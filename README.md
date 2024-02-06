@@ -110,8 +110,16 @@ We present two demos videos that complete user request on Windows OS using UFO.
 In this example, we will show you how to use UFO to deleting all notes on a PowerPoint presentation with just a few simple steps. Explore it to work smarter not harder!
 
 
+https://github.com/microsoft/UFO/assets/11352048/cf60c643-04f7-4180-9a55-5fb240627834
+
+
+
 #### 2️⃣📧 Example 2: Composing an email using text from multiple sources.
 In this example, we will show you how to use UFO to extract texts from Word documents, description of an image, to compose an email and send. Enjoy your cross-application experiment with UFO!
+
+
+https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4fc32e0
+
 
 
 ## 📚 Citation
