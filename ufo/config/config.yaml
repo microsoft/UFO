@@ -1,8 +1,8 @@
 version: 0.1
 
-OPENAI_API_BASE: "https://cloudgpt-swc.openai.azure.com/openai/deployments/gpt-4-visual-preview/chat/completions?api-version=2023-12-01-preview" # The base URL for the OpenAI API
+OPENAI_API_BASE: "" # The base URL for the OpenAI API
 OPENAI_API_KEY: ""  # Set the value to sk-xxx if you host the openai interface for open llm model
-OPENAI_API_MODEL: "gpt-4-visual-preview"  # The only OpenAI model by now that accepts visual input
+OPENAI_API_MODEL: ""  # The only OpenAI model by now that accepts visual input
 CONTROL_BACKEND: "uia"  # The backend for control action
 MAX_TOKENS: 2000  # The max token limit for the response completion
 MAX_RETRY: 3  # The max retry limit for the response completion

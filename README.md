@@ -2,7 +2,12 @@
     UFO<img src="./assets/ufo.png" width="40px"/> :A <strong>U</strong>I-<strong>F</strong>ocused Multimodal Agent for Windows <strong>O</strong>S
 </h1> -->
 
-# **UFO** ![ufo](./assets/ufo_blue.png =x24): A **U**I-**F**ocused Agent for Windows **O**S Interaction
+<!-- # **UFO** ![ufo](./assets/ufo_blue.png =x24): A **U**I-**F**ocused Agent for Windows **O**S Interaction -->
+
+
+<h1 align="center">
+    <img src="./assets/ufo_blue.png" width="36" /> A <b>U</b>I-<b>F</b>ocused Agent for Windows <b>O</b>S Interaction
+</h1>
 
 <div align="center">
 
