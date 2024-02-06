@@ -6,7 +6,7 @@
 
 
 <h1 align="center">
-    <img src="./assets/ufo_blue.png" width="36" /> A <b>U</b>I-<b>F</b>ocused Agent for Windows <b>O</b>S Interaction
+    <img <b>UFO</b> rc="./assets/ufo_blue.png" width="36" />: A <b>U</b>I-<b>F</b>ocused Agent for Windows <b>O</b>S Interaction
 </h1>
 
 <div align="center">
