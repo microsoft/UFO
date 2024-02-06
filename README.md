@@ -26,12 +26,12 @@
 
 
 ## 🆕 News
-- 📅 2024-02-30 UFO is released on GitHub🎈.
+- 📅 2024-02-07 UFO is released on GitHub🎈.
 
 
 ## 💥 Highlights
 
-- [x] **First Windows Agent Framework** - UFO represents the first agent framework that can translate user request in natural language into grounded operation on Windows OS.
+- [x] **First Windows Agent** - UFO represents the first agent framework that can translate user request in natural language into grounded operation on Windows OS.
 - [x] **Interactive Mode** - UFO allows for multiple sub-requests from users in the same session for completing complex task.
 - [x] **Action Safeguard** - UFO supports safeguard to prompt for user confirmation when the action is sensitive.
 - [x] **Easy Extension** - UFO is easy to extend to accomplish more complex tasks with different operations.
@@ -104,7 +104,7 @@ You may use them to debug, replay, or analyze the agent output.
 
 ## 🎬 Demo Examples
 
-We present two demos videos that complete user request on Windows OS using UFO.
+We present two demos videos that complete user request on Windows OS using UFO. For more video, please consult our technical report.
 
 #### 1️⃣🗑️ Example 1: Deleting all notes on a PowerPoint presentation.
 In this example, we will show you how to use UFO to deleting all notes on a PowerPoint presentation with just a few simple steps. Explore it to work smarter not harder!
@@ -128,7 +128,7 @@ If you use UFO in your research, please cite our paper:
 ```
 @article{ufo,
   title={UFO: A UI-Focused Agent for Windows OS Interaction},
-  author={Chaoyun Zhang, Liqun Li, Shilin He, Xu Zhang,  Bo Qiao, Si Qin, Minghua Ma, Yu Kang, Qingwei Lin, Saravan Rajmohan, Dongmei Zhang, Qi Zhang},
+  author={Chaoyun Zhang, Liqun Li, Shilin He, Xu Zhang, Bo Qiao, Si Qin, Minghua Ma, Yu Kang, Qingwei Lin, Saravan Rajmohan, Dongmei Zhang, Qi Zhang},
   journal={arXiv preprint arXiv:2311.17541},
   year={2024}
 }
