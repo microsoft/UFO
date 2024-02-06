@@ -92,7 +92,7 @@ Please enter your request to be completed🛸:
 
 You can find the screenshots taken and request and reponse logs in the following folder:
 ```
-ufo/logs/<your_task_name>/
+./ufo/logs/<your_task_name>/
 ```
 You may use them to debug, replay, or analyze the agent output.
 
@@ -133,6 +133,10 @@ If you use UFO in your research, please cite our paper:
   year={2024}
 }
 ```
+
+
+## Disclaimer
+By choosing to run the provided code, you acknowledge and agree to the following terms and conditions regarding the functionality and data handling practices in [DISCLAIMER.md](./DISCLAIMER.md)
 
 
 ## Trademarks
