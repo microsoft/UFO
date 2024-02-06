@@ -60,7 +60,7 @@ Before running UFO, you need to provide your LLM configurations. Taking OpenAI a
 #### OpenAI
 ```
 OPENAI_API_BASE: Your OpenAI Endpoint # The base URL for the OpenAI API
-OPENAI_API_KEY: Your OpenAI Key  # Set the value to sk-xxx if you host the openai interface for open llm model
+OPENAI_API_KEY: Your OpenAI Key  # Set the value to the openai key for the llm model
 OPENAI_API_MODEL: GPT Model Name  # The only OpenAI model by now that accepts visual input
 ```
 
@@ -85,7 +85,7 @@ Welcome to use UFO🛸, A UI-focused Multimodal Agent for Windows OS.
  \___/ |_|     \___/
 Please enter your request to be completed🛸:
 ```
-#### <**Reminder: Before inputing your request, please make sure the targeted applications are active on the system.**>
+#### **Reminder❗: Before UFO executing your request, please make sure the targeted applications are active on the system.**
 
 
 ###  Step 4 🎥: Execution Logs 
