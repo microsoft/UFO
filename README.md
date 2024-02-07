@@ -81,7 +81,7 @@ OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts
 
 ### 🎉 Step 3: Start UFO
 
-#### ⌨️ Command Line (CLI)
+#### ⌨️ You can execute the following on your Windows command Line (CLI):
 
 ```bash
 # assume you are in the cloned UFO folder
