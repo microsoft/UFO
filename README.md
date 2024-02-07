@@ -42,8 +42,6 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 
-
-
 ## ✨ Getting Started
 
 
@@ -70,6 +68,14 @@ OPENAI_API_BASE: Your OpenAI Endpoint # The base URL for the OpenAI API
 OPENAI_API_KEY: Your OpenAI Key  # Set the value to the openai key for the llm model
 OPENAI_API_MODEL: GPT Model Name  # The only OpenAI model by now that accepts visual input
 ```
+
+#### Azure OpenAI
+```
+OPENAI_API_BASE: Your OpenAI Endpoint # The base URL for the OpenAI API
+OPENAI_API_KEY: Your OpenAI Key  # Set the value to the openai key for the llm model
+OPENAI_API_MODEL: GPT Model Name  # The only OpenAI model by now that accepts visual input
+```
+
 
 ### 🚩 Step 3: Start UFO
 
@@ -126,6 +132,15 @@ In this example, we will show you how to use UFO to extract texts from Word docu
 
 
 https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4fc32e0
+
+
+
+
+## 📊 Evaluation
+To evaluate, please refer to the [WindosBench](./DISCLAIMER.md) in the Section A of Appendix in our technical report. Some tips for completing your request:
+
+
+
 
 
 
