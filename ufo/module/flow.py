@@ -51,7 +51,7 @@ class Session(object):
 
         
 
-        print_with_color("""Welcome to use UFO🛸, A UI-focused Multimodal Agent for Windows OS. 
+        print_with_color("""Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction. 
 {art}
 Please enter your request to be completed🛸: """.format(art=text2art("UFO")), "cyan")
         

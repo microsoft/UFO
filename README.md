@@ -1,10 +1,3 @@
-<!-- <h1 align="center">
-    UFO<img src="./assets/ufo.png" width="40px"/> :A <strong>U</strong>I-<strong>F</strong>ocused Multimodal Agent for Windows <strong>O</strong>S
-</h1> -->
-
-<!-- # **UFO** ![ufo](./assets/ufo_blue.png =x24): A **U**I-**F**ocused Agent for Windows **O**S Interaction -->
-
-
 <h1 align="center">
     <b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="36">: A <b>U</b>I-<b>F</b>ocused Agent for Windows <b>O</b>S Interaction
 </h1>
@@ -25,6 +18,16 @@
 </h1>
 
 
+## Framework
+<b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="24"> operates as a dual-agent framework, encompassing:
+- <b>AppAgent 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
+- <b>ActAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
+Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our technical report.
+<h1 align="center">
+    <img src="./assets/ufo.png"/> 
+</h1>
+
+
 ## 🆕 News
 - 📅 2024-02-08 UFO is released on GitHub🎈.
 
@@ -35,6 +38,9 @@
 - [x] **Interactive Mode** - UFO allows for multiple sub-requests from users in the same session for completing complex task.
 - [x] **Action Safeguard** - UFO supports safeguard to prompt for user confirmation when the action is sensitive.
 - [x] **Easy Extension** - UFO is easy to extend to accomplish more complex tasks with different operations.
+
+
+
 
 
 ## ✨ Getting Started
@@ -77,7 +83,7 @@ This will start the UFO process and you can interact with it through the command
 If everything goes well, you will see the following message:
 
 ```bash
-Welcome to use UFO🛸, A UI-focused Multimodal Agent for Windows OS. 
+Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction. 
  _   _  _____   ___
 | | | ||  ___| / _ \
 | | | || |_   | | | |
@@ -104,7 +110,7 @@ You may use them to debug, replay, or analyze the agent output.
 
 ## 🎬 Demo Examples
 
-We present two demos videos that complete user request on Windows OS using UFO. For more video, please consult our technical report.
+We present two demo videos that complete user request on Windows OS using UFO. For more cases, please consult our technical report.
 
 #### 1️⃣🗑️ Example 1: Deleting all notes on a PowerPoint presentation.
 In this example, we will show you how to use UFO to deleting all notes on a PowerPoint presentation with just a few simple steps. Explore it to work smarter not harder!

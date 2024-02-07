@@ -1,5 +1,4 @@
 import argparse
-import os
 from datetime import datetime
 
 from .config.config import load_config
@@ -25,8 +24,6 @@ headers = {
 }
 
 
-
-
 def main():
     """
     Main function.
@@ -38,6 +35,7 @@ def main():
     status = session.get_status()
     round = session.get_round()
 
+    # Start the task
     while status.upper() not in ["ALLFINISH", "ERROR", "MAX_STEP_REACHED"]:
 
         round = session.get_round()
@@ -78,6 +76,8 @@ def main():
         result = session.get_results()
         round = session.get_round()
 
+
+        # Print the result
         if result != "":
             print_with_color("Result for round {round}:".format(
                 round=round), "magenta")
@@ -85,6 +85,7 @@ def main():
 
         session.set_round(round+1)
 
+    # Print the total cost
     total_cost = session.get_cost()
     formatted_cost = '${:.2f}'.format(total_cost)
     print_with_color(f"Request total cost is {formatted_cost}", "yellow")
