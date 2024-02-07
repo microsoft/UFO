@@ -144,6 +144,7 @@ Please consult the [WindowsBench](http://export.arxiv.org/abs/2311.17541) provid
 
 - Prior to UFO execution of your request, ensure that the targeted application is active (though it may be minimized).
 - Occasionally, requests to GPT-V may trigger content safety measures. UFO will attempt to retry regardless, but adjusting the size or scale of the application window may prove helpful. We are actively solving this issue.
+- Currently, UFO supports a limited set of applications and UI controls that are compatible with the Windows **UI Automation** API. Our future plans include extending support to the Win32 API to enhance its capabilities.
 - Please note that the output of GPT-V may not consistently align with the same request. If unsuccessful with your initial attempt, consider trying again.
 
 
