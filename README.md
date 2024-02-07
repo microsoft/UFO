@@ -21,7 +21,7 @@
 **UFO** is a **UI-Focused** dual-agent framework that seamlessly navigates and operates within individual applications and across them to fulfill user requests on **Windows OS**, even when spanning multiple applications.
 
 <h1 align="center">
-    <img src="./assets/overview.png"/> 
+    <img src="./assets/overview_n.png"/> 
 </h1>
 
 
