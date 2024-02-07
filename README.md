@@ -23,7 +23,7 @@
 - <b>AppAgent 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
 - <b>ActAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
 
-Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our technical report.
+Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](http://export.arxiv.org/abs/2311.17541).
 <h1 align="center">
     <img src="./assets/ufo.png"/> 
 </h1>
@@ -119,10 +119,10 @@ You may use them to debug, replay, or analyze the agent output.
 
 ## 🎬 Demo Examples
 
-We present two demo videos that complete user request on Windows OS using UFO. For more cases, please consult our technical report.
+We present two demo videos that complete user request on Windows OS using UFO. For more cases, please consult our [technical report](http://export.arxiv.org/abs/2311.17541).
 
 #### 1️⃣🗑️ Example 1: Deleting all notes on a PowerPoint presentation.
-In this example, we will show you how to use UFO to deleting all notes on a PowerPoint presentation with just a few simple steps. Explore it to work smarter not harder!
+In this example, we will demonstrate how to efficiently use UFO to delete all notes on a PowerPoint presentation with just a few simple steps. Explore this functionality to enhance your productivity and work smarter, not harder!
 
 
 https://github.com/microsoft/UFO/assets/11352048/cf60c643-04f7-4180-9a55-5fb240627834
@@ -130,7 +130,7 @@ https://github.com/microsoft/UFO/assets/11352048/cf60c643-04f7-4180-9a55-5fb2406
 
 
 #### 2️⃣📧 Example 2: Composing an email using text from multiple sources.
-In this example, we will show you how to use UFO to extract texts from Word documents, description of an image, to compose an email and send. Enjoy your cross-application experiment with UFO!
+In this example, we will demonstrate how to utilize UFO to extract text from Word documents, describe an image, compose an email, and send it seamlessly. Enjoy the versatility and efficiency of cross-application experiences with UFO!
 
 
 https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4fc32e0
