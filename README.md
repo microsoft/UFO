@@ -66,16 +66,16 @@ Before running UFO, you need to provide your LLM configurations. Taking OpenAI a
 ```
 API_TYPE: "openai" 
 OPENAI_API_BASE: "https://api.openai.com/v1/chat/completions" # The base URL for the OpenAI API
-OPENAI_API_KEY: Your OpenAI Key  # Set the value to the openai key for the llm model
-OPENAI_API_MODEL: GPT-V Model Name  # The only OpenAI model by now that accepts visual input
+OPENAI_API_KEY: "YOUR_API_KEY"  # Set the value to the openai key for the llm model
+OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts visual input
 ```
 
 #### Azure OpenAI (AOAI)
 ```
 API_TYPE: "aoai" 
-OPENAI_API_BASE: Your OpenAI Endpoint # The base URL for the OpenAI API
-OPENAI_API_KEY: Your OpenAI Key  # Set the value to the openai key for the llm model
-OPENAI_API_MODEL: GPT-V Model Name  # The only OpenAI model by now that accepts visual input
+OPENAI_API_BASE: "YOUR_ENDPOINT"
+OPENAI_API_KEY: "YOUR_API_KEY"  # Set the value to the openai key for the llm model
+OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts visual input
 ```
 
 
