@@ -18,7 +18,7 @@
 
 </div>
 
-**UFO** is a **UI-Focused** dual-agent framework that seamlessly navigates and operates within individual applications and across them to fulfill user requests on **Windows OS**, even when spanning multiple applications.
+**UFO** is a **UI-Focused** dual-agent framework to fulfill user requests on **Windows OS** by seamlessly navigating and operating within individual or spanning multiple applications.
 
 <h1 align="center">
     <img src="./assets/overview_n.png"/> 
@@ -26,7 +26,7 @@
 
 
 ## 🆕 News
-- 📅 2024-02-07 UFO is released on GitHub🎈.
+- 📅 2024-02-08 UFO is released on GitHub🎈.
 
 
 ## 💥 Highlights
