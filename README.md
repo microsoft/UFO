@@ -35,10 +35,10 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 ## 💥 Highlights
 
-- [x] **First Windows Agent** - UFO represents the first agent framework that can translate user request in natural language into grounded operation on Windows OS.
-- [x] **Interactive Mode** - UFO allows for multiple sub-requests from users in the same session for completing complex task.
-- [x] **Action Safeguard** - UFO supports safeguard to prompt for user confirmation when the action is sensitive.
-- [x] **Easy Extension** - UFO is easy to extend to accomplish more complex tasks with different operations.
+- [x] **First Windows Agent** - UFO is the pioneering agent framework capable of translating user requests in natural language into actionable operations on Windows OS.
+- [x] **Interactive Mode** - UFO facilitates multiple sub-requests from users within the same session, enabling the completion of complex tasks seamlessly.
+- [x] **Action Safeguard** - UFO incorporates safeguards to prompt user confirmation for sensitive actions, enhancing security and preventing inadvertent operations.
+- [x] **Easy Extension** - UFO offers effortless extensibility, allowing for the integration of additional functionalities and control types to tackle diverse and intricate tasks with ease.
 
 
 
@@ -140,7 +140,7 @@ https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4f
 
 ## 📊 Evaluation
 
-Please consult the [WindosBench](./DISCLAIMER.md) provided in Section A of the Appendix within our technical report. Here are some tips (and requirements) to aid in completing your request:
+Please consult the [WindowsBench](http://export.arxiv.org/abs/2311.17541) provided in Section A of the Appendix within our technical report. Here are some tips (and requirements) to aid in completing your request:
 
 - Prior to UFO execution of your request, ensure that the targeted application is active (though it may be minimized).
 - Occasionally, requests to GPT-V may trigger content safety measures. UFO will attempt to retry regardless, but adjusting the size or scale of the application window may prove helpful. We are actively solving this issue.
@@ -149,7 +149,7 @@ Please consult the [WindosBench](./DISCLAIMER.md) provided in Section A of the A
 
 
 ## 📚 Citation
-Our paper could be found [here](http://export.arxiv.org/abs/2311.17541). 
+Our technical report paper can be found [here](http://export.arxiv.org/abs/2311.17541). 
 If you use UFO in your research, please cite our paper:
 ```
 @article{ufo,
@@ -161,7 +161,7 @@ If you use UFO in your research, please cite our paper:
 ```
 
 ## 🎨 Related Project
-You may also find [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file) useful, a code-first agent framework for seamlessly planning and executing data analytics tasks.
+You may also find [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file) useful, a code-first LLM agent framework for seamlessly planning and executing data analytics tasks.
 
 
 ## ⚠️ Disclaimer
