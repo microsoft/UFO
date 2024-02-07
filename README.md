@@ -100,7 +100,7 @@ Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction.
  \___/ |_|     \___/
 Please enter your request to be completed🛸:
 ```
-#### **Reminder❗: Before UFO executing your request, please make sure the targeted applications are active on the system.**
+#### **⚠️Reminder: Before UFO executing your request, please make sure the targeted applications are active on the system.**
 
 
 ###  Step 4 🎥: Execution Logs 
@@ -164,11 +164,11 @@ If you use UFO in your research, please cite our paper:
 You may also find [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file) useful, a code-first agent framework for seamlessly planning and executing data analytics tasks.
 
 
-## Disclaimer
+## ⚠️ Disclaimer
 By choosing to run the provided code, you acknowledge and agree to the following terms and conditions regarding the functionality and data handling practices in [DISCLAIMER.md](./DISCLAIMER.md)
 
 
-## Trademarks
+## <img src="./assets/ufo_blue.png" alt="logo" width="30"> Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
 trademarks or logos is subject to and must follow 
