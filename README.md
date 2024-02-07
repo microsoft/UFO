@@ -22,10 +22,11 @@
 <b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="24"> operates as a dual-agent framework, encompassing:
 - <b>AppAgent 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
 - <b>ActAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
+- <b>Control Interaction 🎮</b>, is tasked with translating actions from AppAgent and ActAgent into interactions with the application and its UI controls. It's essential that the targeted controls are compatible with the Windows **UI Automation** API.
 
 Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](http://export.arxiv.org/abs/2311.17541).
 <h1 align="center">
-    <img src="./assets/ufo.png"/> 
+    <img src="./assets/framework.png"/> 
 </h1>
 
 
