@@ -1,7 +1,7 @@
 version: 0.1
 
 OPENAI_API_BASE: "" # The base URL for the OpenAI API
-OPENAI_API_KEY: ""  # Set the value to sk-xxx if you host the openai interface for open llm model
+OPENAI_API_KEY: ""  # The OpenAI API key
 OPENAI_API_MODEL: ""  # The only OpenAI model by now that accepts visual input
 CONTROL_BACKEND: "uia"  # The backend for control action
 MAX_TOKENS: 2000  # The max token limit for the response completion
