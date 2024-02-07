@@ -27,7 +27,7 @@ ANNOTATION_COLORS: {
         "ComboBox": "#D8B6D4"
     }
 
-PRINT_LOG: FALSE  # Whether to print the log  
+PRINT_LOG: False  # Whether to print the log  
 CONCAT_SCREENSHOT: True  # Whether to concat the screenshot for the control item
 LOG_LEVEL: "DEBUG"  # The log level
 INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the observation
