@@ -18,18 +18,21 @@ args.add_argument("--gptkey", help="GPT key.", type=str,
 parsed_args = args.parse_args()
 
 
-if configs["API_TYPE"].lower() == "openai":
+if configs["API_TYPE"].lower() == "aoai":
     headers = {
         "Content-Type": "application/json",
         "api-key": parsed_args.gptkey,
     }
-elif configs["API_TYPE"].lower() == "aoai":
+elif configs["API_TYPE"].lower() == "openai":
     headers = {
             "Content-Type": "application/json",
             "Authorization": f"Bearer {parsed_args.gptkey}"
         }
 else:
     raise ValueError("API_TYPE should be either 'openai' or 'aoai'.")
+
+
+print(headers)
 
 
 def main():
