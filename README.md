@@ -59,7 +59,7 @@ cd UFO
 pip install -r requirements.txt
 ```
 
-### 🖊️ Step 2: Configure the LLMs
+### ⚙️ Step 2: Configure the LLMs
 Before running UFO, you need to provide your LLM configurations. Taking OpenAI as an example, you can configure `ufo/config/config.yaml` file as follows. 
 
 #### OpenAI
@@ -73,13 +73,13 @@ OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts
 #### Azure OpenAI (AOAI)
 ```
 API_TYPE: "aoai" 
-OPENAI_API_BASE: "YOUR_ENDPOINT"
+OPENAI_API_BASE: "YOUR_ENDPOINT" # The AOAI API endpoint
 OPENAI_API_KEY: "YOUR_API_KEY"  # Set the value to the openai key for the llm model
 OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts visual input
 ```
 
 
-### 🚩 Step 3: Start UFO
+### 🎉 Step 3: Start UFO
 
 #### ⌨️ Command Line (CLI)
 
@@ -105,7 +105,7 @@ Please enter your request to be completed🛸:
 
 ###  Step 4 🎥: Execution Logs 
 
-You can find the screenshots taken and request and reponse logs in the following folder:
+You can find the screenshots taken and request & reponse logs in the following folder:
 ```
 ./ufo/logs/<your_task_name>/
 ```
@@ -159,6 +159,9 @@ If you use UFO in your research, please cite our paper:
   year={2024}
 }
 ```
+
+## 🎨 Related Project
+You may also find [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file) useful, a code-first agent framework for seamlessly planning and executing data analytics tasks.
 
 
 ## Disclaimer
