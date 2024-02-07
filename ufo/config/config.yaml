@@ -1,7 +1,7 @@
 version: 0.1
 
 API_TYPE: "openai"  # The API type, "openai" for the OpenAI API, aoai for the AOAI API.
-OPENAI_API_BASE: "YOUR_ENDPOINT" # The the OpenAI API endpoint, "https://api.openai.com/v1/models" for the OpenAI API.
+OPENAI_API_BASE: "YOUR_ENDPOINT" # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
 OPENAI_API_KEY: "YOUR_API_KEY"  # The OpenAI API key
 OPENAI_API_MODEL: "gpt-4-vision-preview"  # The only OpenAI model by now that accepts visual input
 CONTROL_BACKEND: "uia"  # The backend for control action

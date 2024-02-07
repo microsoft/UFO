@@ -64,16 +64,18 @@ Before running UFO, you need to provide your LLM configurations. Taking OpenAI a
 
 #### OpenAI
 ```
-OPENAI_API_BASE: Your OpenAI Endpoint # The base URL for the OpenAI API
+API_TYPE: "openai" 
+OPENAI_API_BASE: "https://api.openai.com/v1/chat/completions" # The base URL for the OpenAI API
 OPENAI_API_KEY: Your OpenAI Key  # Set the value to the openai key for the llm model
-OPENAI_API_MODEL: GPT Model Name  # The only OpenAI model by now that accepts visual input
+OPENAI_API_MODEL: GPT-V Model Name  # The only OpenAI model by now that accepts visual input
 ```
 
-#### Azure OpenAI
+#### Azure OpenAI (AOAI)
 ```
+API_TYPE: "aoai" 
 OPENAI_API_BASE: Your OpenAI Endpoint # The base URL for the OpenAI API
 OPENAI_API_KEY: Your OpenAI Key  # Set the value to the openai key for the llm model
-OPENAI_API_MODEL: GPT Model Name  # The only OpenAI model by now that accepts visual input
+OPENAI_API_MODEL: GPT-V Model Name  # The only OpenAI model by now that accepts visual input
 ```
 
 
@@ -137,10 +139,12 @@ https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4f
 
 
 ## 📊 Evaluation
-To evaluate, please refer to the [WindosBench](./DISCLAIMER.md) in the Section A of Appendix in our technical report. Some tips for completing your request:
 
+Please consult the [WindosBench](./DISCLAIMER.md) provided in Section A of the Appendix within our technical report. Here are some tips (and requirements) to aid in completing your request:
 
-
+- Prior to UFO execution of your request, ensure that the targeted application is active (though it may be minimized).
+- Occasionally, requests to GPT-V may trigger content safety measures. UFO will attempt to retry regardless, but adjusting the size or scale of the application window may prove helpful. We are actively solving this issue.
+- Please note that the output of GPT-V may not consistently align with the same request. If unsuccessful with your initial attempt, consider trying again.
 
 
 
