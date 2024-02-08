@@ -15,7 +15,7 @@ It is crucial to note that Microsoft, the provider of this code, explicitly stat
 By running the code, you understand and accept the responsibility for the content and nature of the data present on your desktop during the execution period. It is your responsibility to ensure that no sensitive or confidential information is visible or captured during this process.
 
 ## 5. Security Measures:
-Microsoft has implemented security measures to safeguard the data transmission process. However, it is recommended that you run the code in a secure and controlled environment to minimize potential risks. Ensure that you are running the latest security updates on your system.
+Microsoft has implemented security measures to safeguard the action execution. However, it is recommended that you run the code in a secure and controlled environment to minimize potential risks. Ensure that you are running the latest security updates on your system.
 
 ## 6. Consent for Inference:
 You explicitly provide consent for the GPT model to analyze the captured screenshots for the purpose of generating relevant outputs. This consent is inherent in the act of executing the code.
