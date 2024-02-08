@@ -101,7 +101,9 @@ Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction.
  \___/ |_|     \___/
 Please enter your request to be completed🛸:
 ```
-#### **⚠️Reminder: Before UFO executing your request, please make sure the targeted applications are active on the system.**
+#### **⚠️Reminder:####
+- Before UFO executing your request, please make sure the targeted applications are active on the system.
+- The GPT-V accepts screenshots of your desktop and application GUI as input. Please ensure that no sensitive or confidential information is visible or captured during the execution process. For further information, refer to [DISCLAIMER.md](./DISCLAIMER.md).
 
 
 ###  Step 4 🎥: Execution Logs 
