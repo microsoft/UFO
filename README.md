@@ -122,7 +122,7 @@ You may use them to debug, replay, or analyze the agent output.
 
 ## 🎬 Demo Examples
 
-We present two demo videos that complete user request on Windows OS using UFO. For more cases, please consult our [technical report](http://export.arxiv.org/abs/2311.17541).
+We present two demo videos that complete user request on Windows OS using UFO. For more case stufu, please consult our [technical report](http://export.arxiv.org/abs/2311.17541).
 
 #### 1️⃣🗑️ Example 1: Deleting all notes on a PowerPoint presentation.
 In this example, we will demonstrate how to efficiently use UFO to delete all notes on a PowerPoint presentation with just a few simple steps. Explore this functionality to enhance your productivity and work smarter, not harder!
