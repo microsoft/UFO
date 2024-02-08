@@ -31,7 +31,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 🆕 News
-- 📅 2024-02-08 UFO is released on GitHub🎈.
+- 📅 2024-02-09 UFO is released on GitHub🎈.
 
 
 ## 💥 Highlights
