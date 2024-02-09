@@ -39,7 +39,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 - [x] **First Windows Agent** - UFO is the pioneering agent framework capable of translating user requests in natural language into actionable operations on Windows OS.
 - [x] **Interactive Mode** - UFO facilitates multiple sub-requests from users within the same session, enabling the completion of complex tasks seamlessly.
 - [x] **Action Safeguard** - UFO incorporates safeguards to prompt user confirmation for sensitive actions, enhancing security and preventing inadvertent operations.
-- [x] **Easy Extension** - UFO offers effortless extensibility, allowing for the integration of additional functionalities and control types to tackle diverse and intricate tasks with ease.
+- [x] **Easy Extension** - UFO offers extensibility, allowing for the integration of additional functionalities and control types to tackle diverse and intricate tasks with ease.
 
 
 
