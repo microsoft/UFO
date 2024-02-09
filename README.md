@@ -24,7 +24,7 @@
 - <b>ActAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
 - <b>Control Interaction 🎮</b>, is tasked with translating actions from AppAgent and ActAgent into interactions with the application and its UI controls. It's essential that the targeted controls are compatible with the Windows **UI Automation** API.
 
-Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](UFO_paper.pdf).
+Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](./assets/UFO_paper.pdf).
 <h1 align="center">
     <img src="./assets/framework.png"/> 
 </h1>
@@ -122,7 +122,7 @@ You may use them to debug, replay, or analyze the agent output.
 
 ## 🎬 Demo Examples
 
-We present two demo videos that complete user request on Windows OS using UFO. For more case stufu, please consult our [technical report](UFO_paper.pdf).
+We present two demo videos that complete user request on Windows OS using UFO. For more case study, please consult our [technical report](./assets/UFO_paper.pdf).
 
 #### 1️⃣🗑️ Example 1: Deleting all notes on a PowerPoint presentation.
 In this example, we will demonstrate how to efficiently use UFO to delete all notes on a PowerPoint presentation with just a few simple steps. Explore this functionality to enhance your productivity and work smarter, not harder!
