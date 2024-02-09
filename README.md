@@ -24,7 +24,7 @@
 - <b>ActAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
 - <b>Control Interaction 🎮</b>, is tasked with translating actions from AppAgent and ActAgent into interactions with the application and its UI controls. It's essential that the targeted controls are compatible with the Windows **UI Automation** API.
 
-Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](http://export.arxiv.org/abs/2311.17541).
+Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](UFO_paper.pdf).
 <h1 align="center">
     <img src="./assets/framework.png"/> 
 </h1>
@@ -122,7 +122,7 @@ You may use them to debug, replay, or analyze the agent output.
 
 ## 🎬 Demo Examples
 
-We present two demo videos that complete user request on Windows OS using UFO. For more case stufu, please consult our [technical report](http://export.arxiv.org/abs/2311.17541).
+We present two demo videos that complete user request on Windows OS using UFO. For more case stufu, please consult our [technical report](UFO_paper.pdf).
 
 #### 1️⃣🗑️ Example 1: Deleting all notes on a PowerPoint presentation.
 In this example, we will demonstrate how to efficiently use UFO to delete all notes on a PowerPoint presentation with just a few simple steps. Explore this functionality to enhance your productivity and work smarter, not harder!
@@ -143,7 +143,7 @@ https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4f
 
 ## 📊 Evaluation
 
-Please consult the [WindowsBench](http://export.arxiv.org/abs/2311.17541) provided in Section A of the Appendix within our technical report. Here are some tips (and requirements) to aid in completing your request:
+Please consult the [WindowsBench](./assets/UFO_paper.pdf) provided in Section A of the Appendix within our technical report. Here are some tips (and requirements) to aid in completing your request:
 
 - Prior to UFO execution of your request, ensure that the targeted application is active (though it may be minimized).
 - Occasionally, requests to GPT-V may trigger content safety measures. UFO will attempt to retry regardless, but adjusting the size or scale of the application window may prove helpful. We are actively solving this issue.
@@ -153,13 +153,12 @@ Please consult the [WindowsBench](http://export.arxiv.org/abs/2311.17541) provid
 
 
 ## 📚 Citation
-Our technical report paper can be found [here](http://export.arxiv.org/abs/2311.17541). 
+Our technical report paper can be found [here](./assets/UFO_paper.pdf). 
 If you use UFO in your research, please cite our paper:
 ```
 @article{ufo,
   title={UFO: A UI-Focused Agent for Windows OS Interaction},
   author={Chaoyun Zhang, Liqun Li, Shilin He, Xu Zhang, Bo Qiao, Si Qin, Minghua Ma, Yu Kang, Qingwei Lin, Saravan Rajmohan, Dongmei Zhang, Qi Zhang},
-  journal={arXiv preprint arXiv:2311.17541},
   year={2024}
 }
 ```
