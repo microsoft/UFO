@@ -110,7 +110,7 @@ Please enter your request to be completed🛸:
 
 ###  Step 4 🎥: Execution Logs 
 
-You can find the screenshots taken and request & reponse logs in the following folder:
+You can find the screenshots taken and request & response logs in the following folder:
 ```
 ./ufo/logs/<your_task_name>/
 ```
