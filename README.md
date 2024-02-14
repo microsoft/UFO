@@ -159,8 +159,8 @@ Our technical report paper can be found [here](https://arxiv.org/abs/2402.07939)
 If you use UFO in your research, please cite our paper:
 ```
 @article{ufo,
-  title={UFO: A UI-Focused Agent for Windows OS Interaction},
-  author={Chaoyun Zhang, Liqun Li, Shilin He, Xu Zhang, Bo Qiao, Si Qin, Minghua Ma, Yu Kang, Qingwei Lin, Saravan Rajmohan, Dongmei Zhang, Qi Zhang},
+  title={{UFO: A UI-Focused Agent for Windows OS Interaction}},
+  author={Zhang, Chaoyun and Li, Liqun and He, Shilin and  Zhang, Xu and Qiao, Bo and  Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and  Zhang, Qi},
   journal={arXiv preprint arXiv:2402.07939},
   year={2024}
 }
