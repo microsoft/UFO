@@ -31,8 +31,8 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 🆕 News
-- 📅 2024-02-14 Our [technical report](https://arxiv.org/abs/2402.07939) is online!
-- 📅 2024-02-10 UFO is released on GitHub🎈. Happy Chinese New year🐉!
+- 📅 2024-02-14: Our [technical report](https://arxiv.org/abs/2402.07939) is online!
+- 📅 2024-02-10: UFO is released on GitHub🎈. Happy Chinese New year🐉!
 
 
 
