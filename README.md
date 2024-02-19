@@ -167,9 +167,9 @@ If you use UFO in your research, please cite our paper:
 ```
 
 ## 📝 Todo List
-[] Support local host GUI interaction model.
-[] RAG enhanced UFO.
-[] Chatbox GUI for UFO.
+- [] Support local host GUI interaction model.
+- [] RAG enhanced UFO.
+- [] Chatbox GUI for UFO.
 
 ## 🎨 Related Project
 You may also find [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file) useful, a code-first LLM agent framework for seamlessly planning and executing data analytics tasks.
