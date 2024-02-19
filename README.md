@@ -63,7 +63,7 @@ pip install -r requirements.txt
 ```
 
 ### ⚙️ Step 2: Configure the LLMs
-Before running UFO, you need to provide your LLM configurations. Taking OpenAI as an example, you can configure `ufo/config/config.yaml` file as follows. 
+Before running UFO, you need to provide your LLM configurations. You can configure `ufo/config/config.yaml` file as follows. 
 
 #### OpenAI
 ```
@@ -165,6 +165,11 @@ If you use UFO in your research, please cite our paper:
   year={2024}
 }
 ```
+
+## 📝 Todo List
+[] Support local host GUI interaction model.
+[] RAG enhanced UFO.
+[] Chatbox GUI for UFO.
 
 ## 🎨 Related Project
 You may also find [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file) useful, a code-first LLM agent framework for seamlessly planning and executing data analytics tasks.
