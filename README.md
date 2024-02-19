@@ -167,6 +167,7 @@ If you use UFO in your research, please cite our paper:
 ```
 
 ## 📝 Todo List
+- ⏩ Documentation.
 - ⏩ Support local host GUI interaction model.
 - ⏩ RAG enhanced UFO.
 - ⏩ Chatbox GUI for UFO.
