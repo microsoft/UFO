@@ -112,7 +112,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
             print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
             print_with_color("Selected application📲: {application}".format(application=self.application), "yellow")
-            print_with_color("Next Plan📚: {plan}".format(plan=self.plan.replace("\\n", "\n")), "cyan")
+            print_with_color("Next Plan📚: {plan}".format(plan=str(self.plan).replace("\\n", "\n")), "cyan")
             print_with_color("Comment💬: {comment}".format(comment=comment), "green")
             
             
