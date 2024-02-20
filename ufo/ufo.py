@@ -35,9 +35,6 @@ else:
     raise ValueError("API_TYPE should be either 'openai' or 'aoai'.")
 
 
-print(headers)
-
-
 def main():
     """
     Main function.
