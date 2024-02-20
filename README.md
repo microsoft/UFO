@@ -76,7 +76,7 @@ OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts
 #### Azure OpenAI (AOAI)
 ```
 API_TYPE: "aoai" 
-OPENAI_API_BASE: "YOUR_ENDPOINT" # The AOAI API address. Format: https://{your-resource-name}.openai.azure.com/openai/deployments/{deployment-id}/completions?api-version={api-version}
+OPENAI_API_BASE: "YOUR_ENDPOINT" # The AOAI API address. Format: https://{your-resource-name}.openai.azure.com/openai/deployments/{deployment-id}/chat/completions?api-version={api-version}
 OPENAI_API_KEY: "YOUR_API_KEY"  # Set the value to the openai key for the llm model
 OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts visual input
 ```
