@@ -7,9 +7,11 @@ import os
 from io import BytesIO
 from typing import Optional
 
-from colorama import Fore, Style
+from colorama import Fore, Style, init
 from PIL import Image
 
+# init colorama
+init()
 
 def print_with_color(text: str, color: str = ""):
     """
