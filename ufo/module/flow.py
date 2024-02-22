@@ -242,7 +242,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 print_with_color("Selected item🕹️: {control_text}, Label: {label}".format(control_text=control_text, label=control_label), "yellow")
                 print_with_color("Action applied⚒️: {action}".format(action=action), "blue")
                 print_with_color("Status📊: {status}".format(status=self.status), "blue")
-                print_with_color("Next Plan📚: {plan}".format(plan=self.plan.replace("\\n", "\n")), "cyan")
+                print_with_color("Next Plan📚: {plan}".format(plan=str(self.plan).replace("\\n", "\n")), "cyan")
                 print_with_color("Comment💬: {comment}".format(comment=comment), "green")
 
 

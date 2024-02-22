@@ -8,6 +8,9 @@
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
 ![Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
+![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/:UFO_Agent)
+
+
 
 </div>
 
@@ -30,7 +33,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 </h1>
 
 
-## 🆕 News
+## 📢 News
 - 📅 2024-02-14: Our [technical report](https://arxiv.org/abs/2402.07939) is online!
 - 📅 2024-02-10: UFO is released on GitHub🎈. Happy Chinese New year🐉!
 
