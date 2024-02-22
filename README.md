@@ -7,7 +7,7 @@
 
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
-![Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)
+![Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)&ensp;
 ![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/UFO_Agent)
 
 
