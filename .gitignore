@@ -6,3 +6,6 @@
 __pycache__/
 **/__pycache__/
 *.pyc
+
+# Ignore the config file
+ufo/config/config.yaml
