@@ -1,6 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-import utils
+from . import utils
 
 
 class BasicDocumentLoader:
@@ -8,7 +8,7 @@ class BasicDocumentLoader:
     A class to load documents from a list of files with a given extension list.
     """
 
-    def __init__(self, extensions: str, directory: str = None):
+    def __init__(self, extensions: str = None, directory: str = None):
         """
         Create a new BasicDocumentLoader.
         :param extensions: The extensions to load.
