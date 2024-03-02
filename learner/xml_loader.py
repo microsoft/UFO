@@ -1,14 +1,14 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import basic
-import utils
+from . import basic
 import os
 from langchain_community.document_loaders import UnstructuredXMLLoader
+from langchain.docstore.document import Document
 import xml.etree.ElementTree as ET
 
 
-class XMLLoader(basic.Loader):
+class XMLLoader(basic.BasicDocumentLoader):
     """
     Class to load XML documents.
     """
@@ -63,9 +63,8 @@ class XMLLoader(basic.Loader):
 
     def construct_document_list(self):
         """
-        Construct a document from the given file.
-        :param file: The file to construct the document from.
-        :return: The constructed document.
+        Construct a list of documents.
+        :return: The list of documents.
         """
         documents = []
         for file in self.load_file_name():
@@ -82,6 +81,32 @@ class XMLLoader(basic.Loader):
             documents.append(document)
 
         return documents
+    
+
+
+    def construct_document(self):
+        """
+        Construct a langchain document list.
+        :return: The langchain document list.
+        """
+        documents = []
+        for file in self.load_file_name():
+            text = self.get_microsoft_document_text(file)
+            metadata = self.get_microsoft_document_metadata(file + ".meta")
+            title = metadata["title"]
+            summary = metadata["summary"]
+            page_content = """{title} - {summary}""".format(title=title, summary=summary)
+
+            metadata = {
+                'title': title,
+                'summary': summary,
+                'text':text
+            }
+            document = Document(page_content=page_content, metadata=metadata)
+            
+            documents.append(document)
+        return documents
+    
 
     
     
