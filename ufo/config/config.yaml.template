@@ -4,6 +4,8 @@ API_TYPE: "openai"  # The API type, "openai" for the OpenAI API, "aoai" for the 
 OPENAI_API_BASE: "YOUR_ENDPOINT" for the OpenAI API.
 OPENAI_API_KEY: "YOUR_API_KEY"  # The OpenAI API key
 AOAI_DEPLOYMENT: "YOUR_AOAI_DEPLOYMENT"  # Your AOAI deployment if apply
+BING_API_KEY: "YOUR_BING_SEARCH_API_KEY"  # The Bing search API key
+
 OPENAI_API_MODEL: "gpt-4-vision-preview"  # The only OpenAI model by now that accepts visual input
 CONTROL_BACKEND: "uia"  # The backend for control action
 MAX_TOKENS: 2000  # The max token limit for the response completion
