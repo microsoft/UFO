@@ -23,29 +23,10 @@ class Retriever:
 
 
 
-def load_json_file(file_path):
-    """
-    Load a JSON file.
-    :param file_path: The path to the file to load.
-    :return: The loaded JSON data.
-    """
-
-    with open(file_path, 'r') as file:
-        data = json.load(file)
-    return data
 
 
-def get_offline_config():
-    """
-    Get the list of offline indexers.
-    :return: The list of offline indexers.
-    """
 
-    if os.path.exists("learner/records.json"):
-        records = load_json_file("./learner/records.json")
-    else:
-        records = {}
-    return records
+
 
 
 
