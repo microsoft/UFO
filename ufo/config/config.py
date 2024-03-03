@@ -3,6 +3,7 @@
 
 import os
 import yaml
+import json
 
 
 def load_config(config_path="ufo/config/config.yaml"):
@@ -35,3 +36,19 @@ def load_config(config_path="ufo/config/config.yaml"):
         )
 
     return configs
+
+
+
+def get_offline_learner_indexer_config():
+    """
+    Get the list of offline indexers.
+    :return: The list of offline indexers.
+    """
+
+    file_path = "learner/records.json"
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as file:
+            records = json.load(file)
+    else:
+        records = {}
+    return records
