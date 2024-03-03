@@ -5,6 +5,9 @@ import requests
 from ..config.config import load_config
 from langchain.text_splitter import HTMLHeaderTextSplitter
 from langchain.docstore.document import Document
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+
 
 configs = load_config()
 
@@ -58,7 +61,6 @@ class BingWebRetriever:
                 html_splitter = HTMLHeaderTextSplitter(headers_to_split_on=[])
                 document = html_splitter.split_text(response.text)
                 return document
-            
             else:
                 print("Error in  getting search result for {url}, error code: {status_code}.".format(url=url, status_code=response.status_code))
                 return None
@@ -90,6 +92,21 @@ class BingWebRetriever:
                 document_list.append(document)
 
         return document_list
+    
+    def create_indexer(self, documents: list):
+        """
+        Create an indexer for the given query.
+        :param query: The query to create an indexer for.
+        :return: The created indexer.
+        """
+        embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+
+        db = FAISS.from_documents(documents, embeddings)
+
+        return db
+    
+
+        
 
         
     
