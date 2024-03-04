@@ -4,6 +4,7 @@
 from langchain_community.vectorstores import FAISS
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from ..config.config import get_offline_learner_indexer_config, load_config
+from ..utils import print_with_color
 from . import web_retriever
 
 
@@ -67,13 +68,13 @@ def create_online_search_retriever(query):
     """
     
     bing_retriever = web_retriever.BingWebRetriever()
-
     result_list = bing_retriever.search(query, top_k=configs["RAG_ONLINE_SEARCH_TOPK"])
     documents = bing_retriever.create_documents(result_list)
+    print(documents)
     if len(documents) == 0:
         return None
     indexer = bing_retriever.create_indexer(documents)
-
+    print_with_color("Online indexer created successfully for {num} searched results.".format(num=len(documents)), "cyan")
     return Retriever(indexer)
 
 
@@ -89,6 +90,7 @@ def create_offline_doc_retriever(app_name):
     path = get_offline_indexer_path(app_name)
 
     if path:
+        print_with_color("Loading offline indexer from {path}...".format(path=path), "cyan")
         indexer = load_indexer(path)
         return Retriever(indexer)
     

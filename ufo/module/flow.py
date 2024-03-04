@@ -83,7 +83,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
         
-        app_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request, self.rag_prompt())
+        app_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request)
         app_selection_prompt_message = prompter.prompt_construction(self.app_selection_prompt["system"], [desktop_screen_url], app_selection_prompt_user_message)
 
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
@@ -150,7 +150,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             if configs["RAG_OFFLINE_DOCS"]:
                 print_with_color("Loading offline document indexer for {app}...".format(app=self.application), "magenta")
                 self.offline_doc_retriever = retriever.create_offline_doc_retriever(self.application)
-            if configs["RAG_ONLINE_DOCS"]:
+            if configs["RAG_ONLINE_SEARCH"]:
                 print_with_color("Creating a Bing search indexer...", "magenta")
                 self.online_doc_retriever = retriever.create_online_search_retriever(self.request)
 
@@ -214,7 +214,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 image_url += [screenshot_url, screenshot_annotated_url]
 
 
-            action_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request, retrived_docs)
+            action_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request, self.rag_prompt())
             action_selection_prompt_message = prompter.prompt_construction(self.action_selection_prompt["system"], image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
             
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
@@ -325,7 +325,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         
         retrieved_docs = ""
         if self.offline_doc_retriever:
-            offline_docs = self.offline_doc_retriever.retrieve(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], filter=None)
+            offline_docs = self.offline_doc_retriever.retrieve("How to {query} for {app}".format(self.request, self.application), configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], filter=None)
             offline_docs_prompt = prompter.retrived_documents_prompt_construction("Help Documents", "Document", [doc.page_content for doc in offline_docs])
             retrieved_docs += offline_docs_prompt
 
