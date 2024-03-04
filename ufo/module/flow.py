@@ -325,7 +325,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         
         retrieved_docs = ""
         if self.offline_doc_retriever:
-            offline_docs = self.offline_doc_retriever.retrieve("How to {query} for {app}".format(self.request, self.application), configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], filter=None)
+            offline_docs = self.offline_doc_retriever.retrieve("How to {query} for {app}".format(query=self.request, app=self.application), configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], filter=None)
             offline_docs_prompt = prompter.retrived_documents_prompt_construction("Help Documents", "Document", [doc.page_content for doc in offline_docs])
             retrieved_docs += offline_docs_prompt
 
