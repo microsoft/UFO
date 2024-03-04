@@ -87,8 +87,6 @@ class BingWebRetriever:
                 metadata["snippet"] = result["snippet"]
 
                 document = Document(page_content=page_content, metadata=metadata)
-
-
                 document_list.append(document)
 
         return document_list
