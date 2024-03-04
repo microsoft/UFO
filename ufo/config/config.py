@@ -41,10 +41,11 @@ def load_config(config_path="ufo/config/config.yaml"):
 
 def get_offline_learner_indexer_config():
     """
-    Get the list of offline indexers.
+    Get the list of offline indexers obtained from the learner.
     :return: The list of offline indexers.
     """
 
+    # The fixed path of the offline indexer config file.
     file_path = "learner/records.json"
     if os.path.exists(file_path):
         with open(file_path, 'r') as file:
