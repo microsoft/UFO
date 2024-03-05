@@ -89,7 +89,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         except Exception as e:
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
-            print_with_color("Error occurs when calling LLM.", "red")
+            print_with_color("Error occurs when calling LLM2.", "red")
             self.request_logger.info(log)
             self.status = "ERROR"
             return
@@ -98,7 +98,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.cost += cost
 
         try:
-            response_string = response["choices"][0]["message"]["content"]
+            try:
+                response_string = response["choices"][0]["message"]["content"]
+            except:
+                # response_string = response["choices"][0]["message"]["content"]
+                response_string = response.choices[0].message.content
             response_json = json_parser(response_string)
 
             application_label = response_json["ControlLabel"]
@@ -210,7 +214,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, headers)
             except Exception as e:
                 log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
-                print_with_color("Error occurs when calling LLM.", "red")
+                print_with_color("Error occurs when calling LLM1.", "red")
                 self.request_logger.info(log)
                 self.status = "ERROR"
                 time.sleep(configs["SLEEP_TIME"])
@@ -219,7 +223,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.cost += cost
 
             try:
-                response_string = response["choices"][0]["message"]["content"]
+                try:
+                    response_string = response["choices"][0]["message"]["content"]
+                except:
+                    # response_string = response["choices"][0]["message"]["content"]
+                    response_string = response.choices[0].message.content
                 response_json = json_parser(response_string)
 
                 observation = response_json["Observation"]
