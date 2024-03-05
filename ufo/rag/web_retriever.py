@@ -3,6 +3,7 @@
 
 import requests
 from ..config.config import load_config
+from ..utils import print_with_color
 from langchain.text_splitter import HTMLHeaderTextSplitter
 from langchain.docstore.document import Document
 from langchain_community.embeddings import HuggingFaceEmbeddings
@@ -36,7 +37,7 @@ class BingWebRetriever:
         try:
             response = requests.get(url, headers={"Ocp-Apim-Subscription-Key": self.api_key})
         except requests.RequestException as e:
-            print(f"Error when searching: {e}")
+            print_with_color(f"Warning: Error when searching: {e}".format(e=e), "yellow")
             return None
         result_list = []
 
@@ -62,10 +63,10 @@ class BingWebRetriever:
                 document = html_splitter.split_text(response.text)
                 return document
             else:
-                print("Error in  getting search result for {url}, error code: {status_code}.".format(url=url, status_code=response.status_code))
+                print_with_color("Warning: Error in  getting search result for {url}, error code: {status_code}.".format(url=url, status_code=response.status_code), "yellow")
                 return None
         except requests.exceptions.RequestException as e:
-            print("Error in  getting search result for {url}: {e}.".format(url=url, e=e))
+            print_with_color("Warning: Error in  getting search result for {url}: {e}.".format(url=url, e=e), "yellow")
             return None
 
 

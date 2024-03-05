@@ -4,7 +4,7 @@
 import os
 import yaml
 import json
-
+from ..utils import print_with_color
 
 def load_config(config_path="ufo/config/config.yaml"):
     """
@@ -23,8 +23,8 @@ def load_config(config_path="ufo/config/config.yaml"):
         if yaml_data:
             configs.update(yaml_data)
     except FileNotFoundError:
-        print(
-            f"Warning: Config file not found at {config_path}. Using only environment variables.")
+        print_with_color(
+            f"Warning: Config file not found at {config_path}. Using only environment variables.", "yellow")
 
     # Update the API base URL for AOAI
     if configs["API_TYPE"].lower() == "aoai":

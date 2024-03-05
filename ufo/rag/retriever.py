@@ -70,7 +70,6 @@ def create_online_search_retriever(query):
     bing_retriever = web_retriever.BingWebRetriever()
     result_list = bing_retriever.search(query, top_k=configs["RAG_ONLINE_SEARCH_TOPK"])
     documents = bing_retriever.create_documents(result_list)
-    print(documents)
     if len(documents) == 0:
         return None
     indexer = bing_retriever.create_indexer(documents)

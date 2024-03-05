@@ -22,6 +22,7 @@ from ..utils import (create_folder, encode_image_from_path,
 
 configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]
+logging.getLogger('tensorflow').disabled = True
 
 
 
@@ -326,7 +327,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         retrieved_docs = ""
         if self.offline_doc_retriever:
             offline_docs = self.offline_doc_retriever.retrieve("How to {query} for {app}".format(query=self.request, app=self.application), configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], filter=None)
-            offline_docs_prompt = prompter.retrived_documents_prompt_construction("Help Documents", "Document", [doc.page_content for doc in offline_docs])
+            offline_docs_prompt = prompter.retrived_documents_prompt_construction("Help Documents", "Document", [doc.metadata["text"] for doc in offline_docs])
             retrieved_docs += offline_docs_prompt
 
         if self.online_doc_retriever:
