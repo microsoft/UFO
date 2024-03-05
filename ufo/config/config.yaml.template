@@ -42,13 +42,14 @@ INPUT_TEXT_API: "type_keys" # The input text API
 
 ## RAG Configuration for the offline docs
 RAG_OFFLINE_DOCS: False  # Whether to use the offline RAG.
-RAG_OFFLINE_DOCS_RETRIEVED_TOPK: 2
+RAG_OFFLINE_DOCS_RETRIEVED_TOPK: 1  # The topk for the offline retrieved documents
 
 
 ## RAG Configuration for the Bing search
 RAG_ONLINE_SEARCH: False  # Whether to use the online search for the RAG.
-RAG_ONLINE_SEARCH_TOPK: 5
-RAG_ONLINE_RETRIEVED_TOPK: 2
+RAG_ONLINE_SEARCH_TOPK: 5  # The topk for the online search
+RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
+
 
 
 
