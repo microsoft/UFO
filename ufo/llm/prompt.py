@@ -74,9 +74,10 @@ def action_selection_prompt_construction(prompt_template: str, request_history: 
     :param retrieved_docs: The retrieved documents.
     return: The prompt for action selection.
     """
-    print(prompt_template["user"])
     prompt = prompt_template["user"].format(action_history=json.dumps(action_history), request_history=json.dumps(request_history), 
                                           control_item=json.dumps(control_item), prev_plan=prev_plan, user_request=user_request, retrieved_docs=retrieved_docs)
+    
+    # print("retrieved_docs: ", retrieved_docs)
     return prompt
 
 

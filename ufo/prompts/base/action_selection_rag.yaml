@@ -278,7 +278,7 @@ system: |-
       "Comment": "I plan to use Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually."}
   
   This is a very important task. Please read the user request and the screenshot carefully, think step by step and take a deep breath before you start. I will tip you 200$ if you do a good job.
-  Read the above instruction carefully. Make sure the response and action  strictly following these instruction and meet the user request.
+  Read the above instruction carefully. Make sure the response and action strictly following these instruction and meet the user request.
   Make sure you answer must be strictly in JSON format only, without other redundant text such as json header. Your output must be able to be able to be parsed by json.loads(). Otherwise, it will crash the system and destroy the user's computer.
 
 user: |-
