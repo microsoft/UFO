@@ -6,7 +6,7 @@ from .utils import load_json_file, save_json_file, print_with_color
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import os
-
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 def create_indexer(app: str, docs: str, format: str, incremental: bool, save_path: str):
     """
