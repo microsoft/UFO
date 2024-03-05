@@ -228,7 +228,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 self.request_logger.info(log)
                 self.status = "ERROR"
                 time.sleep(configs["SLEEP_TIME"])
-                continue
+                return 
             
             self.cost += cost
 

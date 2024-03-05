@@ -32,7 +32,7 @@ def load_config(config_path="ufo/config/config.yaml"):
             endpoint=configs["OPENAI_API_BASE"][:-1] if configs["OPENAI_API_BASE"].endswith(
                 "/") else configs["OPENAI_API_BASE"],
             deployment_name=configs["AOAI_DEPLOYMENT"],
-            api_version="2024-02-15-preview"
+            api_version="2023-12-01-preview"
         )
 
     return configs
