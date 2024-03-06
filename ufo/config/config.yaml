@@ -1,6 +1,6 @@
 version: 0.1
 
-API_TYPE: "azure"  # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.
+API_TYPE: "azure"  # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure' for the ad authority of the AOAI API.
 OPENAI_API_BASE: "YOUR_API_BASE" # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the AAD, it should be your endpoints.
 OPENAI_API_KEY: "YOUR_API_KEY"  # The OpenAI API key
 OPENAI_API_MODEL: "gpt-4-visual-preview"  # The only OpenAI model by now that accepts visual input
@@ -39,7 +39,7 @@ INPUT_TEXT_API: "type_keys" # The input text API
 AAD_TENANT_ID: "YOUR_ID"
 AAD_API_VERSION: "YOUR_VERSION"
 AAD_API_SCOPE: "YOUR_SCOPE" 
-AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE"
+AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" #API://YOUR_SCOPE_BASE
 
 
 
