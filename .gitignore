@@ -12,12 +12,9 @@ __pycache__/
 
 # Ignore the config file
 ufo/config/config.yaml
-*.yaml.test
-*.yaml
+
 
 # Ignore the helper files
 ufo/rag/app_docs/*
 learner/records.json
 vectordb/*
-
-
