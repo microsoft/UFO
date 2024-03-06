@@ -64,10 +64,10 @@ class BingWebRetriever:
                 return document
             else:
                 print_with_color("Warning: Error in  getting search result for {url}, error code: {status_code}.".format(url=url, status_code=response.status_code), "yellow")
-                return None
+                return [Document(page_content="", metadata={"url": url})]
         except requests.exceptions.RequestException as e:
-            print_with_color("Warning: Error in  getting search result for {url}: {e}.".format(url=url, e=e), "yellow")
-            return None
+            print_with_color("Warning: Error in getting search result for {url}: {e}.".format(url=url, e=e), "yellow")
+            return [Document(page_content="", metadata={"url": url})]
 
 
     def create_documents(self, result_list: list):
