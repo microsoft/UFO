@@ -1,9 +1,9 @@
 version: 0.2
 
 API_TYPE: "azure_ad"  # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.
-OPENAI_API_BASE: "YOUR_ENDPOINT" # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the AAD, it should be your endpoints.
+OPENAI_API_BASE: "YOUR_ENDPOINT" # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the AAD API address. Format: https://{your-resource-name}.azure-api.net/
 OPENAI_API_KEY: "YOUR_API_KEY"  # The OpenAI API key
-API_VERSION: "API_VERSION" # 
+API_VERSION: "API_VERSION" # For GPT4-visual, the value usually be the "2023-12-01-preview"
 OPENAI_API_MODEL: "gpt-4-visual-preview"  # The only OpenAI model by now that accepts visual input
 CONTROL_BACKEND: "uia"  # The backend for control action
 MAX_TOKENS: 2000  # The max token limit for the response completion
@@ -37,9 +37,9 @@ APP_SELECTION_PROMPT: "ufo/prompts/base/app_selection.yaml"  # The prompt for th
 ACTION_SELECTION_PROMPT: "ufo/prompts/base/action_selection.yaml"  # The prompt for the action selection
 INPUT_TEXT_API: "type_keys" # The input text API
 ###For AAD
-AAD_TENANT_ID: "YOUR_TENANT_ID"
-AAD_API_SCOPE: "YOUR_SCOPE" #"openai"
-AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" #API://YOUR_SCOPE_BASE
+AAD_TENANT_ID: "YOUR_TENANT_ID" # Set the value to your tenant id for the llm model
+AAD_API_SCOPE: "YOUR_SCOPE" # Set the value to your scope for the llm model
+AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE
 
 
 
