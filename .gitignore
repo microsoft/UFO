@@ -8,3 +8,4 @@ __pycache__/
 *.pyc
 *.bin
 *.yaml.test
+*.yaml

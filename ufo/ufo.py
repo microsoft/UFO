@@ -33,10 +33,10 @@ elif configs["API_TYPE"].lower() == "openai":
             "Content-Type": "application/json",
             "Authorization": f"Bearer {parsed_args.gptkey}"
         }
-elif configs["API_TYPE"].lower() == "azure":
+elif configs["API_TYPE"].lower() == "azure_ad":
     headers = {}
 else:
-    raise ValueError("API_TYPE should be either 'openai' or 'aoai' or 'azure'.")
+    raise ValueError("API_TYPE should be either 'openai' or 'aoai' or 'azure_ad'.")
 
 
 def main():
