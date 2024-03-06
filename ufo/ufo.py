@@ -17,8 +17,6 @@ args.add_argument("--task", help="The name of current task.",
                   type=str, default=datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
 args.add_argument("--gptkey", help="GPT key.", type=str,
                   default=configs["OPENAI_API_KEY"])
-# args.add_argument("--authority", help="ad-authority", type=bool,
-#                   default=None)
 
 parsed_args = args.parse_args()
 
