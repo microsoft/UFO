@@ -22,6 +22,16 @@ def load_config(config_path="ufo/config/config.yaml"):
         if yaml_data:
             configs.update(yaml_data)
     except FileNotFoundError:
-        print(f"Warning: Config file not found at {config_path}. Using only environment variables.")
+        print(
+            f"Warning: Config file not found at {config_path}. Using only environment variables.")
+
+    # Update the API base URL for AOAI
+    if configs["API_TYPE"].lower() == "aoai":
+        configs["OPENAI_API_BASE"] = "{endpoint}/openai/deployments/{deployment_name}/chat/completions?api-version={api_version}".format(
+            endpoint=configs["OPENAI_API_BASE"][:-1] if configs["OPENAI_API_BASE"].endswith(
+                "/") else configs["OPENAI_API_BASE"],
+            deployment_name=configs["AOAI_DEPLOYMENT"],
+            api_version="2024-02-15-preview"
+        )
 
     return configs

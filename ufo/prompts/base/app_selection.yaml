@@ -10,7 +10,7 @@ system: |-
   ## Guidelines
   - You are given a screenshot of the current desktop, along with a list of available applications in the windows.
   - The screenshot of multiple screens is concatenated into one image. 
-  - You are given the information of all available applications item in the current desktop window in a dict format: {"label": control_text: "the text of the application", control_type: "the type of the application"}.
+  - You are given the information of all available applications item in the current desktop window in a dict format: {label: "label", control_text: "the text of the application", control_type: "the type of the application"}.
   - You are provided your previous plan of action for reference to decide the application. This usually happens when the you have already completed the previous task on an application and need to switch to another application to complete the next task.
   - When the selected application is visible in the screenshot, analyze the screenshot of the application window on its current status. Draft your plan based on the current status of the application and user request, and do not include the steps that have been completed on the application base on your screenshot observation.
   - You are provided the user request history for reference to decide the selection of application or control item.
