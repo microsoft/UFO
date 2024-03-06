@@ -37,11 +37,10 @@ def get_gptv_completion(messages, headers):
             response_json = response.json()
             response.raise_for_status()  # Will raise an HTTPError if the HTTP request returned an unsuccessful status code
             
-
+            
             if "choices" not in response_json:
                 print_with_color(f"GPT Error: No Reply", "red")
                 continue
-
             if "error" not in response_json:
                 usage = response_json.get("usage", {})
                 prompt_tokens = usage.get("prompt_tokens", 0)
@@ -51,6 +50,15 @@ def get_gptv_completion(messages, headers):
                 
             return response_json, cost
         except requests.RequestException as e:
+            error_code = response_json["error"]["code"]
+            # print(error_code)
+            if error_code == "429":
+                print_with_color(f"Rate Limit Exceeded, sleep 15 seconds and retry", "green")
+                time.sleep(15)
+                continue
+            if error_code == "BadRequest":
+                print_with_color(f"Bad Request, please retry", "green")
+                break
             print_with_color(f"Error making API request: {e}", "red")
             print_with_color(str(response_json), "red")
             try:

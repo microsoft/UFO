@@ -62,6 +62,7 @@ def main():
             session.process_application_selection(headers=headers)
             step = session.get_step()
             status = session.get_status()
+            print_with_color(f"status after app selection: {status}", "magenta")
 
             while status.upper() not in ["FINISH", "ERROR"] and step <= configs["MAX_STEP"]:
                 session.process_action_selection(headers=headers)

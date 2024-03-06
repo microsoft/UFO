@@ -8,11 +8,14 @@ from typing import List
 
 from pywinauto import Desktop
 
+from .openfile import AppMappings
+
 from ..config.config import load_config
 
 configs = load_config()
 
 BACKEND = configs["CONTROL_BACKEND"]
+
 
 
 def get_desktop_app_info(remove_empty:bool=True):
@@ -30,9 +33,6 @@ def get_desktop_app_info(remove_empty:bool=True):
         app_titles = [title for title in app_titles if title != ""]
     return [app_titles, app_control_types]
 
-
-
-
 def get_desktop_app_info_dict(remove_empty:bool=True, field_list:List[str]=["control_text", "control_type"]):
     """
     Get titles and control types of all the apps on the desktop.
@@ -47,6 +47,20 @@ def get_desktop_app_info_dict(remove_empty:bool=True, field_list:List[str]=["con
     desktop_windows_info = get_control_info_dict(desktop_windows_dict, field_list)
     return desktop_windows_dict, desktop_windows_info
 
+
+
+def find_window_by_app_name(desktop_windows_dict, app_name):
+    title_pattern = AppMappings.get_app_name(app_name)
+    print(f"Title pattern: {title_pattern}, dict: {desktop_windows_dict}")
+    if title_pattern is None:
+        print(f"No title pattern found for app name: {app_name}")
+        return None
+    # Search through the windows for a title match
+    for window_id, window_wrapper in desktop_windows_dict.items():
+        if title_pattern in window_wrapper.window_text():
+            return window_wrapper
+    print("Window not found.")
+    return None
 
     
 def find_control_elements_in_descendants(window, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0):
@@ -195,8 +209,6 @@ def execution(window, method_name:str, args:dict):
         return f"{window} doesn't have a method named {method_name}"
     except Exception as e:
         return f"An error occurred: {e}"
-    
-
 
 def wait_enabled(window, timeout:int=10, retry_interval:int=0.5):
     """

@@ -12,7 +12,7 @@ from pywinauto.uia_defines import NoPatternInterfaceError
 from ..config.config import load_config
 from ..llm import llm_call
 from ..llm import prompt as prompter
-from ..ui_control import control
+from ..ui_control import control, openfile
 from ..ui_control import screenshot as screen
 from ..utils import (create_folder, encode_image_from_path,
                      generate_function_call, json_parser, print_with_color,
@@ -62,7 +62,9 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.request_history = []
 
     def process_application_selection(self, headers):
-
+        # call openapp function here, build class, test if it works.
+        # track app, if not opened, open it and instantiate it, check if control_dict matched with userrequest.
+        # add some tests.
         """
         Select an action.
         header: The headers of the request.
@@ -83,11 +85,13 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         app_selection_prompt_message = prompter.prompt_construction(self.app_selection_prompt["system"], [desktop_screen_url], app_selection_prompt_user_message)
 
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
-
+        image_path_list = [desktop_save_path]
         try:
             response, cost = llm_call.get_gptv_completion(app_selection_prompt_message, headers)
+# TODO: Add error handling for the case when the response is not in the expected format
 
         except Exception as e:
+            print_with_color(e, 'red')
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
             print_with_color("Error occurs when calling LLM.", "red")
             self.request_logger.info(log)
@@ -100,7 +104,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         try:
             response_string = response["choices"][0]["message"]["content"]
             response_json = json_parser(response_string)
-
             application_label = response_json["ControlLabel"]
             self.application = response_json["ControlText"]
             observation = response_json["Observation"]
@@ -108,6 +111,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.plan = response_json["Plan"]
             self.status = response_json["Status"]
             comment = response_json["Comment"]
+            OpenAPP = response_json["OpenAPP"]
 
             print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
             print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
@@ -119,18 +123,30 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             response_json["Step"] = self.step
             response_json["ControlLabel"] = self.application
             response_json["Action"] = "set_focus()"
-        
             response_json = self.set_result_and_log("", response_json)
-
-            if "FINISH" in self.status.upper() or self.application == "":
+            if "FINISH" in self.status.upper():
                 self.status = "FINISH"
                 return
-                
-            app_window = desktop_windows_dict[application_label]
-
+            app_window = None
+            if OpenAPP is not None:
+                file_manager = openfile.OpenFile()
+                results = file_manager.execute_code(OpenAPP)
+                # reset the desktop_windows_dict
+                print(results)
+                APP_name = OpenAPP["APP"]
+                time.sleep(3)
+                # wait for loading the app
+                desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
+                if not results:
+                    self.status = "ERROR in openning the application or file."
+                    return
+            
+            if OpenAPP is None:
+                app_window = desktop_windows_dict[application_label]
+            else:
+                app_window = control.find_window_by_app_name(desktop_windows_dict, APP_name)
             try:
                 app_window.is_normal()
-
             # Handle the case when the window interface is not available
             except NoPatternInterfaceError as e:
                 self.error_logger(response_string, str(e))
@@ -140,8 +156,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             
             self.status = "CONTINUE"
             self.app_window = app_window
-
-            self.app_window.set_focus()
+            if self.app_window:
+                self.app_window.set_focus()
             time.sleep(configs["SLEEP_TIME"])
 
             self.step += 1
@@ -170,8 +186,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         control_screenshot_save_path = self.log_path + f"action_step{self.step}_selected_controls.png"
 
 
-
-        if BACKEND == "uia":
+        img_path_list = []
+        if BACKEND == "uia" and self.app_window != None:
             control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
         else:
             control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
@@ -192,23 +208,26 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 last_screenshot_save_path = self.log_path + f"action_step{self.step - 1}.png"
                 last_control_screenshot_save_path = self.log_path + f"action_step{self.step - 1}_selected_controls.png"
                 image_url += [encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
-
+                img_path_list += [last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path]
             if configs["CONCAT_SCREENSHOT"]:
                 screen.concat_images_left_right(screenshot_save_path, annotated_screenshot_save_path, concat_screenshot_save_path)
                 image_url += [encode_image_from_path(concat_screenshot_save_path)]
+                img_path_list += [concat_screenshot_save_path]
             else:
                 screenshot_url = encode_image_from_path(screenshot_save_path)
                 screenshot_annotated_url = encode_image_from_path(annotated_screenshot_save_path)
                 image_url += [screenshot_url, screenshot_annotated_url]
+                img_path_list += [screenshot_save_path, annotated_screenshot_save_path]
 
             action_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request)
             action_selection_prompt_message = prompter.prompt_construction(self.action_selection_prompt["system"], image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
             
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
-
+            print_with_color(f"image path list: {img_path_list}", "red")
             try:
                 response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, headers)
-            except Exception as e:
+            except Exception as e:      
+                print_with_color(f"error: {e}", "red")
                 log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
                 print_with_color("Error occurs when calling LLM.", "red")
                 self.request_logger.info(log)
@@ -262,10 +281,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 if "control_labels" in args:
                     selected_controls_labels = args["control_labels"]
                     control_list = [annotation_dict[str(label)] for label in selected_controls_labels]
+                    # print_with_color("Control_list: {control}".format(control=control_list), "red")
                 continue
             
             break
-
+        
         # The task is finish and no further action is needed
         if self.status.upper() == "FINISH" and function_call == "":
             self.status = self.status.upper()
@@ -286,13 +306,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         
         # Action needed.
         control_selected = annotation_dict.get(control_label, self.app_window)
-        # print_with_color("Actual control name: {name}".format(name=control_selected.element_info.name), "magenta")
         control_selected.set_focus()
 
         if not self.safe_guard(action, control_text):
             return 
         
-        
+
         # Take screenshot of the selected control
         screen.capture_screenshot_controls(self.app_window, [control_selected], control_screenshot_save_path)
         control.wait_enabled(control_selected)
