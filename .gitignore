@@ -1,3 +1,6 @@
+# Ignore login file
+*.bin
+
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints
 /test/*
