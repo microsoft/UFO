@@ -83,6 +83,16 @@ OPENAI_API_KEY: "YOUR_API_KEY"  # Set the value to the openai key for the llm mo
 OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts visual input
 ```
 
+#### AAD application auth
+```
+API_TYPE: "azure_ad" 
+OPENAI_API_BASE: "YOUR_ENDPOINT" # The AAD API address. Format: https://{your-resource-name}.azure-api.net/
+API_VERSION: "API-VERSION" #For GPT4-visual, the value usually be the "2023-12-01-preview"
+OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts visual input
+AAD_TENANT_ID: "YOUR_TENANT_ID" #Set the value to your tenant id for the llm model
+AAD_API_SCOPE: "YOUR_SCOPE" #Set the value to your scope for the llm model
+AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" #Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE
+```
 
 ### 🎉 Step 3: Start UFO
 
