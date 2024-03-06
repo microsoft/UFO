@@ -103,7 +103,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.cost += cost
 
         try:
-            response_string = response["choices"][0]["message"]["content"]
+            aad = configs['API_TYPE'].lower() == 'azure_ad'
+            if not aad:
+                response_string = response["choices"][0]["message"]["content"]
+            else:
+                response_string = response.choices[0].message.content
             response_json = json_parser(response_string)
 
             application_label = response_json["ControlLabel"]
@@ -233,7 +237,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.cost += cost
 
             try:
-                response_string = response["choices"][0]["message"]["content"]
+                aad = configs['API_TYPE'].lower() == 'azure_ad'
+                if not aad:
+                    response_string = response["choices"][0]["message"]["content"]
+                else:
+                    response_string = response.choices[0].message.content
                 response_json = json_parser(response_string)
 
                 observation = response_json["Observation"]
