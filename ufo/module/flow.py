@@ -51,6 +51,7 @@ class Session(object):
         self.request = ""
         self.results = ""
         self.cost = 0
+        self.openapp = configs["OPEN_APP"]
 
         
 
@@ -80,6 +81,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.results = ""
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
+# TODO: if not allow open app, should change prompt.
         
         app_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request)
         app_selection_prompt_message = prompter.prompt_construction(self.app_selection_prompt["system"], [desktop_screen_url], app_selection_prompt_user_message)
@@ -129,10 +131,13 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 return
             app_window = None
             if OpenAPP is not None:
+                if not self.openapp:
+                    print_with_color(f"Open file/APP functionality has been disabled, and your request needs to open an file/APP, please modify seetings in your config.yaml", "red")
+                    self.status = "FINISH"
+                    return
                 file_manager = openfile.OpenFile()
                 results = file_manager.execute_code(OpenAPP)
                 # reset the desktop_windows_dict
-                print(results)
                 APP_name = OpenAPP["APP"]
                 time.sleep(3)
                 # wait for loading the app
@@ -140,8 +145,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 if not results:
                     self.status = "ERROR in openning the application or file."
                     return
-            
-            if OpenAPP is None:
+            if OpenAPP is None or not self.openapp:
                 app_window = desktop_windows_dict[application_label]
             else:
                 app_window = control.find_window_by_app_name(desktop_windows_dict, APP_name)
@@ -178,7 +182,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         header: The headers of the request.
         return: The outcome, the application window, and the action log.
         """
-
         print_with_color("Step {step}: Taking an action on application {application}.".format(step=self.step, application=self.application), "magenta")
         screenshot_save_path = self.log_path + f"action_step{self.step}.png"
         annotated_screenshot_save_path = self.log_path + f"action_step{self.step}_annotated.png"
@@ -426,6 +429,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         """
         log = json.dumps({"step": self.step, "status": "ERROR", "response": response_str, "error": error})
         self.logger.info(log)
+
 
 
 def initialize_logger(log_path, log_filename):
