@@ -130,7 +130,9 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 self.status = "FINISH"
                 return
             app_window = None
+            # if gpt did not use open app function
             if OpenAPP is not None:
+                # if open app is not allowed, finished section.
                 if not self.openapp:
                     print_with_color(f"Open file/APP functionality has been disabled, and your request needs to open an file/APP, please modify seetings in your config.yaml", "red")
                     self.status = "FINISH"
@@ -148,6 +150,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             if OpenAPP is None or not self.openapp:
                 app_window = desktop_windows_dict[application_label]
             else:
+                # find app window by the name of app through mappings
                 app_window = control.find_window_by_app_name(desktop_windows_dict, APP_name)
             try:
                 app_window.is_normal()
@@ -188,7 +191,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         concat_screenshot_save_path = self.log_path + f"action_step{self.step}_concat.png"
         control_screenshot_save_path = self.log_path + f"action_step{self.step}_selected_controls.png"
 
-
+        # img_path_list is added for handel error 400
         img_path_list = []
         if BACKEND == "uia" and self.app_window != None:
             control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
@@ -222,6 +225,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 image_url += [screenshot_url, screenshot_annotated_url]
                 img_path_list += [screenshot_save_path, annotated_screenshot_save_path]
 
+            
             action_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request)
             action_selection_prompt_message = prompter.prompt_construction(self.action_selection_prompt["system"], image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
             

@@ -15,6 +15,10 @@ configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]
 
 class AppMappings:
+    """
+    Mappings for OpenFile class.
+    app_name_map: a mapping from the key/command to the name of the app.
+    app_process_map: a mapping from the key/command to the process name of the app."""
     app_name_map = {
         "powerpnt": "PowerPoint",
         "winword": "Microsoft Word",
@@ -114,6 +118,10 @@ class OpenFile:
     
 
     def is_file_open_in_app(self) -> bool:
+        """
+        Check if the specific file is opened in the app.
+        :return: Open status of file, not correlated with self.openstatus.
+        """
         app_map = AppMappings()
         app_name = app_map.get_app_name(self.APP.lower())
         file_name = self.file_path
