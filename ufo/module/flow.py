@@ -88,7 +88,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             response, cost = llm_call.get_gptv_completion(app_selection_prompt_message, headers)
 
         except Exception as e:
-            print(e)
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
             print_with_color("Error occurs when calling LLM.", "red")
             self.request_logger.info(log)
