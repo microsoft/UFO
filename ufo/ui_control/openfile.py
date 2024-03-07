@@ -21,7 +21,7 @@ class AppMappings:
     app_process_map: a mapping from the key/command to the process name of the app."""
     app_name_map = {
         "powerpnt": "PowerPoint",
-        "winword": "Microsoft Word",
+        "winword": "Word",
         "outlook": "Outlook",
         "explorer": "Explorer",
         "notepad": "Notepad",
@@ -90,7 +90,7 @@ class OpenFile:
             if "Desktop" in self.file_path:
                 desktop_path = find_desktop_path()
                 self.file_path = self.file_path.replace("Desktop", desktop_path)
-            code_snippet = f"import os\nos.system('start {self.APP} {self.file_path}')"
+            code_snippet = f"import os\nos.system('start {self.APP} \"{self.file_path}\"')"
             code_snippet = code_snippet.replace("\\", "\\\\")
             try:
                 exec(code_snippet, globals())

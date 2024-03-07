@@ -51,9 +51,7 @@ def get_desktop_app_info_dict(remove_empty:bool=True, field_list:List[str]=["con
 
 def find_window_by_app_name(desktop_windows_dict, app_name):
     title_pattern = AppMappings.get_app_name(app_name)
-    print(f"Title pattern: {title_pattern}, dict: {desktop_windows_dict}")
     if title_pattern is None:
-        print(f"No title pattern found for app name: {app_name}")
         return None
     # Search through the windows for a title match
     for window_id, window_wrapper in desktop_windows_dict.items():

@@ -82,7 +82,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
 # TODO: if not allow open app, should change prompt.
-        
+        if self.openapp:
+            self.app_selection_prompt = yaml.safe_load(open(configs["APP_SELECTION_PROMPT_OPEN"], "r", encoding="utf-8"))
         app_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request)
         app_selection_prompt_message = prompter.prompt_construction(self.app_selection_prompt["system"], [desktop_screen_url], app_selection_prompt_user_message)
 
@@ -113,7 +114,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.plan = response_json["Plan"]
             self.status = response_json["Status"]
             comment = response_json["Comment"]
-            OpenAPP = response_json["OpenAPP"]
+            OpenAPP = response_json.get("OpenAPP", None)
 
             print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
             print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
@@ -141,7 +142,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 results = file_manager.execute_code(OpenAPP)
                 # reset the desktop_windows_dict
                 APP_name = OpenAPP["APP"]
-                time.sleep(3)
+                time.sleep(5)
                 # wait for loading the app
                 desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
                 if not results:
@@ -225,12 +226,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 image_url += [screenshot_url, screenshot_annotated_url]
                 img_path_list += [screenshot_save_path, annotated_screenshot_save_path]
 
-            
+            if self.openapp:
+                self.action_selection_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_PROMPT_OPEN"], "r", encoding="utf-8"))
             action_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request)
             action_selection_prompt_message = prompter.prompt_construction(self.action_selection_prompt["system"], image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
             
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
-            print_with_color(f"image path list: {img_path_list}", "red")
             try:
                 response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, headers)
             except Exception as e:      
