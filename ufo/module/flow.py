@@ -41,9 +41,7 @@ class Session(object):
         self.log_path = f"logs/{self.task}/"
         create_folder(self.log_path)
         self.logger = initialize_logger(self.log_path, "response.log")
-        self.request_logger = initialize_logger(self.log_path, "request.log")
-        self.app_selection_prompt = yaml.safe_load(open(configs["APP_SELECTION_PROMPT"], "r", encoding="utf-8"))
-        self.action_selection_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_PROMPT"], "r", encoding="utf-8"))
+        self.request_logger = initialize_logger(self.log_path, "request.log")  
         self.status = "APP_SELECTION"
         self.application = ""
         self.app_window = None
@@ -51,7 +49,11 @@ class Session(object):
         self.request = ""
         self.results = ""
         self.cost = 0
-
+        self.is_app_agent_visual = configs["APP_AGENT_VISUAL_MODE"]
+        self.is_action_agent_visual = configs["ACTION_AGENT_VISUAL_MODE"]
+        self.app_selection_prompt = yaml.safe_load(open(configs["APP_SELECTION_PROMPT" if self.is_app_agent_visual else "APP_SELECTION_NON_VISUAL_PROMPT"], "r", encoding="utf-8"))
+        self.action_selection_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_PROMPT" if self.is_action_agent_visual else "ACTION_SELECTION_NON_VISUAL_PROMPT"], "r", encoding="utf-8"))
+      
         
 
         print_with_color("""Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction. 
@@ -80,12 +82,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
         
         app_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request)
-        app_selection_prompt_message = prompter.prompt_construction(self.app_selection_prompt["system"], [desktop_screen_url], app_selection_prompt_user_message)
+        
+        if self.is_app_agent_visual:
+            app_selection_prompt_message = prompter.prompt_construction(self.app_selection_prompt["system"], [desktop_screen_url], app_selection_prompt_user_message)
+        else:
+            app_selection_prompt_message = prompter.prompt_construction_non_visual(self.app_selection_prompt["system"], app_selection_prompt_user_message)
 
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
 
         try:
-            response, cost = llm_call.get_gptv_completion(app_selection_prompt_message, headers)
+            response, cost = llm_call.get_gptv_completion(app_selection_prompt_message, headers, self.is_app_agent_visual)
 
         except Exception as e:
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
@@ -206,12 +212,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 image_url += [screenshot_url, screenshot_annotated_url]
 
             action_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request)
-            action_selection_prompt_message = prompter.prompt_construction(self.action_selection_prompt["system"], image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
-            
+           
+            if self.is_action_agent_visual:
+                action_selection_prompt_message = prompter.prompt_construction(self.action_selection_prompt["system"], image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
+            else:
+                action_selection_prompt_message = prompter.prompt_construction_non_visual(self.action_selection_prompt["system"], action_selection_prompt_user_message)
+
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
 
             try:
-                response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, headers)
+                response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, headers, self.is_action_agent_visual)
             except Exception as e:
                 log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
                 print_with_color("Error occurs when calling LLM.", "red")

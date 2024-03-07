@@ -11,11 +11,12 @@ from .azure_ad import get_chat_completion
 configs = load_config()
 
 
-def get_gptv_completion(messages, headers):
+def get_gptv_completion(messages, headers, is_visual):
     """
     Get GPT-V completion from messages.
     messages: The messages to be sent to GPT-V.
     headers: The headers of the request.
+    is_visual: Whether the request is for visual mode.
     endpoint: The endpoint of the request.
     max_tokens: The maximum number of tokens to generate.
     temperature: The sampling temperature.
@@ -30,13 +31,13 @@ def get_gptv_completion(messages, headers):
             "temperature": configs["TEMPERATURE"],
             "max_tokens": configs["MAX_TOKENS"],
             "top_p": configs["TOP_P"],
-            "model": configs["OPENAI_API_MODEL"]
+            "model": configs["OPENAI_API_MODEL" if is_visual else "OPENAI_API_MODEL_NON_VISUAL"]
         }
 
     for _ in range(configs["MAX_RETRY"]):
         try:
             if not aad :
-                response = requests.post(configs["OPENAI_API_BASE"], headers=headers, json=payload)
+                response = requests.post(configs["OPENAI_API_BASE" if is_visual else "OPENAI_API_BASE_NON_VISUAL"], headers=headers, json=payload)
 
                 response_json = response.json()
                 response.raise_for_status()  # Will raise an HTTPError if the HTTP request returned an unsuccessful status code
@@ -52,7 +53,7 @@ def get_gptv_completion(messages, headers):
                     completion_tokens = usage.get("completion_tokens", 0)
             else:
                 response = get_chat_completion(
-                    engine=configs["OPENAI_API_MODEL"],
+                    engine=configs["OPENAI_API_MODEL" if is_visual else "OPENAI_API_MODEL_NON_VISUAL"],
                     messages = messages,
                     max_tokens = configs["MAX_TOKENS"],
                     temperature = configs["TEMPERATURE"],

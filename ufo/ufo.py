@@ -17,22 +17,32 @@ args.add_argument("--task", help="The name of current task.",
                   type=str, default=datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
 args.add_argument("--gptkey", help="GPT key.", type=str,
                   default=configs["OPENAI_API_KEY"])
+args.add_argument("--gptkey-nonvisual", help="GPT key for non visual mode.", type=str,
+                  default=configs["OPENAI_API_KEY_NON_VISUAL"])
 
 parsed_args = args.parse_args()
 
 
 if configs["API_TYPE"].lower() == "aoai":
-    headers = {
+    app_headers = {
         "Content-Type": "application/json",
-        "api-key": parsed_args.gptkey,
+        "api-key": parsed_args.gptkey if configs["APP_AGENT_VISUAL_MODE"] else parsed_args.gptkey_nonvisual
+    }
+    action_headers = {
+        "Content-Type": "application/json",
+        "api-key": parsed_args.gptkey if configs["ACTION_AGENT_VISUAL_MODE"] else parsed_args.gptkey_nonvisual,
     }
 elif configs["API_TYPE"].lower() == "openai":
-    headers = {
+    app_headers = {
             "Content-Type": "application/json",
-            "Authorization": f"Bearer {parsed_args.gptkey}"
+            "Authorization": f"Bearer {parsed_args.gptkey}" if configs["APP_AGENT_VISUAL_MODE"] else f"Bearer {parsed_args.gptkey_nonvisual}"
+        }
+    action_headers = {
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {parsed_args.gptkey}" if configs["ACTION_AGENT_VISUAL_MODE"] else f"Bearer {parsed_args.gptkey_nonvisual}"
         }
 elif configs["API_TYPE"].lower() == "azure_ad":
-    headers = {}
+    app_headers = action_headers = {}
 else:
     raise ValueError("API_TYPE should be either 'openai' or 'aoai' or 'azure_ad'.")
 
@@ -60,12 +70,12 @@ def main():
                 break
 
         while status.upper() not in ["FINISH", "ERROR"] and step <= configs["MAX_STEP"]:
-            session.process_application_selection(headers=headers)
+            session.process_application_selection(headers=app_headers)
             step = session.get_step()
             status = session.get_status()
 
             while status.upper() not in ["FINISH", "ERROR"] and step <= configs["MAX_STEP"]:
-                session.process_action_selection(headers=headers)
+                session.process_action_selection(headers=action_headers)
                 status = session.get_status()
                 step = session.get_step()
 

@@ -44,7 +44,10 @@ AAD_TENANT_ID: "YOUR_TENANT_ID" # Set the value to your tenant id for the llm mo
 AAD_API_SCOPE: "YOUR_SCOPE" # Set the value to your scope for the llm model
 AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE
 
-
-
-
-  
+APP_AGENT_VISUAL_MODE: True  # Whether to use the visual mode for the app agent
+ACTION_AGENT_VISUAL_MODE: True  # Whether to use the visual mode for the action agent
+OPENAI_API_BASE_NON_VISUAL: "YOUR_NON_VISUAL_ENDPOINT"  # The OpenAI endpoint for non-visual model
+OPENAI_API_KEY_NON_VISUAL: "YOUR_API_KEY"  # The OpenAI API key for non-visual model
+OPENAI_API_MODEL_NON_VISUAL: "gpt-4-1106-preview"  # The non-visual OpenAI model
+APP_SELECTION_NON_VISUAL_PROMPT: "ufo/prompts/nonvisual/app_selection.yaml"  # The non-visual prompt for the app selection
+ACTION_SELECTION_NON_VISUAL_PROMPT: "ufo/prompts/nonvisual/action_selection.yaml"  # The non-visual prompt for the action selection

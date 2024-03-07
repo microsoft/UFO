@@ -4,8 +4,9 @@ from typing import Literal, Optional
 from ..config.config import load_config
 
 configs = load_config()
-available_models = Literal[ #only GPT4V could be used 
+available_models = Literal[ #only following 2 model could be used 
     "gpt-4-visual-preview",
+    "gpt-4-1106-preview"
 ]
 
 def get_openai_token(
