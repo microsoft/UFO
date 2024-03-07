@@ -138,5 +138,6 @@ class OpenFile:
         # TODO: open third party app
         pass
 
+# taskweaver, litellm type_key, set text/get text function do judgement.
         
     
