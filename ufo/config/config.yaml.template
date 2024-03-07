@@ -37,10 +37,10 @@ INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the o
 REQUEST_TIMEOUT: 250  # The call timeout for the GPT-V model
 APP_SELECTION_PROMPT: "ufo/prompts/base/app_selection.yaml"  # The prompt for the app selection
 ACTION_SELECTION_PROMPT: "ufo/prompts/base/action_selection.yaml"  # The prompt for the action selection
-APP_SELECTION_PROMPT_OPEN: "ufo/prompts/base/app_selection_open.yaml"  # The prompt for the app selection
-ACTION_SELECTION_PROMPT_OPEN: "ufo/prompts/base/action_selection_open.yaml"  # The prompt for the action selection
+APP_SELECTION_PROMPT_OPENAPP_ENABLED: "ufo/prompts/base/app_selection_openapp_enabled.yaml"  # The prompt for the app selection
+ACTION_SELECTION_PROMPT_OPENAPP_ENABLED: "ufo/prompts/base/action_selection_openapp_enabled.yaml"  # The prompt for the action selection
 INPUT_TEXT_API: "type_keys" # The input text API
-OPEN_APP: False
+ALLOW_OPENAPP: False
 ### For AAD
 AAD_TENANT_ID: "YOUR_TENANT_ID" # Set the value to your tenant id for the llm model
 AAD_API_SCOPE: "YOUR_SCOPE" # Set the value to your scope for the llm model
