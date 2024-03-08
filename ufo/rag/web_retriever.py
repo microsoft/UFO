@@ -13,7 +13,7 @@ from langchain_community.vectorstores import FAISS
 configs = load_config()
 
 
-class BingWebRetriever:
+class BingSearchWeb:
     """
     Class to retrieve web documents.
     """
@@ -53,6 +53,7 @@ class BingWebRetriever:
         :param url: The URL to retrieve the web document from.
         :return: The web text from the given URL.
         """
+        print(f"Getting search result for {url}") 
         try:
             headers = {
                 'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
