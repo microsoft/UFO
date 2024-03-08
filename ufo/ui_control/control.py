@@ -5,7 +5,6 @@ import ast
 import time
 import warnings
 from typing import List
-from ..ui_control.screenshot import TransparentBox
 
 from pywinauto import Desktop
 
@@ -208,15 +207,9 @@ def execution(window, method_name:str, args:dict):
             method_name = "type_keys"
             args = {"keys": args["text"], "pause": 0.1, "with_spaces": True}
     try:
-        if configs["DRAW_RECTANGLE"]:
-            box = TransparentBox(box_width=2)
-            left, top, right, bottom = window.rectangle().left, window.rectangle().top, window.rectangle().right, window.rectangle().bottom
-            box.start_drawing(left, top, right, bottom, screenshot=window.capture_as_image())
         result = atomic_execution(window, method_name, args)
         if configs["INPUT_TEXT_ENTER"] and method_name in ["type_keys", "set_edit_text"]:
             atomic_execution(window, "type_keys", args = {"keys": "{ENTER}"})
-        if configs["DRAW_RECTANGLE"]:
-            box.end_drawing()
         return result
     except Exception as e:
         return f"An error occurred: {e}"
