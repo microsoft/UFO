@@ -59,24 +59,21 @@ def get_gptv_completion(messages, headers):
                     temperature = configs["TEMPERATURE"],
                     top_p = configs["TOP_P"],
                 )
-
                 response_json = json.loads(response.model_dump_json())
                 
-                if "error" not in response:
+                if "error" not in response_json:
                     usage = response.usage
                     prompt_tokens = usage.prompt_tokens
                     completion_tokens = usage.completion_tokens
                 
-
             cost = prompt_tokens / 1000 * 0.01 + completion_tokens / 1000 * 0.03
              
             return response_json, cost
-        except requests.RequestException as e:
+        except Exception as e:
             print_with_color(f"Error making API request: {e}", "red")
-            print_with_color(str(response_json), "red")
             try:
-                print_with_color(response.json(), "red")
+                print_with_color(response_json, "red")
             except:
-                _ 
-            time.sleep(3)
+                pass
+            time.sleep(5)
             continue
