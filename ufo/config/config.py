@@ -3,7 +3,8 @@
 
 import os
 import yaml
-
+import json
+from ..utils import print_with_color
 
 def load_config(config_path="ufo/config/config.yaml"):
     """
@@ -22,8 +23,8 @@ def load_config(config_path="ufo/config/config.yaml"):
         if yaml_data:
             configs.update(yaml_data)
     except FileNotFoundError:
-        print(
-            f"Warning: Config file not found at {config_path}. Using only environment variables.")
+        print_with_color(
+            f"Warning: Config file not found at {config_path}. Using only environment variables.", "yellow")
 
     # Update the API base URL for AOAI
     if configs["API_TYPE"].lower() == "aoai":
@@ -31,7 +32,24 @@ def load_config(config_path="ufo/config/config.yaml"):
             endpoint=configs["OPENAI_API_BASE"][:-1] if configs["OPENAI_API_BASE"].endswith(
                 "/") else configs["OPENAI_API_BASE"],
             deployment_name=configs["AOAI_DEPLOYMENT"],
-            api_version="2024-02-15-preview"
+            api_version=configs["API_VERSION"]
         )
 
     return configs
+
+
+
+def get_offline_learner_indexer_config():
+    """
+    Get the list of offline indexers obtained from the learner.
+    :return: The list of offline indexers.
+    """
+
+    # The fixed path of the offline indexer config file.
+    file_path = "learner/records.json"
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as file:
+            records = json.load(file)
+    else:
+        records = {}
+    return records

@@ -64,14 +64,39 @@ def app_selection_prompt_construction(prompt_template: str, user_request: str, a
     return prompt_template["user"].format(user_request=user_request, applications=app_info)
 
 
-def action_selection_prompt_construction(prompt_template: str, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str):
+def action_selection_prompt_construction(prompt_template: str, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str=""):
     """
     Construct the prompt for action selection.
     :param prompt_template: The template of the prompt.
     :param action_history: The action history.
     :param control_item: The control item.
     :param user_request: The user request.
+    :param retrieved_docs: The retrieved documents.
     return: The prompt for action selection.
     """
+    prompt = prompt_template["user"].format(action_history=json.dumps(action_history), request_history=json.dumps(request_history), 
+                                          control_item=json.dumps(control_item), prev_plan=prev_plan, user_request=user_request, retrieved_docs=retrieved_docs)
+    
+    return prompt
 
-    return prompt_template["user"].format(action_history=json.dumps(action_history), request_history=json.dumps(request_history), control_item=json.dumps(control_item), prev_plan=prev_plan, user_request=user_request)
+
+
+def retrived_documents_prompt_helper(header: str, separator: str, documents: list):
+    """
+    Construct the prompt for retrieved documents.
+    :param header: The header of the prompt.
+    :param separator: The separator of the prompt.
+    :param documents: The retrieved documents.
+    return: The prompt for retrieved documents.
+    """
+
+    prompts = "\n<{header}:>\n".format(header=header)
+    for i, document in enumerate(documents):
+        prompts += "\n"
+        prompts += "[{separator} {i}:]".format(separator=separator, i=i+1)
+        prompts += "\n"
+        prompts += document
+        prompts += "\n"
+    return prompts
+
+    

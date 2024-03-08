@@ -6,9 +6,11 @@ import os
 import time
 import json
 import yaml
+
 from art import text2art
 from pywinauto.uia_defines import NoPatternInterfaceError
 
+from ..rag import retriever_factory
 from ..config.config import load_config
 from ..llm import llm_call
 from ..llm import prompt as prompter
@@ -20,6 +22,7 @@ from ..utils import (create_folder, encode_image_from_path,
 
 configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 
 
@@ -51,6 +54,8 @@ class Session(object):
         self.request = ""
         self.results = ""
         self.cost = 0
+        self.offline_doc_retriever = None
+        self.online_doc_retriever = None
 
         
 
@@ -89,7 +94,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         except Exception as e:
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
-            print_with_color("Error occurs when calling LLM.", "red")
+            print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
             self.request_logger.info(log)
             self.status = "ERROR"
             return
@@ -98,11 +103,9 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.cost += cost
 
         try:
-            aad = configs['API_TYPE'].lower() == 'azure_ad'
-            if not aad:
-                response_string = response["choices"][0]["message"]["content"]
-            else:
-                response_string = response.choices[0].message.content
+
+            response_string = response["choices"][0]["message"]["content"]
+
             response_json = json_parser(response_string)
 
             application_label = response_json["ControlLabel"]
@@ -146,6 +149,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.app_window = app_window
 
             self.app_window.set_focus()
+
+            if configs["RAG_OFFLINE_DOCS"]:
+                print_with_color("Loading offline document indexer for {app}...".format(app=self.application), "magenta")
+                offline_retriever_factory = retriever_factory.OfflineDocRetrieverFactory(self.application)
+                self.offline_doc_retriever = offline_retriever_factory.create_offline_doc_retriever()
+            if configs["RAG_ONLINE_SEARCH"]:
+                print_with_color("Creating a Bing search indexer...", "magenta")
+                offline_retriever_factory = retriever_factory.OnlineDocRetrieverFactory(self.request)
+                self.online_doc_retriever = offline_retriever_factory.create_online_search_retriever()
+
             time.sleep(configs["SLEEP_TIME"])
 
             self.step += 1
@@ -205,7 +218,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 screenshot_annotated_url = encode_image_from_path(annotated_screenshot_save_path)
                 image_url += [screenshot_url, screenshot_annotated_url]
 
-            action_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request)
+
+            action_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request, self.rag_prompt())
             action_selection_prompt_message = prompter.prompt_construction(self.action_selection_prompt["system"], image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
             
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
@@ -214,20 +228,17 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, headers)
             except Exception as e:
                 log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
-                print_with_color("Error occurs when calling LLM.", "red")
+                print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
                 self.request_logger.info(log)
                 self.status = "ERROR"
                 time.sleep(configs["SLEEP_TIME"])
-                continue
+                return 
             
             self.cost += cost
 
             try:
-                aad = configs['API_TYPE'].lower() == 'azure_ad'
-                if not aad:
-                    response_string = response["choices"][0]["message"]["content"]
-                else:
-                    response_string = response.choices[0].message.content
+
+                response_string = response["choices"][0]["message"]["content"]
                 response_json = json_parser(response_string)
 
                 observation = response_json["Observation"]
@@ -311,6 +322,26 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         return
     
+
+    def rag_prompt(self):
+        """
+        Retrieving documents for the user request.
+        :return: The retrieved documents string.
+        """
+        
+        retrieved_docs = ""
+        if self.offline_doc_retriever:
+            offline_docs = self.offline_doc_retriever.retrieve("How to {query} for {app}".format(query=self.request, app=self.application), configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], filter=None)
+            offline_docs_prompt = prompter.retrived_documents_prompt_helper("Help Documents", "Document", [doc.metadata["text"] for doc in offline_docs])
+            retrieved_docs += offline_docs_prompt
+
+        if self.online_doc_retriever:
+            online_search_docs = self.online_doc_retriever.retrieve(self.request, configs["RAG_ONLINE_RETRIEVED_TOPK"], filter=None)
+            online_docs_prompt = prompter.retrived_documents_prompt_helper("Online Search Results", "Search Result", [doc.page_content for doc in online_search_docs])
+            retrieved_docs += online_docs_prompt
+
+        return retrieved_docs
+
 
     def set_new_round(self):
         """
