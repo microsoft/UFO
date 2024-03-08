@@ -81,7 +81,7 @@ def action_selection_prompt_construction(prompt_template: str, request_history: 
 
 
 
-def retrived_documents_prompt_construction(header: str, separator: str, documents: list):
+def retrived_documents_prompt_helper(header: str, separator: str, documents: list):
     """
     Construct the prompt for retrieved documents.
     :param header: The header of the prompt.

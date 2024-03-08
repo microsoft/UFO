@@ -58,7 +58,13 @@ class XMLLoader(basic.BasicDocumentLoader):
         :param file: The file to get the text for.
         :return: The text for the given file.
         """
-        return UnstructuredXMLLoader(file).load()[0].page_content
+
+        try:
+            doc_text = UnstructuredXMLLoader(file).load()[0].page_content
+        except:
+            doc_text = None
+
+        return doc_text
     
 
     def construct_document_list(self):

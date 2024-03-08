@@ -6,6 +6,7 @@ import time
 from ..config.config import load_config
 from ..utils import print_with_color
 from .azure_ad import get_chat_completion
+import json
 
 
 configs = load_config()
@@ -58,12 +59,14 @@ def get_gptv_completion(messages, headers):
                     temperature = configs["TEMPERATURE"],
                     top_p = configs["TOP_P"],
                 )
+
+                response_json = json.loads(response.model_dump_json())
                 
                 if "error" not in response:
                     usage = response.usage
                     prompt_tokens = usage.prompt_tokens
                     completion_tokens = usage.completion_tokens
-                response_json = response
+                
 
             cost = prompt_tokens / 1000 * 0.01 + completion_tokens / 1000 * 0.03
              
