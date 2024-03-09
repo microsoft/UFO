@@ -113,9 +113,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.cost += cost
 
         try:
-
             response_string = response["choices"][0]["message"]["content"]
-
             response_json = json_parser(response_string)
 
             application_label = response_json["ControlLabel"]
