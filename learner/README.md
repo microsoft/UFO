@@ -1,6 +1,6 @@
-<h1 align="center">
-    Enhancing UFO with RAG using Offline Help Documents
-</h1>
+
+# Enhancing UFO with RAG using Offline Help Documents
+
 
 ## How to Prepare Your Help Documents ❓
 
