@@ -72,7 +72,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.request = input()
         self.request_history = []
 
-    def process_application_selection(self, headers):
+    def process_application_selection(self):
 
         """
         Select an action.
@@ -100,7 +100,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
 
         try:
-            response, cost = llm_call.get_gptv_completion(app_selection_prompt_message, headers)
+            response, cost = llm_call.get_gptv_completion(app_selection_prompt_message)
 
         except Exception as e:
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
@@ -181,7 +181,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             return
 
 
-    def process_action_selection(self, headers):
+    def process_action_selection(self):
         """
         Select an action.
         header: The headers of the request.
@@ -236,7 +236,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
 
             try:
-                response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, headers)
+                response, cost = llm_call.get_gptv_completion(action_selection_prompt_message)
             except Exception as e:
                 log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
                 print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
@@ -248,7 +248,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.cost += cost
 
             try:
-
                 response_string = response["choices"][0]["message"]["content"]
                 response_json = json_parser(response_string)
 

@@ -28,14 +28,7 @@ system: |-
   
   ## Action on the control item
   - You are able to use pywinauto to interact with the control item.
-  - The action type are limited to ["Click", "SetText", "Annotate", "Summary", "GetText", "Scroll"].
-
-  - "Click" is to click the control item with mouse.
-  - "SetText" is to input text to the control item.
-  - "Annotate" is to take a screenshot of the current application window and annotate the control item on the screenshot.
-  - "Summary" is to summarize your observation of the current application window base on the clean screenshot. This usually happens when the you need to complete the user request by summarizing or describing the information on the current application window.
-  - "GetText" is to get the text of the control item. It typical apply to Edit and Document control item when user request is to get the text of the control item.
-  - "Scroll" is to scroll the control item. It typical apply to Edit and Document control item when user request is to get the text of the control item.
+  {apis}
 
   - You may need to take sensitive actions to complete the task. If an action is sensitive to the system, it needs to be confirmed by the user. Below are some examples of sensitive actions, but they are not limited to these cases:
       [1] Sending a message or email to someone:
