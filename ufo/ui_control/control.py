@@ -174,6 +174,24 @@ def parse_function_call(call):
 
 
 
+def atomic_execution(window, method_name:str, args:dict):
+    """
+    Atomic execution of the action on the control elements.
+    :param window: The window variable to execute the action.
+    :param method: The method to execute.
+    :param args: The arguments of the method.
+    :return: The result of the action.
+    """
+    try:
+        method = getattr(window, method_name)
+        result = method(**args)
+    except AttributeError:
+        result = f"{window} doesn't have a method named {method_name}"
+    except Exception as e:
+        result = f"An error occurred: {e}"
+    return result
+
+
 def execution(window, method_name:str, args:dict):
     """
     Execute the action on the control elements.
@@ -182,17 +200,17 @@ def execution(window, method_name:str, args:dict):
     :param args: The arguments of the method.
     :return: The result of the action.
     """
+
+
     if method_name == "set_edit_text":
         if configs["INPUT_TEXT_API"] == "type_keys":
             method_name = "type_keys"
             args = {"keys": args["text"], "pause": 0.1, "with_spaces": True}
-
     try:
-        method = getattr(window, method_name)
-        result = method(**args)
+        result = atomic_execution(window, method_name, args)
+        if configs["INPUT_TEXT_ENTER"] and method_name in ["type_keys", "set_edit_text"]:
+            atomic_execution(window, "type_keys", args = {"keys": "{ENTER}"})
         return result
-    except AttributeError:
-        return f"{window} doesn't have a method named {method_name}"
     except Exception as e:
         return f"An error occurred: {e}"
     

@@ -29,7 +29,7 @@ def main():
     Main function.
     """
 
-    db_file_path = indexer.create_indexer(parsed_args.app, parsed_args.docs, parsed_args.format, parsed_args.incremental, parsed_args.save_path)
+    indexer.create_indexer(parsed_args.app, parsed_args.docs, parsed_args.format, parsed_args.incremental, parsed_args.save_path)
 
 
 if __name__ == "__main__":

@@ -4,9 +4,21 @@ from typing import Literal, Optional
 from ..config.config import load_config
 
 configs = load_config()
-available_models = Literal[ #only following 2 model could be used 
+
+available_models = Literal[
+    "gpt-35-turbo-20220309",
+    "gpt-35-turbo-16k-20230613",
+    "gpt-35-turbo-20230613",
+    "gpt-35-turbo-1106",
+
+    "gpt-4-20230321",
+    "gpt-4-20230613",
+    "gpt-4-32k-20230321",
+    "gpt-4-32k-20230613",
+    "gpt-4-1106-preview",
+    "gpt-4-0125-preview",
+    
     "gpt-4-visual-preview",
-    "gpt-4-1106-preview"
 ]
 
 def get_openai_token(
