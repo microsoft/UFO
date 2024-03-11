@@ -5,7 +5,7 @@ import ast
 import time
 import warnings
 from typing import List
-
+import psutil
 from pywinauto import Desktop
 
 from ..config.config import load_config
@@ -250,5 +250,17 @@ def wait_visible(window, timeout:int=10, retry_interval:int=0.5):
 
    
 
-    
-   
+def get_application_name(window):
+    """
+    Get the application name of the window.
+    :param window: The window to get the application name.
+    :return: The application name of the window.
+    """
+    if window == None:
+        return ""
+    process_id = window.process_id()
+    try:
+        process = psutil.Process(process_id)
+        return process.name()
+    except psutil.NoSuchProcess:
+        return ""
