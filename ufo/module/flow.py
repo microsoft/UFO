@@ -134,14 +134,20 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             response_json["Step"] = self.step
             response_json["ControlLabel"] = self.application
             response_json["Action"] = "set_focus()"
+            response_json["Agent"] = "AppAgent"
         
-            response_json = self.set_result_and_log("", response_json)
+            
 
             if "FINISH" in self.status.upper() or self.application == "":
                 self.status = "FINISH"
+                response_json["Application"] = ""
+                response_json = self.set_result_and_log("", response_json)
                 return
                 
             app_window = desktop_windows_dict[application_label]
+
+            response_json["Application"] = control.get_application_name(app_window)
+            response_json = self.set_result_and_log("", response_json)
 
             try:
                 app_window.is_normal()
@@ -264,6 +270,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 comment = response_json["Comment"]
                 response_json["Step"] = self.step
                 response_json["Action"] = action
+                response_json["Agent"] = "ActAgent"
+                response_json["Application"] = control.get_application_name(self.app_window)
 
 
                 print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
