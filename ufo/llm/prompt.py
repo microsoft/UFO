@@ -52,7 +52,7 @@ def prompt_construction(system_prompt: str, image_list: List, user_prompt: str, 
     return prompt_message
 
 
-def system_prompt_construction(prompt_template: str, apis: str, examples: str):
+def system_prompt_construction(prompt_template: str, apis: str, examples: str) -> str:
     """
     Construct the prompt for app selection.
     :param prompt_template: The template of the prompt.
@@ -90,20 +90,20 @@ def retrived_documents_prompt_helper(header: str, separator: str, documents: lis
     """
 
     if header:
-        prompts = "\n<{header}:>\n".format(header=header)
+        prompt = "\n<{header}:>\n".format(header=header)
     else:
-        prompts = ""
+        prompt = ""
     for i, document in enumerate(documents):
         if separator:
-            prompts += "[{separator} {i}:]".format(separator=separator, i=i+1)
-            prompts += "\n"
-        prompts += document
-        prompts += "\n\n"
-    return prompts
+            prompt += "[{separator} {i}:]".format(separator=separator, i=i+1)
+            prompt += "\n"
+        prompt += document
+        prompt += "\n\n"
+    return prompt
 
 
 
-def api_prompt_helper(apis: dict, verbose: int = 1):
+def api_prompt_helper(apis: dict, verbose: int = 1) -> List[str]:
     """
     Construct the prompt for APIs.
     :param apis: The APIs.

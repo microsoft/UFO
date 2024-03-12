@@ -250,11 +250,11 @@ def wait_visible(window, timeout:int=10, retry_interval:int=0.5):
 
    
 
-def get_application_name(window):
+def get_application_name(window) -> str:
     """
     Get the application name of the window.
     :param window: The window to get the application name.
-    :return: The application name of the window.
+    :return: The application name of the window. Empty string ("") if failed to get the name.
     """
     if window == None:
         return ""
