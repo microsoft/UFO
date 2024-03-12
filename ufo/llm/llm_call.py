@@ -46,10 +46,10 @@ def get_gptv_completion(messages):
     max_retry: The maximum number of retries.
     return: The response of the request.
     """
-    aad = configs['API_TYPE'].lower() == 'azure_ad'
+    is_aad = configs['API_TYPE'].lower() == 'azure_ad'
     headers = get_request_header()
 
-    if not aad:
+    if not is_aad:
         payload = {
             "messages": messages,
             "temperature": configs["TEMPERATURE"],
@@ -60,7 +60,7 @@ def get_gptv_completion(messages):
 
     for _ in range(configs["MAX_RETRY"]):
         try:
-            if not aad :
+            if not is_aad :
                 response = requests.post(configs["OPENAI_API_BASE"], headers=headers, json=payload)
 
                 response_json = response.json()
