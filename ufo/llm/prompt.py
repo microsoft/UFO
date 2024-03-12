@@ -51,6 +51,33 @@ def prompt_construction(system_prompt: str, image_list: List, user_prompt: str, 
 
     return prompt_message
 
+def prompt_construction_non_visual(system_prompt: str, user_prompt: str):
+    """
+    Construct the prompt for GPT-4 Non-Visual model.
+    :param system_prompt: The system prompt.
+    :param user_prompt: The user prompt.
+    return: The prompt for GPT-4 Non-Visual model.
+    """
+    prompt_message = []
+    if len(system_prompt) > 0:
+        system_message = {
+            "role": "system",
+            "content": system_prompt
+        }
+        prompt_message.append(system_message)
+
+    user_content = []
+
+    user_content.append({
+        "type": "text",
+        "text": user_prompt
+    })
+
+    user_message = {"role": "user", "content": user_content}
+    prompt_message.append(user_message)
+
+    return prompt_message
+
 
 def system_prompt_construction(prompt_template: str, apis: str, examples: str) -> str:
     """
