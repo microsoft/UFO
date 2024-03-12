@@ -17,4 +17,8 @@ ufo/config/config.yaml
 # Ignore the helper files
 ufo/rag/app_docs/*
 learner/records.json
-vectordb/*
+vectordb/docs/*
+
+# Don't ignore the example files
+!vectordb/docs/example/
+

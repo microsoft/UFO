@@ -47,6 +47,12 @@ class Session(object):
         self.request_logger = initialize_logger(self.log_path, "request.log")
         self.app_selection_prompt = yaml.safe_load(open(configs["APP_SELECTION_PROMPT"], "r", encoding="utf-8"))
         self.action_selection_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_PROMPT"], "r", encoding="utf-8"))
+
+        self.app_selection_example_prompt = yaml.safe_load(open(configs["APP_SELECTION_EXAMPLE_PROMPT"], "r", encoding="utf-8"))
+        self.action_selection_example_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_EXAMPLE_PROMPT"], "r", encoding="utf-8"))
+
+        self.api_prompt = yaml.safe_load(open(configs["API_PROMPT"], "r", encoding="utf-8"))
+
         self.status = "APP_SELECTION"
         self.application = ""
         self.app_window = None
@@ -66,7 +72,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.request = input()
         self.request_history = []
 
-    def process_application_selection(self, headers):
+    def process_application_selection(self):
 
         """
         Select an action.
@@ -83,14 +89,18 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.results = ""
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
-        
-        app_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request)
-        app_selection_prompt_message = prompter.prompt_construction(self.app_selection_prompt["system"], [desktop_screen_url], app_selection_prompt_user_message)
+
+        app_example_prompt = prompter.examples_prompt_helper(self.app_selection_example_prompt)
+        api_prompt = prompter.api_prompt_helper(self.api_prompt, verbose=0)
+
+        app_selection_prompt_system_message = prompter.system_prompt_construction(self.app_selection_prompt, api_prompt, app_example_prompt)
+        app_selection_prompt_user_message = prompter.user_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request)
+        app_selection_prompt_message = prompter.prompt_construction(app_selection_prompt_system_message, [desktop_screen_url], app_selection_prompt_user_message)
 
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
 
         try:
-            response, cost = llm_call.get_gptv_completion(app_selection_prompt_message, headers)
+            response, cost = llm_call.get_gptv_completion(app_selection_prompt_message)
 
         except Exception as e:
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
@@ -103,9 +113,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.cost += cost
 
         try:
-
             response_string = response["choices"][0]["message"]["content"]
-
             response_json = json_parser(response_string)
 
             application_label = response_json["ControlLabel"]
@@ -126,14 +134,20 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             response_json["Step"] = self.step
             response_json["ControlLabel"] = self.application
             response_json["Action"] = "set_focus()"
+            response_json["Agent"] = "AppAgent"
         
-            response_json = self.set_result_and_log("", response_json)
+            
 
             if "FINISH" in self.status.upper() or self.application == "":
                 self.status = "FINISH"
+                response_json["Application"] = ""
+                response_json = self.set_result_and_log("", response_json)
                 return
                 
             app_window = desktop_windows_dict[application_label]
+
+            response_json["Application"] = control.get_application_name(app_window)
+            response_json = self.set_result_and_log("", response_json)
 
             try:
                 app_window.is_normal()
@@ -173,7 +187,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             return
 
 
-    def process_action_selection(self, headers):
+    def process_action_selection(self):
         """
         Select an action.
         header: The headers of the request.
@@ -218,14 +232,17 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 screenshot_annotated_url = encode_image_from_path(annotated_screenshot_save_path)
                 image_url += [screenshot_url, screenshot_annotated_url]
 
+            action_example_prompt = prompter.examples_prompt_helper(self.action_selection_example_prompt)
+            api_prompt = prompter.api_prompt_helper(self.api_prompt, verbose=1)
 
-            action_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request, self.rag_prompt())
-            action_selection_prompt_message = prompter.prompt_construction(self.action_selection_prompt["system"], image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
+            action_selection_prompt_system_message = prompter.system_prompt_construction(self.action_selection_prompt, api_prompt, action_example_prompt)
+            action_selection_prompt_user_message = prompter.user_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request, self.rag_prompt())
+            action_selection_prompt_message = prompter.prompt_construction(action_selection_prompt_system_message, image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
             
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
 
             try:
-                response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, headers)
+                response, cost = llm_call.get_gptv_completion(action_selection_prompt_message)
             except Exception as e:
                 log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
                 print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
@@ -237,7 +254,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.cost += cost
 
             try:
-
                 response_string = response["choices"][0]["message"]["content"]
                 response_json = json_parser(response_string)
 
@@ -254,6 +270,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 comment = response_json["Comment"]
                 response_json["Step"] = self.step
                 response_json["Action"] = action
+                response_json["Agent"] = "ActAgent"
+                response_json["Application"] = control.get_application_name(self.app_window)
 
 
                 print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")

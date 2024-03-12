@@ -52,19 +52,18 @@ def prompt_construction(system_prompt: str, image_list: List, user_prompt: str, 
     return prompt_message
 
 
-def app_selection_prompt_construction(prompt_template: str, user_request: str, app_info: dict):
+def system_prompt_construction(prompt_template: str, apis: str, examples: str) -> str:
     """
     Construct the prompt for app selection.
     :param prompt_template: The template of the prompt.
-    :param user_request: The user request.
-    :param app_info: The app info.
+    :param examples: The examples.
     return: The prompt for app selection.
     """
 
-    return prompt_template["user"].format(user_request=user_request, applications=app_info)
+    return prompt_template["system"].format(apis=apis, examples=examples)
 
 
-def action_selection_prompt_construction(prompt_template: str, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str=""):
+def user_prompt_construction(prompt_template: str, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str=""):
     """
     Construct the prompt for action selection.
     :param prompt_template: The template of the prompt.
@@ -90,13 +89,59 @@ def retrived_documents_prompt_helper(header: str, separator: str, documents: lis
     return: The prompt for retrieved documents.
     """
 
-    prompts = "\n<{header}:>\n".format(header=header)
+    if header:
+        prompt = "\n<{header}:>\n".format(header=header)
+    else:
+        prompt = ""
     for i, document in enumerate(documents):
-        prompts += "\n"
-        prompts += "[{separator} {i}:]".format(separator=separator, i=i+1)
-        prompts += "\n"
-        prompts += document
-        prompts += "\n"
-    return prompts
+        if separator:
+            prompt += "[{separator} {i}:]".format(separator=separator, i=i+1)
+            prompt += "\n"
+        prompt += document
+        prompt += "\n\n"
+    return prompt
+
+
+
+def api_prompt_helper(apis: dict, verbose: int = 1) -> List[str]:
+    """
+    Construct the prompt for APIs.
+    :param apis: The APIs.
+    :param verbose: The verbosity level.
+    return: The prompt for APIs.
+    """
+
+    # Construct the prompt for APIs
+    api_list = ["- The action type are limited to {actions}.".format(actions=list(apis.keys()))]
+    
+    # Construct the prompt for each API
+    for key in apis.keys():
+        api = apis[key]
+        if verbose > 0:
+            api_text = "{summary}\n{usage}".format(summary=api["summary"], usage=api["usage"])
+        else:
+            api_text = api["summary"]
+            
+        api_list.append(api_text)
+        
+    return api_list
+
+
+def examples_prompt_helper(examples: dict, header: str = "## Response Examples", separator: str = "Example"):
+    """
+    Construct the prompt for examples.
+    :param examples: The examples.
+    :param header: The header of the prompt.
+    :param separator: The separator of the prompt.
+    return: The prompt for examples.
+    """
+
+    example_list = []
+
+    for key in examples.keys():
+        if key.startswith("example"):
+            example_list.append(examples[key])
+
+    return retrived_documents_prompt_helper(header, separator, example_list)
 
     

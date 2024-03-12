@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+	<introduction>
+		
+		<para>Copilot in <token>PowerPoint_generic</token> is an AI-powered feature that can help you create, design, and format your slides.  You can type in what you intend to convey with your presentation, and <token>copilot</token> will help you get it done. </para>
+		<para><token>copilot</token> can help you move past that initial blank slide and get you moving in the right direction.</para>
+	</introduction>
+	<section expanded="false">
+		<title>Create a new presentation</title>
+		<content>
+			
+			<alert class="note">
+				<para>This feature is available to customers with a Copilot for Microsoft 365 license or Copilot Pro license.</para>
+			</alert>
+			<para>When you start a new presentation, you can have <token>copilot</token> create a first draft for you. Select <legacyBold>Copilot</legacyBold> on the ribbon to launch the <token>copilot</token> pane, then tell it what you want or use the suggested prompts. For example, you could enter "<legacyItalic>Create a presentation about the history of soccer</legacyItalic>," and it will get that started for you.</para>
+			<alert class="tip">
+				<para>Want to use a template for your presentation? Create your presentation from a template or open your .potx file first, then ask Copilot to create your presentation.</para>
+			</alert>
+			<para>For more information, see <link xlink:href="3222ee03-f5a4-4d27-8642-9c387ab4854d">Create a new presentation.</link></para>
+		</content>
+	</section>
+	<section>
+		<title>Create from a document</title>
+		<content>
+			
+			<alert class="note">
+				<para>This feature is only available to customers with a Copilot for Microsoft 365 license.</para>
+			</alert>
+			<para>If you have a Word document prepared that contains your intended content, you can provide that as the basis for your new presentation. Open the <token>copilot</token> pane and type or select <legacyBold>Create presentation from file </legacyBold>in the suggested prompt menu. Tell <token>copilot</token> what Word document you want to make a presentation from by typing to search your files or by pasting the URL of your Word document, and <token>copilot</token> will create a draft presentation from that document.</para>
+			<alert class="tip">
+				<para>You can open the <token>copilot</token> pane at any time. Just select the <token>copilot</token> button <mediaLinkInline><image xlink:href="359ca4a9-0383-4f62-b075-f40adb44f736" /></mediaLinkInline> on the <ui>Home</ui> tab of the ribbon.</para>
+			</alert>
+		</content>
+	</section>
+	<section expanded="false">
+		<title>Try a new design</title>
+		<content>
+			
+			<para>Do you want to change the style of an existing presentation or a new presentation created with Copilot? Open the <token>copilot</token> pane and ask <token>copilot</token> to <legacyBold>Try a new design</legacyBold>. <token>copilot</token> will change the theme of your entire presentation. You can try this multiple times until you find something you like.</para>
+		</content>
+	</section>
+	<section>
+		<title>Add a slide - or just an image</title>
+		<content>
+			
+			<alert class="note">
+				<para>This feature is available to customers with a Copilot for Microsoft 365 license or Copilot Pro license.</para>
+			</alert>
+			<para>Imagine that you want to add a slide to your deck on the history of soccer.  You can instruct <token>copilot</token> to “<legacyItalic><ui>Add a slide about</ui> the history of Women’s Olympic Soccer</legacyItalic>,” and <token>copilot</token> will create the slide for you.</para>
+			<para><mediaLinkInline><image xlink:href="4cec8fa2-706f-4e39-bf2c-8e953e88afdf" /></mediaLinkInline></para>
+			<para><token>copilot</token> can help make your great work even better. Suppose you've created a presentation on a new location you're opening, but it still lacks imagery. You could prompt <token>copilot</token> to “<legacyItalic><ui>A</ui><ui>dd an image</ui> <ui>of</ui> a store under construction,</legacyItalic>” and <token>copilot</token> will insert a picture to make your presentation more appealing. </para>
+			<para>For more information, see <link xlink:href="ae906e57-db71-4f46-8ed5-c1e2cebe6a80">Add a slide or image.</link></para>
+		</content>
+	</section>
+	<section expanded="false">
+		<title>Organize your presentation</title>
+		<content>
+			
+			<alert class="note">
+				<para>This feature is available to customers with a Copilot for Microsoft 365 license or Copilot Pro license.</para>
+			</alert>
+			<para>Wondering if there's a better way to present your content? Open the <token>copilot</token> pane and ask <token>copilot</token> to <legacyBold>Organize this presentation</legacyBold>. <token>copilot</token> will add sections and create some section summary slides as well.</para>
+			<para>For more information, see <link xlink:href="a207eea3-7a56-4225-88f1-54dd37cdcf6a">Organize this presentation.</link></para>
+		</content>
+	</section>
+	<section>
+		<title>Summarize a presentation</title>
+		<content>
+			
+			<alert class="note">
+				<para>This feature is available to customers with a Copilot for Microsoft 365 license or Copilot Pro license.</para>
+			</alert>
+			<para>Somebody share a long slide deck with you and you need to get the main points quicky? Open the <token>copilot</token> pane and ask it to <legacyBold>Summarize this presentation</legacyBold>. <token>copilot</token> will read through the deck for you and break out the main ideas as bullet points.</para>
+			<para>For more information, see <link xlink:href="499e604c-4ab9-4f6a-9dbe-691cc87f2f69">Summarize your presentation.</link></para>
+		</content>
+	</section>
+	<section>
+		<title>Current limitations</title>
+		<content>
+			
+			<para><token>copilot</token> in <token>PowerPoint_generic</token> doesn't currently support referencing organizational assets in Microsoft 365.</para>
+		</content>
+	</section>
+	<section>
+		<title>Keep in mind...</title>
+		<content>
+			
+			<para><token>copilot</token> leverages GPT, a new AI system from OpenAI that creates text based on a prompt. As it is a new system, it may create things you didn’t expect. If you find content to be unexpected or offensive, send us feedback so we can make it better. Also, because the content is generated by AI that draws from the internet, it may contain inaccuracies or sensitive material. Be sure to review and verify the information that it generates. And note that similar requests may result in the same content being generated. </para>
+		</content>
+	</section>
+	<section>
+		<title>We want to hear from you!</title>
+		<content>
+			
+			<para>If there's something you like about <token>copilot</token>, and especially if there's something you don't like, you can submit feedback to Microsoft. Just click the thumbs up or thumbs down button underneath the <token>copilot</token> chat box. This feedback will be used to help us improve your experience in <token>PowerPoint_generic</token>. </para>
+		</content>
+	</section>
+	<section>
+		<title>Learn more</title>
+		<content>
+			
+			<para><externalLink><linkText>Microsoft Copilot help &amp; learning</linkText><linkUri>https://support.microsoft.com/copilot</linkUri></externalLink></para>
+			<para><link xlink:href="3e229188-9086-4f4c-9f9f-824cd25ae84f">Frequently Asked Questions about Copilot in PowerPoint</link></para>
+			<para><link xlink:href="40a622db-6d25-4266-b008-4bbcb55cf52f">Where can I get Microsoft Copilot?</link></para>
+			<para><externalLink><linkText>Data, Privacy, and Security for Microsoft Copilot for Microsoft 365</linkText><linkUri>https://learn.microsoft.com/microsoft-365-copilot/microsoft-365-copilot-privacy</linkUri></externalLink></para>
+		</content>
+	</section>
+	<relatedTopics />
+</developerConceptualDocument>
