@@ -118,7 +118,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.plan = response_json["Plan"]
             self.status = response_json["Status"]
             comment = response_json["Comment"]
-            OpenAPP = response_json.get("Need_OpenAPP", None)
+            # "AppsToOpen": {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}
+            AppsToOpen = response_json.get("AppsToOpen", None)
 
             print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
             print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
@@ -136,19 +137,19 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 return
             app_window = None
             # if gpt did not use open app function
-            if OpenAPP is not None:
+            if AppsToOpen is not None:
                 # if open app is not allowed, finished section.
                 file_manager = openfile.OpenFile()
-                results = file_manager.execute_code(OpenAPP)
+                results = file_manager.execute_code(AppsToOpen)
                 # reset the desktop_windows_dict
-                APP_name = OpenAPP["APP"]
+                APP_name = AppsToOpen["APP"]
                 time.sleep(5)
                 # wait for loading the app
                 desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
                 if not results:
                     self.status = "ERROR in openning the application or file."
                     return
-            if OpenAPP is not None:
+            if AppsToOpen is not None:
                 app_window = desktop_windows_dict[application_label]
             else:
                 # find app window by the name of app through mappings

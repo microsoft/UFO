@@ -63,7 +63,7 @@ system: |-
       "Status": <Specify whether the task is finished or not. If the task is finished, output "FINISH". If the task is not finished and need further action, output "CONTINUE". You must output either "FINISH" or "CONTINUE" in this field.>
       "Plan": <Specify the following plan of action to complete the user request. You must provided the detailed steps of action to complete the user request. If you believe the task is finished and no further actions are required, output <FINISH>.>
       "Comment": <Specify any additional comments or information you would like to provide. This field is optional. If the task is finished, you have to give a brief summary of the task or action flow to answer the user request. If the task is not finished, you can give a brief summary of your observation of screenshots, the current progress or list some points for future actions that need to be paid attention to.>
-      "Need_OpenAPP": <Default value of it is null, if the user request contains to open a specific application, this field should be a dictionary, contains 2 filed: "APP" and "filepath", this field is set as the arguments of the function Need_OpenAPP.>
+      "AppsToOpen": <Default value of it is null, if the user request contains to open a specific application, this field should be a dictionary, contains 2 filed: "APP" and "filepath", this field is set as the arguments of the function OpenAPP.>
     }
   - If the user request is just asking question and do not need to take action on the application, you should answer the user request on the "Comment" field, and set the "Status" as "FINISH".
   - You must analyze the screenshot and the user request carefully, to understand what have been completed on which application, you must not repeatedly choose the same application or control item, unless the user request has not been completed on the application.
@@ -84,7 +84,7 @@ system: |-
     "Status": "CONTINUE",
     "Plan": "(1) Open the windows of outlook application.\\n(2) Input the email address of the receiver.\\n(3) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.\\n(4) Input the content of the email. I need to input 'Dear Jack,\\nI hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.\\nYour commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.\\nYour code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.\\nPlease know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.\\nOnce again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.\\nBest regards,\\nZac'.\\n(5) Click the Send button to send the email. This action is sensitive and need to be confirmed by the user.",
     "Comment": "It is time to open the outlook application!"
-    "Need_OpenAPP": null}
+    "AppsToOpen": null}
 
 
   - Example 2:
@@ -99,7 +99,7 @@ system: |-
     "Status": "CONTINUE",
     "Plan": "(1) Open the windows of Teams application.\\n(2) Click the Chat button to open the chat window with Tom.\\n(3) Input the message. I need to input 'Hi Tom, can you join the meeting at 3pm?'\\n(4) Click the Send button to send the message. This action is sensitive and need to be confirmed by the user.",
     "Comment": "It is time to open the Teams application."
-    "Need_OpenAPP": null}
+    "AppsToOpen": null}
 
 
   - Example 3:
@@ -113,7 +113,7 @@ system: |-
     "Status": "CONTINUE",
     "Plan": "(1) Click the search button. \\n(2) Click and select the first email in the searching results. \\n(3) Click the Delete button to for deletion. This action is sensitive and need to be confirmed by the user.",
     "Comment": "The 'VLDB' has already been input in the search box, so for future step I do not need to input it again. The deletion action is sensitive and need to be confirmed by the user."
-    "Need_OpenAPP": null}
+    "AppsToOpen": null}
 
 
   - Example 4:
@@ -127,7 +127,7 @@ system: |-
     "Status": "CONTINUE",
     "Plan": "(1) Open the windows of Word application of framework.docx.\\n(2) Observe carefully the image content in the framework.docx file, and summarize in detail the image content to reply to the user request."
     "Comment": "It's time to open the Word application of framework.docx and summarize the image content in the file."
-    "Need_OpenAPP": null}
+    "AppsToOpen": null}
 
 
   - Example 5: 
@@ -142,7 +142,7 @@ system: |-
       "Status": "CONTINUE",
       "Plan": "(1) Open the image of framework.png to complete the next task.\\n (2) Describe in detail the workflow of the framework in the image of framework.png base on the screenshot of the image.\\n  (3) Switch to the Teams application.\\n (4) Open the chat window with Tom. \\n (5) Input the text of the Document control named 'framework.docx' and the description of the workflow of the framework in the image of framework.png in the Edit control named 'Type a new message'. These information can be extracted from my history actions.\\n (6) Click the Send button to send the message. This action is sensitive to the system and need to be confirmed by the user. I need to confirm the action before clicking the Send button. If the user confirms the action, the task is finished.",
       "Comment": "After I get the text of the Document control named 'framework.docx', I need to switch to the image of framework.png to complete the next task, and summarize them to sent the message to Tom on Teams."
-      "Need_OpenAPP": null}
+      "AppsToOpen": null}
 
 
   - Example 6: 
@@ -157,7 +157,7 @@ system: |-
       "Status": "CONTINUE",
       "Plan": "(1) Open the Mail - Outlook - Zac to complete the next task.\\n (2) Base on previous email draft, revise the email body to be more detail using SetText API. \\n  (3) Click the Send button to send the email. This action is sensitive to the system and need to be confirmed by the user.",
       "Comment": "The previous request is to draft the email and fill in the email address of the receiver, which as been completed. Now it is time to revise the email to be longer and send it."
-      "Need_OpenAPP": null}
+      "AppsToOpen": null}
 
   - Example 7: 
   User Request: 
@@ -173,7 +173,7 @@ system: |-
       "Status": "CONTINUE",
       "Plan": "(1) Open and set focus the presentation - PowerPoint.\\n (2) Click the 'File' button at the upper left corner, to open a menu.\\n (3) Click the 'Info' ListItem, to access the 'Info' page.\\n  (4) Click the 'Check for Issues' MenuItem, to open a menu for checking. \\n (5) Click the 'Inspect Document', to open a document inspector. \\n (6) Click the 'Inspect' button, to inspect the ppt for notes. \\n (7) I should now find and click the 'Remove All Presentation Notes'. However, this button is usually at the bottom of the menu and therefore I should apply wheel_mouse_input(wheel_dist=-20) to a ScrollBar to reach the menu bottom to make this button visible.\\n (8) Once 'Remove All Presentation Notes' is visible, I should click it to remove all notes in the presentation.pptx file. This action is sensitive to the system and need to be confirmed by the user.",
       "Comment": "I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file."
-      "Need_OpenAPP": null}
+      "AppsToOpen": null}
  
 
    - Example 8: 
@@ -188,7 +188,7 @@ system: |-
       "Status": "CONTINUE",
       "Plan": "(1) Open and set focus the Google - Microsoft​ Edge.\\n (2) Set text of 'Imdiffusion GitHub' in the search box of Google. The control type of the search box is usually in a type of ComboBox. \\n (3) Click Google Search to search for the Imdiffusion repo on github.\\n (4) Once the searched results are visible, click the Imdiffusion repo Hyperlink in the search results to open the repo page.\\n (5) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.",
       "Comment": "I plan to Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually."
-      "Need_OpenAPP": null}
+      "AppsToOpen": null}
 
 
   - Example 9: 
@@ -202,7 +202,7 @@ system: |-
         "Status": "CONTINUE",
         "Plan": "(1) Call the function OpenAPP with the arguments {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'} to open the test.pptx file.".\\n(2) When the file is open, delete text in the title and input 'Apple is the best tech Company' in the title. ",
         "Comment": Since the PowerPoint application is not visible in the screenshot, I will use the function OpenAPP to open the test.pptx file directly from the desktop. Then modify the title of the ppt file after its opened."
-        "Need_OpenAPP": {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}}
+        "AppsToOpen": {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}}
     
 
     - Example 10: 
@@ -216,7 +216,7 @@ system: |-
         "Status": "CONTINUE",
         "Plan": "(1) Call the function OpenAPP with the arguments {'APP': 'powerpnt', 'file_path': ''} to open the file explorer APP.\\n(2) Once the file explorer is open, I need to use the search box to find the label.txt file.",
         "Comment": Since the file explorer application is not visible in the screenshot, I will use the function OpenAPP to open the file explorer file directly."
-        "Need_OpenAPP": {'APP': 'powerpnt', 'file_path': ''}}
+        "AppsToOpen": {'APP': 'powerpnt', 'file_path': ''}}
  
 
   This is a very important task. Please read the user request and the screenshot carefully, think step by step and take a deep breath before you start. 
