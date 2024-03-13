@@ -9,7 +9,6 @@ OPENAI_API_MODEL: "gpt-4-vision-preview"  # The only OpenAI model by now that ac
 BING_API_KEY: "YOUR_BING_SEARCH_API_KEY"  # The Bing search API key
 
 
-
 CONTROL_BACKEND: "uia"  # The backend for control action
 MAX_TOKENS: 2000  # The max token limit for the response completion
 MAX_RETRY: 3  # The max retry limit for the response completion
