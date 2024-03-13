@@ -41,6 +41,16 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 - 📅 2024-02-10: UFO is released on GitHub🎈. Happy Chinese New year🐉!
 
 
+## Media Coverage 🌐
+UFO sightings have garnered attention from various media outlets, including:
+- [Microsoft's UFO abducts traditional user interfaces for a smarter Windows experience](https://the-decoder.com/microsofts-ufo-abducts-traditional-user-interfaces-for-a-smarter-windows-experience/)
+- [The AI PC - The Future of Computers? - Microsoft UFO](https://www.youtube.com/watch?v=1k4LcffCq3E)
+- [下一代Windows系统曝光：基于GPT-4V，Agent跨应用调度，代号UFO](https://www.qbitai.com/2024/02/121048.html)
+- [下一代智能版 Windows 要来了？微软推出首个 Windows Agent，命名为 UFO！](https://blog.csdn.net/csdnnews/article/details/136161570)
+- [Microsoft発のオープンソース版「UFO」登場！　Windowsを自動操縦するAIエージェントを試す](https://internet.watch.impress.co.jp/docs/column/shimizu/1570581.html)
+- ...
+
+These sources provide insights into the evolving landscape of technology and the implications of UFO phenomena on various platforms.
 
 ## 💥 Highlights
 
