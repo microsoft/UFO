@@ -1,0 +1,81 @@
+version: 0.1
+
+API_TYPE: "azure_ad"  # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, "azure_ad" for aoai aad. #USER
+# OPENAI_API_BASE: "https://cloudgpt-swc.openai.azure.com" # for the OpenAI API.
+OPENAI_API_BASE: "https://cloudgpt-openai.azure-api.net/" #USER
+OPENAI_API_KEY: "5dad6fd852874c9db87b049e7d4ea1a9"  # The OpenAI API key #USER
+AOAI_DEPLOYMENT: "gpt-4-visual-preview"  # Your AOAI deployment if apply #USER
+API_VERSION: "2024-02-15-preview" # For GPT4-visual, the value usually be the "2023-12-01-preview" #USER
+OPENAI_API_MODEL: "gpt-4-visual-preview"  # The only OpenAI model by now that accepts visual input #USER
+BING_API_KEY: "a5f1dec156334648a2354fabb221ffff"  # The Bing search API key #USER
+
+# DRAW_RECTANGLE: True  # Whether to draw the rectangle for the control item
+CONTROL_BACKEND: "uia"  # The backend for control action #DEV
+MAX_TOKENS: 2000  # The max token limit for the response completion #USER
+MAX_RETRY: 10  # The max retry limit for the response completion #USER
+MAX_STEP: 30  # The max step limit for completing the user request #USER
+SLEEP_TIME: 5  # The sleep time between each step to wait for the window to be ready
+TEMPERATURE: 0.0  # The temperature of the model: the lower the value, the more consistent the output of the model
+TOP_P: 0.0  # The top_p of the model: the lower the value, the more conservative the output of the model
+SAFE_GUARD: True  # Whether to use the safe guard to prevent the model from doing sensitve operations. #DEV
+
+# ALL DEV
+CONTROL_TYPE_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton"]  # The list of control types that are allowed to be selected 
+HISTORY_KEYS: ["Step", "Thought", "ControlText", "Action", "Comment", "Results"]  # The keys of the action history for the next step.
+ANNOTATION_COLORS: {
+        "Button": "#FFF68F",
+        "Edit": "#A5F0B5",
+        "TabItem": "#A5E7F0",
+        "Document": "#FFD18A",
+        "ListItem": "#D9C3FE",
+        "MenuItem": "#E7FEC3",
+        "ScrollBar": "#FEC3F8",
+        "TreeItem": "#D6D6D6",
+        "Hyperlink": "#91FFEB",
+        "ComboBox": "#D8B6D4"
+    }
+
+#USER
+PRINT_LOG: False  # Whether to print the log  
+LOG_LEVEL: "DEBUG"  # The log level
+
+#USER
+CONCAT_SCREENSHOT: True  # Whether to concat the screenshot for the control item
+INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the observation
+
+# DEV
+REQUEST_TIMEOUT: 250  # The call timeout for the GPT-V model
+
+
+APP_SELECTION_PROMPT: "ufo/prompts/base/app_selection.yaml"  # The prompt for the app selection
+ACTION_SELECTION_PROMPT: "ufo/prompts/base/action_selection.yaml"  # The prompt for the action selection
+
+APP_SELECTION_EXAMPLE_PROMPT: "ufo/prompts/examples/app_example.yaml"  # The prompt for the app selection
+ACTION_SELECTION_EXAMPLE_PROMPT: "ufo/prompts/examples/action_example.yaml"  # The prompt for the action selection
+
+API_PROMPT: "ufo/prompts/base/api.yaml" # The prompt for the API
+
+
+# DEV
+INPUT_TEXT_API: "type_keys" # The input text API
+INPUT_TEXT_ENTER: True # whether to press enter after typing the text
+
+### For AAD
+AAD_TENANT_ID: "72f988bf-86f1-41af-91ab-2d7cd011db47" # Set the value to your tenant id for the llm model
+AAD_API_SCOPE: "openai" # Set the value to your scope for the llm model e.g. OPENAI
+AAD_API_SCOPE_BASE: "feb7b661-cac7-44a8-8dc1-163b63c23df2" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE
+
+# User
+## RAG Configuration for the offline docs
+RAG_OFFLINE_DOCS: True  # Whether to use the offline RAG.
+RAG_OFFLINE_DOCS_RETRIEVED_TOPK: 1 # The topk for the offline retrieved documents
+
+# User
+## RAG Configuration for the Bing search
+RAG_ONLINE_SEARCH: True  # Whether to use the online search for the RAG.
+RAG_ONLINE_SEARCH_TOPK: 3 # The topk for the online search
+RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
+
+
+
+  

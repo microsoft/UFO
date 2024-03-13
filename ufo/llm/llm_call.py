@@ -84,6 +84,7 @@ def get_gptv_completion(messages):
                     top_p = configs["TOP_P"],
                 )
                 response_json = json.loads(response.model_dump_json())
+                print(response_json)
                 
                 if "error" not in response_json:
                     usage = response.usage
