@@ -6,9 +6,11 @@ import os
 import time
 import json
 import yaml
+
 from art import text2art
 from pywinauto.uia_defines import NoPatternInterfaceError
 
+from ..rag import retriever_factory
 from ..config.config import load_config
 from ..llm import llm_call
 from ..llm import prompt as prompter
@@ -20,6 +22,7 @@ from ..utils import (create_folder, encode_image_from_path,
 
 configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]
+os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
 
 
@@ -44,6 +47,12 @@ class Session(object):
         self.request_logger = initialize_logger(self.log_path, "request.log")
         self.app_selection_prompt = yaml.safe_load(open(configs["APP_SELECTION_PROMPT"], "r", encoding="utf-8"))
         self.action_selection_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_PROMPT"], "r", encoding="utf-8"))
+
+        self.app_selection_example_prompt = yaml.safe_load(open(configs["APP_SELECTION_EXAMPLE_PROMPT"], "r", encoding="utf-8"))
+        self.action_selection_example_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_EXAMPLE_PROMPT"], "r", encoding="utf-8"))
+
+        self.api_prompt = yaml.safe_load(open(configs["API_PROMPT"], "r", encoding="utf-8"))
+
         self.status = "APP_SELECTION"
         self.application = ""
         self.app_window = None
@@ -51,6 +60,8 @@ class Session(object):
         self.request = ""
         self.results = ""
         self.cost = 0
+        self.offline_doc_retriever = None
+        self.online_doc_retriever = None
         self.allow_openapp = configs["ALLOW_OPENAPP"]
 
         
@@ -62,10 +73,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.request = input()
         self.request_history = []
 
-    def process_application_selection(self, headers):
-        # call openapp function here, build class, test if it works.
-        # track app, if not opened, open it and instantiate it, check if control_dict matched with userrequest.
-        # add some tests.
+    def process_application_selection(self):
+
         """
         Select an action.
         header: The headers of the request.
@@ -81,22 +90,24 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.results = ""
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
-# TODO: if not allow open app, should change prompt.
         if self.allow_openapp:
             self.app_selection_prompt = yaml.safe_load(open(configs["APP_SELECTION_PROMPT_OPEN"], "r", encoding="utf-8"))
-        app_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request)
-        app_selection_prompt_message = prompter.prompt_construction(self.app_selection_prompt["system"], [desktop_screen_url], app_selection_prompt_user_message)
+        app_example_prompt = prompter.examples_prompt_helper(self.app_selection_example_prompt)
+        api_prompt = prompter.api_prompt_helper(self.api_prompt, verbose=0)
+
+        app_selection_prompt_system_message = prompter.system_prompt_construction(self.app_selection_prompt, api_prompt, app_example_prompt)
+        app_selection_prompt_user_message = prompter.user_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request)
+        app_selection_prompt_message = prompter.prompt_construction(app_selection_prompt_system_message, [desktop_screen_url], app_selection_prompt_user_message)
 
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
         image_path_list = [desktop_save_path]
         try:
-            response, cost = llm_call.get_gptv_completion(app_selection_prompt_message, headers)
-# TODO: Add error handling for the case when the response is not in the expected format
+            response, cost = llm_call.get_gptv_completion(app_selection_prompt_message)
 
         except Exception as e:
             print_with_color(e, 'red')
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
-            print_with_color("Error occurs when calling LLM.", "red")
+            print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
             self.request_logger.info(log)
             self.status = "ERROR"
             return
@@ -105,11 +116,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.cost += cost
 
         try:
-            aad = configs['API_TYPE'].lower() == 'azure_ad'
-            if not aad:
-                response_string = response["choices"][0]["message"]["content"]
-            else:
-                response_string = response.choices[0].message.content
+            response_string = response["choices"][0]["message"]["content"]
             response_json = json_parser(response_string)
             application_label = response_json["ControlLabel"]
             self.application = response_json["ControlText"]
@@ -131,9 +138,14 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             response_json["Step"] = self.step
             response_json["ControlLabel"] = self.application
             response_json["Action"] = "set_focus()"
-            response_json = self.set_result_and_log("", response_json)
-            if "FINISH" in self.status.upper():
+            response_json["Agent"] = "AppAgent"
+        
+            
+
+            if "FINISH" in self.status.upper() or self.application == "":
                 self.status = "FINISH"
+                response_json["Application"] = ""
+                response_json = self.set_result_and_log("", response_json)
                 return
             app_window = None
             # if gpt did not use open app function
@@ -154,6 +166,9 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             else:
                 # find app window by the name of app through mappings
                 app_window = control.find_window_by_app_name(desktop_windows_dict, APP_name)
+            response_json["Application"] = control.get_application_name(app_window)
+            response_json = self.set_result_and_log("", response_json)
+
             try:
                 app_window.is_normal()
             # Handle the case when the window interface is not available
@@ -167,6 +182,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.app_window = app_window
             if self.app_window:
                 self.app_window.set_focus()
+
+            if configs["RAG_OFFLINE_DOCS"]:
+                print_with_color("Loading offline document indexer for {app}...".format(app=self.application), "magenta")
+                offline_retriever_factory = retriever_factory.OfflineDocRetrieverFactory(self.application)
+                self.offline_doc_retriever = offline_retriever_factory.create_offline_doc_retriever()
+            if configs["RAG_ONLINE_SEARCH"]:
+                print_with_color("Creating a Bing search indexer...", "magenta")
+                offline_retriever_factory = retriever_factory.OnlineDocRetrieverFactory(self.request)
+                self.online_doc_retriever = offline_retriever_factory.create_online_search_retriever()
+
             time.sleep(configs["SLEEP_TIME"])
 
             self.step += 1
@@ -181,7 +206,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             return
 
 
-    def process_action_selection(self, headers):
+    def process_action_selection(self):
         """
         Select an action.
         header: The headers of the request.
@@ -229,29 +254,29 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
             if self.allow_openapp:
                 self.action_selection_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_PROMPT_OPEN"], "r", encoding="utf-8"))
-            action_selection_prompt_user_message = prompter.action_selection_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request)
-            action_selection_prompt_message = prompter.prompt_construction(self.action_selection_prompt["system"], image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
+            action_example_prompt = prompter.examples_prompt_helper(self.action_selection_example_prompt)
+            api_prompt = prompter.api_prompt_helper(self.api_prompt, verbose=1)
+
+            action_selection_prompt_system_message = prompter.system_prompt_construction(self.action_selection_prompt, api_prompt, action_example_prompt)
+            action_selection_prompt_user_message = prompter.user_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request, self.rag_prompt())
+            action_selection_prompt_message = prompter.prompt_construction(action_selection_prompt_system_message, image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
             
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
             try:
-                response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, headers)
+                response, cost = llm_call.get_gptv_completion(action_selection_prompt_message)
             except Exception as e:      
                 print_with_color(f"error: {e}", "red")
                 log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
-                print_with_color("Error occurs when calling LLM.", "red")
+                print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
                 self.request_logger.info(log)
                 self.status = "ERROR"
                 time.sleep(configs["SLEEP_TIME"])
-                continue
+                return 
             
             self.cost += cost
 
             try:
-                aad = configs['API_TYPE'].lower() == 'azure_ad'
-                if not aad:
-                    response_string = response["choices"][0]["message"]["content"]
-                else:
-                    response_string = response.choices[0].message.content
+                response_string = response["choices"][0]["message"]["content"]
                 response_json = json_parser(response_string)
 
                 observation = response_json["Observation"]
@@ -267,6 +292,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 comment = response_json["Comment"]
                 response_json["Step"] = self.step
                 response_json["Action"] = action
+                response_json["Agent"] = "ActAgent"
+                response_json["Application"] = control.get_application_name(self.app_window)
 
 
                 print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
@@ -335,6 +362,26 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         return
     
+
+    def rag_prompt(self):
+        """
+        Retrieving documents for the user request.
+        :return: The retrieved documents string.
+        """
+        
+        retrieved_docs = ""
+        if self.offline_doc_retriever:
+            offline_docs = self.offline_doc_retriever.retrieve("How to {query} for {app}".format(query=self.request, app=self.application), configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], filter=None)
+            offline_docs_prompt = prompter.retrived_documents_prompt_helper("Help Documents", "Document", [doc.metadata["text"] for doc in offline_docs])
+            retrieved_docs += offline_docs_prompt
+
+        if self.online_doc_retriever:
+            online_search_docs = self.online_doc_retriever.retrieve(self.request, configs["RAG_ONLINE_RETRIEVED_TOPK"], filter=None)
+            online_docs_prompt = prompter.retrived_documents_prompt_helper("Online Search Results", "Search Result", [doc.page_content for doc in online_search_docs])
+            retrieved_docs += online_docs_prompt
+
+        return retrieved_docs
+
 
     def set_new_round(self):
         """

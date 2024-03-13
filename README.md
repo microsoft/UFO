@@ -33,6 +33,10 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 📢 News
+- 📅 2024-03-XX: New Release for v0.0.1! Check out our exciting new features:
+    1. Our UFO framework now support RAG from offline document and online Bing search. 
+    2. We now support creating your help documents for each Windows app to become an app expert. Check XX for more details!
+    3. UFO now support more LLMs and customized models.
 - 📅 2024-02-14: Our [technical report](https://arxiv.org/abs/2402.07939) is online!
 - 📅 2024-02-10: UFO is released on GitHub🎈. Happy Chinese New year🐉!
 
@@ -41,10 +45,10 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 ## 💥 Highlights
 
 - [x] **First Windows Agent** - UFO is the pioneering agent framework capable of translating user requests in natural language into actionable operations on Windows OS.
+- [x] **RAG Enhanced** - UFO is enhanced by Retrieval Augmented Generation (RAG) from heterogeneous sources to promote its ability, including offling help documents and online search engine.
 - [x] **Interactive Mode** - UFO facilitates multiple sub-requests from users within the same session, enabling the completion of complex tasks seamlessly.
 - [x] **Action Safeguard** - UFO incorporates safeguards to prompt user confirmation for sensitive actions, enhancing security and preventing inadvertent operations.
 - [x] **Easy Extension** - UFO offers extensibility, allowing for the integration of additional functionalities and control types to tackle diverse and intricate tasks with ease.
-
 
 
 ## ✨ Getting Started
@@ -65,7 +69,7 @@ pip install -r requirements.txt
 ```
 
 ### ⚙️ Step 2: Configure the LLMs
-Before running UFO, you need to provide your LLM configurations. You can configure `ufo/config/config.yaml` file as follows. 
+Before running UFO, you need to provide your LLM configurations. You can configure create a config file `ufo/config/config.yaml` by copying the `ufo/config/config.yaml.template` edited as follows. 
 
 #### OpenAI
 ```
@@ -83,16 +87,6 @@ OPENAI_API_KEY: "YOUR_API_KEY"  # Set the value to the openai key for the llm mo
 OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts visual input
 ```
 
-#### AAD application auth
-```
-API_TYPE: "azure_ad" 
-OPENAI_API_BASE: "YOUR_ENDPOINT" # The AAD API address. Format: https://{your-resource-name}.azure-api.net/
-API_VERSION: "API-VERSION" #For GPT4-visual, the value usually be the "2023-12-01-preview"
-OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts visual input
-AAD_TENANT_ID: "YOUR_TENANT_ID" #Set the value to your tenant id for the llm model
-AAD_API_SCOPE: "YOUR_SCOPE" #Set the value to your scope for the llm model
-AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" #Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE
-```
 
 ### 🎉 Step 3: Start UFO
 
