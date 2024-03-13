@@ -79,7 +79,7 @@ pip install -r requirements.txt
 ```
 
 ### ⚙️ Step 2: Configure the LLMs
-Before running UFO, you need to provide your LLM configurations. You can configure create a config file `ufo/config/config.yaml` by copying the `ufo/config/config.yaml.template` edited as follows. 
+Before running UFO, you need to provide your LLM configurations. You can create a config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` edited as follows: 
 
 #### OpenAI
 ```
