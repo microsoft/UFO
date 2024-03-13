@@ -8,7 +8,6 @@ API_VERSION: "2024-02-15-preview" # "2024-02-15-preview" by default.
 OPENAI_API_MODEL: "gpt-4-vision-preview"  # The only OpenAI model by now that accepts visual input
 BING_API_KEY: "YOUR_BING_SEARCH_API_KEY"  # The Bing search API key
 
-
 CONTROL_BACKEND: "uia"  # The backend for control action
 MAX_TOKENS: 2000  # The max token limit for the response completion
 MAX_RETRY: 3  # The max retry limit for the response completion
@@ -44,7 +43,7 @@ ACTION_SELECTION_PROMPT: "ufo/prompts/base/{mode}/action_selection_rag.yaml"  # 
 APP_SELECTION_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/app_example.yaml"  # The prompt for the app selection
 ACTION_SELECTION_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/action_example.yaml"  # The prompt for the action selection
 
-API_PROMPT: "ufo/prompts/base/api.yaml"  # The prompt for the API
+API_PROMPT: "ufo/prompts/base/{mode}/api.yaml"  # The prompt for the API
 INPUT_TEXT_API: "type_keys" # The input text API
 INPUT_TEXT_ENTER: True # whether to press enter after typing the text
 

@@ -51,19 +51,22 @@ def get_gptv_completion(messages, is_visual=True):
     is_aad = configs['API_TYPE'].lower() == 'azure_ad'
     headers = get_request_header()
 
+    model_name = configs["OPENAI_API_MODEL" if is_visual else "OPENAI_API_MODEL_NON_VISUAL"]
+    api_base = configs["OPENAI_API_BASE" if is_visual else "OPENAI_API_BASE_NON_VISUAL"]
+
     if not is_aad:
         payload = {
             "messages": messages,
             "temperature": configs["TEMPERATURE"],
             "max_tokens": configs["MAX_TOKENS"],
             "top_p": configs["TOP_P"],
-            "model": configs["OPENAI_API_MODEL" if is_visual else "OPENAI_API_MODEL_NON_VISUAL"]
+            "model": model_name
         }
 
     for _ in range(configs["MAX_RETRY"]):
         try:
             if not is_aad :
-                response = requests.post(configs["OPENAI_API_BASE" if is_visual else "OPENAI_API_BASE_NON_VISUAL"], headers=headers, json=payload)
+                response = requests.post(api_base, headers=headers, json=payload)
 
                 response_json = response.json()
                 response.raise_for_status()  # Will raise an HTTPError if the HTTP request returned an unsuccessful status code
@@ -79,14 +82,14 @@ def get_gptv_completion(messages, is_visual=True):
                     completion_tokens = usage.get("completion_tokens", 0)
             else:
                 response = get_chat_completion(
-                    engine=configs["OPENAI_API_MODEL" if is_visual else "OPENAI_API_MODEL_NON_VISUAL"],
+                    engine=model_name,
                     messages = messages,
                     max_tokens = configs["MAX_TOKENS"],
                     temperature = configs["TEMPERATURE"],
                     top_p = configs["TOP_P"],
                 )
                 response_json = json.loads(response.model_dump_json())
-                print(response_json)
+
                 
                 if "error" not in response_json:
                     usage = response.usage
