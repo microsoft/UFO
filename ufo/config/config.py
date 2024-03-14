@@ -49,24 +49,32 @@ def load_llm_config(config_path="ufo/config/config_llm.yaml"):
         print_with_color(
             f"Warning: Config file not found at {config_path}. Using only environment variables.", "yellow")
 
-    # Update the API base URL for AOAI
-    if configs["API_TYPE"].lower() == "aoai" and 'deployments' not in configs["API_BASE"]:
-        configs["API_BASE"] = "{endpoint}/openai/deployments/{deployment_name}/chat/completions?api-version={api_version}".format(
-            endpoint=configs["API_BASE"][:-1] if configs["API_BASE"].endswith(
-                "/") else configs["API_BASE"],
-            deployment_name=configs["API_MODEL"],
-            api_version=configs["API_VERSION"]
-        )
-    if configs["API_TYPE_NON_VISUAL"].lower() == "aoai" and 'deployments' not in configs["API_BASE_NON_VISUAL"]:
-        configs["API_BASE_NON_VISUAL"] = "{endpoint}/openai/deployments/{deployment_name}/chat/completions?api-version={api_version}".format(
-            endpoint=configs["API_BASE_NON_VISUAL"][:-1] if configs["API_BASE_NON_VISUAL"].endswith(
-                "/") else configs["API_BASE_NON_VISUAL"],
-            deployment_name=configs["API_MODEL_NON_VISUAL"],
-            api_version=configs["API_VERSION_NON_VISUAL"]
-        )
+    
+    return optimize_configs(configs)
 
+
+def parse_aoai_base(config):
+    if 'deployments' not in config["API_BASE"]:
+        config["API_BASE"] = "{endpoint}/openai/deployments/{deployment_name}/chat/completions?api-version={api_version}".format(
+                endpoint=config["API_BASE"][:-1] if config["API_BASE"].endswith(
+                    "/") else config["API_BASE"],
+                deployment_name=config["API_MODEL"],
+                api_version=config["API_VERSION"]
+        )
+    return config["API_BASE"]
+
+def update_api_base(configs, key):
+    if not isinstance(configs[key], list):
+        configs[key] = [configs[key]]
+    for config in configs[key][1:]:
+        if config["API_TYPE"].lower() == "aoai":
+            config["API_BASE"] = parse_aoai_base(config)
+
+def optimize_configs(configs):
+    update_api_base(configs, 'VISUAL')
+    update_api_base(configs, 'NON_VISUAL')
+    
     return configs
-
 
 def get_offline_learner_indexer_config():
     """

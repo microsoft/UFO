@@ -9,4 +9,4 @@ configs = load_llm_config()
 
 def get_gptv_completion(messages, is_visual=True):
     from .openai import OpenAIService
-    return OpenAIService(configs, is_visual).chat_completion(messages)
+    return OpenAIService(configs, is_visual=is_visual).chat_completion(messages)
