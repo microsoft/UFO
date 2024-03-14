@@ -152,12 +152,12 @@ def examples_prompt_helper(examples: dict, header: str = "## Response Examples",
 
 
 
-def load_prompt(template_path, is_visual):
+def load_prompt(template_path: str, is_visual: bool) -> str:
         """
         Get the prompt.
         path_template: The template of the prompt path.
         is_visual: Whether to use the visual prompt.
-        return: The prompt.
+        return: The loaded prompt string.
         """
         path = template_path.format(mode = "visual" if is_visual else "nonvisual")
         prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))

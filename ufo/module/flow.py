@@ -46,14 +46,14 @@ class Session(object):
         self.logger = initialize_logger(self.log_path, "response.log")
         self.request_logger = initialize_logger(self.log_path, "request.log")
 
-        self.app_selection_prompt = self.get_prompt(configs["APP_SELECTION_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
-        self.action_selection_prompt = self.get_prompt(configs["ACTION_SELECTION_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
+        self.app_selection_prompt = prompter.load_prompt(configs["APP_SELECTION_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
+        self.action_selection_prompt = prompter.load_prompt(configs["ACTION_SELECTION_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
 
-        self.app_selection_example_prompt = self.get_prompt(configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
-        self.action_selection_example_prompt = self.get_prompt(configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
+        self.app_selection_example_prompt = prompter.load_prompt(configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
+        self.action_selection_example_prompt = prompter.load_prompt(configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
 
-        self.app_selection_api_prompt = self.get_prompt(configs["API_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
-        self.action_selection_api_prompt = self.get_prompt(configs["API_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
+        self.app_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
+        self.action_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
 
 
         self.status = "APP_SELECTION"
@@ -347,17 +347,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         return
     
-    def get_prompt(self, path_template, is_visual):
-        """
-        Get the prompt.
-        path_template: The template of the prompt path.
-        is_visual: Whether to use the visual prompt.
-        return: The prompt.
-        """
-        path = path_template.format(mode = "visual" if is_visual else "nonvisual")
-        prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
-        
-        return prompt
 
     def rag_prompt(self):
         """
