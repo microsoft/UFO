@@ -45,15 +45,6 @@ class Session(object):
         create_folder(self.log_path)
         self.logger = initialize_logger(self.log_path, "response.log")
         self.request_logger = initialize_logger(self.log_path, "request.log")
-<<<<<<< HEAD
-        self.app_selection_prompt = yaml.safe_load(open(configs["APP_SELECTION_PROMPT"], "r", encoding="utf-8"))
-        self.action_selection_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_PROMPT"], "r", encoding="utf-8"))
-
-        self.app_selection_example_prompt = yaml.safe_load(open(configs["APP_SELECTION_EXAMPLE_PROMPT"], "r", encoding="utf-8"))
-        self.action_selection_example_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_EXAMPLE_PROMPT"], "r", encoding="utf-8"))
-
-        self.api_prompt = yaml.safe_load(open(configs["API_PROMPT"], "r", encoding="utf-8"))
-=======
 
         self.app_selection_prompt = self.get_prompt(configs["APP_SELECTION_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
         self.action_selection_prompt = self.get_prompt(configs["ACTION_SELECTION_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
@@ -64,7 +55,6 @@ class Session(object):
         self.app_selection_api_prompt = self.get_prompt(configs["API_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
         self.action_selection_api_prompt = self.get_prompt(configs["API_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
 
->>>>>>> chaoyun/dev
 
         self.status = "APP_SELECTION"
         self.application = ""
@@ -104,18 +94,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
 
         app_example_prompt = prompter.examples_prompt_helper(self.app_selection_example_prompt)
-<<<<<<< HEAD
-        api_prompt = prompter.api_prompt_helper(self.api_prompt, verbose=0)
-
-        app_selection_prompt_system_message = prompter.system_prompt_construction(self.app_selection_prompt, api_prompt, app_example_prompt)
-        app_selection_prompt_user_message = prompter.user_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request)
-        app_selection_prompt_message = prompter.prompt_construction(app_selection_prompt_system_message, [desktop_screen_url], app_selection_prompt_user_message)
-
-        self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
-
-        try:
-            response, cost = llm_call.get_gptv_completion(app_selection_prompt_message)
-=======
         api_prompt = prompter.api_prompt_helper(self.app_selection_api_prompt, verbose=0)
 
         app_selection_prompt_system_message = prompter.system_prompt_construction(self.app_selection_prompt, api_prompt, app_example_prompt)
@@ -128,7 +106,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         try:
             response, cost = llm_call.get_gptv_completion(app_selection_prompt_message, configs["APP_AGENT_VISUAL_MODE"])
->>>>>>> chaoyun/dev
 
         except Exception as e:
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
@@ -261,13 +238,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 image_url += [screenshot_url, screenshot_annotated_url]
 
             action_example_prompt = prompter.examples_prompt_helper(self.action_selection_example_prompt)
-<<<<<<< HEAD
-            api_prompt = prompter.api_prompt_helper(self.api_prompt, verbose=1)
-
-            action_selection_prompt_system_message = prompter.system_prompt_construction(self.action_selection_prompt, api_prompt, action_example_prompt)
-            action_selection_prompt_user_message = prompter.user_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request, self.rag_prompt())
-            action_selection_prompt_message = prompter.prompt_construction(action_selection_prompt_system_message, image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"])
-=======
             api_prompt = prompter.api_prompt_helper(self.action_selection_api_prompt, verbose=1)
 
             action_selection_prompt_system_message = prompter.system_prompt_construction(self.action_selection_prompt, api_prompt, action_example_prompt)
@@ -275,16 +245,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             
             action_selection_prompt_message = prompter.prompt_construction(action_selection_prompt_system_message, image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"], configs["ACTION_AGENT_VISUAL_MODE"])
             
->>>>>>> chaoyun/dev
             
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
 
             try:
-<<<<<<< HEAD
-                response, cost = llm_call.get_gptv_completion(action_selection_prompt_message)
-=======
                 response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, configs["ACTION_AGENT_VISUAL_MODE"])
->>>>>>> chaoyun/dev
             except Exception as e:
                 log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
                 print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
@@ -382,8 +347,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         return
     
-<<<<<<< HEAD
-=======
     def get_prompt(self, path_template, is_visual):
         """
         Get the prompt.
@@ -395,7 +358,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
         
         return prompt
->>>>>>> chaoyun/dev
 
     def rag_prompt(self):
         """
