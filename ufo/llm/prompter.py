@@ -5,7 +5,7 @@ from typing import List
 import json
 import yaml
 
-def prompt_construction(system_prompt: str, image_list: List, user_prompt: str, include_last_screenshot=False, is_visual=True):
+def prompt_construction(system_prompt: str, image_list: List, user_prompt: str, include_last_screenshot=False, is_visual=True) -> list[dict]:
     """
     Construct the prompt for GPT-4 Visual.
     :param system_prompt: The system prompt.
@@ -69,7 +69,7 @@ def system_prompt_construction(prompt_template: str, apis: str, examples: str) -
     return prompt_template["system"].format(apis=apis, examples=examples)
 
 
-def user_prompt_construction(prompt_template: str, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str=""):
+def user_prompt_construction(prompt_template: str, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> str:
     """
     Construct the prompt for action selection.
     :param prompt_template: The template of the prompt.
@@ -86,7 +86,7 @@ def user_prompt_construction(prompt_template: str, request_history: list, action
 
 
 
-def retrived_documents_prompt_helper(header: str, separator: str, documents: list):
+def retrived_documents_prompt_helper(header: str, separator: str, documents: list) -> str:
     """
     Construct the prompt for retrieved documents.
     :param header: The header of the prompt.
@@ -133,7 +133,7 @@ def api_prompt_helper(apis: dict, verbose: int = 1) -> List[str]:
     return api_list
 
 
-def examples_prompt_helper(examples: dict, header: str = "## Response Examples", separator: str = "Example"):
+def examples_prompt_helper(examples: dict, header: str = "## Response Examples", separator: str = "Example") -> list[str]:
     """
     Construct the prompt for examples.
     :param examples: The examples.
