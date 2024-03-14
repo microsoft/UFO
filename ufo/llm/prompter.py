@@ -3,14 +3,16 @@
 
 from typing import List
 import json
+import yaml
 
-def prompt_construction(system_prompt: str, image_list: List, user_prompt: str, include_last_screenshot=False):
+def prompt_construction(system_prompt: str, image_list: List, user_prompt: str, include_last_screenshot=False, is_visual=True) -> list[dict]:
     """
     Construct the prompt for GPT-4 Visual.
     :param system_prompt: The system prompt.
     :param image_list: The list of images.
     :param user_prompt: The user prompt.
     :param include_last_screenshot: Whether to include the last screenshot.
+    :param is_visual: Whether the request is for visual model.
     return: The prompt for GPT-4 Visual.
     """
     prompt_message = []
@@ -21,25 +23,28 @@ def prompt_construction(system_prompt: str, image_list: List, user_prompt: str, 
         }
         prompt_message.append(system_message)
 
-    screenshot_text = []
-    if include_last_screenshot:
-        screenshot_text += ["Screenshot for the last step:"]
-
-    screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
-
     user_content = []
 
-    for i, image in enumerate(image_list):
-        user_content.append({
-            "type": "text",
-            "text": screenshot_text[i]
-        })
-        user_content.append({
-            "type": "image_url",
-            "image_url": {
-                "url": image
-            }
-        })
+    if is_visual:
+        screenshot_text = []
+        if include_last_screenshot:
+            screenshot_text += ["Screenshot for the last step:"]
+
+        screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
+
+        
+
+        for i, image in enumerate(image_list):
+            user_content.append({
+                "type": "text",
+                "text": screenshot_text[i]
+            })
+            user_content.append({
+                "type": "image_url",
+                "image_url": {
+                    "url": image
+                }
+            })
 
     user_content.append({
         "type": "text",
@@ -50,6 +55,7 @@ def prompt_construction(system_prompt: str, image_list: List, user_prompt: str, 
     prompt_message.append(user_message)
 
     return prompt_message
+
 
 
 def system_prompt_construction(prompt_template: str, apis: str, examples: str) -> str:
@@ -63,7 +69,7 @@ def system_prompt_construction(prompt_template: str, apis: str, examples: str) -
     return prompt_template["system"].format(apis=apis, examples=examples)
 
 
-def user_prompt_construction(prompt_template: str, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str=""):
+def user_prompt_construction(prompt_template: str, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> str:
     """
     Construct the prompt for action selection.
     :param prompt_template: The template of the prompt.
@@ -80,7 +86,7 @@ def user_prompt_construction(prompt_template: str, request_history: list, action
 
 
 
-def retrived_documents_prompt_helper(header: str, separator: str, documents: list):
+def retrived_documents_prompt_helper(header: str, separator: str, documents: list) -> str:
     """
     Construct the prompt for retrieved documents.
     :param header: The header of the prompt.
@@ -127,7 +133,7 @@ def api_prompt_helper(apis: dict, verbose: int = 1) -> List[str]:
     return api_list
 
 
-def examples_prompt_helper(examples: dict, header: str = "## Response Examples", separator: str = "Example"):
+def examples_prompt_helper(examples: dict, header: str = "## Response Examples", separator: str = "Example") -> list[str]:
     """
     Construct the prompt for examples.
     :param examples: The examples.
@@ -143,5 +149,19 @@ def examples_prompt_helper(examples: dict, header: str = "## Response Examples",
             example_list.append(examples[key])
 
     return retrived_documents_prompt_helper(header, separator, example_list)
+
+
+
+def load_prompt(template_path: str, is_visual: bool) -> str:
+        """
+        Get the prompt.
+        path_template: The template of the prompt path.
+        is_visual: Whether to use the visual prompt.
+        return: The loaded prompt string.
+        """
+        path = template_path.format(mode = "visual" if is_visual else "nonvisual")
+        prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
+        
+        return prompt
 
     
