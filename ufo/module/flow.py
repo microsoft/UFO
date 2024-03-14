@@ -105,7 +105,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
 
         try:
-            response, cost = llm_call.get_gptv_completion(app_selection_prompt_message, configs["APP_AGENT_VISUAL_MODE"])
+            response_string, cost = llm_call.get_gptv_completion(app_selection_prompt_message, configs["APP_AGENT_VISUAL_MODE"])
 
         except Exception as e:
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
@@ -118,7 +118,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.cost += cost
 
         try:
-            response_string = response["choices"][0]["message"]["content"]
             response_json = json_parser(response_string)
 
             application_label = response_json["ControlLabel"]
@@ -249,7 +248,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
 
             try:
-                response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, configs["ACTION_AGENT_VISUAL_MODE"])
+                response_string, cost = llm_call.get_gptv_completion(action_selection_prompt_message, configs["ACTION_AGENT_VISUAL_MODE"])
             except Exception as e:
                 log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
                 print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
@@ -261,7 +260,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.cost += cost
 
             try:
-                response_string = response["choices"][0]["message"]["content"]
                 response_json = json_parser(response_string)
 
                 observation = response_json["Observation"]

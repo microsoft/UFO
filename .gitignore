@@ -12,6 +12,7 @@ __pycache__/
 
 # Ignore the config file
 ufo/config/config.yaml
+ufo/config/config_llm.yaml
 
 
 # Ignore the helper files

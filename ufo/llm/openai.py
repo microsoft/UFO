@@ -1,10 +1,13 @@
-
 import datetime
-from typing import Literal, Optional
-from ..config.config import load_config
+from typing import Any, Literal, Optional
+import openai
+from openai import AzureOpenAI, OpenAI
 
-configs = load_config()
-available_models = Literal[
+from ..config.config import load_llm_config
+
+configs = load_llm_config()
+
+available_models = Literal[ #for azure_ad
     "gpt-35-turbo-20220309",
     "gpt-35-turbo-16k-20230613",
     "gpt-35-turbo-20230613",
@@ -19,6 +22,92 @@ available_models = Literal[
     
     "gpt-4-visual-preview",
 ]
+
+
+class OpenAIService:
+    def __init__(self, config, is_visual: bool = True):
+        self.config = config
+        self.is_visual = is_visual
+        api_type = self.config["API_TYPE"].lower() if self.is_visual else self.config["API_TYPE_NON_VISUAL"].lower()
+        max_retry = self.config["MAX_RETRY"]
+        assert api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
+        self.client: OpenAI = (
+            OpenAI(
+                base_url=self.config["API_BASE" if self.is_visual else "API_BASE_NON_VISUAL"],
+                api_key=self.config["API_KEY" if self.is_visual else "API_KEY_NON_VISUAL"],
+                max_retries=max_retry,
+            )
+            if api_type == "openai"
+            else AzureOpenAI(
+                max_retries=max_retry,
+                api_version=self.config["API_VERSION" if self.is_visual else "API_VERSION_NON_VISUAL"],
+                azure_endpoint=self.config["API_BASE" if self.is_visual else "API_BASE_NON_VISUAL"],
+                api_key=(self.config["API_KEY" if self.is_visual else "API_KEY_NON_VISUAL"] if api_type == 'aoai' else get_openai_token()),
+            )
+        )
+        if (configs["API_TYPE"].lower() == "azure_ad" and self.is_visual) or (configs["API_TYPE_NON_VISUAL"].lower() == "azure_ad" and not self.is_visual):   
+            auto_refresh_token()
+
+    def chat_completion(
+        self,
+        messages,
+        stream: bool = False,
+        temperature: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        top_p: Optional[float] = None,
+        **kwargs: Any,
+    ):
+        model = self.config["API_MODEL" if self.is_visual else "API_MODEL_NON_VISUAL"]
+
+        temperature = temperature if temperature is not None else self.config["TEMPERATURE"]
+        max_tokens = max_tokens if max_tokens is not None else self.config["MAX_TOKENS"]
+        top_p = top_p if top_p is not None else self.config["TOP_P"]
+
+        try:
+            response: Any = self.client.chat.completions.create(
+                model=model,
+                messages=messages,  # type: ignore
+                temperature=temperature,
+                max_tokens=max_tokens,
+                top_p=top_p,
+                stream=stream,
+                **kwargs
+            )
+
+            usage = response.usage
+            prompt_tokens = usage.prompt_tokens
+            completion_tokens = usage.completion_tokens
+
+            cost = prompt_tokens / 1000 * 0.01 + completion_tokens / 1000 * 0.03
+
+            return response.choices[0].message.content, cost
+
+        except openai.APITimeoutError as e:
+            # Handle timeout error, e.g. retry or log
+            raise Exception(f"OpenAI API request timed out: {e}")
+        except openai.APIConnectionError as e:
+            # Handle connection error, e.g. check network or log
+            raise Exception(f"OpenAI API request failed to connect: {e}")
+        except openai.BadRequestError as e:
+            # Handle invalid request error, e.g. validate parameters or log
+            raise Exception(f"OpenAI API request was invalid: {e}")
+        except openai.AuthenticationError as e:
+            # Handle authentication error, e.g. check credentials or log
+            raise Exception(f"OpenAI API request was not authorized: {e}")
+        except openai.PermissionDeniedError as e:
+            # Handle permission error, e.g. check scope or log
+            raise Exception(f"OpenAI API request was not permitted: {e}")
+        except openai.RateLimitError as e:
+            # Handle rate limit error, e.g. wait or log
+            raise Exception(f"OpenAI API request exceeded rate limit: {e}")
+        except openai.APIError as e:
+            # Handle API error, e.g. retry or log
+            raise Exception(f"OpenAI API returned an API Error: {e}")
+
+
+    
+
+
 
 def get_openai_token(
     token_cache_file: str = 'apim-token-cache.bin',
@@ -126,7 +215,6 @@ def get_openai_token(
                 "Authentication failed for acquiring AAD token for your organization")
 
 
-
 def auto_refresh_token(
     token_cache_file: str = 'apim-token-cache.bin',
     interval: datetime.timedelta = datetime.timedelta(minutes=15),
@@ -158,7 +246,7 @@ def auto_refresh_token(
         import openai
 
         openai.api_type = "azure" if configs["API_TYPE"] == "azure_ad" else configs["API_TYPE"]
-        openai.base_url = configs["OPENAI_API_BASE"]
+        openai.base_url = configs["API_BASE"]
         openai.api_version = configs["API_VERSION"]
         openai.api_key = get_openai_token(
             token_cache_file=token_cache_file,
@@ -192,36 +280,3 @@ def auto_refresh_token(
 
     return stop
 
-def get_chat_completion(
-    model: available_models = None,
-    client_id: Optional[str] = None,
-    client_secret: Optional[str] = None,
-    *args,
-    **kwargs
-):
-    """
-    helper function for getting chat completion from your organization
-    """
-    import openai
-
-    model_name: str = \
-        model if model is not None else \
-        kwargs.get("engine") if kwargs.get("engine") is not None else \
-        None
-    
-    if "engine" in kwargs:
-        del kwargs["engine"]
-
-    client = openai.AzureOpenAI(
-        api_version=configs["API_VERSION"],
-        azure_endpoint=configs["OPENAI_API_BASE"],
-        azure_ad_token=get_openai_token(client_id=client_id, client_secret=client_secret),
-    )
-
-    response = client.chat.completions.create(
-        model=model_name,
-        *args,
-        **kwargs
-    )
- 
-    return response
