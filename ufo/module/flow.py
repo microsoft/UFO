@@ -13,7 +13,7 @@ from pywinauto.uia_defines import NoPatternInterfaceError
 from ..rag import retriever_factory
 from ..config.config import load_config
 from ..llm import llm_call
-from ..llm import prompt as prompter
+from ..llm import prompter
 from ..ui_control import control
 from ..ui_control import screenshot as screen
 from ..utils import (create_folder, encode_image_from_path,
