@@ -1,9 +1,5 @@
 version: 0.1
 
-## For Non-visual model
-APP_AGENT_VISUAL_MODE: True  # Whether to use the visual mode for the app agent
-ACTION_AGENT_VISUAL_MODE: True  # Whether to use the visual mode for the action agent
-
 BING_API_KEY: "YOUR_BING_SEARCH_API_KEY"  # The Bing search API key
 
 CONTROL_BACKEND: "uia"  # The backend for control action

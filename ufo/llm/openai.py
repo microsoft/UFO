@@ -22,8 +22,8 @@ available_models = Literal[ #for azure_ad
 
 
 class OpenAIService:
-    def __init__(self, config, index: int = 1, is_visual: bool = True):
-        self.config_llm = config["VISUAL" if is_visual else "NON_VISUAL"][index]
+    def __init__(self, config, agent_type: str, is_visual: bool = True):
+        self.config_llm = config[agent_type]["VISUAL" if is_visual else "NON_VISUAL"]
         self.config = config
         api_type = self.config_llm["API_TYPE"].lower()
         max_retry = self.config["MAX_RETRY"]
@@ -141,8 +141,8 @@ class OpenAIService:
         if os.path.exists(token_cache_file):
             cache.deserialize(open(token_cache_file, "r").read())
 
-        authority = "https://login.microsoftonline.com/" + self.config["AAD_TENANT_ID"]
-        api_scope_base = "api://" + self.config["AAD_API_SCOPE_BASE"]
+        authority = "https://login.microsoftonline.com/" + self.config_llm["AAD_TENANT_ID"]
+        api_scope_base = "api://" + self.config_llm["AAD_API_SCOPE_BASE"]
 
         if client_id is not None and client_secret is not None:
             app = msal.ConfidentialClientApplication(
@@ -163,9 +163,9 @@ class OpenAIService:
                 raise Exception(
                     "Authentication failed for acquiring AAD token for your organization")
 
-        scopes = [api_scope_base + "/" + self.config["AAD_API_SCOPE"]]
+        scopes = [api_scope_base + "/" + self.config_llm["AAD_API_SCOPE"]]
         app = msal.PublicClientApplication(
-            self.config["AAD_API_SCOPE_BASE"],
+            self.config_llm["AAD_API_SCOPE_BASE"],
             authority=authority,
             token_cache=cache
         )
