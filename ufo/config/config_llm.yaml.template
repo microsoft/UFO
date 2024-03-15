@@ -90,32 +90,3 @@ TOP_P: 0.0  # The top_p of the model: the lower the value, the more conservative
 
 
 
-
-VISUAL:
-  - NUM: 1 #The number of the visual model
-  - API_TYPE: "azure_ad"  # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.
-    API_BASE: "YOUR_ENDPOINT" # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the AAD, it should be your endpoints.
-    API_KEY: "YOUR_KEY"  # The OpenAI API key
-    API_VERSION: "2024-02-15-preview" # "2024-02-15-preview" by default
-    API_MODEL: "gpt-4-visual-preview"  # The only OpenAI model by now that accepts visual input
-### For Non-visual model
-NON_VISUAL:
-  - NUM: 1 ##The number of the non-visual model
-  - API_TYPE: "aoai"  # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
-    API_BASE: "YOUR_ENDPOINT"  # The OpenAI endpoint for non-visual model
-    API_KEY: "YOUR_KEY"  # The OpenAI API key for non-visual model
-    API_VERSION: "2024-02-15-preview" # "2024-02-15-preview" by default
-    API_MODEL: "gpt-4-visual-preview"  # The non-visual OpenAI model
-### For parameters
-MAX_TOKENS: 2000  # The max token limit for the response completion
-MAX_RETRY: 3  # The max retry limit for the response completion
-TEMPERATURE: 0.0  # The temperature of the model: the lower the value, the more consistent the output of the model
-TOP_P: 0.0  # The top_p of the model: the lower the value, the more conservative the output of the model
-
-### For AAD
-AAD_TENANT_ID: "YOUR_TENANT_ID" # Set the value to your tenant id for the llm model
-AAD_API_SCOPE: "YOUR_SCOPE" # Set the value to your scope for the llm model
-AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE
-
-
-
