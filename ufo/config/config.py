@@ -71,6 +71,9 @@ def update_api_base(configs, key):
             config["API_BASE"] = parse_aoai_base(config)
 
 def optimize_configs(configs):
+    if len(configs["VISUAL"]) != configs["VISUAL"][0]["NUM"]+1 or \
+        len(configs["NON_VISUAL"]) != configs["NON_VISUAL"][0]["NUM"]+1:
+            raise ValueError("Number of APIs does not match number of API listt")
     update_api_base(configs, 'VISUAL')
     update_api_base(configs, 'NON_VISUAL')
     

@@ -23,9 +23,6 @@ available_models = Literal[ #for azure_ad
 
 class OpenAIService:
     def __init__(self, config, index: int = 1, is_visual: bool = True):
-        if len(config["VISUAL" if is_visual else "NON_VISUAL"]) != \
-            config["VISUAL" if is_visual else "NON_VISUAL"][0]["NUM"]+1:
-            raise ValueError("Invalid number of models")
         self.config_llm = config["VISUAL" if is_visual else "NON_VISUAL"][index]
         self.config = config
         api_type = self.config_llm["API_TYPE"].lower()
