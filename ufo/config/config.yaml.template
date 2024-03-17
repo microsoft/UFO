@@ -68,3 +68,14 @@ RAG_OFFLINE_DOCS_RETRIEVED_TOPK: 1  # The topk for the offline retrieved documen
 RAG_ONLINE_SEARCH: False  # Whether to use the online search for the RAG.
 RAG_ONLINE_SEARCH_TOPK: 5  # The topk for the online search
 RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
+
+
+
+## For experience learning
+VISUAL_PROMPT = "ufo/prompts/experience/visual_experience_prompt.yaml"
+NON_VISUAL_PROMPT = "ufo/prompts/experience/nonvisual_experience_prompt.yaml"
+
+VISUAL_EXAMPLE_PROMPT = "ufo/prompts/experience/visual_experience_example_prompt.yaml"
+NON_VISUAL_EXAMPLE_PROMPT = "ufo/prompts/experience/nonvisual_experience_example_prompt.yaml"
+
+EXAMPLE_SAVED_PATH = "ufo/experience/replay/"

@@ -119,7 +119,8 @@ class LogLoader:
                         }
                     }
                     for local_step, step in enumerate(partition)
-                }
+                },
+                "application": list({self.response[step]["Application"] for step in partition})
             }
             self.logs.append(partitioned_logs)
         return self.logs

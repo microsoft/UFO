@@ -173,7 +173,6 @@ def parse_function_call(call):
 
 
 
-
 def atomic_execution(window, method_name:str, args:dict):
     """
     Atomic execution of the action on the control elements.

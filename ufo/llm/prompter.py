@@ -133,7 +133,7 @@ def api_prompt_helper(apis: dict, verbose: int = 1) -> List[str]:
     return api_list
 
 
-def examples_prompt_helper(examples: dict, header: str = "## Response Examples", separator: str = "Example") -> list[str]:
+def examples_prompt_helper(examples: dict, header: str = "## Response Examples", separator: str = "Example") -> str:
     """
     Construct the prompt for examples.
     :param examples: The examples.
@@ -163,5 +163,9 @@ def load_prompt(template_path: str, is_visual: bool) -> str:
         prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
         
         return prompt
+
+
+
+
 
     
