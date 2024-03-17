@@ -78,7 +78,6 @@ def main():
                 round=round), "magenta")
             print_with_color("{result}".format(result=result), "yellow")
 
-        session.set_round(round+1)
 
     # Print the total cost
     total_cost = session.get_cost()

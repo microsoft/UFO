@@ -137,8 +137,10 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             
             
             response_json["Step"] = self.step
+            response_json["Round"] = self.round
             response_json["ControlLabel"] = self.application
             response_json["Action"] = "set_focus()"
+            response_json["Request"] = self.request
             response_json["Agent"] = "AppAgent"
         
             
@@ -276,8 +278,10 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 self.status = response_json["Status"]
                 comment = response_json["Comment"]
                 response_json["Step"] = self.step
+                response_json["Round"] = self.round
                 response_json["Action"] = action
                 response_json["Agent"] = "ActAgent"
+                response_json["Request"] = self.request
                 response_json["Application"] = control.get_application_name(self.app_window)
 
 
@@ -310,6 +314,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             
             break
 
+        self.step += 1
+
         # The task is finish and no further action is needed
         if self.status.upper() == "FINISH" and function_call == "":
             self.status = self.status.upper()
@@ -317,7 +323,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             
             return
         
-        self.step += 1
+        
 
         if function_call:
         # Handle the case when the action is an image summary or switch app

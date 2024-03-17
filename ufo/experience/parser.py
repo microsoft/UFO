@@ -1,0 +1,178 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+import json
+import os
+import re
+from ..utils import encode_image_from_path
+
+
+class LogLoader:
+    """
+    Loading the logs from previous runs.
+    """
+
+    def __init__(self, log_path: str):
+        """
+        Initialize the LogLoader.
+        :param log_path: The path of the log file.
+        """
+        self.log_path = log_path
+        self.response = self.load_response_log()
+        self.max_stepnum = self.find_max_number_in_filenames()
+        self.request_partition = self.get_request_partition()
+        self.screenshots = {}
+        
+        self.logs = []
+
+
+    def load_response_log(self):
+        """
+        Load the response log.
+        :return: The response log.
+        """
+
+        response = []
+        response_log_path = os.path.join(self.log_path, "response.log")
+        with open(response_log_path, 'r', encoding='utf-8') as file:
+            # Read the lines and split them into a list
+            response_log = file.readlines()
+        for response_string in response_log:
+            response.append(json.loads(response_string))
+        return response
+    
+
+    def find_max_number_in_filenames(self) -> int:
+        """
+        Find the maximum number in the filenames.
+        :return: The maximum number in the filenames.
+        """
+
+        # Get the list of files in the folder
+        files = os.listdir(self.log_path)
+        
+        # Initialize an empty list to store extracted numbers
+        numbers = []
+        
+        # Iterate through each file
+        for file in files:
+            # Extract the number from the filename
+            number = extract_number(file)
+            if number is not None:
+                # Append the extracted number to the list
+                numbers.append(number)
+        
+        if numbers:
+            # Return the maximum number if numbers list is not empty
+            return max(numbers)
+        else:
+            # Return None if no numbers are found in filenames
+            return None
+    
+    
+    def load_screenshot(self, stepnum: int = 0, version: str = "") -> str:
+        """
+        Load the screenshot.
+        :param stepnum: The step number of the screenshot.
+        :param version: The version of the screenshot.
+        :return: The screenshot.
+        """
+
+        # create version tag
+        if version:
+            version_tag = "_" + version
+        else:
+            version_tag = ""
+
+        # Get the filename of the screenshot
+        filename = "action_step{stepnum}{version}.png".format(stepnum=stepnum, version=version_tag)
+        screenshot_path = os.path.join(self.log_path, filename)
+
+        # Check if the screenshot exists
+        if os.path.exists(screenshot_path):
+            image_url = encode_image_from_path(screenshot_path)
+        else:
+            image_url = None
+
+        return image_url
+    
+
+    def create_logs(self) -> list:
+        """
+        Create the response log.
+        :return: The response log.
+        """
+        self.logs = []
+        for partition in self.request_partition:
+            request = self.response[partition[0]]["Request"]
+            nround = self.response[partition[0]]["Round"]
+            partitioned_logs = {
+                "request": request,
+                "round": nround,
+                **{
+                    "step_%s" % step: {
+                        "response": self.response[step],
+                        "screenshot": {
+                            version: self.load_screenshot(step, "" if version == "raw" else version)
+                            for version in ["raw", "selected_controls"]
+                        }
+                    }
+                    for step in partition
+                }
+            }
+            self.logs.append(partitioned_logs)
+        return self.logs
+    
+    
+    def get_request_partition(self) -> list:
+        """
+        Partition the logs.
+        :return: The partitioned logs.
+        """
+        request_partition = []
+        current_round = 0
+        current_partition = []
+
+        for step in range(self.max_stepnum):
+            nround = self.response[step]["Round"]
+            
+            if nround != current_round:
+                if current_partition:
+                    request_partition.append(current_partition)
+                current_partition = [step]
+                current_round = nround
+            else:
+                current_partition.append(step)
+
+        if current_partition:
+            request_partition.append(current_partition)
+
+        return request_partition
+
+
+
+def extract_number(filename):
+    # Define a regular expression pattern to extract numbers
+    pattern = r'action_step(\d+)\.png'
+    # Use re.search to find the matching pattern in the filename
+    match = re.search(pattern, filename)
+    if match:
+        # Return the extracted number as an integer
+        return int(match.group(1))
+    else:
+        # Return None if no match is found
+        return None
+
+
+
+def extract_number(filename):
+    # Define a regular expression pattern to extract numbers
+    pattern = r'action_step(\d+)\.png'
+    # Use re.search to find the matching pattern in the filename
+    match = re.search(pattern, filename)
+    if match:
+        # Return the extracted number as an integer
+        return int(match.group(1))
+    else:
+        # Return None if no match is found
+        return None
