@@ -94,8 +94,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
         if self.allow_openapp:
-            self.app_selection_prompt = yaml.safe_load(open(configs["APP_SELECTION_PROMPT_OPENAPP_ENABLED"], "r", encoding="utf-8"))
-            self.app_selection_example_prompt = yaml.safe_load(open(configs["APP_SELECTION_EXAMPLE_PROMPT_OPENAPP_ENABLED"], "r", encoding="utf-8"))
+            self.app_selection_prompt = prompter.load_prompt(configs["APP_SELECTION_PROMPT_OPENAPP_ENABLED"], configs["APP_AGENT_VISUAL_MODE"])
+            self.app_selection_example_prompt = prompter.load_prompt(configs["APP_SELECTION_EXAMPLE_PROMPT_OPENAPP_ENABLED"], configs["APP_AGENT_VISUAL_MODE"])
         app_example_prompt = prompter.examples_prompt_helper(self.app_selection_example_prompt)
         api_prompt = prompter.api_prompt_helper(self.app_selection_api_prompt, verbose=0)
 
@@ -255,8 +255,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 img_path_list += [screenshot_save_path, annotated_screenshot_save_path]
 
             if self.allow_openapp:
-                self.action_selection_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_PROMPT_OPENAPP_ENABLED"], "r", encoding="utf-8"))
-                self.action_selection_example_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_EXAMPLE_PROMPT_OPENAPP_ENABLED"], "r", encoding="utf-8"))            
+                self.action_selection_prompt = prompter.load_prompt(configs["ACTION_SELECTION_PROMPT_OPENAPP_ENABLED"], configs["ACTION_AGENT_VISUAL_MODE"])
+                self.action_selection_example_prompt = prompter.load_prompt(configs["ACTION_SELECTION_EXAMPLE_PROMPT_OPENAPP_ENABLED"], configs["ACTION_AGENT_VISUAL_MODE"])           
             action_example_prompt = prompter.examples_prompt_helper(self.action_selection_example_prompt)
             api_prompt = prompter.api_prompt_helper(self.action_selection_api_prompt, verbose=1)
 
