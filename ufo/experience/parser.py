@@ -112,12 +112,13 @@ class LogLoader:
                 **{
                     "step_%s" % step: {
                         "response": self.response[step],
+                        "is_first_action": local_step == 1,
                         "screenshot": {
                             version: self.load_screenshot(step, "" if version == "raw" else version)
                             for version in ["raw", "selected_controls"]
                         }
                     }
-                    for step in partition
+                    for local_step, step in enumerate(partition)
                 }
             }
             self.logs.append(partitioned_logs)
@@ -148,7 +149,6 @@ class LogLoader:
             request_partition.append(current_partition)
 
         return request_partition
-
 
 
 def extract_number(filename):
