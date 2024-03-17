@@ -6,7 +6,7 @@ import psutil
 import time
 
 from pywinauto import Desktop
-
+import pygetwindow as gw
 from ..config.config import load_config
 from ..utils import find_desktop_path, print_with_color
 
@@ -38,7 +38,7 @@ class AppMappings:
         "powerpnt": ["POWERPNT.EXE", "powerpnt"],
         "winword": ["WINWORD.EXE", "winword"],
         "outlook": ["OUTLOOK.EXE", "outlook"],
-        "explorer": ["explorer.exe", "explorer"],
+        "explorer": ["explorer.exe"],
         "notepad": ["notepad.exe", "notepad"],
         "msteams:": ["Teams.exe", "teams", "msteams"],
         "ms-todo:": ["Todo.exe", "todo", "ms-todo"],
@@ -80,7 +80,8 @@ class OpenFile:
         """
         self.APP = args["APP"]
         self.file_path = args.get("file_path", "")
-        if self.check_open_status():
+        self.check_open_status()
+        if self.openstatus:
             if self.file_path == "":
                 return True
             else:
@@ -90,11 +91,15 @@ class OpenFile:
             if "Desktop" in self.file_path:
                 desktop_path = find_desktop_path()
                 self.file_path = self.file_path.replace("Desktop", desktop_path)
-            code_snippet = f"import os\nos.system('start {self.APP} \"{self.file_path}\"')"
+            if self.file_path == "":
+                code_snippet = f"import os\nos.system('start {self.APP}')"
+            else:
+                code_snippet = f"import os\nos.system('start {self.APP} \"{self.file_path}\"')"
             code_snippet = code_snippet.replace("\\", "\\\\")
             try:
                 exec(code_snippet, globals())
-                return self.check_open_status()
+                time.sleep(3)
+                return True
 
             except Exception as e:
                 print_with_color(f"An error occurred: {e}", "red")
@@ -102,19 +107,21 @@ class OpenFile:
         else:
             print_with_color(f"Third party APP: {self.APP} is not supported yet.", "green")
             return False
-        
+
     def check_open_status(self) -> bool:
         """
         Check the open status of the file.
         :return: The open status of the file.
         """
+        if self.APP == "explorer":
+            self.openstatus = False
         app_map = AppMappings()
         likely_process_names = app_map.get_process_names(self.APP.lower())
         for proc in psutil.process_iter(['name']):
             if proc.info['name'] in likely_process_names:
                 self.openstatus = True
-                return self.openstatus
-        return self.openstatus
+                return
+        self.openstatus = False
     
 
     def is_file_open_in_app(self) -> bool:

@@ -59,7 +59,6 @@ def system_prompt_construction(prompt_template: str, apis: str, examples: str) -
     :param examples: The examples.
     return: The prompt for app selection.
     """
-
     return prompt_template["system"].format(apis=apis, examples=examples)
 
 

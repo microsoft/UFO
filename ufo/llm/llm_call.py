@@ -102,7 +102,8 @@ def get_gptv_completion(messages):
                 continue
             if error_code == "BadRequest":
                 print_with_color(f"Bad Request, please retry", "green")
-                break
+                time.sleep(15)
+                continue
             print_with_color(f"Error making API request: {e}", "red")
             try:
                 print_with_color(response_json, "red")

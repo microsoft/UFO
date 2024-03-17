@@ -91,7 +91,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
         if self.allow_openapp:
-            self.app_selection_prompt = yaml.safe_load(open(configs["APP_SELECTION_PROMPT_OPEN"], "r", encoding="utf-8"))
+            self.app_selection_prompt = yaml.safe_load(open(configs["APP_SELECTION_PROMPT_OPENAPP_ENABLED"], "r", encoding="utf-8"))
+            self.app_selection_example_prompt = yaml.safe_load(open(configs["APP_SELECTION_EXAMPLE_PROMPT_OPENAPP_ENABLED"], "r", encoding="utf-8"))
         app_example_prompt = prompter.examples_prompt_helper(self.app_selection_example_prompt)
         api_prompt = prompter.api_prompt_helper(self.api_prompt, verbose=0)
 
@@ -142,33 +143,29 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         
             
 
-            if "FINISH" in self.status.upper() or self.application == "":
+            if "FINISH" in self.status.upper() or self.application == "" and AppsToOpen is None:
                 self.status = "FINISH"
                 response_json["Application"] = ""
                 response_json = self.set_result_and_log("", response_json)
                 return
             app_window = None
-            # if gpt did not use open app function
             if AppsToOpen is not None:
-                # if open app is not allowed, finished section.
                 file_manager = openfile.OpenFile()
                 results = file_manager.execute_code(AppsToOpen)
-                # reset the desktop_windows_dict
+
                 APP_name = AppsToOpen["APP"]
                 time.sleep(5)
-                # wait for loading the app
                 desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
                 if not results:
                     self.status = "ERROR in openning the application or file."
                     return
-            if AppsToOpen is not None:
+            if AppsToOpen is None:
                 app_window = desktop_windows_dict[application_label]
             else:
                 # find app window by the name of app through mappings
                 app_window = control.find_window_by_app_name(desktop_windows_dict, APP_name)
             response_json["Application"] = control.get_application_name(app_window)
             response_json = self.set_result_and_log("", response_json)
-
             try:
                 app_window.is_normal()
             # Handle the case when the window interface is not available
@@ -253,7 +250,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 img_path_list += [screenshot_save_path, annotated_screenshot_save_path]
 
             if self.allow_openapp:
-                self.action_selection_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_PROMPT_OPEN"], "r", encoding="utf-8"))
+                self.action_selection_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_PROMPT_OPENAPP_ENABLED"], "r", encoding="utf-8"))
+                self.action_selection_example_prompt = yaml.safe_load(open(configs["ACTION_SELECTION_EXAMPLE_PROMPT_OPENAPP_ENABLED"], "r", encoding="utf-8"))            
             action_example_prompt = prompter.examples_prompt_helper(self.action_selection_example_prompt)
             api_prompt = prompter.api_prompt_helper(self.api_prompt, verbose=1)
 

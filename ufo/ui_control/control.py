@@ -55,7 +55,7 @@ def find_window_by_app_name(desktop_windows_dict, app_name):
         return None
     # Search through the windows for a title match
     for window_id, window_wrapper in desktop_windows_dict.items():
-        if title_pattern in window_wrapper.window_text():
+        if title_pattern in window_wrapper.window_text() or 'Home' in window_wrapper.window_text() and title_pattern == "Explorer":
             return window_wrapper
     print("Window not found.")
     return None
