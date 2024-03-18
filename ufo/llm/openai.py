@@ -22,8 +22,8 @@ available_models = Literal[ #for azure_ad
 
 
 class OpenAIService:
-    def __init__(self, config, agent_type: str, is_visual: bool = True):
-        self.config_llm = config[agent_type]["VISUAL" if is_visual else "NON_VISUAL"]
+    def __init__(self, config, agent_type: str):
+        self.config_llm = config[agent_type]
         self.config = config
         api_type = self.config_llm["API_TYPE"].lower()
         max_retry = self.config["MAX_RETRY"]
@@ -33,10 +33,12 @@ class OpenAIService:
                 base_url=self.config_llm["API_BASE"],
                 api_key=self.config_llm["API_KEY"],
                 max_retries=max_retry,
+                timeout=self.config["TIMEOUT"],
             )
             if api_type == "openai"
             else AzureOpenAI(
                 max_retries=max_retry,
+                timeout=self.config["TIMEOUT"],
                 api_version=self.config_llm["API_VERSION"],
                 azure_endpoint=self.config_llm["API_BASE"],
                 api_key=(self.config_llm["API_KEY"] if api_type == 'aoai' else self.get_openai_token()),

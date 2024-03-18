@@ -37,22 +37,20 @@ def load_config(config_path="ufo/config/"):
     return optimize_configs(configs)
 
 
-def update_api_base(configs, agent, key):
-    if configs[agent][key]["API_TYPE"].lower() == "aoai":
-        if 'deployments' not in configs[agent][key]["API_BASE"]:
-            configs[agent][key]["API_BASE"] = "{endpoint}/openai/deployments/{deployment_name}/chat/completions?api-version={api_version}".format(
-                    endpoint=configs[agent][key]["API_BASE"][:-1] if configs[agent][key]["API_BASE"].endswith(
-                        "/") else configs[agent][key]["API_BASE"],
-                    deployment_name=configs[agent][key]["API_MODEL"],
-                    api_version=configs[agent][key]["API_VERSION"]
+def update_api_base(configs, agent):
+    if configs[agent]["API_TYPE"].lower() == "aoai":
+        if 'deployments' not in configs[agent]["API_BASE"]:
+            configs[agent]["API_BASE"] = "{endpoint}/openai/deployments/{deployment_name}/chat/completions?api-version={api_version}".format(
+                    endpoint=configs[agent]["API_BASE"][:-1] if configs[agent]["API_BASE"].endswith(
+                        "/") else configs[agent]["API_BASE"],
+                    deployment_name=configs[agent]["API_MODEL"],
+                    api_version=configs[agent]["API_VERSION"]
             )
         
 
 def optimize_configs(configs):
-    update_api_base(configs,'APP_AGENT', 'VISUAL')
-    update_api_base(configs,'APP_AGENT', 'NON_VISUAL')
-    update_api_base(configs, 'ACTION_AGENT', 'VISUAL')
-    update_api_base(configs, 'ACTION_AGENT', 'NON_VISUAL')
+    update_api_base(configs,'APP_AGENT')
+    update_api_base(configs,'ACTION_AGENT')
     
     return configs
 
