@@ -55,4 +55,32 @@ class ExperienceSummarizer:
         """
         response = get_gptv_completion(prompt, self.is_visual)
 
-        return prompt
+        return response
+    
+
+    def get_summary_list(self, logs: list) -> list:
+        """
+        """
+        summaries = []
+        for log in logs:
+            prompt = self.build_prompt(log)
+            summary = self.get_summary(prompt)
+            summaries.append(summary)
+
+        self.update_ymal(summaries, "path")
+        self.update_verctor_db(summaries, "path")
+        return summaries
+    
+
+    @staticmethod
+    def update_ymal(summaries: list, yaml_path: str):
+        """
+        """
+        pass
+
+
+    @staticmethod
+    def update_verctor_db(summaries: list, db_path: str):
+        """
+        """
+        pass
