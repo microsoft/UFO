@@ -91,12 +91,25 @@ class ApplicationAgentPrompter(BasicPrompter):
 
 
     def examples_prompt_helper(self, header: str = "## Response Examples", separator: str = "Example") -> str:
+        """
+        Construct the prompt for examples.
+        :param examples: The examples.
+        :param header: The header of the prompt.
+        :param separator: The separator of the prompt.
+        return: The prompt for examples.
+        """
         
+        template = """
+        [User Request]:
+            {request}
+        [Response]:
+            {response}"""
         example_list = []
 
         for key in self.example_prompt_template.keys():
             if key.startswith("example"):
-                example_list.append(self.example_prompt_template[key])
+                example = template.format(request=self.example_prompt_template[key]["Request"], response=json.dumps(self.example_prompt_template[key]["Response"]))
+                example_list.append(example)
 
         return self.retrived_documents_prompt_helper(header, separator, example_list)
 
@@ -219,12 +232,26 @@ class ActionAgentPrompter(BasicPrompter):
         
     
     def examples_prompt_helper(self, header: str = "## Response Examples", separator: str = "Example") -> str:
+        """
+        Construct the prompt for examples.
+        :param examples: The examples.
+        :param header: The header of the prompt.
+        :param separator: The separator of the prompt.
+        return: The prompt for examples.
+        """
+        
+        template = """
+        [User Request]:
+            {request}
+        [Response]:
+            {response}"""
         
         example_list = []
 
         for key in self.example_prompt_template.keys():
             if key.startswith("example"):
-                example_list.append(self.example_prompt_template[key])
+                example = template.format(request=self.example_prompt_template[key]["Request"], response=json.dumps(self.example_prompt_template[key]["Response"]))
+                example_list.append(example)
 
         return self.retrived_documents_prompt_helper(header, separator, example_list)
 

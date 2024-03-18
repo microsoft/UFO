@@ -58,11 +58,12 @@ class Session(object):
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
 
-        
-
-        print_with_color("""Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction. 
+        welcome_text = """
+Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction. 
 {art}
-Please enter your request to be completed🛸: """.format(art=text2art("UFO")), "cyan")
+Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
+
+        print_with_color(welcome_text, "cyan")
         
         self.request = input()
         self.request_history = []
