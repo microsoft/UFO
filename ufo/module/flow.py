@@ -5,7 +5,6 @@ import logging
 import os
 import time
 import json
-import yaml
 
 from art import text2art
 from pywinauto.uia_defines import NoPatternInterfaceError
@@ -13,7 +12,7 @@ from pywinauto.uia_defines import NoPatternInterfaceError
 from ..rag import retriever_factory
 from ..config.config import load_config
 from ..llm import llm_call
-from ..llm import prompter
+from ..prompter.agent_prompter import ApplicationAgentPrompter, ActionAgentPrompter
 from ..ui_control import control
 from ..ui_control import screenshot as screen
 from ..utils import (create_folder, encode_image_from_path,
@@ -46,15 +45,8 @@ class Session(object):
         self.logger = initialize_logger(self.log_path, "response.log")
         self.request_logger = initialize_logger(self.log_path, "request.log")
 
-        self.app_selection_prompt = prompter.load_prompt(configs["APP_SELECTION_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
-        self.action_selection_prompt = prompter.load_prompt(configs["ACTION_SELECTION_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
-
-        self.app_selection_example_prompt = prompter.load_prompt(configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
-        self.action_selection_example_prompt = prompter.load_prompt(configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
-
-        self.app_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
-        self.action_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
-
+        self.app_selection_prompter = ApplicationAgentPrompter(configs["APP_AGENT_VISUAL_MODE"], configs["APP_SELECTION_PROMPT"], configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        self.act_selection_prompter = ActionAgentPrompter(configs["ACTION_AGENT_VISUAL_MODE"], configs["ACTION_SELECTION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
 
         self.status = "APP_SELECTION"
         self.application = ""
@@ -93,13 +85,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
 
-        app_example_prompt = prompter.examples_prompt_helper(self.app_selection_example_prompt)
-        api_prompt = prompter.api_prompt_helper(self.app_selection_api_prompt, verbose=0)
 
-        app_selection_prompt_system_message = prompter.system_prompt_construction(self.app_selection_prompt, api_prompt, app_example_prompt)
-        app_selection_prompt_user_message = prompter.user_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request)
+        app_selection_prompt_system_message = self.app_selection_prompter.system_prompt_construction()
+        app_selection_prompt_user_message = self.app_selection_prompter.user_content_construction([desktop_screen_url], self.request_history, self.action_history, 
+                                                                                                  desktop_windows_info, self.plan, self.request)
         
-        app_selection_prompt_message = prompter.prompt_construction(app_selection_prompt_system_message, [desktop_screen_url], app_selection_prompt_user_message, False, configs["APP_AGENT_VISUAL_MODE"])
+        app_selection_prompt_message = self.app_selection_prompter.prompt_construction(app_selection_prompt_system_message, app_selection_prompt_user_message)
 
         
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
@@ -144,7 +135,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             response_json["Agent"] = "AppAgent"
         
             
-
             if "FINISH" in self.status.upper() or self.application == "":
                 self.status = "FINISH"
                 response_json["Application"] = ""
@@ -239,15 +229,14 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 screenshot_annotated_url = encode_image_from_path(annotated_screenshot_save_path)
                 image_url += [screenshot_url, screenshot_annotated_url]
 
-            action_example_prompt = prompter.examples_prompt_helper(self.action_selection_example_prompt)
-            api_prompt = prompter.api_prompt_helper(self.action_selection_api_prompt, verbose=1)
 
-            action_selection_prompt_system_message = prompter.system_prompt_construction(self.action_selection_prompt, api_prompt, action_example_prompt)
-            action_selection_prompt_user_message = prompter.user_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request, self.rag_prompt())
+            action_selection_prompt_system_message = self.act_selection_prompter.system_prompt_construction()
+            action_selection_prompt_user_message = self.act_selection_prompter.user_content_construction(image_url, self.request_history, self.action_history, 
+                                                                                                         control_info, self.plan, self.request, self.rag_prompt(), configs["INCLUDE_LAST_SCREENSHOT"])
             
-            action_selection_prompt_message = prompter.prompt_construction(action_selection_prompt_system_message, image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"], configs["ACTION_AGENT_VISUAL_MODE"])
-            
-            
+            action_selection_prompt_message = self.act_selection_prompter.prompt_construction(action_selection_prompt_system_message, action_selection_prompt_user_message)
+
+    
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
 
             try:
@@ -363,12 +352,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         retrieved_docs = ""
         if self.offline_doc_retriever:
             offline_docs = self.offline_doc_retriever.retrieve("How to {query} for {app}".format(query=self.request, app=self.application), configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], filter=None)
-            offline_docs_prompt = prompter.retrived_documents_prompt_helper("Help Documents", "Document", [doc.metadata["text"] for doc in offline_docs])
+            offline_docs_prompt = self.act_selection_prompter.retrived_documents_prompt_helper("Help Documents", "Document", [doc.metadata["text"] for doc in offline_docs])
             retrieved_docs += offline_docs_prompt
 
         if self.online_doc_retriever:
             online_search_docs = self.online_doc_retriever.retrieve(self.request, configs["RAG_ONLINE_RETRIEVED_TOPK"], filter=None)
-            online_docs_prompt = prompter.retrived_documents_prompt_helper("Online Search Results", "Search Result", [doc.page_content for doc in online_search_docs])
+            online_docs_prompt = self.act_selection_prompter.retrived_documents_prompt_helper("Online Search Results", "Search Result", [doc.page_content for doc in online_search_docs])
             retrieved_docs += online_docs_prompt
 
         return retrieved_docs

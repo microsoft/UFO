@@ -57,7 +57,7 @@ class LogLoader:
         # Iterate through each file
         for file in files:
             # Extract the number from the filename
-            number = extract_number(file)
+            number = self.extract_number(file)
             if number is not None:
                 # Append the extracted number to the list
                 numbers.append(number)
@@ -152,28 +152,22 @@ class LogLoader:
         return request_partition
 
 
-def extract_number(filename):
-    # Define a regular expression pattern to extract numbers
-    pattern = r'action_step(\d+)\.png'
-    # Use re.search to find the matching pattern in the filename
-    match = re.search(pattern, filename)
-    if match:
-        # Return the extracted number as an integer
-        return int(match.group(1))
-    else:
-        # Return None if no match is found
-        return None
+    @staticmethod
+    def extract_number(filename : str) -> int:
+        """
+        Extract the number from the filename.
+        :param filename: The filename.
+        :return: The number extracted from the filename.
+        """
 
+        # Define a regular expression pattern to extract numbers
+        pattern = r'action_step(\d+)\.png'
+        # Use re.search to find the matching pattern in the filename
+        match = re.search(pattern, filename)
+        if match:
+            # Return the extracted number as an integer
+            return int(match.group(1))
+        else:
+            # Return None if no match is found
+            return None
 
-
-def extract_number(filename):
-    # Define a regular expression pattern to extract numbers
-    pattern = r'action_step(\d+)\.png'
-    # Use re.search to find the matching pattern in the filename
-    match = re.search(pattern, filename)
-    if match:
-        # Return the extracted number as an integer
-        return int(match.group(1))
-    else:
-        # Return None if no match is found
-        return None

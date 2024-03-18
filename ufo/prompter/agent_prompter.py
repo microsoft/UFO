@@ -1,0 +1,256 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+from .basic import BasicPrompter
+import json
+from typing import List
+
+
+class ApplicationAgentPrompter(BasicPrompter):
+    """
+    The ApplicationAgentPrompter class is the prompter for the application agent.
+    """
+
+    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str):
+        """
+        Initialize the ApplicationAgentPrompter.
+        :param is_visual: Whether the request is for visual model.
+        :param prompt_template: The path of the prompt template.
+        :param example_prompt_template: The path of the example prompt template.
+        :param api_prompt_template: The path of the api prompt template.
+        """
+        super().__init__(is_visual, prompt_template, example_prompt_template)
+        self.api_prompt_template = self.load_prompt_template(api_prompt_template)
+
+
+    def system_prompt_construction(self) -> str:
+        """
+        Construct the prompt for app selection.
+        return: The prompt for app selection.
+        """
+
+        apis = self.api_prompt_helper(verbose = 0)
+        examples = self.examples_prompt_helper()     
+
+        return self.prompt_template["system"].format(apis=apis, examples=examples)
+    
+
+
+    def user_prompt_construction(self, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> str:
+        """
+        Construct the prompt for action selection.
+        :param action_history: The action history.
+        :param control_item: The control item.
+        :param user_request: The user request.
+        :param retrieved_docs: The retrieved documents.
+        return: The prompt for action selection.
+        """
+        prompt = self.prompt_template["user"].format(action_history=json.dumps(action_history), request_history=json.dumps(request_history), 
+                                            control_item=json.dumps(control_item), prev_plan=prev_plan, user_request=user_request, retrieved_docs=retrieved_docs)
+        
+        return prompt
+    
+
+
+    def user_content_construction(self, image_list: List, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> list[dict]:
+        """
+        Construct the prompt for LLMs.
+        :param image_list: The list of images.
+        :param action_history: The action history.
+        :param control_item: The control item.
+        :param user_request: The user request.
+        :param retrieved_docs: The retrieved documents.
+        return: The prompt for LLMs.
+        """
+
+        user_content = []
+
+
+        if self.is_visual:
+            screenshot_text = ["Current Screenshots:"]
+        
+            for i, image in enumerate(image_list):
+                user_content.append({
+                    "type": "text",
+                    "text": screenshot_text[i]
+                })
+                user_content.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": image
+                    }
+                })
+
+        user_content.append({
+            "type": "text",
+            "text": self.user_prompt_construction(request_history, action_history, control_item, prev_plan, user_request, retrieved_docs)
+        })
+
+        return user_content
+    
+
+
+    def examples_prompt_helper(self, header: str = "## Response Examples", separator: str = "Example") -> str:
+        
+        example_list = []
+
+        for key in self.example_prompt_template.keys():
+            if key.startswith("example"):
+                example_list.append(self.example_prompt_template[key])
+
+        return self.retrived_documents_prompt_helper(header, separator, example_list)
+
+
+
+    def api_prompt_helper(self, verbose: int = 1) -> List[str]:
+        """
+        Construct the prompt for APIs.
+        :param apis: The APIs.
+        :param verbose: The verbosity level.
+        return: The prompt for APIs.
+        """
+
+        # Construct the prompt for APIs
+        api_list = ["- The action type are limited to {actions}.".format(actions=list(self.api_prompt_template.keys()))]
+        
+        # Construct the prompt for each API
+        for key in self.api_prompt_template.keys():
+            api = self.api_prompt_template[key]
+            if verbose > 0:
+                api_text = "{summary}\n{usage}".format(summary=api["summary"], usage=api["usage"])
+            else:
+                api_text = api["summary"]
+                
+            api_list.append(api_text)
+
+        api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
+            
+        return api_prompt
+    
+
+
+class ActionAgentPrompter(BasicPrompter):
+    """
+    The ActionAgentPrompter class is the prompter for the action agent.
+    """
+
+    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str):
+        """
+        Initialize the ApplicationAgentPrompter.
+        :param is_visual: Whether the request is for visual model.
+        :param prompt_template: The path of the prompt template.
+        :param example_prompt_template: The path of the example prompt template.
+        :param api_prompt_template: The path of the api prompt template.
+        """
+        super().__init__(is_visual, prompt_template, example_prompt_template)
+        self.api_prompt_template = self.load_prompt_template(api_prompt_template)
+
+
+    def system_prompt_construction(self) -> str:
+        """
+        Construct the prompt for app selection.
+        return: The prompt for app selection.
+        """
+
+        apis = self.api_prompt_helper(verbose = 1)
+        examples = self.examples_prompt_helper()     
+
+        return self.prompt_template["system"].format(apis=apis, examples=examples)
+    
+
+
+    def user_prompt_construction(self, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> str:
+        """
+        Construct the prompt for action selection.
+        :param prompt_template: The template of the prompt.
+        :param action_history: The action history.
+        :param control_item: The control item.
+        :param user_request: The user request.
+        :param retrieved_docs: The retrieved documents.
+        return: The prompt for action selection.
+        """
+        prompt = self.prompt_template["user"].format(action_history=json.dumps(action_history), request_history=json.dumps(request_history), 
+                                            control_item=json.dumps(control_item), prev_plan=prev_plan, user_request=user_request, retrieved_docs=retrieved_docs)
+        
+        return prompt
+    
+
+
+    def user_content_construction(self, image_list: list, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="", include_last_screenshot: bool=True) -> list[dict]:
+        """
+        Construct the prompt for LLMs.
+        :param image_list: The list of images.
+        :param action_history: The action history.
+        :param control_item: The control item.
+        :param user_request: The user request.
+        :param retrieved_docs: The retrieved documents.
+        return: The prompt for LLMs.
+        """
+
+        user_content = []
+
+
+        if self.is_visual:
+
+            screenshot_text = []
+            if include_last_screenshot:
+                screenshot_text += ["Screenshot for the last step:"]
+
+                screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
+        
+            for i, image in enumerate(image_list):
+                user_content.append({
+                    "type": "text",
+                    "text": screenshot_text[i]
+                })
+                user_content.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": image
+                    }
+                })
+
+        user_content.append({
+            "type": "text",
+            "text": self.user_prompt_construction(request_history, action_history, control_item, prev_plan, user_request, retrieved_docs)
+        })
+
+        return user_content
+        
+    
+    def examples_prompt_helper(self, header: str = "## Response Examples", separator: str = "Example") -> str:
+        
+        example_list = []
+
+        for key in self.example_prompt_template.keys():
+            if key.startswith("example"):
+                example_list.append(self.example_prompt_template[key])
+
+        return self.retrived_documents_prompt_helper(header, separator, example_list)
+
+
+    def api_prompt_helper(self, verbose: int = 1) -> List[str]:
+        """
+        Construct the prompt for APIs.
+        :param apis: The APIs.
+        :param verbose: The verbosity level.
+        return: The prompt for APIs.
+        """
+
+        # Construct the prompt for APIs
+        api_list = ["- The action type are limited to {actions}.".format(actions=list(self.api_prompt_template.keys()))]
+        
+        # Construct the prompt for each API
+        for key in self.api_prompt_template.keys():
+            api = self.api_prompt_template[key]
+            if verbose > 0:
+                api_text = "{summary}\n{usage}".format(summary=api["summary"], usage=api["usage"])
+            else:
+                api_text = api["summary"]
+                
+            api_list.append(api_text)
+
+        api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
+            
+        return api_prompt
+    

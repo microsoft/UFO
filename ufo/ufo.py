@@ -36,7 +36,7 @@ def main():
 
         round = session.get_round()
         
-        if round > 0:
+        if status == "FINISH":
             session.set_new_round()
             status = session.get_status()
             if status == "ALLFINISH":
