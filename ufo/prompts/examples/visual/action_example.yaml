@@ -25,6 +25,9 @@ example1:
       (4) Click the Send button to send the email.
     Comment: |-
       After I click the New Email button, the New Email window will be opened and available for composing the email.
+  Tips: |-
+    1. Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
+    2. You need to draft the content of the email and send it to the receiver. 
 
 
 example2: 
@@ -53,6 +56,9 @@ example2:
       (5) Click the Send button to send the email.
     Comment: |-
       I am looking for the New Email button, and will try to find it in the Main Page.
+  Tips: |-
+    1. Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
+    2. Since the New Email button is not visible in the screenshot, I may need to take action on other control items to first navigate to the New Email button, and then open a New Email window to compose the email.
 
 
 
@@ -78,6 +84,8 @@ example3:
       (1) Click the Send button to send the message. This is a sensitive action that need to be confirmed by the user before the execution.
     Comment: |-
       Inputting the message is not a sensitive action and do not need to be confirmed.
+  Tips: |-
+    1. Sending a message is a sensitive action and need to be confirmed.
 
 
 
@@ -100,7 +108,7 @@ example4:
         Dear Amy,
 
         I hope this message finds you well. I am writing to ask how you feel about the new project. Let me know if you have any concerns.
-        
+
         Best regards,
         [Sender's Name]
     Status: |-
@@ -109,7 +117,10 @@ example4:
       <FINISH>
     Comment: |-
       I revised the previous plan base on the screenshot since I observe that New Email window has already opened and the title of email has already been inputted. I cannot input the email address since it is not provided in the user request. Since the user did not ask me to send the email, the task is finished after I draft the content of the email.
-   
+  Tips: |-
+    1. Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
+    2. You need to draft the content of the email and send it to the receiver. Use polite language when drafting the email.
+
 
 example5:
   Request: |-
@@ -133,6 +144,8 @@ example5:
       <FINISH>
     Comment: |-
       I searched for the word 'UFO' in the document successfully. The user should view the search result.
+  Tips: |-
+    1. If there are steps already taken (e.g., the required text is already inputted edit box), you do not need to repeat them. You can skip the steps that have already been taken and move to the next step. 
 
 
 example6:
@@ -161,7 +174,9 @@ example6:
       (6) Click the Send button to send the message. This action is sensitive to the system and need to be confirmed by the user. I need to confirm the action before clicking the Send button. If the user confirms the action, the task is finished.
     Comment: |-
       The partial tasks on 'framework.docx' is completed once I take the current action. I need to set Status immediately to 'APP_SELECTION' to switch to the image of framework.png to complete the next task.
-
+  Tips: |-
+    1. In Word application, the main canva is a Document control, and the text of the document can be extracted by using the 'GetText' action.
+    2. After extracting the text of the document, I need to set the status as 'APP_SELECTION' immediately to switch to the image of framework.png to complete the next task.
 
 
 example7:
@@ -191,6 +206,9 @@ example7:
       (6) Once 'Remove All Presentation Notes' is visible, I should click it to remove all notes in the presentation.pptx file. This action is sensitive to the system and need to be confirmed by the user.
     Comment: |-
       I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
+  Tips: |-
+    1. The 'Remove All Presentation Notes' function is the fastest way to remove all notes in the presentation.pptx file. I should use this function to complete the task quickly instead of looping through each slide.
+    2. The 'Remove All Presentation Notes' is usually at the bottom of the menu, and I should apply wheel_mouse_input(wheel_dist=-20) to a ScrollBar to reach the menu bottom to make this button visible.
 
 
 example8:
@@ -217,6 +235,9 @@ example8:
       (3) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
     Comment: |-
       I plan to use Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
+  Tips: |-
+    1. The search box is usually in a type of ComboBox.
+    2. The number of stars of a Github repo page can be found in the repo page visually.
 
 
 example9: 
@@ -246,6 +267,9 @@ example9:
       (6) Close the details view by clicking the 'Dismiss detail view' botton.
     Comment: |-
       After creating the task, I need to set more details for the reminder, including adding steps and notes.
+  Tips: |-
+    1. You need to add more details for the task, including adding steps and notes.
+    2. You need to add each step one by one and add notes to the task.
 
 
 
@@ -273,6 +297,9 @@ example10:
         (3) Click the 'Send' buttom to send the request to Copilot. This completes the task.
       Comment: |-
         I need use the Copilot Add-in to create a slide from the meeting_notes.docx.
+  Tips: |-
+    1. The Copilot Add-in can directly create a slide from the meeting_notes.docx. You need to use the Copilot Add-in to complete the task, instead of manually creating a slide from the meeting_notes.docx.
+    2. The Copilot Add-in is visible in the screenshot, and I need to double click it to open the Copilot Add-in.
 
 
 example11: 
@@ -298,5 +325,7 @@ example11:
       (2) Input '@Zac, please revise the presentation1.pptx.' in the comment text box.
     Comment: |-
       I need to leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx.
+  Tips: |-
+    1. The comment text box is usually opened by clicking the Comment button.
 
 

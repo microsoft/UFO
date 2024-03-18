@@ -14,6 +14,7 @@ def load_config(config_path="ufo/config/config.yaml"):
     :return: Merged configuration from environment variables and YAML file.
     """
     # Copy environment variables to avoid modifying them directly
+    os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Suppress TensorFlow warnings
     configs = dict(os.environ)
 
     try:

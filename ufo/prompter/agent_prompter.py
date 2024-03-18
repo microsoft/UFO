@@ -3,7 +3,6 @@
 
 from .basic import BasicPrompter
 import json
-from typing import List
 
 
 class ApplicationAgentPrompter(BasicPrompter):
@@ -52,7 +51,7 @@ class ApplicationAgentPrompter(BasicPrompter):
     
 
 
-    def user_content_construction(self, image_list: List, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> list[dict]:
+    def user_content_construction(self, image_list: list, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> list[dict]:
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.
@@ -108,14 +107,14 @@ class ApplicationAgentPrompter(BasicPrompter):
 
         for key in self.example_prompt_template.keys():
             if key.startswith("example"):
-                example = template.format(request=self.example_prompt_template[key]["Request"], response=json.dumps(self.example_prompt_template[key]["Response"]))
+                example = template.format(request=self.example_prompt_template[key].get("Request"), response=json.dumps(self.example_prompt_template[key].get("Response")))
                 example_list.append(example)
 
         return self.retrived_documents_prompt_helper(header, separator, example_list)
 
 
 
-    def api_prompt_helper(self, verbose: int = 1) -> List[str]:
+    def api_prompt_helper(self, verbose: int = 1) -> str:
         """
         Construct the prompt for APIs.
         :param apis: The APIs.
@@ -250,13 +249,13 @@ class ActionAgentPrompter(BasicPrompter):
 
         for key in self.example_prompt_template.keys():
             if key.startswith("example"):
-                example = template.format(request=self.example_prompt_template[key]["Request"], response=json.dumps(self.example_prompt_template[key]["Response"]))
+                example = template.format(request=self.example_prompt_template[key].get("Request"), response=json.dumps(self.example_prompt_template[key].get("Response")))
                 example_list.append(example)
 
         return self.retrived_documents_prompt_helper(header, separator, example_list)
 
 
-    def api_prompt_helper(self, verbose: int = 1) -> List[str]:
+    def api_prompt_helper(self, verbose: int = 1) -> str:
         """
         Construct the prompt for APIs.
         :param apis: The APIs.

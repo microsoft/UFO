@@ -21,7 +21,7 @@ from ..utils import (create_folder, encode_image_from_path,
 
 configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
 
 
 
@@ -105,7 +105,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.request_logger.info(log)
             self.status = "ERROR"
             return
-
 
         self.cost += cost
 

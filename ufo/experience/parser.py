@@ -109,8 +109,9 @@ class LogLoader:
             partitioned_logs = {
                 "request": request,
                 "round": nround,
+                "step_num": len(partition),
                 **{
-                    "step_%s" % step: {
+                    "step_%s" % local_step: {
                         "response": self.response[step],
                         "is_first_action": local_step == 1,
                         "screenshot": {

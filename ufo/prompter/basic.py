@@ -71,7 +71,7 @@ class BasicPrompter(ABC):
 
         return prompt_message
     
-    
+
     @staticmethod
     def retrived_documents_prompt_helper(header: str, separator: str, documents: list) -> str:
         """
@@ -100,7 +100,7 @@ class BasicPrompter(ABC):
 
         pass
     
-
+    
     @abstractmethod
     def user_prompt_construction(self) -> str:
 
@@ -117,7 +117,7 @@ class BasicPrompter(ABC):
         
         pass
 
-
+    
     def api_prompt_helper(self) -> str:
         
         pass
