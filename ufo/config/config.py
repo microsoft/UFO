@@ -43,9 +43,10 @@ def update_api_base(configs, agent):
             configs[agent]["API_BASE"] = "{endpoint}/openai/deployments/{deployment_name}/chat/completions?api-version={api_version}".format(
                     endpoint=configs[agent]["API_BASE"][:-1] if configs[agent]["API_BASE"].endswith(
                         "/") else configs[agent]["API_BASE"],
-                    deployment_name=configs[agent]["API_MODEL"],
+                    deployment_name=configs[agent]["API_DEPLOYMENT_ID"],
                     api_version=configs[agent]["API_VERSION"]
             )
+        configs[agent]["API_MODEL"] = configs[agent]["API_DEPLOYMENT_ID"]
         
 
 def optimize_configs(configs):
