@@ -45,8 +45,8 @@ class Session(object):
         self.logger = initialize_logger(self.log_path, "response.log")
         self.request_logger = initialize_logger(self.log_path, "request.log")
 
-        self.app_selection_prompter = ApplicationAgentPrompter(configs["APP_AGENT_VISUAL_MODE"], configs["APP_SELECTION_PROMPT"], configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
-        self.act_selection_prompter = ActionAgentPrompter(configs["ACTION_AGENT_VISUAL_MODE"], configs["ACTION_SELECTION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        self.app_selection_prompter = ApplicationAgentPrompter(configs["APP_AGENT"]["VISUAL_MODE"], configs["APP_SELECTION_PROMPT"], configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        self.act_selection_prompter = ActionAgentPrompter(configs["ACTION_AGENT"]["VISUAL_MODE"], configs["ACTION_SELECTION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
 
         self.status = "APP_SELECTION"
         self.application = ""
@@ -97,7 +97,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
 
         try:
-            response, cost = llm_call.get_gptv_completion(app_selection_prompt_message, configs["APP_AGENT_VISUAL_MODE"])
+            response_string, cost = llm_call.get_completion(app_selection_prompt_message, "APP", use_backup_engine=True)
 
         except Exception as e:
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
@@ -109,7 +109,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         self.cost += cost
 
         try:
-            response_string = response["choices"][0]["message"]["content"]
             response_json = json_parser(response_string)
 
             application_label = response_json["ControlLabel"]
@@ -240,7 +239,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
 
             try:
-                response, cost = llm_call.get_gptv_completion(action_selection_prompt_message, configs["ACTION_AGENT_VISUAL_MODE"])
+                response_string, cost = llm_call.get_completion(action_selection_prompt_message, "ACTION", use_backup_engine=True)
             except Exception as e:
                 log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
                 print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
@@ -252,7 +251,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.cost += cost
 
             try:
-                response_string = response["choices"][0]["message"]["content"]
                 response_json = json_parser(response_string)
 
                 observation = response_json["Observation"]
