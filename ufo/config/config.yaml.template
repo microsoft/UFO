@@ -33,6 +33,11 @@ ACTION_SELECTION_PROMPT: "ufo/prompts/base/{mode}/action_selection.yaml"  # The 
 APP_SELECTION_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/app_example.yaml"  # The prompt for the app selection
 ACTION_SELECTION_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/action_example.yaml"  # The prompt for the action selection
 
+
+## For experience learning
+EXPERIENCE_PROMPT: "ufo/prompts/experience/{mode}/experience_summary.yaml"
+EXPERIENCE_SAVED_PATH: "vectordb/experience/"
+
 API_PROMPT: "ufo/prompts/base/{mode}/api.yaml"  # The prompt for the API
 INPUT_TEXT_API: "type_keys" # The input text API
 INPUT_TEXT_ENTER: True # whether to press enter after typing the text
@@ -49,12 +54,6 @@ RAG_ONLINE_SEARCH_TOPK: 5  # The topk for the online search
 RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
 
 
-
-## For experience learning
-VISUAL_PROMPT = "ufo/prompts/experience/visual_experience_prompt.yaml"
-NON_VISUAL_PROMPT = "ufo/prompts/experience/nonvisual_experience_prompt.yaml"
-
-VISUAL_EXAMPLE_PROMPT = "ufo/prompts/experience/visual_experience_example_prompt.yaml"
-NON_VISUAL_EXAMPLE_PROMPT = "ufo/prompts/experience/nonvisual_experience_example_prompt.yaml"
-
-EXAMPLE_SAVED_PATH = "ufo/experience/replay/"
+## RAG Configuration for experience
+RAG_EXPERIENCE: True  # Whether to use the offline RAG.
+RAG_EXPERIENCE_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
