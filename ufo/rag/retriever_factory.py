@@ -59,8 +59,8 @@ class OfflineDocRetriever(Retriever):
         :appname: The name of the application.
         """
         self.app_name = app_name
-        self.indexer_path = self.get_offline_indexer_path()
-        self.indexer = self.get_indexer()
+        indexer_path = self.get_offline_indexer_path()
+        self.indexer = self.get_indexer(indexer_path)
 
 
     def get_offline_indexer_path(self):
@@ -93,7 +93,7 @@ class OfflineDocRetriever(Retriever):
             db = FAISS.load_local(path, embeddings)
             return db
         except:
-            print_with_color("Error: Failed to load offline indexer from {path}.".format(path=path), "red")
+            print_with_color("Warning: Failed to load offline indexer from {path}.".format(path=path), "yellow")
             return None
 
 
@@ -117,13 +117,12 @@ class ExperienceRetriever(Retriever):
         :param query: The query to create an indexer for.
         """
 
-
         try:
             embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
             db = FAISS.load_local(db_path, embeddings)
             return db
         except:
-            print_with_color("Error: Failed to load experience indexer from {path}.".format(path=db_path), "red")
+            print_with_color("Warning: Failed to load experience indexer from {path}.".format(path=db_path), "yellow")
             return None
 
 

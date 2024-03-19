@@ -19,6 +19,7 @@ ufo/config/config_llm.yaml
 ufo/rag/app_docs/*
 learner/records.json
 vectordb/docs/*
+vectordb/experience/*
 
 # Don't ignore the example files
 !vectordb/docs/example/

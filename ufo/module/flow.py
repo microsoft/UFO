@@ -375,14 +375,13 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         :return: The retrieved examples and tips string.
         """
         
-        if self.experience_retriever:
-            # Retrieve experience examples. Only retrieve the examples that are related to the current application.
-            
-            experience_docs = self.experience_retriever.retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"], 
-                                                                 filter=lambda x: self.app_root.lower() in [app.lower() for app in x["app_list"]])
+        # Retrieve experience examples. Only retrieve the examples that are related to the current application.
+        experience_docs = self.experience_retriever.retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"], 
+                                                                filter=lambda x: self.app_root.lower() in [app.lower() for app in x["app_list"]])
+        
+        if experience_docs:
             examples = [doc.metadata.get("example", {}) for doc in experience_docs]
             tips = [doc.metadata.get("Tips", "") for doc in experience_docs]
-
         else:
             examples = []
             tips = []

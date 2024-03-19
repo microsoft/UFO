@@ -1,23 +1,22 @@
 example0:
   example:
-    Observation: The screenshot shows the Microsoft To Do application with the task
-      list visible. There is an option to add a new task, but no task related to learning
-      LLM is listed yet.
-    Thought: To fulfill the user's request, I need to add a new task titled 'Learn
-      LLM' using the 'Add a task' option.
+    Observation: The current screenshot shows that I am on the Microsoft To Do application.
+      The application is open and there is an edit block at the bottom for inputting
+      the task.
+    Thought: "I need to add a task of 'Learning LLM' to the edit block of 'Add a task\
+      \ in \u201CMy Day\u201D'."
     ControlLabel: '19'
     ControlText: "Add a task in \u201CMy Day\u201D"
     Function: set_edit_text
     Args:
-      text: Learn LLM
+      text: Learning LLM
     Status: FINISH
     Plan: <FINISH>
-    Comment: After setting the text for the new task, the task creation process is
-      complete.
-  Tips: '1. Ensure the task title is clear and specific to the learning goal.
+    Comment: After inputting the task, no further action is required as the user only
+      requested the creation of a to-do item.
+  Tips: '- Ensure the task description is clear and concise.
 
-    2. After creating the task, consider adding specific steps or details to help
-    organize the learning process.'
-  request: create a to do for learning LLM.
+    - After adding the task, you can set a reminder or due date if needed.'
+  request: Create 1 to do for learning LLM.
   app_list:
   - ApplicationFrameHost.exe
