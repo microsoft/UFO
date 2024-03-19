@@ -40,6 +40,8 @@ def main():
             session.set_new_round()
             status = session.get_status()
             if status == "ALLFINISH":
+                if session.experience_asker():
+                    session.experience_saver()
                 break
 
         while status.upper() not in ["FINISH", "ERROR"] and step <= configs["MAX_STEP"]:

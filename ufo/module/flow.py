@@ -8,6 +8,7 @@ import json
 
 from art import text2art
 from pywinauto.uia_defines import NoPatternInterfaceError
+from ..experience.summarizer import ExperienceSummarizer
 
 from ..rag import retriever_factory
 from ..config.config import load_config
@@ -311,7 +312,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             return
         
         
-
         if function_call:
         # Handle the case when the action is an image summary or switch app
             if function_call.lower() == "summary":
@@ -359,6 +359,37 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             retrieved_docs += online_docs_prompt
 
         return retrieved_docs
+    
+
+
+    def experience_asker(self):
+        print_with_color("""Would you like to save the current conversation flow for future reference by the agent?
+[Y] for yes, any other key for no.""", "cyan")
+        
+        self.request = input()
+
+        if self.request.upper() == "Y":
+            return True
+        else:
+            return False
+        
+
+    def experience_saver(self):
+        """
+        Save the current agent experience.
+        """
+        print_with_color("Summarizing and saving the execution flow as experience...", "yellow")
+        
+        summarizer = ExperienceSummarizer(configs["ACTION_AGENT"]["VISUAL_MODE"], configs["EXPERIENCE_PROMPT"], configs["EXAMPLE_PROMPT_TEMPLATE"], configs["API_PROMPT"])
+        experience = summarizer.read_logs(self.log_path)
+        summaries, total_cost = summarizer.get_summary_list(experience)
+
+
+        summarizer.create_or_update_yaml(summaries, os.path.join(self.log_path, "yaml/experience.yaml"))
+        summarizer.create_or_update_yaml(summaries, os.path.join(self.log_path, "experience_db"))
+
+        self.cost += total_cost
+        print_with_color("The experience has been saved.", "cyan")
 
 
     def set_new_round(self):
