@@ -5,6 +5,7 @@ import ast
 import time
 import warnings
 from typing import List
+import pyautogui
 
 from pywinauto import Desktop
 
@@ -183,18 +184,22 @@ def execution(window, method_name:str, args:dict):
     :return: The result of the action.
     """
     if method_name == "set_edit_text":
-        if configs["INPUT_TEXT_API"] == "type_keys":
-            method_name = "type_keys"
-            args = {"keys": args["text"], "pause": 0.1, "with_spaces": True}
-
-    try:
-        method = getattr(window, method_name)
-        result = method(**args)
-        return result
-    except AttributeError:
-        return f"{window} doesn't have a method named {method_name}"
-    except Exception as e:
-        return f"An error occurred: {e}"
+        pyautogui.write(args["text"])
+        #if configs["INPUT_TEXT_API"] == "type_keys":
+            #method_name = "type_keys"
+            #args = {"keys": args["text"], "pause": 0.1, "with_spaces": True}
+    else:
+        try:
+            print("window:", window, "method_name", method_name)
+            method = getattr(window, method_name)
+            print("method", method)
+            result = method(**args)
+            print("result", result)
+            return result
+        except AttributeError:
+            return f"{window} doesn't have a method named {method_name}"
+        except Exception as e:
+            return f"An error occurred: {e}"
     
 
 
