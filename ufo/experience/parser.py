@@ -155,7 +155,7 @@ class ExperienceLogLoader:
 
     
     @staticmethod
-    def get_user_request(log_partition: dict):
+    def get_user_request(log_partition: dict) -> str: 
         """
         Get the user request.
         :param log_partition: The log partition.
@@ -166,7 +166,7 @@ class ExperienceLogLoader:
 
 
     @staticmethod
-    def get_app_list(log_partition: dict):
+    def get_app_list(log_partition: dict) -> list:
         """
         Get the user request.
         :param log_partition: The log partition.
