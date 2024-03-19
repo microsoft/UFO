@@ -168,6 +168,9 @@ class ActionAgentPrompter(BasicPrompter):
         examples = self.examples_prompt_helper(additional_examples=additional_examples)
         tips_prompt = "\n".join(tips)
 
+        # Remove empty lines
+        tips_prompt = '\n'.join(filter(None, tips_prompt.split('\n')))
+
         return self.prompt_template["system"].format(apis=apis, examples=examples, tips=tips_prompt)
     
 
@@ -282,29 +285,4 @@ class ActionAgentPrompter(BasicPrompter):
         api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
             
         return api_prompt
-    
-
-    def tips_prompt_helper(self, verbose: int = 1) -> str:
-        """
-        Construct the prompt for tips.
-        :param verbose: The verbosity level.
-        return: The prompt for tips.
-        """
-
-        # Construct the prompt for tips
-        tips_list = ["- The action type are limited to {actions}.".format(actions=list(self.api_prompt_template.keys()))]
-        
-        # Construct the prompt for each tip
-        for key in self.api_prompt_template.keys():
-            api = self.api_prompt_template[key]
-            if verbose > 0:
-                api_text = "{summary}\n{usage}".format(summary=api["summary"], usage=api["usage"])
-            else:
-                api_text = api["summary"]
-                
-            tips_list.append(api_text)
-
-        tips_prompt = self.retrived_documents_prompt_helper("", "", tips_list)
-            
-        return tips_prompt
     
