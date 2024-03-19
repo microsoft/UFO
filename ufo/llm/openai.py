@@ -104,8 +104,6 @@ class OpenAIService:
             raise Exception(f"OpenAI API returned an API Error: {e}")
 
 
-    
-
 
 
     def get_openai_token(

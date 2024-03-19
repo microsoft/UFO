@@ -4,7 +4,7 @@
 
 from .parser import LogLoader
 from ..prompter.experience_prompter import ExperiencePrompter
-from ..llm.llm_call import get_gptv_completion
+from ..llm.llm_call import get_completion
 
 
 class ExperienceSummarizer:
@@ -53,7 +53,7 @@ class ExperienceSummarizer:
     def get_summary(self, prompt: str) -> str:
         """
         """
-        response = get_gptv_completion(prompt, self.is_visual)
+        response = get_completion(prompt, self.is_visual)
 
         return response
     
