@@ -151,16 +151,17 @@ def examples_prompt_helper(examples: dict, header: str = "## Response Examples",
 
 
 
-def load_prompt(template_path: str, is_visual: bool) -> str:
-        """
-        Get the prompt.
-        path_template: The template of the prompt path.
-        is_visual: Whether to use the visual prompt.
-        return: The loaded prompt string.
-        """
-        path = template_path.format(mode = "visual" if is_visual else "nonvisual")
-        prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
-        
-        return prompt
-
+def load_prompt(template_path: str, is_visual: bool, openapp: bool) -> str:
+    """
+    Get the prompt.
+    path_template: The template of the prompt path.
+    is_visual: Whether to use the visual prompt.
+    openapp: Whether to enable openapp.
+    return: The loaded prompt string.
+    """
+    base_prompt_config_without_extension = template_path[:-5]  # Remove the last 5 characters, assuming it ends with ".yaml"
+    openapp_suffix = "_openapp_enabled" if openapp else ""
+    path = f"{base_prompt_config_without_extension.format(mode="visual" if is_visual else "nonvisual")}{openapp_suffix}.yaml"
+    prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
+    return prompt
     

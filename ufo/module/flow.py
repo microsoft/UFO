@@ -45,15 +45,16 @@ class Session(object):
         create_folder(self.log_path)
         self.logger = initialize_logger(self.log_path, "response.log")
         self.request_logger = initialize_logger(self.log_path, "request.log")
+        self.allow_openapp = configs["ALLOW_OPENAPP"]
 
-        self.app_selection_prompt = prompter.load_prompt(configs["APP_SELECTION_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
-        self.action_selection_prompt = prompter.load_prompt(configs["ACTION_SELECTION_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
+        self.app_selection_prompt = prompter.load_prompt(configs["APP_SELECTION_PROMPT"], configs["APP_AGENT_VISUAL_MODE"], self.allow_openapp)
+        self.action_selection_prompt = prompter.load_prompt(configs["ACTION_SELECTION_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"], self.allow_openapp)
 
-        self.app_selection_example_prompt = prompter.load_prompt(configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
-        self.action_selection_example_prompt = prompter.load_prompt(configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
+        self.app_selection_example_prompt = prompter.load_prompt(configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["APP_AGENT_VISUAL_MODE"], self.allow_openapp)
+        self.action_selection_example_prompt = prompter.load_prompt(configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"], self.allow_openapp)
 
-        self.app_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["APP_AGENT_VISUAL_MODE"])
-        self.action_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"])
+        self.app_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["APP_AGENT_VISUAL_MODE"], False)
+        self.action_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["ACTION_AGENT_VISUAL_MODE"], False)
 
 
         self.status = "APP_SELECTION"
@@ -65,7 +66,7 @@ class Session(object):
         self.cost = 0
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
-        self.allow_openapp = configs["ALLOW_OPENAPP"]
+        
 
         
 
@@ -93,9 +94,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.results = ""
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
-        if self.allow_openapp:
-            self.app_selection_prompt = prompter.load_prompt(configs["APP_SELECTION_PROMPT_OPENAPP_ENABLED"], configs["APP_AGENT_VISUAL_MODE"])
-            self.app_selection_example_prompt = prompter.load_prompt(configs["APP_SELECTION_EXAMPLE_PROMPT_OPENAPP_ENABLED"], configs["APP_AGENT_VISUAL_MODE"])
         app_example_prompt = prompter.examples_prompt_helper(self.app_selection_example_prompt)
         api_prompt = prompter.api_prompt_helper(self.app_selection_api_prompt, verbose=0)
 
@@ -154,6 +152,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 response_json = self.set_result_and_log("", response_json)
                 return
             app_window = None
+            print(AppsToOpen)
             if AppsToOpen is not None:
                 file_manager = openfile.OpenFile()
                 results = file_manager.execute_code(AppsToOpen)
@@ -220,7 +219,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         concat_screenshot_save_path = self.log_path + f"action_step{self.step}_concat.png"
         control_screenshot_save_path = self.log_path + f"action_step{self.step}_selected_controls.png"
 
-        # img_path_list is added for handel error 400
+        # img_path_list is added for handle error 400
         img_path_list = []
         if BACKEND == "uia" and self.app_window != None:
             control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
@@ -253,10 +252,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 screenshot_annotated_url = encode_image_from_path(annotated_screenshot_save_path)
                 image_url += [screenshot_url, screenshot_annotated_url]
                 img_path_list += [screenshot_save_path, annotated_screenshot_save_path]
-
-            if self.allow_openapp:
-                self.action_selection_prompt = prompter.load_prompt(configs["ACTION_SELECTION_PROMPT_OPENAPP_ENABLED"], configs["ACTION_AGENT_VISUAL_MODE"])
-                self.action_selection_example_prompt = prompter.load_prompt(configs["ACTION_SELECTION_EXAMPLE_PROMPT_OPENAPP_ENABLED"], configs["ACTION_AGENT_VISUAL_MODE"])           
             action_example_prompt = prompter.examples_prompt_helper(self.action_selection_example_prompt)
             api_prompt = prompter.api_prompt_helper(self.action_selection_api_prompt, verbose=1)
 

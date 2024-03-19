@@ -115,6 +115,7 @@ class OpenFile:
         """
         if self.APP == "explorer":
             self.openstatus = False
+            return
         app_map = AppMappings()
         likely_process_names = app_map.get_process_names(self.APP.lower())
         for proc in psutil.process_iter(['name']):
@@ -144,7 +145,3 @@ class OpenFile:
     def open_third_party_APP(self, args: dict) -> bool:
         # TODO: open third party app
         pass
-
-# taskweaver, litellm type_key, set text/get text function do judgement.
-        
-    
