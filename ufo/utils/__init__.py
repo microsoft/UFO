@@ -175,6 +175,18 @@ def revise_line_breaks(args: dict):
 
     return args
 
+def find_desktop_path() -> Optional[str]:
+    # Check if OneDrive desktop is used
+    onedrive_path = os.environ.get('OneDrive')
+    if onedrive_path:
+        onedrive_desktop = os.path.join(onedrive_path, 'Desktop')
+        if os.path.exists(onedrive_desktop):
+            return onedrive_desktop
+    # Fallback to the local user desktop
+    local_desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
+    if os.path.exists(local_desktop):
+        return local_desktop
+    return None
 
 
     

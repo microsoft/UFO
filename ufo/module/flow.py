@@ -14,7 +14,7 @@ from ..rag import retriever_factory
 from ..config.config import load_config
 from ..llm import llm_call
 from ..llm import prompter
-from ..ui_control import control
+from ..ui_control import control, openfile
 from ..ui_control import screenshot as screen
 from ..utils import (create_folder, encode_image_from_path,
                      generate_function_call, json_parser, print_with_color,
@@ -45,15 +45,16 @@ class Session(object):
         create_folder(self.log_path)
         self.logger = initialize_logger(self.log_path, "response.log")
         self.request_logger = initialize_logger(self.log_path, "request.log")
+        self.allow_openapp = configs["ALLOW_OPENAPP"]
 
-        self.app_selection_prompt = prompter.load_prompt(configs["APP_SELECTION_PROMPT"], configs["APP_AGENT"]["VISUAL_MODE"])
-        self.action_selection_prompt = prompter.load_prompt(configs["ACTION_SELECTION_PROMPT"], configs["ACTION_AGENT"]["VISUAL_MODE"])
+        self.app_selection_prompt = prompter.load_prompt(configs["APP_SELECTION_PROMPT"], configs["APP_AGENT"]["VISUAL_MODE"], self.allow_openapp)
+        self.action_selection_prompt = prompter.load_prompt(configs["ACTION_SELECTION_PROMPT"], configs["ACTION_AGENT"]["VISUAL_MODE"], self.allow_openapp)
 
-        self.app_selection_example_prompt = prompter.load_prompt(configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["APP_AGENT"]["VISUAL_MODE"])
-        self.action_selection_example_prompt = prompter.load_prompt(configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["ACTION_AGENT"]["VISUAL_MODE"])
+        self.app_selection_example_prompt = prompter.load_prompt(configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["APP_AGENT"]["VISUAL_MODE"], self.allow_openapp)
+        self.action_selection_example_prompt = prompter.load_prompt(configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["ACTION_AGENT"]["VISUAL_MODE"], self.allow_openapp)
 
-        self.app_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["APP_AGENT"]["VISUAL_MODE"])
-        self.action_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["ACTION_AGENT"]["VISUAL_MODE"])
+        self.app_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["APP_AGENT"]["VISUAL_MODE"], False)
+        self.action_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["ACTION_AGENT"]["VISUAL_MODE"], False)
 
 
         self.status = "APP_SELECTION"
@@ -65,6 +66,7 @@ class Session(object):
         self.cost = 0
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
+        
 
         
 
@@ -92,7 +94,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         self.results = ""
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
-
         app_example_prompt = prompter.examples_prompt_helper(self.app_selection_example_prompt)
         api_prompt = prompter.api_prompt_helper(self.app_selection_api_prompt, verbose=0)
 
@@ -103,11 +104,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
-
+        image_path_list = [desktop_save_path]
         try:
             response_string, cost = llm_call.get_completion(app_selection_prompt_message, "APP", use_backup_engine=True)
 
         except Exception as e:
+            print_with_color(e, 'red')
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
             print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
             self.request_logger.info(log)
@@ -119,7 +121,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         try:
             response_json = json_parser(response_string)
-
             application_label = response_json["ControlLabel"]
             self.application = response_json["ControlText"]
             observation = response_json["Observation"]
@@ -127,6 +128,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.plan = response_json["Plan"]
             self.status = response_json["Status"]
             comment = response_json["Comment"]
+            # "AppsToOpen": {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}
+            AppsToOpen = response_json.get("AppsToOpen", None)
 
             print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
             print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
@@ -142,20 +145,32 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         
             
 
-            if "FINISH" in self.status.upper() or self.application == "":
+            if "FINISH" in self.status.upper() or self.application == "" and AppsToOpen is None:
                 self.status = "FINISH"
                 response_json["Application"] = ""
                 response_json = self.set_result_and_log("", response_json)
                 return
-                
-            app_window = desktop_windows_dict[application_label]
+            app_window = None
+            print(AppsToOpen)
+            if AppsToOpen is not None:
+                file_manager = openfile.OpenFile()
+                results = file_manager.execute_code(AppsToOpen)
 
+                APP_name = AppsToOpen["APP"]
+                time.sleep(5)
+                desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
+                if not results:
+                    self.status = "ERROR in openning the application or file."
+                    return
+            if AppsToOpen is None:
+                app_window = desktop_windows_dict[application_label]
+            else:
+                # find app window by the name of app through mappings
+                app_window = control.find_window_by_app_name(desktop_windows_dict, APP_name)
             response_json["Application"] = control.get_application_name(app_window)
             response_json = self.set_result_and_log("", response_json)
-
             try:
                 app_window.is_normal()
-
             # Handle the case when the window interface is not available
             except NoPatternInterfaceError as e:
                 self.error_logger(response_string, str(e))
@@ -165,8 +180,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             
             self.status = "CONTINUE"
             self.app_window = app_window
-
-            self.app_window.set_focus()
+            if self.app_window:
+                self.app_window.set_focus()
 
             if configs["RAG_OFFLINE_DOCS"]:
                 print_with_color("Loading offline document indexer for {app}...".format(app=self.application), "magenta")
@@ -197,16 +212,15 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         header: The headers of the request.
         return: The outcome, the application window, and the action log.
         """
-
         print_with_color("Step {step}: Taking an action on application {application}.".format(step=self.step, application=self.application), "magenta")
         screenshot_save_path = self.log_path + f"action_step{self.step}.png"
         annotated_screenshot_save_path = self.log_path + f"action_step{self.step}_annotated.png"
         concat_screenshot_save_path = self.log_path + f"action_step{self.step}_concat.png"
         control_screenshot_save_path = self.log_path + f"action_step{self.step}_selected_controls.png"
 
-
-
-        if BACKEND == "uia":
+        # img_path_list is added for handle error 400
+        img_path_list = []
+        if BACKEND == "uia" and self.app_window != None:
             control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
         else:
             control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
@@ -227,15 +241,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 last_screenshot_save_path = self.log_path + f"action_step{self.step - 1}.png"
                 last_control_screenshot_save_path = self.log_path + f"action_step{self.step - 1}_selected_controls.png"
                 image_url += [encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
-
+                img_path_list += [last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path]
             if configs["CONCAT_SCREENSHOT"]:
                 screen.concat_images_left_right(screenshot_save_path, annotated_screenshot_save_path, concat_screenshot_save_path)
                 image_url += [encode_image_from_path(concat_screenshot_save_path)]
+                img_path_list += [concat_screenshot_save_path]
             else:
                 screenshot_url = encode_image_from_path(screenshot_save_path)
                 screenshot_annotated_url = encode_image_from_path(annotated_screenshot_save_path)
                 image_url += [screenshot_url, screenshot_annotated_url]
-
+                img_path_list += [screenshot_save_path, annotated_screenshot_save_path]
             action_example_prompt = prompter.examples_prompt_helper(self.action_selection_example_prompt)
             api_prompt = prompter.api_prompt_helper(self.action_selection_api_prompt, verbose=1)
 
@@ -246,7 +261,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             
             
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
-
             try:
                 response_string, cost = llm_call.get_completion(action_selection_prompt_message, "ACTION", use_backup_engine=True)
             except Exception as e:
@@ -304,10 +318,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 if "control_labels" in args:
                     selected_controls_labels = args["control_labels"]
                     control_list = [annotation_dict[str(label)] for label in selected_controls_labels]
+                    # print_with_color("Control_list: {control}".format(control=control_list), "red")
                 continue
             
             break
-
+        
         # The task is finish and no further action is needed
         if self.status.upper() == "FINISH" and function_call == "":
             self.status = self.status.upper()
@@ -328,13 +343,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         
         # Action needed.
         control_selected = annotation_dict.get(control_label, self.app_window)
-        # print_with_color("Actual control name: {name}".format(name=control_selected.element_info.name), "magenta")
         control_selected.set_focus()
 
         if not self.safe_guard(action, control_text):
             return 
         
-        
+
         # Take screenshot of the selected control
         screen.capture_screenshot_controls(self.app_window, [control_selected], control_screenshot_save_path)
         control.wait_enabled(control_selected)
@@ -469,6 +483,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         """
         log = json.dumps({"step": self.step, "status": "ERROR", "response": response_str, "error": error})
         self.logger.info(log)
+
 
 
 def initialize_logger(log_path, log_filename):

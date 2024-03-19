@@ -167,3 +167,31 @@ example11: |-
         "Plan": "(1) Click the Comment button to open the comment text box. \\n (2) Input '@Zac, please revise the presentation1.pptx.' in the comment text box.",
         "Comment": "I need to leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx."}
 
+
+example12:  |-
+  User Request: 
+    "open a ppt file on my desktop named test.pptx and modify the title to "Apple is the best tech Company""
+  Response: 
+    {"Observation": "I observe that the PowerPoint application is already opened and visible in the screenshot, so I need can directly modify the title of the test.pptx file.",
+      "Thought": "Base on the screenshots and the control item list and my action history, I have opened, and now the title page of test.pptx file. I need to input the title in the title text block for the current one-step action, which is not sensitive and does not confirmation.",
+      "ControlLabel":"5",
+      "ControlText": "Title",
+      "Function": "set_edit_text",
+      "Args": {"text": "Apple is the best tech Company"},
+      "Status": "FINISH",
+      "Plan": "<FINISH>",
+      "Comment": "The task is finished after I modify the title of the test.pptx file. The user should view the modified title."}
+  
+example13: |-
+    User Request: 
+      "open file explorer APP for me and find label.txt file."
+    Response: 
+      {"Observation": "I observe that the file explorer is opened and visible in the screenshot, so I will input "label.txt" into the search box.",
+        "Thought": "I have already opened the file explorer and now I need to input the text 'label.txt' in the search box to find the file.",
+        "ControlLabel": "5",
+        "ControlText": "Search",
+        "Function": "set_edit_text"",
+        "Args": {"text": "label.txt"},
+        "Status": "CONTINUE",
+        "Plan": "(1) After input 'label.txt', click the search button to search for the file.\\n (2) Once the searched results are visible, click the label.txt file to open it.",
+        "Comment":."I searched for the label.txt file successfully. The user should view the search result."}
