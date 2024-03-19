@@ -7,7 +7,7 @@ import re
 from ..utils import encode_image_from_path
 
 
-class LogLoader:
+class ExperienceLogLoader:
     """
     Loading the logs from previous runs.
     """
@@ -151,6 +151,28 @@ class LogLoader:
             request_partition.append(current_partition)
 
         return request_partition
+    
+
+    
+    @staticmethod
+    def get_user_request(log_partition: dict):
+        """
+        Get the user request.
+        :param log_partition: The log partition.
+        :return: The user request.
+        """
+        return log_partition.get("request")
+    
+
+
+    @staticmethod
+    def get_app_list(log_partition: dict):
+        """
+        Get the user request.
+        :param log_partition: The log partition.
+        :return: The application list.
+        """
+        return log_partition.get("application")
 
 
     @staticmethod

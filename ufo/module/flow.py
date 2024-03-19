@@ -42,8 +42,8 @@ class Session(object):
 
         self.log_path = f"logs/{self.task}/"
         create_folder(self.log_path)
-        self.logger = initialize_logger(self.log_path, "response.log")
-        self.request_logger = initialize_logger(self.log_path, "request.log")
+        self.logger = self.initialize_logger(self.log_path, "response.log")
+        self.request_logger = self.initialize_logger(self.log_path, "request.log")
 
         self.app_selection_prompter = ApplicationAgentPrompter(configs["APP_AGENT"]["VISUAL_MODE"], configs["APP_SELECTION_PROMPT"], configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
         self.act_selection_prompter = ActionAgentPrompter(configs["ACTION_AGENT"]["VISUAL_MODE"], configs["ACTION_SELECTION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
@@ -465,27 +465,27 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         log = json.dumps({"step": self.step, "status": "ERROR", "response": response_str, "error": error})
         self.logger.info(log)
 
+    @staticmethod
+    def initialize_logger(log_path, log_filename):
+        """
+        Initialize logging.
+        log_path: The path of the log file.
+        log_filename: The name of the log file.
+        return: The logger.
+        """
+        # Code for initializing logging
+        logger = logging.Logger(log_filename)
 
-def initialize_logger(log_path, log_filename):
-    """
-    Initialize logging.
-    log_path: The path of the log file.
-    log_filename: The name of the log file.
-    return: The logger.
-    """
-    # Code for initializing logging
-    logger = logging.Logger(log_filename)
-
-    if not configs["PRINT_LOG"]:
-        # Remove existing handlers if PRINT_LOG is False
-        logger.handlers = []
+        if not configs["PRINT_LOG"]:
+            # Remove existing handlers if PRINT_LOG is False
+            logger.handlers = []
 
 
-    log_file_path = os.path.join(log_path, log_filename)
-    file_handler = logging.FileHandler(log_file_path, encoding="utf-8")
-    formatter = logging.Formatter('%(message)s')
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-    logger.setLevel(configs["LOG_LEVEL"])
+        log_file_path = os.path.join(log_path, log_filename)
+        file_handler = logging.FileHandler(log_file_path, encoding="utf-8")
+        formatter = logging.Formatter('%(message)s')
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+        logger.setLevel(configs["LOG_LEVEL"])
 
-    return logger
+        return logger

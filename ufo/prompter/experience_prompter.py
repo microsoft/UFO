@@ -5,7 +5,6 @@ from .basic import BasicPrompter
 import json
 
 
-
 class ExperiencePrompter(BasicPrompter):
     """
     The ExperiencePrompter class is the prompter for the experience learning.

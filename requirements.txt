@@ -9,5 +9,5 @@ pywin32==304
 pywinauto==0.6.8
 PyYAML==6.0.1
 Requests==2.31.0
-faiss-cpu==1.23.5
+faiss-cpu==1.8.0
 lxml==5.1.0
