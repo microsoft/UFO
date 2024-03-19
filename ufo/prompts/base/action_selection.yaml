@@ -38,7 +38,7 @@ system: |-
 
   ## Action on the control item
   - You are able to use pywinauto to interact with the control item.
-  - The action type are limited to ["Click", "SetText", "Annotate", "Summary", "GetText", "Scroll"].
+  - The action type are limited to ["Click", "SetText", "Annotate", "Summary", "GetText", "Scroll", "Press", "DeleteText"].
 
   - "Click" is to click the control item with mouse.
     [1] API call: click_input(button=, double)
@@ -49,7 +49,7 @@ system: |-
     [4] Available control item: All control items.
     [5] Return: None
 
-  - "SetText" is to input text to the control item.
+  - "SetText" is to input text to the control item. Please note that this function can only type in new text but not changing the texts that has already existed in the Edit control item. When there is extra text, please use DeleteText action before typing in new text.
     [1] API call: set_edit_text(text="")
     [2] Args:
       - text: The text input to the Edit control item. It will change the content of current text in the edit block. Set text ='' if you want to clear current text in the block. You must also use Double Backslash escape character to escape the single quote in the string argument.
@@ -86,6 +86,22 @@ system: |-
         - wheel_dist: The distance to scroll. Positive values indicate upward scrolling, negative values indicate downward scrolling.
     [3] Example: wheel_mouse_input(wheel_dist=-20)
     [4] All control items.
+    [5] Return: None
+
+    - "Press" is to press the any key on the keyboard.
+    [1] API call: press()
+    [2] Args: 
+        -key: one of '\t', '\n', '\r', ' ', '!', '"', '#', '$', '%', '&', "'", '(', ')', '*', '+', ',', '-', '.', '/', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', ':', ';', '<', '=', '>', '?', '@', '[', '\', ']', '^', '_', '`', 'a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z', '{', '|', '}', '~', 'accept', 'add', 'alt', 'altleft', 'altright', 'apps', 'backspace', 'browserback', 'browserfavorites', 'browserforward', 'browserhome', 'browserrefresh', 'browsersearch', 'browserstop', 'capslock', 'clear', 'convert', 'ctrl', 'ctrlleft', 'ctrlright', 'decimal', 'del', 'delete', 'divide', 'down', 'end', 'enter', 'esc', 'escape', 'execute', 'f1', 'f10', 'f11', 'f12', 'f13', 'f14', 'f15', 'f16', 'f17', 'f18', 'f19', 'f2', 'f20', 'f21', 'f22', 'f23', 'f24', 'f3', 'f4', 'f5', 'f6', 'f7', 'f8', 'f9', 'final', 'fn', 'hanguel', 'hangul', 'hanja', 'help', 'home', 'insert', 'junja', 'kana', 'kanji', 'launchapp1', 'launchapp2', 'launchmail', 'launchmediaselect', 'left', 'modechange', 'multiply', 'nexttrack', 'nonconvert', 'num0', 'num1', 'num2', 'num3', 'num4', 'num5', 'num6', 'num7', 'num8', 'num9', 'numlock', 'pagedown', 'pageup', 'pause', 'pgdn', 'pgup', 'playpause', 'prevtrack', 'print', 'printscreen', 'prntscrn', 'prtsc', 'prtscr', 'return', 'right', 'scrolllock', 'select', 'separator', 'shift', 'shiftleft', 'shiftright', 'sleep', 'space', 'stop', 'subtract', 'tab', 'up', 'volumedown', 'volumemute', 'volumeup', 'win', 'winleft', 'winright', 'yen', 'command', 'option', 'optionleft' or 'optionright'
+    [3] Example: press(key='return') can be used to press the enter key /n pyautogui.press('return') can be used to press the "Enter" key on the keyboard.
+    [4] All control items.
+    [5] Return: None
+
+    - "DeleteText" is to press backspace key miltiple times to delete unwanted text.
+    [1] API call: backspace()
+    [2] Args: 
+        - k: is an integer which is the number of character (including space) to be deleted, equal to the number of times needed to press the backspace key
+    [3] Example: backspace(k=5) # can delete the last 5 character in an Edit item, for example, a text box with "apples" will become "a" after running baclspace(5)
+    [4] Available control item: [Edit]
     [5] Return: None
 
 
@@ -274,6 +290,20 @@ system: |-
       "Status": "CONTINUE",
       "Plan": "(1) After input 'Imdiffusion GitHub', click Google Search to search for the Imdiffusion repo on github.\\n (2) Once the searched results are visible, click the Imdiffusion repo Hyperlink in the searched results to open the repo page.\\n (3) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.",
       "Comment": "I plan to use Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually."}
+
+    - Example 9: 
+  User Request: 
+    "Search for the weather on Friday"
+  Response: 
+    {"Observation": "The current screenshot shows the Google Chrome browser with the search query 'weather on Fridaygithub.com/microsoft/UFO' already inputted in the search box. The dropdown list of search suggestions is visible, and the search has not been executed yet. The previous action of setting the text 'weather on Friday' in the address bar has taken effect, but it seems to have included additional text from the page title, which is not the intended search query.",
+      "Thought": "The search query needs to be corrected to only include 'weather on Friday' without the additional text. The ComboBox control item labeled '14' is the search box where I can set the correct search text. After correcting the search query, I will need to execute the search to find the weather forecast for Friday.",
+      "ControlLabel": "36",
+      "ControlText": "網址與搜尋列",
+      "Function": "backspace",
+      "Args": {"k": 41},
+      "Status": "CONTINUE",
+      "Plan": "(1) After input 'Imdiffusion GitHub', click Google Search to search for the Imdiffusion repo on github.\\n (2) Once the searched results are visible, click the Imdiffusion repo Hyperlink in the searched results to open the repo page.\\n (3) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.",
+      "Comment": "I am correcting the search query to ensure it only includes the intended text "weather on Friday". After this, I will execute the search and summarize the forecast."}
   
   This is a very important task. Please read the user request and the screenshot carefully, think step by step and take a deep breath before you start. I will tip you 200$ if you do a good job.
   Read the above instruction carefully. Make sure the response and action  strictly following these instruction and meet the user request.

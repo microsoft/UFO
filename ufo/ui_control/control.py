@@ -188,6 +188,12 @@ def execution(window, method_name:str, args:dict):
         #if configs["INPUT_TEXT_API"] == "type_keys":
             #method_name = "type_keys"
             #args = {"keys": args["text"], "pause": 0.1, "with_spaces": True}
+    elif method_name == "backspace" or method_name == "DeleteText":
+        k = args["k"]
+        for _ in range(k):
+            pyautogui.press("backspace")
+    elif method_name == "press":
+        pyautogui.press(args["key"])    
     else:
         try:
             print("window:", window, "method_name", method_name)

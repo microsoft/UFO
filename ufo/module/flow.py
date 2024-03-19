@@ -242,7 +242,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 print_with_color("Selected item🕹️: {control_text}, Label: {label}".format(control_text=control_text, label=control_label), "yellow")
                 print_with_color("Action applied⚒️: {action}".format(action=action), "blue")
                 print_with_color("Status📊: {status}".format(status=self.status), "blue")
-                print_with_color("Next Plan📚: {plan}".format(plan=str(self.plan).replace("\\n", "\n")), "cyan")
+                print_with_color("Next Plan📚: {plan}".format(plan=self.plan.replace("\\n", "\n")), "cyan")
                 print_with_color("Comment💬: {comment}".format(comment=comment), "green")
 
 
@@ -286,6 +286,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         
         # Action needed.
         control_selected = annotation_dict.get(control_label, self.app_window)
+        #print("annotation_dict:", annotation_dict, "control_label:", control_label, "self.app_window:", self.app_window, "control_selecte:", control_selected)
         # print_with_color("Actual control name: {name}".format(name=control_selected.element_info.name), "magenta")
         control_selected.set_focus()
 
@@ -296,8 +297,10 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         # Take screenshot of the selected control
         screen.capture_screenshot_controls(self.app_window, [control_selected], control_screenshot_save_path)
         control.wait_enabled(control_selected)
+        print("control_selected:", control_selected, "\n", "function_call:", function_call, "\n", "args:", args)
         results = control.execution(control_selected, function_call, args)
         response_json = self.set_result_and_log(results, response_json)
+        
 
         time.sleep(configs["SLEEP_TIME"])
 
