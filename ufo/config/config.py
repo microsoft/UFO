@@ -6,7 +6,7 @@ import yaml
 import json
 from ..utils import print_with_color
 
-def load_config(config_path="ufo/config/config.yaml"):
+def load_config(config_path="ufo/config/"):
     """
     Load the configuration from a YAML file and environment variables.
 
@@ -16,28 +16,44 @@ def load_config(config_path="ufo/config/config.yaml"):
     # Copy environment variables to avoid modifying them directly
     configs = dict(os.environ)
 
+    path = config_path
+
     try:
-        with open(config_path, "r") as file:
+        with open(path + "config.yaml", "r") as file:
             yaml_data = yaml.safe_load(file)
         # Update configs with YAML data
         if yaml_data:
             configs.update(yaml_data)
+        with open(path + "config_llm.yaml", "r") as file:
+            yaml_llm_data = yaml.safe_load(file)
+        # Update configs with YAML data
+        if yaml_data:
+            configs.update(yaml_llm_data)
     except FileNotFoundError:
         print_with_color(
             f"Warning: Config file not found at {config_path}. Using only environment variables.", "yellow")
 
-    # Update the API base URL for AOAI
-    if configs["API_TYPE"].lower() == "aoai":
-        configs["OPENAI_API_BASE"] = "{endpoint}/openai/deployments/{deployment_name}/chat/completions?api-version={api_version}".format(
-            endpoint=configs["OPENAI_API_BASE"][:-1] if configs["OPENAI_API_BASE"].endswith(
-                "/") else configs["OPENAI_API_BASE"],
-            deployment_name=configs["AOAI_DEPLOYMENT"],
-            api_version=configs["API_VERSION"]
-        )
 
+    return optimize_configs(configs)
+
+
+def update_api_base(configs, agent):
+    if configs[agent]["API_TYPE"].lower() == "aoai":
+        if 'deployments' not in configs[agent]["API_BASE"]:
+            configs[agent]["API_BASE"] = "{endpoint}/openai/deployments/{deployment_name}/chat/completions?api-version={api_version}".format(
+                    endpoint=configs[agent]["API_BASE"][:-1] if configs[agent]["API_BASE"].endswith(
+                        "/") else configs[agent]["API_BASE"],
+                    deployment_name=configs[agent]["API_DEPLOYMENT_ID"],
+                    api_version=configs[agent]["API_VERSION"]
+            )
+        configs[agent]["API_MODEL"] = configs[agent]["API_DEPLOYMENT_ID"]
+        
+
+def optimize_configs(configs):
+    update_api_base(configs,'APP_AGENT')
+    update_api_base(configs,'ACTION_AGENT')
+    
     return configs
-
-
 
 def get_offline_learner_indexer_config():
     """
