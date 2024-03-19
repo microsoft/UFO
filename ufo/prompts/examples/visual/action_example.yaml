@@ -150,7 +150,7 @@ example5:
 
 example6:
   Request: |-
-    Search for the word 'UFO' in the document.
+    Send an message to Tom on Teams by including a (1) the text extracted from framework.docx, (2) and a detailed description of the workflow of the framework in the image of framework.png.
   Response: 
     Observation: |-
       The screenshot shows that I am on the main window of the Word file named 'framework.docx'. The text of the file, which I am interest, is visible in the screenshot. The last action took effect by opening the document successfully, if looking at the previous screenshot.
@@ -277,26 +277,26 @@ example10:
   Request: |-
       Please create a slide from the meeting_notes.docx in the presentation1.pptx.
   Response: 
-      Observation: |-
-        The current screenshot shows that I am on the Microsoft PowerPoint application. The Copilot Add-in is visible in the screenshot.
-      Thought: |-
-        I need to double click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide from the meeting_notes.docx.
-      ControlLabel: |-
-        60
-      ControlText: |-
-        Copilot
-      Function: |- 
-        click_input
-      Args: 
-        {"button": "left", "double": true}
-      Status: |-
-        CONTINUE
-      Plan: |-
-        (1) Click the 'Create presentation from file' button to open a file picker.
-        (2) Select and click the meeting_notes.docx file in the file picker.
-        (3) Click the 'Send' buttom to send the request to Copilot. This completes the task.
-      Comment: |-
-        I need use the Copilot Add-in to create a slide from the meeting_notes.docx.
+    Observation: |-
+      The current screenshot shows that I am on the Microsoft PowerPoint application. The Copilot Add-in is visible in the screenshot.
+    Thought: |-
+      I need to double click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide from the meeting_notes.docx.
+    ControlLabel: |-
+      60
+    ControlText: |-
+      Copilot
+    Function: |- 
+      click_input
+    Args: 
+      {"button": "left", "double": true}
+    Status: |-
+      CONTINUE
+    Plan: |-
+      (1) Click the 'Create presentation from file' button to open a file picker.
+      (2) Select and click the meeting_notes.docx file in the file picker.
+      (3) Click the 'Send' buttom to send the request to Copilot. This completes the task.
+    Comment: |-
+      I need use the Copilot Add-in to create a slide from the meeting_notes.docx.
   Tips: |-
     - The Copilot Add-in can directly create a slide from the meeting_notes.docx. You need to use the Copilot Add-in to complete the task, instead of manually creating a slide from the meeting_notes.docx.
     - The Copilot Add-in is visible in the screenshot, and I need to double click it to open the Copilot Add-in.
