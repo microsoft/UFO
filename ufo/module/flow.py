@@ -51,6 +51,7 @@ class Session(object):
 
         self.status = "APP_SELECTION"
         self.application = ""
+        self.app_root = ""
         self.app_window = None
         self.plan = ""
         self.request = ""
@@ -58,6 +59,7 @@ class Session(object):
         self.cost = 0
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
+        self.experience_retriever = None
 
         welcome_text = """
 Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction. 
@@ -143,7 +145,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
                 
             app_window = desktop_windows_dict[application_label]
 
-            response_json["Application"] = control.get_application_name(app_window)
+            self.app_root = control.get_application_name(app_window)
+            response_json["Application"] = self.app_root
             response_json = self.set_result_and_log("", response_json)
 
             try:
@@ -163,12 +166,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             if configs["RAG_OFFLINE_DOCS"]:
                 print_with_color("Loading offline document indexer for {app}...".format(app=self.application), "magenta")
-                offline_retriever_factory = retriever_factory.OfflineDocRetrieverFactory(self.application)
-                self.offline_doc_retriever = offline_retriever_factory.create_offline_doc_retriever()
+                self.offline_doc_retriever = retriever_factory.OfflineDocRetriever(self.application)
             if configs["RAG_ONLINE_SEARCH"]:
                 print_with_color("Creating a Bing search indexer...", "magenta")
-                offline_retriever_factory = retriever_factory.OnlineDocRetrieverFactory(self.request)
-                self.online_doc_retriever = offline_retriever_factory.create_online_search_retriever()
+                self.online_doc_retriever = retriever_factory.OnlineDocRetriever(self.request)
+            if configs["RAG_EXPERIENCE"]:
+                print_with_color("Creating an experience indexer...", "magenta")
+                experience_path = configs["EXPERIENCE_SAVED_PATH"]
+                db_path = os.path.join(experience_path, "experience_db")
+                self.experience_retriever = retriever_factory.ExperienceRetriever(db_path)
+
 
             time.sleep(configs["SLEEP_TIME"])
 
@@ -230,7 +237,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
                 image_url += [screenshot_url, screenshot_annotated_url]
 
 
-            action_selection_prompt_system_message = self.act_selection_prompter.system_prompt_construction()
+            examples, tips = self.rag_experience_retrieve()
+            action_selection_prompt_system_message = self.act_selection_prompter.system_prompt_construction(examples, tips)
             action_selection_prompt_user_message = self.act_selection_prompter.user_content_construction(image_url, self.request_history, self.action_history, 
                                                                                                          control_info, self.plan, self.request, self.rag_prompt(), configs["INCLUDE_LAST_SCREENSHOT"])
             
@@ -270,7 +278,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
                 response_json["Action"] = action
                 response_json["Agent"] = "ActAgent"
                 response_json["Request"] = self.request
-                response_json["Application"] = control.get_application_name(self.app_window)
+                response_json["Application"] = self.app_root
 
 
                 print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
@@ -359,8 +367,27 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             retrieved_docs += online_docs_prompt
 
         return retrieved_docs
-    
 
+    
+    def rag_experience_retrieve(self):
+        """
+        Retrieving experience examples for the user request.
+        :return: The retrieved examples and tips string.
+        """
+        
+        if self.experience_retriever:
+            # Retrieve experience examples. Only retrieve the examples that are related to the current application.
+            
+            experience_docs = self.experience_retriever.retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"], 
+                                                                 filter=lambda x: self.app_root.lower() in [app.lower() for app in x["app_list"]])
+            examples = [doc.metadata.get("example", {}) for doc in experience_docs]
+            tips = [doc.metadata.get("Tips", "") for doc in experience_docs]
+
+        else:
+            examples = []
+            tips = []
+
+        return examples, tips
 
     def experience_asker(self):
         print_with_color("""Would you like to save the current conversation flow for future reference by the agent?
@@ -379,14 +406,15 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         Save the current agent experience.
         """
         print_with_color("Summarizing and saving the execution flow as experience...", "yellow")
-        
-        summarizer = ExperienceSummarizer(configs["ACTION_AGENT"]["VISUAL_MODE"], configs["EXPERIENCE_PROMPT"], configs["EXAMPLE_PROMPT_TEMPLATE"], configs["API_PROMPT"])
+
+        summarizer = ExperienceSummarizer(configs["ACTION_AGENT"]["VISUAL_MODE"], configs["EXPERIENCE_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
         experience = summarizer.read_logs(self.log_path)
         summaries, total_cost = summarizer.get_summary_list(experience)
 
-
-        summarizer.create_or_update_yaml(summaries, os.path.join(self.log_path, "yaml/experience.yaml"))
-        summarizer.create_or_update_yaml(summaries, os.path.join(self.log_path, "experience_db"))
+        experience_path = configs["EXPERIENCE_SAVED_PATH"]
+        create_folder(experience_path)
+        summarizer.create_or_update_yaml(summaries, os.path.join(experience_path, "experience.yaml"))
+        summarizer.create_or_update_vector_db(summaries, os.path.join(experience_path, "experience_db"))
 
         self.cost += total_cost
         print_with_color("The experience has been saved.", "cyan")

@@ -11,3 +11,4 @@ PyYAML==6.0.1
 Requests==2.31.0
 faiss-cpu==1.8.0
 lxml==5.1.0
+psutil==5.9.8

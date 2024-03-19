@@ -93,6 +93,7 @@ class BingSearchWeb:
 
         return document_list
     
+    
     def create_indexer(self, documents: list):
         """
         Create an indexer for the given query.

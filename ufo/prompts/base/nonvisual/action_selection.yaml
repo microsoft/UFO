@@ -90,6 +90,9 @@ system: |-
   - The 'Copilot' Add-in can help you with some special requests, such as creating a slide in PowerPoint from a Word document.
   - You are given the help documents of the application or/and the online search results for completing the user request. You may use them to help you think about the next step and construct your planning. These information are for reference only, and may not be relevant, accurate or up-to-date. You must rely more on the current control item list to make the decision.
 
+  ## Here are other tips for you to complete the user request:
+  {tips}
+
   {examples}
 
   This is a very important task. Please read the user request and the control item list carefully, think step by step and take a deep breath before you start. I will tip you 200$ if you do a good job.

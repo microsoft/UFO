@@ -92,7 +92,7 @@ class ExperienceSummarizer:
 
 
     @staticmethod
-    def read_log(log_path: str) -> list:
+    def read_logs(log_path: str) -> list:
         """
         Read the log.
         :param log_path: The path of the log file.
