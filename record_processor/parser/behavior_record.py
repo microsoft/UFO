@@ -1,9 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-class Record:
+class BehaviorRecord:
     """
     Class for the user behavior record.
+    A serise of steps user performed to achieve a specific request will be recorded in this class.
     """
 
     def __init__(self, applications, step_num, **steps):
@@ -25,9 +26,10 @@ class Record:
         
     
 
-class Step:
+class BehaviorStep:
     """
     Class for the single step information in the user behavior record.
+    Multiple steps will be recorded to achieve a specific request.
     """
 
     def __init__(self, application, description, action, screenshot, comment):

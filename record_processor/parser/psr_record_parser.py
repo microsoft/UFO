@@ -4,11 +4,12 @@
 import re
 import xml.etree.ElementTree as ET
 from bs4 import BeautifulSoup
-from .record import Record, Step
+from .behavior_record import BehaviorRecord, BehaviorStep
+
 
 class PSRRecordParser:
     """
-    Class for parsing the steps recorder .mht file content to record.
+    Class for parsing the steps recorder .mht file content to user behavior record.
     """
 
     def __init__(self, content):
@@ -35,7 +36,7 @@ class PSRRecordParser:
         self.parts_dict = self.split_file_by_boundary(boundary)
         self.comments = self.get_comments(self.parts_dict['main.htm']['Content'])
         self.steps = self.get_steps(self.parts_dict['main.htm']['Content'])
-        record = Record(list(set(self.applications)), len(self.steps), **self.steps)
+        record = BehaviorRecord(list(set(self.applications)), len(self.steps), **self.steps)
 
         return record
     
@@ -118,7 +119,7 @@ class PSRRecordParser:
                 screenshot = self.get_screenshot(screenshot_file_name)
                 step_key = f"step_{int(action_number) - 1}"
 
-                step = Step(application, description, action, screenshot, self.comments.get(step_key))
+                step = BehaviorStep(application, description, action, screenshot, self.comments.get(step_key))
                 steps[step_key] = step
                 self.applications.append(application)
             return steps
