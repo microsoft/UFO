@@ -36,10 +36,12 @@ def main():
 
         round = session.get_round()
         
-        if round > 0:
+        if status == "FINISH":
             session.set_new_round()
             status = session.get_status()
             if status == "ALLFINISH":
+                if session.experience_asker():
+                    session.experience_saver()
                 break
 
         while status.upper() not in ["FINISH", "ERROR"] and step <= configs["MAX_STEP"]:
@@ -78,7 +80,6 @@ def main():
                 round=round), "magenta")
             print_with_color("{result}".format(result=result), "yellow")
 
-        session.set_round(round+1)
 
     # Print the total cost
     total_cost = session.get_cost()
