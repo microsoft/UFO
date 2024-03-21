@@ -12,7 +12,7 @@ class PSRRecordParser:
     Class for parsing the steps recorder .mht file content to user behavior record.
     """
 
-    def __init__(self, content):
+    def __init__(self, content: str):
         """
         Constructor for the RecordParser class.
         """
@@ -34,12 +34,13 @@ class PSRRecordParser:
         """
         boundary = self.find_boundary()
         self.parts_dict = self.split_file_by_boundary(boundary)
-        self.comments = self.get_comments(self.parts_dict['main.htm']['Content'])
+        self.comments = self.get_comments(
+            self.parts_dict['main.htm']['Content'])
         self.steps = self.get_steps(self.parts_dict['main.htm']['Content'])
-        record = BehaviorRecord(list(set(self.applications)), len(self.steps), **self.steps)
+        record = BehaviorRecord(
+            list(set(self.applications)), len(self.steps), **self.steps)
 
         return record
-    
 
     def find_boundary(self) -> str:
         """
@@ -55,8 +56,8 @@ class PSRRecordParser:
             return boundary
         else:
             raise ValueError("Boundary not found in the .mht file.")
-        
-    def split_file_by_boundary(self, boundary) -> dict:
+
+    def split_file_by_boundary(self, boundary: str) -> dict:
         """
         Split the file by the boundary into parts, 
         Store the parts in a dictionary, including the content type,
@@ -69,30 +70,35 @@ class PSRRecordParser:
         for part in parts:
             content_type_start = part.find("Content-Type:")
             content_location_start = part.find("Content-Location:")
-            content_transfer_encoding_start = part.find("Content-Transfer-Encoding:")
+            content_transfer_encoding_start = part.find(
+                "Content-Transfer-Encoding:")
             part_info = {}
             if content_location_start != -1:
                 content_location_end = part.find("\n", content_location_start)
-                content_location = part[content_location_start:content_location_end].split(":")[1].strip()
+                content_location = part[content_location_start:content_location_end].split(":")[
+                    1].strip()
 
                 # add the content location
                 if content_type_start != -1:
                     content_type_end = part.find("\n", content_type_start)
-                    content_type = part[content_type_start:content_type_end].split(":")[1].strip()
+                    content_type = part[content_type_start:content_type_end].split(":")[
+                        1].strip()
                     part_info["Content-Type"] = content_type
 
                 # add the content transfer encoding
                 if content_transfer_encoding_start != -1:
-                    content_transfer_encoding_end = part.find("\n", content_transfer_encoding_start)
-                    content_transfer_encoding = part[content_transfer_encoding_start:content_transfer_encoding_end].split(":")[1].strip()
+                    content_transfer_encoding_end = part.find(
+                        "\n", content_transfer_encoding_start)
+                    content_transfer_encoding = part[content_transfer_encoding_start:content_transfer_encoding_end].split(":")[
+                        1].strip()
                     part_info["Content-Transfer-Encoding"] = content_transfer_encoding
 
                 content = part[content_location_end:].strip()
                 part_info["Content"] = content
                 part_dict[content_location] = part_info
         return part_dict
-    
-    def get_steps(self, content) -> dict:
+
+    def get_steps(self, content: str) -> dict:
         """
         Get the steps from the content in fllowing steps:
         1. Find the UserActionData tag in the content.
@@ -103,30 +109,33 @@ class PSRRecordParser:
         return: A dictionary of steps.
         """
 
-        user_action_data = re.search(r'<UserActionData>(.*?)</UserActionData>', content, re.DOTALL)
+        user_action_data = re.search(
+            r'<UserActionData>(.*?)</UserActionData>', content, re.DOTALL)
         if user_action_data:
 
             root = ET.fromstring(user_action_data.group(1))
             steps = {}
 
             for each_action in root.findall('EachAction'):
-                
+
                 action_number = each_action.get('ActionNumber')
                 application = each_action.get('FileName')
                 description = each_action.find('Description').text
                 action = each_action.find('Action').text
-                screenshot_file_name = each_action.find('ScreenshotFileName').text
+                screenshot_file_name = each_action.find(
+                    'ScreenshotFileName').text
                 screenshot = self.get_screenshot(screenshot_file_name)
                 step_key = f"step_{int(action_number) - 1}"
 
-                step = BehaviorStep(application, description, action, screenshot, self.comments.get(step_key))
+                step = BehaviorStep(
+                    application, description, action, screenshot, self.comments.get(step_key))
                 steps[step_key] = step
                 self.applications.append(application)
             return steps
         else:
             raise ValueError("UserActionData not found in the file.")
-        
-    def get_comments(self, content) -> dict:
+
+    def get_comments(self, content: str) -> dict:
         """
         Get the user input comments for each step
         content: The content of the main.htm file.
@@ -135,15 +144,16 @@ class PSRRecordParser:
         soup = BeautifulSoup(content, 'html.parser')
         body = soup.body
         steps_html = body.find('div', id='Steps')
-        steps = steps_html.find_all(lambda tag: tag.name == 'div' and tag.has_attr('id') and re.match(r'^Step\d+$', tag['id']))
+        steps = steps_html.find_all(lambda tag: tag.name == 'div' and tag.has_attr(
+            'id') and re.match(r'^Step\d+$', tag['id']))
 
         comments = {}
         for index, step in enumerate(steps):
             comment_tag = step.find('b', text='Comment: ')
             comments[f'step_{index}'] = comment_tag.next_sibling if comment_tag else None
         return comments
-    
-    def get_screenshot(self, screenshot_file_name) -> str:
+
+    def get_screenshot(self, screenshot_file_name: str) -> str:
         """
         Get the screenshot by screenshot file name.
         The screenshot related information is stored in the parts_dict.
@@ -155,7 +165,7 @@ class PSRRecordParser:
         content_type = screenshot_part['Content-Type']
         content_transfer_encoding = screenshot_part['Content-Transfer-Encoding']
 
-        screenshot = 'data:{type};{encoding}, {content}'.format(type=content_type, encoding=content_transfer_encoding, content=content)        
+        screenshot = 'data:{type};{encoding}, {content}'.format(
+            type=content_type, encoding=content_transfer_encoding, content=content)
 
         return screenshot
-    
