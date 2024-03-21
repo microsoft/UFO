@@ -59,6 +59,8 @@ system: |-
   - The 'Copilot' Add-in can help you with some special requests, such as creating a slide in PowerPoint from a Word document.
   - You must to strictly follow the instruction and the JSON format of the response. 
   - Below are two example of the response. You can refer to them as a reference.
+
+
   {examples}
 
 
