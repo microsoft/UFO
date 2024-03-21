@@ -4,7 +4,7 @@
 import json
 import os
 import re
-from ..utils import encode_image_from_path
+from ..utils import encode_image_from_path, print_with_color
 
 
 class ExperienceLogLoader:
@@ -19,7 +19,7 @@ class ExperienceLogLoader:
         """
         self.log_path = log_path
         self.response = self.load_response_log()
-        self.max_stepnum = self.find_max_number_in_filenames()
+        self.max_stepnum = self.find_max_number_in_filenames(log_path)
         self.request_partition = self.get_request_partition()
         self.screenshots = {}
         
@@ -38,18 +38,22 @@ class ExperienceLogLoader:
             # Read the lines and split them into a list
             response_log = file.readlines()
         for response_string in response_log:
-            response.append(json.loads(response_string))
+            try:
+                response.append(json.loads(response_string))
+            except json.JSONDecodeError:
+                print_with_color(f"Error loading response log: {response_string}", "yellow")
         return response
     
 
-    def find_max_number_in_filenames(self) -> int:
+    @staticmethod
+    def find_max_number_in_filenames(log_path) -> int:
         """
         Find the maximum number in the filenames.
         :return: The maximum number in the filenames.
         """
 
         # Get the list of files in the folder
-        files = os.listdir(self.log_path)
+        files = os.listdir(log_path)
         
         # Initialize an empty list to store extracted numbers
         numbers = []
@@ -57,7 +61,7 @@ class ExperienceLogLoader:
         # Iterate through each file
         for file in files:
             # Extract the number from the filename
-            number = self.extract_number(file)
+            number = ExperienceLogLoader.extract_action_step_count(file)
             if number is not None:
                 # Append the extracted number to the list
                 numbers.append(number)
@@ -176,9 +180,9 @@ class ExperienceLogLoader:
 
 
     @staticmethod
-    def extract_number(filename : str) -> int:
+    def extract_action_step_count(filename : str) -> int:
         """
-        Extract the number from the filename.
+        Extract the action step count from the filename.
         :param filename: The filename.
         :return: The number extracted from the filename.
         """

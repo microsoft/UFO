@@ -4,6 +4,7 @@
 from abc import ABC, abstractmethod
 import os
 import yaml
+from ..utils import print_with_color
 
 
 class BasicPrompter(ABC):
@@ -42,7 +43,10 @@ class BasicPrompter(ABC):
             path = template_path.format(mode = "visual" if self.is_visual == True else "nonvisual")
         
         if os.path.exists(path):
-            prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
+            try:
+                prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
+            except yaml.YAMLError as exc:
+                print_with_color(f"Error loading prompt template: {exc}", "yellow")
         else:
             raise FileNotFoundError(f"Prompt template not found at {path}")
         

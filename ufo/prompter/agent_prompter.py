@@ -158,7 +158,7 @@ class ActionAgentPrompter(BasicPrompter):
         self.api_prompt_template = self.load_prompt_template(api_prompt_template)
 
 
-    def system_prompt_construction(self, additional_examples=[], tips=[]) -> str:
+    def system_prompt_construction(self, additional_examples: list =[], tips: list =[]) -> str:
         """
         Construct the prompt for app selection.
         return: The prompt for app selection.

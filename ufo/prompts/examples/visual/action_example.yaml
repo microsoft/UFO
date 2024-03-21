@@ -52,7 +52,18 @@ example2:
       (1) Find the New Email button in the Main Page and click it to open a New Email window. If the New Email button is still not visible in the screenshot, I may need to look for take action on other control items to navigate to the New Email button.
       (2) Input the email address of the receiver.
       (3) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.
-      (4) Input the content of the email. I need to input 'Dear Jack,\\nI hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.\\nYour commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.\\nYour code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.\\nPlease know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.\\nOnce again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.\\nBest regards,\\nZac'.
+      (4) Input the content of the email. I need to input 
+      
+      'Dear Jack,
+      I hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.
+      Your commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.
+      Your code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.
+      
+      Please know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.
+      Once again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.
+      Best regards,
+      Zac'.
+
       (5) Click the Send button to send the email.
     Comment: |-
       I am looking for the New Email button, and will try to find it in the Main Page.
@@ -280,7 +291,7 @@ example10:
     Observation: |-
       The current screenshot shows that I am on the Microsoft PowerPoint application. The Copilot Add-in is visible in the screenshot.
     Thought: |-
-      I need to double click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide from the meeting_notes.docx.
+      I need to click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide from the meeting_notes.docx.
     ControlLabel: |-
       60
     ControlText: |-
@@ -288,32 +299,31 @@ example10:
     Function: |- 
       click_input
     Args: 
-      {"button": "left", "double": true}
+      {"button": "left", "double": false}
     Status: |-
       CONTINUE
     Plan: |-
       (1) Click the 'Create presentation from file' button to open a file picker.
-      (2) Select and click the meeting_notes.docx file in the file picker.
+      (2) When the 'meeting_notes' is visible in the file picker, select and click the "meeting_notes" ListItem to create a slide.
       (3) Click the 'Send' buttom to send the request to Copilot. This completes the task.
     Comment: |-
-      I need use the Copilot Add-in to create a slide from the meeting_notes.docx.
+      I need to use the Copilot Add-in to create a slide from the meeting_notes.docx.
   Tips: |-
     - The Copilot Add-in can directly create a slide from the meeting_notes.docx. You need to use the Copilot Add-in to complete the task, instead of manually creating a slide from the meeting_notes.docx.
-    - The Copilot Add-in is visible in the screenshot, and I need to double click it to open the Copilot Add-in.
 
 
 example11: 
   Request: |-
-    Please @Zac to revise the presentation1.pptx.
+    Save the presentation1.pptx into pdf format.
   Response: 
     Observation: |-
       The current screenshot shows the powerpoint application is visible, and the presentation1.pptx is opened.
     Thought: |- 
-      I need to set focus on the powerpoint application and leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx.
+      I need to click the 'File' button, to make the the 'Save As Adobe PDF' button available. Then I need to click the 'Save As Adobe PDF' button to save the presentation1.pptx into pdf format. If the 'Save As Adobe PDF' button is not visible in the screenshot, I may need to use the 'Save a Copy' button to manually save the presentation1.pptx into pdf format.
     ControlLabel: |-
-      42
+      34
     ControlText: |-
-      Insert
+      File
     Function: |-  
       click_input
     Args: 
@@ -321,11 +331,11 @@ example11:
     Status: |-
       CONTINUE
     Plan: |-
-      (1) Click the Comment button to open the comment text box. 
-      (2) Input '@Zac, please revise the presentation1.pptx.' in the comment text box.
+      (1) Click the "Save As Adobe PDF" button to open the save as dialog. 
+      (2) Click the "Save" button to save the presentation1.pptx into pdf format. This completes the task.
     Comment: |-
-      I need to leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx.
+      I need to use the "Save As Adobe PDF" button to save the presentation1.pptx into pdf format.
   Tips: |-
-    - The comment text box is usually opened by clicking the Comment button.
-
+    - Saving the presentation1.pptx into pdf format can be done by clicking the "Save As Adobe PDF" button.
+    - If the "Save As Adobe PDF" button is not visible in the screenshot, you may need to use the "Save a Copy" button to manually save the presentation1.pptx into pdf format.
 

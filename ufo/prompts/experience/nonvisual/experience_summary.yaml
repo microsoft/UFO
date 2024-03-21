@@ -15,7 +15,7 @@ system: |-
 
 
   ## Output Format
-  - You are required to are required to response in a JSON format, consisting of 10 distinct parts with the following keys and corresponding content:
+  - You are required to response in a JSON format, consisting of 10 distinct parts with the following keys and corresponding content:
     {{"Observation": <Describe and summarize your observation of the Agent Trajectory.>}
     "Thought": <Outline the logic behind the first action required to fulfill the request.>
     "ControlLabel": <Specify the precise annotated label of the control item to be selected at the first step. If none of the control items are suitable or the task is complete, output an empty string.>
