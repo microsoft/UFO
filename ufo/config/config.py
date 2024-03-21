@@ -48,7 +48,11 @@ def update_api_base(configs, agent):
                     api_version=configs[agent]["API_VERSION"]
             )
         configs[agent]["API_MODEL"] = configs[agent]["API_DEPLOYMENT_ID"]
-        
+    elif configs[agent]["API_TYPE"].lower() == "openai":
+        if 'chat/completions' in configs[agent]["API_BASE"]:
+            configs[agent]["API_BASE"] = configs[agent]["API_BASE"][:-18] if configs[agent]["API_BASE"].endswith(
+                "/") else configs[agent]["API_BASE"][:-17]
+            
 
 def optimize_configs(configs):
     update_api_base(configs,'APP_AGENT')

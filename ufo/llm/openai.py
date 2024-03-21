@@ -1,24 +1,8 @@
 import datetime
-from typing import Any, Literal, Optional
+from typing import Any, Optional
 import openai
 from openai import AzureOpenAI, OpenAI
 
-
-available_models = Literal[ #for azure_ad
-    "gpt-35-turbo-20220309",
-    "gpt-35-turbo-16k-20230613",
-    "gpt-35-turbo-20230613",
-    "gpt-35-turbo-1106",
-
-    "gpt-4-20230321",
-    "gpt-4-20230613",
-    "gpt-4-32k-20230321",
-    "gpt-4-32k-20230613",
-    "gpt-4-1106-preview",
-    "gpt-4-0125-preview",
-    
-    "gpt-4-visual-preview",
-]
 
 
 class OpenAIService:
