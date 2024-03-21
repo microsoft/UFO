@@ -147,7 +147,7 @@ class ActionExecutor:
         selected_controls_labels = args_dict.get("control_labels", [])
         control_reannotate = [annotation_dict[str(label)] for label in selected_controls_labels]
 
-        pass
+        return control_reannotate
     
 
 
