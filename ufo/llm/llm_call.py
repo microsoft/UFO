@@ -40,7 +40,8 @@ def get_completion(messages, agent: str='APP', use_backup_engine: bool=True):
             raise ValueError(f'API_TYPE {api_type} not supported')
     except Exception as e:
         if use_backup_engine:
-            print_with_color(f"The API request of {agent_type} failed: {e}, try to use the backup engine", "red")
+            print_with_color(f"The API request of {agent_type} failed: {e}.", "red")
+            print_with_color(f"Switching to use the backup engine...", "yellow")
             return get_completion(messages, agent='backup', use_backup_engine=False)
         else:
             raise e

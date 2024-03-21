@@ -8,6 +8,8 @@ from langchain_community.vectorstores import FAISS
 import os
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
 
+
+
 def create_indexer(app: str, docs: str, format: str, incremental: bool, save_path: str):
     """
     Create an indexer for the given application.

@@ -5,15 +5,15 @@ import logging
 import os
 import time
 import json
-import yaml
 
 from art import text2art
 from pywinauto.uia_defines import NoPatternInterfaceError
+from ..experience.summarizer import ExperienceSummarizer
 
 from ..rag import retriever_factory
 from ..config.config import load_config
 from ..llm import llm_call
-from ..llm import prompter
+from ..prompter.agent_prompter import ApplicationAgentPrompter, ActionAgentPrompter
 from ..ui_control import control
 from ..ui_control import screenshot as screen
 from ..utils import (create_folder, encode_image_from_path,
@@ -22,7 +22,7 @@ from ..utils import (create_folder, encode_image_from_path,
 
 configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]
-os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' 
+
 
 
 
@@ -43,21 +43,15 @@ class Session(object):
 
         self.log_path = f"logs/{self.task}/"
         create_folder(self.log_path)
-        self.logger = initialize_logger(self.log_path, "response.log")
-        self.request_logger = initialize_logger(self.log_path, "request.log")
+        self.logger = self.initialize_logger(self.log_path, "response.log")
+        self.request_logger = self.initialize_logger(self.log_path, "request.log")
 
-        self.app_selection_prompt = prompter.load_prompt(configs["APP_SELECTION_PROMPT"], configs["APP_AGENT"]["VISUAL_MODE"])
-        self.action_selection_prompt = prompter.load_prompt(configs["ACTION_SELECTION_PROMPT"], configs["ACTION_AGENT"]["VISUAL_MODE"])
-
-        self.app_selection_example_prompt = prompter.load_prompt(configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["APP_AGENT"]["VISUAL_MODE"])
-        self.action_selection_example_prompt = prompter.load_prompt(configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["ACTION_AGENT"]["VISUAL_MODE"])
-
-        self.app_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["APP_AGENT"]["VISUAL_MODE"])
-        self.action_selection_api_prompt = prompter.load_prompt(configs["API_PROMPT"], configs["ACTION_AGENT"]["VISUAL_MODE"])
-
+        self.app_selection_prompter = ApplicationAgentPrompter(configs["APP_AGENT"]["VISUAL_MODE"], configs["APP_SELECTION_PROMPT"], configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        self.act_selection_prompter = ActionAgentPrompter(configs["ACTION_AGENT"]["VISUAL_MODE"], configs["ACTION_SELECTION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
 
         self.status = "APP_SELECTION"
         self.application = ""
+        self.app_root = ""
         self.app_window = None
         self.plan = ""
         self.request = ""
@@ -65,12 +59,14 @@ class Session(object):
         self.cost = 0
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
+        self.experience_retriever = None
 
-        
-
-        print_with_color("""Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction. 
+        welcome_text = """
+Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction. 
 {art}
-Please enter your request to be completed🛸: """.format(art=text2art("UFO")), "cyan")
+Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
+
+        print_with_color(welcome_text, "cyan")
         
         self.request = input()
         self.request_history = []
@@ -93,13 +89,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
 
-        app_example_prompt = prompter.examples_prompt_helper(self.app_selection_example_prompt)
-        api_prompt = prompter.api_prompt_helper(self.app_selection_api_prompt, verbose=0)
 
-        app_selection_prompt_system_message = prompter.system_prompt_construction(self.app_selection_prompt, api_prompt, app_example_prompt)
-        app_selection_prompt_user_message = prompter.user_prompt_construction(self.app_selection_prompt, self.request_history, self.action_history, desktop_windows_info, self.plan, self.request)
+        app_selection_prompt_system_message = self.app_selection_prompter.system_prompt_construction()
+        app_selection_prompt_user_message = self.app_selection_prompter.user_content_construction([desktop_screen_url], self.request_history, self.action_history, 
+                                                                                                  desktop_windows_info, self.plan, self.request)
         
-        app_selection_prompt_message = prompter.prompt_construction(app_selection_prompt_system_message, [desktop_screen_url], app_selection_prompt_user_message, False, configs["APP_AGENT"]["VISUAL_MODE"])
+        app_selection_prompt_message = self.app_selection_prompter.prompt_construction(app_selection_prompt_system_message, app_selection_prompt_user_message)
 
         
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
@@ -113,7 +108,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             self.request_logger.info(log)
             self.status = "ERROR"
             return
-
 
         self.cost += cost
 
@@ -136,12 +130,13 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             
             
             response_json["Step"] = self.step
+            response_json["Round"] = self.round
             response_json["ControlLabel"] = self.application
             response_json["Action"] = "set_focus()"
+            response_json["Request"] = self.request
             response_json["Agent"] = "AppAgent"
         
             
-
             if "FINISH" in self.status.upper() or self.application == "":
                 self.status = "FINISH"
                 response_json["Application"] = ""
@@ -150,7 +145,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 
             app_window = desktop_windows_dict[application_label]
 
-            response_json["Application"] = control.get_application_name(app_window)
+            self.app_root = control.get_application_name(app_window)
+            response_json["Application"] = self.app_root
             response_json = self.set_result_and_log("", response_json)
 
             try:
@@ -170,12 +166,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
 
             if configs["RAG_OFFLINE_DOCS"]:
                 print_with_color("Loading offline document indexer for {app}...".format(app=self.application), "magenta")
-                offline_retriever_factory = retriever_factory.OfflineDocRetrieverFactory(self.application)
-                self.offline_doc_retriever = offline_retriever_factory.create_offline_doc_retriever()
+                self.offline_doc_retriever = retriever_factory.OfflineDocRetriever(self.application)
             if configs["RAG_ONLINE_SEARCH"]:
                 print_with_color("Creating a Bing search indexer...", "magenta")
-                offline_retriever_factory = retriever_factory.OnlineDocRetrieverFactory(self.request)
-                self.online_doc_retriever = offline_retriever_factory.create_online_search_retriever()
+                self.online_doc_retriever = retriever_factory.OnlineDocRetriever(self.request)
+            if configs["RAG_EXPERIENCE"]:
+                print_with_color("Creating an experience indexer...", "magenta")
+                experience_path = configs["EXPERIENCE_SAVED_PATH"]
+                db_path = os.path.join(experience_path, "experience_db")
+                self.experience_retriever = retriever_factory.ExperienceRetriever(db_path)
+
 
             time.sleep(configs["SLEEP_TIME"])
 
@@ -236,15 +236,15 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 screenshot_annotated_url = encode_image_from_path(annotated_screenshot_save_path)
                 image_url += [screenshot_url, screenshot_annotated_url]
 
-            action_example_prompt = prompter.examples_prompt_helper(self.action_selection_example_prompt)
-            api_prompt = prompter.api_prompt_helper(self.action_selection_api_prompt, verbose=1)
 
-            action_selection_prompt_system_message = prompter.system_prompt_construction(self.action_selection_prompt, api_prompt, action_example_prompt)
-            action_selection_prompt_user_message = prompter.user_prompt_construction(self.action_selection_prompt, self.request_history, self.action_history, control_info, self.plan, self.request, self.rag_prompt())
+            examples, tips = self.rag_experience_retrieve()
+            action_selection_prompt_system_message = self.act_selection_prompter.system_prompt_construction(examples, tips)
+            action_selection_prompt_user_message = self.act_selection_prompter.user_content_construction(image_url, self.request_history, self.action_history, 
+                                                                                                         control_info, self.plan, self.request, self.rag_prompt(), configs["INCLUDE_LAST_SCREENSHOT"])
             
-            action_selection_prompt_message = prompter.prompt_construction(action_selection_prompt_system_message, image_url, action_selection_prompt_user_message, configs["INCLUDE_LAST_SCREENSHOT"], configs["ACTION_AGENT"]["VISUAL_MODE"])
-            
-            
+            action_selection_prompt_message = self.act_selection_prompter.prompt_construction(action_selection_prompt_system_message, action_selection_prompt_user_message)
+
+    
             self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
 
             try:
@@ -274,9 +274,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
                 self.status = response_json["Status"]
                 comment = response_json["Comment"]
                 response_json["Step"] = self.step
+                response_json["Round"] = self.round
                 response_json["Action"] = action
                 response_json["Agent"] = "ActAgent"
-                response_json["Application"] = control.get_application_name(self.app_window)
+                response_json["Request"] = self.request
+                response_json["Application"] = self.app_root
 
 
                 print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
@@ -308,6 +310,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             
             break
 
+        self.step += 1
+
         # The task is finish and no further action is needed
         if self.status.upper() == "FINISH" and function_call == "":
             self.status = self.status.upper()
@@ -315,8 +319,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
             
             return
         
-        self.step += 1
-
+        
         if function_call:
         # Handle the case when the action is an image summary or switch app
             if function_call.lower() == "summary":
@@ -355,15 +358,65 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         retrieved_docs = ""
         if self.offline_doc_retriever:
             offline_docs = self.offline_doc_retriever.retrieve("How to {query} for {app}".format(query=self.request, app=self.application), configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], filter=None)
-            offline_docs_prompt = prompter.retrived_documents_prompt_helper("Help Documents", "Document", [doc.metadata["text"] for doc in offline_docs])
+            offline_docs_prompt = self.act_selection_prompter.retrived_documents_prompt_helper("Help Documents", "Document", [doc.metadata["text"] for doc in offline_docs])
             retrieved_docs += offline_docs_prompt
 
         if self.online_doc_retriever:
             online_search_docs = self.online_doc_retriever.retrieve(self.request, configs["RAG_ONLINE_RETRIEVED_TOPK"], filter=None)
-            online_docs_prompt = prompter.retrived_documents_prompt_helper("Online Search Results", "Search Result", [doc.page_content for doc in online_search_docs])
+            online_docs_prompt = self.act_selection_prompter.retrived_documents_prompt_helper("Online Search Results", "Search Result", [doc.page_content for doc in online_search_docs])
             retrieved_docs += online_docs_prompt
 
         return retrieved_docs
+
+    
+    def rag_experience_retrieve(self):
+        """
+        Retrieving experience examples for the user request.
+        :return: The retrieved examples and tips string.
+        """
+        
+        # Retrieve experience examples. Only retrieve the examples that are related to the current application.
+        experience_docs = self.experience_retriever.retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"], 
+                                                                filter=lambda x: self.app_root.lower() in [app.lower() for app in x["app_list"]])
+        
+        if experience_docs:
+            examples = [doc.metadata.get("example", {}) for doc in experience_docs]
+            tips = [doc.metadata.get("Tips", "") for doc in experience_docs]
+        else:
+            examples = []
+            tips = []
+
+        return examples, tips
+
+    def experience_asker(self):
+        print_with_color("""Would you like to save the current conversation flow for future reference by the agent?
+[Y] for yes, any other key for no.""", "cyan")
+        
+        self.request = input()
+
+        if self.request.upper() == "Y":
+            return True
+        else:
+            return False
+        
+
+    def experience_saver(self):
+        """
+        Save the current agent experience.
+        """
+        print_with_color("Summarizing and saving the execution flow as experience...", "yellow")
+
+        summarizer = ExperienceSummarizer(configs["ACTION_AGENT"]["VISUAL_MODE"], configs["EXPERIENCE_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        experience = summarizer.read_logs(self.log_path)
+        summaries, total_cost = summarizer.get_summary_list(experience)
+
+        experience_path = configs["EXPERIENCE_SAVED_PATH"]
+        create_folder(experience_path)
+        summarizer.create_or_update_yaml(summaries, os.path.join(experience_path, "experience.yaml"))
+        summarizer.create_or_update_vector_db(summaries, os.path.join(experience_path, "experience_db"))
+
+        self.cost += total_cost
+        print_with_color("The experience has been saved.", "cyan")
 
 
     def set_new_round(self):
@@ -470,27 +523,27 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO")), 
         log = json.dumps({"step": self.step, "status": "ERROR", "response": response_str, "error": error})
         self.logger.info(log)
 
+    @staticmethod
+    def initialize_logger(log_path, log_filename):
+        """
+        Initialize logging.
+        log_path: The path of the log file.
+        log_filename: The name of the log file.
+        return: The logger.
+        """
+        # Code for initializing logging
+        logger = logging.Logger(log_filename)
 
-def initialize_logger(log_path, log_filename):
-    """
-    Initialize logging.
-    log_path: The path of the log file.
-    log_filename: The name of the log file.
-    return: The logger.
-    """
-    # Code for initializing logging
-    logger = logging.Logger(log_filename)
-
-    if not configs["PRINT_LOG"]:
-        # Remove existing handlers if PRINT_LOG is False
-        logger.handlers = []
+        if not configs["PRINT_LOG"]:
+            # Remove existing handlers if PRINT_LOG is False
+            logger.handlers = []
 
 
-    log_file_path = os.path.join(log_path, log_filename)
-    file_handler = logging.FileHandler(log_file_path, encoding="utf-8")
-    formatter = logging.Formatter('%(message)s')
-    file_handler.setFormatter(formatter)
-    logger.addHandler(file_handler)
-    logger.setLevel(configs["LOG_LEVEL"])
+        log_file_path = os.path.join(log_path, log_filename)
+        file_handler = logging.FileHandler(log_file_path, encoding="utf-8")
+        formatter = logging.Formatter('%(message)s')
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
+        logger.setLevel(configs["LOG_LEVEL"])
 
-    return logger
+        return logger
