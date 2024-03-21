@@ -6,7 +6,7 @@ import zipfile
 import json
 import os
 
-def unzip_and_read_file(file_path):
+def unzip_and_read_file(file_path) -> str:
     """
     Unzip the file and read the content of the extracted file.
     file_path: the path of the pending zip file.
@@ -17,7 +17,7 @@ def unzip_and_read_file(file_path):
         content = file.read()
     return content
 
-def unzip_file(zip_file_path):
+def unzip_file(zip_file_path) -> str:
     """
     Unzip the file and return the path of the extracted file.
     zip_file_path: the path of the pending zip file.

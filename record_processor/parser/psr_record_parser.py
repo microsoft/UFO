@@ -22,7 +22,7 @@ class PSRRecordParser:
         self.comments = []
         self.steps = []
 
-    def parse_to_record(self):
+    def parse_to_record(self) -> BehaviorRecord:
         """
         Parse the steps recorder .mht file content to record in following steps:
         1. Find the boundary in the .mht file.
@@ -41,7 +41,7 @@ class PSRRecordParser:
         return record
     
 
-    def find_boundary(self):
+    def find_boundary(self) -> str:
         """
         Find the boundary in the .mht file.
         """
@@ -56,7 +56,7 @@ class PSRRecordParser:
         else:
             raise ValueError("Boundary not found in the .mht file.")
         
-    def split_file_by_boundary(self, boundary):
+    def split_file_by_boundary(self, boundary) -> dict:
         """
         Split the file by the boundary into parts, 
         Store the parts in a dictionary, including the content type,
@@ -92,7 +92,7 @@ class PSRRecordParser:
                 part_dict[content_location] = part_info
         return part_dict
     
-    def get_steps(self, content):
+    def get_steps(self, content) -> dict:
         """
         Get the steps from the content in fllowing steps:
         1. Find the UserActionData tag in the content.
@@ -126,7 +126,7 @@ class PSRRecordParser:
         else:
             raise ValueError("UserActionData not found in the file.")
         
-    def get_comments(self, content):
+    def get_comments(self, content) -> dict:
         """
         Get the user input comments for each step
         content: The content of the main.htm file.
@@ -143,7 +143,7 @@ class PSRRecordParser:
             comments[f'step_{index}'] = comment_tag.next_sibling if comment_tag else None
         return comments
     
-    def get_screenshot(self, screenshot_file_name):
+    def get_screenshot(self, screenshot_file_name) -> str:
         """
         Get the screenshot by screenshot file name.
         The screenshot related information is stored in the parts_dict.
