@@ -190,6 +190,7 @@ def execution(window, method_name:str, args:dict):
             #args = {"keys": args["text"], "pause": 0.1, "with_spaces": True}
     elif method_name == "backspace" or method_name == "DeleteText":
         k = args["k"]
+        pyautogui.press("end")
         for _ in range(k):
             pyautogui.press("backspace")
     elif method_name == "press":
