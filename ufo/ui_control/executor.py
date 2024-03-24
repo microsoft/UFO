@@ -91,25 +91,32 @@ class ActionExecutor:
     
 
     def set_text(self, method_name:str, args:dict):
-            try: 
-                result = self.atomic_execution(self.control, method_name, args)
-                if configs["INPUT_TEXT_ENTER"]:
-                    self.atomic_execution(self.control, "type_keys", args = {"keys": "{ENTER}"})
-                # the following "if" is tentative, could be eliminated as it will cause some wierd behavior. 
-                # But is a good way to check if set_text worked. 
-                if args["text"] not in self.control.window_text():
-                    raise Exception(f"Failed to use set_text: {args['text']}")
-                return result
-            except:
-                print_with_color(f"{self.control} doesn't have a method named {method_name}, trying another input method", "yellow")
-                method_name = "type_keys"
-                clear_text_keys = "^a{BACKSPACE}"
-                text_to_type = args["text"]
-                keys_to_send = clear_text_keys + text_to_type
-                method_name = "type_keys"
-                args = {"keys": keys_to_send, "pause": 0.1, "with_spaces": True}
-                return self.atomic_execution(self.control, method_name, args)
-    
+        """
+        Use set_text method to take the input action, 
+        will automatically switch to type_keys if set_text fails, 
+        and make sure the text is correctly set by clearing the exist values.
+        :param method_names: set edit text method.
+        :param args: The arguments of the set edit text method.
+        :return: The result of the set edit text action."""
+        try: 
+            result = self.atomic_execution(self.control, method_name, args)
+            if configs["INPUT_TEXT_ENTER"]:
+                self.atomic_execution(self.control, "type_keys", args = {"keys": "{ENTER}"})
+            # the following "if" is tentative, could be eliminated as it will cause some wierd behavior. 
+            # But is a good way to check if set_text worked. 
+            if args["text"] not in self.control.window_text():
+                raise Exception(f"Failed to use set_text: {args['text']}")
+            return result
+        except:
+            print_with_color(f"{self.control} doesn't have a method named {method_name}, trying another input method", "yellow")
+            method_name = "type_keys"
+            clear_text_keys = "^a{BACKSPACE}"
+            text_to_type = args["text"]
+            keys_to_send = clear_text_keys + text_to_type
+            method_name = "type_keys"
+            args = {"keys": keys_to_send, "pause": 0.1, "with_spaces": True}
+            return self.atomic_execution(self.control, method_name, args)
+
     def __set_edit_text(self, args_dict:dict):
         """
         Set the edit text of the control element.
