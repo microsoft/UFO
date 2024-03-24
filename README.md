@@ -33,10 +33,10 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 📢 News
-- 📅 2024-03-XX: New Release for v0.0.1! Check out our exciting new features:
+- 📅 2024-03-25: New Release for v0.1! Check out our exciting new features:
     1. Our UFO framework now support RAG from offline document and online Bing search. 
-    2. We now support creating your help documents for each Windows app to become an app expert. Check XX for more details!
-    3. UFO now support more LLMs and customized models.
+    2. We now support creating your help documents for each Windows applications to become an app expert. Check XX for more details!
+    3. UFO now support more customizing GPT for AppAgent and ActAgent. You can now use text-only model (e.g. GPT-4) for each agent!
 - 📅 2024-02-14: Our [technical report](https://arxiv.org/abs/2402.07939) is online!
 - 📅 2024-02-10: UFO is released on GitHub🎈. Happy Chinese New year🐉!
 
@@ -184,11 +184,11 @@ If you use UFO in your research, please cite our paper:
 ```
 
 ## 📝 Todo List
-- ⏩ Documentation.
-- ⏩ Support local host GUI interaction model.
-- ⏩ Support more control using Win32 API.
-- ⏩ RAG enhanced UFO.
-- ⏩ Chatbox GUI for UFO.
+- [x] RAG enhanced UFO.
+- [ ] Documentation.
+- [ ] Support local host GUI interaction model.
+- [ ] Support more control using Win32 API.
+- [ ] Chatbox GUI for UFO.
 
 
 
