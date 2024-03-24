@@ -33,10 +33,11 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 📢 News
-- 📅 2024-03-25: New Release for v0.1! Check out our exciting new features:
-    1. Our UFO framework now support RAG from offline document and online Bing search. 
-    2. We now support creating your help documents for each Windows applications to become an app expert. Check XX for more details!
-    3. UFO now support more customizing GPT for AppAgent and ActAgent. You can now use text-only model (e.g. GPT-4) for each agent!
+- 📅 2024-03-25: **New Release for v0.1**! Check out our exciting new features:
+    1. UFO now supports RAG from offline document and online Bing search. 
+    2. You can save the task completion trajectory for UFO's reference. It can improves its future successful rate!
+    3. We now support creating your help documents for each Windows applications to become an app expert. Check the [README](./learner/README.md) for more details!
+    4. You cam customize different GPT models for AppAgent and ActAgent. Text-only models (e.g. GPT-4) are now supported!
 - 📅 2024-02-14: Our [technical report](https://arxiv.org/abs/2402.07939) is online!
 - 📅 2024-02-10: UFO is released on GitHub🎈. Happy Chinese New year🐉!
 
@@ -45,6 +46,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 UFO sightings have garnered attention from various media outlets, including:
 - [Microsoft's UFO abducts traditional user interfaces for a smarter Windows experience](https://the-decoder.com/microsofts-ufo-abducts-traditional-user-interfaces-for-a-smarter-windows-experience/)
+- [🚀 UFO & GPT-4-V: Sit back and relax, mientras GPT lo hace todo🌌](https://www.linkedin.com/posts/gutierrezfrancois_ai-ufo-microsoft-activity-7176819900399652865-pLoo?utm_source=share&utm_medium=member_desktop)
 - [The AI PC - The Future of Computers? - Microsoft UFO](https://www.youtube.com/watch?v=1k4LcffCq3E)
 - [下一代Windows系统曝光：基于GPT-4V，Agent跨应用调度，代号UFO](https://www.qbitai.com/2024/02/121048.html)
 - [下一代智能版 Windows 要来了？微软推出首个 Windows Agent，命名为 UFO！](https://blog.csdn.net/csdnnews/article/details/136161570)
@@ -80,26 +82,36 @@ pip install -r requirements.txt
 ```
 
 ### ⚙️ Step 2: Configure the LLMs
-Before running UFO, you need to provide your LLM configurations. You can create a config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` edited as follows: 
+Before running UFO, you need to provide your LLM configurations **individully for AppAgent and ActAgent**. You can create a config file `ufo/config/config_llm.yaml`, by copying the `ufo/config/config_llm.yaml.template` and editing config for "APP_AGENT" and "ACTION_AGENT" as follows: 
 
 #### OpenAI
 ```
-API_TYPE: "openai" 
-OPENAI_API_BASE: "https://api.openai.com/v1/chat/completions" # The base URL for the OpenAI API
-OPENAI_API_KEY: "YOUR_API_KEY"  # Set the value to the openai key for the llm model
-OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts visual input
+VISUAL_MODE: True, # Whether to use the visual mode
+API_TYPE: "openai" , # The API type, "openai" for the OpenAI API.  
+API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint.
+API_KEY: "sk-",  # The OpenAI API key, begin with sk-
+API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model by now that accepts visual input
 ```
 
 #### Azure OpenAI (AOAI)
 ```
-API_TYPE: "aoai" 
-OPENAI_API_BASE: "YOUR_ENDPOINT" # The AOAI API address. Format: https://{your-resource-name}.openai.azure.com/openai/deployments/{deployment-id}/chat/completions?api-version={api-version}
-OPENAI_API_KEY: "YOUR_API_KEY"  # Set the value to the openai key for the llm model
-OPENAI_API_MODEL: "GPTV_MODEL_NAME"  # The only OpenAI model by now that accepts visual input
+API_TYPE: "aoai" , # The API type, "aoai" for the Azure OpenAI.  
+API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
+API_KEY: "YOUR_KEY",  # The aoai API key
+API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model by now that accepts visual input
+API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 ```
+You can optionally set an backup LLM engine in the field of "BACKUP_AGENT" if the above engines failed.
+
+### 📔 Step 3: Additional Setting for RAG (optional).
+If you want to enhance UFO's ability with external knowledge, you can optionallly config it with external database for retrieval augmented generation (RAG).
 
 
-### 🎉 Step 3: Start UFO
+
+
+### 🎉 Step 4: Start UFO
 
 #### ⌨️ You can execute the following on your Windows command Line (CLI):
 
