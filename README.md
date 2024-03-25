@@ -33,11 +33,11 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 📢 News
-- 📅 2024-03-25: **New Release for v0.1**! Check out our exciting new features:
-    1. UFO now supports RAG from offline document and online Bing search. 
-    2. You can save the task completion trajectory for UFO's reference. It can improves its future successful rate!
-    3. We now support creating your help documents for each Windows applications to become an app expert. Check the [README](./learner/README.md) for more details!
-    4. You cam customize different GPT models for AppAgent and ActAgent. Text-only models (e.g. GPT-4) are now supported!
+- 📅 2024-03-25: **New Release for v0.1!** Check out our exciting new features:
+    1. UFO now supports RAG from offline documents and online Bing search.
+    2. You can save the task completion trajectory into its memory for UFO's reference, improving its future success rate!
+    3. We now support creating your help documents for each Windows application to become an app expert. Check the [README](./learner/README.md) for more details!
+    4. You can customize different GPT models for AppAgent and ActAgent. Text-only models (e.g., GPT-4) are now supported!
 - 📅 2024-02-14: Our [technical report](https://arxiv.org/abs/2402.07939) is online!
 - 📅 2024-02-10: UFO is released on GitHub🎈. Happy Chinese New year🐉!
 
@@ -82,10 +82,10 @@ pip install -r requirements.txt
 ```
 
 ### ⚙️ Step 2: Configure the LLMs
-Before running UFO, you need to provide your LLM configurations **individully for AppAgent and ActAgent**. You can create a config file `ufo/config/config_llm.yaml`, by copying the `ufo/config/config_llm.yaml.template` and editing config for "APP_AGENT" and "ACTION_AGENT" as follows: 
+Before running UFO, you need to provide your LLM configurations **individully for AppAgent and ActAgent**. You can create your own config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` and editing config for **APP_AGENT** and **ACTION_AGENT** as follows: 
 
 #### OpenAI
-```
+```bash
 VISUAL_MODE: True, # Whether to use the visual mode
 API_TYPE: "openai" , # The API type, "openai" for the OpenAI API.  
 API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint.
@@ -95,7 +95,7 @@ API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model by now that accepts 
 ```
 
 #### Azure OpenAI (AOAI)
-```
+```bash
 API_TYPE: "aoai" , # The API type, "aoai" for the Azure OpenAI.  
 API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
 API_KEY: "YOUR_KEY",  # The aoai API key
@@ -106,8 +106,44 @@ API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 You can optionally set an backup LLM engine in the field of "BACKUP_AGENT" if the above engines failed.
 
 ### 📔 Step 3: Additional Setting for RAG (optional).
-If you want to enhance UFO's ability with external knowledge, you can optionallly config it with external database for retrieval augmented generation (RAG).
+If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file.
 
+#### RAG from Offline Help Document
+Before enabling this function, you need to create an offline indexer for your help document. Please refer to the [README](./learner/README.md) to learn how to create an offline vectored database for retrieval. You can enable this function by setting the following configuration:
+```bash
+## RAG Configuration for the offline docs
+RAG_OFFLINE_DOCS: True  # Whether to use the offline RAG.
+RAG_OFFLINE_DOCS_RETRIEVED_TOPK: 1  # The topk for the offline retrieved documents
+```
+Adjust `RAG_OFFLINE_DOCS_RETRIEVED_TOPK` to optimize performance.
+
+
+####  RAG from Online Bing Search Engine
+Enhance UFO's ability by utilizing the most up-to-date online search results! To use this function, you need to obtain a Bing search API key. Activate this feature by setting the following configuration:
+```bash
+## RAG Configuration for the Bing search
+BING_API_KEY: "YOUR_BING_SEARCH_API_KEY"  # The Bing search API key
+RAG_ONLINE_SEARCH: True  # Whether to use the online search for the RAG.
+RAG_ONLINE_SEARCH_TOPK: 5  # The topk for the online search
+RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
+```
+Adjust `RAG_ONLINE_SEARCH_TOPK` and `RAG_ONLINE_RETRIEVED_TOPK` to get better performance.
+
+
+#### RAG from Self-Demonstration
+Save task completion trajectories into UFO's memory for future reference. This can improve its future success rates based on its previous experiences!
+
+After completing a task, you'll see the following message:
+```
+Would you like to save the current conversation flow for future reference by the agent?
+[Y] for yes, any other key for no.
+```
+Press `Y` to save it into its memory and enable memory retrieval via the following configuration:
+```bash
+## RAG Configuration for experience
+RAG_EXPERIENCE: True  # Whether to use the RAG from its self-experience.
+RAG_EXPERIENCE_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
+```
 
 
 
@@ -137,7 +173,7 @@ Please enter your request to be completed🛸:
 - The GPT-V accepts screenshots of your desktop and application GUI as input. Please ensure that no sensitive or confidential information is visible or captured during the execution process. For further information, refer to [DISCLAIMER.md](./DISCLAIMER.md).
 
 
-###  Step 4 🎥: Execution Logs 
+###  Step 5 🎥: Execution Logs 
 
 You can find the screenshots taken and request & response logs in the following folder:
 ```
