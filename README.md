@@ -110,7 +110,7 @@ You can also non-visial model (e.g., GPT-4) for each agent, by setting `VISUAL_M
 ####  Non-Visual Model Configuration
 You can utilize non-visual models (e.g., GPT-4) for each agent by configuring the following settings in the config.yaml file:
 
-- ```VISUAL_MODE: True to enable non-visual mode.```
+- ```VISUAL_MODE: False # To enable non-visual mode.```
 - Specify the appropriate `API_MODEL` (OpenAI) and `API_DEPLOYMENT_ID` (AOAI) for each agent.
 
 Optionally, you can set a backup language model (LLM) engine in the `BACKUP_AGENT` field to handle cases where the primary engines fail during inference. Ensure you configure these settings accurately to leverage non-visual models effectively.
