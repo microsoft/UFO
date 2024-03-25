@@ -1,16 +1,6 @@
-version: 0.1
-
-API_TYPE: "openai"  # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API.
-OPENAI_API_BASE: "YOUR_ENDPOINT" # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
-OPENAI_API_KEY: "YOUR_API_KEY"  # The OpenAI API key
-OPENAI_API_MODEL: "gpt-4-vision-preview"  # The only OpenAI model by now that accepts visual input
 CONTROL_BACKEND: "uia"  # The backend for control action
-MAX_TOKENS: 2000  # The max token limit for the response completion
-MAX_RETRY: 3  # The max retry limit for the response completion
 MAX_STEP: 30  # The max step limit for completing the user request
 SLEEP_TIME: 5  # The sleep time between each step to wait for the window to be ready
-TEMPERATURE: 0.0  # The temperature of the model: the lower the value, the more consistent the output of the model
-TOP_P: 0.0  # The top_p of the model: the lower the value, the more conservative the output of the model
 SAFE_GUARD: True  # Whether to use the safe guard to prevent the model from doing sensitve operations.
 CONTROL_TYPE_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton"]  # The list of control types that are allowed to be selected 
 HISTORY_KEYS: ["Step", "Thought", "ControlText", "Action", "Comment", "Results"]  # The keys of the action history for the next step.
@@ -32,10 +22,17 @@ CONCAT_SCREENSHOT: True  # Whether to concat the screenshot for the control item
 LOG_LEVEL: "DEBUG"  # The log level
 INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the observation
 REQUEST_TIMEOUT: 250  # The call timeout for the GPT-V model
-APP_SELECTION_PROMPT: "ufo/prompts/base/app_selection.yaml"  # The prompt for the app selection
-ACTION_SELECTION_PROMPT: "ufo/prompts/base/action_selection.yaml"  # The prompt for the action selection
+
+APP_SELECTION_PROMPT: "ufo/prompts/base/{mode}/app_selection.yaml"  # The prompt for the app selection
+ACTION_SELECTION_PROMPT: "ufo/prompts/base/{mode}/action_selection.yaml"  # The prompt for the action selection
+
+APP_SELECTION_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/app_example.yaml"  # The prompt for the app selection
+ACTION_SELECTION_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/action_example.yaml"  # The prompt for the action selection
+
+## For experience learning
+EXPERIENCE_PROMPT: "ufo/prompts/experience/{mode}/experience_summary.yaml"
+EXPERIENCE_SAVED_PATH: "vectordb/experience/"
+
+API_PROMPT: "ufo/prompts/base/{mode}/api.yaml"  # The prompt for the API
 INPUT_TEXT_API: "type_keys" # The input text API
-
-
-
-  
+INPUT_TEXT_ENTER: True # whether to press enter after typing the text

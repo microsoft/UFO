@@ -1,13 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import ast
-import time
-import warnings
-from typing import List
 
+from typing import List, Tuple
+import psutil
 from pywinauto import Desktop
-
 from ..config.config import load_config
 
 configs = load_config()
@@ -15,7 +12,7 @@ configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]
 
 
-def get_desktop_app_info(remove_empty:bool=True):
+def get_desktop_app_info(remove_empty:bool=True) -> Tuple[dict, List[dict]]:
     """
     Get titles and control types of all the apps on the desktop.
     :param remove_empty: Whether to remove empty titles.
@@ -28,12 +25,12 @@ def get_desktop_app_info(remove_empty:bool=True):
     if remove_empty:
         app_control_types = [app_control_types[i] for i, title in enumerate(app_titles) if title != ""]
         app_titles = [title for title in app_titles if title != ""]
-    return [app_titles, app_control_types]
+    return app_titles, app_control_types
 
 
 
 
-def get_desktop_app_info_dict(remove_empty:bool=True, field_list:List[str]=["control_text", "control_type"]):
+def get_desktop_app_info_dict(remove_empty:bool=True, field_list:List[str]=["control_text", "control_type"]) -> Tuple[dict, List[dict]]:
     """
     Get titles and control types of all the apps on the desktop.
     :param remove_empty: Whether to remove empty titles.
@@ -49,7 +46,7 @@ def get_desktop_app_info_dict(remove_empty:bool=True, field_list:List[str]=["con
 
 
     
-def find_control_elements_in_descendants(window, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0):
+def find_control_elements_in_descendants(window, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0) -> List:
     """
     Find control elements in descendants of the window.
     :param window: The window to find control elements.
@@ -85,7 +82,7 @@ def find_control_elements_in_descendants(window, control_type_list:List[str]=[],
     
 
 
-def get_control_info(window, field_list:List[str]=[]):
+def get_control_info(window, field_list:List[str]=[]) -> dict:
     """
     Get control info of the window.
     :param window: The window to get control info.
@@ -110,7 +107,7 @@ def get_control_info(window, field_list:List[str]=[]):
 
 
 
-def get_control_info_batch(window_list:List, field_list:List[str]=[]):
+def get_control_info_batch(window_list:List, field_list:List[str]=[]) -> List:
     """
     Get control info of the window.
     :param window: The list of windows to get control info.
@@ -124,7 +121,7 @@ def get_control_info_batch(window_list:List, field_list:List[str]=[]):
 
 
 
-def get_control_info_dict(window_dict:dict, field_list:List[str]=[]):
+def get_control_info_dict(window_dict:dict, field_list:List[str]=[]) -> List[dict]:
     """
     Get control info of the window.
     :param window: The list of windows to get control info.
@@ -140,7 +137,7 @@ def get_control_info_dict(window_dict:dict, field_list:List[str]=[]):
     return control_info_list
 
 
-def replace_newline(input_str):
+def replace_newline(input_str : str) -> str:
     """
     Replace \n with \\n.
     :param input_str: The string to replace.
@@ -155,82 +152,19 @@ def replace_newline(input_str):
         result_str = result_str.replace('\\\\n', '\\n')
 
     return result_str
+   
 
-
-def parse_function_call(call):
+def get_application_name(window) -> str:
     """
-    Parse the function call.
-    :param call: The function call.
-    :return: The function name and arguments."""
-
-    node = ast.parse(call)
-
-    # Get the function name and arguments
-    func_name = node.body[0].value.func.id
-    args = {arg.arg: ast.literal_eval(arg.value) for arg in node.body[0].value.keywords}
-
-    return func_name, args
-
-
-
-
-def execution(window, method_name:str, args:dict):
+    Get the application name of the window.
+    :param window: The window to get the application name.
+    :return: The application name of the window. Empty string ("") if failed to get the name.
     """
-    Execute the action on the control elements.
-    :param window: The window variable to execute the action.
-    :param method: The method to execute.
-    :param args: The arguments of the method.
-    :return: The result of the action.
-    """
-    if method_name == "set_edit_text":
-        if configs["INPUT_TEXT_API"] == "type_keys":
-            method_name = "type_keys"
-            args = {"keys": args["text"], "pause": 0.1, "with_spaces": True}
-
+    if window == None:
+        return ""
+    process_id = window.process_id()
     try:
-        method = getattr(window, method_name)
-        result = method(**args)
-        return result
-    except AttributeError:
-        return f"{window} doesn't have a method named {method_name}"
-    except Exception as e:
-        return f"An error occurred: {e}"
-    
-
-
-def wait_enabled(window, timeout:int=10, retry_interval:int=0.5):
-    """
-    Wait until the window is enabled.
-    :param window: The window to wait.
-    :param timeout: The timeout to wait.
-    :param retry_interval: The retry interval to wait.
-    """
-    while not window.is_enabled():
-        time.sleep(retry_interval)
-        timeout -= retry_interval
-        if timeout <= 0:
-            warnings.warn(f"Timeout: {window} is not enabled.")
-            break
-    return
-
-
-
-def wait_visible(window, timeout:int=10, retry_interval:int=0.5):
-    """
-    Wait until the window is enabled.
-    :param window: The window to wait.
-    :param timeout: The timeout to wait.
-    :param retry_interval: The retry interval to wait.
-    """
-    while not window.is_visible():
-        time.sleep(retry_interval)
-        timeout -= retry_interval
-        if timeout <= 0:
-            warnings.warn(f"Timeout: {window} is not visible.")
-            break
-    return
-
-   
-
-    
-   
+        process = psutil.Process(process_id)
+        return process.name()
+    except psutil.NoSuchProcess:
+        return ""

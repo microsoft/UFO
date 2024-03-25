@@ -15,24 +15,9 @@ configs = load_config()
 args = argparse.ArgumentParser()
 args.add_argument("--task", help="The name of current task.",
                   type=str, default=datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
-args.add_argument("--gptkey", help="GPT key.", type=str,
-                  default=configs["OPENAI_API_KEY"])
 
 parsed_args = args.parse_args()
 
-
-if configs["API_TYPE"].lower() == "aoai":
-    headers = {
-        "Content-Type": "application/json",
-        "api-key": parsed_args.gptkey,
-    }
-elif configs["API_TYPE"].lower() == "openai":
-    headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {parsed_args.gptkey}"
-        }
-else:
-    raise ValueError("API_TYPE should be either 'openai' or 'aoai'.")
 
 
 def main():
@@ -51,20 +36,21 @@ def main():
 
         round = session.get_round()
         
-        if round > 0:
+        if status == "FINISH":
             session.set_new_round()
             status = session.get_status()
             if status == "ALLFINISH":
+                if session.experience_asker():
+                    session.experience_saver()
                 break
 
         while status.upper() not in ["FINISH", "ERROR"] and step <= configs["MAX_STEP"]:
-
-            session.process_application_selection(headers=headers)
+            session.process_application_selection()
             step = session.get_step()
             status = session.get_status()
 
             while status.upper() not in ["FINISH", "ERROR"] and step <= configs["MAX_STEP"]:
-                session.process_action_selection(headers=headers)
+                session.process_action_selection()
                 status = session.get_status()
                 step = session.get_step()
 
@@ -94,7 +80,6 @@ def main():
                 round=round), "magenta")
             print_with_color("{result}".format(result=result), "yellow")
 
-        session.set_round(round+1)
 
     # Print the total cost
     total_cost = session.get_cost()
