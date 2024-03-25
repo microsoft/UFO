@@ -33,7 +33,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 📢 News
-- 📅 2024-03-25: **New Release for v0.1!** Check out our exciting new features:
+- 📅 2024-03-26: **New Release for v0.0.1!** Check out our exciting new features:
     1. UFO now supports RAG from offline documents and online Bing search.
     2. You can save the task completion trajectory into its memory for UFO's reference, improving its future success rate!
     3. We now support creating your help documents for each Windows application to become an app expert. Check the [README](./learner/README.md) for more details!
