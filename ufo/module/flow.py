@@ -321,11 +321,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.control_reannotate = executor.annotation(args, annotation_dict)
             return
 
-        else:
-            self.control_reannotate = None
+
+        self.control_reannotate = None
             
 
-        # The task is finish and no further action is needed
+        # The task is finished and no further action is needed
         if self.status.upper() == "FINISH" and not control_selected:
             self.status = self.status.upper()
             response_json = self.set_result_and_log("", response_json)
