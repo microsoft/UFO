@@ -34,9 +34,9 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 ## 📢 News
 - 📅 2024-03-26: **New Release for v0.0.1!** Check out our exciting new features:
-    1. UFO now supports RAG from offline documents and online Bing search.
-    2. You can save the task completion trajectory into its memory for UFO's reference, improving its future success rate!
-    3. We now support creating your help documents for each Windows application to become an app expert. Check the [README](./learner/README.md) for more details!
+    1. We now support creating your help documents for each Windows application to become an app expert. Check the [README](./learner/README.md) for more details!
+    2. UFO now supports RAG from offline documents and online Bing search.
+    3. You can save the task completion trajectory into its memory for UFO's reference, improving its future success rate!
     4. You can customize different GPT models for AppAgent and ActAgent. Text-only models (e.g., GPT-4) are now supported!
 - 📅 2024-02-14: Our [technical report](https://arxiv.org/abs/2402.07939) is online!
 - 📅 2024-02-10: UFO is released on GitHub🎈. Happy Chinese New year🐉!
