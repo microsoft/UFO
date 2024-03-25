@@ -1,9 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-class BehaviorStep:
+class DemonstrationStep:
     """
-    Class for the single step information in the user behavior record.
+    Class for the single step information in the user demonstration record.
     Multiple steps will be recorded to achieve a specific request.
     """
 
@@ -18,13 +18,13 @@ class BehaviorStep:
         self.screenshot = screenshot
 
 
-class BehaviorRecord:
+class DemonstrationRecord:
     """
-    Class for the user behavior record.
+    Class for the user demonstration record.
     A serise of steps user performed to achieve a specific request will be recorded in this class.
     """
 
-    def __init__(self, applications: list, step_num: int, **steps: BehaviorStep):
+    def __init__(self, applications: list, step_num: int, **steps: DemonstrationStep):
         """
         Create a new Record.
         """
@@ -35,8 +35,20 @@ class BehaviorRecord:
         for index, step in steps.items():
             setattr(self, index, step.__dict__)
 
-    def set_request(self, request):
+    def set_request(self, request: str):
         """
         Set the request.
         """
         self.request = request
+    
+    def get_request(self) -> str:
+        """
+        Get the request.
+        """
+        return self.request
+    
+    def get_applications(self) -> list:
+        """
+        Get the application.
+        """
+        return self.applications

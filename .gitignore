@@ -21,6 +21,7 @@ ufo/rag/app_docs/*
 learner/records.json
 vectordb/docs/*
 vectordb/experience/*
+vectordb/demonstration/*
 
 # Don't ignore the example files
 !vectordb/docs/example/

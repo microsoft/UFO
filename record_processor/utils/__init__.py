@@ -48,10 +48,32 @@ def save_to_json(data: dict, output_file_path: str):
 
     # Extract the directory path from the file path
     directory = os.path.dirname(output_file_path)
-
-    # Check if the directory exists, if not, create it
-    if not os.path.exists(directory):
-        os.makedirs(directory)
+    
+    create_folder(directory)
 
     with open(output_file_path, 'w') as file:
         json.dump(data, file, indent=4)
+        
+        
+def create_folder(folder_path: str):
+    """
+    Create a folder if it doesn't exist.
+
+    :param folder_path: The path of the folder to create.
+    """
+    if not os.path.exists(folder_path):
+        os.makedirs(folder_path)
+        
+def json_parser(json_string:str):
+    """
+    Parse json string to json object.
+    :param json_string: The json string to parse.
+    :return: The json object.
+    """
+
+    # Remove the ```json and ``` at the beginning and end of the string if exists.
+    if json_string.startswith("```json"):
+        json_string = json_string[7:-3]
+
+    return json.loads(json_string)
+
