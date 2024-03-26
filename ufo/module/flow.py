@@ -56,7 +56,7 @@ class Session(object):
         self.plan = ""
         self.request = ""
         self.results = ""
-        self.cost = 0
+        self.cost = 0.0
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
         self.experience_retriever = None
@@ -108,8 +108,10 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.request_logger.info(log)
             self.status = "ERROR"
             return
-
-        self.cost += cost
+        if isinstance(cost, float) and isinstance(self.cost, float):
+            self.cost += cost
+        else:
+            self.cost = None
 
         try:
             response_json = json_parser(response_string)
@@ -257,7 +259,10 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
                 time.sleep(configs["SLEEP_TIME"])
                 return 
             
-            self.cost += cost
+            if isinstance(cost, float) and isinstance(self.cost, float):
+                self.cost += cost
+            else:
+                self.cost = None
 
             try:
                 response_json = json_parser(response_string)
@@ -414,8 +419,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         create_folder(experience_path)
         summarizer.create_or_update_yaml(summaries, os.path.join(experience_path, "experience.yaml"))
         summarizer.create_or_update_vector_db(summaries, os.path.join(experience_path, "experience_db"))
-
-        self.cost += total_cost
+        
+        if isinstance(total_cost, float) and isinstance(self.cost, float):
+            self.cost += total_cost
+        else:
+            self.cost = None
         print_with_color("The experience has been saved.", "cyan")
 
 
@@ -476,6 +484,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         Get the cost of the session.
         return: The cost of the session.
         """
+        if not isinstance(self.cost, float):
+            return "Cost is not available. Please try to update the price."
         return self.cost
     
     def get_application_window(self):

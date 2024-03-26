@@ -3,6 +3,8 @@ from typing import Any, Optional
 import openai
 from openai import AzureOpenAI, OpenAI
 
+from ufo.llm.util import get_cost_estimator
+
 
 
 class OpenAIService:
@@ -61,7 +63,7 @@ class OpenAIService:
             prompt_tokens = usage.prompt_tokens
             completion_tokens = usage.completion_tokens
 
-            cost = prompt_tokens / 1000 * 0.01 + completion_tokens / 1000 * 0.03
+            cost = get_cost_estimator(self.config_llm["API_TYPE"], model, prompt_tokens, completion_tokens)
 
             return response.choices[0].message.content, cost
 
