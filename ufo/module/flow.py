@@ -484,7 +484,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return: The cost of the session.
         """
         if not isinstance(self.cost, float):
-            return "Cost is not available. Please try to update the price."
+            return None
         return self.cost
     
     def get_application_window(self):
