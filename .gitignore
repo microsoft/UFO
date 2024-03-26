@@ -25,3 +25,4 @@ vectordb/experience/*
 # Don't ignore the example files
 !vectordb/docs/example/
 
+.vscode

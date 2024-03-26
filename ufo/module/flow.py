@@ -14,8 +14,8 @@ from ..rag import retriever_factory
 from ..config.config import load_config
 from ..llm import llm_call
 from ..prompter.agent_prompter import ApplicationAgentPrompter, ActionAgentPrompter
-from ..ui_control import control
-from ..ui_control import screenshot as screen
+from ..ui_control import control, screenshot as screen
+from ..ui_control.executor import ActionExecutor
 from ..utils import (create_folder, encode_image_from_path,
                      generate_function_call, json_parser, print_with_color,
                      revise_line_breaks, yes_or_no)
@@ -60,6 +60,7 @@ class Session(object):
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
         self.experience_retriever = None
+        self.control_reannotate = None
 
         welcome_text = """
 Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction. 
@@ -166,6 +167,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             self.app_window.set_focus()
 
+            # Initialize the document retriever
             if configs["RAG_OFFLINE_DOCS"]:
                 print_with_color("Loading offline document indexer for {app}...".format(app=self.application), "magenta")
                 self.offline_doc_retriever = retriever_factory.OfflineDocRetriever(self.application)
@@ -206,147 +208,144 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         concat_screenshot_save_path = self.log_path + f"action_step{self.step}_concat.png"
         control_screenshot_save_path = self.log_path + f"action_step{self.step}_selected_controls.png"
 
-
-
-        if BACKEND == "uia":
-            control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
+        if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
+            control_list = self.control_reannotate
         else:
             control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
 
-        while True:
-            if self.app_window == None:
-                self.status = "ERROR"
-                print_with_color("Required Application window is not available.", "red")
-                return
+        if self.app_window == None:
+            self.status = "ERROR"
+            print_with_color("Required Application window is not available.", "red")
+            return
+
+
             
-            annotation_dict, _, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
-            control_info = control.get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
+        annotation_dict, _, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
+        control_info = control.get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
 
-            image_url = []
+        image_url = []
 
-            if configs["INCLUDE_LAST_SCREENSHOT"]:
-                
-                last_screenshot_save_path = self.log_path + f"action_step{self.step - 1}.png"
-                last_control_screenshot_save_path = self.log_path + f"action_step{self.step - 1}_selected_controls.png"
-                image_url += [encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
+        if configs["INCLUDE_LAST_SCREENSHOT"]:
+            
+            last_screenshot_save_path = self.log_path + f"action_step{self.step - 1}.png"
+            last_control_screenshot_save_path = self.log_path + f"action_step{self.step - 1}_selected_controls.png"
+            image_url += [encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
 
-            if configs["CONCAT_SCREENSHOT"]:
-                screen.concat_images_left_right(screenshot_save_path, annotated_screenshot_save_path, concat_screenshot_save_path)
-                image_url += [encode_image_from_path(concat_screenshot_save_path)]
-            else:
-                screenshot_url = encode_image_from_path(screenshot_save_path)
-                screenshot_annotated_url = encode_image_from_path(annotated_screenshot_save_path)
-                image_url += [screenshot_url, screenshot_annotated_url]
+        if configs["CONCAT_SCREENSHOT"]:
+            screen.concat_images_left_right(screenshot_save_path, annotated_screenshot_save_path, concat_screenshot_save_path)
+            image_url += [encode_image_from_path(concat_screenshot_save_path)]
+        else:
+            screenshot_url = encode_image_from_path(screenshot_save_path)
+            screenshot_annotated_url = encode_image_from_path(annotated_screenshot_save_path)
+            image_url += [screenshot_url, screenshot_annotated_url]
 
-
+        if configs["RAG_EXPERIENCE"]:
             examples, tips = self.rag_experience_retrieve()
-            action_selection_prompt_system_message = self.act_selection_prompter.system_prompt_construction(examples, tips)
-            action_selection_prompt_user_message = self.act_selection_prompter.user_content_construction(image_url, self.request_history, self.action_history, 
-                                                                                                         control_info, self.plan, self.request, self.rag_prompt(), configs["INCLUDE_LAST_SCREENSHOT"])
+        else:
+            examples = []
+            tips = []
+
+        action_selection_prompt_system_message = self.act_selection_prompter.system_prompt_construction(examples, tips)
+        action_selection_prompt_user_message = self.act_selection_prompter.user_content_construction(image_url, self.request_history, self.action_history, 
+                                                                                                        control_info, self.plan, self.request, self.rag_prompt(), configs["INCLUDE_LAST_SCREENSHOT"])
+        
+        action_selection_prompt_message = self.act_selection_prompter.prompt_construction(action_selection_prompt_system_message, action_selection_prompt_user_message)
+
+        self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
+
+        try:
+            response_string, cost = llm_call.get_completion(action_selection_prompt_message, "ACTION", use_backup_engine=True)
+        except Exception as e:
+            log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
+            print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
+            self.request_logger.info(log)
+            self.status = "ERROR"
+            time.sleep(configs["SLEEP_TIME"])
+            return 
             
-            action_selection_prompt_message = self.act_selection_prompter.prompt_construction(action_selection_prompt_system_message, action_selection_prompt_user_message)
+        if isinstance(cost, float) and isinstance(self.cost, float):
+            self.cost += cost
+        else:
+            self.cost = None
 
-    
-            self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
+        try:
+            response_json = json_parser(response_string)
 
-            try:
-                response_string, cost = llm_call.get_completion(action_selection_prompt_message, "ACTION", use_backup_engine=True)
-            except Exception as e:
-                log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
-                print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
-                self.request_logger.info(log)
-                self.status = "ERROR"
-                time.sleep(configs["SLEEP_TIME"])
-                return 
+            observation = response_json["Observation"]
+            thought = response_json["Thought"]
+            control_label = response_json["ControlLabel"]
+            control_text = response_json["ControlText"]
+            function_call = response_json["Function"]
+            args = revise_line_breaks(response_json["Args"])
+
+            control_selected = annotation_dict.get(control_label, "")
+
+
+            # Build the executor for over the control item.
+            executor = ActionExecutor(control_selected, self.app_window)
+
+            # Compose the function call and the arguments string.
+            action = generate_function_call(function_call, args)
+
+            # Set the result and log the result.
+            self.plan = response_json["Plan"]
+            self.status = response_json["Status"]
+            comment = response_json["Comment"]
+            response_json["Step"] = self.step
+            response_json["Round"] = self.round
+            response_json["Action"] = action
+            response_json["Agent"] = "ActAgent"
+            response_json["Request"] = self.request
+            response_json["Application"] = self.app_root
+
+            # Log the response.
+            print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
+            print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
+            print_with_color("Selected item🕹️: {control_text}, Label: {label}".format(control_text=control_text, label=control_label), "yellow")
+            print_with_color("Action applied⚒️: {action}".format(action=action), "blue")
+            print_with_color("Status📊: {status}".format(status=self.status), "blue")
+            print_with_color("Next Plan📚: {plan}".format(plan=str(self.plan).replace("\\n", "\n")), "cyan")
+            print_with_color("Comment💬: {comment}".format(comment=comment), "green")
+
+
+        except Exception as e:
+            # Return the error message and log the error.
+            print_with_color("Error occurs at step {step}".format(step=self.step), "red")
+            print_with_color(str(e), "red")
+            self.status = "ERROR"
+
+            self.error_logger(response_string, str(e))
             
-            if isinstance(cost, float) and isinstance(self.cost, float):
-                self.cost += cost
-            else:
-                self.cost = None
-
-            try:
-                response_json = json_parser(response_string)
-
-                observation = response_json["Observation"]
-                thought = response_json["Thought"]
-                control_label = response_json["ControlLabel"]
-                control_text = response_json["ControlText"]
-                function_call = response_json["Function"]
-                args = revise_line_breaks(response_json["Args"])
-
-                action = generate_function_call(function_call, args)
-                self.plan = response_json["Plan"]
-                self.status = response_json["Status"]
-                comment = response_json["Comment"]
-                response_json["Step"] = self.step
-                response_json["Round"] = self.round
-                response_json["Action"] = action
-                response_json["Agent"] = "ActAgent"
-                response_json["Request"] = self.request
-                response_json["Application"] = self.app_root
-
-
-                print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
-                print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
-                print_with_color("Selected item🕹️: {control_text}, Label: {label}".format(control_text=control_text, label=control_label), "yellow")
-                print_with_color("Action applied⚒️: {action}".format(action=action), "blue")
-                print_with_color("Status📊: {status}".format(status=self.status), "blue")
-                print_with_color("Next Plan📚: {plan}".format(plan=str(self.plan).replace("\\n", "\n")), "cyan")
-                print_with_color("Comment💬: {comment}".format(comment=comment), "green")
-
-
-            except Exception as e:
-                print_with_color("Error occurs at step {step}".format(step=self.step), "red")
-                print_with_color(str(e), "red")
-                print_with_color(response_string, "red")
-                self.status = "ERROR"
-
-                self.error_logger(response_string, str(e))
-                
-                return
-            
-            if "SCREENSHOT" in self.status.upper():
-                print_with_color("Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.", "magenta")
-                annotated_screenshot_save_path = self.log_path + f"action_step{self.step}_annotated_retake.png"
-                if "control_labels" in args:
-                    selected_controls_labels = args["control_labels"]
-                    control_list = [annotation_dict[str(label)] for label in selected_controls_labels]
-                continue
-            
-            break
-
+            return
+        
         self.step += 1
 
-        # The task is finish and no further action is needed
-        if self.status.upper() == "FINISH" and function_call == "":
+        # Handle the case when the control item is overlapped and the agent is unable to select the control item. Retake the annotated screenshot.
+        if "SCREENSHOT" in self.status.upper():
+            print_with_color("Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.", "magenta")
+            self.control_reannotate = executor.annotation(args, annotation_dict)
+            return
+
+
+        self.control_reannotate = None
+            
+
+        # The task is finished and no further action is needed
+        if self.status.upper() == "FINISH" and not control_selected:
             self.status = self.status.upper()
             response_json = self.set_result_and_log("", response_json)
             
             return
         
-        
-        if function_call:
-        # Handle the case when the action is an image summary or switch app
-            if function_call.lower() == "summary":
-                response_json = self.set_result_and_log(args["text"], response_json)
-                return
-        else:
-            response_json = self.set_result_and_log("", response_json)
-            return
-        
-        # Action needed.
-        control_selected = annotation_dict.get(control_label, self.app_window)
-        # print_with_color("Actual control name: {name}".format(name=control_selected.element_info.name), "magenta")
-        control_selected.set_focus()
-
         if not self.safe_guard(action, control_text):
             return 
         
-        
         # Take screenshot of the selected control
         screen.capture_screenshot_controls(self.app_window, [control_selected], control_screenshot_save_path)
-        control.wait_enabled(control_selected)
-        results = control.execution(control_selected, function_call, args)
+
+
+        # Execute the action
+        results = executor.execution(function_call, args)  
         response_json = self.set_result_and_log(results, response_json)
 
         time.sleep(configs["SLEEP_TIME"])

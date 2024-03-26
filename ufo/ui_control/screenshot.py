@@ -89,10 +89,12 @@ def capture_screenshot_controls(top_window, control_list: List, save_path:str, c
     screenshot = top_window.capture_as_image()
     window_rect = top_window.rectangle()
     
+
     for control in control_list:
-        control_rect = control.rectangle()
-        adjusted_rect = coordinate_adjusted(window_rect, control_rect)
-        screenshot = draw_rectangles(screenshot, adjusted_rect, color=color)
+        if control:
+            control_rect = control.rectangle()
+            adjusted_rect = coordinate_adjusted(window_rect, control_rect)
+            screenshot = draw_rectangles(screenshot, adjusted_rect, color=color)
     if is_save:
         screenshot.save(save_path)
     return screenshot

@@ -103,12 +103,12 @@ example4:
       set_edit_text
     Args:
       text: |
-      Dear Amy,
+        Dear Amy,
 
-      I hope this message finds you well. I am writing to ask how you feel about the new project. Let me know if you have any concerns.
+        I hope this message finds you well. I am writing to ask how you feel about the new project. Let me know if you have any concerns.
 
-      Best regards,
-      [Sender's Name]
+        Best regards,
+        [Sender's Name]
     Status: |-
       FINISH
     Plan: |-
@@ -203,7 +203,7 @@ example7:
       (3) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
     Comment: |-
       I plan to use Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
-   Tips: |-
+  Tips: |-
     - The search box is usually in a type of ComboBox.
     - The number of stars of a Github repo page can be found in the repo page visually.
 
