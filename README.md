@@ -142,7 +142,7 @@ RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
 Adjust `RAG_ONLINE_SEARCH_TOPK` and `RAG_ONLINE_RETRIEVED_TOPK` to get better performance.
 
 
-#### RAG from Previous-Experience
+#### RAG from Self-Demonstration
 Save task completion trajectories into UFO's memory for future reference. This can improve its future success rates based on its previous experiences!
 
 After completing a task, you'll see the following message:
