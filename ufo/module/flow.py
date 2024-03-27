@@ -60,6 +60,7 @@ class Session(object):
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
         self.experience_retriever = None
+        self.demonstration_retriever = None
         self.control_reannotate = None
 
         welcome_text = """
@@ -177,7 +178,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
                 experience_path = configs["EXPERIENCE_SAVED_PATH"]
                 db_path = os.path.join(experience_path, "experience_db")
                 self.experience_retriever = retriever_factory.ExperienceRetriever(db_path)
-
+            if configs["RAG_DEMONSTRATION"]:
+                print_with_color("Creating an demonstration indexer...", "magenta")
+                demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
+                db_path = os.path.join(demonstration_path, "demonstration_db")
+                self.demonstration_retriever = retriever_factory.DemonstrationRetriever(db_path)
 
             time.sleep(configs["SLEEP_TIME"])
 
@@ -236,13 +241,24 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             screenshot_url = encode_image_from_path(screenshot_save_path)
             screenshot_annotated_url = encode_image_from_path(annotated_screenshot_save_path)
             image_url += [screenshot_url, screenshot_annotated_url]
-
+            
+        examples = []
+        tips = []
         if configs["RAG_EXPERIENCE"]:
-            examples, tips = self.rag_experience_retrieve()
+            experience_examples, experience_tips = self.rag_experience_retrieve()
         else:
-            examples = []
-            tips = []
-
+            experience_examples = []
+            experience_tips = []
+            
+        if configs["RAG_DEMONSTRATION"]:
+            demonstration_examples, demonstration_tips = self.rag_demonstration_retrieve()
+        else:
+            demonstration_examples = []
+            demonstration_tips = []
+        
+        examples += experience_examples + demonstration_examples
+        tips += experience_tips + demonstration_tips
+        
         action_selection_prompt_system_message = self.act_selection_prompter.system_prompt_construction(examples, tips)
         action_selection_prompt_user_message = self.act_selection_prompter.user_content_construction(image_url, self.request_history, self.action_history, 
                                                                                                         control_info, self.plan, self.request, self.rag_prompt(), configs["INCLUDE_LAST_SCREENSHOT"])
@@ -417,7 +433,23 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         self.cost += total_cost
         print_with_color("The experience has been saved.", "cyan")
 
+    def rag_demonstration_retrieve(self):
+        """
+        Retrieving demonstration examples for the user request.
+        :return: The retrieved examples and tips string.
+        """
+        
+        # Retrieve demonstration examples. Only retrieve the examples that are related to the current application.
+        demonstration_docs = self.demonstration_retriever.retrieve(self.request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"])
+        
+        if demonstration_docs:
+            examples = [doc.metadata.get("example", {}) for doc in demonstration_docs]
+            tips = [doc.metadata.get("Tips", "") for doc in demonstration_docs]
+        else:
+            examples = []
+            tips = []
 
+        return examples, tips
     def set_new_round(self):
         """
         Start a new round.

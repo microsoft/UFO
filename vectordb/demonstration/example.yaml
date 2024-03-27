@@ -1,0 +1,37 @@
+example0:
+  example:
+    Observation: The screenshot shows the Microsoft Outlook application with an email
+      composition window open. The 'To' field is empty, and no email address has been
+      entered. The subject and body of the email are also blank. The last action taken
+      was opening the Outlook application.
+    Thought: Based on the screenshot, the first step is to input the email address
+      example@gmail.com into the 'To' field.
+    ControlLabel: '2'
+    ControlText: ''
+    Function: SetText
+    Args:
+      text: example@gmail.com
+    Status: CONTINUE
+    Plan: '(1) Input the email address example@gmail.com into the ''To'' field.
+
+      (2) Input the subject of the email. Since the user request is to say hello,
+      the subject can be ''Hello''.
+
+      (3) Input the content of the email. The content should be a friendly greeting,
+      such as ''Hi there,\nJust wanted to drop a quick note to say hello!\nBest regards.''
+
+      (4) Click the Send button to send the email.'
+    Comment: The user has provided the email address and the content to be sent. The
+      trajectory shows that the user began to input an incorrect email and content,
+      which does not match the user request. I will correct this by inputting the
+      right email address and content.
+  Tips: '- Ensure the email address is entered correctly in the ''To'' field.
+
+    - Use a clear and concise subject for the email.
+
+    - Draft the email content in a friendly and professional tone.
+
+    - Review the email before sending to avoid any mistakes.'
+  request: send email to example@gmail.com and say hello
+  app_list:
+  - MSEDGEWEBVIEW2.EXE
