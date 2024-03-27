@@ -92,27 +92,39 @@ class ActionExecutor:
         return args_dict.get("text")
     
 
-
     def __set_edit_text(self, args_dict:dict):
         """
         Set the edit text of the control element.
         :param args: The arguments of the set edit text method.
         :return: The result of the set edit text action.
         """
-        if configs["INPUT_TEXT_API"] == "type_keys":
+        
+        if configs["INPUT_TEXT_API"] == "set_text":
+            method_name = "set_text"
+            args = {"text": args_dict["text"]}   
+        else:
             method_name = "type_keys"
             args = {"keys": args_dict["text"], "pause": 0.1, "with_spaces": True}
-        else:
-            args = {"text": args_dict["text"]}
-
         try:
             result = self.atomic_execution(self.control, method_name, args)
-            if configs["INPUT_TEXT_ENTER"] and method_name in ["type_keys", "set_edit_text"]:
+            if method_name == "set_text" and args["text"] not in self.control.window_text():
+                raise Exception(f"Failed to use set_text: {args['text']}")
+            if configs["INPUT_TEXT_ENTER"] and method_name in ["type_keys", "set_text"]:
                 self.atomic_execution(self.control, "type_keys", args = {"keys": "{ENTER}"})
             return result
         except Exception as e:
-            return f"An error occurred: {e}"
-    
+            if method_name == "set_text":
+                print_with_color(f"{self.control} doesn't have a method named {method_name}, trying default input method", "yellow")
+                method_name = "type_keys"
+                clear_text_keys = "^a{BACKSPACE}"
+                text_to_type = args["text"]
+                keys_to_send = clear_text_keys + text_to_type
+                method_name = "type_keys"
+                args = {"keys": keys_to_send, "pause": 0.1, "with_spaces": True}
+                return self.atomic_execution(self.control, method_name, args)
+            else:
+                return f"An error occurred: {e}"
+ 
 
 
     def __texts(self, args_dict:dict) -> str:
