@@ -174,28 +174,3 @@ def revise_line_breaks(args: dict):
             args[key] = args[key].replace('\\n', '\n')
 
     return args
-
-
-
-    
-def get_cost_estimator(configs, prompt_tokens, completion_tokens) -> float:
-        model_type = configs["API_TYPE"]
-        model = configs["API_MODEL"]
-        if model_type == "openai":
-            if model in configs["OPENAI_PRICES"]:
-                cost = prompt_tokens * configs["OPENAI_PRICES"][model]["input"]/1000 + completion_tokens * configs["OPENAI_PRICES"][model]["output"]/1000
-            else:
-                print(f"Model {model} not found in OpenAI prices")
-                return None
-        elif model_type == "azure_ad" or type == "aoai":
-            if model in configs["OPENAI_PRICES"]:
-                cost = prompt_tokens * configs["AZURE_PRICES"][model]["input"]/1000 + completion_tokens * configs["AZURE_PRICES"][model]["output"]/1000
-            else:
-                print(f"Model {model} not found in Azure prices")
-                return None
-        else:
-            return None 
-        return cost
-
-
-

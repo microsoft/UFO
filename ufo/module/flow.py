@@ -109,10 +109,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.request_logger.info(log)
             self.status = "ERROR"
             return
-        if isinstance(cost, float) and isinstance(self.cost, float):
-            self.cost += cost
-        else:
-            self.cost = None
+        self.update_cost(cost=cost)
 
         try:
             response_json = json_parser(response_string)
@@ -263,10 +260,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             time.sleep(configs["SLEEP_TIME"])
             return 
             
-        if isinstance(cost, float) and isinstance(self.cost, float):
-            self.cost += cost
-        else:
-            self.cost = None
+        self.update_cost(cost=cost)
 
         try:
             response_json = json_parser(response_string)
@@ -419,10 +413,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         summarizer.create_or_update_yaml(summaries, os.path.join(experience_path, "experience.yaml"))
         summarizer.create_or_update_vector_db(summaries, os.path.join(experience_path, "experience_db"))
         
-        if isinstance(total_cost, float) and isinstance(self.cost, float):
-            self.cost += total_cost
-        else:
-            self.cost = None
+        self.update_cost(cost=total_cost)
         print_with_color("The experience has been saved.", "cyan")
 
 
@@ -531,6 +522,15 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         """
         log = json.dumps({"step": self.step, "status": "ERROR", "response": response_str, "error": error})
         self.logger.info(log)
+
+    def update_cost(self, cost):
+        """
+        Update the cost of the session.
+        """
+        if isinstance(cost, float) and isinstance(self.cost, float):
+            self.cost += cost
+        else:
+            self.cost = None
 
     @staticmethod
     def initialize_logger(log_path, log_filename):
