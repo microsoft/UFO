@@ -5,12 +5,14 @@
 from typing import List, Tuple
 import psutil
 from pywinauto import Desktop
-from ..config.config import load_config
+import win32com
+# from ..config.config import load_config
 
-configs = load_config()
+# configs = load_config()
 
-BACKEND = configs["CONTROL_BACKEND"]
+# BACKEND = configs["CONTROL_BACKEND"]
 
+BACKEND =  "uia"
 
 def get_desktop_app_info(remove_empty:bool=True) -> Tuple[dict, List[dict]]:
     """
@@ -168,3 +170,50 @@ def get_application_name(window) -> str:
         return process.name()
     except psutil.NoSuchProcess:
         return ""
+
+
+def get_parent_control(control):
+    return control.element_info.parent
+
+def get_child_controls(control):
+    return control.descendants()
+
+def are_controls_siblings(control1, control2):
+    """
+    Check if two controls are siblings.
+    :param control1: The first control.
+    :param control2: The second control.
+    :return: True if the two controls are siblings, False otherwise.
+    """
+    parent1 = control1.element_info.parent
+    parent2 = control2.element_info.parent
+
+    if parent1 is not None and parent2 is not None:
+        return parent1 == parent2
+    else:
+        return False
+
+def is_control_actionable(control):
+    """
+    Check if the control is actionable.
+    :param control: The control to check.
+    :return: True if the control is actionable, otherwise False.
+    """
+    properties = control.get_properties()
+    if 'IsEnabled' in properties:
+        is_enabled = properties['IsEnabled']
+        if not is_enabled:
+            return False
+
+    if 'IsVisible' in properties:
+        is_visible = properties['IsVisible']
+        if not is_visible:
+            return False
+
+def get_app_states(app_window):
+    """
+    Get the states of the app window.
+    :param app_window: The app window to get the states.
+    :return: The states of the app window.
+    """
+    return None
