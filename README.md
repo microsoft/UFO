@@ -142,7 +142,7 @@ RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
 Adjust `RAG_ONLINE_SEARCH_TOPK` and `RAG_ONLINE_RETRIEVED_TOPK` to get better performance.
 
 
-#### RAG from Self-Demonstration
+#### RAG from Previous-Experience
 Save task completion trajectories into UFO's memory for future reference. This can improve its future success rates based on its previous experiences!
 
 After completing a task, you'll see the following message:
@@ -157,6 +157,15 @@ RAG_EXPERIENCE: True  # Whether to use the RAG from its self-experience.
 RAG_EXPERIENCE_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
 ```
 
+#### RAG from User-Demonstration
+Boost UFO's capabilities through user demonstration! Utilize Microsoft Steps Recorder to record step-by-step processes for achieving specific tasks. With a simple command processed by the record_processor (refer to the [README](./record_processor/README.md)), UFO can store these trajectories in its memory for future reference, enhancing its learning from user interactions.
+
+You can enable this function by setting the following configuration:
+```bash
+## RAG Configuration for demonstration
+RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
+RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
+```
 
 
 ### 🎉 Step 4: Start UFO

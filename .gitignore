@@ -25,5 +25,6 @@ vectordb/demonstration/*
 
 # Don't ignore the example files
 !vectordb/docs/example/
+!vectordb/demonstration/example.yaml
 
 .vscode

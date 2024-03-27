@@ -157,6 +157,32 @@ class OnlineDocRetriever(Retriever):
 
 
 
+class DemonstrationRetriever(Retriever):
+    """
+    Class to create demonstration retrievers.
+    """
+
+    def __init__(self, db_path) -> None:
+        """
+        Create a new DemonstrationRetriever.
+        :db_path: The path to the database.
+        """
+        self.indexer = self.get_indexer(db_path)
+
+
+    def get_indexer(self, db_path: str):
+        """
+        Create a demonstration indexer.
+        :db_path: The path to the database.
+        """
+
+        try:
+            embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+            db = FAISS.load_local(db_path, embeddings)
+            return db
+        except:
+            print_with_color("Warning: Failed to load demonstration indexer from {path}.".format(path=db_path), "yellow")
+            return None
 
 
 

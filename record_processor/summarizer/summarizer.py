@@ -146,7 +146,7 @@ class DemonstrationSummarizer:
         # Check if the db exists, if not, create a new one.
         if os.path.exists(db_path):
             prev_db = FAISS.load_local(
-                db_path, embeddings, allow_dangerous_deserialization=True)
+                db_path, embeddings)
             db.merge_from(prev_db)
 
         db.save_local(db_path)

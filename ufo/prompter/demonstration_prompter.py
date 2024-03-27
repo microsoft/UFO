@@ -69,7 +69,7 @@ class DemonstrationPrompter(BasicPrompter):
             })
 
         # Get the total steps of the demonstration record. And construct the agent trajectory.
-        step_num = demo_record.step_num
+        step_num = demo_record.get_step_num()   
 
         user_content.append({
             "type": "text",
@@ -94,7 +94,7 @@ class DemonstrationPrompter(BasicPrompter):
         # Add the user request.
         user_content.append({
             "type": "text",
-            "text": self.user_prompt_construction(demo_record.__getattribute__("request"))
+            "text": self.user_prompt_construction(demo_record.get_request())
         })
 
         return user_content

@@ -17,7 +17,6 @@ class DemonstrationStep:
         self.comment = comment
         self.screenshot = screenshot
 
-
 class DemonstrationRecord:
     """
     Class for the user demonstration record.
@@ -28,10 +27,11 @@ class DemonstrationRecord:
         """
         Create a new Record.
         """
-        self.request = ""
-        self.round = 0
-        self.applications = applications
-        self.step_num = step_num
+        self.__request = ""
+        self.__round = 0
+        self.__applications = applications
+        self.__step_num = step_num
+        # adding each key-value pair in steps to the record
         for index, step in steps.items():
             setattr(self, index, step.__dict__)
 
@@ -39,16 +39,22 @@ class DemonstrationRecord:
         """
         Set the request.
         """
-        self.request = request
+        self.__request = request
     
     def get_request(self) -> str:
         """
         Get the request.
         """
-        return self.request
+        return self.__request
     
     def get_applications(self) -> list:
         """
         Get the application.
         """
-        return self.applications
+        return self.__applications
+    
+    def get_step_num(self) -> int:
+        """
+        Get the step number.
+        """
+        return self.__step_num

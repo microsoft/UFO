@@ -20,7 +20,7 @@ system: |-
   - You are required to response in a JSON format, consisting of 10 distinct parts with the following keys and corresponding content:
     {{"Observation": <Describe the initial screenshot of the application window in detail, including observations about the application's status relevant to the user request.>
     "Thought": <Outline the logic behind the first action required to fulfill the request.>
-    "ControlLabel": <Specify the precise annotated label of the control item to be selected at the first step. If none of the control items are suitable or the task is complete, output an empty string.>
+    "ControlLabel": <Specify the precise annotated label of the control item to be selected at the first step. If none of the control items are suitable or the task is complete, output an random number.>
     "ControlText": <Specify the precise control_text of the control item to be selected at the first step. If none of the control items are suitable or the task is complete, output an empty string ''.>
     "Function": <Specify the precise API function name (without arguments) to be called on the control item to complete the user request. Leave it as an empty string "" if no suitable API function exists or the task is complete.>
     "Args": <Specify the precise arguments in dictionary format of the selected API function to be called on the control item to complete the user request. Leave it as an empty dictionary {{}} if the API does not require arguments, or no suitable API function exists, or the task is complete.>
