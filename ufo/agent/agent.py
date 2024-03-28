@@ -1,97 +1,53 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from abc import ABC, abstractmethod
+
+from .agent import BasicAgent, BasicMemoryItem, BasicMemory
+from ..prompter.agent_prompter import ApplicationAgentPrompter, ActionAgentPrompter
 from typing import List, Dict, Type
-from dataclasses import dataclass
+from .. import utils
 
 
-class BasicAgent(ABC):
+class HostAgent(BasicAgent):
     """
-    The BasicAgent class is the abstract class for the agent.
+    The HostAgent class the manager of AppAgents.
     """
 
-    def __init__(self, agent_type: str, memory: Type['BasicMemory']):
+    def __init__(self, agent_type: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str):
         """
-        Initialize the BasicAgent.
-        :param agent_type: The type of the agent.
-        :param memory: The memory of the agent.
+        Initialize the HostAgent.
+        :agent_type: The type of the agent.
+        :is_visual: The flag indicating whether the agent is visual or not.
         """
-        self.agent_type = agent_type
-        self.memory = memory
+        super().__init__(agent_type=agent_type)
+        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
+        self._memory = BasicMemory()
 
 
 
-    @abstractmethod
-    def get_prompt(self) -> str:
+    def get_prompter(self, is_visual, main_prompt, example_prompt, api_prompt) -> str:
         """
         Get the prompt for the agent.
         :return: The prompt.
         """
-        pass
-
-
-    def get_response(self, prompt: str) -> str:
-        """
-        Get the response for the prompt.
-        :param prompt: The prompt.
-        :return: The response.
-        """
-        pass
-
-
-    def print_response(self, response: str) -> None:
-        """
-        Print the response.
-        :param response: The response.
-        """
-        pass
-
-
-    def build_offline_docs_retriever(self) -> None:
-        """
-        Build the offline docs retriever.
-        """
-        pass
-
-
-    def build_online_search_retriever(self) -> None:
-        """
-        Build the online search retriever.
-        """
-        pass
-
+        return ApplicationAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
     
 
-    
-
-@dataclass
-class BasicMemory(ABC):
-    """
-    This data class represents a memory of an agent.
-    """
-
-    @abstractmethod
-    def save(self, data: dict) -> None:
+    def message_constructor(self, image_list: List, request_history: str, action_history: str, os_info: str, plan: str, request: str) -> list:
         """
-        Save the data to the memory.
-        :param data: The data to save.
+        Construct the message.
+        :param image_list: The list of screenshot images.
+        :param request_history: The request history.
+        :param action_history: The action history.
+        :param os_info: The OS information.
+        :param plan: The plan.
+        :param request: The request.
+        :return: The message.
         """
-        pass
-
-    @abstractmethod
-    def load(self, key: str) -> dict:
-        """
-        Load the data from the memory.
-        :param key: The key of the data.
-        :return: The data.
-        """
-        pass
-
-    @abstractmethod
-    def delete(self, key: str) -> None:
-        """
-        Delete the data from the memory.
-        :param key: The key of the data.
-        """
-        pass
+        hostagent_prompt_system_message = self.prompter.system_prompt_construction()
+        hostagent_prompt_user_message = self.prompter.user_content_construction(image_list, request_history, action_history, 
+                                                                                                  os_info, plan, request)
+        
+        hostagent_prompt_message = self.prompter.prompt_construction(hostagent_prompt_system_message, hostagent_prompt_user_message)
+        
+        return hostagent_prompt_message
