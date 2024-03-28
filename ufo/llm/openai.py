@@ -13,25 +13,24 @@ class OpenAIService:
         self.config = config
         self.api_type = self.config_llm["API_TYPE"].lower()
         self.max_retry = self.config["MAX_RETRY"]
+        self.prices = self.config["PRICES"]
         assert self.api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
-        if self.api_type == "openai":
-            self.client = OpenAI(
-                    base_url=self.config_llm["API_BASE"],
-                    api_key=self.config_llm["API_KEY"],
-                    max_retries=self.max_retry,
-                    timeout=self.config["TIMEOUT"],
-                )
-            self.prices = self.config["OPENAI_PRICES"]
-        else:
-            self.client = AzureOpenAI(
+        self.client: OpenAI = (
+            OpenAI(
+                base_url=self.config_llm["API_BASE"],
+                api_key=self.config_llm["API_KEY"],
+                max_retries=self.max_retry,
+                timeout=self.config["TIMEOUT"],
+            )
+            if self.api_type == "openai"
+            else AzureOpenAI(
                 max_retries=self.max_retry,
                 timeout=self.config["TIMEOUT"],
                 api_version=self.config_llm["API_VERSION"],
                 azure_endpoint=self.config_llm["API_BASE"],
                 api_key=(self.config_llm["API_KEY"] if self.api_type == 'aoai' else self.get_openai_token()),
             )
-            self.prices = self.config["AZURE_PRICES"]
-
+        )
         if self.api_type == "azure_ad":
             self.auto_refresh_token()
 
@@ -65,7 +64,7 @@ class OpenAIService:
             prompt_tokens = usage.prompt_tokens
             completion_tokens = usage.completion_tokens
 
-            cost = self.get_cost_estimator(model, self.prices, prompt_tokens, completion_tokens)
+            cost = self.get_cost_estimator(self.api_type, model, self.prices, prompt_tokens, completion_tokens)
 
             return response.choices[0].message.content, cost
 
@@ -263,7 +262,7 @@ class OpenAIService:
 
         return stop
 
-    def get_cost_estimator(self, model, prices, prompt_tokens, completion_tokens) -> float:
+    def get_cost_estimator(self, api_type, model, prices, prompt_tokens, completion_tokens) -> float:
         """
         Calculates the cost estimate for using a specific model based on the number of prompt tokens and completion tokens.
 
@@ -276,9 +275,13 @@ class OpenAIService:
         Returns:
             float: The estimated cost for using the model.
         """
-        if model in prices:
-            cost = prompt_tokens * prices[model]["input"]/1000 + completion_tokens * prices[model]["output"]/1000
+        if api_type.lower() == "openai":
+            name = str(api_type+'/'+model)
         else:
-            print(f"Model {model} not found in prices")
+            name = str('azure/'+model)
+        if name in prices:
+            cost = prompt_tokens * prices[name]["input"]/1000 + completion_tokens * prices[name]["output"]/1000
+        else:
+            print(f"{name} not found in prices")
             return None
         return cost
