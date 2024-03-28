@@ -10,7 +10,6 @@ from art import text2art
 from pywinauto.uia_defines import NoPatternInterfaceError
 from ..experience.summarizer import ExperienceSummarizer
 
-from ..rag import retriever_factory
 from ..config.config import load_config
 from ..llm import llm_call
 from ..prompter.agent_prompter import ApplicationAgentPrompter, ActionAgentPrompter
@@ -18,11 +17,12 @@ from ..ui_control import control, screenshot as screen
 from ..ui_control.executor import ActionExecutor
 from ..utils import (create_folder, encode_image_from_path,
                      generate_function_call, json_parser, print_with_color,
-                     revise_line_breaks, yes_or_no)
+                     revise_line_breaks, yes_or_no, LazyImport)
 
 configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]
 
+retriever_factory = LazyImport("..rag.retriever_factory")
 
 
 

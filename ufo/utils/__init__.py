@@ -6,6 +6,7 @@ import json
 import os
 from io import BytesIO
 from typing import Optional
+import importlib
 
 from colorama import Fore, Style, init
 from PIL import Image
@@ -176,6 +177,15 @@ def revise_line_breaks(args: dict):
     return args
 
 
+def LazyImport(module_name:str):
+    """
+    Import a module as a global variable.
+    :param module_name: The name of the module to import.
+    :return: The imported module.
+    """
+    global_name = module_name.split(".")[-1]
+    globals()[global_name] = importlib.import_module(module_name, __package__)
+    return globals()[global_name]
 
     
 

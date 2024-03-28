@@ -31,10 +31,6 @@ def capture_screenshot(window_title:str, save_path:str, is_save:bool=True):
         screenshot.save(save_path)
     return screenshot
 
-from ..config.config import load_config
-from ..utils import number_to_letter
-
-configs = load_config()
 
 def capture_screenshot(window_title:str, save_path:str, is_save:bool=True):
     """
