@@ -12,7 +12,7 @@ class BasicPrompter(ABC):
     The BasicPrompter class is the abstract class for the prompter.
     """
 
-    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str):
+    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, use_lite: bool = False):
         """
         Initialize the BasicPrompter.
         :param is_visual: Whether the request is for visual model.
@@ -20,6 +20,7 @@ class BasicPrompter(ABC):
         :param example_prompt_template: The path of the example prompt template.
         """
         self.is_visual = is_visual
+        self.use_lite = use_lite
         if prompt_template:
             self.prompt_template = self.load_prompt_template(prompt_template)
         else:
@@ -40,7 +41,10 @@ class BasicPrompter(ABC):
         if self.is_visual == None:
             path = template_path
         else:
-            path = template_path.format(mode = "visual" if self.is_visual == True else "nonvisual")
+            if self.use_lite:
+                path = template_path.format(mode = "lite/visual" if self.is_visual else "lite/nonvisual")
+            else:
+                path = template_path.format(mode = "visual" if self.is_visual else "nonvisual")
         
         if os.path.exists(path):
             try:

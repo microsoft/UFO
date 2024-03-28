@@ -3,6 +3,11 @@
 
 from ufo.utils import print_with_color
 from ..config.config import load_config
+from .openai import OpenAIService
+from .qwen import QwenService
+from .ollama import OllamaService
+from .llava import LlavaService
+from .cogagent import CogagentService
 
 
 configs = load_config()
@@ -32,9 +37,20 @@ def get_completion(messages, agent: str='APP', use_backup_engine: bool=True):
     
     api_type =  configs[agent_type]['API_TYPE']
     try:
-        if api_type.lower() in ['openai', 'aoai', 'azure_ad']:
-            from .openai import OpenAIService
-            response, cost = OpenAIService(configs, agent_type=agent_type).chat_completion(messages)
+        service_map = {
+            'openai': OpenAIService,
+            'aoai': OpenAIService,
+            'azure_ad': OpenAIService,
+            'qwen': QwenService,
+            'ollama': OllamaService,
+            'llava': LlavaService,
+            'cogagent': CogagentService
+        }
+
+        api_type_lower = api_type.lower()
+        if api_type_lower in service_map:
+            service = service_map[api_type_lower]
+            response, cost = service(configs, agent_type=agent_type).chat_completion(messages)
             return response, cost
         else:
             raise ValueError(f'API_TYPE {api_type} not supported')
