@@ -1,6 +1,3 @@
-# Copyright (c) Microsoft Corporation.
-# Licensed under the MIT License.
-
 import requests
 from ..config.config import load_config
 from ..utils import print_with_color
@@ -9,9 +6,7 @@ from langchain.docstore.document import Document
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
-
 configs = load_config()
-
 
 class BingSearchWeb:
     """
@@ -22,8 +17,7 @@ class BingSearchWeb:
         """
         Create a new WebRetriever.
         """
-        self.api_key = configs["BING_API_KEY"]
-
+        self.api_key = configs.get("BING_API_KEY", "")
 
     def search(self, query: str, top_k: int = 1):
         """
@@ -31,21 +25,21 @@ class BingSearchWeb:
         :param url: The URL to retrieve the web document from.
         :return: The web document from the given URL.
         """
-        url = f"https://api.bing.microsoft.com/v7.0/search?q={query}"
+        base_url = "https://api.bing.microsoft.com/v7.0/search"
+        params = {"q": query}
         if top_k > 0:
-            url += f"&count={top_k}"
+            params["count"] = top_k
+
         try:
-            response = requests.get(url, headers={"Ocp-Apim-Subscription-Key": self.api_key})
+            response = requests.get(base_url, params=params, headers={"Ocp-Apim-Subscription-Key": self.api_key})
+            response.raise_for_status()  # Raise exception for non-200 status codes
+            result_list = []
+            for item in response.json().get("webPages", {}).get("value", []):
+                result_list.append({"name": item.get("name"), "url": item.get("url"), "snippet": item.get("snippet")})
+            return result_list
         except requests.RequestException as e:
-            print_with_color(f"Warning: Error when searching: {e}".format(e=e), "yellow")
-            return None
-        result_list = []
-
-        for item in response.json()["webPages"]["value"]:
-            result_list.append({"name": item["name"], "url": item["url"], "snippet": item["snippet"]})
-
-        return result_list
-
+            print_with_color(f"Warning: Error when searching: {e}", "yellow")
+            return []
 
     def get_url_text(self, url: str):
         """
@@ -55,21 +49,15 @@ class BingSearchWeb:
         """
         print(f"Getting search result for {url}") 
         try:
-            headers = {
-                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
-            }
+            headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
             response = requests.get(url, headers=headers)
-            if response.status_code == 200:
-                html_splitter = HTMLHeaderTextSplitter(headers_to_split_on=[])
-                document = html_splitter.split_text(response.text)
-                return document
-            else:
-                print_with_color("Warning: Error in  getting search result for {url}, error code: {status_code}.".format(url=url, status_code=response.status_code), "yellow")
-                return [Document(page_content="", metadata={"url": url})]
-        except requests.exceptions.RequestException as e:
-            print_with_color("Warning: Error in getting search result for {url}: {e}.".format(url=url, e=e), "yellow")
+            response.raise_for_status()  # Raise exception for non-200 status codes
+            html_splitter = HTMLHeaderTextSplitter(headers_to_split_on=[])
+            document = html_splitter.split_text(response.text)
+            return [Document(page_content=document.page_content, metadata={"url": url})]
+        except requests.RequestException as e:
+            print_with_color(f"Warning: Error in getting search result for {url}: {e}", "yellow")
             return [Document(page_content="", metadata={"url": url})]
-
 
     def create_documents(self, result_list: list):
         """
@@ -78,21 +66,17 @@ class BingSearchWeb:
         :return: The documents from the given result list.
         """
         document_list = []
-
         for result in result_list:
-            documents = self.get_url_text(result["url"])
+            documents = self.get_url_text(result.get("url", ""))
             for document in documents:
                 page_content = document.page_content
                 metadata = document.metadata
-                metadata["url"] = result["url"]
-                metadata["name"] = result["name"]
-                metadata["snippet"] = result["snippet"]
-
+                metadata["url"] = result.get("url", "")
+                metadata["name"] = result.get("name", "")
+                metadata["snippet"] = result.get("snippet", "")
                 document = Document(page_content=page_content, metadata=metadata)
                 document_list.append(document)
-
         return document_list
-    
     
     def create_indexer(self, documents: list):
         """
@@ -101,15 +85,5 @@ class BingSearchWeb:
         :return: The created indexer.
         """
         embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
-
         db = FAISS.from_documents(documents, embeddings)
-
         return db
-    
-
-        
-
-        
-    
-
-    
