@@ -27,9 +27,13 @@ def load_config(config_path="ufo/config/"):
             configs.update(yaml_data)
         with open(path + "config_dev.yaml", "r") as file:
             yaml_dev_data = yaml.safe_load(file)
+        with open(path + "config_prices.yaml", "r") as file:
+            yaml_prices_data = yaml.safe_load(file)
         # Update configs with YAML data
         if yaml_data:
             configs.update(yaml_dev_data)
+        if yaml_prices_data:
+            configs.update(yaml_prices_data)
     except FileNotFoundError:
         print_with_color(
             f"Warning: Config file not found at {config_path}. Using only environment variables.", "yellow")
@@ -57,6 +61,7 @@ def update_api_base(configs, agent):
 def optimize_configs(configs):
     update_api_base(configs,'APP_AGENT')
     update_api_base(configs,'ACTION_AGENT')
+    update_api_base(configs,'BACKUP_AGENT')
     
     return configs
 

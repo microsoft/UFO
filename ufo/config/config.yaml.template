@@ -94,8 +94,3 @@ RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
 ## RAG Configuration for experience
 RAG_EXPERIENCE: True  # Whether to use the RAG from its self-experience.
 RAG_EXPERIENCE_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
-
-
-
-
-
