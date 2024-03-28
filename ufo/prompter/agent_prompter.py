@@ -10,7 +10,7 @@ class ApplicationAgentPrompter(BasicPrompter):
     The ApplicationAgentPrompter class is the prompter for the application agent.
     """
 
-    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str):
+    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str, use_lite: bool = False):
         """
         Initialize the ApplicationAgentPrompter.
         :param is_visual: Whether the request is for visual model.
@@ -18,7 +18,7 @@ class ApplicationAgentPrompter(BasicPrompter):
         :param example_prompt_template: The path of the example prompt template.
         :param api_prompt_template: The path of the api prompt template.
         """
-        super().__init__(is_visual, prompt_template, example_prompt_template)
+        super().__init__(is_visual, prompt_template, example_prompt_template, use_lite)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template)
 
 
@@ -146,7 +146,7 @@ class ActionAgentPrompter(BasicPrompter):
     The ActionAgentPrompter class is the prompter for the action agent.
     """
 
-    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str):
+    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str, use_lite: bool = False):
         """
         Initialize the ApplicationAgentPrompter.
         :param is_visual: Whether the request is for visual model.
@@ -154,7 +154,7 @@ class ActionAgentPrompter(BasicPrompter):
         :param example_prompt_template: The path of the example prompt template.
         :param api_prompt_template: The path of the api prompt template.
         """
-        super().__init__(is_visual, prompt_template, example_prompt_template)
+        super().__init__(is_visual, prompt_template, example_prompt_template, use_lite)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template)
 
 

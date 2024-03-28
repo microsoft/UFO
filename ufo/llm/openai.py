@@ -5,9 +5,10 @@ import datetime
 from typing import Any, Optional
 import openai
 from openai import AzureOpenAI, OpenAI
+from .base import BaseService
 
 
-class OpenAIService:
+class OpenAIService(BaseService):
     def __init__(self, config, agent_type: str):
         self.config_llm = config[agent_type]
         self.config = config
@@ -262,26 +263,26 @@ class OpenAIService:
 
         return stop
 
-    def get_cost_estimator(self, api_type, model, prices, prompt_tokens, completion_tokens) -> float:
-        """
-        Calculates the cost estimate for using a specific model based on the number of prompt tokens and completion tokens.
+    # def get_cost_estimator(self, api_type, model, prices, prompt_tokens, completion_tokens) -> float:
+    #     """
+    #     Calculates the cost estimate for using a specific model based on the number of prompt tokens and completion tokens.
 
-        Args:
-            model (str): The name of the model.
-            prices (dict): A dictionary containing the prices for different models.
-            prompt_tokens (int): The number of prompt tokens used.
-            completion_tokens (int): The number of completion tokens used.
+    #     Args:
+    #         model (str): The name of the model.
+    #         prices (dict): A dictionary containing the prices for different models.
+    #         prompt_tokens (int): The number of prompt tokens used.
+    #         completion_tokens (int): The number of completion tokens used.
 
-        Returns:
-            float: The estimated cost for using the model.
-        """
-        if api_type.lower() == "openai":
-            name = str(api_type+'/'+model)
-        else:
-            name = str('azure/'+model)
-        if name in prices:
-            cost = prompt_tokens * prices[name]["input"]/1000 + completion_tokens * prices[name]["output"]/1000
-        else:
-            print(f"{name} not found in prices")
-            return None
-        return cost
+    #     Returns:
+    #         float: The estimated cost for using the model.
+    #     """
+    #     if api_type.lower() == "openai":
+    #         name = str(api_type+'/'+model)
+    #     else:
+    #         name = str('azure/'+model)
+    #     if name in prices:
+    #         cost = prompt_tokens * prices[name]["input"]/1000 + completion_tokens * prices[name]["output"]/1000
+    #     else:
+    #         print(f"{name} not found in prices")
+    #         return None
+    #     return cost
