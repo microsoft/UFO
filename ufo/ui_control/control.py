@@ -183,6 +183,9 @@ def execution(window, method_name:str, args:dict):
     :param args: The arguments of the method.
     :return: The result of the action.
     """
+    print("window:", window, "method_name", method_name)
+    method = getattr(window, method_name)
+    print("method", method)
     if method_name == "set_edit_text":
         pyautogui.write(args["text"])
         #if configs["INPUT_TEXT_API"] == "type_keys":
@@ -197,9 +200,6 @@ def execution(window, method_name:str, args:dict):
         pyautogui.press(args["key"])    
     else:
         try:
-            print("window:", window, "method_name", method_name)
-            method = getattr(window, method_name)
-            print("method", method)
             result = method(**args)
             print("result", result)
             return result

@@ -100,7 +100,7 @@ system: |-
     [1] API call: backspace()
     [2] Args: 
         - k: is an integer which is the number of character (including space) to be deleted, equal to the number of times needed to press the backspace key
-    [3] Example: backspace(k=5) # can delete the last 5 character in an Edit item, for example, a text box with "apples" will become "a" after running baclspace(5)
+    [3] Example: backspace(k=5) # can delete the last 5 character in an Edit item, for example, a text box with "apples" will become "a" after running backspace(5)
     [4] Available control item: [Edit]
     [5] Return: None
 
