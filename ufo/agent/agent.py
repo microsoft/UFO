@@ -2,7 +2,8 @@
 # Licensed under the MIT License.
 
 
-from .agent import BasicAgent, BasicMemoryItem, BasicMemory
+from .agent import BasicAgent, BasicMemory
+from .memory import HostAgentMemoryItem, AppAgentMemoryItem
 from ..prompter.agent_prompter import ApplicationAgentPrompter, ActionAgentPrompter
 from typing import List, Dict, Type
 from .. import utils
@@ -13,15 +14,15 @@ class HostAgent(BasicAgent):
     The HostAgent class the manager of AppAgents.
     """
 
-    def __init__(self, agent_type: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str):
+    def __init__(self, name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str):
         """
         Initialize the HostAgent.
         :agent_type: The type of the agent.
         :is_visual: The flag indicating whether the agent is visual or not.
         """
-        super().__init__(agent_type=agent_type)
+        super().__init__(name=name)
         self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
-        self._memory = BasicMemory()
+        self._memory = []
 
 
 

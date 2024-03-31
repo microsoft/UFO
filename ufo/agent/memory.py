@@ -1,4 +1,4 @@
-from .agent import BasicAgent, BasicMemoryItem, BasicMemory
+from .agent import BasicMemoryItem, BasicMemory
 from dataclasses import dataclass
 
 
@@ -15,8 +15,6 @@ class HostAgentMemoryItem(BasicMemoryItem):
     """
     The HostAgent class the manager of AppAgents.
     """
-
-
 
 
 

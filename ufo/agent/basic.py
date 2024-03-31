@@ -85,15 +85,16 @@ class BasicMemory(ABC):
     This data class represents a memory of an agent.
     """
 
-    content: List[T] = []
+    _content: List[T] = []
 
     @abstractmethod
-    def load(self, key: str) -> dict:
+    def load(self, content: List[T]) -> dict:
         """
         Load the data from the memory.
         :param key: The key of the data.
         """
-        pass
+        self._content = content
+        
     
 
     def filter_memory_from_steps(self, steps: List[int]) -> List[dict]:
@@ -102,7 +103,7 @@ class BasicMemory(ABC):
         :param steps: The steps to filter.
         :return: The filtered memory.
         """
-        return [item.to_dict() for item in self.content if item.step in steps]
+        return [item.to_dict() for item in self._content if item.step in steps]
     
     
     def filter_memory_from_keys(self, keys: List[str]) -> List[dict]:
@@ -111,16 +112,16 @@ class BasicMemory(ABC):
         :param keys: The keys to filter.
         :return: The filtered memory.
         """
-        return [item.filter(keys) for item in self.content]
+        return [item.filter(keys) for item in self._content]
     
     
 
-    def add_memory_item(self, memory_item: BasicMemoryItem) -> None:
+    def add_memory_item(self, memory_item: T) -> None:
         """
         Add a memory item to the memory.
         :param memory_item: The memory item to add.
         """
-        self.content.append(memory_item)
+        self._content.append(memory_item)
 
 
     def delete_memory_item(self, step: int) -> None:
@@ -128,7 +129,7 @@ class BasicMemory(ABC):
         Delete a memory item from the memory.
         :param step: The step of the memory item to delete.
         """
-        self.content = [item for item in self.content if item.step != step]
+        self._content = [item for item in self._content if item.step != step]
 
 
     def to_json(self) -> str:
@@ -137,7 +138,7 @@ class BasicMemory(ABC):
         :return: The JSON string.
         """
 
-        return json.dumps([item.to_dict() for item in self.content])
+        return json.dumps([item.to_dict() for item in self._content])
 
 
 
@@ -159,6 +160,7 @@ class BasicAgent(ABC):
         self._step = 0
         self._complete = False
         self._name = name
+        self._status = None
         
 
     @property
@@ -169,6 +171,16 @@ class BasicAgent(ABC):
         :returns: complete (bool): True if execution is complete; False otherwise.
         """
         return self._complete
+    
+    
+    @property
+    def status(self) -> str:
+        """
+        Get the status of the agent.
+        :return: The status of the agent.
+        """
+        return self._status
+    
     
     @property 
     def memory(self) -> BasicMemory:
@@ -234,6 +246,15 @@ class BasicAgent(ABC):
         self._step += step
 
 
+    def reflection(self) -> None:
+        """
+        TODO:
+        Reflect on the action.
+        """
+        
+        pass
+
+
     def build_offline_docs_retriever(self) -> None:
         """
         Build the offline docs retriever.
@@ -268,7 +289,6 @@ class BasicAgent(ABC):
         :param response: The response.
         """
         pass
-
 
 
     @classmethod
