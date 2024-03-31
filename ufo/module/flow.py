@@ -300,7 +300,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.control_reannotate = executor.annotation(args, annotation_dict)
             return
 
-
         self.control_reannotate = None
             
 
@@ -358,7 +357,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         utils.print_with_color("The experience has been saved.", "cyan")
 
 
-    def set_new_round(self):
+    def set_new_round(self) -> None:
         """
         Start a new round.
         """
@@ -374,6 +373,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         else:
             self.status = "APP_SELECTION"
             return
+        
         
     def get_round(self):
         """
@@ -425,9 +425,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return self.app_window
     
 
-    def set_result_and_log(self, result, response_json):
+    def set_result_and_log(self, result: str, response_json: dict) -> dict:
         """
         Set the result of the session, and log the result.
+        result: The result of the session.
+        response_json: The response json.
+        return: The response json.
         """
         if type(result) != str and type(result) != list:
             result = ""
@@ -438,9 +441,13 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
         return response_json
     
-    def safe_guard(self, action, control_text):
+    
+    def safe_guard(self, action: str, control_text: str) -> bool:
         """
         Safe guard for the session.
+        action: The action to be taken.
+        control_text: The text of the control item.
+        return: The boolean value indicating whether to proceed or not.
         """
         if "PENDING" in self.status.upper() and configs["SAFE_GUARD"]:
             utils.print_with_color("[Input Required:] UFO🛸 will apply {action} on the [{control_text}] item. Please confirm whether to proceed or not. Please input Y or N.".format(action=action, control_text=control_text), "magenta")
@@ -455,12 +462,14 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
                 self.status = "FINISH"
         return True
     
-    def error_logger(self, response_str, error):
+
+    def error_logger(self, response_str: str, error: str) -> None:
         """
         Error handler for the session.
         """
         log = json.dumps({"step": self.step, "status": "ERROR", "response": response_str, "error": error})
         self.logger.info(log)
+
 
     @staticmethod
     def initialize_logger(log_path, log_filename):

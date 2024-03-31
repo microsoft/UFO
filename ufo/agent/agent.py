@@ -82,9 +82,6 @@ class HostAgent(BasicAgent):
 
 
 
-
-
-
 class AppAgent(BasicAgent):
     """
     The HostAgent class the manager of AppAgents.
