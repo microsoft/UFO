@@ -132,22 +132,24 @@ class OnlineDocRetriever(Retriever):
     Class to create online retrievers.
     """
 
-    def __init__(self, query:str) -> None:
+    def __init__(self, query:str, top_k:int) -> None:
         """
         Create a new OfflineDocRetrieverFactory.
-        :appname: The name of the application.
+        :query: The query to create an indexer for.
+        :top_k: The number of documents to retrieve.
         """
         self.query = query
-        self.indexer = self.get_indexer()
+        self.indexer = self.get_indexer(top_k)
+        
 
-    def get_indexer(self):
+    def get_indexer(self, top_k: int):
         """
         Create an online search indexer.
-        :param query: The query to create an indexer for.
+        :param top_k: The number of documents to retrieve.
         """
         
         bing_retriever = web_search.BingSearchWeb()
-        result_list = bing_retriever.search(self.query, top_k=configs["RAG_ONLINE_SEARCH_TOPK"])
+        result_list = bing_retriever.search(self.query, top_k=top_k)
         documents = bing_retriever.create_documents(result_list)
         if len(documents) == 0:
             return None

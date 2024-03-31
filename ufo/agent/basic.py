@@ -4,7 +4,7 @@
 
 from abc import ABC, abstractmethod
 from typing import List, Dict, Type, TypeVar
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from ..llm import llm_call
 from .. import utils
 import json
@@ -85,7 +85,7 @@ class BasicMemory(ABC):
     This data class represents a memory of an agent.
     """
 
-    _content: List[T] = []
+    _content: List[T] = field(default_factory=list)
 
     @abstractmethod
     def load(self, content: List[T]) -> dict:
@@ -170,6 +170,8 @@ class BasicAgent(ABC):
 
         :returns: complete (bool): True if execution is complete; False otherwise.
         """
+        self._complete = self._status.lower() == "finish"
+
         return self._complete
     
     
@@ -219,13 +221,13 @@ class BasicAgent(ABC):
 
     
     @classmethod
-    def get_response(cls, message: List[dict]) -> str:
+    def get_response(cls, message: List[dict], namescope, use_backup_engine) -> str:
         """
         Get the response for the prompt.
         :param prompt: The prompt.
         :return: The response.
         """
-        response_string, cost = llm_call.get_completion(message, cls.__name__, use_backup_engine=True)
+        response_string, cost = llm_call.get_completion(message, namescope, use_backup_engine=use_backup_engine)
         return response_string, cost
     
 
@@ -246,7 +248,32 @@ class BasicAgent(ABC):
         self._step += step
 
 
-    def reflection(self) -> None:
+    def update_status(self, status: str) -> None:
+        """
+        Update the status of the agent.
+        :param status: The status of the agent.
+        """
+        self._status = status
+
+
+
+    def get_step(self) -> int:
+        """
+        Get the step of the agent.
+        :return: The step of the agent.
+        """
+        return self._step
+    
+
+    def get_status(self) -> str:
+        """
+        Get the status of the agent.
+        :return: The status of the agent.
+        """
+        return self._status
+
+
+    def reflection(self, original_message, response, user_content) -> None:
         """
         TODO:
         Reflect on the action.

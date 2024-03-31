@@ -11,17 +11,13 @@ from pywinauto.uia_defines import NoPatternInterfaceError
 from ..experience.summarizer import ExperienceSummarizer
 
 from ..config.config import load_config
-from ..llm import llm_call
-from ..prompter.agent_prompter import ApplicationAgentPrompter, ActionAgentPrompter
 from ..ui_control import control, screenshot as screen
 from ..ui_control.executor import ActionExecutor
 from .. import utils
-from ..agent.agent import HostAgent
+from ..agent.agent import HostAgent, AppAgent
 
 configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]
-
-retriever_factory = utils.LazyImport("..rag.retriever_factory")
 
 
 
@@ -45,8 +41,8 @@ class Session(object):
         self.logger = self.initialize_logger(self.log_path, "response.log")
         self.request_logger = self.initialize_logger(self.log_path, "request.log")
 
-        self.app_selection_prompter = ApplicationAgentPrompter(configs["APP_AGENT"]["VISUAL_MODE"], configs["APP_SELECTION_PROMPT"], configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
-        self.act_selection_prompter = ActionAgentPrompter(configs["ACTION_AGENT"]["VISUAL_MODE"], configs["ACTION_SELECTION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        self.HostAgent = HostAgent("HostAgent", configs["APP_AGENT"]["VISUAL_MODE"], configs["APP_SELECTION_PROMPT"], configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        self.AppAgent = None
 
         self.status = "APP_SELECTION"
         self.application = ""
@@ -89,18 +85,15 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
 
-
-        app_selection_prompt_system_message = self.app_selection_prompter.system_prompt_construction()
-        app_selection_prompt_user_message = self.app_selection_prompter.user_content_construction([desktop_screen_url], self.request_history, self.action_history, 
+        
+        app_selection_prompt_message = self.HostAgent.message_constructor([desktop_screen_url], self.request_history, self.action_history, 
                                                                                                   desktop_windows_info, self.plan, self.request)
         
-        app_selection_prompt_message = self.app_selection_prompter.prompt_construction(app_selection_prompt_system_message, app_selection_prompt_user_message)
-
         
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
 
         try:
-            response_string, cost = llm_call.get_completion(app_selection_prompt_message, "APP", use_backup_engine=True)
+            response_string, cost = self.HostAgent.get_response(app_selection_prompt_message, "APP", use_backup_engine=True)
 
         except Exception as e:
             log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
@@ -112,22 +105,14 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         self.cost += cost
 
         try:
-            response_json = utils.json_parser(response_string)
+            response_json = self.HostAgent.response_to_dict(response_string)
 
             application_label = response_json["ControlLabel"]
             self.application = response_json["ControlText"]
-            observation = response_json["Observation"]
-            thought = response_json["Thought"]
             self.plan = response_json["Plan"]
             self.status = response_json["Status"]
-            comment = response_json["Comment"]
 
-            utils.print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
-            utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
-            utils.print_with_color("Selected application📲: {application}".format(application=self.application), "yellow")
-            utils.print_with_color("Next Plan📚: {plan}".format(plan=str(self.plan).replace("\\n", "\n")), "cyan")
-            utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
-            
+            self.HostAgent.print_response(response_json)
             
             response_json["Step"] = self.step
             response_json["Round"] = self.round
@@ -164,23 +149,28 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             self.app_window.set_focus()
 
+            # Initialize the AppAgent
+            self.AppAgent = AppAgent("AppAgent", self.application, self.app_root, configs["ACTION_AGENT"]["VISUAL_MODE"], 
+                                     configs["ACTION_SELECTION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.app_window)
+            
             # Initialize the document retriever
             if configs["RAG_OFFLINE_DOCS"]:
                 utils.print_with_color("Loading offline document indexer for {app}...".format(app=self.application), "magenta")
-                self.offline_doc_retriever = retriever_factory.OfflineDocRetriever(self.application)
+                self.offline_doc_retriever = self.AppAgent.build_offline_docs_retriever()
             if configs["RAG_ONLINE_SEARCH"]:
                 utils.print_with_color("Creating a Bing search indexer...", "magenta")
-                self.online_doc_retriever = retriever_factory.OnlineDocRetriever(self.request)
+                self.online_doc_retriever = self.AppAgent.build_online_search_retriever(self.request, configs["RAG_ONLINE_SEARCH_TOPK"])
             if configs["RAG_EXPERIENCE"]:
                 utils.print_with_color("Creating an experience indexer...", "magenta")
                 experience_path = configs["EXPERIENCE_SAVED_PATH"]
                 db_path = os.path.join(experience_path, "experience_db")
-                self.experience_retriever = retriever_factory.ExperienceRetriever(db_path)
-
+                self.experience_retriever = self.AppAgent.build_experience_retriever(db_path)
 
             time.sleep(configs["SLEEP_TIME"])
 
             self.step += 1
+            self.HostAgent.update_step()
+            self.HostAgent.update_status(self.status)
 
         except Exception as e:
             utils.print_with_color("Error Occurs at application selection.", "red")
@@ -215,7 +205,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             utils.print_with_color("Required Application window is not available.", "red")
             return
 
-
             
         annotation_dict, _, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
         control_info = control.get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
@@ -236,22 +225,20 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             screenshot_annotated_url = utils.encode_image_from_path(annotated_screenshot_save_path)
             image_url += [screenshot_url, screenshot_annotated_url]
 
+
         if configs["RAG_EXPERIENCE"]:
-            examples, tips = self.rag_experience_retrieve()
+            examples, tips = self.AppAgent.rag_experience_retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"])
         else:
             examples = []
             tips = []
 
-        action_selection_prompt_system_message = self.act_selection_prompter.system_prompt_construction(examples, tips)
-        action_selection_prompt_user_message = self.act_selection_prompter.user_content_construction(image_url, self.request_history, self.action_history, 
-                                                                                                        control_info, self.plan, self.request, self.rag_prompt(), configs["INCLUDE_LAST_SCREENSHOT"])
+        external_knowledge_prompt = self.AppAgent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
+        action_selection_prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, image_url, self.request_history, self.action_history, control_info, self.plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
         
-        action_selection_prompt_message = self.act_selection_prompter.prompt_construction(action_selection_prompt_system_message, action_selection_prompt_user_message)
-
         self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
 
         try:
-            response_string, cost = llm_call.get_completion(action_selection_prompt_message, "ACTION", use_backup_engine=True)
+            response_string, cost = self.AppAgent.get_response(action_selection_prompt_message, "ACTION", use_backup_engine=True)
         except Exception as e:
             log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
             utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
@@ -263,16 +250,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         self.cost += cost
 
         try:
-            response_json = utils.json_parser(response_string)
+            response_json = self.AppAgent.response_to_dict(response_string)
 
-            observation = response_json["Observation"]
-            thought = response_json["Thought"]
             control_label = response_json["ControlLabel"]
             control_text = response_json["ControlText"]
             function_call = response_json["Function"]
             args = utils.revise_line_breaks(response_json["Args"])
 
             control_selected = annotation_dict.get(control_label, "")
+
+            self.AppAgent.print_response(response_json)
 
 
             # Build the executor for over the control item.
@@ -284,22 +271,13 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             # Set the result and log the result.
             self.plan = response_json["Plan"]
             self.status = response_json["Status"]
-            comment = response_json["Comment"]
+
             response_json["Step"] = self.step
             response_json["Round"] = self.round
             response_json["Action"] = action
             response_json["Agent"] = "ActAgent"
             response_json["Request"] = self.request
             response_json["Application"] = self.app_root
-
-            # Log the response.
-            utils.print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
-            utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
-            utils.print_with_color("Selected item🕹️: {control_text}, Label: {label}".format(control_text=control_text, label=control_label), "yellow")
-            utils.print_with_color("Action applied⚒️: {action}".format(action=action), "blue")
-            utils.print_with_color("Status📊: {status}".format(status=self.status), "blue")
-            utils.print_with_color("Next Plan📚: {plan}".format(plan=str(self.plan).replace("\\n", "\n")), "cyan")
-            utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
 
 
         except Exception as e:
@@ -313,6 +291,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             return
         
         self.step += 1
+        self.AppAgent.update_step()
+        self.AppAgent.update_status(self.status)
 
         # Handle the case when the control item is overlapped and the agent is unable to select the control item. Retake the annotated screenshot.
         if "SCREENSHOT" in self.status.upper():
@@ -347,52 +327,13 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return
     
 
-    def rag_prompt(self):
-        """
-        Retrieving documents for the user request.
-        :return: The retrieved documents string.
-        """
-        
-        retrieved_docs = ""
-        if self.offline_doc_retriever:
-            offline_docs = self.offline_doc_retriever.retrieve("How to {query} for {app}".format(query=self.request, app=self.application), configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], filter=None)
-            offline_docs_prompt = self.act_selection_prompter.retrived_documents_prompt_helper("Help Documents", "Document", [doc.metadata["text"] for doc in offline_docs])
-            retrieved_docs += offline_docs_prompt
-
-        if self.online_doc_retriever:
-            online_search_docs = self.online_doc_retriever.retrieve(self.request, configs["RAG_ONLINE_RETRIEVED_TOPK"], filter=None)
-            online_docs_prompt = self.act_selection_prompter.retrived_documents_prompt_helper("Online Search Results", "Search Result", [doc.page_content for doc in online_search_docs])
-            retrieved_docs += online_docs_prompt
-
-        return retrieved_docs
-
-    
-    def rag_experience_retrieve(self):
-        """
-        Retrieving experience examples for the user request.
-        :return: The retrieved examples and tips string.
-        """
-        
-        # Retrieve experience examples. Only retrieve the examples that are related to the current application.
-        experience_docs = self.experience_retriever.retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"], 
-                                                                filter=lambda x: self.app_root.lower() in [app.lower() for app in x["app_list"]])
-        
-        if experience_docs:
-            examples = [doc.metadata.get("example", {}) for doc in experience_docs]
-            tips = [doc.metadata.get("Tips", "") for doc in experience_docs]
-        else:
-            examples = []
-            tips = []
-
-        return examples, tips
-
     def experience_asker(self):
         utils.print_with_color("""Would you like to save the current conversation flow for future reference by the agent?
 [Y] for yes, any other key for no.""", "cyan")
         
-        self.request = input()
+        ans = input()
 
-        if self.request.upper() == "Y":
+        if ans == "Y":
             return True
         else:
             return False
