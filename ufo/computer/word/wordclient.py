@@ -3,7 +3,6 @@
 
 
 from ..client import WinCOMClient
-from abc import ABC, abstractmethod
 from typing import List, Dict, Type
 import win32com.client
 
@@ -13,7 +12,7 @@ class Word(WinCOMClient):
     The base class for Windows COM client.
     """
 
-
+    
     def __init__(self, app_root_name: str, process_name: str) -> None:
         """
         Initialize the Windows COM client.
@@ -23,8 +22,6 @@ class Word(WinCOMClient):
         super().__init__(app_root_name, process_name)
 
 
-    
-    @abstractmethod
     def get_object_from_process_name(self) -> None:
         """
         Get the object from the process name.
