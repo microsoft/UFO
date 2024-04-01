@@ -15,7 +15,7 @@ from ..ui_control import control, screenshot as screen
 from ..ui_control.executor import ActionExecutor
 from .. import utils
 from ..agent.agent import HostAgent, AppAgent
-from ..agent.basic import MemoryItem, Memory
+from ..agent.basic import MemoryItem
 
 configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]
@@ -33,8 +33,8 @@ class Session(object):
         :param gpt_key: GPT key.
         """
         self.task = task
-        self.step = 0
-        self.round = 0
+        self._step = 0
+        self._round = 0
         self.action_history = []
 
         self.log_path = f"logs/{self.task}/"
@@ -45,14 +45,14 @@ class Session(object):
         self.HostAgent = HostAgent("HostAgent", configs["APP_AGENT"]["VISUAL_MODE"], configs["APP_SELECTION_PROMPT"], configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
         self.AppAgent = None
 
-        self.status = "APP_SELECTION"
+        self._status = "APP_SELECTION"
         self.application = ""
         self.app_root = ""
         self.app_window = None
         self.plan = ""
         self.request = ""
 
-        self.cost = 0
+        self._cost = 0
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
         self.experience_retriever = None
@@ -77,8 +77,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         """
         
         # Code for selecting an action
-        utils.print_with_color("Step {step}: Selecting an application.".format(step=self.step), "magenta")
-        desktop_save_path = self.log_path + f"action_step{self.step}.png"
+        utils.print_with_color("Step {step}: Selecting an application.".format(step=self._step), "magenta")
+        desktop_save_path = self.log_path + f"action_step{self._step}.png"
         _ = screen.capture_screenshot_multiscreen(desktop_save_path)
         desktop_screen_url = utils.encode_image_from_path(desktop_save_path)
 
@@ -89,19 +89,19 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
                                                                                                   desktop_windows_info, self.plan, self.request)
         
         
-        self.request_logger.debug(json.dumps({"step": self.step, "prompt": app_selection_prompt_message, "status": ""}))
+        self.request_logger.debug(json.dumps({"step": self._step, "prompt": app_selection_prompt_message, "status": ""}))
 
         try:
             response_string, cost = self.HostAgent.get_response(app_selection_prompt_message, "APP", use_backup_engine=True)
 
         except Exception as e:
-            log = json.dumps({"step": self.step, "status": str(e), "prompt": app_selection_prompt_message})
+            log = json.dumps({"step": self._step, "status": str(e), "prompt": app_selection_prompt_message})
             utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
             self.request_logger.info(log)
-            self.status = "ERROR"
+            self._status = "ERROR"
             return
 
-        self.cost += cost
+        self._cost += cost
 
         try:
             response_json = self.HostAgent.response_to_dict(response_string)
@@ -109,7 +109,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             application_label = response_json["ControlLabel"]
             self.application = response_json["ControlText"]
             self.plan = response_json["Plan"]
-            self.status = response_json["Status"]
+            self._status = response_json["Status"]
 
             self.HostAgent.print_response(response_json)
 
@@ -122,7 +122,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             # Create a memory item for the host agent
             host_agent_step_memory = MemoryItem()
-            additional_memory = {"Step": self.step, "AgentStep": self.HostAgent.get_step(), "Round": self.round, "ControlLabel": self.application, "Action": "set_focus()", 
+            additional_memory = {"Step": self._step, "AgentStep": self.HostAgent.get_step(), "Round": self._round, "ControlLabel": self.application, "Action": "set_focus()", 
                                  "Request": self.request, "Agent": "AppAgent", "Application": self.app_root, "Cost": cost, "Results": ""}
             host_agent_step_memory.set_values_from_dict(response_json)
             host_agent_step_memory.set_values_from_dict(additional_memory)
@@ -131,7 +131,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             
             response_json = self.set_result_and_log(host_agent_step_memory.to_dict())
         
-            if "FINISH" in self.status.upper() or self.application == "" or not app_window:
+            if "FINISH" in self._status.upper() or self.application == "" or not app_window:
                 return
                 
             try:
@@ -141,10 +141,10 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             except NoPatternInterfaceError as e:
                 self.error_logger(response_string, str(e))
                 utils.print_with_color("Window interface {title} not available for the visual element.".format(title=self.application), "red")
-                self.status = "ERROR"
+                self._status = "ERROR"
                 return
             
-            self.status = "CONTINUE"
+            self._status = "CONTINUE"
             self.app_window = app_window
 
             self.app_window.set_focus()
@@ -168,16 +168,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             time.sleep(configs["SLEEP_TIME"])
 
-            self.step += 1
+            self._step += 1
             self.HostAgent.update_step()
-            self.HostAgent.update_status(self.status)
+            self.HostAgent.update_status(self._status)
 
         except Exception as e:
             utils.print_with_color("Error Occurs at application selection.", "red")
             utils.print_with_color(str(e), "red")
             utils.print_with_color(response_string, "red")
             self.error_logger(response_string, str(e))
-            self.status = "ERROR"
+            self._status = "ERROR"
 
             return
 
@@ -189,12 +189,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return: The outcome, the application window, and the action log.
         """
 
-        utils.print_with_color("Step {step}: Taking an action on application {application}.".format(step=self.step, application=self.application), "magenta")
-        control_screenshot_save_path = self.log_path + f"action_step{self.step}_selected_controls.png"
+        utils.print_with_color("Step {step}: Taking an action on application {application}.".format(step=self._step, application=self.application), "magenta")
+        control_screenshot_save_path = self.log_path + f"action_step{self._step}_selected_controls.png"
 
 
         if self.app_window == None:
-            self.status = "ERROR"
+            self._status = "ERROR"
             utils.print_with_color("Required Application window is not available.", "red")
             return
 
@@ -209,19 +209,19 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         external_knowledge_prompt = self.AppAgent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
         action_selection_prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, image_url, self.request_history, self.action_history, control_info, self.plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
         
-        self.request_logger.debug(json.dumps({"step": self.step, "prompt": action_selection_prompt_message, "status": ""}))
+        self.request_logger.debug(json.dumps({"step": self._step, "prompt": action_selection_prompt_message, "status": ""}))
 
         try:
             response_string, cost = self.AppAgent.get_response(action_selection_prompt_message, "ACTION", use_backup_engine=True)
         except Exception as e:
-            log = json.dumps({"step": self.step, "status": str(e), "prompt": action_selection_prompt_message})
+            log = json.dumps({"step": self._step, "status": str(e), "prompt": action_selection_prompt_message})
             utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
             self.request_logger.info(log)
-            self.status = "ERROR"
+            self._status = "ERROR"
             time.sleep(configs["SLEEP_TIME"])
             return 
         
-        self.cost += cost
+        self._cost += cost
 
         try:
             response_json = self.AppAgent.response_to_dict(response_string)
@@ -243,7 +243,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             # Set the result and log the result.
             self.plan = response_json["Plan"]
-            self.status = response_json["Status"]
+            self._status = response_json["Status"]
 
 
             # Compose the function call and the arguments string.
@@ -260,7 +260,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             # Create a memory item for the app agent
             app_agent_step_memory = MemoryItem()
             
-            additional_memory = {"Step": self.step, "AgentStep": self.AppAgent.get_step(), "Round": self.round, "Action": action, 
+            additional_memory = {"Step": self._step, "AgentStep": self.AppAgent.get_step(), "Round": self._round, "Action": action, 
                                  "Request": self.request, "Agent": "ActAgent", "Application": self.app_root, "Cost": cost, "Results": results}
             app_agent_step_memory.set_values_from_dict(response_json)
             app_agent_step_memory.set_values_from_dict(additional_memory)
@@ -272,19 +272,19 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
         except Exception as e:
             # Return the error message and log the error.
-            utils.print_with_color("Error occurs at step {step}".format(step=self.step), "red")
+            utils.print_with_color("Error occurs at step {step}".format(step=self._step), "red")
             utils.print_with_color(str(e), "red")
-            self.status = "ERROR"
+            self._status = "ERROR"
 
             self.error_logger(response_string, str(e))
             return
         
-        self.step += 1
+        self._step += 1
         self.AppAgent.update_step()
-        self.AppAgent.update_status(self.status)
+        self.AppAgent.update_status(self._status)
 
         # Handle the case when the control item is overlapped and the agent is unable to select the control item. Retake the annotated screenshot.
-        if "SCREENSHOT" in self.status.upper():
+        if "SCREENSHOT" in self._status.upper():
             utils.print_with_color("Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.", "magenta")
             self.control_reannotate = executor.annotation(args, annotation_dict)
             return
@@ -302,9 +302,9 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return: The image url, the annotation dict, and the control info.
         """
 
-        screenshot_save_path = self.log_path + f"action_step{self.step}.png"
-        annotated_screenshot_save_path = self.log_path + f"action_step{self.step}_annotated.png"
-        concat_screenshot_save_path = self.log_path + f"action_step{self.step}_concat.png"
+        screenshot_save_path = self.log_path + f"action_step{self._step}.png"
+        annotated_screenshot_save_path = self.log_path + f"action_step{self._step}_annotated.png"
+        concat_screenshot_save_path = self.log_path + f"action_step{self._step}_concat.png"
 
 
         if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
@@ -319,8 +319,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
         if configs["INCLUDE_LAST_SCREENSHOT"]:
             
-            last_screenshot_save_path = self.log_path + f"action_step{self.step - 1}.png"
-            last_control_screenshot_save_path = self.log_path + f"action_step{self.step - 1}_selected_controls.png"
+            last_screenshot_save_path = self.log_path + f"action_step{self._step - 1}.png"
+            last_control_screenshot_save_path = self.log_path + f"action_step{self._step - 1}_selected_controls.png"
             image_url += [utils.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
 
         if configs["CONCAT_SCREENSHOT"]:
@@ -362,7 +362,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         summarizer.create_or_update_yaml(summaries, os.path.join(experience_path, "experience.yaml"))
         summarizer.create_or_update_vector_db(summaries, os.path.join(experience_path, "experience_db"))
 
-        self.cost += total_cost
+        self._cost += total_cost
         utils.print_with_color("The experience has been saved.", "cyan")
 
 
@@ -370,26 +370,27 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         """
         Start a new round.
         """
-        self.request_history.append({self.round: self.request})
-        self.round += 1
+        self.request_history.append({self._round: self.request})
+        self._round += 1
         utils.print_with_color("""Please enter your new request. Enter 'N' for exit.""", "cyan")
         
         self.request = input()
 
         if self.request.upper() == "N":
-            self.status = "ALLFINISH"
+            self._status = "ALLFINISH"
             return
         else:
-            self.status = "APP_SELECTION"
+            self._status = "APP_SELECTION"
             return
         
-        
+    @property
     def get_round(self):
         """
         Get the round of the session.
         return: The round of the session.
         """
-        return self.round
+        return self._round
+    
     
     def set_round(self, new_round):
         """
@@ -398,27 +399,41 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         self.round = new_round
 
 
+    @property
     def get_status(self):
         """
         Get the status of the session.
         return: The status of the session.
         """
-        return self.status
+        return self._status
     
+    
+    @property
     def get_step(self):
         """
         Get the step of the session.
         return: The step of the session.
         """
-        return self.step
-
+        return self._step
     
+
+    @property
     def get_cost(self):
         """
         Get the cost of the session.
         return: The cost of the session.
         """
-        return self.cost
+        return self._cost
+    
+
+    def get_results(self):
+        """
+        Get the results of the session.
+        return: The results of the session.
+        """
+        return self.action_history
+    
+
     
     def get_application_window(self):
         """
@@ -449,17 +464,17 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         control_text: The text of the control item.
         return: The boolean value indicating whether to proceed or not.
         """
-        if "PENDING" in self.status.upper() and configs["SAFE_GUARD"]:
+        if "PENDING" in self._status.upper() and configs["SAFE_GUARD"]:
             utils.print_with_color("[Input Required:] UFO🛸 will apply {action} on the [{control_text}] item. Please confirm whether to proceed or not. Please input Y or N.".format(action=action, control_text=control_text), "magenta")
             decision = utils.yes_or_no()
             if not decision:
                 utils.print_with_color("The user decide to stop the task.", "magenta")
-                self.status = "FINISH"
+                self._status = "FINISH"
                 return False
             
             # Handle the PENDING_AND_FINISH case
             elif "FINISH" in self.plan:
-                self.status = "FINISH"
+                self._status = "FINISH"
         return True
     
 
@@ -467,7 +482,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         """
         Error handler for the session.
         """
-        log = json.dumps({"step": self.step, "status": "ERROR", "response": response_str, "error": error})
+        log = json.dumps({"step": self._step, "status": "ERROR", "response": response_str, "error": error})
         self.logger.info(log)
 
 
