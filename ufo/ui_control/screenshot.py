@@ -111,6 +111,7 @@ def coordinate_adjusted(window_rect:RECT, control_rect:RECT):
     return adjusted_rect
 
 
+
 def draw_rectangles_controls(image, coordinate:tuple, label_text:str, botton_margin:int=5, border_width:int=2, font_size:int=25, 
                              font_color:str="#000000", border_color:str="#FF0000", button_color:str="#FFF68F"):
     """
