@@ -8,6 +8,8 @@ from ufo.config.config import load_config
 from .parser.psr_record_parser import PSRRecordParser
 from .utils import create_folder, save_to_json, unzip_and_read_file
 from ufo.utils import print_with_color
+from typing import Tuple
+
 
 configs = load_config()
 
@@ -33,15 +35,17 @@ def main():
         record.set_request(parsed_args.request[0])
 
         summarizer = DemonstrationSummarizer(
-            configs["ACTION_AGENT"]["VISUAL_MODE"], configs["DEMONSTRATION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+            configs["ACTION_AGENT"]["VISUAL_MODE"], configs["DEMONSTRATION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"], configs["RAG_DEMONSTRATION_COMPLETION_N"])
 
-        summaries, total_cost = summarizer.get_summary_list([record])
-        if asker(summaries):
+        summaries, total_cost = summarizer.get_summary_list(record)
+        
+        is_save, index = asker(summaries)
+        if is_save and index >= 0:
             demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
             create_folder(demonstration_path)
 
             save_to_json(record.__dict__, os.path.join(demonstration_path, "demonstration_log", parsed_args.request[0].replace(' ', '_')) + ".json")
-            summarizer.create_or_update_yaml(summaries, os.path.join(demonstration_path, "demonstration.yaml"))
+            summarizer.create_or_update_yaml([summaries[index]], os.path.join(demonstration_path, "demonstration.yaml"))
             summarizer.create_or_update_vector_db(summaries, os.path.join(demonstration_path, "demonstration_db"))
 
         formatted_cost = '${:.2f}'.format(total_cost)
@@ -51,16 +55,19 @@ def main():
         print_with_color(str(e), "red")
 
 
-def asker(summaries) -> bool:
-    plan = summaries[0]["example"]["Plan"]
-    print_with_color("""Here's the plan summarized from your demonstration: """, "cyan")
-    print_with_color(plan, "green")
-    print_with_color("""Would you like to save the plan future reference by the agent?
-[Y] for yes, any other key for no.""", "cyan")
+def asker(summaries) -> Tuple[bool, int]:
+    print_with_color("""Here are the plans summarized from your demonstration: """, "cyan")
+    for index, summary in enumerate(summaries):
+        print_with_color(f"Plan [{index + 1}]", "green")
+        print_with_color(f"{summary['example']['Plan']}", "yellow")
 
+    print_with_color(f"Would you like to save any one of them as future reference by the agent? press ", color="cyan" , end="")
+    for index in range(1, len(summaries) + 1):
+        print_with_color(f"[{index}]", color="cyan", end=" ")
+    print_with_color("to save the corresponding plan, or press any other key to skip.", color="cyan")    
     response = input()
-
-    if response.upper() == "Y":
-        return True
+    
+    if response.isnumeric() and int(response) in range(1, len(summaries) + 1):
+        return True, int(response) - 1
     else:
-        return False
+        return False, -1

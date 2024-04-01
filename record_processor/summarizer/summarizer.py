@@ -5,7 +5,7 @@ import os
 import yaml
 from record_processor.parser.demonstration_record import DemonstrationRecord
 from record_processor.utils import json_parser
-from ufo.llm.llm_call import get_completion
+from ufo.llm.llm_call import get_completions
 from ufo.prompter.demonstration_prompter import DemonstrationPrompter
 from typing import Tuple
 from langchain.docstore.document import Document
@@ -18,7 +18,7 @@ class DemonstrationSummarizer:
     The DemonstrationSummarizer class is the summarizer for the demonstration learning.
     """
 
-    def __init__(self, is_visual: bool, prompt_template: str, demonstration_prompt_template: str, api_prompt_template: str):
+    def __init__(self, is_visual: bool, prompt_template: str, demonstration_prompt_template: str, api_prompt_template: str, completion_num: int = 1):
         """
         Initialize the DemonstrationSummarizer.
         :param is_visual: Whether the request is for visual model.
@@ -30,6 +30,7 @@ class DemonstrationSummarizer:
         self.prompt_template = prompt_template
         self.demonstration_prompt_template = demonstration_prompt_template
         self.api_prompt_template = api_prompt_template
+        self.completion_num = completion_num
 
     def build_prompt(self, demo_record: DemonstrationRecord) -> list:
         """
@@ -47,16 +48,8 @@ class DemonstrationSummarizer:
 
         return demonstration_prompt
 
-    def get_summary(self, prompt_message: list) -> Tuple[dict, float]:
-        """
-        Get the summary.
-        :param prompt_message: A list of prompt messages.
-        return: The summary and the cost.
-        """
-
-        # Get the completion for the prompt message
-        response_string, cost = get_completion(
-            prompt_message, "ACTION", use_backup_engine=True)
+    
+    def restructure_response(self, response_string: str) -> dict:
         try:
             response_json = json_parser(response_string)
         except:
@@ -69,26 +62,27 @@ class DemonstrationSummarizer:
             for key in ["Observation", "Thought", "ControlLabel", "ControlText", "Function", "Args", "Status", "Plan", "Comment"]:
                 summary["example"][key] = response_json.get(key, "")
             summary["Tips"] = response_json.get("Tips", "")
+            
+        return summary 
 
-        return summary, cost
 
-    def get_summary_list(self, records: list) -> Tuple[list, float]:
+    def get_summary_list(self, record: DemonstrationRecord) -> Tuple[list, float]:
         """
-        Get the summary list for a list of records.
-        :param records: The list of records.
-        return: The summary list and the total cost.
+        Get the summary list for a record
+        :param record: The demonstration record.
+        return: The summary list for the user defined completion number and the cost
         """
+        
+        prompt = self.build_prompt(record)
+        response_string_list, cost = get_completions(prompt, "ACTION", use_backup_engine=True, n=self.completion_num)
         summaries = []
-        total_cost = 0
-        for record in records:
-            prompt = self.build_prompt(record)
-            summary, cost = self.get_summary(prompt)
+        for response_string in response_string_list:
+            summary = self.restructure_response(response_string)
             summary["request"] = record.get_request()
             summary["app_list"] = record.get_applications()
             summaries.append(summary)
-            total_cost += cost
 
-        return summaries, total_cost
+        return summaries, cost
 
     @staticmethod
     def create_or_update_yaml(summaries: list, yaml_path: str):
@@ -145,8 +139,7 @@ class DemonstrationSummarizer:
 
         # Check if the db exists, if not, create a new one.
         if os.path.exists(db_path):
-            prev_db = FAISS.load_local(
-                db_path, embeddings)
+            prev_db = FAISS.load_local(db_path, embeddings)
             db.merge_from(prev_db)
 
         db.save_local(db_path)
