@@ -212,7 +212,7 @@ def is_control_actionable(control):
 
 def get_app_states(app_window):
     """
-    Get the states of the app window.
+    Get the states of the app window use apis from pywinauto, win32com, etc.
     :param app_window: The app window to get the states.
     :return: The states of the app window.
     """

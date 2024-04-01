@@ -4,65 +4,77 @@ from ..ui_control import control, screenshot as screen
 
 
 class WindowsAppEnv(gym.Env):
-    def __init__(self,app_window=None):
+    def __init__(self,app_window=None,exit_fail_times=5,score_threshold=5):
         """
         :param app_window: The app_window to be focused on.从中解析出所有需要的state
+        :param exit_fail_times: The available max continuent times of failure.
+        :param score_threshold: The threshold of the score to do summary.
         :return: None
         """
         super(WindowsAppEnv, self).__init__()
         # 定义状态空间和动作空间
-        # self.action_space = spaces.Discrete(2)  # 例如，两个动作
-        # self.observation_space = spaces.Box(low=0, high=255, shape=(480, 640, 3), dtype=np.uint8)  # 假设状态是一个图像
-
+        # self.action_space=[]
         # 初始化 Windows 应用程序
         self.init_state = control.get_app_states(app_window)
         self.last_state = None
+        self.current_state = self.init_state
         # 最近失败次数
         self.recent_fail_times= 0 
+        self.exit_fail_times = exit_fail_times
+        # task exploration round
+        self.round = 0
+        self.score_threshold = score_threshold
 
-    def step(self, action):
-        # 执行动作，例如点击或输入
-        # prompt the exploration_action_agent to act
-        # actions includes the initive action apis
-
-        # 获取新的状态
-        new_state = self.get_state()
-
-        # 计算奖励
-        reward = self.calculate_reward(new_state)
-
-        # 检查是否中断
-        if self.is_interupted(new_state):
-            pass
+    def step(self):
+        """
+        Interact with explorer agent and update the states.
+        """
+        self.last_state = self.current_state
+        self.update_current_state()
         
-        done = self.is_done(new_state)
-
-        return new_state, reward, done, {}
-
     def reset(self):
-        # 重置应用程序状态
-        self.app.window().reset()
-        return self.get_state()
+        # 重置应用程序,放弃目前的状态，回到备份的状态文件
+        return self.get_current_state()
 
-    def get_state(self):
+    def update_current_state(self):
         # 从应用程序获取状态
-        # 调用pywinauto、win32com的来获取所有的状态信息
+        # 调用pywinauto、win32com等api来获取所有的状态信息
+        self._current_state = control.get_app_states()
+        return None
 
-        
-        return self.app.window().capture_as_image()
-
-    def calculate_reward(self, state):
+    def get_all_states(self):
         """
-        :param state: The current state to calculate the reward.
-        :return: The reward of the current state.
+        Return 3 states of the environment.
+        :return: The 3 states of the environment.
         """
-        return 0  # 示例奖励
+        return self._init_state,self._last_state,self._current_state
     
-    def is_interupted(self, state):
-        # 定义何时中断一个 episode
-        return False
-    
+    def is_done(self):
+        """
+        :return: True if the fail times reach the max times, False otherwise.
+        """
+        return self._recent_fail_times >= self._exit_fail_times
 
-    def is_done(self, state):
-        # 定义何时结束一个 episode
-        return False  # 示例结束条件
+def execute_task_summary(app_env:WindowsAppEnv):
+    """
+    Call the summary agent and execute the summary task.
+    :param app_env: The WindowsAppEnv object TO do summary task.
+    :return: The description of Task.
+    """
+    return ""
+
+def execute_exploration(app_env:WindowsAppEnv):
+    """
+    Call the explorer action agent and execute the action
+    :param app_env: The WindowsAppEnv object to do exploration task.
+    :return: Record the actions and status of execution.
+    """
+    return None,None
+
+def calculate_reward(app_env:WindowsAppEnv):
+    """
+    Calcluate the reward of the current state.
+    :param app_env: The WindowsAppEnv object to calculate the reward.
+    :return: The reward of the current state.
+    """
+    return 0
