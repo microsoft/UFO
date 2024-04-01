@@ -10,7 +10,7 @@
 __pycache__/
 **/__pycache__/
 *.pyc
-
+seeds/
 # Ignore the config file
 ufo/config/config.yaml
 ufo/config/config_llm.yaml

@@ -5,7 +5,11 @@
 from typing import List, Tuple
 import psutil
 from pywinauto import Desktop
-import win32com
+import win32com.client as win32
+import shutil
+import os
+import datetime
+
 # from ..config.config import load_config
 
 # configs = load_config()
@@ -216,4 +220,52 @@ def get_app_states(app_window):
     :param app_window: The app window to get the states.
     :return: The states of the app window.
     """
+
     return None
+
+class AppControl:
+    def __init__(self,app_root_name) -> None:
+        self.file_instance = None
+        self.app_instance = None
+        self.app_root_name = app_root_name
+
+
+    def quit(self):
+        """
+        Quit the application.
+        """
+        if not self.app_instance:
+            self.app_instance.Quit()
+            self.app_instance = None
+        if not self.file_instance:
+            self.file_instance.Close()
+            self.file_instance = None
+        
+    def open_file_with_app(self,file_path):
+        """
+        This function attempts to open a file using a specified application.
+        
+        :param file_path: The full path to the file you want to open.
+        :param app_name: The ProgID of the application you want to use to open the file.
+        """
+        try:
+            # Start the specified application
+            self.app_instance = win32.gencache.EnsureDispatch(self.app_root_name)
+            # Make the application visible
+            self.app_instance.Visible = True  
+            
+            # Different applications have different methods for opening files
+            if self.app_root_name == 'Word.Application':
+                self.file_instance = self.app_instance.Documents.Open(file_path)
+            elif self.app_root_name == 'Excel.Application':
+                self.file_instance = self.app_instance.Workbooks.Open(file_path)
+            # Add more cases here for different applications
+            else:
+                print(f"Application '{self.app_root_name}' is not supported by this function.")
+                self.file_instance.Close()
+                self.app_instance.Quit()
+                self.app_instance = None
+                self.file_instance = None
+
+        except Exception as e:
+            print(f"An error occurred: {e}")

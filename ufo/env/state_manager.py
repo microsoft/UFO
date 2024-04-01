@@ -4,18 +4,22 @@ from ..ui_control import control, screenshot as screen
 
 
 class WindowsAppEnv(gym.Env):
-    def __init__(self,app_window=None,exit_fail_times=5,score_threshold=5):
+    def __init__(self,app_root_name=None,exit_fail_times=5,score_threshold=5):
         """
-        :param app_window: The app_window to be focused on.从中解析出所有需要的state
+        :param app_root_name: The app_root_name to be focused on.
         :param exit_fail_times: The available max continuent times of failure.
         :param score_threshold: The threshold of the score to do summary.
         :return: None
         """
         super(WindowsAppEnv, self).__init__()
-        # 定义状态空间和动作空间
-        # self.action_space=[]
-        # 初始化 Windows 应用程序
-        self.init_state = control.get_app_states(app_window)
+        # 应用程序窗口
+        self.app_root_name = app_root_name
+        # s0->st action记录
+        self.history_actions = []
+        # s0->st states记录
+        self.history_states = []
+        # 3 observation state
+        self.init_state = None
         self.last_state = None
         self.current_state = self.init_state
         # 最近失败次数
@@ -39,8 +43,9 @@ class WindowsAppEnv(gym.Env):
     def update_current_state(self):
         # 从应用程序获取状态
         # 调用pywinauto、win32com等api来获取所有的状态信息
-        self._current_state = control.get_app_states()
-        return None
+        self.current_state = control.get_app_states(self.app_root_name)
+        if not self.init_state:
+            self.init_state = self.current_state
 
     def get_all_states(self):
         """
