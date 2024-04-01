@@ -3,21 +3,20 @@
 # Licensed under the MIT License.
 
 from abc import ABC, abstractmethod
-from typing import List, Dict, Type, TypeVar
+from typing import List, Dict, Type
 from dataclasses import dataclass, field
 from ..llm import llm_call
 from .. import utils
 import json
 
 
-
 @dataclass
-class BasicMemoryItem:
-    step: int
-    thought: str
-    action: str
+class MemoryItem:
+    """
+    This data class represents a memory item of an agent at one step.
+    """
 
-    _memory_attributes = ["step", "thought", "action"]
+    _memory_attributes = []
 
     def to_dict(self) -> dict:
         """
@@ -56,6 +55,14 @@ class BasicMemoryItem:
         if key not in self._memory_attributes:
             self._memory_attributes.append(key)
 
+    
+    def set_values_from_dict(self, values: dict) -> None:
+        """
+        Add fields to the memory item.
+        :param values: The values of the fields.
+        """
+        for key, value in values.items():
+            self.set_value(key, value)
 
 
     def get_value(self, key: str) -> object:
@@ -67,6 +74,15 @@ class BasicMemoryItem:
 
         return getattr(self, key, None)
     
+
+    def get_values(self, keys: List[str]) -> dict:
+        """
+        Get the values of the fields.
+        :param keys: The keys of the fields.
+        :return: The values of the fields.
+        """
+        return {key: self.get_value(key) for key in keys}
+    
     
     @property
     def attributes(self) -> List[str]:
@@ -77,25 +93,22 @@ class BasicMemoryItem:
         return self._memory_attributes
     
 
-
-T = TypeVar('T', bound='BasicMemoryItem')
 @dataclass
-class BasicMemory(ABC):
+class Memory():
     """
     This data class represents a memory of an agent.
     """
 
-    _content: List[T] = field(default_factory=list)
+    _content: List[MemoryItem] = field(default_factory=list)
 
-    @abstractmethod
-    def load(self, content: List[T]) -> dict:
+    
+    def load(self, content: List[MemoryItem]) -> dict:
         """
         Load the data from the memory.
         :param key: The key of the data.
         """
         self._content = content
         
-    
 
     def filter_memory_from_steps(self, steps: List[int]) -> List[dict]:
         """
@@ -116,12 +129,13 @@ class BasicMemory(ABC):
     
     
 
-    def add_memory_item(self, memory_item: T) -> None:
+    def add_memory_item(self, memory_item: MemoryItem) -> None:
         """
         Add a memory item to the memory.
         :param memory_item: The memory item to add.
         """
         self._content.append(memory_item)
+
 
 
     def delete_memory_item(self, step: int) -> None:
@@ -185,7 +199,7 @@ class BasicAgent(ABC):
     
     
     @property 
-    def memory(self) -> BasicMemory:
+    def memory(self) -> Memory:
         """
         Get the memory of the agent.
         :return: The memory of the agent.
@@ -254,6 +268,14 @@ class BasicAgent(ABC):
         :param status: The status of the agent.
         """
         self._status = status
+
+
+    def update_memory(self, memory_item: MemoryItem) -> None:
+        """
+        Update the memory of the agent.
+        :param memory_item: The memory item to add.
+        """
+        self._memory.add_memory_item(memory_item)
 
 
 

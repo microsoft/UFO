@@ -148,6 +148,14 @@ def json_parser(json_string:str):
     return json.loads(json_string)
 
 
+def is_json_serializable(obj):
+    try:
+        json.dumps(obj)
+        return True
+    except TypeError:
+        return False
+
+
 
 def generate_function_call(func, args):
     """

@@ -2,8 +2,7 @@
 # Licensed under the MIT License.
 
 
-from .basic import BasicAgent, BasicMemory
-from .memory import HostAgentMemoryItem, AppAgentMemoryItem
+from .basic import BasicAgent, Memory
 from ..prompter.agent_prompter import ApplicationAgentPrompter, ActionAgentPrompter
 from typing import List, Dict, Type
 from .. import utils
@@ -24,7 +23,7 @@ class HostAgent(BasicAgent):
         """
         super().__init__(name=name)
         self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
-        self._memory = []
+        self._memory = Memory()
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
         self.experience_retriever = None
@@ -95,10 +94,14 @@ class AppAgent(BasicAgent):
         """
         super().__init__(name=name)
         self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
-        self._memory = []
+        self._memory = Memory()
         self._app_gui_interface = app_gui_interface
         self._instance_name = instance_name
         self._root_name = root_name
+        self.offline_doc_retriever = None
+        self.online_doc_retriever = None
+        self.experience_retriever = None
+        self.human_demonstration_retriever = None
 
 
 

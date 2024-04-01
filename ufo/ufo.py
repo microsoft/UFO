@@ -70,15 +70,15 @@ def main():
                 status = "MAX_STEP_REACHED"
                 break
 
-        result = session.get_results()
-        round = session.get_round()
+        # result = session.get_results()
+        # round = session.get_round()
 
 
         # Print the result
-        if result != "":
-            print_with_color("Result for round {round}:".format(
-                round=round), "magenta")
-            print_with_color("{result}".format(result=result), "yellow")
+        # if result != "":
+        #     print_with_color("Result for round {round}:".format(
+        #         round=round), "magenta")
+        #     print_with_color("{result}".format(result=result), "yellow")
 
 
     # Print the total cost

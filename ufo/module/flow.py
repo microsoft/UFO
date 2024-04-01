@@ -15,6 +15,7 @@ from ..ui_control import control, screenshot as screen
 from ..ui_control.executor import ActionExecutor
 from .. import utils
 from ..agent.agent import HostAgent, AppAgent
+from ..agent.basic import MemoryItem, Memory
 
 configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]
@@ -50,7 +51,7 @@ class Session(object):
         self.app_window = None
         self.plan = ""
         self.request = ""
-        self.results = ""
+
         self.cost = 0
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
@@ -80,8 +81,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         desktop_save_path = self.log_path + f"action_step{self.step}.png"
         _ = screen.capture_screenshot_multiscreen(desktop_save_path)
         desktop_screen_url = utils.encode_image_from_path(desktop_save_path)
-
-        self.results = ""
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
 
@@ -113,27 +112,28 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.status = response_json["Status"]
 
             self.HostAgent.print_response(response_json)
+
+
+            # Get the application window
+            app_window = desktop_windows_dict.get(application_label)
+
+            # Get the application name
+            self.app_root = control.get_application_name(app_window)
+
+            # Create a memory item for the host agent
+            host_agent_step_memory = MemoryItem()
+            additional_memory = {"Step": self.step, "AgentStep": self.HostAgent.get_step(), "Round": self.round, "ControlLabel": self.application, "Action": "set_focus()", 
+                                 "Request": self.request, "Agent": "AppAgent", "Application": self.app_root, "Cost": cost, "Results": ""}
+            host_agent_step_memory.set_values_from_dict(response_json)
+            host_agent_step_memory.set_values_from_dict(additional_memory)
+
+            self.HostAgent.update_memory(host_agent_step_memory)
             
-            response_json["Step"] = self.step
-            response_json["Round"] = self.round
-            response_json["ControlLabel"] = self.application
-            response_json["Action"] = "set_focus()"
-            response_json["Request"] = self.request
-            response_json["Agent"] = "AppAgent"
+            response_json = self.set_result_and_log(host_agent_step_memory.to_dict())
         
-            
-            if "FINISH" in self.status.upper() or self.application == "":
-                self.status = "FINISH"
-                response_json["Application"] = ""
-                response_json = self.set_result_and_log("", response_json)
+            if "FINISH" in self.status.upper() or self.application == "" or not app_window:
                 return
                 
-            app_window = desktop_windows_dict[application_label]
-
-            self.app_root = control.get_application_name(app_window)
-            response_json["Application"] = self.app_root
-            response_json = self.set_result_and_log("", response_json)
-
             try:
                 app_window.is_normal()
 
@@ -190,41 +190,15 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         """
 
         utils.print_with_color("Step {step}: Taking an action on application {application}.".format(step=self.step, application=self.application), "magenta")
-        screenshot_save_path = self.log_path + f"action_step{self.step}.png"
-        annotated_screenshot_save_path = self.log_path + f"action_step{self.step}_annotated.png"
-        concat_screenshot_save_path = self.log_path + f"action_step{self.step}_concat.png"
         control_screenshot_save_path = self.log_path + f"action_step{self.step}_selected_controls.png"
 
-        if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
-            control_list = self.control_reannotate
-        else:
-            control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
 
         if self.app_window == None:
             self.status = "ERROR"
             utils.print_with_color("Required Application window is not available.", "red")
             return
 
-            
-        annotation_dict, _, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
-        control_info = control.get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
-
-        image_url = []
-
-        if configs["INCLUDE_LAST_SCREENSHOT"]:
-            
-            last_screenshot_save_path = self.log_path + f"action_step{self.step - 1}.png"
-            last_control_screenshot_save_path = self.log_path + f"action_step{self.step - 1}_selected_controls.png"
-            image_url += [utils.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
-
-        if configs["CONCAT_SCREENSHOT"]:
-            screen.concat_images_left_right(screenshot_save_path, annotated_screenshot_save_path, concat_screenshot_save_path)
-            image_url += [utils.encode_image_from_path(concat_screenshot_save_path)]
-        else:
-            screenshot_url = utils.encode_image_from_path(screenshot_save_path)
-            screenshot_annotated_url = utils.encode_image_from_path(annotated_screenshot_save_path)
-            image_url += [screenshot_url, screenshot_annotated_url]
-
+        image_url, annotation_dict, control_info = self.screenshots_and_control_info_helper()
 
         if configs["RAG_EXPERIENCE"]:
             examples, tips = self.AppAgent.rag_experience_retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"])
@@ -261,23 +235,39 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             self.AppAgent.print_response(response_json)
 
-
             # Build the executor for over the control item.
             executor = ActionExecutor(control_selected, self.app_window)
 
-            # Compose the function call and the arguments string.
-            action = utils.generate_function_call(function_call, args)
+            # Take screenshot of the selected control
+            screen.capture_screenshot_controls(self.app_window, [control_selected], control_screenshot_save_path)
 
             # Set the result and log the result.
             self.plan = response_json["Plan"]
             self.status = response_json["Status"]
 
-            response_json["Step"] = self.step
-            response_json["Round"] = self.round
-            response_json["Action"] = action
-            response_json["Agent"] = "ActAgent"
-            response_json["Request"] = self.request
-            response_json["Application"] = self.app_root
+
+            # Compose the function call and the arguments string.
+            action = utils.generate_function_call(function_call, args)
+
+            if self.safe_guard(action, control_text):
+                # Execute the action
+                results = executor.execution(function_call, args)
+                if not utils.is_json_serializable:
+                    results = ""
+            else:
+                results = "The user decide to stop the task."
+
+            # Create a memory item for the app agent
+            app_agent_step_memory = MemoryItem()
+            
+            additional_memory = {"Step": self.step, "AgentStep": self.AppAgent.get_step(), "Round": self.round, "Action": action, 
+                                 "Request": self.request, "Agent": "ActAgent", "Application": self.app_root, "Cost": cost, "Results": results}
+            app_agent_step_memory.set_values_from_dict(response_json)
+            app_agent_step_memory.set_values_from_dict(additional_memory)
+
+            self.AppAgent.update_memory(app_agent_step_memory)
+
+            response_json = self.set_result_and_log(app_agent_step_memory.to_dict())
 
 
         except Exception as e:
@@ -287,7 +277,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.status = "ERROR"
 
             self.error_logger(response_string, str(e))
-            
             return
         
         self.step += 1
@@ -302,28 +291,48 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
         self.control_reannotate = None
             
-
-        # The task is finished and no further action is needed
-        if self.status.upper() == "FINISH" and not control_selected:
-            self.status = self.status.upper()
-            response_json = self.set_result_and_log("", response_json)
-            
-            return
-        
-        if not self.safe_guard(action, control_text):
-            return 
-        
-        # Take screenshot of the selected control
-        screen.capture_screenshot_controls(self.app_window, [control_selected], control_screenshot_save_path)
-
-
-        # Execute the action
-        results = executor.execution(function_call, args)  
-        response_json = self.set_result_and_log(results, response_json)
-
         time.sleep(configs["SLEEP_TIME"])
 
         return
+    
+
+    def screenshots_and_control_info_helper(self):
+        """
+        Helper function for taking screenshots.
+        return: The image url, the annotation dict, and the control info.
+        """
+
+        screenshot_save_path = self.log_path + f"action_step{self.step}.png"
+        annotated_screenshot_save_path = self.log_path + f"action_step{self.step}_annotated.png"
+        concat_screenshot_save_path = self.log_path + f"action_step{self.step}_concat.png"
+
+
+        if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
+            control_list = self.control_reannotate
+        else:
+            control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
+            
+        annotation_dict, _, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
+        control_info = control.get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
+        
+        image_url = []
+
+        if configs["INCLUDE_LAST_SCREENSHOT"]:
+            
+            last_screenshot_save_path = self.log_path + f"action_step{self.step - 1}.png"
+            last_control_screenshot_save_path = self.log_path + f"action_step{self.step - 1}_selected_controls.png"
+            image_url += [utils.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
+
+        if configs["CONCAT_SCREENSHOT"]:
+            screen.concat_images_left_right(screenshot_save_path, annotated_screenshot_save_path, concat_screenshot_save_path)
+            image_url += [utils.encode_image_from_path(concat_screenshot_save_path)]
+        else:
+            screenshot_url = utils.encode_image_from_path(screenshot_save_path)
+            screenshot_annotated_url = utils.encode_image_from_path(annotated_screenshot_save_path)
+            image_url += [screenshot_url, screenshot_annotated_url]
+
+        return image_url, annotation_dict, control_info
+
     
 
     def experience_asker(self):
@@ -403,12 +412,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         """
         return self.step
 
-    def get_results(self):
-        """
-        Get the results of the session.
-        return: The results of the session.
-        """
-        return self.results
     
     def get_cost(self):
         """
@@ -425,19 +428,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return self.app_window
     
 
-    def set_result_and_log(self, result: str, response_json: dict) -> dict:
+    def set_result_and_log(self, response_json: dict) -> dict:
         """
         Set the result of the session, and log the result.
         result: The result of the session.
         response_json: The response json.
         return: The response json.
         """
-        if type(result) != str and type(result) != list:
-            result = ""
-        response_json["Results"] = result
+
         self.logger.info(json.dumps(response_json))
         self.action_history.append({key: response_json[key] for key in configs["HISTORY_KEYS"]})
-        self.results = result
 
         return response_json
     

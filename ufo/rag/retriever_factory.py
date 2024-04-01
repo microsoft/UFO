@@ -47,7 +47,6 @@ class Retriever(ABC):
         return self.indexer.similarity_search(query, top_k, filter=filter)
     
     
-    
 
 class OfflineDocRetriever(Retriever):
     """
@@ -140,7 +139,7 @@ class OnlineDocRetriever(Retriever):
         """
         self.query = query
         self.indexer = self.get_indexer(top_k)
-        
+
 
     def get_indexer(self, top_k: int):
         """
