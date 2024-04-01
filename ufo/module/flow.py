@@ -78,6 +78,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         
         # Code for selecting an action
         utils.print_with_color("Step {step}: Selecting an application.".format(step=self._step), "magenta")
+
         desktop_save_path = self.log_path + f"action_step{self._step}.png"
         _ = screen.capture_screenshot_multiscreen(desktop_save_path)
         desktop_screen_url = utils.encode_image_from_path(desktop_save_path)
@@ -207,7 +208,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             tips = []
 
         external_knowledge_prompt = self.AppAgent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
-        action_selection_prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, image_url, self.request_history, self.action_history, control_info, self.plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
+        action_selection_prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, image_url, self.request_history, self.action_history, 
+                                                                            control_info, self.plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
         
         self.request_logger.debug(json.dumps({"step": self._step, "prompt": action_selection_prompt_message, "status": ""}))
 
@@ -296,7 +298,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return
     
 
-    def screenshots_and_control_info_helper(self):
+    def screenshots_and_control_info_helper(self) -> tuple:
         """
         Helper function for taking screenshots.
         return: The image url, the annotation dict, and the control info.
@@ -335,7 +337,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
     
 
-    def experience_asker(self):
+    def experience_asker(self) -> bool:
         utils.print_with_color("""Would you like to save the current conversation flow for future reference by the agent?
 [Y] for yes, any other key for no.""", "cyan")
         
@@ -347,7 +349,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             return False
         
 
-    def experience_saver(self):
+    def experience_saver(self) -> None:
         """
         Save the current agent experience.
         """
@@ -384,7 +386,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             return
         
     @property
-    def get_round(self):
+    def get_round(self) -> int:
         """
         Get the round of the session.
         return: The round of the session.
@@ -392,7 +394,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return self._round
     
     
-    def set_round(self, new_round):
+    def set_round(self, new_round: int) -> None:
         """
         Set the round of the session.
         """
@@ -400,7 +402,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
 
     @property
-    def get_status(self):
+    def get_status(self) -> str:
         """
         Get the status of the session.
         return: The status of the session.
@@ -409,7 +411,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
     
     
     @property
-    def get_step(self):
+    def get_step(self) -> int:
         """
         Get the step of the session.
         return: The step of the session.
@@ -418,7 +420,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
     
 
     @property
-    def get_cost(self):
+    def get_cost(self) -> float:
         """
         Get the cost of the session.
         return: The cost of the session.
@@ -426,16 +428,21 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return self._cost
     
 
-    def get_results(self):
+    def get_results(self) -> list:
         """
         Get the results of the session.
         return: The results of the session.
         """
-        return self.action_history
+
+        if len(self.action_history) > 0:
+            result = self.action_history[-1].get("Results")
+        else:
+            result
+        return result
     
 
     
-    def get_application_window(self):
+    def get_application_window(self) -> object:
         """
         Get the application of the session.
         return: The application of the session.
@@ -487,7 +494,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
 
     @staticmethod
-    def initialize_logger(log_path, log_filename):
+    def initialize_logger(log_path: str, log_filename: str) -> logging.Logger:
         """
         Initialize logging.
         log_path: The path of the log file.
