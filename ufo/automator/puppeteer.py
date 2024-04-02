@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 from .ui_control.controller import UIController
-from word.wordclient import Word
+from .word.wordclient import Word
 
 
 class AppPuppeteer():
@@ -31,7 +31,7 @@ class AppPuppeteer():
         :param process_name: The process name.
         """
         win_com_client_mapping = {
-            "WINWORD.EXE": Word(self._app_root_name, self._app_root_name)
+            "WINWORD.EXE": Word
 
         }
 

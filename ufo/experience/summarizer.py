@@ -56,7 +56,7 @@ class ExperienceSummarizer:
         """
 
         # Get the completion for the prompt message
-        response_string, cost = get_completion(prompt_message, "ACTION", use_backup_engine=True)
+        response_string, cost = get_completion(prompt_message, "APPAGENT", use_backup_engine=True)
         try:
             response_json = json_parser(response_string)
         except:

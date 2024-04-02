@@ -6,10 +6,11 @@ from typing import Dict, List, Type
 
 from .. import utils
 from ..automator import puppeteer
-from ..prompter.agent_prompter import (ActionAgentPrompter,
-                                       ApplicationAgentPrompter)
+from ..prompter.agent_prompter import (HostAgentPrompter,
+                                       AppAgentPrompter)
 from .basic import BasicAgent, Memory
 
+# Lazy import the retriever factory to aviod long loading time.
 retriever_factory = utils.LazyImport("..rag.retriever_factory")
 
 
@@ -39,7 +40,7 @@ class HostAgent(BasicAgent):
         Get the prompt for the agent.
         :return: The prompt.
         """
-        return ApplicationAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
+        return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
     
 
     def message_constructor(self, image_list: List, request_history: str, action_history: str, os_info: str, plan: str, request: str) -> list:
@@ -114,7 +115,7 @@ class AppAgent(BasicAgent):
         Get the prompt for the agent.
         :return: The prompt.
         """
-        return ActionAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
+        return AppAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
     
 
     def message_constructor(self, dynamic_examples: str, dynamic_tips: str, dynamic_knowledge: str, image_list: List,

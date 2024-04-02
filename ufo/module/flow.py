@@ -5,6 +5,7 @@ import json
 import logging
 import os
 import time
+import traceback
 
 from art import text2art
 from pywinauto.uia_defines import NoPatternInterfaceError
@@ -42,7 +43,7 @@ class Session(object):
         self.logger = self.initialize_logger(self.log_path, "response.log")
         self.request_logger = self.initialize_logger(self.log_path, "request.log")
 
-        self.HostAgent = HostAgent("HostAgent", configs["APP_AGENT"]["VISUAL_MODE"], configs["APP_SELECTION_PROMPT"], configs["APP_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        self.HostAgent = HostAgent("HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"], configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
         self.AppAgent = None
 
         self._status = "APP_SELECTION"
@@ -86,17 +87,17 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
 
         
-        app_selection_prompt_message = self.HostAgent.message_constructor([desktop_screen_url], self.request_history, self.action_history, 
+        hostagent_prompt_message = self.HostAgent.message_constructor([desktop_screen_url], self.request_history, self.action_history, 
                                                                                                   desktop_windows_info, self.plan, self.request)
         
         
-        self.request_logger.debug(json.dumps({"step": self._step, "prompt": app_selection_prompt_message, "status": ""}))
+        self.request_logger.debug(json.dumps({"step": self._step, "prompt": hostagent_prompt_message, "status": ""}))
 
         try:
-            response_string, cost = self.HostAgent.get_response(app_selection_prompt_message, "APP", use_backup_engine=True)
+            response_string, cost = self.HostAgent.get_response(hostagent_prompt_message, "HOSTAGENT", use_backup_engine=True)
 
         except Exception as e:
-            log = json.dumps({"step": self._step, "status": str(e), "prompt": app_selection_prompt_message})
+            log = json.dumps({"step": self._step, "status": str(e), "prompt": hostagent_prompt_message})
             utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
             self.request_logger.info(log)
             self._status = "ERROR"
@@ -151,8 +152,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.app_window.set_focus()
 
             # Initialize the AppAgent
-            self.AppAgent = AppAgent("{root}/{process}".format(root=self.app_root, process=self.application), self.application, self.app_root, configs["ACTION_AGENT"]["VISUAL_MODE"], 
-                                     configs["ACTION_SELECTION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.app_window)
+
+
+            self.AppAgent = AppAgent("{root}/{process}".format(root=self.app_root, process=self.application), self.application, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
+                                     configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.app_window)
+            
+            
             
             # Initialize the document retriever
             if configs["RAG_OFFLINE_DOCS"]:
@@ -169,15 +174,20 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             time.sleep(configs["SLEEP_TIME"])
 
+            
+
             self._step += 1
             self.HostAgent.update_step()
             self.HostAgent.update_status(self._status)
 
+            
+
         except Exception as e:
+            error_trace = traceback.format_exc()
             utils.print_with_color("Error Occurs at application selection.", "red")
-            utils.print_with_color(str(e), "red")
+            utils.print_with_color(str(error_trace), "red")
             utils.print_with_color(response_string, "red")
-            self.error_logger(response_string, str(e))
+            self.error_logger(response_string, str(error_trace))
             self._status = "ERROR"
 
             return
@@ -208,15 +218,15 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             tips = []
 
         external_knowledge_prompt = self.AppAgent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
-        action_selection_prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, image_url, self.request_history, self.action_history, 
+        appagent_prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, image_url, self.request_history, self.action_history, 
                                                                             control_info, self.plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
         
-        self.request_logger.debug(json.dumps({"step": self._step, "prompt": action_selection_prompt_message, "status": ""}))
+        self.request_logger.debug(json.dumps({"step": self._step, "prompt": appagent_prompt_message, "status": ""}))
 
         try:
-            response_string, cost = self.AppAgent.get_response(action_selection_prompt_message, "ACTION", use_backup_engine=True)
+            response_string, cost = self.AppAgent.get_response(appagent_prompt_message, "APPAGENT", use_backup_engine=True)
         except Exception as e:
-            log = json.dumps({"step": self._step, "status": str(e), "prompt": action_selection_prompt_message})
+            log = json.dumps({"step": self._step, "status": str(e), "prompt": appagent_prompt_message})
             utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
             self.request_logger.info(log)
             self._status = "ERROR"
@@ -239,8 +249,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             # Build the executor for over the control item.
             ui_controller = self.AppAgent.Puppeteer.create_ui_controller(control_selected)
-            
-            # UIController(control_selected, self.app_window)
+        
 
             # Take screenshot of the selected control
             screen.capture_screenshot_controls(self.app_window, [control_selected], control_screenshot_save_path)
@@ -345,7 +354,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         
         ans = input()
 
-        if ans == "Y":
+        if ans.upper() == "Y":
             return True
         else:
             return False
@@ -357,7 +366,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         """
         utils.print_with_color("Summarizing and saving the execution flow as experience...", "yellow")
 
-        summarizer = ExperienceSummarizer(configs["ACTION_AGENT"]["VISUAL_MODE"], configs["EXPERIENCE_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        summarizer = ExperienceSummarizer(configs["APP_AGENT"]["VISUAL_MODE"], configs["EXPERIENCE_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
         experience = summarizer.read_logs(self.log_path)
         summaries, total_cost = summarizer.get_summary_list(experience)
 

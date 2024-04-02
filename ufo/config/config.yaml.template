@@ -1,4 +1,4 @@
-APP_AGENT: {
+HOST_AGENT: {
   VISUAL_MODE: True, # Whether to use the visual mode
 
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
@@ -22,7 +22,7 @@ APP_AGENT: {
   # AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
 }
 
-ACTION_AGENT: {
+APP_AGENT: {
   VISUAL_MODE: True, # Whether to use the visual mode
 
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  

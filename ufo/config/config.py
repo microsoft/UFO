@@ -55,8 +55,8 @@ def update_api_base(configs, agent):
             
 
 def optimize_configs(configs):
+    update_api_base(configs,'HOST_AGENT')
     update_api_base(configs,'APP_AGENT')
-    update_api_base(configs,'ACTION_AGENT')
     
     return configs
 

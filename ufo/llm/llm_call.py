@@ -14,23 +14,23 @@ def get_completion(messages, agent: str='APP', use_backup_engine: bool=True):
 
     Args:
         messages (list): List of messages to be used for completion.
-        agent (str, optional): Type of agent. Possible values are 'APP', 'ACTION' or 'BACKUP'.
+        agent (str, optional): Type of agent. Possible values are 'hostagent', 'appagent' or 'BACKUP'.
         use_backup_engine (bool, optional): Flag indicating whether to use the backup engine or not.
 
     Returns:
         tuple: A tuple containing the completion response (str) and the cost (float).
 
     """
-    if agent.lower() in ["app", "hostagent"]:
+    if agent.lower() in ["host", "hostagent"]:
+        agent_type = "HOST_AGENT"
+    elif agent.lower() in ["app", "appagent"]:
         agent_type = "APP_AGENT"
-    elif agent.lower() in ["action", "appagent"]:
-        agent_type = "ACTION_AGENT"
     elif agent.lower() == "backup":
         agent_type = "BACKUP_AGENT"
     else:
         raise ValueError(f'Agent {agent} not supported')
     
-    api_type =  configs[agent_type]['API_TYPE']
+    api_type = configs[agent_type]['API_TYPE']
     try:
         if api_type.lower() in ['openai', 'aoai', 'azure_ad']:
             from .openai import OpenAIService
