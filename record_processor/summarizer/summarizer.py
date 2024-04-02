@@ -63,7 +63,7 @@ class DemonstrationSummarizer:
                 summary["example"][key] = response_json.get(key, "")
             summary["Tips"] = response_json.get("Tips", "")
             
-        return summary 
+            return summary 
 
 
     def get_summary_list(self, record: DemonstrationRecord) -> Tuple[list, float]:
@@ -78,9 +78,10 @@ class DemonstrationSummarizer:
         summaries = []
         for response_string in response_string_list:
             summary = self.restructure_response(response_string)
-            summary["request"] = record.get_request()
-            summary["app_list"] = record.get_applications()
-            summaries.append(summary)
+            if summary:
+                summary["request"] = record.get_request()
+                summary["app_list"] = record.get_applications()
+                summaries.append(summary)
 
         return summaries, cost
 

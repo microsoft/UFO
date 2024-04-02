@@ -3,6 +3,15 @@
 
 UFO can learn from user-provided demonstrations for specific requests and use them as references in the future when encountering similar tasks. Providing clear demonstrations along with precise requests can significantly enhance UFO's performance.
 
+## How to Enable and Config this Function ❓
+You can enable this function by setting the following configuration:
+```bash
+## RAG Configuration for demonstration
+RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
+RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
+RAG_DEMONSTRATION_COMPLETION_N: 3  # The number of completion choices for the demonstration result
+```
+
 ## How to Prepare Your Demostration  ❓
 
 ### Record your steps by Microsoft Steps Recorder
@@ -41,12 +50,20 @@ Replace `record ZIP file path` with the full path to the ZIP file you just creat
 
 This command will parse the record and summarize to an execution plan. You'll see the confirmation message as follow:
 ```
-Here's the plan summarized from your demonstration:
+Here are the plans summarized from your demonstration:
+Plan [1]
 (1) Input the email address 'example@gmail.com' in the 'To' field.
 (2) Input the subject of the email. I need to input 'Greetings'.
 (3) Input the content of the email. I need to input 'Hello,\nI hope this message finds you well. I am writing to send you a warm greeting and to wish you a great day.\nBest regards.'
 (4) Click the Send button to send the email.
-Would you like to save the plan future reference by the agent?
-[Y] for yes, any other key for no.
+Plan [2]
+(1) ***
+(2) ***
+(3) ***
+Plan [3]
+(1) ***
+(2) ***
+(3) ***
+Would you like to save any one of them as future reference by the agent? press [1] [2] [3] to save the corresponding plan, or press any other key to skip.
 ```
-Press `Y` to save it into its memory for furture reference. A sample could be find [here](../vectordb/demonstration/example.yaml).
+Press `1` to save it into its memory for furture reference. A sample could be find [here](../vectordb/demonstration/example.yaml).

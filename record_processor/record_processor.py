@@ -46,7 +46,7 @@ def main():
 
             save_to_json(record.__dict__, os.path.join(demonstration_path, "demonstration_log", parsed_args.request[0].replace(' ', '_')) + ".json")
             summarizer.create_or_update_yaml([summaries[index]], os.path.join(demonstration_path, "demonstration.yaml"))
-            summarizer.create_or_update_vector_db(summaries, os.path.join(demonstration_path, "demonstration_db"))
+            summarizer.create_or_update_vector_db([summaries[index]], os.path.join(demonstration_path, "demonstration_db"))
 
         formatted_cost = '${:.2f}'.format(total_cost)
         print_with_color(f"Request total cost is {formatted_cost}", "yellow")

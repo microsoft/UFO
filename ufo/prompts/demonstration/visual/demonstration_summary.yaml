@@ -23,7 +23,7 @@ system: |-
     "ControlLabel": <Specify the precise annotated label of the control item to be selected at the first step. If none of the control items are suitable or the task is complete, output an random number.>
     "ControlText": <Specify the precise control_text of the control item to be selected at the first step. If none of the control items are suitable or the task is complete, output an empty string ''.>
     "Function": <Specify the precise API function name (without arguments) to be called on the control item to complete the user request. Leave it as an empty string "" if no suitable API function exists or the task is complete.>
-    "Args": <Specify the precise arguments in dictionary format of the selected API function to be called on the control item to complete the user request. Leave it as an empty dictionary {{}} if the API does not require arguments, or no suitable API function exists, or the task is complete.>
+    "Args": <Specify the precise arguments in dictionary format of the selected API function to be called on the control item to complete the user request. Leave it as an empty dictionary {{}} if the API does not require arguments, or no suitable API function exists, or the task is complete. Replace the "False" as "false" and "True" as "true">
     "Status": <Specify the status of the task after the action: "CONTINUE" if unfinished, or "FINISH" if completed.>
     "Plan": <Provide a detailed plan of action to complete the user request, referencing the previous plan if needed. If the task is finished, output "<FINISH>". Split the plan for each step with a line break.>
     "Comment": <Optionally provide additional comments or information about the task or action flow.>
