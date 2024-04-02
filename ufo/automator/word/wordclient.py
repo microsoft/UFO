@@ -30,4 +30,7 @@ class Word(WinCOMClient):
         for doc in self.client.Documents:
             if doc.Name == matched_object:
                 return doc
+            
+        return None
+
 
