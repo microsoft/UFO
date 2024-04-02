@@ -146,6 +146,7 @@ class OnlineDocRetriever(Retriever):
         """
         Create an online search indexer.
         :param top_k: The number of documents to retrieve.
+        :return: The created indexer.
         """
         
         bing_retriever = web_search.BingSearchWeb()
