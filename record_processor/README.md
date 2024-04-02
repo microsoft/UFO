@@ -67,3 +67,12 @@ Plan [3]
 Would you like to save any one of them as future reference by the agent? press [1] [2] [3] to save the corresponding plan, or press any other key to skip.
 ```
 Press `1` to save it into its memory for furture reference. A sample could be find [here](../vectordb/demonstration/example.yaml).
+
+**Step 3: Enable RAG from Demonstration**
+You can enable this function by setting the following configuration in the `ufo/config/config.yaml` file:
+```bash
+## RAG Configuration for demonstration
+RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
+RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the retrieved demonstration examples.
+```
+Adjust `RAG_DEMONSTRATION_RETRIEVED_TOPK` to optimize performance.

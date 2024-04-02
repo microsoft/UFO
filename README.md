@@ -164,7 +164,7 @@ You can enable this function by setting the following configuration:
 ```bash
 ## RAG Configuration for demonstration
 RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
-RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
+RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the demonstration examples.
 ```
 
 
