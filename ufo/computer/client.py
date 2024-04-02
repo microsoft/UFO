@@ -2,9 +2,9 @@
 # Licensed under the MIT License.
 
 
-
 from abc import ABC, abstractmethod
-from typing import List, Dict, Type
+from typing import Dict, List, Type
+
 import win32com.client
 
 

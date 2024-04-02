@@ -1,22 +1,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import json
 import logging
 import os
 import time
-import json
 
 from art import text2art
 from pywinauto.uia_defines import NoPatternInterfaceError
-from ..experience.summarizer import ExperienceSummarizer
-
-from ..config.config import load_config
-from ..computer.ui_control import utils as control
-from ..computer.ui_control import screenshot as screen
 
 from .. import utils
-from ..agent.agent import HostAgent, AppAgent
+from ..agent.agent import AppAgent, HostAgent
 from ..agent.basic import MemoryItem
+from ..computer.ui_control import screenshot as screen
+from ..computer.ui_control import utils as control
+from ..config.config import load_config
+from ..experience.summarizer import ExperienceSummarizer
 
 configs = load_config()
 BACKEND = configs["CONTROL_BACKEND"]

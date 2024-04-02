@@ -2,11 +2,11 @@
 # Licensed under the MIT License.
 
 import base64
+import importlib
 import json
 import os
 from io import BytesIO
 from typing import Optional
-import importlib
 
 from colorama import Fore, Style, init
 from PIL import Image

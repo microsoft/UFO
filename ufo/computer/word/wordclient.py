@@ -4,7 +4,6 @@
 from ..client import WinCOMClient
 
 
-
 class Word(WinCOMClient):
     """
     The base class for Windows COM client.

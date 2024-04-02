@@ -2,12 +2,13 @@
 # Licensed under the MIT License.
 
 from abc import ABC, abstractmethod
-from langchain_community.vectorstores import FAISS
+
 from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+
 from ..config.config import get_offline_learner_indexer_config, load_config
 from ..utils import print_with_color
 from . import web_search
-
 
 configs = load_config()
 

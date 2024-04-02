@@ -3,13 +3,13 @@
 
 from typing import List
 
+import win32api
+import win32con
+import win32gui
+import win32ui
 from PIL import Image, ImageDraw, ImageFont, ImageGrab
 from pywinauto.application import Application
 from pywinauto.win32structures import RECT
-import win32con
-import win32api
-import win32gui
-import win32ui
 
 from ...config.config import load_config
 from ...utils import number_to_letter

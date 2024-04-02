@@ -2,11 +2,13 @@
 # Licensed under the MIT License.
 
 
-from .basic import BasicAgent, Memory
-from ..prompter.agent_prompter import ApplicationAgentPrompter, ActionAgentPrompter
-from typing import List, Dict, Type
+from typing import Dict, List, Type
+
 from .. import utils
 from ..computer import puppeteer
+from ..prompter.agent_prompter import (ActionAgentPrompter,
+                                       ApplicationAgentPrompter)
+from .basic import BasicAgent, Memory
 
 retriever_factory = utils.LazyImport("..rag.retriever_factory")
 
