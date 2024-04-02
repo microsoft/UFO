@@ -24,7 +24,7 @@ class AppPuppeteer():
         :param process_name: The process name.
         """
         win_com_client_mapping = {
-            "WINWORD.EXE": Word(self._app_root_name, self._app_root_name),
+            "WINWORD.EXE": Word(self._app_root_name, self._app_root_name)
 
         }
 
