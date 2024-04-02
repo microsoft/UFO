@@ -45,3 +45,10 @@ class AppPuppeteer():
         :return: The UI controller.
         """
         return UIController(control, self.ui_control_interface)
+    
+
+    def com_client_exists(self) -> bool:
+        """
+        Check if the COM client exists.
+        """
+        return self.com_client is not None
