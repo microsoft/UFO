@@ -55,6 +55,7 @@ UFO sightings have garnered attention from various media outlets, including:
 
 These sources provide insights into the evolving landscape of technology and the implications of UFO phenomena on various platforms.
 
+
 ## 💥 Highlights
 
 - [x] **First Windows Agent** - UFO is the pioneering agent framework capable of translating user requests in natural language into actionable operations on Windows OS.
@@ -156,6 +157,15 @@ RAG_EXPERIENCE: True  # Whether to use the RAG from its self-experience.
 RAG_EXPERIENCE_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
 ```
 
+#### RAG from User-Demonstration
+Boost UFO's capabilities through user demonstration! Utilize Microsoft Steps Recorder to record step-by-step processes for achieving specific tasks. With a simple command processed by the record_processor (refer to the [README](./record_processor/README.md)), UFO can store these trajectories in its memory for future reference, enhancing its learning from user interactions.
+
+You can enable this function by setting the following configuration:
+```bash
+## RAG Configuration for demonstration
+RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
+RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
+```
 
 
 ### 🎉 Step 4: Start UFO

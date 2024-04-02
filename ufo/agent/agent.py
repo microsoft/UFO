@@ -217,6 +217,24 @@ class AppAgent(BasicAgent):
 
         return examples, tips
     
+    def rag_demonstration_retrieve(self, request, demonstratuib_top_k: int) -> str:
+        """
+        Retrieving demonstration examples for the user request.
+        :return: The retrieved examples and tips string.
+        """
+        
+        # Retrieve demonstration examples.
+        demonstration_docs = self.human_demonstration_retriever.retrieve(request, demonstratuib_top_k)
+        
+        if demonstration_docs:
+            examples = [doc.metadata.get("example", {}) for doc in demonstration_docs]
+            tips = [doc.metadata.get("Tips", "") for doc in demonstration_docs]
+        else:
+            examples = []
+            tips = []
+
+        return examples, tips
+    
 
     def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
         """
@@ -249,8 +267,8 @@ class AppAgent(BasicAgent):
         self.experience_retriever = retriever_factory.ExperienceRetriever(db_path)
 
 
-    def build_human_demonstration_retriever(self) -> None:
+    def build_human_demonstration_retriever(self, db_path) -> None:
         """
         Build the human demonstration retriever.
         """
-        pass
+        self.human_demonstration_retriever = retriever_factory.DemonstrationRetriever(db_path)
