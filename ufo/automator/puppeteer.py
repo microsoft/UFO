@@ -15,6 +15,7 @@ class AppPuppeteer():
         self._process_name = process_name
         self._app_root_name = app_root_name
         self.ui_control_interface = ui_control_interface
+        self.com_client = self.get_com_client()
 
 
     def get_com_client(self) -> None:
