@@ -3,8 +3,10 @@
 
 import re
 import xml.etree.ElementTree as ET
+
 from bs4 import BeautifulSoup
-from .demonstration_record import DemonstrationStep, DemonstrationRecord
+
+from .demonstration_record import DemonstrationRecord, DemonstrationStep
 
 
 class PSRRecordParser:

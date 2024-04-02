@@ -2,15 +2,17 @@
 # Licensed under the MIT License.
 
 import os
+from typing import Tuple
+
 import yaml
+from langchain.docstore.document import Document
+from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_community.vectorstores import FAISS
+
 from record_processor.parser.demonstration_record import DemonstrationRecord
 from record_processor.utils import json_parser
 from ufo.llm.llm_call import get_completions
 from ufo.prompter.demonstration_prompter import DemonstrationPrompter
-from typing import Tuple
-from langchain.docstore.document import Document
-from langchain_community.embeddings import HuggingFaceEmbeddings
-from langchain_community.vectorstores import FAISS
 
 
 class DemonstrationSummarizer:
