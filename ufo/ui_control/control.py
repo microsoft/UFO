@@ -6,17 +6,17 @@ from typing import List, Tuple
 import psutil
 from pywinauto import Desktop
 import win32com.client as win32
-import shutil
-import os
 import datetime
+import screenshot as screen
+from ..utils import delete_file
 
-# from ..config.config import load_config
+from ..config.config import load_config
 
-# configs = load_config()
+configs = load_config()
 
-# BACKEND = configs["CONTROL_BACKEND"]
+BACKEND = configs["CONTROL_BACKEND"]
 
-BACKEND =  "uia"
+# BACKEND =  "uia"
 
 def get_desktop_app_info(remove_empty:bool=True) -> Tuple[dict, List[dict]]:
     """
@@ -214,23 +214,16 @@ def is_control_actionable(control):
         if not is_visible:
             return False
 
-def get_app_states(app_window):
-    """
-    Get the states of the app window use apis from pywinauto, win32com, etc.
-    :param app_window: The app window to get the states.
-    :return: The states of the app window.
-    """
-
-    return None
 
 class AppControl:
     def __init__(self,app_root_name) -> None:
         self.file_instance = None
         self.app_instance = None
         self.app_root_name = app_root_name
+        self.app_window = None
+        self.file_path = None
 
-
-    def quit(self):
+    def quit(self,save=True):
         """
         Quit the application.
         """
@@ -240,7 +233,35 @@ class AppControl:
         if not self.file_instance:
             self.file_instance.Close()
             self.file_instance = None
+        if not save and not self.file_path:
+            delete_file(self.file_path)
+        self.file_path = None
         
+
+    def get_app_states(self):
+        """
+        Get the states of the app window use apis from pywinauto, win32com, etc.
+        """
+        # get the  UIAWrapper object of the app window
+        desktop_windows_dict, desktop_windows_info = get_desktop_app_info_dict()
+        for k,v in desktop_windows_dict.items():
+            app_window = desktop_windows_dict[k]
+            app_root = get_application_name(app_window)
+            if app_root == self.app_root_name:
+                self.app_window = app_window
+        if not self.app_window:
+            print(f"Target App not found.")
+            return None
+        # use the app_window and app_instance to get the states
+        depth = 0
+        control_list = find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"],depth=depth)
+        time_info = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+        screenshot_save_path = f"D:/agents/UFO/logs/exp/screenshot_{time_info}_{depth}.png"
+        annotated_screenshot_save_path = f"D:/agents/UFO/logs/exp/screenshot_{time_info}_{depth}_annotated.png"
+        annotation_dict, _, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
+        control_info = get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
+        return control_info
+
     def open_file_with_app(self,file_path):
         """
         This function attempts to open a file using a specified application.
@@ -248,11 +269,17 @@ class AppControl:
         :param file_path: The full path to the file you want to open.
         :param app_name: The ProgID of the application you want to use to open the file.
         """
+        self.file_path = file_path
         try:
             # Start the specified application
             self.app_instance = win32.gencache.EnsureDispatch(self.app_root_name)
             # Make the application visible
             self.app_instance.Visible = True  
+
+            # Close all previously opened documents if supported
+            if hasattr(self.app_instance, 'Documents'):
+                for doc in self.app_instance.Documents:
+                    doc.Close(False)  # Argument False indicates not to save changes
             
             # Different applications have different methods for opening files
             if self.app_root_name == 'Word.Application':

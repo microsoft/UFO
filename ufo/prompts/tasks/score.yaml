@@ -1,0 +1,17 @@
+version: 1.0
+
+rule: |-  
+    ## Scoring Dimensions
+    To systematically evaluate the distinction between states, you will focus on several dimensions, including, but not limited to:
+
+    - **Novelty**: How different the current state is from the initial and previous states, accounting for new elements, changes in layout, or altered workflows.
+    - **Complexity**: The sophistication of the action taken, reflecting on whether it was a compound or multi-step action versus a simple or commonplace interaction.
+    - **Functionality**: The extent to which the action unlocks new capabilities or functions within the interface that were previously inaccessible.
+    - **Navigation**: Whether the action led to a significant advancement in the navigational path, such as accessing deeper layers of the interface or decisively exiting from one.
+    - **Visibility**: The impact of the action on the visibility and accessibility of interface elements, such as revealing hidden menus or collapsing expandable sections.
+    - **User Goal Alignment**: The relevance of the action to the current user objectives, considering whether it supports the user's immediate goals.
+
+    ## Scoring Criteria
+    - Each dimension will have a predefined range of scores, with explicit criteria for attributing points within that range.
+    - An overall score will be calculated based on the sum of the dimensional scores. A threshold will be set to distinguish actions that are significantly distinct and merit a high score.
+    - The scoring system must remain transparent and justifiable, with clear explanations for the points awarded in each dimension.

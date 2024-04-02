@@ -12,22 +12,51 @@ class WindowsAppEnv(gym.Env):
         :return: None
         """
         super(WindowsAppEnv, self).__init__()
-        # 应用程序窗口
+        # app root name
         self.app_root_name = app_root_name
-        # s0->st action记录
+        # s0->st action history
         self.history_actions = []
-        # s0->st states记录
+        # s0->st states history
         self.history_states = []
         # 3 observation state
         self.init_state = None
         self.last_state = None
         self.current_state = self.init_state
-        # 最近失败次数
+        # recent fail times
         self.recent_fail_times= 0 
         self.exit_fail_times = exit_fail_times
         # task exploration round
         self.round = 0
         self.score_threshold = score_threshold
+        # app control instance
+        self.app_control = control.AppControl(self.app_root_name)
+    
+    def init_env(self):
+        """
+        Init the environment.
+        """
+        self.history_actions = []
+        self.history_states = []
+        self.init_state = None
+        self.last_state = None
+        self.current_state = self.init_state
+        self.recent_fail_times= 0 
+        self.round = 0
+
+    def start(self,seed):
+        """
+        Start the Window env.
+        :param seed: The seed file to start the env.
+        """
+        self.app_control.open_file_with_app(seed)
+
+    def close(self):
+        """
+        Close the Window env.
+        """
+        self.app_control.quit()
+        self.init_env()
+
 
     def step(self):
         """
@@ -36,14 +65,19 @@ class WindowsAppEnv(gym.Env):
         self.last_state = self.current_state
         self.update_current_state()
         
-    def reset(self):
-        # 重置应用程序,放弃目前的状态，回到备份的状态文件
-        return self.get_current_state()
+    def reset(self,seed):
+        """
+        Reset the env to the a seed.
+        """
+        self.app_control.quit(save=False)
+        self.init_env()
+        self.start(seed)
 
     def update_current_state(self):
-        # 从应用程序获取状态
-        # 调用pywinauto、win32com等api来获取所有的状态信息
-        self.current_state = control.get_app_states(self.app_root_name)
+        """
+        Update current states of app with pywinauto、win32com 
+        """
+        self.current_state = self.app_control.get_app_states()
         if not self.init_state:
             self.init_state = self.current_state
 

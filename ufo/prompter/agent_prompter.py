@@ -3,14 +3,16 @@
 
 from .basic import BasicPrompter
 import json
-class HumanProxyPrompter(BasicPrompter):
+
+
+class ExplorerPrompter(BasicPrompter):
     """
-    The HumanProxyPrompter class is the prompter for the human proxy.
+    The ExplorerPrompter class is the prompter for the explorer.
     """
 
     def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str):
         """
-        Initialize the HumanProxyPrompter.
+        Initialize the ExplorerPrompter.
         :param is_visual: Whether the request is for visual model.
         :param prompt_template: The path of the prompt template.
         :param example_prompt_template: The path of the example prompt template.
@@ -31,7 +33,6 @@ class HumanProxyPrompter(BasicPrompter):
         
         return self.prompt_template["system"].format(apis=apis, examples=examples)
     
-
 
 
     def user_prompt_construction(self, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> str:

@@ -10,7 +10,6 @@ from .utils import print_with_color
 from .env.state_manager import WindowsAppEnv,calculate_reward,execute_task_summary,execute_exploration
 from .env.tasks_recorder import TaskRecorder
 from .env.seeds_manager import SeedManager
-from .ui_control.control import AppControl
 configs = load_config()
 
 
@@ -20,7 +19,7 @@ args.add_argument("--app", help="The name of exploration app.",
 parsed_args = args.parse_args()
 
 
-# todo: 解耦不同agent,task summary和下一步的explore可以修改成并行方式
+# todo: action agent,summary agent parallel
 # todo: record tasks and ROUGE
 
 def main():
@@ -31,14 +30,13 @@ def main():
     score_threshold = configs['SCORE_THRESHOLD']
     exit_fail_times = configs['EXIT_FAIL_TIMES']
     app_root_name = configs['EXP_APPS'][parsed_args.app.lower()]
-    app_control = AppControl(app_root_name)
     task_recorder = TaskRecorder(parsed_args.app.lower())
     seed_manager = SeedManager(parsed_args.app.lower())
     app_env = WindowsAppEnv(app_root_name,exit_fail_times,score_threshold)
 
     for seed in seed_manager.get_seeds():
         # Start by open a copy of the original seed file
-        app_control.open_file_with_app(seed)
+        app_env.start(seed)
         # get the current state
         app_env.update_current_state()
         init_state = app_env.init_state
@@ -59,9 +57,11 @@ def main():
                 break
             # at the initial state or not reach the failures times
             _,status = execute_exploration(app_env)
+            if not status:
+                app_env.reset()
             app_env.step()
         # Close the seed file and open the next seed file
-        app_control.quit(save=True)
+        app_env.quit()
 
 
 if __name__ == "__main__":

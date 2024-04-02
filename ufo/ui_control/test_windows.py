@@ -122,6 +122,8 @@ if __name__ == "__main__":
     # get all visible app in windows
     desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
     print(desktop_windows_dict)
+    print('------------------------')
+    print(desktop_windows_info)
     # choose a label of app
     app_label = input("Input the label of app:")
     app_window = desktop_windows_dict[app_label]

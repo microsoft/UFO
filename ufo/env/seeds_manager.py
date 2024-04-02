@@ -3,7 +3,7 @@ import os
 import json
 from ..config.config import load_config
 import datetime
-from ..utils.utils import copy_file
+from ..utils import copy_file
 
 configs = load_config()
 
