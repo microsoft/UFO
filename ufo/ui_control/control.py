@@ -7,7 +7,7 @@ import psutil
 from pywinauto import Desktop
 import win32com.client as win32
 import datetime
-import screenshot as screen
+# import screenshot as screen
 from ..utils import delete_file
 
 from ..config.config import load_config
@@ -238,29 +238,29 @@ class AppControl:
         self.file_path = None
         
 
-    def get_app_states(self):
-        """
-        Get the states of the app window use apis from pywinauto, win32com, etc.
-        """
-        # get the  UIAWrapper object of the app window
-        desktop_windows_dict, desktop_windows_info = get_desktop_app_info_dict()
-        for k,v in desktop_windows_dict.items():
-            app_window = desktop_windows_dict[k]
-            app_root = get_application_name(app_window)
-            if app_root == self.app_root_name:
-                self.app_window = app_window
-        if not self.app_window:
-            print(f"Target App not found.")
-            return None
-        # use the app_window and app_instance to get the states
-        depth = 0
-        control_list = find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"],depth=depth)
-        time_info = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-        screenshot_save_path = f"D:/agents/UFO/logs/exp/screenshot_{time_info}_{depth}.png"
-        annotated_screenshot_save_path = f"D:/agents/UFO/logs/exp/screenshot_{time_info}_{depth}_annotated.png"
-        annotation_dict, _, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
-        control_info = get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
-        return control_info
+    # def get_app_states(self):
+    #     """
+    #     Get the states of the app window use apis from pywinauto, win32com, etc.
+    #     """
+    #     # get the  UIAWrapper object of the app window
+    #     desktop_windows_dict, desktop_windows_info = get_desktop_app_info_dict()
+    #     for k,v in desktop_windows_dict.items():
+    #         app_window = desktop_windows_dict[k]
+    #         app_root = get_application_name(app_window)
+    #         if app_root == self.app_root_name:
+    #             self.app_window = app_window
+    #     if not self.app_window:
+    #         print(f"Target App not found.")
+    #         return None
+    #     # use the app_window and app_instance to get the states
+    #     depth = 0
+    #     control_list = find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"],depth=depth)
+    #     time_info = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    #     screenshot_save_path = f"D:/agents/UFO/logs/exp/screenshot_{time_info}_{depth}.png"
+    #     annotated_screenshot_save_path = f"D:/agents/UFO/logs/exp/screenshot_{time_info}_{depth}_annotated.png"
+    #     annotation_dict, _, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
+    #     control_info = get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
+    #     return control_info
 
     def open_file_with_app(self,file_path):
         """
