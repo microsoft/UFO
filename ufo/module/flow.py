@@ -154,10 +154,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             # Initialize the AppAgent
 
-
             self.AppAgent = AppAgent("{root}/{process}".format(root=self.app_root, process=self.application), self.application, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
                                      configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.app_window)
-            
             
             
             # Initialize the document retriever
@@ -181,7 +179,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             time.sleep(configs["SLEEP_TIME"])
 
             
-
             self._step += 1
             self.HostAgent.update_step()
             self.HostAgent.update_status(self._status)
@@ -217,9 +214,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
         image_url, annotation_dict, control_info = self.screenshots_and_control_info_helper()
         
-        
-        examples = []
-        tips = []
+
         if configs["RAG_EXPERIENCE"]:
             experience_examples, experience_tips = self.AppAgent.rag_experience_retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"])
         else:
@@ -232,8 +227,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             demonstration_examples = []
             demonstration_tips = []
         
-        examples += experience_examples + demonstration_examples
-        tips += experience_tips + demonstration_tips
+        examples = experience_examples + demonstration_examples
+        tips = experience_tips + demonstration_tips
 
         external_knowledge_prompt = self.AppAgent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
         appagent_prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, image_url, self.request_history, self.action_history, 
@@ -244,8 +239,9 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         try:
             response_string, cost = self.AppAgent.get_response(appagent_prompt_message, "APPAGENT", use_backup_engine=True)
         except Exception as e:
-            log = json.dumps({"step": self._step, "status": str(e), "prompt": appagent_prompt_message})
-            utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
+            error_trace = traceback.format_exc()
+            log = json.dumps({"step": self._step, "status": str(error_trace), "prompt": appagent_prompt_message})
+            utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(error_trace)), "red")
             self.request_logger.info(log)
             self._status = "ERROR"
             time.sleep(configs["SLEEP_TIME"])
