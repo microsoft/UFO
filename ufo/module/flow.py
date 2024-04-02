@@ -51,7 +51,6 @@ class Session(object):
         self.app_root = ""
         self.app_window = None
         self.plan = ""
-        self.request = ""
 
         self._cost = 0.0
         self.control_reannotate = None
