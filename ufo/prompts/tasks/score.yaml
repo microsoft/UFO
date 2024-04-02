@@ -2,10 +2,9 @@ version: 1.0
 
 rule: |-  
     ## Scoring Dimensions
-    To systematically evaluate the distinction between states, you will focus on several dimensions, including, but not limited to:
+    To systematically evaluate the distinction between states, you will focus on several dimensions, including:
 
     - **Novelty**: How different the current state is from the initial and previous states, accounting for new elements, changes in layout, or altered workflows.
-    - **Complexity**: The sophistication of the action taken, reflecting on whether it was a compound or multi-step action versus a simple or commonplace interaction.
     - **Functionality**: The extent to which the action unlocks new capabilities or functions within the interface that were previously inaccessible.
     - **Navigation**: Whether the action led to a significant advancement in the navigational path, such as accessing deeper layers of the interface or decisively exiting from one.
     - **Visibility**: The impact of the action on the visibility and accessibility of interface elements, such as revealing hidden menus or collapsing expandable sections.
