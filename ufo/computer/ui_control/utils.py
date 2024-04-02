@@ -5,7 +5,7 @@
 from typing import List, Tuple
 import psutil
 from pywinauto import Desktop
-from ..config.config import load_config
+from ...config.config import load_config
 
 configs = load_config()
 

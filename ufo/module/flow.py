@@ -11,8 +11,9 @@ from pywinauto.uia_defines import NoPatternInterfaceError
 from ..experience.summarizer import ExperienceSummarizer
 
 from ..config.config import load_config
-from ..ui_control import control, screenshot as screen
-from ..ui_control.executor import ActionExecutor
+from ..computer.ui_control import utils as control
+from ..computer.ui_control import screenshot as screen
+
 from .. import utils
 from ..agent.agent import HostAgent, AppAgent
 from ..agent.basic import MemoryItem
@@ -151,7 +152,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.app_window.set_focus()
 
             # Initialize the AppAgent
-            self.AppAgent = AppAgent("AppAgent", self.application, self.app_root, configs["ACTION_AGENT"]["VISUAL_MODE"], 
+            self.AppAgent = AppAgent("{root}/{process}".format(root=self.app_root, process=self.application), self.application, self.app_root, configs["ACTION_AGENT"]["VISUAL_MODE"], 
                                      configs["ACTION_SELECTION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.app_window)
             
             # Initialize the document retriever
@@ -238,7 +239,9 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.AppAgent.print_response(response_json)
 
             # Build the executor for over the control item.
-            executor = ActionExecutor(control_selected, self.app_window)
+            ui_controller = self.AppAgent.Puppeteer.create_ui_controller(control_selected)
+            
+            # UIController(control_selected, self.app_window)
 
             # Take screenshot of the selected control
             screen.capture_screenshot_controls(self.app_window, [control_selected], control_screenshot_save_path)
@@ -253,8 +256,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             if self.safe_guard(action, control_text):
                 # Execute the action
-                results = executor.execution(function_call, args)
-                if not utils.is_json_serializable:
+                results = ui_controller.execution(function_call, args)
+                if not utils.is_json_serializable(results):
                     results = ""
             else:
                 results = "The user decide to stop the task."
@@ -288,7 +291,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         # Handle the case when the control item is overlapped and the agent is unable to select the control item. Retake the annotated screenshot.
         if "SCREENSHOT" in self._status.upper():
             utils.print_with_color("Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.", "magenta")
-            self.control_reannotate = executor.annotation(args, annotation_dict)
+            self.control_reannotate = ui_controller.annotation(args, annotation_dict)
             return
 
         self.control_reannotate = None
@@ -385,7 +388,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self._status = "APP_SELECTION"
             return
         
-    @property
+
     def get_round(self) -> int:
         """
         Get the round of the session.
@@ -401,7 +404,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         self.round = new_round
 
 
-    @property
+
     def get_status(self) -> str:
         """
         Get the status of the session.
@@ -410,7 +413,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return self._status
     
     
-    @property
     def get_step(self) -> int:
         """
         Get the step of the session.
@@ -419,7 +421,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return self._step
     
 
-    @property
     def get_cost(self) -> float:
         """
         Get the cost of the session.

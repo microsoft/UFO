@@ -4,16 +4,16 @@
 import time
 import warnings
 
-from ..config.config import load_config
-from .control import get_control_info
-from ..utils import print_with_color
+from ...config.config import load_config
+from .utils import get_control_info
+from ...utils import print_with_color
 
 
 configs = load_config()
 
 
 
-class ActionExecutor:
+class UIController:
     """
     The action executor class.
     """

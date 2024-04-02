@@ -11,8 +11,8 @@ import win32api
 import win32gui
 import win32ui
 
-from ..config.config import load_config
-from ..utils import number_to_letter
+from ...config.config import load_config
+from ...utils import number_to_letter
 
 configs = load_config()
 

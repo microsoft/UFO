@@ -7,8 +7,8 @@ import time
 
 from pywinauto import Desktop
 import pygetwindow as gw
-from ..config.config import load_config
-from ..utils import find_desktop_path, print_with_color
+from ...config.config import load_config
+from ...utils import find_desktop_path, print_with_color
 
 configs = load_config()
 

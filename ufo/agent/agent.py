@@ -6,6 +6,7 @@ from .basic import BasicAgent, Memory
 from ..prompter.agent_prompter import ApplicationAgentPrompter, ActionAgentPrompter
 from typing import List, Dict, Type
 from .. import utils
+from ..computer import puppeteer
 
 retriever_factory = utils.LazyImport("..rag.retriever_factory")
 
@@ -86,7 +87,7 @@ class AppAgent(BasicAgent):
     The HostAgent class the manager of AppAgents.
     """
 
-    def __init__(self, name: str, instance_name: str, root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, app_gui_interface: Type):
+    def __init__(self, name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, ui_control_interface: Type):
         """
         Initialize the HostAgent.
         :agent_type: The type of the agent.
@@ -95,13 +96,14 @@ class AppAgent(BasicAgent):
         super().__init__(name=name)
         self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
         self._memory = Memory()
-        self._app_gui_interface = app_gui_interface
-        self._instance_name = instance_name
-        self._root_name = root_name
+        self._ui_control_interface = ui_control_interface
+        self._process_name = process_name
+        self._app_root_name = app_root_name
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
         self.experience_retriever = None
         self.human_demonstration_retriever = None
+        self.Puppeteer = self.create_puppteer_interface()
 
 
 
@@ -181,7 +183,7 @@ class AppAgent(BasicAgent):
 
         # Retrieve offline documents and construct the prompt
         if self.offline_doc_retriever:
-            offline_docs = self.offline_doc_retriever.retrieve("How to {query} for {app}".format(query=request, app=self._instance_name), offline_top_k, filter=None)
+            offline_docs = self.offline_doc_retriever.retrieve("How to {query} for {app}".format(query=request, app=self._process_name), offline_top_k, filter=None)
             offline_docs_prompt = self.prompter.retrived_documents_prompt_helper("Help Documents", "Document", [doc.metadata["text"] for doc in offline_docs])
             retrieved_docs += offline_docs_prompt
 
@@ -202,7 +204,7 @@ class AppAgent(BasicAgent):
         
         # Retrieve experience examples. Only retrieve the examples that are related to the current application.
         experience_docs = self.experience_retriever.retrieve(request, experience_top_k,
-                                                                filter=lambda x: self._root_name.lower() in [app.lower() for app in x["app_list"]])
+                                                                filter=lambda x: self._app_root_name.lower() in [app.lower() for app in x["app_list"]])
         
         if experience_docs:
             examples = [doc.metadata.get("example", {}) for doc in experience_docs]
@@ -212,6 +214,13 @@ class AppAgent(BasicAgent):
             tips = []
 
         return examples, tips
+    
+
+    def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
+        """
+        Create the Puppeteer interface.
+        """
+        return puppeteer.AppPuppeteer(self._process_name, self._app_root_name, self._ui_control_interface)
 
 
 
@@ -219,7 +228,7 @@ class AppAgent(BasicAgent):
         """
         Build the offline docs retriever.
         """
-        self.offline_doc_retriever = retriever_factory.OfflineDocRetriever(self._instance_name)
+        self.offline_doc_retriever = retriever_factory.OfflineDocRetriever(self._process_name)
 
 
     def build_online_search_retriever(self, request: str, top_k: int) -> None:
