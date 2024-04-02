@@ -54,10 +54,6 @@ class Session(object):
         self.request = ""
 
         self._cost = 0
-        self.offline_doc_retriever = None
-        self.online_doc_retriever = None
-        self.experience_retriever = None
-        self.demonstration_retriever = None
         self.control_reannotate = None
 
         welcome_text = """
@@ -161,20 +157,20 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             # Initialize the document retriever
             if configs["RAG_OFFLINE_DOCS"]:
                 utils.print_with_color("Loading offline document indexer for {app}...".format(app=self.application), "magenta")
-                self.offline_doc_retriever = self.AppAgent.build_offline_docs_retriever()
+                self.AppAgent.build_offline_docs_retriever()
             if configs["RAG_ONLINE_SEARCH"]:
                 utils.print_with_color("Creating a Bing search indexer...", "magenta")
-                self.online_doc_retriever = self.AppAgent.build_online_search_retriever(self.request, configs["RAG_ONLINE_SEARCH_TOPK"])
+                self.AppAgent.build_online_search_retriever(self.request, configs["RAG_ONLINE_SEARCH_TOPK"])
             if configs["RAG_EXPERIENCE"]:
                 utils.print_with_color("Creating an experience indexer...", "magenta")
                 experience_path = configs["EXPERIENCE_SAVED_PATH"]
                 db_path = os.path.join(experience_path, "experience_db")
-                self.experience_retriever = self.AppAgent.build_experience_retriever(db_path)
+                self.AppAgent.build_experience_retriever(db_path)
             if configs["RAG_DEMONSTRATION"]:
                 utils.print_with_color("Creating an demonstration indexer...", "magenta")
                 demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
                 db_path = os.path.join(demonstration_path, "demonstration_db")
-                self.demonstration_retriever = self.AppAgent.build_human_demonstration_retriever(db_path)
+                self.AppAgent.build_human_demonstration_retriever(db_path)
 
             time.sleep(configs["SLEEP_TIME"])
 
