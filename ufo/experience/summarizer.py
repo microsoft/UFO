@@ -80,7 +80,7 @@ class ExperienceSummarizer:
         return: The summary list and the total cost.
         """
         summaries = []
-        total_cost = 0
+        total_cost = 0.0
         for log_partition in logs:
             prompt = self.build_prompt(log_partition)
             summary, cost = self.get_summary(prompt)

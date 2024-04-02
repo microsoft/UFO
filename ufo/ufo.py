@@ -82,8 +82,9 @@ def main():
 
     # Print the total cost
     total_cost = session.get_cost()
-    formatted_cost = '${:.2f}'.format(total_cost)
-    print_with_color(f"Request total cost is {formatted_cost}", "yellow")
+    if isinstance(total_cost, float):
+        formatted_cost = '${:.2f}'.format(total_cost)
+        print_with_color(f"Request total cost is {formatted_cost}", "yellow")
 
     return status
 

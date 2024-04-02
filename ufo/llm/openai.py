@@ -1,34 +1,37 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
 import datetime
 from typing import Any, Optional
 import openai
 from openai import AzureOpenAI, OpenAI
 
 
-
 class OpenAIService:
     def __init__(self, config, agent_type: str):
         self.config_llm = config[agent_type]
         self.config = config
-        api_type = self.config_llm["API_TYPE"].lower()
-        max_retry = self.config["MAX_RETRY"]
-        assert api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
+        self.api_type = self.config_llm["API_TYPE"].lower()
+        self.max_retry = self.config["MAX_RETRY"]
+        self.prices = self.config["PRICES"]
+        assert self.api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
         self.client: OpenAI = (
             OpenAI(
                 base_url=self.config_llm["API_BASE"],
                 api_key=self.config_llm["API_KEY"],
-                max_retries=max_retry,
+                max_retries=self.max_retry,
                 timeout=self.config["TIMEOUT"],
             )
-            if api_type == "openai"
+            if self.api_type == "openai"
             else AzureOpenAI(
-                max_retries=max_retry,
+                max_retries=self.max_retry,
                 timeout=self.config["TIMEOUT"],
                 api_version=self.config_llm["API_VERSION"],
                 azure_endpoint=self.config_llm["API_BASE"],
-                api_key=(self.config_llm["API_KEY"] if api_type == 'aoai' else self.get_openai_token()),
+                api_key=(self.config_llm["API_KEY"] if self.api_type == 'aoai' else self.get_openai_token()),
             )
         )
-        if api_type == "azure_ad":
+        if self.api_type == "azure_ad":
             self.auto_refresh_token()
 
     def chat_completion(
@@ -64,7 +67,7 @@ class OpenAIService:
             prompt_tokens = usage.prompt_tokens
             completion_tokens = usage.completion_tokens
 
-            cost = prompt_tokens / 1000 * 0.01 + completion_tokens / 1000 * 0.03
+            cost = self.get_cost_estimator(self.api_type, model, self.prices, prompt_tokens, completion_tokens)
 
             return [response.choices[i].message.content for i in range(n)], cost
 
@@ -90,9 +93,6 @@ class OpenAIService:
         except openai.APIError as e:
             # Handle API error, e.g. retry or log
             raise Exception(f"OpenAI API returned an API Error: {e}")
-
-
-
 
     def get_openai_token(
         self,
@@ -200,7 +200,6 @@ class OpenAIService:
                 raise Exception(
                     "Authentication failed for acquiring AAD token for your organization")
 
-
     def auto_refresh_token(
         self,
         token_cache_file: str = 'apim-token-cache.bin',
@@ -267,3 +266,26 @@ class OpenAIService:
 
         return stop
 
+    def get_cost_estimator(self, api_type, model, prices, prompt_tokens, completion_tokens) -> float:
+        """
+        Calculates the cost estimate for using a specific model based on the number of prompt tokens and completion tokens.
+
+        Args:
+            model (str): The name of the model.
+            prices (dict): A dictionary containing the prices for different models.
+            prompt_tokens (int): The number of prompt tokens used.
+            completion_tokens (int): The number of completion tokens used.
+
+        Returns:
+            float: The estimated cost for using the model.
+        """
+        if api_type.lower() == "openai":
+            name = str(api_type+'/'+model)
+        else:
+            name = str('azure/'+model)
+        if name in prices:
+            cost = prompt_tokens * prices[name]["input"]/1000 + completion_tokens * prices[name]["output"]/1000
+        else:
+            print(f"{name} not found in prices")
+            return None
+        return cost

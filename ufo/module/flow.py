@@ -53,7 +53,7 @@ class Session(object):
         self.plan = ""
         self.request = ""
 
-        self._cost = 0
+        self._cost = 0.0
         self.control_reannotate = None
 
         welcome_text = """
@@ -99,8 +99,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.request_logger.info(log)
             self._status = "ERROR"
             return
-
-        self._cost += cost
+        
+        self.update_cost(cost=cost)
 
         try:
             response_json = self.HostAgent.response_to_dict(response_string)
@@ -242,8 +242,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self._status = "ERROR"
             time.sleep(configs["SLEEP_TIME"])
             return 
-        
-        self._cost += cost
+            
+        self.update_cost(cost=cost)
 
         try:
             response_json = self.AppAgent.response_to_dict(response_string)
@@ -384,8 +384,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         utils.create_folder(experience_path)
         summarizer.create_or_update_yaml(summaries, os.path.join(experience_path, "experience.yaml"))
         summarizer.create_or_update_vector_db(summaries, os.path.join(experience_path, "experience_db"))
-
-        self._cost += total_cost
+        
+        self.update_cost(cost=total_cost)
         utils.print_with_color("The experience has been saved.", "cyan")
 
     def set_new_round(self) -> None:
@@ -451,14 +451,14 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         Get the results of the session.
         return: The results of the session.
         """
-
-        if len(self.action_history) > 0:
-            result = self.action_history[-1].get("Results")
-        else:
-            result
-        return result
+        return self.results
     
-
+    def get_cost(self):
+        """
+        Get the cost of the session.
+        return: The cost of the session.
+        """
+        return self.cost
     
     def get_application_window(self) -> object:
         """
@@ -509,6 +509,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         """
         log = json.dumps({"step": self._step, "status": "ERROR", "response": response_str, "error": error})
         self.logger.info(log)
+
+
+    def update_cost(self, cost):
+        """
+        Update the cost of the session.
+        """
+        if isinstance(cost, float) and isinstance(self.cost, float):
+            self._cost += cost
+        else:
+            self._cost = None
 
 
     @staticmethod
