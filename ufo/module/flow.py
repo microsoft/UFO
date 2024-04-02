@@ -464,7 +464,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         Get the cost of the session.
         return: The cost of the session.
         """
-        return self.cost
+        return self._cost
     
     def get_application_window(self) -> object:
         """
