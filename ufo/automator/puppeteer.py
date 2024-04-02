@@ -7,10 +7,16 @@ from word.wordclient import Word
 
 class AppPuppeteer():
     """
-    The base class for the app expert.
+    The class for the app puppeteer to automate the app in the Windows environment.
     """
 
-    def __init__(self, process_name, app_root_name, ui_control_interface) -> None:
+    def __init__(self, process_name: str, app_root_name: str, ui_control_interface) -> None:
+        """
+        Initialize the app puppeteer.
+        :param process_name: The process name of the app.
+        :param app_root_name: The app root name, e.g., WINWORD.EXE.
+        :param ui_control_interface: The UI control interface instance in pywinauto.
+        """
         
         self._process_name = process_name
         self._app_root_name = app_root_name
