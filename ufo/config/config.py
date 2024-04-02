@@ -26,10 +26,10 @@ def load_config(config_path="ufo/config/"):
         if yaml_data:
             configs.update(yaml_data)
         with open(path + "config_llm.yaml", "r") as file:
-            yaml_llm_data = yaml.safe_load(file)
+            yaml_dev_data = yaml.safe_load(file)
         # Update configs with YAML data
         if yaml_data:
-            configs.update(yaml_llm_data)
+            configs.update(yaml_dev_data)
     except FileNotFoundError:
         print_with_color(
             f"Warning: Config file not found at {config_path}. Using only environment variables.", "yellow")

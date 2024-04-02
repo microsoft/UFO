@@ -8,7 +8,6 @@ from .config.config import load_config
 from .module import flow
 from .utils import print_with_color
 
-
 configs = load_config()
 
 

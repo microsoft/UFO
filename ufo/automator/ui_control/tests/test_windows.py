@@ -1,6 +1,5 @@
 """测试pywinauto的能力"""
-import control
-
+import utils as control
 from typing import List
 
 from PIL import Image, ImageDraw, ImageFont, ImageGrab

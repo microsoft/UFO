@@ -21,9 +21,9 @@ def get_completion(messages, agent: str='APP', use_backup_engine: bool=True):
         tuple: A tuple containing the completion response (str) and the cost (float).
 
     """
-    if agent.lower() == "app":
+    if agent.lower() in ["app", "hostagent"]:
         agent_type = "APP_AGENT"
-    elif agent.lower() == "action":
+    elif agent.lower() in ["action", "appagent"]:
         agent_type = "ACTION_AGENT"
     elif agent.lower() == "backup":
         agent_type = "BACKUP_AGENT"

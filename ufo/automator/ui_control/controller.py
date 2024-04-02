@@ -1,22 +1,23 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import time
+import warnings
 
-from ..utils import print_with_color
-from .control import get_control_info
-from ..config.config import load_config
-import time, warnings
+from ...config.config import load_config
+from ...utils import print_with_color
+from .utils import get_control_info
 
 configs = load_config()
 
 
 
-class ActionExecutor:
+class UIController:
     """
     The action executor class.
     """
 
-    def __init__(self, control, application) -> None:
+    def __init__(self, control: object, application: object) -> None:
         """
         Initialize the action executor.
         :param control: The control element to execute the action.
@@ -113,7 +114,7 @@ class ActionExecutor:
     
 
 
-    def __texts(self, args_dict:dict):
+    def __texts(self, args_dict:dict) -> str:
         """
         Get the text of the control element.
         :param args: The arguments of the text method.

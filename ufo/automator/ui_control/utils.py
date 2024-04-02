@@ -3,14 +3,16 @@
 
 
 from typing import List, Tuple
+
 import psutil
 from pywinauto import Desktop
 import win32com.client as win32
 import datetime
 # import screenshot as screen
-from ..utils import delete_file
+from ...utils import delete_file
 
-from ..config.config import load_config
+
+from ...config.config import load_config
 
 configs = load_config()
 
@@ -18,7 +20,7 @@ BACKEND = configs["CONTROL_BACKEND"]
 
 # BACKEND =  "uia"
 
-def get_desktop_app_info(remove_empty:bool=True) -> Tuple[dict, List[dict]]:
+def get_desktop_app_info(remove_empty: bool=True) -> Tuple[dict, List[dict]]:
     """
     Get titles and control types of all the apps on the desktop.
     :param remove_empty: Whether to remove empty titles.
@@ -36,7 +38,7 @@ def get_desktop_app_info(remove_empty:bool=True) -> Tuple[dict, List[dict]]:
 
 
 
-def get_desktop_app_info_dict(remove_empty:bool=True, field_list:List[str]=["control_text", "control_type"]) -> Tuple[dict, List[dict]]:
+def get_desktop_app_info_dict(remove_empty: bool=True, field_list: List[str]=["control_text", "control_type"]) -> Tuple[dict, List[dict]]:
     """
     Get titles and control types of all the apps on the desktop.
     :param remove_empty: Whether to remove empty titles.
