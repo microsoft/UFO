@@ -446,12 +446,18 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         return self._cost
     
 
-    def get_results(self) -> list:
+    def get_results(self) -> str:
         """
         Get the results of the session.
         return: The results of the session.
         """
-        return self.results
+
+        if len(self.action_history) > 0:
+            result = self.action_history[-1].get("Results")
+        else:
+            result
+        return result
+    
     
     def get_cost(self):
         """
@@ -515,7 +521,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         """
         Update the cost of the session.
         """
-        if isinstance(cost, float) and isinstance(self.cost, float):
+        if isinstance(cost, float) and isinstance(self._cost, float):
             self._cost += cost
         else:
             self._cost = None
