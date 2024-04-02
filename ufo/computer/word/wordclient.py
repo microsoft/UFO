@@ -1,10 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-
 from ..client import WinCOMClient
-from typing import List, Dict, Type
-import win32com.client
+
 
 
 class Word(WinCOMClient):
@@ -12,7 +10,7 @@ class Word(WinCOMClient):
     The base class for Windows COM client.
     """
 
-    
+
     def __init__(self, app_root_name: str, process_name: str) -> None:
         """
         Initialize the Windows COM client.
