@@ -14,7 +14,7 @@ from PIL import Image
 # init colorama
 init()
 
-def print_with_color(text: str, color: str = ""):
+def print_with_color(text: str, color: str = "", end: str = "\n"):
     """
     Print text with specified color using ANSI escape codes from Colorama library.
 
@@ -35,7 +35,7 @@ def print_with_color(text: str, color: str = ""):
     selected_color = color_mapping.get(color.lower(), "")
     colored_text = selected_color + text + Style.RESET_ALL
 
-    print(colored_text)
+    print(colored_text, end=end)
 
 
 

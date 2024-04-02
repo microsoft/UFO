@@ -57,6 +57,7 @@ class Session(object):
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
         self.experience_retriever = None
+        self.demonstration_retriever = None
         self.control_reannotate = None
 
         welcome_text = """
@@ -171,6 +172,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
                 experience_path = configs["EXPERIENCE_SAVED_PATH"]
                 db_path = os.path.join(experience_path, "experience_db")
                 self.experience_retriever = self.AppAgent.build_experience_retriever(db_path)
+            if configs["RAG_DEMONSTRATION"]:
+                utils.print_with_color("Creating an demonstration indexer...", "magenta")
+                demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
+                db_path = os.path.join(demonstration_path, "demonstration_db")
+                self.demonstration_retriever = self.AppAgent.build_human_demonstration_retriever(db_path)
 
             time.sleep(configs["SLEEP_TIME"])
 
@@ -210,12 +216,24 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             return
 
         image_url, annotation_dict, control_info = self.screenshots_and_control_info_helper()
-
+        
+        
+        examples = []
+        tips = []
         if configs["RAG_EXPERIENCE"]:
-            examples, tips = self.AppAgent.rag_experience_retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"])
+            experience_examples, experience_tips = self.AppAgent.rag_experience_retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"])
         else:
-            examples = []
-            tips = []
+            experience_examples = []
+            experience_tips = []
+            
+        if configs["RAG_DEMONSTRATION"]:
+            demonstration_examples, demonstration_tips = self.AppAgent.rag_demonstration_retrieve(self.request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"])
+        else:
+            demonstration_examples = []
+            demonstration_tips = []
+        
+        examples += experience_examples + demonstration_examples
+        tips += experience_tips + demonstration_tips
 
         external_knowledge_prompt = self.AppAgent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
         appagent_prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, image_url, self.request_history, self.action_history, 
@@ -377,7 +395,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
         self._cost += total_cost
         utils.print_with_color("The experience has been saved.", "cyan")
-
 
     def set_new_round(self) -> None:
         """
