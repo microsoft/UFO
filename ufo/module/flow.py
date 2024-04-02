@@ -360,7 +360,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
     def experience_asker(self) -> bool:
         utils.print_with_color("""Would you like to save the current conversation flow for future reference by the agent?
-[Y] for yes, any other key for no.""", "cyan")
+[Y] for yes, any other key for no.""", "magenta")
         
         ans = input()
 
@@ -386,7 +386,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         summarizer.create_or_update_vector_db(summaries, os.path.join(experience_path, "experience_db"))
         
         self.update_cost(cost=total_cost)
-        utils.print_with_color("The experience has been saved.", "cyan")
+        utils.print_with_color("The experience has been saved.", "magenta")
 
     def set_new_round(self) -> None:
         """
