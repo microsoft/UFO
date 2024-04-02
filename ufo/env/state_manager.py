@@ -1,6 +1,7 @@
 import gymnasium as gym
 from gymnasium import spaces
-from ..ui_control import control, screenshot as screen
+from ..automator.ui_control import utils as control
+from ..automator.ui_control import screenshot as screen
 
 
 class WindowsAppEnv(gym.Env):
