@@ -23,12 +23,6 @@ LOG_LEVEL: "DEBUG"  # The log level
 INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the observation
 REQUEST_TIMEOUT: 250  # The call timeout for the GPT-V model
 
-# APP_SELECTION_PROMPT: "ufo/prompts/base/{mode}/app_selection.yaml"  # The prompt for the app selection
-# ACTION_SELECTION_PROMPT: "ufo/prompts/base/{mode}/action_selection.yaml"  # The prompt for the action selection
-
-# APP_SELECTION_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/app_example.yaml"  # The prompt for the app selection
-# ACTION_SELECTION_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/action_example.yaml"  # The prompt for the action selection
-
 
 HOSTAGENT_PROMPT: "ufo/prompts/base/{mode}/host_agent.yaml"  # The prompt for the app selection
 APPAGENT_PROMPT: "ufo/prompts/base/{mode}/app_agent.yaml"  # The prompt for the action selection
