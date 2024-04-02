@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 from .ui_control.controller import UIController
+from word.wordclient import Word
 
 
 class AppPuppeteer():
@@ -16,14 +17,18 @@ class AppPuppeteer():
         self.ui_control_interface = ui_control_interface
 
 
-
-    def get_com_client(self, app_root_name: str, process_name: str) -> None:
+    def get_com_client(self) -> None:
         """
         Get the COM client.
         :param app_root_name: The app root name.
         :param process_name: The process name.
         """
-        pass
+        win_com_client_mapping = {
+            "WINWORD.EXE": Word(self._app_root_name, self._app_root_name),
+
+        }
+
+        return win_com_client_mapping.get(self._app_root_name, None)
 
 
     def create_ui_controller(self, control: object) -> UIController:

@@ -12,8 +12,8 @@ from pywinauto.uia_defines import NoPatternInterfaceError
 from .. import utils
 from ..agent.agent import AppAgent, HostAgent
 from ..agent.basic import MemoryItem
-from ..computer.ui_control import screenshot as screen
-from ..computer.ui_control import utils as control
+from ..automator.ui_control import screenshot as screen
+from ..automator.ui_control import utils as control
 from ..config.config import load_config
 from ..experience.summarizer import ExperienceSummarizer
 

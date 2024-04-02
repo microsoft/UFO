@@ -5,7 +5,7 @@
 from typing import Dict, List, Type
 
 from .. import utils
-from ..computer import puppeteer
+from ..automator import puppeteer
 from ..prompter.agent_prompter import (ActionAgentPrompter,
                                        ApplicationAgentPrompter)
 from .basic import BasicAgent, Memory
