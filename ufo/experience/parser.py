@@ -4,6 +4,7 @@
 import json
 import os
 import re
+
 from ..utils import encode_image_from_path, print_with_color
 
 
