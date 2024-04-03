@@ -4,7 +4,7 @@ langchain==0.1.11
 langchain_community==0.0.27
 msal==1.25.0
 openai==1.13.3
-Pillow==10.2.0
+Pillow==10.3.0
 pywin32==304
 pywinauto==0.6.8
 PyYAML==6.0.1
