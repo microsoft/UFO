@@ -19,11 +19,14 @@ class HostAgent(BasicAgent):
     The HostAgent class the manager of AppAgents.
     """
 
-    def __init__(self, name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str):
+    def __init__(self, name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
         """
         Initialize the HostAgent.
-        :agent_type: The type of the agent.
-        :is_visual: The flag indicating whether the agent is visual or not.
+        :name: The name of the agent.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt file path.
+        :param example_prompt: The example prompt file path.
+        :param api_prompt: The API prompt file path.
         """
         super().__init__(name=name)
         self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
@@ -35,10 +38,14 @@ class HostAgent(BasicAgent):
 
 
 
-    def get_prompter(self, is_visual, main_prompt, example_prompt, api_prompt) -> str:
+    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> HostAgentPrompter:
         """
         Get the prompt for the agent.
-        :return: The prompt.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt file path.
+        :param example_prompt: The example prompt file path.
+        :param api_prompt: The API prompt file path.
+        :return: The prompter instance.
         """
         return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
     
@@ -90,11 +97,15 @@ class AppAgent(BasicAgent):
     The HostAgent class the manager of AppAgents.
     """
 
-    def __init__(self, name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, ui_control_interface: Type):
+    def __init__(self, name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, ui_control_interface: Type) -> None:
         """
-        Initialize the HostAgent.
-        :agent_type: The type of the agent.
-        :is_visual: The flag indicating whether the agent is visual or not.
+        Initialize the AppAgent.
+        :name: The name of the agent.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt file path.
+        :param example_prompt: The example prompt file path.
+        :param api_prompt: The API prompt file path.
+        :param ui_control_interface: The UI control interface in pywinauto.
         """
         super().__init__(name=name)
         self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
@@ -109,11 +120,14 @@ class AppAgent(BasicAgent):
         self.Puppeteer = self.create_puppteer_interface()
 
 
-
-    def get_prompter(self, is_visual, main_prompt, example_prompt, api_prompt) -> str:
+    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> AppAgentPrompter:
         """
         Get the prompt for the agent.
-        :return: The prompt.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt file path.
+        :param example_prompt: The example prompt file path.
+        :param api_prompt: The API prompt file path.
+        :return: The prompter instance.
         """
         return AppAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
     
@@ -144,10 +158,10 @@ class AppAgent(BasicAgent):
     
 
 
-    def print_response(self, response_dict: Dict):
+    def print_response(self, response_dict: Dict) -> None:
         """
         Print the response.
-        :param response: The response.
+        :param response: The response dictionary.
         """
         
         control_text = response_dict.get("ControlText")
@@ -160,6 +174,7 @@ class AppAgent(BasicAgent):
         function_call = response_dict.get("Function")
         args = utils.revise_line_breaks(response_dict.get("Args"))
 
+        # Generate the function call string
         action = utils.generate_function_call(function_call, args)
 
         utils.print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
@@ -169,8 +184,6 @@ class AppAgent(BasicAgent):
         utils.print_with_color("Status📊: {status}".format(status=status), "blue")
         utils.print_with_color("Next Plan📚: {plan}".format(plan=str(plan).replace("\\n", "\n")), "cyan")
         utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
-
-
 
 
     def external_knowledge_prompt_helper(self, request: str, offline_top_k: int, online_top_k: int) -> str:
@@ -199,9 +212,11 @@ class AppAgent(BasicAgent):
         return retrieved_docs
     
 
-    def rag_experience_retrieve(self, request, experience_top_k: int) -> str:
+    def rag_experience_retrieve(self, request: str, experience_top_k: int) -> str:
         """
         Retrieving experience examples for the user request.
+        :param request: The user request.
+        :param experience_top_k: The number of documents to retrieve.
         :return: The retrieved examples and tips string.
         """
         
@@ -218,14 +233,17 @@ class AppAgent(BasicAgent):
 
         return examples, tips
     
-    def rag_demonstration_retrieve(self, request, demonstratuib_top_k: int) -> str:
+    
+    def rag_demonstration_retrieve(self, request:str, demonstration_top_k: int) -> str:
         """
         Retrieving demonstration examples for the user request.
+        :param request: The user request.
+        :param demonstration_top_k: The number of documents to retrieve.
         :return: The retrieved examples and tips string.
         """
         
         # Retrieve demonstration examples.
-        demonstration_docs = self.human_demonstration_retriever.retrieve(request, demonstratuib_top_k)
+        demonstration_docs = self.human_demonstration_retriever.retrieve(request, demonstration_top_k)
         
         if demonstration_docs:
             examples = [doc.metadata.get("example", {}) for doc in demonstration_docs]
@@ -239,7 +257,8 @@ class AppAgent(BasicAgent):
 
     def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
         """
-        Create the Puppeteer interface.
+        Create the Puppeteer interface to automate the app.
+        :return: The Puppeteer interface.
         """
         return puppeteer.AppPuppeteer(self._process_name, self._app_root_name, self._ui_control_interface)
 
@@ -261,15 +280,19 @@ class AppAgent(BasicAgent):
         self.online_doc_retriever = retriever_factory.OnlineDocRetriever(request, top_k)
 
     
-    def build_experience_retriever(self, db_path) -> None:
+    def build_experience_retriever(self, db_path: str) -> None:
         """
         Build the experience retriever.
+        :param db_path: The path to the experience database.
+        :return: The experience retriever.
         """
         self.experience_retriever = retriever_factory.ExperienceRetriever(db_path)
 
 
-    def build_human_demonstration_retriever(self, db_path) -> None:
+    def build_human_demonstration_retriever(self, db_path: str) -> None:
         """
         Build the human demonstration retriever.
+        :param db_path: The path to the human demonstration database.
+        :return: The human demonstration retriever.
         """
         self.human_demonstration_retriever = retriever_factory.DemonstrationRetriever(db_path)

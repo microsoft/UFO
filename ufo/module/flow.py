@@ -179,7 +179,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.HostAgent.update_status(self._status)
 
             
-
         except Exception as e:
             error_trace = traceback.format_exc()
             utils.print_with_color("Error Occurs at application selection.", "red")
@@ -386,6 +385,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         
         self.update_cost(cost=total_cost)
         utils.print_with_color("The experience has been saved.", "magenta")
+        
 
     def set_new_round(self) -> None:
         """
