@@ -10,15 +10,16 @@ class HostAgentPrompter(BasicPrompter):
     The HostAgentPrompter class is the prompter for the host agent.
     """
 
-    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str):
+    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str, is_lite: bool=False):
         """
         Initialize the ApplicationAgentPrompter.
         :param is_visual: Whether the request is for visual model.
+        :param is_lite: Whether to use lite prompt.
         :param prompt_template: The path of the prompt template.
         :param example_prompt_template: The path of the example prompt template.
         :param api_prompt_template: The path of the api prompt template.
         """
-        super().__init__(is_visual, prompt_template, example_prompt_template)
+        super().__init__(is_visual, prompt_template, example_prompt_template, is_lite)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template)
 
 
@@ -146,15 +147,16 @@ class AppAgentPrompter(BasicPrompter):
     The AppAgentPrompter class is the prompter for the application agent.
     """
 
-    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str):
+    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str, is_lite: bool=False):
         """
         Initialize the ApplicationAgentPrompter.
         :param is_visual: Whether the request is for visual model.
+        :param is_lite: Whether to use lite prompt.
         :param prompt_template: The path of the prompt template.
         :param example_prompt_template: The path of the example prompt template.
         :param api_prompt_template: The path of the api prompt template.
         """
-        super().__init__(is_visual, prompt_template, example_prompt_template)
+        super().__init__(is_visual, prompt_template, example_prompt_template, is_lite)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template)
 
 

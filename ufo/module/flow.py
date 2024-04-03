@@ -43,7 +43,7 @@ class Session(object):
         self.logger = self.initialize_logger(self.log_path, "response.log")
         self.request_logger = self.initialize_logger(self.log_path, "request.log")
 
-        self.HostAgent = HostAgent("HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"], configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        self.HostAgent = HostAgent("HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"], configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], configs["HOST_AGENT"]["LITE_MODE"])
         self.AppAgent = None
 
         self._status = "APP_SELECTION"
@@ -150,7 +150,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             # Initialize the AppAgent
 
             self.AppAgent = AppAgent("{root}/{process}".format(root=self.app_root, process=self.application), self.application, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
-                                     configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.app_window)
+                                     configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.app_window, configs["APP_AGENT"]["LITE_MODE"])
             
             
             # Initialize the document retriever

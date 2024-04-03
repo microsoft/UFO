@@ -5,6 +5,10 @@ from ufo.utils import print_with_color
 from ..config.config import load_config
 from typing import Tuple
 
+from .openai import OpenAIService
+from .qwen import QwenService
+from .ollama import OllamaService
+
 
 configs = load_config()
 
@@ -48,20 +52,20 @@ def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n:
         agent_type = "BACKUP_AGENT"
     else:
         raise ValueError(f'Agent {agent} not supported')
-    
-    api_type = configs[agent_type]['API_TYPE']
+    api_type =  configs[agent_type]['API_TYPE']
     try:
-        if api_type.lower() in ['openai', 'aoai', 'azure_ad']:
-            from .openai import OpenAIService
-            response, cost = OpenAIService(configs, agent_type=agent_type).chat_completion(messages, n)
-            return response, cost
-        elif api_type.lower() in ['qwen']:
-            from .qwen import QwenService
-            response, cost = QwenService(configs, agent_type=agent_type).chat_completion(messages, n)
-            return response, cost
-        elif api_type.lower() in ['ollama']:
-            from .ollama import OllamaService
-            response, cost = OllamaService(configs, agent_type=agent_type).chat_completion(messages, n)
+        service_map = {
+            'openai': OpenAIService,
+            'aoai': OpenAIService,
+            'azure_ad': OpenAIService,
+            'qwen': QwenService,
+            'ollama': OllamaService,
+        }
+
+        api_type_lower = api_type.lower()
+        if api_type_lower in service_map:
+            service = service_map[api_type_lower]
+            response, cost = service(configs, agent_type=agent_type).chat_completion(messages)
             return response, cost
         else:
             raise ValueError(f'API_TYPE {api_type} not supported')
