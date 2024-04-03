@@ -76,10 +76,10 @@ class WinCOMClient(ABC):
     
 
 
-    def app_match(self, object_name_list: str) -> bool:
+    def app_match(self, object_name_list: List[str]) -> str:
         """
         Check if the process name matches the app root.
-        :param object_name: The list of object name.
+        :param object_name_list: The list of object name.
         :return: The matched object name.
         """
 
