@@ -36,62 +36,89 @@ class OpenAIService(BaseService):
             self.auto_refresh_token()
 
     def chat_completion(
-        self,
-        messages,
-        n,
-        stream: bool = False,
-        temperature: Optional[float] = None,
-        max_tokens: Optional[int] = None,
-        top_p: Optional[float] = None,
-        **kwargs: Any,
-    ):
-        model = self.config_llm["API_MODEL"]
+            self,
+            messages,
+            n,
+            stream: bool = False,
+            temperature: Optional[float] = None,
+            max_tokens: Optional[int] = None,
+            top_p: Optional[float] = None,
+            **kwargs: Any,
+        ):
+            """
+            Generates completions for a given conversation using the OpenAI Chat API.
 
-        temperature = temperature if temperature is not None else self.config["TEMPERATURE"]
-        max_tokens = max_tokens if max_tokens is not None else self.config["MAX_TOKENS"]
-        top_p = top_p if top_p is not None else self.config["TOP_P"]
+            Args:
+                messages (List[Dict[str, str]]): The list of messages in the conversation.
+                    Each message should have a 'role' (either 'system', 'user', or 'assistant')
+                    and 'content' (the content of the message).
+                n (int): The number of completions to generate.
+                stream (bool, optional): Whether to stream the API response. Defaults to False.
+                temperature (float, optional): The temperature parameter for randomness in the output.
+                    Higher values (e.g., 0.8) make the output more random, while lower values (e.g., 0.2) make it more deterministic.
+                    If not provided, the default value from the configuration will be used.
+                max_tokens (int, optional): The maximum number of tokens in the generated completion.
+                    If not provided, the default value from the configuration will be used.
+                top_p (float, optional): The top-p parameter for nucleus sampling.
+                    It specifies the cumulative probability threshold for selecting the next token.
+                    If not provided, the default value from the configuration will be used.
+                **kwargs: Additional keyword arguments to pass to the OpenAI API.
 
-        try:
-            response: Any = self.client.chat.completions.create(
-                model=model,
-                messages=messages,  # type: ignore
-                n=n,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                top_p=top_p,
-                stream=stream,
-                **kwargs
-            )
+            Returns:
+                Tuple[List[str], float]: A tuple containing a list of generated completions and the estimated cost.
 
-            usage = response.usage
-            prompt_tokens = usage.prompt_tokens
-            completion_tokens = usage.completion_tokens
+            Raises:
+                Exception: If there is an error in the OpenAI API request, such as a timeout, connection failure, invalid request, authentication error,
+                    permission error, rate limit error, or API error.
 
-            cost = self.get_cost_estimator(self.api_type, model, self.prices, prompt_tokens, completion_tokens)
+            """
+            model = self.config_llm["API_MODEL"]
 
-            return [response.choices[i].message.content for i in range(n)], cost
+            temperature = temperature if temperature is not None else self.config["TEMPERATURE"]
+            max_tokens = max_tokens if max_tokens is not None else self.config["MAX_TOKENS"]
+            top_p = top_p if top_p is not None else self.config["TOP_P"]
 
-        except openai.APITimeoutError as e:
-            # Handle timeout error, e.g. retry or log
-            raise Exception(f"OpenAI API request timed out: {e}")
-        except openai.APIConnectionError as e:
-            # Handle connection error, e.g. check network or log
-            raise Exception(f"OpenAI API request failed to connect: {e}")
-        except openai.BadRequestError as e:
-            # Handle invalid request error, e.g. validate parameters or log
-            raise Exception(f"OpenAI API request was invalid: {e}")
-        except openai.AuthenticationError as e:
-            # Handle authentication error, e.g. check credentials or log
-            raise Exception(f"OpenAI API request was not authorized: {e}")
-        except openai.PermissionDeniedError as e:
-            # Handle permission error, e.g. check scope or log
-            raise Exception(f"OpenAI API request was not permitted: {e}")
-        except openai.RateLimitError as e:
-            # Handle rate limit error, e.g. wait or log
-            raise Exception(f"OpenAI API request exceeded rate limit: {e}")
-        except openai.APIError as e:
-            # Handle API error, e.g. retry or log
-            raise Exception(f"OpenAI API returned an API Error: {e}")
+            try:
+                response: Any = self.client.chat.completions.create(
+                    model=model,
+                    messages=messages,  # type: ignore
+                    n=n,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    top_p=top_p,
+                    stream=stream,
+                    **kwargs
+                )
+
+                usage = response.usage
+                prompt_tokens = usage.prompt_tokens
+                completion_tokens = usage.completion_tokens
+
+                cost = self.get_cost_estimator(self.api_type, model, self.prices, prompt_tokens, completion_tokens)
+
+                return [response.choices[i].message.content for i in range(n)], cost
+
+            except openai.APITimeoutError as e:
+                # Handle timeout error, e.g. retry or log
+                raise Exception(f"OpenAI API request timed out: {e}")
+            except openai.APIConnectionError as e:
+                # Handle connection error, e.g. check network or log
+                raise Exception(f"OpenAI API request failed to connect: {e}")
+            except openai.BadRequestError as e:
+                # Handle invalid request error, e.g. validate parameters or log
+                raise Exception(f"OpenAI API request was invalid: {e}")
+            except openai.AuthenticationError as e:
+                # Handle authentication error, e.g. check credentials or log
+                raise Exception(f"OpenAI API request was not authorized: {e}")
+            except openai.PermissionDeniedError as e:
+                # Handle permission error, e.g. check scope or log
+                raise Exception(f"OpenAI API request was not permitted: {e}")
+            except openai.RateLimitError as e:
+                # Handle rate limit error, e.g. wait or log
+                raise Exception(f"OpenAI API request exceeded rate limit: {e}")
+            except openai.APIError as e:
+                # Handle API error, e.g. retry or log
+                raise Exception(f"OpenAI API returned an API Error: {e}")
 
     def get_openai_token(
         self,
