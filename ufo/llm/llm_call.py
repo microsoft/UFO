@@ -32,7 +32,7 @@ def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n:
 
     Args:
         messages (list): List of messages to be used for completion.
-        agent (str, optional): Type of agent. Possible values are 'hostagent', 'appagent' or 'BACKUP'.
+        agent (str, optional): Type of agent. Possible values are 'hostagent', 'appagent' or 'backup'.
         use_backup_engine (bool, optional): Flag indicating whether to use the backup engine or not.
         n (int, optional): Number of completions to generate.
 
@@ -54,6 +54,14 @@ def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n:
         if api_type.lower() in ['openai', 'aoai', 'azure_ad']:
             from .openai import OpenAIService
             response, cost = OpenAIService(configs, agent_type=agent_type).chat_completion(messages, n)
+            return response, cost
+        elif api_type.lower() in ['qwen']:
+            from .qwen import QwenService
+            response, cost = QwenService(configs, agent_type=agent_type).chat_completion(messages, n)
+            return response, cost
+        elif api_type.lower() in ['ollama']:
+            from .ollama import OllamaService
+            response, cost = OllamaService(configs, agent_type=agent_type).chat_completion(messages, n)
             return response, cost
         else:
             raise ValueError(f'API_TYPE {api_type} not supported')

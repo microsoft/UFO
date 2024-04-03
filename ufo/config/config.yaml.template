@@ -1,5 +1,6 @@
 HOST_AGENT: {
   VISUAL_MODE: True, # Whether to use the visual mode
+  LITE_MODE: True, # Whether to use the lite version of the prompt.
 
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
   API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
@@ -24,6 +25,7 @@ HOST_AGENT: {
 
 APP_AGENT: {
   VISUAL_MODE: True, # Whether to use the visual mode
+  LITE_MODE: True, # Whether to use the lite version of the prompt.
 
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
   API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
@@ -48,6 +50,7 @@ APP_AGENT: {
 
 BACKUP_AGENT: {
   VISUAL_MODE: True, # Whether to use the visual mode
+  LITE_MODE: True, # Whether to use the lite version of the prompt.
 
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
   API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
