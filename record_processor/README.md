@@ -3,8 +3,15 @@
 
 UFO can learn from user-provided demonstrations for specific requests and use them as references in the future when encountering similar tasks. Providing clear demonstrations along with precise requests can significantly enhance UFO's performance.
 
+## Demo ❗
+<h1 align="center">
+    <video>
+        <source src="../assets/record_processor/Demo.mp4" type="video/mp4">
+    </video> 
+</h1>
+
 ## How to Enable and Config this Function ❓
-You can enable this function by setting the following configuration:
+You can enable this function by setting the following configuration in the ```ufo/config/config.yaml``` file:
 ```bash
 ## RAG Configuration for demonstration
 RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
@@ -68,11 +75,3 @@ Would you like to save any one of them as future reference by the agent? press [
 ```
 Press `1` to save it into its memory for furture reference. A sample could be find [here](../vectordb/demonstration/example.yaml).
 
-**Step 3: Enable RAG from Demonstration**
-You can enable this function by setting the following configuration in the `ufo/config/config.yaml` file:
-```bash
-## RAG Configuration for demonstration
-RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
-RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the retrieved demonstration examples.
-```
-Adjust `RAG_DEMONSTRATION_RETRIEVED_TOPK` to optimize performance.
