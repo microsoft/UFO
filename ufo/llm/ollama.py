@@ -63,6 +63,7 @@ class OllamaService(BaseService):
                         **kwargs,
                     )
                     responses.append(response)
+                    break
                 except Exception as e:
                     print_with_color(f"Error making API request: {e}", "red")
                     try:
@@ -71,7 +72,7 @@ class OllamaService(BaseService):
                         _ 
                     time.sleep(3)
                     continue
-            return responses, None
+        return responses, None
 
     def _chat_completion(
         self,

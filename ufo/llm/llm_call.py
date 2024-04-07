@@ -8,9 +8,22 @@ from typing import Tuple
 from .openai import OpenAIService
 from .qwen import QwenService
 from .ollama import OllamaService
+from .cogagent import CogagentService
+from .llava import LlavaService
 
 
 configs = load_config()
+host_service_map = {
+    'openai': OpenAIService,
+    'aoai': OpenAIService,
+    'azure_ad': OpenAIService,
+    'qwen': QwenService,
+    'ollama': OllamaService,
+}
+customized_service_map = {
+    'llava': LlavaService,
+    'cogagent': CogagentService,
+}
 
 def get_completion(messages, agent: str='APP', use_backup_engine: bool=True) -> Tuple[str, float]:
     """
@@ -54,17 +67,13 @@ def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n:
         raise ValueError(f'Agent {agent} not supported')
     api_type =  configs[agent_type]['API_TYPE']
     try:
-        service_map = {
-            'openai': OpenAIService,
-            'aoai': OpenAIService,
-            'azure_ad': OpenAIService,
-            'qwen': QwenService,
-            'ollama': OllamaService,
-        }
-
         api_type_lower = api_type.lower()
-        if api_type_lower in service_map:
-            service = service_map[api_type_lower]
+        if api_type_lower in host_service_map:
+            service = host_service_map[api_type_lower]
+            response, cost = service(configs, agent_type=agent_type).chat_completion(messages)
+            return response, cost
+        elif api_type_lower == 'customized':
+            service = customized_service_map[configs[agent_type]['API_MODEL']]
             response, cost = service(configs, agent_type=agent_type).chat_completion(messages)
             return response, cost
         else:

@@ -83,6 +83,7 @@ class QwenService(BaseService):
                             shutil.rmtree(self.tmp_dir, ignore_errors=True)
                             responses.append(self.parse_qwen_response(response.output.choices[0].message.content[0]['text']))
                             cost += _cost
+                            break
                     else:
                         raise ValueError(response.message)
                 except Exception as e:
