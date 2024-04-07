@@ -42,7 +42,26 @@ def get_completion(messages, agent: str='APP', use_backup_engine: bool=True) -> 
     responses, cost = get_completions(messages, agent=agent, use_backup_engine=use_backup_engine, n=1)
     return responses[0], cost
 
+def customized_check(model_name):
+    """
+    Customized check function to determine the type of model based on the given model name.
 
+    Args:
+        model_name (str): The name of the model.
+
+    Returns:
+        str: The type of the model. If the model name contains 'llava', it returns 'llava'.
+             If the model name contains 'cogagent', it returns 'cogagent'.
+             Otherwise, it returns the original model name.
+    """
+    model_name = model_name.lower()
+    if 'llava' in model_name:
+        return 'llava'
+    elif 'cogagent' in model_name:
+        return 'cogagent'
+    else:
+        return model_name
+    
 def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n: int=1) -> Tuple[list, float]:
     """
     Get completions for the given messages.
@@ -73,7 +92,7 @@ def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n:
             response, cost = service(configs, agent_type=agent_type).chat_completion(messages)
             return response, cost
         elif api_type_lower == 'customized':
-            service = customized_service_map[configs[agent_type]['API_MODEL']]
+            service = customized_service_map[customized_check(configs[agent_type]['API_MODEL'])]
             response, cost = service(configs, agent_type=agent_type).chat_completion(messages)
             return response, cost
         else:
