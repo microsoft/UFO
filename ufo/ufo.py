@@ -4,11 +4,12 @@
 import argparse
 from datetime import datetime
 
-from .config.config import load_config
+from .config.config import Config
 from .module import flow
 from .utils import print_with_color
 
-configs = load_config()
+
+configs = Config.get_instance().config_data
 
 
 args = argparse.ArgumentParser()

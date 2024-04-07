@@ -5,9 +5,6 @@ import argparse
 from . import indexer
 
 
-
-# configs = load_config()
-
 args = argparse.ArgumentParser()
 args.add_argument("--app", help="The name of application to learn.",
                   type=str, default="./")

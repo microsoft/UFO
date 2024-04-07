@@ -11,10 +11,11 @@ from PIL import Image, ImageDraw, ImageFont, ImageGrab
 from pywinauto.application import Application
 from pywinauto.win32structures import RECT
 
-from ...config.config import load_config
+from ...config.config import Config
 from ...utils import number_to_letter
 
-configs = load_config()
+
+configs = Config.get_instance().config_data
 
 def capture_screenshot(window_title:str, save_path:str, is_save:bool=True):
     """

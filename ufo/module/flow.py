@@ -15,10 +15,11 @@ from ..agent.agent import AppAgent, HostAgent
 from ..agent.basic import MemoryItem
 from ..automator.ui_control import screenshot as screen
 from ..automator.ui_control import utils as control
-from ..config.config import load_config
+from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
 
-configs = load_config()
+
+configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
 
 
@@ -65,7 +66,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         self.request = input()
         self.request_history = []
 
-    def process_application_selection(self):
+    def process_application_selection(self) -> None:
 
         """
         Select an action.
@@ -125,7 +126,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             host_agent_step_memory.set_values_from_dict(response_json)
             host_agent_step_memory.set_values_from_dict(additional_memory)
 
-            self.HostAgent.update_memory(host_agent_step_memory)
+            self.HostAgent.add_memory(host_agent_step_memory)
             
             response_json = self.set_result_and_log(host_agent_step_memory.to_dict())
         
@@ -152,24 +153,9 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.AppAgent = AppAgent("{root}/{process}".format(root=self.app_root, process=self.application), self.application, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
                                      configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.app_window)
             
-            
-            # Initialize the document retriever
-            if configs["RAG_OFFLINE_DOCS"]:
-                utils.print_with_color("Loading offline document indexer for {app}...".format(app=self.application), "magenta")
-                self.AppAgent.build_offline_docs_retriever()
-            if configs["RAG_ONLINE_SEARCH"]:
-                utils.print_with_color("Creating a Bing search indexer...", "magenta")
-                self.AppAgent.build_online_search_retriever(self.request, configs["RAG_ONLINE_SEARCH_TOPK"])
-            if configs["RAG_EXPERIENCE"]:
-                utils.print_with_color("Creating an experience indexer...", "magenta")
-                experience_path = configs["EXPERIENCE_SAVED_PATH"]
-                db_path = os.path.join(experience_path, "experience_db")
-                self.AppAgent.build_experience_retriever(db_path)
-            if configs["RAG_DEMONSTRATION"]:
-                utils.print_with_color("Creating an demonstration indexer...", "magenta")
-                demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
-                db_path = os.path.join(demonstration_path, "demonstration_db")
-                self.AppAgent.build_human_demonstration_retriever(db_path)
+
+            # Load the retrievers for APP_AGENT.
+            self._app_agent_load_retrievers()
 
             time.sleep(configs["SLEEP_TIME"])
 
@@ -190,7 +176,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             return
 
 
-    def process_action_selection(self):
+    def process_action_selection(self) -> None:
         """
         Select an action.
         header: The headers of the request.
@@ -286,7 +272,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             app_agent_step_memory.set_values_from_dict(response_json)
             app_agent_step_memory.set_values_from_dict(additional_memory)
 
-            self.AppAgent.update_memory(app_agent_step_memory)
+            self.AppAgent.add_memory(app_agent_step_memory)
 
             response_json = self.set_result_and_log(app_agent_step_memory.to_dict())
 
@@ -315,6 +301,31 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         time.sleep(configs["SLEEP_TIME"])
 
         return
+    
+
+
+    def _app_agent_load_retrievers(self):
+        """
+        Load the retrievers for APP_AGENT.
+        """
+
+        if configs["RAG_OFFLINE_DOCS"]:
+            utils.print_with_color("Loading offline document indexer for {app}...".format(app=self.application), "magenta")
+            self.AppAgent.build_offline_docs_retriever()
+        if configs["RAG_ONLINE_SEARCH"]:
+            utils.print_with_color("Creating a Bing search indexer...", "magenta")
+            self.AppAgent.build_online_search_retriever(self.request, configs["RAG_ONLINE_SEARCH_TOPK"])
+        if configs["RAG_EXPERIENCE"]:
+            utils.print_with_color("Creating an experience indexer...", "magenta")
+            experience_path = configs["EXPERIENCE_SAVED_PATH"]
+            db_path = os.path.join(experience_path, "experience_db")
+            self.AppAgent.build_experience_retriever(db_path)
+        if configs["RAG_DEMONSTRATION"]:
+            utils.print_with_color("Creating an demonstration indexer...", "magenta")
+            demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
+            db_path = os.path.join(demonstration_path, "demonstration_db")
+            self.AppAgent.build_human_demonstration_retriever(db_path)
+
     
 
     def screenshots_and_control_info_helper(self) -> tuple:
@@ -385,7 +396,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         
         self.update_cost(cost=total_cost)
         utils.print_with_color("The experience has been saved.", "magenta")
-        
+
 
     def set_new_round(self) -> None:
         """

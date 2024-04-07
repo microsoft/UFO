@@ -8,10 +8,11 @@ import psutil
 import pygetwindow as gw
 from pywinauto import Desktop
 
-from ...config.config import load_config
+from ...config.config import Config
 from ...utils import find_desktop_path, print_with_color
 
-configs = load_config()
+
+configs = Config.get_instance().config_data
 
 BACKEND = configs["CONTROL_BACKEND"]
 
