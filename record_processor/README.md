@@ -4,11 +4,9 @@
 UFO can learn from user-provided demonstrations for specific requests and use them as references in the future when encountering similar tasks. Providing clear demonstrations along with precise requests can significantly enhance UFO's performance.
 
 ## Demo ❗
-<h1 align="center">
-    <video>
-        <source src="../assets/record_processor/Demo.mp4" type="video/mp4">
-    </video> 
-</h1>
+
+https://github.com/yunhao0204/UFO/assets/59384816/54b7f084-2482-4503-b223-148a866fae41
+
 
 ## How to Enable and Config this Function ❓
 You can enable this function by setting the following configuration in the ```ufo/config/config.yaml``` file:
