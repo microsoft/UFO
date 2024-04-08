@@ -3,7 +3,7 @@
 
 import os
 import argparse
-from record_processor.summarizer.summarizer import DemonstrationSummarizer
+from .summarizer.summarizer import DemonstrationSummarizer
 from ufo.config.config import load_config
 from .parser.psr_record_parser import PSRRecordParser
 from .utils import create_folder, save_to_json, unzip_and_read_file
