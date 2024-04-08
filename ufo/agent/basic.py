@@ -17,7 +17,7 @@ class MemoryItem:
     This data class represents a memory item of an agent at one step.
     """
 
-    _memory_attributes = []
+    _memory_attributes: List[str] = []
 
     def to_dict(self) -> dict:
         """
@@ -122,7 +122,7 @@ class Memory():
     
     def filter_memory_from_keys(self, keys: List[str]) -> List[dict]:
         """
-        Filter the memory from the keys.
+        Filter the memory from the keys. If an item does not have the key, the key will be ignored.
         :param keys: The keys to filter.
         :return: The filtered memory.
         """
@@ -168,9 +168,7 @@ class BasicAgent(ABC):
     def __init__(self, name: str):
         """
         Initialize the BasicAgent.
-        :param agent_type: The type of the agent.
-         :param memory: The memory of the agent.
-        :param memory: The memory of the agent.
+        :param name: The name of the agent.
         """
         self._step = 0
         self._complete = False
@@ -271,12 +269,20 @@ class BasicAgent(ABC):
         self._status = status
 
 
-    def update_memory(self, memory_item: MemoryItem) -> None:
+    def add_memory(self, memory_item: MemoryItem) -> None:
         """
         Update the memory of the agent.
         :param memory_item: The memory item to add.
         """
         self._memory.add_memory_item(memory_item)
+
+
+    def delete_memory(self, step: int) -> None:
+        """
+        Delete the memory of the agent.
+        :param step: The step of the memory item to delete.
+        """
+        self._memory.delete_memory_item(step)
 
 
 

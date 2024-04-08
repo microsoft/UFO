@@ -11,7 +11,8 @@ from ufo.utils import print_with_color
 from typing import Tuple
 
 
-configs = load_config()
+
+configs = Config.get_instance().config_data
 
 args = argparse.ArgumentParser()
 args.add_argument("--request", "-r", help="The request that user want to achieve.",

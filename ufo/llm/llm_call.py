@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 
 from ufo.utils import print_with_color
-from ..config.config import load_config
+from ..config.config import Config
 from typing import Tuple
 
 
-configs = load_config()
+
+configs = Config.get_instance().config_data
 
 def get_completion(messages, agent: str='APP', use_backup_engine: bool=True) -> Tuple[str, float]:
     """

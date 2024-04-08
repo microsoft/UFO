@@ -7,9 +7,10 @@ from typing import List, Tuple
 import psutil
 from pywinauto import Desktop
 
-from ...config.config import load_config
+from ...config.config import Config
 
-configs = load_config()
+
+configs = Config.get_instance().config_data
 
 BACKEND = configs["CONTROL_BACKEND"]
 

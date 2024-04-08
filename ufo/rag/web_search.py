@@ -7,10 +7,11 @@ from langchain.text_splitter import HTMLHeaderTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
-from ..config.config import load_config
+from ..config.config import Config
 from ..utils import print_with_color
 
-configs = load_config()
+
+configs = Config.get_instance().config_data
 
 
 class BingSearchWeb:

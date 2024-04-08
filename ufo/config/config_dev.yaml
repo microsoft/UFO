@@ -18,7 +18,7 @@ ANNOTATION_COLORS: {
     }
 
 PRINT_LOG: False  # Whether to print the log  
-CONCAT_SCREENSHOT: True  # Whether to concat the screenshot for the control item
+CONCAT_SCREENSHOT: False  # Whether to concat the screenshot for the control item
 LOG_LEVEL: "DEBUG"  # The log level
 INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the observation
 REQUEST_TIMEOUT: 250  # The call timeout for the GPT-V model
