@@ -3,8 +3,14 @@
 
 UFO can learn from user-provided demonstrations for specific requests and use them as references in the future when encountering similar tasks. Providing clear demonstrations along with precise requests can significantly enhance UFO's performance.
 
+## Demo ❗
+Here's a demo of using user demonstrations to enhance UFO's understanding of user requests. UFO currently could assist users with a wide range of tasks. However, like any AI system, UFO may encounter challenges in accurately interpreting complex user requests.To address this, we demonstrate how UFO leverages user demonstrations to improve its performance over time. By observing and analyzing user interactions, UFO adapts and refines its understanding of user requests, leading to more accurate and efficient assistance.
+
+https://github.com/yunhao0204/UFO/assets/59384816/0146f83e-1b5e-4933-8985-fe3f24ec4777
+
+
 ## How to Enable and Config this Function ❓
-You can enable this function by setting the following configuration:
+You can enable this function by setting the following configuration in the ```ufo/config/config.yaml``` file:
 ```bash
 ## RAG Configuration for demonstration
 RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
@@ -68,11 +74,3 @@ Would you like to save any one of them as future reference by the agent? press [
 ```
 Press `1` to save it into its memory for furture reference. A sample could be find [here](../vectordb/demonstration/example.yaml).
 
-**Step 3: Enable RAG from Demonstration**
-You can enable this function by setting the following configuration in the `ufo/config/config.yaml` file:
-```bash
-## RAG Configuration for demonstration
-RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
-RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the retrieved demonstration examples.
-```
-Adjust `RAG_DEMONSTRATION_RETRIEVED_TOPK` to optimize performance.

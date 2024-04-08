@@ -3,7 +3,7 @@
 
 import os
 import argparse
-from record_processor.summarizer.summarizer import DemonstrationSummarizer
+from .summarizer.summarizer import DemonstrationSummarizer
 from ufo.config.config import Config
 from .parser.psr_record_parser import PSRRecordParser
 from .utils import create_folder, save_to_json, unzip_and_read_file
@@ -36,11 +36,11 @@ def main():
         record.set_request(parsed_args.request[0])
 
         summarizer = DemonstrationSummarizer(
-            configs["ACTION_AGENT"]["VISUAL_MODE"], configs["DEMONSTRATION_PROMPT"], configs["ACTION_SELECTION_EXAMPLE_PROMPT"], configs["API_PROMPT"], configs["RAG_DEMONSTRATION_COMPLETION_N"])
+            configs["APP_AGENT"]["VISUAL_MODE"], configs["DEMONSTRATION_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], configs["RAG_DEMONSTRATION_COMPLETION_N"])
 
         summaries, total_cost = summarizer.get_summary_list(record)
         
-        is_save, index = asker(summaries)
+        is_save, index = __asker(summaries)
         if is_save and index >= 0:
             demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
             create_folder(demonstration_path)
@@ -56,7 +56,7 @@ def main():
         print_with_color(str(e), "red")
 
 
-def asker(summaries) -> Tuple[bool, int]:
+def __asker(summaries) -> Tuple[bool, int]:
     print_with_color("""Here are the plans summarized from your demonstration: """, "cyan")
     for index, summary in enumerate(summaries):
         print_with_color(f"Plan [{index + 1}]", "green")
