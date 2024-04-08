@@ -34,17 +34,17 @@ class PSRRecordParser:
         5. Construct the record object and return it.
         return: A record object.
         """
-        boundary = self.find_boundary()
-        self.parts_dict = self.split_file_by_boundary(boundary)
-        self.comments = self.get_comments(
+        boundary = self.__find_boundary()
+        self.parts_dict = self.__split_file_by_boundary(boundary)
+        self.comments = self.__get_comments(
             self.parts_dict['main.htm']['Content'])
-        self.steps = self.get_steps(self.parts_dict['main.htm']['Content'])
+        self.steps = self.__get_steps(self.parts_dict['main.htm']['Content'])
         record = DemonstrationRecord(
             list(set(self.applications)), len(self.steps), **self.steps)
 
         return record
 
-    def find_boundary(self) -> str:
+    def __find_boundary(self) -> str:
         """
         Find the boundary in the .mht file.
         """
@@ -59,7 +59,7 @@ class PSRRecordParser:
         else:
             raise ValueError("Boundary not found in the .mht file.")
 
-    def split_file_by_boundary(self, boundary: str) -> dict:
+    def __split_file_by_boundary(self, boundary: str) -> dict:
         """
         Split the file by the boundary into parts, 
         Store the parts in a dictionary, including the content type,
@@ -100,7 +100,7 @@ class PSRRecordParser:
                 part_dict[content_location] = part_info
         return part_dict
 
-    def get_steps(self, content: str) -> dict:
+    def __get_steps(self, content: str) -> dict:
         """
         Get the steps from the content in fllowing steps:
         1. Find the UserActionData tag in the content.
@@ -126,7 +126,7 @@ class PSRRecordParser:
                 action = each_action.find('Action').text
                 screenshot_file_name = each_action.find(
                     'ScreenshotFileName').text
-                screenshot = self.get_screenshot(screenshot_file_name)
+                screenshot = self.__get_screenshot(screenshot_file_name)
                 step_key = f"step_{int(action_number) - 1}"
 
                 step = DemonstrationStep(
@@ -137,7 +137,7 @@ class PSRRecordParser:
         else:
             raise ValueError("UserActionData not found in the file.")
 
-    def get_comments(self, content: str) -> dict:
+    def __get_comments(self, content: str) -> dict:
         """
         Get the user input comments for each step
         content: The content of the main.htm file.
@@ -155,7 +155,7 @@ class PSRRecordParser:
             comments[f'step_{index}'] = comment_tag.next_sibling if comment_tag else None
         return comments
 
-    def get_screenshot(self, screenshot_file_name: str) -> str:
+    def __get_screenshot(self, screenshot_file_name: str) -> str:
         """
         Get the screenshot by screenshot file name.
         The screenshot related information is stored in the parts_dict.
