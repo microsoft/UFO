@@ -122,7 +122,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             # Create a memory item for the host agent
             host_agent_step_memory = MemoryItem()
             additional_memory = {"Step": self._step, "AgentStep": self.HostAgent.get_step(), "Round": self._round, "ControlLabel": self.application, "Action": "set_focus()", 
-                                 "Request": self.request, "Agent": "AppAgent", "Application": self.app_root, "Cost": cost, "Results": ""}
+                                 "Request": self.request, "Agent": "HostAgent", "AgentName": self.HostAgent.name, "Application": self.app_root, "Cost": cost, "Results": ""}
             host_agent_step_memory.set_values_from_dict(response_json)
             host_agent_step_memory.set_values_from_dict(additional_memory)
 
@@ -150,7 +150,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             # Initialize the AppAgent
 
-            self.AppAgent = AppAgent("{root}/{process}".format(root=self.app_root, process=self.application), self.application, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
+            self.AppAgent = AppAgent("AppAgent/{root}/{process}".format(root=self.app_root, process=self.application), self.application, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
                                      configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.app_window)
             
 
@@ -234,7 +234,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             control_label = response_json["ControlLabel"]
             control_text = response_json["ControlText"]
-            function_call = response_json["Function"]
+            operation = response_json["Function"]
             args = utils.revise_line_breaks(response_json["Args"])
 
             control_selected = annotation_dict.get(control_label, "")
@@ -254,11 +254,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
 
             # Compose the function call and the arguments string.
-            action = utils.generate_function_call(function_call, args)
+            action = utils.generate_function_call(operation, args)
 
             if self.safe_guard(action, control_text):
                 # Execute the action
-                results = ui_controller.execution(function_call, args)
+                results = ui_controller.execution(operation, args)
                 if not utils.is_json_serializable(results):
                     results = ""
             else:
@@ -268,7 +268,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             app_agent_step_memory = MemoryItem()
             
             additional_memory = {"Step": self._step, "AgentStep": self.AppAgent.get_step(), "Round": self._round, "Action": action, 
-                                 "Request": self.request, "Agent": "ActAgent", "Application": self.app_root, "Cost": cost, "Results": results}
+                                 "Request": self.request, "Agent": "ActAgent", "AgentName": self.AppAgent.name, "Application": self.app_root, "Cost": cost, "Results": results}
             app_agent_step_memory.set_values_from_dict(response_json)
             app_agent_step_memory.set_values_from_dict(additional_memory)
 
