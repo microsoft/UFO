@@ -192,7 +192,7 @@ class AppAgent(BasicAgent):
         :param request: The request.
         :param offline_top_k: The number of offline documents to retrieve.
         :param online_top_k: The number of online documents to retrieve.
-        :return: The prompt message.
+        :return: The prompt message for the external_knowledge.
         """
 
         retrieved_docs = ""

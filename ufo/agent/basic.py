@@ -179,7 +179,6 @@ class BasicAgent(ABC):
     def complete(self) -> bool:
         """
         Indicates whether the current instruction execution is complete.
-
         :returns: complete (bool): True if execution is complete; False otherwise.
         """
         self._complete = self._status.lower() == "finish"
