@@ -89,11 +89,11 @@ def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n:
         api_type_lower = api_type.lower()
         if api_type_lower in host_service_map:
             service = host_service_map[api_type_lower]
-            response, cost = service(configs, agent_type=agent_type).chat_completion(messages)
+            response, cost = service(configs, agent_type=agent_type).chat_completion(messages, n)
             return response, cost
         elif api_type_lower == 'customized':
             service = customized_service_map[customized_check(configs[agent_type]['API_MODEL'])]
-            response, cost = service(configs, agent_type=agent_type).chat_completion(messages)
+            response, cost = service(configs, agent_type=agent_type).chat_completion(messages, n)
             return response, cost
         else:
             raise ValueError(f'API_TYPE {api_type} not supported')
