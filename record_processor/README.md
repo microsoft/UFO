@@ -5,7 +5,7 @@ UFO can learn from user-provided demonstrations for specific requests and use th
 
 ## Demo ❗
 
-https://github.com/yunhao0204/UFO/assets/59384816/54b7f084-2482-4503-b223-148a866fae41
+https://github.com/yunhao0204/UFO/assets/59384816/0146f83e-1b5e-4933-8985-fe3f24ec4777
 
 
 ## How to Enable and Config this Function ❓
