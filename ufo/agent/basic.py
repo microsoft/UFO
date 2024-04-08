@@ -17,7 +17,7 @@ class MemoryItem:
     This data class represents a memory item of an agent at one step.
     """
 
-    _memory_attributes: List[str] = []
+    _memory_attributes = []
 
     def to_dict(self) -> dict:
         """
