@@ -1,16 +1,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from typing import List
-import psutil
 import time
+from typing import List
 
-from pywinauto import Desktop
+import psutil
 import pygetwindow as gw
-from ..config.config import load_config
-from ..utils import find_desktop_path, print_with_color
+from pywinauto import Desktop
 
-configs = load_config()
+from ...config.config import Config
+from ...utils import find_desktop_path, print_with_color
+
+
+configs = Config.get_instance().config_data
 
 BACKEND = configs["CONTROL_BACKEND"]
 

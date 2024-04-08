@@ -5,9 +5,9 @@ from .basic import BasicPrompter
 import json
 
 
-class ApplicationAgentPrompter(BasicPrompter):
+class HostAgentPrompter(BasicPrompter):
     """
-    The ApplicationAgentPrompter class is the prompter for the application agent.
+    The HostAgentPrompter class is the prompter for the host agent.
     """
 
     def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str):
@@ -141,9 +141,9 @@ class ApplicationAgentPrompter(BasicPrompter):
     
 
 
-class ActionAgentPrompter(BasicPrompter):
+class AppAgentPrompter(BasicPrompter):
     """
-    The ActionAgentPrompter class is the prompter for the action agent.
+    The AppAgentPrompter class is the prompter for the application agent.
     """
 
     def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str):

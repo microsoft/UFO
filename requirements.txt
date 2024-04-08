@@ -13,3 +13,4 @@ faiss-cpu==1.8.0
 lxml==5.1.0
 psutil==5.9.8
 beautifulsoup4==4.12.3
+sentence-transformers==2.5.1

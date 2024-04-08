@@ -6,15 +6,12 @@ from typing import List
 from PIL import Image, ImageDraw, ImageFont, ImageGrab
 from pywinauto.application import Application
 from pywinauto.win32structures import RECT
-import win32con
-import win32api
-import win32gui
-import win32ui
 
-from ..config.config import load_config
-from ..utils import number_to_letter
+from ...config.config import Config
+from ...utils import number_to_letter
 
-configs = load_config()
+
+configs = Config.get_instance().config_data
 
 def capture_screenshot(window_title:str, save_path:str, is_save:bool=True):
     """
@@ -31,10 +28,6 @@ def capture_screenshot(window_title:str, save_path:str, is_save:bool=True):
         screenshot.save(save_path)
     return screenshot
 
-from ..config.config import load_config
-from ..utils import number_to_letter
-
-configs = load_config()
 
 def capture_screenshot(window_title:str, save_path:str, is_save:bool=True):
     """
@@ -61,7 +54,7 @@ def capture_screenshot_multiscreen(save_path:str):
     return screenshot
 
 
-def draw_rectangles(image, coordinate:tuple, color="red", width=3):
+def draw_rectangles(image, coordinate:tuple, color: str="red", width: int=3):
     """
     Draw a rectangle on the image.
     :param image: The image to draw on.
@@ -113,6 +106,7 @@ def coordinate_adjusted(window_rect:RECT, control_rect:RECT):
                          control_rect.right - window_rect.left, control_rect.bottom - window_rect.top)
     
     return adjusted_rect
+
 
 
 def draw_rectangles_controls(image, coordinate:tuple, label_text:str, botton_margin:int=5, border_width:int=2, font_size:int=25, 
@@ -236,6 +230,10 @@ class TransparentBox:
         Create a new TransparentBox.
         :param box_width: The width of the box.
         """
+        import win32api
+        import win32con
+        import win32gui
+        import win32ui
         self.desktop = win32gui.GetDesktopWindow()
         self.desktop_dc = win32gui.GetWindowDC(self.desktop)
         self.dc = win32ui.CreateDCFromHandle(self.desktop_dc)

@@ -2,14 +2,15 @@
 # Licensed under the MIT License.
 
 from abc import ABC, abstractmethod
-from langchain_community.vectorstores import FAISS
+
 from langchain_community.embeddings import HuggingFaceEmbeddings
-from ..config.config import get_offline_learner_indexer_config, load_config
+from langchain_community.vectorstores import FAISS
+
+from ..config.config import get_offline_learner_indexer_config
 from ..utils import print_with_color
 from . import web_search
 
 
-configs = load_config()
 
 class Retriever(ABC):
     """
@@ -45,7 +46,6 @@ class Retriever(ABC):
             return None
         
         return self.indexer.similarity_search(query, top_k, filter=filter)
-    
     
     
 
@@ -132,22 +132,25 @@ class OnlineDocRetriever(Retriever):
     Class to create online retrievers.
     """
 
-    def __init__(self, query:str) -> None:
+    def __init__(self, query:str, top_k:int) -> None:
         """
         Create a new OfflineDocRetrieverFactory.
-        :appname: The name of the application.
+        :query: The query to create an indexer for.
+        :top_k: The number of documents to retrieve.
         """
         self.query = query
-        self.indexer = self.get_indexer()
+        self.indexer = self.get_indexer(top_k)
 
-    def get_indexer(self):
+
+    def get_indexer(self, top_k: int):
         """
         Create an online search indexer.
-        :param query: The query to create an indexer for.
+        :param top_k: The number of documents to retrieve.
+        :return: The created indexer.
         """
         
         bing_retriever = web_search.BingSearchWeb()
-        result_list = bing_retriever.search(self.query, top_k=configs["RAG_ONLINE_SEARCH_TOPK"])
+        result_list = bing_retriever.search(self.query, top_k=top_k)
         documents = bing_retriever.create_documents(result_list)
         if len(documents) == 0:
             return None
@@ -157,6 +160,32 @@ class OnlineDocRetriever(Retriever):
 
 
 
+class DemonstrationRetriever(Retriever):
+    """
+    Class to create demonstration retrievers.
+    """
+
+    def __init__(self, db_path) -> None:
+        """
+        Create a new DemonstrationRetriever.
+        :db_path: The path to the database.
+        """
+        self.indexer = self.get_indexer(db_path)
+
+
+    def get_indexer(self, db_path: str):
+        """
+        Create a demonstration indexer.
+        :db_path: The path to the database.
+        """
+
+        try:
+            embeddings = HuggingFaceEmbeddings(model_name="sentence-transformers/all-mpnet-base-v2")
+            db = FAISS.load_local(db_path, embeddings)
+            return db
+        except:
+            print_with_color("Warning: Failed to load demonstration indexer from {path}.".format(path=db_path), "yellow")
+            return None
 
 
 

@@ -109,7 +109,7 @@ You can also non-visial model (e.g., GPT-4) for each agent, by setting `VISUAL_M
 
 
 ####  Non-Visual Model Configuration
-You can utilize non-visual models (e.g., GPT-4) for each agent by configuring the following settings in the config.yaml file:
+You can utilize non-visual models (e.g., GPT-4) for each agent by configuring the following settings in the `config.yaml` file:
 
 - ```VISUAL_MODE: False # To enable non-visual mode.```
 - Specify the appropriate `API_MODEL` (OpenAI) and `API_DEPLOYMENT_ID` (AOAI) for each agent.
@@ -157,6 +157,15 @@ RAG_EXPERIENCE: True  # Whether to use the RAG from its self-experience.
 RAG_EXPERIENCE_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
 ```
 
+#### RAG from User-Demonstration
+Boost UFO's capabilities through user demonstration! Utilize Microsoft Steps Recorder to record step-by-step processes for achieving specific tasks. With a simple command processed by the record_processor (refer to the [README](./record_processor/README.md)), UFO can store these trajectories in its memory for future reference, enhancing its learning from user interactions.
+
+You can enable this function by setting the following configuration:
+```bash
+## RAG Configuration for demonstration
+RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
+RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the demonstration examples.
+```
 
 
 ### 🎉 Step 4: Start UFO

@@ -30,3 +30,14 @@ Replace `app_name` with the name of the application, such as PowerPoint or WeCha
 Replace `path_of_the_docs` with the full path to the folder containing all your documents.
 
 This command will create an offline indexer for all documents in the `path_of_the_docs` folder using Faiss and embedding with sentence transformer (more embeddings will be supported soon). The created index by default will be placed [here](../vectordb/docs/).
+
+
+
+## How to Enable RAG from Help Documents during Online Inference ❓
+To enable this in online inference, you can set the following configuration in the `ufo/config/config.yaml` file:
+```bash
+## RAG Configuration for the offline docs
+RAG_OFFLINE_DOCS: True  # Whether to use the offline RAG.
+RAG_OFFLINE_DOCS_RETRIEVED_TOPK: 1  # The topk for the offline retrieved documents
+```
+Adjust `RAG_OFFLINE_DOCS_RETRIEVED_TOPK` to optimize performance.

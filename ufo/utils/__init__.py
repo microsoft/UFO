@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import base64
+import importlib
 import json
 import os
 from io import BytesIO
@@ -13,7 +14,7 @@ from PIL import Image
 # init colorama
 init()
 
-def print_with_color(text: str, color: str = ""):
+def print_with_color(text: str, color: str = "", end: str = "\n"):
     """
     Print text with specified color using ANSI escape codes from Colorama library.
 
@@ -34,7 +35,7 @@ def print_with_color(text: str, color: str = ""):
     selected_color = color_mapping.get(color.lower(), "")
     colored_text = selected_color + text + Style.RESET_ALL
 
-    print(colored_text)
+    print(colored_text, end=end)
 
 
 
@@ -147,6 +148,14 @@ def json_parser(json_string:str):
     return json.loads(json_string)
 
 
+def is_json_serializable(obj):
+    try:
+        json.dumps(obj)
+        return True
+    except TypeError:
+        return False
+
+
 
 def generate_function_call(func, args):
     """
@@ -174,3 +183,20 @@ def revise_line_breaks(args: dict):
             args[key] = args[key].replace('\\n', '\n')
 
     return args
+
+
+def LazyImport(module_name:str):
+    """
+    Import a module as a global variable.
+    :param module_name: The name of the module to import.
+    :return: The imported module.
+    """
+    global_name = module_name.split(".")[-1]
+    globals()[global_name] = importlib.import_module(module_name, __package__)
+    return globals()[global_name]
+
+    
+
+
+
+

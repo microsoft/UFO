@@ -37,12 +37,14 @@ class OpenAIService:
     def chat_completion(
         self,
         messages,
+        n,
         stream: bool = False,
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ):
+    ) :
+        
         model = self.config_llm["API_MODEL"]
 
         temperature = temperature if temperature is not None else self.config["TEMPERATURE"]
@@ -57,6 +59,7 @@ class OpenAIService:
                 max_tokens=max_tokens,
                 top_p=top_p,
                 stream=stream,
+                n=n,
                 **kwargs
             )
 
@@ -66,7 +69,8 @@ class OpenAIService:
 
             cost = self.get_cost_estimator(self.api_type, model, self.prices, prompt_tokens, completion_tokens)
 
-            return response.choices[0].message.content, cost
+            return [response.choices[i].message.content for i in range(n)], cost
+
 
         except openai.APITimeoutError as e:
             # Handle timeout error, e.g. retry or log
