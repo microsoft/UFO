@@ -163,8 +163,6 @@ class BasicAgent(ABC):
     The BasicAgent class is the abstract class for the agent.
     """
 
-    _registry: Dict[str, Type['BasicAgent']] = {}
-
     def __init__(self, name: str):
         """
         Initialize the BasicAgent.
@@ -174,6 +172,7 @@ class BasicAgent(ABC):
         self._complete = False
         self._name = name
         self._status = None
+        self._register_self()
         
 
     @property
@@ -348,17 +347,13 @@ class BasicAgent(ABC):
 
 
     @classmethod
-    def register(cls, name: str, agent_cls: Type['BasicAgent']) -> None:
+    def _register_self(self):
         """
-        Registers an agent class in the registry.
-
-        Parameters:
-        - name (str): The name to register the class under.
-        - agent_cls (Type['Agent']): The class to register.
+        Register the subclass upon instantiation.
         """
-        if name in cls._registry:
-            raise ValueError(f"Agent class already registered under '{name}'.")
-        cls._registry[name] = agent_cls
+        cls = type(self)
+        if cls.__name__ not in AgentRegistry._registry:
+            AgentRegistry.register(cls.__name__, cls)
 
 
 
@@ -366,12 +361,37 @@ class BasicAgent(ABC):
     def get_cls(cls, name: str) -> Type['BasicAgent']:
         """
         Retrieves an agent class from the registry.
+        :param name: The name of the agent class.
+        :return: The agent class.
+        """
+        return AgentRegistry().get_cls(name)
+    
 
-        Parameters:
-        - name (str): The name of the class to retrieve
 
-        Returns:
-        - agent_cls (Type['Agent']): The class registered under the specified name.
+class AgentRegistry:
+    """
+    The registry for the agent.
+    """
+
+    _registry: Dict[str, Type['BasicAgent']] = {}
+
+    @classmethod
+    def register(cls, name: str, agent_cls: Type['BasicAgent']) -> None:
+        """
+        Register an agent class.
+        :param name: The name of the agent class.
+        :param agent_cls: The agent class.
+        """
+        if name in cls._registry:
+            raise ValueError(f"Agent class already registered under '{name}'.")
+        cls._registry[name] = agent_cls
+
+    @classmethod
+    def get_cls(cls, name: str) -> Type['BasicAgent']:
+        """
+        Get an agent class from the registry.
+        :param name: The name of the agent class.
+        :return: The agent class.
         """
         if name not in cls._registry:
             raise ValueError(f"No agent class registered under '{name}'.")

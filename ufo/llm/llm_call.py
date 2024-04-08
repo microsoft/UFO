@@ -6,7 +6,6 @@ from ..config.config import Config
 from typing import Tuple
 
 
-
 configs = Config.get_instance().config_data
 
 def get_completion(messages, agent: str='APP', use_backup_engine: bool=True) -> Tuple[str, float]:
