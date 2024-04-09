@@ -5,9 +5,10 @@ import datetime
 from typing import Any, Optional
 import openai
 from openai import AzureOpenAI, OpenAI
+from .base import BaseService
 
 
-class OpenAIService:
+class OpenAIService(BaseService):
     def __init__(self, config, agent_type: str):
         self.config_llm = config[agent_type]
         self.config = config
@@ -44,7 +45,32 @@ class OpenAIService:
         top_p: Optional[float] = None,
         **kwargs: Any,
     ) :
+        """
+        Generates completions for a given conversation using the OpenAI Chat API.
         
+        Args:
+            messages (List[Dict[str, str]]): The list of messages in the conversation.
+                Each message should have a 'role' (either 'system', 'user', or 'assistant')
+                and 'content' (the content of the message).
+            n (int): The number of completions to generate.
+            stream (bool, optional): Whether to stream the API response. Defaults to False.
+            temperature (float, optional): The temperature parameter for randomness in the output.
+                Higher values (e.g., 0.8) make the output more random, while lower values (e.g., 0.2) make it more deterministic.
+                If not provided, the default value from the configuration will be used.
+            max_tokens (int, optional): The maximum number of tokens in the generated completion.
+                If not provided, the default value from the configuration will be used.
+            top_p (float, optional): The top-p parameter for nucleus sampling.
+                It specifies the cumulative probability threshold for selecting the next token.
+                If not provided, the default value from the configuration will be used.
+            **kwargs: Additional keyword arguments to pass to the OpenAI API.
+        
+        Returns:
+            Tuple[List[str], float]: A tuple containing a list of generated completions and the estimated cost.
+        
+        Raises:
+            Exception: If there is an error in the OpenAI API request, such as a timeout, connection failure, invalid request, authentication error,
+                permission error, rate limit error, or API error.
+        """
         model = self.config_llm["API_MODEL"]
 
         temperature = temperature if temperature is not None else self.config["TEMPERATURE"]
@@ -55,11 +81,11 @@ class OpenAIService:
             response: Any = self.client.chat.completions.create(
                 model=model,
                 messages=messages,  # type: ignore
+                n=n,
                 temperature=temperature,
                 max_tokens=max_tokens,
                 top_p=top_p,
                 stream=stream,
-                n=n,
                 **kwargs
             )
 
@@ -70,7 +96,6 @@ class OpenAIService:
             cost = self.get_cost_estimator(self.api_type, model, self.prices, prompt_tokens, completion_tokens)
 
             return [response.choices[i].message.content for i in range(n)], cost
-
 
         except openai.APITimeoutError as e:
             # Handle timeout error, e.g. retry or log
@@ -265,27 +290,3 @@ class OpenAIService:
             thread.stop()
 
         return stop
-
-    def get_cost_estimator(self, api_type, model, prices, prompt_tokens, completion_tokens) -> float:
-        """
-        Calculates the cost estimate for using a specific model based on the number of prompt tokens and completion tokens.
-
-        Args:
-            model (str): The name of the model.
-            prices (dict): A dictionary containing the prices for different models.
-            prompt_tokens (int): The number of prompt tokens used.
-            completion_tokens (int): The number of completion tokens used.
-
-        Returns:
-            float: The estimated cost for using the model.
-        """
-        if api_type.lower() == "openai":
-            name = str(api_type+'/'+model)
-        else:
-            name = str('azure/'+model)
-        if name in prices:
-            cost = prompt_tokens * prices[name]["input"]/1000 + completion_tokens * prices[name]["output"]/1000
-        else:
-            print(f"{name} not found in prices")
-            return None
-        return cost

@@ -27,7 +27,9 @@ PRICES: {
     "azure/gpt-4-32k-20230321":{"input": 0.06, "output": 0.12},
     "azure/gpt-4-1106-preview": {"input": 0.01, "output": 0.03},
     "azure/gpt-4-0125-preview": {"input": 0.01, "output": 0.03},
-    "azure/gpt-4-visual-preview": {"input": 0.01, "output": 0.03}
+    "azure/gpt-4-visual-preview": {"input": 0.01, "output": 0.03},
+    "qwen/qwen-vl-plus": {"input": 0.008, "output": 0.008},
+    "qwen/qwen-vl-max": {"input": 0.02, "output": 0.02},
 }
 
 
