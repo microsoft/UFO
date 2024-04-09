@@ -33,9 +33,9 @@ Open another terminal and run:
 ollama run YOUR_MODEL
 ```
 
-:::info
+***info***
 When serving LLMs via Ollama, it will by default start a server at `http://localhost:11434`, which will later be used as the API base in `config.yaml`.
-:::
+
 
 2. Add following configuration to `config.yaml`:
 ```json showLineNumbers
@@ -46,7 +46,7 @@ When serving LLMs via Ollama, it will by default start a server at `http://local
     "API_MODEL": "YOUR_MODEL"
 }
 ```
-NOTE: `API_BASE` is the URL started in the Ollama LLM server and `API_MODEL` is the model name of Ollama LLM, it should be same as the one you served before. In addition, due to model limitations, you can use lite version of prompt to have a taste on UFO which can be configured in `config_dev.yaml`.
+NOTE: `API_BASE` is the URL started in the Ollama LLM server and `API_MODEL` is the model name of Ollama LLM, it should be same as the one you served before. In addition, due to model limitations, you can use lite version of prompt to have a taste on UFO which can be configured in `config_dev.yaml`. Attention to the top ***note***.
 
 #### If you use your customize model as the Agent
 1. Start a server with your model, which will later be used as the API base in `config.yaml`.
