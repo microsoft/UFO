@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import abc
+from importlib import import_module
 
 class BaseService(abc.ABC):
     @abc.abstractmethod
@@ -11,6 +12,24 @@ class BaseService(abc.ABC):
     @abc.abstractmethod
     def chat_completion(self, *args, **kwargs):
         pass
+    
+    @staticmethod
+    def get_service(name):
+        service_map = {
+                'openai': 'OpenAIService',
+                'aoai': 'OpenAIService',
+                'azure_ad': 'OpenAIService',
+                'qwen': 'QwenService',
+                'ollama': 'OllamaService',
+                'placeholder': 'PlaceHolderService',
+                }
+        service_name = service_map.get(name, None)
+        if service_name:
+            if name in ['aoai', 'azure_ad']:
+                module = import_module('.openai', package='ufo.llm')
+            else:
+                module = import_module('.'+service_name.lower(), package='ufo.llm')
+        return getattr(module, service_name)
 
     def get_cost_estimator(self, api_type, model, prices, prompt_tokens, completion_tokens) -> float:
         """

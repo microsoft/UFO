@@ -1,10 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+from importlib import import_module
 from ufo.utils import print_with_color
 from ..config.config import Config
 from typing import Tuple
 
+from .base import BaseService
 from .openai import OpenAIService
 from .qwen import QwenService
 from .ollama import OllamaService
@@ -12,13 +14,6 @@ from .ollama import OllamaService
 
 
 configs = Config.get_instance().config_data
-host_service_map = {
-    'openai': OpenAIService,
-    'aoai': OpenAIService,
-    'azure_ad': OpenAIService,
-    'qwen': QwenService,
-    'ollama': OllamaService,
-}
 
 def get_completion(messages, agent: str='APP', use_backup_engine: bool=True) -> Tuple[str, float]:
     """
@@ -64,8 +59,8 @@ def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n:
     api_type = configs[agent_type]['API_TYPE']
     try:
         api_type_lower = api_type.lower()
-        if api_type_lower in host_service_map:
-            service = host_service_map[api_type_lower]
+        service = BaseService.get_service(api_type_lower)
+        if service:
             response, cost = service(configs, agent_type=agent_type).chat_completion(messages, n)
             return response, cost
         else:
@@ -74,6 +69,6 @@ def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n:
         if use_backup_engine:
             print_with_color(f"The API request of {agent_type} failed: {e}.", "red")
             print_with_color(f"Switching to use the backup engine...", "yellow")
-            return get_completion(messages, agent='backup', use_backup_engine=False, n=n)
+            return get_completions(messages, agent='backup', use_backup_engine=False, n=n)
         else:
             raise e
