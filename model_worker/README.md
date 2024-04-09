@@ -46,4 +46,4 @@ When serving LLMs via Ollama, it will by default start a server at `http://local
     "API_MODEL": "YOUR_MODEL"
 }
 ```
-NOTE: `API_BASE` is the URL started in the Ollama LLM server and `API_MODEL` is the model name of Ollama LLM, it should be same as the one you served before. In addition, due to model limitations, you can use `use_lite` to enable a lightweight version of prompt to have a taste on UFO.
+NOTE: `API_BASE` is the URL started in the Ollama LLM server and `API_MODEL` is the model name of Ollama LLM, it should be same as the one you served before. In addition, due to model limitations, you can use lightweight version of prompt to have a taste on UFO.
