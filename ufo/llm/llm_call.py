@@ -7,9 +7,6 @@ from ..config.config import Config
 from typing import Tuple
 
 from .base import BaseService
-from .openai import OpenAIService
-from .qwen import QwenService
-from .ollama import OllamaService
 
 
 
