@@ -1,7 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from importlib import import_module
 from ufo.utils import print_with_color
 from ..config.config import Config
 from typing import Tuple
