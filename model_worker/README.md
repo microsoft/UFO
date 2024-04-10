@@ -3,7 +3,7 @@ The lite version of the prompt is not fully optimized. To achieve better results
 ### If you use QWEN as the Agent
 
 1. QWen (Tongyi Qianwen) is a LLM developed by Alibaba. Go to [QWen](https://dashscope.aliyun.com/) and register an account and get the API key. More details can be found [here](https://help.aliyun.com/zh/dashscope/developer-reference/activate-dashscope-and-create-an-api-key?spm=a2c4g.11186623.0.0.7b5749d72j3SYU) (in Chinese).
-2. Install the required packages dashscope or uncomment it in the `requirements.txt`.
+2. Install the required packages dashscope or run the `install.py` with `-qwen` options.
 ```bash
 pip install dashscope
 ```
@@ -23,7 +23,7 @@ You can find the model name in the [QWen LLM model list](https://help.aliyun.com
 We provide a short example to show how to configure the ollama in the following, which might change if ollama makes updates.
 
 ```bash title="install ollama and serve LLMs in local" showLineNumbers
-## Install ollama on Linux & WSL2
+## Install ollama on Linux & WSL2 or run the `install.py` with `-ollama` options
 curl https://ollama.ai/install.sh | sh
 ## Run the serving
 ollama serve
@@ -56,7 +56,7 @@ NOTE: `API_BASE` is the URL started in the Ollama LLM server and `API_MODEL` is 
 {
     "API_TYPE": "custom_model" ,
     "API_BASE": "YOUR_ENDPOINT", 
-    "API_KEY": "ARBITRARY_STRING",  
+    "API_KEY": "YOUR_KEY",  
     "API_MODEL": "YOUR_MODEL"
 }
 ```

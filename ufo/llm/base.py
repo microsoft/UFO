@@ -28,7 +28,7 @@ class BaseService(abc.ABC):
             if name in ['aoai', 'azure_ad']:
                 module = import_module('.openai', package='ufo.llm')
             else:
-                module = import_module('.'+service_name.lower(), package='ufo.llm')
+                module = import_module('.'+name.lower(), package='ufo.llm')
         return getattr(module, service_name)
 
     def get_cost_estimator(self, api_type, model, prices, prompt_tokens, completion_tokens) -> float:

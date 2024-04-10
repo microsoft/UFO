@@ -55,7 +55,7 @@ class OllamaService(BaseService):
             for _ in range(self.max_retry):
                 try:
                     response = self._chat_completion(
-                        messages=messages[i],
+                        messages=messages,
                         temperature=temperature,
                         max_tokens=max_tokens,
                         top_p=top_p,
@@ -155,7 +155,6 @@ class OllamaService(BaseService):
         Returns:
             list: The processed messages with modified content and images.
         """
-
         _messages = copy.deepcopy(messages)
         tmp_image_text = tmp_image = None
         for i, message in enumerate(_messages):

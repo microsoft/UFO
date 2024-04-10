@@ -60,7 +60,7 @@ class QwenService(BaseService):
                 try:
                     response = dashscope.MultiModalConversation.call(
                         model=self.model,
-                        messages=self.process_messages(messages[i]),
+                        messages=self.process_messages(messages),
                         top_p=top_p,
                     )
                     if response.status_code == HTTPStatus.OK:
