@@ -5,6 +5,9 @@ from ufo.utils import print_with_color
 from ..config.config import Config
 from typing import Tuple
 
+from .base import BaseService
+
+
 
 configs = Config.get_instance().config_data
 
@@ -14,7 +17,7 @@ def get_completion(messages, agent: str='APP', use_backup_engine: bool=True) -> 
 
     Args:
         messages (list): List of messages to be used for completion.
-        agent (str, optional): Type of agent. Possible values are 'hostagent', 'appagent' or 'BACKUP'.
+        agent (str, optional): Type of agent. Possible values are 'hostagent', 'appagent' or 'backup'.
         use_backup_engine (bool, optional): Flag indicating whether to use the backup engine or not.
         
     Returns:
@@ -51,9 +54,10 @@ def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n:
     
     api_type = configs[agent_type]['API_TYPE']
     try:
-        if api_type.lower() in ['openai', 'aoai', 'azure_ad']:
-            from .openai import OpenAIService
-            response, cost = OpenAIService(configs, agent_type=agent_type).chat_completion(messages, n)
+        api_type_lower = api_type.lower()
+        service = BaseService.get_service(api_type_lower)
+        if service:
+            response, cost = service(configs, agent_type=agent_type).chat_completion(messages, n)
             return response, cost
         else:
             raise ValueError(f'API_TYPE {api_type} not supported')
@@ -61,6 +65,6 @@ def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n:
         if use_backup_engine:
             print_with_color(f"The API request of {agent_type} failed: {e}.", "red")
             print_with_color(f"Switching to use the backup engine...", "yellow")
-            return get_completion(messages, agent='backup', use_backup_engine=False, n=n)
+            return get_completions(messages, agent='backup', use_backup_engine=False, n=n)
         else:
             raise e
