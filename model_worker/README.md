@@ -48,17 +48,17 @@ When serving LLMs via Ollama, it will by default start a server at `http://local
 ```
 NOTE: `API_BASE` is the URL started in the Ollama LLM server and `API_MODEL` is the model name of Ollama LLM, it should be same as the one you served before. In addition, due to model limitations, you can use lite version of prompt to have a taste on UFO which can be configured in `config_dev.yaml`. Attention to the top ***note***.
 
-#### If you use your customize model as the Agent
+#### If you use your custom model as the Agent
 1. Start a server with your model, which will later be used as the API base in `config.yaml`.
 
 2. Add following configuration to `config.yaml`:
 ```json showLineNumbers
 {
-    "API_TYPE": "customize_model" ,
+    "API_TYPE": "custom_model" ,
     "API_BASE": "YOUR_ENDPOINT", 
     "API_KEY": "ARBITRARY_STRING",  
     "API_MODEL": "YOUR_MODEL"
 }
 ```
 
-NOTE: You should create a new Python script <customize_model>.py in the ufo/llm folder like the format of the <placeholder>.py, which needs to inherit `BaseService` as the parent class, as well as the `__init__` and `chat_completion` methods. At the same time, you need to add the dynamic import of your file in the `get_service` method of `BaseService`.
+NOTE: You should create a new Python script <custom_model>.py in the ufo/llm folder like the format of the <placeholder>.py, which needs to inherit `BaseService` as the parent class, as well as the `__init__` and `chat_completion` methods. At the same time, you need to add the dynamic import of your file in the `get_service` method of `BaseService`.
