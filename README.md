@@ -79,9 +79,8 @@ UFO requires **Python >= 3.10** running on **Windows OS >= 10**. It can be insta
 git clone https://github.com/microsoft/UFO.git
 cd UFO
 # install the requirements
-python setup.py
-# If you want to use the Qwen and Ollama as your LLMs, run the python file with options
-python setup.py -qwen -ollama
+pip install -r requirements.txt
+# If you want to use the Qwen as your LLMs, uncomment the related libs.
 ```
 
 ### ⚙️ Step 2: Configure the LLMs
