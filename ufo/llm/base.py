@@ -47,7 +47,7 @@ class BaseService(abc.ABC):
                 module = import_module('.openai', package='ufo.llm')
             elif service_name == 'CustomService':
                 custom_model = 'llava' if 'llava' in model_name else model_name
-                custom_service_name = custom_service_map.get('llava' if 'llava' in custom_model.lower() else custom_model, None)
+                custom_service_name = custom_service_map.get('llava' if 'llava' in custom_model else custom_model, None)
                 if custom_service_name:
                     module = import_module('.'+custom_model, package='ufo.llm')
                     service_name = custom_service_name
