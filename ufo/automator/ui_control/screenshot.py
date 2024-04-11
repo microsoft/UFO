@@ -10,23 +10,14 @@ from pywinauto.win32structures import RECT
 from ...config.config import Config
 from ...utils import number_to_letter
 
+import win32api
+import win32con
+import win32gui
+import win32ui
+
 
 configs = Config.get_instance().config_data
 
-def capture_screenshot(window_title:str, save_path:str, is_save:bool=True):
-    """
-    Capture a screenshot of the window.
-    :param window_title: The title of the window.
-    :param save_path: The path to save the screenshot.
-    :param is_save: Whether to save the screenshot.
-    :return: The screenshot.
-    """
-    app = Application(backend="uia").connect(title_re=window_title)
-    window = app.top_window()
-    screenshot = window.capture_as_image()
-    if is_save:
-        screenshot.save(save_path)
-    return screenshot
 
 
 def capture_screenshot(window_title:str, save_path:str, is_save:bool=True):
@@ -230,10 +221,7 @@ class TransparentBox:
         Create a new TransparentBox.
         :param box_width: The width of the box.
         """
-        import win32api
-        import win32con
-        import win32gui
-        import win32ui
+        
         self.desktop = win32gui.GetDesktopWindow()
         self.desktop_dc = win32gui.GetWindowDC(self.desktop)
         self.dc = win32ui.CreateDCFromHandle(self.desktop_dc)
