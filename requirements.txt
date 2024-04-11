@@ -16,5 +16,5 @@ beautifulsoup4==4.12.3
 sentence-transformers==2.5.1
 #For Qwen
 #dashscope
-#For configure your endpoint with your own custom model.
+#For configuring the endpoint with your own custom model.
 #fastapi

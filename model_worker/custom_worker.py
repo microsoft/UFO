@@ -55,9 +55,9 @@ def direct_generate_llava(self, params):
     return response
 
 
-# API
-import FastAPI
-app = FastAPI()
+# The API is included in llava and cogagent installations. If you customize your model, you can install fastapi via pip or uncomment the library in the requirements.
+# import FastAPI
+# app = FastAPI()
 
 #For llava
 @app.post("/chat/completions")

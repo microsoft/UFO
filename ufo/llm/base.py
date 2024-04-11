@@ -14,7 +14,20 @@ class BaseService(abc.ABC):
         pass
     
     @staticmethod
-    def get_service(name, custom_model=None):
+    def get_service(name, model_name=None):
+        """
+        Get the service based on the given name and custom model.
+
+        Args:
+            name (str): The name of the service.
+            model_name (str, optional): The model name.
+
+        Returns:
+            object: The service object.
+
+        Raises:
+            ValueError: If the given service name or model name is not supported.
+        """
         service_map = {
             'openai': 'OpenAIService',
             'aoai': 'OpenAIService',
@@ -23,7 +36,7 @@ class BaseService(abc.ABC):
             'ollama': 'OllamaService',
             'placeholder': 'PlaceHolderService',
             'custom': 'CustomService',
-                }
+        }
         custom_service_map = {
             'llava': 'LlavaService',
             'cogagent': 'CogAgentService',
@@ -33,7 +46,7 @@ class BaseService(abc.ABC):
             if name in ['aoai', 'azure_ad']:
                 module = import_module('.openai', package='ufo.llm')
             elif service_name == 'CustomService':
-                custom_model = 'llava' if 'llava' in custom_model else custom_model
+                custom_model = 'llava' if 'llava' in model_name else model_name
                 custom_service_name = custom_service_map.get('llava' if 'llava' in custom_model.lower() else custom_model, None)
                 if custom_service_name:
                     module = import_module('.'+custom_model, package='ufo.llm')
@@ -45,7 +58,7 @@ class BaseService(abc.ABC):
             return getattr(module, service_name)
         else:
             raise ValueError(f'Model {name} not supported')
-        
+    
     def get_cost_estimator(self, api_type, model, prices, prompt_tokens, completion_tokens) -> float:
         """
         Calculates the cost estimate for using a specific model based on the number of prompt tokens and completion tokens.

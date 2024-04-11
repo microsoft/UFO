@@ -54,8 +54,7 @@ def get_completions(messages, agent: str='APP', use_backup_engine: bool=True, n:
     
     api_type = configs[agent_type]['API_TYPE']
     try:
-        api_type_lower = api_type.lower()
-        service = BaseService.get_service(api_type_lower, configs[agent_type]['API_MODEL'])
+        service = BaseService.get_service(api_type.lower(), configs[agent_type]['API_MODEL'])
         if service:
             response, cost = service(configs, agent_type=agent_type).chat_completion(messages, n)
             return response, cost

@@ -7,7 +7,7 @@ from ufo.utils import print_with_color
 from .base import BaseService
 
 
-class CogagentService(BaseService):
+class CogAgentService(BaseService):
     def __init__(self, config, agent_type: str):
         self.config_llm = config[agent_type]
         self.config = config
@@ -24,6 +24,21 @@ class CogagentService(BaseService):
         top_p: Optional[float] = None,
         **kwargs: Any,
     ):
+        """
+        Generate chat completions based on given messages.
+
+        Args:
+            messages (list): A list of messages.
+            n (int): The number of completions to generate.
+            temperature (float, optional): The temperature for sampling. Defaults to None.
+            max_tokens (int, optional): The maximum number of tokens in the completion. Defaults to None.
+            top_p (float, optional): The cumulative probability for top-p sampling. Defaults to None.
+            **kwargs: Additional keyword arguments.
+
+        Returns:
+            tuple: A tuple containing the generated texts and None.
+
+        """
 
         temperature = temperature if temperature is not None else self.config["TEMPERATURE"]
         max_tokens = max_tokens if max_tokens is not None else self.config["MAX_TOKENS"]
