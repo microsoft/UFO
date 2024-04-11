@@ -15,7 +15,14 @@ HOST_AGENT: {
   # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
   # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
   # API_DEPLOYMENT_ID: "gpt-4-visual-preview", # The deployment id for the AOAI API
-  
+
+  ### Comment above and uncomment these according to your need if using "Qwen", "Ollama" or "Custom".
+  # API_TYPE: "Custom", 
+  # API_BASE: "YOUR_ENDPOINT", 
+  # API_KEY: "YOUR_KEY", 
+  # API_MODEL: "YOUR_MODEL",
+
+
   ### For Azure_AD
   # AAD_TENANT_ID: "YOUR_TENANT_ID", # Set the value to your tenant id for the llm model
   # AAD_API_SCOPE: "YOUR_SCOPE", # Set the value to your scope for the llm model
@@ -39,6 +46,12 @@ APP_AGENT: {
   # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
   # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
   # API_DEPLOYMENT_ID: "gpt-4-visual-preview", # The deployment id for the AOAI API
+
+  ### Comment above and uncomment these according to your need if using "Qwen", "Ollama" or "Custom".
+  # API_TYPE: "Custom", 
+  # API_BASE: "YOUR_ENDPOINT", 
+  # API_KEY: "YOUR_KEY", 
+  # API_MODEL: "YOUR_MODEL",
   
   ### For Azure_AD
   # AAD_TENANT_ID: "YOUR_TENANT_ID", # Set the value to your tenant id for the llm model
@@ -63,6 +76,12 @@ BACKUP_AGENT: {
   # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
   # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
   # API_DEPLOYMENT_ID: "gpt-4-visual-preview", # The deployment id for the AOAI API
+
+  ### Comment above and uncomment these according to your need if using "Qwen", "Ollama" or "Custom".
+  # API_TYPE: "Custom", 
+  # API_BASE: "YOUR_ENDPOINT", 
+  # API_KEY: "YOUR_KEY", 
+  # API_MODEL: "YOUR_MODEL",
   
   ### For Azure_AD
   # AAD_TENANT_ID: "YOUR_TENANT_ID", # Set the value to your tenant id for the llm model
