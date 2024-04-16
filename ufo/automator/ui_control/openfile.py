@@ -5,11 +5,10 @@ import time
 from typing import List
 
 import psutil
-import pygetwindow as gw
 from pywinauto import Desktop
 
 from ...config.config import Config
-from ...utils import find_desktop_path, print_with_color
+from ... import utils 
 
 
 configs = Config.get_instance().config_data
@@ -91,7 +90,7 @@ class OpenFile:
                     return True
         if self.APP in self.win_app:
             if "Desktop" in self.file_path:
-                desktop_path = find_desktop_path()
+                desktop_path = utils.find_desktop_path()
                 self.file_path = self.file_path.replace("Desktop", desktop_path)
             if self.file_path == "":
                 code_snippet = f"import os\nos.system('start {self.APP}')"
@@ -104,10 +103,10 @@ class OpenFile:
                 return True
 
             except Exception as e:
-                print_with_color(f"An error occurred: {e}", "red")
+                utils.print_with_color(f"An error occurred: {e}", "red")
                 return False
         else:
-            print_with_color(f"Third party APP: {self.APP} is not supported yet.", "green")
+            utils.print_with_color(f"Third party APP: {self.APP} is not supported yet.", "green")
             return False
 
     def check_open_status(self) -> bool:
@@ -123,6 +122,7 @@ class OpenFile:
         for proc in psutil.process_iter(['name']):
             if proc.info['name'] in likely_process_names:
                 self.openstatus = True
+                print(f"{self.APP} is already open.")
                 return
         self.openstatus = False
     

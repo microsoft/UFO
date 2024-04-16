@@ -8,6 +8,7 @@ import psutil
 from pywinauto import Desktop
 
 from ...config.config import Config
+from .openfile import AppMappings
 
 
 configs = Config.get_instance().config_data
@@ -156,6 +157,18 @@ def replace_newline(input_str : str) -> str:
 
     return result_str
    
+
+def find_window_by_app_name(desktop_windows_dict, app_name):
+    title_pattern = AppMappings.get_app_name(app_name)
+    if title_pattern is None:
+        return None
+    # Search through the windows for a title match
+    for window_id, window_wrapper in desktop_windows_dict.items():
+        if title_pattern in window_wrapper.window_text() or 'Home' in window_wrapper.window_text() and title_pattern == "Explorer":
+            return window_wrapper
+    print("Window not found.")
+    return None
+
 
 def get_application_name(window) -> str:
     """
