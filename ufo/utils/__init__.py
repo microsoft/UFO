@@ -196,7 +196,9 @@ def LazyImport(module_name:str):
     return globals()[global_name]
 
 def find_desktop_path() -> Optional[str]:
-    # Check if OneDrive desktop is used
+    '''
+    Find the desktop path of the user.
+    '''
     onedrive_path = os.environ.get('OneDrive')
     if onedrive_path:
         onedrive_desktop = os.path.join(onedrive_path, 'Desktop')

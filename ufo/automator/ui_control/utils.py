@@ -159,6 +159,11 @@ def replace_newline(input_str : str) -> str:
    
 
 def find_window_by_app_name(desktop_windows_dict, app_name):
+    '''
+    Find the window on windows control panel by the app name.
+    :param desktop_windows_dict: The windows on the desktop.
+    :param app_name: The app name to find.
+    '''
     title_pattern = AppMappings.get_app_name(app_name)
     if title_pattern is None:
         return None
