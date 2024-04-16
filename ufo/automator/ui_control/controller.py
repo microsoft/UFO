@@ -8,6 +8,8 @@ from ...config.config import Config
 from ...utils import print_with_color
 from .utils import get_control_info
 
+from typing import Dict
+
 
 configs = Config.get_instance().config_data
 
@@ -34,14 +36,8 @@ class UIController:
         self.application = application
 
 
-
-    def get_method(self, method_name:str) -> callable:
-        """
-        Get the method of the control element.
-        :param method_name: The name of the method.
-        :return: The method of the control element.
-        """
-        method_name = str(method_name)
+    @property
+    def registry(self) -> Dict:
 
         mappping = {
             "click_input": self.__click_input,
@@ -52,7 +48,18 @@ class UIController:
             "": self.__no_action
         }
 
-        return mappping.get(method_name.lower(), None)
+        return mappping
+
+
+    def get_method(self, method_name:str) -> callable:
+        """
+        Get the method of the control element.
+        :param method_name: The name of the method.
+        :return: The method of the control element.
+        """
+        method_name = str(method_name)
+
+        return self.registry.get(method_name.lower(), None)
     
 
     def execution(self, method_name:str, args_dict:dict) -> str:

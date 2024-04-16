@@ -10,8 +10,11 @@ from ..prompter.agent_prompter import (HostAgentPrompter,
                                        AppAgentPrompter)
 from .basic import BasicAgent, Memory
 
+
 # Lazy import the retriever factory to aviod long loading time.
 retriever_factory = utils.LazyImport("..rag.retriever_factory")
+
+
 
 
 class HostAgent(BasicAgent):
@@ -156,7 +159,7 @@ class AppAgent(BasicAgent):
 
         return appagent_prompt_message
     
-
+    
 
     def print_response(self, response_dict: Dict) -> None:
         """

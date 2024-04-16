@@ -21,26 +21,26 @@ class BasicPrompter(ABC):
         """
         self.is_visual = is_visual
         if prompt_template:
-            self.prompt_template = self.load_prompt_template(prompt_template)
+            self.prompt_template = self.load_prompt_template(prompt_template, is_visual)
         else:
             self.prompt_template = ""
         if example_prompt_template:
-            self.example_prompt_template = self.load_prompt_template(example_prompt_template)
+            self.example_prompt_template = self.load_prompt_template(example_prompt_template, is_visual)
         else:
             self.example_prompt_template = ""
 
 
 
-    def load_prompt_template(self, template_path: str) -> dict:
+    def load_prompt_template(self, template_path: str, is_visual=None) -> dict:
         """
         Load the prompt template.
         :return: The prompt template.
         """
 
-        if self.is_visual == None:
+        if is_visual == None:
             path = template_path
         else:
-            path = template_path.format(mode = "visual" if self.is_visual == True else "nonvisual")
+            path = template_path.format(mode = "visual" if is_visual == True else "nonvisual")
         
         if os.path.exists(path):
             try:

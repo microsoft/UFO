@@ -1,9 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+from ..config.config import Config
 from .basic import BasicPrompter
 import json
 
+configs = Config.get_instance().config_data
 
 class HostAgentPrompter(BasicPrompter):
     """
@@ -19,7 +21,7 @@ class HostAgentPrompter(BasicPrompter):
         :param api_prompt_template: The path of the api prompt template.
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
-        self.api_prompt_template = self.load_prompt_template(api_prompt_template)
+        self.api_prompt_template = self.load_prompt_template(api_prompt_template, is_visual)
 
 
     def system_prompt_construction(self) -> str:
@@ -155,7 +157,7 @@ class AppAgentPrompter(BasicPrompter):
         :param api_prompt_template: The path of the api prompt template.
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
-        self.api_prompt_template = self.load_prompt_template(api_prompt_template)
+        self.api_prompt_template = self.load_prompt_template(api_prompt_template, is_visual)
 
 
     def system_prompt_construction(self, additional_examples: list =[], tips: list =[]) -> str:
@@ -259,6 +261,34 @@ class AppAgentPrompter(BasicPrompter):
         example_list += [json.dumps(example) for example in additional_examples]
 
         return self.retrived_documents_prompt_helper(header, separator, example_list)
+    
+
+    def get_app_specific_prompt(self, app_root_name: str) -> str:
+        """
+        Get the app specific prompt.
+        :param app_root_name: The app root name.
+        :return: The app specific prompt.
+        """
+
+        # Mapping the app root name to the prompt path key.
+        mapping = {
+            "WINWORD.EXE": "WORD_API_PROMPT",
+            "EXCEL.EXE": "EXCEL_API_PROMPT",
+            "POWERPNT.EXE": "POWERPOINT_API_PROMPT",
+            "olk.exe": "OUTLOOK_API_PROMPT"
+        }
+
+        # Get the prompt path key.
+        prompt_path_key = mapping.get(app_root_name, "")
+        prompt_path = configs.get(prompt_path_key, "")
+
+        # Load the app specific prompt.
+        if prompt_path:
+            app_specific_prompt = self.load_prompt_template(prompt_path, None)
+        else:
+            app_specific_prompt = ""
+
+        return app_specific_prompt
 
 
     def api_prompt_helper(self, verbose: int = 1) -> str:

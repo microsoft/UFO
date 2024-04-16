@@ -1,0 +1,11 @@
+InsertTable:
+  summary: |-
+    "InsertTable" is to insert a table to a Word document.
+  usage: |-
+    [1] API call: insert_table(rows: int, columns: int) 
+    [2] Args:
+      - rows: The number of rows in the table.
+      - columns: The number of columns in the table.
+    [3] Example: insert_table(rows=3, columns=3)
+    [4] Available control item: The Document control item in the Word app.
+  

@@ -21,7 +21,7 @@ class DemonstrationPrompter(BasicPrompter):
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
         self.api_prompt_template = self.load_prompt_template(
-            api_prompt_template)
+            api_prompt_template, is_visual)
 
     def system_prompt_construction(self) -> str:
         """
