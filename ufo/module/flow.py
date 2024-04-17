@@ -192,7 +192,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             utils.print_with_color("Required Application window is not available.", "red")
             return
 
-        image_url, annotation_dict, control_info = self.screenshots_and_control_info_helper()
+        image_url, annotation_dict, control_info, annotation_coor_dict, screenshot = self.screenshots_and_control_info_helper()
         
 
         if configs["RAG_EXPERIENCE"]:
@@ -210,9 +210,15 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         examples = experience_examples + demonstration_examples
         tips = experience_tips + demonstration_tips
 
+        ## Filter the control info
+        filtered_control_info =  self.AppAgent.control_filter(control_info, self.plan, annotation_coor_dict, screenshot, configs["CONTROL_FILTER_TYPE"].lower(), 
+                                                                configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"], configs["CONTROL_FILTER_TOP_K_SEMANTIC"], 
+                                                                configs["CONTROL_FILTER_MODEL_ICON_NAME"], configs["CONTROL_FILTER_TOP_K_ICON"])
+        
+        
         external_knowledge_prompt = self.AppAgent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
         appagent_prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, image_url, self.request_history, self.action_history, 
-                                                                            control_info, self.plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
+                                                                            filtered_control_info, self.plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
         
         self.request_logger.debug(json.dumps({"step": self._step, "prompt": appagent_prompt_message, "status": ""}))
 
@@ -331,7 +337,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
     def screenshots_and_control_info_helper(self) -> tuple:
         """
         Helper function for taking screenshots.
-        return: The image url, the annotation dict, and the control info.
+        return: The image url, the annotation dict with coordinate, the screenshot and the control info.
         """
 
         screenshot_save_path = self.log_path + f"action_step{self._step}.png"
@@ -344,7 +350,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         else:
             control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
             
-        annotation_dict, _, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
+        annotation_dict, annotation_coor_dict, screenshot, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
         control_info = control.get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
         
         image_url = []
@@ -363,7 +369,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             screenshot_annotated_url = utils.encode_image_from_path(annotated_screenshot_save_path)
             image_url += [screenshot_url, screenshot_annotated_url]
 
-        return image_url, annotation_dict, control_info
+        return image_url, annotation_dict, control_info, annotation_coor_dict, screenshot
 
     
 

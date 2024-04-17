@@ -3,6 +3,8 @@
 
 
 from typing import Dict, List, Type
+from PIL import Image
+import re
 
 from .. import utils
 from ..automator import puppeteer
@@ -12,6 +14,7 @@ from .basic import BasicAgent, Memory
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever_factory = utils.LazyImport("..rag.retriever_factory")
+control_filter = utils.LazyImport("..automator.ui_control.control_filter")
 
 
 class HostAgent(BasicAgent):
@@ -296,3 +299,74 @@ class AppAgent(BasicAgent):
         :return: The human demonstration retriever.
         """
         self.human_demonstration_retriever = retriever_factory.DemonstrationRetriever(db_path)
+        
+    def control_filter(self, control_info: list, plan: str, annotation_coor_dict: dict, screenshot: Image, control_filter_type:str,
+                        semantic_model_name, semantic_top_k, icon_model_name, icon_top_k) -> list:
+        """
+        Filters the control information based on the specified control filter type.
+
+        Args:
+            control_info (list): The list of control information to be filtered.
+            plan (str): The plan string.
+            annotation_coor_dict (dict): The dictionary containing annotation coordinates.
+            screenshot (Image): The screenshot image.
+            control_filter_type (str): The type of control filter to be applied.
+            semantic_model_name: The name of the semantic model.
+            semantic_top_k: The top k value for semantic filtering.
+            icon_model_name: The name of the icon model.
+            icon_top_k: The top k value for icon filtering.
+
+        Returns:
+            list: The filtered control information.
+
+        Raises:
+            ValueError: If an unsupported control filter type is provided.
+        """
+        is_text_required = 'text' in control_filter_type
+        is_semantic_required = 'semantic' in control_filter_type
+        is_icon_required = 'icon' in control_filter_type
+        
+        if control_filter_type and not (is_text_required or is_semantic_required or is_icon_required):
+            raise ValueError(f"Unsupported CONTROL_FILTER_TYPE: {control_filter_type}")
+
+        if not control_filter_type:
+            return control_info
+        else:
+            filtered_control_info = []
+            
+            keywords = self.plan_parse(plan)
+            
+            if is_text_required:
+                control_filter.TextModel.control_filter(filtered_control_info, control_info, keywords)
+            
+            if is_semantic_required:
+                model_semantic  = control_filter.SemanticModel(semantic_model_name)
+                
+                model_semantic.control_filter(filtered_control_info, control_info, keywords, semantic_top_k)
+            
+            if is_icon_required:                
+                model_icon = control_filter.IconModel(icon_model_name)
+
+                model_icon.control_filter(filtered_control_info, control_info, annotation_coor_dict, screenshot, keywords, icon_top_k)
+
+        return filtered_control_info
+
+    def plan_parse(self, plan):
+            """
+            Parses a plan and extracts keywords.
+
+            Args:
+                plan (str): The plan to be parsed.
+
+            Returns:
+                list: A list of keywords extracted from the plan.
+            """
+            plans = plan.split("\n")
+            keywords = []
+            for plan in plans:
+                words = plan.replace("'", "").strip(".").split()
+                words = [word for word in words if word.isalpha() or bool(re.fullmatch(r'[\u4e00-\u9fa5]+', word))]
+                keywords.extend(words)
+            return keywords
+
+    

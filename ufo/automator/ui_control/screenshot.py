@@ -161,10 +161,10 @@ def control_annotations(window:str, screenshot_save_path:str, annotated_screensh
     :param color_diff: Whether to use color difference to annotate different control type.
     :param color_default: The default color of the annotation.
     :param is_save: Whether to save the screenshot and annotated screenshot.
-    :return: The dictionary of the annotations and the annotated screenshot.
+    :return: The dictionary of the annotations with coordinates and the annotated screenshot.
     """
 
-    annotation_dict = {}
+    annotation_dict, annotation_coor_dict = {}, {}
     window_rect = window.rectangle()
     screenshot = window.capture_as_image()
     screenshot_annotated = screenshot.copy()
@@ -185,11 +185,13 @@ def control_annotations(window:str, screenshot_save_path:str, annotated_screensh
             label_text = number_to_letter(i)
             screenshot_annotated = draw_rectangles_controls(screenshot_annotated, adjusted_coordinate, label_text, button_color=color_dict.get(control.element_info.control_type, color_default) if color_diff else color_default)
         annotation_dict[label_text] = control
+        annotation_coor_dict[label_text] = adjusted_rect
+        
 
     if is_save:
         screenshot.save(screenshot_save_path)
         screenshot_annotated.save(annotated_screenshot_save_path)
-    return annotation_dict, screenshot, screenshot_annotated
+    return annotation_dict, annotation_coor_dict, screenshot, screenshot_annotated
 
 
 
