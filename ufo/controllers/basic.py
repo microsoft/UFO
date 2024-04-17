@@ -2,9 +2,7 @@
 # Licensed under the MIT License.
 
 from abc import ABC, abstractmethod
-from collections import deque
 from typing import Dict, List, Type
-from .ui_control.controller import UIAutomator
 
 
 class ReceiverBasic(ABC):
