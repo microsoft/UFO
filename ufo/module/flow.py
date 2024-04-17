@@ -211,7 +211,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         tips = experience_tips + demonstration_tips
 
         ## Filter the control info
-        filtered_control_info =  self.AppAgent.control_filter(control_info, self.plan, annotation_coor_dict, screenshot, configs["CONTROL_FILTER_TYPE"].lower(), 
+        filtered_control_info =  self.AppAgent.control_filter(control_info, self.plan, annotation_coor_dict, screenshot, configs["CONTROL_FILTER_TYPE"], 
                                                                 configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"], configs["CONTROL_FILTER_TOP_K_SEMANTIC"], 
                                                                 configs["CONTROL_FILTER_MODEL_ICON_NAME"], configs["CONTROL_FILTER_TOP_K_ICON"])
         

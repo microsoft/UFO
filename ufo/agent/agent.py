@@ -300,7 +300,7 @@ class AppAgent(BasicAgent):
         """
         self.human_demonstration_retriever = retriever_factory.DemonstrationRetriever(db_path)
         
-    def control_filter(self, control_info: list, plan: str, annotation_coor_dict: dict, screenshot: Image, control_filter_type:str,
+    def control_filter(self, control_info: list, plan: str, annotation_coor_dict: dict, screenshot: Image, control_filter_type:list,
                         semantic_model_name, semantic_top_k, icon_model_name, icon_top_k) -> list:
         """
         Filters the control information based on the specified control filter type.
@@ -310,7 +310,7 @@ class AppAgent(BasicAgent):
             plan (str): The plan string.
             annotation_coor_dict (dict): The dictionary containing annotation coordinates.
             screenshot (Image): The screenshot image.
-            control_filter_type (str): The type of control filter to be applied.
+            control_filter_type (list): The type of control filter to be applied.
             semantic_model_name: The name of the semantic model.
             semantic_top_k: The top k value for semantic filtering.
             icon_model_name: The name of the icon model.
@@ -322,9 +322,11 @@ class AppAgent(BasicAgent):
         Raises:
             ValueError: If an unsupported control filter type is provided.
         """
-        is_text_required = 'text' in control_filter_type
-        is_semantic_required = 'semantic' in control_filter_type
-        is_icon_required = 'icon' in control_filter_type
+        
+        control_filter_type_lower = [control_filter_type_lower.lower() for control_filter_type_lower in control_filter_type]
+        is_text_required = 'text' in control_filter_type_lower
+        is_semantic_required = 'semantic' in control_filter_type_lower
+        is_icon_required = 'icon' in control_filter_type_lower
         
         if control_filter_type and not (is_text_required or is_semantic_required or is_icon_required):
             raise ValueError(f"Unsupported CONTROL_FILTER_TYPE: {control_filter_type}")
