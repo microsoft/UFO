@@ -59,17 +59,6 @@ class ReceiverBasic(ABC):
         return {command_name: self for command_name in self.supported_command_names}
 
 
-class ReceiverFactory(ABC):
-    """
-    The abstract receiver factory interface.
-    """
-
-    @abstractmethod  
-    def create_receiver(self, *args, **kwargs):  
-        pass 
-
-
-
 class CommandBasic(ABC):
     """
     The abstract command interface.
@@ -96,115 +85,17 @@ class CommandBasic(ABC):
     @property
     def name(self):
         return self.__class__.__name__
+
+
+
+class ReceiverFactory(ABC):
+    """
+    The abstract receiver factory interface.
+    """
+
+    @abstractmethod  
+    def create_receiver(self, *args, **kwargs):  
+        pass 
     
-
-
-class AutomatorBasic(ABC):
-    """
-    The base class for Automator.
-    """
-
-    def __init__(self) -> None:
-        """
-        Initialize the Automator.
-        """
-        self.command_queue = deque()
-
-
-    @abstractmethod
-    def create_receiver(self):
-        """
-        Create the receiver.
-        :return: The receiver.
-        """
-        pass
-
-    @abstractmethod
-    def register_commands(self):
-        """
-        Register the commands.
-        """
-        pass
-
-
-    def get_supported_commands(self) -> List:
-        """
-        Get the supported commands.
-        :return: The supported commands.
-        """
-        return list(self.commands.keys())
-
-
-    def execution(self, command_name:str, params:Dict, *args, **kwargs) -> str:
-        """
-        Execute the command.
-        :param command_name: The command name.
-        :param params: The arguments.
-        :return: The execution result.
-        """
-
-        command = self.commands.get(command_name.lower(), None)
-        if command is None:
-            return f"Command {command_name} is not supported."
-        
-        return command(self.receiver, params, *args, **kwargs).execute()
-    
-
-    @staticmethod
-    def get_command_string(command_name:str, params:Dict):
-        """
-        Generate a function call string.
-        :param func: The function name.
-        :param args: The arguments as a dictionary.
-        :return: The function call string.
-        """
-        # Format the arguments
-        args_str = ', '.join(f'{k}={v!r}' for k, v in params.items())
-
-        # Return the function call string
-        return f'{command_name}({args_str})'
-    
-
-
-class InvokerBasic(ABC):
-    """
-    The base class for Automator Invoker.
-    """
-
-    def __init__(self) -> None:
-        """
-        Initialize the Automator Invoker.
-        :param automator: The Automator.
-        """
-        self.queue = deque()
-
-
-    def execute_command(self, command_name:str, params:Dict, *args, **kwargs) -> str:
-        """
-        Execute the command.
-        :param command_name: The command name.
-        :param params: The arguments.
-        :return: The execution result.
-        """
-        return self.automator.execution(command_name, params, *args, **kwargs)
-
-
-    def get_supported_commands(self) -> List:
-        """
-        Get the supported commands.
-        :return: The supported commands.
-        """
-        return self.automator.get_supported_commands()
-
-
-    @staticmethod
-    def get_command_string(command_name:str, params:Dict):
-        """
-        Generate a function call string.
-        :param func: The function name.
-        :param args: The arguments as a dictionary.
-        :return: The function call string.
-        """
-        return AutomatorBasic.get_command_string(command_name, params)
     
 
