@@ -3,12 +3,14 @@
 
 
 from typing import Dict, List, Type
-
+import time
 from .. import utils
 from ..automator import puppeteer
 from ..prompter.agent_prompter import (HostAgentPrompter,
                                        AppAgentPrompter)
 from .basic import BasicAgent, Memory
+from ..automator.ui_control import controller as ui_file_control
+from ..automator.ui_control import utils as control
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever_factory = utils.LazyImport("..rag.retriever_factory")
@@ -19,7 +21,7 @@ class HostAgent(BasicAgent):
     The HostAgent class the manager of AppAgents.
     """
 
-    def __init__(self, name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
+    def __init__(self, name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, allow_openapp = False) -> None:
         """
         Initialize the HostAgent.
         :name: The name of the agent.
@@ -29,7 +31,7 @@ class HostAgent(BasicAgent):
         :param api_prompt: The API prompt file path.
         """
         super().__init__(name=name)
-        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
+        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, allow_openapp)
         self._memory = Memory()
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
@@ -38,7 +40,7 @@ class HostAgent(BasicAgent):
 
 
 
-    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> HostAgentPrompter:
+    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, allow_openapp = False) -> HostAgentPrompter:
         """
         Get the prompt for the agent.
         :param is_visual: The flag indicating whether the agent is visual or not.
@@ -47,7 +49,7 @@ class HostAgent(BasicAgent):
         :param api_prompt: The API prompt file path.
         :return: The prompter instance.
         """
-        return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
+        return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, allow_openapp)
     
 
     def message_constructor(self, image_list: List, request_history: str, action_history: str, os_info: str, plan: str, request: str) -> list:
@@ -69,6 +71,17 @@ class HostAgent(BasicAgent):
         
         return hostagent_prompt_message
     
+    def app_file_manager(self, app_file_info: dict):
+        file_manager = ui_file_control.FileController()
+        results = file_manager.execute_code(app_file_info)
+        APP_name = app_file_info["APP"]
+        time.sleep(5)
+        desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
+        if not results:
+            self.status = "ERROR in openning the application or file."
+            return None
+        app_window = control.find_window_by_app_name(desktop_windows_dict, APP_name)
+        return app_window
 
     def print_response(self, response_dict: Dict):
         """
@@ -156,6 +169,7 @@ class AppAgent(BasicAgent):
 
         return appagent_prompt_message
     
+
 
 
     def print_response(self, response_dict: Dict) -> None:

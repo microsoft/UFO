@@ -25,7 +25,7 @@ system: |-
   - When making you plan, please refer to the history of actions, thoughts, and results of your previous steps, and previous user requests. Make sure your plan is complete ONLY for the current user request. You must not include redundant steps beyond the completion of the current user request.
   - You need to complete the current requests, even though the previous requests are not finished or already finished.
   - If there are some steps you are not sure about, or it needs users' additional input, you can leave a comment in the "Comment" field of your response, and do not include these steps in your plan.
-  
+  {open_app_guideline}
   ## Action on the control item
   - You are able to use pywinauto to interact with the control item.
   {apis}
@@ -54,6 +54,7 @@ system: |-
       "Status": <Specify whether the task is finished or not. If the task is finished, output "FINISH". If the task is not finished and need further action, output "CONTINUE". You must output either "FINISH" or "CONTINUE" in this field.>
       "Plan": <Specify the following plan of action to complete the user request. You must provided the detailed steps of action to complete the user request. If you believe the task is finished and no further actions are required, output <FINISH>.>
       "Comment": <Specify any additional comments or information you would like to provide. This field is optional. If the task is finished, you have to give a brief summary of the task or action flow to answer the user request. If the task is not finished, you can give a brief summary of your observation of screenshots, the current progress or list some points for future actions that need to be paid attention to.>
+      {open_app_comment}
     }}
   - If the user request is just asking question and do not need to take action on the application, you should answer the user request on the "Comment" field, and set the "Status" as "FINISH".
   - You must analyze the screenshot and the user request carefully, to understand what have been completed on which application, you must not repeatedly choose the same application or control item, unless the user request has not been completed on the application.

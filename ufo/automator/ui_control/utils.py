@@ -8,7 +8,6 @@ import psutil
 from pywinauto import Desktop
 
 from ...config.config import Config
-from .openfile import AppMappings
 
 
 configs = Config.get_instance().config_data
@@ -189,3 +188,46 @@ def get_application_name(window) -> str:
         return process.name()
     except psutil.NoSuchProcess:
         return ""
+    
+class AppMappings:
+    """
+    Mappings for OpenFile class.
+    app_name_map: a mapping from the key/command to the name of the app.
+    app_process_map: a mapping from the key/command to the process name of the app."""
+    app_name_map = {
+        "powerpnt": "PowerPoint",
+        "winword": "Word",
+        "outlook": "Outlook",
+        "explorer": "Explorer",
+        "notepad": "Notepad",
+        "msteams:": "Microsoft Teams",
+        "ms-todo:": "Microsoft To Do",
+        "edge": "Microsoft Edge",
+        "chrome": "Google Chrome",
+        "firefox": "Firefox",
+        "excel": "Excel",
+        "ms-settings:": "Settings"
+    }
+
+    app_process_map = {
+        "powerpnt": ["POWERPNT.EXE", "powerpnt"],
+        "winword": ["WINWORD.EXE", "winword"],
+        "outlook": ["OUTLOOK.EXE", "outlook"],
+        "explorer": ["explorer.exe"],
+        "notepad": ["notepad.exe", "notepad"],
+        "msteams:": ["Teams.exe", "teams", "msteams"],
+        "ms-todo:": ["Todo.exe", "todo", "ms-todo"],
+        "edge": ["msedge.exe", "edge"],
+        "chrome": ["chrome.exe", "chrome"],
+        "firefox": ["firefox.exe", "firefox"],
+        "excel": ["EXCEL.EXE", "excel"],
+        "ms-settings:": ["SystemSettings.exe", "ms-settings"],
+    }
+
+    @classmethod
+    def get_app_name(cls, key):
+        return cls.app_name_map.get(key, "Unknown App")
+
+    @classmethod
+    def get_process_names(cls, key):
+        return cls.app_process_map.get(key, [key])

@@ -12,7 +12,7 @@ class BasicPrompter(ABC):
     The BasicPrompter class is the abstract class for the prompter.
     """
 
-    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str):
+    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, allow_openapp: bool):
         """
         Initialize the BasicPrompter.
         :param is_visual: Whether the request is for visual model.
@@ -28,6 +28,7 @@ class BasicPrompter(ABC):
             self.example_prompt_template = self.load_prompt_template(example_prompt_template)
         else:
             self.example_prompt_template = ""
+        self.allow_openapp = allow_openapp
 
 
 

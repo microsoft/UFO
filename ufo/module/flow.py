@@ -15,7 +15,6 @@ from ..agent.agent import AppAgent, HostAgent
 from ..agent.basic import MemoryItem
 from ..automator.ui_control import screenshot as screen
 from ..automator.ui_control import utils as control
-from ..automator.ui_control import openfile
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
 
@@ -45,10 +44,8 @@ class Session(object):
         self.logger = self.initialize_logger(self.log_path, "response.log")
         self.request_logger = self.initialize_logger(self.log_path, "request.log")
         self.allow_openapp = configs["ALLOW_OPENAPP"]
-        if self.allow_openapp:
-            self.HostAgent = HostAgent("HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT_OPENAPP_ENABLED"], configs["HOSTAGENT_EXAMPLE_PROMPT_OPENAPP_ENABLED"], configs["API_PROMPT"])
-        else:
-            self.HostAgent = HostAgent("HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"], configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        # 整合prompt
+        self.HostAgent = HostAgent("HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"], configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.allow_openapp)
         self.AppAgent = None
         
 
@@ -139,19 +136,11 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
                 if self.application == "" or not app_window:
                     return       
             app_window = None
+            
             if self.app_to_open is not None:
-                file_manager = openfile.OpenFile()
-                results = file_manager.execute_code(self.app_to_open)
-                APP_name = self.app_to_open["APP"]
-                time.sleep(5)
-                desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
-                if not results:
-                    self.status = "ERROR in openning the application or file."
-                    return
-            if self.app_to_open is None:
-                app_window = desktop_windows_dict[application_label]
+                app_window = self.HostAgent.app_file_manager(self.app_to_open)
             else:
-                app_window = control.find_window_by_app_name(desktop_windows_dict, APP_name)
+                app_window = desktop_windows_dict.get(application_label)
             self.application = control.get_application_name(app_window) 
             try:
                 app_window.is_normal()
