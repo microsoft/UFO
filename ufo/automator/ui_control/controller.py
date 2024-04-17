@@ -253,10 +253,10 @@ class FileController():
             else:
                 if self.is_file_open_in_app():
                     return True
-        if self.APP in self.win_app:
+        if self.APP in self.win_app: #if fine with the app, then open it
             if "Desktop" in self.file_path:
                 desktop_path = utils.find_desktop_path()
-                self.file_path = self.file_path.replace("Desktop", desktop_path)
+                self.file_path = self.file_path.replace("Desktop", desktop_path) #locate actual desktop path
             if self.file_path == "":
                 code_snippet = f"import os\nos.system('start {self.APP}')"
             else:
@@ -264,7 +264,7 @@ class FileController():
             code_snippet = code_snippet.replace("\\", "\\\\")
             try:
                 exec(code_snippet, globals())
-                time.sleep(3)
+                time.sleep(3) #wait for the app to boot
                 return True
 
             except Exception as e:
@@ -283,7 +283,7 @@ class FileController():
             self.openstatus = False
             return
         app_map = AppMappings()
-        likely_process_names = app_map.get_process_names(self.APP.lower())
+        likely_process_names = app_map.get_process_names(self.APP.lower())  # Get the likely process names of the app
         for proc in psutil.process_iter(['name']):
             if proc.info['name'] in likely_process_names:
                 self.openstatus = True
@@ -304,7 +304,7 @@ class FileController():
             file_name = self.file_path.split("\\")[-1]
         desktop = Desktop(backend="uia")
         for window in desktop.windows():
-            if app_name in window.window_text() and file_name in window.window_text():
+            if app_name in window.window_text() and file_name in window.window_text():      #make sure the file is successfully opened in the app
                 return True
         return False
 

@@ -72,6 +72,11 @@ class HostAgent(BasicAgent):
         return hostagent_prompt_message
     
     def app_file_manager(self, app_file_info: dict):
+        '''
+        Open the application or file for the user.
+        :param app_file_info: The information of the application or file. {'APP': name of app, 'file_path': path}
+        :return: The window of the application.
+        '''
         file_manager = ui_file_control.FileController()
         results = file_manager.execute_code(app_file_info)
         APP_name = app_file_info["APP"]
