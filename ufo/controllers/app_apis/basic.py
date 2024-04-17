@@ -2,13 +2,15 @@
 # Licensed under the MIT License.
 
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from typing import Dict, List
+from ..basic import ReceiverBasic, CommandBasic, ReceiverFactory
+from .word.wordclient import WordWinCOMReceiver
 
 import win32com.client
 
 
-class WinCOMClient(ABC):
+class WinCOMReceiverBasic(ReceiverBasic):
     """
     The base class for Windows COM client.
     """
@@ -20,18 +22,23 @@ class WinCOMClient(ABC):
         :param app_root_name: The app root name.
         :param process_name: The process name.
         """
+        super().__init__()
 
         self.app_root_name = app_root_name
         self.process_name = process_name
 
-        self.clsid = self.app_root_mappping()
-
-        if self.clsid is None:
-            raise ValueError(f"App root name {app_root_name} is not supported.")
+        
         
         self.client = win32com.client.Dispatch(self.clsid)
-        self.object = self.get_object_from_process_name()
+        self.com_object = self.get_object_from_process_name()
 
+
+    @abstractmethod
+    def get_default_command_registry(self):
+        """
+        The default command registry.
+        """
+        pass
 
 
     @abstractmethod
@@ -43,31 +50,13 @@ class WinCOMClient(ABC):
         pass
 
 
-
-    @property
     @abstractmethod
-    def registry(self) -> Dict[str, str]:
+    def get_default_command_registry(self) -> Dict:
         """
         Get the method registry of the COM object.
         """
         pass
-
-
-
-    def app_root_mappping(self) -> str:
-        """
-        Map the app root to the corresponding app.
-        :return: The CLSID of the COM object.
-        """
-        
-        win_com_map = {
-            "WINWORD.EXE": "Word.Application",
-            "EXCEL.EXE": "Excel.Application",
-            "POWERPNT.EXE": "PowerPoint.Application",
-            "olk.exe": "Outlook.Application"
-        }
-
-        return win_com_map.get(self.app_root_name, None)
+    
     
 
     def get_suffix_mapping(self) -> Dict[str, str]:
@@ -102,17 +91,6 @@ class WinCOMClient(ABC):
 
         return max(object_name_list, key=lambda x: self.longest_common_substring_length(clean_process_name, x))
     
-    
-    
-    def get_method(self, method_name: str) -> callable:
-        """
-        Get the method from the COM object.
-        :param method_name: The method name.
-        :return: The method.
-        """
-        method_name = str(method_name)
-        return self.registry.get(method_name.lower(), None)
-
 
 
     @staticmethod
@@ -141,6 +119,67 @@ class WinCOMClient(ABC):
                     dp[i][j] = 0
         
         return max_length
+    
+
+
+class WinCOMCommand(CommandBasic):
+    """
+    The abstract command interface.
+    """
+
+    def __init__(self, receiver: WinCOMReceiverBasic, params=None) -> None:
+        """
+        Initialize the command.
+        :param receiver: The receiver of the command.
+        """
+        self.receiver = receiver
+        self.params = params if params is not None else {}
+
+    @abstractmethod  
+    def execute(self):  
+        pass
+
+
+
+class COMReceiverFactory(ReceiverFactory):  
+    def create_receiver(self, app_root_name: str, process_name: str) -> WinCOMReceiverBasic:
+        """
+        Create the wincom receiver.
+        :param app_root_name: The app root name.
+        :param process_name: The process name.
+        :return: The receiver.
+        """
+        win_com_client_mapping = {  
+            "WINWORD.EXE": WordWinCOMReceiver  
+        }
+
+        com_receiver = win_com_client_mapping.get(app_root_name, None)
+        if com_receiver is None:
+            raise ValueError(f"Receiver for app root {app_root_name} is not found.")
+        
+
+        clsid = self.app_root_mappping(app_root_name)
+
+        if clsid is None:
+            raise ValueError(f"App root name {app_root_name} is not supported.")
+        
+        return com_receiver(app_root_name, process_name)
+    
+
+    def app_root_mappping(self, app_root_name:str) -> str:
+        """
+        Map the app root to the corresponding app.
+        :return: The CLSID of the COM object.
+        """
+        
+        win_com_map = {
+            "WINWORD.EXE": "Word.Application",
+            "EXCEL.EXE": "Excel.Application",
+            "POWERPNT.EXE": "PowerPoint.Application",
+            "olk.exe": "Outlook.Application"
+        }
+
+        return win_com_map.get(app_root_name, None)
     
 
 

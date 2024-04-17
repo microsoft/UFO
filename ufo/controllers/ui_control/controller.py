@@ -6,18 +6,25 @@ import warnings
 
 from ...config.config import Config
 from ...utils import print_with_color
-from ..basic import AutomatorBasic
+from ..basic import CommandBasic, ReceiverBasic, ReceiverFactory
 from .utils import get_control_info
 
 from typing import Dict, List
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 
 configs = Config.get_instance().config_data
 
 
 
-class ControlReceiver:
-    def __init__(self, control, application):  
+class ControlReceiver(ReceiverBasic):
+    def __init__(self, control, application):
+        """
+        Initialize the control receiver.
+        :param control: The control element.
+        :param application: The application element.
+        """
+        super().__init__()
+
         self.control = control
 
         if control:
@@ -25,6 +32,21 @@ class ControlReceiver:
             self.control.set_focus()
             self.wait_enabled()
         self.application = application
+
+
+    def get_default_command_registry(self):
+        """
+        The default command registry.
+        """
+        return {
+            "click_input": ClickInputCommand,
+            "summary": SummaryCommand,
+            "set_edit_text": SetEditTextCommand,
+            "texts": GetTextsCommand,
+            "wheel_mouse_input": WheelMouseInputCommand,
+            "annotation": AnnotationCommand,
+            "": NoActionCommand
+        }
 
 
     def atomic_execution(self, method_name:str, params:Dict) -> str:
@@ -102,7 +124,6 @@ class ControlReceiver:
                 return f"An error occurred: {e}"
  
 
-
     def texts(self) -> str:
         """
         Get the text of the control element.
@@ -173,8 +194,17 @@ class ControlReceiver:
                 break
 
 
+class UIControlReceiverFactory(ReceiverFactory):
+    """
+    The factory class for the control receiver.
+    """
+    def create_receiver(self, control, application):  
+        return ControlReceiver(control, application)
+    
 
-class ControlCommand(ABC):
+
+
+class ControlCommand(CommandBasic):
     """
     The abstract command interface.
     """
@@ -190,16 +220,6 @@ class ControlCommand(ABC):
     @abstractmethod  
     def execute(self):  
         pass
-
-    def undo(self):
-        pass
-
-    def redo(self):
-        self.execute()
-    
-    @property
-    def name(self):
-        return self.__class__.__name__
 
 
 
@@ -230,7 +250,6 @@ class AtomicCommand(ControlCommand):
 
 
 
-
 class ClickInputCommand(ControlCommand):
     """
     The click input command class.
@@ -243,7 +262,6 @@ class ClickInputCommand(ControlCommand):
         """
         return self.receiver.click_input(self.params)
 
-    
 
 
 class SummaryCommand(ControlCommand):
@@ -259,7 +277,6 @@ class SummaryCommand(ControlCommand):
         return self.receiver.summary(self.params)
 
     
-
 
 class SetEditTextCommand(ControlCommand):
     """
@@ -302,8 +319,6 @@ class WheelMouseInputCommand(ControlCommand):
         """
         return self.receiver.wheel_mouse_input(self.params)
     
-    
-
 
 class AnnotationCommand(ControlCommand):
     """
@@ -330,7 +345,6 @@ class AnnotationCommand(ControlCommand):
     
     
 
-
 class NoActionCommand(ControlCommand):
     """
     The no action command class.
@@ -343,40 +357,3 @@ class NoActionCommand(ControlCommand):
         """
         return self.receiver.no_action()
     
-
-
-
-class UIAutomator(AutomatorBasic):
-    """
-    The UI Automator class.
-    """
-
-    def __init__(self, control:object, application:object) -> None:
-        """
-        Initialize the UI Automator.
-        """
-        super().__init__()
-        self.control = control
-        self.application = application
-
-    def create_receiver(self) -> ControlReceiver:
-        """
-        Create the receiver.
-        :return: The receiver.
-        """
-        return ControlReceiver(self.control, self.application)
-    
-
-    def register_commands(self):
-        """
-        Register the commands.
-        """
-        self.commands = {
-            "click_input": ClickInputCommand,
-            "summary": SummaryCommand,
-            "set_edit_text": SetEditTextCommand,
-            "texts": GetTextsCommand,
-            "wheel_mouse_input": WheelMouseInputCommand,
-            "annotation": AnnotationCommand,
-            "": NoActionCommand
-        }

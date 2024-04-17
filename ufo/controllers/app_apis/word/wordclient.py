@@ -1,23 +1,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from ..client import WinCOMClient
+from ..basic import WinCOMReceiverBasic, WinCOMCommand
+from typing import Dict
 
 
-class Word(WinCOMClient):
+class WordWinCOMReceiver(WinCOMReceiverBasic):
     """
     The base class for Windows COM client.
     """
-
-
-    def __init__(self, app_root_name: str, process_name: str) -> None:
-        """
-        Initialize the Windows COM client.
-        :param clsid: The CLSID of the COM object.
-        :param interface: The interface of the COM object.
-        """
-        super().__init__(app_root_name, process_name)
-
+    
 
     def get_object_from_process_name(self) -> None:
         """
@@ -34,20 +26,19 @@ class Word(WinCOMClient):
         return None
     
 
-    @property
-    def registry(self) -> dict:
+    def get_default_command_registry(self) -> Dict:
         """
         Get the method registry of the COM object.
         :return: The method registry.
         """
         mappping = {
-            "insert_table": self.__insert_table,
+            "insert_table": InsertTableCommand,
         }
 
         return mappping
     
 
-    def __insert_table(self, rows: int, columns: int) -> object:
+    def insert_table(self, rows: int, columns: int) -> object:
         """
         Insert a table at the end of the document.
         :param rows: The number of rows.
@@ -56,14 +47,27 @@ class Word(WinCOMClient):
         """
 
         # Get the range at the end of the document
-        end_range = self.object.Range()
+        end_range = self.com_object.Range()
         end_range.Collapse(0)  # Collapse the range to the end
 
         # Insert a paragraph break (optional)
         end_range.InsertParagraphAfter()
-        table = self.object.Tables.Add(end_range, rows, columns)
+        table = self.com_object.Tables.Add(end_range, rows, columns)
         table.Borders.Enable = True
 
         return table
+    
+
+
+class InsertTableCommand(WinCOMCommand):
+    """
+    The command to insert a table.
+    """
+    def execute(self):
+        """
+        Execute the command to insert a table.
+        :return: The inserted table.
+        """
+        return self.receiver.insert_table(self.params.get("rows"), self.params.get("columns"))
 
 
