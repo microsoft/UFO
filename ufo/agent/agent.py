@@ -178,7 +178,7 @@ class AppAgent(BasicAgent):
         args = utils.revise_line_breaks(response_dict.get("Args"))
 
         # Generate the function call string
-        action = utils.generate_function_call(function_call, args)
+        action = self.Puppeteer.get_command_string(function_call, args)
 
         utils.print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
         utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
