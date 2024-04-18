@@ -156,21 +156,6 @@ def is_json_serializable(obj):
         return False
 
 
-
-def generate_function_call(func, args):
-    """
-    Generate a function call string.
-    :param func: The function name.
-    :param args: The arguments as a dictionary.
-    :return: The function call string.
-    """
-    # Format the arguments
-    args_str = ', '.join(f'{k}={v!r}' for k, v in args.items())
-
-    # Return the function call string
-    return f'{func}({args_str})'
-
-
 def revise_line_breaks(args: dict):
     """
     Replace '\\n' with '\n' in the arguments.

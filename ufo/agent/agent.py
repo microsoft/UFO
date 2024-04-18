@@ -5,8 +5,7 @@
 from typing import Dict, List, Type
 
 from .. import utils
-# from ..automator import puppeteer
-from ..controller import puppeteer
+from ..automator import puppeteer
 from ..prompter.agent_prompter import (HostAgentPrompter,
                                        AppAgentPrompter)
 from .basic import BasicAgent, Memory
