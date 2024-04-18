@@ -242,7 +242,9 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.AppAgent.print_response(response_json)
 
             # Build the executor for over the control item.
-            ui_controller = self.AppAgent.Puppeteer.create_ui_controller(control_selected)
+            # ui_controller = self.AppAgent.Puppeteer.create_ui_controller(control_selected)
+
+            self.AppAgent.Puppeteer.create_ui_control_receiver(control_selected, self.app_window)
         
 
             # Take screenshot of the selected control
@@ -254,11 +256,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
 
             # Compose the function call and the arguments string.
-            action = utils.generate_function_call(operation, args)
+            action = self.AppAgent.Puppeteer.get_command_string(operation, args)
 
             if self.safe_guard(action, control_text):
                 # Execute the action
-                results = ui_controller.execution(operation, args)
+                # results = ui_controller.execution(operation, args)
+                results = self.AppAgent.Puppeteer.execute_command(operation, args)
                 if not utils.is_json_serializable(results):
                     results = ""
             else:
@@ -293,7 +296,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         # Handle the case when the control item is overlapped and the agent is unable to select the control item. Retake the annotated screenshot.
         if "SCREENSHOT" in self._status.upper():
             utils.print_with_color("Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.", "magenta")
-            self.control_reannotate = ui_controller.annotation(args, annotation_dict)
+            # self.control_reannotate = ui_controller.annotation(args, annotation_dict)
+            self.control_reannotate = self.AppAgent.Puppeteer.execute_command("annotation", args, annotation_dict)
             return
 
         self.control_reannotate = None

@@ -5,7 +5,8 @@
 from typing import Dict, List, Type
 
 from .. import utils
-from ..automator import puppeteer
+# from ..automator import puppeteer
+from ..controller import puppeteer
 from ..prompter.agent_prompter import (HostAgentPrompter,
                                        AppAgentPrompter)
 from .basic import BasicAgent, Memory
@@ -263,7 +264,7 @@ class AppAgent(BasicAgent):
         Create the Puppeteer interface to automate the app.
         :return: The Puppeteer interface.
         """
-        return puppeteer.AppPuppeteer(self._process_name, self._app_root_name, self._ui_control_interface)
+        return puppeteer.AppPuppeteer(self._process_name, self._app_root_name)
 
 
 
