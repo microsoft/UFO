@@ -57,6 +57,7 @@ class ControlReceiver(ReceiverBasic):
         :param params: The arguments of the method.
         :return: The result of the action.
         """
+
         try:
             method = getattr(self.control, method_name)
             result = method(**params)
@@ -77,7 +78,7 @@ class ControlReceiver(ReceiverBasic):
         :param params: The arguments of the click method.
         :return: The result of the click action.
         """
-        return self.atomic_execution(self.control, "click_input", params)
+        return self.atomic_execution("click_input", params)
     
 
     def summary(self, params:Dict):
@@ -104,11 +105,12 @@ class ControlReceiver(ReceiverBasic):
             method_name = "type_keys"
             args = {"keys": params["text"], "pause": 0.1, "with_spaces": True}
         try:
-            result = self.atomic_execution(self.control, method_name, args)
+            result = self.atomic_execution(method_name, args)
             if method_name == "set_text" and args["text"] not in self.control.window_text():
                 raise Exception(f"Failed to use set_text: {args['text']}")
             if configs["INPUT_TEXT_ENTER"] and method_name in ["type_keys", "set_text"]:
-                self.atomic_execution(self.control, "type_keys", args = {"keys": "{ENTER}"})
+
+                self.atomic_execution("type_keys", params={"keys": "{ENTER}"})
             return result
         except Exception as e:
             if method_name == "set_text":
@@ -119,7 +121,7 @@ class ControlReceiver(ReceiverBasic):
                 keys_to_send = clear_text_keys + text_to_type
                 method_name = "type_keys"
                 args = {"keys": keys_to_send, "pause": 0.1, "with_spaces": True}
-                return self.atomic_execution(self.control, method_name, args)
+                return self.atomic_execution(method_name, args)
             else:
                 return f"An error occurred: {e}"
  
@@ -140,7 +142,7 @@ class ControlReceiver(ReceiverBasic):
         :param params: The arguments of the wheel mouse input method.
         :return: The result of the wheel mouse input action.
         """
-        return self.atomic_execution(self.control, "wheel_mouse_input", params)
+        return self.atomic_execution("wheel_mouse_input", params)
     
 
     def no_action(self):
@@ -155,7 +157,7 @@ class ControlReceiver(ReceiverBasic):
     def annotation(self, params:Dict, annotation_dict:Dict) -> List[str]:
         """
         Take a screenshot of the current application window and annotate the control item on the screenshot.
-        :param args_dict: The arguments of the annotation method.
+        :param params: The arguments of the annotation method.
         :param annotation_dict: The dictionary of the control labels.
         """
         selected_controls_labels = params.get("control_labels", [])
@@ -242,7 +244,7 @@ class AtomicCommand(ControlCommand):
         """
         Execute the atomic command.
         :param method_name: The method to execute.
-        :param args_dict: The arguments of the method.
+        :param params: The arguments of the method.
         :return: The result of the atomic command.
         """
         return self.receiver.atomic_execution(self.method_name, self.params)
@@ -288,6 +290,7 @@ class SetEditTextCommand(ControlCommand):
         Execute the set edit text command.
         :return: The result of the set edit text command.
         """
+
         return self.receiver.set_edit_text(self.params)
     
     
@@ -329,7 +332,7 @@ class AnnotationCommand(ControlCommand):
         """
         Initialize the annotation command.
         :param receiver: The receiver of the command.
-        :param args_dict: The arguments of the annotation method.
+        :param params: The arguments of the annotation method.
         :param annotation_dict: The dictionary of the control labels.
         """
         super().__init__(receiver, params)

@@ -32,6 +32,8 @@ class ReceiverBasic(ABC):
         Get the command registry.
         """
         return self.command_registry
+    
+    
 
     def register_command(self, command_name:str, command:Type) -> None:
         """

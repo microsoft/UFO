@@ -5,6 +5,7 @@ from ..basic import WinCOMReceiverBasic, WinCOMCommand
 from typing import Dict
 
 
+
 class WordWinCOMReceiver(WinCOMReceiverBasic):
     """
     The base class for Windows COM client.
@@ -69,5 +70,5 @@ class InsertTableCommand(WinCOMCommand):
         :return: The inserted table.
         """
         return self.receiver.insert_table(self.params.get("rows"), self.params.get("columns"))
-
+    
 

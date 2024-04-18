@@ -3,7 +3,8 @@
 
 from collections import deque
 from .ui_control.controller import ControlReceiver, UIControlReceiverFactory
-from .app_apis.basic import COMReceiverFactory, WinCOMReceiverBasic
+from .app_apis.basic import WinCOMReceiverBasic
+from .app_apis.factory import COMReceiverFactory
 from .basic import ReceiverFactory
 from typing import Dict, List
 
@@ -103,7 +104,7 @@ class AppPuppeteer():
         if command is None:
             raise ValueError(f"Command {command_name} is not supported.")
         
-        return command(self.receiver, params, *args, **kwargs)
+        return command(receiver, params, *args, **kwargs)
     
 
     def execute_command(self, command_name:str, params:Dict, *args, **kwargs) -> str:
