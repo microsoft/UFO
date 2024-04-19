@@ -140,22 +140,6 @@ def get_control_info_dict(window_dict:dict, field_list:List[str]=[]) -> List[dic
     return control_info_list
 
 
-def replace_newline(input_str : str) -> str:
-    """
-    Replace \n with \\n.
-    :param input_str: The string to replace.
-    :return: The replaced string.
-    """
-    # Replace \n with \\n
-    result_str = input_str.replace('\n', '\\n')
-
-    # Check if there are already \\n in the string
-    if '\\\\n' in result_str:
-        # If found, revert \\n to \n
-        result_str = result_str.replace('\\\\n', '\\n')
-
-    return result_str
-   
 
 def get_application_name(window) -> str:
     """

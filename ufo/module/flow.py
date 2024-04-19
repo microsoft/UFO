@@ -9,11 +9,11 @@ import traceback
 
 from art import text2art
 from pywinauto.uia_defines import NoPatternInterfaceError
+from ..automator.ui_control.screenshot import PhotographerFacade
 
 from .. import utils
 from ..agent.agent import AppAgent, HostAgent
 from ..agent.basic import MemoryItem
-from ..automator.ui_control import screenshot as screen
 from ..automator.ui_control import utils as control
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
@@ -47,6 +47,8 @@ class Session(object):
         self.HostAgent = HostAgent("HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"], configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
         self.AppAgent = None
 
+        self.photographer = PhotographerFacade()
+
         self._status = "APP_SELECTION"
         self.application = ""
         self.app_root = ""
@@ -78,7 +80,10 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         utils.print_with_color("Step {step}: Selecting an application.".format(step=self._step), "magenta")
 
         desktop_save_path = self.log_path + f"action_step{self._step}.png"
-        _ = screen.capture_screenshot_multiscreen(desktop_save_path)
+
+
+        self.photographer.capture_desktop_screen_screenshot(all_screens=True, save_path=desktop_save_path)
+
         desktop_screen_url = utils.encode_image_from_path(desktop_save_path)
 
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
@@ -248,7 +253,10 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         
 
             # Take screenshot of the selected control
-            screen.capture_screenshot_controls(self.app_window, [control_selected], control_screenshot_save_path)
+
+
+            self.photographer.capture_app_window_screenshot_with_rectangle(self.app_window, sub_control_list=[control_selected], save_path=control_screenshot_save_path)
+
 
             # Set the result and log the result.
             self.plan = response_json["Plan"]
@@ -348,7 +356,12 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         else:
             control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
             
-        annotation_dict, _, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
+
+        annotation_dict = self.photographer.get_annotation_dict(self.app_window, control_list, annotation_type="number")
+
+        self.photographer.capture_app_window_screenshot(self.app_window, save_path=screenshot_save_path)
+        self.photographer.capture_app_window_screenshot_with_annotation(self.app_window, control_list, annotation_type="number", save_path=annotated_screenshot_save_path)
+
         control_info = control.get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
         
         image_url = []
@@ -360,7 +373,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             image_url += [utils.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
 
         if configs["CONCAT_SCREENSHOT"]:
-            screen.concat_images_left_right(screenshot_save_path, annotated_screenshot_save_path, concat_screenshot_save_path)
+            self.photographer.concat_screenshots(screenshot_save_path, annotated_screenshot_save_path, concat_screenshot_save_path)
             image_url += [utils.encode_image_from_path(concat_screenshot_save_path)]
         else:
             screenshot_url = utils.encode_image_from_path(screenshot_save_path)
