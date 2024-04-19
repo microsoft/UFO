@@ -137,7 +137,7 @@ class OpenFile:
         file_name = self.file_path
         if "\\" in self.file_path:
             file_name = self.file_path.split("\\")[-1]
-        desktop = Desktop(backend="uia")
+        desktop = Desktop(backend=BACKEND)
         for window in desktop.windows():
             if app_name in window.window_text() and file_name in window.window_text():
                 return True

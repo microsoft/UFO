@@ -14,7 +14,7 @@ from ..automator.ui_control.screenshot import PhotographerFacade
 from .. import utils
 from ..agent.agent import AppAgent, HostAgent
 from ..agent.basic import MemoryItem
-from ..automator.ui_control import utils as control
+from ..automator.ui_control import utils2 as control
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
 
@@ -350,12 +350,10 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         annotated_screenshot_save_path = self.log_path + f"action_step{self._step}_annotated.png"
         concat_screenshot_save_path = self.log_path + f"action_step{self._step}_concat.png"
 
-
         if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
             control_list = self.control_reannotate
         else:
-            control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
-            
+            control_list = control.find_control_elements_in_descendants(BACKEND, self.app_window, control_type_list = configs["CONTROL_LIST"], class_name_list = configs["CONTROL_LIST"])
 
         annotation_dict = self.photographer.get_annotation_dict(self.app_window, control_list, annotation_type="number")
 
