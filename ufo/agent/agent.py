@@ -14,7 +14,7 @@ from .basic import BasicAgent, Memory
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever_factory = utils.LazyImport("..rag.retriever_factory")
-control_filter = utils.LazyImport("..automator.ui_control.control_filter")
+control_filter_factory = utils.LazyImport("..automator.ui_control.control_filter_factory")
 
 
 class HostAgent(BasicAgent):
@@ -329,33 +329,75 @@ class AppAgent(BasicAgent):
         is_icon_required = 'icon' in control_filter_type_lower
         
         if control_filter_type and not (is_text_required or is_semantic_required or is_icon_required):
+            
             raise ValueError(f"Unsupported CONTROL_FILTER_TYPE: {control_filter_type}")
-
-        if not control_filter_type:
+        
+        elif not control_filter_type:
+            
             return control_info
         else:
             filtered_control_info = []
             
-            keywords = self.plan_parse(plan)
+            keywords = self.plan_to_keywords(plan)
             
             if is_text_required:
-                control_filter.TextModel.control_filter(filtered_control_info, control_info, keywords)
+                self.text_control_filter(filtered_control_info, control_info, keywords)
             
             if is_semantic_required:
-                model_semantic  = control_filter.SemanticModel(semantic_model_name)
-                
-                model_semantic.control_filter(filtered_control_info, control_info, keywords, semantic_top_k)
+                self.semantic_control_filter(filtered_control_info, control_info, keywords, semantic_model_name, semantic_top_k)
             
             if is_icon_required:                
-                model_icon = control_filter.IconModel(icon_model_name)
-
-                model_icon.control_filter(filtered_control_info, control_info, annotation_coor_dict, screenshot, keywords, icon_top_k)
+                self.icon_control_filter(filtered_control_info, control_info, annotation_coor_dict, screenshot, icon_model_name, icon_top_k, keywords)
 
         return filtered_control_info
 
-    def plan_parse(self, plan):
+    
+
+    def text_control_filter(self, filtered_control_info: list, control_info: list, keywords: list) -> list:
+        """
+        Filters the control information based on the text control filter.
+
+        Args:
+            filtered_control_info (list): The list of already filtered control items.
+            control_info (list): The list of control information to be filtered.
+            plan (str): A list of keywords extracted from the plan.
+        """
+        control_filter_factory.TextControlFilter.control_filter(filtered_control_info, control_info, keywords)
+    
+    def semantic_control_filter(self, filtered_control_info: list, control_info: list, keywords: list, semantic_model_name: str, semantic_top_k: int) -> list:
+        """
+        Filters the control information based on the semantic control filter.
+
+        Args:
+            filtered_control_info (list): The list of already filtered control items.
+            control_info (list): The list of control information to be filtered.
+            keywords (list): A list of keywords.
+            semantic_model_name: The name of the semantic model.
+            semantic_top_k: The top k value for semantic filtering.
+        """
+        model_semantic = control_filter_factory.SemanticControlFilter(semantic_model_name)
+        model_semantic.control_filter(filtered_control_info, control_info, keywords, semantic_top_k)
+    
+    def icon_control_filter(self, filtered_control_info: list, control_info: list, annotation_coor_dict: dict, screenshot: Image, icon_model_name: str, icon_top_k: int, keywords: list) -> list:
+        """
+        Filters the control information based on the icon control filter.
+
+        Args:
+            filtered_control_info (list): The list of already filtered control items.
+            control_info (list): The list of control information to be filtered.
+            annotation_coor_dict (dict): The dictionary containing annotation coordinates.
+            screenshot (Image): The screenshot image.
+            icon_model_name: The name of the icon model.
+            icon_top_k: The top k value for icon filtering.
+            filtered_control_info (list): The list of already filtered control items.
+            keywords (list): A list of keywords.
+        """
+        model_icon = control_filter_factory.IconControlFilter(icon_model_name)
+        model_icon.control_filter(filtered_control_info, control_info, annotation_coor_dict, screenshot, keywords, icon_top_k)
+    
+    def plan_to_keywords(self, plan):
             """
-            Parses a plan and extracts keywords.
+            Gets keywords from the plan.
 
             Args:
                 plan (str): The plan to be parsed.
