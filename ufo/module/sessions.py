@@ -11,8 +11,10 @@ from .. import utils
 from ..agent.agent import AgentFactory
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
+from . import interactor
 from . import processor
 from . import state
+
 
 
 
@@ -56,14 +58,9 @@ class Session(object):
         self._cost = 0.0
         self.control_reannotate = None
 
-        welcome_text = """
-Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction. 
-{art}
-Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
-
-        utils.print_with_color(welcome_text, "cyan")
+        utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
         
-        self.request = input()
+        self.request = interactor.first_request()
 
 
     def process_application_selection(self) -> None:
@@ -111,18 +108,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             control_reannotate = app_agent_processor.get_control_reannotate()
 
-    
-
-    def experience_asker(self) -> bool:
-        utils.print_with_color("""Would you like to save the current conversation flow for future reference by the agent?
-[Y] for yes, any other key for no.""", "magenta")
-        
-        ans = input()
-
-        if ans.upper() == "Y":
-            return True
-        else:
-            return False
         
 
     def experience_saver(self) -> None:
@@ -151,9 +136,8 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
         self.HostAgent.add_request_memory(self.request)
         self._round += 1
-        utils.print_with_color("""Please enter your new request. Enter 'N' for exit.""", "cyan")
         
-        self.request = input()
+        self.request = interactor.new_request()
 
         if self.request.upper() == "N":
             self._status = "COMPLETE"

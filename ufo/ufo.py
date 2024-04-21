@@ -5,7 +5,7 @@ import argparse
 from datetime import datetime
 
 from .config.config import Config
-from .module import flow, sessions
+from .module import flow, sessions, interactor
 from .utils import print_with_color
 
 
@@ -40,7 +40,7 @@ def main():
             session.set_new_round()
             status = session.get_status()
             if status == "COMPLETE":
-                if session.experience_asker():
+                if interactor.experience_asker():
                     session.experience_saver()
                 break
 
