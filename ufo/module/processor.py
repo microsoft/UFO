@@ -12,6 +12,8 @@ import traceback
 from ..agent.basic import MemoryItem
 from ..config.config import Config
 
+from . import interactor
+
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
 
@@ -550,8 +552,8 @@ class AppAgentProcessor(BaseProcessor):
             return: The boolean value indicating whether to proceed or not.
             """
             
-            utils.print_with_color("[Input Required:] UFO🛸 will apply {action} on the [{control_text}] item. Please confirm whether to proceed or not. Please input Y or N.".format(action=action, control_text=control_text), "magenta")
-            decision = utils.yes_or_no()
+           
+            decision = interactor.sensitive_step_asker(action, control_text)
             if not decision:
                 utils.print_with_color("The user decide to stop the task.", "magenta")
                 self._status = "FINISH"

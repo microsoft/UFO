@@ -36,3 +36,18 @@ def experience_asker() -> bool:
             return False
         
 
+def sensitive_step_asker(action, control_text) -> bool:
+
+    utils.print_with_color("[Input Required:] UFO🛸 will apply {action} on the [{control_text}] item. Please confirm whether to proceed or not. Please input Y or N.".format(action=action, control_text=control_text), "magenta")
+
+    while True:
+        user_input = input().upper()
+
+        if user_input == 'Y':
+            return True
+        elif user_input == 'N':
+            return False
+        else:
+            print("Invalid choice. Please enter either Y or N. Try again.")
+        
+

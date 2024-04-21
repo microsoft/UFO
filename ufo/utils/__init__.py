@@ -118,22 +118,6 @@ def check_json_format(string:str):
     return True
 
 
-def yes_or_no():
-    """
-    Ask for user input until the user enters either Y or N.
-    :return: The user input.
-    """
-    while True:
-        user_input = input().upper()
-
-        if user_input == 'Y':
-            return True
-        elif user_input == 'N':
-            return False
-        else:
-            print("Invalid choice. Please enter either Y or N. Try again.")
-
-
 def json_parser(json_string:str):
     """
     Parse json string to json object.
