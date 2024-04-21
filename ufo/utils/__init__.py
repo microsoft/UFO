@@ -1,15 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import base64
 import importlib
 import json
 import os
-from io import BytesIO
-from typing import Optional
 
 from colorama import Fore, Style, init
-from PIL import Image
 
 # init colorama
 init()
@@ -36,40 +32,6 @@ def print_with_color(text: str, color: str = "", end: str = "\n"):
     colored_text = selected_color + text + Style.RESET_ALL
 
     print(colored_text, end=end)
-
-
-
-def image_to_base64(image: Image):
-    """
-    Convert image to base64 string.
-
-    :param image: The image to convert.
-    :return: The base64 string.
-    """
-    buffered = BytesIO()
-    image.save(buffered, format="PNG")
-    return base64.b64encode(buffered.getvalue()).decode("utf-8")
-
-
-def encode_image_from_path(image_path: str, mime_type: Optional[str] = None) -> str:
-    """
-    Encode an image file to base64 string.
-    :param image_path: The path of the image file.
-    :param mime_type: The mime type of the image.
-    :return: The base64 string.
-    """
-    import mimetypes
-    file_name = os.path.basename(image_path)
-    mime_type = mime_type if mime_type is not None else mimetypes.guess_type(file_name)[0]
-    with open(image_path, "rb") as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode('ascii')
-        
-    if mime_type is None or not mime_type.startswith("image/"):
-        print("Warning: mime_type is not specified or not an image mime type. Defaulting to png.")
-        mime_type = "image/png"
-        
-    image_url = f"data:{mime_type};base64," + encoded_image
-    return image_url
 
 
 

@@ -210,7 +210,7 @@ class HostAgentProcessor(BaseProcessor):
 
         desktop_save_path = self.log_path + f"action_step{self._step}.png"
         self.photographer.capture_desktop_screen_screenshot(all_screens=True, save_path=desktop_save_path)
-        self._desktop_screen_url = utils.encode_image_from_path(desktop_save_path)
+        self._desktop_screen_url = self.photographer.encode_image_from_path(desktop_save_path)
 
 
     def get_control_info(self):  
@@ -386,14 +386,14 @@ class AppAgentProcessor(BaseProcessor):
                 
                 last_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}.png"
                 last_control_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}_selected_controls.png"
-                self._image_url += [utils.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
+                self._image_url += [self.photographer.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
 
             if configs["CONCAT_SCREENSHOT"]:
                 self.photographer.concat_screenshots(screenshot_save_path, annotated_screenshot_save_path, concat_screenshot_save_path)
-                self._image_url += [utils.encode_image_from_path(concat_screenshot_save_path)]
+                self._image_url += [self.photographer.encode_image_from_path(concat_screenshot_save_path)]
             else:
-                screenshot_url = utils.encode_image_from_path(screenshot_save_path)
-                screenshot_annotated_url = utils.encode_image_from_path(annotated_screenshot_save_path)
+                screenshot_url = self.photographer.encode_image_from_path(screenshot_save_path)
+                screenshot_annotated_url = self.photographer.encode_image_from_path(annotated_screenshot_save_path)
                 self._image_url += [screenshot_url, screenshot_annotated_url]
 
         
