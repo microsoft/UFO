@@ -11,6 +11,30 @@ from ..utils import print_with_color
 from . import web_search
 
 
+class RetrieverFactory:  
+    """  
+    Factory class to create retrievers.  
+    """  
+  
+    @staticmethod  
+    def create_retriever(retriever_type: str, *args, **kwargs):  
+        """  
+        Create a retriever based on the given type.  
+        :param retriever_type: The type of retriever to create.  
+        :return: The created retriever.  
+        """  
+        if retriever_type == "offline":  
+            return OfflineDocRetriever(*args, **kwargs)  
+        elif retriever_type == "experience":  
+            return ExperienceRetriever(*args, **kwargs)  
+        elif retriever_type == "online":  
+            return OnlineDocRetriever(*args, **kwargs)  
+        elif retriever_type == "demonstration":  
+            return DemonstrationRetriever(*args, **kwargs)  
+        else:  
+            raise ValueError("Invalid retriever type: {}".format(retriever_type)) 
+        
+        
 
 class Retriever(ABC):
     """
@@ -134,7 +158,7 @@ class OnlineDocRetriever(Retriever):
 
     def __init__(self, query:str, top_k:int) -> None:
         """
-        Create a new OfflineDocRetrieverFactory.
+        Create a new OfflineDocRetriever.
         :query: The query to create an indexer for.
         :top_k: The number of documents to retrieve.
         """

@@ -11,87 +11,24 @@ from ..prompter.agent_prompter import (HostAgentPrompter,
 from .basic import BasicAgent, Memory
 
 
-# Lazy import the retriever factory to aviod long loading time.
-retriever_factory = utils.LazyImport("..rag.retriever_factory")
-
-
-
-
-class HostAgent(BasicAgent):
-    """
-    The HostAgent class the manager of AppAgents.
-    """
-
-    def __init__(self, name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
-        """
-        Initialize the HostAgent.
-        :name: The name of the agent.
-        :param is_visual: The flag indicating whether the agent is visual or not.
-        :param main_prompt: The main prompt file path.
-        :param example_prompt: The example prompt file path.
-        :param api_prompt: The API prompt file path.
-        """
-        super().__init__(name=name)
-        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
-        self._memory = Memory()
-        self.offline_doc_retriever = None
-        self.online_doc_retriever = None
-        self.experience_retriever = None
-        self.human_demonstration_retriever = None
-
-
-
-    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> HostAgentPrompter:
-        """
-        Get the prompt for the agent.
-        :param is_visual: The flag indicating whether the agent is visual or not.
-        :param main_prompt: The main prompt file path.
-        :param example_prompt: The example prompt file path.
-        :param api_prompt: The API prompt file path.
-        :return: The prompter instance.
-        """
-        return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
-    
-
-    def message_constructor(self, image_list: List, request_history: str, action_history: str, os_info: str, plan: str, request: str) -> list:
-        """
-        Construct the message.
-        :param image_list: The list of screenshot images.
-        :param request_history: The request history.
-        :param action_history: The action history.
-        :param os_info: The OS information.
-        :param plan: The plan.
-        :param request: The request.
-        :return: The message.
-        """
-        hostagent_prompt_system_message = self.prompter.system_prompt_construction()
-        hostagent_prompt_user_message = self.prompter.user_content_construction(image_list, request_history, action_history, 
-                                                                                                  os_info, plan, request)
-        
-        hostagent_prompt_message = self.prompter.prompt_construction(hostagent_prompt_system_message, hostagent_prompt_user_message)
-        
-        return hostagent_prompt_message
-    
-
-    def print_response(self, response_dict: Dict):
-        """
-        Print the response.
-        :param response: The response.
-        """
-        
-        application = response_dict.get("ControlText")
-        observation = response_dict.get("Observation")
-        thought = response_dict.get("Thought")
-        plan = response_dict.get("Plan")
-        status = response_dict.get("Status")
-        comment = response_dict.get("Comment")
-
-        utils.print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
-        utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
-        utils.print_with_color("Selected application📲: {application}".format(application=application), "yellow")
-        utils.print_with_color("Status📊: {status}".format(status=status), "blue")
-        utils.print_with_color("Next Plan📚: {plan}".format(plan=str(plan).replace("\\n", "\n")), "cyan")
-        utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
+class AgentFactory:  
+    """  
+    Factory class to create agents.  
+    """  
+  
+    @staticmethod  
+    def create_agent(agent_type: str, *args, **kwargs):  
+        """  
+        Create an agent based on the given type.  
+        :param agent_type: The type of agent to create.  
+        :return: The created agent.  
+        """  
+        if agent_type == "host":  
+            return HostAgent(*args, **kwargs)  
+        elif agent_type == "app":  
+            return AppAgent(*args, **kwargs)  
+        else:  
+            raise ValueError("Invalid agent type: {}".format(agent_type))  
 
 
 
@@ -121,6 +58,7 @@ class AppAgent(BasicAgent):
         self.experience_retriever = None
         self.human_demonstration_retriever = None
         self.Puppeteer = self.create_puppteer_interface()
+        self.host = None
 
 
     def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> AppAgentPrompter:
@@ -264,6 +202,14 @@ class AppAgent(BasicAgent):
         :return: The Puppeteer interface.
         """
         return puppeteer.AppPuppeteer(self._process_name, self._app_root_name)
+    
+
+    def set_host(self, host: Type) -> None:
+        """
+        Set the host agent.
+        :param host: The host agent.
+        """
+        self.host = host
 
 
 
@@ -271,7 +217,8 @@ class AppAgent(BasicAgent):
         """
         Build the offline docs retriever.
         """
-        self.offline_doc_retriever = retriever_factory.OfflineDocRetriever(self._process_name)
+        self.offline_doc_retriever = self.retriever_factory.create_retriever("offline", self._process_name)
+        
 
 
     def build_online_search_retriever(self, request: str, top_k: int) -> None:
@@ -280,7 +227,7 @@ class AppAgent(BasicAgent):
         :param request: The request for online Bing search.
         :param top_k: The number of documents to retrieve.
         """
-        self.online_doc_retriever = retriever_factory.OnlineDocRetriever(request, top_k)
+        self.online_doc_retriever = self.retriever_factory.create_retriever("online", request, top_k)
 
     
     def build_experience_retriever(self, db_path: str) -> None:
@@ -289,7 +236,8 @@ class AppAgent(BasicAgent):
         :param db_path: The path to the experience database.
         :return: The experience retriever.
         """
-        self.experience_retriever = retriever_factory.ExperienceRetriever(db_path)
+        self.experience_retriever = self.retriever_factory.create_retriever("experience", db_path)
+        
 
 
     def build_human_demonstration_retriever(self, db_path: str) -> None:
@@ -298,4 +246,104 @@ class AppAgent(BasicAgent):
         :param db_path: The path to the human demonstration database.
         :return: The human demonstration retriever.
         """
-        self.human_demonstration_retriever = retriever_factory.DemonstrationRetriever(db_path)
+        self.human_demonstration_retriever = self.retriever_factory.create_retriever("demonstration", db_path)
+
+
+
+class HostAgent(BasicAgent):
+    """
+    The HostAgent class the manager of AppAgents.
+    """
+
+    def __init__(self, name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
+        """
+        Initialize the HostAgent.
+        :name: The name of the agent.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt file path.
+        :param example_prompt: The example prompt file path.
+        :param api_prompt: The API prompt file path.
+        """
+        super().__init__(name=name)
+        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
+        self._memory = Memory()
+        self.offline_doc_retriever = None
+        self.online_doc_retriever = None
+        self.experience_retriever = None
+        self.human_demonstration_retriever = None
+        self.agent_factory = AgentFactory()
+        self.appagent_dict = {}
+
+
+
+    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> HostAgentPrompter:
+        """
+        Get the prompt for the agent.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt file path.
+        :param example_prompt: The example prompt file path.
+        :param api_prompt: The API prompt file path.
+        :return: The prompter instance.
+        """
+        return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
+    
+
+    def create_appagent(self, appagent_name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, ui_control_interface: Type) -> None:
+        """
+        Create an AppAgent hosted by the HostAgent.
+        :param appagent_name: The name of the AppAgent.
+        :param process_name: The process name of the app.
+        :param app_root_name: The root name of the app.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt file path.
+        :param example_prompt: The example prompt file path.
+        :param api_prompt: The API prompt file path.
+        :param ui_control_interface: The UI control interface in pywinauto.
+        :return: The created AppAgent.
+        """
+        app_agent = self.agent_factory.create_agent("app", appagent_name, process_name, app_root_name, is_visual, main_prompt, example_prompt, api_prompt, ui_control_interface)
+        self.appagent_dict[appagent_name] = app_agent
+        app_agent.set_host(self)
+
+        return app_agent
+    
+
+    def message_constructor(self, image_list: List, request_history: str, action_history: str, os_info: str, plan: str, request: str) -> list:
+        """
+        Construct the message.
+        :param image_list: The list of screenshot images.
+        :param request_history: The request history.
+        :param action_history: The action history.
+        :param os_info: The OS information.
+        :param plan: The plan.
+        :param request: The request.
+        :return: The message.
+        """
+        hostagent_prompt_system_message = self.prompter.system_prompt_construction()
+        hostagent_prompt_user_message = self.prompter.user_content_construction(image_list, request_history, action_history, 
+                                                                                                  os_info, plan, request)
+        
+        hostagent_prompt_message = self.prompter.prompt_construction(hostagent_prompt_system_message, hostagent_prompt_user_message)
+        
+        return hostagent_prompt_message
+    
+
+    def print_response(self, response_dict: Dict):
+        """
+        Print the response.
+        :param response: The response.
+        """
+        
+        application = response_dict.get("ControlText")
+        observation = response_dict.get("Observation")
+        thought = response_dict.get("Thought")
+        plan = response_dict.get("Plan")
+        status = response_dict.get("Status")
+        comment = response_dict.get("Comment")
+
+        utils.print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
+        utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
+        utils.print_with_color("Selected application📲: {application}".format(application=application), "yellow")
+        utils.print_with_color("Status📊: {status}".format(status=status), "blue")
+        utils.print_with_color("Next Plan📚: {plan}".format(plan=str(plan).replace("\\n", "\n")), "cyan")
+        utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")

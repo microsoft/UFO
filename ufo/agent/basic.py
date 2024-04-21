@@ -9,6 +9,8 @@ from typing import Dict, List, Type
 
 from .. import utils
 from ..llm import llm_call
+# Lazy import the retriever factory to aviod long loading time.
+retriever = utils.LazyImport("..rag.retriever")
 
 
 @dataclass
@@ -157,7 +159,6 @@ class Memory():
 
 
 
-
 class BasicAgent(ABC):
     """
     The BasicAgent class is the abstract class for the agent.
@@ -173,6 +174,7 @@ class BasicAgent(ABC):
         self._name = name
         self._status = None
         self._register_self()
+        self.retriever_factory = retriever.RetrieverFactory()
         
 
     @property
@@ -395,3 +397,4 @@ class AgentRegistry:
         if name not in cls._registry:
             raise ValueError(f"No agent class registered under '{name}'.")
         return cls._registry[name]
+    

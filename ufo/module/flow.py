@@ -12,9 +12,9 @@ from pywinauto.uia_defines import NoPatternInterfaceError
 from ..automator.ui_control.screenshot import PhotographerFacade
 
 from .. import utils
-from ..agent.agent import AppAgent, HostAgent
+from ..agent.agent import AgentFactory
 from ..agent.basic import MemoryItem
-from ..automator.ui_control import utils2 as control
+from ..automator.ui_control import utils as control
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
 
@@ -44,7 +44,8 @@ class Session(object):
         self.logger = self.initialize_logger(self.log_path, "response.log")
         self.request_logger = self.initialize_logger(self.log_path, "request.log")
 
-        self.HostAgent = HostAgent("HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"], configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        self.HostAgent = AgentFactory.create_agent("host", "HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"], configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+    
         self.AppAgent = None
 
         self.photographer = PhotographerFacade()
@@ -155,10 +156,10 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
 
             # Initialize the AppAgent
 
-            self.AppAgent = AppAgent("AppAgent/{root}/{process}".format(root=self.app_root, process=self.application), self.application, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
+            self.AppAgent = self.HostAgent.create_appagent("AppAgent/{root}/{process}".format(root=self.app_root, process=self.application), self.application, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
                                      configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.app_window)
-            
 
+            
             # Load the retrievers for APP_AGENT.
             self._app_agent_load_retrievers()
 
@@ -339,7 +340,6 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.AppAgent.build_human_demonstration_retriever(db_path)
 
     
-
     def screenshots_and_control_info_helper(self) -> tuple:
         """
         Helper function for taking screenshots.
