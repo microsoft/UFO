@@ -45,10 +45,10 @@ class BaseProcessor(ABC):
         self.get_prompt_message()  
         self.get_response()
         if self._status == "ERROR":
-            return "ERROR", self._step, self._cost, 
+            return
         self.parse_response()
-        if self._status in ["ERROR", "FINISH"]:
-            return self._status, self._step, self._cost
+        if self._status == "ERROR":
+            return
         self.execute_action()
         self.update_memory()
 
@@ -231,7 +231,7 @@ class HostAgentProcessor(BaseProcessor):
             
             self.HostAgent.print_response(self._response_json)
 
-            if "FINISH" in self._status.upper() or self._control_text == "" or not self._app_window:
+            if "FINISH" in self._status.upper() or self._control_text == "":
                 self._status = "FINISH"
 
         except Exception:
@@ -247,19 +247,17 @@ class HostAgentProcessor(BaseProcessor):
 
          # Get the application window
         self._app_window = self._desktop_windows_dict.get(self.control_label)
-
         # Get the application name
         self.app_root = control.get_application_name(self._app_window)
-
         try:
             self._app_window.is_normal()
 
         # Handle the case when the window interface is not available
-        except NoPatternInterfaceError as e:
+        except Exception:
             utils.print_with_color("Window interface {title} not available for the visual element.".format(title=self._control_text), "red")
             self._status = "ERROR"
             return
-        
+
         self._status = "CONTINUE"
         self._app_window.set_focus()
 
@@ -361,8 +359,8 @@ class AppAgentProcessor(BaseProcessor):
 
             if configs["INCLUDE_LAST_SCREENSHOT"]:
                 
-                last_screenshot_save_path = self.log_path + f"action_step{self._step - 1}.png"
-                last_control_screenshot_save_path = self.log_path + f"action_step{self._step - 1}_selected_controls.png"
+                last_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}.png"
+                last_control_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}_selected_controls.png"
                 self._image_url += [utils.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
 
             if configs["CONCAT_SCREENSHOT"]:
@@ -406,10 +404,9 @@ class AppAgentProcessor(BaseProcessor):
             agent_memory = self.AppAgent.memory
 
             if agent_memory.length > 0:
-                prev_plan = agent_memory.get_latest_item().to_dict()["Plan"]
+                prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
             else:
                 prev_plan = ""
-
             self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
                                                                                 self._control_info, prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
@@ -479,7 +476,6 @@ class AppAgentProcessor(BaseProcessor):
 
                 if "SCREENSHOT" in self._status.upper():
                     utils.print_with_color("Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.", "magenta")
-                    # self.control_reannotate = ui_controller.annotation(args, annotation_dict)
                     self._control_reannotate = self.AppAgent.Puppeteer.execute_command("annotation", self._args, self._annotation_dict)
                 else:
                     self._control_reannotate = None
@@ -499,16 +495,18 @@ class AppAgentProcessor(BaseProcessor):
             app_agent_step_memory = MemoryItem()
 
             app_root = control.get_application_name(self._app_window)
+            HostAgent = self.AppAgent.get_host()
+            round = HostAgent.get_round()
             
-            
-            additional_memory = {"Step": self._step, "AgentStep": self.AppAgent.get_step(), "Round": self._round, "Action": self._action, 
+            additional_memory = {"Step": self._step, "AgentStep": self.AppAgent.get_step(), "Round": round, "Action": self._action, 
                                  "Request": self.request, "Agent": "ActAgent", "AgentName": self.AppAgent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
-            app_agent_step_memory.set_values_from_dict(response_json)
+            app_agent_step_memory.set_values_from_dict(self._response_json)
             app_agent_step_memory.set_values_from_dict(additional_memory)
 
             self.AppAgent.add_memory(app_agent_step_memory)
 
-            response_json = self.log(app_agent_step_memory.to_dict())
+            memorized_action = {key: app_agent_step_memory.to_dict().get(key) for key in configs["HISTORY_KEYS"]}
+            HostAgent.add_global_action_memory(memorized_action)
 
 
         def update_status(self):
