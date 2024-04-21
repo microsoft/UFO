@@ -5,7 +5,7 @@ import argparse
 from datetime import datetime
 
 from .config.config import Config
-from .module import flow
+from .module import flow, sessions
 from .utils import print_with_color
 
 
@@ -25,7 +25,7 @@ def main():
     Main function.
     """
 
-    session = flow.Session(parsed_args.task)
+    session = sessions.Session(parsed_args.task)
 
     step = 0
     status = session.get_status()

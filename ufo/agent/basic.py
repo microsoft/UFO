@@ -140,6 +140,15 @@ class Memory():
         self._content.append(memory_item)
 
 
+    @property
+    def length(self) -> int:
+        """
+        Get the length of the memory.
+        :return: The length of the memory.
+        """
+        return len(self._content)
+
+
 
     def delete_memory_item(self, step: int) -> None:
         """
@@ -156,6 +165,25 @@ class Memory():
         """
 
         return json.dumps([item.to_dict() for item in self._content])
+    
+
+    def get_latest_item(self) -> MemoryItem:
+        """
+        Get the latest memory item.
+        :return: The latest memory item.
+        """
+        if self.length == 0:
+            return None
+        return self._content[-1]
+    
+
+    @property
+    def content(self) -> List[MemoryItem]:
+        """
+        Get the content of the memory.
+        :return: The content of the memory.
+        """
+        return self._content
 
 
 
@@ -175,6 +203,7 @@ class BasicAgent(ABC):
         self._status = None
         self._register_self()
         self.retriever_factory = retriever.RetrieverFactory()
+        self._memory = Memory()
         
 
     @property

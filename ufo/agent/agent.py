@@ -8,7 +8,7 @@ from .. import utils
 from ..automator import puppeteer
 from ..prompter.agent_prompter import (HostAgentPrompter,
                                        AppAgentPrompter)
-from .basic import BasicAgent, Memory
+from .basic import BasicAgent, Memory, MemoryItem
 
 
 class AgentFactory:  
@@ -37,7 +37,7 @@ class AppAgent(BasicAgent):
     The HostAgent class the manager of AppAgents.
     """
 
-    def __init__(self, name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, ui_control_interface: Type) -> None:
+    def __init__(self, name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
         """
         Initialize the AppAgent.
         :name: The name of the agent.
@@ -45,12 +45,9 @@ class AppAgent(BasicAgent):
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
         :param api_prompt: The API prompt file path.
-        :param ui_control_interface: The UI control interface in pywinauto.
         """
         super().__init__(name=name)
         self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
-        self._memory = Memory()
-        self._ui_control_interface = ui_control_interface
         self._process_name = process_name
         self._app_root_name = app_root_name
         self.offline_doc_retriever = None
@@ -266,13 +263,15 @@ class HostAgent(BasicAgent):
         """
         super().__init__(name=name)
         self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
-        self._memory = Memory()
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
         self.experience_retriever = None
         self.human_demonstration_retriever = None
         self.agent_factory = AgentFactory()
         self.appagent_dict = {}
+        self._global_action_memory = Memory()
+        self._reqest_history_memory = Memory()
+        self._active_appagent = None
 
 
 
@@ -288,7 +287,7 @@ class HostAgent(BasicAgent):
         return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
     
 
-    def create_appagent(self, appagent_name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, ui_control_interface: Type) -> None:
+    def create_appagent(self, appagent_name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
         """
         Create an AppAgent hosted by the HostAgent.
         :param appagent_name: The name of the AppAgent.
@@ -298,14 +297,22 @@ class HostAgent(BasicAgent):
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
         :param api_prompt: The API prompt file path.
-        :param ui_control_interface: The UI control interface in pywinauto.
         :return: The created AppAgent.
         """
-        app_agent = self.agent_factory.create_agent("app", appagent_name, process_name, app_root_name, is_visual, main_prompt, example_prompt, api_prompt, ui_control_interface)
+        app_agent = self.agent_factory.create_agent("app", appagent_name, process_name, app_root_name, is_visual, main_prompt, example_prompt, api_prompt)
         self.appagent_dict[appagent_name] = app_agent
         app_agent.set_host(self)
+        self._active_appagent = app_agent
 
         return app_agent
+    
+
+    def get_active_appagent(self) -> Type:
+        """
+        Get the active app agent.
+        :return: The active app agent.
+        """
+        return self._active_appagent
     
 
     def message_constructor(self, image_list: List, request_history: str, action_history: str, os_info: str, plan: str, request: str) -> list:
@@ -347,3 +354,40 @@ class HostAgent(BasicAgent):
         utils.print_with_color("Status📊: {status}".format(status=status), "blue")
         utils.print_with_color("Next Plan📚: {plan}".format(plan=str(plan).replace("\\n", "\n")), "cyan")
         utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
+
+
+    def add_global_action_memory(self, action: dict) -> None:
+        """
+        Add the action to the memory.
+        :param action: The action.
+        """
+
+        action_memory_item = MemoryItem(action)
+        self._global_action_memory.add_memory_item(action_memory_item)
+
+
+
+    def add_request_memory(self, request: str) -> None:
+        """
+        Add the request to the memory.
+        :param request: The request.
+        """
+        request_length = self._reqest_history_memory.length
+        request_memory_item = MemoryItem({f"Old Request {request_length}": request})
+        self._reqest_history_memory.add_memory_item(request_memory_item)
+
+
+    def get_global_action_memory(self) -> Memory:
+        """
+        Get the global action memory.
+        :return: The global action memory.
+        """
+        return self._global_action_memory
+    
+
+    def get_request_history_memory(self) -> Memory:
+        """
+        Get the request history.
+        :return: The request history.
+        """
+        return self._reqest_history_memory
