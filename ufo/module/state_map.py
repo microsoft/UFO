@@ -1,20 +1,20 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-
-from .state import AllFinishState, AppSelectionState, ErrorState, FinishState, ActionSelectionState, MaxStepReachedState, SessionState
+from . import state
 
 STATE_MAPPING = {  
-    "FINISH": FinishState,  
-    "ERROR": ErrorState,  
-    "APP_SELECTION": AppSelectionState,  
-    "ACTION_SELECTION": ActionSelectionState,  
-    "ALLFINISH": AllFinishState,  
-    "MAX_STEP_REACHED": MaxStepReachedState  
+    "FINISH": state.RoundFinishState,  
+    "ERROR": state.ErrorState,  
+    "APP_SELECTION": state.AppSelectionState,  
+    "ACTION_SELECTION": state.ActionSelectionState,  
+    "COMPLETE": state.SessionFinishState,
+    "SCREENSHOT": state.AnnotationState,  
+    "MAX_STEP_REACHED": state.MaxStepReachedState  
 }
 
 
-def AppropriateState(status: str) -> SessionState:
+def AppropriateState(status: str) -> state.SessionState:
     """
     """
     return STATE_MAPPING.get(status, None)
