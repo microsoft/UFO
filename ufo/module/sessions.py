@@ -56,7 +56,7 @@ class Session(object):
         
 
         self._cost = 0.0
-        self.control_reannotate = None
+        self.control_reannotate = []
 
         utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
         
@@ -92,24 +92,21 @@ class Session(object):
         return: The outcome, the application window, and the action log.
         """
 
-
-        control_reannotate = []
-
-        while isinstance(control_reannotate, list):
-            app_agent_processor = processor.AppAgentProcessor(log_path=self.log_path, photographer=self.photographer, request=self.request, global_step=self._step, process_name=self.application,
-                                                                request_logger=self.request_logger, logger=self.logger, app_agent=self.AppAgent, app_window=self.app_window, 
-                                                                control_reannotate=control_reannotate, prev_status=self._status)
-            
-            app_agent_processor.process()
         
-            self._status = app_agent_processor.get_process_status()
-            self._step += app_agent_processor.get_process_step()
-            self.update_cost(app_agent_processor.get_process_cost())
+        app_agent_processor = processor.AppAgentProcessor(log_path=self.log_path, photographer=self.photographer, request=self.request, global_step=self._step, process_name=self.application,
+                                                            request_logger=self.request_logger, logger=self.logger, app_agent=self.AppAgent, app_window=self.app_window, 
+                                                            control_reannotate=self.control_reannotate, prev_status=self._status)
+        
+        app_agent_processor.process()
+    
+        self._status = app_agent_processor.get_process_status()
+        self._step += app_agent_processor.get_process_step()
+        self.update_cost(app_agent_processor.get_process_cost())
 
-            control_reannotate = app_agent_processor.get_control_reannotate()
+        self.control_reannotate = app_agent_processor.get_control_reannotate()
+
 
         
-
     def experience_saver(self) -> None:
         """
         Save the current agent experience.

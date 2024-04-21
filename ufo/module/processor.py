@@ -493,9 +493,11 @@ class AppAgentProcessor(BaseProcessor):
                     return
 
 
-                if "SCREENSHOT" in self._status.upper():
+                if self._status.upper() == "SCREENSHOT":
                     utils.print_with_color("Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.", "magenta")
                     self._control_reannotate = self.AppAgent.Puppeteer.execute_command("annotation", self._args, self._annotation_dict)
+                    if self._control_reannotate is None or len(self._control_reannotate) == 0:
+                        self._status = "CONTINUE"
                 else:
                     self._control_reannotate = None
 
