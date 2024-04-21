@@ -164,7 +164,7 @@ class Memory():
         :return: The JSON string.
         """
 
-        return json.dumps([item.to_dict() for item in self._content])
+        return json.dumps([item.to_dict() for item in self._content if item is not None])
     
 
     def get_latest_item(self) -> MemoryItem:

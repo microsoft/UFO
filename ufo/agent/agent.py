@@ -209,6 +209,14 @@ class AppAgent(BasicAgent):
         self.host = host
 
 
+    def get_host(self) -> Type:
+        """
+        Get the host agent.
+        :return: The host agent.
+        """
+        return self.host
+
+
 
     def build_offline_docs_retriever(self) -> None:
         """
@@ -315,6 +323,14 @@ class HostAgent(BasicAgent):
         return self._active_appagent
     
 
+    def get_round(self) -> int:
+        """
+        Get the round number.
+        :return: The round number.
+        """
+        return self._reqest_history_memory.length
+    
+
     def message_constructor(self, image_list: List, request_history: str, action_history: str, os_info: str, plan: str, request: str) -> list:
         """
         Construct the message.
@@ -362,7 +378,8 @@ class HostAgent(BasicAgent):
         :param action: The action.
         """
 
-        action_memory_item = MemoryItem(action)
+        action_memory_item = MemoryItem()
+        action_memory_item.set_values_from_dict(action)
         self._global_action_memory.add_memory_item(action_memory_item)
 
 
@@ -373,7 +390,8 @@ class HostAgent(BasicAgent):
         :param request: The request.
         """
         request_length = self._reqest_history_memory.length
-        request_memory_item = MemoryItem({f"Old Request {request_length}": request})
+        request_memory_item = MemoryItem()
+        request_memory_item.set_values_from_dict({f"old request {request_length}": request})
         self._reqest_history_memory.add_memory_item(request_memory_item)
 
 
