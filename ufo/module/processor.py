@@ -60,19 +60,18 @@ class BaseProcessor(ABC):
         self.update_step_and_status()
         
     
-    
+    @abstractmethod
     def print_step_info(self):
         pass
     
-        
+    @abstractmethod 
     def capture_screenshot(self):  
         pass
-
+    
+    @abstractmethod 
     def get_control_info(self):  
         pass
   
-    def create_app_agent(self):
-        pass
 
     @abstractmethod  
     def get_prompt_message(self):  
@@ -86,14 +85,19 @@ class BaseProcessor(ABC):
     def parse_response(self):  
         pass  
 
+    @abstractmethod  
+    def execute_action(self):  
+        pass  
+
     @abstractmethod
     def update_memory(self):
         pass
 
-    @abstractmethod  
-    def execute_action(self):  
-        pass  
-  
+    
+    def create_app_agent(self):
+        pass
+
+
     def update_step_and_status(self):  
         self._step += 1  
         self.update_status()
