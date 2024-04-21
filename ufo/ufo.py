@@ -32,14 +32,14 @@ def main():
     round = session.get_round()
 
     # Start the task
-    while status.upper() not in ["ALLFINISH", "ERROR", "MAX_STEP_REACHED"]:
+    while status.upper() not in ["COMPLETE", "ERROR", "MAX_STEP_REACHED"]:
 
         round = session.get_round()
         
         if status == "FINISH":
             session.set_new_round()
             status = session.get_status()
-            if status == "ALLFINISH":
+            if status == "COMPLETE":
                 if session.experience_asker():
                     session.experience_saver()
                 break
@@ -49,7 +49,7 @@ def main():
             step = session.get_step()
             status = session.get_status()
 
-            while status.upper() not in ["FINISH", "ERROR"] and step <= configs["MAX_STEP"]:
+            while status.upper() == "CONTINUE" and step <= configs["MAX_STEP"]:
                 session.process_action_selection()
                 status = session.get_status()
                 step = session.get_step()

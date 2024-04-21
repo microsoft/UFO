@@ -12,6 +12,7 @@ from ..agent.agent import AgentFactory
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
 from . import processor
+from . import state
 
 
 
@@ -46,10 +47,11 @@ class Session(object):
         self.photographer = PhotographerFacade()
 
         self._status = "APP_SELECTION"
+        self._state = state.AppropriateState(self._status)(self)
         self.application = ""
         self.app_root = ""
         self.app_window = None
-        self.plan = ""
+        
 
         self._cost = 0.0
         self.control_reannotate = None
@@ -73,7 +75,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         """
 
         host_agent_processor = processor.HostAgentProcessor(log_path=self.log_path, photographer=self.photographer, request=self.request, global_step=self._step,
-                                                            request_logger=self.request_logger, logger=self.logger, host_agent=self.HostAgent)
+                                                            request_logger=self.request_logger, logger=self.logger, host_agent=self.HostAgent, prev_status=self._status)
         
         host_agent_processor.process()
 
@@ -97,8 +99,9 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         control_reannotate = []
 
         while isinstance(control_reannotate, list):
-            app_agent_processor = processor.AppAgentProcessor(log_path=self.log_path, photographer=self.photographer, request=self.request, global_step=self._step,  process_name=self.application,
-                                                                request_logger=self.request_logger, logger=self.logger, app_agent=self.AppAgent, app_window=self.app_window, control_reannotate=control_reannotate)
+            app_agent_processor = processor.AppAgentProcessor(log_path=self.log_path, photographer=self.photographer, request=self.request, global_step=self._step, process_name=self.application,
+                                                                request_logger=self.request_logger, logger=self.logger, app_agent=self.AppAgent, app_window=self.app_window, 
+                                                                control_reannotate=control_reannotate, prev_status=self._status)
             
             app_agent_processor.process()
         
@@ -153,7 +156,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         self.request = input()
 
         if self.request.upper() == "N":
-            self._status = "ALLFINISH"
+            self._status = "COMPLETE"
             return
         else:
             self._status = "APP_SELECTION"
@@ -233,6 +236,22 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self._cost += cost
         else:
             self._cost = None
+
+
+
+    def set_state(self, state) -> None:
+        """
+        Set the state of the session.
+        """
+        self.state = state
+
+
+    def handle(self) -> None:
+        """
+        Handle the session.
+        """
+        self.state.handle()
+
 
 
     @staticmethod

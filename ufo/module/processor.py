@@ -9,7 +9,6 @@ import json
 import os
 import time
 import traceback
-from pywinauto.uia_defines import NoPatternInterfaceError
 from ..agent.basic import MemoryItem
 from ..config.config import Config
 
@@ -18,16 +17,17 @@ BACKEND = configs["CONTROL_BACKEND"]
 
 
 class BaseProcessor(ABC):
-    def __init__(self, log_path, photographer, request, request_logger, logger, global_step):
+    def __init__(self, log_path, photographer, request, request_logger, logger, global_step, prev_status):
         self.log_path = log_path
         self.photographer = photographer
         self.request = request
         self.request_logger = request_logger
         self.logger = logger
         self.global_step = global_step
+        self.prev_status = prev_status
         
         self._step = 0
-        self._status = ""  
+        self._status = prev_status
         self._prompt_message = None  
         self._response = None  
         self._cost = 0
@@ -44,20 +44,23 @@ class BaseProcessor(ABC):
         self.get_control_info()
         self.get_prompt_message()  
         self.get_response()
-        if self._status == "ERROR":
+
+        if self.is_error():
             return
         self.parse_response()
-        if self._status == "ERROR":
+
+        if self.is_error():
             return
+        
         self.execute_action()
         self.update_memory()
 
-        if isinstance(self, HostAgentProcessor):
+        if self.should_create_appagent():
             self.create_app_agent()
         self.update_step_and_status()
         
     
-
+    
     def print_step_info(self):
         pass
     
@@ -68,6 +71,9 @@ class BaseProcessor(ABC):
     def get_control_info(self):  
         pass
   
+    def create_app_agent(self):
+        pass
+
     @abstractmethod  
     def get_prompt_message(self):  
         pass  
@@ -131,6 +137,19 @@ class BaseProcessor(ABC):
         return self._cost
     
 
+    def is_error(self):
+
+        return self._status == "ERROR"
+    
+
+    def should_create_appagent(self):
+
+        if isinstance(self, HostAgentProcessor) and self.prev_status == "APP_SELECTION":
+            return True
+        else:
+            return False
+
+
   
     @abstractmethod  
     def update_status(self):  
@@ -148,7 +167,7 @@ class BaseProcessor(ABC):
         self.logger.info(json.dumps(response_json))
 
 
-    def error_logger(self, response_str: str, error: str) -> None:
+    def error_log(self, response_str: str, error: str) -> None:
         """
         Error handler for the session.
         """
@@ -169,8 +188,8 @@ class BaseProcessor(ABC):
 
 class HostAgentProcessor(BaseProcessor):
 
-    def __init__(self, log_path, photographer, request, request_logger, logger, host_agent, global_step):
-        super().__init__(log_path, photographer, request, request_logger, logger, global_step)
+    def __init__(self, log_path, photographer, request, request_logger, logger, host_agent, global_step, prev_status):
+        super().__init__(log_path, photographer, request, request_logger, logger, global_step, prev_status)
         self.HostAgent = host_agent  
 
         self._desktop_screen_url = None
@@ -239,7 +258,7 @@ class HostAgentProcessor(BaseProcessor):
             utils.print_with_color("Error Occurs at application selection.", "red")
             utils.print_with_color(str(error_trace), "red")
             utils.print_with_color(self._response, "red")
-            self.error_logger(self._response, str(error_trace))
+            self.error_log(self._response, str(error_trace))
             self._status = "ERROR"
 
 
@@ -319,8 +338,8 @@ class HostAgentProcessor(BaseProcessor):
 
 class AppAgentProcessor(BaseProcessor):
     
-        def __init__(self, log_path, photographer, request, request_logger, logger, app_agent, global_step, process_name, app_window, control_reannotate=None):
-            super().__init__(log_path, photographer, request, request_logger, logger, global_step)
+        def __init__(self, log_path, photographer, request, request_logger, logger, app_agent, global_step, process_name, app_window, control_reannotate, prev_status):
+            super().__init__(log_path, photographer, request, request_logger, logger, global_step, prev_status)
 
             self.AppAgent = app_agent
             self.process_name = process_name
@@ -442,7 +461,7 @@ class AppAgentProcessor(BaseProcessor):
                 utils.print_with_color("Error Occurs at action selection in AppAgent.", "red")
                 utils.print_with_color(str(error_trace), "red")
                 utils.print_with_color(self._response, "red")
-                self.error_logger(self._response, str(error_trace))
+                self.error_log(self._response, str(error_trace))
                 self._status = "ERROR"
 
 
@@ -486,7 +505,7 @@ class AppAgentProcessor(BaseProcessor):
                 utils.print_with_color(f"Error Occurs at action execution in AppAgent at step {self.global_step}", "red")
                 utils.print_with_color(str(error_trace), "red")
                 utils.print_with_color(self._response, "red")
-                self.error_logger(self._response, str(error_trace))
+                self.error_log(self._response, str(error_trace))
                 self._status = "ERROR"
            
         
