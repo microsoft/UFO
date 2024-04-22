@@ -12,6 +12,8 @@ from ...utils import number_to_letter
 
 
 configs = Config.get_instance().config_data
+BACKEND = configs["CONTROL_BACKEND"]
+
 
 def capture_screenshot(window_title:str, save_path:str, is_save:bool=True):
     """
@@ -21,7 +23,7 @@ def capture_screenshot(window_title:str, save_path:str, is_save:bool=True):
     :param is_save: Whether to save the screenshot.
     :return: The screenshot.
     """
-    app = Application(backend="uia").connect(title_re=window_title)
+    app = Application(backend=BACKEND).connect(title_re=window_title)
     window = app.top_window()
     screenshot = window.capture_as_image()
     if is_save:
@@ -37,7 +39,7 @@ def capture_screenshot(window_title:str, save_path:str, is_save:bool=True):
     :param is_save: Whether to save the screenshot.
     :return: The screenshot.
     """
-    app = Application(backend="uia").connect(title_re=window_title)
+    app = Application(backend=BACKEND).connect(title_re=window_title)
     window = app.top_window()
     screenshot = window.capture_as_image()
     if is_save:

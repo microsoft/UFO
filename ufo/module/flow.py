@@ -346,11 +346,13 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
         annotated_screenshot_save_path = self.log_path + f"action_step{self._step}_annotated.png"
         concat_screenshot_save_path = self.log_path + f"action_step{self._step}_concat.png"
 
-
         if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
             control_list = self.control_reannotate
+        elif BACKEND == "win32":
+            control_list = control.find_win32_control_elements_in_descendants(self.app_window, class_name_list = configs["CONTROL_LIST"])
         else:
-            control_list = control.find_control_elements_in_descendants(self.app_window, configs["CONTROL_TYPE_LIST"])
+            control_list = control.find_uia_control_elements_in_descendants(self.app_window, control_type_list = configs["CONTROL_LIST"])
+
             
         annotation_dict, _, _ = screen.control_annotations(self.app_window, screenshot_save_path, annotated_screenshot_save_path, control_list, anntation_type="number")
         control_info = control.get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])

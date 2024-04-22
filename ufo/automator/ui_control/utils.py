@@ -40,18 +40,22 @@ def get_desktop_app_info_dict(remove_empty: bool=True, field_list: List[str]=["c
     :return: The titles and control types of all the apps on the desktop.
     """
     desktop_windows = Desktop(BACKEND).windows()
-        
+    
+    # Remove the not visible applications for win32 backend
+    if(BACKEND == "win32"):
+        desktop_windows = [app for app in desktop_windows if app.is_visible()]
+
     if remove_empty:
-         desktop_windows = [app for app in desktop_windows if app.window_text()!= "" and app.element_info.class_name not in ["IME", "MSCTFIME UI", "TXGuiFoundation"]]
+        desktop_windows = [app for app in desktop_windows if app.window_text()!= "" and app.element_info.class_name not in ["IME", "MSCTFIME UI"]]
+         
     desktop_windows_dict = dict(zip([str(i+1) for i in range(len(desktop_windows))], desktop_windows))
     desktop_windows_info = get_control_info_dict(desktop_windows_dict, field_list)
     return desktop_windows_dict, desktop_windows_info
 
-
     
-def find_control_elements_in_descendants(window, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0) -> List:
+def find_uia_control_elements_in_descendants(window, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0) -> List:
     """
-    Find control elements in descendants of the window.
+    Find control elements in descendants of the window for uia backend.
     :param window: The window to find control elements.
     :param control_type_list: The control types to find.
     :param class_name_list: The class names to find.
@@ -83,7 +87,39 @@ def find_control_elements_in_descendants(window, control_type_list:List[str]=[],
 
     return control_elements
     
+def find_win32_control_elements_in_descendants(window, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0) -> List:
+    """
+    Find control elements in descendants of the window for win32 backend.
+    :param window: The window to find control elements.
+    :param control_type_list: The control types to find.
+    :param class_name_list: The class names to find.
+    :param title_list: The titles to find.
+    :param is_visible: Whether the control elements are visible.
+    :param is_enabled: Whether the control elements are enabled.
+    :param depth: The depth of the descendants to find.
+    :return: The control elements found.
+    """
+    control_elements = []
+    if len(class_name_list) == 0:
+        control_elements += window.descendants()
+    else:
+        for class_name in class_name_list:
+            if depth == 0:
+                subcontrols = window.descendants(class_name=class_name)
+            else:
+                subcontrols = window.descendants(class_name=class_name, depth=depth)
+            control_elements += subcontrols
 
+    if is_visible:
+        control_elements = [control for control in control_elements if control.is_visible()]
+    if is_enabled:
+        control_elements = [control for control in control_elements if control.is_enabled()]
+    if len(title_list) > 0:
+        control_elements = [control for control in control_elements if control.window_text() in title_list]
+    if len(control_type_list) > 0:
+        control_elements = [control for control in control_elements if control.element_info.control_type in control_type_list]
+
+    return [control for control in control_elements if control.element_info.name != '']
 
 def get_control_info(window, field_list:List[str]=[]) -> dict:
     """
