@@ -17,6 +17,9 @@ configs = Config.get_instance().config_data
 
 
 class Photographer(ABC): 
+    """
+    Abstract class for the photographer.
+    """
     @abstractmethod  
     def capture(self):  
         pass  
@@ -286,7 +289,12 @@ class AnnotationDecorator(PhotographerDecorator):
     
 class PhotographerFactory:  
     @staticmethod  
-    def create_screenshot(screenshot_type, *args, **kwargs):  
+    def create_screenshot(screenshot_type: str, *args, **kwargs):
+        """
+        Create a screenshot.
+        :param screenshot_type: The type of the screenshot.
+        :return: The screenshot photographer.
+        """
         if screenshot_type == "app_window":  
             return ControlPhotographer(*args, **kwargs)  
         elif screenshot_type == "desktop_window":  
@@ -335,16 +343,34 @@ class PhotographerFacade:
         return screenshot.capture(save_path)
     
 
-    def capture_app_window_screenshot_with_annotation(self, control, sub_control_list, annotation_type:str="number", color_diff:bool=True, color_default:str="#FFF68F", save_path=None):
+    def capture_app_window_screenshot_with_annotation(self, control, sub_control_list: List, annotation_type:str="number", color_diff:bool=True, color_default:str="#FFF68F", save_path=None) -> Image:
+        """
+        Capture the control screenshot with annotations.
+        :param control: The control item to capture.
+        :param sub_control_list: The list of the controls to annotate.
+        :param annotation_type: The type of the annotation.
+        :param color_diff: Whether to use different colors for different control types.
+        :param color_default: The default color of the annotation.
+        :return: The screenshot.
+        """
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)  
         screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type, color_diff, color_default)
         return screenshot.capture(save_path)
     
 
-    def get_annotation_dict(self, control, sub_control_list, annotation_type="number"):
+    def get_annotation_dict(self, control, sub_control_list: List, annotation_type="number") -> Dict:
+        """
+        Get the dictionary of the annotations.
+        :param control: The control item to capture.
+        :param sub_control_list: The list of the controls to annotate.
+        :param annotation_type: The type of the annotation.
+        :return: The dictionary of the annotations.
+        """
+
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
         screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type)  
         return screenshot.get_annotation_dict()
+
     
     
 
