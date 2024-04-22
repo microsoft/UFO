@@ -243,7 +243,7 @@ example9:
       None
 
 
-example10:
+example_openapp1:
   request: 
     open a ppt file on my desktop named test.pptx and modify the title to Apple is the best tech Company
   Response: 
@@ -265,7 +265,7 @@ example10:
     AppsToOpen: {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}
   
 
-example11:
+example_openapp2:
   request: |- 
     open file explorer APP for me and find label.txt file.
   Response: 

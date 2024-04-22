@@ -155,23 +155,6 @@ def replace_newline(input_str : str) -> str:
         result_str = result_str.replace('\\\\n', '\\n')
 
     return result_str
-   
-
-def find_window_by_app_name(desktop_windows_dict, app_name):
-    '''
-    Find the window on windows control panel by the app name.
-    :param desktop_windows_dict: The windows on the desktop.
-    :param app_name: The app name to find.
-    '''
-    title_pattern = AppMappings.get_app_name(app_name)
-    if title_pattern is None:
-        return None
-    # Search through the windows for a title match
-    for window_id, window_wrapper in desktop_windows_dict.items():
-        if title_pattern in window_wrapper.window_text() or 'Home' in window_wrapper.window_text() and title_pattern == "Explorer":
-            return window_wrapper
-    print("Window not found.")
-    return None
 
 
 def get_application_name(window) -> str:
@@ -188,46 +171,3 @@ def get_application_name(window) -> str:
         return process.name()
     except psutil.NoSuchProcess:
         return ""
-    
-class AppMappings:
-    """
-    Mappings for OpenFile class.
-    app_name_map: a mapping from the key/command to the name of the app.
-    app_process_map: a mapping from the key/command to the process name of the app."""
-    app_name_map = {
-        "powerpnt": "PowerPoint",
-        "winword": "Word",
-        "outlook": "Outlook",
-        "explorer": "Explorer",
-        "notepad": "Notepad",
-        "msteams:": "Microsoft Teams",
-        "ms-todo:": "Microsoft To Do",
-        "edge": "Microsoft Edge",
-        "chrome": "Google Chrome",
-        "firefox": "Firefox",
-        "excel": "Excel",
-        "ms-settings:": "Settings"
-    }
-
-    app_process_map = {
-        "powerpnt": ["POWERPNT.EXE", "powerpnt"],
-        "winword": ["WINWORD.EXE", "winword"],
-        "outlook": ["OUTLOOK.EXE", "outlook"],
-        "explorer": ["explorer.exe"],
-        "notepad": ["notepad.exe", "notepad"],
-        "msteams:": ["Teams.exe", "teams", "msteams"],
-        "ms-todo:": ["Todo.exe", "todo", "ms-todo"],
-        "edge": ["msedge.exe", "edge"],
-        "chrome": ["chrome.exe", "chrome"],
-        "firefox": ["firefox.exe", "firefox"],
-        "excel": ["EXCEL.EXE", "excel"],
-        "ms-settings:": ["SystemSettings.exe", "ms-settings"],
-    }
-
-    @classmethod
-    def get_app_name(cls, key):
-        return cls.app_name_map.get(key, "Unknown App")
-
-    @classmethod
-    def get_process_names(cls, key):
-        return cls.app_process_map.get(key, [key])

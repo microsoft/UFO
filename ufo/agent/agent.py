@@ -9,7 +9,7 @@ from ..automator import puppeteer
 from ..prompter.agent_prompter import (HostAgentPrompter,
                                        AppAgentPrompter)
 from .basic import BasicAgent, Memory
-from ..automator.ui_control import controller as ui_file_control
+from ..automator.ui_control import openfile
 from ..automator.ui_control import utils as control
 
 # Lazy import the retriever factory to aviod long loading time.
@@ -77,15 +77,14 @@ class HostAgent(BasicAgent):
         :param app_file_info: The information of the application or file. {'APP': name of app, 'file_path': path}
         :return: The window of the application.
         '''
-        file_manager = ui_file_control.FileController()
+        file_manager = openfile.FileController()
         results = file_manager.execute_code(app_file_info)
-        APP_name = app_file_info["APP"]
         time.sleep(5)
         desktop_windows_dict, desktop_windows_info = control.get_desktop_app_info_dict()
         if not results:
             self.status = "ERROR in openning the application or file."
             return None
-        app_window = control.find_window_by_app_name(desktop_windows_dict, APP_name)
+        app_window = file_manager.find_window_by_app_name(desktop_windows_dict)
         return app_window
 
     def print_response(self, response_dict: Dict):

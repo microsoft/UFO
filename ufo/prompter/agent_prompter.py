@@ -112,7 +112,7 @@ class HostAgentPrompter(BasicPrompter):
         for key, values in self.example_prompt_template.items():
             
             if key.startswith("example"):
-                if key == "example10" or key == "example11":
+                if key.startswith("example_openapp") and not self.allow_openapp:
                     continue
                 if not self.allow_openapp:
                     del values["Response"]["AppsToOpen"]
