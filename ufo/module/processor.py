@@ -454,7 +454,6 @@ class HostAgentProcessor(BaseProcessor):
     
 
 
-
 class AppAgentProcessor(BaseProcessor):
     
         def __init__(self, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, global_step: int, 

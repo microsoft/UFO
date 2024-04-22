@@ -5,7 +5,7 @@ import argparse
 from datetime import datetime
 
 from .config.config import Config
-from .module.session import Session
+from .module.sessions import Session
 from .module.state import (ErrorState, MaxStepReachedState, NoneState,
                            SessionFinishState)
 
