@@ -91,7 +91,7 @@ class RoundFinishState(SessionState):
         session.set_new_round()
         status = session.get_status()
  
-        session.set_state(StatusToStateMapper.get_appropriate_state(status))
+        session.set_state(StatusToStateMapper().get_appropriate_state(status))
 
 
 
@@ -153,7 +153,7 @@ class AppSelectionState(SessionState):
             return
         
 
-        session.set_state(StatusToStateMapper.get_appropriate_state(status))
+        session.set_state(StatusToStateMapper().get_appropriate_state(status))
 
 
 
@@ -176,7 +176,7 @@ class ContinueState(SessionState):
             session.set_state(MaxStepReachedState())  
             return
   
-        session.set_state(StatusToStateMapper.get_appropriate_state(status))  
+        session.set_state(StatusToStateMapper().get_appropriate_state(status))  
 
 
 

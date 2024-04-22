@@ -4,7 +4,7 @@
 import logging
 import os
 
-from art import text2art
+
 from ..automator.ui_control.screenshot import PhotographerFacade
 
 from .. import utils
@@ -13,7 +13,7 @@ from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
 from . import interactor
 from . import processor
-from .state import StateMapping
+from .state import StatusToStateMapper
 
 
 
@@ -48,7 +48,7 @@ class Session(object):
         self.photographer = PhotographerFacade()
 
         self._status = "APP_SELECTION"
-        self._state = StateMapping().AppropriateState(self._status)
+        self._state = StatusToStateMapper().get_appropriate_state(self._status)
         self.application = ""
         self.app_root = ""
         self.app_window = None
