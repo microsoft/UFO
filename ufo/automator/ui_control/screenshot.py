@@ -258,6 +258,28 @@ class AnnotationDecorator(PhotographerDecorator):
             annotation_dict[label_text] = control
         return annotation_dict
     
+    def get_annotation_coordinate_dict(self) -> Dict:
+        """
+        Get the dictionary of the coordinate of the annotations.
+        :return: The dictionary of the annotations' coordinate.
+        """
+        annotation_coordinate_dict = {}
+        window_rect = self.photographer.control.rectangle()
+        for i, control in enumerate(self.sub_control_list):
+            if self.annotation_type == "number":
+                label_text = str(i+1)
+            elif self.annotation_type == "letter":
+                label_text = self.number_to_letter(i)
+            control_rect = control.rectangle()
+            annotation_coordinate_dict[label_text] = self.coordinate_adjusted(window_rect, control_rect)
+        return annotation_coordinate_dict
+    
+    def get_screen_shot(self) -> Image:
+        """
+        Get the screenshot.
+        :return: The screenshot.
+        """
+        return self.photographer.capture()
 
     def capture(self, save_path:Optional[str] = None):
         """
@@ -370,6 +392,20 @@ class PhotographerFacade:
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
         screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type)  
         return screenshot.get_annotation_dict()
+    
+    
+    def get_annotation_coordinate_dict_with_screenshot(self, control, sub_control_list: List, annotation_type="number") -> Dict:
+        """
+        Get the dictionary of the coordinate of the annotations.
+        :param control: The control item to capture.
+        :param sub_control_list: The list of the controls to annotate.
+        :param annotation_type: The type of the annotation.
+        :return: The dictionary of the annotations' coordinate and screenshot in PIL.
+        """
+
+        screenshot = self.screenshot_factory.create_screenshot("app_window", control)
+        screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type)  
+        return screenshot.get_annotation_coordinate_dict(), screenshot.get_screen_shot()
 
     
     

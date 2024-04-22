@@ -9,8 +9,9 @@ from typing import Dict, List, Type
 
 from .. import utils
 from ..llm import llm_call
-# Lazy import the retriever factory to aviod long loading time.
+# Lazy import the retriever and control_filter factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
+control_filter = utils.LazyImport("..automator.ui_control.control_filter")
 
 
 @dataclass
@@ -203,6 +204,7 @@ class BasicAgent(ABC):
         self._status = None
         self._register_self()
         self.retriever_factory = retriever.RetrieverFactory()
+        self.control_filter_factory = control_filter.ControlFilterFactory()
         self._memory = Memory()
         
 

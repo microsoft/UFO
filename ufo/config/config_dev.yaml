@@ -51,3 +51,11 @@ INPUT_TEXT_ENTER: True # whether to press enter after typing the text
 ## APIs related
 USE_APIS: True  # Whether to use the API
 WORD_API_PROMPT: "ufo/prompts/base/{mode}/word_api.yaml"  # The prompt for the word API
+
+# For control filtering
+#'TEXT' for only rich text filter, 'SEMANTIC' for only semantic similarity match, 'ICON' for only icon match
+CONTROL_FILTER_TYPE: ["TEXT", "SEMANTIC", "ICON"]  # The control filter type
+CONTROL_FILTER_TOP_K_SEMANTIC: 15  # The control filter top k for semantic similarity
+CONTROL_FILTER_TOP_K_ICON: 15  # The control filter top k for icon similarity
+CONTROL_FILTER_MODEL_SEMANTIC_NAME: "all-MiniLM-L6-v2"  # The control filter model name of semantic similarity
+CONTROL_FILTER_MODEL_ICON_NAME: "clip-ViT-B-32"  # The control filter model name of icon similarity
