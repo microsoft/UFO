@@ -17,7 +17,6 @@ from .state import StateMapping
 
 
 
-
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
 
@@ -66,9 +65,7 @@ class Session(object):
     def process_application_selection(self) -> None:
 
         """
-        Select an action.
-        header: The headers of the request.
-        return: The outcome, the application window, and the action log.
+        Select an application to interact with.
         """
 
         host_agent_processor = processor.HostAgentProcessor(log_path=self.log_path, photographer=self.photographer, request=self.request, global_step=self._step,
@@ -87,9 +84,7 @@ class Session(object):
 
     def process_action_selection(self) -> None:
         """
-        Select an action.
-        header: The headers of the request.
-        return: The outcome, the application window, and the action log.
+        Select an action with the application.
         """
 
         
@@ -109,7 +104,7 @@ class Session(object):
         
     def experience_saver(self) -> None:
         """
-        Save the current agent experience.
+        Save the current trajectory as agent experience.
         """
         utils.print_with_color("Summarizing and saving the execution flow as experience...", "yellow")
 
@@ -191,6 +186,7 @@ class Session(object):
         """
         return self._cost
     
+    
     def print_cost(self) -> None:
         # Print the total cost 
 
@@ -223,9 +219,8 @@ class Session(object):
         """
         return self.app_window
     
-    
 
-    def update_cost(self, cost):
+    def update_cost(self, cost: float) -> None:
         """
         Update the cost of the session.
         """

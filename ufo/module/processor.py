@@ -5,12 +5,17 @@
 from abc import ABC, abstractmethod
 from .. import utils
 from ..automator.ui_control import utils as control
+from ..automator.ui_control.screenshot import PhotographerFacade
+
+from ..agent.agent import HostAgent, AppAgent
 import json
 import os
 import time
 import traceback
 from ..agent.basic import MemoryItem
 from ..config.config import Config
+from logging import Logger
+from typing import Type
 
 from . import interactor
 
@@ -19,7 +24,22 @@ BACKEND = configs["CONTROL_BACKEND"]
 
 
 class BaseProcessor(ABC):
-    def __init__(self, log_path, photographer, request, request_logger, logger, global_step, prev_status):
+    """
+    The base processor for the session.
+    """
+
+    def __init__(self, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, global_step: int, prev_status: str) -> None:
+        """
+        Initialize the processor.
+        :param log_path: The log path.
+        :param photographer: The photographer facade to process the screenshots.
+        :param request: The user request.
+        :param request_logger: The logger for the request string.
+        :param logger: The logger for the response and error.
+        :param global_step: The global step of the session.
+        :param prev_status: The previous status of the session.
+        """
+
         self.log_path = log_path
         self.photographer = photographer
         self.request = request
@@ -40,6 +60,20 @@ class BaseProcessor(ABC):
 
         
     def process(self):
+        """
+        Process the session.
+        The process includes the following steps:
+        1. Print the step information.
+        2. Capture the screenshot.
+        3. Get the control information.
+        4. Get the prompt message.
+        5. Get the response.
+        6. Parse the response.
+        7. Execute the action.
+        8. Update the memory.
+        9. Create the app agent if necessary.
+        10. Update the step and status.
+        """
 
         self.print_step_info()
         self.capture_screenshot()
@@ -64,43 +98,81 @@ class BaseProcessor(ABC):
     
     @abstractmethod
     def print_step_info(self):
+        """
+        Print the step information.
+        """
         pass
     
     @abstractmethod 
-    def capture_screenshot(self):  
+    def capture_screenshot(self):
+        """
+        Capture the screenshot.
+        """
         pass
     
     @abstractmethod 
-    def get_control_info(self):  
+    def get_control_info(self): 
+        """
+        Get the control information.
+        """
         pass
   
 
     @abstractmethod  
-    def get_prompt_message(self):  
+    def get_prompt_message(self):
+        """
+        Get the prompt message.
+        """
         pass  
   
     @abstractmethod  
     def get_response(self):  
+        """
+        Get the response from the LLM.
+        """
         pass  
   
     @abstractmethod  
-    def parse_response(self):  
+    def parse_response(self):
+        """
+        Parse the response.
+        """
         pass  
 
     @abstractmethod  
-    def execute_action(self):  
+    def execute_action(self):
+        """
+        Execute the action.
+        """
         pass  
 
     @abstractmethod
     def update_memory(self):
+        """
+        Update the memory of the Agent.
+        """
+        pass
+
+
+    @abstractmethod  
+    def update_status(self):
+        """
+        Update the status of the session.
+        """
         pass
 
     
     def create_app_agent(self):
+        """
+        Create the app agent.
+        """
         pass
 
 
-    def update_step_and_status(self):  
+    def update_step_and_status(self):
+        """
+        Update the step and status of the process.
+        """
         self._step += 1  
         self.update_status()
 
@@ -144,22 +216,24 @@ class BaseProcessor(ABC):
     
 
     def is_error(self):
+        """
+        Check if the process is in error.
+        :return: The boolean value indicating if the process is in error.
+        """
 
         return self._status == "ERROR"
     
 
     def should_create_appagent(self):
+        """
+        Check if the app agent should be created.
+        :return: The boolean value indicating if the app agent should be created.
+        """
 
         if isinstance(self, HostAgentProcessor) and self.prev_status == "APP_SELECTION":
             return True
         else:
             return False
-
-
-  
-    @abstractmethod  
-    def update_status(self):  
-        pass
 
 
     def log(self, response_json: dict) -> dict:
@@ -194,8 +268,21 @@ class BaseProcessor(ABC):
 
 class HostAgentProcessor(BaseProcessor):
 
-    def __init__(self, log_path, photographer, request, request_logger, logger, host_agent, global_step, prev_status):
+    def __init__(self, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, host_agent: HostAgent, global_step: int, prev_status: str):
         super().__init__(log_path, photographer, request, request_logger, logger, global_step, prev_status)
+
+        """
+        Initialize the host agent processor.
+        :param log_path: The log path.
+        :param photographer: The photographer facade to process the screenshots.
+        :param request: The user request.
+        :param request_logger: The logger for the request string.
+        :param logger: The logger for the response and error.
+        :param host_agent: The host agent.
+        :param global_step: The global step of the session.
+        :param prev_status: The previous status of the session.
+        """
+
         self.HostAgent = host_agent  
 
         self._desktop_screen_url = None
@@ -204,20 +291,31 @@ class HostAgentProcessor(BaseProcessor):
         
     
     def print_step_info(self):
+        """
+        Print the step information.
+        """
         utils.print_with_color("Step {step}: Selecting an application.".format(step=self.global_step), "magenta")
 
     def capture_screenshot(self):
-
+        """
+        Capture the screenshot.
+        """
         desktop_save_path = self.log_path + f"action_step{self._step}.png"
         self.photographer.capture_desktop_screen_screenshot(all_screens=True, save_path=desktop_save_path)
         self._desktop_screen_url = self.photographer.encode_image_from_path(desktop_save_path)
 
 
-    def get_control_info(self):  
+    def get_control_info(self):
+        """
+        Get the control information.
+        """
         self._desktop_windows_dict, self._desktop_windows_info = control.get_desktop_app_info_dict()
 
 
     def get_prompt_message(self):
+        """
+        Get the prompt message.
+        """
 
         request_history = self.HostAgent.get_request_history_memory().to_json()
         action_history = self.HostAgent.get_global_action_memory().to_json()
@@ -236,6 +334,9 @@ class HostAgentProcessor(BaseProcessor):
     
     
     def get_response(self):
+        """
+        Get the response from the LLM.
+        """
 
         try:
             self._response, self._cost = self.HostAgent.get_response(self._prompt_message, "HOSTAGENT", use_backup_engine=True)
@@ -246,7 +347,10 @@ class HostAgentProcessor(BaseProcessor):
             self._status = "ERROR"
         
 
-    def parse_response(self):  
+    def parse_response(self):
+        """
+        Parse the response.
+        """
         try:
             self._response_json = self.HostAgent.response_to_dict(self._response)
             self.control_label = self._response_json["ControlLabel"]
@@ -269,6 +373,9 @@ class HostAgentProcessor(BaseProcessor):
 
 
     def execute_action(self):
+        """
+        Execute the action.
+        """
 
          # Get the application window
         self._app_window = self._desktop_windows_dict.get(self.control_label)
@@ -288,6 +395,9 @@ class HostAgentProcessor(BaseProcessor):
 
 
     def update_memory(self):
+        """
+        Update the memory of the Agent.
+        """
 
         round = self.HostAgent.get_round()
 
@@ -305,6 +415,9 @@ class HostAgentProcessor(BaseProcessor):
         
 
     def update_status(self):
+        """
+        Update the status of the session.
+        """
         self.HostAgent.update_step()
         self.HostAgent.update_status(self._status)
 
@@ -345,8 +458,24 @@ class HostAgentProcessor(BaseProcessor):
 
 class AppAgentProcessor(BaseProcessor):
     
-        def __init__(self, log_path, photographer, request, request_logger, logger, app_agent, global_step, process_name, app_window, control_reannotate, prev_status):
+        def __init__(self, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, global_step: int, 
+                     process_name: str, app_window: Type, control_reannotate: list, prev_status: str):
             super().__init__(log_path, photographer, request, request_logger, logger, global_step, prev_status)
+
+            """
+            Initialize the app agent processor.
+            :param log_path: The log path.
+            :param photographer: The photographer facade to process the screenshots.
+            :param request: The user request.
+            :param request_logger: The logger for the request string.
+            :param logger: The logger for the response and error.
+            :param app_agent: The app agent.
+            :param global_step: The global step of the session.
+            :param process_name: The process name.
+            :param app_window: The application window.
+            :param control_reannotate: The list of controls to reannotate.
+            :param prev_status: The previous status of the session.
+            """
 
             self.AppAgent = app_agent
             self.process_name = process_name
@@ -363,10 +492,16 @@ class AppAgentProcessor(BaseProcessor):
 
 
         def print_step_info(self):
+            """
+            Print the step information.
+            """
             utils.print_with_color("Step {step}: Taking an action on application {application}.".format(step=self.global_step, application=self.process_name), "magenta")
 
 
         def capture_screenshot(self):
+            """
+            Capture the screenshot.
+            """
             
             screenshot_save_path = self.log_path + f"action_step{self.global_step}.png"
             annotated_screenshot_save_path = self.log_path + f"action_step{self.global_step}_annotated.png"
@@ -400,10 +535,17 @@ class AppAgentProcessor(BaseProcessor):
         
 
         def get_control_info(self):
+            """
+            Get the control information.
+            """
             self._control_info = control.get_control_info_dict(self._annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
 
 
         def get_prompt_message(self):
+            """
+            Get the prompt message.
+            """
+
             if configs["RAG_EXPERIENCE"]:
                 experience_examples, experience_tips = self.AppAgent.rag_experience_retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"])
             else:
@@ -440,6 +582,9 @@ class AppAgentProcessor(BaseProcessor):
 
 
         def get_response(self):
+            """
+            Get the response from the LLM.
+            """
             try:
                 self._response, self._cost = self.AppAgent.get_response(self._prompt_message, "APPAGENT", use_backup_engine=True)
             except Exception as e:
@@ -452,6 +597,9 @@ class AppAgentProcessor(BaseProcessor):
                 return
             
         def parse_response(self):
+            """
+            Parse the response.
+            """
             try:
                 self._response_json = self.AppAgent.response_to_dict(self._response)
 
@@ -473,6 +621,9 @@ class AppAgentProcessor(BaseProcessor):
 
 
         def execute_action(self):
+            """
+            Execute the action.
+            """
             try:
                 control_selected = self._annotation_dict.get(self._control_label, "")
                 self.AppAgent.Puppeteer.create_ui_control_receiver(control_selected, self._app_window)
@@ -519,6 +670,9 @@ class AppAgentProcessor(BaseProcessor):
            
         
         def update_memory(self):
+            """
+            Update the memory of the Agent.
+            """
             # Create a memory item for the app agent
             app_agent_step_memory = MemoryItem()
 
@@ -538,6 +692,9 @@ class AppAgentProcessor(BaseProcessor):
 
 
         def update_status(self):
+            """
+            Update the status of the session.
+            """
             self.AppAgent.update_step()
             self.AppAgent.update_status(self._status)
 
@@ -568,6 +725,10 @@ class AppAgentProcessor(BaseProcessor):
 
 
         def get_control_reannotate(self):
+            """
+            Get the control to reannotate.
+            :return: The control to reannotate.
+            """
 
             return self._control_reannotate
  

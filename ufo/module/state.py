@@ -14,10 +14,14 @@ configs = Config.get_instance().config_data
 
 
 class StateMapping(ABC):
+    """
+    A class to map the status to the appropriate state.
+    """
 
     
     def __init__(self):
         """
+        Initialize the state mapping.
         """
 
         self.STATE_MAPPING = {  
@@ -33,6 +37,9 @@ class StateMapping(ABC):
 
     def AppropriateState(self, status: str) -> object:
         """
+        Get the appropriate state based on the status.
+        :param status: The status string.
+        :return: The appropriate state.
         """
         state = self.STATE_MAPPING.get(status, NoneState)
         return state()
@@ -40,21 +47,41 @@ class StateMapping(ABC):
 
 
 class SessionState(ABC):
-
+    """
+    The base class for session state.
+    """
     def handle(self, session):
+        """
+        Handle the session.
+        :param session: The session.
+        """
         pass
     
 
 
 class NoneState(SessionState):
+    """
+    The state when the session is None.
+    """
 
     def handle(self, session):
+        """
+        Handle the session. Do nothing.
+        :param session: The session.
+        """
         pass
 
 
 class RoundFinishState(SessionState):
+    """
+    The state when a single round is finished.
+    """
 
     def handle(self, session):
+        """
+        Handle the session. Either start a new round or finish the session.
+        :param session: The session.
+        """
 
         result = session.get_results()  
         round = session.get_round()  
@@ -71,23 +98,46 @@ class RoundFinishState(SessionState):
         session.set_state(StateMapping().AppropriateState(status))
 
 
+
 class SessionFinishState(SessionState):
+    """
+    The state when the entire session is finished.
+    """
 
     def handle(self, session):
+        """
+        Handle the session. Finish the entire session, and save the experience if needed.
+        :param session: The session.
+        """
 
         if experience_asker():
             session.experience_saver()
 
 
+
 class ErrorState(SessionState):
+    """
+    The state when an error occurs.
+    """
 
     def handle(self, session):
+        """
+        Handle the session. Do nothing.
+        :param session: The session.
+        """
         pass
 
 
 class AppSelectionState(SessionState):
+    """
+    The state when the application selection is needed by a HostAgent.
+    """
 
     def handle(self, session):
+        """
+        Handle the session. Process the application selection.
+        :param session: The session.
+        """
 
         round = session.get_round()
         step = session.get_step()
@@ -112,8 +162,15 @@ class AppSelectionState(SessionState):
 
 
 class ContinueState(SessionState):
+    """
+    The state when the session needs to continue by the AppAgent.
+    """
 
     def handle(self, session):
+        """
+        Handle the session. Process the action selection.
+        :param session: The session.
+        """
 
         session.process_action_selection()  
         status = session.get_status()  
@@ -128,15 +185,29 @@ class ContinueState(SessionState):
 
 
 class AnnotationState(ContinueState):
+    """
+    The state when the session needs to re-nnotate the screenshot.
+    """
 
     def handle(self, session):
+        """
+        Handle the session. Process the action selection with the re-annotation screenshot.
+        :param session: The session.
+        """
         super().handle(session)
 
 
 
 class MaxStepReachedState(SessionState):
+    """
+    The state when the maximum step is reached.
+    """
 
     def handle(self, session):
+        """
+        Handle the session. Finish the session when the maximum step is reached.
+        :param session: The session.
+        """
         pass
 
 
