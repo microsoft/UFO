@@ -5,7 +5,8 @@ import json
 import os
 import re
 
-from ..utils import encode_image_from_path, print_with_color
+from ..utils import print_with_color
+from ..automator.ui_control.screenshot import PhotographerFacade
 
 
 class ExperienceLogLoader:
@@ -95,7 +96,7 @@ class ExperienceLogLoader:
 
         # Check if the screenshot exists
         if os.path.exists(screenshot_path):
-            image_url = encode_image_from_path(screenshot_path)
+            image_url = PhotographerFacade.encode_image_from_path(screenshot_path)
         else:
             image_url = None
 

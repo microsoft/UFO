@@ -13,7 +13,7 @@ from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
 from . import interactor
 from . import processor
-from . import state
+from .state import StateMapping
 
 
 
@@ -49,7 +49,7 @@ class Session(object):
         self.photographer = PhotographerFacade()
 
         self._status = "APP_SELECTION"
-        self._state = state.AppropriateState(self._status)(self)
+        self._state = StateMapping().AppropriateState(self._status)
         self.application = ""
         self.app_root = ""
         self.app_window = None
@@ -167,6 +167,14 @@ class Session(object):
         """
         return self._status
     
+
+    def get_state(self) -> object:
+        """
+        Get the state of the session.
+        return: The state of the session.
+        """
+        return self._state
+    
     
     def get_step(self) -> int:
         """
@@ -183,6 +191,14 @@ class Session(object):
         """
         return self._cost
     
+    def print_cost(self) -> None:
+        # Print the total cost 
+
+        total_cost = self.get_cost()  
+        if isinstance(total_cost, float):  
+            formatted_cost = '${:.2f}'.format(total_cost)  
+            utils.print_with_color(f"Request total cost is {formatted_cost}", "yellow")
+        
 
     def get_results(self) -> str:
         """
@@ -224,14 +240,14 @@ class Session(object):
         """
         Set the state of the session.
         """
-        self.state = state
+        self._state = state
 
 
     def handle(self) -> None:
         """
         Handle the session.
         """
-        self.state.handle()
+        self._state.handle(self)
 
 
 

@@ -308,7 +308,8 @@ class HostAgentProcessor(BaseProcessor):
         self.HostAgent.update_step()
         self.HostAgent.update_status(self._status)
 
-        time.sleep(configs["SLEEP_TIME"])
+        if self._status != "FINISH":
+            time.sleep(configs["SLEEP_TIME"])
 
 
     def create_app_agent(self):
@@ -540,7 +541,8 @@ class AppAgentProcessor(BaseProcessor):
             self.AppAgent.update_step()
             self.AppAgent.update_status(self._status)
 
-            time.sleep(configs["SLEEP_TIME"])
+            if self._status != "FINISH":
+                time.sleep(configs["SLEEP_TIME"])
 
 
 

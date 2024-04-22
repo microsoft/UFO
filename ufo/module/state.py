@@ -3,11 +3,50 @@
 
 from abc import ABC
 
-from .state_map import AppropriateState
+from ..config.config import Config
+from ..utils import print_with_color
+from .interactor import experience_asker
+
+
+configs = Config.get_instance().config_data
+
+
+
+
+class StateMapping(ABC):
+
+    
+    def __init__(self):
+        """
+        """
+
+        self.STATE_MAPPING = {  
+            "FINISH": RoundFinishState,  
+            "ERROR": ErrorState,  
+            "APP_SELECTION": AppSelectionState,  
+            "CONTINUE": ContinueState,  
+            "COMPLETE": SessionFinishState,
+            "SCREENSHOT": AnnotationState,  
+            "MAX_STEP_REACHED": MaxStepReachedState
+        }
+
+
+    def AppropriateState(self, status: str) -> object:
+        """
+        """
+        state = self.STATE_MAPPING.get(status, NoneState)
+        return state()
 
 
 
 class SessionState(ABC):
+
+    def handle(self, session):
+        pass
+    
+
+
+class NoneState(SessionState):
 
     def handle(self, session):
         pass
@@ -16,7 +55,28 @@ class SessionState(ABC):
 class RoundFinishState(SessionState):
 
     def handle(self, session):
-        pass
+
+        result = session.get_results()  
+        round = session.get_round()  
+  
+        # Print the result  
+        if result != "":  
+            print_with_color("Result for round {round}:".format(  
+                round=round), "magenta")  
+            print_with_color("{result}".format(result=result), "yellow")
+
+        session.set_new_round()
+        status = session.get_status()
+ 
+        session.set_state(StateMapping().AppropriateState(status))
+
+
+class SessionFinishState(SessionState):
+
+    def handle(self, session):
+
+        if experience_asker():
+            session.experience_saver()
 
 
 class ErrorState(SessionState):
@@ -28,28 +88,56 @@ class ErrorState(SessionState):
 class AppSelectionState(SessionState):
 
     def handle(self, session):
-        pass
+
+        round = session.get_round()
+        step = session.get_step()
+
+        if round >= 1:
+            print_with_color(  
+                "Step {step}: Switching to New Application".format(step=step), "magenta")  
+            app_window = session.get_application_window()  
+            app_window.minimize()
+
+        session.process_application_selection()  
+        step = session.get_step()  
+        status = session.get_status()  
+  
+        if step > configs["MAX_STEP"]:  
+            session.set_state(MaxStepReachedState())  
+            return
+        
+
+        session.set_state(StateMapping().AppropriateState(status))
 
 
-class ActionSelectionState(SessionState):
+
+class ContinueState(SessionState):
 
     def handle(self, session):
-        pass
+
+        session.process_action_selection()  
+        status = session.get_status()  
+        step = session.get_step()  
+  
+        if step > configs["MAX_STEP"]:  
+            session.set_state(MaxStepReachedState())  
+            return
+  
+        session.set_state(StateMapping().AppropriateState(status))  
 
 
-class SessionFinishState(SessionState):
+
+class AnnotationState(ContinueState):
 
     def handle(self, session):
-        pass
+        super().handle(session)
 
-
-class AnnotationState(SessionState):
-
-    def handle(self, session):
-        pass
 
 
 class MaxStepReachedState(SessionState):
 
     def handle(self, session):
         pass
+
+
+
