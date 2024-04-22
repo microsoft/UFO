@@ -6,42 +6,38 @@ from abc import ABC
 from ..config.config import Config
 from ..utils import print_with_color
 from .interactor import experience_asker
-
+from typing import Dict, Type, Callable  
 
 configs = Config.get_instance().config_data
 
 
-
-
-class StateMapping(ABC):
-    """
-    A class to map the status to the appropriate state.
-    """
-
-    
-    def __init__(self):
-        """
-        Initialize the state mapping.
-        """
-
-        self.STATE_MAPPING = {  
+class StatusToStateMapper(ABC):  
+    """  
+    A class to map the status to the appropriate state.  
+    """  
+  
+    @staticmethod  
+    def create_state_mapping() -> Dict[str, Type[object]]:  
+        return {  
             "FINISH": RoundFinishState,  
             "ERROR": ErrorState,  
             "APP_SELECTION": AppSelectionState,  
             "CONTINUE": ContinueState,  
-            "COMPLETE": SessionFinishState,
+            "COMPLETE": SessionFinishState,  
             "SCREENSHOT": AnnotationState,  
-            "MAX_STEP_REACHED": MaxStepReachedState
-        }
-
-
-    def AppropriateState(self, status: str) -> object:
-        """
-        Get the appropriate state based on the status.
-        :param status: The status string.
-        :return: The appropriate state.
-        """
-        state = self.STATE_MAPPING.get(status, NoneState)
+            "MAX_STEP_REACHED": MaxStepReachedState  
+        }  
+  
+    def __init__(self):  
+        self.STATE_MAPPING = self.create_state_mapping()  
+  
+    def get_appropriate_state(self, status: str) -> Type[object]:  
+        """  
+        Get the appropriate state based on the status.  
+        :param status: The status string.  
+        :return: The appropriate state.  
+        """  
+        state = self.STATE_MAPPING.get(status, NoneState)  
         return state()
 
 
@@ -95,7 +91,7 @@ class RoundFinishState(SessionState):
         session.set_new_round()
         status = session.get_status()
  
-        session.set_state(StateMapping().AppropriateState(status))
+        session.set_state(StatusToStateMapper.get_appropriate_state(status))
 
 
 
@@ -157,7 +153,7 @@ class AppSelectionState(SessionState):
             return
         
 
-        session.set_state(StateMapping().AppropriateState(status))
+        session.set_state(StatusToStateMapper.get_appropriate_state(status))
 
 
 
@@ -180,7 +176,7 @@ class ContinueState(SessionState):
             session.set_state(MaxStepReachedState())  
             return
   
-        session.set_state(StateMapping().AppropriateState(status))  
+        session.set_state(StatusToStateMapper.get_appropriate_state(status))  
 
 
 
