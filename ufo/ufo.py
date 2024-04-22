@@ -13,7 +13,7 @@ configs = Config.get_instance().config_data
 
 
 args = argparse.ArgumentParser()
-args.add_argument("--task", help="The name of current task.",
+args.add_argument("--task", "-t", help="The name of current task.",
                   type=str, default=datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
 
 parsed_args = args.parse_args()
