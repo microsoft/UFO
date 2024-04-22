@@ -2,11 +2,11 @@
 # Licensed under the MIT License.
 
 from abc import ABC
+from typing import Dict, Type
 
 from ..config.config import Config
 from ..utils import print_with_color
 from .interactor import experience_asker
-from typing import Dict, Type, Callable  
 
 configs = Config.get_instance().config_data
 

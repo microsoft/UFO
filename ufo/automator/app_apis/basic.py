@@ -4,9 +4,10 @@
 
 from abc import abstractmethod
 from typing import Dict, List
-from ..basic import ReceiverBasic, CommandBasic
 
 import win32com.client
+
+from ..basic import CommandBasic, ReceiverBasic
 
 
 class WinCOMReceiverBasic(ReceiverBasic):

@@ -2,9 +2,8 @@
 # Licensed under the MIT License.
 
 from ..basic import ReceiverFactory
-from .word.wordclient import WordWinCOMReceiver
 from .basic import WinCOMReceiverBasic
-
+from .word.wordclient import WordWinCOMReceiver
 
 
 class COMReceiverFactory(ReceiverFactory):  

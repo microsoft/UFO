@@ -45,27 +45,6 @@ def create_folder(folder_path: str):
         os.makedirs(folder_path)
 
 
-
-def number_to_letter(n:int):
-    """
-    Convert number to letter.
-    :param n: The number to convert.
-    :return: The letter converted from the number.
-    """
-    if n < 0:
-        return "Invalid input"
-    
-    result = ""
-    while n >= 0:
-        remainder = n % 26
-        result = chr(65 + remainder) + result  # 65 is the ASCII code for 'A'
-        n = n // 26 - 1
-        if n < 0:
-            break
-    
-    return result
-
-
 def check_json_format(string:str):
     """
     Check if the string can be correctly parse by json.

@@ -2,21 +2,20 @@
 # Licensed under the MIT License.
 
 
-from abc import ABC, abstractmethod
-from .. import utils
-from ..automator.ui_control import utils as control
-from ..automator.ui_control.screenshot import PhotographerFacade
-
-from ..agent.agent import HostAgent, AppAgent
 import json
 import os
 import time
 import traceback
-from ..agent.basic import MemoryItem
-from ..config.config import Config
+from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Type
+from typing import Optional, Type
 
+from .. import utils
+from ..agent.agent import AppAgent, HostAgent
+from ..agent.basic import MemoryItem
+from ..automator.ui_control import utils as control
+from ..automator.ui_control.screenshot import PhotographerFacade
+from ..config.config import Config
 from . import interactor
 
 configs = Config.get_instance().config_data
@@ -459,7 +458,7 @@ class HostAgentProcessor(BaseProcessor):
 class AppAgentProcessor(BaseProcessor):
     
         def __init__(self, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, global_step: int, 
-                     process_name: str, app_window: Type, control_reannotate: list, prev_status: str):
+                     process_name: str, app_window: Type, control_reannotate: Optional[list], prev_status: str):
             super().__init__(log_path, photographer, request, request_logger, logger, global_step, prev_status)
 
             """
@@ -695,6 +694,7 @@ class AppAgentProcessor(BaseProcessor):
             """
             Update the status of the session.
             """
+
             self.AppAgent.update_step()
             self.AppAgent.update_status(self._status)
 
@@ -710,8 +710,7 @@ class AppAgentProcessor(BaseProcessor):
             control_text: The text of the control item.
             return: The boolean value indicating whether to proceed or not.
             """
-            
-           
+                       
             decision = interactor.sensitive_step_asker(action, control_text)
             if not decision:
                 utils.print_with_color("The user decide to stop the task.", "magenta")

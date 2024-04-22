@@ -4,11 +4,10 @@
 import argparse
 from datetime import datetime
 
-from .module.state import SessionFinishState, ErrorState, MaxStepReachedState, NoneState
-from .module.session import Session
 from .config.config import Config
-from .utils import print_with_color
-
+from .module.session import Session
+from .module.state import (ErrorState, MaxStepReachedState, NoneState,
+                           SessionFinishState)
 
 configs = Config.get_instance().config_data
 

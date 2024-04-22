@@ -4,18 +4,13 @@
 import logging
 import os
 
-
-from ..automator.ui_control.screenshot import PhotographerFacade
-
 from .. import utils
 from ..agent.agent import AgentFactory
+from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
-from . import interactor
-from . import processor
+from . import interactor, processor
 from .state import StatusToStateMapper
-
-
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]

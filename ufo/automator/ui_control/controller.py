@@ -3,14 +3,13 @@
 
 import time
 import warnings
+from abc import abstractmethod
+from typing import Dict, List
 
 from ...config.config import Config
 from ...utils import print_with_color
 from ..basic import CommandBasic, ReceiverBasic, ReceiverFactory
 from .utils import get_control_info
-
-from typing import Dict, List
-from abc import abstractmethod
 
 configs = Config.get_instance().config_data
 

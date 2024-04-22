@@ -1,25 +1,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from typing import List
-
-from PIL import Image, ImageDraw, ImageFont, ImageGrab
-from pywinauto.win32structures import RECT
-from typing import Dict, Optional
-from abc import ABC, abstractmethod  
-from io import BytesIO
-
-from ...config.config import Config
-from ...utils import number_to_letter
-
 import base64
 import mimetypes
 import os
-import win32api
-import win32con
-import win32gui
-import win32ui
+from abc import ABC, abstractmethod
+from io import BytesIO
+from typing import Dict, List, Optional
 
+from PIL import Image, ImageDraw, ImageFont, ImageGrab
+from pywinauto.win32structures import RECT
+
+from ...config.config import Config
 
 configs = Config.get_instance().config_data
 
@@ -132,11 +124,6 @@ class RectangleDecorator(PhotographerDecorator):
         self.color = color  
         self.width = width
         self.sub_control_list = sub_control_list
-  
-    def capture(self):
-        image = super().capture()
-        # Draw rectangle on the image  
-        return image
     
 
     @staticmethod
@@ -232,6 +219,27 @@ class AnnotationDecorator(PhotographerDecorator):
         image.paste(button_img, (coordinate[0], coordinate[1]))
         return image
     
+    
+    @staticmethod
+    def number_to_letter(n:int):
+        """
+        Convert number to letter.
+        :param n: The number to convert.
+        :return: The letter converted from the number.
+        """
+        if n < 0:
+            return "Invalid input"
+        
+        result = ""
+        while n >= 0:
+            remainder = n % 26
+            result = chr(65 + remainder) + result  # 65 is the ASCII code for 'A'
+            n = n // 26 - 1
+            if n < 0:
+                break
+        
+        return result
+    
 
     def get_annotation_dict(self) -> Dict:
         """
@@ -243,12 +251,12 @@ class AnnotationDecorator(PhotographerDecorator):
             if self.annotation_type == "number":
                 label_text = str(i+1)
             elif self.annotation_type == "letter":
-                label_text = number_to_letter(i)
+                label_text = self.number_to_letter(i)
             annotation_dict[label_text] = control
         return annotation_dict
     
 
-    def capture(self, save_path:str):
+    def capture(self, save_path:Optional[str] = None):
         """
         Capture a screenshot with annotations.
         :param save_path: The path to save the screenshot.
@@ -341,7 +349,7 @@ class PhotographerFacade:
     
 
     @staticmethod
-    def concat_screenshots(image1_path: str, image2_path: str, output_path: str):
+    def concat_screenshots(image1_path: str, image2_path: str, output_path: str) -> Image:
         """
         Concatenate two images horizontally.
         :param image1_path: The path of the first image.
@@ -402,78 +410,3 @@ class PhotographerFacade:
             
         image_url = f"data:{mime_type};base64," + encoded_image
         return image_url
-
-
-
-class TransparentBox:
-    """
-    A transparent box to draw on the screen.
-    """
-    def __init__(self, box_width=3):
-        """
-        Create a new TransparentBox.
-        :param box_width: The width of the box.
-        """
-        
-        self.desktop = win32gui.GetDesktopWindow()
-        self.desktop_dc = win32gui.GetWindowDC(self.desktop)
-        self.dc = win32ui.CreateDCFromHandle(self.desktop_dc)
-        self.dc.SetMapMode(win32con.MM_TEXT)
-        self.pen = win32ui.CreatePen(win32con.PS_SOLID, box_width, win32api.RGB(255, 0, 0))
-        self.brush = win32ui.CreateBrush(win32con.BS_NULL, 0, 0)
-        self.started = False
-        self.box_width = box_width  # Store the width of the box
-
-    def start_drawing(self, left, top, right, bottom, screenshot):
-        """
-        Start drawing the rectangle.
-        :param left: The left coordinate of the rectangle.
-        :param top: The top coordinate of the rectangle.
-        :param right: The right coordinate of the rectangle.
-        :param bottom: The bottom coordinate of the rectangle.
-        :param screenshot: The screenshot to draw on.
-        """
-        if not self.started:
-            self.left = left 
-            self.top = top  
-            self.right = right  
-            self.bottom = bottom 
-            # Capture a screenshot of the area where the rectangle will be drawn
-            self.screenshot = screenshot
-            self.dc.SelectObject(self.pen)
-            self.dc.SelectObject(self.brush)
-            self.dc.Rectangle((self.left + self.box_width // 2, self.top + self.box_width // 2, self.right- self.box_width // 2, self.bottom- self.box_width // 2))
-            self.started = True
-
-    def end_drawing(self):
-        """
-        End drawing the rectangle.
-        """
-        if self.started:
-            win32gui.ReleaseDC(self.desktop, self.desktop_dc)
-            self.dc = None
-            self.started = False
-
-            # Restore the screenshot to erase the rectangle
-            screenshot_dc = self.screenshot.load()
-            self.desktop_dc = win32gui.GetWindowDC(self.desktop)
-
-            # Set the pixels for the top and bottom borders of the rectangle
-            for x in range(self.left, self.right):
-                for y in range(self.top, self.top + self.box_width):  # Iterate over the width of the box for the top border
-                    color = screenshot_dc[x - self.left, y - self.top]
-                    win32gui.SetPixel(self.desktop_dc, x, y, win32api.RGB(color[0], color[1], color[2]))
-                for y in range(self.bottom - self.box_width, self.bottom):  # Iterate over the width of the box for the bottom border
-                    color = screenshot_dc[x - self.left, y - self.top]
-                    win32gui.SetPixel(self.desktop_dc, x, y, win32api.RGB(color[0], color[1], color[2]))
-
-            # Set the pixels for the left and right borders of the rectangle
-            for y in range(self.top, self.bottom):
-                for x in range(self.left, self.left + self.box_width):  # Iterate over the width of the box for the left border
-                    color = screenshot_dc[x - self.left, y - self.top]
-                    win32gui.SetPixel(self.desktop_dc, x, y, win32api.RGB(color[0], color[1], color[2]))
-                for x in range(self.right - self.box_width, self.right):  # Iterate over the width of the box for the right border
-                    color = screenshot_dc[x - self.left, y - self.top]
-                    win32gui.SetPixel(self.desktop_dc, x, y, win32api.RGB(color[0], color[1], color[2]))
-
-            win32gui.ReleaseDC(self.desktop, self.desktop_dc)

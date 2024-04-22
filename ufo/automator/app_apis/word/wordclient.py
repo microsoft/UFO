@@ -1,9 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from ..basic import WinCOMReceiverBasic, WinCOMCommand
 from typing import Dict
 
+from ..basic import WinCOMCommand, WinCOMReceiverBasic
 
 
 class WordWinCOMReceiver(WinCOMReceiverBasic):
