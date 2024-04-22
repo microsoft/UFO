@@ -50,6 +50,9 @@ class Round(object):
 
         self.request = request
 
+        self.index = None
+        self.global_step = None
+
 
     def process_application_selection(self) -> None:
 
@@ -57,8 +60,8 @@ class Round(object):
         Select an application to interact with.
         """
 
-        host_agent_processor = processor.HostAgentProcessor(log_path=self.log_path, photographer=self.photographer, request=self.request, global_step=self._step,
-                                                            request_logger=self.request_logger, logger=self.logger, host_agent=self.HostAgent, prev_status=self._status)
+        host_agent_processor = processor.HostAgentProcessor(index=self.index, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step,
+                                                            request_logger=self.request_logger, logger=self.logger, host_agent=self.HostAgent, prev_status=self.get_status(), app_window=self.app_window)
         
         host_agent_processor.process()
 
@@ -76,9 +79,9 @@ class Round(object):
         Select an action with the application.
         """
         
-        app_agent_processor = processor.AppAgentProcessor(log_path=self.log_path, photographer=self.photographer, request=self.request, global_step=self._step, process_name=self.application,
-                                                            request_logger=self.request_logger, logger=self.logger, app_agent=self.AppAgent, app_window=self.app_window, 
-                                                            control_reannotate=self.control_reannotate, prev_status=self._status)
+        app_agent_processor = processor.AppAgentProcessor(index=self.index, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step, 
+                                                          process_name=self.application, request_logger=self.request_logger, logger=self.logger, app_agent=self.AppAgent, app_window=self.app_window, 
+                                                            control_reannotate=self.control_reannotate, prev_status=self.get_status())
         
         app_agent_processor.process()
     
@@ -136,6 +139,19 @@ class Round(object):
         else:
             result = ""
         return result
+    
+
+    def set_index(self, index: int) -> None:
+        """
+        Set the index of the session.
+        """
+        self.index = index
+
+    def set_global_step(self, global_step: int) -> None:
+        """
+        Set the global step of the session.
+        """
+        self.global_step = global_step
     
     
     def get_application_window(self) -> object:

@@ -67,6 +67,10 @@ class Session(object):
         """
 
         new_round = round.Round(task=self.task, logger=self.logger, request_logger=self.request_logger, photographer=PhotographerFacade(), HostAgent=self.HostAgent, request=self.request)
+        new_round.set_index(self.get_round_num())
+        new_round.set_global_step(self.get_step())
+
+        self.round_list.append(new_round)
         
         return new_round
 
@@ -115,13 +119,15 @@ class Session(object):
         """
 
         current_round = self.get_current_round()
+        current_round.set_global_step(self.get_step())
+
         current_round.process_application_selection()
-
-        self._status = current_round.get_status()
-        self._step += current_round.get_step()
-        self.update_cost(current_round.get_cost())
-
         
+        self._status = current_round.get_status()
+        self._step += 1
+
+        self.app_window = current_round.get_application_window()
+
 
     def round_appagent_execution(self) -> None:
         """
@@ -129,11 +135,12 @@ class Session(object):
         """
 
         current_round = self.get_current_round()
+        current_round.set_global_step(self.get_step())
+
         current_round.process_action_selection()
 
         self._status = current_round.get_status()
-        self._step += current_round.get_step()
-        self.update_cost(current_round.get_cost())
+        self._step += 1
 
 
     

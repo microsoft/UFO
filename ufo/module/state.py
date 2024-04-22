@@ -81,7 +81,10 @@ class RoundFinishState(SessionState):
         """
 
         result = session.get_results()  
-        round_num = session.get_round_num()  
+        round_num = session.get_round_num()
+
+        round_cost = session.get_current_round().get_cost()
+        session.update_cost(round_cost)
   
         # Print the result  
         if result != "":  
@@ -136,24 +139,14 @@ class AppSelectionState(SessionState):
         :param session: The session.
         """
 
-        round_num = session.get_round_num()
-        step = session.get_step()
-
-        if round_num >= 1:
-            print_with_color(  
-                "Step {step}: Switching to New Application".format(step=step), "magenta")  
-            app_window = session.get_application_window()  
-            app_window.minimize()
-
         session.round_hostagent_execution()  
         step = session.get_step()  
-        status = session.get_status()  
+        status = session.get_status()
   
         if step > configs["MAX_STEP"]:  
             session.set_state(MaxStepReachedState())  
             return
         
-
         session.set_state(StatusToStateMapper().get_appropriate_state(status))
 
 
@@ -171,7 +164,7 @@ class ContinueState(SessionState):
 
         session.round_appagent_execution()  
         status = session.get_status()  
-        step = session.get_step()  
+        step = session.get_step()
   
         if step > configs["MAX_STEP"]:  
             session.set_state(MaxStepReachedState())  
