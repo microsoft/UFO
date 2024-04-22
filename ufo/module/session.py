@@ -9,7 +9,7 @@ from ..agent.agent import AgentFactory
 from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
-from . import interactor, processor
+from . import interactor, round
 from .state import StatusToStateMapper
 
 configs = Config.get_instance().config_data
@@ -21,6 +21,7 @@ class Session(object):
     """
     A session for UFO.
     """
+
     def __init__(self, task):
         """
         Initialize a session.
@@ -48,6 +49,7 @@ class Session(object):
         self.app_root = ""
         self.app_window = None
         
+
         self._cost = 0.0
         self.control_reannotate = []
 
@@ -55,47 +57,24 @@ class Session(object):
         
         self.request = interactor.first_request()
 
+        self.round_list = []
+        self._current_round = self.create_round()
 
-    def process_application_selection(self) -> None:
 
+    def create_round(self) -> round.Round:
         """
-        Select an application to interact with.
+        Create a new round.
         """
 
-        host_agent_processor = processor.HostAgentProcessor(log_path=self.log_path, photographer=self.photographer, request=self.request, global_step=self._step,
-                                                            request_logger=self.request_logger, logger=self.logger, host_agent=self.HostAgent, prev_status=self._status)
+        new_round = round.Round(task=self.task, logger=self.logger, request_logger=self.request_logger, photographer=PhotographerFacade(), HostAgent=self.HostAgent, request=self.request)
+        new_round.set_index(self.get_round_num())
+        new_round.set_global_step(self.get_step())
+
+        self.round_list.append(new_round)
         
-        host_agent_processor.process()
+        return new_round
 
-        self._status = host_agent_processor.get_process_status()
-        self._step += host_agent_processor.get_process_step()
-        self.update_cost(host_agent_processor.get_process_cost())
-
-        self.AppAgent = self.HostAgent.get_active_appagent()
-        self.app_window = host_agent_processor.get_active_window()
-        self.application = host_agent_processor.get_active_control_text()
-
-
-    def process_action_selection(self) -> None:
-        """
-        Select an action with the application.
-        """
-
-        
-        app_agent_processor = processor.AppAgentProcessor(log_path=self.log_path, photographer=self.photographer, request=self.request, global_step=self._step, process_name=self.application,
-                                                            request_logger=self.request_logger, logger=self.logger, app_agent=self.AppAgent, app_window=self.app_window, 
-                                                            control_reannotate=self.control_reannotate, prev_status=self._status)
-        
-        app_agent_processor.process()
     
-        self._status = app_agent_processor.get_process_status()
-        self._step += app_agent_processor.get_process_step()
-        self.update_cost(app_agent_processor.get_process_cost())
-
-        self.control_reannotate = app_agent_processor.get_control_reannotate()
-
-
-        
     def experience_saver(self) -> None:
         """
         Save the current trajectory as agent experience.
@@ -115,7 +94,7 @@ class Session(object):
         utils.print_with_color("The experience has been saved.", "magenta")
 
 
-    def set_new_round(self) -> None:
+    def start_new_round(self) -> None:
         """
         Start a new round.
         """
@@ -129,18 +108,58 @@ class Session(object):
             self._status = "COMPLETE"
             return
         else:
+            self._current_round = self.create_round()
             self._status = "APP_SELECTION"
             return
         
 
-    def get_round(self) -> int:
+    def round_hostagent_execution(self) -> None:
+        """
+        Execute the host agent in the current round.
+        """
+
+        current_round = self.get_current_round()
+        current_round.set_global_step(self.get_step())
+
+        current_round.process_application_selection()
+        
+        self._status = current_round.get_status()
+        self._step += 1
+
+        self.app_window = current_round.get_application_window()
+
+
+    def round_appagent_execution(self) -> None:
+        """
+        Execute the app agent in the current round.
+        """
+
+        current_round = self.get_current_round()
+        current_round.set_global_step(self.get_step())
+
+        current_round.process_action_selection()
+
+        self._status = current_round.get_status()
+        self._step += 1
+
+
+    
+    def get_current_round(self) -> round.Round:
+        """
+        Get the current round.
+        return: The current round.
+        """
+        return self._current_round
+
+
+
+    def get_round_num(self) -> int:
         """
         Get the round of the session.
         return: The round of the session.
         """
         return self._round
     
-
 
     def get_status(self) -> str:
         """
@@ -175,7 +194,9 @@ class Session(object):
     
     
     def print_cost(self) -> None:
-        # Print the total cost 
+        """
+        Print the total cost.
+        """
 
         total_cost = self.get_cost()  
         if isinstance(total_cost, float):  
@@ -198,7 +219,6 @@ class Session(object):
         return result
     
     
-    
     def get_application_window(self) -> object:
         """
         Get the application of the session.
@@ -215,7 +235,6 @@ class Session(object):
             self._cost += cost
         else:
             self._cost = None
-
 
 
     def set_state(self, state) -> None:
@@ -247,7 +266,6 @@ class Session(object):
         if not configs["PRINT_LOG"]:
             # Remove existing handlers if PRINT_LOG is False
             logger.handlers = []
-
 
         log_file_path = os.path.join(log_path, log_filename)
         file_handler = logging.FileHandler(log_file_path, encoding="utf-8")
