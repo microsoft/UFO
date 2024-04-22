@@ -244,7 +244,7 @@ example9:
 
 
 example_openapp1:
-  request: 
+  Request: 
     open a ppt file on my desktop named test.pptx and modify the title to Apple is the best tech Company
   Response: 
     Observation: |-
@@ -266,7 +266,7 @@ example_openapp1:
   
 
 example_openapp2:
-  request: |- 
+  Request: |- 
     open file explorer APP for me and find label.txt file.
   Response: 
     Observation: |-

@@ -18,8 +18,9 @@ class HostAgentPrompter(BasicPrompter):
         :param example_prompt_template: The path of the example prompt template.
         :param api_prompt_template: The path of the api prompt template.
         """
-        super().__init__(is_visual, prompt_template, example_prompt_template, allow_openapp)
+        super().__init__(is_visual, prompt_template, example_prompt_template)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template)
+        self.allow_openapp = allow_openapp
 
 
     def system_prompt_construction(self) -> str:
@@ -28,14 +29,14 @@ class HostAgentPrompter(BasicPrompter):
         return: The prompt for app selection.
         """
         if self.allow_openapp:
-            open_app_guideline = r'- For OpenAPP operation, some Windows apps can be opened directly by calling the function OpenAPP with the arguments , here is some examples, you should put them as argument of function OpenAPP. Here are examplesL powerpoint: "powerpnt", word: "winword", outlook: "outlook", settings: "ms-settings:", file explorer: "explorer", teams: "msteams", notepad: "notepad", Microsoft To Do: "ms-todo:"'
-            open_app_comment = r'"AppsToOpen": <Default value of it is null, if the user request contains to open a specific application, this field should be a dictionary, contains 2 filed: "APP" and "filepath", this field is set as the arguments of the function OpenAPP.>'
+            open_app_guideline = self.prompt_template["open_app_guideline"]
+            open_app_comment = self.prompt_template["open_app_comment"]
         else:
             open_app_guideline = ""
             open_app_comment = ""
         apis = self.api_prompt_helper(verbose = 0)
         examples = self.examples_prompt_helper()     
-
+        print(self.prompt_template["system"].format(apis=apis, examples=examples, open_app_guideline=open_app_guideline, open_app_comment=open_app_comment))
         return self.prompt_template["system"].format(apis=apis, examples=examples, open_app_guideline=open_app_guideline, open_app_comment=open_app_comment)
     
 
