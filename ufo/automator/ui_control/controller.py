@@ -6,9 +6,7 @@ import warnings
 
 from ...config.config import Config
 from .utils import get_control_info
-from ... import utils
-import psutil
-from pywinauto import Desktop
+from ...utils import print_with_color
 
 
 configs = Config.get_instance().config_data
@@ -68,7 +66,7 @@ class UIController:
 
         if not method:
             message = f"{self.control} doesn't have a method named {method_name}"
-            utils.print_with_color(message, "red")
+            print_with_color(message, "red")
             return message
         
         return method(args_dict)
@@ -116,7 +114,7 @@ class UIController:
             return result
         except Exception as e:
             if method_name == "set_text":
-                utils.print_with_color(f"{self.control} doesn't have a method named {method_name}, trying default input method", "yellow")
+                print_with_color(f"{self.control} doesn't have a method named {method_name}, trying default input method", "yellow")
                 method_name = "type_keys"
                 clear_text_keys = "^a{BACKSPACE}"
                 text_to_type = args["text"]
@@ -211,11 +209,11 @@ class UIController:
             result = method(**args)
         except AttributeError:
             message = f"{control} doesn't have a method named {method_name}"
-            utils.print_with_color(f"Warning: {message}", "yellow")
+            print_with_color(f"Warning: {message}", "yellow")
             result = message
         except Exception as e:
             message = f"An error occurred: {e}"
-            utils.print_with_color(f"Warning: {message}", "yellow")
+            print_with_color(f"Warning: {message}", "yellow")
             result = message
         return result
     
