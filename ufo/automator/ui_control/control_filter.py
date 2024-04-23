@@ -159,7 +159,7 @@ class IconControlFilter(ControlFilterModel):
         Inherits attributes from ControlFilterModel.
     Methods:
         control_filter_score(control_icon, keywords): Calculates the score of a control icon based on its similarity to the given keywords.
-        control_filter(filtered_control_info, control_items, annotation_coor_dict, screenshot, keywords, top_k): Filters control items based on their scores and returns the top-k items.
+        control_filter(filtered_control_info, control_items, cropped_icons_dict, keywords, top_k): Filters control items based on their scores and returns the top-k items.
     """
 
     def control_filter_score(self, control_icon, keywords):
@@ -175,24 +175,22 @@ class IconControlFilter(ControlFilterModel):
         control_icon_embedding = self.get_embedding(control_icon)
         return max(self.cos_sim(control_icon_embedding, keywords_embedding).tolist()[0])
 
-    def control_filter(self, filtered_control_info, control_items, annotation_coor_dict, screenshot, keywords, top_k):
+    def control_filter(self, filtered_control_info, control_items, cropped_icons_dict, keywords, top_k):
         """
         Filters control items based on their scores and returns the top-k items.
         Args:
             filtered_control_info: The list of already filtered control items.
             control_items: The list of all control items.
-            annotation_coor_dict: A dictionary mapping control labels to their coordinates.
-            screenshot: The screenshot image.
+            cropped_icons: The dictionary of the cropped icons.
             keywords: The keywords to compare the control icons against.
             top_k: The number of top items to return.
         Returns:
             The list of top-k control items based on their scores.
         """
         scores = []
-        for label, coor in annotation_coor_dict.items():
+        for label, cropped_icon in cropped_icons_dict.items():
             if label not in [info['label'] for info in filtered_control_info]:
-                crop_img = screenshot.crop(coor)
-                score = self.control_filter_score(crop_img, keywords)
+                score = self.control_filter_score(cropped_icon, keywords)
                 scores.append((score, label))
             else:
                 scores.append((-100.0, label))

@@ -256,15 +256,14 @@ class AppAgent(BasicAgent):
         self.human_demonstration_retriever = self.retriever_factory.create_retriever("demonstration", db_path)
 
 
-    def control_filter(self, control_info: list, plan: str, annotation_coor_dict: dict, screenshot: Image, control_filter_type:list,
+    def control_filter(self, control_info: list, plan: str, cropped_icons_dict: dict, control_filter_type:list,
                         semantic_model_name, semantic_top_k, icon_model_name, icon_top_k) -> list:
         """
         Filters the control information based on the specified control filter type.
         Args:
             control_info (list): The list of control information to be filtered.
             plan (str): The plan string.
-            annotation_coor_dict (dict): The dictionary containing annotation coordinates.
-            screenshot (Image): The screenshot image.
+            cropped_icons_dict (dict): The dictionary containing icons.
             control_filter_type (list): The type of control filter to be applied.
             semantic_model_name: The name of the semantic model.
             semantic_top_k: The top k value for semantic filtering.
@@ -300,7 +299,7 @@ class AppAgent(BasicAgent):
                 self.semantic_control_filter(filtered_control_info, control_info, keywords, semantic_model_name, semantic_top_k)
 
             if is_icon_required:                
-                self.icon_control_filter(filtered_control_info, control_info, annotation_coor_dict, screenshot, icon_model_name, icon_top_k, keywords)
+                self.icon_control_filter(filtered_control_info, control_info, cropped_icons_dict, icon_model_name, icon_top_k, keywords)
 
         return filtered_control_info
     
@@ -331,13 +330,13 @@ class AppAgent(BasicAgent):
         model_semantic.control_filter(filtered_control_info, control_info, keywords, semantic_top_k)
 
 
-    def icon_control_filter(self, filtered_control_info: list, control_info: list, annotation_coor_dict: dict, screenshot: Image, icon_model_name: str, icon_top_k: int, keywords: list) -> list:
+    def icon_control_filter(self, filtered_control_info: list, control_info: list, cropped_icons_dict: dict, icon_model_name: str, icon_top_k: int, keywords: list) -> list:
         """
         Filters the control information based on the icon control filter.
         Args:
             filtered_control_info (list): The list of already filtered control items.
             control_info (list): The list of control information to be filtered.
-            annotation_coor_dict (dict): The dictionary containing annotation coordinates.
+            cropped_icons_dict (dict): The dictionary containing icons.
             screenshot (Image): The screenshot image.
             icon_model_name: The name of the icon model.
             icon_top_k: The top k value for icon filtering.
@@ -345,7 +344,7 @@ class AppAgent(BasicAgent):
             keywords (list): A list of keywords.
         """
         model_icon = self.control_filter_factory.create_control_filter('icon', icon_model_name)
-        model_icon.control_filter(filtered_control_info, control_info, annotation_coor_dict, screenshot, keywords, icon_top_k)
+        model_icon.control_filter(filtered_control_info, control_info, cropped_icons_dict, keywords, icon_top_k)
 
     
     def plan_to_keywords(self, plan:str) -> list:

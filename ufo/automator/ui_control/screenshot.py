@@ -394,18 +394,23 @@ class PhotographerFacade:
         return screenshot.get_annotation_dict()
     
     
-    def get_annotation_coordinate_dict_with_screenshot(self, control, sub_control_list: List, annotation_type="number") -> Dict:
+    def get_cropped_icons_dict(self, control, sub_control_list: List, annotation_type="number") -> Dict:
         """
-        Get the dictionary of the coordinate of the annotations.
+        Get the dictionary of the cropped icons.
         :param control: The control item to capture.
         :param sub_control_list: The list of the controls to annotate.
         :param annotation_type: The type of the annotation.
-        :return: The dictionary of the annotations' coordinate and screenshot in PIL.
+        :return: The dictionary of the cropped icons.
         """
 
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
-        screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type)  
-        return screenshot.get_annotation_coordinate_dict(), screenshot.get_screen_shot()
+        screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type)
+        cropped_icons_dict = {}
+        image = screenshot.get_screen_shot()
+        for label, coordinate in screenshot.get_annotation_coordinate_dict().items():
+            cropped_icon = image.crop(coordinate)
+            cropped_icons_dict[label] = cropped_icon
+        return cropped_icons_dict
 
     
     

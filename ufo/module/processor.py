@@ -507,8 +507,7 @@ class AppAgentProcessor(BaseProcessor):
             self._image_url = []
             self._control_reannotate = None
             self.prev_plan = ""
-            self.annotation_coordinate_dict = {}
-            self.screenshot = None
+            self.cropped_icons_dict = {}
             self.filter_control_info = None
 
 
@@ -535,7 +534,7 @@ class AppAgentProcessor(BaseProcessor):
                 control_list = control.find_control_elements_in_descendants(BACKEND, self._app_window, control_type_list = configs["CONTROL_LIST"], class_name_list = configs["CONTROL_LIST"])
 
             self._annotation_dict = self.photographer.get_annotation_dict(self._app_window, control_list, annotation_type="number")
-            self.annotation_coordinate_dict, self.screenshot = self.photographer.get_annotation_coordinate_dict_with_screenshot(self._app_window, control_list, annotation_type="number")
+            self.cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, control_list, annotation_type="number")
 
             self.photographer.capture_app_window_screenshot(self._app_window, save_path=screenshot_save_path)
             self.photographer.capture_app_window_screenshot_with_annotation(self._app_window, control_list, annotation_type="number", save_path=annotated_screenshot_save_path)
@@ -569,7 +568,7 @@ class AppAgentProcessor(BaseProcessor):
             Get the control information.
             """
             
-            self.filter_control_info = self.AppAgent.control_filter(self._control_info, plan, self.annotation_coordinate_dict, self.screenshot, configs["CONTROL_FILTER_TYPE"], 
+            self.filter_control_info = self.AppAgent.control_filter(self._control_info, plan, self.cropped_icons_dict, configs["CONTROL_FILTER_TYPE"], 
                                                                 configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"], configs["CONTROL_FILTER_TOP_K_SEMANTIC"], 
                                                                 configs["CONTROL_FILTER_MODEL_ICON_NAME"], configs["CONTROL_FILTER_TOP_K_ICON"])
 
