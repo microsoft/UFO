@@ -27,7 +27,8 @@ class BaseProcessor(ABC):
     The base processor for the session.
     """
 
-    def __init__(self, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, global_step: int, prev_status: str) -> None:
+    def __init__(self, index: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
+                 round_step: int, global_step: int, prev_status: str, app_window:Type) -> None:
         """
         Initialize the processor.
         :param log_path: The log path.
@@ -44,8 +45,12 @@ class BaseProcessor(ABC):
         self.request = request
         self.request_logger = request_logger
         self.logger = logger
+        self._app_window = app_window
+        
         self.global_step = global_step
+        self.round_step = round_step
         self.prev_status = prev_status
+        self.index = index
         
         self._step = 0
         self._status = prev_status
@@ -53,7 +58,6 @@ class BaseProcessor(ABC):
         self._response = None  
         self._cost = 0
         self._control_label = None
-        self._app_window = None
         self._control_text = None
         self._response_json = None
 
@@ -76,7 +80,7 @@ class BaseProcessor(ABC):
 
         self.print_step_info()
         self.capture_screenshot()
-        self.get_control_info()  
+        self.get_control_info()
         self.get_prompt_message()
         self.get_response()
 
@@ -267,17 +271,20 @@ class BaseProcessor(ABC):
 
 class HostAgentProcessor(BaseProcessor):
 
-    def __init__(self, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, host_agent: HostAgent, global_step: int, prev_status: str):
-        super().__init__(log_path, photographer, request, request_logger, logger, global_step, prev_status)
+    def __init__(self, index: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
+                 host_agent: HostAgent, round_step: int, global_step: int, prev_status: str, app_window=None):
+        super().__init__(index, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
         """
         Initialize the host agent processor.
         :param log_path: The log path.
+        :param index: The index of the session.
         :param photographer: The photographer facade to process the screenshots.
         :param request: The user request.
         :param request_logger: The logger for the request string.
         :param logger: The logger for the response and error.
         :param host_agent: The host agent.
+        :param round_step: The round step.
         :param global_step: The global step of the session.
         :param prev_status: The previous status of the session.
         """
@@ -293,13 +300,13 @@ class HostAgentProcessor(BaseProcessor):
         """
         Print the step information.
         """
-        utils.print_with_color("Step {step}: Selecting an application.".format(step=self.global_step), "magenta")
+        utils.print_with_color("Round {index}, Step {step}: Selecting an application.".format(index=self.index+1, step=self.round_step+1), "magenta")
 
     def capture_screenshot(self):
         """
         Capture the screenshot.
         """
-        desktop_save_path = self.log_path + f"action_step{self._step}.png"
+        desktop_save_path = self.log_path + f"action_step{self.global_step}.png"
         self.photographer.capture_desktop_screen_screenshot(all_screens=True, save_path=desktop_save_path)
         self._desktop_screen_url = self.photographer.encode_image_from_path(desktop_save_path)
 
@@ -377,11 +384,13 @@ class HostAgentProcessor(BaseProcessor):
         """
 
          # Get the application window
-        self._app_window = self._desktop_windows_dict.get(self.control_label)
+        new_app_window = self._desktop_windows_dict.get(self.control_label, None)
+        if new_app_window is None:
+            return
         # Get the application name
-        self.app_root = control.get_application_name(self._app_window)
+        self.app_root = control.get_application_name(new_app_window)
         try:
-            self._app_window.is_normal()
+            new_app_window.is_normal()
 
         # Handle the case when the window interface is not available
         except Exception:
@@ -390,6 +399,13 @@ class HostAgentProcessor(BaseProcessor):
             return
 
         self._status = "CONTINUE"
+        
+        if new_app_window is not self._app_window and self._app_window is not None:
+            utils.print_with_color(  
+                "Switching to a new application...", "magenta")
+            self._app_window.minimize()
+
+        self._app_window = new_app_window
         self._app_window.set_focus()
 
 
@@ -401,7 +417,7 @@ class HostAgentProcessor(BaseProcessor):
         round = self.HostAgent.get_round()
 
         host_agent_step_memory = MemoryItem()
-        additional_memory = {"Step": self._step, "AgentStep": self.HostAgent.get_step(), "Round": round, "ControlLabel": self._control_text, "Action": "set_focus()", 
+        additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.HostAgent.get_step(), "Round": self.index, "ControlLabel": self._control_text, "Action": "set_focus()", 
                                 "Request": self.request, "Agent": "HostAgent", "AgentName": self.HostAgent.name, "Application": self.app_root, "Cost": self._cost, "Results": ""}
         
         host_agent_step_memory.set_values_from_dict(self._response_json)
@@ -457,18 +473,20 @@ class HostAgentProcessor(BaseProcessor):
 
 class AppAgentProcessor(BaseProcessor):
     
-        def __init__(self, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, global_step: int, 
+        def __init__(self, index: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, global_step: int, 
                      process_name: str, app_window: Type, control_reannotate: Optional[list], prev_status: str, host_agent: HostAgent):
-            super().__init__(log_path, photographer, request, request_logger, logger, global_step, prev_status)
+            super().__init__(index, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
             """
             Initialize the app agent processor.
+            :param index: The index of the session.
             :param log_path: The log path.
             :param photographer: The photographer facade to process the screenshots.
             :param request: The user request.
             :param request_logger: The logger for the request string.
             :param logger: The logger for the response and error.
             :param app_agent: The app agent.
+            :param round_step: The round step.
             :param global_step: The global step of the session.
             :param process_name: The process name.
             :param app_window: The application window.
@@ -499,7 +517,7 @@ class AppAgentProcessor(BaseProcessor):
             """
             Print the step information.
             """
-            utils.print_with_color("Step {step}: Taking an action on application {application}.".format(step=self.global_step, application=self.process_name), "magenta")
+            utils.print_with_color("Round {index}, Step {step}: Taking an action on application {application}.".format(index=self.index+1, step=self.round_step+1, application=self.process_name), "magenta")
 
 
         def capture_screenshot(self):
@@ -525,8 +543,8 @@ class AppAgentProcessor(BaseProcessor):
 
             if configs["INCLUDE_LAST_SCREENSHOT"]:
                 
-                last_screenshot_save_path = self.log_path + f"action_step{self.global_step}.png"
-                last_control_screenshot_save_path = self.log_path + f"action_step{self.global_step}_selected_controls.png"
+                last_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}.png"
+                last_control_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}_selected_controls.png"
                 self._image_url += [self.photographer.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
 
             if configs["CONCAT_SCREENSHOT"]:
@@ -591,13 +609,12 @@ class AppAgentProcessor(BaseProcessor):
                 self.filter_control_info = self.get_filter_control_info(self.prev_plan)
                 print(repr(self.prev_plan))
             else:
-                self.prev_plan = ""
                 self.filter_control_info = self.get_filter_control_info(self.HostAgent.memory.get_latest_item().to_dict()["Plan"])
                 print(repr(self.HostAgent.memory.get_latest_item().to_dict()["Plan"]))
             self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
                                                                                 self.filter_control_info, self.prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
-            self.request_logger.debug(json.dumps({"step": self._step, "prompt": self._prompt_message, "status": ""}))
+            self.request_logger.debug(json.dumps({"step": self.global_step, "prompt": self._prompt_message, "status": ""}))
 
 
         def get_response(self):
@@ -608,7 +625,7 @@ class AppAgentProcessor(BaseProcessor):
                 self._response, self._cost = self.AppAgent.get_response(self._prompt_message, "APPAGENT", use_backup_engine=True)
             except Exception as e:
                 error_trace = traceback.format_exc()
-                log = json.dumps({"step": self._step, "status": str(error_trace), "prompt": self._prompt_messag})
+                log = json.dumps({"step": self.global_step, "status": str(error_trace), "prompt": self._prompt_message})
                 utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(error_trace)), "red")
                 self.request_logger.info(log)
                 self._status = "ERROR"
@@ -699,13 +716,14 @@ class AppAgentProcessor(BaseProcessor):
             HostAgent = self.AppAgent.get_host()
             round = HostAgent.get_round()
             
-            additional_memory = {"Step": self._step, "AgentStep": self.AppAgent.get_step(), "Round": round, "Action": self._action, 
+            additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.AppAgent.get_step(), "Round": self.index, "Action": self._action, 
                                  "Request": self.request, "Agent": "ActAgent", "AgentName": self.AppAgent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
             app_agent_step_memory.set_values_from_dict(self._response_json)
             app_agent_step_memory.set_values_from_dict(additional_memory)
 
             self.AppAgent.add_memory(app_agent_step_memory)
 
+            self.log(app_agent_step_memory.to_dict())
             memorized_action = {key: app_agent_step_memory.to_dict().get(key) for key in configs["HISTORY_KEYS"]}
             HostAgent.add_global_action_memory(memorized_action)
 
