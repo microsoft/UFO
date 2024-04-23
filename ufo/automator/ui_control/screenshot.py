@@ -258,7 +258,8 @@ class AnnotationDecorator(PhotographerDecorator):
             annotation_dict[label_text] = control
         return annotation_dict
     
-    def get_cropped_icons_dict(self) -> Dict:
+    
+    def get_cropped_icons_dict(self, annotation_dict:Dict) -> Dict:
         """
         Get the dictionary of the cropped icons.
         :return: The dictionary of the cropped icons.
@@ -266,13 +267,11 @@ class AnnotationDecorator(PhotographerDecorator):
         cropped_icons_dict = {}
         image = self.photographer.capture()
         window_rect = self.photographer.control.rectangle()
-        for i, control in enumerate(self.sub_control_list):
-            if self.annotation_type == "number":
-                label_text = str(i+1)
-            elif self.annotation_type == "letter":
-                label_text = self.number_to_letter(i)
+
+        for label_text, control in annotation_dict.items():
             control_rect = control.rectangle()
             cropped_icons_dict[label_text] = image.crop(self.coordinate_adjusted(window_rect, control_rect))
+
         return cropped_icons_dict
     
 
@@ -389,7 +388,7 @@ class PhotographerFacade:
         return screenshot.get_annotation_dict()
     
     
-    def get_cropped_icons_dict(self, control, sub_control_list: List, annotation_type="number") -> Dict:
+    def get_cropped_icons_dict(self, control, annotation_dict) -> Dict:
         """
         Get the dictionary of the cropped icons.
         :param control: The control item to capture.
@@ -399,8 +398,8 @@ class PhotographerFacade:
         """
 
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
-        screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type)
-        return screenshot.get_cropped_icons_dict()
+        screenshot = AnnotationDecorator(screenshot, sub_control_list=[])
+        return screenshot.get_cropped_icons_dict(annotation_dict)
 
     
     

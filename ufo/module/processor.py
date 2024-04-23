@@ -506,8 +506,8 @@ class AppAgentProcessor(BaseProcessor):
             self._args = None
             self._image_url = []
             self._control_reannotate = None
-            self.cropped_icons_dict = {}
             self.control_filter_factory = control_filter.ControlFilterFactory()
+
             
         def print_step_info(self):
             """
@@ -531,7 +531,6 @@ class AppAgentProcessor(BaseProcessor):
                 control_list = control.find_control_elements_in_descendants(BACKEND, self._app_window, control_type_list = configs["CONTROL_LIST"], class_name_list = configs["CONTROL_LIST"])
 
             self._annotation_dict = self.photographer.get_annotation_dict(self._app_window, control_list, annotation_type="number")
-            self.cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, control_list, annotation_type="number")
 
             self.photographer.capture_app_window_screenshot(self._app_window, save_path=screenshot_save_path)
             self.photographer.capture_app_window_screenshot_with_annotation(self._app_window, control_list, annotation_type="number", save_path=annotated_screenshot_save_path)
@@ -568,42 +567,38 @@ class AppAgentProcessor(BaseProcessor):
             Return:
                 The filtered control information.
             """
-
+            
             control_filter_type = configs["CONTROL_FILTER_TYPE"]
-            control_filter_type_lower = [control_filter_type_lower.lower() for control_filter_type_lower in control_filter_type]
-            is_text_required = 'text' in control_filter_type_lower
-            is_semantic_required = 'semantic' in control_filter_type_lower
-            is_icon_required = 'icon' in control_filter_type_lower
 
-            if control_filter_type and not (is_text_required or is_semantic_required or is_icon_required):
-
-                raise ValueError(f"Unsupported CONTROL_FILTER_TYPE: {control_filter_type}")
-
-            elif not control_filter_type:
-
+            if len(self._control_info) == 0:
                 return self._control_info
-            else:
-                filtered_control_info = []
 
-                keywords = self.control_filter_factory.plan_to_keywords(plan)
+            
+            control_filter_type_lower = [control_filter_type_lower.lower() for control_filter_type_lower in control_filter_type]
+            
+            filtered_control_info = []
 
-                if is_text_required:
-                    model_text = self.control_filter_factory.create_control_filter('text')
-                    model_text.control_filter(filtered_control_info, self._control_info, keywords)
-                    
-                if is_semantic_required:
-                    model_semantic = self.control_filter_factory.create_control_filter('semantic', configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"])
-                    model_semantic.control_filter(filtered_control_info, self._control_info, keywords, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
-                    
-                if is_icon_required:                
-                    model_icon = self.control_filter_factory.create_control_filter('icon', configs["CONTROL_FILTER_MODEL_ICON_NAME"])
-                    model_icon.control_filter(filtered_control_info, self._control_info, self.cropped_icons_dict, keywords, configs["CONTROL_FILTER_TOP_K_ICON"])
+            keywords = self.control_filter_factory.plan_to_keywords(plan)
+
+            if 'text' in control_filter_type_lower:
+                model_text = self.control_filter_factory.create_control_filter('text')
+                model_text.control_filter(filtered_control_info, self._control_info, keywords)
+                
+            if 'semantic' in control_filter_type_lower:
+                model_semantic = self.control_filter_factory.create_control_filter('semantic', configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"])
+                model_semantic.control_filter(filtered_control_info, self._control_info, keywords, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
+                
+            if 'icon' in control_filter_type_lower:                
+                model_icon = self.control_filter_factory.create_control_filter('icon', configs["CONTROL_FILTER_MODEL_ICON_NAME"])
+
+                cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, self._control_info)
+                model_icon.control_filter(filtered_control_info, self._control_info, cropped_icons_dict, keywords, configs["CONTROL_FILTER_TOP_K_ICON"])
 
             
             
         def get_prompt_message(self):
             """
-            Get the prompt message.
+            Get the prompt message for the AppAgent.
             """
 
             if configs["RAG_EXPERIENCE"]:
