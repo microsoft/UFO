@@ -570,7 +570,7 @@ class AppAgentProcessor(BaseProcessor):
             
             control_filter_type = configs["CONTROL_FILTER_TYPE"]
 
-            if len(self._control_info) == 0:
+            if len(self.control_filter_type) == 0:
                 return self._control_info
 
             
@@ -593,6 +593,9 @@ class AppAgentProcessor(BaseProcessor):
 
                 cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, self._control_info)
                 model_icon.control_filter(filtered_control_info, self._control_info, cropped_icons_dict, keywords, configs["CONTROL_FILTER_TOP_K_ICON"])
+
+
+            return filtered_control_info
 
             
             
