@@ -573,7 +573,7 @@ class AppAgentProcessor(BaseProcessor):
             control_filter_type = configs["CONTROL_FILTER_TYPE"]
 
             if len(control_filter_type) == 0:
-                return self._control_info
+                return self._annotation_dict
 
             
             control_filter_type_lower = [control_filter_type_lower.lower() for control_filter_type_lower in control_filter_type]
@@ -593,7 +593,7 @@ class AppAgentProcessor(BaseProcessor):
             if 'icon' in control_filter_type_lower:                
                 model_icon = self.control_filter_factory.create_control_filter('icon', configs["CONTROL_FILTER_MODEL_ICON_NAME"])
 
-                cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, self._control_info)
+                cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, self._annotation_dict)
                 model_icon.control_filter(filtered_control_info, self._control_info, cropped_icons_dict, keywords, configs["CONTROL_FILTER_TOP_K_ICON"])
 
 
