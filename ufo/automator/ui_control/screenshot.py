@@ -258,12 +258,13 @@ class AnnotationDecorator(PhotographerDecorator):
             annotation_dict[label_text] = control
         return annotation_dict
     
-    def get_annotation_coordinate_dict(self) -> Dict:
+    def get_cropped_icons_dict(self) -> Dict:
         """
-        Get the dictionary of the coordinate of the annotations.
-        :return: The dictionary of the annotations' coordinate.
+        Get the dictionary of the cropped icons.
+        :return: The dictionary of the cropped icons.
         """
-        annotation_coordinate_dict = {}
+        cropped_icons_dict = {}
+        image = self.photographer.capture()
         window_rect = self.photographer.control.rectangle()
         for i, control in enumerate(self.sub_control_list):
             if self.annotation_type == "number":
@@ -271,8 +272,8 @@ class AnnotationDecorator(PhotographerDecorator):
             elif self.annotation_type == "letter":
                 label_text = self.number_to_letter(i)
             control_rect = control.rectangle()
-            annotation_coordinate_dict[label_text] = self.coordinate_adjusted(window_rect, control_rect)
-        return annotation_coordinate_dict
+            cropped_icons_dict[label_text] = image.crop(self.coordinate_adjusted(window_rect, control_rect))
+        return cropped_icons_dict
     
     def get_screen_shot(self) -> Image:
         """
@@ -405,12 +406,7 @@ class PhotographerFacade:
 
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
         screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type)
-        cropped_icons_dict = {}
-        image = screenshot.get_screen_shot()
-        for label, coordinate in screenshot.get_annotation_coordinate_dict().items():
-            cropped_icon = image.crop(coordinate)
-            cropped_icons_dict[label] = cropped_icon
-        return cropped_icons_dict
+        return screenshot.get_cropped_icons_dict()
 
     
     

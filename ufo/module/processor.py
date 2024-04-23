@@ -4,6 +4,7 @@
 
 import json
 import os
+import re
 import time
 import traceback
 from abc import ABC, abstractmethod
@@ -17,6 +18,9 @@ from ..automator.ui_control import utils as control
 from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from . import interactor
+
+# Lazy import the control_filter factory to aviod long loading time.
+control_filter = utils.LazyImport("..automator.ui_control.control_filter")
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -414,8 +418,6 @@ class HostAgentProcessor(BaseProcessor):
         Update the memory of the Agent.
         """
 
-        round = self.HostAgent.get_round()
-
         host_agent_step_memory = MemoryItem()
         additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.HostAgent.get_step(), "Round": self.index, "ControlLabel": self._control_text, "Action": "set_focus()", 
                                 "Request": self.request, "Agent": "HostAgent", "AgentName": self.HostAgent.name, "Application": self.app_root, "Cost": self._cost, "Results": ""}
@@ -474,7 +476,7 @@ class HostAgentProcessor(BaseProcessor):
 class AppAgentProcessor(BaseProcessor):
     
         def __init__(self, index: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, global_step: int, 
-                     process_name: str, app_window: Type, control_reannotate: Optional[list], prev_status: str, host_agent: HostAgent):
+                     process_name: str, app_window: Type, control_reannotate: Optional[list], prev_status: str):
             super().__init__(index, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
             """
@@ -495,10 +497,8 @@ class AppAgentProcessor(BaseProcessor):
             """
 
             self.AppAgent = app_agent
-            self.HostAgent = host_agent
             self.process_name = process_name
             self.control_reannotate = control_reannotate
-            self._app_window= app_window
 
             self._annotation_dict = None
             self._control_info = None
@@ -506,12 +506,9 @@ class AppAgentProcessor(BaseProcessor):
             self._args = None
             self._image_url = []
             self._control_reannotate = None
-            self.prev_plan = ""
             self.cropped_icons_dict = {}
-            self.filter_control_info = None
-
-
-
+            self.control_filter_factory = control_filter.ControlFilterFactory()
+            
         def print_step_info(self):
             """
             Print the step information.
@@ -562,17 +559,47 @@ class AppAgentProcessor(BaseProcessor):
             self._control_info = control.get_control_info_dict(self._annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
 
         
-        
         def get_filter_control_info(self, plan:str):
             """
-            Get the control information.
-            """
+            Get the filtered control information.
             
-            self.filter_control_info = self.AppAgent.control_filter(self._control_info, plan, self.cropped_icons_dict, configs["CONTROL_FILTER_TYPE"], 
-                                                                configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"], configs["CONTROL_FILTER_TOP_K_SEMANTIC"], 
-                                                                configs["CONTROL_FILTER_MODEL_ICON_NAME"], configs["CONTROL_FILTER_TOP_K_ICON"])
+            :param plan: The plan string.
+            
+            Return:
+                The filtered control information.
+            """
 
+            control_filter_type = configs["CONTROL_FILTER_TYPE"]
+            control_filter_type_lower = [control_filter_type_lower.lower() for control_filter_type_lower in control_filter_type]
+            is_text_required = 'text' in control_filter_type_lower
+            is_semantic_required = 'semantic' in control_filter_type_lower
+            is_icon_required = 'icon' in control_filter_type_lower
 
+            if control_filter_type and not (is_text_required or is_semantic_required or is_icon_required):
+
+                raise ValueError(f"Unsupported CONTROL_FILTER_TYPE: {control_filter_type}")
+
+            elif not control_filter_type:
+
+                return self._control_info
+            else:
+                filtered_control_info = []
+
+                keywords = self.plan_to_keywords(plan)
+
+                if is_text_required:
+                    self.text_control_filter(filtered_control_info, self._control_info, keywords)
+                    
+                if is_semantic_required:
+                    self.semantic_control_filter(filtered_control_info, self._control_info, keywords, configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"], configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
+
+                if is_icon_required:                
+                    self.icon_control_filter(filtered_control_info, self._control_info, configs["CONTROL_FILTER_MODEL_ICON_NAME"], configs["CONTROL_FILTER_TOP_K_ICON"], keywords)
+
+            return filtered_control_info
+
+            
+            
         def get_prompt_message(self):
             """
             Get the prompt message.
@@ -604,13 +631,14 @@ class AppAgentProcessor(BaseProcessor):
             agent_memory = self.AppAgent.memory
 
             if agent_memory.length > 0:
-                self.prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
-                self.filter_control_info = self.get_filter_control_info(self.prev_plan)
+                prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
+                filter_control_info = self.get_filter_control_info(prev_plan)
             else:
-                self.filter_control_info = self.get_filter_control_info(self.HostAgent.memory.get_latest_item().to_dict()["Plan"])
+                prev_plan = ""
+                filter_control_info = self.get_filter_control_info(HostAgent.memory.get_latest_item().to_dict()["Plan"])
 
             self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
-                                                                                self.filter_control_info, self.prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
+                                                                                filter_control_info, prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
             self.request_logger.debug(json.dumps({"step": self.global_step, "prompt": self._prompt_message, "status": ""}))
 
@@ -765,4 +793,62 @@ class AppAgentProcessor(BaseProcessor):
             """
 
             return self._control_reannotate
- 
+                
+        
+        def text_control_filter(self, filtered_control_info: list, control_info: list, keywords: list) -> list:
+            """
+            Filters the control information based on the text control filter.
+            Args:
+                filtered_control_info (list): The list of already filtered control items.
+                control_info (list): The list of control information to be filtered.
+                plan (str): A list of keywords extracted from the plan.
+            """
+            model_text = self.control_filter_factory.create_control_filter('text')
+            model_text.control_filter(filtered_control_info, control_info, keywords)
+
+
+        def semantic_control_filter(self, filtered_control_info: list, control_info: list, keywords: list, semantic_model_name: str, semantic_top_k: int) -> list:
+            """
+            Filters the control information based on the semantic control filter.
+            Args:
+                filtered_control_info (list): The list of already filtered control items.
+                control_info (list): The list of control information to be filtered.
+                keywords (list): A list of keywords.
+                semantic_model_name: The name of the semantic model.
+                semantic_top_k: The top k value for semantic filtering.
+            """
+            model_semantic = self.control_filter_factory.create_control_filter('semantic', semantic_model_name)
+            model_semantic.control_filter(filtered_control_info, control_info, keywords, semantic_top_k)
+
+
+        def icon_control_filter(self, filtered_control_info: list, control_info: list, icon_model_name: str, icon_top_k: int, keywords: list) -> list:
+            """
+            Filters the control information based on the icon control filter.
+            Args:
+                filtered_control_info (list): The list of already filtered control items.
+                control_info (list): The list of control information to be filtered.
+                screenshot (Image): The screenshot image.
+                icon_model_name: The name of the icon model.
+                icon_top_k: The top k value for icon filtering.
+                filtered_control_info (list): The list of already filtered control items.
+                keywords (list): A list of keywords.
+            """
+            model_icon = self.control_filter_factory.create_control_filter('icon', icon_model_name)
+            model_icon.control_filter(filtered_control_info, control_info, self.cropped_icons_dict, keywords, icon_top_k)
+
+        
+        def plan_to_keywords(self, plan:str) -> list:
+                """
+                Gets keywords from the plan.
+                Args:
+                    plan (str): The plan to be parsed.
+                Returns:
+                    list: A list of keywords extracted from the plan.
+                """
+                plans = plan.split("\n")
+                keywords = []
+                for plan in plans:
+                    words = plan.replace("'", "").strip(".").split()
+                    words = [word for word in words if word.isalpha() or bool(re.fullmatch(r'[\u4e00-\u9fa5]+', word))]
+                    keywords.extend(words)
+                return keywords

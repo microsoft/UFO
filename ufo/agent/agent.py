@@ -3,8 +3,6 @@
 
 
 from typing import Dict, List, Type
-from PIL import Image
-import re
 
 from .. import utils
 from ..automator import puppeteer
@@ -255,113 +253,6 @@ class AppAgent(BasicAgent):
         """
         self.human_demonstration_retriever = self.retriever_factory.create_retriever("demonstration", db_path)
 
-
-    def control_filter(self, control_info: list, plan: str, cropped_icons_dict: dict, control_filter_type:list,
-                        semantic_model_name, semantic_top_k, icon_model_name, icon_top_k) -> list:
-        """
-        Filters the control information based on the specified control filter type.
-        Args:
-            control_info (list): The list of control information to be filtered.
-            plan (str): The plan string.
-            cropped_icons_dict (dict): The dictionary containing icons.
-            control_filter_type (list): The type of control filter to be applied.
-            semantic_model_name: The name of the semantic model.
-            semantic_top_k: The top k value for semantic filtering.
-            icon_model_name: The name of the icon model.
-            icon_top_k: The top k value for icon filtering.
-        Returns:
-            list: The filtered control information.
-        Raises:
-            ValueError: If an unsupported control filter type is provided.
-        """
-
-        control_filter_type_lower = [control_filter_type_lower.lower() for control_filter_type_lower in control_filter_type]
-        is_text_required = 'text' in control_filter_type_lower
-        is_semantic_required = 'semantic' in control_filter_type_lower
-        is_icon_required = 'icon' in control_filter_type_lower
-
-        if control_filter_type and not (is_text_required or is_semantic_required or is_icon_required):
-
-            raise ValueError(f"Unsupported CONTROL_FILTER_TYPE: {control_filter_type}")
-
-        elif not control_filter_type:
-
-            return control_info
-        else:
-            filtered_control_info = []
-
-            keywords = self.plan_to_keywords(plan)
-
-            if is_text_required:
-                self.text_control_filter(filtered_control_info, control_info, keywords)
-                
-            if is_semantic_required:
-                self.semantic_control_filter(filtered_control_info, control_info, keywords, semantic_model_name, semantic_top_k)
-
-            if is_icon_required:                
-                self.icon_control_filter(filtered_control_info, control_info, cropped_icons_dict, icon_model_name, icon_top_k, keywords)
-
-        return filtered_control_info
-    
-    
-    def text_control_filter(self, filtered_control_info: list, control_info: list, keywords: list) -> list:
-        """
-        Filters the control information based on the text control filter.
-        Args:
-            filtered_control_info (list): The list of already filtered control items.
-            control_info (list): The list of control information to be filtered.
-            plan (str): A list of keywords extracted from the plan.
-        """
-        model_text = self.control_filter_factory.create_control_filter('text')
-        model_text.control_filter(filtered_control_info, control_info, keywords)
-
-
-    def semantic_control_filter(self, filtered_control_info: list, control_info: list, keywords: list, semantic_model_name: str, semantic_top_k: int) -> list:
-        """
-        Filters the control information based on the semantic control filter.
-        Args:
-            filtered_control_info (list): The list of already filtered control items.
-            control_info (list): The list of control information to be filtered.
-            keywords (list): A list of keywords.
-            semantic_model_name: The name of the semantic model.
-            semantic_top_k: The top k value for semantic filtering.
-        """
-        model_semantic = self.control_filter_factory.create_control_filter('semantic', semantic_model_name)
-        model_semantic.control_filter(filtered_control_info, control_info, keywords, semantic_top_k)
-
-
-    def icon_control_filter(self, filtered_control_info: list, control_info: list, cropped_icons_dict: dict, icon_model_name: str, icon_top_k: int, keywords: list) -> list:
-        """
-        Filters the control information based on the icon control filter.
-        Args:
-            filtered_control_info (list): The list of already filtered control items.
-            control_info (list): The list of control information to be filtered.
-            cropped_icons_dict (dict): The dictionary containing icons.
-            screenshot (Image): The screenshot image.
-            icon_model_name: The name of the icon model.
-            icon_top_k: The top k value for icon filtering.
-            filtered_control_info (list): The list of already filtered control items.
-            keywords (list): A list of keywords.
-        """
-        model_icon = self.control_filter_factory.create_control_filter('icon', icon_model_name)
-        model_icon.control_filter(filtered_control_info, control_info, cropped_icons_dict, keywords, icon_top_k)
-
-    
-    def plan_to_keywords(self, plan:str) -> list:
-            """
-            Gets keywords from the plan.
-            Args:
-                plan (str): The plan to be parsed.
-            Returns:
-                list: A list of keywords extracted from the plan.
-            """
-            plans = plan.split("\n")
-            keywords = []
-            for plan in plans:
-                words = plan.replace("'", "").strip(".").split()
-                words = [word for word in words if word.isalpha() or bool(re.fullmatch(r'[\u4e00-\u9fa5]+', word))]
-                keywords.extend(words)
-            return keywords
 
 class HostAgent(BasicAgent):
     """

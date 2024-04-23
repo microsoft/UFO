@@ -80,7 +80,7 @@ class Round(object):
 
         app_agent_processor = processor.AppAgentProcessor(index=self.index, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step, 
                                                           process_name=self.application, request_logger=self.request_logger, logger=self.logger, app_agent=self.AppAgent, app_window=self.app_window, 
-                                                            control_reannotate=self.control_reannotate, prev_status=self.get_status(), host_agent=self.HostAgent)
+                                                            control_reannotate=self.control_reannotate, prev_status=self.get_status())
 
         app_agent_processor.process()
 

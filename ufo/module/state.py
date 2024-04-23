@@ -83,7 +83,7 @@ class RoundFinishState(SessionState):
         round_num = session.get_round_num()
 
         round_cost = session.get_current_round().get_cost()
-        session.update_cost(round_cost)  
+        session.update_cost(round_cost)
   
         # Print the result  
         if result != "":  
@@ -163,7 +163,7 @@ class ContinueState(SessionState):
 
         session.round_appagent_execution()  
         status = session.get_status()  
-        step = session.get_step()  
+        step = session.get_step()
   
         if step > configs["MAX_STEP"]:  
             session.set_state(MaxStepReachedState())  
