@@ -338,7 +338,8 @@ class HostAgentProcessor(BaseProcessor):
 
         self._prompt_message = self.HostAgent.message_constructor([self._desktop_screen_url], request_history, action_history, 
                                                                                                   self._desktop_windows_info, plan, self.request)
-        self.request_logger.debug(json.dumps({"step": self._step, "prompt": self._prompt_message, "status": ""}))
+        log = json.dumps({"step": self._step, "prompt": self._prompt_message, "control_items": list(self._desktop_windows_dict.keys()), "filted_control_items": list(self._desktop_windows_dict.keys()), "status": ""})
+        self.request_logger.debug(log)
         return self._prompt_message
     
     
@@ -350,7 +351,8 @@ class HostAgentProcessor(BaseProcessor):
         try:
             self._response, self._cost = self.HostAgent.get_response(self._prompt_message, "HOSTAGENT", use_backup_engine=True)
         except Exception as e:
-            log = json.dumps({"step": self._step, "status": str(e), "prompt": self._prompt_message})
+            error_trace = traceback.format_exc()
+            log = json.dumps({"step": self._step, "status": str(error_trace), "prompt": self._prompt_message})
             utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
             self.request_logger.info(log)
             self._status = "ERROR"
@@ -639,7 +641,9 @@ class AppAgentProcessor(BaseProcessor):
             self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
                                                                                 filtered_control_info, prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
-            self.request_logger.debug(json.dumps({"step": self.global_step, "prompt": self._prompt_message, "status": ""}))
+            log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": list(self._control_info.keys()), 
+                              "filted_control_items": list(filtered_control_info.keys()), "status": ""})
+            self.request_logger.debug(log)
 
 
         def get_response(self):
@@ -650,12 +654,13 @@ class AppAgentProcessor(BaseProcessor):
                 self._response, self._cost = self.AppAgent.get_response(self._prompt_message, "APPAGENT", use_backup_engine=True)
             except Exception as e:
                 error_trace = traceback.format_exc()
-                log = json.dumps({"step": self.global_step, "status": str(error_trace), "prompt": self._prompt_message})
+                log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "status": str(error_trace)})
                 utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(error_trace)), "red")
                 self.request_logger.info(log)
                 self._status = "ERROR"
                 time.sleep(configs["SLEEP_TIME"])
                 return
+            
             
         def parse_response(self):
             """
@@ -700,6 +705,7 @@ class AppAgentProcessor(BaseProcessor):
                 # Whether to proceed with the action.
                 should_proceed = True
 
+                # Safe guard for the action.
                 if self._status.upper() == "PENDING" and configs["SAFE_GUARD"]:
                     should_proceed = self._safe_guard_judgement(self._action, self._control_text)
                     
@@ -709,6 +715,7 @@ class AppAgentProcessor(BaseProcessor):
                         self._results = ""
                 else:
                     self._results = "The user decide to stop the task."
+                    
                     return
 
 
@@ -721,7 +728,7 @@ class AppAgentProcessor(BaseProcessor):
                     self._control_reannotate = None
 
 
-            except Exception as e:
+            except Exception:
                 error_trace = traceback.format_exc()
                 utils.print_with_color(f"Error Occurs at action execution in AppAgent at step {self.global_step}", "red")
                 utils.print_with_color(str(error_trace), "red")
