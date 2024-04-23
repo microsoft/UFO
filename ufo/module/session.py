@@ -21,13 +21,14 @@ class Session(object):
     """
     A session for UFO.
     """
-
+    
     def __init__(self, task):
         """
         Initialize a session.
         :param task: The name of current task.
         :param gpt_key: GPT key.
         """
+        
         self.task = task
         self._step = 0
         self._round = 0
@@ -56,7 +57,7 @@ class Session(object):
         utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
         
         self.request = interactor.first_request()
-
+        
         self.round_list = []
         self._current_round = self.create_round()
 
@@ -73,8 +74,8 @@ class Session(object):
         self.round_list.append(new_round)
         
         return new_round
-
-    
+        
+  
     def experience_saver(self) -> None:
         """
         Save the current trajectory as agent experience.
@@ -122,7 +123,7 @@ class Session(object):
         current_round.set_global_step(self.get_step())
 
         current_round.process_application_selection()
-        
+
         self._status = current_round.get_status()
         self._step += 1
 
@@ -133,7 +134,7 @@ class Session(object):
         """
         Execute the app agent in the current round.
         """
-
+        
         current_round = self.get_current_round()
         current_round.set_global_step(self.get_step())
 
@@ -141,8 +142,7 @@ class Session(object):
 
         self._status = current_round.get_status()
         self._step += 1
-
-
+    
     
     def get_current_round(self) -> round.Round:
         """
@@ -150,7 +150,6 @@ class Session(object):
         return: The current round.
         """
         return self._current_round
-
 
 
     def get_round_num(self) -> int:
@@ -196,7 +195,7 @@ class Session(object):
     def print_cost(self) -> None:
         """
         Print the total cost.
-        """
+        """ 
 
         total_cost = self.get_cost()  
         if isinstance(total_cost, float):  
@@ -219,6 +218,7 @@ class Session(object):
         return result
     
     
+    
     def get_application_window(self) -> object:
         """
         Get the application of the session.
@@ -235,6 +235,7 @@ class Session(object):
             self._cost += cost
         else:
             self._cost = None
+
 
 
     def set_state(self, state) -> None:
@@ -266,6 +267,7 @@ class Session(object):
         if not configs["PRINT_LOG"]:
             # Remove existing handlers if PRINT_LOG is False
             logger.handlers = []
+
 
         log_file_path = os.path.join(log_path, log_filename)
         file_handler = logging.FileHandler(log_file_path, encoding="utf-8")

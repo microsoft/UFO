@@ -254,7 +254,6 @@ class AppAgent(BasicAgent):
         self.human_demonstration_retriever = self.retriever_factory.create_retriever("demonstration", db_path)
 
 
-
 class HostAgent(BasicAgent):
     """
     The HostAgent class the manager of AppAgents.

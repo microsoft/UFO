@@ -18,6 +18,9 @@ from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from . import interactor
 
+# Lazy import the control_filter factory to aviod long loading time.
+control_filter = utils.LazyImport("..automator.ui_control.control_filter")
+
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
 
@@ -46,10 +49,9 @@ class BaseProcessor(ABC):
         self.request_logger = request_logger
         self.logger = logger
         self._app_window = app_window
-
+        
         self.global_step = global_step
         self.round_step = round_step
-
         self.prev_status = prev_status
         self.index = index
         
@@ -59,7 +61,6 @@ class BaseProcessor(ABC):
         self._response = None  
         self._cost = 0
         self._control_label = None
-        
         self._control_text = None
         self._response_json = None
 
@@ -83,7 +84,7 @@ class BaseProcessor(ABC):
         self.print_step_info()
         self.capture_screenshot()
         self.get_control_info()
-        self.get_prompt_message()  
+        self.get_prompt_message()
         self.get_response()
 
         if self.is_error():
@@ -386,14 +387,12 @@ class HostAgentProcessor(BaseProcessor):
         """
 
          # Get the application window
-        
         new_app_window = self._desktop_windows_dict.get(self.control_label, None)
         if new_app_window is None:
             return
-        
         # Get the application name
-        self.app_root = control.get_application_name(new_app_window)   
-
+        self.app_root = control.get_application_name(new_app_window)
+        
         try:
             new_app_window.is_normal()
 
@@ -404,7 +403,7 @@ class HostAgentProcessor(BaseProcessor):
             return
 
         self._status = "CONTINUE"
-
+        
         if new_app_window is not self._app_window and self._app_window is not None:
             utils.print_with_color(  
                 "Switching to a new application...", "magenta")
@@ -473,6 +472,7 @@ class HostAgentProcessor(BaseProcessor):
     
 
 
+
 class AppAgentProcessor(BaseProcessor):
     
         def __init__(self, index: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, global_step: int, 
@@ -506,8 +506,9 @@ class AppAgentProcessor(BaseProcessor):
             self._args = None
             self._image_url = []
             self._control_reannotate = None
-
-
+            self.cropped_icons_dict = {}
+            self.control_filter_factory = control_filter.ControlFilterFactory()
+            
         def print_step_info(self):
             """
             Print the step information.
@@ -530,6 +531,7 @@ class AppAgentProcessor(BaseProcessor):
                 control_list = control.find_control_elements_in_descendants(BACKEND, self._app_window, control_type_list = configs["CONTROL_LIST"], class_name_list = configs["CONTROL_LIST"])
 
             self._annotation_dict = self.photographer.get_annotation_dict(self._app_window, control_list, annotation_type="number")
+            self.cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, control_list, annotation_type="number")
 
             self.photographer.capture_app_window_screenshot(self._app_window, save_path=screenshot_save_path)
             self.photographer.capture_app_window_screenshot_with_annotation(self._app_window, control_list, annotation_type="number", save_path=annotated_screenshot_save_path)
@@ -550,14 +552,55 @@ class AppAgentProcessor(BaseProcessor):
                 self._image_url += [screenshot_url, screenshot_annotated_url]
 
         
-
         def get_control_info(self):
             """
             Get the control information.
             """
             self._control_info = control.get_control_info_dict(self._annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
 
+        
+        def get_filtered_control_info(self, plan:str):
+            """
+            Get the filtered control information.
+            
+            :param plan: The plan string.
+            
+            Return:
+                The filtered control information.
+            """
 
+            control_filter_type = configs["CONTROL_FILTER_TYPE"]
+            control_filter_type_lower = [control_filter_type_lower.lower() for control_filter_type_lower in control_filter_type]
+            is_text_required = 'text' in control_filter_type_lower
+            is_semantic_required = 'semantic' in control_filter_type_lower
+            is_icon_required = 'icon' in control_filter_type_lower
+
+            if control_filter_type and not (is_text_required or is_semantic_required or is_icon_required):
+
+                raise ValueError(f"Unsupported CONTROL_FILTER_TYPE: {control_filter_type}")
+
+            elif not control_filter_type:
+
+                return self._control_info
+            else:
+                filtered_control_info = []
+
+                keywords = self.control_filter_factory.plan_to_keywords(plan)
+
+                if is_text_required:
+                    model_text = self.control_filter_factory.create_control_filter('text')
+                    model_text.control_filter(filtered_control_info, self._control_info, keywords)
+                    
+                if is_semantic_required:
+                    model_semantic = self.control_filter_factory.create_control_filter('semantic', configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"])
+                    model_semantic.control_filter(filtered_control_info, self._control_info, keywords, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
+                    
+                if is_icon_required:                
+                    model_icon = self.control_filter_factory.create_control_filter('icon', configs["CONTROL_FILTER_MODEL_ICON_NAME"])
+                    model_icon.control_filter(filtered_control_info, self._control_info, self.cropped_icons_dict, keywords, configs["CONTROL_FILTER_TOP_K_ICON"])
+
+            
+            
         def get_prompt_message(self):
             """
             Get the prompt message.
@@ -590,10 +633,13 @@ class AppAgentProcessor(BaseProcessor):
 
             if agent_memory.length > 0:
                 prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
+                filtered_control_info = self.get_filtered_control_info(prev_plan)
             else:
                 prev_plan = ""
+                filtered_control_info = self.get_filtered_control_info(HostAgent.memory.get_latest_item().to_dict()["Plan"])
+
             self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
-                                                                                self._control_info, prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
+                                                                                filtered_control_info, prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
             self.request_logger.debug(json.dumps({"step": self.global_step, "prompt": self._prompt_message, "status": ""}))
 
@@ -698,7 +744,6 @@ class AppAgentProcessor(BaseProcessor):
             
             additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.AppAgent.get_step(), "Round": self.index, "Action": self._action, 
                                  "Request": self.request, "Agent": "ActAgent", "AgentName": self.AppAgent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
-            
             app_agent_step_memory.set_values_from_dict(self._response_json)
             app_agent_step_memory.set_values_from_dict(additional_memory)
 
@@ -749,4 +794,3 @@ class AppAgentProcessor(BaseProcessor):
             """
 
             return self._control_reannotate
- 

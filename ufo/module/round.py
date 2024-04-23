@@ -11,7 +11,6 @@ from ..config.config import Config
 from . import processor
 
 configs = Config.get_instance().config_data
-BACKEND = configs["CONTROL_BACKEND"]
 
 
 
@@ -44,7 +43,7 @@ class Round(object):
         self.application = ""
         self.app_root = ""
         self.app_window = None
-        
+
         self._cost = 0.0
         self.control_reannotate = []
 
@@ -62,7 +61,7 @@ class Round(object):
 
         host_agent_processor = processor.HostAgentProcessor(index=self.index, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step,
                                                             request_logger=self.request_logger, logger=self.logger, host_agent=self.HostAgent, prev_status=self.get_status(), app_window=self.app_window)
-        
+
         host_agent_processor.process()
 
         self._status = host_agent_processor.get_process_status()
@@ -78,13 +77,13 @@ class Round(object):
         """
         Select an action with the application.
         """
-        
+
         app_agent_processor = processor.AppAgentProcessor(index=self.index, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step, 
                                                           process_name=self.application, request_logger=self.request_logger, logger=self.logger, app_agent=self.AppAgent, app_window=self.app_window, 
                                                             control_reannotate=self.control_reannotate, prev_status=self.get_status())
-        
+
         app_agent_processor.process()
-    
+
         self._status = app_agent_processor.get_process_status()
         self._step += app_agent_processor.get_process_step()
         self.update_cost(app_agent_processor.get_process_cost())
@@ -98,16 +97,16 @@ class Round(object):
         return: The status of the session.
         """
         return self._status
-    
-    
-    
+
+
+
     def get_step(self) -> int:
         """
         Get the step of the session.
         return: The step of the session.
         """
         return self._step
-    
+
 
     def get_cost(self) -> float:
         """
@@ -115,8 +114,8 @@ class Round(object):
         return: The cost of the session.
         """
         return self._cost
-    
-    
+
+
     def print_cost(self) -> None:
         # Print the total cost 
 
@@ -125,7 +124,7 @@ class Round(object):
             formatted_cost = '${:.2f}'.format(total_cost)  
             utils.print_with_color(f"Request total cost for current round is {formatted_cost}", "yellow")
 
-        
+
     def get_results(self) -> str:
         """
         Get the results of the session.
@@ -139,7 +138,7 @@ class Round(object):
         else:
             result = ""
         return result
-    
+
 
     def set_index(self, index: int) -> None:
         """
@@ -152,15 +151,15 @@ class Round(object):
         Set the global step of the session.
         """
         self.global_step = global_step
-    
-    
+
+
     def get_application_window(self) -> object:
         """
         Get the application of the session.
         return: The application of the session.
         """
         return self.app_window
-    
+
 
     def update_cost(self, cost: float) -> None:
         """

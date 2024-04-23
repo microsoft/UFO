@@ -68,7 +68,6 @@ class NoneState(SessionState):
         pass
 
 
-
 class RoundFinishState(SessionState):
     """
     The state when a single round is finished.
