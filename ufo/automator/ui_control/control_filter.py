@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 import heapq
 import sentence_transformers
+import re
 import warnings
 
 warnings.filterwarnings("ignore")
@@ -26,8 +27,24 @@ class ControlFilterFactory:
             return IconControlFilter(*args, **kwargs)  
         else:  
             raise ValueError("Invalid retriever type: {}".format(control_filter_type)) 
-        
-      
+    
+    @staticmethod
+    def plan_to_keywords(plan:str) -> list:
+        """
+        Gets keywords from the plan. 
+        We only consider the words in the plan that are alphabetic or Chinese characters.
+        Args:
+            plan (str): The plan to be parsed.
+        Returns:
+            list: A list of keywords extracted from the plan.
+        """
+        plans = plan.split("\n")
+        keywords = []
+        for plan in plans:
+            words = plan.replace("'", "").strip(".").split()
+            words = [word for word in words if word.isalpha() or bool(re.fullmatch(r'[\u4e00-\u9fa5]+', word))]
+            keywords.extend(words)
+        return keywords
 
 class ControlFilterModel:
     """
