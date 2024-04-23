@@ -338,7 +338,8 @@ class HostAgentProcessor(BaseProcessor):
 
         self._prompt_message = self.HostAgent.message_constructor([self._desktop_screen_url], request_history, action_history, 
                                                                                                   self._desktop_windows_info, plan, self.request)
-        log = json.dumps({"step": self._step, "prompt": self._prompt_message, "control_items": list(self._desktop_windows_dict.keys()), "filted_control_items": list(self._desktop_windows_dict.keys()), "status": ""})
+        
+        log = json.dumps({"step": self._step, "prompt": self._prompt_message, "control_items": self._desktop_windows_info, "filted_control_items": self._desktop_windows_info, "status": ""})
         self.request_logger.debug(log)
         return self._prompt_message
     
@@ -573,7 +574,7 @@ class AppAgentProcessor(BaseProcessor):
             control_filter_type = configs["CONTROL_FILTER_TYPE"]
 
             if len(control_filter_type) == 0:
-                return self._annotation_dict
+                return self._control_info
 
             
             control_filter_type_lower = [control_filter_type_lower.lower() for control_filter_type_lower in control_filter_type]
@@ -641,8 +642,8 @@ class AppAgentProcessor(BaseProcessor):
             self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
                                                                                 filtered_control_info, prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
-            log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": list(self._control_info.keys()), 
-                              "filted_control_items": list(filtered_control_info.keys()), "status": ""})
+            log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": self._control_info, 
+                              "filted_control_items": filtered_control_info, "status": ""})
             self.request_logger.debug(log)
 
 
