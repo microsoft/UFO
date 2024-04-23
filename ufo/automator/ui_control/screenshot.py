@@ -275,12 +275,6 @@ class AnnotationDecorator(PhotographerDecorator):
             cropped_icons_dict[label_text] = image.crop(self.coordinate_adjusted(window_rect, control_rect))
         return cropped_icons_dict
     
-    def get_screen_shot(self) -> Image:
-        """
-        Get the screenshot.
-        :return: The screenshot.
-        """
-        return self.photographer.capture()
 
     def capture(self, save_path:Optional[str] = None):
         """

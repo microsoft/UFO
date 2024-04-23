@@ -393,6 +393,7 @@ class HostAgentProcessor(BaseProcessor):
             return
         # Get the application name
         self.app_root = control.get_application_name(new_app_window)
+        
         try:
             new_app_window.is_normal()
 
