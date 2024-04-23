@@ -14,12 +14,12 @@ from .. import utils
 from ..agent.agent import AppAgent, HostAgent
 from ..agent.basic import MemoryItem
 from ..automator.ui_control import utils as control
+from ..automator.ui_control.control_filter import ControlFilterFactory
+
 from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from . import interactor
 
-# Lazy import the control_filter factory to aviod long loading time.
-control_filter = utils.LazyImport("..automator.ui_control.control_filter")
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -508,7 +508,7 @@ class AppAgentProcessor(BaseProcessor):
             self._args = None
             self._image_url = []
             self._control_reannotate = None
-            self.control_filter_factory = control_filter.ControlFilterFactory()
+            self.control_filter_factory = ControlFilterFactory()
 
             
         def print_step_info(self):
@@ -572,7 +572,7 @@ class AppAgentProcessor(BaseProcessor):
             
             control_filter_type = configs["CONTROL_FILTER_TYPE"]
 
-            if len(self.control_filter_type) == 0:
+            if len(control_filter_type) == 0:
                 return self._control_info
 
             
@@ -715,7 +715,7 @@ class AppAgentProcessor(BaseProcessor):
                         self._results = ""
                 else:
                     self._results = "The user decide to stop the task."
-                    
+
                     return
 
 

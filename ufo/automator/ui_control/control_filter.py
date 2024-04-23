@@ -1,11 +1,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 import heapq
-import sentence_transformers
+from ...utils import LazyImport
+
+import time
 import re
 import warnings
 
+
 warnings.filterwarnings("ignore")
+
 
 class ControlFilterFactory:  
     """  
@@ -45,6 +49,7 @@ class ControlFilterFactory:
             words = [word for word in words if word.isalpha() or bool(re.fullmatch(r'[\u4e00-\u9fa5]+', word))]
             keywords.extend(words)
         return keywords
+    
 
 class ControlFilterModel:
     """
@@ -76,7 +81,10 @@ class ControlFilterModel:
         Returns:
             SentenceTransformer: The loaded SentenceTransformer model.
         """
+        import sentence_transformers
+        
         return sentence_transformers.SentenceTransformer(model_path)
+    
 
     def get_embedding(self, content):
         """
@@ -87,25 +95,29 @@ class ControlFilterModel:
             The embedding of the object.
         """
         return self.model.encode(content)
+    
 
     def control_filter(self, keywords, control_item):
-            """
-            Calculates the cosine similarity between the embeddings of the given keywords and the control item.
-            Args:
-                keywords (str): The keywords to be used for calculating the similarity.
-                control_item (str): The control item to be compared with the keywords.
-            Returns:
-                float: The cosine similarity between the embeddings of the keywords and the control item.
-            """
-            keywords_embedding = self.get_embedding(keywords)
-            control_item_embedding = self.get_embedding(control_item)
-            return self.cos_sim(keywords_embedding, control_item_embedding)
+        """
+        Calculates the cosine similarity between the embeddings of the given keywords and the control item.
+        Args:
+            keywords (str): The keywords to be used for calculating the similarity.
+            control_item (str): The control item to be compared with the keywords.
+        Returns:
+            float: The cosine similarity between the embeddings of the keywords and the control item.
+        """
+        keywords_embedding = self.get_embedding(keywords)
+        control_item_embedding = self.get_embedding(control_item)
+        return self.cos_sim(keywords_embedding, control_item_embedding)
+    
 
     @staticmethod
     def cos_sim(embedding1, embedding2):
         """
         Computes the cosine similarity between two embeddings.
         """
+        import sentence_transformers
+
         return sentence_transformers.util.cos_sim(embedding1, embedding2)
 
 
@@ -128,6 +140,7 @@ class TextControlFilter:
                 control_text = control_item['control_text'].lower()
                 if any(keyword in control_text or control_text in keyword for keyword in keywords):
                     filtered_control_info.append(control_item)
+
 
 class SemanticControlFilter(ControlFilterModel):
     """
