@@ -11,7 +11,6 @@ from ..config.config import Config
 from . import processor
 
 configs = Config.get_instance().config_data
-BACKEND = configs["CONTROL_BACKEND"]
 
 
 

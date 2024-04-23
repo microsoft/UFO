@@ -277,8 +277,8 @@ class HostAgentProcessor(BaseProcessor):
 
         """
         Initialize the host agent processor.
-        :param log_path: The log path.
         :param index: The index of the session.
+        :param log_path: The log path.
         :param photographer: The photographer facade to process the screenshots.
         :param request: The user request.
         :param request_logger: The logger for the request string.
@@ -607,10 +607,9 @@ class AppAgentProcessor(BaseProcessor):
             if agent_memory.length > 0:
                 self.prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
                 self.filter_control_info = self.get_filter_control_info(self.prev_plan)
-                print(repr(self.prev_plan))
             else:
                 self.filter_control_info = self.get_filter_control_info(self.HostAgent.memory.get_latest_item().to_dict()["Plan"])
-                print(repr(self.HostAgent.memory.get_latest_item().to_dict()["Plan"]))
+
             self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
                                                                                 self.filter_control_info, self.prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
@@ -714,7 +713,6 @@ class AppAgentProcessor(BaseProcessor):
 
             app_root = control.get_application_name(self._app_window)
             HostAgent = self.AppAgent.get_host()
-            round = HostAgent.get_round()
             
             additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.AppAgent.get_step(), "Round": self.index, "Action": self._action, 
                                  "Request": self.request, "Agent": "ActAgent", "AgentName": self.AppAgent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
