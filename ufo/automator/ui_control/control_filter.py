@@ -53,30 +53,21 @@ class ControlFilterFactory:
                     return control_infos
             
             return filtered_control_info
-    
+        
     @staticmethod
-    def plan_to_keywords(plan:str, topk_plan:int, is_first_round: bool) -> list:
-        """
-        Gets keywords from the plan. 
-        We only consider the words in the plan that are alphabetic or Chinese characters.
-        Args:
-            plan (str): The plan to be parsed.
-            topk_plan (int): The number of top plans to be considered.
-            is_first_round(boolean): The boolean value indicating whether it is the first round.
-        Returns:
-            list: A list of keywords extracted from the plan.
-        """
-        if is_first_round:
-            plans = str(plan).split("\n")
-        else:
+    def get_plans(plan, topk_plan):
+            """
+            Parses the given plan and returns a list of plans up to the specified topk_plan.
+
+            Args:
+                plan (str): The plan to be parsed.
+                topk_plan (int): The maximum number of plans to be returned.
+
+            Returns:
+                list: A list of plans up to the specified topk_plan.
+            """
             plans = str(plan).split("\n")[:topk_plan]
-            
-        keywords = []
-        for plan in plans:
-            words = plan.replace("'", "").strip(".").split()
-            words = [word for word in words if word.isalpha() or bool(re.fullmatch(r'[\u4e00-\u9fa5]+', word))]
-            keywords.extend(words)
-        return keywords
+            return plans
     
 
 class ControlFilterModel:
@@ -138,6 +129,26 @@ class ControlFilterModel:
         control_item_embedding = self.get_embedding(control_item)
         return self.cos_sim(keywords_embedding, control_item_embedding)
     
+    
+    @staticmethod
+    def plans_to_keywords(plans:list) -> list:
+        """
+        Gets keywords from the plan. 
+        We only consider the words in the plan that are alphabetic or Chinese characters.
+        Args:
+            plans (list): The plan to be parsed.
+        Returns:
+            list: A list of keywords extracted from the plan.
+        """
+            
+        keywords = []
+        for plan in plans:
+            words = plan.replace("'", "").strip(".").split()
+            words = [word for word in words if word.isalpha() or bool(re.fullmatch(r'[\u4e00-\u9fa5]+', word))]
+            keywords.extend(words)
+        return keywords
+    
+    
     @staticmethod
     def remove_stopwords(keywords):
         """
@@ -175,17 +186,18 @@ class ControlFilterModel:
 
 class TextControlFilter:
     """
-    A class that provides methods for filtering control items based on keywords.
+    A class that provides methods for filtering control items based on plans.
     """
 
     @staticmethod
-    def control_filter(control_items, keywords):
+    def control_filter(control_items, plans):
         """
         Filters control items based on keywords.
         Args:
             control_items (list): A list of control items to be filtered.
             keywords (list): A list of keywords to filter the control items.
         """
+        keywords = ControlFilterModel.plans_to_keywords(plans)
         return [control_item for control_item in control_items if any(keyword in control_item['control_text'].lower() or \
                                 control_item['control_text'].lower() in keyword for keyword in keywords)]
     
@@ -195,32 +207,31 @@ class SemanticControlFilter(ControlFilterModel):
     A class that represents a semantic model for control filtering.
     """
 
-    def control_filter_score(self, control_text, keywords):
+    def control_filter_score(self, control_text, plans):
         """
         Calculates the score for a control item based on the similarity between its text and a set of keywords.
         Args:
             control_text (str): The text of the control item.
-            keywords (list): A list of keywords.
+            plans (list): The plan to be used for calculating the similarity.
         Returns:
             float: The score indicating the similarity between the control text and the keywords.
         """
-        keywords_embedding = self.get_embedding(keywords)
+        plan_embedding = self.get_embedding(plans)
         control_text_embedding = self.get_embedding(control_text)
-        return max(self.cos_sim(control_text_embedding, keywords_embedding).tolist()[0])
+        return max(self.cos_sim(control_text_embedding, plan_embedding).tolist()[0])
 
-    def control_filter(self, control_items, keywords, top_k):
+    def control_filter(self, control_items, plans, top_k):
         """
         Filters control items based on their similarity to a set of keywords.
         Args:
             control_items (list): A list of control items to be filtered.
-            keywords (list): A list of keywords.
+            plans (list): A list of plans.
             top_k (int): The number of top control items to be selected.
         """
         scores = []
-        keywords_without_stopwords = self.remove_stopwords(keywords)
         for control_item in control_items:
             control_text = control_item['control_text'].lower()
-            score = self.control_filter_score(control_text, keywords_without_stopwords)
+            score = self.control_filter_score(control_text, plans)
             scores.append(score)
         topk_scores_items = heapq.nlargest(top_k, enumerate(scores), key=lambda x: x[1])
         topk_indices = [score_item[0] for score_item in topk_scores_items]
@@ -237,34 +248,34 @@ class IconControlFilter(ControlFilterModel):
         control_filter(filtered_control_info, control_items, cropped_icons_dict, keywords, top_k): Filters control items based on their scores and returns the top-k items.
     """
 
-    def control_filter_score(self, control_icon, keywords):
+    def control_filter_score(self, control_icon, plans):
         """
         Calculates the score of a control icon based on its similarity to the given keywords.
         Args:
             control_icon: The control icon image.
-            keywords: The keywords to compare the control icon against.
+            plan: The plan to compare the control icon against.
         Returns:
             The maximum similarity score between the control icon and the keywords.
         """
-        keywords_embedding = self.get_embedding(keywords)
+        plans_embedding = self.get_embedding(plans)
         control_icon_embedding = self.get_embedding(control_icon)
-        return max(self.cos_sim(control_icon_embedding, keywords_embedding).tolist()[0])
+        return max(self.cos_sim(control_icon_embedding, plans_embedding).tolist()[0])
 
-    def control_filter(self, control_items, cropped_icons_dict, keywords, top_k):
+    def control_filter(self, control_items, cropped_icons_dict, plans, top_k):
         """
         Filters control items based on their scores and returns the top-k items.
         Args:
             control_items: The list of all control items.
             cropped_icons: The dictionary of the cropped icons.
-            keywords: The keywords to compare the control icons against.
+            plans: The plans to compare the control icons against.
             top_k: The number of top items to return.
         Returns:
             The list of top-k control items based on their scores.
         """
         scores_items = []
-        keywords_without_stopwords = self.remove_stopwords(keywords)
+
         for label, cropped_icon in cropped_icons_dict.items():
-            score = self.control_filter_score(cropped_icon, keywords_without_stopwords)
+            score = self.control_filter_score(cropped_icon, plans)
             scores_items.append((score, label))
         topk_scores_items = heapq.nlargest(top_k, scores_items, key=lambda x: x[0])
         topk_labels = [scores_items[1] for scores_items in topk_scores_items]
