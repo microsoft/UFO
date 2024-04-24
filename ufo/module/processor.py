@@ -64,6 +64,7 @@ class BaseProcessor(ABC):
         self._control_text = None
         self._response_json = None
         self._results = None
+        self.app_root = None
 
         
     def process(self):
@@ -396,6 +397,7 @@ class HostAgentProcessor(BaseProcessor):
 
         if self.app_to_open is not None:
             new_app_window = self.HostAgent.app_file_manager(self.app_to_open)
+            self._control_text = new_app_window.window_text()
         else:
             # Get the application window
             new_app_window = self._desktop_windows_dict.get(self.control_label, None)

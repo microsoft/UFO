@@ -4,6 +4,7 @@
 import importlib
 import json
 import os
+from typing import Optional
 
 from colorama import Fore, Style, init
 
@@ -104,6 +105,7 @@ def LazyImport(module_name:str):
     global_name = module_name.split(".")[-1]
     globals()[global_name] = importlib.import_module(module_name, __package__)
     return globals()[global_name]
+
 
 def find_desktop_path() -> Optional[str]:
     '''

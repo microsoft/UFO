@@ -38,7 +38,7 @@ class HostAgentPrompter(BasicPrompter):
             open_app_comment = ""
         apis = self.api_prompt_helper(verbose = 0)
         examples = self.examples_prompt_helper()     
-        print(self.prompt_template["system"].format(apis=apis, examples=examples, open_app_guideline=open_app_guideline, open_app_comment=open_app_comment))
+
         return self.prompt_template["system"].format(apis=apis, examples=examples, open_app_guideline=open_app_guideline, open_app_comment=open_app_comment)
     
 

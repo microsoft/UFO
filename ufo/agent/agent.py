@@ -107,6 +107,8 @@ class AppAgent(BasicAgent):
         
         control_text = response_dict.get("ControlText")
         control_label = response_dict.get("ControlLabel")
+        if not control_text:
+            control_text = "[The required application needs to be opened.]"
         observation = response_dict.get("Observation")
         thought = response_dict.get("Thought")
         plan = response_dict.get("Plan")
@@ -294,7 +296,7 @@ class HostAgent(BasicAgent):
         :param api_prompt: The API prompt file path.
         :return: The prompter instance.
         """
-        return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
+        return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, allow_openapp)
     
 
     def create_appagent(self, appagent_name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
@@ -358,6 +360,7 @@ class HostAgent(BasicAgent):
         :param app_file_info: The information of the application or file. {'APP': name of app, 'file_path': path}
         :return: The window of the application.
         '''
+        utils.print_with_color("Opening the required application or file...", "yellow")
         file_manager = openfile.FileController()
         results = file_manager.execute_code(app_file_info)
         time.sleep(5)
@@ -366,6 +369,10 @@ class HostAgent(BasicAgent):
             self.status = "ERROR in openning the application or file."
             return None
         app_window = file_manager.find_window_by_app_name(desktop_windows_dict)
+        app_name = app_window.window_text()
+
+        utils.print_with_color(f"The application {app_name} has been opened successfully.", "green")
+        
         return app_window
     
 
