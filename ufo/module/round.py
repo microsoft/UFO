@@ -8,7 +8,7 @@ from .. import utils
 from ..agent.agent import HostAgent
 from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
-from . import processor
+from .processors import processor
 
 from .basic import BaseRound
 
@@ -73,7 +73,7 @@ class Round(BaseRound):
         self.AppAgent = self.HostAgent.get_active_appagent()
         self.app_window = host_agent_processor.get_active_window()
         self.application = host_agent_processor.get_active_control_text()
-        
+
 
 
     def process_action_selection(self) -> None:

@@ -9,14 +9,14 @@ import traceback
 from logging import Logger
 from typing import Optional, Type
 
-from .. import utils
-from ..agent.agent import AppAgent, HostAgent
-from ..agent.basic import MemoryItem
-from ..automator.ui_control import utils as control
-from ..automator.ui_control.control_filter import ControlFilterFactory
-from ..automator.ui_control.screenshot import PhotographerFacade
-from ..config.config import Config
-from . import interactor
+from ... import utils
+from ...agent.agent import AppAgent, HostAgent
+from ...agent.basic import MemoryItem
+from ...automator.ui_control import utils as control
+from ...automator.ui_control.control_filter import ControlFilterFactory
+from ...automator.ui_control.screenshot import PhotographerFacade
+from ...config.config import Config
+from .. import interactor
 from .basic import BaseProcessor
 
 configs = Config.get_instance().config_data
