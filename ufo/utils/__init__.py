@@ -105,6 +105,22 @@ def LazyImport(module_name:str):
     globals()[global_name] = importlib.import_module(module_name, __package__)
     return globals()[global_name]
 
+def find_desktop_path() -> Optional[str]:
+    '''
+    Find the desktop path of the user.
+    '''
+    onedrive_path = os.environ.get('OneDrive')
+    if onedrive_path:
+        onedrive_desktop = os.path.join(onedrive_path, 'Desktop')
+        if os.path.exists(onedrive_desktop):
+            return onedrive_desktop
+    # Fallback to the local user desktop
+    local_desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
+    if os.path.exists(local_desktop):
+        return local_desktop
+    return None
+
+
     
 
 
