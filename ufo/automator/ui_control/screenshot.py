@@ -369,7 +369,7 @@ class PhotographerFacade:
         """
         Capture the control screenshot with annotations.
         :param control: The control item to capture.
-        :param sub_control_list: The list of the controls to annotate.
+        :param annotation_control_dict: The dictionary of the controls with annotation labels as keys.
         :param annotation_type: The type of the annotation.
         :param color_diff: Whether to use different colors for different control types.
         :param color_default: The default color of the annotation.
@@ -379,6 +379,7 @@ class PhotographerFacade:
         sub_control_list = list(annotation_control_dict.values())
         screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type, color_diff, color_default)
         return screenshot.capture_with_annotation_dict(annotation_control_dict, save_path)
+    
     
 
     def capture_app_window_screenshot_with_annotation(self, control, sub_control_list: List, annotation_type:str="number", color_diff:bool=True, color_default:str="#FFF68F", save_path=None) -> Image:
