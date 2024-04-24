@@ -197,10 +197,13 @@ class TextControlFilter:
             control_items (list): A list of control items to be filtered.
             keywords (list): A list of keywords to filter the control items.
         """
-        keywords = ControlFilterModel.plans_to_keywords(plans)
-        return [control_item for control_item in control_items if any(keyword in control_item['control_text'].lower() or \
-                                control_item['control_text'].lower() in keyword for keyword in keywords)]
-    
+        for control_item in control_items:
+            if control_item not in filtered_control_info:
+                control_text = control_item['control_text'].lower()
+                if any(keyword in control_text or control_text in keyword for keyword in keywords):
+                    filtered_control_info.append(control_item)
+
+
 
 class SemanticControlFilter(ControlFilterModel):
     """
@@ -236,7 +239,8 @@ class SemanticControlFilter(ControlFilterModel):
         topk_scores_items = heapq.nlargest(top_k, enumerate(scores), key=lambda x: x[1])
         topk_indices = [score_item[0] for score_item in topk_scores_items]
 
-        return [control_items[i] for i in topk_indices]
+        filtered_control_info.extend([control_items[i] for i in topk_indices])
+        
 
 class IconControlFilter(ControlFilterModel):
     """

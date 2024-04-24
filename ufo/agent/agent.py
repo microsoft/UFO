@@ -2,12 +2,14 @@
 # Licensed under the MIT License.
 
 
+import time
 from typing import Dict, List, Type
 
 from .. import utils
 from ..automator import puppeteer
-from ..prompter.agent_prompter import (HostAgentPrompter,
-                                       AppAgentPrompter)
+from ..automator.ui_control import openfile
+from ..automator.ui_control import utils as control
+from ..prompter.agent_prompter import AppAgentPrompter, HostAgentPrompter
 from .basic import BasicAgent, Memory, MemoryItem
 
 
@@ -94,6 +96,7 @@ class AppAgent(BasicAgent):
 
         return appagent_prompt_message
     
+
     
 
     def print_response(self, response_dict: Dict) -> None:
@@ -104,6 +107,8 @@ class AppAgent(BasicAgent):
         
         control_text = response_dict.get("ControlText")
         control_label = response_dict.get("ControlLabel")
+        if not control_text:
+            control_text = "[The required application needs to be opened.]"
         observation = response_dict.get("Observation")
         thought = response_dict.get("Thought")
         plan = response_dict.get("Plan")
@@ -259,7 +264,7 @@ class HostAgent(BasicAgent):
     The HostAgent class the manager of AppAgents.
     """
 
-    def __init__(self, name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
+    def __init__(self, name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, allow_openapp = False) -> None:
         """
         Initialize the HostAgent.
         :name: The name of the agent.
@@ -269,7 +274,7 @@ class HostAgent(BasicAgent):
         :param api_prompt: The API prompt file path.
         """
         super().__init__(name=name)
-        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
+        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, allow_openapp)
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
         self.experience_retriever = None
@@ -282,7 +287,7 @@ class HostAgent(BasicAgent):
 
 
 
-    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> HostAgentPrompter:
+    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, allow_openapp = False) -> HostAgentPrompter:
         """
         Get the prompt for the agent.
         :param is_visual: The flag indicating whether the agent is visual or not.
@@ -291,7 +296,7 @@ class HostAgent(BasicAgent):
         :param api_prompt: The API prompt file path.
         :return: The prompter instance.
         """
-        return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
+        return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, allow_openapp)
     
 
     def create_appagent(self, appagent_name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
@@ -348,6 +353,27 @@ class HostAgent(BasicAgent):
         hostagent_prompt_message = self.prompter.prompt_construction(hostagent_prompt_system_message, hostagent_prompt_user_message)
         
         return hostagent_prompt_message
+    
+    def app_file_manager(self, app_file_info: dict):
+        '''
+        Open the application or file for the user.
+        :param app_file_info: The information of the application or file. {'APP': name of app, 'file_path': path}
+        :return: The window of the application.
+        '''
+        utils.print_with_color("Opening the required application or file...", "yellow")
+        file_manager = openfile.FileController()
+        results = file_manager.execute_code(app_file_info)
+        time.sleep(5)
+        desktop_windows_dict, _ = control.get_desktop_app_info_dict()
+        if not results:
+            self.status = "ERROR in openning the application or file."
+            return None
+        app_window = file_manager.find_window_by_app_name(desktop_windows_dict)
+        app_name = app_window.window_text()
+
+        utils.print_with_color(f"The application {app_name} has been opened successfully.", "green")
+        
+        return app_window
     
 
     def print_response(self, response_dict: Dict):

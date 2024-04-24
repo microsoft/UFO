@@ -6,268 +6,21 @@ import json
 import os
 import time
 import traceback
-from abc import ABC, abstractmethod
 from logging import Logger
 from typing import Optional, Type
 
-from .. import utils
-from ..agent.agent import AppAgent, HostAgent
-from ..agent.basic import MemoryItem
-from ..automator.ui_control import utils as control
-from ..automator.ui_control.control_filter import ControlFilterFactory
-
-from ..automator.ui_control.screenshot import PhotographerFacade
-from ..config.config import Config
-from . import interactor
-
+from ... import utils
+from ...agent.agent import AppAgent, HostAgent
+from ...agent.basic import MemoryItem
+from ...automator.ui_control import utils as control
+from ...automator.ui_control.control_filter import ControlFilterFactory
+from ...automator.ui_control.screenshot import PhotographerFacade
+from ...config.config import Config
+from .. import interactor
+from .basic import BaseProcessor
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
-
-
-class BaseProcessor(ABC):
-    """
-    The base processor for the session.
-    """
-
-    def __init__(self, index: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
-                 round_step: int, global_step: int, prev_status: str, app_window:Type) -> None:
-        """
-        Initialize the processor.
-        :param log_path: The log path.
-        :param photographer: The photographer facade to process the screenshots.
-        :param request: The user request.
-        :param request_logger: The logger for the request string.
-        :param logger: The logger for the response and error.
-        :param global_step: The global step of the session.
-        :param prev_status: The previous status of the session.
-        """
-
-        self.log_path = log_path
-        self.photographer = photographer
-        self.request = request
-        self.request_logger = request_logger
-        self.logger = logger
-        self._app_window = app_window
-        
-        self.global_step = global_step
-        self.round_step = round_step
-        self.prev_status = prev_status
-        self.index = index
-        
-        self._step = 0
-        self._status = prev_status
-        self._prompt_message = None  
-        self._response = None  
-        self._cost = 0
-        self._control_label = None
-        self._control_text = None
-        self._response_json = None
-
-        
-    def process(self):
-        """
-        Process the session.
-        The process includes the following steps:
-        1. Print the step information.
-        2. Capture the screenshot.
-        3. Get the control information.
-        4. Get the prompt message.
-        5. Get the response.
-        6. Parse the response.
-        7. Execute the action.
-        8. Update the memory.
-        9. Create the app agent if necessary.
-        10. Update the step and status.
-        """
-
-        self.print_step_info()
-        self.capture_screenshot()
-        self.get_control_info()
-        self.get_prompt_message()
-        self.get_response()
-
-        if self.is_error():
-            return
-        self.parse_response()
-
-        if self.is_error():
-            return
-        
-        self.execute_action()
-        self.update_memory()
-
-        if self.should_create_appagent():
-            self.create_app_agent()
-        self.update_step_and_status()
-        
-    
-    @abstractmethod
-    def print_step_info(self):
-        """
-        Print the step information.
-        """
-        pass
-    
-    @abstractmethod 
-    def capture_screenshot(self):
-        """
-        Capture the screenshot.
-        """
-        pass
-    
-    @abstractmethod 
-    def get_control_info(self): 
-        """
-        Get the control information.
-        """
-        pass
-  
-
-    @abstractmethod  
-    def get_prompt_message(self):
-        """
-        Get the prompt message.
-        """
-        pass  
-  
-    @abstractmethod  
-    def get_response(self):  
-        """
-        Get the response from the LLM.
-        """
-        pass  
-  
-    @abstractmethod  
-    def parse_response(self):
-        """
-        Parse the response.
-        """
-        pass  
-
-    @abstractmethod  
-    def execute_action(self):
-        """
-        Execute the action.
-        """
-        pass  
-
-    @abstractmethod
-    def update_memory(self):
-        """
-        Update the memory of the Agent.
-        """
-        pass
-
-
-    @abstractmethod  
-    def update_status(self):
-        """
-        Update the status of the session.
-        """
-        pass
-
-    
-    def create_app_agent(self):
-        """
-        Create the app agent.
-        """
-        pass
-
-
-    def update_step_and_status(self):
-        """
-        Update the step and status of the process.
-        """
-        self._step += 1  
-        self.update_status()
-
-
-    def get_active_window(self):
-        """
-        Get the active window.
-        :return: The active window.
-        """
-        return self._app_window
-    
-    
-    def get_active_control_text(self):
-        """
-        Get the active application.
-        :return: The active application.
-        """
-        return self._control_text
-    
-
-    def get_process_status(self):
-        """
-        Get the process status.
-        :return: The process status.
-        """
-        return self._status
-    
-    def get_process_step(self):
-        """
-        Get the process step.
-        :return: The process step.
-        """
-        return self._step
-    
-    def get_process_cost(self):
-        """
-        Get the process cost.
-        :return: The process cost.
-        """
-        return self._cost
-    
-
-    def is_error(self):
-        """
-        Check if the process is in error.
-        :return: The boolean value indicating if the process is in error.
-        """
-
-        return self._status == "ERROR"
-    
-
-    def should_create_appagent(self):
-        """
-        Check if the app agent should be created.
-        :return: The boolean value indicating if the app agent should be created.
-        """
-
-        if isinstance(self, HostAgentProcessor) and self.prev_status == "APP_SELECTION":
-            return True
-        else:
-            return False
-
-
-    def log(self, response_json: dict) -> dict:
-        """
-        Set the result of the session, and log the result.
-        result: The result of the session.
-        response_json: The response json.
-        return: The response json.
-        """
-
-        self.logger.info(json.dumps(response_json))
-
-
-    def error_log(self, response_str: str, error: str) -> None:
-        """
-        Error handler for the session.
-        """
-        log = json.dumps({"step": self._step, "status": "ERROR", "response": response_str, "error": error})
-        self.logger.info(log)
-        
-
-
-    def get_current_action_memory(self):
-        """
-        Get the current action memory.
-        :return: The current action memory.
-        """
-        pass
 
 
 
@@ -297,6 +50,7 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = None
         self._desktop_windows_dict = None
         self._desktop_windows_info = None
+        self.app_to_open = None
         
     
     def print_step_info(self):
@@ -365,10 +119,11 @@ class HostAgentProcessor(BaseProcessor):
         """
         try:
             self._response_json = self.HostAgent.response_to_dict(self._response)
-            self.control_label = self._response_json["ControlLabel"]
-            self._control_text = self._response_json["ControlText"]
-            self.plan = self._response_json["Plan"]
-            self._status = self._response_json["Status"]
+            self.control_label = self._response_json.get("ControlLabel", "")
+            self._control_text = self._response_json.get("ControlText", "")
+            self.plan = self._response_json.get("Plan", "")
+            self._status = self._response_json.get("Status", "")
+            self.app_to_open = self._response_json.get("AppsToOpen", None)
             
             self.HostAgent.print_response(self._response_json)
 
@@ -389,8 +144,13 @@ class HostAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
-         # Get the application window
-        new_app_window = self._desktop_windows_dict.get(self.control_label, None)
+        if self.app_to_open is not None:
+            new_app_window = self.HostAgent.app_file_manager(self.app_to_open)
+            self._control_text = new_app_window.window_text()
+        else:
+            # Get the application window
+            new_app_window = self._desktop_windows_dict.get(self.control_label, None)
+
         if new_app_window is None:
             return
         # Get the application name
@@ -445,6 +205,18 @@ class HostAgentProcessor(BaseProcessor):
             time.sleep(configs["SLEEP_TIME"])
 
 
+    def should_create_appagent(self):
+        """
+        Check if the app agent should be created.
+        :return: The boolean value indicating if the app agent should be created.
+        """
+
+        if isinstance(self, HostAgentProcessor) and self.prev_status == "APP_SELECTION":
+            return True
+        else:
+            return False
+        
+        
     def create_app_agent(self):
         """
         Create the app agent.
@@ -501,16 +273,14 @@ class AppAgentProcessor(BaseProcessor):
 
             self.AppAgent = app_agent
             self.process_name = process_name
-            self.control_reannotate = control_reannotate
 
             self._annotation_dict = None
             self._control_info = None
             self._operation = None
             self._args = None
             self._image_url = []
-            self._control_reannotate = None
+            self._control_reannotate = control_reannotate
             self.control_filter_factory = ControlFilterFactory()
-            self.filtered_control_info = None
 
             
         def print_step_info(self):
@@ -528,33 +298,20 @@ class AppAgentProcessor(BaseProcessor):
             screenshot_save_path = self.log_path + f"action_step{self.global_step}.png"
             annotated_screenshot_save_path = self.log_path + f"action_step{self.global_step}_annotated.png"
             concat_screenshot_save_path = self.log_path + f"action_step{self.global_step}_concat.png"
-            
 
-            if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
-                control_list = self.control_reannotate
+            if type(self._control_reannotate) == list and len(self._control_reannotate) > 0:
+                control_list = self._control_reannotate
             else:
                 control_list = control.find_control_elements_in_descendants(BACKEND, self._app_window, control_type_list = configs["CONTROL_LIST"], class_name_list = configs["CONTROL_LIST"])
-            
+
             self._annotation_dict = self.photographer.get_annotation_dict(self._app_window, control_list, annotation_type="number")
-            
-            agent_memory = self.AppAgent.memory
-            if agent_memory.length > 0:
-                prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
-                
-            else:
-                prev_plan = ""
-                
-            self.filtered_control_info = self.get_filtered_control_info(prev_plan)
-            
-            
 
             self.photographer.capture_app_window_screenshot(self._app_window, save_path=screenshot_save_path)
-            self.photographer.capture_app_window_screenshot_with_annotation(self._app_window, control_list, annotation_type="number",\
-                                    save_path=annotated_screenshot_save_path, filtered_control_info=self.filtered_control_info)
+            
+            self.photographer.capture_app_window_screenshot_with_annotation(self._app_window, control_list, annotation_type="number", save_path=annotated_screenshot_save_path)
 
 
             if configs["INCLUDE_LAST_SCREENSHOT"]:
-                
                 last_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}.png"
                 last_control_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}_selected_controls.png"
                 self._image_url += [self.photographer.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
@@ -586,11 +343,8 @@ class AppAgentProcessor(BaseProcessor):
             """
             
             control_filter_type = configs["CONTROL_FILTER_TYPE"]
-            topk_plan = configs["CONTROL_FILTER_TOP_K_PLAN"]
-            if self._control_info is None:
-                self.get_control_info()
-                
-            if len(control_filter_type) == 0 or plan == "":
+
+            if len(control_filter_type) == 0:
                 return self._control_info
 
             
@@ -598,27 +352,24 @@ class AppAgentProcessor(BaseProcessor):
             
             filtered_control_info = []
 
-            plans = self.control_filter_factory.get_plans(plan, topk_plan)
-            
+            keywords = self.control_filter_factory.plan_to_keywords(plan)
+
             if 'text' in control_filter_type_lower:
                 model_text = self.control_filter_factory.create_control_filter('text')
-                filtered_text_control_info = model_text.control_filter(self._control_info, plans)
-                filtered_control_info = self.control_filter_factory.append_filtered_control_info(filtered_control_info, filtered_text_control_info)
+                model_text.control_filter(filtered_control_info, self._control_info, keywords)
                 
             if 'semantic' in control_filter_type_lower:
                 model_semantic = self.control_filter_factory.create_control_filter('semantic', configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"])
-                filtered_semantic_control_info = model_semantic.control_filter(self._control_info, plans, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
-                filtered_control_info = self.control_filter_factory.append_filtered_control_info(filtered_control_info, filtered_semantic_control_info)
+                model_semantic.control_filter(filtered_control_info, self._control_info, keywords, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
                 
-            if 'icon' in control_filter_type_lower:          
+            if 'icon' in control_filter_type_lower:                
                 model_icon = self.control_filter_factory.create_control_filter('icon', configs["CONTROL_FILTER_MODEL_ICON_NAME"])
 
                 cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, self._annotation_dict)
-                filtered_icon_control_info = model_icon.control_filter(self._control_info, cropped_icons_dict, plans, configs["CONTROL_FILTER_TOP_K_ICON"])
-                filtered_control_info = self.control_filter_factory.append_filtered_control_info(filtered_control_info, filtered_icon_control_info)
+                model_icon.control_filter(filtered_control_info, self._control_info, cropped_icons_dict, keywords, configs["CONTROL_FILTER_TOP_K_ICON"])
+
 
             return filtered_control_info
-
 
             
             
@@ -654,14 +405,16 @@ class AppAgentProcessor(BaseProcessor):
 
             if agent_memory.length > 0:
                 prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
+                filtered_control_info = self.get_filtered_control_info(prev_plan)
             else:
                 prev_plan = ""
+                filtered_control_info = self.get_filtered_control_info(HostAgent.memory.get_latest_item().to_dict()["Plan"])
 
             self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
-                                                                                self.filtered_control_info, prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
+                                                                                filtered_control_info, prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
             log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": self._control_info, 
-                              "filted_control_items": self.filtered_control_info, "status": ""})
+                              "filted_control_items": filtered_control_info, "status": ""})
             self.request_logger.debug(log)
 
 
@@ -688,11 +441,11 @@ class AppAgentProcessor(BaseProcessor):
             try:
                 self._response_json = self.AppAgent.response_to_dict(self._response)
 
-                self._control_label = self._response_json["ControlLabel"]
-                self._control_text = self._response_json["ControlText"]
-                self._operation = self._response_json["Function"]
-                self._args = utils.revise_line_breaks(self._response_json["Args"])
-                self._status = self._response_json["Status"]
+                self._control_label = self._response_json.get("ControlLabel", "")
+                self._control_text = self._response_json.get("ControlText", "")
+                self._operation = self._response_json.get("Function", "")
+                self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
+                self._status = self._response_json.get("Status", "")
 
                 self.AppAgent.print_response(self._response_json)
 

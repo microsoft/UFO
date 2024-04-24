@@ -12,7 +12,7 @@ class HostAgentPrompter(BasicPrompter):
     The HostAgentPrompter class is the prompter for the host agent.
     """
 
-    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str):
+    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str, allow_openapp = False):
         """
         Initialize the ApplicationAgentPrompter.
         :param is_visual: Whether the request is for visual model.
@@ -22,6 +22,7 @@ class HostAgentPrompter(BasicPrompter):
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template, is_visual)
+        self.allow_openapp = allow_openapp
 
 
     def system_prompt_construction(self) -> str:
@@ -29,11 +30,16 @@ class HostAgentPrompter(BasicPrompter):
         Construct the prompt for app selection.
         return: The prompt for app selection.
         """
-
+        if self.allow_openapp:
+            open_app_guideline = self.prompt_template["open_app_guideline"]
+            open_app_comment = self.prompt_template["open_app_comment"]
+        else:
+            open_app_guideline = ""
+            open_app_comment = ""
         apis = self.api_prompt_helper(verbose = 0)
         examples = self.examples_prompt_helper()     
 
-        return self.prompt_template["system"].format(apis=apis, examples=examples)
+        return self.prompt_template["system"].format(apis=apis, examples=examples, open_app_guideline=open_app_guideline, open_app_comment=open_app_comment)
     
 
 
@@ -99,7 +105,6 @@ class HostAgentPrompter(BasicPrompter):
         :param separator: The separator of the prompt.
         return: The prompt for examples.
         """
-        
         template = """
         [User Request]:
             {request}
@@ -107,9 +112,14 @@ class HostAgentPrompter(BasicPrompter):
             {response}"""
         example_list = []
 
-        for key in self.example_prompt_template.keys():
+        for key, values in self.example_prompt_template.items():
+            
             if key.startswith("example"):
-                example = template.format(request=self.example_prompt_template[key].get("Request"), response=json.dumps(self.example_prompt_template[key].get("Response")))
+                if key.startswith("example_openapp") and not self.allow_openapp:
+                    continue
+                if not self.allow_openapp:
+                    del values["Response"]["AppsToOpen"]
+                example = template.format(request=values.get("Request"), response=json.dumps(values.get("Response")))
                 example_list.append(example)
 
         return self.retrived_documents_prompt_helper(header, separator, example_list)
