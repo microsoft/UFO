@@ -369,10 +369,10 @@ class HostAgentProcessor(BaseProcessor):
         """
         try:
             self._response_json = self.HostAgent.response_to_dict(self._response)
-            self.control_label = self._response_json["ControlLabel"]
-            self._control_text = self._response_json["ControlText"]
-            self.plan = self._response_json["Plan"]
-            self._status = self._response_json["Status"]
+            self.control_label = self._response_json.get("ControlLabel", "")
+            self._control_text = self._response_json.get("ControlText", "")
+            self.plan = self._response_json.get("Plan", "")
+            self._status = self._response_json.get("Status", "")
             self.app_to_open = self._response_json.get("AppsToOpen", None)
             
             self.HostAgent.print_response(self._response_json)
@@ -679,11 +679,11 @@ class AppAgentProcessor(BaseProcessor):
             try:
                 self._response_json = self.AppAgent.response_to_dict(self._response)
 
-                self._control_label = self._response_json["ControlLabel"]
-                self._control_text = self._response_json["ControlText"]
-                self._operation = self._response_json["Function"]
-                self._args = utils.revise_line_breaks(self._response_json["Args"])
-                self._status = self._response_json["Status"]
+                self._control_label = self._response_json.get("ControlLabel", "")
+                self._control_text = self._response_json.get("ControlText", "")
+                self._operation = self._response_json.get("Function", "")
+                self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
+                self._status = self._response_json.get("Status", "")
 
                 self.AppAgent.print_response(self._response_json)
 
