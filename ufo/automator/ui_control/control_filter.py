@@ -142,6 +142,7 @@ class TextControlFilter:
                     filtered_control_info.append(control_item)
 
 
+
 class SemanticControlFilter(ControlFilterModel):
     """
     A class that represents a semantic model for control filtering.
@@ -181,6 +182,7 @@ class SemanticControlFilter(ControlFilterModel):
         topk_indices = [item[0] for item in topk_items]
 
         filtered_control_info.extend([control_items[i] for i in topk_indices])
+        
 
 class IconControlFilter(ControlFilterModel):
     """

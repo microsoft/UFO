@@ -248,6 +248,7 @@ class AtomicCommand(ControlCommand):
         """
         return self.receiver.atomic_execution(self.method_name, self.params)
     
+    
 
 
 

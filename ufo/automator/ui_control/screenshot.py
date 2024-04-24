@@ -275,19 +275,11 @@ class AnnotationDecorator(PhotographerDecorator):
         return cropped_icons_dict
     
 
-    def capture(self, save_path:Optional[str] = None):
-        """
-        Capture a screenshot with annotations.
-        :param save_path: The path to save the screenshot.
-        :return: The screenshot with annotations.
-        """
+    def capture_with_annotation_dict(self, annotation_dict: Dict, save_path:Optional[str] = None):
 
-        annotation_dict = self.get_annotation_dict()
         window_rect = self.photographer.control.rectangle()
         screenshot_annotated = self.photographer.capture()
-
-        assert self.annotation_type in ["number", "letter"], "The annotation type must be number or letter."
-
+    
         color_dict = configs["ANNOTATION_COLORS"]
 
         for label_text, control in annotation_dict.items():
@@ -301,6 +293,19 @@ class AnnotationDecorator(PhotographerDecorator):
             screenshot_annotated.save(save_path)
 
         return screenshot_annotated
+
+    
+
+    def capture(self, save_path:Optional[str] = None):
+        """
+        Capture a screenshot with annotations.
+        :param save_path: The path to save the screenshot.
+        :return: The screenshot with annotations.
+        """
+
+        annotation_dict = self.get_annotation_dict()
+        self.capture_with_annotation_dict(annotation_dict, save_path)
+
     
     
 class PhotographerFactory:  
@@ -359,6 +364,23 @@ class PhotographerFacade:
         return screenshot.capture(save_path)
     
 
+    def capture_app_window_screenshot_with_annotation_dict(self, control, annotation_control_dict: Dict, annotation_type:str="number", 
+                                                           color_diff:bool=True, color_default:str="#FFF68F", save_path=None) -> Image:
+        """
+        Capture the control screenshot with annotations.
+        :param control: The control item to capture.
+        :param sub_control_list: The list of the controls to annotate.
+        :param annotation_type: The type of the annotation.
+        :param color_diff: Whether to use different colors for different control types.
+        :param color_default: The default color of the annotation.
+        :return: The screenshot.
+        """
+        screenshot = self.screenshot_factory.create_screenshot("app_window", control)
+        sub_control_list = list(annotation_control_dict.values())
+        screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type, color_diff, color_default)
+        return screenshot.capture_with_annotation_dict(annotation_control_dict, save_path)
+    
+
     def capture_app_window_screenshot_with_annotation(self, control, sub_control_list: List, annotation_type:str="number", color_diff:bool=True, color_default:str="#FFF68F", save_path=None) -> Image:
         """
         Capture the control screenshot with annotations.
@@ -402,8 +424,6 @@ class PhotographerFacade:
         return screenshot.get_cropped_icons_dict(annotation_dict)
 
     
-    
-
     @staticmethod
     def concat_screenshots(image1_path: str, image2_path: str, output_path: str) -> Image:
         """

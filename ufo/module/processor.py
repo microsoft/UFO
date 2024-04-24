@@ -63,6 +63,7 @@ class BaseProcessor(ABC):
         self._control_label = None
         self._control_text = None
         self._response_json = None
+        self._results = None
 
         
     def process(self):
@@ -206,12 +207,14 @@ class BaseProcessor(ABC):
         """
         return self._status
     
+    
     def get_process_step(self):
         """
         Get the process step.
         :return: The process step.
         """
         return self._step
+    
     
     def get_process_cost(self):
         """
@@ -536,11 +539,11 @@ class AppAgentProcessor(BaseProcessor):
             self._annotation_dict = self.photographer.get_annotation_dict(self._app_window, control_list, annotation_type="number")
 
             self.photographer.capture_app_window_screenshot(self._app_window, save_path=screenshot_save_path)
+            
             self.photographer.capture_app_window_screenshot_with_annotation(self._app_window, control_list, annotation_type="number", save_path=annotated_screenshot_save_path)
 
 
             if configs["INCLUDE_LAST_SCREENSHOT"]:
-                
                 last_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}.png"
                 last_control_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}_selected_controls.png"
                 self._image_url += [self.photographer.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
