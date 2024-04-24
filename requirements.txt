@@ -14,5 +14,7 @@ lxml==5.1.0
 psutil==5.9.8
 beautifulsoup4==4.12.3
 sentence-transformers==2.5.1
-#For Qwen
+##For Qwen
 #dashscope
+##For removing stopwords
+#nltk

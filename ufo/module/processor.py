@@ -510,6 +510,7 @@ class AppAgentProcessor(BaseProcessor):
             self._image_url = []
             self._control_reannotate = None
             self.control_filter_factory = ControlFilterFactory()
+            self.filtered_control_info = None
 
             
         def print_step_info(self):
@@ -527,16 +528,32 @@ class AppAgentProcessor(BaseProcessor):
             screenshot_save_path = self.log_path + f"action_step{self.global_step}.png"
             annotated_screenshot_save_path = self.log_path + f"action_step{self.global_step}_annotated.png"
             concat_screenshot_save_path = self.log_path + f"action_step{self.global_step}_concat.png"
+            agent_memory = self.AppAgent.memory
 
             if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
                 control_list = self.control_reannotate
             else:
                 control_list = control.find_control_elements_in_descendants(BACKEND, self._app_window, control_type_list = configs["CONTROL_LIST"], class_name_list = configs["CONTROL_LIST"])
-
+            
             self._annotation_dict = self.photographer.get_annotation_dict(self._app_window, control_list, annotation_type="number")
+            
+            if agent_memory.length > 0:
+                prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
+                self.filtered_control_info = self.get_filtered_control_info(prev_plan)
+            else:
+                prev_plan = ""
+                self.filtered_control_info = self.get_filtered_control_info(self.AppAgent.get_host().memory.get_latest_item().to_dict()["Plan"])
+            
+            if self.filtered_control_info:
+                filtered_control_info_index = [info['label'] for info in self.filtered_control_info]
+            else:
+                filtered_control_info_index = []
+            
+            
 
             self.photographer.capture_app_window_screenshot(self._app_window, save_path=screenshot_save_path)
-            self.photographer.capture_app_window_screenshot_with_annotation(self._app_window, control_list, annotation_type="number", save_path=annotated_screenshot_save_path)
+            self.photographer.capture_app_window_screenshot_with_annotation(self._app_window, control_list, annotation_type="number",\
+                                    save_path=annotated_screenshot_save_path, filtered_control_info_index=filtered_control_info_index)
 
 
             if configs["INCLUDE_LAST_SCREENSHOT"]:
@@ -561,18 +578,22 @@ class AppAgentProcessor(BaseProcessor):
             self._control_info = control.get_control_info_dict(self._annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
 
         
-        def get_filtered_control_info(self, plan:str):
+        def get_filtered_control_info(self, plan:str, is_first_round=False):
             """
             Get the filtered control information.
             
             :param plan: The plan string.
+            :param is_first_round: The boolean value indicating whether it is the first round.
             
             Return:
                 The filtered control information.
             """
             
             control_filter_type = configs["CONTROL_FILTER_TYPE"]
-
+            topk_plan = configs["CONTROL_FILTER_TOP_K_PLAN"]
+            if self._control_info is None:
+                self.get_control_info()
+                
             if len(control_filter_type) == 0:
                 return self._control_info
 
@@ -581,22 +602,24 @@ class AppAgentProcessor(BaseProcessor):
             
             filtered_control_info = []
 
-            keywords = self.control_filter_factory.plan_to_keywords(plan)
-
+            keywords = self.control_filter_factory.plan_to_keywords(plan, topk_plan, is_first_round)
+            
             if 'text' in control_filter_type_lower:
                 model_text = self.control_filter_factory.create_control_filter('text')
-                model_text.control_filter(filtered_control_info, self._control_info, keywords)
+                filtered_text_control_info = model_text.control_filter(self._control_info, keywords)
+                filtered_control_info = self.control_filter_factory.append_filtered_control_info(filtered_control_info, filtered_text_control_info)
                 
             if 'semantic' in control_filter_type_lower:
                 model_semantic = self.control_filter_factory.create_control_filter('semantic', configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"])
-                model_semantic.control_filter(filtered_control_info, self._control_info, keywords, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
+                filtered_semantic_control_info = model_semantic.control_filter(self._control_info, keywords, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
+                filtered_control_info = self.control_filter_factory.append_filtered_control_info(filtered_control_info, filtered_semantic_control_info)
                 
-            if 'icon' in control_filter_type_lower:                
+            if 'icon' in control_filter_type_lower:          
                 model_icon = self.control_filter_factory.create_control_filter('icon', configs["CONTROL_FILTER_MODEL_ICON_NAME"])
 
                 cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, self._annotation_dict)
-                model_icon.control_filter(filtered_control_info, self._control_info, cropped_icons_dict, keywords, configs["CONTROL_FILTER_TOP_K_ICON"])
-
+                filtered_icon_control_info = model_icon.control_filter(self._control_info, cropped_icons_dict, keywords, configs["CONTROL_FILTER_TOP_K_ICON"])
+                filtered_control_info = self.control_filter_factory.append_filtered_control_info(filtered_control_info, filtered_icon_control_info)
 
             return filtered_control_info
 
@@ -634,16 +657,14 @@ class AppAgentProcessor(BaseProcessor):
 
             if agent_memory.length > 0:
                 prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
-                filtered_control_info = self.get_filtered_control_info(prev_plan)
             else:
                 prev_plan = ""
-                filtered_control_info = self.get_filtered_control_info(HostAgent.memory.get_latest_item().to_dict()["Plan"])
 
             self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
-                                                                                filtered_control_info, prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
+                                                                                self.filtered_control_info, prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
             log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": self._control_info, 
-                              "filted_control_items": filtered_control_info, "status": ""})
+                              "filted_control_items": self.filtered_control_info, "status": ""})
             self.request_logger.debug(log)
 
 
