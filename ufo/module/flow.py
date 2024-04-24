@@ -43,9 +43,10 @@ class Session(object):
         utils.create_folder(self.log_path)
         self.logger = self.initialize_logger(self.log_path, "response.log")
         self.request_logger = self.initialize_logger(self.log_path, "request.log")
-
-        self.HostAgent = HostAgent("HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"], configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        self.allow_openapp = configs["ALLOW_OPENAPP"]
+        self.HostAgent = HostAgent("HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"], configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], self.allow_openapp)
         self.AppAgent = None
+        
 
         self._status = "APP_SELECTION"
         self.application = ""
@@ -109,6 +110,7 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.application = response_json["ControlText"]
             self.plan = response_json["Plan"]
             self._status = response_json["Status"]
+            self.app_to_open = response_json.get("AppsToOpen", None)
 
             self.HostAgent.print_response(response_json)
 
@@ -129,10 +131,16 @@ Please enter your request to be completed🛸: """.format(art=text2art("UFO"))
             self.HostAgent.add_memory(host_agent_step_memory)
             
             response_json = self.set_result_and_log(host_agent_step_memory.to_dict())
-        
-            if "FINISH" in self._status.upper() or self.application == "" or not app_window:
-                return
-                
+            if "FINISH" in self._status.upper() and not self.allow_openapp:
+                if self.application == "" or not app_window:
+                    return       
+            app_window = None
+            
+            if self.app_to_open is not None:
+                app_window = self.HostAgent.app_file_manager(self.app_to_open)
+            else:
+                app_window = desktop_windows_dict.get(application_label)
+            self.application = control.get_application_name(app_window) 
             try:
                 app_window.is_normal()
 

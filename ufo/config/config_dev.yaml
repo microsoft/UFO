@@ -46,3 +46,4 @@ DEMONSTRATION_SAVED_PATH: "vectordb/demonstration/"
 API_PROMPT: "ufo/prompts/base/{mode}/api.yaml"  # The prompt for the API
 INPUT_TEXT_API: "type_keys" # The input text API
 INPUT_TEXT_ENTER: True # whether to press enter after typing the text
+ALLOW_OPENAPP: True  # Whether to allow the open app action

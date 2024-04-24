@@ -191,7 +191,7 @@ def replace_newline(input_str : str) -> str:
         result_str = result_str.replace('\\\\n', '\\n')
 
     return result_str
-   
+
 
 def get_application_name(window) -> str:
     """

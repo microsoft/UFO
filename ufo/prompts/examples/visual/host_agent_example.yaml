@@ -22,6 +22,8 @@ example1:
       (5) Click the Send button to send the email. This action is sensitive and need to be confirmed by the user.
     Comment: |-
       It is time to open the outlook application!
+    AppsToOpen: |-
+      None
 
 
 example2: 
@@ -45,6 +47,8 @@ example2:
       (4) Click the Send button to send the message. This action is sensitive and need to be confirmed by the user.
     Comment: |-
       It is time to open the Teams application.
+    AppsToOpen: |-
+      None
 
 
 
@@ -70,7 +74,8 @@ example3:
       (5) Input the text of the Document control named 'framework.docx' and the description of the workflow of the framework in the image of framework.png in the Edit control named 'Type a new message'. These information can be extracted from my history actions.\\n (6) Click the Send button to send the message. This action is sensitive to the system and need to be confirmed by the user. I need to confirm the action before clicking the Send button. If the user confirms the action, the task is finished.
     Comment: |-
       After I get the text of the Document control named 'framework.docx', I need to switch to the image of framework.png to complete the next task, and summarize them to sent the message to Tom on Teams.
-
+    AppsToOpen: |-
+      None
 
 
 example4:
@@ -93,7 +98,8 @@ example4:
       (3) Click the Send button to send the email. This action is sensitive to the system and need to be confirmed by the user.
     Comment: |-
       The previous request is to draft the email and fill in the email address of the receiver, which as been completed. Now it is time to revise the email to be longer and send it.
-
+    AppsToOpen: |-
+      None
 
 example5:
   Request: |-
@@ -120,7 +126,8 @@ example5:
       (8) Once 'Remove All Presentation Notes' is visible, I should click it to remove all notes in the presentation.pptx file. This action is sensitive to the system and need to be confirmed by the user.
     Comment: |-
       I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
-
+    AppsToOpen: |-
+      None
  
 
 
@@ -146,7 +153,8 @@ example6:
       (5) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
     Comment: |-
       I plan to Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
-
+    AppsToOpen: |-
+      None
 
 
 example7: 
@@ -174,7 +182,8 @@ example7:
       (8) Close the details view by clicking the 'Dismiss detail view' botton.
     Comment: |-
       I plan to use the Microsoft To Do application to set a reminder for the user, and add details and notes to the reminder.
-
+    AppsToOpen: |-
+      None
 
 example8: 
   Request: |- 
@@ -206,7 +215,8 @@ example8:
         "Status": "CONTINUE",
         "Plan": "(1) Open the presentation1 - PowerPoint. \\n (2) Double click the Copilot Add-in to open the Copilot that can help to create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide from the meeting_notes.docx. \\n (3) Click the 'Create presentation from file' button to open a file picker. \\n (4) Select and click the meeting_notes.docx file in the file picker. \\n (5) Click the 'Send' buttom to send the request to Copilot. This completes the task.",
         "Comment": "I plan to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx."}
-
+    AppsToOpen: |-
+      None
 
 example9:
   Request: |-
@@ -229,3 +239,50 @@ example9:
       (4) Input '@Zac, please revise the presentation1.pptx.' in the comment text box.
     Comment: |-
       I plan to leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx.
+    AppsToOpen: |-
+      None
+
+
+example_openapp1:
+  Request: 
+    open a ppt file on my desktop named test.pptx and modify the title to Apple is the best tech Company
+  Response: 
+    Observation: |-
+      I observe that the PowerPoint application is not visible in the screenshot, so I need to open the PowerPoint application and the test.pptx file.,
+    Thought: |- 
+      I need to open test.pptx through function OpenAPP directly, as I can not observe it in the screenshot. After that, I will proceed to modify the title of the ppt file.,
+    ControlLabel: |-
+      2
+    ControlText: |-
+      PowerPoint
+    Status: |-
+      CONTINUE
+    Plan: |-
+      (1) Call the function OpenAPP with the arguments {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'} to open the test.pptx file.
+      (2) When the file is open, delete text in the title and input 'Apple is the best tech Company' in the title.
+    Comment: |-
+      Since the PowerPoint application is not visible in the screenshot, I will use the function OpenAPP to open the test.pptx file directly from the desktop. Then modify the title of the ppt file after its opened.
+    AppsToOpen: {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}
+  
+
+example_openapp2:
+  Request: |- 
+    open file explorer APP for me and find label.txt file.
+  Response: 
+    Observation: |-
+      I observe that the file explorer is not visible in the screenshot, so I need to open the file explorer via python code, and then use search box to find the label.txt.
+    Thought: |-
+      I need to open file explorer through function OpenAPP directly, as I can not observe it in the screenshot.
+    ControlLabel: |-
+      3
+    ControlText: 
+      Explorer
+    Status: |-
+      CONTINUE
+    Plan: |-
+      (1) Call the function OpenAPP with the arguments {'APP': 'powerpnt', 'file_path': ''} to open the file explorer APP.
+      (2) Once the file explorer is open, I need to use the search box to find the label.txt file.,
+    Comment: |-
+      Since the file explorer application is not visible in the screenshot, I will use the function OpenAPP to open the file explorer file directly.
+    AppsToOpen: |-
+      {'APP': 'powerpnt', 'file_path': ''}

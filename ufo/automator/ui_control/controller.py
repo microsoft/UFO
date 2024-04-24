@@ -5,8 +5,8 @@ import time
 import warnings
 
 from ...config.config import Config
-from ...utils import print_with_color
 from .utils import get_control_info
+from ...utils import print_with_color
 
 
 configs = Config.get_instance().config_data
@@ -217,4 +217,3 @@ class UIController:
             result = message
         return result
     
-
