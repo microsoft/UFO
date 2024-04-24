@@ -1,5 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+from abc import abstractmethod
 import heapq
 from ...utils import LazyImport
 
@@ -33,41 +34,42 @@ class ControlFilterFactory:
             raise ValueError("Invalid retriever type: {}".format(control_filter_type)) 
     
     @staticmethod
-    def append_filtered_control_info(filtered_control_info, control_infos):
+    def append_filtered_annotation_dict(filtered_control_dict, control_dicts):
             """
-            Appends the given control_info to the filtered_control_info list if it is not already present.
+            Appends the given control_info to the filtered_control_dict if it is not already present.
 
             Args:
-                filtered_control_info (list): The list of filtered control information.
-                control_info: The control information to be appended.
+                filtered_control_dict (dict): The dictionary of filtered control information.
+                control_dicts (dict): The control information to be appended.
 
             Returns:
-                list: The updated filtered_control_info list.
+                dict: The updated filtered_control_dict dictionary.
             """
-            if control_infos:
-                if filtered_control_info:
-                    filtered_control_info.extend([control_info for control_info in control_infos\
-                        if control_info not in filtered_control_info])
-                    return filtered_control_info
+            if control_dicts:
+                if filtered_control_dict:
+                    for label, control_info in control_dicts.items():
+                        if label not in filtered_control_dict:
+                            filtered_control_dict[label] = control_info
+                    return filtered_control_dict
                 else:
-                    return control_infos
+                    return control_dicts
             
-            return filtered_control_info
+            return filtered_control_dict
         
     @staticmethod
     def get_plans(plan, topk_plan):
-            """
-            Parses the given plan and returns a list of plans up to the specified topk_plan.
+        """
+        Parses the given plan and returns a list of plans up to the specified topk_plan.
 
-            Args:
-                plan (str): The plan to be parsed.
-                topk_plan (int): The maximum number of plans to be returned.
+        Args:
+            plan (str): The plan to be parsed.
+            topk_plan (int): The maximum number of plans to be returned.
 
-            Returns:
-                list: A list of plans up to the specified topk_plan.
-            """
-            plans = str(plan).split("\n")[:topk_plan]
-            return plans
+        Returns:
+            list: A list of plans up to the specified topk_plan.
+        """
+        plans = str(plan).split("\n")[:topk_plan]
+        return plans
     
 
 class ControlFilterModel:
@@ -115,19 +117,18 @@ class ControlFilterModel:
         """
         return self.model.encode(content)
     
-
-    def control_filter(self, keywords, control_item):
+    
+    @abstractmethod
+    def control_filter(self, control_dicts, plans, **kwargs):
         """
         Calculates the cosine similarity between the embeddings of the given keywords and the control item.
         Args:
-            keywords (str): The keywords to be used for calculating the similarity.
-            control_item (str): The control item to be compared with the keywords.
+            control_dicts (dic): The control item to be compared with the plans.
+            plans (str): The plans to be used for calculating the similarity.
         Returns:
             float: The cosine similarity between the embeddings of the keywords and the control item.
         """
-        keywords_embedding = self.get_embedding(keywords)
-        control_item_embedding = self.get_embedding(control_item)
-        return self.cos_sim(keywords_embedding, control_item_embedding)
+        pass
     
     
     @staticmethod
@@ -190,18 +191,21 @@ class TextControlFilter:
     """
 
     @staticmethod
-    def control_filter(control_items, plans):
+    def control_filter(control_dicts, plans):
         """
         Filters control items based on keywords.
         Args:
-            control_items (list): A list of control items to be filtered.
+            control_dicts (dict): A dictionary of control items to be filtered.
             keywords (list): A list of keywords to filter the control items.
         """
-        for control_item in control_items:
-            if control_item not in filtered_control_info:
-                control_text = control_item['control_text'].lower()
-                if any(keyword in control_text or control_text in keyword for keyword in keywords):
-                    filtered_control_info.append(control_item)
+        filtered_control_dict = {}
+        
+        keywords = ControlFilterModel.plans_to_keywords(plans)
+        for label, control_item in control_dicts.items():
+            control_text = control_item.element_info.name.lower()
+            if any(keyword in control_text or control_text in keyword for keyword in keywords):
+                filtered_control_dict[label] = control_item
+        return filtered_control_dict
 
 
 
@@ -223,33 +227,33 @@ class SemanticControlFilter(ControlFilterModel):
         control_text_embedding = self.get_embedding(control_text)
         return max(self.cos_sim(control_text_embedding, plan_embedding).tolist()[0])
 
-    def control_filter(self, control_items, plans, top_k):
+    def control_filter(self, control_dicts, plans, top_k):
         """
         Filters control items based on their similarity to a set of keywords.
         Args:
-            control_items (list): A list of control items to be filtered.
+            control_dicts (dict): A dictionary of control items to be filtered.
             plans (list): A list of plans.
             top_k (int): The number of top control items to be selected.
         """
-        scores = []
-        for control_item in control_items:
-            control_text = control_item['control_text'].lower()
+        scores_items = []
+        filtered_control_dict = {}
+        
+        for label, control_item in control_dicts.items():
+            control_text = control_item.element_info.name.lower()
             score = self.control_filter_score(control_text, plans)
-            scores.append(score)
-        topk_scores_items = heapq.nlargest(top_k, enumerate(scores), key=lambda x: x[1])
-        topk_indices = [score_item[0] for score_item in topk_scores_items]
+            scores_items.append((label, score))
+        topk_scores_items = heapq.nlargest(top_k, (scores_items), key=lambda x: x[1])
+        topk_items = [(score_item[0], score_item[1]) for score_item in topk_scores_items]
 
-        filtered_control_info.extend([control_items[i] for i in topk_indices])
+        for label, control_item in control_dicts.items():
+            if label in topk_items:
+                filtered_control_dict[label] = control_item
+        return filtered_control_dict
         
 
 class IconControlFilter(ControlFilterModel):
     """
-    Represents a model for filtering control icons based on keywords.
-    Attributes:
-        Inherits attributes from ControlFilterModel.
-    Methods:
-        control_filter_score(control_icon, keywords): Calculates the score of a control icon based on its similarity to the given keywords.
-        control_filter(filtered_control_info, control_items, cropped_icons_dict, keywords, top_k): Filters control items based on their scores and returns the top-k items.
+    A class that represents a icon model for control filtering.
     """
 
     def control_filter_score(self, control_icon, plans):
@@ -265,11 +269,11 @@ class IconControlFilter(ControlFilterModel):
         control_icon_embedding = self.get_embedding(control_icon)
         return max(self.cos_sim(control_icon_embedding, plans_embedding).tolist()[0])
 
-    def control_filter(self, control_items, cropped_icons_dict, plans, top_k):
+    def control_filter(self, control_dicts, cropped_icons_dict, plans, top_k):
         """
         Filters control items based on their scores and returns the top-k items.
         Args:
-            control_items: The list of all control items.
+            control_dicts: The dictionary of all control items.
             cropped_icons: The dictionary of the cropped icons.
             plans: The plans to compare the control icons against.
             top_k: The number of top items to return.
@@ -277,6 +281,7 @@ class IconControlFilter(ControlFilterModel):
             The list of top-k control items based on their scores.
         """
         scores_items = []
+        filtered_control_dict = {}
 
         for label, cropped_icon in cropped_icons_dict.items():
             score = self.control_filter_score(cropped_icon, plans)
@@ -284,4 +289,7 @@ class IconControlFilter(ControlFilterModel):
         topk_scores_items = heapq.nlargest(top_k, scores_items, key=lambda x: x[0])
         topk_labels = [scores_items[1] for scores_items in topk_scores_items]
 
-        return [control_item for control_item in control_items if control_item['label'] in topk_labels ]
+        for label, control_item in control_dicts.items():
+            if label in topk_labels:
+                filtered_control_dict[label] = control_item 
+        return filtered_control_dict

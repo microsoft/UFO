@@ -190,23 +190,7 @@ def get_control_info_batch(window_list:List, field_list:List[str]=[]) -> List:
 def get_control_info_dict(window_dict:dict, field_list:List[str]=[]) -> List[dict]:
     """
     Get control info of the window.
-    :param window: The list of windows to get control info.
-    :param field_list: The fields to get.
-    return: The list of control info of the window.
-    """
-    control_info_list = []
-    for key in window_dict.keys():
-        window = window_dict[key]  
-        control_info = get_control_info(window, field_list)
-        control_info["label"] = key
-        control_info_list.append(control_info)
-    return control_info_list
-
-
-def get_control_info_dict(window_dict:dict, field_list:List[str]=[]) -> List[dict]:
-    """
-    Get control info of the window.
-    :param window: The list of windows to get control info.
+    :param window_dict: The dict of windows to get control info.
     :param field_list: The fields to get.
     return: The list of control info of the window.
     """

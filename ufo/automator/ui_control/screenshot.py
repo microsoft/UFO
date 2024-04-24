@@ -395,7 +395,7 @@ class PhotographerFacade:
         """
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)  
         screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type, color_diff, color_default)
-        return screenshot.capture(save_path, filtered_control_info)
+        return screenshot.capture(save_path)
     
 
     def get_annotation_dict(self, control, sub_control_list: List, annotation_type="number") -> Dict:
