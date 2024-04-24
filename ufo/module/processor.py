@@ -512,14 +512,13 @@ class AppAgentProcessor(BaseProcessor):
 
             self.AppAgent = app_agent
             self.process_name = process_name
-            self.control_reannotate = control_reannotate
 
             self._annotation_dict = None
             self._control_info = None
             self._operation = None
             self._args = None
             self._image_url = []
-            self._control_reannotate = None
+            self._control_reannotate = control_reannotate
             self.control_filter_factory = ControlFilterFactory()
 
             
@@ -539,8 +538,8 @@ class AppAgentProcessor(BaseProcessor):
             annotated_screenshot_save_path = self.log_path + f"action_step{self.global_step}_annotated.png"
             concat_screenshot_save_path = self.log_path + f"action_step{self.global_step}_concat.png"
 
-            if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
-                control_list = self.control_reannotate
+            if type(self._control_reannotate) == list and len(self._control_reannotate) > 0:
+                control_list = self._control_reannotate
             else:
                 control_list = control.find_control_elements_in_descendants(BACKEND, self._app_window, control_type_list = configs["CONTROL_LIST"], class_name_list = configs["CONTROL_LIST"])
 
