@@ -12,6 +12,7 @@ from pywinauto import Desktop
 configs = Config.get_instance().config_data
 
 BACKEND = configs["CONTROL_BACKEND"]
+
 class FileController():
     """
     Control block for open file / specific APP and proceed the operation.

@@ -300,6 +300,7 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = None
         self._desktop_windows_dict = None
         self._desktop_windows_info = None
+        self.app_to_open = None
         
     
     def print_step_info(self):
@@ -372,6 +373,7 @@ class HostAgentProcessor(BaseProcessor):
             self._control_text = self._response_json["ControlText"]
             self.plan = self._response_json["Plan"]
             self._status = self._response_json["Status"]
+            self.app_to_open = self._response_json.get("AppsToOpen", None)
             
             self.HostAgent.print_response(self._response_json)
 
@@ -392,8 +394,12 @@ class HostAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
-         # Get the application window
-        new_app_window = self._desktop_windows_dict.get(self.control_label, None)
+        if self.app_to_open is not None:
+            new_app_window = self.HostAgent.app_file_manager(self.app_to_open)
+        else:
+            # Get the application window
+            new_app_window = self._desktop_windows_dict.get(self.control_label, None)
+
         if new_app_window is None:
             return
         # Get the application name
