@@ -4,7 +4,6 @@
 
 from logging import Logger
 
-from .. import utils
 from ..agent.agent import HostAgent
 from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
