@@ -15,6 +15,6 @@ psutil==5.9.8
 beautifulsoup4==4.12.3
 sentence-transformers==2.5.1
 ##For Qwen
-#dashscope
+#dashscope==1.15.0
 ##For removing stopwords
-#nltk
+#nltk==3.8.1
