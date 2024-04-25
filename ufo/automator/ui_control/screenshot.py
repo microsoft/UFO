@@ -390,6 +390,7 @@ class PhotographerFacade:
         :param annotation_type: The type of the annotation.
         :param color_diff: Whether to use different colors for different control types.
         :param color_default: The default color of the annotation.
+        :param filtered_control_info: The list of the filtered control info.
         :return: The screenshot.
         """
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)  

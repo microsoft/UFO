@@ -279,8 +279,10 @@ class AppAgentProcessor(BaseProcessor):
             self._operation = None
             self._args = None
             self._image_url = []
+            self.prev_plan = ""
             self._control_reannotate = control_reannotate
             self.control_filter_factory = ControlFilterFactory()
+            self.filtered_annotation_dict = None
 
             
         def print_step_info(self):
@@ -305,10 +307,14 @@ class AppAgentProcessor(BaseProcessor):
                 control_list = control.find_control_elements_in_descendants(BACKEND, self._app_window, control_type_list = configs["CONTROL_LIST"], class_name_list = configs["CONTROL_LIST"])
 
             self._annotation_dict = self.photographer.get_annotation_dict(self._app_window, control_list, annotation_type="number")
-
+            
+            self.get_prev_plan()
+            self.get_filtered_annotation_dict()
+            self.get_filtered_control_info()
+            
             self.photographer.capture_app_window_screenshot(self._app_window, save_path=screenshot_save_path)
             
-            self.photographer.capture_app_window_screenshot_with_annotation(self._app_window, control_list, annotation_type="number", save_path=annotated_screenshot_save_path)
+            self.photographer.capture_app_window_screenshot_with_annotation_dict(self._app_window, self.filtered_annotation_dict, annotation_type="number", save_path=annotated_screenshot_save_path)
 
 
             if configs["INCLUDE_LAST_SCREENSHOT"]:
@@ -324,6 +330,21 @@ class AppAgentProcessor(BaseProcessor):
                 screenshot_annotated_url = self.photographer.encode_image_from_path(annotated_screenshot_save_path)
                 self._image_url += [screenshot_url, screenshot_annotated_url]
 
+        def get_prev_plan(self):
+            """
+            Retrieves the previous plan from the agent's memory.
+
+            Returns:
+                str: The previous plan, or an empty string if the agent's memory is empty.
+            """
+            agent_memory = self.AppAgent.memory
+
+            if agent_memory.length > 0:
+                prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
+            else:
+                prev_plan = ""
+            self.prev_plan = prev_plan
+
         
         def get_control_info(self):
             """
@@ -332,44 +353,55 @@ class AppAgentProcessor(BaseProcessor):
             self._control_info = control.get_control_info_dict(self._annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
 
         
-        def get_filtered_control_info(self, plan:str):
+        def get_filtered_control_info(self):
             """
             Get the filtered control information.
+            """
+            self.filtered_control_info = control.get_control_info_dict(self.filtered_annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
+
+        
+        def get_filtered_annotation_dict(self):
+            """
+            Get the filtered annotation dictionary.
             
-            :param plan: The plan string.
             
             Return:
-                The filtered control information.
+                The dictionary of filtered control information.
             """
             
             control_filter_type = configs["CONTROL_FILTER_TYPE"]
+            topk_plan = configs["CONTROL_FILTER_TOP_K_PLAN"]
 
-            if len(control_filter_type) == 0:
-                return self._control_info
+            if len(control_filter_type) == 0 or self.prev_plan == "":
+                self.filtered_annotation_dict = self._annotation_dict
+                return
 
             
             control_filter_type_lower = [control_filter_type_lower.lower() for control_filter_type_lower in control_filter_type]
             
-            filtered_control_info = []
+            filtered_annotation_dict = {}
 
-            keywords = self.control_filter_factory.plan_to_keywords(plan)
+            plans = self.control_filter_factory.get_plans(self.prev_plan, topk_plan)
 
             if 'text' in control_filter_type_lower:
                 model_text = self.control_filter_factory.create_control_filter('text')
-                model_text.control_filter(filtered_control_info, self._control_info, keywords)
+                filtered_text_dict = model_text.control_filter(self._annotation_dict, plans)
+                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_text_dict)
                 
             if 'semantic' in control_filter_type_lower:
                 model_semantic = self.control_filter_factory.create_control_filter('semantic', configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"])
-                model_semantic.control_filter(filtered_control_info, self._control_info, keywords, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
+                filtered_semantic_dict = model_semantic.control_filter(self._annotation_dict, plans, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
+                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_semantic_dict)
+                
                 
             if 'icon' in control_filter_type_lower:                
                 model_icon = self.control_filter_factory.create_control_filter('icon', configs["CONTROL_FILTER_MODEL_ICON_NAME"])
 
                 cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, self._annotation_dict)
-                model_icon.control_filter(filtered_control_info, self._control_info, cropped_icons_dict, keywords, configs["CONTROL_FILTER_TOP_K_ICON"])
-
-
-            return filtered_control_info
+                filtered_icon_dict = model_icon.control_filter(self._annotation_dict, cropped_icons_dict, plans, configs["CONTROL_FILTER_TOP_K_ICON"])
+                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_icon_dict)
+                
+            self.filtered_annotation_dict = filtered_annotation_dict
 
             
             
@@ -401,20 +433,12 @@ class AppAgentProcessor(BaseProcessor):
             action_history = HostAgent.get_global_action_memory().to_json()
             request_history = HostAgent.get_request_history_memory().to_json()
 
-            agent_memory = self.AppAgent.memory
-
-            if agent_memory.length > 0:
-                prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
-                filtered_control_info = self.get_filtered_control_info(prev_plan)
-            else:
-                prev_plan = ""
-                filtered_control_info = self.get_filtered_control_info(HostAgent.memory.get_latest_item().to_dict()["Plan"])
-
+            self.get_prev_plan()
             self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
-                                                                                filtered_control_info, prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
+                                                                                self.filtered_control_info, self.prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
             log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": self._control_info, 
-                              "filted_control_items": filtered_control_info, "status": ""})
+                              "filted_control_items": self.filtered_control_info, "status": ""})
             self.request_logger.debug(log)
 
 
