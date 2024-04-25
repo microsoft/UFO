@@ -83,7 +83,7 @@ pip install -r requirements.txt
 ```
 
 ### ⚙️ Step 2: Configure the LLMs
-Before running UFO, you need to provide your LLM configurations **individully for AppAgent and ActAgent**. You can create your own config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` and editing config for **APP_AGENT** and **ACTION_AGENT** as follows: 
+Before running UFO, you need to provide your LLM configurations **individually for AppAgent and ActAgent**. You can create your own config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` and editing config for **APP_AGENT** and **ACTION_AGENT** as follows: 
 
 #### OpenAI
 ```bash
