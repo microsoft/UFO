@@ -57,6 +57,12 @@ class ReceiverBasic(ABC):
         Get the command-receiver mapping.
         """
         return {command_name: self for command_name in self.supported_command_names}
+    
+
+    @property
+    def type_name(self):
+        
+        return self.__class__.__name__
 
 
 class CommandBasic(ABC):

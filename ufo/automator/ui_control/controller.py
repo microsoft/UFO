@@ -46,7 +46,10 @@ class ControlReceiver(ReceiverBasic):
             "annotation": AnnotationCommand,
             "": NoActionCommand
         }
-
+    
+    @property
+    def type_name(self):
+        return "UIControl"
 
     def atomic_execution(self, method_name:str, params:Dict) -> str:
         """

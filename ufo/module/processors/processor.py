@@ -422,7 +422,7 @@ class AppAgentProcessor(BaseProcessor):
             """
             try:
                 control_selected = self._annotation_dict.get(self._control_label, "")
-                self.AppAgent.Puppeteer.create_ui_control_receiver(control_selected, self._app_window)
+                self.AppAgent.Puppeteer.receiver_manager.create_ui_control_receiver(control_selected, self._app_window)
 
                 # Save the screenshot of the selected control.
                 control_screenshot_save_path = self.log_path + f"action_step{self.global_step}_selected_controls.png"

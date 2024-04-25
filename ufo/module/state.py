@@ -7,7 +7,7 @@ from typing import Dict, Type
 from ..config.config import Config
 from ..utils import print_with_color
 from .interactor import experience_asker
-from .basic import BaseSession
+
 
 configs = Config.get_instance().config_data
 
@@ -54,7 +54,7 @@ class SessionState(ABC):
         """
         self.state_mapping = StatusToStateMapper()
 
-    def handle(self, session: BaseSession):
+    def handle(self, session):
         """
         Handle the session.
         :param session: The session.

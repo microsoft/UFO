@@ -90,6 +90,11 @@ class WinCOMReceiverBasic(ReceiverBasic):
         return max(object_name_list, key=lambda x: self.longest_common_substring_length(clean_process_name, x))
     
 
+    @property
+    def type_name(self):
+        return "COM"
+    
+
 
     @staticmethod
     def longest_common_substring_length(str1, str2) -> int:
