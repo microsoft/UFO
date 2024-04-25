@@ -311,7 +311,6 @@ class AppAgentProcessor(BaseProcessor):
             self.prev_plan = self.get_prev_plan()
 
             self.filtered_annotation_dict = self.get_filtered_annotation_dict(self._annotation_dict)
-            self.filtered_control_info = self.get_control_info(self.filtered_annotation_dict)
             
             self.photographer.capture_app_window_screenshot(self._app_window, save_path=screenshot_save_path)
             
@@ -331,74 +330,14 @@ class AppAgentProcessor(BaseProcessor):
                 screenshot_annotated_url = self.photographer.encode_image_from_path(annotated_screenshot_save_path)
                 self._image_url += [screenshot_url, screenshot_annotated_url]
 
-
-
-        def get_prev_plan(self):
-            """
-            Retrieves the previous plan from the agent's memory.
-
-            Returns:
-                str: The previous plan, or an empty string if the agent's memory is empty.
-            """
-            agent_memory = self.AppAgent.memory
-
-            if agent_memory.length > 0:
-                prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
-            else:
-                prev_plan = ""
-
-            return prev_plan
-            
-
         
-        def get_control_info(self, annotation_dict: dict):
+        
+        def get_control_info(self):
             """
             Get the control information.
             """
-            return control.get_control_info_dict(annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
-
-        
-        def get_filtered_annotation_dict(self, annotation_dict: dict):
-            """
-            Get the filtered annotation dictionary.
-            :param annotation_dict: The annotation dictionary.
-            
-            
-            Return:
-                The dictionary of filtered control information.
-            """
-            
-            control_filter_type = configs["CONTROL_FILTER_TYPE"]
-            topk_plan = configs["CONTROL_FILTER_TOP_K_PLAN"]
-
-            if len(control_filter_type) == 0 or self.prev_plan == "":
-                return annotation_dict
-            
-            control_filter_type_lower = [control_filter_type_lower.lower() for control_filter_type_lower in control_filter_type]
-            
-            filtered_annotation_dict = {}
-
-            plans = self.control_filter_factory.get_plans(self.prev_plan, topk_plan)
-
-            if 'text' in control_filter_type_lower:
-                model_text = self.control_filter_factory.create_control_filter('text')
-                filtered_text_dict = model_text.control_filter(annotation_dict, plans)
-                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_text_dict)
-                
-            if 'semantic' in control_filter_type_lower:
-                model_semantic = self.control_filter_factory.create_control_filter('semantic', configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"])
-                filtered_semantic_dict = model_semantic.control_filter(annotation_dict, plans, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
-                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_semantic_dict)
-                
-                
-            if 'icon' in control_filter_type_lower:                
-                model_icon = self.control_filter_factory.create_control_filter('icon', configs["CONTROL_FILTER_MODEL_ICON_NAME"])
-
-                cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, annotation_dict)
-                filtered_icon_dict = model_icon.control_filter(annotation_dict, cropped_icons_dict, plans, configs["CONTROL_FILTER_TOP_K_ICON"])
-                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_icon_dict)
-                
-            return filtered_annotation_dict
+            self._control_info = control.get_control_info_dict(self._annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
+            self.filtered_control_info = control.get_control_info_dict(self.filtered_annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
 
             
             
@@ -591,3 +530,63 @@ class AppAgentProcessor(BaseProcessor):
             """
 
             return self._control_reannotate
+        
+        
+        def get_prev_plan(self):
+            """
+            Retrieves the previous plan from the agent's memory.
+
+            Returns:
+                str: The previous plan, or an empty string if the agent's memory is empty.
+            """
+            agent_memory = self.AppAgent.memory
+
+            if agent_memory.length > 0:
+                prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
+            else:
+                prev_plan = ""
+
+            return prev_plan
+        
+        
+        def get_filtered_annotation_dict(self, annotation_dict: dict):
+            """
+            Get the filtered annotation dictionary.
+            :param annotation_dict: The annotation dictionary.
+            
+            
+            Return:
+                The dictionary of filtered control information.
+            """
+            
+            control_filter_type = configs["CONTROL_FILTER_TYPE"]
+            topk_plan = configs["CONTROL_FILTER_TOP_K_PLAN"]
+
+            if len(control_filter_type) == 0 or self.prev_plan == "":
+                return annotation_dict
+            
+            control_filter_type_lower = [control_filter_type_lower.lower() for control_filter_type_lower in control_filter_type]
+            
+            filtered_annotation_dict = {}
+
+            plans = self.control_filter_factory.get_plans(self.prev_plan, topk_plan)
+
+            if 'text' in control_filter_type_lower:
+                model_text = self.control_filter_factory.create_control_filter('text')
+                filtered_text_dict = model_text.control_filter(annotation_dict, plans)
+                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_text_dict)
+                
+            if 'semantic' in control_filter_type_lower:
+                model_semantic = self.control_filter_factory.create_control_filter('semantic', configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"])
+                filtered_semantic_dict = model_semantic.control_filter(annotation_dict, plans, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
+                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_semantic_dict)
+                
+                
+            if 'icon' in control_filter_type_lower:                
+                model_icon = self.control_filter_factory.create_control_filter('icon', configs["CONTROL_FILTER_MODEL_ICON_NAME"])
+
+                cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, annotation_dict)
+                filtered_icon_dict = model_icon.control_filter(annotation_dict, cropped_icons_dict, plans, configs["CONTROL_FILTER_TOP_K_ICON"])
+                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_icon_dict)
+                
+            return filtered_annotation_dict
