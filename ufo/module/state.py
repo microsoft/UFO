@@ -7,6 +7,7 @@ from typing import Dict, Type
 from ..config.config import Config
 from ..utils import print_with_color
 from .interactor import experience_asker
+from .basic import BaseSession
 
 configs = Config.get_instance().config_data
 
@@ -53,7 +54,7 @@ class SessionState(ABC):
         """
         self.state_mapping = StatusToStateMapper()
 
-    def handle(self, session):
+    def handle(self, session: BaseSession):
         """
         Handle the session.
         :param session: The session.
@@ -193,6 +194,7 @@ class ContinueState(SessionState):
 
 
 
+
 class AnnotationState(ContinueState):
     """
     The state when the session needs to re-nnotate the screenshot.
@@ -200,7 +202,7 @@ class AnnotationState(ContinueState):
 
     def handle(self, session):
         """
-        Handle the session. Process the action selection with the re-annotation screenshot.
+        Handle the session. Process the action selection with the re-annotation screenshot. Same as ContinueState.
         :param session: The session.
         """
         super().handle(session)
