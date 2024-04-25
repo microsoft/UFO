@@ -54,7 +54,7 @@ WORD_API_PROMPT: "ufo/prompts/base/{mode}/word_api.yaml"  # The prompt for the w
 
 # For control filtering
 #'TEXT' for only rich text filter, 'SEMANTIC' for only semantic similarity match, 'ICON' for only icon match
-CONTROL_FILTER_TYPE: ['TEXT', 'SEMANTIC', 'ICON']  # The list of control filter type, support 'TEXT', 'SEMANTIC', 'ICON'
+CONTROL_FILTER_TYPE: []  # The list of control filter type, support 'TEXT', 'SEMANTIC', 'ICON'
 CONTROL_FILTER_TOP_K_PLAN: 2  # The control filter effect on top k plans from UFO, default is 2
 CONTROL_FILTER_TOP_K_SEMANTIC: 15  # The control filter top k for semantic similarity
 CONTROL_FILTER_TOP_K_ICON: 15  # The control filter top k for icon similarity
