@@ -311,7 +311,6 @@ class AppAgentProcessor(BaseProcessor):
             self.prev_plan = self.get_prev_plan()
 
             self.filtered_annotation_dict = self.get_filtered_annotation_dict(self._annotation_dict)
-            
             self.photographer.capture_app_window_screenshot(self._app_window, save_path=screenshot_save_path)
             
             self.photographer.capture_app_window_screenshot_with_annotation_dict(self._app_window, self.filtered_annotation_dict, annotation_type="number", save_path=annotated_screenshot_save_path)

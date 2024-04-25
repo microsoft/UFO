@@ -46,12 +46,26 @@ class SessionState(ABC):
     """
     The base class for session state.
     """
+
+    def __init__(self):
+        """
+        Initialize the state.
+        """
+        self.state_mapping = StatusToStateMapper()
+
     def handle(self, session):
         """
         Handle the session.
         :param session: The session.
         """
         pass
+
+    def get_state(self, status: str):
+        """
+        Get the current state.
+        :return: The current state.
+        """
+        return self.state_mapping.get_appropriate_state(status)
     
 
 
@@ -94,7 +108,9 @@ class RoundFinishState(SessionState):
         session.start_new_round()
         status = session.get_status()
  
-        session.set_state(StatusToStateMapper().get_appropriate_state(status))
+        state = self.get_state(status)
+
+        session.set_state(state)
 
 
 
@@ -146,7 +162,9 @@ class AppSelectionState(SessionState):
             session.set_state(MaxStepReachedState())  
             return
         
-        session.set_state(StatusToStateMapper().get_appropriate_state(status))
+        state = self.get_state(status)
+
+        session.set_state(state)
 
 
 
@@ -169,7 +187,9 @@ class ContinueState(SessionState):
             session.set_state(MaxStepReachedState())  
             return
   
-        session.set_state(StatusToStateMapper().get_appropriate_state(status))  
+        state = self.get_state(status)
+
+        session.set_state(state)
 
 
 
@@ -184,7 +204,7 @@ class AnnotationState(ContinueState):
         :param session: The session.
         """
         super().handle(session)
-        
+
 
 
 
