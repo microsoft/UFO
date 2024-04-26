@@ -14,7 +14,12 @@ configs = Config.get_instance().config_data
 
 
 
-def get_desktop_windows(backend="uia", remove_empty: bool=True) -> List:  
+def get_desktop_windows(backend="uia", remove_empty: bool=True) -> List:
+    """
+    Get all the apps on the desktop.
+    :param remove_empty: Whether to remove empty titles.
+    :return: The apps on the desktop.
+    """
     desktop_windows = Desktop(backend=backend).windows()  
       
     if backend == "win32":  
