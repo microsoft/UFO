@@ -78,6 +78,7 @@ class CommandBasic(ABC):
         """
         self.receiver = receiver
         self.params = params if params is not None else {}
+        
 
     @abstractmethod  
     def execute(self):  

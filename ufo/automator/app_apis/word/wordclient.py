@@ -57,6 +57,10 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
 
         return table
     
+    @property
+    def type_name(self):
+        return "COM/WORD"
+    
 
 
 class InsertTableCommand(WinCOMCommand):

@@ -75,7 +75,7 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_windows_dict, self._desktop_windows_info = control.get_desktop_app_info_dict()
 
 
-    def get_prompt_message(self) -> List:
+    def get_prompt_message(self) -> None:
         """
         Get the prompt message.
         """
@@ -95,7 +95,7 @@ class HostAgentProcessor(BaseProcessor):
         
         log = json.dumps({"step": self._step, "prompt": self._prompt_message, "control_items": self._desktop_windows_info, "filted_control_items": self._desktop_windows_info, "status": ""})
         self.request_logger.debug(log)
-        return self._prompt_message
+        
     
     
     def get_response(self) -> None:
