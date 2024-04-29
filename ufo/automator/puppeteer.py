@@ -38,6 +38,9 @@ class AppPuppeteer():
         receiver = self.receiver_manager.get_receiver(command_name)
         command = receiver.get_command_registry().get(command_name.lower(), None)
 
+        if receiver is None:
+            raise ValueError(f"Receiver for command {command_name} is not found.")
+
         if command is None:
             raise ValueError(f"Command {command_name} is not supported.")
         
