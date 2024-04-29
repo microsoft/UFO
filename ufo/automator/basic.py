@@ -45,18 +45,19 @@ class ReceiverBasic(ABC):
         self.command_registry[command_name] = command
         
     
-    def get_supported_command_names(self) -> List:
+    def get_supported_command_names(self) -> List[str]:
         """
         Get the command name list.
         """
         return list(self.command_registry.keys())
     
     
-    def self_command_mapping(self) -> Dict:
+    def self_command_mapping(self) -> Dict[str, Type]:
         """
         Get the command-receiver mapping.
         """
         return {command_name: self for command_name in self.supported_command_names}
+    
     
 
     @property

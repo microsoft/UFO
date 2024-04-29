@@ -216,7 +216,7 @@ class AppAgent(BasicAgent):
 
     def get_host(self) -> Type:
         """
-        Get the host agent.
+        Get the host agent that manages the AppAgent.
         :return: The host agent.
         """
         return self.host

@@ -33,7 +33,8 @@ class ControlReceiver(ReceiverBasic):
         self.application = application
 
 
-    def get_default_command_registry(self):
+    @staticmethod
+    def get_default_command_registry():
         """
         The default command registry.
         """

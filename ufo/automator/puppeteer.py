@@ -121,6 +121,7 @@ class ReceiverManager:
         """
         Initialize the receiver manager.
         """
+
         self.receiver_registry = {}  
         self.receiver_factories = {}  
         self.ui_control_receiver = None  
@@ -132,19 +133,20 @@ class ReceiverManager:
     def load_receiver_factories(self) -> None:
         """
         Load the receiver factories. Now we have two types of receiver factories: UI control receiver factory and COM receiver factory.
+        A receiver factory is responsible for creating the receiver for the specific type of receiver.
         """
 
-        self.register_receiver_factory("UIControl", UIControlReceiverFactory())  
-        self.register_receiver_factory("COM", COMReceiverFactory())   
+        self.__register_receiver_factory("UIControl", UIControlReceiverFactory())  
+        self.__register_receiver_factory("COM", COMReceiverFactory())   
   
-    def register_receiver_factory(self, factory_name: str, factory: ReceiverFactory) -> None:
+    def __register_receiver_factory(self, factory_name: str, factory: ReceiverFactory) -> None:
         """
         Register the receiver factory.
         :param factory_name: The factory name.
         :param factory: The factory instance.
         """ 
         self.receiver_factories[factory_name] = factory 
-        
+
   
     def create_ui_control_receiver(self, control: object, application: object) -> ControlReceiver:
         """
@@ -154,7 +156,7 @@ class ReceiverManager:
         """
         factory = self.receiver_factories.get("UIControl")
         self.ui_control_receiver = factory.create_receiver(control, application)
-        self.update_receiver_registry()
+        self.__update_receiver_registry()
 
         return self.ui_control_receiver
     
@@ -168,13 +170,13 @@ class ReceiverManager:
         """
         factory = self.receiver_factories.get("COM")  
         self.com_receiver = factory.create_receiver(app_root_name, process_name)
-        self.update_receiver_registry()
+        self.__update_receiver_registry()
         return self.com_receiver
     
   
-    def update_receiver_registry(self) -> None:
+    def __update_receiver_registry(self) -> None:
         """
-        Update the receiver registry.
+        Update the receiver registry. A receiver registry is a dictionary that maps the command name to the receiver.
         """
 
         if self.ui_control_receiver is not None:

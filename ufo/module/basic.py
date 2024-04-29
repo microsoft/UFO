@@ -22,7 +22,7 @@ BACKEND = configs["CONTROL_BACKEND"]
 
 class BaseRound(ABC):
     """
-    A round of a session in UFO.
+    A round of a session in UFO. A round is a single interaction between the user and the UFO system.
     """
 
     def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, HostAgent: HostAgent, request: str) -> None: 
@@ -159,7 +159,7 @@ class BaseRound(ABC):
 
 class BaseSession(ABC):
     """
-    A session for UFO.
+    A round of a session in UFO. A session consists of multiple rounds of interactions.
     """
     
     def __init__(self, task):
@@ -241,15 +241,13 @@ class BaseSession(ABC):
         self.HostAgent.add_request_memory(self.request)
         self._round += 1
         
-        self.request = interactor.new_request()
+        self.request, iscomplete = interactor.new_request()
 
-        if self.request.upper() == "N":
+        if iscomplete:
             self._status = "COMPLETE"
-            return
         else:
             self._current_round = self.create_round()
             self._status = "APP_SELECTION"
-            return
         
         
     @abstractmethod

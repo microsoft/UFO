@@ -26,8 +26,8 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
             
         return None
     
-
-    def get_default_command_registry(self) -> Dict:
+    @staticmethod
+    def get_default_command_registry() -> Dict[str, WinCOMCommand]:
         """
         Get the method registry of the COM object.
         :return: The method registry.

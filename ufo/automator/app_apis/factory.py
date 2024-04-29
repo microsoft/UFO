@@ -20,8 +20,8 @@ class COMReceiverFactory(ReceiverFactory):
         :return: The receiver.
         """
 
-        com_receiver = self.com_client_mapper(app_root_name)
-        clsid = self.app_root_mappping(app_root_name)
+        com_receiver = self.__com_client_mapper(app_root_name)
+        clsid = self.__app_root_mappping(app_root_name)
 
         if clsid is None:
             raise ValueError(f"App root name {app_root_name} is not supported.")
@@ -29,7 +29,7 @@ class COMReceiverFactory(ReceiverFactory):
         return com_receiver(app_root_name, process_name)
     
 
-    def com_client_mapper(self, app_root_name: str) -> Type[WinCOMReceiverBasic]:
+    def __com_client_mapper(self, app_root_name: str) -> Type[WinCOMReceiverBasic]:
         """
         Map the app root to the corresponding COM client.
         :param app_root_name: The app root name.
@@ -46,7 +46,7 @@ class COMReceiverFactory(ReceiverFactory):
         return com_receiver
     
 
-    def app_root_mappping(self, app_root_name:str) -> str:
+    def __app_root_mappping(self, app_root_name:str) -> str:
         """
         Map the app root to the corresponding app.
         :return: The CLSID of the COM object.
