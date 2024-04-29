@@ -183,7 +183,7 @@ class HostAgentProcessor(BaseProcessor):
 
         host_agent_step_memory = MemoryItem()
         additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.HostAgent.get_step(), "Round": self.index, "ControlLabel": self._control_text, "Action": "set_focus()", 
-                                "Request": self.request, "Agent": "HostAgent", "AgentName": self.HostAgent.name, "Application": self.app_root, "Cost": self._cost, "Results": ""}
+                                "ActionType": "UIControl", "Request": self.request, "Agent": "HostAgent", "AgentName": self.HostAgent.name, "Application": self.app_root, "Cost": self._cost, "Results": ""}
         
         host_agent_step_memory.set_values_from_dict(self._response_json)
         host_agent_step_memory.set_values_from_dict(additional_memory)
@@ -481,8 +481,9 @@ class AppAgentProcessor(BaseProcessor):
             app_root = control.get_application_name(self._app_window)
             HostAgent = self.AppAgent.get_host()
             
+            
             additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.AppAgent.get_step(), "Round": self.index, "Action": self._action, 
-                                 "Request": self.request, "Agent": "ActAgent", "AgentName": self.AppAgent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
+                                 "ActionType": self.AppAgent.Puppeteer.get_command_types(self._operation), "Request": self.request, "Agent": "ActAgent", "AgentName": self.AppAgent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
             app_agent_step_memory.set_values_from_dict(self._response_json)
             app_agent_step_memory.set_values_from_dict(additional_memory)
 

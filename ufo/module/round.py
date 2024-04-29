@@ -24,33 +24,40 @@ class Round(BaseRound):
         """
         Initialize a session.
         :param task: The name of current task.
-        :param gpt_key: GPT key.
         """
 
-        self._step = 0
-
-        self.log_path = f"logs/{task}/"
-
-        self.logger = logger
-        self.request_logger = request_logger
-
-        self.HostAgent = HostAgent
-        self.AppAgent = None
-
-        self.photographer = photographer
-
-        self._status = "APP_SELECTION"
-
-        self.application = ""
-        self.app_root = ""
-        self.app_window = None
-
-        self._cost = 0.0
-        self.control_reannotate = []
-
-        self.request = request
-
-        self.index = None
+        # Step-related properties  
+        self._step = 0  
+  
+        # Logging-related properties  
+        self.log_path = f"logs/{task}/"  
+        self.logger = logger  
+        self.request_logger = request_logger  
+  
+        # Agent-related properties  
+        self.HostAgent = HostAgent  
+        self.AppAgent = None  
+  
+        # Photographer-related properties  
+        self.photographer = photographer  
+  
+        # Status-related properties  
+        self._status = "APP_SELECTION"  
+  
+        # Application-related properties  
+        self.application = ""  
+        self.app_root = ""  
+        self.app_window = None  
+  
+        # Cost and reannotate-related properties  
+        self._cost = 0.0  
+        self.control_reannotate = []  
+  
+        # Request-related properties  
+        self.request = request  
+  
+        # Index and global step-related properties  
+        self.index = None  
         self.global_step = None
 
 

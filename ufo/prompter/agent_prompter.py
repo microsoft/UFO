@@ -310,7 +310,7 @@ class AppAgentPrompter(BasicPrompter):
         # Construct the prompt for COM APIs
         if self.app_api_prompt_template:
 
-            api_list += ["- There are additional APIs for operations. You should **prioritize** using these APIs if they are available since they are more reliable and efficient. The avaliable APIs are: {apis}".format(apis=list(self.app_api_prompt_template.keys()))]
+            api_list += ["- There are additional shortcut APIs for your operations. You should **prioritize** using these APIs if they are available since they are more reliable and efficient. The avaliable APIs are: {apis}".format(apis=list(self.app_api_prompt_template.keys()))]
             for key in self.app_api_prompt_template.keys():
                 api = self.app_api_prompt_template[key]
                 if verbose > 0:
@@ -321,8 +321,7 @@ class AppAgentPrompter(BasicPrompter):
                 api_list.append(api_text)
 
         api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
-            
-        print(api_prompt)
+
         return api_prompt
     
 
