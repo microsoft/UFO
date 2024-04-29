@@ -6,6 +6,7 @@ from typing import Type
 from ..basic import ReceiverFactory
 from .basic import WinCOMReceiverBasic
 from .word.wordclient import WordWinCOMReceiver
+from ...utils import print_with_color
 
 
 class COMReceiverFactory(ReceiverFactory):
@@ -23,10 +24,11 @@ class COMReceiverFactory(ReceiverFactory):
         com_receiver = self.__com_client_mapper(app_root_name)
         clsid = self.__app_root_mappping(app_root_name)
 
-        if clsid is None:
-            raise ValueError(f"App root name {app_root_name} is not supported.")
+        if clsid is None or com_receiver is None:
+            print_with_color(f"Win32COM API is not supported for {process_name}.", "yellow")
+            return None
         
-        return com_receiver(app_root_name, process_name)
+        return com_receiver(app_root_name, process_name, clsid)
     
 
     def __com_client_mapper(self, app_root_name: str) -> Type[WinCOMReceiverBasic]:
@@ -40,8 +42,6 @@ class COMReceiverFactory(ReceiverFactory):
         }
 
         com_receiver = win_com_client_mapping.get(app_root_name, None)
-        if com_receiver is None:
-            raise ValueError(f"Receiver for app root {app_root_name} is not found.")
 
         return com_receiver
     

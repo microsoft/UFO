@@ -7,7 +7,7 @@ import os
 import time
 import traceback
 from logging import Logger
-from typing import Optional, Type
+from typing import Dict, List, Optional, Type
 
 from ... import utils
 from ...agent.agent import AppAgent, HostAgent
@@ -53,13 +53,13 @@ class HostAgentProcessor(BaseProcessor):
         self.app_to_open = None
         
     
-    def print_step_info(self):
+    def print_step_info(self) -> None:
         """
         Print the step information.
         """
         utils.print_with_color("Round {index}, Step {step}: Selecting an application.".format(index=self.index+1, step=self.round_step+1), "magenta")
 
-    def capture_screenshot(self):
+    def capture_screenshot(self) -> None:
         """
         Capture the screenshot.
         """
@@ -68,14 +68,14 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = self.photographer.encode_image_from_path(desktop_save_path)
 
 
-    def get_control_info(self):
+    def get_control_info(self) -> None:
         """
         Get the control information.
         """
         self._desktop_windows_dict, self._desktop_windows_info = control.get_desktop_app_info_dict()
 
 
-    def get_prompt_message(self):
+    def get_prompt_message(self) -> List:
         """
         Get the prompt message.
         """
@@ -98,7 +98,7 @@ class HostAgentProcessor(BaseProcessor):
         return self._prompt_message
     
     
-    def get_response(self):
+    def get_response(self) -> None:
         """
         Get the response from the LLM.
         """
@@ -113,7 +113,7 @@ class HostAgentProcessor(BaseProcessor):
             self._status = "ERROR"
         
 
-    def parse_response(self):
+    def parse_response(self) -> None:
         """
         Parse the response.
         """
@@ -139,7 +139,7 @@ class HostAgentProcessor(BaseProcessor):
             self._status = "ERROR"
 
 
-    def execute_action(self):
+    def execute_action(self) -> None:
         """
         Execute the action.
         """
@@ -176,7 +176,7 @@ class HostAgentProcessor(BaseProcessor):
         self._app_window.set_focus()
 
 
-    def update_memory(self):
+    def update_memory(self) -> None:
         """
         Update the memory of the Agent.
         """
@@ -194,7 +194,7 @@ class HostAgentProcessor(BaseProcessor):
         self.HostAgent.add_global_action_memory(memorized_action)
         
 
-    def update_status(self):
+    def update_status(self) -> None:
         """
         Update the status of the session.
         """
@@ -205,7 +205,7 @@ class HostAgentProcessor(BaseProcessor):
             time.sleep(configs["SLEEP_TIME"])
 
 
-    def should_create_appagent(self):
+    def should_create_appagent(self) -> bool:
         """
         Check if the app agent should be created.
         :return: The boolean value indicating if the app agent should be created.
@@ -217,13 +217,17 @@ class HostAgentProcessor(BaseProcessor):
             return False
         
         
-    def create_app_agent(self):
+    def create_app_agent(self) -> AppAgent:
         """
         Create the app agent.
         :return: The app agent.
         """
         appagent = self.HostAgent.create_appagent("AppAgent/{root}/{process}".format(root=self.app_root, process=self._control_text), self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
                                      configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        
+        # Create the COM receiver for the app agent.
+        if configs.get("USE_APIS", False):
+            appagent.Puppeteer.receiver_manager.create_com_receiver(self.app_root, self._control_text)
             
         # Load the retrievers for APP_AGENT.
         if configs["RAG_OFFLINE_DOCS"]:
@@ -285,14 +289,14 @@ class AppAgentProcessor(BaseProcessor):
             self.filtered_annotation_dict = None
 
             
-        def print_step_info(self):
+        def print_step_info(self) -> None:
             """
             Print the step information.
             """
             utils.print_with_color("Round {index}, Step {step}: Taking an action on application {application}.".format(index=self.index+1, step=self.round_step+1, application=self.process_name), "magenta")
 
 
-        def capture_screenshot(self):
+        def capture_screenshot(self) -> None:
             """
             Capture the screenshot.
             """
@@ -331,7 +335,7 @@ class AppAgentProcessor(BaseProcessor):
 
         
         
-        def get_control_info(self):
+        def get_control_info(self) -> None:
             """
             Get the control information.
             """
@@ -340,7 +344,7 @@ class AppAgentProcessor(BaseProcessor):
 
             
             
-        def get_prompt_message(self):
+        def get_prompt_message(self) -> None:
             """
             Get the prompt message for the AppAgent.
             """
@@ -376,7 +380,7 @@ class AppAgentProcessor(BaseProcessor):
             self.request_logger.debug(log)
 
 
-        def get_response(self):
+        def get_response(self) -> None:
             """
             Get the response from the LLM.
             """
@@ -392,7 +396,7 @@ class AppAgentProcessor(BaseProcessor):
                 return
             
             
-        def parse_response(self):
+        def parse_response(self) -> None:
             """
             Parse the response.
             """
@@ -416,7 +420,7 @@ class AppAgentProcessor(BaseProcessor):
                 self._status = "ERROR"
 
 
-        def execute_action(self):
+        def execute_action(self) -> None:
             """
             Execute the action.
             """
@@ -467,7 +471,7 @@ class AppAgentProcessor(BaseProcessor):
                 self._status = "ERROR"
            
         
-        def update_memory(self):
+        def update_memory(self) -> None:
             """
             Update the memory of the Agent.
             """
@@ -489,7 +493,7 @@ class AppAgentProcessor(BaseProcessor):
             HostAgent.add_global_action_memory(memorized_action)
 
 
-        def update_status(self):
+        def update_status(self) -> None:
             """
             Update the status of the session.
             """
@@ -502,7 +506,7 @@ class AppAgentProcessor(BaseProcessor):
 
 
 
-        def _safe_guard_judgement(self, action, control_text):
+        def _safe_guard_judgement(self, action, control_text) -> bool:
             """
             Safe guard for the session.
             action: The action to be taken.
@@ -522,7 +526,7 @@ class AppAgentProcessor(BaseProcessor):
             return True
 
 
-        def get_control_reannotate(self):
+        def get_control_reannotate(self) -> List:
             """
             Get the control to reannotate.
             :return: The control to reannotate.
@@ -531,7 +535,7 @@ class AppAgentProcessor(BaseProcessor):
             return self._control_reannotate
         
         
-        def get_prev_plan(self):
+        def get_prev_plan(self) -> str:
             """
             Retrieves the previous plan from the agent's memory.
 
@@ -548,7 +552,7 @@ class AppAgentProcessor(BaseProcessor):
             return prev_plan
         
         
-        def get_filtered_annotation_dict(self, annotation_dict: dict):
+        def get_filtered_annotation_dict(self, annotation_dict: dict) -> Dict[str, Type]:
             """
             Get the filtered annotation dictionary.
             :param annotation_dict: The annotation dictionary.

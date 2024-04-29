@@ -1,9 +1,15 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from ..config.config import Config
-from .basic import BasicPrompter
 import json
+import os
+from typing import Dict, Optional
+
+import yaml
+
+from ..config.config import Config
+from ..utils import print_with_color
+from .basic import BasicPrompter
 
 configs = Config.get_instance().config_data
 
@@ -158,7 +164,7 @@ class AppAgentPrompter(BasicPrompter):
     The AppAgentPrompter class is the prompter for the application agent.
     """
 
-    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str):
+    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str, root_name: Optional[str] = None):
         """
         Initialize the ApplicationAgentPrompter.
         :param is_visual: Whether the request is for visual model.
@@ -167,7 +173,13 @@ class AppAgentPrompter(BasicPrompter):
         :param api_prompt_template: The path of the api prompt template.
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
+        self.root_name = root_name
+        self.app_prompter = AppPrompter(self.root_name)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template, is_visual)
+        self.app_api_prompt_template = None
+
+        if configs.get("USE_APIS", False):
+            self.app_api_prompt_template = self.app_prompter.load_com_api_prompt()
 
 
     def system_prompt_construction(self, additional_examples: list =[], tips: list =[]) -> str:
@@ -184,7 +196,6 @@ class AppAgentPrompter(BasicPrompter):
         tips_prompt = '\n'.join(filter(None, tips_prompt.split('\n')))
 
         return self.prompt_template["system"].format(apis=apis, examples=examples, tips=tips_prompt)
-    
 
 
     def user_prompt_construction(self, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> str:
@@ -273,33 +284,6 @@ class AppAgentPrompter(BasicPrompter):
         return self.retrived_documents_prompt_helper(header, separator, example_list)
     
 
-    def get_app_specific_prompt(self, app_root_name: str) -> str:
-        """
-        Get the app specific prompt.
-        :param app_root_name: The app root name.
-        :return: The app specific prompt.
-        """
-
-        # Mapping the app root name to the prompt path key.
-        mapping = {
-            "WINWORD.EXE": "WORD_API_PROMPT",
-            "EXCEL.EXE": "EXCEL_API_PROMPT",
-            "POWERPNT.EXE": "POWERPOINT_API_PROMPT",
-            "olk.exe": "OUTLOOK_API_PROMPT"
-        }
-
-        # Get the prompt path key.
-        prompt_path_key = mapping.get(app_root_name, "")
-        prompt_path = configs.get(prompt_path_key, "")
-
-        # Load the app specific prompt.
-        if prompt_path:
-            app_specific_prompt = self.load_prompt_template(prompt_path, None)
-        else:
-            app_specific_prompt = ""
-
-        return app_specific_prompt
-
 
     def api_prompt_helper(self, verbose: int = 1) -> str:
         """
@@ -308,11 +292,12 @@ class AppAgentPrompter(BasicPrompter):
         :param verbose: The verbosity level.
         return: The prompt for APIs.
         """
-
-        # Construct the prompt for APIs
-        api_list = ["- The action type are limited to {actions}.".format(actions=list(self.api_prompt_template.keys()))]
         
-        # Construct the prompt for each API
+        
+        # Construct the prompt for each UI control action.
+        api_list = ["- The action types for UI elements are: {actions}.".format(actions=list(self.api_prompt_template.keys()))]
+        
+        
         for key in self.api_prompt_template.keys():
             api = self.api_prompt_template[key]
             if verbose > 0:
@@ -322,7 +307,77 @@ class AppAgentPrompter(BasicPrompter):
                 
             api_list.append(api_text)
 
+        # Construct the prompt for COM APIs
+        if self.app_api_prompt_template:
+
+            api_list += ["- There are additional APIs for operations. You should **prioritize** using these APIs if they are available since they are more reliable and efficient. The avaliable APIs are: {apis}".format(apis=list(self.app_api_prompt_template.keys()))]
+            for key in self.app_api_prompt_template.keys():
+                api = self.app_api_prompt_template[key]
+                if verbose > 0:
+                    api_text = "{summary}\n{usage}".format(summary=api["summary"], usage=api["usage"])
+                else:
+                    api_text = api["summary"]
+                    
+                api_list.append(api_text)
+
         api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
             
+        print(api_prompt)
         return api_prompt
+    
+
+
+
+class AppPrompter:
+
+    def __init__(self, root_name) -> None:
+        self.root_name = root_name
+
+
+    def load_com_api_prompt(self) -> Dict[str, str]:
+        """
+        Load the prompt template for COM APIs.
+        :return: The prompt template for COM APIs.
+        """
+        app2configkey_mapper = {
+            "WINWORD.EXE": "WORD_API_PROMPT",
+            "EXCEL.EXE": "EXCEL_API_PROMPT",
+            "POWERPNT.EXE": "POWERPOINT_API_PROMPT",
+            "olk.exe": "OUTLOOK_API_PROMPT"
+        }
+
+        # Get the config key of app
+        config_key = app2configkey_mapper.get(self.root_name, None)
+        # Get the prompt address from config
+        prompt_address = configs.get(config_key, None)
+
+        if prompt_address:
+            return self.load_prompt_template(prompt_address, None)
+        else:
+            return {}
+
+
+
+    @staticmethod
+    def load_prompt_template(template_path: str, is_visual=None) -> Dict[str, str]:
+        """
+        Load the prompt template.
+        :return: The prompt template.
+        """
+
+        if is_visual == None:
+            path = template_path
+        else:
+            path = template_path.format(mode = "visual" if is_visual == True else "nonvisual")
+        
+        if os.path.exists(path):
+            try:
+                prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
+            except yaml.YAMLError as exc:
+                print_with_color(f"Error loading prompt template: {exc}", "yellow")
+        else:
+            raise FileNotFoundError(f"Prompt template not found at {path}")
+        
+        return prompt
+        
     

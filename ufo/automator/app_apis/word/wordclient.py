@@ -35,7 +35,6 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         mappping = {
             "insert_table": InsertTableCommand,
         }
-
         return mappping
     
 

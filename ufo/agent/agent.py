@@ -49,7 +49,7 @@ class AppAgent(BasicAgent):
         :param api_prompt: The API prompt file path.
         """
         super().__init__(name=name)
-        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt)
+        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, app_root_name)
         self._process_name = process_name
         self._app_root_name = app_root_name
         self.offline_doc_retriever = None
@@ -60,7 +60,7 @@ class AppAgent(BasicAgent):
         self.host = None
 
 
-    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> AppAgentPrompter:
+    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, app_root_name) -> AppAgentPrompter:
         """
         Get the prompt for the agent.
         :param is_visual: The flag indicating whether the agent is visual or not.
@@ -69,7 +69,7 @@ class AppAgent(BasicAgent):
         :param api_prompt: The API prompt file path.
         :return: The prompter instance.
         """
-        return AppAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
+        return AppAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, app_root_name)
     
 
     def message_constructor(self, dynamic_examples: str, dynamic_tips: str, dynamic_knowledge: str, image_list: List,
@@ -299,7 +299,7 @@ class HostAgent(BasicAgent):
         return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, allow_openapp)
     
 
-    def create_appagent(self, appagent_name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
+    def create_appagent(self, appagent_name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> AppAgent:
         """
         Create an AppAgent hosted by the HostAgent.
         :param appagent_name: The name of the AppAgent.
@@ -309,7 +309,7 @@ class HostAgent(BasicAgent):
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
         :param api_prompt: The API prompt file path.
-        :return: The created AppAgent.
+        :return: The created AppAgent.  
         """
         app_agent = self.agent_factory.create_agent("app", appagent_name, process_name, app_root_name, is_visual, main_prompt, example_prompt, api_prompt)
         self.appagent_dict[appagent_name] = app_agent
