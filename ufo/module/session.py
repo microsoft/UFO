@@ -6,10 +6,9 @@ from .. import utils
 from ..agent.agent import AgentFactory
 from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
-
 from . import interactor, round
-from .state import StatusToStateMapper
 from .basic import BaseSession
+from .state import StatusToStateMapper
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]

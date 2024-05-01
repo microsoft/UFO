@@ -190,7 +190,6 @@ class AnnotationDecorator(PhotographerDecorator):
         """
         Draw a rectangle around the control and label it.
         :param image: The image to draw on.
-        :param save_path: The path to save the screenshot.
         :param coordinate: The coordinate of the control.
         :param label_text: The text label of the control.
         :param botton_margin: The margin of the button.
@@ -199,7 +198,7 @@ class AnnotationDecorator(PhotographerDecorator):
         :param font_color: The color of the font.
         :param border_color: The color of the border.
         :param button_color: The color of the button.
-        return: The image with the rectangle and label.
+        return: The image with the control rectangle and label.
         """
         _ = ImageDraw.Draw(image)
         font = ImageFont.truetype("arial.ttf", font_size) 

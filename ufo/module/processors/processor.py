@@ -578,12 +578,12 @@ class AppAgentProcessor(BaseProcessor):
             if 'text' in control_filter_type_lower:
                 model_text = self.control_filter_factory.create_control_filter('text')
                 filtered_text_dict = model_text.control_filter(annotation_dict, plans)
-                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_text_dict)
+                filtered_annotation_dict = self.control_filter_factory.inplace_append_filtered_annotation_dict(filtered_annotation_dict, filtered_text_dict)
                 
             if 'semantic' in control_filter_type_lower:
                 model_semantic = self.control_filter_factory.create_control_filter('semantic', configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"])
                 filtered_semantic_dict = model_semantic.control_filter(annotation_dict, plans, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
-                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_semantic_dict)
+                filtered_annotation_dict = self.control_filter_factory.inplace_append_filtered_annotation_dict(filtered_annotation_dict, filtered_semantic_dict)
                 
                 
             if 'icon' in control_filter_type_lower:                
@@ -591,6 +591,6 @@ class AppAgentProcessor(BaseProcessor):
 
                 cropped_icons_dict = self.photographer.get_cropped_icons_dict(self._app_window, annotation_dict)
                 filtered_icon_dict = model_icon.control_filter(annotation_dict, cropped_icons_dict, plans, configs["CONTROL_FILTER_TOP_K_ICON"])
-                filtered_annotation_dict = self.control_filter_factory.append_filtered_annotation_dict(filtered_annotation_dict, filtered_icon_dict)
+                filtered_annotation_dict = self.control_filter_factory.inplace_append_filtered_annotation_dict(filtered_annotation_dict, filtered_icon_dict)
                 
             return filtered_annotation_dict

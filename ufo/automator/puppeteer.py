@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 
 from collections import deque
-from .ui_control.controller import ControlReceiver, UIControlReceiverFactory
+from typing import Dict, List
+
 from .app_apis.basic import WinCOMReceiverBasic
 from .app_apis.factory import COMReceiverFactory
-from .basic import ReceiverFactory, ReceiverBasic
-from typing import Dict, List
+from .basic import ReceiverBasic, ReceiverFactory
+from .ui_control.controller import ControlReceiver, UIControlReceiverFactory
 
 
 class AppPuppeteer():

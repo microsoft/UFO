@@ -3,10 +3,10 @@
 
 from typing import Type
 
+from ...utils import print_with_color
 from ..basic import ReceiverFactory
 from .basic import WinCOMReceiverBasic
 from .word.wordclient import WordWinCOMReceiver
-from ...utils import print_with_color
 
 
 class COMReceiverFactory(ReceiverFactory):

@@ -1,13 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-from abc import abstractmethod
 import heapq
-from ...utils import LazyImport
-
-import time
 import re
 import warnings
-
+from abc import abstractmethod
+from typing import Dict, List
 
 warnings.filterwarnings("ignore")
 
@@ -34,9 +31,10 @@ class ControlFilterFactory:
             raise ValueError("Invalid retriever type: {}".format(control_filter_type)) 
     
     @staticmethod
-    def append_filtered_annotation_dict(filtered_control_dict, control_dicts):
+    def inplace_append_filtered_annotation_dict(filtered_control_dict: Dict, control_dicts: Dict):
             """
             Appends the given control_info to the filtered_control_dict if it is not already present.
+            For example, if the filtered_control_dict is empty, it will be updated with the control_info. The operation is performed in place.
 
             Args:
                 filtered_control_dict (dict): The dictionary of filtered control information.
@@ -46,15 +44,9 @@ class ControlFilterFactory:
                 dict: The updated filtered_control_dict dictionary.
             """
             if control_dicts:
-                if filtered_control_dict:
-                    for label, control_info in control_dicts.items():
-                        if label not in filtered_control_dict:
-                            filtered_control_dict[label] = control_info
-                    return filtered_control_dict
-                else:
-                    return control_dicts
-            
+                filtered_control_dict.update({k: v for k, v in control_dicts.items() if k not in filtered_control_dict})
             return filtered_control_dict
+    
         
     @staticmethod
     def get_plans(plan, topk_plan):
@@ -191,12 +183,12 @@ class TextControlFilter:
     """
 
     @staticmethod
-    def control_filter(control_dicts, plans):
+    def control_filter(control_dicts:Dict, plans: List[str]) -> Dict:
         """
         Filters control items based on keywords.
         Args:
             control_dicts (dict): A dictionary of control items to be filtered.
-            keywords (list): A list of keywords to filter the control items.
+            plans (list): A list of plans for the following steps.
         """
         filtered_control_dict = {}
         
@@ -221,7 +213,7 @@ class SemanticControlFilter(ControlFilterModel):
             control_text (str): The text of the control item.
             plans (list): The plan to be used for calculating the similarity.
         Returns:
-            float: The score indicating the similarity between the control text and the keywords.
+            float: The score (0-1) indicating the similarity between the control text and the keywords.
         """
         plan_embedding = self.get_embedding(plans)
         control_text_embedding = self.get_embedding(control_text)
