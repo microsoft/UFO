@@ -22,8 +22,13 @@ class Round(BaseRound):
 
     def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, HostAgent: HostAgent, request: str) -> None: 
         """
-        Initialize a session.
+        Initialize a round.
         :param task: The name of current task.
+        :param logger: The logger for the response and error.
+        :param request_logger: The logger for the request string.
+        :param photographer: The photographer facade to process the screenshots.
+        :param HostAgent: The host agent.
+        :param request: The user request at the current round.
         """
 
         # Step-related properties  

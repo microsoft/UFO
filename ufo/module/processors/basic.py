@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+
 import json
 
 from abc import ABC, abstractmethod
@@ -17,7 +18,9 @@ BACKEND = configs["CONTROL_BACKEND"]
 
 class BaseProcessor(ABC):
     """
-    The base processor for the session.
+    The base processor for the session. A session consists of multiple rounds of conversation with the user, completing a task. 
+    At each round, the HostAgent and AppAgent interact with the user and the application with the processor. 
+    Each processor is responsible for processing the user request and updating the HostAgent and AppAgent at a single step in a round.
     """
 
     def __init__(self, index: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 

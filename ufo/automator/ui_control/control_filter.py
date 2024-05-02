@@ -64,23 +64,23 @@ class ControlFilterFactory:
         return plans
     
 
-class ControlFilterModel:
+class BasicControlFilter:
     """
-    ControlFilterModel represents a model for filtering control items.
+    BasicControlFilter represents a model for filtering control items.
     """
 
     _instances = {}
 
     def __new__(cls, model_path):
         """
-        Creates a new instance of ControlFilterModel.
+        Creates a new instance of BasicControlFilter.
         Args:
             model_path (str): The path to the model.
         Returns:
-            ControlFilterModel: The ControlFilterModel instance.
+            BasicControlFilter: The BasicControlFilter instance.
         """
         if model_path not in cls._instances: 
-            instance = super(ControlFilterModel, cls).__new__(cls)
+            instance = super(BasicControlFilter, cls).__new__(cls)
             instance.model = cls.load_model(model_path)
             cls._instances[model_path] = instance
         return cls._instances[model_path]
@@ -192,7 +192,7 @@ class TextControlFilter:
         """
         filtered_control_dict = {}
         
-        keywords = ControlFilterModel.plans_to_keywords(plans)
+        keywords = BasicControlFilter.plans_to_keywords(plans)
         for label, control_item in control_dicts.items():
             control_text = control_item.element_info.name.lower()
             if any(keyword in control_text or control_text in keyword for keyword in keywords):
@@ -201,7 +201,7 @@ class TextControlFilter:
 
 
 
-class SemanticControlFilter(ControlFilterModel):
+class SemanticControlFilter(BasicControlFilter):
     """
     A class that represents a semantic model for control filtering.
     """
@@ -243,7 +243,7 @@ class SemanticControlFilter(ControlFilterModel):
         return filtered_control_dict
         
 
-class IconControlFilter(ControlFilterModel):
+class IconControlFilter(BasicControlFilter):
     """
     A class that represents a icon model for control filtering.
     """

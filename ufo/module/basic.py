@@ -1,6 +1,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+
+"""
+This module contains the basic classes of Round and Session for the UFO system.
+
+A round of a session in UFO manages a single user request and consists of multiple steps. 
+
+A session may consists of multiple rounds of interactions.
+
+The session is the core class of UFO. It manages the state transition and handles the different states, using the state pattern.
+
+For more details definition of the state pattern, please refer to the state.py module.
+"""
+
 import logging
 import os
 from abc import ABC, abstractmethod
@@ -22,14 +35,19 @@ BACKEND = configs["CONTROL_BACKEND"]
 
 class BaseRound(ABC):
     """
-    A round of a session in UFO. A round is a single interaction between the user and the UFO system.
+    A round of a session in UFO. 
+    A round manages a single user request and consists of multiple steps. A session may consists of multiple rounds of interactions.
     """
 
     def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, HostAgent: HostAgent, request: str) -> None: 
         """
-        Initialize a session.
+        Initialize a round.
         :param task: The name of current task.
-        :param gpt_key: GPT key.
+        :param logger: The logger for the response and error.
+        :param request_logger: The logger for the request string.
+        :param photographer: The photographer facade to process the screenshots.
+        :param HostAgent: The host agent.
+        :param request: The user request at the current round.
         """
 
         self._step = 0
@@ -159,14 +177,21 @@ class BaseRound(ABC):
 
 class BaseSession(ABC):
     """
-    A round of a session in UFO. A session consists of multiple rounds of interactions.
+    A basic session in UFO. A session consists of multiple rounds of interactions.
+    The handle function is the core function to handle the session. UFO runs with the state transition and handles the different states, using the state pattern.
+    A session follows the following steps: 
+    1. Begins with the ''APP_SELECTION'' state for the HostAgent to select an application.
+    2. After the application is selected, the session moves to the ''CONTINUE'' state for the AppAgent to select an action. This process continues until all the actions are completed.
+    3. When all the actions are completed for the current user request at a round, the session moves to the ''FINISH'' state.
+    4. The session will ask the user if they want to continue with another request. If the user wants to continue, the session will start a new round and move to the ''APP_SELECTION'' state.
+    5. If the user does not want to continue, the session will transition to the ''COMPLETE'' state. 
+    6. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
     """
     
     def __init__(self, task):
         """
         Initialize a session.
         :param task: The name of current task.
-        :param gpt_key: GPT key.
         """
         
         self.task = task

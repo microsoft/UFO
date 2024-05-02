@@ -1,6 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+"""
+This module contains the state classes for the UFO system.
+
+The state classes are used to handle the session based on the status of the session, using the State pattern.
+"""
+
+
 from abc import ABC
 from typing import Dict, Type
 
