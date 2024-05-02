@@ -379,4 +379,116 @@ class AppPrompter:
         
         return prompt
         
+
+class FollowerAgentPrompter(AppAgentPrompter):
+    """
+    The FollowerAgentPrompter class is the prompter for the follower agent.
+    """
+
+    def __init__(self, is_visual: bool, prompt_template: str, example_prompt_template: str, api_prompt_template: str, 
+                 app_info_prompt_template: Optional[str] = None, root_name: Optional[str] = None) -> None:
+        """
+        Initialize the FollowerAgentPrompter.
+        :param is_visual: Whether the request is for visual model.
+        :param prompt_template: The path of the prompt template.
+        :param example_prompt_template: The path of the example prompt template.
+        :param api_prompt_template: The path of the api prompt template.
+        :param app_info_prompt_template: The path of the app info prompt template.
+        :param root_name: The root name of the app.
+        """
+        super().__init__(is_visual, prompt_template, example_prompt_template, api_prompt_template, root_name)
+        
+        if app_info_prompt_template is not None:
+            self.app_info_prompt_template = self.load_prompt_template(app_info_prompt_template)
+        else:
+            self.app_info_prompt_template = None
+
+
+    def system_prompt_construction(self, additional_examples: list =[], tips: list =[]) -> str:
+        """
+        Construct the prompt for app selection.
+        return: The prompt for app selection.
+        """
+
+        apis = self.api_prompt_helper(verbose = 1)
+        examples = self.examples_prompt_helper(additional_examples=additional_examples)
+        tips_prompt = "\n".join(tips)
+
+        # Remove empty lines
+        tips_prompt = '\n'.join(filter(None, tips_prompt.split('\n')))
+
+        if self.app_info_prompt_template is None:
+            app_name = self.root_name
+            app_info = "The state of the application is not available."
+        else:
+            app_name = self.app_info_prompt_template["application_name"]
+            app_info = self.app_info_prompt_template["state_description"]
+            
+        return self.prompt_template["system"].format(apis=apis, examples=examples, tips=tips_prompt, 
+                                                     app_name=app_name, app_info=app_info)
+
+
+    def user_prompt_construction(self, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="", current_state:dict={}, state_diff:dict={}) -> str:
+        """
+        Construct the prompt for action selection.
+        :param prompt_template: The template of the prompt.
+        :param action_history: The action history.
+        :param control_item: The control item.
+        :param user_request: The user request.
+        :param retrieved_docs: The retrieved documents.
+        :param current_state: The current state of the application.
+        :param state_diff: The state difference of the application before and after the action.
+        return: The prompt for action selection.
+        """
+        prompt = self.prompt_template["user"].format(action_history=json.dumps(action_history), request_history=json.dumps(request_history), 
+                                            control_item=json.dumps(control_item), prev_plan=prev_plan, user_request=user_request, retrieved_docs=retrieved_docs,
+                                            current_state=json.dumps(current_state), state_diff=json.dumps(state_diff))
+        
+        return prompt
+    
+
+    def user_content_construction(self, image_list: list, request_history: list, action_history: list, control_item: list, prev_plan: str, 
+                                  user_request: str, retrieved_docs: str="", current_state: dict = {}, state_diff: dict = {}, include_last_screenshot: bool=True) -> list[dict]:
+        """
+        Construct the prompt for LLMs.
+        :param image_list: The list of images.
+        :param action_history: The action history.
+        :param control_item: The control item.
+        :param user_request: The user request.
+        :param retrieved_docs: The retrieved documents.
+        :param current_state: The current state of the application (Optional).
+        :param state_diff: The state difference of the application before and after the action (Optional).
+        :param include_last_screenshot: Whether to include the last screenshot as input.
+        return: The prompt for LLMs.
+        """
+
+        user_content = []
+
+
+        if self.is_visual:
+
+            screenshot_text = []
+            if include_last_screenshot:
+                screenshot_text += ["Screenshot for the last step:"]
+
+                screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
+        
+            for i, image in enumerate(image_list):
+                user_content.append({
+                    "type": "text",
+                    "text": screenshot_text[i]
+                })
+                user_content.append({
+                    "type": "image_url",
+                    "image_url": {
+                        "url": image
+                    }
+                })
+
+        user_content.append({
+            "type": "text",
+            "text": self.user_prompt_construction(request_history, action_history, control_item, prev_plan, user_request, retrieved_docs, current_state, state_diff)
+        })
+
+        return user_content
     

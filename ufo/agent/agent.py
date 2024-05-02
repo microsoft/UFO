@@ -9,7 +9,8 @@ from .. import utils
 from ..automator import puppeteer
 from ..automator.ui_control import openfile
 from ..automator.ui_control import utils as control
-from ..prompter.agent_prompter import AppAgentPrompter, HostAgentPrompter
+from ..prompter.agent_prompter import (AppAgentPrompter, FollowerAgentPrompter,
+                                       HostAgentPrompter)
 from .basic import BasicAgent, Memory, MemoryItem
 
 
@@ -28,7 +29,9 @@ class AgentFactory:
         if agent_type == "host":  
             return HostAgent(*args, **kwargs)  
         elif agent_type == "app":  
-            return AppAgent(*args, **kwargs)  
+            return AppAgent(*args, **kwargs)
+        elif agent_type == "follower":
+            return FollowerAgent(*args, **kwargs)
         else:  
             raise ValueError("Invalid agent type: {}".format(agent_type))  
 
@@ -299,20 +302,22 @@ class HostAgent(BasicAgent):
         return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, allow_openapp)
     
 
-    def create_appagent(self, appagent_name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> AppAgent:
+    def create_subagent(self, agent_type: str, agent_name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, 
+                        example_prompt: str, api_prompt: str, *args, **kwargs) -> BasicAgent:
         """
-        Create an AppAgent hosted by the HostAgent.
-        :param appagent_name: The name of the AppAgent.
+        Create an SubAgent hosted by the HostAgent.
+        :param agent_type: The type of the agent to create.
+        :param agent_name: The name of the SubAgent.
         :param process_name: The process name of the app.
         :param app_root_name: The root name of the app.
         :param is_visual: The flag indicating whether the agent is visual or not.
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
         :param api_prompt: The API prompt file path.
-        :return: The created AppAgent.  
+        :return: The created SubAgent.  
         """
-        app_agent = self.agent_factory.create_agent("app", appagent_name, process_name, app_root_name, is_visual, main_prompt, example_prompt, api_prompt)
-        self.appagent_dict[appagent_name] = app_agent
+        app_agent = self.agent_factory.create_agent(agent_type, agent_name, process_name, app_root_name, is_visual, main_prompt, example_prompt, api_prompt, *args, **kwargs)
+        self.appagent_dict[agent_name] = app_agent
         app_agent.set_host(self)
         self._active_appagent = app_agent
 
@@ -434,3 +439,117 @@ class HostAgent(BasicAgent):
         :return: The request history.
         """
         return self._reqest_history_memory
+    
+
+
+class FollowerAgent(AppAgent):
+    """
+    The FollowerAgent class the manager of a FollowedAgent that follows the step-by-step instructions for action execution within an application.
+    It is a subclass of the AppAgent, which completes the action execution within the application.
+    """
+
+    def __init__(self, name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, app_info_prompt:str):
+        """
+        Initialize the FollowAgent.
+        :agent_type: The type of the agent.
+        :is_visual: The flag indicating whether the agent is visual or not.
+        """
+        super().__init__(name=name)
+        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, app_info_prompt)
+        self._process_name = process_name
+        self._app_root_name = app_root_name
+        self.offline_doc_retriever = None
+        self.online_doc_retriever = None
+        self.experience_retriever = None
+        self.human_demonstration_retriever = None
+        self.Puppeteer = self.create_puppteer_interface()
+        self.host = None
+
+
+
+    def get_prompter(self, is_visual, main_prompt, example_prompt, api_prompt, app_info_prompt) -> FollowerAgentPrompter:
+        """
+        Get the prompter for the follower agent.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt file path.
+        :param example_prompt: The example prompt file path.
+        :param api_prompt: The API prompt file path.
+        :param app_info_prompt: The app information prompt file path.
+        :return: The prompter instance.
+        """
+        return FollowerAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, app_info_prompt)
+    
+
+    def message_constructor(self, dynamic_examples: str, dynamic_tips: str, dynamic_knowledge: str, image_list: List,
+                             request_history: str, action_history: str, control_info: str, plan: str, request: str, include_last_screenshot: bool) -> list:
+        """
+        Construct the prompt message for the AppAgent.
+        :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
+        :param dynamic_tips: The dynamic tips retrieved from the self-demonstration and human demonstration.
+        :param dynamic_knowledge: The dynamic knowledge retrieved from the external knowledge base.
+        :param image_list: The list of screenshot images.
+        :param request_history: The request history.
+        :param action_history: The action history.
+        :param control_info: The control information.
+        :param plan: The plan.
+        :param request: The request.
+        :param include_last_screenshot: The flag indicating whether to include the last screenshot.
+        :return: The prompt message.
+        """
+        appagent_prompt_system_message = self.prompter.system_prompt_construction(dynamic_examples, dynamic_tips)
+        appagent_prompt_user_message = self.prompter.user_content_construction(image_list, request_history, action_history, 
+                                                                                                        control_info, plan, request, dynamic_knowledge, include_last_screenshot)
+        
+        appagent_prompt_message = self.prompter.prompt_construction(appagent_prompt_system_message, appagent_prompt_user_message)
+
+        return appagent_prompt_message
+    
+    def message_constructor(self, dynamic_examples: str, dynamic_tips: str, dynamic_knowledge: str, image_list: List,
+                             request_history: str, action_history: str, control_info: str, plan: str, request: str, current_state: dict, state_diff:dict, include_last_screenshot: bool) -> list:
+        """
+        Construct the prompt message for the AppAgent.
+        :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
+        :param dynamic_tips: The dynamic tips retrieved from the self-demonstration and human demonstration.
+        :param image_list: The list of screenshot images.
+        :param request_history: The request history.
+        :param action_history: The action history.
+        :param plan: The plan.
+        :param request: The request.
+        :return: The prompt message.
+        """
+        followagent_prompt_system_message = self.prompter.system_prompt_construction(dynamic_examples, dynamic_tips)
+        followagent_prompt_user_message = self.prompter.user_content_construction(image_list, request_history, action_history, control_info, plan, request, 
+                                                                                  dynamic_knowledge, current_state, state_diff, include_last_screenshot)
+        
+        followagent_prompt_message = self.prompter.prompt_construction(followagent_prompt_system_message, followagent_prompt_user_message)
+
+        return followagent_prompt_message
+    
+
+
+    def print_response(self, response_dict: Dict):
+        """
+        Print the response.
+        :param response: The response.
+        """
+        
+        control_text = response_dict.get("controlText")
+        control_label = response_dict.get("controlLabel")
+        observation = response_dict.get("observation")
+        thought = response_dict.get("thought")
+        plan = response_dict.get("plan")
+        status = response_dict.get("status")
+        function_call = response_dict.get("function")
+        review = response_dict.get("review")
+
+        args = utils.revise_line_breaks(response_dict.get("args"))
+
+        action = utils.generate_function_call(function_call, args)
+
+        utils.print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
+        utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
+        utils.print_with_color("Selected item🕹️: {control_text}, Label: {label}".format(control_text=control_text, label=control_label), "yellow")
+        utils.print_with_color("Action applied⚒️: {action}".format(action=action), "blue")
+        utils.print_with_color("Status📊: {status}".format(status=status), "blue")
+        utils.print_with_color("Review: {review}".format(review=review), "blue")
+        utils.print_with_color("Next Plan📚: {plan}".format(plan=str(plan).replace("\\n", "\n")), "cyan")

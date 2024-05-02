@@ -5,9 +5,8 @@ import argparse
 from datetime import datetime
 
 from .config.config import Config
-from .module.session import Session
-from .module.state import (ErrorState, MaxStepReachedState, NoneState,
-                           SessionFinishState)
+from .module.session import SessionFactory
+from .module.client import UFOClientManager
 
 configs = Config.get_instance().config_data
 
@@ -15,6 +14,10 @@ configs = Config.get_instance().config_data
 args = argparse.ArgumentParser()
 args.add_argument("--task", "-t", help="The name of current task.",
                   type=str, default=datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
+args.add_argument("--mode", "-m", help="mode of the task. Default is normal, it can be set to 'follower' if you want to run the follower agent.",
+                  type=str, default="normal")
+args.add_argument("--plan", "-p", help="The path of the plan file. It is required for the follower mode.",
+                  type=str, default="")
 
 parsed_args = args.parse_args()
 
@@ -24,17 +27,11 @@ def main():
     """
     Main function.
     """
+    sessions = SessionFactory.create_session(task=parsed_args.task, mode=parsed_args.mode, plan=parsed_args.plan)
 
-    session = Session(parsed_args.task)
+    clients = UFOClientManager(sessions)
+    clients.run_all()
 
-    while not isinstance(session.get_state(), (SessionFinishState, ErrorState, MaxStepReachedState, NoneState)):
-
-        session.handle()
-
-    if isinstance(session.get_state(), SessionFinishState):
-        session.handle()
-  
-    session.print_cost()
   
 
 

@@ -133,8 +133,10 @@ class SessionFinishState(SessionState):
         :param session: The session.
         """
 
-        if experience_asker():
-            session.experience_saver()
+        # Save the experience if needed, only for the normal session.
+        if session.session_type == "Session":
+            if experience_asker():
+                session.experience_saver()
 
 
 

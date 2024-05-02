@@ -34,6 +34,7 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         """
         mappping = {
             "insert_table": InsertTableCommand,
+            "select_text": SelectTextCommand
         }
         return mappping
     
@@ -57,6 +58,24 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
 
         return table
     
+    
+    def select_text(self, text: str) -> None:
+        """
+        Select the text in the document.
+        :param text: The text to be selected.
+        """
+        finder = self.com_object.Range().Find
+        finder.Text = text
+
+        if finder.Execute():
+            finder.Parent.Select()
+            return f"Text {text} is selected."
+        else:
+            return f"Text {text} is not found."
+
+
+
+    
     @property
     def type_name(self):
         return "COM/WORD"
@@ -73,5 +92,18 @@ class InsertTableCommand(WinCOMCommand):
         :return: The inserted table.
         """
         return self.receiver.insert_table(self.params.get("rows"), self.params.get("columns"))
+    
+
+
+class SelectTextCommand(WinCOMCommand):
+    """
+    The command to select text.
+    """
+    def execute(self):
+        """
+        Execute the command to select text.
+        :return: The selected text.
+        """
+        return self.receiver.select_text(self.params.get("text"))
     
 

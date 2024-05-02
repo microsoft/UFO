@@ -73,7 +73,7 @@ class BaseRound(ABC):
 
         self.request = request
 
-        self.index = None
+        self.round_num = None
         self.global_step = None
 
 
@@ -145,9 +145,9 @@ class BaseRound(ABC):
 
     def set_index(self, index: int) -> None:
         """
-        Set the index of the session.
+        Set the round index of the session.
         """
-        self.index = index
+        self.round_num = index
 
 
     def set_global_step(self, global_step: int) -> None:
@@ -163,6 +163,7 @@ class BaseRound(ABC):
         return: The application of the session.
         """
         return self.app_window
+    
 
 
     def update_cost(self, cost: float) -> None:
@@ -173,6 +174,7 @@ class BaseRound(ABC):
             self._cost += cost
         else:
             self._cost = None
+
 
 
 class BaseSession(ABC):
@@ -257,22 +259,13 @@ class BaseSession(ABC):
         utils.print_with_color("The experience has been saved.", "magenta")
 
 
-
+    @abstractmethod
     def start_new_round(self) -> None:
         """
         Start a new round.
         """
 
-        self.HostAgent.add_request_memory(self.request)
-        self._round += 1
-        
-        self.request, iscomplete = interactor.new_request()
-
-        if iscomplete:
-            self._status = "COMPLETE"
-        else:
-            self._current_round = self.create_round()
-            self._status = "APP_SELECTION"
+        pass
         
         
     @abstractmethod
@@ -398,6 +391,14 @@ class BaseSession(ABC):
         Handle the session.
         """
         self._state.handle(self)
+
+    @property
+    def session_type(self) -> str:
+        """
+        Get the class name of the session.
+        return: The class name of the session.
+        """
+        return self.__class__.__name__
 
 
 

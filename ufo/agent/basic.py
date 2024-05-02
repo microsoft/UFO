@@ -140,6 +140,13 @@ class Memory():
         self._content.append(memory_item)
 
 
+    def clear(self) -> None:
+        """
+        Clear the memory.
+        """
+        self._content = []
+
+
     @property
     def length(self) -> int:
         """
@@ -312,6 +319,13 @@ class BasicAgent(ABC):
         :param step: The step of the memory item to delete.
         """
         self._memory.delete_memory_item(step)
+
+
+    def clear_memory(self) -> None:
+        """
+        Clear the memory of the agent.
+        """
+        self._memory.clear()
 
 
 

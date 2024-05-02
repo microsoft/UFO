@@ -204,7 +204,7 @@ class HostAgentProcessor(BaseProcessor):
             time.sleep(configs["SLEEP_TIME"])
 
 
-    def should_create_appagent(self) -> bool:
+    def should_create_subagent(self) -> bool:
         """
         Check if the app agent should be created.
         :return: The boolean value indicating if the app agent should be created.
@@ -216,18 +216,29 @@ class HostAgentProcessor(BaseProcessor):
             return False
         
         
-    def create_app_agent(self) -> AppAgent:
+    def create_sub_agent(self) -> AppAgent:
         """
         Create the app agent.
         :return: The app agent.
         """
-        appagent = self.HostAgent.create_appagent("AppAgent/{root}/{process}".format(root=self.app_root, process=self._control_text), self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
+        appagent = self.HostAgent.create_subagent("app", "AppAgent/{root}/{process}".format(root=self.app_root, process=self._control_text), self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
                                      configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
         
         # Create the COM receiver for the app agent.
         if configs.get("USE_APIS", False):
             appagent.Puppeteer.receiver_manager.create_com_receiver(self.app_root, self._control_text)
             
+        self.app_agent_context_provision(appagent)
+
+        return appagent
+    
+
+    def app_agent_context_provision(self, appagent: AppAgent) -> None:
+        """
+        Provision the context for the app agent.
+        :param appagent: The app agent to provision the context.
+        """
+
         # Load the retrievers for APP_AGENT.
         if configs["RAG_OFFLINE_DOCS"]:
             utils.print_with_color("Loading offline document indexer for {app}...".format(app=self._control_text), "magenta")
@@ -245,8 +256,6 @@ class HostAgentProcessor(BaseProcessor):
             demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
             db_path = os.path.join(demonstration_path, "demonstration_db")
             appagent.build_human_demonstration_retriever(db_path)
-
-        return appagent
     
 
 

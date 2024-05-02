@@ -110,8 +110,8 @@ class BaseProcessor(ABC):
         self.update_memory()
 
         # Step 9: Create the app agent if necessary.
-        if self.should_create_appagent():
-            self.create_app_agent()
+        if self.should_create_subagent():
+            self.create_sub_agent()
 
         # Step 10: Update the step and status.
         self.update_step_and_status()
@@ -183,7 +183,7 @@ class BaseProcessor(ABC):
         pass
 
     
-    def create_app_agent(self) -> None:
+    def create_sub_agent(self) -> None:
         """
         Create the app agent.
         """
@@ -247,7 +247,7 @@ class BaseProcessor(ABC):
         return self._status == "ERROR"
     
 
-    def should_create_appagent(self) -> bool:
+    def should_create_subagent(self) -> bool:
         """
         Check if the app agent should be created.
         :return: The boolean value indicating if the app agent should be created.
