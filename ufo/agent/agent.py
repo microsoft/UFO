@@ -28,7 +28,9 @@ class AgentFactory:
         if agent_type == "host":  
             return HostAgent(*args, **kwargs)  
         elif agent_type == "app":  
-            return AppAgent(*args, **kwargs)  
+            return AppAgent(*args, **kwargs)
+        elif agent_type == "follower":
+            return FollowerAgent(*args, **kwargs)
         else:  
             raise ValueError("Invalid agent type: {}".format(agent_type))  
 
@@ -43,11 +45,14 @@ class AppAgent(BasicAgent):
         """
         Initialize the AppAgent.
         :name: The name of the agent.
+        :param process_name: The process name of the selected application.
+        :param app_root_name: The root name of the selected application.
         :param is_visual: The flag indicating whether the agent is visual or not.
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
         :param api_prompt: The API prompt file path.
         """
+
         super().__init__(name=name)
         self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, app_root_name)
         self._process_name = process_name
@@ -127,6 +132,7 @@ class AppAgent(BasicAgent):
         utils.print_with_color("Status📊: {status}".format(status=status), "blue")
         utils.print_with_color("Next Plan📚: {plan}".format(plan=str(plan).replace("\\n", "\n")), "cyan")
         utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
+
 
 
     def external_knowledge_prompt_helper(self, request: str, offline_top_k: int, online_top_k: int) -> str:
@@ -272,6 +278,7 @@ class HostAgent(BasicAgent):
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
         :param api_prompt: The API prompt file path.
+        :param allow_openapp: The flag indicating whether to allow the agent to open an application process.
         """
         super().__init__(name=name)
         self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, allow_openapp)
@@ -434,3 +441,81 @@ class HostAgent(BasicAgent):
         :return: The request history.
         """
         return self._reqest_history_memory
+    
+
+
+class FollowerAgent(AppAgent):
+    """
+    The FollowerAgent class the manager of a FollowedAgent that follows the step-by-step instructions for action execution within an application.
+    """
+
+    def __init__(self, name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, app_info_prompt:str):
+        """
+        Initialize the FollowAgent.
+        :agent_type: The type of the agent.
+        :is_visual: The flag indicating whether the agent is visual or not.
+        """
+        super().__init__(name=name)
+        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, app_info_prompt)
+        self._process_name = process_name
+        self._app_root_name = app_root_name
+        self.human_demonstration_retriever = None
+
+
+
+    def get_prompter(self, is_visual, main_prompt, example_prompt, api_prompt, app_info_prompt) -> str:
+        """
+        Get the prompt for the agent.
+        :return: The prompt.
+        """
+        return ActionFollowAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, app_info_prompt)
+    
+
+    def message_constructor(self, dynamic_examples: str, dynamic_tips: str, request_history: str, action_history: str, 
+                            control_info: list, current_state: dict, plan: str, request: str, diff_state:dict) -> list:
+        """
+        Construct the prompt message for the AppAgent.
+        :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
+        :param dynamic_tips: The dynamic tips retrieved from the self-demonstration and human demonstration.
+        :param image_list: The list of screenshot images.
+        :param request_history: The request history.
+        :param action_history: The action history.
+        :param plan: The plan.
+        :param request: The request.
+        :return: The prompt message.
+        """
+        followagent_prompt_system_message = self.prompter.system_prompt_construction(dynamic_examples, dynamic_tips)
+        followagent_prompt_user_message = self.prompter.user_content_construction(request_history, action_history, control_info, current_state, plan, request, diff_state)
+        
+        appagent_prompt_message = self.prompter.prompt_construction(followagent_prompt_system_message, followagent_prompt_user_message)
+
+        return appagent_prompt_message
+    
+
+
+    def print_response(self, response_dict: Dict):
+        """
+        Print the response.
+        :param response: The response.
+        """
+        
+        control_text = response_dict.get("controlText")
+        control_label = response_dict.get("controlLabel")
+        observation = response_dict.get("observation")
+        thought = response_dict.get("thought")
+        plan = response_dict.get("plan")
+        status = response_dict.get("status")
+        function_call = response_dict.get("function")
+        review = response_dict.get("review")
+
+        args = utils.revise_line_breaks(response_dict.get("args"))
+
+        action = utils.generate_function_call(function_call, args)
+
+        utils.print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
+        utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
+        utils.print_with_color("Selected item🕹️: {control_text}, Label: {label}".format(control_text=control_text, label=control_label), "yellow")
+        utils.print_with_color("Action applied⚒️: {action}".format(action=action), "blue")
+        utils.print_with_color("Status📊: {status}".format(status=status), "blue")
+        utils.print_with_color("Review: {review}".format(review=review), "blue")
+        utils.print_with_color("Next Plan📚: {plan}".format(plan=str(plan).replace("\\n", "\n")), "cyan")
