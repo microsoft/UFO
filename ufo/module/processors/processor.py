@@ -23,26 +23,25 @@ configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
 
 
-
-
 class HostAgentProcessor(BaseProcessor):
 
-    def __init__(self, index: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
+    def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
                  host_agent: HostAgent, round_step: int, global_step: int, prev_status: str, app_window=None):
-        super().__init__(index, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
+        super().__init__(round_num, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
         """
         Initialize the host agent processor.
-        :param index: The index of the session.
+        :param round_num: The total number of rounds in the session.
         :param log_path: The log path.
         :param photographer: The photographer facade to process the screenshots.
         :param request: The user request.
         :param request_logger: The logger for the request string.
         :param logger: The logger for the response and error.
-        :param host_agent: The host agent.
-        :param round_step: The round step.
+        :param host_agent: The host agent to process the session.
+        :param round_step: The number of steps in the round.
         :param global_step: The global step of the session.
         :param prev_status: The previous status of the session.
+        :param app_window: The application window.
         """
 
         self.HostAgent = host_agent  
@@ -57,7 +56,7 @@ class HostAgentProcessor(BaseProcessor):
         """
         Print the step information.
         """
-        utils.print_with_color("Round {index}, Step {step}: Selecting an application.".format(index=self.index+1, step=self.round_step+1), "magenta")
+        utils.print_with_color("Round {round_num}, Step {step}: Selecting an application.".format(round_num=self.round_num+1, step=self.round_step+1), "magenta")
 
     def capture_screenshot(self) -> None:
         """
@@ -182,7 +181,7 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         host_agent_step_memory = MemoryItem()
-        additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.HostAgent.get_step(), "Round": self.index, "ControlLabel": self._control_text, "Action": "set_focus()", 
+        additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.HostAgent.get_step(), "Round": self.round_num, "ControlLabel": self._control_text, "Action": "set_focus()", 
                                 "ActionType": "UIControl", "Request": self.request, "Agent": "HostAgent", "AgentName": self.HostAgent.name, "Application": self.app_root, "Cost": self._cost, "Results": ""}
         
         host_agent_step_memory.set_values_from_dict(self._response_json)
@@ -254,20 +253,20 @@ class HostAgentProcessor(BaseProcessor):
 
 class AppAgentProcessor(BaseProcessor):
     
-        def __init__(self, index: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, global_step: int, 
+        def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, global_step: int, 
                      process_name: str, app_window: Type, control_reannotate: Optional[list], prev_status: str):
-            super().__init__(index, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
+            super().__init__(round_num, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
             """
             Initialize the app agent processor.
-            :param index: The index of the session.
+            :param round_num: The total number of rounds in the session.
             :param log_path: The log path.
             :param photographer: The photographer facade to process the screenshots.
             :param request: The user request.
             :param request_logger: The logger for the request string.
             :param logger: The logger for the response and error.
-            :param app_agent: The app agent.
-            :param round_step: The round step.
+            :param app_agent: The app agent to process the current step.
+            :param round_step: The number of steps in the round.
             :param global_step: The global step of the session.
             :param process_name: The process name.
             :param app_window: The application window.
@@ -293,7 +292,7 @@ class AppAgentProcessor(BaseProcessor):
             """
             Print the step information.
             """
-            utils.print_with_color("Round {index}, Step {step}: Taking an action on application {application}.".format(index=self.index+1, step=self.round_step+1, application=self.process_name), "magenta")
+            utils.print_with_color("Round {round_num}, Step {step}: Taking an action on application {application}.".format(round_num=self.round_num+1, step=self.round_step+1, application=self.process_name), "magenta")
 
 
         def capture_screenshot(self) -> None:
@@ -431,8 +430,8 @@ class AppAgentProcessor(BaseProcessor):
                 # Save the screenshot of the selected control.
                 control_screenshot_save_path = self.log_path + f"action_step{self.global_step}_selected_controls.png"
                 self.photographer.capture_app_window_screenshot_with_rectangle(self._app_window, sub_control_list=[control_selected], save_path=control_screenshot_save_path)
+
                 # Compose the function call and the arguments string.
-                
                 self._action = self.AppAgent.Puppeteer.get_command_string(self._operation, self._args)
 
 
@@ -482,7 +481,7 @@ class AppAgentProcessor(BaseProcessor):
             HostAgent = self.AppAgent.get_host()
             
             
-            additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.AppAgent.get_step(), "Round": self.index, "Action": self._action, 
+            additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.AppAgent.get_step(), "Round": self.round_num, "Action": self._action, 
                                  "ActionType": self.AppAgent.Puppeteer.get_command_types(self._operation), "Request": self.request, "Agent": "ActAgent", "AgentName": self.AppAgent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
             app_agent_step_memory.set_values_from_dict(self._response_json)
             app_agent_step_memory.set_values_from_dict(additional_memory)

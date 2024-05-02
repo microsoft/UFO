@@ -23,17 +23,20 @@ class BaseProcessor(ABC):
     Each processor is responsible for processing the user request and updating the HostAgent and AppAgent at a single step in a round.
     """
 
-    def __init__(self, index: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
+    def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
                  round_step: int, global_step: int, prev_status: str, app_window:Type) -> None:
         """
         Initialize the processor.
+        :param round_num: The index of the processor. The round_num is the total number of rounds in the session.
         :param log_path: The log path.
         :param photographer: The photographer facade to process the screenshots.
         :param request: The user request.
         :param request_logger: The logger for the request string.
         :param logger: The logger for the response and error.
+        :param round_step: The step of the round.
         :param global_step: The global step of the session.
         :param prev_status: The previous status of the session.
+        :param app_window: The application window.
         """
 
         self.log_path = log_path
@@ -46,7 +49,7 @@ class BaseProcessor(ABC):
         self.global_step = global_step
         self.round_step = round_step
         self.prev_status = prev_status
-        self.index = index
+        self.round_num = round_num
         
         self._step = 0
         self._status = prev_status
@@ -62,7 +65,7 @@ class BaseProcessor(ABC):
         
     def process(self):
         """
-        Process the session.
+        Process a single step in a round.
         The process includes the following steps:
         1. Print the step information.
         2. Capture the screenshot.
@@ -76,24 +79,41 @@ class BaseProcessor(ABC):
         10. Update the step and status.
         """
 
+        # Step 1: Print the step information.
         self.print_step_info()
+
+        # Step 2: Capture the screenshot.
         self.capture_screenshot()
+
+        # Step 3: Get the control information.
         self.get_control_info()
+
+        # Step 4: Get the prompt message.
         self.get_prompt_message()
+
+        # Step 5: Get the response.
         self.get_response()
 
         if self.is_error():
             return
+        
+        # Step 6: Parse the response, if there is no error.
         self.parse_response()
 
         if self.is_error():
             return
         
+        # Step 7: Execute the action.
         self.execute_action()
+
+        # Step 8: Update the memory.
         self.update_memory()
 
+        # Step 9: Create the app agent if necessary.
         if self.should_create_appagent():
             self.create_app_agent()
+
+        # Step 10: Update the step and status.
         self.update_step_and_status()
         
     
