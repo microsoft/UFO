@@ -63,7 +63,7 @@ class BaseProcessor(ABC):
         self.app_root = None
 
         
-    def process(self):
+    def process(self) -> None:
         """
         Process a single step in a round.
         The process includes the following steps:
@@ -118,21 +118,21 @@ class BaseProcessor(ABC):
         
     
     @abstractmethod
-    def print_step_info(self):
+    def print_step_info(self) -> None:
         """
         Print the step information.
         """
         pass
     
     @abstractmethod 
-    def capture_screenshot(self):
+    def capture_screenshot(self) -> None:
         """
         Capture the screenshot.
         """
         pass
     
     @abstractmethod 
-    def get_control_info(self): 
+    def get_control_info(self) -> None:
         """
         Get the control information.
         """
@@ -140,35 +140,35 @@ class BaseProcessor(ABC):
   
 
     @abstractmethod  
-    def get_prompt_message(self):
+    def get_prompt_message(self) -> None:
         """
         Get the prompt message.
         """
         pass  
   
     @abstractmethod  
-    def get_response(self):  
+    def get_response(self) -> None:
         """
         Get the response from the LLM.
         """
         pass  
   
     @abstractmethod  
-    def parse_response(self):
+    def parse_response(self) -> None:
         """
         Parse the response.
         """
         pass  
 
     @abstractmethod  
-    def execute_action(self):
+    def execute_action(self) -> None:
         """
         Execute the action.
         """
         pass  
 
     @abstractmethod
-    def update_memory(self):
+    def update_memory(self) -> None:
         """
         Update the memory of the Agent.
         """
@@ -176,21 +176,21 @@ class BaseProcessor(ABC):
 
 
     @abstractmethod  
-    def update_status(self):
+    def update_status(self) -> None:
         """
         Update the status of the session.
         """
         pass
 
     
-    def create_app_agent(self):
+    def create_app_agent(self) -> None:
         """
         Create the app agent.
         """
         pass
 
 
-    def update_step_and_status(self):
+    def update_step_and_status(self) -> None:
         """
         Update the step and status of the process.
         """
@@ -198,7 +198,7 @@ class BaseProcessor(ABC):
         self.update_status()
 
 
-    def get_active_window(self):
+    def get_active_window(self) -> Type:
         """
         Get the active window.
         :return: The active window.
@@ -206,7 +206,7 @@ class BaseProcessor(ABC):
         return self._app_window
     
     
-    def get_active_control_text(self):
+    def get_active_control_text(self) -> str:
         """
         Get the active application.
         :return: The active application.
@@ -214,7 +214,7 @@ class BaseProcessor(ABC):
         return self._control_text
     
 
-    def get_process_status(self):
+    def get_process_status(self) -> str:
         """
         Get the process status.
         :return: The process status.
@@ -222,7 +222,7 @@ class BaseProcessor(ABC):
         return self._status
     
     
-    def get_process_step(self):
+    def get_process_step(self) -> int:
         """
         Get the process step.
         :return: The process step.
@@ -230,7 +230,7 @@ class BaseProcessor(ABC):
         return self._step
     
     
-    def get_process_cost(self):
+    def get_process_cost(self) -> float:
         """
         Get the process cost.
         :return: The process cost.
@@ -238,7 +238,7 @@ class BaseProcessor(ABC):
         return self._cost
     
 
-    def is_error(self):
+    def is_error(self) -> bool:
         """
         Check if the process is in error.
         :return: The boolean value indicating if the process is in error.
@@ -247,7 +247,7 @@ class BaseProcessor(ABC):
         return self._status == "ERROR"
     
 
-    def should_create_appagent(self):
+    def should_create_appagent(self) -> bool:
         """
         Check if the app agent should be created.
         :return: The boolean value indicating if the app agent should be created.
@@ -256,7 +256,7 @@ class BaseProcessor(ABC):
         return False
 
 
-    def log(self, response_json: dict) -> dict:
+    def log(self, response_json: dict) -> None:
         """
         Set the result of the session, and log the result.
         result: The result of the session.
@@ -273,12 +273,3 @@ class BaseProcessor(ABC):
         """
         log = json.dumps({"step": self._step, "status": "ERROR", "response": response_str, "error": error})
         self.logger.info(log)
-        
-
-
-    def get_current_action_memory(self):
-        """
-        Get the current action memory.
-        :return: The current action memory.
-        """
-        pass
