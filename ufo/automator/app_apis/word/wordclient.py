@@ -34,7 +34,8 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         """
         mappping = {
             "insert_table": InsertTableCommand,
-            "select_text": SelectTextCommand
+            "select_text": SelectTextCommand,
+            "select_table": SelectTableCommand
         }
         return mappping
     
@@ -72,7 +73,19 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
             return f"Text {text} is selected."
         else:
             return f"Text {text} is not found."
+        
 
+    def select_table(self, number: int) -> None:
+        """
+        Select a table in the document.
+        :param number: The number of the table.
+        """
+        tables = self.com_object.Tables
+        if not number or number < 1 or number > tables.Count:
+            return f"Table number {number} is out of range."
+        
+        tables[number].Select()
+        return f"Table {number} is selected."
 
 
     
@@ -105,5 +118,18 @@ class SelectTextCommand(WinCOMCommand):
         :return: The selected text.
         """
         return self.receiver.select_text(self.params.get("text"))
+    
+
+
+class SelectTableCommand(WinCOMCommand):
+    """
+    The command to select a table.
+    """
+    def execute(self):
+        """
+        Execute the command to select a table in the document.
+        :return: The selected table.
+        """
+        return self.receiver.select_table(self.params.get("number"))
     
 

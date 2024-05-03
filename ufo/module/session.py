@@ -319,7 +319,7 @@ class FollowerSession(Session):
             self._status = "COMPLETE"
         else:
             self.request = self.plan_reader.next_step()
-            utils.print_with_color("Starting round {round} for the subtask:".format(round=self._round), "yellow")
+            utils.print_with_color("Starting step {round}:".format(round=self._round), "yellow")
             utils.print_with_color(self.request, "cyan")
             self._current_round = self.create_round()
             self._current_round.set_application_window(self.app_window)
