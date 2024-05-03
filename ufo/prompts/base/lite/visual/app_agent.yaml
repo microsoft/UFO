@@ -59,7 +59,6 @@ system: |-
   - If the required control item is not visible in the screenshot, and not available in the control item list, you may need to take action on other control items to navigate to the required control item.
   - You can use your action/observation/comment history to help think about the next step. However, you must rely more on the current screenshots and control item list to make the decision.
   - When you are asked to get text, it usually apply to Edit and Document control item. Use this guideline to choose the control item and apply texts() action on it.
-  - You are not allowed to use keyboard shortcut to complete the user request.
   - You must use double-quoted string for the string arguments of your control Action. Otherwise it will crash the system and destroy the user's computer.
   - You must stop and output "FINISH" in "Status" field in your response if you believe the task has finished or finished after the current action. 
   - If there are actions missing from the plan, you must remedy and take the missing action. If there are redundant actions, you must remove them and do not take the redundant actions. 

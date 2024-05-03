@@ -102,7 +102,7 @@ class SessionFactory:
     The factory class to create a session.
     """
 
-    @staticmethod
+    
     def create_session(self, task: str, mode: str, plan: str) -> BaseSession:
         """
         Create a session.

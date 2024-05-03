@@ -29,7 +29,7 @@ class FollowerHostAgentProcessor(HostAgentProcessor):
         app_info_prompt = configs.get("APP_INFO_PROMPT", None)
 
         appagent = self.HostAgent.create_subagent("follower", "FollowerAgent/{root}/{process}".format(root=self.app_root, process=self._control_text), self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
-                                     configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], app_info_prompt=app_info_prompt)
+                                     configs["FOLLOWERAHENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], app_info_prompt=app_info_prompt)
         
         # Create the COM receiver for the app agent.
         if configs.get("USE_APIS", False):

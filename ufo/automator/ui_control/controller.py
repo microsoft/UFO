@@ -44,6 +44,7 @@ class ControlReceiver(ReceiverBasic):
             "set_edit_text": SetEditTextCommand,
             "texts": GetTextsCommand,
             "wheel_mouse_input": WheelMouseInputCommand,
+            "keyboard_input": keyboardInputCommand,
             "annotation": AnnotationCommand,
             "": NoActionCommand
         }
@@ -127,7 +128,17 @@ class ControlReceiver(ReceiverBasic):
                 return self.atomic_execution(method_name, args)
             else:
                 return f"An error occurred: {e}"
+            
+
+    def keyboard_input(self, params:Dict):
+        """
+        Keyboard input on the control element.
+        :param params: The arguments of the keyboard input method.
+        :return: The result of the keyboard input action.
+        """
+        return self.atomic_execution("type_keys", params)
  
+
 
     def texts(self) -> str:
         """
@@ -349,6 +360,20 @@ class AnnotationCommand(ControlCommand):
         :return: The result of the annotation command.
         """
         return self.receiver.annotation(self.params, self.annotation_dict)
+    
+
+
+class keyboardInputCommand(ControlCommand):
+    """
+    The keyborad input command class.
+    """
+
+    def execute(self) -> str:
+        """
+        Execute the keyborad input command.
+        :return: The result of the keyborad input command.
+        """
+        return self.receiver.keyboard_input(self.params)
     
     
 
