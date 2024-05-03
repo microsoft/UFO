@@ -199,7 +199,7 @@ class Session(BaseSession):
         Create a new round.
         """
 
-        new_round = round.Round(task=self.task, logger=self.logger, request_logger=self.request_logger, photographer=PhotographerFacade(), HostAgent=self.HostAgent, request=self.request)
+        new_round = round.Round(task=self.task, logger=self.logger, request_logger=self.request_logger, photographer=PhotographerFacade(), host_agent=self.host_agent, request=self.request)
         new_round.set_index(self.get_round_num())
         new_round.set_global_step(self.get_step())
 
@@ -224,7 +224,7 @@ class Session(BaseSession):
 
         self.app_window = current_round.get_application_window()
         self.application = self.app_window.window_text()
-        self.AppAgent = self.HostAgent.get_active_appagent()
+        self.app_agent = self.host_agent.get_active_appagent()
 
 
     def round_appagent_execution(self) -> None:
@@ -246,7 +246,7 @@ class Session(BaseSession):
         Start a new round.
         """
 
-        self.HostAgent.add_request_memory(self.request)
+        self.host_agent.add_request_memory(self.request)
         self._round += 1
         
         self.request, iscomplete = interactor.new_request()
@@ -291,7 +291,7 @@ class FollowerSession(Session):
         """
 
         new_round = round.FollowerRound(task=self.task, logger=self.logger, request_logger=self.request_logger, photographer=PhotographerFacade(), 
-                                        HostAgent=self.HostAgent, AppAgent=self.AppAgent, app_window=self.app_window, application=self.application, request=self.request)
+                                        host_agent=self.host_agent, app_agent=self.app_agent, app_window=self.app_window, application=self.application, request=self.request)
         new_round.set_index(self.get_round_num())
         new_round.set_global_step(self.get_step())
 
@@ -307,11 +307,11 @@ class FollowerSession(Session):
 
         # Add the request to the memory, but not for the first round.
         if self._round > 0:
-            self.HostAgent.add_request_memory(self.request)
+            self.host_agent.add_request_memory(self.request)
 
         # Clear the memory of the app agent to avoid any misinterpretation.
-        if self.AppAgent is not None:
-            self.AppAgent.clear_memory()
+        if self.app_agent is not None:
+            self.app_agent.clear_memory()
 
         self._round += 1
         

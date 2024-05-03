@@ -25,7 +25,6 @@ from ..agent.agent import AgentFactory, HostAgent
 from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
-from . import interactor
 from .state import StatusToStateMapper
 
 configs = Config.get_instance().config_data
@@ -39,14 +38,14 @@ class BaseRound(ABC):
     A round manages a single user request and consists of multiple steps. A session may consists of multiple rounds of interactions.
     """
 
-    def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, HostAgent: HostAgent, request: str) -> None: 
+    def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, host_agent: HostAgent, request: str) -> None: 
         """
         Initialize a round.
         :param task: The name of current task.
         :param logger: The logger for the response and error.
         :param request_logger: The logger for the request string.
         :param photographer: The photographer facade to process the screenshots.
-        :param HostAgent: The host agent.
+        :param host_agent: The host agent.
         :param request: The user request at the current round.
         """
 
@@ -57,8 +56,8 @@ class BaseRound(ABC):
         self.logger = logger
         self.request_logger = request_logger
 
-        self.HostAgent = HostAgent
-        self.AppAgent = None
+        self.host_agent = host_agent
+        self.app_agent = None
 
         self.photographer = photographer
 
@@ -134,7 +133,7 @@ class BaseRound(ABC):
         return: The results of the session.
         """
 
-        action_history = self.HostAgent.get_global_action_memory().content
+        action_history = self.host_agent.get_global_action_memory().content
 
         if len(action_history) > 0:
             result = action_history[-1].to_dict().get("Results")
@@ -215,9 +214,9 @@ class BaseSession(ABC):
         self.request_logger = self.initialize_logger(self.log_path, "request.log")  
   
         # Agent-related properties  
-        self.HostAgent = AgentFactory.create_agent("host", "HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"],  
+        self.host_agent = AgentFactory.create_agent("host", "HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"],  
                                                    configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], configs["ALLOW_OPENAPP"])  
-        self.AppAgent = None  
+        self.app_agent = None  
   
         # Photographer-related properties  
         self.photographer = PhotographerFacade()  
@@ -357,7 +356,7 @@ class BaseSession(ABC):
         return: The results of the session.
         """
 
-        action_history = self.HostAgent.get_global_action_memory().content
+        action_history = self.host_agent.get_global_action_memory().content
 
         if len(action_history) > 0:
             result = action_history[-1].to_dict().get("Results")

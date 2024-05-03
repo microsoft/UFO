@@ -1,10 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from logging import Logger
-from typing import Type
-from ufo.agent.agent import AppAgent
-from ufo.automator.ui_control.screenshot import PhotographerFacade
 from .processor import AppAgentProcessor, HostAgentProcessor
 from ...config.config import Config
 from ...agent.agent import FollowerAgent
@@ -28,16 +24,16 @@ class FollowerHostAgentProcessor(HostAgentProcessor):
 
         agent_name = "FollowerAgent/{root}/{process}".format(root=self.app_root, process=self._control_text)
 
-        appagent = self.HostAgent.create_subagent("follower", agent_name, self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
+        app_agent = self.host_agent.create_subagent("follower", agent_name, self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
                                      configs["FOLLOWERAHENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], app_info_prompt)
         
         # Create the COM receiver for the app agent.
         if configs.get("USE_APIS", False):
-            appagent.Puppeteer.receiver_manager.create_com_receiver(self.app_root, self._control_text)
+            app_agent.Puppeteer.receiver_manager.create_com_receiver(self.app_root, self._control_text)
             
-        self.app_agent_context_provision(appagent)
+        self.app_agent_context_provision(app_agent)
 
-        return appagent
+        return app_agent
 
 
 
@@ -49,13 +45,13 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             """
 
             if configs["RAG_EXPERIENCE"]:
-                experience_examples, experience_tips = self.AppAgent.rag_experience_retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"])
+                experience_examples, experience_tips = self.app_agent.rag_experience_retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"])
             else:
                 experience_examples = []
                 experience_tips = []
                 
             if configs["RAG_DEMONSTRATION"]:
-                demonstration_examples, demonstration_tips = self.AppAgent.rag_demonstration_retrieve(self.request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"])
+                demonstration_examples, demonstration_tips = self.app_agent.rag_demonstration_retrieve(self.request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"])
             else:
                 demonstration_examples = []
                 demonstration_tips = []
@@ -63,10 +59,10 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             examples = experience_examples + demonstration_examples
             tips = experience_tips + demonstration_tips
 
-            external_knowledge_prompt = self.AppAgent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
+            external_knowledge_prompt = self.app_agent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
 
 
-            HostAgent = self.AppAgent.get_host()
+            HostAgent = self.app_agent.get_host()
 
             action_history = HostAgent.get_global_action_memory().to_json()
             request_history = HostAgent.get_request_history_memory().to_json()
@@ -74,7 +70,7 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             current_state = {}
             state_diff = {}
 
-            self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
+            self._prompt_message = self.app_agent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
                                                                                 self.filtered_control_info, self.prev_plan, self.request, current_state, state_diff, configs["INCLUDE_LAST_SCREENSHOT"])
             
             log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": self._control_info, 

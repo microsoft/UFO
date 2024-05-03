@@ -21,14 +21,14 @@ class Round(BaseRound):
     A round of a session in UFO.
     """
 
-    def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, HostAgent: HostAgent, request: str) -> None: 
+    def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, host_agent: HostAgent, request: str) -> None: 
         """
         Initialize a round.
         :param task: The name of current task.
         :param logger: The logger for the response and error.
         :param request_logger: The logger for the request string.
         :param photographer: The photographer facade to process the screenshots.
-        :param HostAgent: The host agent.
+        :param host_agent: The host agent.
         :param request: The user request at the current round.
         """
 
@@ -41,8 +41,8 @@ class Round(BaseRound):
         self.request_logger = request_logger  
   
         # Agent-related properties  
-        self.HostAgent = HostAgent  
-        self.AppAgent = None  
+        self.host_agent = host_agent  
+        self.app_agent = None  
   
         # Photographer-related properties  
         self.photographer = photographer  
@@ -74,7 +74,7 @@ class Round(BaseRound):
         """
 
         host_agent_processor = processor.HostAgentProcessor(round_num=self.round_num, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step,
-                                                            request_logger=self.request_logger, logger=self.logger, host_agent=self.HostAgent, prev_status=self.get_status(), app_window=self.app_window)
+                                                            request_logger=self.request_logger, logger=self.logger, host_agent=self.host_agent, prev_status=self.get_status(), app_window=self.app_window)
 
         host_agent_processor.process()
 
@@ -82,7 +82,7 @@ class Round(BaseRound):
         self._step += host_agent_processor.get_process_step()
         self.update_cost(host_agent_processor.get_process_cost())
 
-        self.AppAgent = self.HostAgent.get_active_appagent()
+        self.app_agent = self.host_agent.get_active_appagent()
         self.app_window = host_agent_processor.get_active_window()
         self.application = host_agent_processor.get_active_control_text()
 
@@ -94,7 +94,7 @@ class Round(BaseRound):
         """
 
         app_agent_processor = processor.AppAgentProcessor(round_num=self.round_num, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step, 
-                                                          process_name=self.application, request_logger=self.request_logger, logger=self.logger, app_agent=self.AppAgent, app_window=self.app_window, 
+                                                          process_name=self.application, request_logger=self.request_logger, logger=self.logger, app_agent=self.app_agent, app_window=self.app_window, 
                                                             control_reannotate=self.control_reannotate, prev_status=self.get_status())
 
         app_agent_processor.process()
@@ -111,23 +111,23 @@ class Round(BaseRound):
 class FollowerRound(Round):
 
     def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, 
-                 HostAgent: HostAgent, AppAgent: Optional[FollowerAgent], app_window: Optional[object], application: Optional[str], request: str) -> None:
+                 host_agent: HostAgent, app_agent: Optional[FollowerAgent], app_window: Optional[object], application: Optional[str], request: str) -> None:
         """
         Initialize a follower round.
         :param task: The name of current task.
         :param logger: The logger for the response and error.
         :param request_logger: The logger for the request string.
         :param photographer: The photographer facade to process the screenshots.
-        :param HostAgent: The host agent.
-        :param AppAgent: The app agent.
+        :param host_agent: The host agent.
+        :param app_agent: The app agent.
         :param app_window: The window of the application.
         :param application: The name of the application.
         :param request: The user request at the current round.
         """
 
-        super().__init__(task, logger, request_logger, photographer, HostAgent, request)
+        super().__init__(task, logger, request_logger, photographer, host_agent, request)
 
-        self.AppAgent = AppAgent
+        self.app_agent = app_agent
         self.app_window = app_window
         self.application = application
 
@@ -140,7 +140,7 @@ class FollowerRound(Round):
         """
 
         host_agent_processor = follower_processor.FollowerHostAgentProcessor(round_num=self.round_num, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step,
-                                                            request_logger=self.request_logger, logger=self.logger, host_agent=self.HostAgent, prev_status=self.get_status(), app_window=self.app_window)
+                                                            request_logger=self.request_logger, logger=self.logger, host_agent=self.host_agent, prev_status=self.get_status(), app_window=self.app_window)
 
         host_agent_processor.process()
 
@@ -148,7 +148,7 @@ class FollowerRound(Round):
         self._step += host_agent_processor.get_process_step()
         self.update_cost(host_agent_processor.get_process_cost())
 
-        self.AppAgent = self.HostAgent.get_active_appagent()
+        self.app_agent = self.host_agent.get_active_appagent()
         self.app_window = host_agent_processor.get_active_window()
         self.application = host_agent_processor.get_active_control_text()
 
@@ -160,7 +160,7 @@ class FollowerRound(Round):
         """
 
         app_agent_processor = follower_processor.FollowerAppAgentProcessor(round_num=self.round_num, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step, 
-                                                          process_name=self.application, request_logger=self.request_logger, logger=self.logger, app_agent=self.AppAgent, app_window=self.app_window, 
+                                                          process_name=self.application, request_logger=self.request_logger, logger=self.logger, app_agent=self.app_agent, app_window=self.app_window, 
                                                             control_reannotate=self.control_reannotate, prev_status=self.get_status())
 
         app_agent_processor.process()
