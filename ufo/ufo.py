@@ -16,7 +16,7 @@ args.add_argument("--task", "-t", help="The name of current task.",
                   type=str, default=datetime.now().strftime("%Y-%m-%d-%H-%M-%S"))
 args.add_argument("--mode", "-m", help="mode of the task. Default is normal, it can be set to 'follower' if you want to run the follower agent.",
                   type=str, default="normal")
-args.add_argument("--plan", "-p", help="The path of the plan file. It is required for the follower mode.",
+args.add_argument("--plan", "-p", help="The path of the plan file or folder. It is only required for the follower mode.",
                   type=str, default="")
 
 parsed_args = args.parse_args()
