@@ -11,10 +11,12 @@ from .. import utils
 from ..automator import puppeteer
 from ..automator.ui_control import openfile
 from ..automator.ui_control import utils as control
+from ..config.config import Config
 from ..prompter.agent_prompter import (AppAgentPrompter, FollowerAgentPrompter,
                                        HostAgentPrompter)
 from .basic import BasicAgent, Memory, MemoryItem
 
+configs = Config.get_instance().config_data
 
 class AgentFactory:  
     """  
@@ -22,7 +24,7 @@ class AgentFactory:
     """  
   
     @staticmethod  
-    def create_agent(agent_type: str, *args, **kwargs):  
+    def create_agent(agent_type: str, *args, **kwargs) -> BasicAgent:  
         """  
         Create an agent based on the given type.  
         :param agent_type: The type of agent to create.  
@@ -361,16 +363,18 @@ class HostAgent(BasicAgent):
         
         return hostagent_prompt_message
     
+    
     def app_file_manager(self, app_file_info: dict):
         '''
         Open the application or file for the user.
         :param app_file_info: The information of the application or file. {'APP': name of app, 'file_path': path}
         :return: The window of the application.
         '''
+
         utils.print_with_color("Opening the required application or file...", "yellow")
         file_manager = openfile.FileController()
         results = file_manager.execute_code(app_file_info)
-        time.sleep(5)
+        time.sleep(configs.get("SLEEP_TIME", 5))
         desktop_windows_dict, _ = control.get_desktop_app_info_dict()
         if not results:
             self.status = "ERROR in openning the application or file."

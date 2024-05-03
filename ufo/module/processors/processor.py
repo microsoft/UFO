@@ -28,7 +28,8 @@ BACKEND = configs["CONTROL_BACKEND"]
 class HostAgentProcessor(BaseProcessor):
 
     def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
-                 host_agent: HostAgent, round_step: int, global_step: int, prev_status: str, app_window=None):
+                 host_agent: HostAgent, round_step: int, global_step: int, prev_status: str, app_window=None) -> None:
+        
         super().__init__(round_num, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
         """
@@ -263,7 +264,8 @@ class HostAgentProcessor(BaseProcessor):
 class AppAgentProcessor(BaseProcessor):
     
         def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, global_step: int, 
-                     process_name: str, app_window: UIAWrapper, control_reannotate: Optional[list], prev_status: str):
+                     process_name: str, app_window: UIAWrapper, control_reannotate: Optional[list], prev_status: str) -> None:
+            
             super().__init__(round_num, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
             """

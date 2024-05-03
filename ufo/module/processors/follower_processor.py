@@ -14,7 +14,7 @@ class FollowerHostAgentProcessor(HostAgentProcessor):
 
     def create_sub_agent(self) -> FollowerAgent:
         """
-        Create a sub agent for the host agent.
+        Create a follower subagent for the host agent.
         :return: The created sub agent.
         """
 
@@ -42,7 +42,7 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
     
     def get_prompt_message(self) -> None:
             """
-            Get the prompt message for the AppAgent.
+            Get the prompt message for the AppAgent in the follower mode. It may accept additional prompts as input.
             """
 
             if configs["RAG_EXPERIENCE"]:

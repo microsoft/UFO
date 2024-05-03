@@ -5,12 +5,13 @@
 from logging import Logger
 from typing import Optional
 
-from ..agent.agent import HostAgent, FollowerAgent
+from pywinauto.controls.uiawrapper import UIAWrapper
+
+from ..agent.agent import FollowerAgent, HostAgent
 from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
-from .processors import processor, follower_processor   
-
 from .basic import BaseRound
+from .processors import follower_processor, processor
 
 configs = Config.get_instance().config_data
 

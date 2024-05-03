@@ -3,7 +3,7 @@
 
 import json
 import os
-from typing import Dict, Optional
+from typing import Dict, List, Optional
 
 import yaml
 
@@ -49,7 +49,7 @@ class HostAgentPrompter(BasicPrompter):
     
 
 
-    def user_prompt_construction(self, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> str:
+    def user_prompt_construction(self, request_history: List[str], action_history: List[str], control_item: List[str], prev_plan: str, user_request: str, retrieved_docs: str="") -> str:
         """
         Construct the prompt for action selection.
         :param action_history: The action history.
@@ -65,7 +65,7 @@ class HostAgentPrompter(BasicPrompter):
     
 
 
-    def user_content_construction(self, image_list: list, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> list[dict]:
+    def user_content_construction(self, image_list: List[str], request_history: List[str], action_history: List[str], control_item: List[str], prev_plan: str, user_request: str, retrieved_docs: str="") -> List[Dict]:
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.
@@ -182,7 +182,7 @@ class AppAgentPrompter(BasicPrompter):
             self.app_api_prompt_template = self.app_prompter.load_com_api_prompt()
 
 
-    def system_prompt_construction(self, additional_examples: list =[], tips: list =[]) -> str:
+    def system_prompt_construction(self, additional_examples: List[str] =[], tips: List[str] =[]) -> str:
         """
         Construct the prompt for app selection.
         return: The prompt for app selection.
@@ -198,7 +198,7 @@ class AppAgentPrompter(BasicPrompter):
         return self.prompt_template["system"].format(apis=apis, examples=examples, tips=tips_prompt)
 
 
-    def user_prompt_construction(self, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="") -> str:
+    def user_prompt_construction(self, request_history: List[str], action_history: List[str], control_item: List[str], prev_plan: str, user_request: str, retrieved_docs: str="") -> str:
         """
         Construct the prompt for action selection.
         :param prompt_template: The template of the prompt.
@@ -215,7 +215,7 @@ class AppAgentPrompter(BasicPrompter):
     
 
 
-    def user_content_construction(self, image_list: list, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="", include_last_screenshot: bool=True) -> list[dict]:
+    def user_content_construction(self, image_list: List[str], request_history: List[str], action_history: List[str], control_item: List[str], prev_plan: str, user_request: str, retrieved_docs: str="", include_last_screenshot: bool=True) -> List[Dict]:
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.
@@ -257,7 +257,7 @@ class AppAgentPrompter(BasicPrompter):
         return user_content
         
     
-    def examples_prompt_helper(self, header: str = "## Response Examples", separator: str = "Example", additional_examples: list[str] = []) -> str:
+    def examples_prompt_helper(self, header: str = "## Response Examples", separator: str = "Example", additional_examples: List[str] = []) -> str:
         """
         Construct the prompt for examples.
         :param examples: The examples.
@@ -404,7 +404,7 @@ class FollowerAgentPrompter(AppAgentPrompter):
             self.app_info_prompt_template = None
 
 
-    def system_prompt_construction(self, additional_examples: list =[], tips: list =[]) -> str:
+    def system_prompt_construction(self, additional_examples: List[str] =[], tips: List[str] =[]) -> str:
         """
         Construct the prompt for app selection.
         return: The prompt for app selection.
@@ -428,7 +428,7 @@ class FollowerAgentPrompter(AppAgentPrompter):
                                                      app_name=app_name, app_info=app_info)
 
 
-    def user_prompt_construction(self, request_history: list, action_history: list, control_item: list, prev_plan: str, user_request: str, retrieved_docs: str="", current_state:dict={}, state_diff:dict={}) -> str:
+    def user_prompt_construction(self, request_history: List[str], action_history: List[str], control_item: List[str], prev_plan: str, user_request: str, retrieved_docs: str="", current_state:dict={}, state_diff:dict={}) -> str:
         """
         Construct the prompt for action selection.
         :param prompt_template: The template of the prompt.
@@ -447,8 +447,8 @@ class FollowerAgentPrompter(AppAgentPrompter):
         return prompt
     
 
-    def user_content_construction(self, image_list: list, request_history: list, action_history: list, control_item: list, prev_plan: str, 
-                                  user_request: str, retrieved_docs: str="", current_state: dict = {}, state_diff: dict = {}, include_last_screenshot: bool=True) -> list[dict]:
+    def user_content_construction(self, image_list: List[str], request_history: List[str], action_history: List[str], control_item: List[str], prev_plan: str, 
+                                  user_request: str, retrieved_docs: str="", current_state: dict = {}, state_diff: dict = {}, include_last_screenshot: bool=True) -> List[Dict]:
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.

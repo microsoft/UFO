@@ -3,7 +3,7 @@
 
 import json
 import os
-from typing import List
+from typing import List, Optional
 
 from .. import utils
 from ..automator.ui_control.screenshot import PhotographerFacade
@@ -38,7 +38,7 @@ class PlanReader:
         return self.plan.get("task", "")
     
     
-    def get_steps(self) -> list:
+    def get_steps(self) -> List[str]:
         """
         Get the steps in the plan.
         :return: The steps in the plan.
@@ -83,7 +83,7 @@ class PlanReader:
         return request
     
     
-    def next_step(self) -> dict:
+    def next_step(self) -> Optional[str]:
         """
         Get the next step in the plan.
         :return: The next step.
@@ -152,7 +152,7 @@ class SessionFactory:
     
     
     @staticmethod
-    def get_plan_files(path: str) -> list:
+    def get_plan_files(path: str) -> List[str]:
         """
         Get the plan files in the folder. The plan file should have the extension ".json".
         :param path: The path of the folder.
@@ -265,7 +265,7 @@ class FollowerSession(Session):
     A session for following a list of plan for action taken.
     """
 
-    def __init__(self, task: str, plan_file: str):
+    def __init__(self, task: str, plan_file: str) -> None:
         """
         Initialize a session.
         :param task: The name of current task.
@@ -285,7 +285,7 @@ class FollowerSession(Session):
         
 
 
-    def create_round(self) -> round.Round:
+    def create_round(self) -> round.FollowerRound:
         """
         Create a new round.
         """

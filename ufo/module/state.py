@@ -11,13 +11,19 @@ The state classes are used to handle the session based on the status of the sess
 from __future__ import annotations
 
 from abc import ABC
-from typing import Dict, Type
+from typing import TYPE_CHECKING, Dict, Type
 
 from ..config.config import Config
 from ..utils import print_with_color
 from .interactor import experience_asker
 
 configs = Config.get_instance().config_data
+
+
+# To avoid circular import
+if TYPE_CHECKING:
+    from .session import Session
+
 
 
 class StatusToStateMapper(ABC):  
@@ -62,7 +68,7 @@ class SessionState(ABC):
         """
         self.state_mapping = StatusToStateMapper()
 
-    def handle(self, session):
+    def handle(self, session: "Session") -> None:
         """
         Handle the session.
         :param session: The session.
@@ -83,7 +89,7 @@ class NoneState(SessionState):
     The state when the session is None.
     """
 
-    def handle(self, session):
+    def handle(self, session: "Session") -> None:
         """
         Handle the session. Do nothing.
         :param session: The session.
@@ -96,7 +102,7 @@ class RoundFinishState(SessionState):
     The state when a single round is finished.
     """
 
-    def handle(self, session):
+    def handle(self, session: "Session") -> None:
         """
         Handle the session. Either start a new round or finish the session.
         :param session: The session.
@@ -128,7 +134,7 @@ class SessionFinishState(SessionState):
     The state when the entire session is finished.
     """
 
-    def handle(self, session):
+    def handle(self, session: "Session") -> None:
         """
         Handle the session. Finish the entire session, and save the experience if needed.
         :param session: The session.
@@ -146,7 +152,7 @@ class ErrorState(SessionState):
     The state when an error occurs.
     """
 
-    def handle(self, session):
+    def handle(self, session: "Session") -> None:
         """
         Handle the session. Do nothing.
         :param session: The session.
@@ -159,7 +165,7 @@ class AppSelectionState(SessionState):
     The state when the application selection is needed by a HostAgent.
     """
 
-    def handle(self, session):
+    def handle(self, session: "Session") -> None:
         """
         Handle the session. Process the application selection.
         :param session: The session.
@@ -184,7 +190,7 @@ class ContinueState(SessionState):
     The state when the session needs to continue by the AppAgent.
     """
 
-    def handle(self, session):
+    def handle(self, session: "Session") -> None:
         """
         Handle the session. Process the action selection.
         :param session: The session.
@@ -210,7 +216,7 @@ class AnnotationState(ContinueState):
     The state when the session needs to re-nnotate the screenshot.
     """
 
-    def handle(self, session):
+    def handle(self, session: "Session") -> None:
         """
         Handle the session. Process the action selection with the re-annotation screenshot. Same as ContinueState.
         :param session: The session.
@@ -225,7 +231,7 @@ class MaxStepReachedState(SessionState):
     The state when the maximum step is reached.
     """
 
-    def handle(self, session):
+    def handle(self, session: "Session") -> None:
         """
         Handle the session. Finish the session when the maximum step is reached.
         :param session: The session.
