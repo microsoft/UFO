@@ -2,19 +2,19 @@
 # Licensed under the MIT License.
 
 
-from typing import List, Tuple
+from typing import List, Tuple, Dict
 
 import psutil
 from pywinauto import Desktop
+from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ...config.config import Config
-
 
 configs = Config.get_instance().config_data
 
 
 
-def get_desktop_windows(backend="uia", remove_empty: bool=True) -> List:
+def get_desktop_windows(backend:str ="uia", remove_empty: bool=True) -> List:
     """
     Get all the apps on the desktop.
     :param remove_empty: Whether to remove empty titles.
@@ -31,7 +31,7 @@ def get_desktop_windows(backend="uia", remove_empty: bool=True) -> List:
     return desktop_windows
 
 
-def get_desktop_app_info(backend="uia", remove_empty: bool=True) -> Tuple[dict, List[dict]]:
+def get_desktop_app_info(backend:str ="uia", remove_empty: bool=True) -> Tuple[List[str], List[str]]:
     """
     Get titles and control types of all the apps on the desktop.
     :param remove_empty: Whether to remove empty titles.
@@ -47,7 +47,7 @@ def get_desktop_app_info(backend="uia", remove_empty: bool=True) -> Tuple[dict, 
 
 
 
-def get_desktop_app_info_dict(backend="uia", remove_empty: bool=True, field_list: List[str]=["control_text", "control_type"]) -> Tuple[dict, List[dict]]:
+def get_desktop_app_info_dict(backend: str="uia", remove_empty: bool=True, field_list: List[str]=["control_text", "control_type"]) -> Tuple[Dict[str, UIAWrapper], List[Dict[str, str]]]:
     """
     Get titles and control types of all the apps on the desktop.
     :param remove_empty: Whether to remove empty titles.
@@ -60,7 +60,7 @@ def get_desktop_app_info_dict(backend="uia", remove_empty: bool=True, field_list
 
     
 
-def find_uia_control_elements_in_descendants(window, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0) -> List:
+def find_uia_control_elements_in_descendants(window:UIAWrapper, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0) -> List:
     """
     Find control elements in descendants of the window for uia backend.
     :param window: The window to find control elements.
@@ -99,7 +99,7 @@ def find_uia_control_elements_in_descendants(window, control_type_list:List[str]
     return control_elements
     
     
-def find_win32_control_elements_in_descendants(window, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0) -> List:
+def find_win32_control_elements_in_descendants(window:UIAWrapper, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0) -> List:
     """
     Find control elements in descendants of the window for win32 backend.
     :param window: The window to find control elements.
@@ -138,7 +138,7 @@ def find_win32_control_elements_in_descendants(window, control_type_list:List[st
     return [control for control in control_elements if control.element_info.name != '']
 
 
-def find_control_elements_in_descendants(backend, window, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0) -> List:
+def find_control_elements_in_descendants(backend:str, window:UIAWrapper, control_type_list:List[str]=[], class_name_list:List[str]=[], title_list:List[str]=[], is_visible:bool=True, is_enabled:bool=True, depth:int=0) -> List:
     """
     Find control elements in descendants of the window for win32 backend.
     :param backend: The backend to use.
@@ -161,7 +161,7 @@ def find_control_elements_in_descendants(backend, window, control_type_list:List
     
     
 
-def get_control_info(window, field_list:List[str]=[]) -> dict:
+def get_control_info(window:UIAWrapper, field_list:List[str]=[]) -> Dict[str, str]:
     """
     Get control info of the window.
     :param window: The window to get control info.
@@ -186,7 +186,7 @@ def get_control_info(window, field_list:List[str]=[]) -> dict:
 
 
 
-def get_control_info_batch(window_list:List, field_list:List[str]=[]) -> List:
+def get_control_info_batch(window_list:List[UIAWrapper], field_list:List[str]=[]) -> List:
     """
     Get control info of the window.
     :param window: The list of windows to get control info.
@@ -200,7 +200,7 @@ def get_control_info_batch(window_list:List, field_list:List[str]=[]) -> List:
 
 
 
-def get_control_info_dict(window_dict:dict, field_list:List[str]=[]) -> List[dict]:
+def get_control_info_dict(window_dict:Dict[str, UIAWrapper], field_list:List[str]=[]) -> List[Dict[str, str]]:
     """
     Get control info of the window.
     :param window_dict: The dict of windows to get control info.
@@ -217,7 +217,7 @@ def get_control_info_dict(window_dict:dict, field_list:List[str]=[]) -> List[dic
 
 
 
-def get_application_name(window) -> str:
+def get_application_name(window:UIAWrapper) -> str:
     """
     Get the application name of the window.
     :param window: The window to get the application name.

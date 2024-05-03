@@ -19,13 +19,13 @@ import os
 from abc import ABC, abstractmethod
 from logging import Logger
 
+from pywinauto.controls.uiawrapper import UIAWrapper
 
 from .. import utils
 from ..agent.agent import AgentFactory, HostAgent
 from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
-from . import interactor
 from .state import StatusToStateMapper
 
 configs = Config.get_instance().config_data
@@ -39,14 +39,14 @@ class BaseRound(ABC):
     A round manages a single user request and consists of multiple steps. A session may consists of multiple rounds of interactions.
     """
 
-    def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, HostAgent: HostAgent, request: str) -> None: 
+    def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, host_agent: HostAgent, request: str) -> None: 
         """
         Initialize a round.
         :param task: The name of current task.
         :param logger: The logger for the response and error.
         :param request_logger: The logger for the request string.
         :param photographer: The photographer facade to process the screenshots.
-        :param HostAgent: The host agent.
+        :param host_agent: The host agent.
         :param request: The user request at the current round.
         """
 
@@ -57,8 +57,8 @@ class BaseRound(ABC):
         self.logger = logger
         self.request_logger = request_logger
 
-        self.HostAgent = HostAgent
-        self.AppAgent = None
+        self.host_agent = host_agent
+        self.app_agent = None
 
         self.photographer = photographer
 
@@ -73,7 +73,7 @@ class BaseRound(ABC):
 
         self.request = request
 
-        self.index = None
+        self.round_num = None
         self.global_step = None
 
 
@@ -134,7 +134,7 @@ class BaseRound(ABC):
         return: The results of the session.
         """
 
-        action_history = self.HostAgent.get_global_action_memory().content
+        action_history = self.host_agent.get_global_action_memory().content
 
         if len(action_history) > 0:
             result = action_history[-1].to_dict().get("Results")
@@ -145,9 +145,9 @@ class BaseRound(ABC):
 
     def set_index(self, index: int) -> None:
         """
-        Set the index of the session.
+        Set the round index of the session.
         """
-        self.index = index
+        self.round_num = index
 
 
     def set_global_step(self, global_step: int) -> None:
@@ -157,12 +157,20 @@ class BaseRound(ABC):
         self.global_step = global_step
 
 
-    def get_application_window(self) -> object:
+    def get_application_window(self) -> UIAWrapper:
         """
         Get the application of the session.
         return: The application of the session.
         """
         return self.app_window
+    
+    def set_application_window(self, app_window: UIAWrapper) -> None:
+        """
+        Set the application window.
+        :param app_window: The application window.
+        """
+        self.app_window = app_window
+    
 
 
     def update_cost(self, cost: float) -> None:
@@ -173,6 +181,7 @@ class BaseRound(ABC):
             self._cost += cost
         else:
             self._cost = None
+
 
 
 class BaseSession(ABC):
@@ -188,44 +197,44 @@ class BaseSession(ABC):
     6. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
     """
     
-    def __init__(self, task):
+    def __init__(self, task: str):
         """
         Initialize a session.
         :param task: The name of current task.
         """
         
-        self.task = task
-        self._step = 0
-        self._round = 0
+        # Task-related properties  
+        self.task = task  
+        self._step = 0  
+        self._round = 0 
 
-        self.log_path = f"logs/{self.task}/"
-        utils.create_folder(self.log_path)
-        self.logger = self.initialize_logger(self.log_path, "response.log")
-        self.request_logger = self.initialize_logger(self.log_path, "request.log")
-
-        self.HostAgent = AgentFactory.create_agent("host", "HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"], 
-                                                   configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], configs["ALLOW_OPENAPP"])
-    
-        self.AppAgent = None
-
-        self.photographer = PhotographerFacade()
-
-        self._status = "APP_SELECTION"
-        self._state = StatusToStateMapper().get_appropriate_state(self._status)
-        self.application = ""
-        self.app_root = ""
-        self.app_window = None
-        
-
-        self._cost = 0.0
+        # Logging-related properties  
+        self.log_path = f"logs/{self.task}/"  
+        utils.create_folder(self.log_path)  
+        self.logger = self.initialize_logger(self.log_path, "response.log")  
+        self.request_logger = self.initialize_logger(self.log_path, "request.log")  
+  
+        # Agent-related properties  
+        self.host_agent = AgentFactory.create_agent("host", "HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"],  
+                                                   configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], configs["ALLOW_OPENAPP"])  
+        self.app_agent = None  
+  
+        # Photographer-related properties  
+        self.photographer = PhotographerFacade()  
+  
+        # Status and state-related properties  
+        self._status = "APP_SELECTION"  
+        self._state = StatusToStateMapper().get_appropriate_state(self._status)  
+  
+        # Application-related properties  
+        self.application = ""  
+        self.app_root = ""  
+        self.app_window = None  
+  
+        # Cost and reannotate-related properties  
+        self._cost = 0.0  
         self.control_reannotate = []
-
-        utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
-        
-        self.request = interactor.first_request()
-        
-        self.round_list = []
-        self._current_round = self.create_round()
+  
 
 
     @abstractmethod
@@ -257,22 +266,13 @@ class BaseSession(ABC):
         utils.print_with_color("The experience has been saved.", "magenta")
 
 
-
+    @abstractmethod
     def start_new_round(self) -> None:
         """
         Start a new round.
         """
 
-        self.HostAgent.add_request_memory(self.request)
-        self._round += 1
-        
-        self.request, iscomplete = interactor.new_request()
-
-        if iscomplete:
-            self._status = "COMPLETE"
-        else:
-            self._current_round = self.create_round()
-            self._status = "APP_SELECTION"
+        pass
         
         
     @abstractmethod
@@ -357,7 +357,7 @@ class BaseSession(ABC):
         return: The results of the session.
         """
 
-        action_history = self.HostAgent.get_global_action_memory().content
+        action_history = self.host_agent.get_global_action_memory().content
 
         if len(action_history) > 0:
             result = action_history[-1].to_dict().get("Results")
@@ -367,12 +367,20 @@ class BaseSession(ABC):
     
     
     
-    def get_application_window(self) -> object:
+    def get_application_window(self) -> UIAWrapper:
         """
         Get the application of the session.
         return: The application of the session.
         """
         return self.app_window
+    
+
+    def set_application_window(self, app_window: UIAWrapper) -> None:
+        """
+        Set the application window.
+        :param app_window: The application window.
+        """
+        self.app_window = app_window
     
 
     def update_cost(self, cost: float) -> None:
@@ -398,6 +406,14 @@ class BaseSession(ABC):
         Handle the session.
         """
         self._state.handle(self)
+
+    @property
+    def session_type(self) -> str:
+        """
+        Get the class name of the session.
+        return: The class name of the session.
+        """
+        return self.__class__.__name__
 
 
 

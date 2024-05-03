@@ -2,16 +2,21 @@
 # Licensed under the MIT License.
 
 
+from __future__ import annotations
+
 import time
-from typing import Dict, List, Type
+from typing import Dict, List
 
 from .. import utils
 from ..automator import puppeteer
 from ..automator.ui_control import openfile
 from ..automator.ui_control import utils as control
-from ..prompter.agent_prompter import AppAgentPrompter, HostAgentPrompter
+from ..config.config import Config
+from ..prompter.agent_prompter import (AppAgentPrompter, FollowerAgentPrompter,
+                                       HostAgentPrompter)
 from .basic import BasicAgent, Memory, MemoryItem
 
+configs = Config.get_instance().config_data
 
 class AgentFactory:  
     """  
@@ -19,7 +24,7 @@ class AgentFactory:
     """  
   
     @staticmethod  
-    def create_agent(agent_type: str, *args, **kwargs):  
+    def create_agent(agent_type: str, *args, **kwargs) -> BasicAgent:  
         """  
         Create an agent based on the given type.  
         :param agent_type: The type of agent to create.  
@@ -38,10 +43,10 @@ class AgentFactory:
 
 class AppAgent(BasicAgent):
     """
-    The HostAgent class the manager of AppAgents.
+    The AppAgent class that manages the interaction with the application.
     """
 
-    def __init__(self, name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
+    def __init__(self, name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, skip_prompter:bool=False) -> None:
         """
         Initialize the AppAgent.
         :name: The name of the agent.
@@ -54,7 +59,8 @@ class AppAgent(BasicAgent):
         """
 
         super().__init__(name=name)
-        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, app_root_name)
+        if not skip_prompter:
+            self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, app_root_name)
         self._process_name = process_name
         self._app_root_name = app_root_name
         self.offline_doc_retriever = None
@@ -102,7 +108,6 @@ class AppAgent(BasicAgent):
         return appagent_prompt_message
     
 
-    
 
     def print_response(self, response_dict: Dict) -> None:
         """
@@ -113,7 +118,7 @@ class AppAgent(BasicAgent):
         control_text = response_dict.get("ControlText")
         control_label = response_dict.get("ControlLabel")
         if not control_text:
-            control_text = "[The required application needs to be opened.]"
+            control_text = "[No control selected.]"
         observation = response_dict.get("Observation")
         thought = response_dict.get("Thought")
         plan = response_dict.get("Plan")
@@ -212,7 +217,7 @@ class AppAgent(BasicAgent):
         return puppeteer.AppPuppeteer(self._process_name, self._app_root_name)
     
 
-    def set_host(self, host: Type) -> None:
+    def set_host(self, host: HostAgent) -> None:
         """
         Set the host agent.
         :param host: The host agent.
@@ -220,7 +225,7 @@ class AppAgent(BasicAgent):
         self.host = host
 
 
-    def get_host(self) -> Type:
+    def get_host(self) -> HostAgent:
         """
         Get the host agent that manages the AppAgent.
         :return: The host agent.
@@ -306,27 +311,29 @@ class HostAgent(BasicAgent):
         return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, allow_openapp)
     
 
-    def create_appagent(self, appagent_name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> AppAgent:
+    def create_subagent(self, agent_type: str, agent_name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, 
+                        example_prompt: str, api_prompt: str, *args, **kwargs) -> BasicAgent:
         """
-        Create an AppAgent hosted by the HostAgent.
-        :param appagent_name: The name of the AppAgent.
+        Create an SubAgent hosted by the HostAgent.
+        :param agent_type: The type of the agent to create.
+        :param agent_name: The name of the SubAgent.
         :param process_name: The process name of the app.
         :param app_root_name: The root name of the app.
         :param is_visual: The flag indicating whether the agent is visual or not.
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
         :param api_prompt: The API prompt file path.
-        :return: The created AppAgent.  
+        :return: The created SubAgent.  
         """
-        app_agent = self.agent_factory.create_agent("app", appagent_name, process_name, app_root_name, is_visual, main_prompt, example_prompt, api_prompt)
-        self.appagent_dict[appagent_name] = app_agent
+        app_agent = self.agent_factory.create_agent(agent_type, agent_name, process_name, app_root_name, is_visual, main_prompt, example_prompt, api_prompt, *args, **kwargs)
+        self.appagent_dict[agent_name] = app_agent
         app_agent.set_host(self)
         self._active_appagent = app_agent
 
         return app_agent
     
 
-    def get_active_appagent(self) -> Type:
+    def get_active_appagent(self) -> AppAgent:
         """
         Get the active app agent.
         :return: The active app agent.
@@ -361,16 +368,18 @@ class HostAgent(BasicAgent):
         
         return hostagent_prompt_message
     
+    
     def app_file_manager(self, app_file_info: dict):
         '''
         Open the application or file for the user.
         :param app_file_info: The information of the application or file. {'APP': name of app, 'file_path': path}
         :return: The window of the application.
         '''
+
         utils.print_with_color("Opening the required application or file...", "yellow")
         file_manager = openfile.FileController()
         results = file_manager.execute_code(app_file_info)
-        time.sleep(5)
+        time.sleep(configs.get("SLEEP_TIME", 5))
         desktop_windows_dict, _ = control.get_desktop_app_info_dict()
         if not results:
             self.status = "ERROR in openning the application or file."
@@ -390,6 +399,8 @@ class HostAgent(BasicAgent):
         """
         
         application = response_dict.get("ControlText")
+        if not application:
+            application = "[The required application needs to be opened.]"
         observation = response_dict.get("Observation")
         thought = response_dict.get("Thought")
         plan = response_dict.get("Plan")
@@ -441,4 +452,3 @@ class HostAgent(BasicAgent):
         :return: The request history.
         """
         return self._reqest_history_memory
-    

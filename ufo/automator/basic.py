@@ -1,8 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+from __future__ import annotations
+
 from abc import ABC, abstractmethod
-from typing import Dict, List, Type
+from typing import Dict, List
 
 
 class ReceiverBasic(ABC):
@@ -35,7 +37,7 @@ class ReceiverBasic(ABC):
     
     
 
-    def register_command(self, command_name:str, command:Type) -> None:
+    def register_command(self, command_name:str, command:CommandBasic) -> None:
         """
         Add to the command registry.
         :param command_name: The command name.
@@ -52,7 +54,7 @@ class ReceiverBasic(ABC):
         return list(self.command_registry.keys())
     
     
-    def self_command_mapping(self) -> Dict[str, Type]:
+    def self_command_mapping(self) -> Dict[str, CommandBasic]:
         """
         Get the command-receiver mapping.
         """
@@ -71,7 +73,7 @@ class CommandBasic(ABC):
     The abstract command interface.
     """
 
-    def __init__(self, receiver: ReceiverBasic, params=None) -> None:
+    def __init__(self, receiver: ReceiverBasic, params: Dict = None) -> None:
         """
         Initialize the command.
         :param receiver: The receiver of the command.

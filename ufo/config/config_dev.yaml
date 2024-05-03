@@ -29,6 +29,7 @@ HOSTAGENT_PROMPT: "ufo/prompts/base/{mode}/host_agent.yaml"  # The prompt for th
 # Due to the limitation of input size, lite version of the prompt help users have a taste. And the path is "ufo/prompts/base/lite/{mode}/host_agent.yaml"
 APPAGENT_PROMPT: "ufo/prompts/base/{mode}/app_agent.yaml"  # The prompt for the action selection
 # Lite version: "ufo/prompts/base/lite/{mode}/app_agent.yaml"
+FOLLOWERAHENT_PROMPT: "ufo/prompts/base/{mode}/app_agent.yaml"  # The prompt for the follower agent
 
 HOSTAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/host_agent_example.yaml"  # The prompt for the app selection
 # Lite version: "ufo/prompts/examples/lite/{mode}/host_agent_example.yaml"

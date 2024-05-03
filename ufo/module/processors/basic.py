@@ -3,14 +3,13 @@
 
 
 import json
-
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Type
+
+from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ...automator.ui_control.screenshot import PhotographerFacade
 from ...config.config import Config
-
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -24,7 +23,7 @@ class BaseProcessor(ABC):
     """
 
     def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
-                 round_step: int, global_step: int, prev_status: str, app_window:Type) -> None:
+                 round_step: int, global_step: int, prev_status: str, app_window:UIAWrapper) -> None:
         """
         Initialize the processor.
         :param round_num: The index of the processor. The round_num is the total number of rounds in the session.
@@ -110,8 +109,8 @@ class BaseProcessor(ABC):
         self.update_memory()
 
         # Step 9: Create the app agent if necessary.
-        if self.should_create_appagent():
-            self.create_app_agent()
+        if self.should_create_subagent():
+            self.create_sub_agent()
 
         # Step 10: Update the step and status.
         self.update_step_and_status()
@@ -183,7 +182,7 @@ class BaseProcessor(ABC):
         pass
 
     
-    def create_app_agent(self) -> None:
+    def create_sub_agent(self) -> None:
         """
         Create the app agent.
         """
@@ -198,7 +197,7 @@ class BaseProcessor(ABC):
         self.update_status()
 
 
-    def get_active_window(self) -> Type:
+    def get_active_window(self) -> UIAWrapper:
         """
         Get the active window.
         :return: The active window.
@@ -247,7 +246,7 @@ class BaseProcessor(ABC):
         return self._status == "ERROR"
     
 
-    def should_create_appagent(self) -> bool:
+    def should_create_subagent(self) -> bool:
         """
         Check if the app agent should be created.
         :return: The boolean value indicating if the app agent should be created.

@@ -7,7 +7,9 @@ import os
 import time
 import traceback
 from logging import Logger
-from typing import Dict, List, Optional, Type
+from typing import Dict, List, Optional
+
+from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ... import utils
 from ...agent.agent import AppAgent, HostAgent
@@ -26,7 +28,8 @@ BACKEND = configs["CONTROL_BACKEND"]
 class HostAgentProcessor(BaseProcessor):
 
     def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
-                 host_agent: HostAgent, round_step: int, global_step: int, prev_status: str, app_window=None):
+                 host_agent: HostAgent, round_step: int, global_step: int, prev_status: str, app_window=None) -> None:
+        
         super().__init__(round_num, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
         """
@@ -44,7 +47,7 @@ class HostAgentProcessor(BaseProcessor):
         :param app_window: The application window.
         """
 
-        self.HostAgent = host_agent  
+        self.host_agent = host_agent  
 
         self._desktop_screen_url = None
         self._desktop_windows_dict = None
@@ -79,17 +82,17 @@ class HostAgentProcessor(BaseProcessor):
         Get the prompt message.
         """
 
-        request_history = self.HostAgent.get_request_history_memory().to_json()
-        action_history = self.HostAgent.get_global_action_memory().to_json()
+        request_history = self.host_agent.get_request_history_memory().to_json()
+        action_history = self.host_agent.get_global_action_memory().to_json()
 
-        agent_memory = self.HostAgent.memory
+        agent_memory = self.host_agent.memory
 
         if agent_memory.length > 0:
             plan = agent_memory.get_latest_item().to_dict()["Plan"]
         else:
             plan = ""
 
-        self._prompt_message = self.HostAgent.message_constructor([self._desktop_screen_url], request_history, action_history, 
+        self._prompt_message = self.host_agent.message_constructor([self._desktop_screen_url], request_history, action_history, 
                                                                                                   self._desktop_windows_info, plan, self.request)
         
         log = json.dumps({"step": self._step, "prompt": self._prompt_message, "control_items": self._desktop_windows_info, "filted_control_items": self._desktop_windows_info, "status": ""})
@@ -103,7 +106,7 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         try:
-            self._response, self._cost = self.HostAgent.get_response(self._prompt_message, "HOSTAGENT", use_backup_engine=True)
+            self._response, self._cost = self.host_agent.get_response(self._prompt_message, "HOSTAGENT", use_backup_engine=True)
         except Exception as e:
             error_trace = traceback.format_exc()
             log = json.dumps({"step": self._step, "status": str(error_trace), "prompt": self._prompt_message})
@@ -117,14 +120,14 @@ class HostAgentProcessor(BaseProcessor):
         Parse the response.
         """
         try:
-            self._response_json = self.HostAgent.response_to_dict(self._response)
+            self._response_json = self.host_agent.response_to_dict(self._response)
             self.control_label = self._response_json.get("ControlLabel", "")
             self._control_text = self._response_json.get("ControlText", "")
             self.plan = self._response_json.get("Plan", "")
             self._status = self._response_json.get("Status", "")
             self.app_to_open = self._response_json.get("AppsToOpen", None)
             
-            self.HostAgent.print_response(self._response_json)
+            self.host_agent.print_response(self._response_json)
 
             if "FINISH" in self._status.upper() or self._control_text == "":
                 self._status = "FINISH"
@@ -144,7 +147,7 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         if self.app_to_open is not None:
-            new_app_window = self.HostAgent.app_file_manager(self.app_to_open)
+            new_app_window = self.host_agent.app_file_manager(self.app_to_open)
             self._control_text = new_app_window.window_text()
         else:
             # Get the application window
@@ -163,8 +166,6 @@ class HostAgentProcessor(BaseProcessor):
             utils.print_with_color("Window interface {title} not available for the visual element.".format(title=self._control_text), "red")
             self._status = "ERROR"
             return
-
-        self._status = "CONTINUE"
         
         if new_app_window is not self._app_window and self._app_window is not None:
             utils.print_with_color(  
@@ -181,30 +182,30 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         host_agent_step_memory = MemoryItem()
-        additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.HostAgent.get_step(), "Round": self.round_num, "ControlLabel": self._control_text, "Action": "set_focus()", 
-                                "ActionType": "UIControl", "Request": self.request, "Agent": "HostAgent", "AgentName": self.HostAgent.name, "Application": self.app_root, "Cost": self._cost, "Results": ""}
+        additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.host_agent.get_step(), "Round": self.round_num, "ControlLabel": self._control_text, "Action": "set_focus()", 
+                                "ActionType": "UIControl", "Request": self.request, "Agent": "HostAgent", "AgentName": self.host_agent.name, "Application": self.app_root, "Cost": self._cost, "Results": ""}
         
         host_agent_step_memory.set_values_from_dict(self._response_json)
         host_agent_step_memory.set_values_from_dict(additional_memory)
-        self.HostAgent.add_memory(host_agent_step_memory)
+        self.host_agent.add_memory(host_agent_step_memory)
         
         self.log(host_agent_step_memory.to_dict())
         memorized_action = {key: host_agent_step_memory.to_dict().get(key) for key in configs["HISTORY_KEYS"]}
-        self.HostAgent.add_global_action_memory(memorized_action)
+        self.host_agent.add_global_action_memory(memorized_action)
         
 
     def update_status(self) -> None:
         """
         Update the status of the session.
         """
-        self.HostAgent.update_step()
-        self.HostAgent.update_status(self._status)
+        self.host_agent.update_step()
+        self.host_agent.update_status(self._status)
 
         if self._status != "FINISH":
             time.sleep(configs["SLEEP_TIME"])
 
 
-    def should_create_appagent(self) -> bool:
+    def should_create_subagent(self) -> bool:
         """
         Check if the app agent should be created.
         :return: The boolean value indicating if the app agent should be created.
@@ -216,37 +217,46 @@ class HostAgentProcessor(BaseProcessor):
             return False
         
         
-    def create_app_agent(self) -> AppAgent:
+    def create_sub_agent(self) -> AppAgent:
         """
         Create the app agent.
         :return: The app agent.
         """
-        appagent = self.HostAgent.create_appagent("AppAgent/{root}/{process}".format(root=self.app_root, process=self._control_text), self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
+        app_agent = self.host_agent.create_subagent("app", "AppAgent/{root}/{process}".format(root=self.app_root, process=self._control_text), self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
                                      configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
         
         # Create the COM receiver for the app agent.
         if configs.get("USE_APIS", False):
-            appagent.Puppeteer.receiver_manager.create_com_receiver(self.app_root, self._control_text)
+            app_agent.Puppeteer.receiver_manager.create_com_receiver(self.app_root, self._control_text)
             
+        self.app_agent_context_provision(app_agent)
+
+        return app_agent
+    
+
+    def app_agent_context_provision(self, app_agent: AppAgent) -> None:
+        """
+        Provision the context for the app agent.
+        :param app_agent: The app agent to provision the context.
+        """
+
         # Load the retrievers for APP_AGENT.
         if configs["RAG_OFFLINE_DOCS"]:
             utils.print_with_color("Loading offline document indexer for {app}...".format(app=self._control_text), "magenta")
-            appagent.build_offline_docs_retriever()
+            app_agent.build_offline_docs_retriever()
         if configs["RAG_ONLINE_SEARCH"]:
             utils.print_with_color("Creating a Bing search indexer...", "magenta")
-            appagent.build_online_search_retriever(self.request, configs["RAG_ONLINE_SEARCH_TOPK"])
+            app_agent.build_online_search_retriever(self.request, configs["RAG_ONLINE_SEARCH_TOPK"])
         if configs["RAG_EXPERIENCE"]:
             utils.print_with_color("Creating an experience indexer...", "magenta")
             experience_path = configs["EXPERIENCE_SAVED_PATH"]
             db_path = os.path.join(experience_path, "experience_db")
-            appagent.build_experience_retriever(db_path)
+            app_agent.build_experience_retriever(db_path)
         if configs["RAG_DEMONSTRATION"]:
             utils.print_with_color("Creating an demonstration indexer...", "magenta")
             demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
             db_path = os.path.join(demonstration_path, "demonstration_db")
-            appagent.build_human_demonstration_retriever(db_path)
-
-        return appagent
+            app_agent.build_human_demonstration_retriever(db_path)
     
 
 
@@ -254,7 +264,8 @@ class HostAgentProcessor(BaseProcessor):
 class AppAgentProcessor(BaseProcessor):
     
         def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, global_step: int, 
-                     process_name: str, app_window: Type, control_reannotate: Optional[list], prev_status: str):
+                     process_name: str, app_window: UIAWrapper, control_reannotate: Optional[list], prev_status: str) -> None:
+            
             super().__init__(round_num, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
             """
@@ -274,7 +285,7 @@ class AppAgentProcessor(BaseProcessor):
             :param prev_status: The previous status of the session.
             """
 
-            self.AppAgent = app_agent
+            self.app_agent = app_agent
             self.process_name = process_name
 
             self._annotation_dict = None
@@ -349,13 +360,13 @@ class AppAgentProcessor(BaseProcessor):
             """
 
             if configs["RAG_EXPERIENCE"]:
-                experience_examples, experience_tips = self.AppAgent.rag_experience_retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"])
+                experience_examples, experience_tips = self.app_agent.rag_experience_retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"])
             else:
                 experience_examples = []
                 experience_tips = []
                 
             if configs["RAG_DEMONSTRATION"]:
-                demonstration_examples, demonstration_tips = self.AppAgent.rag_demonstration_retrieve(self.request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"])
+                demonstration_examples, demonstration_tips = self.app_agent.rag_demonstration_retrieve(self.request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"])
             else:
                 demonstration_examples = []
                 demonstration_tips = []
@@ -363,15 +374,15 @@ class AppAgentProcessor(BaseProcessor):
             examples = experience_examples + demonstration_examples
             tips = experience_tips + demonstration_tips
 
-            external_knowledge_prompt = self.AppAgent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
+            external_knowledge_prompt = self.app_agent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
 
 
-            HostAgent = self.AppAgent.get_host()
+            host_agent = self.app_agent.get_host()
 
-            action_history = HostAgent.get_global_action_memory().to_json()
-            request_history = HostAgent.get_request_history_memory().to_json()
+            action_history = host_agent.get_global_action_memory().to_json()
+            request_history = host_agent.get_request_history_memory().to_json()
 
-            self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
+            self._prompt_message = self.app_agent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
                                                                                 self.filtered_control_info, self.prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
             log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": self._control_info, 
@@ -384,7 +395,7 @@ class AppAgentProcessor(BaseProcessor):
             Get the response from the LLM.
             """
             try:
-                self._response, self._cost = self.AppAgent.get_response(self._prompt_message, "APPAGENT", use_backup_engine=True)
+                self._response, self._cost = self.app_agent.get_response(self._prompt_message, "APPAGENT", use_backup_engine=True)
             except Exception as e:
                 error_trace = traceback.format_exc()
                 log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "status": str(error_trace)})
@@ -400,7 +411,7 @@ class AppAgentProcessor(BaseProcessor):
             Parse the response.
             """
             try:
-                self._response_json = self.AppAgent.response_to_dict(self._response)
+                self._response_json = self.app_agent.response_to_dict(self._response)
 
                 self._control_label = self._response_json.get("ControlLabel", "")
                 self._control_text = self._response_json.get("ControlText", "")
@@ -408,7 +419,7 @@ class AppAgentProcessor(BaseProcessor):
                 self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
                 self._status = self._response_json.get("Status", "")
 
-                self.AppAgent.print_response(self._response_json)
+                self.app_agent.print_response(self._response_json)
 
             except Exception:
                 error_trace = traceback.format_exc()
@@ -425,14 +436,14 @@ class AppAgentProcessor(BaseProcessor):
             """
             try:
                 control_selected = self._annotation_dict.get(self._control_label, "")
-                self.AppAgent.Puppeteer.receiver_manager.create_ui_control_receiver(control_selected, self._app_window)
+                self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(control_selected, self._app_window)
 
                 # Save the screenshot of the selected control.
                 control_screenshot_save_path = self.log_path + f"action_step{self.global_step}_selected_controls.png"
                 self.photographer.capture_app_window_screenshot_with_rectangle(self._app_window, sub_control_list=[control_selected], save_path=control_screenshot_save_path)
 
                 # Compose the function call and the arguments string.
-                self._action = self.AppAgent.Puppeteer.get_command_string(self._operation, self._args)
+                self._action = self.app_agent.Puppeteer.get_command_string(self._operation, self._args)
 
 
                 # Whether to proceed with the action.
@@ -443,7 +454,7 @@ class AppAgentProcessor(BaseProcessor):
                     should_proceed = self._safe_guard_judgement(self._action, self._control_text)
                     
                 if should_proceed:
-                    self._results = self.AppAgent.Puppeteer.execute_command(self._operation, self._args)
+                    self._results = self.app_agent.Puppeteer.execute_command(self._operation, self._args)
                     if not utils.is_json_serializable(self._results):
                         self._results = ""
                 else:
@@ -454,7 +465,7 @@ class AppAgentProcessor(BaseProcessor):
 
                 if self._status.upper() == "SCREENSHOT":
                     utils.print_with_color("Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.", "magenta")
-                    self._control_reannotate = self.AppAgent.Puppeteer.execute_command("annotation", self._args, self._annotation_dict)
+                    self._control_reannotate = self.app_agent.Puppeteer.execute_command("annotation", self._args, self._annotation_dict)
                     if self._control_reannotate is None or len(self._control_reannotate) == 0:
                         self._status = "CONTINUE"
                 else:
@@ -478,19 +489,19 @@ class AppAgentProcessor(BaseProcessor):
             app_agent_step_memory = MemoryItem()
 
             app_root = control.get_application_name(self._app_window)
-            HostAgent = self.AppAgent.get_host()
+            host_agent = self.app_agent.get_host()
             
             
-            additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.AppAgent.get_step(), "Round": self.round_num, "Action": self._action, 
-                                 "ActionType": self.AppAgent.Puppeteer.get_command_types(self._operation), "Request": self.request, "Agent": "ActAgent", "AgentName": self.AppAgent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
+            additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.app_agent.get_step(), "Round": self.round_num, "Action": self._action, 
+                                 "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation), "Request": self.request, "Agent": "ActAgent", "AgentName": self.app_agent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
             app_agent_step_memory.set_values_from_dict(self._response_json)
             app_agent_step_memory.set_values_from_dict(additional_memory)
 
-            self.AppAgent.add_memory(app_agent_step_memory)
+            self.app_agent.add_memory(app_agent_step_memory)
 
             self.log(app_agent_step_memory.to_dict())
             memorized_action = {key: app_agent_step_memory.to_dict().get(key) for key in configs["HISTORY_KEYS"]}
-            HostAgent.add_global_action_memory(memorized_action)
+            host_agent.add_global_action_memory(memorized_action)
 
 
         def update_status(self) -> None:
@@ -498,8 +509,8 @@ class AppAgentProcessor(BaseProcessor):
             Update the status of the session.
             """
 
-            self.AppAgent.update_step()
-            self.AppAgent.update_status(self._status)
+            self.app_agent.update_step()
+            self.app_agent.update_status(self._status)
 
             if self._status != "FINISH":
                 time.sleep(configs["SLEEP_TIME"])
@@ -542,7 +553,7 @@ class AppAgentProcessor(BaseProcessor):
             Returns:
                 str: The previous plan, or an empty string if the agent's memory is empty.
             """
-            agent_memory = self.AppAgent.memory
+            agent_memory = self.app_agent.memory
 
             if agent_memory.length > 0:
                 prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
@@ -552,7 +563,7 @@ class AppAgentProcessor(BaseProcessor):
             return prev_plan
         
         
-        def get_filtered_annotation_dict(self, annotation_dict: dict) -> Dict[str, Type]:
+        def get_filtered_annotation_dict(self, annotation_dict: dict) -> Dict[str, UIAWrapper]:
             """
             Get the filtered annotation dictionary.
             :param annotation_dict: The annotation dictionary.
