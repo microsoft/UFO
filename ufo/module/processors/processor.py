@@ -163,8 +163,6 @@ class HostAgentProcessor(BaseProcessor):
             utils.print_with_color("Window interface {title} not available for the visual element.".format(title=self._control_text), "red")
             self._status = "ERROR"
             return
-
-        self._status = "CONTINUE"
         
         if new_app_window is not self._app_window and self._app_window is not None:
             utils.print_with_color(  

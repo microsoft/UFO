@@ -3,8 +3,9 @@
 
 
 from logging import Logger
+from typing import Optional
 
-from ..agent.agent import HostAgent
+from ..agent.agent import HostAgent, FollowerAgent
 from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from .processors import processor, follower_processor   
@@ -109,7 +110,8 @@ class Round(BaseRound):
 
 class FollowerRound(Round):
 
-    def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, HostAgent: HostAgent, request: str) -> None:
+    def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, 
+                 HostAgent: HostAgent, AppAgent: Optional[FollowerAgent], app_window: Optional[object], application: Optional[str], request: str) -> None:
         """
         Initialize a follower round.
         :param task: The name of current task.
@@ -117,10 +119,18 @@ class FollowerRound(Round):
         :param request_logger: The logger for the request string.
         :param photographer: The photographer facade to process the screenshots.
         :param HostAgent: The host agent.
+        :param AppAgent: The app agent.
+        :param app_window: The window of the application.
+        :param application: The name of the application.
         :param request: The user request at the current round.
         """
 
         super().__init__(task, logger, request_logger, photographer, HostAgent, request)
+
+        self.AppAgent = AppAgent
+        self.app_window = app_window
+        self.application = application
+
 
 
     def process_application_selection(self) -> None:
@@ -160,3 +170,6 @@ class FollowerRound(Round):
         self.update_cost(app_agent_processor.get_process_cost())
 
         self.control_reannotate = app_agent_processor.get_control_reannotate()
+
+
+    

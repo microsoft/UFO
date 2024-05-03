@@ -6,21 +6,17 @@ import os
 from typing import List
 
 from .. import utils
-from ..agent.agent import AgentFactory
 from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from . import interactor, round
 from .basic import BaseSession
-from .state import StatusToStateMapper
 
 configs = Config.get_instance().config_data
-BACKEND = configs["CONTROL_BACKEND"]
-
 
 
 class PlanReader:
     """
-    The reader for the plan file.
+    The reader for a plan file.
     """
 
     def __init__(self, plan_file: str):
@@ -70,6 +66,19 @@ class PlanReader:
         object_name = self.get_operation_object()
 
         request = f"{task} in {object_name}"
+
+        return request
+    
+
+    def get_host_agent_request(self) -> str:
+        """
+        Get the request for the host agent.
+        :return: The request for the host agent.
+        """
+
+        object_name = self.get_operation_object()
+
+        request = f"Open and select the application of {object_name}, and output the FINISH status immediately."
 
         return request
     
@@ -173,47 +182,16 @@ class Session(BaseSession):
         :param task: The name of current task.
         """
         
-        # Task-related properties  
-        self.task = task  
-        self._step = 0  
-        self._round = 0 
-
-        # Logging-related properties  
-        self.log_path = f"logs/{self.task}/"  
-        utils.create_folder(self.log_path)  
-        self.logger = self.initialize_logger(self.log_path, "response.log")  
-        self.request_logger = self.initialize_logger(self.log_path, "request.log")  
-  
-        # Agent-related properties  
-        self.HostAgent = AgentFactory.create_agent("host", "HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"],  
-                                                   configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], configs["ALLOW_OPENAPP"])  
-        self.AppAgent = None  
-  
-        # Photographer-related properties  
-        self.photographer = PhotographerFacade()  
-  
-        # Status and state-related properties  
-        self._status = "APP_SELECTION"  
-        self._state = StatusToStateMapper().get_appropriate_state(self._status)  
-  
-        # Application-related properties  
-        self.application = ""  
-        self.app_root = ""  
-        self.app_window = None  
-  
-        # Cost and reannotate-related properties  
-        self._cost = 0.0  
-        self.control_reannotate = []  
+        super(Session, self).__init__(task)
   
         # Initial setup and welcome message  
         utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
-
-        if isinstance(self, Session):
-            self.request = interactor.first_request()
+            
+        self.request = interactor.first_request()
   
         # Round-related properties  
         self.round_list = []  
-        self._current_round = self.create_round() 
+        self._current_round = self.create_round()
 
 
     def create_round(self) -> round.Round:
@@ -241,9 +219,11 @@ class Session(BaseSession):
         current_round.process_application_selection()
 
         self._status = current_round.get_status()
+
         self._step += 1
 
         self.app_window = current_round.get_application_window()
+        self.application = self.app_window.window_text()
         self.AppAgent = self.HostAgent.get_active_appagent()
 
 
@@ -292,10 +272,17 @@ class FollowerSession(Session):
         :param plan_dir: The path of the plan file to follow.
         """
 
-        super(FollowerSession, self).__init__(task)
+        super(Session, self).__init__(task)
 
         self.plan_reader = PlanReader(plan_file)
-        self.request = self.plan_reader.get_initial_request()
+        self.request = self.plan_reader.get_host_agent_request()
+        utils.print_with_color("Complete the following request:", "yellow")
+        utils.print_with_color(self.plan_reader.get_initial_request(), "cyan")
+
+        # Round-related properties  
+        self.round_list = []  
+        self._current_round = self.create_round()
+        
 
 
     def create_round(self) -> round.Round:
@@ -303,7 +290,8 @@ class FollowerSession(Session):
         Create a new round.
         """
 
-        new_round = round.Round(task=self.task, logger=self.logger, request_logger=self.request_logger, photographer=PhotographerFacade(), HostAgent=self.HostAgent, request=self.request)
+        new_round = round.FollowerRound(task=self.task, logger=self.logger, request_logger=self.request_logger, photographer=PhotographerFacade(), 
+                                        HostAgent=self.HostAgent, AppAgent=self.AppAgent, app_window=self.app_window, application=self.application, request=self.request)
         new_round.set_index(self.get_round_num())
         new_round.set_global_step(self.get_step())
 
@@ -326,13 +314,15 @@ class FollowerSession(Session):
             self.AppAgent.clear_memory()
 
         self._round += 1
-
         
         if self.plan_reader.task_finished():
             self._status = "COMPLETE"
         else:
             self.request = self.plan_reader.next_step()
+            utils.print_with_color("Starting round {round} for the subtask:".format(round=self._round), "yellow")
+            utils.print_with_color(self.request, "cyan")
             self._current_round = self.create_round()
+            self._current_round.set_application_window(self.app_window)
             self._status = "CONTINUE"
         
     

@@ -39,10 +39,10 @@ class AgentFactory:
 
 class AppAgent(BasicAgent):
     """
-    The HostAgent class the manager of AppAgents.
+    The AppAgent class that manages the interaction with the application.
     """
 
-    def __init__(self, name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> None:
+    def __init__(self, name: str, process_name: str, app_root_name: str, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, skip_prompter:bool=False) -> None:
         """
         Initialize the AppAgent.
         :name: The name of the agent.
@@ -52,7 +52,8 @@ class AppAgent(BasicAgent):
         :param api_prompt: The API prompt file path.
         """
         super().__init__(name=name)
-        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, app_root_name)
+        if not skip_prompter:
+            self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, app_root_name)
         self._process_name = process_name
         self._app_root_name = app_root_name
         self.offline_doc_retriever = None
@@ -100,7 +101,6 @@ class AppAgent(BasicAgent):
         return appagent_prompt_message
     
 
-    
 
     def print_response(self, response_dict: Dict) -> None:
         """
@@ -111,7 +111,7 @@ class AppAgent(BasicAgent):
         control_text = response_dict.get("ControlText")
         control_label = response_dict.get("ControlLabel")
         if not control_text:
-            control_text = "[The required application needs to be opened.]"
+            control_text = "[No control selected.]"
         observation = response_dict.get("Observation")
         thought = response_dict.get("Thought")
         plan = response_dict.get("Plan")
@@ -388,6 +388,8 @@ class HostAgent(BasicAgent):
         """
         
         application = response_dict.get("ControlText")
+        if not application:
+            application = "[The required application needs to be opened.]"
         observation = response_dict.get("Observation")
         thought = response_dict.get("Thought")
         plan = response_dict.get("Plan")
@@ -454,20 +456,12 @@ class FollowerAgent(AppAgent):
         :agent_type: The type of the agent.
         :is_visual: The flag indicating whether the agent is visual or not.
         """
-        super().__init__(name=name)
-        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, app_info_prompt)
-        self._process_name = process_name
-        self._app_root_name = app_root_name
-        self.offline_doc_retriever = None
-        self.online_doc_retriever = None
-        self.experience_retriever = None
-        self.human_demonstration_retriever = None
-        self.Puppeteer = self.create_puppteer_interface()
-        self.host = None
+        super().__init__(name=name, process_name=process_name, app_root_name=app_root_name, is_visual=is_visual,
+                          main_prompt=main_prompt, example_prompt=example_prompt, api_prompt=api_prompt, skip_prompter=True)
+        self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt, api_prompt, app_info_prompt, app_root_name)
 
 
-
-    def get_prompter(self, is_visual, main_prompt, example_prompt, api_prompt, app_info_prompt) -> FollowerAgentPrompter:
+    def get_prompter(self, is_visual: str, main_prompt: str, example_prompt: str, api_prompt: str, app_info_prompt: str, app_root_name: str="") -> FollowerAgentPrompter:
         """
         Get the prompter for the follower agent.
         :param is_visual: The flag indicating whether the agent is visual or not.
@@ -475,9 +469,10 @@ class FollowerAgent(AppAgent):
         :param example_prompt: The example prompt file path.
         :param api_prompt: The API prompt file path.
         :param app_info_prompt: The app information prompt file path.
+        :param app_root_name: The root name of the app.
         :return: The prompter instance.
         """
-        return FollowerAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, app_info_prompt)
+        return FollowerAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, app_info_prompt, app_root_name)
     
 
     def message_constructor(self, dynamic_examples: str, dynamic_tips: str, dynamic_knowledge: str, image_list: List,
@@ -524,32 +519,3 @@ class FollowerAgent(AppAgent):
         followagent_prompt_message = self.prompter.prompt_construction(followagent_prompt_system_message, followagent_prompt_user_message)
 
         return followagent_prompt_message
-    
-
-
-    def print_response(self, response_dict: Dict):
-        """
-        Print the response.
-        :param response: The response.
-        """
-        
-        control_text = response_dict.get("controlText")
-        control_label = response_dict.get("controlLabel")
-        observation = response_dict.get("observation")
-        thought = response_dict.get("thought")
-        plan = response_dict.get("plan")
-        status = response_dict.get("status")
-        function_call = response_dict.get("function")
-        review = response_dict.get("review")
-
-        args = utils.revise_line_breaks(response_dict.get("args"))
-
-        action = utils.generate_function_call(function_call, args)
-
-        utils.print_with_color("Observations👀: {observation}".format(observation=observation), "cyan")
-        utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
-        utils.print_with_color("Selected item🕹️: {control_text}, Label: {label}".format(control_text=control_text, label=control_label), "yellow")
-        utils.print_with_color("Action applied⚒️: {action}".format(action=action), "blue")
-        utils.print_with_color("Status📊: {status}".format(status=status), "blue")
-        utils.print_with_color("Review: {review}".format(review=review), "blue")
-        utils.print_with_color("Next Plan📚: {plan}".format(plan=str(plan).replace("\\n", "\n")), "cyan")

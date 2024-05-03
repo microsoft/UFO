@@ -13,8 +13,6 @@ import json
 
 
 configs = Config.get_instance().config_data
-BACKEND = configs["CONTROL_BACKEND"]
-
 
 
 
@@ -28,8 +26,10 @@ class FollowerHostAgentProcessor(HostAgentProcessor):
 
         app_info_prompt = configs.get("APP_INFO_PROMPT", None)
 
-        appagent = self.HostAgent.create_subagent("follower", "FollowerAgent/{root}/{process}".format(root=self.app_root, process=self._control_text), self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
-                                     configs["FOLLOWERAHENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], app_info_prompt=app_info_prompt)
+        agent_name = "FollowerAgent/{root}/{process}".format(root=self.app_root, process=self._control_text)
+
+        appagent = self.HostAgent.create_subagent("follower", agent_name, self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
+                                     configs["FOLLOWERAHENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], app_info_prompt)
         
         # Create the COM receiver for the app agent.
         if configs.get("USE_APIS", False):
@@ -71,8 +71,11 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             action_history = HostAgent.get_global_action_memory().to_json()
             request_history = HostAgent.get_request_history_memory().to_json()
 
+            current_state = {}
+            state_diff = {}
+
             self._prompt_message = self.AppAgent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
-                                                                                self.filtered_control_info, self.prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
+                                                                                self.filtered_control_info, self.prev_plan, self.request, current_state, state_diff, configs["INCLUDE_LAST_SCREENSHOT"])
             
             log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": self._control_info, 
                               "filted_control_items": self.filtered_control_info, "status": ""})
