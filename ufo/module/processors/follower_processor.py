@@ -7,17 +7,15 @@ from ...agent.agent import FollowerAgent
 import json
 
 
-
 configs = Config.get_instance().config_data
-
 
 
 class FollowerHostAgentProcessor(HostAgentProcessor):
 
     def create_sub_agent(self) -> FollowerAgent:
         """
-        Create the app agent.
-        :return: The app agent.
+        Create a sub agent for the host agent.
+        :return: The created sub agent.
         """
 
         app_info_prompt = configs.get("APP_INFO_PROMPT", None)
@@ -38,6 +36,9 @@ class FollowerHostAgentProcessor(HostAgentProcessor):
 
 
 class FollowerAppAgentProcessor(AppAgentProcessor):
+    """
+    The processor for the AppAgent in the follower mode.
+    """
     
     def get_prompt_message(self) -> None:
             """
@@ -62,10 +63,10 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             external_knowledge_prompt = self.app_agent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
 
 
-            HostAgent = self.app_agent.get_host()
+            host_agent = self.app_agent.get_host()
 
-            action_history = HostAgent.get_global_action_memory().to_json()
-            request_history = HostAgent.get_request_history_memory().to_json()
+            action_history = host_agent.get_global_action_memory().to_json()
+            request_history = host_agent.get_request_history_memory().to_json()
 
             current_state = {}
             state_diff = {}

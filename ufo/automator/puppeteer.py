@@ -2,11 +2,13 @@
 # Licensed under the MIT License.
 
 from collections import deque
-from typing import Dict, List
+from typing import Dict, List, Optional
+
+from pywinauto.controls.uiawrapper import UIAWrapper
 
 from .app_apis.basic import WinCOMReceiverBasic
 from .app_apis.factory import COMReceiverFactory
-from .basic import ReceiverBasic, ReceiverFactory
+from .basic import CommandBasic, ReceiverBasic, ReceiverFactory
 from .ui_control.controller import ControlReceiver, UIControlReceiverFactory
 
 
@@ -30,7 +32,7 @@ class AppPuppeteer():
 
         
 
-    def create_command(self, command_name: str, params: Dict, *args, **kwargs) -> object:
+    def create_command(self, command_name: str, params: Dict, *args, **kwargs) -> Optional[CommandBasic]:
         """
         Create the command.
         :param command_name: The command name.
@@ -152,7 +154,7 @@ class ReceiverManager:
         self.receiver_factories[factory_name] = factory 
 
   
-    def create_ui_control_receiver(self, control: object, application: object) -> ControlReceiver:
+    def create_ui_control_receiver(self, control: UIAWrapper, application: UIAWrapper) -> ControlReceiver:
         """
         Build the UI controller.
         :param control: The control element.

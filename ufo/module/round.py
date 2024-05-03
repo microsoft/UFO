@@ -111,7 +111,7 @@ class Round(BaseRound):
 class FollowerRound(Round):
 
     def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, 
-                 host_agent: HostAgent, app_agent: Optional[FollowerAgent], app_window: Optional[object], application: Optional[str], request: str) -> None:
+                 host_agent: HostAgent, app_agent: Optional[FollowerAgent], app_window: Optional[UIAWrapper], application: Optional[str], request: str) -> None:
         """
         Initialize a follower round.
         :param task: The name of current task.

@@ -2,8 +2,10 @@
 # Licensed under the MIT License.
 
 
+from __future__ import annotations
+
 import time
-from typing import Dict, List, Type
+from typing import Dict, List
 
 from .. import utils
 from ..automator import puppeteer
@@ -209,7 +211,7 @@ class AppAgent(BasicAgent):
         return puppeteer.AppPuppeteer(self._process_name, self._app_root_name)
     
 
-    def set_host(self, host: Type) -> None:
+    def set_host(self, host: HostAgent) -> None:
         """
         Set the host agent.
         :param host: The host agent.
@@ -217,7 +219,7 @@ class AppAgent(BasicAgent):
         self.host = host
 
 
-    def get_host(self) -> Type:
+    def get_host(self) -> HostAgent:
         """
         Get the host agent that manages the AppAgent.
         :return: The host agent.
@@ -324,7 +326,7 @@ class HostAgent(BasicAgent):
         return app_agent
     
 
-    def get_active_appagent(self) -> Type:
+    def get_active_appagent(self) -> AppAgent:
         """
         Get the active app agent.
         :return: The active app agent.

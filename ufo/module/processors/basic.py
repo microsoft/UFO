@@ -3,14 +3,13 @@
 
 
 import json
-
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Type
+
+from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ...automator.ui_control.screenshot import PhotographerFacade
 from ...config.config import Config
-
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -24,7 +23,7 @@ class BaseProcessor(ABC):
     """
 
     def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
-                 round_step: int, global_step: int, prev_status: str, app_window:Type) -> None:
+                 round_step: int, global_step: int, prev_status: str, app_window:UIAWrapper) -> None:
         """
         Initialize the processor.
         :param round_num: The index of the processor. The round_num is the total number of rounds in the session.
@@ -198,7 +197,7 @@ class BaseProcessor(ABC):
         self.update_status()
 
 
-    def get_active_window(self) -> Type:
+    def get_active_window(self) -> UIAWrapper:
         """
         Get the active window.
         :return: The active window.

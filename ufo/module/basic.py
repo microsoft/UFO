@@ -19,6 +19,7 @@ import os
 from abc import ABC, abstractmethod
 from logging import Logger
 
+from pywinauto.controls.uiawrapper import UIAWrapper
 
 from .. import utils
 from ..agent.agent import AgentFactory, HostAgent
@@ -156,14 +157,14 @@ class BaseRound(ABC):
         self.global_step = global_step
 
 
-    def get_application_window(self) -> object:
+    def get_application_window(self) -> UIAWrapper:
         """
         Get the application of the session.
         return: The application of the session.
         """
         return self.app_window
     
-    def set_application_window(self, app_window: object) -> None:
+    def set_application_window(self, app_window: UIAWrapper) -> None:
         """
         Set the application window.
         :param app_window: The application window.
@@ -366,7 +367,7 @@ class BaseSession(ABC):
     
     
     
-    def get_application_window(self) -> object:
+    def get_application_window(self) -> UIAWrapper:
         """
         Get the application of the session.
         return: The application of the session.
@@ -374,7 +375,7 @@ class BaseSession(ABC):
         return self.app_window
     
 
-    def set_application_window(self, app_window: object) -> None:
+    def set_application_window(self, app_window: UIAWrapper) -> None:
         """
         Set the application window.
         :param app_window: The application window.

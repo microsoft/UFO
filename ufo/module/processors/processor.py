@@ -7,7 +7,9 @@ import os
 import time
 import traceback
 from logging import Logger
-from typing import Dict, List, Optional, Type
+from typing import Dict, List, Optional
+
+from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ... import utils
 from ...agent.agent import AppAgent, HostAgent
@@ -261,7 +263,7 @@ class HostAgentProcessor(BaseProcessor):
 class AppAgentProcessor(BaseProcessor):
     
         def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, global_step: int, 
-                     process_name: str, app_window: Type, control_reannotate: Optional[list], prev_status: str):
+                     process_name: str, app_window: UIAWrapper, control_reannotate: Optional[list], prev_status: str):
             super().__init__(round_num, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
             """
@@ -559,7 +561,7 @@ class AppAgentProcessor(BaseProcessor):
             return prev_plan
         
         
-        def get_filtered_annotation_dict(self, annotation_dict: dict) -> Dict[str, Type]:
+        def get_filtered_annotation_dict(self, annotation_dict: dict) -> Dict[str, UIAWrapper]:
             """
             Get the filtered annotation dictionary.
             :param annotation_dict: The annotation dictionary.

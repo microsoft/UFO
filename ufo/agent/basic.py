@@ -5,7 +5,7 @@
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Dict, List, Type
+from typing import Dict, List, Type, Optional
 
 from .. import utils
 from ..llm import llm_call
@@ -68,7 +68,7 @@ class MemoryItem:
             self.set_value(key, value)
 
 
-    def get_value(self, key: str) -> object:
+    def get_value(self, key: str) -> Optional[str]:
         """
         Get the value of the field.
         :param key: The key of the field.

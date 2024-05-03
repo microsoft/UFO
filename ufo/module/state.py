@@ -8,13 +8,14 @@ The state classes are used to handle the session based on the status of the sess
 """
 
 
+from __future__ import annotations
+
 from abc import ABC
 from typing import Dict, Type
 
 from ..config.config import Config
 from ..utils import print_with_color
 from .interactor import experience_asker
-
 
 configs = Config.get_instance().config_data
 
@@ -25,7 +26,7 @@ class StatusToStateMapper(ABC):
     """  
   
     @staticmethod  
-    def create_state_mapping() -> Dict[str, Type[object]]:  
+    def create_state_mapping() -> Dict[str, Type[SessionState]]:  
         return {  
             "FINISH": RoundFinishState,  
             "ERROR": ErrorState,  
@@ -39,7 +40,7 @@ class StatusToStateMapper(ABC):
     def __init__(self):  
         self.STATE_MAPPING = self.create_state_mapping()  
   
-    def get_appropriate_state(self, status: str) -> Type[object]:  
+    def get_appropriate_state(self, status: str) -> Type[SessionState]:  
         """  
         Get the appropriate state based on the status.  
         :param status: The status string.  
