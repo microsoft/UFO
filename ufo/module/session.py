@@ -95,6 +95,7 @@ class Session(BaseSession):
         self._step += 1
 
         self.app_window = current_round.get_application_window()
+        self.application = self.app_window.window_text()
 
 
     def round_appagent_execution(self) -> None:

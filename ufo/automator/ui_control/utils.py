@@ -72,6 +72,10 @@ def find_uia_control_elements_in_descendants(window, control_type_list:List[str]
     :param depth: The depth of the descendants to find.
     :return: The control elements found.
     """
+
+    if window is None:
+        return []
+
     control_elements = []
     if len(control_type_list) == 0:
         control_elements += window.descendants()
@@ -107,6 +111,10 @@ def find_win32_control_elements_in_descendants(window, control_type_list:List[st
     :param depth: The depth of the descendants to find.
     :return: The control elements found.
     """
+
+    if window is None:
+        return []
+    
     control_elements = []
     if len(class_name_list) == 0:
         control_elements += window.descendants()
