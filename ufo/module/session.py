@@ -24,7 +24,8 @@ class PlanReader:
         :param plan_file: The path of the plan file.
         """
 
-        self.plan = json.load(open(plan_file, "r"))
+        with open(plan_file, "r") as f:
+            self.plan = json.load(f)
         self.remaining_steps = self.get_steps()
 
         
@@ -120,12 +121,14 @@ class SessionFactory:
         """
         if mode == "normal":
             return [Session(task)]
-        if mode == "follower":
+        elif mode == "follower":
             # If the plan is a folder, create a follower session for each plan file in the folder.
             if self.is_folder(plan):
                 return self.create_follower_session_in_batch(task, plan)
             else:
                 return [FollowerSession(task, plan)]
+        else:
+            raise ValueError(f"The {mode} mode is not supported.")
         
 
     def create_follower_session_in_batch(self, task: str, plan: str) -> List[BaseSession]:
@@ -137,7 +140,10 @@ class SessionFactory:
         """
         plan_files = self.get_plan_files(plan)
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
-        return [FollowerSession(f"{task}/{file_name}", plan_file) for file_name, plan_file in zip(file_names, plan_files)]
+        sessions = [FollowerSession(f"{task}/{file_name}", plan_file) 
+                    for file_name, plan_file in zip(file_names, plan_files)]
+
+        return sessions
     
     
     @staticmethod
