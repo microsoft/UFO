@@ -17,8 +17,8 @@ from ...agent.basic import MemoryItem
 from ...automator.ui_control.control_filter import ControlFilterFactory
 from ...config.config import Config
 from .. import interactor
-from .basic import BaseProcessor
 from ..state import Status
+from .basic import BaseProcessor
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]

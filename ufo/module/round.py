@@ -74,8 +74,6 @@ class Round(BaseRound):
         
 
 
-
-
 class FollowerRound(Round):
 
     def __init__(self, task: str, logger: Logger, request_logger: Logger, 

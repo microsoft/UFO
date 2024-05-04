@@ -36,7 +36,7 @@ class UFOClient:
 
 class UFOClientManager:
 
-    def __init__(self, session_list: List[UFOClient]) -> None:
+    def __init__(self, session_list: List[BaseSession]) -> None:
         """
         Initialize a batch UFO client.
         """
