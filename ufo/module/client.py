@@ -23,10 +23,10 @@ class UFOClient:
         Run the UFO client.
         """
 
-        while not isinstance(self.session.get_state(), (SessionFinishState, ErrorState, MaxStepReachedState, NoneState)):
-
+        while not self.session.is_finish():
             self.session.handle()
 
+        # If the session is finished normally, handle the last state with additional logic.
         if isinstance(self.session.get_state(), SessionFinishState):
             self.session.handle()
     

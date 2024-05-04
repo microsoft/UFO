@@ -25,7 +25,8 @@ from .. import utils
 from ..agent.agent import AgentFactory, HostAgent
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
-from .state import StatusToStateMapper
+from .state import (ErrorState, MaxStepReachedState, NoneState,
+                    SessionFinishState, StatusToStateMapper)
 
 configs = Config.get_instance().config_data
 
@@ -74,7 +75,7 @@ class BaseRound(ABC):
   
         # round_num and global step-related properties  
         self.round_num = None  
-        self.global_step = None
+        self.session_step = None
 
 
     def process_application_selection(self) -> None:
@@ -96,8 +97,8 @@ class BaseRound(ABC):
 
     def get_status(self) -> str:
         """
-        Get the status of the session.
-        return: The status of the session.
+        Get the status of the round.
+        return: The status of the round.
         """
         return self._status
 
@@ -105,16 +106,16 @@ class BaseRound(ABC):
 
     def get_step(self) -> int:
         """
-        Get the step of the session.
-        return: The step of the session.
+        Get the local step of the round.
+        return: The step of the round.
         """
         return self._step
 
 
     def get_cost(self) -> float:
         """
-        Get the cost of the session.
-        return: The cost of the session.
+        Get the cost of the round.
+        return: The cost of the round.
         """
         return self._cost
 
@@ -132,8 +133,8 @@ class BaseRound(ABC):
 
     def get_results(self) -> str:
         """
-        Get the results of the session.
-        return: The results of the session.
+        Get the results of the round.
+        return: The results of the round.
         """
 
         action_history = self.host_agent.get_global_action_memory().content
@@ -147,16 +148,16 @@ class BaseRound(ABC):
 
     def set_index(self, index: int) -> None:
         """
-        Set the round index of the session.
+        Set the round index of the round.
         """
         self.round_num = index
 
 
-    def set_global_step(self, global_step: int) -> None:
+    def set_session_step(self, session_step: int) -> None:
         """
-        Set the global step of the session.
+        Set the global step of the round.
         """
-        self.global_step = global_step
+        self.session_step = session_step
 
 
     def get_application_window(self) -> UIAWrapper:
@@ -177,7 +178,7 @@ class BaseRound(ABC):
 
     def update_cost(self, cost: float) -> None:
         """
-        Update the cost of the session.
+        Update the cost of the round.
         """
         if isinstance(cost, float) and isinstance(self._cost, float):
             self._cost += cost
@@ -291,7 +292,7 @@ class BaseSession(ABC):
         pass
     
     
-    def get_current_round(self):
+    def get_current_round(self) -> BaseRound:
         """
         Get the current round.
         return: The current round.
@@ -391,6 +392,16 @@ class BaseSession(ABC):
         else:
             self._cost = None
 
+
+
+    def is_finish(self) -> bool:
+        """
+        Check if the session is ended.
+        return: True if the session is ended, otherwise False.
+        """
+
+        # Finish the session if the state is SessionFinishState, ErrorState, MaxStepReachedState, or NoneState.
+        return True if isinstance(self.get_state(), (SessionFinishState, ErrorState, MaxStepReachedState, NoneState)) else False
 
 
     def set_state(self, state) -> None:

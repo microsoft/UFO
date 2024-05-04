@@ -40,7 +40,7 @@ class Round(BaseRound):
         Select an application to interact with.
         """
 
-        host_agent_processor = processor.HostAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), global_step=self.global_step,
+        host_agent_processor = processor.HostAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), session_step=self.session_step,
                                                             request_logger=self.request_logger, logger=self.logger, host_agent=self.host_agent, prev_status=self.get_status(), app_window=self.app_window)
 
         host_agent_processor.process()
@@ -60,7 +60,7 @@ class Round(BaseRound):
         Select an action with the application.
         """
 
-        app_agent_processor = processor.AppAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), global_step=self.global_step, 
+        app_agent_processor = processor.AppAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), session_step=self.session_step, 
                                                           process_name=self.application, request_logger=self.request_logger, logger=self.logger, app_agent=self.app_agent, app_window=self.app_window, 
                                                             control_reannotate=self.control_reannotate, prev_status=self.get_status())
 
@@ -105,7 +105,7 @@ class FollowerRound(Round):
         Select an application to interact with.
         """
 
-        host_agent_processor = follower_processor.FollowerHostAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), global_step=self.global_step,
+        host_agent_processor = follower_processor.FollowerHostAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), session_step=self.session_step,
                                                             request_logger=self.request_logger, logger=self.logger, host_agent=self.host_agent, prev_status=self.get_status(), app_window=self.app_window)
 
         host_agent_processor.process()
@@ -125,7 +125,7 @@ class FollowerRound(Round):
         Select an action with the application.
         """
 
-        app_agent_processor = follower_processor.FollowerAppAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), global_step=self.global_step, 
+        app_agent_processor = follower_processor.FollowerAppAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), session_step=self.session_step, 
                                                           process_name=self.application, request_logger=self.request_logger, logger=self.logger, app_agent=self.app_agent, app_window=self.app_window, 
                                                             control_reannotate=self.control_reannotate, prev_status=self.get_status())
 

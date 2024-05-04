@@ -7,7 +7,6 @@ from abc import abstractmethod
 from typing import Dict, List
 
 from ...config.config import Config
-from .utils import get_control_info
 from ...utils import print_with_color
 from ..basic import CommandBasic, ReceiverBasic, ReceiverFactory
 
@@ -27,7 +26,6 @@ class ControlReceiver(ReceiverBasic):
         self.control = control
 
         if control:
-            self.control_info = get_control_info(control)
             self.control.set_focus()
             self.wait_enabled()
         self.application = application

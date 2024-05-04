@@ -200,7 +200,7 @@ class Session(BaseSession):
 
         new_round = round.Round(task=self.task, logger=self.logger, request_logger=self.request_logger, host_agent=self.host_agent, request=self.request)
         new_round.set_index(self.get_round_num())
-        new_round.set_global_step(self.get_step())
+        new_round.set_session_step(self.get_step())
 
         self.round_list.append(new_round)
         
@@ -213,7 +213,7 @@ class Session(BaseSession):
         """
 
         current_round = self.get_current_round()
-        current_round.set_global_step(self.get_step())
+        current_round.set_session_step(self.get_step())
 
         current_round.process_application_selection()
 
@@ -232,7 +232,7 @@ class Session(BaseSession):
         """
         
         current_round = self.get_current_round()
-        current_round.set_global_step(self.get_step())
+        current_round.set_session_step(self.get_step())
 
         current_round.process_action_selection()
 
@@ -292,7 +292,7 @@ class FollowerSession(Session):
         new_round = round.FollowerRound(task=self.task, logger=self.logger, request_logger=self.request_logger,
                                         host_agent=self.host_agent, app_agent=self.app_agent, app_window=self.app_window, application=self.application, request=self.request)
         new_round.set_index(self.get_round_num())
-        new_round.set_global_step(self.get_step())
+        new_round.set_session_step(self.get_step())
 
         self.round_list.append(new_round)
         

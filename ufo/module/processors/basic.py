@@ -24,7 +24,7 @@ class BaseProcessor(ABC):
     """
 
     def __init__(self, round_num: int, log_path: str, request: str, request_logger: Logger, logger: Logger, 
-                 round_step: int, global_step: int, prev_status: str, app_window:UIAWrapper) -> None:
+                 round_step: int, session_step: int, prev_status: str, app_window:UIAWrapper) -> None:
         """
         Initialize the processor.
         :param round_num: The index of the processor. The round_num is the total number of rounds in the session.
@@ -33,7 +33,7 @@ class BaseProcessor(ABC):
         :param request_logger: The logger for the request string.
         :param logger: The logger for the response and error.
         :param round_step: The step of the round.
-        :param global_step: The global step of the session.
+        :param session_step: The global step of the session.
         :param prev_status: The previous status of the session.
         :param app_window: The application window.
         """
@@ -46,7 +46,7 @@ class BaseProcessor(ABC):
         self.logger = logger
         self._app_window = app_window
         
-        self.global_step = global_step
+        self.session_step = session_step
         self.round_step = round_step
         self.prev_status = prev_status
         self.round_num = round_num

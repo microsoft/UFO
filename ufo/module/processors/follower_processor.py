@@ -77,6 +77,6 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             self._prompt_message = self.app_agent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
                                                                                 self.filtered_control_info, self.prev_plan, self.request, current_state, state_diff, configs["INCLUDE_LAST_SCREENSHOT"])
             
-            log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": self._control_info, 
+            log = json.dumps({"step": self.session_step, "prompt": self._prompt_message, "control_items": self._control_info, 
                               "filted_control_items": self.filtered_control_info, "status": ""})
             self.request_logger.debug(log)

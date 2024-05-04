@@ -26,9 +26,9 @@ BACKEND = configs["CONTROL_BACKEND"]
 class HostAgentProcessor(BaseProcessor):
 
     def __init__(self, round_num: int, log_path: str, request: str, request_logger: Logger, logger: Logger, 
-                 host_agent: HostAgent, round_step: int, global_step: int, prev_status: str, app_window=None) -> None:
+                 host_agent: HostAgent, round_step: int, session_step: int, prev_status: str, app_window=None) -> None:
         
-        super().__init__(round_num, log_path, request, request_logger, logger, round_step, global_step, prev_status, app_window)
+        super().__init__(round_num, log_path, request, request_logger, logger, round_step, session_step, prev_status, app_window)
 
         """
         Initialize the host agent processor.
@@ -39,7 +39,7 @@ class HostAgentProcessor(BaseProcessor):
         :param logger: The logger for the response and error.
         :param host_agent: The host agent to process the session.
         :param round_step: The number of steps in the round.
-        :param global_step: The global step of the session.
+        :param session_step: The global step of the session.
         :param prev_status: The previous status of the session.
         :param app_window: The application window.
         """
@@ -63,7 +63,7 @@ class HostAgentProcessor(BaseProcessor):
         Capture the screenshot.
         """
 
-        desktop_save_path = self.log_path + f"action_step{self.global_step}.png"
+        desktop_save_path = self.log_path + f"action_step{self.session_step}.png"
 
         # Capture the desktop screenshot for all screens.
         self.photographer.capture_desktop_screen_screenshot(all_screens=True, save_path=desktop_save_path)
@@ -202,7 +202,7 @@ class HostAgentProcessor(BaseProcessor):
         host_agent_step_memory = MemoryItem()
 
         # Log additional information for the host agent.
-        additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.host_agent.get_step(), "Round": self.round_num, "ControlLabel": self._control_text, "Action": "set_focus()", 
+        additional_memory = {"Step": self.session_step, "RoundStep": self.get_process_step(), "AgentStep": self.host_agent.get_step(), "Round": self.round_num, "ControlLabel": self._control_text, "Action": "set_focus()", 
                                 "ActionType": "UIControl", "Request": self.request, "Agent": "HostAgent", "AgentName": self.host_agent.name, "Application": self.app_root, "Cost": self._cost, "Results": ""}
         
         host_agent_step_memory.set_values_from_dict(self._response_json)
@@ -297,10 +297,10 @@ class HostAgentProcessor(BaseProcessor):
 
 class AppAgentProcessor(BaseProcessor):
     
-        def __init__(self, round_num: int, log_path: str, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, global_step: int, 
+        def __init__(self, round_num: int, log_path: str, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, session_step: int, 
                      process_name: str, app_window: UIAWrapper, control_reannotate: Optional[list], prev_status: str) -> None:
             
-            super().__init__(round_num, log_path, request, request_logger, logger, round_step, global_step, prev_status, app_window)
+            super().__init__(round_num, log_path, request, request_logger, logger, round_step, session_step, prev_status, app_window)
 
             """
             Initialize the app agent processor.
@@ -311,7 +311,7 @@ class AppAgentProcessor(BaseProcessor):
             :param logger: The logger for the response and error.
             :param app_agent: The app agent to process the current step.
             :param round_step: The number of steps in the round.
-            :param global_step: The global step of the session.
+            :param session_step: The global step of the session.
             :param process_name: The process name.
             :param app_window: The application window.
             :param control_reannotate: The list of controls to reannotate.
@@ -345,9 +345,9 @@ class AppAgentProcessor(BaseProcessor):
             """
             
             # Define the paths for the screenshots saved.
-            screenshot_save_path = self.log_path + f"action_step{self.global_step}.png"
-            annotated_screenshot_save_path = self.log_path + f"action_step{self.global_step}_annotated.png"
-            concat_screenshot_save_path = self.log_path + f"action_step{self.global_step}_concat.png"
+            screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
+            annotated_screenshot_save_path = self.log_path + f"action_step{self.session_step}_annotated.png"
+            concat_screenshot_save_path = self.log_path + f"action_step{self.session_step}_concat.png"
 
             # Get the control elements in the application window if the control items are not provided for reannotation.
             if type(self._control_reannotate) == list and len(self._control_reannotate) > 0:
@@ -369,8 +369,8 @@ class AppAgentProcessor(BaseProcessor):
 
             # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
             if configs["INCLUDE_LAST_SCREENSHOT"]:
-                last_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}.png"
-                last_control_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}_selected_controls.png"
+                last_screenshot_save_path = self.log_path + f"action_step{self.session_step - 1}.png"
+                last_control_screenshot_save_path = self.log_path + f"action_step{self.session_step - 1}_selected_controls.png"
                 self._image_url += [self.photographer.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
 
             # Whether to concatenate the screenshots of clean screenshot and annotated screenshot into one image.
@@ -431,7 +431,7 @@ class AppAgentProcessor(BaseProcessor):
             
 
             # Log the prompt message. Only save them in debug mode.
-            log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": self._control_info, 
+            log = json.dumps({"step": self.session_step, "prompt": self._prompt_message, "control_items": self._control_info, 
                               "filted_control_items": self.filtered_control_info, "status": ""})
             self.request_logger.debug(log)
 
@@ -446,7 +446,7 @@ class AppAgentProcessor(BaseProcessor):
                 self._response, self._cost = self.app_agent.get_response(self._prompt_message, "APPAGENT", use_backup_engine=True)
             except Exception as e:
                 error_trace = traceback.format_exc()
-                log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "status": str(error_trace)})
+                log = json.dumps({"step": self.session_step, "prompt": self._prompt_message, "status": str(error_trace)})
                 utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(error_trace)), "red")
                 self.request_logger.info(log)
                 self._status = "ERROR"
@@ -492,7 +492,7 @@ class AppAgentProcessor(BaseProcessor):
                 self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(control_selected, self._app_window)
 
                 # Save the screenshot of the tagged selected control.
-                control_screenshot_save_path = self.log_path + f"action_step{self.global_step}_selected_controls.png"
+                control_screenshot_save_path = self.log_path + f"action_step{self.session_step}_selected_controls.png"
                 self.photographer.capture_app_window_screenshot_with_rectangle(self._app_window, sub_control_list=[control_selected], save_path=control_screenshot_save_path)
 
                 # Compose the function call and the arguments string.
@@ -528,7 +528,7 @@ class AppAgentProcessor(BaseProcessor):
 
             except Exception:
                 error_trace = traceback.format_exc()
-                utils.print_with_color(f"Error Occurs at action execution in AppAgent at step {self.global_step}", "red")
+                utils.print_with_color(f"Error Occurs at action execution in AppAgent at step {self.session_step}", "red")
                 utils.print_with_color(str(error_trace), "red")
                 utils.print_with_color(self._response, "red")
                 self.error_log(self._response, str(error_trace))
@@ -546,7 +546,7 @@ class AppAgentProcessor(BaseProcessor):
             host_agent = self.app_agent.get_host()
             
             # Log additional information for the app agent.
-            additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.app_agent.get_step(), "Round": self.round_num, "Action": self._action, 
+            additional_memory = {"Step": self.session_step, "RoundStep": self.get_process_step(), "AgentStep": self.app_agent.get_step(), "Round": self.round_num, "Action": self._action, 
                                  "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation), "Request": self.request, "Agent": "ActAgent", "AgentName": self.app_agent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
             app_agent_step_memory.set_values_from_dict(self._response_json)
             app_agent_step_memory.set_values_from_dict(additional_memory)
