@@ -119,12 +119,8 @@ class HostAgentProcessor(BaseProcessor):
         # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
         try:
             self._response, self._cost = self.host_agent.get_response(self._prompt_message, "HOSTAGENT", use_backup_engine=True)
-        except Exception as e:
-            error_trace = traceback.format_exc()
-            log = json.dumps({"step": self._step, "status": str(error_trace), "prompt": self._prompt_message})
-            utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
-            self.request_logger.info(log)
-            self._status = Status.ERROR
+        except Exception:
+            self.llm_error_handler()
         
 
     def parse_response(self) -> None:
@@ -135,24 +131,21 @@ class HostAgentProcessor(BaseProcessor):
         # Try to parse the response. If an error occurs, catch the exception and log the error.
         try:
             self._response_json = self.host_agent.response_to_dict(self._response)
-            self.control_label = self._response_json.get("ControlLabel", "")
-            self._control_text = self._response_json.get("ControlText", "")
-            self.plan = self._response_json.get("Plan", "")
-            self._status = self._response_json.get("Status", "")
-            self.app_to_open = self._response_json.get("AppsToOpen", None)
             
-            self.host_agent.print_response(self._response_json)
-
-            if Status.FINISH in self._status.upper() or self._control_text == "":
-                self._status = Status.FINISH
-
         except Exception:
-            error_trace = traceback.format_exc()
-            utils.print_with_color("Error Occurs at application selection.", "red")
-            utils.print_with_color(str(error_trace), "red")
-            utils.print_with_color(self._response, "red")
-            self.error_log(self._response, str(error_trace))
-            self._status = Status.ERROR
+            self.general_error_handler()
+
+
+        self.control_label = self._response_json.get("ControlLabel", "")
+        self._control_text = self._response_json.get("ControlText", "")
+        self.plan = self._response_json.get("Plan", "")
+        self._status = self._response_json.get("Status", "")
+        self.app_to_open = self._response_json.get("AppsToOpen", None)
+        
+        self.host_agent.print_response(self._response_json)
+
+        if Status.FINISH in self._status.upper() or self._control_text == "":
+            self._status = Status.FINISH
 
 
     def execute_action(self) -> None:
@@ -464,13 +457,8 @@ class AppAgentProcessor(BaseProcessor):
             # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
             try:
                 self._response, self._cost = self.app_agent.get_response(self._prompt_message, "APPAGENT", use_backup_engine=True)
-            except Exception as e:
-                error_trace = traceback.format_exc()
-                log = json.dumps({"step": self.session_step, "prompt": self._prompt_message, "status": str(error_trace)})
-                utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(error_trace)), "red")
-                self.request_logger.info(log)
-                self._status = Status.ERROR
-                time.sleep(configs["SLEEP_TIME"])
+            except Exception:
+                self.llm_error_handler()
                 return
             
             
@@ -483,21 +471,17 @@ class AppAgentProcessor(BaseProcessor):
             try:
                 self._response_json = self.app_agent.response_to_dict(self._response)
 
-                self._control_label = self._response_json.get("ControlLabel", "")
-                self._control_text = self._response_json.get("ControlText", "")
-                self._operation = self._response_json.get("Function", "")
-                self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
-                self._status = self._response_json.get("Status", "")
-
-                self.app_agent.print_response(self._response_json)
-
             except Exception:
-                error_trace = traceback.format_exc()
-                utils.print_with_color("Error Occurs at action selection in AppAgent.", "red")
-                utils.print_with_color(str(error_trace), "red")
-                utils.print_with_color(self._response, "red")
-                self.error_log(self._response, str(error_trace))
-                self._status = Status.ERROR
+                self.general_error_handler()
+
+
+            self._control_label = self._response_json.get("ControlLabel", "")
+            self._control_text = self._response_json.get("ControlText", "")
+            self._operation = self._response_json.get("Function", "")
+            self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
+            self._status = self._response_json.get("Status", "")
+
+            self.app_agent.print_response(self._response_json)
 
 
         def execute_action(self) -> None:
@@ -539,12 +523,7 @@ class AppAgentProcessor(BaseProcessor):
 
 
             except Exception:
-                error_trace = traceback.format_exc()
-                utils.print_with_color(f"Error Occurs at action execution in AppAgent at step {self.session_step}", "red")
-                utils.print_with_color(str(error_trace), "red")
-                utils.print_with_color(self._response, "red")
-                self.error_log(self._response, str(error_trace))
-                self._status = Status.ERROR
+                self.general_error_handler()
 
 
         def capture_control_screenshot(self, control_selected: UIAWrapper) -> None:

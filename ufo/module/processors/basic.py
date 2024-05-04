@@ -3,14 +3,17 @@
 
 
 import json
+import traceback
 from abc import ABC, abstractmethod
 from logging import Logger
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ...automator.ui_control.screenshot import PhotographerFacade
+from ... import utils
 from ...automator.ui_control.inspector import ControlInspectorFacade
+from ...automator.ui_control.screenshot import PhotographerFacade
 from ...config.config import Config
+from ..state import Status
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -273,3 +276,37 @@ class BaseProcessor(ABC):
         """
         log = json.dumps({"step": self._step, "status": "ERROR", "response": response_str, "error": error})
         self.logger.info(log)
+
+
+    @property
+    def name(self) -> str:
+        """
+        Get the name of the processor.
+        :return: The name of the processor.
+        """
+        return self.__class__.__name__
+    
+
+    def general_error_handler(self) -> None:
+        """
+        Error handler for the general error.
+        """
+        error_trace = traceback.format_exc()
+        utils.print_with_color(f"Error Occurs at {self.name}", "red")
+        utils.print_with_color(str(error_trace), "red")
+        utils.print_with_color(self._response, "red")
+        self.error_log(self._response, str(error_trace))
+        self._status = Status.ERROR
+
+
+    def llm_error_handler(self) -> None:
+        """
+        Error handler for the LLM error.
+        """
+        error_trace = traceback.format_exc()
+        log = json.dumps({"step": self.session_step, "prompt": self._prompt_message, "status": str(error_trace)})
+        utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(error_trace)), "red")
+        self.request_logger.info(log)
+        self._status = Status.ERROR
+        return
+    
