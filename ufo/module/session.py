@@ -220,11 +220,9 @@ class Session(BaseSession):
 
         current_round = self.get_current_round()
         current_round.set_session_step(self.get_step())
-
         current_round.process_application_selection()
 
         self._status = current_round.get_status()
-
         self._step += 1
 
         self.app_window = current_round.get_application_window()
@@ -239,7 +237,6 @@ class Session(BaseSession):
         
         current_round = self.get_current_round()
         current_round.set_session_step(self.get_step())
-
         current_round.process_action_selection()
 
         self._status = current_round.get_status()

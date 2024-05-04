@@ -18,6 +18,7 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from logging import Logger
+from typing import Type
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -25,6 +26,7 @@ from .. import utils
 from ..agent.agent import AgentFactory, HostAgent
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
+from .processors.basic import BaseProcessor
 from .state import (ErrorState, MaxStepReachedState, NoneState,
                     SessionFinishState, StatusToStateMapper)
 
@@ -77,7 +79,7 @@ class BaseRound(ABC):
         self.round_num = None  
         self.session_step = None
 
-
+    @abstractmethod
     def process_application_selection(self) -> None:
 
         """
@@ -86,13 +88,47 @@ class BaseRound(ABC):
 
         pass
 
-
+    @abstractmethod
     def process_action_selection(self) -> None:
         """
         Select an action with the application.
         """
 
         pass
+
+
+    @abstractmethod
+    def _create_host_agent_processor(self, processor_class: Type['BaseProcessor']) -> BaseProcessor:
+        """
+        Create a host agent processor.
+        :param processor_class: The processor class.
+        :return: The processor instance.
+        """
+
+        pass
+
+
+    @abstractmethod
+    def _create_app_agent_processor(self, processor_class: Type['BaseProcessor']) -> BaseProcessor:
+        """
+        Create a host agent processor.
+        :param processor_class: The processor class.
+        :return: The processor instance.
+        """
+
+        pass
+
+
+    def _run_step(self, processor: BaseProcessor) -> None:
+        """
+        Run a step.
+        :param processor: The processor.
+        """
+        processor.process()
+
+        self._status = processor.get_process_status()
+        self._step += processor.get_process_step()
+        self.update_cost(processor.get_process_cost())
 
 
     def get_status(self) -> str:
