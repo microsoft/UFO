@@ -28,8 +28,6 @@ from ..experience.summarizer import ExperienceSummarizer
 from .state import StatusToStateMapper
 
 configs = Config.get_instance().config_data
-BACKEND = configs["CONTROL_BACKEND"]
-
 
 
 class BaseRound(ABC):
@@ -47,29 +45,35 @@ class BaseRound(ABC):
         :param host_agent: The host agent.
         :param request: The user request at the current round.
         """
-
-        self._step = 0
-
-        self.log_path = f"logs/{task}/"
-
-        self.logger = logger
-        self.request_logger = request_logger
-
-        self.host_agent = host_agent
-        self.app_agent = None
-
-        self._status = "APP_SELECTION"
-
-        self.application = ""
-        self.app_root = ""
-        self.app_window = None
-
-        self._cost = 0.0
-        self.control_reannotate = []
-
-        self.request = request
-
-        self.round_num = None
+        # Step-related properties  
+        self._step = 0  
+  
+        # Logging-related properties  
+        self.log_path = f"logs/{task}/"  
+        self.logger = logger  
+        self.request_logger = request_logger  
+  
+        # Agent-related properties  
+        self.host_agent = host_agent  
+        self.app_agent = None  
+  
+        # Status-related properties  
+        self._status = "APP_SELECTION"  
+  
+        # Application-related properties  
+        self.application = ""  
+        self.app_root = ""  
+        self.app_window = None  
+  
+        # Cost and reannotate-related properties  
+        self._cost = 0.0  
+        self.control_reannotate = []  
+  
+        # Request-related properties  
+        self.request = request  
+  
+        # round_num and global step-related properties  
+        self.round_num = None  
         self.global_step = None
 
 

@@ -62,8 +62,13 @@ class HostAgentProcessor(BaseProcessor):
         """
         Capture the screenshot.
         """
+
         desktop_save_path = self.log_path + f"action_step{self.global_step}.png"
+
+        # Capture the desktop screenshot for all screens.
         self.photographer.capture_desktop_screen_screenshot(all_screens=True, save_path=desktop_save_path)
+
+        # Encode the desktop screenshot into base64 format as required by the LLM.
         self._desktop_screen_url = self.photographer.encode_image_from_path(desktop_save_path)
 
 
@@ -71,7 +76,11 @@ class HostAgentProcessor(BaseProcessor):
         """
         Get the control information.
         """
+
+        # Get all available windows on the desktop, into a dictionary with format {index: application object}.
         self._desktop_windows_dict = self.control_inspector.get_desktop_app_dict(remove_empty=True)
+
+        # Get the textual information of all windows.
         self._desktop_windows_info = self.control_inspector.get_desktop_app_info(self._desktop_windows_dict)
 
 
@@ -80,19 +89,22 @@ class HostAgentProcessor(BaseProcessor):
         Get the prompt message.
         """
 
+        # Get the request and action history of the host agent.
         request_history = self.host_agent.get_request_history_memory().to_json()
         action_history = self.host_agent.get_global_action_memory().to_json()
 
+        # Get the previous plan from the memory. If the memory is empty, set the plan to an empty string.
         agent_memory = self.host_agent.memory
-
         if agent_memory.length > 0:
             plan = agent_memory.get_latest_item().to_dict()["Plan"]
         else:
             plan = ""
 
+        # Construct the prompt message for the host agent.
         self._prompt_message = self.host_agent.message_constructor([self._desktop_screen_url], request_history, action_history, 
                                                                                                   self._desktop_windows_info, plan, self.request)
         
+        # Log the prompt message. Only save them in debug mode.
         log = json.dumps({"step": self._step, "prompt": self._prompt_message, "control_items": self._desktop_windows_info, "filted_control_items": self._desktop_windows_info, "status": ""})
         self.request_logger.debug(log)
         
@@ -103,6 +115,7 @@ class HostAgentProcessor(BaseProcessor):
         Get the response from the LLM.
         """
 
+        # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
         try:
             self._response, self._cost = self.host_agent.get_response(self._prompt_message, "HOSTAGENT", use_backup_engine=True)
         except Exception as e:
@@ -117,6 +130,8 @@ class HostAgentProcessor(BaseProcessor):
         """
         Parse the response.
         """
+        
+        # Try to parse the response. If an error occurs, catch the exception and log the error.
         try:
             self._response_json = self.host_agent.response_to_dict(self._response)
             self.control_label = self._response_json.get("ControlLabel", "")
@@ -144,6 +159,7 @@ class HostAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
+        # When the required application is not opened, try to open the application and set the focus to the application window.
         if self.app_to_open is not None:
             new_app_window = self.host_agent.app_file_manager(self.app_to_open)
             self._control_text = new_app_window.window_text()
@@ -153,9 +169,11 @@ class HostAgentProcessor(BaseProcessor):
 
         if new_app_window is None:
             return
-        # Get the application name
+        
+        # Get the root name of the application.
         self.app_root = self.control_inspector.get_application_root_name(new_app_window)
         
+        # Check if the window interface is available for the visual element.
         try:
             new_app_window.is_normal()
 
@@ -165,6 +183,7 @@ class HostAgentProcessor(BaseProcessor):
             self._status = "ERROR"
             return
         
+        # Switch to the new application window, if it is different from the current application window.
         if new_app_window is not self._app_window and self._app_window is not None:
             utils.print_with_color(  
                 "Switching to a new application...", "magenta")
@@ -179,7 +198,10 @@ class HostAgentProcessor(BaseProcessor):
         Update the memory of the Agent.
         """
 
+        # Create a memory item for the host agent at the current step.
         host_agent_step_memory = MemoryItem()
+
+        # Log additional information for the host agent.
         additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.host_agent.get_step(), "Round": self.round_num, "ControlLabel": self._control_text, "Action": "set_focus()", 
                                 "ActionType": "UIControl", "Request": self.request, "Agent": "HostAgent", "AgentName": self.host_agent.name, "Application": self.app_root, "Cost": self._cost, "Results": ""}
         
@@ -187,7 +209,10 @@ class HostAgentProcessor(BaseProcessor):
         host_agent_step_memory.set_values_from_dict(additional_memory)
         self.host_agent.add_memory(host_agent_step_memory)
         
+        # Log the memory item.
         self.log(host_agent_step_memory.to_dict())
+
+        # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
         memorized_action = {key: host_agent_step_memory.to_dict().get(key) for key in configs["HISTORY_KEYS"]}
         self.host_agent.add_global_action_memory(memorized_action)
         
@@ -199,6 +224,7 @@ class HostAgentProcessor(BaseProcessor):
         self.host_agent.update_step()
         self.host_agent.update_status(self._status)
 
+        # Wait for the application to be ready after an action is taken before proceeding to the next step.
         if self._status != "FINISH":
             time.sleep(configs["SLEEP_TIME"])
 
@@ -209,6 +235,7 @@ class HostAgentProcessor(BaseProcessor):
         :return: The boolean value indicating if the app agent should be created.
         """
 
+        # Only create the app agent when the previous status is APP_SELECTION and the processor is HostAgentProcessor.
         if isinstance(self, HostAgentProcessor) and self.prev_status == "APP_SELECTION":
             return True
         else:
@@ -220,6 +247,8 @@ class HostAgentProcessor(BaseProcessor):
         Create the app agent.
         :return: The app agent.
         """
+
+        # Create the app agent.
         app_agent = self.host_agent.create_subagent("app", "AppAgent/{root}/{process}".format(root=self.app_root, process=self._control_text), self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
                                      configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
         
@@ -227,6 +256,7 @@ class HostAgentProcessor(BaseProcessor):
         if configs.get("USE_APIS", False):
             app_agent.Puppeteer.receiver_manager.create_com_receiver(self.app_root, self._control_text)
             
+        # Provision the context for the app agent, including the all retrievers.
         self.app_agent_context_provision(app_agent)
 
         return app_agent
@@ -238,18 +268,24 @@ class HostAgentProcessor(BaseProcessor):
         :param app_agent: The app agent to provision the context.
         """
 
-        # Load the retrievers for APP_AGENT.
+        # Load the offline document indexer for the app agent if available.
         if configs["RAG_OFFLINE_DOCS"]:
             utils.print_with_color("Loading offline document indexer for {app}...".format(app=self._control_text), "magenta")
             app_agent.build_offline_docs_retriever()
+
+        # Load the online search indexer for the app agent if available.
         if configs["RAG_ONLINE_SEARCH"]:
             utils.print_with_color("Creating a Bing search indexer...", "magenta")
             app_agent.build_online_search_retriever(self.request, configs["RAG_ONLINE_SEARCH_TOPK"])
+
+        # Load the experience indexer for the app agent if available.
         if configs["RAG_EXPERIENCE"]:
             utils.print_with_color("Creating an experience indexer...", "magenta")
             experience_path = configs["EXPERIENCE_SAVED_PATH"]
             db_path = os.path.join(experience_path, "experience_db")
             app_agent.build_experience_retriever(db_path)
+
+        # Load the demonstration indexer for the app agent if available.
         if configs["RAG_DEMONSTRATION"]:
             utils.print_with_color("Creating an demonstration indexer...", "magenta")
             demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
@@ -308,31 +344,36 @@ class AppAgentProcessor(BaseProcessor):
             Capture the screenshot.
             """
             
+            # Define the paths for the screenshots saved.
             screenshot_save_path = self.log_path + f"action_step{self.global_step}.png"
             annotated_screenshot_save_path = self.log_path + f"action_step{self.global_step}_annotated.png"
             concat_screenshot_save_path = self.log_path + f"action_step{self.global_step}_concat.png"
 
+            # Get the control elements in the application window if the control items are not provided for reannotation.
             if type(self._control_reannotate) == list and len(self._control_reannotate) > 0:
                 control_list = self._control_reannotate
             else:
                 control_list = self.control_inspector.find_control_elements_in_descendants(self._app_window, control_type_list = configs["CONTROL_LIST"], class_name_list = configs["CONTROL_LIST"])
 
-
+            # Get the annotation dictionary for the control items, in a format of {control_label: control_element}.
             self._annotation_dict = self.photographer.get_annotation_dict(self._app_window, control_list, annotation_type="number")
             
             self.prev_plan = self.get_prev_plan()
 
+            # Attempt to filter out irrelevant control items based on the previous plan.
             self.filtered_annotation_dict = self.get_filtered_annotation_dict(self._annotation_dict)
             self.photographer.capture_app_window_screenshot(self._app_window, save_path=screenshot_save_path)
             
+            # Capture the screenshot of the selected control items with annotation and save it.
             self.photographer.capture_app_window_screenshot_with_annotation_dict(self._app_window, self.filtered_annotation_dict, annotation_type="number", save_path=annotated_screenshot_save_path)
 
-
+            # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
             if configs["INCLUDE_LAST_SCREENSHOT"]:
                 last_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}.png"
                 last_control_screenshot_save_path = self.log_path + f"action_step{self.global_step - 1}_selected_controls.png"
                 self._image_url += [self.photographer.encode_image_from_path(last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path)]
 
+            # Whether to concatenate the screenshots of clean screenshot and annotated screenshot into one image.
             if configs["CONCAT_SCREENSHOT"]:
                 self.photographer.concat_screenshots(screenshot_save_path, annotated_screenshot_save_path, concat_screenshot_save_path)
                 self._image_url += [self.photographer.encode_image_from_path(concat_screenshot_save_path)]
@@ -347,6 +388,8 @@ class AppAgentProcessor(BaseProcessor):
             """
             Get the control information.
             """
+
+            # Get the control information for the control items and the filtered control items, in a format of list of dictionaries.
             self._control_info = self.control_inspector.get_control_info_list_of_dict(self._annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
             self.filtered_control_info = self.control_inspector.get_control_info_list_of_dict(self.filtered_annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
 
@@ -357,6 +400,7 @@ class AppAgentProcessor(BaseProcessor):
             Get the prompt message for the AppAgent.
             """
 
+            # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
             if configs["RAG_EXPERIENCE"]:
                 experience_examples, experience_tips = self.app_agent.rag_experience_retrieve(self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"])
             else:
@@ -372,17 +416,21 @@ class AppAgentProcessor(BaseProcessor):
             examples = experience_examples + demonstration_examples
             tips = experience_tips + demonstration_tips
 
+            # Get the external knowledge prompt for the AppAgent using the offline and online retrievers.
             external_knowledge_prompt = self.app_agent.external_knowledge_prompt_helper(self.request, configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"], configs["RAG_ONLINE_RETRIEVED_TOPK"])
 
 
+            # Get the action history and request history of the host agent and feed them into the prompt message.
             host_agent = self.app_agent.get_host()
-
             action_history = host_agent.get_global_action_memory().to_json()
             request_history = host_agent.get_request_history_memory().to_json()
 
+            # Construct the prompt message for the AppAgent.
             self._prompt_message = self.app_agent.message_constructor(examples, tips, external_knowledge_prompt, self._image_url, request_history, action_history, 
                                                                                 self.filtered_control_info, self.prev_plan, self.request, configs["INCLUDE_LAST_SCREENSHOT"])
             
+
+            # Log the prompt message. Only save them in debug mode.
             log = json.dumps({"step": self.global_step, "prompt": self._prompt_message, "control_items": self._control_info, 
                               "filted_control_items": self.filtered_control_info, "status": ""})
             self.request_logger.debug(log)
@@ -392,6 +440,8 @@ class AppAgentProcessor(BaseProcessor):
             """
             Get the response from the LLM.
             """
+
+            # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
             try:
                 self._response, self._cost = self.app_agent.get_response(self._prompt_message, "APPAGENT", use_backup_engine=True)
             except Exception as e:
@@ -408,6 +458,8 @@ class AppAgentProcessor(BaseProcessor):
             """
             Parse the response.
             """
+
+            # Try to parse the response. If an error occurs, catch the exception and log the error.
             try:
                 self._response_json = self.app_agent.response_to_dict(self._response)
 
@@ -432,11 +484,14 @@ class AppAgentProcessor(BaseProcessor):
             """
             Execute the action.
             """
+
+
             try:
+                # Get the selected control item from the annotation dictionary and LLM response. The LLm response is a number index corresponding to the key in the annotation dictionary.
                 control_selected = self._annotation_dict.get(self._control_label, "")
                 self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(control_selected, self._app_window)
 
-                # Save the screenshot of the selected control.
+                # Save the screenshot of the tagged selected control.
                 control_screenshot_save_path = self.log_path + f"action_step{self.global_step}_selected_controls.png"
                 self.photographer.capture_app_window_screenshot_with_rectangle(self._app_window, sub_control_list=[control_selected], save_path=control_screenshot_save_path)
 
@@ -451,6 +506,7 @@ class AppAgentProcessor(BaseProcessor):
                 if self._status.upper() == "PENDING" and configs["SAFE_GUARD"]:
                     should_proceed = self._safe_guard_judgement(self._action, self._control_text)
                     
+                # Execute the action if the user decides to proceed or safe guard is not enabled.
                 if should_proceed:
                     self._results = self.app_agent.Puppeteer.execute_command(self._operation, self._args)
                     if not utils.is_json_serializable(self._results):
@@ -460,7 +516,7 @@ class AppAgentProcessor(BaseProcessor):
 
                     return
 
-
+                # Handle the case when the annotation is overlapped and the agent is unable to select the control items.
                 if self._status.upper() == "SCREENSHOT":
                     utils.print_with_color("Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.", "magenta")
                     self._control_reannotate = self.app_agent.Puppeteer.execute_command("annotation", self._args, self._annotation_dict)
@@ -489,7 +545,7 @@ class AppAgentProcessor(BaseProcessor):
             app_root = self.control_inspector.get_application_root_name(self._app_window)
             host_agent = self.app_agent.get_host()
             
-            
+            # Log additional information for the app agent.
             additional_memory = {"Step": self.global_step, "RoundStep": self.get_process_step(), "AgentStep": self.app_agent.get_step(), "Round": self.round_num, "Action": self._action, 
                                  "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation), "Request": self.request, "Agent": "ActAgent", "AgentName": self.app_agent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
             app_agent_step_memory.set_values_from_dict(self._response_json)
@@ -497,7 +553,10 @@ class AppAgentProcessor(BaseProcessor):
 
             self.app_agent.add_memory(app_agent_step_memory)
 
+            # Log the memory item.
             self.log(app_agent_step_memory.to_dict())
+
+            # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
             memorized_action = {key: app_agent_step_memory.to_dict().get(key) for key in configs["HISTORY_KEYS"]}
             host_agent.add_global_action_memory(memorized_action)
 
@@ -522,7 +581,8 @@ class AppAgentProcessor(BaseProcessor):
             control_text: The text of the control item.
             return: The boolean value indicating whether to proceed or not.
             """
-                       
+            
+            # Ask the user whether to proceed with the action w
             decision = interactor.sensitive_step_asker(action, control_text)
             if not decision:
                 utils.print_with_color("The user decide to stop the task.", "magenta")
@@ -547,9 +607,7 @@ class AppAgentProcessor(BaseProcessor):
         def get_prev_plan(self) -> str:
             """
             Retrieves the previous plan from the agent's memory.
-
-            Returns:
-                str: The previous plan, or an empty string if the agent's memory is empty.
+            :return: The previous plan, or an empty string if the agent's memory is empty.
             """
             agent_memory = self.app_agent.memory
 
@@ -565,12 +623,10 @@ class AppAgentProcessor(BaseProcessor):
             """
             Get the filtered annotation dictionary.
             :param annotation_dict: The annotation dictionary.
-            
-            
-            Return:
-                The dictionary of filtered control information.
+            :return: The filtered annotation dictionary.
             """
             
+            # Get the control filter type and top k plan from the configuration.
             control_filter_type = configs["CONTROL_FILTER_TYPE"]
             topk_plan = configs["CONTROL_FILTER_TOP_K_PLAN"]
 
@@ -581,19 +637,22 @@ class AppAgentProcessor(BaseProcessor):
             
             filtered_annotation_dict = {}
 
+            # Get the top k recent plans from the memory.
             plans = self.control_filter_factory.get_plans(self.prev_plan, topk_plan)
 
+            # Filter the annotation dictionary based on the keywords of control text and plan.
             if 'text' in control_filter_type_lower:
                 model_text = self.control_filter_factory.create_control_filter('text')
                 filtered_text_dict = model_text.control_filter(annotation_dict, plans)
                 filtered_annotation_dict = self.control_filter_factory.inplace_append_filtered_annotation_dict(filtered_annotation_dict, filtered_text_dict)
                 
+            # Filter the annotation dictionary based on the semantic similarity of the control text and plan with their embeddings.
             if 'semantic' in control_filter_type_lower:
                 model_semantic = self.control_filter_factory.create_control_filter('semantic', configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"])
                 filtered_semantic_dict = model_semantic.control_filter(annotation_dict, plans, configs["CONTROL_FILTER_TOP_K_SEMANTIC"])
                 filtered_annotation_dict = self.control_filter_factory.inplace_append_filtered_annotation_dict(filtered_annotation_dict, filtered_semantic_dict)
                 
-                
+            # Filter the annotation dictionary based on the icon image icon and plan with their embeddings.
             if 'icon' in control_filter_type_lower:                
                 model_icon = self.control_filter_factory.create_control_filter('icon', configs["CONTROL_FILTER_MODEL_ICON_NAME"])
 

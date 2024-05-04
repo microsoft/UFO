@@ -18,10 +18,12 @@ class FollowerHostAgentProcessor(HostAgentProcessor):
         :return: The created sub agent.
         """
 
+        # Load additional app info prompt.
         app_info_prompt = configs.get("APP_INFO_PROMPT", None)
 
         agent_name = "FollowerAgent/{root}/{process}".format(root=self.app_root, process=self._control_text)
 
+        # Create the app agent in the follower mode.
         app_agent = self.host_agent.create_subagent("follower", agent_name, self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
                                      configs["FOLLOWERAHENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], app_info_prompt)
         
@@ -68,6 +70,7 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             action_history = host_agent.get_global_action_memory().to_json()
             request_history = host_agent.get_request_history_memory().to_json()
 
+            # Get the current state of the application and the state difference between the current state and the previous state.
             current_state = {}
             state_diff = {}
 

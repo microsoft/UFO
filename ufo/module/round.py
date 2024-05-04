@@ -31,36 +31,7 @@ class Round(BaseRound):
         :param request: The user request at the current round.
         """
 
-        # Step-related properties  
-        self._step = 0  
-  
-        # Logging-related properties  
-        self.log_path = f"logs/{task}/"  
-        self.logger = logger  
-        self.request_logger = request_logger  
-  
-        # Agent-related properties  
-        self.host_agent = host_agent  
-        self.app_agent = None  
-  
-        # Status-related properties  
-        self._status = "APP_SELECTION"  
-  
-        # Application-related properties  
-        self.application = ""  
-        self.app_root = ""  
-        self.app_window = None  
-  
-        # Cost and reannotate-related properties  
-        self._cost = 0.0  
-        self.control_reannotate = []  
-  
-        # Request-related properties  
-        self.request = request  
-  
-        # round_num and global step-related properties  
-        self.round_num = None  
-        self.global_step = None
+        super().__init__(task, logger, request_logger, host_agent, request)
 
 
     def process_application_selection(self) -> None:

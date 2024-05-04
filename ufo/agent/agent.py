@@ -378,7 +378,7 @@ class HostAgent(BasicAgent):
         file_manager = openfile.FileController()
         results = file_manager.execute_code(app_file_info)
         time.sleep(configs.get("SLEEP_TIME", 5))
-        desktop_windows_dict = ControlInspectorFacade(configs["BACKEND"]).get_desktop_app_dict(remove_empty=True)
+        desktop_windows_dict = ControlInspectorFacade(configs["CONTROL_BACKEND"]).get_desktop_app_dict(remove_empty=True)
         if not results:
             self.status = "ERROR in openning the application or file."
             return None
