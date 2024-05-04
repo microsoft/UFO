@@ -23,7 +23,6 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from .. import utils
 from ..agent.agent import AgentFactory, HostAgent
-from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from ..experience.summarizer import ExperienceSummarizer
 from .state import StatusToStateMapper
@@ -39,13 +38,12 @@ class BaseRound(ABC):
     A round manages a single user request and consists of multiple steps. A session may consists of multiple rounds of interactions.
     """
 
-    def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, host_agent: HostAgent, request: str) -> None: 
+    def __init__(self, task: str, logger: Logger, request_logger: Logger, host_agent: HostAgent, request: str) -> None: 
         """
         Initialize a round.
         :param task: The name of current task.
         :param logger: The logger for the response and error.
         :param request_logger: The logger for the request string.
-        :param photographer: The photographer facade to process the screenshots.
         :param host_agent: The host agent.
         :param request: The user request at the current round.
         """
@@ -59,8 +57,6 @@ class BaseRound(ABC):
 
         self.host_agent = host_agent
         self.app_agent = None
-
-        self.photographer = photographer
 
         self._status = "APP_SELECTION"
 
@@ -120,7 +116,9 @@ class BaseRound(ABC):
 
 
     def print_cost(self) -> None:
-        # Print the total cost 
+        """
+        Print the total cost of the round.
+        """
 
         total_cost = self.get_cost()  
         if isinstance(total_cost, float):  
@@ -197,7 +195,7 @@ class BaseSession(ABC):
     6. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
     """
     
-    def __init__(self, task: str):
+    def __init__(self, task: str) -> None:
         """
         Initialize a session.
         :param task: The name of current task.
@@ -217,10 +215,7 @@ class BaseSession(ABC):
         # Agent-related properties  
         self.host_agent = AgentFactory.create_agent("host", "HostAgent", configs["HOST_AGENT"]["VISUAL_MODE"], configs["HOSTAGENT_PROMPT"],  
                                                    configs["HOSTAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"], configs["ALLOW_OPENAPP"])  
-        self.app_agent = None  
-  
-        # Photographer-related properties  
-        self.photographer = PhotographerFacade()  
+        self.app_agent = None
   
         # Status and state-related properties  
         self._status = "APP_SELECTION"  
@@ -342,7 +337,7 @@ class BaseSession(ABC):
     
     def print_cost(self) -> None:
         """
-        Print the total cost.
+        Print the total cost of the session.
         """ 
 
         total_cost = self.get_cost()  
@@ -406,6 +401,7 @@ class BaseSession(ABC):
         Handle the session.
         """
         self._state.handle(self)
+
 
     @property
     def session_type(self) -> str:

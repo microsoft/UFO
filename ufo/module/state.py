@@ -25,11 +25,20 @@ if TYPE_CHECKING:
     from .session import Session
 
 
-
-class StatusToStateMapper(ABC):  
+class StatusToStateMapper:  
     """  
     A class to map the status to the appropriate state.  
     """  
+  
+    _instance = None  
+  
+    def __new__(cls):  
+        if cls._instance is None:  
+            cls._instance = super().__new__(cls)  
+        return cls._instance  
+  
+    def __init__(self):  
+        self.STATE_MAPPING = StatusToStateMapper.create_state_mapping()  
   
     @staticmethod  
     def create_state_mapping() -> Dict[str, Type[SessionState]]:  
@@ -42,9 +51,6 @@ class StatusToStateMapper(ABC):
             "SCREENSHOT": AnnotationState,  
             "MAX_STEP_REACHED": MaxStepReachedState  
         }  
-  
-    def __init__(self):  
-        self.STATE_MAPPING = self.create_state_mapping()  
   
     def get_appropriate_state(self, status: str) -> Type[SessionState]:  
         """  

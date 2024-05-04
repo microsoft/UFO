@@ -8,7 +8,6 @@ from typing import Optional
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ..agent.agent import FollowerAgent, HostAgent
-from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from .basic import BaseRound
 from .processors import follower_processor, processor
@@ -22,13 +21,12 @@ class Round(BaseRound):
     A round of a session in UFO.
     """
 
-    def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, host_agent: HostAgent, request: str) -> None: 
+    def __init__(self, task: str, logger: Logger, request_logger: Logger, host_agent: HostAgent, request: str) -> None: 
         """
         Initialize a round.
         :param task: The name of current task.
         :param logger: The logger for the response and error.
         :param request_logger: The logger for the request string.
-        :param photographer: The photographer facade to process the screenshots.
         :param host_agent: The host agent.
         :param request: The user request at the current round.
         """
@@ -44,9 +42,6 @@ class Round(BaseRound):
         # Agent-related properties  
         self.host_agent = host_agent  
         self.app_agent = None  
-  
-        # Photographer-related properties  
-        self.photographer = photographer  
   
         # Status-related properties  
         self._status = "APP_SELECTION"  
@@ -74,7 +69,7 @@ class Round(BaseRound):
         Select an application to interact with.
         """
 
-        host_agent_processor = processor.HostAgentProcessor(round_num=self.round_num, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step,
+        host_agent_processor = processor.HostAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), global_step=self.global_step,
                                                             request_logger=self.request_logger, logger=self.logger, host_agent=self.host_agent, prev_status=self.get_status(), app_window=self.app_window)
 
         host_agent_processor.process()
@@ -94,7 +89,7 @@ class Round(BaseRound):
         Select an action with the application.
         """
 
-        app_agent_processor = processor.AppAgentProcessor(round_num=self.round_num, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step, 
+        app_agent_processor = processor.AppAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), global_step=self.global_step, 
                                                           process_name=self.application, request_logger=self.request_logger, logger=self.logger, app_agent=self.app_agent, app_window=self.app_window, 
                                                             control_reannotate=self.control_reannotate, prev_status=self.get_status())
 
@@ -111,14 +106,13 @@ class Round(BaseRound):
 
 class FollowerRound(Round):
 
-    def __init__(self, task: str, logger: Logger, request_logger: Logger, photographer: PhotographerFacade, 
+    def __init__(self, task: str, logger: Logger, request_logger: Logger, 
                  host_agent: HostAgent, app_agent: Optional[FollowerAgent], app_window: Optional[UIAWrapper], application: Optional[str], request: str) -> None:
         """
         Initialize a follower round.
         :param task: The name of current task.
         :param logger: The logger for the response and error.
         :param request_logger: The logger for the request string.
-        :param photographer: The photographer facade to process the screenshots.
         :param host_agent: The host agent.
         :param app_agent: The app agent.
         :param app_window: The window of the application.
@@ -126,7 +120,7 @@ class FollowerRound(Round):
         :param request: The user request at the current round.
         """
 
-        super().__init__(task, logger, request_logger, photographer, host_agent, request)
+        super().__init__(task, logger, request_logger, host_agent, request)
 
         self.app_agent = app_agent
         self.app_window = app_window
@@ -140,7 +134,7 @@ class FollowerRound(Round):
         Select an application to interact with.
         """
 
-        host_agent_processor = follower_processor.FollowerHostAgentProcessor(round_num=self.round_num, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step,
+        host_agent_processor = follower_processor.FollowerHostAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), global_step=self.global_step,
                                                             request_logger=self.request_logger, logger=self.logger, host_agent=self.host_agent, prev_status=self.get_status(), app_window=self.app_window)
 
         host_agent_processor.process()
@@ -160,7 +154,7 @@ class FollowerRound(Round):
         Select an action with the application.
         """
 
-        app_agent_processor = follower_processor.FollowerAppAgentProcessor(round_num=self.round_num, log_path=self.log_path, photographer=self.photographer, request=self.request, round_step=self.get_step(), global_step=self.global_step, 
+        app_agent_processor = follower_processor.FollowerAppAgentProcessor(round_num=self.round_num, log_path=self.log_path, request=self.request, round_step=self.get_step(), global_step=self.global_step, 
                                                           process_name=self.application, request_logger=self.request_logger, logger=self.logger, app_agent=self.app_agent, app_window=self.app_window, 
                                                             control_reannotate=self.control_reannotate, prev_status=self.get_status())
 

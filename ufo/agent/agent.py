@@ -7,10 +7,12 @@ from __future__ import annotations
 import time
 from typing import Dict, List
 
+from pywinauto.controls.uiawrapper import UIAWrapper
+
 from .. import utils
 from ..automator import puppeteer
 from ..automator.ui_control import openfile
-from ..automator.ui_control import utils as control
+from ..automator.ui_control.inspector import ControlInspectorFacade
 from ..config.config import Config
 from ..prompter.agent_prompter import (AppAgentPrompter, FollowerAgentPrompter,
                                        HostAgentPrompter)
@@ -68,13 +70,14 @@ class AppAgent(BasicAgent):
         self.host = None
 
 
-    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, app_root_name) -> AppAgentPrompter:
+    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str, app_root_name: str) -> AppAgentPrompter:
         """
         Get the prompt for the agent.
         :param is_visual: The flag indicating whether the agent is visual or not.
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
         :param api_prompt: The API prompt file path.
+        :param app_root_name: The root name of the app.
         :return: The prompter instance.
         """
         return AppAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt, app_root_name)
@@ -364,7 +367,7 @@ class HostAgent(BasicAgent):
         return hostagent_prompt_message
     
     
-    def app_file_manager(self, app_file_info: dict):
+    def app_file_manager(self, app_file_info: Dict[str, str]) -> UIAWrapper:
         '''
         Open the application or file for the user.
         :param app_file_info: The information of the application or file. {'APP': name of app, 'file_path': path}
@@ -375,7 +378,7 @@ class HostAgent(BasicAgent):
         file_manager = openfile.FileController()
         results = file_manager.execute_code(app_file_info)
         time.sleep(configs.get("SLEEP_TIME", 5))
-        desktop_windows_dict, _ = control.get_desktop_app_info_dict()
+        desktop_windows_dict = ControlInspectorFacade(configs["BACKEND"]).get_desktop_app_dict(remove_empty=True)
         if not results:
             self.status = "ERROR in openning the application or file."
             return None
@@ -387,7 +390,7 @@ class HostAgent(BasicAgent):
         return app_window
     
 
-    def print_response(self, response_dict: Dict):
+    def print_response(self, response_dict: Dict) -> None:
         """
         Print the response.
         :param response: The response.

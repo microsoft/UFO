@@ -4,14 +4,14 @@
 import importlib
 import json
 import os
-from typing import Optional
+from typing import Optional, Any, Dict
 
 from colorama import Fore, Style, init
 
 # init colorama
 init()
 
-def print_with_color(text: str, color: str = "", end: str = "\n"):
+def print_with_color(text: str, color: str = "", end: str = "\n") -> None:
     """
     Print text with specified color using ANSI escape codes from Colorama library.
 
@@ -36,7 +36,7 @@ def print_with_color(text: str, color: str = "", end: str = "\n"):
 
 
 
-def create_folder(folder_path: str):
+def create_folder(folder_path: str) -> None:
     """
     Create a folder if it doesn't exist.
 
@@ -46,7 +46,7 @@ def create_folder(folder_path: str):
         os.makedirs(folder_path)
 
 
-def check_json_format(string:str):
+def check_json_format(string:str) -> bool:
     """
     Check if the string can be correctly parse by json.
     :param string: The string to check.
@@ -60,7 +60,7 @@ def check_json_format(string:str):
     return True
 
 
-def json_parser(json_string:str):
+def json_parser(json_string:str) -> Dict[str, Any]:
     """
     Parse json string to json object.
     :param json_string: The json string to parse.
@@ -74,7 +74,12 @@ def json_parser(json_string:str):
     return json.loads(json_string)
 
 
-def is_json_serializable(obj):
+def is_json_serializable(obj: Any) -> bool:
+    """
+    Check if the object is json serializable.
+    :param obj: The object to check.
+    :return: True if the object is json serializable, False otherwise.
+    """
     try:
         json.dumps(obj)
         return True
@@ -82,12 +87,15 @@ def is_json_serializable(obj):
         return False
 
 
-def revise_line_breaks(args: dict):
+def revise_line_breaks(args: Dict[str, Any]) -> Dict[str, Any]:
     """
     Replace '\\n' with '\n' in the arguments.
     :param args: The arguments.
     :return: The arguments with \\n replaced with \n.
     """
+    if not args:
+        return {}
+    
     # Replace \\n with \\n
     for key in args.keys():
         if isinstance(args[key], str):
@@ -96,7 +104,7 @@ def revise_line_breaks(args: dict):
     return args
 
 
-def LazyImport(module_name:str):
+def LazyImport(module_name:str) -> Any:
     """
     Import a module as a global variable.
     :param module_name: The name of the module to import.

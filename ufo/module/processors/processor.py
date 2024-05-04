@@ -14,9 +14,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from ... import utils
 from ...agent.agent import AppAgent, HostAgent
 from ...agent.basic import MemoryItem
-from ...automator.ui_control import utils as control
 from ...automator.ui_control.control_filter import ControlFilterFactory
-from ...automator.ui_control.screenshot import PhotographerFacade
 from ...config.config import Config
 from .. import interactor
 from .basic import BaseProcessor
@@ -27,16 +25,15 @@ BACKEND = configs["CONTROL_BACKEND"]
 
 class HostAgentProcessor(BaseProcessor):
 
-    def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
+    def __init__(self, round_num: int, log_path: str, request: str, request_logger: Logger, logger: Logger, 
                  host_agent: HostAgent, round_step: int, global_step: int, prev_status: str, app_window=None) -> None:
         
-        super().__init__(round_num, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
+        super().__init__(round_num, log_path, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
         """
         Initialize the host agent processor.
         :param round_num: The total number of rounds in the session.
         :param log_path: The log path.
-        :param photographer: The photographer facade to process the screenshots.
         :param request: The user request.
         :param request_logger: The logger for the request string.
         :param logger: The logger for the response and error.
@@ -74,7 +71,8 @@ class HostAgentProcessor(BaseProcessor):
         """
         Get the control information.
         """
-        self._desktop_windows_dict, self._desktop_windows_info = control.get_desktop_app_info_dict()
+        self._desktop_windows_dict = self.control_inspector.get_desktop_app_dict(remove_empty=True)
+        self._desktop_windows_info = self.control_inspector.get_desktop_app_info(self._desktop_windows_dict)
 
 
     def get_prompt_message(self) -> None:
@@ -156,7 +154,7 @@ class HostAgentProcessor(BaseProcessor):
         if new_app_window is None:
             return
         # Get the application name
-        self.app_root = control.get_application_name(new_app_window)
+        self.app_root = self.control_inspector.get_application_root_name(new_app_window)
         
         try:
             new_app_window.is_normal()
@@ -263,16 +261,15 @@ class HostAgentProcessor(BaseProcessor):
 
 class AppAgentProcessor(BaseProcessor):
     
-        def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, global_step: int, 
+        def __init__(self, round_num: int, log_path: str, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, global_step: int, 
                      process_name: str, app_window: UIAWrapper, control_reannotate: Optional[list], prev_status: str) -> None:
             
-            super().__init__(round_num, log_path, photographer, request, request_logger, logger, round_step, global_step, prev_status, app_window)
+            super().__init__(round_num, log_path, request, request_logger, logger, round_step, global_step, prev_status, app_window)
 
             """
             Initialize the app agent processor.
             :param round_num: The total number of rounds in the session.
             :param log_path: The log path.
-            :param photographer: The photographer facade to process the screenshots.
             :param request: The user request.
             :param request_logger: The logger for the request string.
             :param logger: The logger for the response and error.
@@ -318,7 +315,8 @@ class AppAgentProcessor(BaseProcessor):
             if type(self._control_reannotate) == list and len(self._control_reannotate) > 0:
                 control_list = self._control_reannotate
             else:
-                control_list = control.find_control_elements_in_descendants(BACKEND, self._app_window, control_type_list = configs["CONTROL_LIST"], class_name_list = configs["CONTROL_LIST"])
+                control_list = self.control_inspector.find_control_elements_in_descendants(self._app_window, control_type_list = configs["CONTROL_LIST"], class_name_list = configs["CONTROL_LIST"])
+
 
             self._annotation_dict = self.photographer.get_annotation_dict(self._app_window, control_list, annotation_type="number")
             
@@ -349,8 +347,8 @@ class AppAgentProcessor(BaseProcessor):
             """
             Get the control information.
             """
-            self._control_info = control.get_control_info_dict(self._annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
-            self.filtered_control_info = control.get_control_info_dict(self.filtered_annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
+            self._control_info = self.control_inspector.get_control_info_list_of_dict(self._annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
+            self.filtered_control_info = self.control_inspector.get_control_info_list_of_dict(self.filtered_annotation_dict, ["control_text", "control_type" if BACKEND == "uia" else "control_class"])
 
             
             
@@ -488,7 +486,7 @@ class AppAgentProcessor(BaseProcessor):
             # Create a memory item for the app agent
             app_agent_step_memory = MemoryItem()
 
-            app_root = control.get_application_name(self._app_window)
+            app_root = self.control_inspector.get_application_root_name(self._app_window)
             host_agent = self.app_agent.get_host()
             
             

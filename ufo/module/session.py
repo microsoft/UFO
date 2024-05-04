@@ -6,7 +6,6 @@ import os
 from typing import List, Optional
 
 from .. import utils
-from ..automator.ui_control.screenshot import PhotographerFacade
 from ..config.config import Config
 from . import interactor, round
 from .basic import BaseSession
@@ -199,7 +198,7 @@ class Session(BaseSession):
         Create a new round.
         """
 
-        new_round = round.Round(task=self.task, logger=self.logger, request_logger=self.request_logger, photographer=PhotographerFacade(), host_agent=self.host_agent, request=self.request)
+        new_round = round.Round(task=self.task, logger=self.logger, request_logger=self.request_logger, host_agent=self.host_agent, request=self.request)
         new_round.set_index(self.get_round_num())
         new_round.set_global_step(self.get_step())
 
@@ -290,7 +289,7 @@ class FollowerSession(Session):
         Create a new round.
         """
 
-        new_round = round.FollowerRound(task=self.task, logger=self.logger, request_logger=self.request_logger, photographer=PhotographerFacade(), 
+        new_round = round.FollowerRound(task=self.task, logger=self.logger, request_logger=self.request_logger,
                                         host_agent=self.host_agent, app_agent=self.app_agent, app_window=self.app_window, application=self.application, request=self.request)
         new_round.set_index(self.get_round_num())
         new_round.set_global_step(self.get_step())

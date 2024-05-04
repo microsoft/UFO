@@ -9,6 +9,7 @@ from logging import Logger
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ...automator.ui_control.screenshot import PhotographerFacade
+from ...automator.ui_control.inspector import ControlInspectorFacade
 from ...config.config import Config
 
 configs = Config.get_instance().config_data
@@ -22,13 +23,12 @@ class BaseProcessor(ABC):
     Each processor is responsible for processing the user request and updating the HostAgent and AppAgent at a single step in a round.
     """
 
-    def __init__(self, round_num: int, log_path: str, photographer: PhotographerFacade, request: str, request_logger: Logger, logger: Logger, 
+    def __init__(self, round_num: int, log_path: str, request: str, request_logger: Logger, logger: Logger, 
                  round_step: int, global_step: int, prev_status: str, app_window:UIAWrapper) -> None:
         """
         Initialize the processor.
         :param round_num: The index of the processor. The round_num is the total number of rounds in the session.
         :param log_path: The log path.
-        :param photographer: The photographer facade to process the screenshots.
         :param request: The user request.
         :param request_logger: The logger for the request string.
         :param logger: The logger for the response and error.
@@ -39,7 +39,8 @@ class BaseProcessor(ABC):
         """
 
         self.log_path = log_path
-        self.photographer = photographer
+        self.photographer = PhotographerFacade()
+        self.control_inspector = ControlInspectorFacade(BACKEND)
         self.request = request
         self.request_logger = request_logger
         self.logger = logger
