@@ -25,11 +25,23 @@ if TYPE_CHECKING:
     from .session import Session
 
 
+
+class Status:
+    ERROR = "ERROR"
+    FINISH = "FINISH"
+    APP_SELECTION = "APP_SELECTION"
+    CONTINUE = "CONTINUE"
+    COMPLETE = "COMPLETE"
+    SCREENSHOT = "SCREENSHOT"
+    MAX_STEP_REACHED = "MAX_STEP_REACHED"
+
+
 class StatusToStateMapper:  
     """  
     A class to map the status to the appropriate state.  
     """  
   
+    # Singleton instance
     _instance = None  
   
     def __new__(cls):  
@@ -43,13 +55,13 @@ class StatusToStateMapper:
     @staticmethod  
     def create_state_mapping() -> Dict[str, Type[SessionState]]:  
         return {  
-            "FINISH": RoundFinishState,  
-            "ERROR": ErrorState,  
-            "APP_SELECTION": AppSelectionState,  
-            "CONTINUE": ContinueState,  
-            "COMPLETE": SessionFinishState,  
-            "SCREENSHOT": AnnotationState,  
-            "MAX_STEP_REACHED": MaxStepReachedState  
+            Status.FINISH: RoundFinishState,  
+            Status.ERROR: ErrorState,  
+            Status.APP_SELECTION: AppSelectionState,  
+            Status.CONTINUE: ContinueState,
+            Status.COMPLETE: SessionFinishState,  
+            Status.SCREENSHOT: AnnotationState,  
+            Status.MAX_STEP_REACHED: MaxStepReachedState  
         }  
   
     def get_appropriate_state(self, status: str) -> Type[SessionState]:  

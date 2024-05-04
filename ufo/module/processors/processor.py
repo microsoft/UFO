@@ -18,6 +18,7 @@ from ...automator.ui_control.control_filter import ControlFilterFactory
 from ...config.config import Config
 from .. import interactor
 from .basic import BaseProcessor
+from ..state import Status
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -28,8 +29,6 @@ class HostAgentProcessor(BaseProcessor):
     def __init__(self, round_num: int, log_path: str, request: str, request_logger: Logger, logger: Logger, 
                  host_agent: HostAgent, round_step: int, session_step: int, prev_status: str, app_window=None) -> None:
         
-        super().__init__(round_num, log_path, request, request_logger, logger, round_step, session_step, prev_status, app_window)
-
         """
         Initialize the host agent processor.
         :param round_num: The total number of rounds in the session.
@@ -43,6 +42,8 @@ class HostAgentProcessor(BaseProcessor):
         :param prev_status: The previous status of the session.
         :param app_window: The application window.
         """
+        
+        super().__init__(round_num, log_path, request, request_logger, logger, round_step, session_step, prev_status, app_window)
 
         self.host_agent = host_agent  
 
@@ -123,7 +124,7 @@ class HostAgentProcessor(BaseProcessor):
             log = json.dumps({"step": self._step, "status": str(error_trace), "prompt": self._prompt_message})
             utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(e)), "red")
             self.request_logger.info(log)
-            self._status = "ERROR"
+            self._status = Status.ERROR
         
 
     def parse_response(self) -> None:
@@ -142,8 +143,8 @@ class HostAgentProcessor(BaseProcessor):
             
             self.host_agent.print_response(self._response_json)
 
-            if "FINISH" in self._status.upper() or self._control_text == "":
-                self._status = "FINISH"
+            if Status.FINISH in self._status.upper() or self._control_text == "":
+                self._status = Status.FINISH
 
         except Exception:
             error_trace = traceback.format_exc()
@@ -151,7 +152,7 @@ class HostAgentProcessor(BaseProcessor):
             utils.print_with_color(str(error_trace), "red")
             utils.print_with_color(self._response, "red")
             self.error_log(self._response, str(error_trace))
-            self._status = "ERROR"
+            self._status = Status.ERROR
 
 
     def execute_action(self) -> None:
@@ -174,23 +175,38 @@ class HostAgentProcessor(BaseProcessor):
         self.app_root = self.control_inspector.get_application_root_name(new_app_window)
         
         # Check if the window interface is available for the visual element.
-        try:
-            new_app_window.is_normal()
-
-        # Handle the case when the window interface is not available
-        except Exception:
-            utils.print_with_color("Window interface {title} not available for the visual element.".format(title=self._control_text), "red")
-            self._status = "ERROR"
+        if not self.is_window_interface_available(new_app_window):
+            self._status = Status.ERROR
             return
         
         # Switch to the new application window, if it is different from the current application window.
-        if new_app_window is not self._app_window and self._app_window is not None:
-            utils.print_with_color(  
-                "Switching to a new application...", "magenta")
-            self._app_window.minimize()
-
-        self._app_window = new_app_window
+        self.switch_to_new_app_window(new_app_window)
         self._app_window.set_focus()
+
+
+    def is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:  
+        """  
+        Check if the window interface is available for the visual element.  
+        :param new_app_window: The new application window.  
+        :return: True if the window interface is available, False otherwise.  
+        """  
+        try:  
+            new_app_window.is_normal()  
+            return True  
+        except Exception:  
+            utils.print_with_color("Window interface {title} not available for the visual element.".format(title=self._control_text), "red")  
+            return False
+        
+
+    def switch_to_new_app_window(self, new_app_window: UIAWrapper) -> None:  
+        """  
+        Switch to the new application window if it is different from the current application window.  
+        :param new_app_window: The new application window.  
+        """  
+        if new_app_window is not self._app_window and self._app_window is not None:  
+            utils.print_with_color("Switching to a new application...", "magenta")  
+            self._app_window.minimize()  
+        self._app_window = new_app_window 
 
 
     def update_memory(self) -> None:
@@ -202,8 +218,9 @@ class HostAgentProcessor(BaseProcessor):
         host_agent_step_memory = MemoryItem()
 
         # Log additional information for the host agent.
-        additional_memory = {"Step": self.session_step, "RoundStep": self.get_process_step(), "AgentStep": self.host_agent.get_step(), "Round": self.round_num, "ControlLabel": self._control_text, "Action": "set_focus()", 
-                                "ActionType": "UIControl", "Request": self.request, "Agent": "HostAgent", "AgentName": self.host_agent.name, "Application": self.app_root, "Cost": self._cost, "Results": ""}
+        additional_memory = {"Step": self.session_step, "RoundStep": self.get_process_step(), "AgentStep": self.host_agent.get_step(), 
+                             "Round": self.round_num, "ControlLabel": self._control_text, "Action": "set_focus()", "ActionType": "UIControl", 
+                             "Request": self.request, "Agent": "HostAgent", "AgentName": self.host_agent.name, "Application": self.app_root, "Cost": self._cost, "Results": ""}
         
         host_agent_step_memory.set_values_from_dict(self._response_json)
         host_agent_step_memory.set_values_from_dict(additional_memory)
@@ -225,7 +242,7 @@ class HostAgentProcessor(BaseProcessor):
         self.host_agent.update_status(self._status)
 
         # Wait for the application to be ready after an action is taken before proceeding to the next step.
-        if self._status != "FINISH":
+        if self._status != Status.FINISH:
             time.sleep(configs["SLEEP_TIME"])
 
 
@@ -249,8 +266,9 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         # Create the app agent.
-        app_agent = self.host_agent.create_subagent("app", "AppAgent/{root}/{process}".format(root=self.app_root, process=self._control_text), self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
-                                     configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
+        app_agent = self.host_agent.create_subagent("app", "AppAgent/{root}/{process}".format(root=self.app_root, process=self._control_text), 
+                                                    self._control_text, self.app_root, configs["APP_AGENT"]["VISUAL_MODE"], 
+                                                    configs["APPAGENT_PROMPT"], configs["APPAGENT_EXAMPLE_PROMPT"], configs["API_PROMPT"])
         
         # Create the COM receiver for the app agent.
         if configs.get("USE_APIS", False):
@@ -300,8 +318,6 @@ class AppAgentProcessor(BaseProcessor):
         def __init__(self, round_num: int, log_path: str, request: str, request_logger: Logger, logger: Logger, app_agent: AppAgent, round_step:int, session_step: int, 
                      process_name: str, app_window: UIAWrapper, control_reannotate: Optional[list], prev_status: str) -> None:
             
-            super().__init__(round_num, log_path, request, request_logger, logger, round_step, session_step, prev_status, app_window)
-
             """
             Initialize the app agent processor.
             :param round_num: The total number of rounds in the session.
@@ -317,7 +333,10 @@ class AppAgentProcessor(BaseProcessor):
             :param control_reannotate: The list of controls to reannotate.
             :param prev_status: The previous status of the session.
             """
+            
+            super().__init__(round_num, log_path, request, request_logger, logger, round_step, session_step, prev_status, app_window)
 
+            
             self.app_agent = app_agent
             self.process_name = process_name
 
@@ -336,7 +355,8 @@ class AppAgentProcessor(BaseProcessor):
             """
             Print the step information.
             """
-            utils.print_with_color("Round {round_num}, Step {step}: Taking an action on application {application}.".format(round_num=self.round_num+1, step=self.round_step+1, application=self.process_name), "magenta")
+            utils.print_with_color("Round {round_num}, Step {step}: Taking an action on application {application}.".format(
+                round_num=self.round_num+1, step=self.round_step+1, application=self.process_name), "magenta")
 
 
         def capture_screenshot(self) -> None:
@@ -449,7 +469,7 @@ class AppAgentProcessor(BaseProcessor):
                 log = json.dumps({"step": self.session_step, "prompt": self._prompt_message, "status": str(error_trace)})
                 utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(error_trace)), "red")
                 self.request_logger.info(log)
-                self._status = "ERROR"
+                self._status = Status.ERROR
                 time.sleep(configs["SLEEP_TIME"])
                 return
             
@@ -477,7 +497,7 @@ class AppAgentProcessor(BaseProcessor):
                 utils.print_with_color(str(error_trace), "red")
                 utils.print_with_color(self._response, "red")
                 self.error_log(self._response, str(error_trace))
-                self._status = "ERROR"
+                self._status = Status.ERROR
 
 
         def execute_action(self) -> None:
@@ -485,15 +505,13 @@ class AppAgentProcessor(BaseProcessor):
             Execute the action.
             """
 
-
             try:
                 # Get the selected control item from the annotation dictionary and LLM response. The LLm response is a number index corresponding to the key in the annotation dictionary.
                 control_selected = self._annotation_dict.get(self._control_label, "")
                 self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(control_selected, self._app_window)
 
                 # Save the screenshot of the tagged selected control.
-                control_screenshot_save_path = self.log_path + f"action_step{self.session_step}_selected_controls.png"
-                self.photographer.capture_app_window_screenshot_with_rectangle(self._app_window, sub_control_list=[control_selected], save_path=control_screenshot_save_path)
+                self.capture_control_screenshot(control_selected)
 
                 # Compose the function call and the arguments string.
                 self._action = self.app_agent.Puppeteer.get_command_string(self._operation, self._args)
@@ -517,13 +535,7 @@ class AppAgentProcessor(BaseProcessor):
                     return
 
                 # Handle the case when the annotation is overlapped and the agent is unable to select the control items.
-                if self._status.upper() == "SCREENSHOT":
-                    utils.print_with_color("Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.", "magenta")
-                    self._control_reannotate = self.app_agent.Puppeteer.execute_command("annotation", self._args, self._annotation_dict)
-                    if self._control_reannotate is None or len(self._control_reannotate) == 0:
-                        self._status = "CONTINUE"
-                else:
-                    self._control_reannotate = None
+                self.handle_screenshot_status()
 
 
             except Exception:
@@ -532,9 +544,32 @@ class AppAgentProcessor(BaseProcessor):
                 utils.print_with_color(str(error_trace), "red")
                 utils.print_with_color(self._response, "red")
                 self.error_log(self._response, str(error_trace))
-                self._status = "ERROR"
-           
-        
+                self._status = Status.ERROR
+
+
+        def capture_control_screenshot(self, control_selected: UIAWrapper) -> None:
+            """
+            Capture the screenshot of the selected control.
+            :param control_selected: The selected control item.
+            """
+            control_screenshot_save_path = self.log_path + f"action_step{self.session_step}_selected_controls.png"  
+            self.photographer.capture_app_window_screenshot_with_rectangle(self._app_window, sub_control_list=[control_selected], save_path=control_screenshot_save_path) 
+
+
+        def handle_screenshot_status(self) -> None:
+            """
+            Handle the screenshot status when the annotation is overlapped and the agent is unable to select the control items.
+            """
+
+            if self._status.upper() == "SCREENSHOT":  
+                utils.print_with_color("Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.", "magenta")  
+                self._control_reannotate = self.app_agent.Puppeteer.execute_command("annotation", self._args, self._annotation_dict)  
+                if self._control_reannotate is None or len(self._control_reannotate) == 0:  
+                    self._status = "CONTINUE"  
+            else:  
+                self._control_reannotate = None  
+
+
         def update_memory(self) -> None:
             """
             Update the memory of the Agent.
@@ -547,7 +582,8 @@ class AppAgentProcessor(BaseProcessor):
             
             # Log additional information for the app agent.
             additional_memory = {"Step": self.session_step, "RoundStep": self.get_process_step(), "AgentStep": self.app_agent.get_step(), "Round": self.round_num, "Action": self._action, 
-                                 "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation), "Request": self.request, "Agent": "ActAgent", "AgentName": self.app_agent.name, "Application": app_root, "Cost": self._cost, "Results": self._results}
+                                 "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation), "Request": self.request, "Agent": "ActAgent", "AgentName": self.app_agent.name, 
+                                 "Application": app_root, "Cost": self._cost, "Results": self._results}
             app_agent_step_memory.set_values_from_dict(self._response_json)
             app_agent_step_memory.set_values_from_dict(additional_memory)
 
@@ -569,7 +605,7 @@ class AppAgentProcessor(BaseProcessor):
             self.app_agent.update_step()
             self.app_agent.update_status(self._status)
 
-            if self._status != "FINISH":
+            if self._status != Status.FINISH:
                 time.sleep(configs["SLEEP_TIME"])
 
 
@@ -586,12 +622,12 @@ class AppAgentProcessor(BaseProcessor):
             decision = interactor.sensitive_step_asker(action, control_text)
             if not decision:
                 utils.print_with_color("The user decide to stop the task.", "magenta")
-                self._status = "FINISH"
+                self._status = Status.FINISH
                 return False
             
             # Handle the PENDING_AND_FINISH case
-            elif "FINISH" in self.plan:
-                self._status = "FINISH"
+            elif Status.FINISH in self.plan:
+                self._status = Status.FINISH
             return True
 
 
@@ -619,7 +655,7 @@ class AppAgentProcessor(BaseProcessor):
             return prev_plan
         
         
-        def get_filtered_annotation_dict(self, annotation_dict: dict) -> Dict[str, UIAWrapper]:
+        def get_filtered_annotation_dict(self, annotation_dict: Dict[str, UIAWrapper]) -> Dict[str, UIAWrapper]:
             """
             Get the filtered annotation dictionary.
             :param annotation_dict: The annotation dictionary.
