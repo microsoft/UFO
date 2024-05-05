@@ -351,33 +351,25 @@ class AppPrompter:
         prompt_address = configs.get(config_key, None)
 
         if prompt_address:
-            return self.load_prompt_template(prompt_address, None)
+            return AppAgentPrompter.load_prompt_template(prompt_address, None)
+        else:
+            return {}
+        
+    def load_ui_api_prompt(self) -> Dict[str, str]:
+        """
+        Load the prompt template for UI APIs.
+        :return: The prompt template for UI APIs.
+        """
+
+        config_key = "API_PROMPT"
+
+        prompt_address = configs.get(config_key, None)
+
+        if prompt_address:
+            return AppAgentPrompter.load_prompt_template(prompt_address, is_visual=configs["APP_AGENT"]["VISUAL_MODE"])
         else:
             return {}
 
-
-
-    @staticmethod
-    def load_prompt_template(template_path: str, is_visual=None) -> Dict[str, str]:
-        """
-        Load the prompt template.
-        :return: The prompt template.
-        """
-
-        if is_visual == None:
-            path = template_path
-        else:
-            path = template_path.format(mode = "visual" if is_visual == True else "nonvisual")
-        
-        if os.path.exists(path):
-            try:
-                prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
-            except yaml.YAMLError as exc:
-                print_with_color(f"Error loading prompt template: {exc}", "yellow")
-        else:
-            raise FileNotFoundError(f"Prompt template not found at {path}")
-        
-        return prompt
         
 
 class FollowerAgentPrompter(AppAgentPrompter):
