@@ -1,6 +1,6 @@
-Click:
+click_input:
   summary: |-
-    "Click" is to click the control item with mouse.
+    "click_input" is to click the control item with mouse.
   usage: |-
     [1] API call: click_input(button=, double)
     [2] Args:
@@ -11,9 +11,9 @@ Click:
     [5] Return: None
 
 
-SetText:
+set_edit_text:
   summary: |-
-    "SetText" is to input text to the control item.
+    "set_edit_text" is to input text to the control item.
   usage: |-
     [1] API call: set_edit_text(text="")
     [2] Args:
@@ -23,9 +23,9 @@ SetText:
     [5] Return: None
 
 
-Summary:
+summary:
   summary: |-
-    "Summary" is to summarize your throughts of the current application window base on the control item list. This usually happens when the you need to complete the user request by summarizing or describing the information on the current application window. You must use the 'text' argument to input the text to be summarized.
+    "summary" is to summarize your throughts of the current application window base on the control item list. This usually happens when the you need to complete the user request by summarizing or describing the information on the current application window. You must use the 'text' argument to input the text to be summarized.
   usage: |-
     [1] API call: summary(text="")
     [2] Args: None
@@ -33,9 +33,9 @@ Summary:
     [4] Available control item: All control items.
     [5] Return: the summary of the image.
 
-GetText:
+texts:
   summary: |-
-    "GetText" is to get the text of the control item. It typical apply to Edit and Document control item when user request is to get the text of the control item.
+    "texts" is to get the text of the control item. It typical apply to Edit and Document control item when user request is to get the text of the control item.
   usage: |-
     [1] API call: texts()
     [2] Args: None
@@ -43,9 +43,9 @@ GetText:
     [4] All control items.
     [5] Return: the text content of the control item.
 
-Scroll:
+wheel_mouse_input:
   summary: |-
-    "Scroll" is to scroll the control item. It typical apply to a ScrollBar type of control item when user request is to scroll the control item, or the targeted control item is not visible nor available in the control item list, but you know the control item is in the application window and you need to scroll to find it.
+    "wheel_mouse_input" is to scroll the control item. It typical apply to a ScrollBar type of control item when user request is to scroll the control item, or the targeted control item is not visible nor available in the control item list, but you know the control item is in the application window and you need to scroll to find it.
   usage: |-
     [1] API call: wheel_mouse_input()
     [2] Args: 
@@ -55,9 +55,9 @@ Scroll:
     [5] Return: None
 
 
-Keyboard:
+keyboard_input:
   summary: |-
-    "Keyboard" is to simulate the keyboard input. You can use this API to simulate the keyboard input, such as shortcut keys, or any other keys that you want to input.
+    "keyboard_input" is to simulate the keyboard input. You can use this API to simulate the keyboard input, such as shortcut keys, or any other keys that you want to input.
   usage: |-
     [1] API call: keyboard_input(keys: str)
     [2] Args:

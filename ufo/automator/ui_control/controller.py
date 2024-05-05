@@ -263,8 +263,6 @@ class AtomicCommand(ControlCommand):
     
     
 
-
-
 class ClickInputCommand(ControlCommand):
     """
     The click input command class.

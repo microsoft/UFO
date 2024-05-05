@@ -59,6 +59,7 @@ class ReceiverBasic(ABC):
         Get the command-receiver mapping.
         """
         return {command_name: self for command_name in self.supported_command_names}
+
     
     
 

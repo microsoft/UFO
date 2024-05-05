@@ -48,14 +48,6 @@ class WinCOMReceiverBasic(ReceiverBasic):
         :param process_name: The process name.
         """
         pass
-
-
-    @abstractmethod
-    def get_default_command_registry(self) -> Dict:
-        """
-        Get the method registry of the COM object.
-        """
-        pass
     
     
 
