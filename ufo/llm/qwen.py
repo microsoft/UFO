@@ -5,13 +5,15 @@ import json
 import os
 import shutil
 import time
-from PIL import Image
-from typing import Any, Optional
-import dashscope 
-
 from http import HTTPStatus
-from .base import BaseService
+from typing import Any, Optional
+
+import dashscope
+from PIL import Image
+
 from ufo.utils import print_with_color
+
+from .base import BaseService
 
 
 class QwenService(BaseService):

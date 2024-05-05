@@ -5,10 +5,12 @@
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Dict, List, Type
+from typing import Dict, List, Type, Optional
 
 from .. import utils
 from ..llm import llm_call
+# Lazy import the retriever factory to aviod long loading time.
+retriever = utils.LazyImport("..rag.retriever")
 
 
 @dataclass
@@ -19,7 +21,7 @@ class MemoryItem:
 
     _memory_attributes = []
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict[str, str]:
         """
         Convert the MemoryItem to a dictionary.
         :return: The dictionary.
@@ -57,7 +59,7 @@ class MemoryItem:
             self._memory_attributes.append(key)
 
     
-    def set_values_from_dict(self, values: dict) -> None:
+    def set_values_from_dict(self, values: Dict[str, str]) -> None:
         """
         Add fields to the memory item.
         :param values: The values of the fields.
@@ -66,7 +68,7 @@ class MemoryItem:
             self.set_value(key, value)
 
 
-    def get_value(self, key: str) -> object:
+    def get_value(self, key: str) -> Optional[str]:
         """
         Get the value of the field.
         :param key: The key of the field.
@@ -103,7 +105,7 @@ class Memory():
     _content: List[MemoryItem] = field(default_factory=list)
 
     
-    def load(self, content: List[MemoryItem]) -> dict:
+    def load(self, content: List[MemoryItem]) -> None:
         """
         Load the data from the memory.
         :param key: The key of the data.
@@ -111,7 +113,7 @@ class Memory():
         self._content = content
         
 
-    def filter_memory_from_steps(self, steps: List[int]) -> List[dict]:
+    def filter_memory_from_steps(self, steps: List[int]) -> List[Dict[str, str]]:
         """
         Filter the memory from the steps.
         :param steps: The steps to filter.
@@ -120,7 +122,7 @@ class Memory():
         return [item.to_dict() for item in self._content if item.step in steps]
     
     
-    def filter_memory_from_keys(self, keys: List[str]) -> List[dict]:
+    def filter_memory_from_keys(self, keys: List[str]) -> List[Dict[str, str]]:
         """
         Filter the memory from the keys. If an item does not have the key, the key will be ignored.
         :param keys: The keys to filter.
@@ -138,6 +140,22 @@ class Memory():
         self._content.append(memory_item)
 
 
+    def clear(self) -> None:
+        """
+        Clear the memory.
+        """
+        self._content = []
+
+
+    @property
+    def length(self) -> int:
+        """
+        Get the length of the memory.
+        :return: The length of the memory.
+        """
+        return len(self._content)
+
+
 
     def delete_memory_item(self, step: int) -> None:
         """
@@ -153,8 +171,26 @@ class Memory():
         :return: The JSON string.
         """
 
-        return json.dumps([item.to_dict() for item in self._content])
+        return json.dumps([item.to_dict() for item in self._content if item is not None])
+    
 
+    def get_latest_item(self) -> MemoryItem:
+        """
+        Get the latest memory item.
+        :return: The latest memory item.
+        """
+        if self.length == 0:
+            return None
+        return self._content[-1]
+    
+
+    @property
+    def content(self) -> List[MemoryItem]:
+        """
+        Get the content of the memory.
+        :return: The content of the memory.
+        """
+        return self._content
 
 
 
@@ -163,7 +199,7 @@ class BasicAgent(ABC):
     The BasicAgent class is the abstract class for the agent.
     """
 
-    def __init__(self, name: str):
+    def __init__(self, name: str) -> None:
         """
         Initialize the BasicAgent.
         :param name: The name of the agent.
@@ -173,13 +209,14 @@ class BasicAgent(ABC):
         self._name = name
         self._status = None
         self._register_self()
+        self.retriever_factory = retriever.RetrieverFactory()
+        self._memory = Memory()
         
 
     @property
     def complete(self) -> bool:
         """
         Indicates whether the current instruction execution is complete.
-
         :returns: complete (bool): True if execution is complete; False otherwise.
         """
         self._complete = self._status.lower() == "finish"
@@ -244,7 +281,7 @@ class BasicAgent(ABC):
     
 
     @staticmethod
-    def response_to_dict(response: str) -> dict:
+    def response_to_dict(response: str) -> Dict[str, str]:
         """
         Convert the response to a dictionary.
         :param response: The response.
@@ -282,6 +319,13 @@ class BasicAgent(ABC):
         :param step: The step of the memory item to delete.
         """
         self._memory.delete_memory_item(step)
+
+
+    def clear_memory(self) -> None:
+        """
+        Clear the memory of the agent.
+        """
+        self._memory.clear()
 
 
 
@@ -396,3 +440,4 @@ class AgentRegistry:
         if name not in cls._registry:
             raise ValueError(f"No agent class registered under '{name}'.")
         return cls._registry[name]
+    

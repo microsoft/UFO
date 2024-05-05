@@ -2,39 +2,47 @@
 # Licensed under the MIT License.
 
 
-from abc import ABC, abstractmethod
-from typing import Dict, List, Type
+from abc import abstractmethod
+from typing import Dict, List
 
 import win32com.client
 
+from ..basic import CommandBasic, ReceiverBasic
 
-class WinCOMClient(ABC):
+
+class WinCOMReceiverBasic(ReceiverBasic):
     """
     The base class for Windows COM client.
     """
 
 
-    def __init__(self, app_root_name: str, process_name: str) -> None:
+    def __init__(self, app_root_name: str, process_name: str, clsid: str) -> None:
         """
         Initialize the Windows COM client.
         :param app_root_name: The app root name.
         :param process_name: The process name.
+        :param clsid: The CLSID of the COM object.
         """
+        super().__init__()
 
         self.app_root_name = app_root_name
         self.process_name = process_name
-        self.clsid = self.app_root_mappping(app_root_name)
+        self.clsid = clsid
 
-        if self.clsid is None:
-            raise ValueError(f"App root name {app_root_name} is not supported.")
-        
         self.client = win32com.client.Dispatch(self.clsid)
-        self.object = self.get_object_from_process_name(process_name)
-
+        self.com_object = self.get_object_from_process_name()
 
 
     @abstractmethod
-    def get_object_from_process_name(self, process_name: str) -> None:
+    def get_default_command_registry(self):
+        """
+        The default command registry.
+        """
+        pass
+
+
+    @abstractmethod
+    def get_object_from_process_name(self) -> None:
         """
         Get the object from the process name.
         :param process_name: The process name.
@@ -42,24 +50,15 @@ class WinCOMClient(ABC):
         pass
 
 
-    @property
-    def app_root_mappping(self) -> str:
+    @abstractmethod
+    def get_default_command_registry(self) -> Dict:
         """
-        Map the app root to the corresponding app.
-        :return: The CLSID of the COM object.
+        Get the method registry of the COM object.
         """
-        
-        win_com_map = {
-            "WINWORD.EXE": "Word.Application",
-            "EXCEL.EXE": "Excel.Application",
-            "POWERPNT.EXE": "PowerPoint.Application",
-            "olk.exe": "Outlook.Application"
-        }
-
-        return win_com_map.get(self.app_root_name, None)
+        pass
+    
     
 
-    @property
     def get_suffix_mapping(self) -> Dict[str, str]:
         """
         Get the suffix mapping.
@@ -91,7 +90,12 @@ class WinCOMClient(ABC):
             clean_process_name = self.process_name
 
         return max(object_name_list, key=lambda x: self.longest_common_substring_length(clean_process_name, x))
+    
 
+    @property
+    def type_name(self):
+        return "COM"
+    
 
 
     @staticmethod
@@ -120,6 +124,28 @@ class WinCOMClient(ABC):
                     dp[i][j] = 0
         
         return max_length
+    
+
+
+class WinCOMCommand(CommandBasic):
+    """
+    The abstract command interface.
+    """
+
+    def __init__(self, receiver: WinCOMReceiverBasic, params=None) -> None:
+        """
+        Initialize the command.
+        :param receiver: The receiver of the command.
+        """
+        self.receiver = receiver
+        self.params = params if params is not None else {}
+
+    @abstractmethod  
+    def execute(self):  
+        pass
+
+
+    
 
 
         

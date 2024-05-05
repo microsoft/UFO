@@ -53,4 +53,19 @@ Scroll:
     [3] Example: wheel_mouse_input(wheel_dist=-20)
     [4] All control items.
     [5] Return: None
+
+
+Keyboard:
+  summary: |-
+    "Keyboard" is to simulate the keyboard input. You can use this API to simulate the keyboard input, such as shortcut keys, or any other keys that you want to input.
+  usage: |-
+    [1] API call: keyboard_input(keys: str)
+    [2] Args:
+      - keys: The key to input. It can be any key on the keyboard, with special keys represented by their virtual key codes. For example, "{VK_CONTROL}c" represents the Ctrl+C shortcut key.
+    [3] Example: 
+      - keyboard_input(keys="{VK_CONTROL}c") --> Copy the selected text.
+      - keyboard_input(keys="{ENTER}") --> Press the Enter key.
+      - keyboard_input(keys="{TAB 2}") --> Press the Tab key twice.
+    [4] Available control item: All control items.
+    [5] Return: None
   

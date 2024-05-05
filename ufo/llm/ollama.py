@@ -4,12 +4,13 @@ import io
 import json
 import time
 from typing import Any, Optional
-from PIL import Image
 
 import requests
+from PIL import Image
+
+from ufo.utils import print_with_color
 
 from .base import BaseService
-from ufo.utils import print_with_color
 
 
 class OllamaService(BaseService):
