@@ -5,7 +5,7 @@
 import json
 import os
 import time
-import traceback
+
 from logging import Logger
 from typing import Dict, List, Optional
 
@@ -597,7 +597,7 @@ class AppAgentProcessor(BaseProcessor):
             return: The boolean value indicating whether to proceed or not.
             """
             
-            # Ask the user whether to proceed with the action w
+            # Ask the user whether to proceed with the action when the status is PENDING.
             decision = interactor.sensitive_step_asker(action, control_text)
             if not decision:
                 utils.print_with_color("The user decide to stop the task.", "magenta")

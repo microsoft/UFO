@@ -264,7 +264,8 @@ class Session(BaseSession):
 
 class FollowerSession(Session):
     """ 
-    A session for following a list of plan for action taken.
+    A session for following a list of plan for action taken. 
+    This session is used for the follower agent, which accepts a plan file to follow using the PlanReader.
     """
 
     def __init__(self, task: str, plan_file: str) -> None:

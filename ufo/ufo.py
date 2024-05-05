@@ -25,7 +25,13 @@ parsed_args = args.parse_args()
 
 def main():
     """
-    Main function.
+    Main function to run the UFO system.
+
+    To use normal mode, run the following command:
+    python -m ufo -t task_name
+
+    To use follower mode that follows a plan file or folder, run the following command:
+    python -m ufo -t task_name -m follower -p path_to_plan_file_or_folder
     """
     sessions = SessionFactory().create_session(task=parsed_args.task, mode=parsed_args.mode, plan=parsed_args.plan)
 
