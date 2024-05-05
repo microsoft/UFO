@@ -2,16 +2,13 @@
 # Licensed under the MIT License.
 
 import json
-import os
 from typing import Dict, List, Optional
 
-import yaml
-
 from ..config.config import Config
-from ..utils import print_with_color
 from .basic import BasicPrompter
 
 configs = Config.get_instance().config_data
+
 
 class HostAgentPrompter(BasicPrompter):
     """
