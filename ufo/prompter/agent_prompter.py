@@ -174,7 +174,7 @@ class AppAgentPrompter(BasicPrompter):
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
         self.root_name = root_name
-        self.app_prompter = AppPrompter(self.root_name)
+        self.app_prompter = APIPromptLoader(self.root_name)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template, is_visual)
         self.app_api_prompt_template = None
 
@@ -324,53 +324,7 @@ class AppAgentPrompter(BasicPrompter):
 
         return api_prompt
     
-
-
-
-class AppPrompter:
-
-    def __init__(self, root_name) -> None:
-        self.root_name = root_name
-
-
-    def load_com_api_prompt(self) -> Dict[str, str]:
-        """
-        Load the prompt template for COM APIs.
-        :return: The prompt template for COM APIs.
-        """
-        app2configkey_mapper = {
-            "WINWORD.EXE": "WORD_API_PROMPT",
-            "EXCEL.EXE": "EXCEL_API_PROMPT",
-            "POWERPNT.EXE": "POWERPOINT_API_PROMPT",
-            "olk.exe": "OUTLOOK_API_PROMPT"
-        }
-
-        # Get the config key of app
-        config_key = app2configkey_mapper.get(self.root_name, None)
-        # Get the prompt address from config
-        prompt_address = configs.get(config_key, None)
-
-        if prompt_address:
-            return AppAgentPrompter.load_prompt_template(prompt_address, None)
-        else:
-            return {}
-        
-    def load_ui_api_prompt(self) -> Dict[str, str]:
-        """
-        Load the prompt template for UI APIs.
-        :return: The prompt template for UI APIs.
-        """
-
-        config_key = "API_PROMPT"
-
-        prompt_address = configs.get(config_key, None)
-
-        if prompt_address:
-            return AppAgentPrompter.load_prompt_template(prompt_address, is_visual=configs["APP_AGENT"]["VISUAL_MODE"])
-        else:
-            return {}
-
-        
+    
 
 class FollowerAgentPrompter(AppAgentPrompter):
     """
@@ -483,4 +437,58 @@ class FollowerAgentPrompter(AppAgentPrompter):
         })
 
         return user_content
+    
+
+
+class APIPromptLoader:
+    """
+    Load the prompt template for APIs.
+    """
+
+    def __init__(self, root_name: str) -> None:
+        """
+        Initialize the APIPromptLoader.
+        :param root_name: The root name of the app.
+        """
+        self.root_name = root_name
+
+
+    def load_com_api_prompt(self) -> Dict[str, str]:
+        """
+        Load the prompt template for COM APIs.
+        :return: The prompt template for COM APIs.
+        """
+        app2configkey_mapper = {
+            "WINWORD.EXE": "WORD_API_PROMPT",
+            "EXCEL.EXE": "EXCEL_API_PROMPT",
+            "POWERPNT.EXE": "POWERPOINT_API_PROMPT",
+            "olk.exe": "OUTLOOK_API_PROMPT"
+        }
+
+        # Get the config key of app
+        config_key = app2configkey_mapper.get(self.root_name, None)
+        # Get the prompt address from config
+        prompt_address = configs.get(config_key, None)
+
+        if prompt_address:
+            return AppAgentPrompter.load_prompt_template(prompt_address, None)
+        else:
+            return {}
+        
+        
+    @staticmethod
+    def load_ui_api_prompt() -> Dict[str, str]:
+        """
+        Load the prompt template for UI APIs.
+        :return: The prompt template for UI APIs.
+        """
+
+        config_key = "API_PROMPT"
+
+        prompt_address = configs.get(config_key, None)
+
+        if prompt_address:
+            return AppAgentPrompter.load_prompt_template(prompt_address, is_visual=configs["APP_AGENT"]["VISUAL_MODE"])
+        else:
+            return {}
     
