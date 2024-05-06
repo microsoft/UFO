@@ -1,6 +1,8 @@
 click_input:
   summary: |-
     "click_input" is to click the control item with mouse.
+  class_name: |-
+    ClickInputCommand
   usage: |-
     [1] API call: click_input(button=, double)
     [2] Args:
@@ -14,6 +16,8 @@ click_input:
 set_edit_text:
   summary: |-
     "set_edit_text" is to input text to the control item.
+  class_name: |-
+    SetEditTextCommand
   usage: |-
     [1] API call: set_edit_text(text="")
     [2] Args:
@@ -26,6 +30,8 @@ set_edit_text:
 summary:
   summary: |-
     "summary" is to summarize your throughts of the current application window base on the control item list. This usually happens when the you need to complete the user request by summarizing or describing the information on the current application window. You must use the 'text' argument to input the text to be summarized.
+  class_name: |-
+    SummaryCommand
   usage: |-
     [1] API call: summary(text="")
     [2] Args: None
@@ -36,6 +42,8 @@ summary:
 texts:
   summary: |-
     "texts" is to get the text of the control item. It typical apply to Edit and Document control item when user request is to get the text of the control item.
+  class_name: |-
+    GetTextsCommand
   usage: |-
     [1] API call: texts()
     [2] Args: None
@@ -46,6 +54,8 @@ texts:
 wheel_mouse_input:
   summary: |-
     "wheel_mouse_input" is to scroll the control item. It typical apply to a ScrollBar type of control item when user request is to scroll the control item, or the targeted control item is not visible nor available in the control item list, but you know the control item is in the application window and you need to scroll to find it.
+  class_name: |-
+    WheelMouseInputCommand
   usage: |-
     [1] API call: wheel_mouse_input()
     [2] Args: 

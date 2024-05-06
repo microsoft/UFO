@@ -1,6 +1,8 @@
-InsertTable:
+insert_table:
   summary: |-
-    "InsertTable" is to insert a table to a Word document.
+    "insert_table" is to insert a table to a Word document.
+  class_name: |-
+    InsertTableCommand
   usage: |-
     [1] API call: insert_table(rows: int, columns: int) 
     [2] Args:
@@ -11,9 +13,11 @@ InsertTable:
     [5] Return: None
 
 
-SelectText:
+select_text:
   summary: |-
-    "SelectText" is to select the text in a Word document for further operations, such as changing the font size or color.
+    "select_text" is to select the text in a Word document for further operations, such as changing the font size or color.
+  class_name: |-
+    SelectTextCommand
   usage: |-
     [1] API call: select_text(text: str) 
     [2] Args:
@@ -23,9 +27,11 @@ SelectText:
     [5] Return: A string of the selected text if successful, otherwise a text not found message.
 
 
-SelectTable:
+select_table:
   summary: |-
-    "SelectTable" is to select a table in a Word document for further operations, such as deleting the table or changing the border color.
+    "select_table" is to select a table in a Word document for further operations, such as deleting the table or changing the border color.
+  class_name: |-
+    SelectTableCommand
   usage: |-
     [1] API call: select_table(number: int) 
     [2] Args:

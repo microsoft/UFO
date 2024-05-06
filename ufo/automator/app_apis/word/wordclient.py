@@ -1,9 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from typing import Dict
+from typing import Dict, Type
 
 from ..basic import WinCOMCommand, WinCOMReceiverBasic
+from ...basic import CommandBasic, ReceiverBasic
+from ....prompter.agent_prompter import APIPromptLoader
 
 
 class WordWinCOMReceiver(WinCOMReceiverBasic):
@@ -26,18 +28,22 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
             
         return None
     
-    @staticmethod
-    def get_default_command_registry() -> Dict[str, WinCOMCommand]:
+
+    def get_default_command_registry(self) -> Dict[str, Type[CommandBasic]]:
         """
-        Get the method registry of the COM object.
-        :return: The method registry.
+        Get the default command registry.
         """
-        mappping = {
-            "insert_table": InsertTableCommand,
-            "select_text": SelectTextCommand,
-            "select_table": SelectTableCommand
-        }
-        return mappping
+
+        api_prompt = APIPromptLoader(self.app_root_name).load_com_api_prompt()
+        class_name_dict = self.filter_api_dict(api_prompt, "class_name")
+
+        global_name_space = globals()
+        command_registry = self.name_to_command_class(global_name_space, class_name_dict)
+
+        return command_registry
+
+    
+    
     
 
     def insert_table(self, rows: int, columns: int) -> object:

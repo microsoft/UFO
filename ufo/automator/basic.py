@@ -4,7 +4,8 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Any, Dict, List, Type
+from ..utils import print_with_color
 
 
 class ReceiverBasic(ABC):
@@ -59,6 +60,37 @@ class ReceiverBasic(ABC):
         Get the command-receiver mapping.
         """
         return {command_name: self for command_name in self.supported_command_names}
+    
+
+    @staticmethod
+    def filter_api_dict(api_dict: Dict[str, Any], key: str) -> Dict[str, str]:
+        """
+        Filter the API dictionary.
+        :param api_dict: The API dictionary.
+        :param key: The key to filter.
+        :return: The filtered API dictionary.
+        """
+        return {k: v.get(key, None) for k, v in api_dict.items()}
+    
+    
+    @staticmethod
+    def name_to_command_class(global_namespace:Dict[str, Any], class_name_mapping: Dict[str, str]) -> Dict[str, Type[CommandBasic]]:
+        """
+        Convert the class name to the command class.
+        :param class_name_mapping: The class name mapping.
+        :return: The command class mapping.
+        """
+
+        api_class_registry = {}
+
+        for key, command_class_name in class_name_mapping.items():
+            if command_class_name in global_namespace:
+                api_class_registry[key] = global_namespace[command_class_name]
+            else:
+                print_with_color("Warning: The command class {command_class_name} with api key {key} is not found in the global namespace.", "yellow")
+        
+        return api_class_registry
+        
 
     
     
