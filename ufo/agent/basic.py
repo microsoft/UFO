@@ -6,8 +6,9 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Dict, List, Type, Optional
 
-from .. import utils
-from ..llm import llm_call
+from ufo import utils
+from ufo.llm import llm_call
+
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")

@@ -9,17 +9,18 @@ from typing import Dict, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from .. import utils
-from ..automator import puppeteer
-from ..automator.ui_control import openfile
-from ..automator.ui_control.inspector import ControlInspectorFacade
-from ..config.config import Config
-from ..prompter.agent_prompter import (
+from ufo import utils
+from ufo.agent.basic import BasicAgent, Memory, MemoryItem
+from ufo.automator import puppeteer
+from ufo.automator.ui_control import openfile
+from ufo.automator.ui_control.inspector import ControlInspectorFacade
+from ufo.config.config import Config
+from ufo.prompter.agent_prompter import (
     AppAgentPrompter,
     FollowerAgentPrompter,
     HostAgentPrompter,
 )
-from .basic import BasicAgent, Memory, MemoryItem
+
 
 configs = Config.get_instance().config_data
 

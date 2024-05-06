@@ -1,10 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import os
-import yaml
 import json
-from ..utils import print_with_color
+import os
+
+import yaml
+
+from ufo.utils import print_with_color
 
 
 class Config:
@@ -23,7 +25,6 @@ class Config:
         if Config._instance is None:
             Config._instance = Config()
         return Config._instance
-    
 
     def load_config(self, config_path="ufo/config/") -> dict:
         """
@@ -33,7 +34,7 @@ class Config:
         :return: Merged configuration from environment variables and YAML file.
         """
         # Copy environment variables to avoid modifying them directly
-        os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3' # Suppress TensorFlow warnings
+        os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # Suppress TensorFlow warnings
         configs = dict(os.environ)
 
         path = config_path
@@ -55,8 +56,9 @@ class Config:
                 configs.update(yaml_prices_data)
         except FileNotFoundError:
             print_with_color(
-                f"Warning: Config file not found at {config_path}. Using only environment variables.", "yellow")
-
+                f"Warning: Config file not found at {config_path}. Using only environment variables.",
+                "yellow",
+            )
 
         return self.optimize_configs(configs)
 
@@ -67,22 +69,29 @@ class Config:
         :param configs: The configuration dictionary.
         :param agent: The agent name.
         """
-        
+
         if configs[agent]["API_TYPE"].lower() == "aoai":
-            if 'deployments' not in configs[agent]["API_BASE"]:
-                configs[agent]["API_BASE"] = "{endpoint}/openai/deployments/{deployment_name}/chat/completions?api-version={api_version}".format(
-                        endpoint=configs[agent]["API_BASE"][:-1] if configs[agent]["API_BASE"].endswith(
-                            "/") else configs[agent]["API_BASE"],
+            if "deployments" not in configs[agent]["API_BASE"]:
+                configs[agent]["API_BASE"] = (
+                    "{endpoint}/openai/deployments/{deployment_name}/chat/completions?api-version={api_version}".format(
+                        endpoint=(
+                            configs[agent]["API_BASE"][:-1]
+                            if configs[agent]["API_BASE"].endswith("/")
+                            else configs[agent]["API_BASE"]
+                        ),
                         deployment_name=configs[agent]["API_DEPLOYMENT_ID"],
-                        api_version=configs[agent]["API_VERSION"]
+                        api_version=configs[agent]["API_VERSION"],
+                    )
                 )
             configs[agent]["API_MODEL"] = configs[agent]["API_DEPLOYMENT_ID"]
         elif configs[agent]["API_TYPE"].lower() == "openai":
-            if 'chat/completions' in configs[agent]["API_BASE"]:
-                configs[agent]["API_BASE"] = configs[agent]["API_BASE"][:-18] if configs[agent]["API_BASE"].endswith(
-                    "/") else configs[agent]["API_BASE"][:-17]
-                
-                
+            if "chat/completions" in configs[agent]["API_BASE"]:
+                configs[agent]["API_BASE"] = (
+                    configs[agent]["API_BASE"][:-18]
+                    if configs[agent]["API_BASE"].endswith("/")
+                    else configs[agent]["API_BASE"][:-17]
+                )
+
     @classmethod
     def optimize_configs(cls, configs: dict) -> dict:
         """
@@ -90,12 +99,10 @@ class Config:
         :param configs: The configurations.
         :return: The optimized configurations.
         """
-        cls.update_api_base(configs,'HOST_AGENT')
-        cls.update_api_base(configs,'APP_AGENT')
-        
-        return configs
-    
+        cls.update_api_base(configs, "HOST_AGENT")
+        cls.update_api_base(configs, "APP_AGENT")
 
+        return configs
 
 
 def get_offline_learner_indexer_config():
@@ -107,7 +114,7 @@ def get_offline_learner_indexer_config():
     # The fixed path of the offline indexer config file.
     file_path = "learner/records.json"
     if os.path.exists(file_path):
-        with open(file_path, 'r') as file:
+        with open(file_path, "r") as file:
             records = json.load(file)
     else:
         records = {}
