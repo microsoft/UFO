@@ -20,7 +20,6 @@ class ReceiverBasic(ABC):
 
         self.command_registry = self.get_default_command_registry()
         self.supported_command_names = self.get_supported_command_names()
-       
 
     @abstractmethod
     def get_default_command_registry(self) -> Dict:
@@ -29,16 +28,13 @@ class ReceiverBasic(ABC):
         """
         pass
 
-
     def get_command_registry(self) -> Dict:
         """
         Get the command registry.
         """
         return self.command_registry
-    
-    
 
-    def register_command(self, command_name:str, command:CommandBasic) -> None:
+    def register_command(self, command_name: str, command: CommandBasic) -> None:
         """
         Add to the command registry.
         :param command_name: The command name.
@@ -46,21 +42,18 @@ class ReceiverBasic(ABC):
         """
 
         self.command_registry[command_name] = command
-        
-    
+
     def get_supported_command_names(self) -> List[str]:
         """
         Get the command name list.
         """
         return list(self.command_registry.keys())
-    
-    
+
     def self_command_mapping(self) -> Dict[str, CommandBasic]:
         """
         Get the command-receiver mapping.
         """
         return {command_name: self for command_name in self.supported_command_names}
-    
 
     @staticmethod
     def filter_api_dict(api_dict: Dict[str, Any], key: str) -> Dict[str, str]:
@@ -71,13 +64,14 @@ class ReceiverBasic(ABC):
         :return: The filtered API dictionary.
         """
         return {k: v.get(key, None) for k, v in api_dict.items()}
-    
-    
+
     @staticmethod
-    def name_to_command_class(global_namespace:Dict[str, Any], class_name_mapping: Dict[str, str]) -> Dict[str, Type[CommandBasic]]:
+    def name_to_command_class(
+        global_namespace: Dict[str, Any], class_name_mapping: Dict[str, str]
+    ) -> Dict[str, Type[CommandBasic]]:
         """
         Convert the class name to the command class.
-        :param class_name_mapping: The class name mapping.
+        :param class_name_mapping: The class name mapping {api_key: class_name}.
         :return: The command class mapping.
         """
 
@@ -87,17 +81,16 @@ class ReceiverBasic(ABC):
             if command_class_name in global_namespace:
                 api_class_registry[key] = global_namespace[command_class_name]
             else:
-                print_with_color("Warning: The command class {command_class_name} with api key {key} is not found in the global namespace.", "yellow")
-        
-        return api_class_registry
-        
+                print_with_color(
+                    "Warning: The command class {command_class_name} with api key {key} is not found in the global namespace.",
+                    "yellow",
+                )
 
-    
-    
+        return api_class_registry
 
     @property
     def type_name(self):
-        
+
         return self.__class__.__name__
 
 
@@ -113,10 +106,9 @@ class CommandBasic(ABC):
         """
         self.receiver = receiver
         self.params = params if params is not None else {}
-        
 
-    @abstractmethod  
-    def execute(self):  
+    @abstractmethod
+    def execute(self):
         pass
 
     def undo(self):
@@ -124,11 +116,10 @@ class CommandBasic(ABC):
 
     def redo(self):
         self.execute()
-    
+
     @property
     def name(self):
         return self.__class__.__name__
-
 
 
 class ReceiverFactory(ABC):
@@ -136,9 +127,6 @@ class ReceiverFactory(ABC):
     The abstract receiver factory interface.
     """
 
-    @abstractmethod  
-    def create_receiver(self, *args, **kwargs):  
-        pass 
-    
-    
-
+    @abstractmethod
+    def create_receiver(self, *args, **kwargs):
+        pass

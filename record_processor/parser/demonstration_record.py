@@ -1,13 +1,21 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+
 class DemonstrationStep:
     """
     Class for the single step information in the user demonstration record.
     Multiple steps will be recorded to achieve a specific request.
     """
 
-    def __init__(self, application: str, description: str, action: str, screenshot: str, comment: str):
+    def __init__(
+        self,
+        application: str,
+        description: str,
+        action: str,
+        screenshot: str,
+        comment: str,
+    ):
         """
         Create a new step.
         """
@@ -16,6 +24,7 @@ class DemonstrationStep:
         self.action = action
         self.comment = comment
         self.screenshot = screenshot
+
 
 class DemonstrationRecord:
     """
@@ -40,19 +49,19 @@ class DemonstrationRecord:
         Set the request.
         """
         self.__request = request
-    
+
     def get_request(self) -> str:
         """
         Get the request.
         """
         return self.__request
-    
+
     def get_applications(self) -> list:
         """
         Get the application.
         """
         return self.__applications
-    
+
     def get_step_num(self) -> int:
         """
         Get the step number.

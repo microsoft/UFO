@@ -20,7 +20,6 @@ class UFOClient:
 
         self.session = session
 
-
     def run(self) -> None:
         """
         Run the UFO client.
@@ -32,9 +31,8 @@ class UFOClient:
         # If the session is finished normally, handle the last state with additional logic.
         if isinstance(self.session.get_state(), SessionFinishState):
             self.session.handle()
-    
-        self.session.print_cost()
 
+        self.session.print_cost()
 
 
 class UFOClientManager:
@@ -49,12 +47,11 @@ class UFOClientManager:
 
         self.session_list = session_list
 
-
     def run_all(self) -> None:
         """
         Run the batch UFO client.
         """
 
         for session in self.session_list:
-           client = UFOClient(session)
-           client.run()
+            client = UFOClient(session)
+            client.run()

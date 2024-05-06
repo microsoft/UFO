@@ -16,7 +16,6 @@ class BasicDocumentLoader:
         self.extensions = extensions
         self.directory = directory
 
-
     def load_file_name(self):
         """
         Load the documents from the given directory.
@@ -24,7 +23,6 @@ class BasicDocumentLoader:
         :return: The list of loaded documents.
         """
         return utils.find_files_with_extension(self.directory, self.extensions)
-    
 
     def construct_document_list(self):
         """
@@ -33,7 +31,3 @@ class BasicDocumentLoader:
         :return: The list of metadata for the loaded documents.
         """
         pass
-    
-
-    
-        

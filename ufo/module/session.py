@@ -28,7 +28,6 @@ class PlanReader:
             self.plan = json.load(f)
         self.remaining_steps = self.get_steps()
 
-        
     def get_task(self) -> str:
         """
         Get the task name.
@@ -36,8 +35,7 @@ class PlanReader:
         """
 
         return self.plan.get("task", "")
-    
-    
+
     def get_steps(self) -> List[str]:
         """
         Get the steps in the plan.
@@ -45,8 +43,7 @@ class PlanReader:
         """
 
         return self.plan.get("steps", [])
-    
-    
+
     def get_operation_object(self) -> str:
         """
         Get the operation object in the step.
@@ -54,7 +51,6 @@ class PlanReader:
         """
 
         return self.plan.get("object", [])
-    
 
     def get_initial_request(self) -> str:
         """
@@ -68,7 +64,6 @@ class PlanReader:
         request = f"{task} in {object_name}"
 
         return request
-    
 
     def get_host_agent_request(self) -> str:
         """
@@ -81,8 +76,7 @@ class PlanReader:
         request = f"Open and select the application of {object_name}, and output the FINISH status immediately."
 
         return request
-    
-    
+
     def next_step(self) -> Optional[str]:
         """
         Get the next step in the plan.
@@ -92,9 +86,8 @@ class PlanReader:
         if self.remaining_steps:
             step = self.remaining_steps.pop(0)
             return step
-        
+
         return None
-    
 
     def task_finished(self) -> bool:
         """
@@ -105,13 +98,11 @@ class PlanReader:
         return not self.remaining_steps
 
 
-
 class SessionFactory:
     """
     The factory class to create a session.
     """
 
-    
     def create_session(self, task: str, mode: str, plan: str) -> BaseSession:
         """
         Create a session.
@@ -129,9 +120,10 @@ class SessionFactory:
                 return [FollowerSession(task, plan)]
         else:
             raise ValueError(f"The {mode} mode is not supported.")
-        
 
-    def create_follower_session_in_batch(self, task: str, plan: str) -> List[BaseSession]:
+    def create_follower_session_in_batch(
+        self, task: str, plan: str
+    ) -> List[BaseSession]:
         """
         Create a follower session.
         :param task: The name of current task.
@@ -140,12 +132,13 @@ class SessionFactory:
         """
         plan_files = self.get_plan_files(plan)
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
-        sessions = [FollowerSession(f"{task}/{file_name}", plan_file) 
-                    for file_name, plan_file in zip(file_names, plan_files)]
+        sessions = [
+            FollowerSession(f"{task}/{file_name}", plan_file)
+            for file_name, plan_file in zip(file_names, plan_files)
+        ]
 
         return sessions
-    
-    
+
     @staticmethod
     def is_folder(path: str) -> bool:
         """
@@ -154,8 +147,7 @@ class SessionFactory:
         :return: True if the path is a folder, False otherwise.
         """
         return os.path.isdir(path)
-    
-    
+
     @staticmethod
     def get_plan_files(path: str) -> List[str]:
         """
@@ -164,7 +156,6 @@ class SessionFactory:
         :return: The plan files in the folder.
         """
         return [os.path.join(path, f) for f in os.listdir(path) if f.endswith(".json")]
-    
 
     def get_file_name_without_extension(self, file_path: str) -> str:
         """
@@ -173,45 +164,48 @@ class SessionFactory:
         :return: The file name without extension.
         """
         return os.path.splitext(os.path.basename(file_path))[0]
-        
-        
+
 
 class Session(BaseSession):
     """
     A session for UFO.
     """
-    
+
     def __init__(self, task: str):
         """
         Initialize a session.
         :param task: The name of current task.
         """
-        
-        super(Session, self).__init__(task)
-  
-        # Initial setup and welcome message  
-        utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
-            
-        self.request = interactor.first_request()
-  
-        # Round-related properties  
-        self.round_list = []  
-        self._current_round = self.create_round()
 
+        super(Session, self).__init__(task)
+
+        # Initial setup and welcome message
+        utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
+
+        self.request = interactor.first_request()
+
+        # Round-related properties
+        self.round_list = []
+        self._current_round = self.create_round()
 
     def create_round(self) -> round.Round:
         """
         Create a new round.
         """
 
-        new_round = round.Round(task=self.task, logger=self.logger, request_logger=self.request_logger, host_agent=self.host_agent, request=self.request)
+        new_round = round.Round(
+            task=self.task,
+            logger=self.logger,
+            request_logger=self.request_logger,
+            host_agent=self.host_agent,
+            request=self.request,
+        )
         new_round.set_index(self.get_round_num())
         new_round.set_session_step(self.get_step())
 
         self.round_list.append(new_round)
-        
+
         return new_round
-        
 
     def round_hostagent_execution(self) -> None:
         """
@@ -229,19 +223,17 @@ class Session(BaseSession):
         self.application = self.app_window.window_text()
         self.app_agent = self.host_agent.get_active_appagent()
 
-
     def round_appagent_execution(self) -> None:
         """
         Execute the app agent in the current round.
         """
-        
+
         current_round = self.get_current_round()
         current_round.set_session_step(self.get_step())
         current_round.process_action_selection()
 
         self._status = current_round.get_status()
         self._step += 1
-
 
     def start_new_round(self) -> None:
         """
@@ -250,7 +242,7 @@ class Session(BaseSession):
 
         self.host_agent.add_request_memory(self.request)
         self._round += 1
-        
+
         self.request, iscomplete = interactor.new_request()
 
         if iscomplete:
@@ -260,11 +252,9 @@ class Session(BaseSession):
             self._status = "APP_SELECTION"
 
 
-
-
 class FollowerSession(Session):
-    """ 
-    A session for following a list of plan for action taken. 
+    """
+    A session for following a list of plan for action taken.
     This session is used for the follower agent, which accepts a plan file to follow using the PlanReader.
     """
 
@@ -282,26 +272,31 @@ class FollowerSession(Session):
         utils.print_with_color("Complete the following request:", "yellow")
         utils.print_with_color(self.plan_reader.get_initial_request(), "cyan")
 
-        # Round-related properties  
-        self.round_list = []  
+        # Round-related properties
+        self.round_list = []
         self._current_round = self.create_round()
-        
-
 
     def create_round(self) -> round.FollowerRound:
         """
         Create a new round.
         """
 
-        new_round = round.FollowerRound(task=self.task, logger=self.logger, request_logger=self.request_logger,
-                                        host_agent=self.host_agent, app_agent=self.app_agent, app_window=self.app_window, application=self.application, request=self.request)
+        new_round = round.FollowerRound(
+            task=self.task,
+            logger=self.logger,
+            request_logger=self.request_logger,
+            host_agent=self.host_agent,
+            app_agent=self.app_agent,
+            app_window=self.app_window,
+            application=self.application,
+            request=self.request,
+        )
         new_round.set_index(self.get_round_num())
         new_round.set_session_step(self.get_step())
 
         self.round_list.append(new_round)
-        
+
         return new_round
-    
 
     def start_new_round(self) -> None:
         """
@@ -317,17 +312,17 @@ class FollowerSession(Session):
             self.app_agent.clear_memory()
 
         self._round += 1
-        
+
         if self.plan_reader.task_finished():
             self._status = "COMPLETE"
         else:
             self.request = self.plan_reader.next_step()
-            utils.print_with_color("Starting step {round}:".format(round=self._round), "yellow")
+            utils.print_with_color(
+                "Starting step {round}:".format(round=self._round), "yellow"
+            )
             utils.print_with_color(self.request, "cyan")
 
             # Create a new round.
             self._current_round = self.create_round()
             self._current_round.set_application_window(self.app_window)
             self._status = "CONTINUE"
-        
-    

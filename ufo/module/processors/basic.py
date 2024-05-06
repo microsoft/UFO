@@ -21,13 +21,23 @@ BACKEND = configs["CONTROL_BACKEND"]
 
 class BaseProcessor(ABC):
     """
-    The base processor for the session. A session consists of multiple rounds of conversation with the user, completing a task. 
-    At each round, the HostAgent and AppAgent interact with the user and the application with the processor. 
+    The base processor for the session. A session consists of multiple rounds of conversation with the user, completing a task.
+    At each round, the HostAgent and AppAgent interact with the user and the application with the processor.
     Each processor is responsible for processing the user request and updating the HostAgent and AppAgent at a single step in a round.
     """
 
-    def __init__(self, round_num: int, log_path: str, request: str, request_logger: Logger, logger: Logger, 
-                 round_step: int, session_step: int, prev_status: str, app_window:UIAWrapper) -> None:
+    def __init__(
+        self,
+        round_num: int,
+        log_path: str,
+        request: str,
+        request_logger: Logger,
+        logger: Logger,
+        round_step: int,
+        session_step: int,
+        prev_status: str,
+        app_window: UIAWrapper,
+    ) -> None:
         """
         Initialize the processor.
         :param round_num: The index of the processor. The round_num is the total number of rounds in the session.
@@ -48,16 +58,16 @@ class BaseProcessor(ABC):
         self.request_logger = request_logger
         self.logger = logger
         self._app_window = app_window
-        
+
         self.session_step = session_step
         self.round_step = round_step
         self.prev_status = prev_status
         self.round_num = round_num
-        
+
         self._step = 0
         self._status = prev_status
-        self._prompt_message = None  
-        self._response = None  
+        self._prompt_message = None
+        self._response = None
         self._cost = 0
         self._control_label = None
         self._control_text = None
@@ -65,7 +75,6 @@ class BaseProcessor(ABC):
         self._results = None
         self.app_root = None
 
-        
     def process(self) -> None:
         """
         Process a single step in a round.
@@ -99,13 +108,13 @@ class BaseProcessor(ABC):
 
         if self.is_error():
             return
-        
+
         # Step 6: Parse the response, if there is no error.
         self.parse_response()
 
         if self.is_error():
             return
-        
+
         # Step 7: Execute the action.
         self.execute_action()
 
@@ -118,57 +127,55 @@ class BaseProcessor(ABC):
 
         # Step 10: Update the step and status.
         self.update_step_and_status()
-        
-    
+
     @abstractmethod
     def print_step_info(self) -> None:
         """
         Print the step information.
         """
         pass
-    
-    @abstractmethod 
+
+    @abstractmethod
     def capture_screenshot(self) -> None:
         """
         Capture the screenshot.
         """
         pass
-    
-    @abstractmethod 
+
+    @abstractmethod
     def get_control_info(self) -> None:
         """
         Get the control information.
         """
         pass
-  
 
-    @abstractmethod  
+    @abstractmethod
     def get_prompt_message(self) -> None:
         """
         Get the prompt message.
         """
-        pass  
-  
-    @abstractmethod  
+        pass
+
+    @abstractmethod
     def get_response(self) -> None:
         """
         Get the response from the LLM.
         """
-        pass  
-  
-    @abstractmethod  
+        pass
+
+    @abstractmethod
     def parse_response(self) -> None:
         """
         Parse the response.
         """
-        pass  
+        pass
 
-    @abstractmethod  
+    @abstractmethod
     def execute_action(self) -> None:
         """
         Execute the action.
         """
-        pass  
+        pass
 
     @abstractmethod
     def update_memory(self) -> None:
@@ -177,29 +184,25 @@ class BaseProcessor(ABC):
         """
         pass
 
-
-    @abstractmethod  
+    @abstractmethod
     def update_status(self) -> None:
         """
         Update the status of the session.
         """
         pass
 
-    
     def create_sub_agent(self) -> None:
         """
         Create the app agent.
         """
         pass
 
-
     def update_step_and_status(self) -> None:
         """
         Update the step and status of the process.
         """
-        self._step += 1  
+        self._step += 1
         self.update_status()
-
 
     def get_active_window(self) -> UIAWrapper:
         """
@@ -207,15 +210,13 @@ class BaseProcessor(ABC):
         :return: The active window.
         """
         return self._app_window
-    
-    
+
     def get_active_control_text(self) -> str:
         """
         Get the active application.
         :return: The active application.
         """
         return self._control_text
-    
 
     def get_process_status(self) -> str:
         """
@@ -223,23 +224,20 @@ class BaseProcessor(ABC):
         :return: The process status.
         """
         return self._status
-    
-    
+
     def get_process_step(self) -> int:
         """
         Get the process step.
         :return: The process step.
         """
         return self._step
-    
-    
+
     def get_process_cost(self) -> float:
         """
         Get the process cost.
         :return: The process cost.
         """
         return self._cost
-    
 
     def is_error(self) -> bool:
         """
@@ -248,7 +246,6 @@ class BaseProcessor(ABC):
         """
 
         return self._status == "ERROR"
-    
 
     def should_create_subagent(self) -> bool:
         """
@@ -257,7 +254,6 @@ class BaseProcessor(ABC):
         """
 
         return False
-
 
     def log(self, response_json: dict) -> None:
         """
@@ -269,14 +265,19 @@ class BaseProcessor(ABC):
 
         self.logger.info(json.dumps(response_json))
 
-
     def error_log(self, response_str: str, error: str) -> None:
         """
         Error handler for the session.
         """
-        log = json.dumps({"step": self._step, "status": "ERROR", "response": response_str, "error": error})
+        log = json.dumps(
+            {
+                "step": self._step,
+                "status": "ERROR",
+                "response": response_str,
+                "error": error,
+            }
+        )
         self.logger.info(log)
-
 
     @property
     def name(self) -> str:
@@ -285,7 +286,6 @@ class BaseProcessor(ABC):
         :return: The name of the processor.
         """
         return self.__class__.__name__
-    
 
     def general_error_handler(self) -> None:
         """
@@ -298,15 +298,21 @@ class BaseProcessor(ABC):
         self.error_log(self._response, str(error_trace))
         self._status = Status.ERROR
 
-
     def llm_error_handler(self) -> None:
         """
         Error handler for the LLM error.
         """
         error_trace = traceback.format_exc()
-        log = json.dumps({"step": self.session_step, "prompt": self._prompt_message, "status": str(error_trace)})
-        utils.print_with_color("Error occurs when calling LLM: {e}".format(e=str(error_trace)), "red")
+        log = json.dumps(
+            {
+                "step": self.session_step,
+                "prompt": self._prompt_message,
+                "status": str(error_trace),
+            }
+        )
+        utils.print_with_color(
+            "Error occurs when calling LLM: {e}".format(e=str(error_trace)), "red"
+        )
         self.request_logger.info(log)
         self._status = Status.ERROR
         return
-    

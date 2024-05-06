@@ -25,7 +25,6 @@ if TYPE_CHECKING:
     from .session import Session
 
 
-
 class Status:
     ERROR = "ERROR"
     FINISH = "FINISH"
@@ -36,43 +35,42 @@ class Status:
     MAX_STEP_REACHED = "MAX_STEP_REACHED"
 
 
-class StatusToStateMapper:  
-    """  
-    A class to map the status to the appropriate state.  
-    """  
-  
-    # Singleton instance
-    _instance = None  
-  
-    def __new__(cls):  
-        if cls._instance is None:  
-            cls._instance = super().__new__(cls)  
-        return cls._instance  
-  
-    def __init__(self):  
-        self.STATE_MAPPING = StatusToStateMapper.create_state_mapping()  
-  
-    @staticmethod  
-    def create_state_mapping() -> Dict[str, Type[SessionState]]:  
-        return {  
-            Status.FINISH: RoundFinishState,  
-            Status.ERROR: ErrorState,  
-            Status.APP_SELECTION: AppSelectionState,  
-            Status.CONTINUE: ContinueState,
-            Status.COMPLETE: SessionFinishState,  
-            Status.SCREENSHOT: AnnotationState,  
-            Status.MAX_STEP_REACHED: MaxStepReachedState  
-        }  
-  
-    def get_appropriate_state(self, status: str) -> Type[SessionState]:  
-        """  
-        Get the appropriate state based on the status.  
-        :param status: The status string.  
-        :return: The appropriate state.  
-        """  
-        state = self.STATE_MAPPING.get(status, NoneState)  
-        return state()
+class StatusToStateMapper:
+    """
+    A class to map the status to the appropriate state.
+    """
 
+    # Singleton instance
+    _instance = None
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        self.STATE_MAPPING = StatusToStateMapper.create_state_mapping()
+
+    @staticmethod
+    def create_state_mapping() -> Dict[str, Type[SessionState]]:
+        return {
+            Status.FINISH: RoundFinishState,
+            Status.ERROR: ErrorState,
+            Status.APP_SELECTION: AppSelectionState,
+            Status.CONTINUE: ContinueState,
+            Status.COMPLETE: SessionFinishState,
+            Status.SCREENSHOT: AnnotationState,
+            Status.MAX_STEP_REACHED: MaxStepReachedState,
+        }
+
+    def get_appropriate_state(self, status: str) -> Type[SessionState]:
+        """
+        Get the appropriate state based on the status.
+        :param status: The status string.
+        :return: The appropriate state.
+        """
+        state = self.STATE_MAPPING.get(status, NoneState)
+        return state()
 
 
 class SessionState(ABC):
@@ -99,7 +97,6 @@ class SessionState(ABC):
         :return: The current state.
         """
         return self.state_mapping.get_appropriate_state(status)
-    
 
 
 class NoneState(SessionState):
@@ -126,25 +123,25 @@ class RoundFinishState(SessionState):
         :param session: The session.
         """
 
-        result = session.get_results()  
+        result = session.get_results()
         round_num = session.get_round_num()
 
         round_cost = session.get_current_round().get_cost()
         session.update_cost(round_cost)
-  
-        # Print the result  
-        if result != "":  
-            print_with_color("Result for round {round_num}:".format(  
-                round_num=round_num), "magenta")  
+
+        # Print the result
+        if result != "":
+            print_with_color(
+                "Result for round {round_num}:".format(round_num=round_num), "magenta"
+            )
             print_with_color("{result}".format(result=result), "yellow")
 
         session.start_new_round()
         status = session.get_status()
- 
+
         state = self.get_state(status)
 
         session.set_state(state)
-
 
 
 class SessionFinishState(SessionState):
@@ -162,7 +159,6 @@ class SessionFinishState(SessionState):
         if session.session_type == "Session":
             if experience_asker():
                 session.experience_saver()
-
 
 
 class ErrorState(SessionState):
@@ -189,18 +185,17 @@ class AppSelectionState(SessionState):
         :param session: The session.
         """
 
-        session.round_hostagent_execution()  
-        step = session.get_step()  
+        session.round_hostagent_execution()
+        step = session.get_step()
         status = session.get_status()
-  
-        if step > configs["MAX_STEP"]:  
-            session.set_state(MaxStepReachedState())  
+
+        if step > configs["MAX_STEP"]:
+            session.set_state(MaxStepReachedState())
             return
-        
+
         state = self.get_state(status)
 
         session.set_state(state)
-
 
 
 class ContinueState(SessionState):
@@ -214,19 +209,17 @@ class ContinueState(SessionState):
         :param session: The session.
         """
 
-        session.round_appagent_execution()  
-        status = session.get_status()  
+        session.round_appagent_execution()
+        status = session.get_status()
         step = session.get_step()
-  
-        if step > configs["MAX_STEP"]:  
-            session.set_state(MaxStepReachedState())  
+
+        if step > configs["MAX_STEP"]:
+            session.set_state(MaxStepReachedState())
             return
-  
+
         state = self.get_state(status)
 
         session.set_state(state)
-
-
 
 
 class AnnotationState(ContinueState):
@@ -242,8 +235,6 @@ class AnnotationState(ContinueState):
         super().handle(session)
 
 
-
-
 class MaxStepReachedState(SessionState):
     """
     The state when the maximum step is reached.
@@ -255,6 +246,3 @@ class MaxStepReachedState(SessionState):
         :param session: The session.
         """
         pass
-
-
-

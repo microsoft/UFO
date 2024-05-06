@@ -4,7 +4,7 @@
 from typing import Dict, Type
 
 from ..basic import WinCOMCommand, WinCOMReceiverBasic
-from ...basic import CommandBasic, ReceiverBasic
+from ...basic import CommandBasic
 from ....prompter.agent_prompter import APIPromptLoader
 
 
@@ -12,7 +12,6 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
     """
     The base class for Windows COM client.
     """
-    
 
     def get_object_from_process_name(self) -> None:
         """
@@ -25,9 +24,8 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         for doc in self.client.Documents:
             if doc.Name == matched_object:
                 return doc
-            
+
         return None
-    
 
     def get_default_command_registry(self) -> Dict[str, Type[CommandBasic]]:
         """
@@ -38,13 +36,11 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         class_name_dict = self.filter_api_dict(api_prompt, "class_name")
 
         global_name_space = globals()
-        command_registry = self.name_to_command_class(global_name_space, class_name_dict)
+        command_registry = self.name_to_command_class(
+            global_name_space, class_name_dict
+        )
 
         return command_registry
-
-    
-    
-    
 
     def insert_table(self, rows: int, columns: int) -> object:
         """
@@ -64,8 +60,7 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         table.Borders.Enable = True
 
         return table
-    
-    
+
     def select_text(self, text: str) -> None:
         """
         Select the text in the document.
@@ -79,7 +74,6 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
             return f"Text {text} is selected."
         else:
             return f"Text {text} is not found."
-        
 
     def select_table(self, number: int) -> None:
         """
@@ -89,53 +83,51 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         tables = self.com_object.Tables
         if not number or number < 1 or number > tables.Count:
             return f"Table number {number} is out of range."
-        
+
         tables[number].Select()
         return f"Table {number} is selected."
 
-
-    
     @property
     def type_name(self):
         return "COM/WORD"
-    
 
 
 class InsertTableCommand(WinCOMCommand):
     """
     The command to insert a table.
     """
+
     def execute(self):
         """
         Execute the command to insert a table.
         :return: The inserted table.
         """
-        return self.receiver.insert_table(self.params.get("rows"), self.params.get("columns"))
-    
+        return self.receiver.insert_table(
+            self.params.get("rows"), self.params.get("columns")
+        )
 
 
 class SelectTextCommand(WinCOMCommand):
     """
     The command to select text.
     """
+
     def execute(self):
         """
         Execute the command to select text.
         :return: The selected text.
         """
         return self.receiver.select_text(self.params.get("text"))
-    
 
 
 class SelectTableCommand(WinCOMCommand):
     """
     The command to select a table.
     """
+
     def execute(self):
         """
         Execute the command to select a table in the document.
         :return: The selected table.
         """
         return self.receiver.select_table(self.params.get("number"))
-    
-

@@ -37,7 +37,14 @@ class DemonstrationSummarizer:
     }
     """
 
-    def __init__(self, is_visual: bool, prompt_template: str, demonstration_prompt_template: str, api_prompt_template: str, completion_num: int = 1):
+    def __init__(
+        self,
+        is_visual: bool,
+        prompt_template: str,
+        demonstration_prompt_template: str,
+        api_prompt_template: str,
+        completion_num: int = 1,
+    ):
         """
         Initialize the DemonstrationSummarizer.
         :param is_visual: Whether the request is for visual model.
@@ -57,9 +64,11 @@ class DemonstrationSummarizer:
         :param record: The demonstration record.
         return: The summary list for the user defined completion number and the cost
         """
-        
+
         prompt = self.__build_prompt(record)
-        response_string_list, cost = get_completions(prompt, "APPAGENT", use_backup_engine=True, n=self.completion_num)
+        response_string_list, cost = get_completions(
+            prompt, "APPAGENT", use_backup_engine=True, n=self.completion_num
+        )
         summaries = []
         for response_string in response_string_list:
             summary = self.__parse_response(response_string)
@@ -69,7 +78,7 @@ class DemonstrationSummarizer:
                 summaries.append(summary)
 
         return summaries, cost
-    
+
     def __build_prompt(self, demo_record: DemonstrationRecord) -> list:
         """
         Build the prompt by the user demonstration record.
@@ -77,14 +86,23 @@ class DemonstrationSummarizer:
         return: The prompt.
         """
         demonstration_prompter = DemonstrationPrompter(
-            self.is_visual, self.prompt_template, self.demonstration_prompt_template, self.api_prompt_template)
-        demonstration_system_prompt = demonstration_prompter.system_prompt_construction()
-        demonstration_user_prompt = demonstration_prompter.user_content_construction(demo_record)
-        demonstration_prompt = demonstration_prompter.prompt_construction(demonstration_system_prompt, demonstration_user_prompt)
+            self.is_visual,
+            self.prompt_template,
+            self.demonstration_prompt_template,
+            self.api_prompt_template,
+        )
+        demonstration_system_prompt = (
+            demonstration_prompter.system_prompt_construction()
+        )
+        demonstration_user_prompt = demonstration_prompter.user_content_construction(
+            demo_record
+        )
+        demonstration_prompt = demonstration_prompter.prompt_construction(
+            demonstration_system_prompt, demonstration_user_prompt
+        )
 
         return demonstration_prompt
 
-    
     def __parse_response(self, response_string: str) -> dict:
         """
         Parse the response string to a dict of summary.
@@ -100,11 +118,21 @@ class DemonstrationSummarizer:
         if response_json:
             summary = dict()
             summary["example"] = {}
-            for key in ["Observation", "Thought", "ControlLabel", "ControlText", "Function", "Args", "Status", "Plan", "Comment"]:
+            for key in [
+                "Observation",
+                "Thought",
+                "ControlLabel",
+                "ControlText",
+                "Function",
+                "Args",
+                "Status",
+                "Plan",
+                "Comment",
+            ]:
                 summary["example"][key] = response_json.get(key, "")
             summary["Tips"] = response_json.get("Tips", "")
-            
-            return summary 
+
+            return summary
 
     @staticmethod
     def create_or_update_yaml(summaries: list, yaml_path: str):
@@ -116,12 +144,12 @@ class DemonstrationSummarizer:
 
         # Check if the file exists, if not, create a new one
         if not os.path.exists(yaml_path):
-            with open(yaml_path, 'w'):
+            with open(yaml_path, "w"):
                 pass
             print(f"Created new YAML file: {yaml_path}")
 
         # Read existing data from the YAML file
-        with open(yaml_path, 'r') as file:
+        with open(yaml_path, "r") as file:
             existing_data = yaml.safe_load(file)
 
         # Initialize index and existing_data if file is empty
@@ -134,9 +162,10 @@ class DemonstrationSummarizer:
             existing_data.update(example)
 
         # Write updated data back to the YAML file
-        with open(yaml_path, 'w') as file:
-            yaml.safe_dump(existing_data, file,
-                           default_flow_style=False, sort_keys=False)
+        with open(yaml_path, "w") as file:
+            yaml.safe_dump(
+                existing_data, file, default_flow_style=False, sort_keys=False
+            )
 
         print(f"Updated existing YAML file successfully: {yaml_path}")
 
@@ -152,11 +181,11 @@ class DemonstrationSummarizer:
 
         for summary in summaries:
             request = summary["request"]
-            document_list.append(
-                Document(page_content=request, metadata=summary))
+            document_list.append(Document(page_content=request, metadata=summary))
 
         embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-mpnet-base-v2")
+            model_name="sentence-transformers/all-mpnet-base-v2"
+        )
         db = FAISS.from_documents(document_list, embeddings)
 
         # Check if the db exists, if not, create a new one.
