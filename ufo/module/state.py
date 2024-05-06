@@ -13,9 +13,10 @@ from __future__ import annotations
 from abc import ABC
 from typing import TYPE_CHECKING, Dict, Type
 
-from ..config.config import Config
-from ..utils import print_with_color
-from .interactor import experience_asker
+from ufo.config.config import Config
+from ufo.module.interactor import experience_asker
+from ufo.utils import print_with_color
+
 
 configs = Config.get_instance().config_data
 

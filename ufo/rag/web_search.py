@@ -7,9 +7,8 @@ from langchain.text_splitter import HTMLHeaderTextSplitter
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
-from ..config.config import Config
-from ..utils import print_with_color
-
+from ufo.config.config import Config
+from ufo.utils import print_with_color
 
 configs = Config.get_instance().config_data
 

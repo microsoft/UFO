@@ -7,7 +7,7 @@ from typing import Dict, List
 
 import win32com.client
 
-from ..basic import CommandBasic, ReceiverBasic
+from ufo.automator.basic import CommandBasic, ReceiverBasic
 
 
 class WinCOMReceiverBasic(ReceiverBasic):
@@ -25,7 +25,7 @@ class WinCOMReceiverBasic(ReceiverBasic):
 
         self.app_root_name = app_root_name
         self.process_name = process_name
-        
+
         self.clsid = clsid
 
         self.client = win32com.client.Dispatch(self.clsid)

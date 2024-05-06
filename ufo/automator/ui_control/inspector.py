@@ -10,7 +10,7 @@ import psutil
 from pywinauto import Desktop
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ...config.config import Config
+from ufo.config.config import Config
 
 configs = Config.get_instance().config_data
 

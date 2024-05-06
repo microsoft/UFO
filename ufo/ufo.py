@@ -4,9 +4,9 @@
 import argparse
 from datetime import datetime
 
-from .config.config import Config
-from .module.client import UFOClientManager
-from .module.session import SessionFactory
+from ufo.config.config import Config
+from ufo.module.client import UFOClientManager
+from ufo.module.session import SessionFactory
 
 configs = Config.get_instance().config_data
 

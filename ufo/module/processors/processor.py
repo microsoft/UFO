@@ -5,20 +5,19 @@
 import json
 import os
 import time
-
 from logging import Logger
 from typing import Dict, List, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ... import utils
-from ...agent.agent import AppAgent, HostAgent
-from ...agent.basic import MemoryItem
-from ...automator.ui_control.control_filter import ControlFilterFactory
-from ...config.config import Config
-from .. import interactor
-from ..state import Status
-from .basic import BaseProcessor
+from ufo import utils
+from ufo.agent.agent import AppAgent, HostAgent
+from ufo.agent.basic import MemoryItem
+from ufo.automator.ui_control.control_filter import ControlFilterFactory
+from ufo.config.config import Config
+from ufo.module import interactor
+from ufo.module.processors.basic import BaseProcessor
+from ufo.module.state import Status
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -306,7 +305,10 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         # Only create the app agent when the previous status is APP_SELECTION and the processor is HostAgentProcessor.
-        if isinstance(self, HostAgentProcessor) and self.prev_status == Status.APP_SELECTION:
+        if (
+            isinstance(self, HostAgentProcessor)
+            and self.prev_status == Status.APP_SELECTION
+        ):
             return True
         else:
             return False

@@ -6,10 +6,10 @@ import warnings
 from abc import abstractmethod
 from typing import Dict, List, Type
 
-from ...config.config import Config
-from ...prompter.agent_prompter import APIPromptLoader
-from ...utils import print_with_color
-from ..basic import CommandBasic, ReceiverBasic, ReceiverFactory
+from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
+from ufo.config.config import Config
+from ufo.prompter.agent_prompter import APIPromptLoader
+from ufo.utils import print_with_color
 
 configs = Config.get_instance().config_data
 

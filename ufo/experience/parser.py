@@ -5,8 +5,8 @@ import json
 import os
 import re
 
-from ..utils import print_with_color
-from ..automator.ui_control.screenshot import PhotographerFacade
+from ufo.automator.ui_control.screenshot import PhotographerFacade
+from ufo.utils import print_with_color
 
 
 class ExperienceLogLoader:

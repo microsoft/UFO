@@ -5,10 +5,10 @@ import json
 import os
 from typing import List, Optional
 
-from .. import utils
-from ..config.config import Config
-from . import interactor, round
-from .basic import BaseSession
+from ufo import utils
+from ufo.config.config import Config
+from ufo.module import interactor, round
+from ufo.module.basic import BaseSession
 
 configs = Config.get_instance().config_data
 

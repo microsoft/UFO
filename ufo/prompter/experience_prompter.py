@@ -1,8 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from .basic import BasicPrompter
 import json
+
+from ufo.prompter.basic import BasicPrompter
 
 
 class ExperiencePrompter(BasicPrompter):

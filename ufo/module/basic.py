@@ -22,12 +22,12 @@ from typing import Type
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from .. import utils
-from ..agent.agent import AgentFactory, HostAgent
-from ..config.config import Config
-from ..experience.summarizer import ExperienceSummarizer
-from .processors.basic import BaseProcessor
-from .state import (
+from ufo import utils
+from ufo.agent.agent import AgentFactory, HostAgent
+from ufo.config.config import Config
+from ufo.experience.summarizer import ExperienceSummarizer
+from ufo.module.processors.basic import BaseProcessor
+from ufo.module.state import (
     ErrorState,
     MaxStepReachedState,
     NoneState,

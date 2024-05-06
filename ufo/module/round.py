@@ -7,10 +7,10 @@ from typing import Optional, Type
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ..agent.agent import FollowerAgent, HostAgent
-from ..config.config import Config
-from .basic import BaseRound
-from .processors import follower_processor, processor
+from ufo.agent.agent import FollowerAgent, HostAgent
+from ufo.config.config import Config
+from ufo.module.basic import BaseRound
+from ufo.module.processors import follower_processor, processor
 
 configs = Config.get_instance().config_data
 

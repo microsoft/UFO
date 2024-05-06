@@ -1,9 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from record_processor.parser.demonstration_record import DemonstrationRecord
-from .basic import BasicPrompter
 import json
+
+from record_processor.parser.demonstration_record import DemonstrationRecord
+from ufo.prompter.basic import BasicPrompter
 
 
 class DemonstrationPrompter(BasicPrompter):

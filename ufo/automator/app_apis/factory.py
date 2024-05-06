@@ -3,10 +3,10 @@
 
 from typing import Type
 
-from ...utils import print_with_color
-from ..basic import ReceiverFactory
-from .basic import WinCOMReceiverBasic
-from .word.wordclient import WordWinCOMReceiver
+from ufo.automator.app_apis.basic import WinCOMReceiverBasic
+from ufo.automator.app_apis.word.wordclient import WordWinCOMReceiver
+from ufo.automator.basic import ReceiverFactory
+from ufo.utils import print_with_color
 
 
 class COMReceiverFactory(ReceiverFactory):

@@ -3,9 +3,11 @@
 
 import datetime
 from typing import Any, Optional
+
 import openai
 from openai import AzureOpenAI, OpenAI
-from .base import BaseService
+
+from ufo.llm.base import BaseService
 
 
 class OpenAIService(BaseService):
@@ -150,8 +152,9 @@ class OpenAIService(BaseService):
         str
             access token for your own organization
         """
-        import msal
         import os
+
+        import msal
 
         cache = msal.SerializableTokenCache()
 

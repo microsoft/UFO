@@ -12,8 +12,7 @@ import dashscope
 from PIL import Image
 
 from ufo.utils import print_with_color
-
-from .base import BaseService
+from ufo.llm.base import BaseService
 
 
 class QwenService(BaseService):

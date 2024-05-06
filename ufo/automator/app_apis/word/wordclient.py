@@ -3,9 +3,9 @@
 
 from typing import Dict, Type
 
-from ..basic import WinCOMCommand, WinCOMReceiverBasic
-from ...basic import CommandBasic
-from ....prompter.agent_prompter import APIPromptLoader
+from ufo.automator.app_apis.basic import WinCOMCommand, WinCOMReceiverBasic
+from ufo.automator.basic import CommandBasic
+from ufo.prompter.agent_prompter import APIPromptLoader
 
 
 class WordWinCOMReceiver(WinCOMReceiverBasic):

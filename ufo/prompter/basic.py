@@ -1,10 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from abc import ABC, abstractmethod
 import os
+from abc import ABC, abstractmethod
+
 import yaml
-from ..utils import print_with_color
+
+from ufo.utils import print_with_color
 
 
 class BasicPrompter(ABC):

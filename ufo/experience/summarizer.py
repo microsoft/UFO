@@ -9,10 +9,10 @@ from langchain.docstore.document import Document
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
-from ..llm.llm_call import get_completion
-from ..prompter.experience_prompter import ExperiencePrompter
-from ..utils import json_parser
-from .parser import ExperienceLogLoader
+from ufo.experience.parser import ExperienceLogLoader
+from ufo.llm.llm_call import get_completion
+from ufo.prompter.experience_prompter import ExperiencePrompter
+from ufo.utils import json_parser
 
 
 class ExperienceSummarizer:

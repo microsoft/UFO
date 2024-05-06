@@ -4,8 +4,8 @@
 
 from typing import List
 
-from .basic import BaseSession
-from .state import SessionFinishState
+from ufo.module.basic import BaseSession
+from ufo.module.state import SessionFinishState
 
 
 class UFOClient:

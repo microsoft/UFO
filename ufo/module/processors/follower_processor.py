@@ -1,11 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from .processor import AppAgentProcessor, HostAgentProcessor
-from ...config.config import Config
-from ...agent.agent import FollowerAgent
+
 import json
 
+from ufo.agent.agent import FollowerAgent
+from ufo.config.config import Config
+from ufo.module.processors.processor import AppAgentProcessor, HostAgentProcessor
 
 configs = Config.get_instance().config_data
 

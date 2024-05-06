@@ -11,7 +11,7 @@ from typing import Dict, List, Optional
 from PIL import Image, ImageDraw, ImageFont, ImageGrab
 from pywinauto.win32structures import RECT
 
-from ...config.config import Config
+from ufo.config.config import Config
 
 configs = Config.get_instance().config_data
 

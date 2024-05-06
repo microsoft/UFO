@@ -9,11 +9,11 @@ from logging import Logger
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ... import utils
-from ...automator.ui_control.inspector import ControlInspectorFacade
-from ...automator.ui_control.screenshot import PhotographerFacade
-from ...config.config import Config
-from ..state import Status
+from ufo import utils
+from ufo.automator.ui_control.inspector import ControlInspectorFacade
+from ufo.automator.ui_control.screenshot import PhotographerFacade
+from ufo.config.config import Config
+from ufo.module.state import Status
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]

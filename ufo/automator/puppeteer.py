@@ -6,10 +6,13 @@ from typing import Dict, List, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from .app_apis.basic import WinCOMReceiverBasic
-from .app_apis.factory import COMReceiverFactory
-from .basic import CommandBasic, ReceiverBasic, ReceiverFactory
-from .ui_control.controller import ControlReceiver, UIControlReceiverFactory
+from ufo.automator.app_apis.basic import WinCOMReceiverBasic
+from ufo.automator.app_apis.factory import COMReceiverFactory
+from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
+from ufo.automator.ui_control.controller import (
+    ControlReceiver,
+    UIControlReceiverFactory,
+)
 
 
 class AppPuppeteer:
