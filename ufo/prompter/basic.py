@@ -30,7 +30,6 @@ class BasicPrompter(ABC):
             self.example_prompt_template = ""
 
 
-
     @staticmethod
     def load_prompt_template(template_path: str, is_visual=None) -> dict:
         """
