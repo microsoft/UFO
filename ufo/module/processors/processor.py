@@ -6,7 +6,7 @@ import json
 import os
 import time
 from logging import Logger
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -564,29 +564,7 @@ class AppAgentProcessor(BaseProcessor):
         Get the prompt message for the AppAgent.
         """
 
-        # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
-        if configs["RAG_EXPERIENCE"]:
-            experience_examples, experience_tips = (
-                self.app_agent.rag_experience_retrieve(
-                    self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
-                )
-            )
-        else:
-            experience_examples = []
-            experience_tips = []
-
-        if configs["RAG_DEMONSTRATION"]:
-            demonstration_examples, demonstration_tips = (
-                self.app_agent.rag_demonstration_retrieve(
-                    self.request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
-                )
-            )
-        else:
-            demonstration_examples = []
-            demonstration_tips = []
-
-        examples = experience_examples + demonstration_examples
-        tips = experience_tips + demonstration_tips
+        examples, tips = self.demonstration_prompt_helper()
 
         # Get the external knowledge prompt for the AppAgent using the offline and online retrievers.
         external_knowledge_prompt = self.app_agent.external_knowledge_prompt_helper(
@@ -836,6 +814,38 @@ class AppAgentProcessor(BaseProcessor):
             prev_plan = ""
 
         return prev_plan
+
+    def demonstration_prompt_helper(self) -> Tuple[List[str], List[str]]:
+        """
+        Get the examples and tips for the AppAgent using the demonstration retriever.
+        :return: The examples and tips for the AppAgent.
+        """
+
+        # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
+        if configs["RAG_EXPERIENCE"]:
+            experience_examples, experience_tips = (
+                self.app_agent.rag_experience_retrieve(
+                    self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
+                )
+            )
+        else:
+            experience_examples = []
+            experience_tips = []
+
+        if configs["RAG_DEMONSTRATION"]:
+            demonstration_examples, demonstration_tips = (
+                self.app_agent.rag_demonstration_retrieve(
+                    self.request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
+                )
+            )
+        else:
+            demonstration_examples = []
+            demonstration_tips = []
+
+        examples = experience_examples + demonstration_examples
+        tips = experience_tips + demonstration_tips
+
+        return examples, tips
 
     def get_filtered_annotation_dict(
         self, annotation_dict: Dict[str, UIAWrapper]

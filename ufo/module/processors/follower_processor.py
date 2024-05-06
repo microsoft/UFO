@@ -60,28 +60,7 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
         Get the prompt message for the AppAgent in the follower mode. It may accept additional prompts as input.
         """
 
-        if configs["RAG_EXPERIENCE"]:
-            experience_examples, experience_tips = (
-                self.app_agent.rag_experience_retrieve(
-                    self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
-                )
-            )
-        else:
-            experience_examples = []
-            experience_tips = []
-
-        if configs["RAG_DEMONSTRATION"]:
-            demonstration_examples, demonstration_tips = (
-                self.app_agent.rag_demonstration_retrieve(
-                    self.request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
-                )
-            )
-        else:
-            demonstration_examples = []
-            demonstration_tips = []
-
-        examples = experience_examples + demonstration_examples
-        tips = experience_tips + demonstration_tips
+        examples, tips = self.demonstration_prompt_helper()
 
         external_knowledge_prompt = self.app_agent.external_knowledge_prompt_helper(
             self.request,
