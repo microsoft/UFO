@@ -28,7 +28,7 @@ set_edit_text:
 
 annotation:
   summary: |-
-    "annotation" is to take a screenshot of the current application window and annotate the control item on the screenshot.
+    "annotation" is to take a screenshot of the current application window and annotate the control item on the screenshot for further analysis.
   class_name: |-
     AnnotationCommand
   usage: |-
@@ -39,9 +39,10 @@ annotation:
     [4] Available control item: All control items.
     [5] Return: None
 
+
 summary:
   summary: |-
-    "summary" is to summarize your observation of the current application window base on the clean screenshot. This usually happens when the you need to complete the user request by summarizing or describing the information on the current application window. You must use the 'text' argument to input the summarized text.
+    "summary" is to summarize your observation of the current application window base on the clean screenshot, or base on available control items. 
   class_name: |-
     SummaryCommand
   usage: |-

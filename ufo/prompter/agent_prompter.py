@@ -24,7 +24,7 @@ class HostAgentPrompter(BasicPrompter):
         :param api_prompt_template: The path of the api prompt template.
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
-        self.api_prompt_template = self.load_prompt_template(api_prompt_template, is_visual)
+        self.api_prompt_template = self.load_prompt_template(api_prompt_template)
         self.allow_openapp = allow_openapp
 
 
@@ -42,7 +42,9 @@ class HostAgentPrompter(BasicPrompter):
         apis = self.api_prompt_helper(verbose = 0)
         examples = self.examples_prompt_helper()     
 
-        return self.prompt_template["system"].format(apis=apis, examples=examples, open_app_guideline=open_app_guideline, open_app_comment=open_app_comment)
+        system_key = "system" if self.is_visual else "system_nonvisual"
+
+        return self.prompt_template[system_key].format(apis=apis, examples=examples, open_app_guideline=open_app_guideline, open_app_comment=open_app_comment)
     
 
 
@@ -172,7 +174,8 @@ class AppAgentPrompter(BasicPrompter):
         super().__init__(is_visual, prompt_template, example_prompt_template)
         self.root_name = root_name
         self.app_prompter = APIPromptLoader(self.root_name)
-        self.api_prompt_template = self.load_prompt_template(api_prompt_template, is_visual)
+        self.api_prompt_template = self.load_prompt_template(api_prompt_template)
+        
         self.app_api_prompt_template = None
 
         if configs.get("USE_APIS", False):
@@ -192,7 +195,9 @@ class AppAgentPrompter(BasicPrompter):
         # Remove empty lines
         tips_prompt = '\n'.join(filter(None, tips_prompt.split('\n')))
 
-        return self.prompt_template["system"].format(apis=apis, examples=examples, tips=tips_prompt)
+        system_key = "system" if self.is_visual else "system_nonvisual"
+
+        return self.prompt_template[system_key].format(apis=apis, examples=examples, tips=tips_prompt)
 
 
     def user_prompt_construction(self, request_history: List[str], action_history: List[str], control_item: List[str], prev_plan: str, user_request: str, retrieved_docs: str="") -> str:
