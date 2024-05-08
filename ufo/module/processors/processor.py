@@ -634,6 +634,7 @@ class AppAgentProcessor(BaseProcessor):
         self._control_text = self._response_json.get("ControlText", "")
         self._operation = self._response_json.get("Function", "")
         self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
+        self._plan = self._response_json.get("Plan", "")
         self._status = self._response_json.get("Status", "")
 
         self.app_agent.print_response(self._response_json)
@@ -789,7 +790,7 @@ class AppAgentProcessor(BaseProcessor):
             return False
 
         # Handle the PENDING_AND_FINISH case
-        elif Status.FINISH in self.plan:
+        elif Status.FINISH in self._plan:
             self._status = Status.FINISH
         return True
 
