@@ -28,10 +28,6 @@ class UFOClient:
         while not self.session.is_finish():
             self.session.handle()
 
-        # If the session is finished normally, handle the last state with additional logic.
-        if isinstance(self.session.get_state(), SessionFinishState):
-            self.session.handle()
-
         self.session.print_cost()
 
 

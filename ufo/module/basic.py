@@ -441,7 +441,7 @@ class BaseSession(ABC):
             True
             if isinstance(
                 self.get_state(),
-                (SessionFinishState, ErrorState, MaxStepReachedState, NoneState),
+                (ErrorState, MaxStepReachedState, NoneState),
             )
             else False
         )

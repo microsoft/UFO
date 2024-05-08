@@ -164,6 +164,8 @@ class SessionFinishState(SessionState):
             if experience_asker():
                 session.experience_saver()
 
+        session.set_state(NoneState())
+
 
 class ErrorState(SessionState):
     """
