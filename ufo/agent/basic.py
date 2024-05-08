@@ -4,12 +4,11 @@
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Dict, List, Type, Optional
+from typing import Dict, List, Optional, Type
 
 from ufo import utils
-from ufo.module.state import Status
 from ufo.llm import llm_call
-
+from ufo.module.state import Status
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
@@ -251,7 +250,9 @@ class BasicAgent(ABC):
         pass
 
     @classmethod
-    def get_response(cls, message: List[dict], namescope, use_backup_engine) -> str:
+    def get_response(
+        cls, message: List[dict], namescope: str, use_backup_engine: bool
+    ) -> str:
         """
         Get the response for the prompt.
         :param prompt: The prompt.

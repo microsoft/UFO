@@ -11,7 +11,16 @@ from ufo.llm.base import BaseService
 
 
 class OpenAIService(BaseService):
-    def __init__(self, config, agent_type: str):
+    """
+    The OpenAI service class to interact with the OpenAI API.
+    """
+
+    def __init__(self, config, agent_type: str) -> None:
+        """
+        Create an OpenAI service instance.
+        :param config: The configuration for the OpenAI service.
+        :param agent_type: The type of the agent.
+        """
         self.config_llm = config[agent_type]
         self.config = config
         self.api_type = self.config_llm["API_TYPE"].lower()

@@ -56,15 +56,15 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         super().__init__(
-            round_num,
-            log_path,
-            request,
-            request_logger,
-            logger,
-            round_step,
-            session_step,
-            prev_status,
-            app_window,
+            round_num=round_num,
+            log_path=log_path,
+            request=request,
+            request_logger=request_logger,
+            logger=logger,
+            round_step=round_step,
+            session_step=session_step,
+            prev_status=prev_status,
+            app_window=app_window,
         )
 
         self.host_agent = host_agent
@@ -419,15 +419,15 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         super().__init__(
-            round_num,
-            log_path,
-            request,
-            request_logger,
-            logger,
-            round_step,
-            session_step,
-            prev_status,
-            app_window,
+            round_num=round_num,
+            log_path=log_path,
+            request=request,
+            request_logger=request_logger,
+            logger=logger,
+            round_step=round_step,
+            session_step=session_step,
+            prev_status=prev_status,
+            app_window=app_window,
         )
 
         self.app_agent = app_agent
@@ -774,7 +774,7 @@ class AppAgentProcessor(BaseProcessor):
         if self._status != Status.FINISH:
             time.sleep(configs["SLEEP_TIME"])
 
-    def _safe_guard_judgement(self, action, control_text) -> bool:
+    def _safe_guard_judgement(self, action: str, control_text: str) -> bool:
         """
         Safe guard for the session.
         action: The action to be taken.
