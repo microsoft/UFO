@@ -11,6 +11,7 @@ from colorama import Fore, Style, init
 # init colorama
 init()
 
+
 def print_with_color(text: str, color: str = "", end: str = "\n") -> None:
     """
     Print text with specified color using ANSI escape codes from Colorama library.
@@ -26,14 +27,13 @@ def print_with_color(text: str, color: str = "", end: str = "\n") -> None:
         "magenta": Fore.MAGENTA,
         "cyan": Fore.CYAN,
         "white": Fore.WHITE,
-        "black": Fore.BLACK
+        "black": Fore.BLACK,
     }
 
     selected_color = color_mapping.get(color.lower(), "")
     colored_text = selected_color + text + Style.RESET_ALL
 
     print(colored_text, end=end)
-
 
 
 def create_folder(folder_path: str) -> None:
@@ -46,13 +46,14 @@ def create_folder(folder_path: str) -> None:
         os.makedirs(folder_path)
 
 
-def check_json_format(string:str) -> bool:
+def check_json_format(string: str) -> bool:
     """
     Check if the string can be correctly parse by json.
     :param string: The string to check.
     :return: True if the string can be correctly parse by json, False otherwise.
     """
     import json
+
     try:
         json.loads(string)
     except ValueError:
@@ -60,7 +61,7 @@ def check_json_format(string:str) -> bool:
     return True
 
 
-def json_parser(json_string:str) -> Dict[str, Any]:
+def json_parser(json_string: str) -> Dict[str, Any]:
     """
     Parse json string to json object.
     :param json_string: The json string to parse.
@@ -95,16 +96,16 @@ def revise_line_breaks(args: Dict[str, Any]) -> Dict[str, Any]:
     """
     if not args:
         return {}
-    
+
     # Replace \\n with \\n
     for key in args.keys():
         if isinstance(args[key], str):
-            args[key] = args[key].replace('\\n', '\n')
+            args[key] = args[key].replace("\\n", "\n")
 
     return args
 
 
-def LazyImport(module_name:str) -> Any:
+def LazyImport(module_name: str) -> Any:
     """
     Import a module as a global variable.
     :param module_name: The name of the module to import.
@@ -116,23 +117,16 @@ def LazyImport(module_name:str) -> Any:
 
 
 def find_desktop_path() -> Optional[str]:
-    '''
+    """
     Find the desktop path of the user.
-    '''
-    onedrive_path = os.environ.get('OneDrive')
+    """
+    onedrive_path = os.environ.get("OneDrive")
     if onedrive_path:
-        onedrive_desktop = os.path.join(onedrive_path, 'Desktop')
+        onedrive_desktop = os.path.join(onedrive_path, "Desktop")
         if os.path.exists(onedrive_desktop):
             return onedrive_desktop
     # Fallback to the local user desktop
-    local_desktop = os.path.join(os.path.expanduser('~'), 'Desktop')
+    local_desktop = os.path.join(os.path.expanduser("~"), "Desktop")
     if os.path.exists(local_desktop):
         return local_desktop
     return None
-
-
-    
-
-
-
-

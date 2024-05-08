@@ -9,45 +9,52 @@ from typing import Dict, List
 warnings.filterwarnings("ignore")
 
 
-class ControlFilterFactory:  
-    """  
-    Factory class to filter control items.  
-    """  
-  
-    @staticmethod  
-    def create_control_filter(control_filter_type: str, *args, **kwargs):  
-        """  
-        Create a control filter model based on the given type.  
-        :param control_filter_type: The type of control filter model to create.  
-        :return: The created retriever.  
-        """  
-        if control_filter_type == "text":  
-            return TextControlFilter(*args, **kwargs)  
-        elif control_filter_type == "semantic":  
-            return SemanticControlFilter(*args, **kwargs)  
-        elif control_filter_type == "icon":  
-            return IconControlFilter(*args, **kwargs)  
-        else:  
-            raise ValueError("Invalid retriever type: {}".format(control_filter_type)) 
-    
+class ControlFilterFactory:
+    """
+    Factory class to filter control items.
+    """
+
     @staticmethod
-    def inplace_append_filtered_annotation_dict(filtered_control_dict: Dict, control_dicts: Dict):
-            """
-            Appends the given control_info to the filtered_control_dict if it is not already present.
-            For example, if the filtered_control_dict is empty, it will be updated with the control_info. The operation is performed in place.
+    def create_control_filter(control_filter_type: str, *args, **kwargs):
+        """
+        Create a control filter model based on the given type.
+        :param control_filter_type: The type of control filter model to create.
+        :return: The created retriever.
+        """
+        if control_filter_type == "text":
+            return TextControlFilter(*args, **kwargs)
+        elif control_filter_type == "semantic":
+            return SemanticControlFilter(*args, **kwargs)
+        elif control_filter_type == "icon":
+            return IconControlFilter(*args, **kwargs)
+        else:
+            raise ValueError("Invalid retriever type: {}".format(control_filter_type))
 
-            Args:
-                filtered_control_dict (dict): The dictionary of filtered control information.
-                control_dicts (dict): The control information to be appended.
+    @staticmethod
+    def inplace_append_filtered_annotation_dict(
+        filtered_control_dict: Dict, control_dicts: Dict
+    ):
+        """
+        Appends the given control_info to the filtered_control_dict if it is not already present.
+        For example, if the filtered_control_dict is empty, it will be updated with the control_info. The operation is performed in place.
 
-            Returns:
-                dict: The updated filtered_control_dict dictionary.
-            """
-            if control_dicts:
-                filtered_control_dict.update({k: v for k, v in control_dicts.items() if k not in filtered_control_dict})
-            return filtered_control_dict
-    
-        
+        Args:
+            filtered_control_dict (dict): The dictionary of filtered control information.
+            control_dicts (dict): The control information to be appended.
+
+        Returns:
+            dict: The updated filtered_control_dict dictionary.
+        """
+        if control_dicts:
+            filtered_control_dict.update(
+                {
+                    k: v
+                    for k, v in control_dicts.items()
+                    if k not in filtered_control_dict
+                }
+            )
+        return filtered_control_dict
+
     @staticmethod
     def get_plans(plan, topk_plan):
         """
@@ -62,7 +69,7 @@ class ControlFilterFactory:
         """
         plans = str(plan).split("\n")[:topk_plan]
         return plans
-    
+
 
 class BasicControlFilter:
     """
@@ -79,7 +86,7 @@ class BasicControlFilter:
         Returns:
             BasicControlFilter: The BasicControlFilter instance.
         """
-        if model_path not in cls._instances: 
+        if model_path not in cls._instances:
             instance = super(BasicControlFilter, cls).__new__(cls)
             instance.model = cls.load_model(model_path)
             cls._instances[model_path] = instance
@@ -95,9 +102,8 @@ class BasicControlFilter:
             SentenceTransformer: The loaded SentenceTransformer model.
         """
         import sentence_transformers
-        
+
         return sentence_transformers.SentenceTransformer(model_path)
-    
 
     def get_embedding(self, content):
         """
@@ -108,8 +114,7 @@ class BasicControlFilter:
             The embedding of the object.
         """
         return self.model.encode(content)
-    
-    
+
     @abstractmethod
     def control_filter(self, control_dicts, plans, **kwargs):
         """
@@ -121,27 +126,29 @@ class BasicControlFilter:
             float: The cosine similarity between the embeddings of the keywords and the control item.
         """
         pass
-    
-    
+
     @staticmethod
-    def plans_to_keywords(plans:list) -> list:
+    def plans_to_keywords(plans: list) -> list:
         """
-        Gets keywords from the plan. 
+        Gets keywords from the plan.
         We only consider the words in the plan that are alphabetic or Chinese characters.
         Args:
             plans (list): The plan to be parsed.
         Returns:
             list: A list of keywords extracted from the plan.
         """
-            
+
         keywords = []
         for plan in plans:
             words = plan.replace("'", "").strip(".").split()
-            words = [word for word in words if word.isalpha() or bool(re.fullmatch(r'[\u4e00-\u9fa5]+', word))]
+            words = [
+                word
+                for word in words
+                if word.isalpha() or bool(re.fullmatch(r"[\u4e00-\u9fa5]+", word))
+            ]
             keywords.extend(words)
         return keywords
-    
-    
+
     @staticmethod
     def remove_stopwords(keywords):
         """
@@ -156,16 +163,15 @@ class BasicControlFilter:
 
         try:
             from nltk.corpus import stopwords
-            
-            stopwords_list = stopwords.words('english')
+
+            stopwords_list = stopwords.words("english")
         except LookupError as e:
             import nltk
-            
-            nltk.download('stopwords')
-            stopwords_list = nltk.corpus.stopwords.words('english')
-        
+
+            nltk.download("stopwords")
+            stopwords_list = nltk.corpus.stopwords.words("english")
+
         return [keyword for keyword in keywords if keyword in stopwords_list]
-    
 
     @staticmethod
     def cos_sim(embedding1, embedding2):
@@ -183,7 +189,7 @@ class TextControlFilter:
     """
 
     @staticmethod
-    def control_filter(control_dicts:Dict, plans: List[str]) -> Dict:
+    def control_filter(control_dicts: Dict, plans: List[str]) -> Dict:
         """
         Filters control items based on keywords.
         Args:
@@ -191,14 +197,16 @@ class TextControlFilter:
             plans (list): A list of plans for the following steps.
         """
         filtered_control_dict = {}
-        
+
         keywords = BasicControlFilter.plans_to_keywords(plans)
         for label, control_item in control_dicts.items():
             control_text = control_item.element_info.name.lower()
-            if any(keyword in control_text or control_text in keyword for keyword in keywords):
+            if any(
+                keyword in control_text or control_text in keyword
+                for keyword in keywords
+            ):
                 filtered_control_dict[label] = control_item
         return filtered_control_dict
-
 
 
 class SemanticControlFilter(BasicControlFilter):
@@ -229,19 +237,21 @@ class SemanticControlFilter(BasicControlFilter):
         """
         scores_items = []
         filtered_control_dict = {}
-        
+
         for label, control_item in control_dicts.items():
             control_text = control_item.element_info.name.lower()
             score = self.control_filter_score(control_text, plans)
             scores_items.append((label, score))
         topk_scores_items = heapq.nlargest(top_k, (scores_items), key=lambda x: x[1])
-        topk_items = [(score_item[0], score_item[1]) for score_item in topk_scores_items]
+        topk_items = [
+            (score_item[0], score_item[1]) for score_item in topk_scores_items
+        ]
 
         for label, control_item in control_dicts.items():
             if label in topk_items:
                 filtered_control_dict[label] = control_item
         return filtered_control_dict
-        
+
 
 class IconControlFilter(BasicControlFilter):
     """
@@ -283,5 +293,5 @@ class IconControlFilter(BasicControlFilter):
 
         for label, control_item in control_dicts.items():
             if label in topk_labels:
-                filtered_control_dict[label] = control_item 
+                filtered_control_dict[label] = control_item
         return filtered_control_dict

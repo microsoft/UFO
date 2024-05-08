@@ -1,14 +1,17 @@
-
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
+
+from __future__ import annotations
 
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Dict, List, Type, Optional
+from typing import Dict, List, Optional, Type
 
-from .. import utils
-from ..llm import llm_call
+from ufo import utils
+from ufo.llm import llm_call
+from ufo.module.state import Status
+
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
 
@@ -26,8 +29,11 @@ class MemoryItem:
         Convert the MemoryItem to a dictionary.
         :return: The dictionary.
         """
-        return {key: value for key, value in self.__dict__.items() if key in self._memory_attributes}
-    
+        return {
+            key: value
+            for key, value in self.__dict__.items()
+            if key in self._memory_attributes
+        }
 
     def to_json(self) -> str:
         """
@@ -35,7 +41,6 @@ class MemoryItem:
         :return: The JSON string.
         """
         return json.dumps(self.to_dict())
-    
 
     def filter(self, keys: List[str] = []) -> None:
         """
@@ -45,8 +50,7 @@ class MemoryItem:
         """
 
         return {key: value for key, value in self.to_dict().items() if key in keys}
-    
-    
+
     def set_value(self, key: str, value: str) -> None:
         """
         Add a field to the memory item.
@@ -58,7 +62,6 @@ class MemoryItem:
         if key not in self._memory_attributes:
             self._memory_attributes.append(key)
 
-    
     def set_values_from_dict(self, values: Dict[str, str]) -> None:
         """
         Add fields to the memory item.
@@ -66,7 +69,6 @@ class MemoryItem:
         """
         for key, value in values.items():
             self.set_value(key, value)
-
 
     def get_value(self, key: str) -> Optional[str]:
         """
@@ -76,7 +78,6 @@ class MemoryItem:
         """
 
         return getattr(self, key, None)
-    
 
     def get_values(self, keys: List[str]) -> dict:
         """
@@ -85,8 +86,7 @@ class MemoryItem:
         :return: The values of the fields.
         """
         return {key: self.get_value(key) for key in keys}
-    
-    
+
     @property
     def attributes(self) -> List[str]:
         """
@@ -94,24 +94,22 @@ class MemoryItem:
         :return: The attributes.
         """
         return self._memory_attributes
-    
+
 
 @dataclass
-class Memory():
+class Memory:
     """
     This data class represents a memory of an agent.
     """
 
     _content: List[MemoryItem] = field(default_factory=list)
 
-    
     def load(self, content: List[MemoryItem]) -> None:
         """
         Load the data from the memory.
         :param key: The key of the data.
         """
         self._content = content
-        
 
     def filter_memory_from_steps(self, steps: List[int]) -> List[Dict[str, str]]:
         """
@@ -120,8 +118,7 @@ class Memory():
         :return: The filtered memory.
         """
         return [item.to_dict() for item in self._content if item.step in steps]
-    
-    
+
     def filter_memory_from_keys(self, keys: List[str]) -> List[Dict[str, str]]:
         """
         Filter the memory from the keys. If an item does not have the key, the key will be ignored.
@@ -129,8 +126,6 @@ class Memory():
         :return: The filtered memory.
         """
         return [item.filter(keys) for item in self._content]
-    
-    
 
     def add_memory_item(self, memory_item: MemoryItem) -> None:
         """
@@ -139,13 +134,11 @@ class Memory():
         """
         self._content.append(memory_item)
 
-
     def clear(self) -> None:
         """
         Clear the memory.
         """
         self._content = []
-
 
     @property
     def length(self) -> int:
@@ -155,8 +148,6 @@ class Memory():
         """
         return len(self._content)
 
-
-
     def delete_memory_item(self, step: int) -> None:
         """
         Delete a memory item from the memory.
@@ -164,15 +155,15 @@ class Memory():
         """
         self._content = [item for item in self._content if item.step != step]
 
-
     def to_json(self) -> str:
         """
         Convert the memory to a JSON string.
         :return: The JSON string.
         """
 
-        return json.dumps([item.to_dict() for item in self._content if item is not None])
-    
+        return json.dumps(
+            [item.to_dict() for item in self._content if item is not None]
+        )
 
     def get_latest_item(self) -> MemoryItem:
         """
@@ -182,7 +173,6 @@ class Memory():
         if self.length == 0:
             return None
         return self._content[-1]
-    
 
     @property
     def content(self) -> List[MemoryItem]:
@@ -191,7 +181,6 @@ class Memory():
         :return: The content of the memory.
         """
         return self._content
-
 
 
 class BasicAgent(ABC):
@@ -211,7 +200,7 @@ class BasicAgent(ABC):
         self._register_self()
         self.retriever_factory = retriever.RetrieverFactory()
         self._memory = Memory()
-        
+        self._host = None
 
     @property
     def complete(self) -> bool:
@@ -219,11 +208,10 @@ class BasicAgent(ABC):
         Indicates whether the current instruction execution is complete.
         :returns: complete (bool): True if execution is complete; False otherwise.
         """
-        self._complete = self._status.lower() == "finish"
+        self._complete = self._status.upper() == Status.FINISH
 
         return self._complete
-    
-    
+
     @property
     def status(self) -> str:
         """
@@ -231,25 +219,36 @@ class BasicAgent(ABC):
         :return: The status of the agent.
         """
         return self._status
-    
-    
-    @property 
+
+    @property
     def memory(self) -> Memory:
         """
         Get the memory of the agent.
         :return: The memory of the agent.
         """
         return self._memory
-    
-    
-    @property 
+
+    @property
     def name(self) -> str:
         """
         Get the name of the agent.
         :return: The name of the agent.
         """
         return self._name
-    
+
+    def get_host(self):
+        """
+        Get the host of the agent.
+        :return: The host of the agent.
+        """
+        return self._host
+
+    def set_host(self, host: BasicAgent):
+        """
+        Set the host of the agent.
+        :param host: The host of the agent.
+        """
+        self._host = host
 
     @abstractmethod
     def get_prompter(self) -> str:
@@ -259,7 +258,6 @@ class BasicAgent(ABC):
         """
         pass
 
-
     @abstractmethod
     def message_constructor(self) -> List[dict]:
         """
@@ -268,17 +266,19 @@ class BasicAgent(ABC):
         """
         pass
 
-    
     @classmethod
-    def get_response(cls, message: List[dict], namescope, use_backup_engine) -> str:
+    def get_response(
+        cls, message: List[dict], namescope: str, use_backup_engine: bool
+    ) -> str:
         """
         Get the response for the prompt.
         :param prompt: The prompt.
         :return: The response.
         """
-        response_string, cost = llm_call.get_completion(message, namescope, use_backup_engine=use_backup_engine)
+        response_string, cost = llm_call.get_completion(
+            message, namescope, use_backup_engine=use_backup_engine
+        )
         return response_string, cost
-    
 
     @staticmethod
     def response_to_dict(response: str) -> Dict[str, str]:
@@ -288,14 +288,12 @@ class BasicAgent(ABC):
         :return: The dictionary.
         """
         return utils.json_parser(response)
-    
-    
+
     def update_step(self, step=1) -> None:
         """
         Update the step of the agent.
         """
         self._step += step
-
 
     def update_status(self, status: str) -> None:
         """
@@ -304,14 +302,12 @@ class BasicAgent(ABC):
         """
         self._status = status
 
-
     def add_memory(self, memory_item: MemoryItem) -> None:
         """
         Update the memory of the agent.
         :param memory_item: The memory item to add.
         """
         self._memory.add_memory_item(memory_item)
-
 
     def delete_memory(self, step: int) -> None:
         """
@@ -320,14 +316,11 @@ class BasicAgent(ABC):
         """
         self._memory.delete_memory_item(step)
 
-
     def clear_memory(self) -> None:
         """
         Clear the memory of the agent.
         """
         self._memory.clear()
-
-
 
     def get_step(self) -> int:
         """
@@ -335,7 +328,6 @@ class BasicAgent(ABC):
         :return: The step of the agent.
         """
         return self._step
-    
 
     def get_status(self) -> str:
         """
@@ -344,15 +336,13 @@ class BasicAgent(ABC):
         """
         return self._status
 
-
     def reflection(self, original_message, response, user_content) -> None:
         """
         TODO:
         Reflect on the action.
         """
-        
-        pass
 
+        pass
 
     def build_offline_docs_retriever(self) -> None:
         """
@@ -360,20 +350,17 @@ class BasicAgent(ABC):
         """
         pass
 
-
     def build_online_search_retriever(self) -> None:
         """
         Build the online search retriever.
         """
         pass
 
-    
     def build_experience_retriever(self) -> None:
         """
         Build the experience retriever.
         """
         pass
-
 
     def build_human_demonstration_retriever(self) -> None:
         """
@@ -381,14 +368,12 @@ class BasicAgent(ABC):
         """
         pass
 
-
     def print_response(self) -> None:
         """
         Print the response.
         :param response: The response.
         """
         pass
-
 
     @classmethod
     def _register_self(self):
@@ -399,17 +384,14 @@ class BasicAgent(ABC):
         if cls.__name__ not in AgentRegistry._registry:
             AgentRegistry.register(cls.__name__, cls)
 
-
-
     @classmethod
-    def get_cls(cls, name: str) -> Type['BasicAgent']:
+    def get_cls(cls, name: str) -> Type["BasicAgent"]:
         """
         Retrieves an agent class from the registry.
         :param name: The name of the agent class.
         :return: The agent class.
         """
         return AgentRegistry().get_cls(name)
-    
 
 
 class AgentRegistry:
@@ -417,10 +399,10 @@ class AgentRegistry:
     The registry for the agent.
     """
 
-    _registry: Dict[str, Type['BasicAgent']] = {}
+    _registry: Dict[str, Type["BasicAgent"]] = {}
 
     @classmethod
-    def register(cls, name: str, agent_cls: Type['BasicAgent']) -> None:
+    def register(cls, name: str, agent_cls: Type["BasicAgent"]) -> None:
         """
         Register an agent class.
         :param name: The name of the agent class.
@@ -431,7 +413,7 @@ class AgentRegistry:
         cls._registry[name] = agent_cls
 
     @classmethod
-    def get_cls(cls, name: str) -> Type['BasicAgent']:
+    def get_cls(cls, name: str) -> Type["BasicAgent"]:
         """
         Get an agent class from the registry.
         :param name: The name of the agent class.
@@ -440,4 +422,3 @@ class AgentRegistry:
         if name not in cls._registry:
             raise ValueError(f"No agent class registered under '{name}'.")
         return cls._registry[name]
-    

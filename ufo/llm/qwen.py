@@ -12,8 +12,7 @@ import dashscope
 from PIL import Image
 
 from ufo.utils import print_with_color
-
-from .base import BaseService
+from ufo.llm.base import BaseService
 
 
 class QwenService(BaseService):
@@ -22,7 +21,7 @@ class QwenService(BaseService):
         self.config = config
         self.max_retry = self.config["MAX_RETRY"]
         self.timeout = self.config["TIMEOUT"]
-        dashscope.api_key=self.config_llm['API_KEY']
+        dashscope.api_key = self.config_llm["API_KEY"]
         self.tmp_dir = None
 
     def chat_completion(
@@ -49,7 +48,9 @@ class QwenService(BaseService):
             ValueError: If the API response does not contain the expected content.
             Exception: If there is an error making the API request.
         """
-        temperature = temperature if temperature is not None else self.config["TEMPERATURE"]
+        temperature = (
+            temperature if temperature is not None else self.config["TEMPERATURE"]
+        )
         max_tokens = max_tokens if max_tokens is not None else self.config["MAX_TOKENS"]
         top_p = top_p if top_p is not None else self.config["TOP_P"] + 1e-06
         self.model = self.config_llm["API_MODEL"]
@@ -72,15 +73,30 @@ class QwenService(BaseService):
                             self.api_type,
                             self.model,
                             self.prices,
-                            usage['input_tokens'],
-                            usage['output_tokens'] + usage['image_tokens'] if 'image_tokens' in usage else usage['output_tokens']
+                            usage["input_tokens"],
+                            (
+                                usage["output_tokens"] + usage["image_tokens"]
+                                if "image_tokens" in usage
+                                else usage["output_tokens"]
+                            ),
                         )
 
-                        if "Observation" not in response.output.choices[0].message.content[0]['text']:
-                            raise ValueError(response.output.choices[0].message.content[0]['text'])
+                        if (
+                            "Observation"
+                            not in response.output.choices[0].message.content[0]["text"]
+                        ):
+                            raise ValueError(
+                                response.output.choices[0].message.content[0]["text"]
+                            )
                         else:
                             shutil.rmtree(self.tmp_dir, ignore_errors=True)
-                            responses.append(self.parse_qwen_response(response.output.choices[0].message.content[0]['text']))
+                            responses.append(
+                                self.parse_qwen_response(
+                                    response.output.choices[0].message.content[0][
+                                        "text"
+                                    ]
+                                )
+                            )
                             cost += _cost
                             break
                     else:
@@ -102,12 +118,13 @@ class QwenService(BaseService):
             list: The processed messages with images saved.
             Path: The path to the saved tmp images.
         """
+
         def save_image_from_base64(base64_str, path, filename):
             image_data = base64.b64decode(base64_str)
             image = Image.open(io.BytesIO(image_data))
-            image_path = os.path.join(path, filename).replace(os.sep, '/')
+            image_path = os.path.join(path, filename).replace(os.sep, "/")
 
-            #resize
+            # resize
             orig_width, orig_height = image.size
             max_size = 512
             scale_w = min(max_size / orig_width, 1)
@@ -127,18 +144,26 @@ class QwenService(BaseService):
         _messages = copy.deepcopy(messages)
         # Process messages and save images if any.
         for i, message in enumerate(_messages):
-            message['content'] = message.get('content', []) if isinstance(message['content'], list) else [message['content']]
-            for j, content in enumerate(message['content']):
+            message["content"] = (
+                message.get("content", [])
+                if isinstance(message["content"], list)
+                else [message["content"]]
+            )
+            for j, content in enumerate(message["content"]):
                 if isinstance(content, str):
                     content = {"text": content}
-                    message['content'][j] = content
-                if content.get('type'):
-                    _ =  content.pop('type')
-                if content.get('image_url'):
-                    img_data = content['image_url']['url'].split('data:image/png;base64,')[1]
+                    message["content"][j] = content
+                if content.get("type"):
+                    _ = content.pop("type")
+                if content.get("image_url"):
+                    img_data = content["image_url"]["url"].split(
+                        "data:image/png;base64,"
+                    )[1]
                     filename = f"{i}_{j}.png"
-                    content['image'] = save_image_from_base64(img_data, temp_dir, filename)
-                    _ = content.pop('image_url')
+                    content["image"] = save_image_from_base64(
+                        img_data, temp_dir, filename
+                    )
+                    _ = content.pop("image_url")
         return _messages
 
     def parse_qwen_response(self, content):
@@ -149,11 +174,13 @@ class QwenService(BaseService):
         Returns:
             str: A JSON string representing the parsed content.
         """
-        dict_str = [_.strip() for _ in content.split('\n')][1:-1]
+        dict_str = [_.strip() for _ in content.split("\n")][1:-1]
         _dict_str = {}
 
         def remove_quotes(s):
-            if (s.startswith('"') and s.endswith('"')) or (s.startswith("'") and s.endswith("'")):
+            if (s.startswith('"') and s.endswith('"')) or (
+                s.startswith("'") and s.endswith("'")
+            ):
                 return s[1:-1]
             elif (s.startswith('"')) or (s.startswith("'")):
                 return s[1]
@@ -162,7 +189,7 @@ class QwenService(BaseService):
             return s
 
         for _str in dict_str:
-            key, value = _str.split(':')
+            key, value = _str.split(":")
             _dict_str[remove_quotes(key)] = value.strip()
 
         return json.dumps(_dict_str)

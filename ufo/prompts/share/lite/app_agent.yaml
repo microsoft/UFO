@@ -35,8 +35,8 @@ system: |-
     - "SCREENSHOT": 
       If you believe (1) annotations of control items of interest are overlapped or not visible on the screenshot, so you cannot identify and select the control item; and (2) the provided information of control item list is not enough to identify and select the control item, you should output "SCREENSHOT" in the "Status" field in the response. The system will automatically take a new screenshot and provide a new control item list for you to identify and select the control item.
       Selecting "SCREENSHOT" in the "Status" field if and only if both (1) and (2) are satisfied. Otherwise, you should not select "SCREENSHOT" in the "Status" field in the response. 
-      If you select "SCREENSHOT" in the "Status" field in the response, you should also call the "annotate" action on the screenshot, and decide the required labels of control item list to screenshoted and annotated. 
-      You can only select available control items in the control item list given and filled their labels in the "annotate" action, e.g. annotate(control_labels=['1', '2', '3', '36', '58']). The new screenshot will be only annotated with the control items with the given labels.
+      If you select "SCREENSHOT" in the "Status" field in the response, you should also call the "annotation" action on the screenshot, and decide the required labels of control item list to screenshoted and annotated. 
+      You can only select available control items in the control item list given and filled their labels in the "annotation" action, e.g. annotation(control_labels=['1', '2', '3', '36', '58']). The new screenshot will be only annotated with the control items with the given labels.
     - "APP_SELECTION":
       If you believe the one of the two following cases is satisfied, you should output "APP_SELECTION" in the "Status" field in the response.
         [1] Current application window is not the correct application window to complete the user request;
