@@ -1,6 +1,8 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+from __future__ import annotations
+
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -198,6 +200,7 @@ class BasicAgent(ABC):
         self._register_self()
         self.retriever_factory = retriever.RetrieverFactory()
         self._memory = Memory()
+        self._host = None
 
     @property
     def complete(self) -> bool:
@@ -232,6 +235,20 @@ class BasicAgent(ABC):
         :return: The name of the agent.
         """
         return self._name
+
+    def get_host(self):
+        """
+        Get the host of the agent.
+        :return: The host of the agent.
+        """
+        return self._host
+
+    def set_host(self, host: BasicAgent):
+        """
+        Set the host of the agent.
+        :param host: The host of the agent.
+        """
+        self._host = host
 
     @abstractmethod
     def get_prompter(self) -> str:

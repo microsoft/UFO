@@ -83,7 +83,6 @@ class AppAgent(BasicAgent):
         self.experience_retriever = None
         self.human_demonstration_retriever = None
         self.Puppeteer = self.create_puppteer_interface()
-        self._host = None
 
     def get_prompter(
         self,
@@ -289,20 +288,6 @@ class AppAgent(BasicAgent):
         :return: The Puppeteer interface.
         """
         return puppeteer.AppPuppeteer(self._process_name, self._app_root_name)
-
-    def set_host(self, host: HostAgent) -> None:
-        """
-        Set the host agent.
-        :param host: The host agent.
-        """
-        self._host = host
-
-    def get_host(self) -> HostAgent:
-        """
-        Get the host agent that manages the AppAgent.
-        :return: The host agent.
-        """
-        return self._host
 
     def build_offline_docs_retriever(self) -> None:
         """
