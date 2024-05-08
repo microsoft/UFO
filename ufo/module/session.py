@@ -9,6 +9,7 @@ from ufo import utils
 from ufo.config.config import Config
 from ufo.module import interactor, round
 from ufo.module.basic import BaseSession
+from ufo.module.state import Status
 
 configs = Config.get_instance().config_data
 
@@ -246,10 +247,10 @@ class Session(BaseSession):
         self.request, iscomplete = interactor.new_request()
 
         if iscomplete:
-            self._status = "COMPLETE"
+            self._status = Status.COMPLETE
         else:
             self._current_round = self.create_round()
-            self._status = "APP_SELECTION"
+            self._status = Status.APP_SELECTION
 
 
 class FollowerSession(Session):
@@ -314,7 +315,7 @@ class FollowerSession(Session):
         self._round += 1
 
         if self.plan_reader.task_finished():
-            self._status = "COMPLETE"
+            self._status = Status.COMPLETE
         else:
             self.request = self.plan_reader.next_step()
             utils.print_with_color(
@@ -325,4 +326,4 @@ class FollowerSession(Session):
             # Create a new round.
             self._current_round = self.create_round()
             self._current_round.set_application_window(self.app_window)
-            self._status = "CONTINUE"
+            self._status = Status.CONTINUE

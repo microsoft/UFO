@@ -182,7 +182,7 @@ class HostAgentProcessor(BaseProcessor):
 
         self.control_label = self._response_json.get("ControlLabel", "")
         self._control_text = self._response_json.get("ControlText", "")
-        self.plan = self._response_json.get("Plan", "")
+        self._plan = self._response_json.get("Plan", "")
         self._status = self._response_json.get("Status", "")
         self.app_to_open = self._response_json.get("AppsToOpen", None)
 
@@ -668,7 +668,7 @@ class AppAgentProcessor(BaseProcessor):
             should_proceed = True
 
             # Safe guard for the action.
-            if self._status.upper() == "PENDING" and configs["SAFE_GUARD"]:
+            if self._status.upper() == Status.PENDING and configs["SAFE_GUARD"]:
                 should_proceed = self._safe_guard_judgement(
                     self._action, self._control_text
                 )
@@ -710,7 +710,7 @@ class AppAgentProcessor(BaseProcessor):
         Handle the screenshot status when the annotation is overlapped and the agent is unable to select the control items.
         """
 
-        if self._status.upper() == "SCREENSHOT":
+        if self._status.upper() == Status.SCREENSHOT:
             utils.print_with_color(
                 "Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.",
                 "magenta",
@@ -719,7 +719,7 @@ class AppAgentProcessor(BaseProcessor):
                 "annotation", self._args, self._annotation_dict
             )
             if self._control_reannotate is None or len(self._control_reannotate) == 0:
-                self._status = "CONTINUE"
+                self._status = Status.CONTINUE
         else:
             self._control_reannotate = None
 
