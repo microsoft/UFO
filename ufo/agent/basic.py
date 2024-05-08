@@ -7,6 +7,7 @@ from dataclasses import dataclass, field
 from typing import Dict, List, Type, Optional
 
 from ufo import utils
+from ufo.module.state import Status 
 from ufo.llm import llm_call
 
 
