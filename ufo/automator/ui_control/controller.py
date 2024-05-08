@@ -4,7 +4,9 @@
 import time
 import warnings
 from abc import abstractmethod
-from typing import Dict, List, Type
+from typing import Any, Dict, List, Optional, Type, Union
+
+from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
 from ufo.config.config import Config
@@ -19,7 +21,7 @@ class ControlReceiver(ReceiverBasic):
     The control receiver class.
     """
 
-    def __init__(self, control, application):
+    def __init__(self, control: UIAWrapper, application: UIAWrapper):
         """
         Initialize the control receiver.
         :param control: The control element.
@@ -55,7 +57,7 @@ class ControlReceiver(ReceiverBasic):
     def type_name(self):
         return "UIControl"
 
-    def atomic_execution(self, method_name: str, params: Dict) -> str:
+    def atomic_execution(self, method_name: str, params: Dict[str, Any]) -> str:
         """
         Atomic execution of the action on the control elements.
         :param control: The control element to execute the action.
@@ -77,7 +79,7 @@ class ControlReceiver(ReceiverBasic):
             result = message
         return result
 
-    def click_input(self, params: Dict):
+    def click_input(self, params: Dict[str, Union[str, bool]]) -> str:
         """
         Click the control element.
         :param params: The arguments of the click method.
@@ -91,7 +93,7 @@ class ControlReceiver(ReceiverBasic):
         else:
             return self.atomic_execution("click_input", params)
 
-    def summary(self, params: Dict):
+    def summary(self, params: Dict[str, str]) -> str:
         """
         Visual summary of the control element.
         :param params: The arguments of the visual summary method. should contain a key "text" with the text summary.
@@ -100,7 +102,7 @@ class ControlReceiver(ReceiverBasic):
 
         return params.get("text")
 
-    def set_edit_text(self, params: Dict):
+    def set_edit_text(self, params: Dict[str, str]) -> str:
         """
         Set the edit text of the control element.
         :param params: The arguments of the set edit text method.
@@ -140,7 +142,7 @@ class ControlReceiver(ReceiverBasic):
             else:
                 return f"An error occurred: {e}"
 
-    def keyboard_input(self, params: Dict):
+    def keyboard_input(self, params: Dict[str, str]) -> str:
         """
         Keyboard input on the control element.
         :param params: The arguments of the keyboard input method.
@@ -156,7 +158,7 @@ class ControlReceiver(ReceiverBasic):
         """
         return self.control.texts()
 
-    def wheel_mouse_input(self, params: dict):
+    def wheel_mouse_input(self, params: Dict[str, str]):
         """
         Wheel mouse input on the control element.
         :param params: The arguments of the wheel mouse input method.
@@ -172,7 +174,9 @@ class ControlReceiver(ReceiverBasic):
 
         return ""
 
-    def annotation(self, params: Dict, annotation_dict: Dict) -> List[str]:
+    def annotation(
+        self, params: Dict[str, str], annotation_dict: Dict[str, UIAWrapper]
+    ) -> List[str]:
         """
         Take a screenshot of the current application window and annotate the control item on the screenshot.
         :param params: The arguments of the annotation method.
@@ -186,7 +190,7 @@ class ControlReceiver(ReceiverBasic):
 
         return control_reannotate
 
-    def wait_enabled(self, timeout: int = 10, retry_interval: int = 0.5):
+    def wait_enabled(self, timeout: int = 10, retry_interval: int = 0.5) -> None:
         """
         Wait until the control is enabled.
         :param timeout: The timeout to wait.
@@ -199,7 +203,7 @@ class ControlReceiver(ReceiverBasic):
                 warnings.warn(f"Timeout: {self.control} is not enabled.")
                 break
 
-    def wait_visible(self, timeout: int = 10, retry_interval: int = 0.5):
+    def wait_visible(self, timeout: int = 10, retry_interval: int = 0.5) -> None:
         """
         Wait until the window is enabled.
         :param timeout: The timeout to wait.
@@ -246,7 +250,10 @@ class AtomicCommand(ControlCommand):
     """
 
     def __init__(
-        self, receiver: ControlReceiver, method_name: str, params=None
+        self,
+        receiver: ControlReceiver,
+        method_name: str,
+        params=Optional[Dict[str, str]],
     ) -> None:
         """
         Initialize the atomic command.
@@ -340,7 +347,10 @@ class AnnotationCommand(ControlCommand):
     """
 
     def __init__(
-        self, receiver: ControlReceiver, params: Dict, annotation_dict: Dict
+        self,
+        receiver: ControlReceiver,
+        params: Dict[str, str],
+        annotation_dict: Dict[str, UIAWrapper],
     ) -> None:
         """
         Initialize the annotation command.

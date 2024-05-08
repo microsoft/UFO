@@ -9,6 +9,7 @@ from io import BytesIO
 from typing import Dict, List, Optional
 
 from PIL import Image, ImageDraw, ImageFont, ImageGrab
+from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.win32structures import RECT
 
 from ufo.config.config import Config
@@ -31,7 +32,7 @@ class ControlPhotographer(Photographer):
     Class to capture the control screenshot.
     """
 
-    def __init__(self, control):
+    def __init__(self, control: UIAWrapper):
         """
         Initialize the ControlPhotographer.
         :param control: The control item to capture.
@@ -79,7 +80,7 @@ class PhotographerDecorator(Photographer):
     Class to decorate the photographer.
     """
 
-    def __init__(self, photographer) -> None:
+    def __init__(self, photographer: Photographer) -> None:
         """
         Initialize the PhotographerDecorator.
         :param photographer: The photographer.
@@ -119,7 +120,11 @@ class RectangleDecorator(PhotographerDecorator):
     """
 
     def __init__(
-        self, photographer, color: str, width: float, sub_control_list: List
+        self,
+        photographer: Photographer,
+        color: str,
+        width: float,
+        sub_control_list: List[UIAWrapper],
     ) -> None:
         """
         Initialize the RectangleDecorator.
@@ -135,7 +140,9 @@ class RectangleDecorator(PhotographerDecorator):
         self.sub_control_list = sub_control_list
 
     @staticmethod
-    def draw_rectangles(image, coordinate: tuple, color: str = "red", width: int = 3):
+    def draw_rectangles(
+        image: Image.Image, coordinate: tuple, color: str = "red", width: int = 3
+    ):
         """
         Draw a rectangle on the image.
         :param image: The image to draw on.
@@ -176,8 +183,8 @@ class AnnotationDecorator(PhotographerDecorator):
 
     def __init__(
         self,
-        screenshot,
-        sub_control_list,
+        screenshot: Image.Image,
+        sub_control_list: List[UIAWrapper],
         annotation_type: str = "number",
         color_diff: bool = True,
         color_default: str = "#FFF68F",
@@ -198,7 +205,7 @@ class AnnotationDecorator(PhotographerDecorator):
 
     @staticmethod
     def draw_rectangles_controls(
-        image,
+        image: Image.Image,
         coordinate: tuple,
         label_text: str,
         botton_margin: int = 5,
@@ -207,7 +214,7 @@ class AnnotationDecorator(PhotographerDecorator):
         font_color: str = "#000000",
         border_color: str = "#FF0000",
         button_color: str = "#FFF68F",
-    ) -> Image:
+    ) -> Image.Image:
         """
         Draw a rectangle around the control and label it.
         :param image: The image to draw on.
@@ -268,7 +275,7 @@ class AnnotationDecorator(PhotographerDecorator):
 
         return result
 
-    def get_annotation_dict(self) -> Dict:
+    def get_annotation_dict(self) -> Dict[str, UIAWrapper]:
         """
         Get the dictionary of the annotations.
         :return: The dictionary of the annotations.
@@ -282,7 +289,9 @@ class AnnotationDecorator(PhotographerDecorator):
             annotation_dict[label_text] = control
         return annotation_dict
 
-    def get_cropped_icons_dict(self, annotation_dict: Dict) -> Dict:
+    def get_cropped_icons_dict(
+        self, annotation_dict: Dict[str, UIAWrapper]
+    ) -> Dict[str, Image.Image]:
         """
         Get the dictionary of the cropped icons.
         :return: The dictionary of the cropped icons.
@@ -300,7 +309,7 @@ class AnnotationDecorator(PhotographerDecorator):
         return cropped_icons_dict
 
     def capture_with_annotation_dict(
-        self, annotation_dict: Dict, save_path: Optional[str] = None
+        self, annotation_dict: Dict[str, UIAWrapper], save_path: Optional[str] = None
     ):
 
         window_rect = self.photographer.control.rectangle()
@@ -361,7 +370,7 @@ class PhotographerFacade:
     def __init__(self):
         self.screenshot_factory = PhotographerFactory()
 
-    def capture_app_window_screenshot(self, control, save_path=None):
+    def capture_app_window_screenshot(self, control: UIAWrapper, save_path=None):
         """
         Capture the control screenshot.
         :param control: The control item to capture.
@@ -382,8 +391,13 @@ class PhotographerFacade:
         return screenshot.capture(save_path)
 
     def capture_app_window_screenshot_with_rectangle(
-        self, control, color="red", width=3, sub_control_list=None, save_path=None
-    ) -> Image:
+        self,
+        control: UIAWrapper,
+        color: str = "red",
+        width=3,
+        sub_control_list: List[UIAWrapper] = None,
+        save_path: Optional[str] = None,
+    ) -> Image.Image:
         """
         Capture the control screenshot with a rectangle.
         :param control: The control item to capture.
@@ -399,13 +413,13 @@ class PhotographerFacade:
 
     def capture_app_window_screenshot_with_annotation_dict(
         self,
-        control,
-        annotation_control_dict: Dict,
+        control: UIAWrapper,
+        annotation_control_dict: Dict[str, UIAWrapper],
         annotation_type: str = "number",
         color_diff: bool = True,
         color_default: str = "#FFF68F",
-        save_path=None,
-    ) -> Image:
+        save_path: Optional[str] = None,
+    ) -> Image.Image:
         """
         Capture the control screenshot with annotations.
         :param control: The control item to capture.
@@ -426,13 +440,13 @@ class PhotographerFacade:
 
     def capture_app_window_screenshot_with_annotation(
         self,
-        control,
-        sub_control_list: List,
+        control: UIAWrapper,
+        sub_control_list: List[UIAWrapper],
         annotation_type: str = "number",
         color_diff: bool = True,
         color_default: str = "#FFF68F",
-        save_path=None,
-    ) -> Image:
+        save_path: Optional[str] = None,
+    ) -> Image.Image:
         """
         Capture the control screenshot with annotations.
         :param control: The control item to capture.
@@ -450,8 +464,11 @@ class PhotographerFacade:
         return screenshot.capture(save_path)
 
     def get_annotation_dict(
-        self, control, sub_control_list: List, annotation_type="number"
-    ) -> Dict:
+        self,
+        control: UIAWrapper,
+        sub_control_list: List[UIAWrapper],
+        annotation_type: str = "number",
+    ) -> Dict[str, UIAWrapper]:
         """
         Get the dictionary of the annotations.
         :param control: The control item to capture.
@@ -464,7 +481,9 @@ class PhotographerFacade:
         screenshot = AnnotationDecorator(screenshot, sub_control_list, annotation_type)
         return screenshot.get_annotation_dict()
 
-    def get_cropped_icons_dict(self, control, annotation_dict) -> Dict:
+    def get_cropped_icons_dict(
+        self, control: UIAWrapper, annotation_dict: Dict[str, UIAWrapper]
+    ) -> Dict[str, Image.Image]:
         """
         Get the dictionary of the cropped icons.
         :param control: The control item to capture.
@@ -480,7 +499,7 @@ class PhotographerFacade:
     @staticmethod
     def concat_screenshots(
         image1_path: str, image2_path: str, output_path: str
-    ) -> Image:
+    ) -> Image.Image:
         """
         Concatenate two images horizontally.
         :param image1_path: The path of the first image.
@@ -508,7 +527,7 @@ class PhotographerFacade:
         return result
 
     @staticmethod
-    def image_to_base64(image: Image):
+    def image_to_base64(image: Image.Image) -> str:
         """
         Convert image to base64 string.
 
