@@ -31,7 +31,6 @@ from ufo.module.state import (
     ErrorState,
     MaxStepReachedState,
     NoneState,
-    SessionFinishState,
     StatusToStateMapper,
 )
 
@@ -436,7 +435,7 @@ class BaseSession(ABC):
         return: True if the session is ended, otherwise False.
         """
 
-        # Finish the session if the state is SessionFinishState, ErrorState, MaxStepReachedState, or NoneState.
+        # Finish the session if the state is ErrorState, MaxStepReachedState, or NoneState.
         return (
             True
             if isinstance(
