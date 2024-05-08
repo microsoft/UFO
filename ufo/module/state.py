@@ -34,6 +34,7 @@ class Status:
     COMPLETE = "COMPLETE"
     SCREENSHOT = "SCREENSHOT"
     MAX_STEP_REACHED = "MAX_STEP_REACHED"
+    EVALUATION = "EVALUATION"
 
 
 class StatusToStateMapper:
@@ -62,6 +63,7 @@ class StatusToStateMapper:
             Status.COMPLETE: SessionFinishState,
             Status.SCREENSHOT: AnnotationState,
             Status.MAX_STEP_REACHED: MaxStepReachedState,
+            Status.EVALUATION: EvaluationState,
         }
 
     def get_appropriate_state(self, status: str) -> Type[SessionState]:
@@ -244,6 +246,19 @@ class MaxStepReachedState(SessionState):
     def handle(self, session: "Session") -> None:
         """
         Handle the session. Finish the session when the maximum step is reached.
+        :param session: The session.
+        """
+        pass
+
+
+class EvaluationState(SessionState):
+    """
+    The state when the session needs to be evaluated.
+    """
+
+    def handle(self, session: "Session") -> None:
+        """
+        Handle the session. Process the evaluation.
         :param session: The session.
         """
         pass
