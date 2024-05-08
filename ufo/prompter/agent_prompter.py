@@ -584,6 +584,7 @@ class APIPromptLoader:
         :param root_name: The root name of the app.
         """
         self.root_name = root_name
+        self.api_prompt_key = "class_name"
 
     def load_com_api_prompt(self) -> Dict[str, str]:
         """
@@ -624,3 +625,11 @@ class APIPromptLoader:
             )
         else:
             return {}
+
+    def filter_api_dict(self, api_prompt_dict: Dict[str, str]) -> Dict[str, str]:
+        """
+        Filter the API prompt dictionary.
+        :param api_prompt: The API prompt dictionary.
+        :return: The filtered API prompt dictionary.
+        """
+        return {k: v.get(self.api_prompt_key, None) for k, v in api_prompt_dict.items()}

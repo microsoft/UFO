@@ -41,8 +41,9 @@ class ControlReceiver(ReceiverBasic):
         Get the default command registry.
         """
 
-        api_prompt = APIPromptLoader("").load_ui_api_prompt()
-        class_name_dict = self.filter_api_dict(api_prompt, "class_name")
+        api_prompt_loader = APIPromptLoader("")
+        api_prompt = api_prompt_loader.load_ui_api_prompt()
+        class_name_dict = api_prompt_loader.filter_api_dict(api_prompt)
 
         global_name_space = globals()
         command_registry = self.name_to_command_class(

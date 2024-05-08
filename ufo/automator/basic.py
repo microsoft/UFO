@@ -57,16 +57,6 @@ class ReceiverBasic(ABC):
         return {command_name: self for command_name in self.supported_command_names}
 
     @staticmethod
-    def filter_api_dict(api_dict: Dict[str, Any], key: str) -> Dict[str, str]:
-        """
-        Filter the API dictionary.
-        :param api_dict: The API dictionary.
-        :param key: The key to filter.
-        :return: The filtered API dictionary.
-        """
-        return {k: v.get(key, None) for k, v in api_dict.items()}
-
-    @staticmethod
     def name_to_command_class(
         global_namespace: Dict[str, Any], class_name_mapping: Dict[str, str]
     ) -> Dict[str, Type[CommandBasic]]:
