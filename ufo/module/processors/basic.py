@@ -245,7 +245,7 @@ class BaseProcessor(ABC):
         :return: The boolean value indicating if the process is in error.
         """
 
-        return self._status == "ERROR"
+        return self._status == Status.ERROR
 
     def should_create_subagent(self) -> bool:
         """
@@ -272,7 +272,7 @@ class BaseProcessor(ABC):
         log = json.dumps(
             {
                 "step": self._step,
-                "status": "ERROR",
+                "status": Status.ERROR,
                 "response": response_str,
                 "error": error,
             }
