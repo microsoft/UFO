@@ -5,7 +5,6 @@
 from typing import List
 
 from ufo.module.basic import BaseSession
-from ufo.module.state import SessionFinishState
 
 
 class UFOClient:
