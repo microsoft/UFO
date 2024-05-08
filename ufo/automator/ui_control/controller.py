@@ -83,7 +83,13 @@ class ControlReceiver(ReceiverBasic):
         :param params: The arguments of the click method.
         :return: The result of the click action.
         """
-        return self.atomic_execution("click_input", params)
+
+        api_name = configs.get("CLICK_API", "click_input")
+
+        if api_name == "click":
+            return self.atomic_execution("click", params)
+        else:
+            return self.atomic_execution("click_input", params)
 
     def summary(self, params: Dict):
         """

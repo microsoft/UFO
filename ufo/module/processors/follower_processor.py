@@ -12,6 +12,9 @@ configs = Config.get_instance().config_data
 
 
 class FollowerHostAgentProcessor(HostAgentProcessor):
+    """
+    Follower host agent processor to handle the AppAgent in the follower mode.
+    """
 
     def create_sub_agent(self) -> FollowerAgent:
         """

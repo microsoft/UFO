@@ -793,7 +793,7 @@ class AppAgentProcessor(BaseProcessor):
             self._status = Status.FINISH
         return True
 
-    def get_control_reannotate(self) -> List:
+    def get_control_reannotate(self) -> List[UIAWrapper]:
         """
         Get the control to reannotate.
         :return: The control to reannotate.
