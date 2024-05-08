@@ -4,9 +4,10 @@
 import time
 import warnings
 from abc import abstractmethod
-from typing import Dict, List
+from typing import Dict, List, Type
 
 from ...config.config import Config
+from ...prompter.agent_prompter import APIPromptLoader
 from ...utils import print_with_color
 from ..basic import CommandBasic, ReceiverBasic, ReceiverFactory
 
@@ -15,6 +16,10 @@ configs = Config.get_instance().config_data
 
 
 class ControlReceiver(ReceiverBasic):
+    """
+    The control receiver class.
+    """
+
     def __init__(self, control, application):
         """
         Initialize the control receiver.
@@ -31,21 +36,22 @@ class ControlReceiver(ReceiverBasic):
         self.application = application
 
 
-    @staticmethod
-    def get_default_command_registry():
+
+    def get_default_command_registry(self) -> Dict[str, Type[CommandBasic]]:
         """
-        The default command registry.
+        Get the default command registry.
         """
-        return {
-            "click_input": ClickInputCommand,
-            "summary": SummaryCommand,
-            "set_edit_text": SetEditTextCommand,
-            "texts": GetTextsCommand,
-            "wheel_mouse_input": WheelMouseInputCommand,
-            "keyboard_input": keyboardInputCommand,
-            "annotation": AnnotationCommand,
-            "": NoActionCommand
-        }
+
+        api_prompt = APIPromptLoader("").load_ui_api_prompt()
+        class_name_dict = self.filter_api_dict(api_prompt, "class_name")
+
+        global_name_space = globals()
+        command_registry = self.name_to_command_class(global_name_space, class_name_dict)
+
+        command_registry[""] = NoActionCommand
+
+        return command_registry
+
     
     @property
     def type_name(self):
@@ -262,8 +268,6 @@ class AtomicCommand(ControlCommand):
         return self.receiver.atomic_execution(self.method_name, self.params)
     
     
-
-
 
 class ClickInputCommand(ControlCommand):
     """

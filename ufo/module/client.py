@@ -9,6 +9,9 @@ from .state import SessionFinishState
 
 
 class UFOClient:
+    """
+    A UFO client to run the UFO system for a single session.
+    """
 
     def __init__(self, session: BaseSession) -> None:
         """
@@ -35,6 +38,9 @@ class UFOClient:
 
 
 class UFOClientManager:
+    """
+    The manager for the UFO clients.
+    """
 
     def __init__(self, session_list: List[BaseSession]) -> None:
         """

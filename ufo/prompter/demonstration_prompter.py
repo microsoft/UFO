@@ -31,7 +31,9 @@ class DemonstrationPrompter(BasicPrompter):
         apis = self.api_prompt_helper(verbose=1)
         examples = self.examples_prompt_helper()
 
-        return self.prompt_template["system"].format(apis=apis, examples=examples)
+        system_key = "system" if self.is_visual else "system_nonvisual"
+
+        return self.prompt_template[system_key].format(apis=apis, examples=examples)
 
     def user_prompt_construction(self, user_request: str) -> str:
         """

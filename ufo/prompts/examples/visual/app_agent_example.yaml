@@ -166,7 +166,7 @@ example6:
     Observation: |-
       The screenshot shows that I am on the main window of the Word file named 'framework.docx'. The text of the file, which I am interest, is visible in the screenshot. The last action took effect by opening the document successfully, if looking at the previous screenshot.
     Thought: |-
-      Base on the screenshots and the control item list, I need to use the 'GetText' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'APP_SELECTION' immediately to switch to the image of framework.png to complete the next task.
+      Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'APP_SELECTION' immediately to switch to the image of framework.png to complete the next task.
     ControlLabel: |-
       83
     ControlText: |-
@@ -186,7 +186,7 @@ example6:
     Comment: |-
       The partial tasks on 'framework.docx' is completed once I take the current action. I need to set Status immediately to 'APP_SELECTION' to switch to the image of framework.png to complete the next task.
   Tips: |-
-    - In Word application, the main canva is a Document control, and the text of the document can be extracted by using the 'GetText' action.
+    - In Word application, the main canva is a Document control, and the text of the document can be extracted by using the 'texts' action.
     - After extracting the text of the document, I need to set the status as 'APP_SELECTION' immediately to switch to the image of framework.png to complete the next task.
 
 

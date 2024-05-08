@@ -23,14 +23,15 @@ class WinCOMReceiverBasic(ReceiverBasic):
         :param process_name: The process name.
         :param clsid: The CLSID of the COM object.
         """
-        super().__init__()
-
+    
         self.app_root_name = app_root_name
         self.process_name = process_name
         self.clsid = clsid
 
         self.client = win32com.client.Dispatch(self.clsid)
         self.com_object = self.get_object_from_process_name()
+
+        super().__init__()
 
 
     @abstractmethod
@@ -46,14 +47,6 @@ class WinCOMReceiverBasic(ReceiverBasic):
         """
         Get the object from the process name.
         :param process_name: The process name.
-        """
-        pass
-
-
-    @abstractmethod
-    def get_default_command_registry(self) -> Dict:
-        """
-        Get the method registry of the COM object.
         """
         pass
     

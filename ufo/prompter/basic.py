@@ -30,8 +30,8 @@ class BasicPrompter(ABC):
             self.example_prompt_template = ""
 
 
-
-    def load_prompt_template(self, template_path: str, is_visual=None) -> dict:
+    @staticmethod
+    def load_prompt_template(template_path: str, is_visual=None) -> dict:
         """
         Load the prompt template.
         :return: The prompt template.

@@ -25,11 +25,11 @@ INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the o
 REQUEST_TIMEOUT: 250  # The call timeout for the GPT-V model
 
 
-HOSTAGENT_PROMPT: "ufo/prompts/base/{mode}/host_agent.yaml"  # The prompt for the app selection
-# Due to the limitation of input size, lite version of the prompt help users have a taste. And the path is "ufo/prompts/base/lite/{mode}/host_agent.yaml"
-APPAGENT_PROMPT: "ufo/prompts/base/{mode}/app_agent.yaml"  # The prompt for the action selection
-# Lite version: "ufo/prompts/base/lite/{mode}/app_agent.yaml"
-FOLLOWERAHENT_PROMPT: "ufo/prompts/base/{mode}/app_agent.yaml"  # The prompt for the follower agent
+HOSTAGENT_PROMPT: "ufo/prompts/share/base/host_agent.yaml"  # The prompt for the app selection
+# Due to the limitation of input size, lite version of the prompt help users have a taste. And the path is "ufo/prompts/share/lite/host_agent.yaml"
+APPAGENT_PROMPT: "ufo/prompts/share/base/app_agent.yaml"  # The prompt for the action selection
+# Lite version: "ufo/prompts/share/lite/app_agent.yaml"
+FOLLOWERAHENT_PROMPT: "ufo/prompts/share/base/app_agent.yaml"  # The prompt for the follower agent
 
 HOSTAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/host_agent_example.yaml"  # The prompt for the app selection
 # Lite version: "ufo/prompts/examples/lite/{mode}/host_agent_example.yaml"
@@ -37,14 +37,14 @@ APPAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/app_agent_example.yaml"  #
 # Lite version: "ufo/prompts/examples/lite/{mode}/app_agent_example.yaml"
 
 ## For experience learning
-EXPERIENCE_PROMPT: "ufo/prompts/experience/{mode}/experience_summary.yaml"
+EXPERIENCE_PROMPT: "ufo/prompts/experience/experience_summary.yaml"
 EXPERIENCE_SAVED_PATH: "vectordb/experience/"
 
 ## For user demonstration learning
-DEMONSTRATION_PROMPT: "ufo/prompts/demonstration/{mode}/demonstration_summary.yaml"
+DEMONSTRATION_PROMPT: "ufo/prompts/demonstration/demonstration_summary.yaml"
 DEMONSTRATION_SAVED_PATH: "vectordb/demonstration/"
 
-API_PROMPT: "ufo/prompts/base/{mode}/api.yaml"  # The prompt for the API
+API_PROMPT: "ufo/prompts/share/base/api.yaml"  # The prompt for the API
 INPUT_TEXT_API: "type_keys" # The input text API
 INPUT_TEXT_ENTER: True # whether to press enter after typing the text
 
