@@ -56,7 +56,7 @@ class ControlFilterFactory:
         return filtered_control_dict
 
     @staticmethod
-    def get_plans(plan, topk_plan):
+    def get_plans(plan: List[str], topk_plan: int) -> List[str]:
         """
         Parses the given plan and returns a list of plans up to the specified topk_plan.
 
@@ -67,8 +67,7 @@ class ControlFilterFactory:
         Returns:
             list: A list of plans up to the specified topk_plan.
         """
-        plans = str(plan).split("\n")[:topk_plan]
-        return plans
+        return plan[:topk_plan]
 
 
 class BasicControlFilter:
@@ -128,7 +127,7 @@ class BasicControlFilter:
         pass
 
     @staticmethod
-    def plans_to_keywords(plans: list) -> list:
+    def plans_to_keywords(plans: List[str]) -> List[str]:
         """
         Gets keywords from the plan.
         We only consider the words in the plan that are alphabetic or Chinese characters.

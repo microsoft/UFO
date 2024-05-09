@@ -31,6 +31,7 @@ from ufo.module.state import (
     ErrorState,
     MaxStepReachedState,
     NoneState,
+    Status,
     StatusToStateMapper,
 )
 
@@ -72,7 +73,7 @@ class BaseRound(ABC):
         self.app_agent = None
 
         # Status-related properties
-        self._status = "APP_SELECTION"
+        self._status = Status.APP_SELECTION
 
         # Application-related properties
         self.application = ""
@@ -267,7 +268,7 @@ class BaseSession(ABC):
         self.app_agent = None
 
         # Status and state-related properties
-        self._status = "APP_SELECTION"
+        self._status = Status.APP_SELECTION
         self._state = StatusToStateMapper().get_appropriate_state(self._status)
 
         # Application-related properties
