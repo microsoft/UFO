@@ -131,7 +131,7 @@ class HostAgentProcessor(BaseProcessor):
         if agent_memory.length > 0:
             plan = agent_memory.get_latest_item().to_dict()["Plan"]
         else:
-            plan = ""
+            plan = []
 
         # Construct the prompt message for the host agent.
         self._prompt_message = self.host_agent.message_constructor(
@@ -438,7 +438,7 @@ class AppAgentProcessor(BaseProcessor):
         self._operation = None
         self._args = None
         self._image_url = []
-        self.prev_plan = ""
+        self.prev_plan = []
         self._control_reannotate = control_reannotate
         self.control_filter_factory = ControlFilterFactory()
         self.filtered_annotation_dict = None
@@ -790,7 +790,7 @@ class AppAgentProcessor(BaseProcessor):
             return False
 
         # Handle the PENDING_AND_FINISH case
-        elif Status.FINISH in self._plan:
+        elif len(self._plan) > 0 and Status.FINISH in self._plan[0]:
             self._status = Status.FINISH
         return True
 
@@ -810,9 +810,9 @@ class AppAgentProcessor(BaseProcessor):
         agent_memory = self.app_agent.memory
 
         if agent_memory.length > 0:
-            prev_plan = agent_memory.get_latest_item().to_dict()["Plan"].strip()
+            prev_plan = agent_memory.get_latest_item().to_dict()["Plan"]
         else:
-            prev_plan = ""
+            prev_plan = []
 
         return prev_plan
 
@@ -861,7 +861,7 @@ class AppAgentProcessor(BaseProcessor):
         control_filter_type = configs["CONTROL_FILTER_TYPE"]
         topk_plan = configs["CONTROL_FILTER_TOP_K_PLAN"]
 
-        if len(control_filter_type) == 0 or self.prev_plan == "":
+        if len(control_filter_type) == 0 or self.prev_plan == []:
             return annotation_dict
 
         control_filter_type_lower = [

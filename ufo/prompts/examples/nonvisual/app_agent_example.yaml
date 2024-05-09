@@ -18,11 +18,11 @@ example1:
         {"button": "left", "double": false}
       Status: |-
         CONTINUE
-      Plan: |-
-        (1) Input the email address of the receiver.
-        (2) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.
-        (3) Input the content of the email. I need to input 'Dear Jack,\nI hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.\nYour commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.\nYour code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.\nPlease know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.\nOnce again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.\nBest regards,\nZac'.
-        (4) Click the Send button to send the email.
+      Plan:
+        - (1) Input the email address of the receiver.
+        - (2) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.
+        - (3) Input the content of the email. I need to input 'Dear Jack,\nI hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.\nYour commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.\nYour code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.\nPlease know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.\nOnce again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.\nBest regards,\nZac'.
+        - (4) Click the Send button to send the email.
       Comment: |-
         After I click the New Email button, the New Email window will be opened and available for composing the email.
   Tips: |-
@@ -48,12 +48,12 @@ example2:
         {"button": "left", "double": false}
       Status: |-
         CONTINUE
-      Plan: |-
-        (1) Find the New Email button in the Main Page and click it to open a New Email window. If the New Email button is still not available in the control item list, I may need to look for take action on other control items to navigate to the New Email button.
-        (2) Input the email address of the receiver.
-        (3) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.
-        (4) Input the content of the email. I need to input 'Dear Jack,\nI hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.\nYour commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.\nYour code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.\nPlease know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.\nOnce again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.\nBest regards,\nZac'.
-        (5) Click the Send button to send the email.
+      Plan:
+        - (1) Find the New Email button in the Main Page and click it to open a New Email window. If the New Email button is still not available in the control item list, I may need to look for take action on other control items to navigate to the New Email button.
+        - (2) Input the email address of the receiver.
+        - (3) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.
+        - (4) Input the content of the email. I need to input 'Dear Jack,\nI hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.\nYour commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.\nYour code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.\nPlease know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.\nOnce again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.\nBest regards,\nZac'.
+        - (5) Click the Send button to send the email.
       Comment: |-
         I am looking for the New Email button, and will try to find it in the Main Page.
   Tips: |-
@@ -79,8 +79,8 @@ example3:
       {"text": "Hello Tom. It's 3 PM. Are you available to join the meeting now?"}
     Status: |- 
       CONTINUE
-    Plan: |-
-      (1) Click the Send button to send the message. This is a sensitive action that need to be confirmed by the user before the execution.
+    Plan:
+      - (1) Click the Send button to send the message. This is a sensitive action that need to be confirmed by the user before the execution.
     Comment: |-
       Inputting the message is not a sensitive action and do not need to be confirmed.
   Tips: |-
@@ -111,8 +111,8 @@ example4:
         [Sender's Name]
     Status: |-
       FINISH
-    Plan: |-
-      <FINISH>
+    Plan:
+      - <FINISH>
     Comment: |-
       I revised the previous plan base on the control item list since I think the New Email window has already opened and the title of email has already been inputted. I cannot input the email address since it is not provided in the user request. Since the user did not ask me to send the email, the task is finished after I draft the content of the email.
   Tips: |-
@@ -138,8 +138,8 @@ example5:
       {"button": "left", "double": false}
     Status: |-
       FINISH
-    Plan: |-
-      <FINISH>
+    Plan:
+      - <FINISH>
     Comment: |-
       I searched for the word 'UFO' in the document successfully. The user should view the search result.
   Tips: |-
@@ -165,13 +165,13 @@ example6:
       {"button": "left", "double": false}
     Status: |-
       CONTINUE
-    Plan: |-
-      (1) Click the 'Info' ListItem, to access the 'Info' page.
-      (2) Click the 'Check for Issues' MenuItem, to open a menu for checking. 
-      (3) Click the 'Inspect Document', to open a document inspector. 
-      (4) Click the 'Inspect' button, to inspect the ppt for notes. 
-      (5) I should now find and click the 'Remove All Presentation Notes'. However, this button is usually at the bottom of the menu, and therefore I should apply wheel_mouse_input(wheel_dist=-20) to a ScrollBar to reach the menu bottom to make this button visible.
-      (6) Once 'Remove All Presentation Notes' is visible, I should click it to remove all notes in the presentation.pptx file. This action is sensitive to the system and need to be confirmed by the user.
+    Plan:
+      - (1) Click the 'Info' ListItem, to access the 'Info' page.
+      - (2) Click the 'Check for Issues' MenuItem, to open a menu for checking. 
+      - (3) Click the 'Inspect Document', to open a document inspector. 
+      - (4) Click the 'Inspect' button, to inspect the ppt for notes. 
+      - (5) I should now find and click the 'Remove All Presentation Notes'. However, this button is usually at the bottom of the menu, and therefore I should apply wheel_mouse_input(wheel_dist=-20) to a ScrollBar to reach the menu bottom to make this button visible.
+      - (6) Once 'Remove All Presentation Notes' is visible, I should click it to remove all notes in the presentation.pptx file. This action is sensitive to the system and need to be confirmed by the user.
     Comment: |-
       I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
   Tips: |-
@@ -197,10 +197,10 @@ example7:
       {"text": "Imdiffusion GitHub"}
     Status: |-  
       CONTINUE
-    Plan: |-
-      (1) After input 'Imdiffusion GitHub', click Google Search to search for the Imdiffusion repo on github.
-      (2) Once the searched results are visible, click the Imdiffusion repo Hyperlink in the searched results to open the repo page.
-      (3) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
+    Plan:
+      - (1) After input 'Imdiffusion GitHub', click Google Search to search for the Imdiffusion repo on github.
+      - (2) Once the searched results are visible, click the Imdiffusion repo Hyperlink in the searched results to open the repo page.
+      - (3) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
     Comment: |-
       I plan to use Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
   Tips: |-
@@ -226,13 +226,13 @@ example8:
       {"text": "Get party dinner (5 people) preparation done before 5PM today."}
     Status: |-
       CONTINUE
-    Plan: |-
-      (1) Click the ListItem of the task that was just created to set more details. 
-      (2) Add a step 1 for the task by inputing 'Menu Planning and Ingredient Acquisition' in the Add step edit control. 
-      (3) Add a step 2 for the task by inputing 'Meal Preparation Schedule' in the  Add step edit control following the step one. 
-      (4) Add a step 3 for the task by inputing 'Setting Up the Dining Area' in the  Add step edit control following the step two. 
-      (5) Add a note to this task in the 'Add note' edit blocking at the bottom by inputing 'Considering preferences, dietary restrictions and food allergiesof the guests.'. 
-      (6) Close the details view by clicking the 'Dismiss detail view' botton.
+    Plan:
+      - (1) Click the ListItem of the task that was just created to set more details. 
+      - (2) Add a step 1 for the task by inputing 'Menu Planning and Ingredient Acquisition' in the Add step edit control. 
+      - (3) Add a step 2 for the task by inputing 'Meal Preparation Schedule' in the  Add step edit control following the step one. 
+      - (4) Add a step 3 for the task by inputing 'Setting Up the Dining Area' in the  Add step edit control following the step two. 
+      - (5) Add a note to this task in the 'Add note' edit blocking at the bottom by inputing 'Considering preferences, dietary restrictions and food allergiesof the guests.'. 
+      - (6) Close the details view by clicking the 'Dismiss detail view' botton.
     Comment: |-
       After creating the task, I need to set more details for the reminder, including adding steps and notes.
   Tips: |-
@@ -259,10 +259,10 @@ example9:
       {"button": "left", "double": true}
     Status: |-
       CONTINUE
-    Plan: |-
-      (1) Click the 'Create presentation from file' button to open a file picker. 
-      (2) Select and click the meeting_notes.docx file in the file picker. 
-      (3) Click the 'Send' buttom to send the request to Copilot. This completes the task.
+    Plan:
+      - (1) Click the 'Create presentation from file' button to open a file picker. 
+      - (2) Select and click the meeting_notes.docx file in the file picker. 
+      - (3) Click the 'Send' buttom to send the request to Copilot. This completes the task.
     Comment: |-
       I need use the Copilot Add-in to create a slide from the meeting_notes.docx.
   Tips: |-
@@ -288,9 +288,9 @@ example10:
       {"button": "left", "double": false}
     Status: |-
       CONTINUE
-    Plan: |-
-      (1) Click the Comment button to open the comment text box. 
-      (2) Input '@Zac, please revise the presentation1.pptx.' in the comment text box.
+    Plan:
+      - (1) Click the Comment button to open the comment text box. 
+      - (2) Input '@Zac, please revise the presentation1.pptx.' in the comment text box.
     Comment: |-
       I need to leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx.
   Tips: |-
