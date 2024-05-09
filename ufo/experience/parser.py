@@ -4,7 +4,9 @@
 import json
 import os
 import re
-from ..utils import encode_image_from_path, print_with_color
+
+from ufo.automator.ui_control.screenshot import PhotographerFacade
+from ufo.utils import print_with_color
 
 
 class ExperienceLogLoader:
@@ -22,9 +24,8 @@ class ExperienceLogLoader:
         self.max_stepnum = self.find_max_number_in_filenames(log_path)
         self.request_partition = self.get_request_partition()
         self.screenshots = {}
-        
-        self.logs = []
 
+        self.logs = []
 
     def load_response_log(self):
         """
@@ -34,16 +35,17 @@ class ExperienceLogLoader:
 
         response = []
         response_log_path = os.path.join(self.log_path, "response.log")
-        with open(response_log_path, 'r', encoding='utf-8') as file:
+        with open(response_log_path, "r", encoding="utf-8") as file:
             # Read the lines and split them into a list
             response_log = file.readlines()
         for response_string in response_log:
             try:
                 response.append(json.loads(response_string))
             except json.JSONDecodeError:
-                print_with_color(f"Error loading response log: {response_string}", "yellow")
+                print_with_color(
+                    f"Error loading response log: {response_string}", "yellow"
+                )
         return response
-    
 
     @staticmethod
     def find_max_number_in_filenames(log_path) -> int:
@@ -54,10 +56,10 @@ class ExperienceLogLoader:
 
         # Get the list of files in the folder
         files = os.listdir(log_path)
-        
+
         # Initialize an empty list to store extracted numbers
         numbers = []
-        
+
         # Iterate through each file
         for file in files:
             # Extract the number from the filename
@@ -65,15 +67,14 @@ class ExperienceLogLoader:
             if number is not None:
                 # Append the extracted number to the list
                 numbers.append(number)
-        
+
         if numbers:
             # Return the maximum number if numbers list is not empty
             return max(numbers)
         else:
             # Return None if no numbers are found in filenames
             return None
-    
-    
+
     def load_screenshot(self, stepnum: int = 0, version: str = "") -> str:
         """
         Load the screenshot.
@@ -89,17 +90,18 @@ class ExperienceLogLoader:
             version_tag = ""
 
         # Get the filename of the screenshot
-        filename = "action_step{stepnum}{version}.png".format(stepnum=stepnum, version=version_tag)
+        filename = "action_step{stepnum}{version}.png".format(
+            stepnum=stepnum, version=version_tag
+        )
         screenshot_path = os.path.join(self.log_path, filename)
 
         # Check if the screenshot exists
         if os.path.exists(screenshot_path):
-            image_url = encode_image_from_path(screenshot_path)
+            image_url = PhotographerFacade.encode_image_from_path(screenshot_path)
         else:
             image_url = None
 
         return image_url
-    
 
     def create_logs(self) -> list:
         """
@@ -115,22 +117,26 @@ class ExperienceLogLoader:
                 "round": nround,
                 "step_num": len(partition),
                 **{
-                    "step_%s" % local_step: {
+                    "step_%s"
+                    % local_step: {
                         "response": self.response[step],
                         "is_first_action": local_step == 1,
                         "screenshot": {
-                            version: self.load_screenshot(step, "" if version == "raw" else version)
+                            version: self.load_screenshot(
+                                step, "" if version == "raw" else version
+                            )
                             for version in ["raw", "selected_controls"]
-                        }
+                        },
                     }
                     for local_step, step in enumerate(partition)
                 },
-                "application": list({self.response[step]["Application"] for step in partition})
+                "application": list(
+                    {self.response[step]["Application"] for step in partition}
+                ),
             }
             self.logs.append(partitioned_logs)
         return self.logs
-    
-    
+
     def get_request_partition(self) -> list:
         """
         Partition the logs.
@@ -142,7 +148,7 @@ class ExperienceLogLoader:
 
         for step in range(self.max_stepnum):
             nround = self.response[step]["Round"]
-            
+
             if nround != current_round:
                 if current_partition:
                     request_partition.append(current_partition)
@@ -155,19 +161,15 @@ class ExperienceLogLoader:
             request_partition.append(current_partition)
 
         return request_partition
-    
 
-    
     @staticmethod
-    def get_user_request(log_partition: dict) -> str: 
+    def get_user_request(log_partition: dict) -> str:
         """
         Get the user request.
         :param log_partition: The log partition.
         :return: The user request.
         """
         return log_partition.get("request")
-    
-
 
     @staticmethod
     def get_app_list(log_partition: dict) -> list:
@@ -178,9 +180,8 @@ class ExperienceLogLoader:
         """
         return log_partition.get("application")
 
-
     @staticmethod
-    def extract_action_step_count(filename : str) -> int:
+    def extract_action_step_count(filename: str) -> int:
         """
         Extract the action step count from the filename.
         :param filename: The filename.
@@ -188,7 +189,7 @@ class ExperienceLogLoader:
         """
 
         # Define a regular expression pattern to extract numbers
-        pattern = r'action_step(\d+)\.png'
+        pattern = r"action_step(\d+)\.png"
         # Use re.search to find the matching pattern in the filename
         match = re.search(pattern, filename)
         if match:
@@ -197,4 +198,3 @@ class ExperienceLogLoader:
         else:
             # Return None if no match is found
             return None
-

@@ -1,19 +1,18 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import base64
+import importlib
 import json
 import os
-from io import BytesIO
-from typing import Optional
+from typing import Optional, Any, Dict
 
 from colorama import Fore, Style, init
-from PIL import Image
 
 # init colorama
 init()
 
-def print_with_color(text: str, color: str = ""):
+
+def print_with_color(text: str, color: str = "", end: str = "\n") -> None:
     """
     Print text with specified color using ANSI escape codes from Colorama library.
 
@@ -28,51 +27,16 @@ def print_with_color(text: str, color: str = ""):
         "magenta": Fore.MAGENTA,
         "cyan": Fore.CYAN,
         "white": Fore.WHITE,
-        "black": Fore.BLACK
+        "black": Fore.BLACK,
     }
 
     selected_color = color_mapping.get(color.lower(), "")
     colored_text = selected_color + text + Style.RESET_ALL
 
-    print(colored_text)
+    print(colored_text, end=end)
 
 
-
-def image_to_base64(image: Image):
-    """
-    Convert image to base64 string.
-
-    :param image: The image to convert.
-    :return: The base64 string.
-    """
-    buffered = BytesIO()
-    image.save(buffered, format="PNG")
-    return base64.b64encode(buffered.getvalue()).decode("utf-8")
-
-
-def encode_image_from_path(image_path: str, mime_type: Optional[str] = None) -> str:
-    """
-    Encode an image file to base64 string.
-    :param image_path: The path of the image file.
-    :param mime_type: The mime type of the image.
-    :return: The base64 string.
-    """
-    import mimetypes
-    file_name = os.path.basename(image_path)
-    mime_type = mime_type if mime_type is not None else mimetypes.guess_type(file_name)[0]
-    with open(image_path, "rb") as image_file:
-        encoded_image = base64.b64encode(image_file.read()).decode('ascii')
-        
-    if mime_type is None or not mime_type.startswith("image/"):
-        print("Warning: mime_type is not specified or not an image mime type. Defaulting to png.")
-        mime_type = "image/png"
-        
-    image_url = f"data:{mime_type};base64," + encoded_image
-    return image_url
-
-
-
-def create_folder(folder_path: str):
+def create_folder(folder_path: str) -> None:
     """
     Create a folder if it doesn't exist.
 
@@ -82,34 +46,14 @@ def create_folder(folder_path: str):
         os.makedirs(folder_path)
 
 
-
-def number_to_letter(n:int):
-    """
-    Convert number to letter.
-    :param n: The number to convert.
-    :return: The letter converted from the number.
-    """
-    if n < 0:
-        return "Invalid input"
-    
-    result = ""
-    while n >= 0:
-        remainder = n % 26
-        result = chr(65 + remainder) + result  # 65 is the ASCII code for 'A'
-        n = n // 26 - 1
-        if n < 0:
-            break
-    
-    return result
-
-
-def check_json_format(string:str):
+def check_json_format(string: str) -> bool:
     """
     Check if the string can be correctly parse by json.
     :param string: The string to check.
     :return: True if the string can be correctly parse by json, False otherwise.
     """
     import json
+
     try:
         json.loads(string)
     except ValueError:
@@ -117,23 +61,7 @@ def check_json_format(string:str):
     return True
 
 
-def yes_or_no():
-    """
-    Ask for user input until the user enters either Y or N.
-    :return: The user input.
-    """
-    while True:
-        user_input = input().upper()
-
-        if user_input == 'Y':
-            return True
-        elif user_input == 'N':
-            return False
-        else:
-            print("Invalid choice. Please enter either Y or N. Try again.")
-
-
-def json_parser(json_string:str):
+def json_parser(json_string: str) -> Dict[str, Any]:
     """
     Parse json string to json object.
     :param json_string: The json string to parse.
@@ -147,38 +75,58 @@ def json_parser(json_string:str):
     return json.loads(json_string)
 
 
-
-def generate_function_call(func, args):
+def is_json_serializable(obj: Any) -> bool:
     """
-    Generate a function call string.
-    :param func: The function name.
-    :param args: The arguments as a dictionary.
-    :return: The function call string.
+    Check if the object is json serializable.
+    :param obj: The object to check.
+    :return: True if the object is json serializable, False otherwise.
     """
-    # Format the arguments
-    args_str = ', '.join(f'{k}={v!r}' for k, v in args.items())
+    try:
+        json.dumps(obj)
+        return True
+    except TypeError:
+        return False
 
-    # Return the function call string
-    return f'{func}({args_str})'
 
-
-def revise_line_breaks(args: dict):
+def revise_line_breaks(args: Dict[str, Any]) -> Dict[str, Any]:
     """
     Replace '\\n' with '\n' in the arguments.
     :param args: The arguments.
     :return: The arguments with \\n replaced with \n.
     """
+    if not args:
+        return {}
+
     # Replace \\n with \\n
     for key in args.keys():
         if isinstance(args[key], str):
-            args[key] = args[key].replace('\\n', '\n')
+            args[key] = args[key].replace("\\n", "\n")
 
     return args
 
 
+def LazyImport(module_name: str) -> Any:
+    """
+    Import a module as a global variable.
+    :param module_name: The name of the module to import.
+    :return: The imported module.
+    """
+    global_name = module_name.split(".")[-1]
+    globals()[global_name] = importlib.import_module(module_name, __package__)
+    return globals()[global_name]
 
-    
 
-
-
-
+def find_desktop_path() -> Optional[str]:
+    """
+    Find the desktop path of the user.
+    """
+    onedrive_path = os.environ.get("OneDrive")
+    if onedrive_path:
+        onedrive_desktop = os.path.join(onedrive_path, "Desktop")
+        if os.path.exists(onedrive_desktop):
+            return onedrive_desktop
+    # Fallback to the local user desktop
+    local_desktop = os.path.join(os.path.expanduser("~"), "Desktop")
+    if os.path.exists(local_desktop):
+        return local_desktop
+    return None

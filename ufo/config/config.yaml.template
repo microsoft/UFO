@@ -1,4 +1,4 @@
-APP_AGENT: {
+HOST_AGENT: {
   VISUAL_MODE: True, # Whether to use the visual mode
 
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
@@ -22,7 +22,7 @@ APP_AGENT: {
   # AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
 }
 
-ACTION_AGENT: {
+APP_AGENT: {
   VISUAL_MODE: True, # Whether to use the visual mode
 
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
@@ -95,7 +95,8 @@ RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
 RAG_EXPERIENCE: True  # Whether to use the RAG from its self-experience.
 RAG_EXPERIENCE_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
 
-
-
-
+## RAG Configuration for demonstration
+RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
+RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
+RAG_DEMONSTRATION_COMPLETION_N: 3  # The number of completion choices for the demonstration result
 
