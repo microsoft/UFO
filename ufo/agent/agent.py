@@ -114,7 +114,7 @@ class AppAgent(BasicAgent):
         request_history: str,
         action_history: str,
         control_info: str,
-        plan: str,
+        plan: List[str],
         request: str,
         include_last_screenshot: bool,
     ) -> list:
@@ -127,7 +127,7 @@ class AppAgent(BasicAgent):
         :param request_history: The request history.
         :param action_history: The action history.
         :param control_info: The control information.
-        :param plan: The plan.
+        :param plan: The plan list.
         :param request: The request.
         :param include_last_screenshot: The flag indicating whether to include the last screenshot.
         :return: The prompt message.
@@ -188,7 +188,7 @@ class AppAgent(BasicAgent):
         )
         utils.print_with_color("Status📊: {status}".format(status=status), "blue")
         utils.print_with_color(
-            "Next Plan📚: {plan}".format(plan=str(plan).replace("\\n", "\n")), "cyan"
+            "Next Plan📚: {plan}".format(plan="\n".join(plan)), "cyan"
         )
         utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
 
@@ -447,7 +447,7 @@ class HostAgent(BasicAgent):
         request_history: str,
         action_history: str,
         os_info: str,
-        plan: str,
+        plan: List[str],
         request: str,
     ) -> list:
         """
@@ -522,7 +522,7 @@ class HostAgent(BasicAgent):
         )
         utils.print_with_color("Status📊: {status}".format(status=status), "blue")
         utils.print_with_color(
-            "Next Plan📚: {plan}".format(plan=str(plan).replace("\\n", "\n")), "cyan"
+            "Next Plan📚: {plan}".format(plan="\n".join(plan)), "cyan"
         )
         utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
 
@@ -641,7 +641,7 @@ class FollowerAgent(AppAgent):
         request_history: str,
         action_history: str,
         control_info: str,
-        plan: str,
+        plan: List[str],
         request: str,
         include_last_screenshot: bool,
     ) -> list:
@@ -688,7 +688,7 @@ class FollowerAgent(AppAgent):
         request_history: str,
         action_history: str,
         control_info: str,
-        plan: str,
+        plan: List[str],
         request: str,
         current_state: dict,
         state_diff: dict,
