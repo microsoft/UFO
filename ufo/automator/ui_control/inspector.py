@@ -253,6 +253,9 @@ class ControlInspectorFacade:
     _instances = {}
 
     def __new__(cls, backend: str = "uia") -> "ControlInspectorFacade":
+        """
+        Singleton pattern.
+        """
         if backend not in cls._instances:
             instance = super().__new__(cls)
             instance.backend = backend
