@@ -104,7 +104,7 @@ class SessionFactory:
     The factory class to create a session.
     """
 
-    def create_session(self, task: str, mode: str, plan: str) -> BaseSession:
+    def create_session(self, task: str, mode: str, plan: str, evaluate: bool) -> BaseSession:
         """
         Create a session.
         :param task: The name of current task.
@@ -112,18 +112,18 @@ class SessionFactory:
         :return: The created session.
         """
         if mode == "normal":
-            return [Session(task)]
+            return [Session(task, evaluate)]
         elif mode == "follower":
             # If the plan is a folder, create a follower session for each plan file in the folder.
             if self.is_folder(plan):
-                return self.create_follower_session_in_batch(task, plan)
+                return self.create_follower_session_in_batch(task, plan, evaluate)
             else:
-                return [FollowerSession(task, plan)]
+                return [FollowerSession(task, plan, evaluate)]
         else:
             raise ValueError(f"The {mode} mode is not supported.")
 
     def create_follower_session_in_batch(
-        self, task: str, plan: str
+        self, task: str, plan: str, evaluate: bool
     ) -> List[BaseSession]:
         """
         Create a follower session.
@@ -134,7 +134,7 @@ class SessionFactory:
         plan_files = self.get_plan_files(plan)
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
         sessions = [
-            FollowerSession(f"{task}/{file_name}", plan_file)
+            FollowerSession(f"{task}/{file_name}", plan_file, evaluate)
             for file_name, plan_file in zip(file_names, plan_files)
         ]
 
@@ -172,13 +172,13 @@ class Session(BaseSession):
     A session for UFO.
     """
 
-    def __init__(self, task: str):
+    def __init__(self, task: str, evaluate: bool = False):
         """
         Initialize a session.
         :param task: The name of current task.
         """
 
-        super(Session, self).__init__(task)
+        super(Session, self).__init__(task, evaluate)
 
         # Initial setup and welcome message
         utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
@@ -259,14 +259,14 @@ class FollowerSession(Session):
     This session is used for the follower agent, which accepts a plan file to follow using the PlanReader.
     """
 
-    def __init__(self, task: str, plan_file: str) -> None:
+    def __init__(self, task: str, plan_file: str, evaluate: bool) -> None:
         """
         Initialize a session.
         :param task: The name of current task.
         :param plan_dir: The path of the plan file to follow.
         """
 
-        super(Session, self).__init__(task)
+        super(Session, self).__init__(task, evaluate)
 
         self.plan_reader = PlanReader(plan_file)
         self.request = self.plan_reader.get_host_agent_request()

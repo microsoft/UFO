@@ -26,6 +26,7 @@ from ufo import utils
 from ufo.agent.agent import AgentFactory, HostAgent
 from ufo.config.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer
+from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.module.processors.basic import BaseProcessor
 from ufo.module.state import (
     ErrorState,
@@ -34,6 +35,7 @@ from ufo.module.state import (
     Status,
     StatusToStateMapper,
 )
+from ufo.eval.evaluate import Evaluator
 
 configs = Config.get_instance().config_data
 
@@ -238,7 +240,7 @@ class BaseSession(ABC):
     6. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
     """
 
-    def __init__(self, task: str) -> None:
+    def __init__(self, task: str, evaluate: bool) -> None:
         """
         Initialize a session.
         :param task: The name of current task.
@@ -246,6 +248,7 @@ class BaseSession(ABC):
 
         # Task-related properties
         self.task = task
+        self.evaluate = evaluate
         self._step = 0
         self._round = 0
 
@@ -279,6 +282,10 @@ class BaseSession(ABC):
         # Cost and reannotate-related properties
         self._cost = 0.0
         self.control_reannotate = []
+
+        # Evaluation-related properties
+        if self.evaluate:
+            self.evaluator = Evaluator(self.log_path)
 
     @abstractmethod
     def create_round(self):
@@ -458,6 +465,15 @@ class BaseSession(ABC):
         """
         self._state.handle(self)
 
+    def evaluation(self) -> None:
+        """
+        Evaluate the session.
+        """
+        result, cost = self.evaluator.evaluate()
+        self.update_cost(cost)
+        utils.print_with_color(f"Evaluation result: {result}", "magenta")
+        self.logger.info(f"{result}")
+
     @property
     def session_type(self) -> str:
         """
@@ -465,6 +481,12 @@ class BaseSession(ABC):
         return: The class name of the session.
         """
         return self.__class__.__name__
+
+    def capture_last_screenshot(self) -> None:
+        screenshot_save_path = self.log_path + f"action_step_final.png"
+        PhotographerFacade().capture_app_window_screenshot(
+                    self.app_window, save_path=screenshot_save_path
+                )
 
     @staticmethod
     def initialize_logger(log_path: str, log_filename: str) -> logging.Logger:
