@@ -21,7 +21,6 @@ from ufo.prompter.agent_prompter import (
     HostAgentPrompter,
 )
 
-
 configs = Config.get_instance().config_data
 
 

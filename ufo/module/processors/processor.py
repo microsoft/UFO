@@ -19,6 +19,7 @@ from ufo.module import interactor
 from ufo.module.processors.basic import BaseProcessor
 from ufo.module.state import Status
 
+
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
 

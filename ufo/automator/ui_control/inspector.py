@@ -12,6 +12,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.config.config import Config
 
+
 configs = Config.get_instance().config_data
 
 
@@ -246,17 +247,25 @@ class Win32BackendStrategy(BackendStrategy):
 
 class ControlInspectorFacade:
     """
-    The facade class for control inspector.
+    The singleton facade class for control inspector.
     """
+
+    _instances = {}
+
+    def __new__(cls, backend: str = "uia") -> "ControlInspectorFacade":
+        if backend not in cls._instances:
+            instance = super().__new__(cls)
+            instance.backend = backend
+            instance.backend_strategy = BackendFactory.create_backend(backend)
+            cls._instances[backend] = instance
+        return cls._instances[backend]
 
     def __init__(self, backend: str = "uia") -> None:
         """
         Initialize the control inspector.
         :param backend: The backend to use.
         """
-
         self.backend = backend
-        self.backend_strategy = BackendFactory.create_backend(backend)
 
     def get_desktop_windows(self, remove_empty: bool = True) -> List[UIAWrapper]:
         """
