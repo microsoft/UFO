@@ -221,7 +221,7 @@ class Session(BaseSession):
         self._step += 1
 
         self.app_window = current_round.get_application_window()
-        self.application = self.app_window.window_text() if self.app_window is not None else None
+        self.application = self.app_window.window_text() if self.app_window else None
         self.app_agent = self.host_agent.get_active_appagent()
 
     def round_appagent_execution(self) -> None:
