@@ -158,13 +158,18 @@ class SessionFinishState(SessionState):
         Handle the session. Finish the entire session, and save the experience if needed.
         :param session: The session.
         """
+        # capture app screenshot after finishing the task 
+        session.capture_last_screenshot()
 
         # Save the experience if needed, only for the normal session.
         if session.session_type == "Session":
             if experience_asker():
                 session.experience_saver()
 
-        session.set_state(NoneState())
+        if session.evaluate:
+            session.set_state(EvaluationState())
+        else:
+            session.set_state(NoneState())
 
 
 class ErrorState(SessionState):
@@ -264,4 +269,8 @@ class EvaluationState(SessionState):
         Handle the session. Process the evaluation.
         :param session: The session.
         """
-        pass
+        print_with_color("Start the evaluation", "yellow")
+        # evaluator = session.evaluator
+        # evaluator.evaluate()
+        session.evaluation()
+        session.set_state(NoneState())

@@ -33,6 +33,13 @@ args.add_argument(
     type=str,
     default="",
 )
+args.add_argument(
+    "--evaluate",
+    "-e",
+    help="The evaluation mode. If set to True, the system will run the evaluation after the execution is finished.",
+    default=False, 
+    action=argparse.BooleanOptionalAction
+)
 
 parsed_args = args.parse_args()
 
@@ -48,7 +55,7 @@ def main():
     python -m ufo -t task_name -m follower -p path_to_plan_file_or_folder
     """
     sessions = SessionFactory().create_session(
-        task=parsed_args.task, mode=parsed_args.mode, plan=parsed_args.plan
+        task=parsed_args.task, mode=parsed_args.mode, plan=parsed_args.plan, evaluate=parsed_args.evaluate
     )
 
     clients = UFOClientManager(sessions)
