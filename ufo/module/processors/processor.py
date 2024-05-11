@@ -183,7 +183,11 @@ class HostAgentProcessor(BaseProcessor):
 
         self.control_label = self._response_json.get("ControlLabel", "")
         self._control_text = self._response_json.get("ControlText", "")
-        self._plan = self._response_json.get("Plan", "")
+
+        # Convert the plan from a string to a list if the plan is a string.
+        self._plan = self.string2list(self._response_json.get("Plan", ""))
+        self._response_json["Plan"] = self._plan
+
         self._status = self._response_json.get("Status", "")
         self.app_to_open = self._response_json.get("AppsToOpen", None)
 
@@ -635,7 +639,11 @@ class AppAgentProcessor(BaseProcessor):
         self._control_text = self._response_json.get("ControlText", "")
         self._operation = self._response_json.get("Function", "")
         self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
-        self._plan = self._response_json.get("Plan", "")
+
+        # Convert the plan from a string to a list if the plan is a string.
+        self._plan = self.string2list(self._response_json.get("Plan", ""))
+        self._response_json["Plan"] = self._plan
+
         self._status = self._response_json.get("Status", "")
 
         self.app_agent.print_response(self._response_json)
