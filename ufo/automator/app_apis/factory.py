@@ -30,7 +30,7 @@ class COMReceiverFactory(ReceiverFactory):
 
         if clsid is None or com_receiver is None:
             print_with_color(
-                f"Win32COM API is not supported for {process_name}.", "yellow"
+                f"Warning: Win32COM API is not supported for {process_name}.", "yellow"
             )
             return None
 
