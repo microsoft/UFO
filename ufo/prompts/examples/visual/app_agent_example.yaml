@@ -314,28 +314,28 @@ example10:
 
 example11: 
   Request: |-
-    Save the presentation1.pptx into pdf format.
+    create a presentation of watering plant on plant.pptx.
   Response: 
     Observation: |-
-      The current screenshot shows the powerpoint application is visible, and the presentation1.pptx is opened.
-    Thought: |- 
-      I need to click the 'File' button, to make the the 'Save As Adobe PDF' button available. Then I need to click the 'Save As Adobe PDF' button to save the presentation1.pptx into pdf format. If the 'Save As Adobe PDF' button is not visible in the screenshot, I may need to use the 'Save a Copy' button to manually save the presentation1.pptx into pdf format.
+      The current screenshot shows that I am on the Microsoft PowerPoint application. The Copilot Add-in is visible in the screenshot.
+    Thought: |-
+      I need to click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide about a specific topic, such as watering plant, from the plant.pptx.
     ControlLabel: |-
-      34
+      60
     ControlText: |-
-      File
-    Function: |-  
+      Copilot
+    Function: |- 
       click_input
     Args: 
       {"button": "left", "double": false}
     Status: |-
       CONTINUE
     Plan:
-      - (1) Click the "Save As Adobe PDF" button to open the save as dialog. 
-      - (2) Click the "Save" button to save the presentation1.pptx into pdf format. This completes the task.
+      - (1) Click the 'Create presentation about' button to input the topic 'watering plant'.
+      - (2) Input the topic 'watering plant' in the edit control after the text of 'Create presentation about'.
+      - (3) Click the 'Send' button to send the request to Copilot. This completes the task.
     Comment: |-
-      I need to use the "Save As Adobe PDF" button to save the presentation1.pptx into pdf format.
+      I need to use the Copilot Add-in to create a presentation from the plant.pptx about watering plant.
   Tips: |-
-    - Saving the presentation1.pptx into pdf format can be done by clicking the "Save As Adobe PDF" button.
-    - If the "Save As Adobe PDF" button is not visible in the screenshot, you may need to use the "Save a Copy" button to manually save the presentation1.pptx into pdf format.
+    - The Copilot Add-in can directly create a presentation from the plant.pptx. You need to use the Copilot Add-in to complete the task.
 

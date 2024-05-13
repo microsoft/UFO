@@ -55,6 +55,7 @@ INPUT_TEXT_ENTER: False # whether to press enter after typing the text
 ## APIs related
 USE_APIS: True  # Whether to use the API
 WORD_API_PROMPT: "ufo/prompts/apps/word/api.yaml"  # The prompt for the word API
+EXCEL_API_PROMPT: "ufo/prompts/apps/excel/api.yaml"  # The prompt for the word API
 
 # For control filtering
 #'TEXT' for only rich text filter, 'SEMANTIC' for only semantic similarity match, 'ICON' for only icon match

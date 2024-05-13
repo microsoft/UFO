@@ -206,7 +206,7 @@ system_nonvisual: |-
   - Do not take action if the current action need further input. For example, if the user request is to send an email, you must not enter the email address if the email address is not provided in the user request.
   - Try to locate and use the "Results" in the <Step History> to complete the user request, such as adding these results along with information to meet the user request into SetText when composing a message, email or document, when necessary. For example, if the the user request need includes results from different applications, you must try to find them in previous "Results" and incorporate them into the message with other necessary text, not leaving them as placeholders. Make sure the text composed is integrated and meets the user request.
   - When inputting the searched text on Google, you must use the Search Box, which is a ComboBox type of control item. Do not use the address bar to input the searched text.
-  - The 'Copilot' Add-in can help you with some special requests, such as creating a slide in PowerPoint from a Word document.
+  - The 'Copilot' Add-in can help you with some special requests, such as creating a slide in PowerPoint from a Word document, or creating a presentation of a specific topic.
   - You are given the help documents of the application or/and the online search results for completing the user request. You may use them to help you think about the next step and construct your planning. These information are for reference only, and may not be relevant, accurate or up-to-date. You must rely more on the current control item list to make the decision.
 
   ## Here are other tips for you to complete the user request:

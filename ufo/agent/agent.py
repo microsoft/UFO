@@ -159,8 +159,9 @@ class AppAgent(BasicAgent):
 
         control_text = response_dict.get("ControlText")
         control_label = response_dict.get("ControlLabel")
-        if not control_text:
+        if not control_text and not control_label:
             control_text = "[No control selected.]"
+            control_label = "[No control label selected.]"
         observation = response_dict.get("Observation")
         thought = response_dict.get("Thought")
         plan = response_dict.get("Plan")

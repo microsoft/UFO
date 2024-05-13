@@ -207,14 +207,6 @@ example8:
       - (5) Click the 'Send' buttom to send the request to Copilot. This completes the task.
     Comment: |-
       I plan to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx.
-
-      {"Observation": "The current screenshot does not show any the powerpoint application or the word application.",
-        "Thought": "I need to open the powerpoint application and the word application to complete the user request. According to the application information, I can use the powerpoint application to create a slide from the meeting_notes.docx and add it to the presentation1.pptx. I need to open the powerpoint application and the word application.",
-        "ControlLabel": "4",
-        "ControlText": "presentation1 - PowerPoint",
-        "Status": "CONTINUE",
-        "Plan": "(1) Open the presentation1 - PowerPoint. \\n (2) Double click the Copilot Add-in to open the Copilot that can help to create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide from the meeting_notes.docx. \\n (3) Click the 'Create presentation from file' button to open a file picker. \\n (4) Select and click the meeting_notes.docx file in the file picker. \\n (5) Click the 'Send' buttom to send the request to Copilot. This completes the task.",
-        "Comment": "I plan to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx."}
     AppsToOpen: |-
       None
 
