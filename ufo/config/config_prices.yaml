@@ -1,6 +1,6 @@
 # Source: https://openai.com/pricing
 # Prices in $ per 1000 tokens
-# Last updated: 2024-03-27
+# Last updated: 2024-05-13
 PRICES: { 
     "openai/gpt-4-0613": {"input": 0.03, "output": 0.06},
     "openai/gpt-3.5-turbo-0613": {"input": 0.0015, "output": 0.002},
