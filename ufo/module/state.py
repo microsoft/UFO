@@ -158,7 +158,7 @@ class SessionFinishState(SessionState):
         Handle the session. Finish the entire session, and save the experience if needed.
         :param session: The session.
         """
-        # capture app screenshot after finishing the task 
+        # capture app screenshot after finishing the task
         session.capture_last_screenshot()
 
         # Save the experience if needed, only for the normal session.
@@ -166,7 +166,7 @@ class SessionFinishState(SessionState):
             if experience_asker():
                 session.experience_saver()
 
-        if session.evaluate:
+        if session.should_evaluate:
             session.set_state(EvaluationState())
         else:
             session.set_state(NoneState())
@@ -256,7 +256,10 @@ class MaxStepReachedState(SessionState):
         Handle the session. Finish the session when the maximum step is reached.
         :param session: The session.
         """
-        pass
+
+        print_with_color("Maximum step reached", "red")
+        session.print_cost()
+        session.set_state(NoneState())
 
 
 class EvaluationState(SessionState):
@@ -269,8 +272,5 @@ class EvaluationState(SessionState):
         Handle the session. Process the evaluation.
         :param session: The session.
         """
-        print_with_color("Start the evaluation", "yellow")
-        # evaluator = session.evaluator
-        # evaluator.evaluate()
         session.evaluation()
         session.set_state(NoneState())

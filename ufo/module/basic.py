@@ -24,9 +24,9 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agent.agent import AgentFactory, HostAgent
+from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer
-from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.module.processors.basic import BaseProcessor
 from ufo.module.state import (
     ErrorState,
@@ -35,7 +35,6 @@ from ufo.module.state import (
     Status,
     StatusToStateMapper,
 )
-from ufo.eval.evaluate import Evaluator
 
 configs = Config.get_instance().config_data
 
@@ -248,7 +247,7 @@ class BaseSession(ABC):
 
         # Task-related properties
         self.task = task
-        self.evaluate = evaluate
+        self.should_evaluate = evaluate
         self._step = 0
         self._round = 0
 
@@ -282,10 +281,6 @@ class BaseSession(ABC):
         # Cost and reannotate-related properties
         self._cost = 0.0
         self.control_reannotate = []
-
-        # Evaluation-related properties
-        if self.evaluate:
-            self.evaluator = Evaluator(self.log_path)
 
     @abstractmethod
     def create_round(self):
@@ -469,10 +464,7 @@ class BaseSession(ABC):
         """
         Evaluate the session.
         """
-        result, cost = self.evaluator.evaluate()
-        self.update_cost(cost)
-        utils.print_with_color(f"Evaluation result: {result}", "magenta")
-        self.logger.info(f"{result}")
+        pass
 
     @property
     def session_type(self) -> str:
@@ -485,8 +477,8 @@ class BaseSession(ABC):
     def capture_last_screenshot(self) -> None:
         screenshot_save_path = self.log_path + f"action_step_final.png"
         PhotographerFacade().capture_app_window_screenshot(
-                    self.app_window, save_path=screenshot_save_path
-                )
+            self.app_window, save_path=screenshot_save_path
+        )
 
     @staticmethod
     def initialize_logger(log_path: str, log_filename: str) -> logging.Logger:

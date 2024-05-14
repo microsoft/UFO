@@ -49,6 +49,9 @@ class BasicPrompter(ABC):
                 mode="visual" if is_visual == True else "nonvisual"
             )
 
+        if not path:
+            return {}
+
         if os.path.exists(path):
             try:
                 prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))

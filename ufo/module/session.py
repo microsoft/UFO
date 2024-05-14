@@ -6,6 +6,7 @@ import os
 from typing import List, Optional
 
 from ufo import utils
+from ufo.agent.evaluation_agent import EvaluationAgent
 from ufo.config.config import Config
 from ufo.module import interactor, round
 from ufo.module.basic import BaseSession
@@ -74,8 +75,10 @@ class PlanReader:
 
         object_name = self.get_operation_object()
 
-        request = (f"Open and select the application of {object_name}, and output the FINISH status immediately. "
-        "You must output the selected application with their control text and label even if it is already open.")
+        request = (
+            f"Open and select the application of {object_name}, and output the FINISH status immediately. "
+            "You must output the selected application with their control text and label even if it is already open."
+        )
 
         return request
 
@@ -105,7 +108,9 @@ class SessionFactory:
     The factory class to create a session.
     """
 
-    def create_session(self, task: str, mode: str, plan: str, evaluate: bool) -> BaseSession:
+    def create_session(
+        self, task: str, mode: str, plan: str, evaluate: bool
+    ) -> BaseSession:
         """
         Create a session.
         :param task: The name of current task.
@@ -328,3 +333,31 @@ class FollowerSession(Session):
             self._current_round = self.create_round()
             self._current_round.set_application_window(self.app_window)
             self._status = Status.CONTINUE
+
+    def evaluation(self) -> None:
+        """
+        Evaluate the session.
+        """
+        utils.print_with_color("Evaluating the session...", "yellow")
+        evaluator = EvaluationAgent(
+            name="eva_agent",
+            app_root_name=self.app_root,
+            is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+            main_prompt=configs["EVALUATION_PROMPT"],
+            example_prompt="",
+            api_prompt=configs["API_PROMPT"],
+        )
+
+        request = self.plan_reader.get_task()
+        result, cost = evaluator.evaluate(request=request, log_path=self.log_path)
+
+        complete = result.get("complete")
+        reason = result.get("reason", "")
+
+        self.update_cost(cost)
+        utils.print_with_color(f"Evaluation result:", "magenta")
+        utils.print_with_color(
+            "[Task is complete:] {complete}".format(complete=complete), "cyan"
+        )
+        utils.print_with_color(f"[Reason:] {reason}".format(reason=reason), "blue")
+        self.logger.info(json.dumps(result))

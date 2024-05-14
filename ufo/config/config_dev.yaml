@@ -1,5 +1,5 @@
 CONTROL_BACKEND: "uia"  # The backend for control action, currently we support uia and win32
-MAX_STEP: 30  # The max step limit for completing the user request
+MAX_STEP: 200  # The max step limit for completing the user request
 SLEEP_TIME: 5  # The sleep time between each step to wait for the window to be ready
 RECTANGLE_TIME: 1
 
@@ -32,6 +32,8 @@ HOSTAGENT_PROMPT: "ufo/prompts/share/base/host_agent.yaml"  # The prompt for the
 APPAGENT_PROMPT: "ufo/prompts/share/base/app_agent.yaml"  # The prompt for the action selection
 # Lite version: "ufo/prompts/share/lite/app_agent.yaml"
 FOLLOWERAHENT_PROMPT: "ufo/prompts/share/base/app_agent.yaml"  # The prompt for the follower agent
+
+EVALUATION_PROMPT: "ufo/prompts/evaluation/evaluate.yaml"  # The prompt for the evaluation
 
 HOSTAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/host_agent_example.yaml"  # The prompt for the app selection
 # Lite version: "ufo/prompts/examples/lite/{mode}/host_agent_example.yaml"
