@@ -1,6 +1,6 @@
 # Source: https://openai.com/pricing
 # Prices in $ per 1000 tokens
-# Last updated: 2024-03-27
+# Last updated: 2024-05-13
 PRICES: { 
     "openai/gpt-4-0613": {"input": 0.03, "output": 0.06},
     "openai/gpt-3.5-turbo-0613": {"input": 0.0015, "output": 0.002},
@@ -9,6 +9,9 @@ PRICES: {
     "openai/gpt-4-1106-vision-preview": {"input": 0.01, "output": 0.03},
     "openai/gpt-4": {"input": 0.03, "output": 0.06},
     "openai/gpt-4-32k": {"input": 0.06, "output": 0.12},
+    "openai/gpt-4-turbo": {"input":0.01,"output": 0.03},
+    "openai/gpt-4o": {"input": 0.005,"output": 0.015},
+    "openai/gpt-4o-2024-05-13": {"input": 0.005, "output": 0.015},
     "openai/gpt-3.5-turbo-0125": {"input": 0.0005, "output": 0.0015},
     "openai/gpt-3.5-turbo-1106": {"input": 0.001, "output": 0.002},
     "openai/gpt-3.5-turbo-instruct": {"input": 0.0015, "output": 0.002},
@@ -28,6 +31,9 @@ PRICES: {
     "azure/gpt-4-1106-preview": {"input": 0.01, "output": 0.03},
     "azure/gpt-4-0125-preview": {"input": 0.01, "output": 0.03},
     "azure/gpt-4-visual-preview": {"input": 0.01, "output": 0.03},
+    "azure/gpt-4-turbo-20240409": {"input":0.01,"output": 0.03},
+    "azure/gpt-4o": {"input": 0.005,"output": 0.015},
+    "azure/gpt-4o-20240513": {"input": 0.005, "output": 0.015},
     "qwen/qwen-vl-plus": {"input": 0.008, "output": 0.008},
     "qwen/qwen-vl-max": {"input": 0.02, "output": 0.02},
 }
