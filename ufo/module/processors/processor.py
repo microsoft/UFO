@@ -765,6 +765,11 @@ class AppAgentProcessor(BaseProcessor):
         # Log the memory item.
         self.log(app_agent_step_memory.to_dict())
 
+        # Save the XML file for the current state.
+        if configs["LOG_XML"]:
+
+            self._save_to_xml()
+
         # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
         memorized_action = {
             key: app_agent_step_memory.to_dict().get(key)
@@ -802,6 +807,16 @@ class AppAgentProcessor(BaseProcessor):
         elif len(self._plan) > 0 and Status.FINISH in self._plan[0]:
             self._status = Status.FINISH
         return True
+
+    def _save_to_xml(self) -> None:
+        """
+        Save the XML file for the current state. Only work for COM objects.
+        """
+        log_abs_path = os.path.abspath(self.log_path)
+        xml_save_path = os.path.join(
+            log_abs_path, f"xml/action_step{self.session_step}.xml"
+        )
+        self.app_agent.Puppeteer.save_to_xml(xml_save_path)
 
     def get_control_reannotate(self) -> List[UIAWrapper]:
         """

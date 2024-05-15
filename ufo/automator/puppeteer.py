@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import os
 from collections import deque
 from typing import Any, Deque, Dict, List, Optional
 
@@ -129,6 +130,10 @@ class AppPuppeteer:
         :param file_path: The file path to save the XML.
         """
         com_receiver = self.receiver_manager.com_receiver
+        dir_path = os.path.dirname(file_path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
         if com_receiver is not None:
             com_receiver.save_to_xml(file_path)
 

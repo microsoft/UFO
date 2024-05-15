@@ -18,12 +18,12 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Type
+from typing import Type, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agent.agent import AgentFactory, HostAgent
+from ufo.agent.agent import AgentFactory, HostAgent, AppAgent
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer
@@ -267,7 +267,7 @@ class BaseSession(ABC):
             configs["API_PROMPT"],
             configs["ALLOW_OPENAPP"],
         )
-        self.app_agent = None
+        self.app_agent: Optional[AppAgent] = None
 
         # Status and state-related properties
         self._status = Status.APP_SELECTION
@@ -474,11 +474,22 @@ class BaseSession(ABC):
         """
         return self.__class__.__name__
 
-    def capture_last_screenshot(self) -> None:
+    def capture_last_snapshot(self) -> None:
+        """
+        Capture the last snapshot of the application, including the screenshot and the XML file if configured.
+        """
+
+        # Capture the final screenshot
         screenshot_save_path = self.log_path + f"action_step_final.png"
         PhotographerFacade().capture_app_window_screenshot(
             self.app_window, save_path=screenshot_save_path
         )
+
+        # Save the final XML file
+        if configs["LOG_XML"]:
+            log_abs_path = os.path.abspath(self.log_path)
+            xml_save_path = os.path.join(log_abs_path, f"xml/action_step_final.xml")
+            self.app_agent.Puppeteer.save_to_xml(xml_save_path)
 
     @staticmethod
     def initialize_logger(log_path: str, log_filename: str) -> logging.Logger:

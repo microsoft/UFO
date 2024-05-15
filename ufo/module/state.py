@@ -159,7 +159,7 @@ class SessionFinishState(SessionState):
         :param session: The session.
         """
         # capture app screenshot after finishing the task
-        session.capture_last_screenshot()
+        session.capture_last_snapshot()
 
         # Save the experience if needed, only for the normal session.
         if session.session_type == "Session":
