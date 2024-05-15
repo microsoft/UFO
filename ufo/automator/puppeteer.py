@@ -103,24 +103,42 @@ class AppPuppeteer:
         """
         return len(self.command_queue)
 
-    def get_full_path(self) -> str:
+    @property
+    def full_path(self) -> str:
         """
-        Get the full path of the process.
+        Get the full path of the process. Only works for COM receiver.
         :return: The full path of the process.
         """
         com_receiver = self.receiver_manager.com_receiver
         if com_receiver is not None:
-            return com_receiver.get_full_path()
+            return com_receiver.full_path
 
         return ""
 
     def save(self) -> None:
         """
-        Save the current state of the app.
+        Save the current state of the app. Only works for COM receiver.
         """
         com_receiver = self.receiver_manager.com_receiver
         if com_receiver is not None:
             com_receiver.save()
+
+    def save_to_xml(self, file_path: str) -> None:
+        """
+        Save the current state of the app to XML. Only works for COM receiver.
+        :param file_path: The file path to save the XML.
+        """
+        com_receiver = self.receiver_manager.com_receiver
+        if com_receiver is not None:
+            com_receiver.save_to_xml(file_path)
+
+    def close(self) -> None:
+        """
+        Close the app. Only works for COM receiver.
+        """
+        com_receiver = self.receiver_manager.com_receiver
+        if com_receiver is not None:
+            com_receiver.close()
 
     @staticmethod
     def get_command_string(command_name: str, params: Dict[str, str]) -> str:

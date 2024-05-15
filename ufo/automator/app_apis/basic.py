@@ -41,7 +41,7 @@ class WinCOMReceiverBasic(ReceiverBasic):
         pass
 
     @abstractmethod
-    def get_object_from_process_name(self) -> None:
+    def get_object_from_process_name(self) -> win32com.client.CDispatch:
         """
         Get the object from the process name.
         :param process_name: The process name.
@@ -81,7 +81,8 @@ class WinCOMReceiverBasic(ReceiverBasic):
             key=lambda x: self.longest_common_substring_length(clean_process_name, x),
         )
 
-    def get_full_path(self) -> str:
+    @property
+    def full_path(self) -> str:
         """
         Get the full path of the process.
         :return: The full path of the process.
@@ -101,12 +102,35 @@ class WinCOMReceiverBasic(ReceiverBasic):
         except:
             pass
 
+    def save_to_xml(self, file_path: str) -> None:
+        """
+        Save the current state of the app to XML.
+        :param file_path: The file path to save the XML.
+        """
+        try:
+            self.com_object.SaveAs(file_path, self.xml_format_code)
+        except:
+            pass
+
+    def close(self) -> None:
+        """
+        Close the app.
+        """
+        try:
+            self.com_object.Close()
+        except:
+            pass
+
     @property
     def type_name(self):
         return "COM"
+    
+    @property
+    def xml_format_code(self) -> int:
+        pass
 
     @staticmethod
-    def longest_common_substring_length(str1, str2) -> int:
+    def longest_common_substring_length(str1: str, str2: str) -> int:
         """
         Get the longest common substring of two strings.
         :param str1: The first string.

@@ -83,6 +83,10 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
     def type_name(self):
         return "COM/EXCEL"
 
+    @property
+    def xml_format_code(self) -> int:
+        return 46
+
 
 class GetSheetContent(WinCOMCommand):
     """
