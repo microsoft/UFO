@@ -6,9 +6,10 @@ from __future__ import annotations
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Type
+from typing import Dict, List, Optional, Type, Union
 
 from ufo import utils
+from ufo.automator import puppeteer
 from ufo.llm import llm_call
 from ufo.module.state import Status
 
@@ -202,6 +203,9 @@ class BasicAgent(ABC):
         self._memory = Memory()
         self._host = None
 
+        # Create the puppeteer interface for automating the application.
+        self.Puppeteer = self.create_puppteer_interface()
+
     @property
     def complete(self) -> bool:
         """
@@ -236,6 +240,12 @@ class BasicAgent(ABC):
         """
         return self._name
 
+    def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
+        """
+        Create the puppeteer interface.
+        """
+        pass
+
     def get_host(self):
         """
         Get the host of the agent.
@@ -259,7 +269,7 @@ class BasicAgent(ABC):
         pass
 
     @abstractmethod
-    def message_constructor(self) -> List[dict]:
+    def message_constructor(self) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the message.
         :return: The message.

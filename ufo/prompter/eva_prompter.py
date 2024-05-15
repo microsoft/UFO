@@ -76,7 +76,9 @@ class EvaluationAgentPrompter(BasicPrompter):
 
         return prompt
 
-    def user_content_construction(self, log_path: str, request: str) -> List[Dict]:
+    def user_content_construction(
+        self, log_path: str, request: str
+    ) -> List[Dict[str, str]]:
         """
         Construct the prompt for the EvaluationAgent.
         :param log_path: The path of the log.
@@ -127,7 +129,7 @@ class EvaluationAgentPrompter(BasicPrompter):
         return user_content
 
     @staticmethod
-    def load_logs(log_path: str) -> List[Dict]:
+    def load_logs(log_path: str) -> List[Dict[str, str]]:
         """
         Load logs from the log path.
         """

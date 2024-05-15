@@ -81,6 +81,17 @@ class WinCOMReceiverBasic(ReceiverBasic):
             key=lambda x: self.longest_common_substring_length(clean_process_name, x),
         )
 
+    def get_full_path(self) -> str:
+        """
+        Get the full path of the process.
+        :return: The full path of the process.
+        """
+        try:
+            full_path = self.com_object.FullName
+            return full_path
+        except:
+            return ""
+
     @property
     def type_name(self):
         return "COM"

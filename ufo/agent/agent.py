@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import time
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -81,7 +81,6 @@ class AppAgent(BasicAgent):
         self.online_doc_retriever = None
         self.experience_retriever = None
         self.human_demonstration_retriever = None
-        self.Puppeteer = self.create_puppteer_interface()
 
     def get_prompter(
         self,
@@ -116,7 +115,7 @@ class AppAgent(BasicAgent):
         plan: List[str],
         request: str,
         include_last_screenshot: bool,
-    ) -> list:
+    ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the prompt message for the AppAgent.
         :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
@@ -449,7 +448,7 @@ class HostAgent(BasicAgent):
         os_info: str,
         plan: List[str],
         request: str,
-    ) -> list:
+    ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the message.
         :param image_list: The list of screenshot images.

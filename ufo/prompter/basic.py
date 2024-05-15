@@ -3,6 +3,7 @@
 
 import os
 from abc import ABC, abstractmethod
+from typing import Dict, List, Union
 
 import yaml
 
@@ -36,7 +37,7 @@ class BasicPrompter(ABC):
             self.example_prompt_template = ""
 
     @staticmethod
-    def load_prompt_template(template_path: str, is_visual=None) -> dict:
+    def load_prompt_template(template_path: str, is_visual=None) -> Dict[str]:
         """
         Load the prompt template.
         :return: The prompt template.
@@ -63,7 +64,9 @@ class BasicPrompter(ABC):
         return prompt
 
     @staticmethod
-    def prompt_construction(system_prompt: str, user_content: list) -> list[dict]:
+    def prompt_construction(
+        system_prompt: str, user_content: List[Dict[str, str]]
+    ) -> List:
         """
         Construct the prompt for summarizing the experience into an example.
         :param user_content: The user content.
@@ -80,7 +83,7 @@ class BasicPrompter(ABC):
 
     @staticmethod
     def retrived_documents_prompt_helper(
-        header: str, separator: str, documents: list
+        header: str, separator: str, documents: List[str]
     ) -> str:
         """
         Construct the prompt for retrieved documents.

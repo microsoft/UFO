@@ -11,12 +11,12 @@ The state classes are used to handle the session based on the status of the sess
 from __future__ import annotations
 
 from abc import ABC
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, Type
 
 from ufo.config.config import Config
 from ufo.module.interactor import experience_asker
 from ufo.utils import print_with_color
-
 
 configs = Config.get_instance().config_data
 
@@ -25,7 +25,7 @@ configs = Config.get_instance().config_data
 if TYPE_CHECKING:
     from .session import Session
 
-
+@dataclass
 class Status:
     ERROR = "ERROR"
     FINISH = "FINISH"

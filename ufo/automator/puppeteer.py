@@ -99,6 +99,17 @@ class AppPuppeteer:
         """
         return len(self.command_queue)
 
+    def get_full_path(self) -> str:
+        """
+        Get the full path of the process.
+        :return: The full path of the process.
+        """
+        com_receiver = self.receiver_manager.com_receiver
+        if com_receiver is not None:
+            return com_receiver.get_full_path()
+
+        return ""
+
     @staticmethod
     def get_command_string(command_name: str, params: Dict) -> str:
         """

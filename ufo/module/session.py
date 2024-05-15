@@ -52,7 +52,7 @@ class PlanReader:
         :return: The operation object.
         """
 
-        return self.plan.get("object", [])
+        return self.plan.get("object", "")
 
     def get_initial_request(self) -> str:
         """
