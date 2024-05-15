@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 from collections import deque
-from typing import Dict, List, Optional
+from typing import Any, Deque, Dict, List, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -30,11 +30,11 @@ class AppPuppeteer:
 
         self._process_name = process_name
         self._app_root_name = app_root_name
-        self.command_queue = deque()
+        self.command_queue: Deque[CommandBasic] = deque()
         self.receiver_manager = ReceiverManager()
 
     def create_command(
-        self, command_name: str, params: Dict, *args, **kwargs
+        self, command_name: str, params: Dict[str, Any], *args, **kwargs
     ) -> Optional[CommandBasic]:
         """
         Create the command.
@@ -62,7 +62,9 @@ class AppPuppeteer:
 
         return receiver.type_name
 
-    def execute_command(self, command_name: str, params: Dict, *args, **kwargs) -> str:
+    def execute_command(
+        self, command_name: str, params: Dict[str, Any], *args, **kwargs
+    ) -> str:
         """
         Execute the command.
         :param command_name: The command name.
@@ -83,7 +85,9 @@ class AppPuppeteer:
             command = self.command_queue.popleft()
             results.append(command.execute())
 
-    def add_command(self, command_name: str, params: Dict, *args, **kwargs) -> None:
+    def add_command(
+        self, command_name: str, params: Dict[str, Any], *args, **kwargs
+    ) -> None:
         """
         Add the command to the command queue.
         :param command_name: The command name.
@@ -110,8 +114,16 @@ class AppPuppeteer:
 
         return ""
 
+    def save(self) -> None:
+        """
+        Save the current state of the app.
+        """
+        com_receiver = self.receiver_manager.com_receiver
+        if com_receiver is not None:
+            com_receiver.save()
+
     @staticmethod
-    def get_command_string(command_name: str, params: Dict) -> str:
+    def get_command_string(command_name: str, params: Dict[str, str]) -> str:
         """
         Generate a function call string.
         :param command_name: The function name.
@@ -137,8 +149,8 @@ class ReceiverManager:
 
         self.receiver_registry = {}
         self.receiver_factories = {}
-        self.ui_control_receiver = None
-        self.com_receiver = None
+        self.ui_control_receiver: Optional[ControlReceiver] = None
+        self.com_receiver: Optional[WinCOMReceiverBasic] = None
 
         self.load_receiver_factories()
 

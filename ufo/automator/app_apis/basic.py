@@ -92,6 +92,15 @@ class WinCOMReceiverBasic(ReceiverBasic):
         except:
             return ""
 
+    def save(self) -> None:
+        """
+        Save the current state of the app.
+        """
+        try:
+            self.com_object.Save()
+        except:
+            pass
+
     @property
     def type_name(self):
         return "COM"
