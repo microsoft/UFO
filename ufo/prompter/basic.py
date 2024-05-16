@@ -37,7 +37,7 @@ class BasicPrompter(ABC):
             self.example_prompt_template = ""
 
     @staticmethod
-    def load_prompt_template(template_path: str, is_visual=None) -> Dict[str]:
+    def load_prompt_template(template_path: str, is_visual=None) -> Dict[str, str]:
         """
         Load the prompt template.
         :return: The prompt template.

@@ -350,14 +350,8 @@ class FollowerSession(Session):
 
         request = self.plan_reader.get_task()
         result, cost = evaluator.evaluate(request=request, log_path=self.log_path)
-
-        complete = result.get("complete")
-        reason = result.get("reason", "")
-
         self.update_cost(cost)
-        utils.print_with_color(f"Evaluation result:", "magenta")
-        utils.print_with_color(
-            "[Task is complete:] {complete}".format(complete=complete), "cyan"
-        )
-        utils.print_with_color(f"[Reason:] {reason}".format(reason=reason), "blue")
+
+        evaluator.print_response(result)
+
         self.logger.info(json.dumps(result))

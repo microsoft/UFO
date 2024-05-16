@@ -82,6 +82,8 @@ class AppAgent(BasicAgent):
         self.experience_retriever = None
         self.human_demonstration_retriever = None
 
+        self.Puppeteer = self.create_puppteer_interface()
+
     def get_prompter(
         self,
         is_visual: bool,
@@ -584,8 +586,14 @@ class FollowerAgent(AppAgent):
     ):
         """
         Initialize the FollowAgent.
-        :agent_type: The type of the agent.
-        :is_visual: The flag indicating whether the agent is visual or not.
+        :param name: The name of the agent.
+        :param process_name: The process name of the app.
+        :param app_root_name: The root name of the app.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt file path.
+        :param example_prompt: The example prompt file path.
+        :param api_prompt: The API prompt file path.
+        :param app_info_prompt: The app information prompt file path.
         """
         super().__init__(
             name=name,
@@ -597,6 +605,7 @@ class FollowerAgent(AppAgent):
             api_prompt=api_prompt,
             skip_prompter=True,
         )
+
         self.prompter = self.get_prompter(
             is_visual,
             main_prompt,

@@ -203,9 +203,6 @@ class BasicAgent(ABC):
         self._memory = Memory()
         self._host = None
 
-        # Create the puppeteer interface for automating the application.
-        self.Puppeteer = self.create_puppteer_interface()
-
     @property
     def complete(self) -> bool:
         """

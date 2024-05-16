@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from typing import Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from ufo.agent.basic import BasicAgent
 from ufo.config.config import Config
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
-from ufo.utils import json_parser
+from ufo.utils import json_parser, print_with_color
 
 configs = Config.get_instance().config_data
 
@@ -96,6 +96,21 @@ class EvaluationAgent(BasicAgent):
         result = json_parser(result)
 
         return result, cost
+
+    def print_response(self, response_dict: Dict[str, Any]) -> None:
+        """
+        Print the response of the evaluation.
+        :param response_dict: The response dictionary.
+        """
+
+        complete = response_dict.get("complete")
+        reason = response_dict.get("reason", "")
+
+        print_with_color(f"Evaluation result:🧐", "magenta")
+        print_with_color(
+            "[Task is complete💯:] {complete}".format(complete=complete), "cyan"
+        )
+        print_with_color(f"[Reason🤔:] {reason}".format(reason=reason), "blue")
 
 
 # The following code is used for testing the agent.

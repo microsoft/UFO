@@ -544,6 +544,11 @@ class AppAgentProcessor(BaseProcessor):
             )
             self._image_url += [screenshot_url, screenshot_annotated_url]
 
+        # Save the XML file for the current state.
+        if configs["LOG_XML"]:
+
+            self._save_to_xml()
+
     def get_control_info(self) -> None:
         """
         Get the control information.
@@ -764,11 +769,6 @@ class AppAgentProcessor(BaseProcessor):
 
         # Log the memory item.
         self.log(app_agent_step_memory.to_dict())
-
-        # Save the XML file for the current state.
-        if configs["LOG_XML"]:
-
-            self._save_to_xml()
 
         # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
         memorized_action = {
