@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+
 import json
 import os
 from typing import Dict, List, Optional
@@ -9,7 +10,6 @@ from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.prompter.agent_prompter import APIPromptLoader
 from ufo.prompter.basic import BasicPrompter
-
 
 configs = Config.get_instance().config_data
 
@@ -54,8 +54,17 @@ class EvaluationAgentPrompter(BasicPrompter):
         apis = self.api_prompt_helper(verbose=1)
 
         system_key = "system"
+        screenshot_key = (
+            "screenshots_all"
+            if configs.get("EVA_ALL_SCREENSHOTS", True)
+            else "screenshots_head_tail"
+        )
 
-        return self.prompt_template[system_key].format(examples=examples, apis=apis)
+        screenshots_description = self.prompt_template[screenshot_key]
+
+        return self.prompt_template[system_key].format(
+            examples=examples, apis=apis, screenshots=screenshots_description
+        )
 
     def user_prompt_construction(
         self,
@@ -86,6 +95,21 @@ class EvaluationAgentPrompter(BasicPrompter):
         return: The prompt for the EvaluationAgent.
         """
 
+        if configs.get("EVA_ALL_SCREENSHOTS", True):
+            return self.user_content_construction_all(log_path, request)
+        else:
+            return self.user_content_construction_head_tail(log_path, request)
+
+    def user_content_construction_head_tail(
+        self, log_path: str, request: str
+    ) -> List[Dict[str, str]]:
+        """
+        Construct the prompt for the EvaluationAgent with head and tail screenshots.
+        :param log_path: The path of the log.
+        :param request: The user request.
+        return: The prompt for the EvaluationAgent.
+        """
+
         user_content = []
         trajectory = []
 
@@ -93,19 +117,7 @@ class EvaluationAgentPrompter(BasicPrompter):
         screenshots = self.load_screenshots(log_path)
 
         for log in logs:
-            step_trajectory = {
-                "Subtask": log.get("Request"),
-                "Step": log.get("Step"),
-                "Observation": log.get("Observation"),
-                "Thought": log.get("Thought"),
-                "ControlLabel": log.get("ControlLabel"),
-                "ControlText": log.get("ControlText"),
-                "Plan": log.get("Plan"),
-                "Comment": log.get("Comment"),
-                "Action": log.get("Action"),
-                "Application": log.get("Application"),
-                "Results": log.get("Results"),
-            }
+            step_trajectory = self.get_step_trajectory(log)
 
             trajectory.append(step_trajectory)
 
@@ -128,6 +140,90 @@ class EvaluationAgentPrompter(BasicPrompter):
 
         return user_content
 
+    def user_content_construction_all(
+        self, log_path: str, request: str
+    ) -> List[Dict[str, str]]:
+        """
+        Construct the prompt for the EvaluationAgent with all screenshots.
+        :param log_path: The path of the log.
+        :param request: The user request.
+        return: The prompt for the EvaluationAgent.
+        """
+
+        user_content = []
+        user_content.append(
+            {
+                "type": "text",
+                "text": "<Original Request:> {request}".format(request=request),
+            }
+        )
+
+        logs = self.load_logs(log_path)
+
+        for log in logs:
+
+            step = log.get("Step")
+
+            if step is None:
+                continue
+
+            if self.is_visual:
+                screenshot_path = os.path.join(log_path, f"action_step{step}.png")
+
+                if os.path.exists(screenshot_path):
+                    screenshot_str = self.load_single_screenshot(screenshot_path)
+                    user_content.append(
+                        {"type": "image_url", "image_url": {"url": screenshot_str}}
+                    )
+
+            step_trajectory = self.get_step_trajectory(log)
+
+            user_content.append({"type": "text", "text": json.dumps(step_trajectory)})
+
+        if self.is_visual:
+            final_screenshot_path = os.path.join(log_path, "action_step_final.png")
+
+            if os.path.exists(final_screenshot_path):
+                user_content.append({"type": "text", "text": "<Final Screenshot:>"})
+                screenshot_str = self.load_single_screenshot(final_screenshot_path)
+
+                user_content.append(
+                    {
+                        "type": "image_url",
+                        "image_url": {"url": screenshot_str},
+                    }
+                )
+
+        user_content.append(
+            {
+                "type": "text",
+                "text": "<Your response:>",
+            }
+        )
+
+        return user_content
+
+    def get_step_trajectory(self, log: Dict[str, str]) -> Dict[str, str]:
+        """
+        Get the step trajectory from the log path.
+        :param log: The log.
+        """
+        step_trajectory = {
+            "Subtask": log.get("Request"),
+            "Step": log.get("Step"),
+            "Observation": log.get("Observation"),
+            "Thought": log.get("Thought"),
+            "ControlLabel": log.get("ControlLabel"),
+            "ControlText": log.get("ControlText"),
+            "Plan": log.get("Plan"),
+            "Comment": log.get("Comment"),
+            "Action": log.get("Action"),
+            "Application": log.get("Application"),
+            "Results": log.get("Results"),
+        }
+
+        return step_trajectory
+
     @staticmethod
     def load_logs(log_path: str) -> List[Dict[str, str]]:
         """
@@ -139,15 +235,35 @@ class EvaluationAgentPrompter(BasicPrompter):
             logs = [json.loads(log) for log in logs]
         return logs
 
-    @staticmethod
-    def load_screenshots(log_path: str) -> List[str]:
+    def load_screenshots(self, log_path: str) -> List[str]:
+        """
+        Load the first and last screenshots from the log path.
+        :param log_path: The path of the log.
+        """
 
         init_image = os.path.join(log_path, "action_step1.png")
         final_image = os.path.join(log_path, "action_step_final.png")
-        init_image_url = PhotographerFacade().encode_image_from_path(init_image)
-        final_image_url = PhotographerFacade().encode_image_from_path(final_image)
+        init_image_url = self.load_single_screenshot(init_image)
+        final_image_url = self.load_single_screenshot(final_image)
         images = [init_image_url, final_image_url]
         return images
+
+    @staticmethod
+    def load_single_screenshot(screenshot_path: str) -> str:
+        """
+        Load a single screenshot from the log path.
+        :param screenshot_path: The path of the screenshot.
+        """
+        if os.path.exists(screenshot_path):
+            return PhotographerFacade().encode_image_from_path(screenshot_path)
+        return ""
+
+    def get_max_step(self, log_path: str) -> int:
+        """
+        Get the step number from the log path.
+        :param log_path: The path of the log.
+        """
+        return len(self.load_logs(log_path))
 
     def examples_prompt_helper(
         self, header: str = "## Response Examples", separator: str = "Example"
@@ -229,3 +345,14 @@ class EvaluationAgentPrompter(BasicPrompter):
         api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
 
         return api_prompt
+
+
+if __name__ == "__main__":
+
+    eva_prompter = EvaluationAgentPrompter(
+        is_visual=True,
+        prompt_template=configs.get("EVALUATION_PROMPT", ""),
+        example_prompt_template="",
+        api_prompt_template=configs.get("API_PROMPT", ""),
+        root_name="WINWORD.EXE",
+    )

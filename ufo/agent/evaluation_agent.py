@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+
 from typing import Any, Dict, Optional, Tuple
 
 from ufo.agent.basic import BasicAgent
@@ -103,13 +104,31 @@ class EvaluationAgent(BasicAgent):
         :param response_dict: The response dictionary.
         """
 
-        complete = response_dict.get("complete")
+        emoji_map = {
+            "yes": "✅",
+            "no": "❌",
+            "maybe": "❓",
+        }
+
+        complete = emoji_map.get(
+            response_dict.get("complete"), response_dict.get("complete")
+        )
+
+        sub_scores = response_dict.get("sub_scores", {})
         reason = response_dict.get("reason", "")
 
-        print_with_color(f"Evaluation result:🧐", "magenta")
+        print_with_color(f"Evaluation result🧐:", "magenta")
+        print_with_color(f"[Sub-scores📊:]", "green")
+
+        for score, evaluation in sub_scores.items():
+            print_with_color(
+                f"{score}: {emoji_map.get(evaluation, evaluation)}", "green"
+            )
+
         print_with_color(
             "[Task is complete💯:] {complete}".format(complete=complete), "cyan"
         )
+
         print_with_color(f"[Reason🤔:] {reason}".format(reason=reason), "blue")
 
 
@@ -118,7 +137,7 @@ if __name__ == "__main__":
 
     eva_agent = EvaluationAgent(
         name="eva_agent",
-        app_root_name="",
+        app_root_name="WINWORD.EXE",
         is_visual=True,
         main_prompt=configs["EVALUATION_PROMPT"],
         example_prompt="",
