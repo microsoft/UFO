@@ -183,6 +183,13 @@ class Memory:
         """
         return self._content
 
+    def is_empty(self) -> bool:
+        """
+        Check if the memory is empty.
+        :return: The boolean value indicating if the memory is empty.
+        """
+        return self.length == 0
+
 
 class BasicAgent(ABC):
     """
