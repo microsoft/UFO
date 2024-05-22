@@ -1,0 +1,14 @@
+table2markdown:
+  summary: |-
+    "table2markdown" is to get the table content in a sheet of the Excel app and convert it to markdown format.
+  class_name: |-
+    GetSheetContent
+  usage: |-
+    [1] API call: table2markdown(sheet_name: str)
+    [2] Args:
+      - sheet_name: The name of the sheet in the Excel app.
+    [3] Example: table2markdown(sheet_name="Sheet1")
+    [4] Available control item: Any control item in the Excel app.
+    [5] Return: the markdown format string of the table content of the sheet.
+
+  

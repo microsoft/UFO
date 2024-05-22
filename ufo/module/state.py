@@ -11,12 +11,12 @@ The state classes are used to handle the session based on the status of the sess
 from __future__ import annotations
 
 from abc import ABC
+from dataclasses import dataclass
 from typing import TYPE_CHECKING, Dict, Type
 
 from ufo.config.config import Config
 from ufo.module.interactor import experience_asker
 from ufo.utils import print_with_color
-
 
 configs = Config.get_instance().config_data
 
@@ -25,7 +25,7 @@ configs = Config.get_instance().config_data
 if TYPE_CHECKING:
     from .session import Session
 
-
+@dataclass
 class Status:
     ERROR = "ERROR"
     FINISH = "FINISH"
@@ -158,13 +158,18 @@ class SessionFinishState(SessionState):
         Handle the session. Finish the entire session, and save the experience if needed.
         :param session: The session.
         """
+        # capture app screenshot after finishing the task
+        session.capture_last_snapshot()
 
         # Save the experience if needed, only for the normal session.
         if session.session_type == "Session":
             if experience_asker():
                 session.experience_saver()
 
-        session.set_state(NoneState())
+        if session.should_evaluate:
+            session.set_state(EvaluationState())
+        else:
+            session.set_state(NoneState())
 
 
 class ErrorState(SessionState):
@@ -251,7 +256,10 @@ class MaxStepReachedState(SessionState):
         Handle the session. Finish the session when the maximum step is reached.
         :param session: The session.
         """
-        pass
+
+        print_with_color("Maximum step reached", "red")
+        session.print_cost()
+        session.set_state(NoneState())
 
 
 class EvaluationState(SessionState):
@@ -264,4 +272,5 @@ class EvaluationState(SessionState):
         Handle the session. Process the evaluation.
         :param session: The session.
         """
-        pass
+        session.evaluation()
+        session.set_state(NoneState())

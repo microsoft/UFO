@@ -19,6 +19,7 @@ from ufo.module import interactor
 from ufo.module.processors.basic import BaseProcessor
 from ufo.module.state import Status
 
+
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
 
@@ -182,7 +183,11 @@ class HostAgentProcessor(BaseProcessor):
 
         self.control_label = self._response_json.get("ControlLabel", "")
         self._control_text = self._response_json.get("ControlText", "")
-        self._plan = self._response_json.get("Plan", "")
+
+        # Convert the plan from a string to a list if the plan is a string.
+        self._plan = self.string2list(self._response_json.get("Plan", ""))
+        self._response_json["Plan"] = self._plan
+
         self._status = self._response_json.get("Status", "")
         self.app_to_open = self._response_json.get("AppsToOpen", None)
 
@@ -539,6 +544,11 @@ class AppAgentProcessor(BaseProcessor):
             )
             self._image_url += [screenshot_url, screenshot_annotated_url]
 
+        # Save the XML file for the current state.
+        if configs["LOG_XML"]:
+
+            self._save_to_xml()
+
     def get_control_info(self) -> None:
         """
         Get the control information.
@@ -574,7 +584,7 @@ class AppAgentProcessor(BaseProcessor):
         )
 
         # Get the action history and request history of the host agent and feed them into the prompt message.
-        host_agent = self.app_agent.get_host()
+        host_agent = self.app_agent.host
         action_history = host_agent.get_global_action_memory().to_json()
         request_history = host_agent.get_request_history_memory().to_json()
 
@@ -634,7 +644,11 @@ class AppAgentProcessor(BaseProcessor):
         self._control_text = self._response_json.get("ControlText", "")
         self._operation = self._response_json.get("Function", "")
         self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
-        self._plan = self._response_json.get("Plan", "")
+
+        # Convert the plan from a string to a list if the plan is a string.
+        self._plan = self.string2list(self._response_json.get("Plan", ""))
+        self._response_json["Plan"] = self._plan
+
         self._status = self._response_json.get("Status", "")
 
         self.app_agent.print_response(self._response_json)
@@ -731,7 +745,7 @@ class AppAgentProcessor(BaseProcessor):
         app_agent_step_memory = MemoryItem()
 
         app_root = self.control_inspector.get_application_root_name(self._app_window)
-        host_agent = self.app_agent.get_host()
+        host_agent = self.app_agent.host
 
         # Log additional information for the app agent.
         additional_memory = {
@@ -763,6 +777,16 @@ class AppAgentProcessor(BaseProcessor):
         }
         host_agent.add_global_action_memory(memorized_action)
 
+        # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
+        if self._response_json.get("SaveScreenshot", False):
+
+            screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
+            metadata = {
+                "screenshot thought": self._response_json.get("Thought", ""),
+            }
+
+            self.app_agent.blackboard.add_image(screenshot_save_path, metadata)
+
     def update_status(self) -> None:
         """
         Update the status of the session.
@@ -793,6 +817,16 @@ class AppAgentProcessor(BaseProcessor):
         elif len(self._plan) > 0 and Status.FINISH in self._plan[0]:
             self._status = Status.FINISH
         return True
+
+    def _save_to_xml(self) -> None:
+        """
+        Save the XML file for the current state. Only work for COM objects.
+        """
+        log_abs_path = os.path.abspath(self.log_path)
+        xml_save_path = os.path.join(
+            log_abs_path, f"xml/action_step{self.session_step}.xml"
+        )
+        self.app_agent.Puppeteer.save_to_xml(xml_save_path)
 
     def get_control_reannotate(self) -> List[UIAWrapper]:
         """

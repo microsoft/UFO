@@ -1,5 +1,5 @@
 CONTROL_BACKEND: "uia"  # The backend for control action, currently we support uia and win32
-MAX_STEP: 30  # The max step limit for completing the user request
+MAX_STEP: 200  # The max step limit for completing the user request
 SLEEP_TIME: 5  # The sleep time between each step to wait for the window to be ready
 RECTANGLE_TIME: 1
 
@@ -33,6 +33,8 @@ APPAGENT_PROMPT: "ufo/prompts/share/base/app_agent.yaml"  # The prompt for the a
 # Lite version: "ufo/prompts/share/lite/app_agent.yaml"
 FOLLOWERAHENT_PROMPT: "ufo/prompts/share/base/app_agent.yaml"  # The prompt for the follower agent
 
+EVALUATION_PROMPT: "ufo/prompts/evaluation/evaluate.yaml"  # The prompt for the evaluation
+
 HOSTAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/host_agent_example.yaml"  # The prompt for the app selection
 # Lite version: "ufo/prompts/examples/lite/{mode}/host_agent_example.yaml"
 APPAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/app_agent_example.yaml"  # The prompt for the action selection
@@ -55,6 +57,7 @@ INPUT_TEXT_ENTER: False # whether to press enter after typing the text
 ## APIs related
 USE_APIS: True  # Whether to use the API
 WORD_API_PROMPT: "ufo/prompts/apps/word/api.yaml"  # The prompt for the word API
+EXCEL_API_PROMPT: "ufo/prompts/apps/excel/api.yaml"  # The prompt for the word API
 
 # For control filtering
 #'TEXT' for only rich text filter, 'SEMANTIC' for only semantic similarity match, 'ICON' for only icon match
@@ -66,3 +69,8 @@ CONTROL_FILTER_MODEL_SEMANTIC_NAME: "all-MiniLM-L6-v2"  # The control filter mod
 CONTROL_FILTER_MODEL_ICON_NAME: "clip-ViT-B-32"  # The control filter model name of icon similarity
 
 ALLOW_OPENAPP: True  # Whether to allow the open app action
+LOG_XML: False  # Whether to log the xml file for the at every step.
+SCREENSHOT_TO_MEMORY: True  # Whether to allow the screenshot to memory for the agent's decision making.
+
+# For the evaluation
+EVA_ALL_SCREENSHOTS: True  # Whether to include all the screenshots in the evaluation

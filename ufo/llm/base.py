@@ -30,6 +30,8 @@ class BaseService(abc.ABC):
                 module = import_module(".openai", package="ufo.llm")
             else:
                 module = import_module("." + name.lower(), package="ufo.llm")
+        else:
+            raise ValueError(f"Service {name} not found.")
         return getattr(module, service_name)
 
     def get_cost_estimator(

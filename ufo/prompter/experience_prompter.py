@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import json
-
+from typing import Dict, List
 from ufo.prompter.basic import BasicPrompter
 
 
@@ -49,7 +49,7 @@ class ExperiencePrompter(BasicPrompter):
 
         return prompt
 
-    def user_content_construction(self, log_partition: list) -> list[dict]:
+    def user_content_construction(self, log_partition: list) -> List[Dict[str, str]]:
         """
         Construct the prompt for LLMs.
         :param log_partition: The log partition.

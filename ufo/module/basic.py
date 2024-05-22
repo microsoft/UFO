@@ -18,12 +18,13 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Type
+from typing import Type, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agent.agent import AgentFactory, HostAgent
+from ufo.agent.agent import AgentFactory, HostAgent, AppAgent
+from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.module.processors.basic import BaseProcessor
@@ -238,7 +239,7 @@ class BaseSession(ABC):
     6. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
     """
 
-    def __init__(self, task: str) -> None:
+    def __init__(self, task: str, evaluate: bool) -> None:
         """
         Initialize a session.
         :param task: The name of current task.
@@ -246,6 +247,7 @@ class BaseSession(ABC):
 
         # Task-related properties
         self.task = task
+        self.should_evaluate = evaluate
         self._step = 0
         self._round = 0
 
@@ -265,7 +267,7 @@ class BaseSession(ABC):
             configs["API_PROMPT"],
             configs["ALLOW_OPENAPP"],
         )
-        self.app_agent = None
+        self.app_agent: Optional[AppAgent] = None
 
         # Status and state-related properties
         self._status = Status.APP_SELECTION
@@ -458,6 +460,12 @@ class BaseSession(ABC):
         """
         self._state.handle(self)
 
+    def evaluation(self) -> None:
+        """
+        Evaluate the session.
+        """
+        pass
+
     @property
     def session_type(self) -> str:
         """
@@ -465,6 +473,23 @@ class BaseSession(ABC):
         return: The class name of the session.
         """
         return self.__class__.__name__
+
+    def capture_last_snapshot(self) -> None:
+        """
+        Capture the last snapshot of the application, including the screenshot and the XML file if configured.
+        """
+
+        # Capture the final screenshot
+        screenshot_save_path = self.log_path + f"action_step_final.png"
+        PhotographerFacade().capture_app_window_screenshot(
+            self.app_window, save_path=screenshot_save_path
+        )
+
+        # Save the final XML file
+        if configs["LOG_XML"]:
+            log_abs_path = os.path.abspath(self.log_path)
+            xml_save_path = os.path.join(log_abs_path, f"xml/action_step_final.xml")
+            self.app_agent.Puppeteer.save_to_xml(xml_save_path)
 
     @staticmethod
     def initialize_logger(log_path: str, log_filename: str) -> logging.Logger:

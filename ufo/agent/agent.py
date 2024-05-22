@@ -5,12 +5,13 @@
 from __future__ import annotations
 
 import time
-from typing import Dict, List
+from typing import Dict, List, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agent.basic import BasicAgent, Memory, MemoryItem
+from ufo.agent.blackboard import Blackboard
 from ufo.automator import puppeteer
 from ufo.automator.ui_control import openfile
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
@@ -20,7 +21,6 @@ from ufo.prompter.agent_prompter import (
     FollowerAgentPrompter,
     HostAgentPrompter,
 )
-
 
 configs = Config.get_instance().config_data
 
@@ -82,6 +82,7 @@ class AppAgent(BasicAgent):
         self.online_doc_retriever = None
         self.experience_retriever = None
         self.human_demonstration_retriever = None
+
         self.Puppeteer = self.create_puppteer_interface()
 
     def get_prompter(
@@ -117,7 +118,7 @@ class AppAgent(BasicAgent):
         plan: List[str],
         request: str,
         include_last_screenshot: bool,
-    ) -> list:
+    ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the prompt message for the AppAgent.
         :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
@@ -135,6 +136,7 @@ class AppAgent(BasicAgent):
         appagent_prompt_system_message = self.prompter.system_prompt_construction(
             dynamic_examples, dynamic_tips
         )
+
         appagent_prompt_user_message = self.prompter.user_content_construction(
             image_list,
             request_history,
@@ -145,6 +147,13 @@ class AppAgent(BasicAgent):
             dynamic_knowledge,
             include_last_screenshot,
         )
+
+        if not self.blackboard.is_empty():
+
+            blackboard_prompt = self.blackboard.blackboard_to_prompt()
+            appagent_prompt_user_message = (
+                blackboard_prompt + appagent_prompt_user_message
+            )
 
         appagent_prompt_message = self.prompter.prompt_construction(
             appagent_prompt_system_message, appagent_prompt_user_message
@@ -160,8 +169,9 @@ class AppAgent(BasicAgent):
 
         control_text = response_dict.get("ControlText")
         control_label = response_dict.get("ControlLabel")
-        if not control_text:
+        if not control_text and not control_label:
             control_text = "[No control selected.]"
+            control_label = "[No control label selected.]"
         observation = response_dict.get("Observation")
         thought = response_dict.get("Thought")
         plan = response_dict.get("Plan")
@@ -191,6 +201,11 @@ class AppAgent(BasicAgent):
             "Next Plan📚: {plan}".format(plan="\n".join(plan)), "cyan"
         )
         utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
+
+        if response_dict.get("SaveScreenshot", False):
+            utils.print_with_color(
+                "The Screenshot is saved to the blackboard. 📸", "yellow"
+            )
 
     def external_knowledge_prompt_helper(
         self, request: str, offline_top_k: int, online_top_k: int
@@ -363,6 +378,7 @@ class HostAgent(BasicAgent):
         self._global_action_memory = Memory()
         self._reqest_history_memory = Memory()
         self._active_appagent = None
+        self._blackboard = Blackboard()
 
     def get_prompter(
         self,
@@ -422,7 +438,7 @@ class HostAgent(BasicAgent):
             **kwargs,
         )
         self.appagent_dict[agent_name] = app_agent
-        app_agent.set_host(self)
+        app_agent.host = self
         self._active_appagent = app_agent
 
         return app_agent
@@ -441,15 +457,22 @@ class HostAgent(BasicAgent):
         """
         return self._reqest_history_memory.length
 
+    @property
+    def blackboard(self):
+        """
+        Get the blackboard.
+        """
+        return self._blackboard
+
     def message_constructor(
         self,
-        image_list: List,
+        image_list: List[str],
         request_history: str,
         action_history: str,
         os_info: str,
         plan: List[str],
         request: str,
-    ) -> list:
+    ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the message.
         :param image_list: The list of screenshot images.
@@ -464,6 +487,12 @@ class HostAgent(BasicAgent):
         hostagent_prompt_user_message = self.prompter.user_content_construction(
             image_list, request_history, action_history, os_info, plan, request
         )
+
+        if not self.blackboard.is_empty():
+            blackboard_prompt = self.blackboard.blackboard_to_prompt()
+            hostagent_prompt_user_message = (
+                blackboard_prompt + hostagent_prompt_user_message
+            )
 
         hostagent_prompt_message = self.prompter.prompt_construction(
             hostagent_prompt_system_message, hostagent_prompt_user_message
@@ -522,7 +551,10 @@ class HostAgent(BasicAgent):
         )
         utils.print_with_color("Status📊: {status}".format(status=status), "blue")
         utils.print_with_color(
-            "Next Plan📚: {plan}".format(plan="\n".join(plan)), "cyan"
+            "Next Plan📚: {plan}".format(
+                plan=str(plan) if isinstance(plan[0], dict) else "\n".join(plan)
+            ),
+            "cyan",
         )
         utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
 
@@ -582,8 +614,14 @@ class FollowerAgent(AppAgent):
     ):
         """
         Initialize the FollowAgent.
-        :agent_type: The type of the agent.
-        :is_visual: The flag indicating whether the agent is visual or not.
+        :param name: The name of the agent.
+        :param process_name: The process name of the app.
+        :param app_root_name: The root name of the app.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt file path.
+        :param example_prompt: The example prompt file path.
+        :param api_prompt: The API prompt file path.
+        :param app_info_prompt: The app information prompt file path.
         """
         super().__init__(
             name=name,
@@ -595,6 +633,7 @@ class FollowerAgent(AppAgent):
             api_prompt=api_prompt,
             skip_prompter=True,
         )
+
         self.prompter = self.get_prompter(
             is_visual,
             main_prompt,
@@ -643,59 +682,12 @@ class FollowerAgent(AppAgent):
         control_info: str,
         plan: List[str],
         request: str,
-        include_last_screenshot: bool,
-    ) -> list:
-        """
-        Construct the prompt message for the AppAgent.
-        :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
-        :param dynamic_tips: The dynamic tips retrieved from the self-demonstration and human demonstration.
-        :param dynamic_knowledge: The dynamic knowledge retrieved from the external knowledge base.
-        :param image_list: The list of screenshot images.
-        :param request_history: The request history.
-        :param action_history: The action history.
-        :param control_info: The control information.
-        :param plan: The plan.
-        :param request: The request.
-        :param include_last_screenshot: The flag indicating whether to include the last screenshot.
-        :return: The prompt message.
-        """
-        appagent_prompt_system_message = self.prompter.system_prompt_construction(
-            dynamic_examples, dynamic_tips
-        )
-        appagent_prompt_user_message = self.prompter.user_content_construction(
-            image_list,
-            request_history,
-            action_history,
-            control_info,
-            plan,
-            request,
-            dynamic_knowledge,
-            include_last_screenshot,
-        )
-
-        appagent_prompt_message = self.prompter.prompt_construction(
-            appagent_prompt_system_message, appagent_prompt_user_message
-        )
-
-        return appagent_prompt_message
-
-    def message_constructor(
-        self,
-        dynamic_examples: str,
-        dynamic_tips: str,
-        dynamic_knowledge: str,
-        image_list: List,
-        request_history: str,
-        action_history: str,
-        control_info: str,
-        plan: List[str],
-        request: str,
         current_state: dict,
         state_diff: dict,
         include_last_screenshot: bool,
     ) -> list:
         """
-        Construct the prompt message for the AppAgent.
+        Construct the prompt message for the FollowAgent.
         :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
         :param dynamic_tips: The dynamic tips retrieved from the self-demonstration and human demonstration.
         :param image_list: The list of screenshot images.

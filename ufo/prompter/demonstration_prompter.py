@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import json
+from typing import Dict, List
 
 from record_processor.parser.demonstration_record import DemonstrationRecord
 from ufo.prompter.basic import BasicPrompter
@@ -51,7 +52,9 @@ class DemonstrationPrompter(BasicPrompter):
 
         return prompt
 
-    def user_content_construction(self, demo_record: DemonstrationRecord) -> list[dict]:
+    def user_content_construction(
+        self, demo_record: DemonstrationRecord
+    ) -> List[Dict[str, str]]:
         """
         Construct the prompt for the user demonstration record with following contents:
         1. Initial Application Screenshot if it is visual mode

@@ -21,6 +21,8 @@ class QwenService(BaseService):
         self.config = config
         self.max_retry = self.config["MAX_RETRY"]
         self.timeout = self.config["TIMEOUT"]
+        self.api_type = self.config_llm["API_TYPE"].lower()
+        self.prices = self.config["PRICES"]
         dashscope.api_key = self.config_llm["API_KEY"]
         self.tmp_dir = None
 
@@ -91,11 +93,9 @@ class QwenService(BaseService):
                         else:
                             shutil.rmtree(self.tmp_dir, ignore_errors=True)
                             responses.append(
-                                self.parse_qwen_response(
-                                    response.output.choices[0].message.content[0][
+                                response.output.choices[0].message.content[0][
                                         "text"
                                     ]
-                                )
                             )
                             cost += _cost
                             break
@@ -165,31 +165,3 @@ class QwenService(BaseService):
                     )
                     _ = content.pop("image_url")
         return _messages
-
-    def parse_qwen_response(self, content):
-        """
-        Parses the qwen response and returns a JSON string.
-        Args:
-            content (str): The content to be parsed.
-        Returns:
-            str: A JSON string representing the parsed content.
-        """
-        dict_str = [_.strip() for _ in content.split("\n")][1:-1]
-        _dict_str = {}
-
-        def remove_quotes(s):
-            if (s.startswith('"') and s.endswith('"')) or (
-                s.startswith("'") and s.endswith("'")
-            ):
-                return s[1:-1]
-            elif (s.startswith('"')) or (s.startswith("'")):
-                return s[1]
-            elif (s.endswith('"')) or (s.endswith("'")):
-                return s[:-1]
-            return s
-
-        for _str in dict_str:
-            key, value = _str.split(":")
-            _dict_str[remove_quotes(key)] = value.strip()
-
-        return json.dumps(_dict_str)

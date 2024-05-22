@@ -21,7 +21,7 @@ class HostAgentPrompter(BasicPrompter):
         prompt_template: str,
         example_prompt_template: str,
         api_prompt_template: str,
-        allow_openapp=False,
+        allow_openapp: bool = False,
     ):
         """
         Initialize the ApplicationAgentPrompter.
@@ -94,7 +94,7 @@ class HostAgentPrompter(BasicPrompter):
         prev_plan: str,
         user_request: str,
         retrieved_docs: str = "",
-    ) -> List[Dict]:
+    ) -> List[Dict[str, str]]:
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.
@@ -284,7 +284,7 @@ class AppAgentPrompter(BasicPrompter):
         user_request: str,
         retrieved_docs: str = "",
         include_last_screenshot: bool = True,
-    ) -> List[Dict]:
+    ) -> List[Dict[str, str]]:
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.

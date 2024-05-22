@@ -71,7 +71,7 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             configs["RAG_ONLINE_RETRIEVED_TOPK"],
         )
 
-        host_agent = self.app_agent.get_host()
+        host_agent = self.app_agent.host
 
         action_history = host_agent.get_global_action_memory().to_json()
         request_history = host_agent.get_request_history_memory().to_json()

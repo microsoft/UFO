@@ -295,3 +295,31 @@ example10:
       I need to leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx.
   Tips: |-
     - The comment text box is usually opened by clicking the Comment button.
+
+
+  example11: 
+  Request: |-
+    create a presentation of watering plant on plant.pptx.
+  Response: 
+    Observation: |-
+      The Copilot Add-in is available in the control item list.
+    Thought: |-
+      I need to click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide about a specific topic, such as watering plant, from the plant.pptx.
+    ControlLabel: |-
+      60
+    ControlText: |-
+      Copilot
+    Function: |- 
+      click_input
+    Args: 
+      {"button": "left", "double": false}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) Click the 'Create presentation about' button to input the topic 'watering plant'.
+      - (2) Input the topic 'watering plant' in the edit control after the text of 'Create presentation about'.
+      - (3) Click the 'Send' button to send the request to Copilot. This completes the task.
+    Comment: |-
+      I need to use the Copilot Add-in to create a presentation from the plant.pptx about watering plant.
+  Tips: |-
+    - The Copilot Add-in can directly create a presentation from the plant.pptx. You need to use the Copilot Add-in to complete the task.

@@ -69,7 +69,6 @@ class Config:
         :param configs: The configuration dictionary.
         :param agent: The agent name.
         """
-
         if configs[agent]["API_TYPE"].lower() == "aoai":
             if "deployments" not in configs[agent]["API_BASE"]:
                 configs[agent]["API_BASE"] = (

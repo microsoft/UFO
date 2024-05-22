@@ -367,8 +367,23 @@ class PhotographerFactory:
 
 
 class PhotographerFacade:
+    """
+    The facade class for the photographer.
+    """
+
+    _instance = None
+
+    def __new__(cls):
+        """
+        Singleton pattern.
+        """
+        if cls._instance is None:
+            cls._instance = super().__new__(cls)
+            cls._instance.screenshot_factory = PhotographerFactory()
+        return cls._instance
+
     def __init__(self):
-        self.screenshot_factory = PhotographerFactory()
+        pass
 
     def capture_app_window_screenshot(self, control: UIAWrapper, save_path=None):
         """

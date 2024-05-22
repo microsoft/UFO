@@ -6,14 +6,20 @@ from __future__ import annotations
 import json
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional, Type, TYPE_CHECKING, Union
 
 from ufo import utils
+from ufo.automator import puppeteer
 from ufo.llm import llm_call
 from ufo.module.state import Status
 
+
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
+
+# To avoid circular import
+if TYPE_CHECKING:
+    from ufo.agent.blackboard import Blackboard
 
 
 @dataclass
@@ -62,7 +68,7 @@ class MemoryItem:
         if key not in self._memory_attributes:
             self._memory_attributes.append(key)
 
-    def set_values_from_dict(self, values: Dict[str, str]) -> None:
+    def set_values_from_dict(self, values: Dict[str, Any]) -> None:
         """
         Add fields to the memory item.
         :param values: The values of the fields.
@@ -182,6 +188,21 @@ class Memory:
         """
         return self._content
 
+    @property
+    def list_content(self) -> List[Dict[str, str]]:
+        """
+        List the content of the memory.
+        :return: The content of the memory.
+        """
+        return [item.to_dict() for item in self._content]
+
+    def is_empty(self) -> bool:
+        """
+        Check if the memory is empty.
+        :return: The boolean value indicating if the memory is empty.
+        """
+        return self.length == 0
+
 
 class BasicAgent(ABC):
     """
@@ -236,14 +257,30 @@ class BasicAgent(ABC):
         """
         return self._name
 
-    def get_host(self):
+    @property
+    def blackboard(self) -> Blackboard:
+        """
+        Get the blackboard.
+        :return: The blackboard.
+        """
+        return self.host.blackboard
+
+    def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
+        """
+        Create the puppeteer interface.
+        """
+        pass
+
+    @property
+    def host(self) -> BasicAgent:
         """
         Get the host of the agent.
         :return: The host of the agent.
         """
         return self._host
 
-    def set_host(self, host: BasicAgent):
+    @host.setter
+    def host(self, host: BasicAgent) -> None:
         """
         Set the host of the agent.
         :param host: The host of the agent.
@@ -259,7 +296,7 @@ class BasicAgent(ABC):
         pass
 
     @abstractmethod
-    def message_constructor(self) -> List[dict]:
+    def message_constructor(self) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the message.
         :return: The message.

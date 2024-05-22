@@ -92,6 +92,10 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
     def type_name(self):
         return "COM/WORD"
 
+    @property
+    def xml_format_code(self) -> int:
+        return 11
+
 
 class InsertTableCommand(WinCOMCommand):
     """

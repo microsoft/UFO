@@ -6,6 +6,7 @@ import json
 import traceback
 from abc import ABC, abstractmethod
 from logging import Logger
+from typing import List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -71,7 +72,7 @@ class BaseProcessor(ABC):
         self._cost = 0
         self._control_label = None
         self._control_text = None
-        self._response_json = None
+        self._response_json = {}
         self._results = None
         self.app_root = None
 
@@ -316,3 +317,15 @@ class BaseProcessor(ABC):
         self.request_logger.info(log)
         self._status = Status.ERROR
         return
+
+    @staticmethod
+    def string2list(string: str) -> List[str]:
+        """
+        Convert a string to a list of string if the input is a string.
+        :param string: The string.
+        :return: The list.
+        """
+        if isinstance(string, str):
+            return [string]
+        else:
+            return string

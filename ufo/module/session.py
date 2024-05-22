@@ -6,6 +6,7 @@ import os
 from typing import List, Optional
 
 from ufo import utils
+from ufo.agent.evaluation_agent import EvaluationAgent
 from ufo.config.config import Config
 from ufo.module import interactor, round
 from ufo.module.basic import BaseSession
@@ -51,7 +52,7 @@ class PlanReader:
         :return: The operation object.
         """
 
-        return self.plan.get("object", [])
+        return self.plan.get("object", "")
 
     def get_initial_request(self) -> str:
         """
@@ -74,7 +75,10 @@ class PlanReader:
 
         object_name = self.get_operation_object()
 
-        request = f"Open and select the application of {object_name}, and output the FINISH status immediately."
+        request = (
+            f"Open and select the application of {object_name}, and output the FINISH status immediately. "
+            "You must output the selected application with their control text and label even if it is already open."
+        )
 
         return request
 
@@ -104,7 +108,9 @@ class SessionFactory:
     The factory class to create a session.
     """
 
-    def create_session(self, task: str, mode: str, plan: str) -> BaseSession:
+    def create_session(
+        self, task: str, mode: str, plan: str, evaluate: bool
+    ) -> BaseSession:
         """
         Create a session.
         :param task: The name of current task.
@@ -112,18 +118,18 @@ class SessionFactory:
         :return: The created session.
         """
         if mode == "normal":
-            return [Session(task)]
+            return [Session(task, evaluate)]
         elif mode == "follower":
             # If the plan is a folder, create a follower session for each plan file in the folder.
             if self.is_folder(plan):
-                return self.create_follower_session_in_batch(task, plan)
+                return self.create_follower_session_in_batch(task, plan, evaluate)
             else:
-                return [FollowerSession(task, plan)]
+                return [FollowerSession(task, plan, evaluate)]
         else:
             raise ValueError(f"The {mode} mode is not supported.")
 
     def create_follower_session_in_batch(
-        self, task: str, plan: str
+        self, task: str, plan: str, evaluate: bool
     ) -> List[BaseSession]:
         """
         Create a follower session.
@@ -134,7 +140,7 @@ class SessionFactory:
         plan_files = self.get_plan_files(plan)
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
         sessions = [
-            FollowerSession(f"{task}/{file_name}", plan_file)
+            FollowerSession(f"{task}/{file_name}", plan_file, evaluate)
             for file_name, plan_file in zip(file_names, plan_files)
         ]
 
@@ -172,13 +178,13 @@ class Session(BaseSession):
     A session for UFO.
     """
 
-    def __init__(self, task: str):
+    def __init__(self, task: str, evaluate: bool = False):
         """
         Initialize a session.
         :param task: The name of current task.
         """
 
-        super(Session, self).__init__(task)
+        super(Session, self).__init__(task, evaluate)
 
         # Initial setup and welcome message
         utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
@@ -221,7 +227,7 @@ class Session(BaseSession):
         self._step += 1
 
         self.app_window = current_round.get_application_window()
-        self.application = self.app_window.window_text()
+        self.application = self.app_window.window_text() if self.app_window else None
         self.app_agent = self.host_agent.get_active_appagent()
 
     def round_appagent_execution(self) -> None:
@@ -259,14 +265,14 @@ class FollowerSession(Session):
     This session is used for the follower agent, which accepts a plan file to follow using the PlanReader.
     """
 
-    def __init__(self, task: str, plan_file: str) -> None:
+    def __init__(self, task: str, plan_file: str, evaluate: bool) -> None:
         """
         Initialize a session.
         :param task: The name of current task.
         :param plan_dir: The path of the plan file to follow.
         """
 
-        super(Session, self).__init__(task)
+        super(Session, self).__init__(task, evaluate)
 
         self.plan_reader = PlanReader(plan_file)
         self.request = self.plan_reader.get_host_agent_request()
@@ -327,3 +333,25 @@ class FollowerSession(Session):
             self._current_round = self.create_round()
             self._current_round.set_application_window(self.app_window)
             self._status = Status.CONTINUE
+
+    def evaluation(self) -> None:
+        """
+        Evaluate the session.
+        """
+        utils.print_with_color("Evaluating the session...", "yellow")
+        evaluator = EvaluationAgent(
+            name="eva_agent",
+            app_root_name=self.app_root,
+            is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+            main_prompt=configs["EVALUATION_PROMPT"],
+            example_prompt="",
+            api_prompt=configs["API_PROMPT"],
+        )
+
+        request = self.plan_reader.get_task()
+        result, cost = evaluator.evaluate(request=request, log_path=self.log_path)
+        self.update_cost(cost)
+
+        evaluator.print_response(result)
+
+        self.logger.info(json.dumps(result))
