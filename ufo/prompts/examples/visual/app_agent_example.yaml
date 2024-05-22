@@ -25,6 +25,8 @@ example1:
       - (4) Click the Send button to send the email.
     Comment: |-
       After I click the New Email button, the New Email window will be opened and available for composing the email.
+    SaveScreenshot:
+      false
   Tips: |-
     - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
     - You need to draft the content of the email and send it to the receiver. 
@@ -66,6 +68,8 @@ example2:
       - (5) Click the Send button to send the email.
     Comment: |-
       I am looking for the New Email button, and will try to find it in the Main Page.
+    SaveScreenshot:
+      false
   Tips: |-
     - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
     - Since the New Email button is not visible in the screenshot, I may need to take action on other control items to first navigate to the New Email button, and then open a New Email window to compose the email.
@@ -94,6 +98,8 @@ example3:
       - (1) Click the Send button to send the message. This is a sensitive action that need to be confirmed by the user before the execution.
     Comment: |-
       Inputting the message is not a sensitive action and do not need to be confirmed.
+    SaveScreenshot:
+      false
   Tips: |-
     - Sending a message is a sensitive action and need to be confirmed.
 
@@ -127,6 +133,8 @@ example4:
       - <FINISH>
     Comment: |-
       I revised the previous plan base on the screenshot since I observe that New Email window has already opened and the title of email has already been inputted. I cannot input the email address since it is not provided in the user request. Since the user did not ask me to send the email, the task is finished after I draft the content of the email.
+    SaveScreenshot:
+      false
   Tips: |-
     - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
     - You need to draft the content of the email and send it to the receiver. Use polite language when drafting the email.
@@ -154,6 +162,8 @@ example5:
       - <FINISH>
     Comment: |-
       I searched for the word 'UFO' in the document successfully. The user should view the search result.
+    SaveScreenshot:
+      false
   Tips: |-
     - If there are steps already taken (e.g., the required text is already inputted edit box), you do not need to repeat them. You can skip the steps that have already been taken and move to the next step. 
 
@@ -163,7 +173,7 @@ example6:
     Send an message to Tom on Teams by including a (1) the text extracted from framework.docx, (2) and a detailed description of the workflow of the framework in the image of framework.png.
   Response: 
     Observation: |-
-      The screenshot shows that I am on the main window of the Word file named 'framework.docx'. The text of the file, which I am interest, is visible in the screenshot. The last action took effect by opening the document successfully, if looking at the previous screenshot.
+      The screenshot shows that I am on the main window of the Word file named 'framework.docx'. The text of the file, which I am interest, is visible in the screenshot. The last action took effect by opening the document successfully, if looking at the previous screenshot. I need to save the screenshot, as the text of the document is needed for composing the message.
     Thought: |-
       Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'APP_SELECTION' immediately to switch to the image of framework.png to complete the next task.
     ControlLabel: |-
@@ -184,6 +194,8 @@ example6:
       - (6) Click the Send button to send the message. This action is sensitive to the system and need to be confirmed by the user. I need to confirm the action before clicking the Send button. If the user confirms the action, the task is finished.
     Comment: |-
       The partial tasks on 'framework.docx' is completed once I take the current action. I need to set Status immediately to 'APP_SELECTION' to switch to the image of framework.png to complete the next task.
+    SaveScreenshot:
+      true
   Tips: |-
     - In Word application, the main canva is a Document control, and the text of the document can be extracted by using the 'texts' action.
     - After extracting the text of the document, I need to set the status as 'APP_SELECTION' immediately to switch to the image of framework.png to complete the next task.
@@ -216,6 +228,8 @@ example7:
       - (6) Once 'Remove All Presentation Notes' is visible, I should click it to remove all notes in the presentation.pptx file. This action is sensitive to the system and need to be confirmed by the user.
     Comment: |-
       I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
+    SaveScreenshot:
+      false
   Tips: |-
     - The 'Remove All Presentation Notes' function is the fastest way to remove all notes in the presentation.pptx file. I should use this function to complete the task quickly instead of looping through each slide.
     - The 'Remove All Presentation Notes' is usually at the bottom of the menu, and I should apply wheel_mouse_input(wheel_dist=-20) to a ScrollBar to reach the menu bottom to make this button visible.
@@ -245,6 +259,8 @@ example8:
       - (3) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
     Comment: |-
       I plan to use Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
+    SaveScreenshot:
+      false
   Tips: |-
     - The search box is usually in a type of ComboBox.
     - The number of stars of a Github repo page can be found in the repo page visually.
@@ -278,6 +294,8 @@ example9:
       - (6) Close the details view by clicking the 'Dismiss detail view' botton.
     Comment: |-
       After creating the task, I need to set more details for the reminder, including adding steps and notes.
+    SaveScreenshot:
+      false
   Tips: |-
     - You need to add more details for the task, including adding steps and notes.
     - You need to add each step one by one and add notes to the task.
@@ -306,6 +324,8 @@ example10:
       - (1) Click the 'Create presentation from file' button to open a file picker.
       - (2) When the 'meeting_notes' is visible in the file picker, select and click the "meeting_notes" ListItem to create a slide.
       - (3) Click the 'Send' buttom to send the request to Copilot. This completes the task.
+    SaveScreenshot:
+      false
     Comment: |-
       I need to use the Copilot Add-in to create a slide from the meeting_notes.docx.
   Tips: |-
@@ -334,6 +354,8 @@ example11:
       - (1) Click the 'Create presentation about' button to input the topic 'watering plant'.
       - (2) Input the topic 'watering plant' in the edit control after the text of 'Create presentation about'.
       - (3) Click the 'Send' button to send the request to Copilot. This completes the task.
+    SaveScreenshot:
+      false
     Comment: |-
       I need to use the Copilot Add-in to create a presentation from the plant.pptx about watering plant.
   Tips: |-

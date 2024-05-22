@@ -584,7 +584,7 @@ class AppAgentProcessor(BaseProcessor):
         )
 
         # Get the action history and request history of the host agent and feed them into the prompt message.
-        host_agent = self.app_agent.get_host()
+        host_agent = self.app_agent.host
         action_history = host_agent.get_global_action_memory().to_json()
         request_history = host_agent.get_request_history_memory().to_json()
 
@@ -745,7 +745,7 @@ class AppAgentProcessor(BaseProcessor):
         app_agent_step_memory = MemoryItem()
 
         app_root = self.control_inspector.get_application_root_name(self._app_window)
-        host_agent = self.app_agent.get_host()
+        host_agent = self.app_agent.host
 
         # Log additional information for the app agent.
         additional_memory = {
@@ -776,6 +776,16 @@ class AppAgentProcessor(BaseProcessor):
             for key in configs["HISTORY_KEYS"]
         }
         host_agent.add_global_action_memory(memorized_action)
+
+        # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
+        if self._response_json.get("SaveScreenshot", False):
+
+            screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
+            metadata = {
+                "screenshot thought": self._response_json.get("Thought", ""),
+            }
+
+            self.app_agent.blackboard.add_image(screenshot_save_path, metadata)
 
     def update_status(self) -> None:
         """
