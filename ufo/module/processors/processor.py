@@ -659,7 +659,8 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         try:
-            # Get the selected control item from the annotation dictionary and LLM response. The LLm response is a number index corresponding to the key in the annotation dictionary.
+            # Get the selected control item from the annotation dictionary and LLM response.
+            # The LLm response is a number index corresponding to the key in the annotation dictionary.
             control_selected = self._annotation_dict.get(self._control_label, "")
 
             if control_selected:
@@ -778,14 +779,7 @@ class AppAgentProcessor(BaseProcessor):
         host_agent.add_global_action_memory(memorized_action)
 
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
-        if self._response_json.get("SaveScreenshot", False):
-
-            screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
-            metadata = {
-                "screenshot thought": self._response_json.get("Thought", ""),
-            }
-
-            self.app_agent.blackboard.add_image(screenshot_save_path, metadata)
+        self._update_image_blackboard()
 
     def update_status(self) -> None:
         """
@@ -797,6 +791,21 @@ class AppAgentProcessor(BaseProcessor):
 
         if self._status != Status.FINISH:
             time.sleep(configs["SLEEP_TIME"])
+
+    def _update_image_blackboard(self) -> None:
+        """
+        Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
+        """
+        screenshot_saving = self._response_json.get("SaveScreenshot", {})
+
+        if screenshot_saving.get("save", False):
+
+            screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
+            metadata = {
+                "screenshot application": self.process_name,
+                "saving reason": screenshot_saving.get("reason", ""),
+            }
+            self.app_agent.blackboard.add_image(screenshot_save_path, metadata)
 
     def _safe_guard_judgement(self, action: str, control_text: str) -> bool:
         """

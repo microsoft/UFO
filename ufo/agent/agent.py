@@ -202,9 +202,18 @@ class AppAgent(BasicAgent):
         )
         utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
 
-        if response_dict.get("SaveScreenshot", False):
+        screenshot_saving = response_dict.get("SaveScreenshot", {})
+
+        if screenshot_saving.get("save", False):
             utils.print_with_color(
-                "The Screenshot is saved to the blackboard. 📸", "yellow"
+                "Notice: The current screenshot📸 is saved to the blackboard.",
+                "yellow",
+            )
+            utils.print_with_color(
+                "Saving reason: {reason}".format(
+                    reason=screenshot_saving.get("reason")
+                ),
+                "yellow",
             )
 
     def external_knowledge_prompt_helper(
