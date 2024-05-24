@@ -12,7 +12,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agent.agent import AppAgent, HostAgent
-from ufo.agent.basic import MemoryItem
+from ufo.agent.memory import MemoryItem
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
 from ufo.module import interactor
@@ -265,7 +265,7 @@ class HostAgentProcessor(BaseProcessor):
         additional_memory = {
             "Step": self.session_step,
             "RoundStep": self.get_process_step(),
-            "AgentStep": self.host_agent.get_step(),
+            "AgentStep": self.host_agent.step,
             "Round": self.round_num,
             "ControlLabel": self._control_text,
             "Action": "set_focus()",
@@ -296,8 +296,8 @@ class HostAgentProcessor(BaseProcessor):
         """
         Update the status of the session.
         """
-        self.host_agent.update_step()
-        self.host_agent.update_status(self._status)
+        self.host_agent.step += 1
+        self.host_agent.status = self._status
 
         # Wait for the application to be ready after an action is taken before proceeding to the next step.
         if self._status != Status.FINISH:
@@ -752,7 +752,7 @@ class AppAgentProcessor(BaseProcessor):
         additional_memory = {
             "Step": self.session_step,
             "RoundStep": self.get_process_step(),
-            "AgentStep": self.app_agent.get_step(),
+            "AgentStep": self.app_agent.step,
             "Round": self.round_num,
             "Action": self._action,
             "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation),
@@ -786,8 +786,8 @@ class AppAgentProcessor(BaseProcessor):
         Update the status of the session.
         """
 
-        self.app_agent.update_step()
-        self.app_agent.update_status(self._status)
+        self.app_agent.step += 1
+        self.app_agent.status = self._status
 
         if self._status != Status.FINISH:
             time.sleep(configs["SLEEP_TIME"])

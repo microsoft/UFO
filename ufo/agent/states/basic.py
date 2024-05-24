@@ -4,10 +4,14 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, Type
+from typing import Dict, Optional, Type, TYPE_CHECKING
 
 from ufo.agent.basic import BasicAgent
 from ufo.modules.context import Context
+
+# Avoid circular import
+if TYPE_CHECKING:
+    from ufo.agent.basic import BasicAgent
 
 
 class AgentStateManager(ABC):
@@ -26,7 +30,7 @@ class AgentStateManager(ABC):
         self._agent = agent
         self._state_instance_mapping: Dict[str, AgentState] = {}
 
-    def get_state(self, status: str) -> Type[AgentState]:
+    def get_state(self, status: str) -> AgentState:
         """
         Get the state for the status.
         :param status: The status string.

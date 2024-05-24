@@ -3,16 +3,15 @@
 
 from __future__ import annotations
 
-import json
 from abc import ABC, abstractmethod
-from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional, Type, TYPE_CHECKING, Union
+from typing import TYPE_CHECKING, Dict, List, Type, Union
 
 from ufo import utils
+from ufo.agent.memory import Memory, MemoryItem
+from ufo.agent.states.basic import AgentState, AgentStateManager
 from ufo.automator import puppeteer
 from ufo.llm import llm_call
 from ufo.module.state import Status
-
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
@@ -20,188 +19,6 @@ retriever = utils.LazyImport("..rag.retriever")
 # To avoid circular import
 if TYPE_CHECKING:
     from ufo.agent.blackboard import Blackboard
-
-
-@dataclass
-class MemoryItem:
-    """
-    This data class represents a memory item of an agent at one step.
-    """
-
-    _memory_attributes = []
-
-    def to_dict(self) -> Dict[str, str]:
-        """
-        Convert the MemoryItem to a dictionary.
-        :return: The dictionary.
-        """
-        return {
-            key: value
-            for key, value in self.__dict__.items()
-            if key in self._memory_attributes
-        }
-
-    def to_json(self) -> str:
-        """
-        Convert the memory item to a JSON string.
-        :return: The JSON string.
-        """
-        return json.dumps(self.to_dict())
-
-    def filter(self, keys: List[str] = []) -> None:
-        """
-        Fetch the memory item.
-        :param keys: The keys to fetch.
-        :return: The filtered memory item.
-        """
-
-        return {key: value for key, value in self.to_dict().items() if key in keys}
-
-    def set_value(self, key: str, value: str) -> None:
-        """
-        Add a field to the memory item.
-        :param key: The key of the field.
-        :param value: The value of the field.
-        """
-        setattr(self, key, value)
-
-        if key not in self._memory_attributes:
-            self._memory_attributes.append(key)
-
-    def set_values_from_dict(self, values: Dict[str, Any]) -> None:
-        """
-        Add fields to the memory item.
-        :param values: The values of the fields.
-        """
-        for key, value in values.items():
-            self.set_value(key, value)
-
-    def get_value(self, key: str) -> Optional[str]:
-        """
-        Get the value of the field.
-        :param key: The key of the field.
-        :return: The value of the field.
-        """
-
-        return getattr(self, key, None)
-
-    def get_values(self, keys: List[str]) -> dict:
-        """
-        Get the values of the fields.
-        :param keys: The keys of the fields.
-        :return: The values of the fields.
-        """
-        return {key: self.get_value(key) for key in keys}
-
-    @property
-    def attributes(self) -> List[str]:
-        """
-        Get the attributes of the memory item.
-        :return: The attributes.
-        """
-        return self._memory_attributes
-
-
-@dataclass
-class Memory:
-    """
-    This data class represents a memory of an agent.
-    """
-
-    _content: List[MemoryItem] = field(default_factory=list)
-
-    def load(self, content: List[MemoryItem]) -> None:
-        """
-        Load the data from the memory.
-        :param key: The key of the data.
-        """
-        self._content = content
-
-    def filter_memory_from_steps(self, steps: List[int]) -> List[Dict[str, str]]:
-        """
-        Filter the memory from the steps.
-        :param steps: The steps to filter.
-        :return: The filtered memory.
-        """
-        return [item.to_dict() for item in self._content if item.step in steps]
-
-    def filter_memory_from_keys(self, keys: List[str]) -> List[Dict[str, str]]:
-        """
-        Filter the memory from the keys. If an item does not have the key, the key will be ignored.
-        :param keys: The keys to filter.
-        :return: The filtered memory.
-        """
-        return [item.filter(keys) for item in self._content]
-
-    def add_memory_item(self, memory_item: MemoryItem) -> None:
-        """
-        Add a memory item to the memory.
-        :param memory_item: The memory item to add.
-        """
-        self._content.append(memory_item)
-
-    def clear(self) -> None:
-        """
-        Clear the memory.
-        """
-        self._content = []
-
-    @property
-    def length(self) -> int:
-        """
-        Get the length of the memory.
-        :return: The length of the memory.
-        """
-        return len(self._content)
-
-    def delete_memory_item(self, step: int) -> None:
-        """
-        Delete a memory item from the memory.
-        :param step: The step of the memory item to delete.
-        """
-        self._content = [item for item in self._content if item.step != step]
-
-    def to_json(self) -> str:
-        """
-        Convert the memory to a JSON string.
-        :return: The JSON string.
-        """
-
-        return json.dumps(
-            [item.to_dict() for item in self._content if item is not None]
-        )
-
-    def get_latest_item(self) -> MemoryItem:
-        """
-        Get the latest memory item.
-        :return: The latest memory item.
-        """
-        if self.length == 0:
-            return None
-        return self._content[-1]
-
-    @property
-    def content(self) -> List[MemoryItem]:
-        """
-        Get the content of the memory.
-        :return: The content of the memory.
-        """
-        return self._content
-
-    @property
-    def list_content(self) -> List[Dict[str, str]]:
-        """
-        List the content of the memory.
-        :return: The content of the memory.
-        """
-        return [item.to_dict() for item in self._content]
-
-    def is_empty(self) -> bool:
-        """
-        Check if the memory is empty.
-        :return: The boolean value indicating if the memory is empty.
-        """
-        return self.length == 0
 
 
 class BasicAgent(ABC):
@@ -222,16 +39,7 @@ class BasicAgent(ABC):
         self.retriever_factory = retriever.RetrieverFactory()
         self._memory = Memory()
         self._host = None
-
-    @property
-    def complete(self) -> bool:
-        """
-        Indicates whether the current instruction execution is complete.
-        :returns: complete (bool): True if execution is complete; False otherwise.
-        """
-        self._complete = self._status.upper() == Status.FINISH
-
-        return self._complete
+        self._state_mamager = self.state_manager_class(self)
 
     @property
     def status(self) -> str:
@@ -240,6 +48,30 @@ class BasicAgent(ABC):
         :return: The status of the agent.
         """
         return self._status
+
+    @status.setter
+    def status(self, status: str) -> None:
+        """
+        Set the status of the agent.
+        :param status: The status of the agent.
+        """
+        self._status = status
+
+    @property
+    def state(self) -> AgentState:
+        """
+        Get the state of the agent.
+        :return: The state of the agent.
+        """
+        return self.state_manager.get_state(self.status)
+
+    @state.setter
+    def state(self, state: AgentState) -> None:
+        """
+        Set the state of the agent.
+        :param state: The state of the agent.
+        """
+        self.state_manager.set_state(state)
 
     @property
     def memory(self) -> Memory:
@@ -326,18 +158,21 @@ class BasicAgent(ABC):
         """
         return utils.json_parser(response)
 
-    def update_step(self, step=1) -> None:
+    @property
+    def step(self) -> int:
         """
-        Update the step of the agent.
+        Get the step of the agent.
+        :return: The step of the agent.
         """
-        self._step += step
+        return self._step
 
-    def update_status(self, status: str) -> None:
+    @step.setter
+    def step(self, step: int) -> None:
         """
-        Update the status of the agent.
-        :param status: The status of the agent.
+        Set the step of the agent.
+        :param step: The step of the agent.
         """
-        self._status = status
+        self._step = step
 
     def add_memory(self, memory_item: MemoryItem) -> None:
         """
@@ -359,27 +194,29 @@ class BasicAgent(ABC):
         """
         self._memory.clear()
 
-    def get_step(self) -> int:
-        """
-        Get the step of the agent.
-        :return: The step of the agent.
-        """
-        return self._step
-
-    def get_status(self) -> str:
-        """
-        Get the status of the agent.
-        :return: The status of the agent.
-        """
-        return self._status
-
-    def reflection(self, original_message, response, user_content) -> None:
+    def reflection(self) -> None:
         """
         TODO:
         Reflect on the action.
         """
 
         pass
+
+    @property
+    def state_manager_class(self) -> Type["AgentStateManager"]:
+        """
+        Get the state manager class.
+        :return: The state manager class.
+        """
+        pass
+
+    @property
+    def state_manager(self) -> AgentStateManager:
+        """
+        Get the state manager.
+        :return: The state manager.
+        """
+        return self._state_mamager
 
     def build_offline_docs_retriever(self) -> None:
         """

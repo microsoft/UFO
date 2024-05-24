@@ -10,7 +10,8 @@ from typing import Dict, List, Union
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agent.basic import BasicAgent, Memory, MemoryItem
+from ufo.agent.basic import BasicAgent
+from ufo.agent.memory import Memory, MemoryItem
 from ufo.agent.blackboard import Blackboard
 from ufo.automator import puppeteer
 from ufo.automator.ui_control import openfile
