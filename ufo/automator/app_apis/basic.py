@@ -76,6 +76,10 @@ class WinCOMReceiverBasic(ReceiverBasic):
         else:
             clean_process_name = self.process_name
 
+        # If the object name list is empty, return an empty string
+        if not object_name_list:
+            return ""
+
         return max(
             object_name_list,
             key=lambda x: self.longest_common_substring_length(clean_process_name, x),
@@ -124,7 +128,7 @@ class WinCOMReceiverBasic(ReceiverBasic):
     @property
     def type_name(self):
         return "COM"
-    
+
     @property
     def xml_format_code(self) -> int:
         pass

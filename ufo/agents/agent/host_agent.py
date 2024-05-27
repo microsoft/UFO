@@ -11,8 +11,8 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.basic import BasicAgent
-from ufo.agents.blackboard import Blackboard
-from ufo.agents.memory import Memory, MemoryItem
+from ufo.agents.memory.blackboard import Blackboard
+from ufo.agents.memory.memory import Memory, MemoryItem
 from ufo.automator.ui_control import openfile
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.config.config import Config

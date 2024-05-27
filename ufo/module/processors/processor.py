@@ -13,7 +13,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.host_agent import HostAgent
-from ufo.agents.memory import MemoryItem
+from ufo.agents.memory.memory import MemoryItem
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
 from ufo.module import interactor

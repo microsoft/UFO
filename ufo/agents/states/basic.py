@@ -80,12 +80,22 @@ class AgentStateManager(ABC):
         return state_class
 
     @property
-    # @abstractmethod
+    @abstractmethod
     def none_state(self) -> AgentState:
         """
         The none state of the state manager.
         """
-        return AgentNoneState(self.agent)
+        pass
+
+
+class ConcreteAgentStateManager(AgentStateManager):
+    """
+    The concrete state manager for the agent.
+    """
+
+    @property
+    def none_state(self) -> AgentState:
+        pass
 
 
 class AgentState(ABC):
@@ -153,30 +163,4 @@ class AgentState(ABC):
         """
         The class name of the state.
         """
-        return ""
-
-
-class AgentNoneState(AgentState):
-    """
-    The none state of the agent.
-    """
-
-    def handle(self, context: Optional["Context"] = None) -> None:
-        pass
-
-    def next_agent(self, context: Optional["Context"] = None) -> BasicAgent:
-        return self.agent
-
-    def next_state(self) -> AgentState:
-        return self
-
-    def is_round_end(self) -> bool:
-        return False
-
-    @property
-    def agent_class(self) -> Type[BasicAgent]:
-        return self.agent.__class__
-
-    @classmethod
-    def name(cls) -> str:
         return ""

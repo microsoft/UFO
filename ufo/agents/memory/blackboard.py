@@ -6,7 +6,7 @@ import os
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
-from ufo.agents.memory import Memory, MemoryItem
+from ufo.agents.memory.memory import Memory, MemoryItem
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 
 
