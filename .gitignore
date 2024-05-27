@@ -10,6 +10,7 @@
 __pycache__/
 **/__pycache__/
 *.pyc
+*.ipynb
 /.VSCodeCounter
 
 # Ignore the config file
@@ -23,6 +24,7 @@ learner/records.json
 vectordb/docs/*
 vectordb/experience/*
 vectordb/demonstration/*
+*.json
 
 # Don't ignore the example files
 !vectordb/docs/example/
