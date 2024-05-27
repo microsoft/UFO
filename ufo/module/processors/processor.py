@@ -188,7 +188,11 @@ class HostAgentProcessor(BaseProcessor):
 
         self.host_agent.print_response(self._response_json)
 
-        if Status.FINISH in self._status.upper() or self._control_text == "":
+        if (
+            Status.FINISH in self._status.upper()
+            or self._control_text == ""
+            and self.app_to_open is None
+        ):
             self._status = Status.FINISH
 
     def execute_action(self) -> None:

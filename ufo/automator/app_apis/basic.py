@@ -76,6 +76,9 @@ class WinCOMReceiverBasic(ReceiverBasic):
         else:
             clean_process_name = self.process_name
 
+        if not object_name_list:
+            return ""
+
         return max(
             object_name_list,
             key=lambda x: self.longest_common_substring_length(clean_process_name, x),
