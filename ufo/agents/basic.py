@@ -21,6 +21,7 @@ retriever = utils.LazyImport("..rag.retriever")
 
 # To avoid circular import
 if TYPE_CHECKING:
+    from ufo.agents.agent.host_agent import HostAgent
     from ufo.agents.memory.blackboard import Blackboard
 
 
@@ -107,7 +108,7 @@ class BasicAgent(ABC):
         pass
 
     @property
-    def host(self) -> BasicAgent:
+    def host(self) -> HostAgent:
         """
         Get the host of the agent.
         :return: The host of the agent.
