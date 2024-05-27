@@ -4,7 +4,7 @@
 
 from typing import Any, Dict, Optional, Tuple
 
-from ufo.agent.basic import BasicAgent
+from ufo.agents.basic import BasicAgent
 from ufo.config.config import Config
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 from ufo.utils import json_parser, print_with_color

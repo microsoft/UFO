@@ -1,13 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-
 import json
 import os
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
-from ufo.agent.memory import Memory, MemoryItem
+from ufo.agents.memory import Memory, MemoryItem
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 
 

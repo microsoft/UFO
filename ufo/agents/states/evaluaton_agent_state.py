@@ -6,9 +6,9 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional, Type
 
-from ufo.agent.agent import HostAgent
-from ufo.agent.evaluation_agent import EvaluationAgent
-from ufo.agent.states.basic import AgentState, AgentStateManager
+from ufo.agents.agent.host_agent import HostAgent
+from ufo.agents.agent.evaluation_agent import EvaluationAgent
+from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.modules.context import Context
 
 

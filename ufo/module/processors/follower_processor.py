@@ -4,7 +4,7 @@
 
 import json
 
-from ufo.agent.agent import FollowerAgent
+from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.config.config import Config
 from ufo.module.processors.processor import AppAgentProcessor, HostAgentProcessor
 

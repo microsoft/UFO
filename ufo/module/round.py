@@ -7,7 +7,8 @@ from typing import Optional, Type
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ufo.agent.agent import FollowerAgent, HostAgent
+from ufo.agents.agent.follower_agent import FollowerAgent
+from ufo.agents.agent.host_agent import HostAgent
 from ufo.config.config import Config
 from ufo.module.basic import BaseRound
 from ufo.module.processors import follower_processor, processor

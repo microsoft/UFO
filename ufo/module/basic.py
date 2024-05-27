@@ -18,12 +18,13 @@ import logging
 import os
 from abc import ABC, abstractmethod
 from logging import Logger
-from typing import Type, Optional
+from typing import Optional, Type
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agent.agent import AgentFactory, HostAgent, AppAgent
+from ufo.agents.agent.app_agent import AppAgent
+from ufo.agents.agent.host_agent import AgentFactory, HostAgent
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer

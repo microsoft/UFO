@@ -6,7 +6,7 @@ import os
 from typing import List, Optional
 
 from ufo import utils
-from ufo.agent.evaluation_agent import EvaluationAgent
+from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.config.config import Config
 from ufo.module import interactor, round
 from ufo.module.basic import BaseSession

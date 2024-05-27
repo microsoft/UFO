@@ -7,18 +7,17 @@ from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Dict, List, Type, Union
 
 from ufo import utils
-from ufo.agent.memory import Memory, MemoryItem
-from ufo.agent.states.basic import AgentState, AgentStateManager
+from ufo.agents.memory import Memory, MemoryItem
+from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.automator import puppeteer
 from ufo.llm import llm_call
-from ufo.module.state import Status
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
 
 # To avoid circular import
 if TYPE_CHECKING:
-    from ufo.agent.blackboard import Blackboard
+    from ufo.agents.blackboard import Blackboard
 
 
 class BasicAgent(ABC):
@@ -199,7 +198,6 @@ class BasicAgent(ABC):
         TODO:
         Reflect on the action.
         """
-
         pass
 
     @property
@@ -208,7 +206,7 @@ class BasicAgent(ABC):
         Get the state manager class.
         :return: The state manager class.
         """
-        pass
+        return AgentStateManager
 
     @property
     def state_manager(self) -> AgentStateManager:

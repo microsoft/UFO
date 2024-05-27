@@ -4,14 +4,13 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, Type, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Optional, Type
 
-from ufo.agent.basic import BasicAgent
 from ufo.modules.context import Context
 
 # Avoid circular import
 if TYPE_CHECKING:
-    from ufo.agent.basic import BasicAgent
+    from ufo.agents.basic import BasicAgent
 
 
 class AgentStateManager(ABC):
@@ -80,13 +79,13 @@ class AgentStateManager(ABC):
         cls._state_mapping[state_class.name()] = state_class
         return state_class
 
-    @abstractmethod
     @property
+    # @abstractmethod
     def none_state(self) -> AgentState:
         """
         The none state of the state manager.
         """
-        pass
+        return AgentNoneState(self.agent)
 
 
 class AgentState(ABC):
@@ -154,4 +153,30 @@ class AgentState(ABC):
         """
         The class name of the state.
         """
+        return ""
+
+
+class AgentNoneState(AgentState):
+    """
+    The none state of the agent.
+    """
+
+    def handle(self, context: Optional["Context"] = None) -> None:
+        pass
+
+    def next_agent(self, context: Optional["Context"] = None) -> BasicAgent:
+        return self.agent
+
+    def next_state(self) -> AgentState:
+        return self
+
+    def is_round_end(self) -> bool:
+        return False
+
+    @property
+    def agent_class(self) -> Type[BasicAgent]:
+        return self.agent.__class__
+
+    @classmethod
+    def name(cls) -> str:
         return ""
