@@ -24,7 +24,9 @@ learner/records.json
 vectordb/docs/*
 vectordb/experience/*
 vectordb/demonstration/*
-*.json
+
+# Ignore the data files
+tasks/*
 
 # Don't ignore the example files
 !vectordb/docs/example/
