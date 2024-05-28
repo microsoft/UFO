@@ -19,9 +19,7 @@ class SessionFactory:
     The factory class to create a session.
     """
 
-    def create_session(
-        self, task: str, mode: str, plan: str, evaluate: bool
-    ) -> BaseSession:
+    def create_session(self, task: str, mode: str, plan: str) -> BaseSession:
         """
         Create a session.
         :param task: The name of current task.
@@ -29,18 +27,18 @@ class SessionFactory:
         :return: The created session.
         """
         if mode == "normal":
-            return [Session(task, evaluate)]
+            return [Session(task, configs.get("EVA_SESSION", False))]
         elif mode == "follower":
             # If the plan is a folder, create a follower session for each plan file in the folder.
             if self.is_folder(plan):
-                return self.create_follower_session_in_batch(task, plan, evaluate)
+                return self.create_follower_session_in_batch(task, plan)
             else:
-                return [FollowerSession(task, plan, evaluate)]
+                return [FollowerSession(task, plan, configs.get("EVA_SESSION", False))]
         else:
             raise ValueError(f"The {mode} mode is not supported.")
 
     def create_follower_session_in_batch(
-        self, task: str, plan: str, evaluate: bool
+        self, task: str, plan: str
     ) -> List[BaseSession]:
         """
         Create a follower session.
@@ -51,7 +49,9 @@ class SessionFactory:
         plan_files = self.get_plan_files(plan)
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
         sessions = [
-            FollowerSession(f"{task}/{file_name}", plan_file, evaluate)
+            FollowerSession(
+                f"{task}/{file_name}", plan_file, configs.get("EVA_SESSION", False)
+            )
             for file_name, plan_file in zip(file_names, plan_files)
         ]
 
@@ -113,7 +113,7 @@ class Session(BaseSession):
             request=request,
             agent=self._host_agent,
             context=self.context,
-            should_evaluate=self._should_evaluate,
+            should_evaluate=configs.get("EVA_ROUND", False),
             id=self.total_rounds,
         )
 
@@ -195,7 +195,7 @@ class FollowerSession(BaseSession):
             request=request,
             agent=agent,
             context=self.context,
-            should_evaluate=self._should_evaluate,
+            should_evaluate=configs.get("EVA_ROUND", False),
             id=self.total_rounds,
         )
 
