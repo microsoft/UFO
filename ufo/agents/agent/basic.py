@@ -15,6 +15,7 @@ from ufo.agents.states.basic import (
 )
 from ufo.automator import puppeteer
 from ufo.llm import llm_call
+from ufo.modules.context import Context
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
@@ -44,6 +45,7 @@ class BasicAgent(ABC):
         self._memory = Memory()
         self._host = None
         self._state_mamager = self.state_manager_class(self)
+        self.processor = None
 
     @property
     def status(self) -> str:
@@ -67,15 +69,7 @@ class BasicAgent(ABC):
         Get the state of the agent.
         :return: The state of the agent.
         """
-        return self.state_manager.get_state(self.status)
-
-    @state.setter
-    def state(self, state: AgentState) -> None:
-        """
-        Set the state of the agent.
-        :param state: The state of the agent.
-        """
-        self.state_manager.set_state(state)
+        return self._state
 
     @property
     def memory(self) -> Memory:
@@ -205,21 +199,30 @@ class BasicAgent(ABC):
         """
         pass
 
-    @property
-    def state_manager_class(self) -> Type["AgentStateManager"]:
+    def set_state(self, state: AgentState) -> None:
         """
-        Get the state manager class.
-        :return: The state manager class.
+        Set the state of the agent.
+        :param state: The state of the agent.
         """
-        return ConcreteAgentStateManager
 
-    @property
-    def state_manager(self) -> AgentStateManager:
+        assert state.agent_class() == type(
+            self
+        ), f"The state is only for agent type of {state.agent_class()}"
+
+        self.state = state
+
+    def handle(self, context: Context) -> None:
         """
-        Get the state manager.
-        :return: The state manager.
+        Handle the agent.
+        :param context: The context for the agent.
         """
-        return self._state_mamager
+        self.state.handle(self, context)
+
+    def process(self, context: Context) -> None:
+        """
+        Process the agent.
+        """
+        pass
 
     def build_offline_docs_retriever(self) -> None:
         """

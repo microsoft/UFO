@@ -10,23 +10,36 @@ from ufo.modules.context import Context
 
 # Avoid circular import
 if TYPE_CHECKING:
-    from ufo.agents.basic import BasicAgent
+    from ufo.agents.agent.basic import BasicAgent
 
 
-class AgentStateManager(ABC):
+class SingletonMeta(type):
+    """
+    A metaclass to create singleton classes.
+    """
+
+    _instances = {}
+
+    def __call__(cls, *args, **kwargs):
+        if cls not in cls._instances:
+            instance = super().__call__(*args, **kwargs)
+            cls._instances[cls] = instance
+        return cls._instances[cls]
+
+
+class AgentStateManager(ABC, metaclass=SingletonMeta):
     """
     A abstract class to manage the states of the agent.
     """
 
     _state_mapping: Dict[str, Type[AgentState]] = {}
 
-    def __init__(self, agent: BasicAgent):
+    def __init__(self):
         """
         Initialize the state manager.
         :param agent: The agent to be handled.
         """
 
-        self._agent = agent
         self._state_instance_mapping: Dict[str, AgentState] = {}
 
     def get_state(self, status: str) -> AgentState:
@@ -35,16 +48,8 @@ class AgentStateManager(ABC):
         :param status: The status string.
         :return: The state object.
         """
-        state = self._state_instance_mapping.get(status)
+        state = self._state_instance_mapping.get(status, self.none_state)
 
-        # Lazy initialization
-        if state is None:
-            state_class = self._state_mapping.get(status)
-            if state_class:
-                state = state_class(self._agent)
-                self.add_state(status, state)
-            else:
-                state = self.none_state
         return state
 
     def add_state(self, status: str, state: AgentState) -> None:
@@ -53,7 +58,7 @@ class AgentStateManager(ABC):
         :param status: The status string.
         :param state: The state object.
         """
-        self._state_instance_mapping[status] = state
+        self.state_map[status] = state
 
     @property
     def agent(self) -> BasicAgent:
@@ -88,16 +93,6 @@ class AgentStateManager(ABC):
         pass
 
 
-class ConcreteAgentStateManager(AgentStateManager):
-    """
-    The concrete state manager for the agent.
-    """
-
-    @property
-    def none_state(self) -> AgentState:
-        pass
-
-
 class AgentState(ABC):
     """
     The abstract class for the agent state.
@@ -105,13 +100,22 @@ class AgentState(ABC):
 
     def __init__(self, agent: BasicAgent) -> None:
         """
-        Initialize the state.
+        Initialize the agent state.
         :param agent: The agent to be handled.
         """
         self._agent = agent
+        self._state_manager = self.create_state_manager()
 
     @abstractmethod
-    def handle(self, context: Optional["Context"] = None) -> None:
+    def create_state_manager(self) -> AgentStateManager:
+        return AgentStateManager()
+
+    @property
+    def state_manager(self) -> AgentStateManager:
+        return self._state_manager
+
+    @abstractmethod
+    def handle(self, agent: BasicAgent, context: Optional["Context"] = None) -> None:
         """
         Handle the agent for the current step.
         :param context: The context for the agent and session.
@@ -119,15 +123,16 @@ class AgentState(ABC):
         pass
 
     @abstractmethod
-    def next_agent(self, context: Optional["Context"] = None) -> BasicAgent:
+    def next_agent(self, agent: BasicAgent) -> BasicAgent:
         """
         Get the agent for the next step.
         :param context: The context for the agent and session.
         :return: The agent for the next step.
         """
-        pass
+        return self.next_state().agent
 
-    def next_state(self) -> AgentState:
+    @abstractmethod
+    def next_state(self, agent: BasicAgent) -> AgentState:
         """
         Get the state for the next step.
         :return: The state for the next step.
@@ -142,16 +147,9 @@ class AgentState(ABC):
         """
         pass
 
-    @property
-    def agent(self) -> BasicAgent:
-        """
-        The agent to be handled.
-        """
-        return self._agent
-
-    @property
+    @classmethod
     @abstractmethod
-    def agent_class(self) -> Type[BasicAgent]:
+    def agent_class(cls) -> Type[BasicAgent]:
         """
         The class of the agent.
         """

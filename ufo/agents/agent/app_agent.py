@@ -7,9 +7,11 @@ from __future__ import annotations
 from typing import Dict, List, Union
 
 from ufo import utils
-from ufo.agents.basic import BasicAgent
+from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator import puppeteer
 from ufo.config.config import Config
+from ufo.modules.context import Context
 from ufo.prompter.agent_prompter import AppAgentPrompter
 
 configs = Config.get_instance().config_data
@@ -273,6 +275,21 @@ class AppAgent(BasicAgent):
             tips = []
 
         return examples, tips
+
+    def process(self, context: Context) -> None:
+        """
+        Process the agent.
+        :param context: The context.
+        """
+        self.processor = AppAgentProcessor(agent=self, context=context)
+        self.processor.process()
+
+    def process_resume(self) -> None:
+        """
+        Resume the process.
+        """
+        if self.processor:
+            self.processor.resume()
 
     def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
         """

@@ -10,7 +10,7 @@ from typing import Dict, List, Union
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.basic import BasicAgent
+from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.memory.memory import Memory, MemoryItem
 from ufo.automator.ui_control import openfile
@@ -78,7 +78,7 @@ class HostAgent(BasicAgent):
         self.agent_factory = AgentFactory()
         self.appagent_dict = {}
         self._global_action_memory = Memory()
-        self._reqest_history_memory = Memory()
+        self._request_history_memory = Memory()
         self._active_appagent = None
         self._blackboard = Blackboard()
 
@@ -157,7 +157,7 @@ class HostAgent(BasicAgent):
         Get the round number.
         :return: The round number.
         """
-        return self._reqest_history_memory.length
+        return self._request_history_memory.length
 
     @property
     def blackboard(self):
@@ -275,12 +275,12 @@ class HostAgent(BasicAgent):
         Add the request to the memory.
         :param request: The request.
         """
-        request_length = self._reqest_history_memory.length
+        request_length = self._request_history_memory.length
         request_memory_item = MemoryItem()
         request_memory_item.set_values_from_dict(
             {f"old request {request_length}": request}
         )
-        self._reqest_history_memory.add_memory_item(request_memory_item)
+        self._request_history_memory.add_memory_item(request_memory_item)
 
     def get_global_action_memory(self) -> Memory:
         """
@@ -294,4 +294,4 @@ class HostAgent(BasicAgent):
         Get the request history.
         :return: The request history.
         """
-        return self._reqest_history_memory
+        return self._request_history_memory

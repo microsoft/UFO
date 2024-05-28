@@ -5,8 +5,9 @@
 import json
 
 from ufo.agents.agent.follower_agent import FollowerAgent
+from ufo.agents.processors.app_agent_processor import AppAgentProcessor
+from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.config.config import Config
-from ufo.module.processors.processor import AppAgentProcessor, HostAgentProcessor
 
 configs = Config.get_instance().config_data
 
@@ -71,10 +72,8 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             configs["RAG_ONLINE_RETRIEVED_TOPK"],
         )
 
-        host_agent = self.app_agent.host
-
-        action_history = host_agent.get_global_action_memory().to_json()
-        request_history = host_agent.get_request_history_memory().to_json()
+        action_history = self.host_agent.get_global_action_memory().to_json()
+        request_history = self.host_agent.get_request_history_memory().to_json()
 
         # Get the current state of the application and the state difference between the current state and the previous state.
         current_state = {}

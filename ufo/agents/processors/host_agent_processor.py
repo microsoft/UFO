@@ -5,7 +5,6 @@
 import json
 import os
 import time
-from typing import Dict, List, Optional, Tuple
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -16,7 +15,7 @@ from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
 from ufo.module.state import Status
-from ufo.modules.context import Context, ContextNames
+from ufo.modules.context import Context
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -42,7 +41,7 @@ class HostAgentProcessor(BaseProcessor):
         :param app_window: The application window.
         """
 
-        super().__init__(context=context)
+        super().__init__(agent=agent, context=context)
 
         self.host_agent = agent
 

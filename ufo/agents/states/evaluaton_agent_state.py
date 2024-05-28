@@ -3,17 +3,16 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from enum import Enum
 from typing import Optional, Type
 
-from ufo.agents.agent.host_agent import HostAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
+from ufo.agents.agent.host_agent import HostAgent
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.modules.context import Context
 
 
-@dataclass
-class EvaluatonAgentStatus:
+class EvaluatonAgentStatus(Enum):
     """
     Store the status of the evaluation agent.
     """
@@ -44,8 +43,8 @@ class EvaluatonAgentState(AgentState):
         """
         return self._agent
 
-    @property
-    def agent_class(self) -> Type[EvaluationAgent]:
+    @classmethod
+    def agent_class(cls) -> Type[EvaluationAgent]:
         """
         Handle the agent for the current step.
         """
@@ -85,7 +84,7 @@ class EvaEvaluatonAgentState(EvaluatonAgentState):
         """
         The class name of the state.
         """
-        return EvaluatonAgentStatus.EVALUATION
+        return EvaluatonAgentStatus.EVALUATION.value
 
 
 @EvaluationAgentStateManager.register

@@ -15,7 +15,7 @@ from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.module.state import Status
 from ufo.modules.context import Context, ContextNames
-from ufo.agents.basic import BasicAgent
+from ufo.agents.agent.basic import BasicAgent
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -36,6 +36,8 @@ class BaseProcessor(ABC):
         """
 
         self._context = context
+        self._agent = agent
+
         self._init_processor_from_context()
 
         self.photographer = PhotographerFacade()
@@ -102,6 +104,20 @@ class BaseProcessor(ABC):
             self.create_sub_agent()
 
         # Step 10: Update the step and status.
+        self.update_step_and_status()
+
+    def resume(self) -> None:
+        """
+        Resume the process of action execution.
+        """
+
+        self.execute_action()
+
+        self.update_memory()
+
+        if self.should_create_subagent():
+            self.create_sub_agent()
+
         self.update_step_and_status()
 
     @abstractmethod
@@ -175,6 +191,14 @@ class BaseProcessor(ABC):
         """
         return self._context
 
+    @property
+    def agent(self) -> BasicAgent:
+        """
+        Get the agent.
+        :return: The agent.
+        """
+        return self._agent
+
     def _init_processor_from_context(self) -> None:
         """
         Initialize the processor from the context.
@@ -189,6 +213,7 @@ class BaseProcessor(ABC):
         self.prev_status = self.context.get(ContextNames.STATE)
         self.round_num = self.context.get(ContextNames.ROUND_NUMBER)
         self._app_window = self.context.get(ContextNames.APPLICATION_WINDOW)
+        self._control_reannotate = self.context.get(ContextNames.CONTROL_REANNOTATION)
         self.application_process_name = self.context.get(
             ContextNames.APPLICATION_PROCESS_NAME
         )

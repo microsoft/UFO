@@ -5,21 +5,19 @@
 import json
 import os
 import time
-from logging import Logger
 from typing import Dict, List, Optional, Tuple
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent
-from ufo.agents.agent.host_agent import HostAgent
 from ufo.agents.memory.memory import MemoryItem
+from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
 from ufo.module import interactor
-from ufo.modules.context import Context
-from ufo.agents.processors.basic import BaseProcessor
 from ufo.module.state import Status
+from ufo.modules.context import Context
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -30,9 +28,7 @@ class AppAgentProcessor(BaseProcessor):
     The processor for the app agent at a single step.
     """
 
-    def __init__(
-        self, agent: AppAgent, context: Context, control_reannotate: Optional[list]
-    ) -> None:
+    def __init__(self, agent: AppAgent, context: Context) -> None:
         """
         Initialize the app agent processor.
         :param agent: The app agent who executes the processor.
@@ -40,10 +36,12 @@ class AppAgentProcessor(BaseProcessor):
         :param control_reannotate: The control items to reannotate.
         """
 
-        super().__init__(context=context)
+        super().__init__(agent=agent, context=context)
 
         self.app_agent = agent
         self.host_agent = agent.host
+
+        self._init_processor_from_context()
 
         self._annotation_dict = None
         self._control_info = None
@@ -51,7 +49,6 @@ class AppAgentProcessor(BaseProcessor):
         self._args = None
         self._image_url = []
         self.prev_plan = []
-        self._control_reannotate = control_reannotate
         self.control_filter_factory = ControlFilterFactory()
         self.filtered_annotation_dict = None
 
