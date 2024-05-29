@@ -73,15 +73,17 @@ class BaseRound(ABC):
         """
 
         # Initialize the round step
-        round_step = {self.id: self.step}
+
+        round_step = {self.id: 0}
         self.context.update_dict(ContextNames.ROUND_STEP, round_step)
 
         # Initialize the round cost
-        round_cost = {self.id: self.cost}
+        round_cost = {self.id: 0}
         self.context.update_dict(ContextNames.ROUND_COST, round_cost)
 
         # Initialize the round request and the current round id
         self.context.set(ContextNames.REQUEST, self.request)
+
         self.context.set(ContextNames.CURRENT_ROUND_ID, self.id)
 
     def run(self) -> None:
@@ -90,7 +92,11 @@ class BaseRound(ABC):
         """
 
         print(
-            "Before", self.state.__class__, self.state.name(), self.state.is_round_end()
+            "Before",
+            self.state.__class__,
+            self.state.name(),
+            self.state.is_round_end(),
+            self.context.get(ContextNames.LOG_PATH),
         )
 
         while not self.is_finished():
@@ -104,6 +110,7 @@ class BaseRound(ABC):
                 self.state.__class__,
                 self.state.name(),
                 self.state.is_round_end(),
+                self.context.get(ContextNames.LOG_PATH),
             )
 
             self.agent = self.agent.state.next_agent(self.agent)
@@ -326,6 +333,7 @@ class BaseSession(ABC):
         request_logger = self.initialize_logger(self.log_path, "request.log")
 
         self.context.set(ContextNames.LOGGER, logger)
+        self.context.set(ContextNames.LOG_PATH, self.log_path)
         self.context.set(ContextNames.REQUEST_LOGGER, request_logger)
 
         # Initialize the session cost and step

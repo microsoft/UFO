@@ -202,6 +202,12 @@ class BaseProcessor(ABC):
         )
         self.context.set(ContextNames.CURRENT_ROUND_STEP, current_round_step + 1)
 
+        self.context.set(ContextNames.SESSION_STEP, self.session_step + 1)
+        self.context.set(
+            ContextNames.SESSION_COST,
+            self.context.get(ContextNames.SESSION_COST) + self.cost,
+        )
+
     @property
     def agent(self) -> BasicAgent:
         """
@@ -301,7 +307,7 @@ class BaseProcessor(ABC):
         """
         log = json.dumps(
             {
-                "step": self._step,
+                "step": self.session_step,
                 "status": self._agent_status_manager.ERROR.value,
                 "response": response_str,
                 "error": error,

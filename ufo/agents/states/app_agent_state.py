@@ -104,7 +104,7 @@ class FinishAppAgentState(AppAgentState):
 
     def next_state(self, agent: "AppAgent") -> HostAgentState:
 
-        return FinishHostAgentState
+        return FinishHostAgentState()
 
     def is_round_end(self) -> bool:
         """

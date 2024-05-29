@@ -5,11 +5,12 @@ import os
 from typing import List
 
 from ufo import utils
+from ufo.agents.states.app_agent_state import ContinueAppAgentState
+from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config.config import Config
 from ufo.module import interactor
-from ufo.modules.basic import BaseSession, BaseRound
+from ufo.modules.basic import BaseRound, BaseSession
 from ufo.modules.sessions.plan_reader import PlanReader
-from ufo.agents.states.app_agent_state import ContinueAppAgentState
 
 configs = Config.get_instance().config_data
 
@@ -110,6 +111,8 @@ class Session(BaseSession):
 
         if self.is_finished():
             return None
+
+        self._host_agent.set_state(ContinueHostAgentState())
         round = BaseRound(
             request=request,
             agent=self._host_agent,
