@@ -31,7 +31,10 @@ class ContextNames(Enum):
 
     @property
     def default_value(self) -> Any:
-        """Get the default value for the context name based on its type."""
+        """
+        Get the default value for the context name based on its type.
+        :return: The default value for the context name.
+        """
         if (
             self == ContextNames.LOG_PATH
             or self == ContextNames.REQUEST
@@ -66,7 +69,10 @@ class ContextNames(Enum):
 
     @property
     def type(self) -> Type:
-        """Get the type of the context name."""
+        """
+        Get the type of the context name.
+        :return: The type of the context name.
+        """
         if (
             self == ContextNames.LOG_PATH
             or self == ContextNames.REQUEST
