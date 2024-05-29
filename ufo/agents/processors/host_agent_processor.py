@@ -14,7 +14,7 @@ from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
-from ufo.modules.context import Context, ContextNames
+from ufo.module.context import Context, ContextNames
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]

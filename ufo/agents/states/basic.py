@@ -7,7 +7,7 @@ from abc import ABC, ABCMeta, abstractmethod
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
-from ufo.modules.context import Context
+from ufo.module.context import Context
 
 # Avoid circular import
 if TYPE_CHECKING:

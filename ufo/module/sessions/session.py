@@ -9,8 +9,8 @@ from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config.config import Config
 from ufo.module import interactor
-from ufo.modules.basic import BaseRound, BaseSession
-from ufo.modules.sessions.plan_reader import PlanReader
+from ufo.module.basic import BaseRound, BaseSession
+from ufo.module.sessions.plan_reader import PlanReader
 
 configs = Config.get_instance().config_data
 

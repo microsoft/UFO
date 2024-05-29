@@ -12,7 +12,7 @@ from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentSt
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator import puppeteer
 from ufo.config.config import Config
-from ufo.modules.context import Context
+from ufo.module.context import Context
 from ufo.prompter.agent_prompter import AppAgentPrompter
 
 configs = Config.get_instance().config_data

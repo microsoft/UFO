@@ -11,7 +11,7 @@ from ufo.agents.memory.memory import Memory, MemoryItem
 from ufo.agents.states.basic import AgentState, AgentStatus
 from ufo.automator import puppeteer
 from ufo.llm import llm_call
-from ufo.modules.context import Context
+from ufo.module.context import Context
 
 
 # Lazy import the retriever factory to aviod long loading time.

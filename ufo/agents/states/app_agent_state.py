@@ -13,7 +13,7 @@ from ufo.agents.states.host_agent_state import (
     FinishHostAgentState,
     NoneHostAgentState,
 )
-from ufo.modules.context import Context
+from ufo.module.context import Context
 
 # Avoid circular import
 if TYPE_CHECKING:

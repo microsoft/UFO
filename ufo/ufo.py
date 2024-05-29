@@ -6,7 +6,7 @@ from datetime import datetime
 
 from ufo.config.config import Config
 from ufo.module.client import UFOClientManager
-from ufo.module.session import SessionFactory
+from ufo.module.sessions.session import SessionFactory
 
 configs = Config.get_instance().config_data
 
@@ -33,13 +33,7 @@ args.add_argument(
     type=str,
     default="",
 )
-args.add_argument(
-    "--evaluate",
-    "-e",
-    help="The evaluation mode. If set to True, the system will run the evaluation after the execution is finished.",
-    default=False,
-    action=argparse.BooleanOptionalAction,
-)
+
 
 parsed_args = args.parse_args()
 
@@ -55,10 +49,7 @@ def main():
     python -m ufo -t task_name -m follower -p path_to_plan_file_or_folder
     """
     sessions = SessionFactory().create_session(
-        task=parsed_args.task,
-        mode=parsed_args.mode,
-        plan=parsed_args.plan,
-        evaluate=parsed_args.evaluate,
+        task=parsed_args.task, mode=parsed_args.mode, plan=parsed_args.plan
     )
 
     clients = UFOClientManager(sessions)

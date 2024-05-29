@@ -7,7 +7,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
-from ufo.modules.context import Context
+from ufo.module.context import Context
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent

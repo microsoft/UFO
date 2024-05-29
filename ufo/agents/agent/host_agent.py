@@ -20,7 +20,7 @@ from ufo.agents.states.host_agent_state import HostAgentStatus, ContinueHostAgen
 from ufo.automator.ui_control import openfile
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.config.config import Config
-from ufo.modules.context import Context
+from ufo.module.context import Context
 from ufo.prompter.agent_prompter import HostAgentPrompter
 
 configs = Config.get_instance().config_data

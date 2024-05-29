@@ -24,9 +24,7 @@ class UFOClient:
         Run the UFO client.
         """
 
-        while not self.session.is_finish():
-            self.session.handle()
-
+        self.session.run()
         self.session.print_cost()
 
 

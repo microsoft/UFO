@@ -13,7 +13,7 @@ from ufo import utils
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
-from ufo.modules.context import Context, ContextNames
+from ufo.module.context import Context, ContextNames
 from ufo.agents.agent.basic import BasicAgent
 
 configs = Config.get_instance().config_data

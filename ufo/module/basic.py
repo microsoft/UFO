@@ -14,28 +14,23 @@ The session is the core class of UFO. It manages the state transition and handle
 For more details definition of the state pattern, please refer to the state.py module.
 """
 
+import json
 import logging
 import os
 from abc import ABC, abstractmethod
-from logging import Logger
-from typing import Optional, Type
+from typing import Dict, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.agent.app_agent import AppAgent
+from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
+from ufo.agents.states.basic import AgentState
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer
-from ufo.module.processors.basic import BaseProcessor
-from ufo.module.state import (
-    ErrorState,
-    MaxStepReachedState,
-    NoneState,
-    Status,
-    StatusToStateMapper,
-)
+from ufo.module.context import Context, ContextNames
 
 configs = Config.get_instance().config_data
 
@@ -48,183 +43,178 @@ class BaseRound(ABC):
 
     def __init__(
         self,
-        task: str,
-        logger: Logger,
-        request_logger: Logger,
-        host_agent: HostAgent,
         request: str,
+        agent: BasicAgent,
+        context: Context,
+        should_evaluate: bool,
+        id: int,
     ) -> None:
         """
         Initialize a round.
-        :param task: The name of current task.
-        :param logger: The logger for the response and error.
-        :param request_logger: The logger for the request string.
-        :param host_agent: The host agent.
-        :param request: The user request at the current round.
-        """
-        # Step-related properties
-        self._step = 0
-
-        # Logging-related properties
-        self.log_path = f"logs/{task}/"
-        self.logger = logger
-        self.request_logger = request_logger
-
-        # Agent-related properties
-        self.host_agent = host_agent
-        self.app_agent = None
-
-        # Status-related properties
-        self._status = Status.APP_SELECTION
-
-        # Application-related properties
-        self.application = ""
-        self.app_root = ""
-        self.app_window = None
-
-        # Cost and reannotate-related properties
-        self._cost = 0.0
-        self.control_reannotate = []
-
-        # Request-related properties
-        self.request = request
-
-        # round_num and global step-related properties
-        self.round_num = None
-        self.session_step = None
-
-    @abstractmethod
-    def process_application_selection(self) -> None:
-        """
-        Select an application to interact with.
+        :param request: The request of the round.
+        :param agent: The initial agent of the round.
+        :param context: The shared context of the round.
+        :param should_evaluate: Whether to evaluate the round.
+        :param id: The id of the round.
         """
 
-        pass
+        self._request = request
+        self._context = context
+        self._agent = agent
+        self._state = agent.state
+        self._id = id
+        self._should_evaluate = should_evaluate
 
-    @abstractmethod
-    def process_action_selection(self) -> None:
-        """
-        Select an action with the application.
-        """
+        self._init_context()
 
-        pass
-
-    @abstractmethod
-    def _create_host_agent_processor(
-        self, processor_class: Type["BaseProcessor"]
-    ) -> BaseProcessor:
+    def _init_context(self) -> None:
         """
-        Create a host agent processor.
-        :param processor_class: The processor class.
-        :return: The processor instance.
+        Update the context of the round.
         """
 
-        pass
+        # Initialize the round step
 
-    @abstractmethod
-    def _create_app_agent_processor(
-        self, processor_class: Type["BaseProcessor"]
-    ) -> BaseProcessor:
+        round_step = {self.id: 0}
+        self.context.update_dict(ContextNames.ROUND_STEP, round_step)
+
+        # Initialize the round cost
+        round_cost = {self.id: 0}
+        self.context.update_dict(ContextNames.ROUND_COST, round_cost)
+
+        # Initialize the round request and the current round id
+        self.context.set(ContextNames.REQUEST, self.request)
+
+        self.context.set(ContextNames.CURRENT_ROUND_ID, self.id)
+
+    def run(self) -> None:
         """
-        Create a host agent processor.
-        :param processor_class: The processor class.
-        :return: The processor instance.
+        Run the round.
         """
 
-        pass
+        while not self.is_finished():
 
-    def _run_step(self, processor: BaseProcessor) -> None:
+            self.agent.handle(self.context)
+
+            self.state = self.agent.state.next_state(self.agent)
+
+            self.agent = self.agent.state.next_agent(self.agent)
+            self.agent.set_state(self.state)
+
+        if self._should_evaluate:
+            self.evaluation()
+
+    def is_finished(self) -> bool:
         """
-        Run a step.
-        :param processor: The processor.
+        Check if the round is finished.
+        return: True if the round is finished, otherwise False.
         """
-        processor.process()
+        return self._state.is_round_end()
 
-        self._status = processor.get_process_status()
-        self._step += processor.get_process_step()
-        self.update_cost(processor.get_process_cost())
+    @property
+    def agent(self) -> BasicAgent:
+        """
+        Get the agent of the round.
+        return: The agent of the round.
+        """
+        return self._agent
 
-    def get_status(self) -> str:
+    @agent.setter
+    def agent(self, agent: BasicAgent) -> None:
+        """
+        Set the agent of the round.
+        :param agent: The agent of the round.
+        """
+        self._agent = agent
+
+    @property
+    def state(self) -> AgentState:
         """
         Get the status of the round.
         return: The status of the round.
         """
-        return self._status
+        return self._state
 
-    def get_step(self) -> int:
+    @state.setter
+    def state(self, state: AgentState) -> None:
+        """
+        Set the status of the round.
+        :param state: The status of the round.
+        """
+        self._state = state
+
+    @property
+    def step(self) -> int:
         """
         Get the local step of the round.
         return: The step of the round.
         """
-        return self._step
+        return self._context.get(ContextNames.ROUND_STEP).get(self.id, 0)
 
-    def get_cost(self) -> float:
+    @property
+    def cost(self) -> float:
         """
         Get the cost of the round.
         return: The cost of the round.
         """
-        return self._cost
+        return self._context.get(ContextNames.ROUND_COST).get(self.id, 0)
+
+    @property
+    def request(self) -> str:
+        """
+        Get the request of the round.
+        return: The request of the round.
+        """
+        return self._request
+
+    @property
+    def id(self) -> int:
+        """
+        Get the id of the round.
+        return: The id of the round.
+        """
+        return self._id
+
+    @property
+    def context(self) -> Context:
+        """
+        Get the context of the round.
+        return: The context of the round.
+        """
+        return self._context
 
     def print_cost(self) -> None:
         """
         Print the total cost of the round.
         """
 
-        total_cost = self.get_cost()
+        total_cost = self.cost
         if isinstance(total_cost, float):
             formatted_cost = "${:.2f}".format(total_cost)
             utils.print_with_color(
                 f"Request total cost for current round is {formatted_cost}", "yellow"
             )
 
-    def get_results(self) -> str:
+    def evaluation(self) -> None:
         """
-        Get the results of the round.
-        return: The results of the round.
+        TODO: Evaluate the round.
         """
+        pass
 
-        action_history = self.host_agent.get_global_action_memory().content
-
-        if len(action_history) > 0:
-            result = action_history[-1].to_dict().get("Results")
-        else:
-            result = ""
-        return result
-
-    def set_index(self, index: int) -> None:
-        """
-        Set the round index of the round.
-        """
-        self.round_num = index
-
-    def set_session_step(self, session_step: int) -> None:
-        """
-        Set the global step of the round.
-        """
-        self.session_step = session_step
-
-    def get_application_window(self) -> UIAWrapper:
+    @property
+    def application_window(self) -> UIAWrapper:
         """
         Get the application of the session.
         return: The application of the session.
         """
-        return self.app_window
+        return self._context.get(ContextNames.APPLICATION_WINDOW)
 
-    def set_application_window(self, app_window: UIAWrapper) -> None:
+    @application_window.setter
+    def application_window(self, app_window: UIAWrapper) -> None:
         """
         Set the application window.
         :param app_window: The application window.
         """
-        self.app_window = app_window
-
-    def update_cost(self, cost: float) -> None:
-        """
-        Update the cost of the round.
-        """
-        if isinstance(cost, float) and isinstance(self._cost, float):
-            self._cost += cost
-        else:
-            self._cost = None
+        self._context.set(ContextNames.APPLICATION_WINDOW, app_window)
 
 
 class BaseSession(ABC):
@@ -232,34 +222,34 @@ class BaseSession(ABC):
     A basic session in UFO. A session consists of multiple rounds of interactions.
     The handle function is the core function to handle the session. UFO runs with the state transition and handles the different states, using the state pattern.
     A session follows the following steps:
-    1. Begins with the ''APP_SELECTION'' state for the HostAgent to select an application.
+    1. Begins with the ''CONTINUE'' state for the HostAgent to select an application.
     2. After the application is selected, the session moves to the ''CONTINUE'' state for the AppAgent to select an action. This process continues until all the actions are completed.
     3. When all the actions are completed for the current user request at a round, the session moves to the ''FINISH'' state.
-    4. The session will ask the user if they want to continue with another request. If the user wants to continue, the session will start a new round and move to the ''APP_SELECTION'' state.
+    4. The session will ask the user if they want to continue with another request. If the user wants to continue, the session will start a new round and move to the ''SWITCH'' state.
     5. If the user does not want to continue, the session will transition to the ''COMPLETE'' state.
     6. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
     """
 
-    def __init__(self, task: str, evaluate: bool) -> None:
+    def __init__(self, task: str, should_evaluate: bool) -> None:
         """
         Initialize a session.
         :param task: The name of current task.
+        :param should_evaluate: Whether to evaluate the session.
         """
 
-        # Task-related properties
-        self.task = task
-        self.should_evaluate = evaluate
-        self._step = 0
-        self._round = 0
+        self._should_evaluate = should_evaluate
 
         # Logging-related properties
-        self.log_path = f"logs/{self.task}/"
+        self.log_path = f"logs/{task}/"
         utils.create_folder(self.log_path)
-        self.logger = self.initialize_logger(self.log_path, "response.log")
-        self.request_logger = self.initialize_logger(self.log_path, "request.log")
 
-        # Agent-related properties
-        self.host_agent = AgentFactory.create_agent(
+        self._rounds: Dict[int, BaseRound] = {}
+
+        self._context = Context()
+        self._init_context()
+        self._finish = False
+
+        self._host_agent: HostAgent = AgentFactory.create_agent(
             "host",
             "HostAgent",
             configs["HOST_AGENT"]["VISUAL_MODE"],
@@ -268,28 +258,129 @@ class BaseSession(ABC):
             configs["API_PROMPT"],
             configs["ALLOW_OPENAPP"],
         )
-        self.app_agent: Optional[AppAgent] = None
 
-        # Status and state-related properties
-        self._status = Status.APP_SELECTION
-        self._state = StatusToStateMapper().get_appropriate_state(self._status)
+    def run(self) -> None:
+        """
+        Run the session.
+        """
 
-        # Application-related properties
-        self.application = ""
-        self.app_root = ""
-        self.app_window = None
+        while not self.is_finished():
 
-        # Cost and reannotate-related properties
-        self._cost = 0.0
-        self.control_reannotate = []
+            round = self.create_new_round()
+            if round is None:
+                break
+            round.run()
+
+        if self.application_window is not None:
+            self.capture_last_snapshot()
+
+        if self._should_evaluate:
+            self.evaluation()
 
     @abstractmethod
-    def create_round(self):
+    def create_new_round(self) -> Optional[BaseRound]:
         """
         Create a new round.
         """
-
         pass
+
+    @abstractmethod
+    def get_request(self) -> str:
+        """
+        Get the request of the session.
+        return: The request of the session.
+        """
+        pass
+
+    def create_following_round(self) -> BaseRound:
+        """
+        Create a following round.
+        return: The following round.
+        """
+        pass
+
+    def add_round(self, id: int, round: BaseRound) -> None:
+        """
+        Add a round to the session.
+        :param id: The id of the round.
+        :param round: The round to be added.
+        """
+        self._rounds[id] = round
+
+    def _init_context(self) -> None:
+        """
+        Initialize the context of the session.
+        """
+
+        # Initialize the logger
+        logger = self.initialize_logger(self.log_path, "response.log")
+        request_logger = self.initialize_logger(self.log_path, "request.log")
+        eval_logger = self.initialize_logger(self.log_path, "evaluation.log")
+
+        self.context.set(ContextNames.LOGGER, logger)
+        self.context.set(ContextNames.LOG_PATH, self.log_path)
+        self.context.set(ContextNames.REQUEST_LOGGER, request_logger)
+        self.context.set(ContextNames.EVALUATION_LOGGER, eval_logger)
+
+        # Initialize the session cost and step
+        self.context.set(ContextNames.SESSION_COST, 0)
+        self.context.set(ContextNames.SESSION_STEP, 0)
+
+    @property
+    def context(self) -> Context:
+        """
+        Get the context of the session.
+        return: The context of the session.
+        """
+        return self._context
+
+    @property
+    def cost(self) -> float:
+        """
+        Get the cost of the session.
+        return: The cost of the session.
+        """
+        return self.context.get(ContextNames.SESSION_COST)
+
+    @cost.setter
+    def cost(self, cost: float) -> None:
+        """
+        Update the cost of the session.
+        :param cost: The cost to be updated.
+        """
+        self.context.set(ContextNames.SESSION_COST, cost)
+
+    @property
+    def step(self) -> int:
+        """
+        Get the step of the session.
+        return: The step of the session.
+        """
+        return self.context.get(ContextNames.SESSION_STEP)
+
+    @property
+    def evaluation_logger(self) -> logging.Logger:
+        """
+        Get the logger for evaluation.
+        return: The logger for evaluation.
+        """
+        return self.context.get(ContextNames.EVALUATION_LOGGER)
+
+    @property
+    def total_rounds(self) -> int:
+        """
+        Get the total number of rounds in the session.
+        return: The total number of rounds in the session.
+        """
+        return len(self._rounds)
+
+    @property
+    def rounds(self) -> Dict[int, BaseRound]:
+        """
+        Get the rounds of the session.
+        return: The rounds of the session.
+        """
+        return self._rounds
 
     def experience_saver(self) -> None:
         """
@@ -306,7 +397,7 @@ class BaseSession(ABC):
             configs["API_PROMPT"],
         )
         experience = summarizer.read_logs(self.log_path)
-        summaries, total_cost = summarizer.get_summary_list(experience)
+        summaries, cost = summarizer.get_summary_list(experience)
 
         experience_path = configs["EXPERIENCE_SAVED_PATH"]
         utils.create_folder(experience_path)
@@ -317,155 +408,79 @@ class BaseSession(ABC):
             summaries, os.path.join(experience_path, "experience_db")
         )
 
-        self.update_cost(cost=total_cost)
+        self.cost += cost
         utils.print_with_color("The experience has been saved.", "magenta")
-
-    @abstractmethod
-    def start_new_round(self) -> None:
-        """
-        Start a new round.
-        """
-
-        pass
-
-    @abstractmethod
-    def round_hostagent_execution(self) -> None:
-        """
-        Execute the host agent in the current round.
-        """
-
-        pass
-
-    @abstractmethod
-    def round_appagent_execution(self) -> None:
-        """
-        Execute the app agent in the current round.
-        """
-
-        pass
-
-    def get_current_round(self) -> BaseRound:
-        """
-        Get the current round.
-        return: The current round.
-        """
-        return self._current_round
-
-    def get_round_num(self) -> int:
-        """
-        Get the round of the session.
-        return: The round of the session.
-        """
-        return self._round
-
-    def get_status(self) -> str:
-        """
-        Get the status of the session.
-        return: The status of the session.
-        """
-        return self._status
-
-    def get_state(self) -> object:
-        """
-        Get the state of the session.
-        return: The state of the session.
-        """
-        return self._state
-
-    def get_step(self) -> int:
-        """
-        Get the step of the session.
-        return: The step of the session.
-        """
-        return self._step
-
-    def get_cost(self) -> float:
-        """
-        Get the cost of the session.
-        return: The cost of the session.
-        """
-        return self._cost
 
     def print_cost(self) -> None:
         """
         Print the total cost of the session.
         """
 
-        total_cost = self.get_cost()
-        if isinstance(total_cost, float):
-            formatted_cost = "${:.2f}".format(total_cost)
-            utils.print_with_color(f"Request total cost is {formatted_cost}", "yellow")
-
-    def get_results(self) -> str:
-        """
-        Get the results of the session.
-        return: The results of the session.
-        """
-
-        action_history = self.host_agent.get_global_action_memory().content
-
-        if len(action_history) > 0:
-            result = action_history[-1].to_dict().get("Results")
+        if isinstance(self.cost, float) and self.cost > 0:
+            formatted_cost = "${:.2f}".format(self.cost)
+            utils.print_with_color(f"Request total cost is {formatted_cost}$", "yellow")
         else:
-            result = ""
-        return result
+            utils.print_with_color(f"Cost is not available for the model {configs['HOST_AGENT']["API_MODEL"]} or {configs['APP_AGENT']["API_MODEL"]}.", "yellow")
 
-    def get_application_window(self) -> UIAWrapper:
+    @property
+    def application_window(self) -> UIAWrapper:
         """
         Get the application of the session.
         return: The application of the session.
         """
-        return self.app_window
+        return self._context.get(ContextNames.APPLICATION_WINDOW)
 
-    def set_application_window(self, app_window: UIAWrapper) -> None:
+    @application_window.setter
+    def application_window(self, app_window: UIAWrapper) -> None:
         """
         Set the application window.
         :param app_window: The application window.
         """
-        self.app_window = app_window
+        self._context.set(ContextNames.APPLICATION_WINDOW, app_window)
 
-    def update_cost(self, cost: float) -> None:
-        """
-        Update the cost of the session.
-        """
-        if isinstance(cost, float) and isinstance(self._cost, float):
-            self._cost += cost
-        else:
-            self._cost = None
-
-    def is_finish(self) -> bool:
+    def is_finished(self) -> bool:
         """
         Check if the session is ended.
         return: True if the session is ended, otherwise False.
         """
+        if self._finish or self.step >= configs["MAX_STEP"]:
+            return True
+        return False
 
-        # Finish the session if the state is ErrorState, MaxStepReachedState, or NoneState.
-        return (
-            True
-            if isinstance(
-                self.get_state(),
-                (ErrorState, MaxStepReachedState, NoneState),
-            )
-            else False
-        )
-
-    def set_state(self, state) -> None:
+    @abstractmethod
+    def request_to_evaluate(self) -> str:
         """
-        Set the state of the session.
+        Get the request to evaluate.
+        return: The request(s) to evaluate.
         """
-        self._state = state
-
-    def handle(self) -> None:
-        """
-        Handle the session.
-        """
-        self._state.handle(self)
+        pass
 
     def evaluation(self) -> None:
         """
         Evaluate the session.
         """
-        pass
+        utils.print_with_color("Evaluating the session...", "yellow")
+        evaluator = EvaluationAgent(
+            name="eva_agent",
+            app_root_name=self.context.get(ContextNames.APPLICATION_ROOT_NAME),
+            is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+            main_prompt=configs["EVALUATION_PROMPT"],
+            example_prompt="",
+            api_prompt=configs["API_PROMPT"],
+        )
+
+        requests = self.request_to_evaluate()
+        result, cost = evaluator.evaluate(request=requests, log_path=self.log_path)
+
+        # Add additional information to the evaluation result.
+        additional_info = {"level": "session", "request": requests, "id": 0}
+        result.update(additional_info)
+
+        self.cost += cost
+
+        evaluator.print_response(result)
+
+        self.evaluation_logger.info(json.dumps(result))
 
     @property
     def session_type(self) -> str:
@@ -482,15 +497,19 @@ class BaseSession(ABC):
 
         # Capture the final screenshot
         screenshot_save_path = self.log_path + f"action_step_final.png"
+
         PhotographerFacade().capture_app_window_screenshot(
-            self.app_window, save_path=screenshot_save_path
+            self.application_window, save_path=screenshot_save_path
         )
 
         # Save the final XML file
         if configs["LOG_XML"]:
             log_abs_path = os.path.abspath(self.log_path)
             xml_save_path = os.path.join(log_abs_path, f"xml/action_step_final.xml")
-            self.app_agent.Puppeteer.save_to_xml(xml_save_path)
+
+            app_agent = self._host_agent.get_active_appagent()
+            if app_agent is not None:
+                app_agent.Puppeteer.save_to_xml(xml_save_path)
 
     @staticmethod
     def initialize_logger(log_path: str, log_filename: str) -> logging.Logger:

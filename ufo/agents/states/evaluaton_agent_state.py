@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Optional, Type
 
 from ufo.agents.agent.host_agent import HostAgent
 from ufo.agents.states.basic import AgentState, AgentStateManager
-from ufo.modules.context import Context
+from ufo.module.context import Context
 
 if TYPE_CHECKING:
     from ufo.agents.agent.evaluation_agent import EvaluationAgent

@@ -15,7 +15,7 @@ from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
 from ufo.module import interactor
-from ufo.modules.context import Context
+from ufo.module.context import Context
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
