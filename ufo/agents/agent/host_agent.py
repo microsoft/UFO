@@ -10,15 +10,18 @@ from typing import Dict, List, Union
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
+from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.memory.memory import Memory, MemoryItem
+from ufo.agents.processors.host_agent_processor import HostAgentProcessor
+from ufo.agents.states.host_agent_state import HostAgentStatus, ContinueHostAgentState
 from ufo.automator.ui_control import openfile
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.config.config import Config
+from ufo.modules.context import Context
 from ufo.prompter.agent_prompter import HostAgentPrompter
-from ufo.agents.agent.app_agent import AppAgent
-from ufo.agents.agent.follower_agent import FollowerAgent
 
 configs = Config.get_instance().config_data
 
@@ -81,6 +84,7 @@ class HostAgent(BasicAgent):
         self._request_history_memory = Memory()
         self._active_appagent = None
         self._blackboard = Blackboard()
+        self.set_state(ContinueHostAgentState())
 
     def get_prompter(
         self,
@@ -228,6 +232,15 @@ class HostAgent(BasicAgent):
 
         return app_window
 
+    def process(self, context: Context) -> None:
+        """
+        Process the agent.
+        :param context: The context.
+        """
+        self.processor = HostAgentProcessor(agent=self, context=context)
+        self.processor.process()
+        self.status = self.processor.status
+
     def print_response(self, response_dict: Dict) -> None:
         """
         Print the response.
@@ -295,3 +308,10 @@ class HostAgent(BasicAgent):
         :return: The request history.
         """
         return self._request_history_memory
+
+    @property
+    def status_manager(self) -> HostAgentStatus:
+        """
+        Get the status manager.
+        """
+        return HostAgentStatus()

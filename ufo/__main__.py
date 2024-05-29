@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
-from . import ufo
+from ufo import ufo2
 
 if __name__ == "__main__":
     # Execute the main script
-    ufo.main()
+    ufo2.main()

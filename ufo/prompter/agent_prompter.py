@@ -40,8 +40,8 @@ class HostAgentPrompter(BasicPrompter):
         return: The prompt for app selection.
         """
         if self.allow_openapp:
-            open_app_guideline = self.prompt_template["open_app_guideline"]
-            open_app_comment = self.prompt_template["open_app_comment"]
+            open_app_guideline = self.prompt_template.get("open_app_guideline", "")
+            open_app_comment = self.prompt_template.get("open_app_comment", "")
         else:
             open_app_guideline = ""
             open_app_comment = ""

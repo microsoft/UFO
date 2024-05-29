@@ -5,20 +5,22 @@
 import json
 import os
 import time
+from typing import TYPE_CHECKING
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent
-from ufo.agents.agent.host_agent import HostAgent
 from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
-from ufo.module.state import Status
 from ufo.modules.context import Context
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
+
+if TYPE_CHECKING:
+    from ufo.agents.agent.host_agent import HostAgent
 
 
 class HostAgentProcessor(BaseProcessor):
@@ -26,7 +28,7 @@ class HostAgentProcessor(BaseProcessor):
     The processor for the host agent at a single step.
     """
 
-    def __init__(self, agent: HostAgent, context: Context) -> None:
+    def __init__(self, agent: "HostAgent", context: Context) -> None:
         """
         Initialize the host agent processor.
         :param round_num: The total number of rounds in the session.
@@ -122,7 +124,7 @@ class HostAgentProcessor(BaseProcessor):
         # Log the prompt message. Only save them in debug mode.
         log = json.dumps(
             {
-                "step": self._step,
+                "step": self.session_step,
                 "prompt": self._prompt_message,
                 "control_items": self._desktop_windows_info,
                 "filted_control_items": self._desktop_windows_info,
@@ -141,6 +143,7 @@ class HostAgentProcessor(BaseProcessor):
             self._response, self._cost = self.host_agent.get_response(
                 self._prompt_message, "HOSTAGENT", use_backup_engine=True
             )
+            self._update_context()
         except Exception:
             self.llm_error_handler()
 
@@ -168,8 +171,11 @@ class HostAgentProcessor(BaseProcessor):
 
         self.host_agent.print_response(self._response_json)
 
-        if Status.FINISH in self._status.upper() or self._control_text == "":
-            self._status = Status.FINISH
+        if (
+            self._agent_status_manager.FINISH.value in self._status.upper()
+            or self._control_text == ""
+        ):
+            self._status = self._agent_status_manager.FINISH.value
 
     def execute_action(self) -> None:
         """
@@ -192,7 +198,7 @@ class HostAgentProcessor(BaseProcessor):
 
         # Check if the window interface is available for the visual element.
         if not self.is_window_interface_available(new_app_window):
-            self._status = Status.ERROR
+            self._status = self._agent_status_manager.ERROR.value
             return
 
         # Switch to the new application window, if it is different from the current application window.
@@ -239,7 +245,7 @@ class HostAgentProcessor(BaseProcessor):
         # Log additional information for the host agent.
         additional_memory = {
             "Step": self.session_step,
-            "RoundStep": self.get_process_step(),
+            "RoundStep": self.round_step,
             "AgentStep": self.host_agent.step,
             "Round": self.round_num,
             "ControlLabel": self._control_text,
@@ -275,7 +281,7 @@ class HostAgentProcessor(BaseProcessor):
         self.host_agent.status = self._status
 
         # Wait for the application to be ready after an action is taken before proceeding to the next step.
-        if self._status != Status.FINISH:
+        if self._status != self._agent_status_manager.FINISH.value:
             time.sleep(configs["SLEEP_TIME"])
 
     def should_create_subagent(self) -> bool:
@@ -284,10 +290,10 @@ class HostAgentProcessor(BaseProcessor):
         :return: The boolean value indicating if the app agent should be created.
         """
 
-        # Only create the app agent when the previous status is APP_SELECTION and the processor is HostAgentProcessor.
+        # Only create the app agent when the previous status is CONTINUE and the processor is HostAgentProcessor.
         if (
             isinstance(self, HostAgentProcessor)
-            and self.prev_status == Status.APP_SELECTION
+            and self.agent.state.name() == self._agent_status_manager.CONTINUE.value
         ):
             return True
         else:

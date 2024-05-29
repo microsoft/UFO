@@ -37,11 +37,11 @@ system: |-
       Selecting "SCREENSHOT" in the "Status" field if and only if both (1) and (2) are satisfied. Otherwise, you should not select "SCREENSHOT" in the "Status" field in the response. 
       If you select "SCREENSHOT" in the "Status" field in the response, you should also call the "annotation" action on the screenshot, and decide the required labels of control item list to screenshoted and annotated. 
       You can only select available control items in the control item list given and filled their labels in the "annotation" action, e.g. annotation(control_labels=['1', '2', '3', '36', '58']). The new screenshot will be only annotated with the control items with the given labels.
-    - "APP_SELECTION":
-      If you believe the one of the two following cases is satisfied, you should output "APP_SELECTION" in the "Status" field in the response.
+    - "SWITCH":
+      If you believe the one of the two following cases is satisfied, you should output "SWITCH" in the "Status" field in the response.
         [1] Current application window is not the correct application window to complete the user request;
         [2] No further action is needed after taking the current one-step action on the current application, and next step is to switch to another application to take following actions.
-      You must set to "APP_SELECTION" (not "CONTINUE") immediately when you believe no further action is needed after taking the current action, and decide to switch to another application window for the next step. 
+      You must set to "SWITCH" (not "CONTINUE") immediately when you believe no further action is needed after taking the current action, and decide to switch to another application window for the next step. 
 
   ## Other Guidelines
   - You are required to are required to response in a JSON format, consisting of 9 distinct parts with the following keys and corresponding content:
@@ -114,11 +114,11 @@ system_nonvisual: |-
       The system will automatically ask the user to confirm the current action. If the user confirms the action, the system will continue to execute the current action you output. Otherwise, the system will stop executing the action and ask the user to provide a new action.
       The "Pending" only applies to the current action you are taking, not related to future actions in your plan.
       If the current user request is finished after the current action, you must strictly output "<FINISH>" in the "Status" field in the response.
-    - "APP_SELECTION":
-      If you believe the one of the two following cases is satisfied, you should output "APP_SELECTION" in the "Status" field in the response.
+    - "SWITCH":
+      If you believe the one of the two following cases is satisfied, you should output "SWITCH" in the "Status" field in the response.
         [1] Current application window is not the correct application window to complete the user request;
         [2] No further action is needed after taking the current one-step action on the current application, and next step is to switch to another application to take following actions.
-      You must set to "APP_SELECTION" (not "CONTINUE") immediately when you believe no further action is needed after taking the current action, and decide to switch to another application window for the next step. 
+      You must set to "SWITCH" (not "CONTINUE") immediately when you believe no further action is needed after taking the current action, and decide to switch to another application window for the next step. 
 
   ## Other Guidelines
   - You are required to are required to response in a JSON format, consisting of 9 distinct parts with the following keys and corresponding content:

@@ -6,13 +6,12 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING, Optional, Type
 
-from ufo.agents.agent.app_agent import AppAgent
-from ufo.agents.agent.host_agent import HostAgent
-from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.modules.context import Context
 
 if TYPE_CHECKING:
+    from ufo.agents.agent.app_agent import AppAgent
+    from ufo.agents.agent.host_agent import HostAgent
     from ufo.agents.states.app_agent_state import AppAgentState
 
 
@@ -26,6 +25,7 @@ class HostAgentStatus(Enum):
     CONTINUE = "CONTINUE"
     FAIL = "FAIL"
     PENDING = "PENDING"
+    CONFIRM = "CONFIRM"
 
 
 class HostAgentStateManager(AgentStateManager):
@@ -38,7 +38,7 @@ class HostAgentStateManager(AgentStateManager):
         """
         The none state of the state manager.
         """
-        return NoneHostAgentState(self.agent)
+        return NoneHostAgentState()
 
 
 class HostAgentState(AgentState):
@@ -46,13 +46,7 @@ class HostAgentState(AgentState):
     The abstract class for the host agent state.
     """
 
-    def create_state_manager(self) -> HostAgentStateManager:
-        """
-        Create the state manager for the agent.
-        """
-        return HostAgentStateManager()
-
-    def handle(self, agent: HostAgent, context: Optional["Context"] = None) -> None:
+    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
         """
         Handle the agent for the current step.
         :param context: The context for the agent and session.
@@ -64,17 +58,19 @@ class HostAgentState(AgentState):
         """
         Handle the agent for the current step.
         """
+        from ufo.agents.agent.host_agent import HostAgent
+
         return HostAgent
 
-    def next_state(self, agent: HostAgent) -> AgentState:
+    def next_state(self, agent: "HostAgent") -> AgentState:
         """
         Get the next state of the agent.
         """
         status = agent.status
         state = HostAgentStateManager.get_state(status)
-        return state(agent)
+        return state
 
-    def next_agent(self, agent: HostAgent) -> HostAgent:
+    def next_agent(self, agent: "HostAgent") -> HostAgent:
         """
         Get the agent for the next step.
         :param context: The context for the agent and session.
@@ -110,23 +106,26 @@ class ContinueHostAgentState(HostAgentState):
     The class for the continue host agent state.
     """
 
-    def handle(self, agent: HostAgent, context: Optional["Context"] = None) -> None:
+    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
         """
         Handle the agent for the current step.
         :param context: The context for the agent and session.
         """
         agent.process(context)
 
-    def next_state(self, agent: HostAgent) -> AppAgentState:
+    def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
         Get the next state of the agent.
         :return: The state for the next step.
         """
 
         # Transition to the app agent state.
-        return ContinueAppAgentState
+        # Lazy import to avoid circular dependency.
+        from ufo.agents.states.app_agent_state import ContinueAppAgentState
 
-    def next_agent(self, agent: HostAgent) -> AppAgent:
+        return ContinueAppAgentState()
+
+    def next_agent(self, agent: "HostAgent") -> AppAgent:
         """
         Get the agent for the next step.
         :param context: The context for the agent and session.

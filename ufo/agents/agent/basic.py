@@ -8,14 +8,11 @@ from typing import TYPE_CHECKING, Dict, List, Type, Union
 
 from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
-from ufo.agents.states.basic import (
-    AgentState,
-    AgentStateManager,
-    ConcreteAgentStateManager,
-)
+from ufo.agents.states.basic import AgentState, AgentStatus
 from ufo.automator import puppeteer
 from ufo.llm import llm_call
 from ufo.modules.context import Context
+
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
@@ -44,8 +41,8 @@ class BasicAgent(ABC):
         self.retriever_factory = retriever.RetrieverFactory()
         self._memory = Memory()
         self._host = None
-        self._state_mamager = self.state_manager_class(self)
         self.processor = None
+        self._state = None
 
     @property
     def status(self) -> str:
@@ -209,7 +206,7 @@ class BasicAgent(ABC):
             self
         ), f"The state is only for agent type of {state.agent_class()}"
 
-        self.state = state
+        self._state = state
 
     def handle(self, context: Context) -> None:
         """
@@ -221,6 +218,14 @@ class BasicAgent(ABC):
     def process(self, context: Context) -> None:
         """
         Process the agent.
+        """
+        pass
+
+    @property
+    def status_manager(self) -> AgentStatus:
+        """
+        Get the status manager.
+        :return: The status manager.
         """
         pass
 

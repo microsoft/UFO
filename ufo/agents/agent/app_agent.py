@@ -8,6 +8,7 @@ from typing import Dict, List, Union
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator import puppeteer
 from ufo.config.config import Config
@@ -54,6 +55,7 @@ class AppAgent(BasicAgent):
         self.human_demonstration_retriever = None
 
         self.Puppeteer = self.create_puppteer_interface()
+        self.set_state(ContinueAppAgentState())
 
     def get_prompter(
         self,
@@ -283,6 +285,7 @@ class AppAgent(BasicAgent):
         """
         self.processor = AppAgentProcessor(agent=self, context=context)
         self.processor.process()
+        self.status = self.processor.status
 
     def process_resume(self) -> None:
         """
@@ -297,6 +300,13 @@ class AppAgent(BasicAgent):
         :return: The Puppeteer interface.
         """
         return puppeteer.AppPuppeteer(self._process_name, self._app_root_name)
+
+    @property
+    def status_manager(self) -> AppAgentStatus:
+        """
+        Get the status manager.
+        """
+        return AppAgentStatus()
 
     def build_offline_docs_retriever(self) -> None:
         """

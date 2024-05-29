@@ -175,7 +175,7 @@ example6:
     Observation: |-
       The screenshot shows that I am on the main window of the Word file named 'framework.docx'. The text of the file, which I am interest, is visible in the screenshot. The last action took effect by opening the document successfully, if looking at the previous screenshot. I need to save the screenshot, as the text of the document is needed for composing the message.
     Thought: |-
-      Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'APP_SELECTION' immediately to switch to the image of framework.png to complete the next task.
+      Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'SWITCH' immediately to switch to the image of framework.png to complete the next task.
     ControlLabel: |-
       83
     ControlText: |-
@@ -184,21 +184,21 @@ example6:
       texts
     Args: {}
     Status: |-
-      APP_SELECTION
+      SWITCH
     Plan:
-      - (1) Switch to the image of framework.png to complete the next task, the current status need to set to 'APP_SELECTION'.
+      - (1) Switch to the image of framework.png to complete the next task, the current status need to set to 'SWITCH'.
       - (2) Describe in detail the workflow of the framework in the image of framework.png base on the screenshot of the image.
       - (3) Switch to the Teams application.
       - (4) Open the chat window with Tom.
       - (5) Input the text of the Document control named 'framework.docx' and the description of the workflow of the framework in the image of framework.png in the Edit control named 'Type a new message'. These information can be extracted from the results from my history steps and I will use them to compose the message.
       - (6) Click the Send button to send the message. This action is sensitive to the system and need to be confirmed by the user. I need to confirm the action before clicking the Send button. If the user confirms the action, the task is finished.
     Comment: |-
-      The partial tasks on 'framework.docx' is completed once I take the current action. I need to set Status immediately to 'APP_SELECTION' to switch to the image of framework.png to complete the next task.
+      The partial tasks on 'framework.docx' is completed once I take the current action. I need to set Status immediately to 'SWITCH' to switch to the image of framework.png to complete the next task.
     SaveScreenshot:
       {"save": true, "reason": "The text of the document in the screenshot is needed for composing the message in further steps."}
   Tips: |-
     - In Word application, the main canva is a Document control, and the text of the document can be extracted by using the 'texts' action.
-    - After extracting the text of the document, I need to set the status as 'APP_SELECTION' immediately to switch to the image of framework.png to complete the next task.
+    - After extracting the text of the document, I need to set the status as 'SWITCH' immediately to switch to the image of framework.png to complete the next task.
 
 
 example7:

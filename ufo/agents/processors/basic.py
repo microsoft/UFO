@@ -5,7 +5,7 @@
 import json
 import traceback
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -13,7 +13,6 @@ from ufo import utils
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
-from ufo.module.state import Status
 from ufo.modules.context import Context, ContextNames
 from ufo.agents.agent.basic import BasicAgent
 
@@ -43,15 +42,15 @@ class BaseProcessor(ABC):
         self.photographer = PhotographerFacade()
         self.control_inspector = ControlInspectorFacade(BACKEND)
 
-        self._step = 0
         self._prompt_message = None
+        self._status = None
         self._response = None
         self._cost = 0
         self._control_label = None
         self._control_text = None
         self._response_json = {}
         self._results = None
-        self.app_root = None
+        self._agent_status_manager = self.agent.status_manager
 
     def process(self) -> None:
         """
@@ -103,8 +102,8 @@ class BaseProcessor(ABC):
         if self.should_create_subagent():
             self.create_sub_agent()
 
-        # Step 10: Update the step and status.
-        self.update_step_and_status()
+        # Step 10: Update the status.
+        self.update_status()
 
     def resume(self) -> None:
         """
@@ -112,13 +111,12 @@ class BaseProcessor(ABC):
         """
 
         self.execute_action()
-
         self.update_memory()
 
         if self.should_create_subagent():
             self.create_sub_agent()
 
-        self.update_step_and_status()
+        self.update_status()
 
     @abstractmethod
     def print_step_info(self) -> None:
@@ -191,6 +189,19 @@ class BaseProcessor(ABC):
         """
         return self._context
 
+    def _update_context(self) -> None:
+        """
+        Update the context.
+        """
+
+        current_round_cost = self.context.get(ContextNames.CURRENT_ROUND_COST)
+        current_round_step = self.context.get(ContextNames.CURRENT_ROUND_STEP)
+
+        self.context.set(
+            ContextNames.CURRENT_ROUND_COST, current_round_cost + self.cost
+        )
+        self.context.set(ContextNames.CURRENT_ROUND_STEP, current_round_step + 1)
+
     @property
     def agent(self) -> BasicAgent:
         """
@@ -208,15 +219,15 @@ class BaseProcessor(ABC):
         self.request = self.context.get(ContextNames.REQUEST)
         self.request_logger = self.context.get(ContextNames.REQUEST_LOGGER)
         self.logger = self.context.get(ContextNames.LOGGER)
-        self.round_step = self.context.get(ContextNames.ROUND_STEP)
+        self.round_step = self.context.get(ContextNames.CURRENT_ROUND_STEP)
         self.session_step = self.context.get(ContextNames.SESSION_STEP)
-        self.prev_status = self.context.get(ContextNames.STATE)
-        self.round_num = self.context.get(ContextNames.ROUND_NUMBER)
+        self.round_num = self.context.get(ContextNames.CURRENT_ROUND_ID)
         self._app_window = self.context.get(ContextNames.APPLICATION_WINDOW)
         self._control_reannotate = self.context.get(ContextNames.CONTROL_REANNOTATION)
         self.application_process_name = self.context.get(
             ContextNames.APPLICATION_PROCESS_NAME
         )
+        self.app_root = self.context.get(ContextNames.APPLICATION_ROOT_NAME)
 
     def create_sub_agent(self) -> None:
         """
@@ -224,45 +235,35 @@ class BaseProcessor(ABC):
         """
         pass
 
-    def update_step_and_status(self) -> None:
-        """
-        Update the step and status of the process.
-        """
-        self._step += 1
-        self.update_status()
-
-    def get_active_window(self) -> UIAWrapper:
+    @property
+    def application_window(self) -> UIAWrapper:
         """
         Get the active window.
         :return: The active window.
         """
         return self._app_window
 
-    def get_active_control_text(self) -> str:
+    @property
+    def control_text(self) -> str:
         """
         Get the active application.
         :return: The active application.
         """
         return self._control_text
 
-    def get_process_status(self) -> str:
+    @property
+    def status(self) -> str:
         """
-        Get the process status.
-        :return: The process status.
+        Get the status of the processor.
+        :return: The status of the processor.
         """
         return self._status
 
-    def get_process_step(self) -> int:
+    @property
+    def cost(self) -> float:
         """
-        Get the process step.
-        :return: The process step.
-        """
-        return self._step
-
-    def get_process_cost(self) -> float:
-        """
-        Get the process cost.
-        :return: The process cost.
+        Get the cost of the processor.
+        :return: The cost of the processor.
         """
         return self._cost
 
@@ -272,14 +273,13 @@ class BaseProcessor(ABC):
         :return: The boolean value indicating if the process is in error.
         """
 
-        return self._status == Status.ERROR
+        return self._status == self._agent_status_manager.ERROR.value
 
     def should_create_subagent(self) -> bool:
         """
         Check if the app agent should be created.
         :return: The boolean value indicating if the app agent should be created.
         """
-
         return False
 
     def log(self, response_json: dict) -> None:
@@ -299,7 +299,7 @@ class BaseProcessor(ABC):
         log = json.dumps(
             {
                 "step": self._step,
-                "status": Status.ERROR,
+                "status": self._agent_status_manager.ERROR.value,
                 "response": response_str,
                 "error": error,
             }
@@ -323,7 +323,7 @@ class BaseProcessor(ABC):
         utils.print_with_color(str(error_trace), "red")
         utils.print_with_color(self._response, "red")
         self.error_log(self._response, str(error_trace))
-        self._status = Status.ERROR
+        self._status = self._agent_status_manager.ERROR.value
 
     def llm_error_handler(self) -> None:
         """
@@ -341,7 +341,7 @@ class BaseProcessor(ABC):
             "Error occurs when calling LLM: {e}".format(e=str(error_trace)), "red"
         )
         self.request_logger.info(log)
-        self._status = Status.ERROR
+        self._status = self._agent_status_manager.ERROR.value
         return
 
     @staticmethod

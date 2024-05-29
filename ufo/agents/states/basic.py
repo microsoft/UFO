@@ -3,7 +3,8 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import ABC, ABCMeta, abstractmethod
+from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.modules.context import Context
@@ -27,7 +28,24 @@ class SingletonMeta(type):
         return cls._instances[cls]
 
 
-class AgentStateManager(ABC, metaclass=SingletonMeta):
+class SingletonABCMeta(SingletonMeta, ABCMeta):
+    pass
+
+
+class AgentStatus(Enum):
+    """
+    The status of the agent.
+    """
+
+    ERROR = "ERROR"
+    FINISH = "FINISH"
+    CONTINUE = "CONTINUE"
+    FAIL = "FAIL"
+    PENDING = "PENDING"
+    CONFIRM = "CONFIRM"
+
+
+class AgentStateManager(ABC, metaclass=SingletonABCMeta):
     """
     A abstract class to manage the states of the agent.
     """
@@ -48,6 +66,15 @@ class AgentStateManager(ABC, metaclass=SingletonMeta):
         :param status: The status string.
         :return: The state object.
         """
+
+        # Lazy load the state class
+        if status not in self._state_instance_mapping:
+            state_class = self._state_mapping.get(status)
+            if state_class:
+                self._state_instance_mapping[status] = state_class()
+            else:
+                self._state_instance_mapping[status] = self.none_state
+
         state = self._state_instance_mapping.get(status, self.none_state)
 
         return state
@@ -98,22 +125,6 @@ class AgentState(ABC):
     The abstract class for the agent state.
     """
 
-    def __init__(self, agent: BasicAgent) -> None:
-        """
-        Initialize the agent state.
-        :param agent: The agent to be handled.
-        """
-        self._agent = agent
-        self._state_manager = self.create_state_manager()
-
-    @abstractmethod
-    def create_state_manager(self) -> AgentStateManager:
-        return AgentStateManager()
-
-    @property
-    def state_manager(self) -> AgentStateManager:
-        return self._state_manager
-
     @abstractmethod
     def handle(self, agent: BasicAgent, context: Optional["Context"] = None) -> None:
         """
@@ -129,7 +140,7 @@ class AgentState(ABC):
         :param context: The context for the agent and session.
         :return: The agent for the next step.
         """
-        return self.next_state().agent
+        return agent
 
     @abstractmethod
     def next_state(self, agent: BasicAgent) -> AgentState:

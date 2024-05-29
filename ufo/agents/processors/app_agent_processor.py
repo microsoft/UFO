@@ -5,19 +5,20 @@
 import json
 import os
 import time
-from typing import Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, Tuple
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
 from ufo.module import interactor
-from ufo.module.state import Status
 from ufo.modules.context import Context
+
+if TYPE_CHECKING:
+    from ufo.agents.agent.app_agent import AppAgent
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -28,7 +29,7 @@ class AppAgentProcessor(BaseProcessor):
     The processor for the app agent at a single step.
     """
 
-    def __init__(self, agent: AppAgent, context: Context) -> None:
+    def __init__(self, agent: "AppAgent", context: Context) -> None:
         """
         Initialize the app agent processor.
         :param agent: The app agent who executes the processor.
@@ -60,7 +61,7 @@ class AppAgentProcessor(BaseProcessor):
             "Round {round_num}, Step {step}: Taking an action on application {application}.".format(
                 round_num=self.round_num + 1,
                 step=self.round_step + 1,
-                application=self.process_name,
+                application=self.application_process_name,
             ),
             "magenta",
         )
@@ -287,7 +288,10 @@ class AppAgentProcessor(BaseProcessor):
             should_proceed = True
 
             # Safe guard for the action.
-            if self._status.upper() == Status.PENDING and configs["SAFE_GUARD"]:
+            if (
+                self._status.upper() == self._agent_status_manager.PENDING.value
+                and configs["SAFE_GUARD"]
+            ):
                 should_proceed = self._safe_guard_judgement(
                     self._action, self._control_text
                 )
@@ -329,7 +333,7 @@ class AppAgentProcessor(BaseProcessor):
         Handle the screenshot status when the annotation is overlapped and the agent is unable to select the control items.
         """
 
-        if self._status.upper() == Status.SCREENSHOT:
+        if self._status.upper() == self._agent_status_manager.SCREENSHOT.value:
             utils.print_with_color(
                 "Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.",
                 "magenta",
@@ -338,7 +342,7 @@ class AppAgentProcessor(BaseProcessor):
                 "annotation", self._args, self._annotation_dict
             )
             if self._control_reannotate is None or len(self._control_reannotate) == 0:
-                self._status = Status.CONTINUE
+                self._status = self._agent_status_manager.CONTINUE.value
         else:
             self._control_reannotate = None
 
@@ -354,7 +358,7 @@ class AppAgentProcessor(BaseProcessor):
         # Log additional information for the app agent.
         additional_memory = {
             "Step": self.session_step,
-            "RoundStep": self.get_process_step(),
+            "RoundStep": self.round_step,
             "AgentStep": self.app_agent.step,
             "Round": self.round_num,
             "Action": self._action,
@@ -392,7 +396,7 @@ class AppAgentProcessor(BaseProcessor):
         self.app_agent.step += 1
         self.app_agent.status = self._status
 
-        if self._status != Status.FINISH:
+        if self._status != self._agent_status_manager.FINISH.value:
             time.sleep(configs["SLEEP_TIME"])
 
     def _update_image_blackboard(self) -> None:
@@ -422,12 +426,15 @@ class AppAgentProcessor(BaseProcessor):
         decision = interactor.sensitive_step_asker(action, control_text)
         if not decision:
             utils.print_with_color("The user decide to stop the task.", "magenta")
-            self._status = Status.FINISH
+            self._status = self._agent_status_manager.FINISH.value
             return False
 
         # Handle the PENDING_AND_FINISH case
-        elif len(self._plan) > 0 and Status.FINISH in self._plan[0]:
-            self._status = Status.FINISH
+        elif (
+            len(self._plan) > 0
+            and self._agent_status_manager.FINISH.value in self._plan[0]
+        ):
+            self._status = self._agent_status_manager.FINISH.value
         return True
 
     def _save_to_xml(self) -> None:

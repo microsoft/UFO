@@ -26,11 +26,11 @@ from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
+from ufo.agents.states.basic import AgentState
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.modules.context import Context, ContextNames
-
 
 configs = Config.get_instance().config_data
 
@@ -89,6 +89,7 @@ class BaseRound(ABC):
         Run the round.
         """
         while not self.is_finished():
+            print(self.state.name())
             self._agent.handle(self._context)
             self._agent = self._agent.state.next_agent(self._agent)
             self._state = self._agent.state.next_state(self._agent)
@@ -105,7 +106,7 @@ class BaseRound(ABC):
         self._state.is_round_end()
 
     @property
-    def state(self) -> str:
+    def state(self) -> AgentState:
         """
         Get the status of the round.
         return: The status of the round.
@@ -192,10 +193,10 @@ class BaseSession(ABC):
     A basic session in UFO. A session consists of multiple rounds of interactions.
     The handle function is the core function to handle the session. UFO runs with the state transition and handles the different states, using the state pattern.
     A session follows the following steps:
-    1. Begins with the ''APP_SELECTION'' state for the HostAgent to select an application.
+    1. Begins with the ''CONTINUE'' state for the HostAgent to select an application.
     2. After the application is selected, the session moves to the ''CONTINUE'' state for the AppAgent to select an action. This process continues until all the actions are completed.
     3. When all the actions are completed for the current user request at a round, the session moves to the ''FINISH'' state.
-    4. The session will ask the user if they want to continue with another request. If the user wants to continue, the session will start a new round and move to the ''APP_SELECTION'' state.
+    4. The session will ask the user if they want to continue with another request. If the user wants to continue, the session will start a new round and move to the ''SWITCH'' state.
     5. If the user does not want to continue, the session will transition to the ''COMPLETE'' state.
     6. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
     """
@@ -365,9 +366,8 @@ class BaseSession(ABC):
         Print the total cost of the session.
         """
 
-        total_cost = self.get_cost()
-        if isinstance(total_cost, float):
-            formatted_cost = "${:.2f}".format(total_cost)
+        if isinstance(self.cost, float):
+            formatted_cost = "${:.2f}".format(self.cost)
             utils.print_with_color(f"Request total cost is {formatted_cost}", "yellow")
 
     @property
@@ -391,7 +391,7 @@ class BaseSession(ABC):
         Check if the session is ended.
         return: True if the session is ended, otherwise False.
         """
-        if self._finish or self.step >= configs["MAX_STEPS"]:
+        if self._finish or self.step >= configs["MAX_STEP"]:
             return True
         return False
 
@@ -441,8 +441,9 @@ class BaseSession(ABC):
 
         # Capture the final screenshot
         screenshot_save_path = self.log_path + f"action_step_final.png"
+
         PhotographerFacade().capture_app_window_screenshot(
-            self.app_window, save_path=screenshot_save_path
+            self.application_window, save_path=screenshot_save_path
         )
 
         # Save the final XML file
