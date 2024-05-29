@@ -3,8 +3,9 @@
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Optional, Type
 from enum import Enum
+from typing import TYPE_CHECKING, Dict, Optional, Type
+
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.agents.states.host_agent_state import (
@@ -38,6 +39,8 @@ class AppAgentStatus(Enum):
 
 class AppAgentStateManager(AgentStateManager):
 
+    _state_mapping: Dict[str, Type[AppAgentState]] = {}
+
     @property
     def none_state(self) -> AgentState:
         """
@@ -63,6 +66,10 @@ class AppAgentState(AgentState):
         """
         Handle the agent for the current step.
         """
+
+        # Avoid circular import
+        from ufo.agents.agent.app_agent import AppAgent
+
         return AppAgent
 
     def next_agent(self, agent: "AppAgent") -> BasicAgent:
@@ -77,7 +84,7 @@ class AppAgentState(AgentState):
         """
 
         status = agent.status
-        state = AppAgentStateManager.get_state(status)
+        state = AppAgentStateManager().get_state(status)
         return state
 
 

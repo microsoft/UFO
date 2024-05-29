@@ -265,6 +265,9 @@ class BaseProcessor(ABC):
         Get the cost of the processor.
         :return: The cost of the processor.
         """
+
+        if self._cost is None:
+            return 0
         return self._cost
 
     def is_error(self) -> bool:

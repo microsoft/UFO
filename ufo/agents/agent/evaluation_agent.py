@@ -89,7 +89,7 @@ class EvaluationAgent(BasicAgent):
         Get the status manager.
         """
 
-        return EvaluatonAgentStatus()
+        return EvaluatonAgentStatus
 
     def evaluate(self, request: str, log_path: str) -> Tuple[Dict[str, str], float]:
         """

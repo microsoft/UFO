@@ -36,7 +36,7 @@ class BasicAgent(ABC):
         self._step = 0
         self._complete = False
         self._name = name
-        self._status = None
+        self._status = self.status_manager.CONTINUE.value
         self._register_self()
         self.retriever_factory = retriever.RetrieverFactory()
         self._memory = Memory()

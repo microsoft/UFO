@@ -88,12 +88,26 @@ class BaseRound(ABC):
         """
         Run the round.
         """
+
+        print(
+            "Before", self.state.__class__, self.state.name(), self.state.is_round_end()
+        )
+
         while not self.is_finished():
-            print(self.state.name())
-            self._agent.handle(self._context)
-            self._agent = self._agent.state.next_agent(self._agent)
-            self._state = self._agent.state.next_state(self._agent)
-            self._agent.set_state(self._state)
+
+            self.agent.handle(self.context)
+
+            self.state = self.agent.state.next_state(self.agent)
+
+            print(
+                "After",
+                self.state.__class__,
+                self.state.name(),
+                self.state.is_round_end(),
+            )
+
+            self.agent = self.agent.state.next_agent(self.agent)
+            self.agent.set_state(self.state)
 
         if self._should_evaluate:
             self.evaluation()
@@ -103,7 +117,23 @@ class BaseRound(ABC):
         Check if the round is finished.
         return: True if the round is finished, otherwise False.
         """
-        self._state.is_round_end()
+        return self._state.is_round_end()
+
+    @property
+    def agent(self) -> BasicAgent:
+        """
+        Get the agent of the round.
+        return: The agent of the round.
+        """
+        return self._agent
+
+    @agent.setter
+    def agent(self, agent: BasicAgent) -> None:
+        """
+        Set the agent of the round.
+        :param agent: The agent of the round.
+        """
+        self._agent = agent
 
     @property
     def state(self) -> AgentState:
@@ -112,6 +142,14 @@ class BaseRound(ABC):
         return: The status of the round.
         """
         return self._state
+
+    @state.setter
+    def state(self, state: AgentState) -> None:
+        """
+        Set the status of the round.
+        :param state: The status of the round.
+        """
+        self._state = state
 
     @property
     def step(self) -> int:
@@ -234,6 +272,7 @@ class BaseSession(ABC):
         """
         Run the session.
         """
+
         while not self.is_finished():
 
             round = self.create_new_round()
@@ -241,7 +280,8 @@ class BaseSession(ABC):
                 break
             round.run()
 
-        self.capture_last_snapshot()
+        if self.application_window is not None:
+            self.capture_last_snapshot()
 
         if self._should_evaluate:
             self.evaluation()

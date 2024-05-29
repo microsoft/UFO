@@ -306,7 +306,7 @@ class AppAgent(BasicAgent):
         """
         Get the status manager.
         """
-        return AppAgentStatus()
+        return AppAgentStatus
 
     def build_offline_docs_retriever(self) -> None:
         """

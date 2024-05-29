@@ -14,7 +14,7 @@ from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
-from ufo.modules.context import Context
+from ufo.modules.context import Context, ContextNames
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
@@ -233,6 +233,10 @@ class HostAgentProcessor(BaseProcessor):
             utils.print_with_color("Switching to a new application...", "magenta")
             self._app_window.minimize()
         self._app_window = new_app_window
+
+        self.context.set(ContextNames.APPLICATION_WINDOW, self._app_window)
+        self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
+        self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self._control_text)
 
     def update_memory(self) -> None:
         """

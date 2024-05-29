@@ -107,7 +107,8 @@ class Session(BaseSession):
         request = self.get_request()
 
         # Create a new round and return None if the session is finished.
-        if self.is_finished:
+
+        if self.is_finished():
             return None
         round = BaseRound(
             request=request,

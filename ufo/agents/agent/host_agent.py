@@ -239,6 +239,7 @@ class HostAgent(BasicAgent):
         """
         self.processor = HostAgentProcessor(agent=self, context=context)
         self.processor.process()
+        print("Agent Status", self.processor.status)
         self.status = self.processor.status
 
     def print_response(self, response_dict: Dict) -> None:
@@ -314,4 +315,4 @@ class HostAgent(BasicAgent):
         """
         Get the status manager.
         """
-        return HostAgentStatus()
+        return HostAgentStatus

@@ -124,7 +124,7 @@ class Context:
 
             context_value = self._context[key.name]
 
-            if isinstance(value, dict) and isinstance(key, context_value):
+            if isinstance(value, dict) and isinstance(context_value, dict):
                 self._context[key.name].update(value)
             else:
                 raise TypeError(

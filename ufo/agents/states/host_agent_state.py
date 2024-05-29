@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, Optional, Type
+from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.modules.context import Context
@@ -32,6 +32,8 @@ class HostAgentStateManager(AgentStateManager):
     """
     The class to manage the states of the host agent.
     """
+
+    _state_mapping: Dict[str, Type[HostAgentState]] = {}
 
     @property
     def none_state(self) -> AgentState:
@@ -67,7 +69,10 @@ class HostAgentState(AgentState):
         Get the next state of the agent.
         """
         status = agent.status
-        state = HostAgentStateManager.get_state(status)
+
+        state = HostAgentStateManager().get_state(status)
+
+        print(f"Next state: {state.name()}", state.__class__)
         return state
 
     def next_agent(self, agent: "HostAgent") -> HostAgent:
@@ -121,9 +126,15 @@ class ContinueHostAgentState(HostAgentState):
 
         # Transition to the app agent state.
         # Lazy import to avoid circular dependency.
-        from ufo.agents.states.app_agent_state import ContinueAppAgentState
 
-        return ContinueAppAgentState()
+        if agent.status == HostAgentStatus.CONTINUE.value:
+
+            from ufo.agents.states.app_agent_state import ContinueAppAgentState
+
+            return ContinueAppAgentState()
+
+        else:
+            return super().next_state(agent)
 
     def next_agent(self, agent: "HostAgent") -> AppAgent:
         """
@@ -132,8 +143,10 @@ class ContinueHostAgentState(HostAgentState):
         :return: The agent for the next step.
         """
 
-        # Transition to the app agent.
-        return agent.get_active_appagent()
+        if agent.status == HostAgentStatus.CONTINUE.value:
+            return agent.get_active_appagent()
+        else:
+            return agent
 
     def is_round_end(self) -> bool:
         """
