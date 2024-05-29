@@ -73,6 +73,6 @@ LOG_XML: False  # Whether to log the xml file for the at every step.
 SCREENSHOT_TO_MEMORY: True  # Whether to allow the screenshot to memory for the agent's decision making.
 
 # For the evaluation
-EVA_SESSION: FALSE  # Whether to include the session in the evaluation
+EVA_SESSION: True  # Whether to include the session in the evaluation
 EVA_ROUND: FALSE
 EVA_ALL_SCREENSHOTS: True  # Whether to include all the screenshots in the evaluation

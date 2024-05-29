@@ -163,7 +163,7 @@ class FollowerSession(BaseSession):
         :param should_evaluate: Whether to evaluate the session.
         """
 
-        super(Session, self).__init__(task, should_evaluate)
+        super().__init__(task, should_evaluate)
 
         self.plan_reader = PlanReader(plan_file)
 
@@ -176,7 +176,7 @@ class FollowerSession(BaseSession):
         request = self.get_request()
 
         # Create a new round and return None if the session is finished.
-        if self.is_finished:
+        if self.is_finished():
             return None
 
         if self.total_rounds == 0:
@@ -186,14 +186,14 @@ class FollowerSession(BaseSession):
         else:
             agent = self._host_agent.get_active_appagent()
             agent.clear_memory()
-            agent.set_state(ContinueAppAgentState)
+            agent.set_state(ContinueAppAgentState())
 
             self._host_agent.add_request_memory(request)
 
             utils.print_with_color(
                 "Starting step {round}:".format(round=self.total_rounds), "yellow"
             )
-            utils.print_with_color(self.request, "cyan")
+            utils.print_with_color(request, "cyan")
 
         round = BaseRound(
             request=request,

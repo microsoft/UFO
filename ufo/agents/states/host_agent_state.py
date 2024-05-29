@@ -71,8 +71,6 @@ class HostAgentState(AgentState):
         status = agent.status
 
         state = HostAgentStateManager().get_state(status)
-
-        print(f"Next state: {state.name()}", state.__class__)
         return state
 
     def next_agent(self, agent: "HostAgent") -> HostAgent:

@@ -20,7 +20,7 @@ class EvaluatonAgentStatus(Enum):
     """
 
     FINISH = "FINISH"
-    EVALUATION = "EVALUATION"
+    CONTINUE = "CONTINUE"
 
 
 class EvaluationAgentStateManager(AgentStateManager):
@@ -54,7 +54,7 @@ class EvaluatonAgentState(AgentState):
 
 
 @EvaluationAgentStateManager.register
-class EvaEvaluatonAgentState(EvaluatonAgentState):
+class ContinueEvaluatonAgentState(EvaluatonAgentState):
     """
     The class for the finish evaluation agent state.
     """
@@ -95,7 +95,7 @@ class EvaEvaluatonAgentState(EvaluatonAgentState):
         """
         The class name of the state.
         """
-        return EvaluatonAgentStatus.EVALUATION.value
+        return EvaluatonAgentStatus.CONTINUE.value
 
 
 @EvaluationAgentStateManager.register

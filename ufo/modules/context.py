@@ -16,6 +16,7 @@ class ContextNames(Enum):
     REQUEST = "REQUEST"
     REQUEST_LOGGER = "REQUEST_LOGGER"
     LOGGER = "LOGGER"
+    EVALUATION_LOGGER = "EVALUATION_LOGGER"
     ROUND_STEP = "ROUND_STEP"
     SESSION_STEP = "SESSION_STEP"
     CURRENT_ROUND_ID = "CURRENT_ROUND_ID"
@@ -52,7 +53,11 @@ class ContextNames(Enum):
             return {}
         elif self == ContextNames.CONTROL_REANNOTATION:
             return []
-        elif self == ContextNames.REQUEST_LOGGER or self == ContextNames.LOGGER:
+        elif (
+            self == ContextNames.REQUEST_LOGGER
+            or self == ContextNames.LOGGER
+            or self == ContextNames.EVALUATION_LOGGER
+        ):
             return None  # Assuming Logger should be initialized elsewhere
         elif self == ContextNames.APPLICATION_WINDOW:
             return None  # Assuming UIAWrapper should be initialized elsewhere
@@ -83,7 +88,11 @@ class ContextNames(Enum):
             return dict
         elif self == ContextNames.CONTROL_REANNOTATION:
             return list
-        elif self == ContextNames.REQUEST_LOGGER or self == ContextNames.LOGGER:
+        elif (
+            self == ContextNames.REQUEST_LOGGER
+            or self == ContextNames.LOGGER
+            or self == ContextNames.EVALUATION_LOGGER
+        ):
             return Logger
         elif self == ContextNames.APPLICATION_WINDOW:
             return UIAWrapper

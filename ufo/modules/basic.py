@@ -91,27 +91,11 @@ class BaseRound(ABC):
         Run the round.
         """
 
-        print(
-            "Before",
-            self.state.__class__,
-            self.state.name(),
-            self.state.is_round_end(),
-            self.context.get(ContextNames.LOG_PATH),
-        )
-
         while not self.is_finished():
 
             self.agent.handle(self.context)
 
             self.state = self.agent.state.next_state(self.agent)
-
-            print(
-                "After",
-                self.state.__class__,
-                self.state.name(),
-                self.state.is_round_end(),
-                self.context.get(ContextNames.LOG_PATH),
-            )
 
             self.agent = self.agent.state.next_agent(self.agent)
             self.agent.set_state(self.state)
@@ -331,10 +315,12 @@ class BaseSession(ABC):
         # Initialize the logger
         logger = self.initialize_logger(self.log_path, "response.log")
         request_logger = self.initialize_logger(self.log_path, "request.log")
+        eval_logger = self.initialize_logger(self.log_path, "evaluation.log")
 
         self.context.set(ContextNames.LOGGER, logger)
         self.context.set(ContextNames.LOG_PATH, self.log_path)
         self.context.set(ContextNames.REQUEST_LOGGER, request_logger)
+        self.context.set(ContextNames.EVALUATION_LOGGER, eval_logger)
 
         # Initialize the session cost and step
         self.context.set(ContextNames.SESSION_COST, 0)
@@ -356,6 +342,14 @@ class BaseSession(ABC):
         """
         return self.context.get(ContextNames.SESSION_COST)
 
+    @cost.setter
+    def cost(self, cost: float) -> None:
+        """
+        Update the cost of the session.
+        :param cost: The cost to be updated.
+        """
+        self.context.set(ContextNames.SESSION_COST, cost)
+
     @property
     def step(self) -> int:
         """
@@ -363,6 +357,14 @@ class BaseSession(ABC):
         return: The step of the session.
         """
         return self.context.get(ContextNames.SESSION_STEP)
+
+    @property
+    def evaluation_logger(self) -> logging.Logger:
+        """
+        Get the logger for evaluation.
+        return: The logger for evaluation.
+        """
+        return self.context.get(ContextNames.EVALUATION_LOGGER)
 
     @property
     def total_rounds(self) -> int:
@@ -395,7 +397,7 @@ class BaseSession(ABC):
             configs["API_PROMPT"],
         )
         experience = summarizer.read_logs(self.log_path)
-        summaries, total_cost = summarizer.get_summary_list(experience)
+        summaries, cost = summarizer.get_summary_list(experience)
 
         experience_path = configs["EXPERIENCE_SAVED_PATH"]
         utils.create_folder(experience_path)
@@ -406,7 +408,7 @@ class BaseSession(ABC):
             summaries, os.path.join(experience_path, "experience_db")
         )
 
-        self.update_cost(cost=total_cost)
+        self.cost += cost
         utils.print_with_color("The experience has been saved.", "magenta")
 
     def print_cost(self) -> None:
@@ -414,9 +416,11 @@ class BaseSession(ABC):
         Print the total cost of the session.
         """
 
-        if isinstance(self.cost, float):
+        if isinstance(self.cost, float) and self.cost > 0:
             formatted_cost = "${:.2f}".format(self.cost)
-            utils.print_with_color(f"Request total cost is {formatted_cost}", "yellow")
+            utils.print_with_color(f"Request total cost is {formatted_cost}$", "yellow")
+        else:
+            utils.print_with_color(f"Cost is not available for the model {configs['HOST_AGENT']["API_MODEL"]} or {configs['APP_AGENT']["API_MODEL"]}.", "yellow")
 
     @property
     def application_window(self) -> UIAWrapper:
@@ -467,12 +471,16 @@ class BaseSession(ABC):
 
         requests = self.request_to_evaluate()
         result, cost = evaluator.evaluate(request=requests, log_path=self.log_path)
-        self.context.add_value(ContextNames.SESSION_COST, cost)
+
+        # Add additional information to the evaluation result.
+        additional_info = {"level": "session", "request": requests, "id": 0}
+        result.update(additional_info)
+
+        self.cost += cost
 
         evaluator.print_response(result)
 
-        logger = self.context.get(ContextNames.LOGGER)
-        logger.info(json.dumps(result))
+        self.evaluation_logger.info(json.dumps(result))
 
     @property
     def session_type(self) -> str:
