@@ -23,12 +23,11 @@ from typing import Dict, Optional
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
+from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
-from ufo.agents.agent.app_agent import AppAgent
-from ufo.agents.states.basic import AgentStatus
-from ufo.agents.states.basic import AgentState
+from ufo.agents.states.basic import AgentState, AgentStatus
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer
