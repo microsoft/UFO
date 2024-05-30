@@ -28,9 +28,6 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             configs["RAG_ONLINE_RETRIEVED_TOPK"],
         )
 
-        action_history = self.host_agent.get_global_action_memory().to_json()
-        request_history = self.host_agent.get_request_history_memory().to_json()
-
         # Get the current state of the application and the state difference between the current state and the previous state.
         current_state = {}
         state_diff = {}
@@ -40,8 +37,6 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             tips,
             external_knowledge_prompt,
             self._image_url,
-            request_history,
-            action_history,
             self.filtered_control_info,
             self.prev_plan,
             self.request,

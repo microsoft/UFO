@@ -103,8 +103,6 @@ system_nonvisual: |-
 
 user: |-
   <Available Applications:> {control_item}
-  <Request History:> {request_history}
-  <Step History:> {action_history}
   <Previous Plan:> {prev_plan}
   <Current User Request:> {user_request}
   <Your response:>

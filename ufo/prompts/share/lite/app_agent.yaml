@@ -155,8 +155,6 @@ system_nonvisual: |-
 user: |-
   {retrieved_docs}
   <Available Control Item:> {control_item}
-  <Request History:> {request_history}
-  <Step History:> {action_history}
   <Previous Plan:> {prev_plan}
   <Current User Request:> {user_request}
   <Your response:>

@@ -100,6 +100,10 @@ class BaseRound(ABC):
             self.agent = self.agent.state.next_agent(self.agent)
             self.agent.set_state(self.state)
 
+        self.agent.blackboard.add_requests(
+            {"request_{i}".format(i=self.id), self.request}
+        )
+
         if self.application_window is not None:
             self.capture_last_snapshot()
 
@@ -392,6 +396,22 @@ class BaseSession(ABC):
         self.context.set(ContextNames.SESSION_COST, cost)
 
     @property
+    def application_window(self) -> UIAWrapper:
+        """
+        Get the application of the session.
+        return: The application of the session.
+        """
+        return self._context.get(ContextNames.APPLICATION_WINDOW)
+
+    @application_window.setter
+    def application_window(self, app_window: UIAWrapper) -> None:
+        """
+        Set the application window.
+        :param app_window: The application window.
+        """
+        self._context.set(ContextNames.APPLICATION_WINDOW, app_window)
+
+    @property
     def step(self) -> int:
         """
         Get the step of the session.
@@ -481,22 +501,6 @@ class BaseSession(ABC):
                 ),
                 "yellow",
             )
-
-    @property
-    def application_window(self) -> UIAWrapper:
-        """
-        Get the application of the session.
-        return: The application of the session.
-        """
-        return self._context.get(ContextNames.APPLICATION_WINDOW)
-
-    @application_window.setter
-    def application_window(self, app_window: UIAWrapper) -> None:
-        """
-        Set the application window.
-        :param app_window: The application window.
-        """
-        self._context.set(ContextNames.APPLICATION_WINDOW, app_window)
 
     def is_error(self):
         """

@@ -85,8 +85,6 @@ class AppAgent(BasicAgent):
         dynamic_tips: str,
         dynamic_knowledge: str,
         image_list: List,
-        request_history: str,
-        action_history: str,
         control_info: str,
         plan: List[str],
         request: str,
@@ -98,8 +96,6 @@ class AppAgent(BasicAgent):
         :param dynamic_tips: The dynamic tips retrieved from the self-demonstration and human demonstration.
         :param dynamic_knowledge: The dynamic knowledge retrieved from the external knowledge base.
         :param image_list: The list of screenshot images.
-        :param request_history: The request history.
-        :param action_history: The action history.
         :param control_info: The control information.
         :param plan: The plan list.
         :param request: The request.
@@ -112,8 +108,6 @@ class AppAgent(BasicAgent):
 
         appagent_prompt_user_message = self.prompter.user_content_construction(
             image_list,
-            request_history,
-            action_history,
             control_info,
             plan,
             request,

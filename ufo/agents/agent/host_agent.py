@@ -14,9 +14,8 @@ from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.agents.memory.blackboard import Blackboard
-from ufo.agents.memory.memory import Memory, MemoryItem
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
-from ufo.agents.states.host_agent_state import HostAgentStatus, ContinueHostAgentState
+from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
 from ufo.automator.ui_control import openfile
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.config.config import Config
@@ -80,8 +79,6 @@ class HostAgent(BasicAgent):
         self.human_demonstration_retriever = None
         self.agent_factory = AgentFactory()
         self.appagent_dict = {}
-        self._global_action_memory = Memory()
-        self._request_history_memory = Memory()
         self._active_appagent = None
         self._blackboard = Blackboard()
         self.set_state(ContinueHostAgentState())
@@ -156,13 +153,6 @@ class HostAgent(BasicAgent):
         """
         return self._active_appagent
 
-    def get_round(self) -> int:
-        """
-        Get the round number.
-        :return: The round number.
-        """
-        return self._request_history_memory.length
-
     @property
     def blackboard(self):
         """
@@ -173,8 +163,6 @@ class HostAgent(BasicAgent):
     def message_constructor(
         self,
         image_list: List[str],
-        request_history: str,
-        action_history: str,
         os_info: str,
         plan: List[str],
         request: str,
@@ -182,8 +170,6 @@ class HostAgent(BasicAgent):
         """
         Construct the message.
         :param image_list: The list of screenshot images.
-        :param request_history: The request history.
-        :param action_history: The action history.
         :param os_info: The OS information.
         :param plan: The plan.
         :param request: The request.
@@ -191,7 +177,7 @@ class HostAgent(BasicAgent):
         """
         hostagent_prompt_system_message = self.prompter.system_prompt_construction()
         hostagent_prompt_user_message = self.prompter.user_content_construction(
-            image_list, request_history, action_history, os_info, plan, request
+            image_list, os_info, plan, request
         )
 
         if not self.blackboard.is_empty():
@@ -272,42 +258,6 @@ class HostAgent(BasicAgent):
             "cyan",
         )
         utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
-
-    def add_global_action_memory(self, action: dict) -> None:
-        """
-        Add the action to the memory.
-        :param action: The action.
-        """
-
-        action_memory_item = MemoryItem()
-        action_memory_item.set_values_from_dict(action)
-        self._global_action_memory.add_memory_item(action_memory_item)
-
-    def add_request_memory(self, request: str) -> None:
-        """
-        Add the request to the memory.
-        :param request: The request.
-        """
-        request_length = self._request_history_memory.length
-        request_memory_item = MemoryItem()
-        request_memory_item.set_values_from_dict(
-            {f"old request {request_length}": request}
-        )
-        self._request_history_memory.add_memory_item(request_memory_item)
-
-    def get_global_action_memory(self) -> Memory:
-        """
-        Get the global action memory.
-        :return: The global action memory.
-        """
-        return self._global_action_memory
-
-    def get_request_history_memory(self) -> Memory:
-        """
-        Get the request history.
-        :return: The request history.
-        """
-        return self._request_history_memory
 
     @property
     def status_manager(self) -> HostAgentStatus:

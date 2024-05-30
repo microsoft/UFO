@@ -122,6 +122,7 @@ class Session(BaseSession):
             return None
 
         self._host_agent.set_state(ContinueHostAgentState())
+
         round = BaseRound(
             request=request,
             agent=self._host_agent,
@@ -154,7 +155,7 @@ class Session(BaseSession):
         Check if the session should be evaluated.
         :return: True if the session should be evaluated, False otherwise.
         """
-        request_memory = self._host_agent.get_request_history_memory()
+        request_memory = self._host_agent.blackboard.requests
         return request_memory.to_json()
 
 
@@ -204,8 +205,6 @@ class FollowerSession(BaseSession):
             agent = self._host_agent.get_active_appagent()
             agent.clear_memory()
             agent.set_state(ContinueAppAgentState())
-
-            self._host_agent.add_request_memory(request)
 
             utils.print_with_color(
                 "Starting step {round}:".format(round=self.total_rounds), "yellow"

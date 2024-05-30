@@ -94,8 +94,6 @@ class FollowerAgent(AppAgent):
         dynamic_tips: str,
         dynamic_knowledge: str,
         image_list: List[str],
-        request_history: str,
-        action_history: str,
         control_info: str,
         plan: List[str],
         request: str,
@@ -108,8 +106,6 @@ class FollowerAgent(AppAgent):
         :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
         :param dynamic_tips: The dynamic tips retrieved from the self-demonstration and human demonstration.
         :param image_list: The list of screenshot images.
-        :param request_history: The request history.
-        :param action_history: The action history.
         :param plan: The plan.
         :param request: The request.
         :return: The prompt message.
@@ -119,8 +115,6 @@ class FollowerAgent(AppAgent):
         )
         followagent_prompt_user_message = self.prompter.user_content_construction(
             image_list,
-            request_history,
-            action_history,
             control_info,
             plan,
             request,

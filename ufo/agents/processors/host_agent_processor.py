@@ -98,10 +98,6 @@ class HostAgentProcessor(BaseProcessor):
         Get the prompt message.
         """
 
-        # Get the request and action history of the host agent.
-        request_history = self.host_agent.get_request_history_memory().to_json()
-        action_history = self.host_agent.get_global_action_memory().to_json()
-
         # Get the previous plan from the memory. If the memory is empty, set the plan to an empty string.
         agent_memory = self.host_agent.memory
         if agent_memory.length > 0:
@@ -112,8 +108,6 @@ class HostAgentProcessor(BaseProcessor):
         # Construct the prompt message for the host agent.
         self._prompt_message = self.host_agent.message_constructor(
             [self._desktop_screen_url],
-            request_history,
-            action_history,
             self._desktop_windows_info,
             plan,
             self.request,
@@ -278,7 +272,8 @@ class HostAgentProcessor(BaseProcessor):
             key: host_agent_step_memory.to_dict().get(key)
             for key in configs["HISTORY_KEYS"]
         }
-        self.host_agent.add_global_action_memory(memorized_action)
+
+        self.host_agent.blackboard.add_trajectories(memorized_action)
 
     def update_status(self) -> None:
         """

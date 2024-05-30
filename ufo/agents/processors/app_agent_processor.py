@@ -188,19 +188,12 @@ class AppAgentProcessor(BaseProcessor):
             configs["RAG_ONLINE_RETRIEVED_TOPK"],
         )
 
-        # Get the action history and request history of the host agent and feed them into the prompt message.
-
-        action_history = self.host_agent.get_global_action_memory().to_json()
-        request_history = self.host_agent.get_request_history_memory().to_json()
-
         # Construct the prompt message for the AppAgent.
         self._prompt_message = self.app_agent.message_constructor(
             examples,
             tips,
             external_knowledge_prompt,
             self._image_url,
-            request_history,
-            action_history,
             self.filtered_control_info,
             self.prev_plan,
             self.request,
@@ -386,9 +379,9 @@ class AppAgentProcessor(BaseProcessor):
             key: app_agent_step_memory.to_dict().get(key)
             for key in configs["HISTORY_KEYS"]
         }
-        self.host_agent.add_global_action_memory(memorized_action)
 
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
+        self.host_agent.blackboard.add_trajectories(memorized_action)
         self._update_image_blackboard()
 
     def update_status(self) -> None:
