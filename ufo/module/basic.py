@@ -360,13 +360,17 @@ class BaseSession(ABC):
         Initialize the context of the session.
         """
 
-        # Initialize the logger
+        # Initialize the ID
+        self.context.set(ContextNames.ID, self.id)
+
+        # Initialize the log path and the logger
         logger = self.initialize_logger(self.log_path, "response.log")
         request_logger = self.initialize_logger(self.log_path, "request.log")
         eval_logger = self.initialize_logger(self.log_path, "evaluation.log")
 
-        self.context.set(ContextNames.LOGGER, logger)
         self.context.set(ContextNames.LOG_PATH, self.log_path)
+
+        self.context.set(ContextNames.LOGGER, logger)
         self.context.set(ContextNames.REQUEST_LOGGER, request_logger)
         self.context.set(ContextNames.EVALUATION_LOGGER, eval_logger)
 

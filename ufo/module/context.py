@@ -14,6 +14,7 @@ class ContextNames(Enum):
     The context names.
     """
 
+    ID: str = "ID"
     MODE = "MODE"
     LOG_PATH = "LOG_PATH"
     REQUEST = "REQUEST"
@@ -50,6 +51,7 @@ class ContextNames(Enum):
             self == ContextNames.SESSION_STEP
             or self == ContextNames.CURRENT_ROUND_ID
             or self == ContextNames.CURRENT_ROUND_STEP
+            or self == ContextNames.ID
         ):
             return 0
         elif (
@@ -89,6 +91,7 @@ class ContextNames(Enum):
             self == ContextNames.SESSION_STEP
             or self == ContextNames.CURRENT_ROUND_ID
             or self == ContextNames.CURRENT_ROUND_STEP
+            or self == ContextNames.ID
         ):
             return int
         elif (
