@@ -283,6 +283,7 @@ class BaseSession(ABC):
         """
 
         self._should_evaluate = should_evaluate
+        self._id = id
 
         # Logging-related properties
         self.log_path = f"logs/{task}/"
@@ -293,7 +294,6 @@ class BaseSession(ABC):
         self._context = Context()
         self._init_context()
         self._finish = False
-        self._id = id
 
         self._host_agent: HostAgent = AgentFactory.create_agent(
             "host",
