@@ -61,10 +61,11 @@ class BaseProcessor(ABC):
         3. Get the control information.
         4. Get the prompt message.
         5. Get the response.
-        6. Parse the response.
-        7. Execute the action.
-        8. Update the memory.
-        9. Update the step and status.
+        6. Update the context.
+        7. Parse the response.
+        8. Execute the action.
+        9. Update the memory.
+        10. Update the step and status.
         """
 
         # Step 1: Print the step information.
@@ -85,19 +86,22 @@ class BaseProcessor(ABC):
         if self.is_error():
             return
 
-        # Step 6: Parse the response, if there is no error.
+        # Step 6: Update the context.
+        self.update_context()
+
+        # Step 7: Parse the response, if there is no error.
         self.parse_response()
 
         if self.is_error():
             return
 
-        # Step 7: Execute the action.
+        # Step 8: Execute the action.
         self.execute_action()
 
-        # Step 8: Update the memory.
+        # Step 9: Update the memory.
         self.update_memory()
 
-        # Step 9: Update the status.
+        # Step 10: Update the status.
         self.update_status()
 
     def resume(self) -> None:
@@ -184,7 +188,7 @@ class BaseProcessor(ABC):
         """
         return self._context
 
-    def _update_context(self) -> None:
+    def update_context(self) -> None:
         """
         Update the context.
         """
@@ -201,6 +205,18 @@ class BaseProcessor(ABC):
         self.context.set(
             ContextNames.SESSION_COST,
             self.context.get(ContextNames.SESSION_COST) + self.cost,
+        )
+
+        print(
+            self.context.get(ContextNames.CURRENT_ROUND_ID),
+            current_round_step,
+            current_round_cost,
+        )
+
+        print(
+            self.context.get(ContextNames.SESSION_STEP),
+            self.session_step,
+            self.context.get(ContextNames.SESSION_COST),
         )
 
     @property

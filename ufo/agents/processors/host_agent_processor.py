@@ -138,10 +138,10 @@ class HostAgentProcessor(BaseProcessor):
 
         # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
         try:
-            self._response, self._cost = self.host_agent.get_response(
+            self._response, self.cost = self.host_agent.get_response(
                 self._prompt_message, "HOSTAGENT", use_backup_engine=True
             )
-            self._update_context()
+
         except Exception:
             self.llm_error_handler()
 
