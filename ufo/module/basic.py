@@ -26,6 +26,7 @@ from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
+from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.states.basic import AgentStatus
 from ufo.agents.states.basic import AgentState
 from ufo.automator.ui_control.screenshot import PhotographerFacade
@@ -97,7 +98,6 @@ class BaseRound(ABC):
             self.agent.handle(self.context)
 
             self.state = self.agent.state.next_state(self.agent)
-
             self.agent = self.agent.state.next_agent(self.agent)
             self.agent.set_state(self.state)
 
@@ -194,6 +194,42 @@ class BaseRound(ABC):
             utils.print_with_color(
                 f"Request total cost for current round is {formatted_cost}", "yellow"
             )
+
+    @property
+    def log_path(self) -> str:
+        """
+        Get the log path of the round.
+        return: The log path of the round.
+        """
+        return self._context.get(ContextNames.LOG_PATH)
+
+    def capture_last_snapshot(self) -> None:
+        """
+        Capture the last snapshot of the application, including the screenshot and the XML file if configured.
+        """
+
+        # Capture the final screenshot
+        screenshot_save_path = self.log_path + f"action_round_{self.id}_final.png"
+
+        if self.application_window is not None:
+
+            PhotographerFacade().capture_app_window_screenshot(
+                self.application_window, save_path=screenshot_save_path
+            )
+
+            # Save the final XML file
+            if configs["LOG_XML"]:
+                log_abs_path = os.path.abspath(self.log_path)
+                xml_save_path = os.path.join(
+                    log_abs_path, f"xml/action_round_{self.id}_final.xml"
+                )
+
+                if issubclass(type(self.agent), HostAgent):
+                    app_agent: AppAgent = self.agent.get_active_appagent()
+                    app_agent.Puppeteer.save_to_xml(xml_save_path)
+                elif issubclass(type(self.agent), AppAgent):
+                    app_agent: AppAgent = self.agent
+                    app_agent.Puppeteer.save_to_xml(xml_save_path)
 
     def evaluation(self) -> None:
         """
@@ -533,18 +569,20 @@ class BaseSession(ABC):
         # Capture the final screenshot
         screenshot_save_path = self.log_path + f"action_step_final.png"
 
-        PhotographerFacade().capture_app_window_screenshot(
-            self.application_window, save_path=screenshot_save_path
-        )
+        if self.application_window is not None:
 
-        # Save the final XML file
-        if configs["LOG_XML"]:
-            log_abs_path = os.path.abspath(self.log_path)
-            xml_save_path = os.path.join(log_abs_path, f"xml/action_step_final.xml")
+            PhotographerFacade().capture_app_window_screenshot(
+                self.application_window, save_path=screenshot_save_path
+            )
 
-            app_agent = self._host_agent.get_active_appagent()
-            if app_agent is not None:
-                app_agent.Puppeteer.save_to_xml(xml_save_path)
+            # Save the final XML file
+            if configs["LOG_XML"]:
+                log_abs_path = os.path.abspath(self.log_path)
+                xml_save_path = os.path.join(log_abs_path, f"xml/action_step_final.xml")
+
+                app_agent = self._host_agent.get_active_appagent()
+                if app_agent is not None:
+                    app_agent.Puppeteer.save_to_xml(xml_save_path)
 
     @staticmethod
     def initialize_logger(log_path: str, log_filename: str) -> logging.Logger:
