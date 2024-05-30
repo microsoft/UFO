@@ -101,6 +101,9 @@ class BaseRound(ABC):
             self.agent = self.agent.state.next_agent(self.agent)
             self.agent.set_state(self.state)
 
+        if self.application_window is not None:
+            self.capture_last_snapshot()
+
         if self._should_evaluate:
             self.evaluation()
 
