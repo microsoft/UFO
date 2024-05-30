@@ -39,7 +39,8 @@ configs = Config.get_instance().config_data
 class BaseRound(ABC):
     """
     A round of a session in UFO.
-    A round manages a single user request and consists of multiple steps. A session may consists of multiple rounds of interactions.
+    A round manages a single user request and consists of multiple steps.
+    A session may consists of multiple rounds of interactions.
     """
 
     def __init__(
@@ -269,7 +270,8 @@ class BaseSession(ABC):
     3. When all the actions are completed for the current user request at a round, the session moves to the ''FINISH'' state.
     4. The session will ask the user if they want to continue with another request. If the user wants to continue, the session will start a new round and move to the ''SWITCH'' state.
     5. If the user does not want to continue, the session will transition to the ''COMPLETE'' state.
-    6. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
+    6. The session will be evaluated if the evaluation is enabled.
+    7. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
     """
 
     def __init__(self, task: str, should_evaluate: bool) -> None:

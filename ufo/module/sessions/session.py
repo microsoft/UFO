@@ -114,7 +114,7 @@ class Session(BaseSession):
         """
 
         # Get a request for the new round.
-        request = self.get_request()
+        request = self.next_request()
 
         # Create a new round and return None if the session is finished.
 
@@ -135,7 +135,7 @@ class Session(BaseSession):
 
         return round
 
-    def get_request(self) -> str:
+    def next_request(self) -> str:
         """
         Get the request for the host agent.
         :return: The request for the host agent.
@@ -191,7 +191,7 @@ class FollowerSession(BaseSession):
         """
 
         # Get a request for the new round.
-        request = self.get_request()
+        request = self.next_request()
 
         # Create a new round and return None if the session is finished.
         if self.is_finished():
@@ -223,7 +223,7 @@ class FollowerSession(BaseSession):
 
         return round
 
-    def get_request(self) -> str:
+    def next_request(self) -> str:
         """
         Get the request for the new round.
         """
