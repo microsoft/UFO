@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 
-from typing import TYPE_CHECKING, Any, Dict, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.evaluaton_agent_state import EvaluatonAgentStatus

@@ -43,7 +43,7 @@ class AppPuppeteer:
         :param params: The arguments for the command.
         """
         receiver = self.receiver_manager.get_receiver(command_name)
-        command = receiver.get_command_registry().get(command_name.lower(), None)
+        command = receiver.command_registry.get(command_name.lower(), None)
 
         if receiver is None:
             raise ValueError(f"Receiver for command {command_name} is not found.")

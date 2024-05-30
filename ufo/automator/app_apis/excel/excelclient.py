@@ -7,13 +7,14 @@ import pandas as pd
 
 from ufo.automator.app_apis.basic import WinCOMCommand, WinCOMReceiverBasic
 from ufo.automator.basic import CommandBasic
-from ufo.prompter.agent_prompter import APIPromptLoader
 
 
 class ExcelWinCOMReceiver(WinCOMReceiverBasic):
     """
     The base class for Windows COM client.
     """
+
+    _command_registry: Dict[str, Type[CommandBasic]] = {}
 
     def get_object_from_process_name(self) -> None:
         """
@@ -28,22 +29,6 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
                 return doc
 
         return None
-
-    def get_default_command_registry(self) -> Dict[str, Type[CommandBasic]]:
-        """
-        Get the default command registry.
-        """
-
-        api_prompt_loader = APIPromptLoader(self.app_root_name)
-        api_prompt = api_prompt_loader.load_com_api_prompt()
-        class_name_dict = api_prompt_loader.filter_api_dict(api_prompt)
-
-        global_name_space = globals()
-        command_registry = self.name_to_command_class(
-            global_name_space, class_name_dict
-        )
-
-        return command_registry
 
     def table2markdown(self, sheet_name: str) -> str:
         """
@@ -88,6 +73,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         return 46
 
 
+@ExcelWinCOMReceiver.register
 class GetSheetContent(WinCOMCommand):
     """
     The command to insert a table.
@@ -99,3 +85,10 @@ class GetSheetContent(WinCOMCommand):
         :return: The inserted table.
         """
         return self.receiver.table2markdown(self.params.get("sheet_name"))
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "table2markdown"
