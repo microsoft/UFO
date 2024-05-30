@@ -247,7 +247,7 @@ class AppAgentProcessor(BaseProcessor):
             self.general_error_handler()
 
         self._control_label = self._response_json.get("ControlLabel", "")
-        self._control_text = self._response_json.get("ControlText", "")
+        self.control_text = self._response_json.get("ControlText", "")
         self._operation = self._response_json.get("Function", "")
         self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
 
@@ -255,7 +255,7 @@ class AppAgentProcessor(BaseProcessor):
         self._plan = self.string2list(self._response_json.get("Plan", ""))
         self._response_json["Plan"] = self._plan
 
-        self._status = self._response_json.get("Status", "")
+        self.status = self._response_json.get("Status", "")
 
         self.app_agent.print_response(self._response_json)
 
@@ -290,11 +290,11 @@ class AppAgentProcessor(BaseProcessor):
 
             # Safe guard for the action.
             if (
-                self._status.upper() == self._agent_status_manager.PENDING.value
+                self.status.upper() == self._agent_status_manager.PENDING.value
                 and configs["SAFE_GUARD"]
             ):
                 should_proceed = self._safe_guard_judgement(
-                    self._action, self._control_text
+                    self._action, self.control_text
                 )
 
             # Execute the action if the user decides to proceed or safe guard is not enabled.
@@ -334,7 +334,7 @@ class AppAgentProcessor(BaseProcessor):
         Handle the screenshot status when the annotation is overlapped and the agent is unable to select the control items.
         """
 
-        if self._status.upper() == self._agent_status_manager.SCREENSHOT.value:
+        if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
             utils.print_with_color(
                 "Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.",
                 "magenta",
@@ -343,7 +343,7 @@ class AppAgentProcessor(BaseProcessor):
                 "annotation", self._args, self._annotation_dict
             )
             if self._control_reannotate is None or len(self._control_reannotate) == 0:
-                self._status = self._agent_status_manager.CONTINUE.value
+                self.status = self._agent_status_manager.CONTINUE.value
         else:
             self._control_reannotate = None
 
@@ -395,9 +395,9 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         self.app_agent.step += 1
-        self.app_agent.status = self._status
+        self.app_agent.status = self.status
 
-        if self._status != self._agent_status_manager.FINISH.value:
+        if self.status != self._agent_status_manager.FINISH.value:
             time.sleep(configs["SLEEP_TIME"])
 
     def _update_image_blackboard(self) -> None:
@@ -427,7 +427,7 @@ class AppAgentProcessor(BaseProcessor):
         decision = interactor.sensitive_step_asker(action, control_text)
         if not decision:
             utils.print_with_color("The user decide to stop the task.", "magenta")
-            self._status = self._agent_status_manager.FINISH.value
+            self.status = self._agent_status_manager.FINISH.value
             return False
 
         # Handle the PENDING_AND_FINISH case
@@ -435,7 +435,7 @@ class AppAgentProcessor(BaseProcessor):
             len(self._plan) > 0
             and self._agent_status_manager.FINISH.value in self._plan[0]
         ):
-            self._status = self._agent_status_manager.FINISH.value
+            self.status = self._agent_status_manager.FINISH.value
         return True
 
     def _save_to_xml(self) -> None:

@@ -158,22 +158,22 @@ class HostAgentProcessor(BaseProcessor):
             self.general_error_handler()
 
         self.control_label = self._response_json.get("ControlLabel", "")
-        self._control_text = self._response_json.get("ControlText", "")
+        self.control_text = self._response_json.get("ControlText", "")
 
         # Convert the plan from a string to a list if the plan is a string.
         self._plan = self.string2list(self._response_json.get("Plan", ""))
         self._response_json["Plan"] = self._plan
 
-        self._status = self._response_json.get("Status", "")
+        self.status = self._response_json.get("Status", "")
         self.app_to_open = self._response_json.get("AppsToOpen", None)
 
         self.host_agent.print_response(self._response_json)
 
         if (
-            self._agent_status_manager.FINISH.value in self._status.upper()
-            or self._control_text == ""
+            self._agent_status_manager.FINISH.value in self.status.upper()
+            or self.control_text == ""
         ):
-            self._status = self._agent_status_manager.FINISH.value
+            self.status = self._agent_status_manager.FINISH.value
 
     def execute_action(self) -> None:
         """
@@ -183,7 +183,7 @@ class HostAgentProcessor(BaseProcessor):
         # When the required application is not opened, try to open the application and set the focus to the application window.
         if self.app_to_open is not None:
             new_app_window = self.host_agent.app_file_manager(self.app_to_open)
-            self._control_text = new_app_window.window_text()
+            self.control_text = new_app_window.window_text()
         else:
             # Get the application window
             new_app_window = self._desktop_windows_dict.get(self.control_label, None)
@@ -196,7 +196,7 @@ class HostAgentProcessor(BaseProcessor):
 
         # Check if the window interface is available for the visual element.
         if not self.is_window_interface_available(new_app_window):
-            self._status = self._agent_status_manager.ERROR.value
+            self.status = self._agent_status_manager.ERROR.value
             return
 
         # Switch to the new application window, if it is different from the current application window.
@@ -216,7 +216,7 @@ class HostAgentProcessor(BaseProcessor):
         except Exception:
             utils.print_with_color(
                 "Window interface {title} not available for the visual element.".format(
-                    title=self._control_text
+                    title=self.control_text
                 ),
                 "red",
             )
@@ -236,7 +236,7 @@ class HostAgentProcessor(BaseProcessor):
         self.context.set(ContextNames.APPLICATION_WINDOW, self._app_window)
 
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
-        self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self._control_text)
+        self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
     def update_memory(self) -> None:
         """
@@ -252,7 +252,7 @@ class HostAgentProcessor(BaseProcessor):
             "RoundStep": self.round_step,
             "AgentStep": self.host_agent.step,
             "Round": self.round_num,
-            "ControlLabel": self._control_text,
+            "ControlLabel": self.control_text,
             "Action": "set_focus()",
             "ActionType": "UIControl",
             "Request": self.request,

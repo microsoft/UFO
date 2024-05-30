@@ -262,6 +262,14 @@ class BaseProcessor(ABC):
         """
         return self._control_text
 
+    @control_text.setter
+    def control_text(self, text: str) -> None:
+        """
+        Set the control text.
+        :param text: The control text.
+        """
+        self._control_text = text
+
     @property
     def status(self) -> str:
         """
@@ -269,6 +277,14 @@ class BaseProcessor(ABC):
         :return: The status of the processor.
         """
         return self._status
+
+    @status.setter
+    def status(self, status: str) -> None:
+        """
+        Set the status of the processor.
+        :param status: The status of the processor.
+        """
+        self._status = status
 
     @property
     def cost(self) -> float:
@@ -280,6 +296,14 @@ class BaseProcessor(ABC):
         if self._cost is None:
             return 0
         return self._cost
+
+    @cost.setter
+    def cost(self, cost: float) -> None:
+        """
+        Set the cost of the processor.
+        :param cost: The cost of the processor.
+        """
+        self._cost = cost
 
     def is_error(self) -> bool:
         """

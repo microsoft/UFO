@@ -26,6 +26,7 @@ from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
+from ufo.agents.states.basic import AgentStatus
 from ufo.agents.states.basic import AgentState
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
@@ -274,7 +275,7 @@ class BaseSession(ABC):
         if self.application_window is not None:
             self.capture_last_snapshot()
 
-        if self._should_evaluate:
+        if self._should_evaluate and not self.is_error():
             self.evaluation()
 
         self.print_cost()
@@ -384,6 +385,17 @@ class BaseSession(ABC):
         """
         return self._rounds
 
+    @property
+    def current_round(self) -> BaseRound:
+        """
+        Get the current round of the session.
+        return: The current round of the session.
+        """
+        if self.total_rounds == 0:
+            return None
+        else:
+            return self._rounds[self.total_rounds - 1]
+
     def experience_saver(self) -> None:
         """
         Save the current trajectory as agent experience.
@@ -448,12 +460,24 @@ class BaseSession(ABC):
         """
         self._context.set(ContextNames.APPLICATION_WINDOW, app_window)
 
+    def is_error(self):
+        """
+        Check if the session is in error state.
+        return: True if the session is in error state, otherwise False.
+        """
+        if self.current_round is not None:
+            return self.current_round.state.name() == AgentStatus.ERROR.value
+        return False
+
     def is_finished(self) -> bool:
         """
         Check if the session is ended.
         return: True if the session is ended, otherwise False.
         """
         if self._finish or self.step >= configs["MAX_STEP"]:
+            return True
+
+        if self.is_error():
             return True
 
         return False
