@@ -274,11 +274,12 @@ class BaseSession(ABC):
     7. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
     """
 
-    def __init__(self, task: str, should_evaluate: bool) -> None:
+    def __init__(self, task: str, should_evaluate: bool, id: int) -> None:
         """
         Initialize a session.
         :param task: The name of current task.
         :param should_evaluate: Whether to evaluate the session.
+        :param id: The id of the session.
         """
 
         self._should_evaluate = should_evaluate
@@ -292,6 +293,7 @@ class BaseSession(ABC):
         self._context = Context()
         self._init_context()
         self._finish = False
+        self._id = id
 
         self._host_agent: HostAgent = AgentFactory.create_agent(
             "host",
@@ -371,6 +373,14 @@ class BaseSession(ABC):
         # Initialize the session cost and step
         self.context.set(ContextNames.SESSION_COST, 0)
         self.context.set(ContextNames.SESSION_STEP, 0)
+
+    @property
+    def id(self) -> int:
+        """
+        Get the id of the session.
+        return: The id of the session.
+        """
+        return self._id
 
     @property
     def context(self) -> Context:

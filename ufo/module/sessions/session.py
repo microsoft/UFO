@@ -29,13 +29,15 @@ class SessionFactory:
         :return: The created session.
         """
         if mode == "normal":
-            return [Session(task, configs.get("EVA_SESSION", False))]
+            return [Session(task, configs.get("EVA_SESSION", False), id=0)]
         elif mode == "follower":
             # If the plan is a folder, create a follower session for each plan file in the folder.
             if self.is_folder(plan):
                 return self.create_follower_session_in_batch(task, plan)
             else:
-                return [FollowerSession(task, plan, configs.get("EVA_SESSION", False))]
+                return [
+                    FollowerSession(task, plan, configs.get("EVA_SESSION", False), id=0)
+                ]
         else:
             raise ValueError(f"The {mode} mode is not supported.")
 
@@ -52,9 +54,12 @@ class SessionFactory:
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
         sessions = [
             FollowerSession(
-                f"{task}/{file_name}", plan_file, configs.get("EVA_SESSION", False)
+                f"{task}/{file_name}",
+                plan_file,
+                configs.get("EVA_SESSION", False),
+                id=i,
             )
-            for file_name, plan_file in zip(file_names, plan_files)
+            for i, (file_name, plan_file) in enumerate(zip(file_names, plan_files))
         ]
 
         return sessions
@@ -165,15 +170,18 @@ class FollowerSession(BaseSession):
     This session is used for the follower agent, which accepts a plan file to follow using the PlanReader.
     """
 
-    def __init__(self, task: str, plan_file: str, should_evaluate: bool) -> None:
+    def __init__(
+        self, task: str, plan_file: str, should_evaluate: bool, id: int
+    ) -> None:
         """
         Initialize a session.
         :param task: The name of current task.
         :param plan_dir: The path of the plan file to follow.
         :param should_evaluate: Whether to evaluate the session.
+        :param id: The id of the session.
         """
 
-        super().__init__(task, should_evaluate)
+        super().__init__(task, should_evaluate, id)
 
         self.plan_reader = PlanReader(plan_file)
 
