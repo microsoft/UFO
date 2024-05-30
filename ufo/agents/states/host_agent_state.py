@@ -54,6 +54,7 @@ class HostAgentState(AgentState):
     def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
         """
         Handle the agent for the current step.
+        :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
         pass
@@ -62,6 +63,7 @@ class HostAgentState(AgentState):
     def agent_class(cls) -> Type[HostAgent]:
         """
         Handle the agent for the current step.
+        :param agent: The agent class of the state.
         """
         from ufo.agents.agent.host_agent import HostAgent
 
@@ -70,6 +72,7 @@ class HostAgentState(AgentState):
     def next_state(self, agent: "HostAgent") -> AgentState:
         """
         Get the next state of the agent.
+        :param agent: The current agent.
         """
         status = agent.status
 
@@ -79,7 +82,7 @@ class HostAgentState(AgentState):
     def next_agent(self, agent: "HostAgent") -> HostAgent:
         """
         Get the agent for the next step.
-        :param context: The context for the agent and session.
+        :param agent: The agent for the current step.
         :return: The agent for the next step.
         """
         return agent
@@ -102,6 +105,7 @@ class FinishHostAgentState(HostAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The class name of the
         """
         return HostAgentStatus.FINISH.value
 
@@ -115,6 +119,7 @@ class ContinueHostAgentState(HostAgentState):
     def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
         """
         Handle the agent for the current step.
+        :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
         agent.process(context)
@@ -123,6 +128,7 @@ class ContinueHostAgentState(HostAgentState):
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
         Get the next state of the agent.
+        :param agent: The current agent.
         :return: The state for the next step.
         """
 
@@ -142,6 +148,7 @@ class ContinueHostAgentState(HostAgentState):
         """
         Create the app agent for the host agent.
         :param agent: The host agent.
+        :param context: The context for the agent and session.
         :return: The app agent.
         """
 
@@ -207,7 +214,7 @@ class ContinueHostAgentState(HostAgentState):
     def next_agent(self, agent: "HostAgent") -> AppAgent:
         """
         Get the agent for the next step.
-        :param context: The context for the agent and session.
+        :param agent: The agent for the current step.
         :return: The agent for the next step.
         """
 
@@ -227,6 +234,7 @@ class ContinueHostAgentState(HostAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The class name of the state.
         """
         return HostAgentStatus.CONTINUE.value
 
@@ -248,6 +256,7 @@ class PendingHostAgentState(HostAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The class name of the state.
         """
         return HostAgentStatus.PENDING.value
 
@@ -269,6 +278,7 @@ class ErrorHostAgentState(HostAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The class name of the
         """
         return HostAgentStatus.ERROR.value
 
@@ -290,6 +300,7 @@ class FailHostAgentState(HostAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The class name of the
         """
         return HostAgentStatus.FAIL.value
 

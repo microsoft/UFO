@@ -105,9 +105,14 @@ class FollowerAgent(AppAgent):
         Construct the prompt message for the FollowAgent.
         :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
         :param dynamic_tips: The dynamic tips retrieved from the self-demonstration and human demonstration.
+        :param dynamic_knowledge: The dynamic knowledge retrieved from the self-demonstration and human demonstration.
         :param image_list: The list of screenshot images.
+        :param control_info: The control information.
         :param plan: The plan.
         :param request: The request.
+        :param current_state: The current state of the app.
+        :param state_diff: The state difference between the current state and the previous state.
+        :param include_last_screenshot: The flag indicating whether the last screenshot should be included.
         :return: The prompt message.
         """
         followagent_prompt_system_message = self.prompter.system_prompt_construction(

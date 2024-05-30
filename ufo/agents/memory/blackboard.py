@@ -48,7 +48,7 @@ class Blackboard:
     def questions(self) -> Memory:
         """
         Get the data from the blackboard.
-        :return: The data from the blackboard.
+        :return: The questions from the blackboard.
         """
         return self._questions
 
@@ -56,7 +56,7 @@ class Blackboard:
     def requests(self) -> Memory:
         """
         Get the data from the blackboard.
-        :return: The data from the blackboard.
+        :return: The requests from the blackboard.
         """
         return self._requests
 
@@ -64,7 +64,7 @@ class Blackboard:
     def trajectories(self) -> Memory:
         """
         Get the data from the blackboard.
-        :return: The data from the blackboard.
+        :return: The trajectories from the blackboard.
         """
         return self._trajectories
 
@@ -81,7 +81,7 @@ class Blackboard:
     ) -> None:
         """
         Add the data to the a memory in the blackboard.
-        :param data: The data to be added. It can be a dictionary or a MemoryItem.
+        :param data: The data to be added. It can be a dictionary or a MemoryItem or a string.
         :param memory: The memory to add the data to.
         """
 
@@ -99,7 +99,7 @@ class Blackboard:
     def add_questions(self, questions: Union[MemoryItem, Dict[str, str]]) -> None:
         """
         Add the data to the blackboard.
-        :param data: The data to be added. It can be a dictionary or a MemoryItem.
+        :param questions: The data to be added. It can be a dictionary or a MemoryItem or a string.
         """
 
         self.add_data(questions, self.questions)
@@ -107,7 +107,7 @@ class Blackboard:
     def add_requests(self, requests: Union[MemoryItem, Dict[str, str]]) -> None:
         """
         Add the data to the blackboard.
-        :param data: The data to be added. It can be a dictionary or a MemoryItem.
+        :param requests: The data to be added. It can be a dictionary or a MemoryItem or a string.
         """
 
         self.add_data(requests, self.requests)
@@ -115,7 +115,7 @@ class Blackboard:
     def add_trajectories(self, trajectories: Union[MemoryItem, Dict[str, str]]) -> None:
         """
         Add the data to the blackboard.
-        :param data: The data to be added. It can be a dictionary or a MemoryItem.
+        :param trajectories: The data to be added. It can be a dictionary or a MemoryItem or a string.
         """
 
         self.add_data(trajectories, self.trajectories)

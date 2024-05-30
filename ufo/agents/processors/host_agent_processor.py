@@ -29,16 +29,8 @@ class HostAgentProcessor(BaseProcessor):
     def __init__(self, agent: "HostAgent", context: Context) -> None:
         """
         Initialize the host agent processor.
-        :param round_num: The total number of rounds in the session.
-        :param log_path: The log path.
-        :param request: The user request.
-        :param request_logger: The logger for the request string.
-        :param logger: The logger for the response and error.
-        :param host_agent: The host agent to process the session.
-        :param round_step: The number of steps in the round.
-        :param session_step: The global step of the session.
-        :param prev_status: The previous status of the session.
-        :param app_window: The application window.
+        :param agent: The host agent to be processed.
+        :param context: The context.
         """
 
         super().__init__(agent=agent, context=context)

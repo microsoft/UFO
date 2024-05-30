@@ -74,7 +74,6 @@ class BaseRound(ABC):
         """
 
         # Initialize the round step
-
         round_step = {self.id: 0}
         self.context.update_dict(ContextNames.ROUND_STEP, round_step)
 
@@ -330,9 +329,9 @@ class BaseSession(ABC):
         pass
 
     @abstractmethod
-    def get_request(self) -> str:
+    def next_request(self) -> str:
         """
-        Get the request of the session.
+        Get the next request of the session.
         return: The request of the session.
         """
         pass

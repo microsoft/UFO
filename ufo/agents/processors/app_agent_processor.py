@@ -34,7 +34,6 @@ class AppAgentProcessor(BaseProcessor):
         Initialize the app agent processor.
         :param agent: The app agent who executes the processor.
         :param context: The context of the session.
-        :param control_reannotate: The control items to reannotate.
         """
 
         super().__init__(agent=agent, context=context)

@@ -57,6 +57,7 @@ class AppAgentState(AgentState):
     def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
         """
         Handle the agent for the current step.
+        :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
         pass
@@ -64,7 +65,8 @@ class AppAgentState(AgentState):
     @classmethod
     def agent_class(cls) -> Type[AppAgent]:
         """
-        Handle the agent for the current step.
+        The agent class of the state.
+        :return: The agent class.
         """
 
         # Avoid circular import
@@ -75,12 +77,16 @@ class AppAgentState(AgentState):
     def next_agent(self, agent: "AppAgent") -> BasicAgent:
         """
         Get the agent for the next step.
+        :param agent: The agent for the current step.
+        :return: The agent for the next step.
         """
         return agent
 
     def next_state(self, agent: "AppAgent") -> AppAgentState:
         """
         Get the next state of the agent.
+        :param agent: The agent for the current step.
+        :return: The state for the next step.
         """
 
         status = agent.status
@@ -97,12 +103,17 @@ class FinishAppAgentState(AppAgentState):
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
         Get the agent for the next step.
-        :param context: The context for the agent and session.
+        :param agent: The agent for the current step.
         :return: The agent for the next step.
         """
         return agent.host
 
     def next_state(self, agent: "AppAgent") -> HostAgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The agent for the current step.
+        :return: The state for the next step.
+        """
 
         return FinishHostAgentState()
 
@@ -117,6 +128,7 @@ class FinishAppAgentState(AppAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The name of the state.
         """
         return AppAgentStatus.FINISH.value
 
@@ -130,6 +142,7 @@ class ContinueAppAgentState(AppAgentState):
     def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
         """
         Handle the agent for the current step.
+        :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
         agent.process(context)
@@ -145,6 +158,7 @@ class ContinueAppAgentState(AppAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The name of the state.
         """
         return AppAgentStatus.CONTINUE.value
 
@@ -159,6 +173,7 @@ class ScreenshotAppAgentState(ContinueAppAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The name of the state.
         """
         return AppAgentStatus.SCREENSHOT.value
 
@@ -172,6 +187,8 @@ class SwitchAppAgentState(AppAgentState):
     def next_state(self, agent: "AppAgent") -> HostAgentState:
         """
         The next state of the agent.
+        :param agent: The agent for the current step.
+        :return: The state for the next step.
         """
 
         return ContinueHostAgentState()
@@ -179,6 +196,8 @@ class SwitchAppAgentState(AppAgentState):
     def next_agent(self, agent: "AppAgent") -> BasicAgent:
         """
         Get the agent for the next step.
+        :param agent: The agent for the current step.
+        :return: The agent for the next step.
         """
         return agent.host
 
@@ -193,6 +212,7 @@ class SwitchAppAgentState(AppAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The name of the state.
         """
         return AppAgentStatus.SWITCH.value
 
@@ -207,6 +227,7 @@ class PendingAppAgentState(AppAgentState):
         """
         TODO
         Handle the agent for the current step.
+        :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
         pass
@@ -222,6 +243,7 @@ class PendingAppAgentState(AppAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The name of the state.
         """
         return AppAgentStatus.PENDING.value
 
@@ -241,6 +263,7 @@ class ConfirmAppAgentState(AppAgentState):
     def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
         """
         Handle the agent for the current step.
+        :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
 
@@ -270,6 +293,7 @@ class ConfirmAppAgentState(AppAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The name of the state.
         """
         return AppAgentStatus.CONFIRM.value
 
@@ -283,7 +307,7 @@ class ErrorAppAgentState(AppAgentState):
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
         Get the agent for the next step.
-        :param context: The context for the agent and session.
+        :param agent: The agent for the current step.
         :return: The agent for the next step.
         """
         return agent.host
@@ -291,6 +315,8 @@ class ErrorAppAgentState(AppAgentState):
     def next_state(self, agent: "AppAgent") -> HostAgentState:
         """
         Get the next state of the agent.
+        :param agent: The agent for the current step.
+        :return: The state for the next step.
         """
         return FinishHostAgentState
 
@@ -305,6 +331,7 @@ class ErrorAppAgentState(AppAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The name of the state.
         """
         return AppAgentStatus.ERROR.value
 
@@ -318,7 +345,7 @@ class FailAppAgentState(AppAgentState):
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
         Get the agent for the next step.
-        :param context: The context for the agent and session.
+        :param agent: The agent for the current step.
         :return: The agent for the next step.
         """
         return agent.host
@@ -326,6 +353,8 @@ class FailAppAgentState(AppAgentState):
     def next_state(self, agent: "AppAgent") -> HostAgentState:
         """
         Get the next state of the agent.
+        :param agent: The agent for the current step.
+        :return: The state for the next step.
         """
         return FinishHostAgentState
 
@@ -340,6 +369,7 @@ class FailAppAgentState(AppAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The name of the state.
         """
         return AppAgentStatus.FAIL.value
 
@@ -353,7 +383,7 @@ class NoneAppAgentState(AppAgentState):
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
         Get the agent for the next step.
-        :param context: The context for the agent and session.
+        :param agent: The agent for the current step.
         :return: The agent for the next step.
         """
         return agent.host
@@ -361,6 +391,8 @@ class NoneAppAgentState(AppAgentState):
     def next_state(self, agent: "AppAgent") -> HostAgentState:
         """
         Get the next state of the agent.
+        :param agent: The agent for the current step.
+        :return: The state for the next step.
         """
         return NoneHostAgentState
 
@@ -375,5 +407,6 @@ class NoneAppAgentState(AppAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The name of the state.
         """
         return ""

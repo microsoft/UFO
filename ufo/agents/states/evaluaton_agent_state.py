@@ -38,13 +38,6 @@ class EvaluatonAgentState(AgentState):
     The abstract class for the evaluation agent state.
     """
 
-    @property
-    def agent(self) -> EvaluationAgent:
-        """
-        The agent to be handled.
-        """
-        return self._agent
-
     @classmethod
     def agent_class(cls) -> Type[EvaluationAgent]:
         """
@@ -64,6 +57,7 @@ class ContinueEvaluatonAgentState(EvaluatonAgentState):
     ) -> None:
         """
         Handle the agent for the current step.
+        :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
         pass
@@ -71,7 +65,7 @@ class ContinueEvaluatonAgentState(EvaluatonAgentState):
     def next_agent(self, agent: EvaluationAgent) -> HostAgent:
         """
         Get the agent for the next step.
-        :param context: The context for the agent and session.
+        :param agent: The agent for the current step.
         :return: The agent for the next step.
         """
         return agent
@@ -87,6 +81,7 @@ class ContinueEvaluatonAgentState(EvaluatonAgentState):
     def none_state(self) -> AgentState:
         """
         The none state of the state manager.
+        :return: The none state of the state manager.
         """
         return NoneEvaluatonAgentState()
 
@@ -94,6 +89,7 @@ class ContinueEvaluatonAgentState(EvaluatonAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The class name of the state.
         """
         return EvaluatonAgentStatus.CONTINUE.value
 
@@ -104,20 +100,23 @@ class NoneEvaluatonAgentState(EvaluatonAgentState):
     The state when the evaluation agent is None.
     """
 
-    def handle(self, context: Optional["Context"] = None) -> None:
+    def handle(
+        self, agent: EvaluationAgent, context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
+        :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
         pass
 
-    def next_agent(self, context: Optional["Context"] = None) -> HostAgent:
+    def next_agent(self, agent: EvaluationAgent) -> HostAgent:
         """
         Get the agent for the next step.
-        :param context: The context for the agent and session.
+        :param agent: The agent for the current step.
         :return: The agent for the next step.
         """
-        self.agent
+        return agent
 
     def is_round_end(self) -> bool:
         """
@@ -130,5 +129,6 @@ class NoneEvaluatonAgentState(EvaluatonAgentState):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The class name of the state.
         """
         return ""

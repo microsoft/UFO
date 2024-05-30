@@ -34,7 +34,7 @@ class SingletonABCMeta(SingletonMeta, ABCMeta):
 
 class AgentStatus(Enum):
     """
-    The status of the agent.
+    The status class for the agent.
     """
 
     ERROR = "ERROR"
@@ -55,7 +55,6 @@ class AgentStateManager(ABC, metaclass=SingletonABCMeta):
     def __init__(self):
         """
         Initialize the state manager.
-        :param agent: The agent to be handled.
         """
 
         self._state_instance_mapping: Dict[str, AgentState] = {}
@@ -88,13 +87,6 @@ class AgentStateManager(ABC, metaclass=SingletonABCMeta):
         self.state_map[status] = state
 
     @property
-    def agent(self) -> BasicAgent:
-        """
-        The agent to be handled.
-        """
-        return self._agent
-
-    @property
     def state_map(self) -> Dict[str, AgentState]:
         """
         The state mapping of status to state.
@@ -107,6 +99,7 @@ class AgentStateManager(ABC, metaclass=SingletonABCMeta):
         """
         Decorator to register the state class to the state manager.
         :param state_class: The state class to be registered.
+        :return: The state class.
         """
         cls._state_mapping[state_class.name()] = state_class
         return state_class
@@ -129,6 +122,7 @@ class AgentState(ABC):
     def handle(self, agent: BasicAgent, context: Optional["Context"] = None) -> None:
         """
         Handle the agent for the current step.
+        :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
         pass
@@ -137,7 +131,7 @@ class AgentState(ABC):
     def next_agent(self, agent: BasicAgent) -> BasicAgent:
         """
         Get the agent for the next step.
-        :param context: The context for the agent and session.
+        :param agent: The agent for the current step.
         :return: The agent for the next step.
         """
         return agent
@@ -146,6 +140,7 @@ class AgentState(ABC):
     def next_state(self, agent: BasicAgent) -> AgentState:
         """
         Get the state for the next step.
+        :param agent: The agent for the current step.
         :return: The state for the next step.
         """
         pass
@@ -163,6 +158,7 @@ class AgentState(ABC):
     def agent_class(cls) -> Type[BasicAgent]:
         """
         The class of the agent.
+        :return: The class of the agent.
         """
         pass
 
@@ -171,5 +167,6 @@ class AgentState(ABC):
     def name(cls) -> str:
         """
         The class name of the state.
+        :return: The class name of the state.
         """
         return ""
