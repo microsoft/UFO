@@ -100,6 +100,7 @@ class Config:
         """
         cls.update_api_base(configs, "HOST_AGENT")
         cls.update_api_base(configs, "APP_AGENT")
+        cls.update_api_base(configs, "BACKUP_AGENT")
 
         return configs
 
