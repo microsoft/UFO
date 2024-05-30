@@ -191,35 +191,11 @@ class BaseProcessor(ABC):
         Update the context.
         """
 
-        current_round_cost = self.context.get(ContextNames.CURRENT_ROUND_COST)
-        current_round_step = self.context.get(ContextNames.CURRENT_ROUND_STEP)
+        self.round_step += 1
+        self.session_step += 1
 
-        self.context.set(
-            ContextNames.CURRENT_ROUND_COST, current_round_cost + self.cost
-        )
-        self.context.set(ContextNames.CURRENT_ROUND_STEP, current_round_step + 1)
-
-        self.context.set(ContextNames.SESSION_STEP, self.session_step + 1)
-        self.context.set(
-            ContextNames.SESSION_COST,
-            self.context.get(ContextNames.SESSION_COST) + self.cost,
-        )
-
-        print(
-            "Round ID: {id}, Round Step: {step}, Round Cost: {cost}".format(
-                id=self.context.get(ContextNames.CURRENT_ROUND_ID),
-                step=current_round_step,
-                cost=current_round_cost,
-            )
-        )
-
-        print(
-            "Session Step: {step1},{step2}, Session Cost: {cost}".format(
-                step1=self.context.get(ContextNames.SESSION_STEP),
-                step2=self.session_step,
-                cost=self.context.get(ContextNames.SESSION_COST),
-            )
-        )
+        self.round_cost += self.cost
+        self.session_cost += self.cost
 
     @property
     def agent(self) -> BasicAgent:
@@ -228,24 +204,6 @@ class BaseProcessor(ABC):
         :return: The agent.
         """
         return self._agent
-
-    # def _init_processor_from_context(self) -> None:
-    #     """
-    #     Initialize the processor from the context.
-    #     """
-
-    # self.log_path = self.context.get(ContextNames.LOG_PATH)
-    # self.request = self.context.get(ContextNames.REQUEST)
-    # self.request_logger = self.context.get(ContextNames.REQUEST_LOGGER)
-    # self.logger = self.context.get(ContextNames.LOGGER)
-    # self._round_step = self.context.get(ContextNames.CURRENT_ROUND_STEP)
-    # self._round_num = self.context.get(ContextNames.CURRENT_ROUND_ID)
-    # self._app_window = self.context.get(ContextNames.APPLICATION_WINDOW)
-    # self._control_reannotate = self.context.get(ContextNames.CONTROL_REANNOTATION)
-    # self.application_process_name = self.context.get(
-    #     ContextNames.APPLICATION_PROCESS_NAME
-    # )
-    # self.app_root = self.context.get(ContextNames.APPLICATION_ROOT_NAME)
 
     @property
     def application_window(self) -> UIAWrapper:
@@ -264,6 +222,38 @@ class BaseProcessor(ABC):
         self.context.set(ContextNames.APPLICATION_WINDOW, window)
 
     @property
+    def round_step(self) -> int:
+        """
+        Get the round step.
+        :return: The round step.
+        """
+        return self.context.get(ContextNames.CURRENT_ROUND_STEP)
+
+    @round_step.setter
+    def round_step(self, step: int) -> None:
+        """
+        Set the round step.
+        :param step: The round step.
+        """
+        self.context.set(ContextNames.CURRENT_ROUND_STEP, step)
+
+    @property
+    def round_cost(self) -> float:
+        """
+        Get the round cost.
+        :return: The round cost.
+        """
+        return self.context.get(ContextNames.CURRENT_ROUND_COST)
+
+    @round_cost.setter
+    def round_cost(self, cost: float) -> None:
+        """
+        Set the round cost.
+        :param cost: The round cost.
+        """
+        self.context.set(ContextNames.CURRENT_ROUND_COST, cost)
+
+    @property
     def session_step(self) -> int:
         """
         Get the session step.
@@ -280,20 +270,20 @@ class BaseProcessor(ABC):
         self.context.set(ContextNames.SESSION_STEP, step)
 
     @property
-    def round_step(self) -> int:
+    def session_cost(self) -> float:
         """
-        Get the round step.
-        :return: The round step.
+        Get the session cost.
+        :return: The session cost.
         """
-        return self.context.get(ContextNames.CURRENT_ROUND_STEP)
+        return self.context.get(ContextNames.SESSION_COST)
 
-    @round_step.setter
-    def round_step(self, step: int) -> None:
+    @session_cost.setter
+    def session_cost(self, cost: float) -> None:
         """
-        Set the round step.
-        :param step: The round step.
+        Set the session cost.
+        :param cost: The session cost.
         """
-        self.context.set(ContextNames.CURRENT_ROUND_STEP, step)
+        self.context.set(ContextNames.SESSION_COST, cost)
 
     @property
     def application_process_name(self) -> str:
