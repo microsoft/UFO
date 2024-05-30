@@ -7,27 +7,6 @@ from typing import List
 from ufo.module.basic import BaseSession
 
 
-class UFOClient:
-    """
-    A UFO client to run the UFO system for a single session.
-    """
-
-    def __init__(self, session: BaseSession) -> None:
-        """
-        Initialize a UFO client.
-        """
-
-        self.session = session
-
-    def run(self) -> None:
-        """
-        Run the UFO client.
-        """
-
-        self.session.run()
-        self.session.print_cost()
-
-
 class UFOClientManager:
     """
     The manager for the UFO clients.
@@ -46,5 +25,4 @@ class UFOClientManager:
         """
 
         for session in self.session_list:
-            client = UFOClient(session)
-            client.run()
+            session.run()

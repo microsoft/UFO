@@ -12,6 +12,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 class ContextNames(Enum):
     """The context names."""
 
+    MODE = "MODE"
     LOG_PATH = "LOG_PATH"
     REQUEST = "REQUEST"
     REQUEST_LOGGER = "REQUEST_LOGGER"
@@ -40,6 +41,7 @@ class ContextNames(Enum):
             or self == ContextNames.REQUEST
             or self == ContextNames.APPLICATION_PROCESS_NAME
             or self == ContextNames.APPLICATION_ROOT_NAME
+            or self == ContextNames.MODE
         ):
             return ""
         elif (
@@ -78,6 +80,7 @@ class ContextNames(Enum):
             or self == ContextNames.REQUEST
             or self == ContextNames.APPLICATION_PROCESS_NAME
             or self == ContextNames.APPLICATION_ROOT_NAME
+            or self == ContextNames.MODE
         ):
             return str
         elif (

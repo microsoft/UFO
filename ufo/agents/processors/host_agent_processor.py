@@ -3,14 +3,12 @@
 
 
 import json
-import os
 import time
 from typing import TYPE_CHECKING
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
@@ -284,91 +282,8 @@ class HostAgentProcessor(BaseProcessor):
         Update the status of the session.
         """
         self.host_agent.step += 1
-        self.host_agent.status = self._status
+        self.host_agent.status = self.status
 
         # Wait for the application to be ready after an action is taken before proceeding to the next step.
-        if self._status != self._agent_status_manager.FINISH.value:
+        if self.status != self._agent_status_manager.FINISH.value:
             time.sleep(configs["SLEEP_TIME"])
-
-    def should_create_subagent(self) -> bool:
-        """
-        Check if the app agent should be created.
-        :return: The boolean value indicating if the app agent should be created.
-        """
-
-        # Only create the app agent when the previous status is CONTINUE and the processor is HostAgentProcessor.
-        if (
-            isinstance(self, HostAgentProcessor)
-            and self.agent.state.name() == self._agent_status_manager.CONTINUE.value
-        ):
-            return True
-        else:
-            return False
-
-    def create_sub_agent(self) -> AppAgent:
-        """
-        Create the app agent.
-        :return: The app agent.
-        """
-
-        # Create the app agent.
-        app_agent = self.host_agent.create_subagent(
-            "app",
-            "AppAgent/{root}/{process}".format(
-                root=self.app_root, process=self._control_text
-            ),
-            self._control_text,
-            self.app_root,
-            configs["APP_AGENT"]["VISUAL_MODE"],
-            configs["APPAGENT_PROMPT"],
-            configs["APPAGENT_EXAMPLE_PROMPT"],
-            configs["API_PROMPT"],
-        )
-
-        # Create the COM receiver for the app agent.
-        if configs.get("USE_APIS", False):
-            app_agent.Puppeteer.receiver_manager.create_com_receiver(
-                self.app_root, self._control_text
-            )
-
-        # Provision the context for the app agent, including the all retrievers.
-        self.app_agent_context_provision(app_agent)
-
-        return app_agent
-
-    def app_agent_context_provision(self, app_agent: AppAgent) -> None:
-        """
-        Provision the context for the app agent.
-        :param app_agent: The app agent to provision the context.
-        """
-
-        # Load the offline document indexer for the app agent if available.
-        if configs["RAG_OFFLINE_DOCS"]:
-            utils.print_with_color(
-                "Loading offline document indexer for {app}...".format(
-                    app=self._control_text
-                ),
-                "magenta",
-            )
-            app_agent.build_offline_docs_retriever()
-
-        # Load the online search indexer for the app agent if available.
-        if configs["RAG_ONLINE_SEARCH"]:
-            utils.print_with_color("Creating a Bing search indexer...", "magenta")
-            app_agent.build_online_search_retriever(
-                self.request, configs["RAG_ONLINE_SEARCH_TOPK"]
-            )
-
-        # Load the experience indexer for the app agent if available.
-        if configs["RAG_EXPERIENCE"]:
-            utils.print_with_color("Creating an experience indexer...", "magenta")
-            experience_path = configs["EXPERIENCE_SAVED_PATH"]
-            db_path = os.path.join(experience_path, "experience_db")
-            app_agent.build_experience_retriever(db_path)
-
-        # Load the demonstration indexer for the app agent if available.
-        if configs["RAG_DEMONSTRATION"]:
-            utils.print_with_color("Creating an demonstration indexer...", "magenta")
-            demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
-            db_path = os.path.join(demonstration_path, "demonstration_db")
-            app_agent.build_human_demonstration_retriever(db_path)

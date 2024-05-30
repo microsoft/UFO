@@ -4,54 +4,10 @@
 
 import json
 
-from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
-from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.config.config import Config
 
 configs = Config.get_instance().config_data
-
-
-class FollowerHostAgentProcessor(HostAgentProcessor):
-    """
-    Follower host agent processor to handle the AppAgent in the follower mode.
-    """
-
-    def create_sub_agent(self) -> FollowerAgent:
-        """
-        Create a follower subagent for the host agent.
-        :return: The created sub agent.
-        """
-
-        # Load additional app info prompt.
-        app_info_prompt = configs.get("APP_INFO_PROMPT", None)
-
-        agent_name = "FollowerAgent/{root}/{process}".format(
-            root=self.app_root, process=self._control_text
-        )
-
-        # Create the app agent in the follower mode.
-        app_agent = self.host_agent.create_subagent(
-            "follower",
-            agent_name,
-            self._control_text,
-            self.app_root,
-            configs["APP_AGENT"]["VISUAL_MODE"],
-            configs["FOLLOWERAHENT_PROMPT"],
-            configs["APPAGENT_EXAMPLE_PROMPT"],
-            configs["API_PROMPT"],
-            app_info_prompt,
-        )
-
-        # Create the COM receiver for the app agent.
-        if configs.get("USE_APIS", False):
-            app_agent.Puppeteer.receiver_manager.create_com_receiver(
-                self.app_root, self._control_text
-            )
-
-        self.app_agent_context_provision(app_agent)
-
-        return app_agent
 
 
 class FollowerAppAgentProcessor(AppAgentProcessor):

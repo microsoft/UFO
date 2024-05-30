@@ -64,8 +64,7 @@ class BaseProcessor(ABC):
         6. Parse the response.
         7. Execute the action.
         8. Update the memory.
-        9. Create the app agent if necessary.
-        10. Update the step and status.
+        9. Update the step and status.
         """
 
         # Step 1: Print the step information.
@@ -98,11 +97,7 @@ class BaseProcessor(ABC):
         # Step 8: Update the memory.
         self.update_memory()
 
-        # Step 9: Create the app agent if necessary.
-        if self.should_create_subagent():
-            self.create_sub_agent()
-
-        # Step 10: Update the status.
+        # Step 9: Update the status.
         self.update_status()
 
     def resume(self) -> None:
@@ -235,12 +230,6 @@ class BaseProcessor(ABC):
         )
         self.app_root = self.context.get(ContextNames.APPLICATION_ROOT_NAME)
 
-    def create_sub_agent(self) -> None:
-        """
-        Create the app agent.
-        """
-        pass
-
     @property
     def application_window(self) -> UIAWrapper:
         """
@@ -283,13 +272,6 @@ class BaseProcessor(ABC):
         """
 
         return self._status == self._agent_status_manager.ERROR.value
-
-    def should_create_subagent(self) -> bool:
-        """
-        Check if the app agent should be created.
-        :return: The boolean value indicating if the app agent should be created.
-        """
-        return False
 
     def log(self, response_json: dict) -> None:
         """

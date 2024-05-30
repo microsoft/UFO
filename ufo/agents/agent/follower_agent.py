@@ -4,13 +4,12 @@
 
 from __future__ import annotations
 
-from typing import List
+from typing import List, Dict
 
 from ufo.agents.agent.app_agent import AppAgent
-from ufo.config.config import Config
+from ufo.agents.processors.follower_agent_processor import FollowerAppAgentProcessor
+from ufo.module.context import Context
 from ufo.prompter.agent_prompter import FollowerAgentPrompter
-
-configs = Config.get_instance().config_data
 
 
 class FollowerAgent(AppAgent):
@@ -94,16 +93,16 @@ class FollowerAgent(AppAgent):
         dynamic_examples: str,
         dynamic_tips: str,
         dynamic_knowledge: str,
-        image_list: List,
+        image_list: List[str],
         request_history: str,
         action_history: str,
         control_info: str,
         plan: List[str],
         request: str,
-        current_state: dict,
-        state_diff: dict,
+        current_state: Dict[str, str],
+        state_diff: Dict[str, str],
         include_last_screenshot: bool,
-    ) -> list:
+    ) -> List[Dict[str, str]]:
         """
         Construct the prompt message for the FollowAgent.
         :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
@@ -136,3 +135,9 @@ class FollowerAgent(AppAgent):
         )
 
         return followagent_prompt_message
+
+    def process(self, context: Context) -> None:
+
+        self.processor = FollowerAppAgentProcessor(agent=self, context=context)
+        self.processor.process()
+        self.status = self.processor.status

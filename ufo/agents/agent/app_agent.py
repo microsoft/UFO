@@ -4,12 +4,13 @@
 
 from __future__ import annotations
 
+import os
 from typing import Dict, List, Union
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
-from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
+from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.automator import puppeteer
 from ufo.config.config import Config
 from ufo.module.context import Context
@@ -313,7 +314,7 @@ class AppAgent(BasicAgent):
         Build the offline docs retriever.
         """
         self.offline_doc_retriever = self.retriever_factory.create_retriever(
-            "offline", self._process_name
+            "offline", self._app_root_name
         )
 
     def build_online_search_retriever(self, request: str, top_k: int) -> None:
@@ -345,3 +346,41 @@ class AppAgent(BasicAgent):
         self.human_demonstration_retriever = self.retriever_factory.create_retriever(
             "demonstration", db_path
         )
+
+    def context_provision(self, request: str = "") -> None:
+        """
+        Provision the context for the app agent.
+        :param app_agent: The app agent to provision the context.
+        """
+
+        # Load the offline document indexer for the app agent if available.
+        if configs["RAG_OFFLINE_DOCS"]:
+            utils.print_with_color(
+                "Loading offline help document indexer for {app}...".format(
+                    app=self._process_name
+                ),
+                "magenta",
+            )
+            self.build_offline_docs_retriever()
+
+        # Load the online search indexer for the app agent if available.
+
+        if configs["RAG_ONLINE_SEARCH"] and request:
+            utils.print_with_color("Creating a Bing search indexer...", "magenta")
+            self.build_online_search_retriever(
+                request, configs["RAG_ONLINE_SEARCH_TOPK"]
+            )
+
+        # Load the experience indexer for the app agent if available.
+        if configs["RAG_EXPERIENCE"]:
+            utils.print_with_color("Creating an experience indexer...", "magenta")
+            experience_path = configs["EXPERIENCE_SAVED_PATH"]
+            db_path = os.path.join(experience_path, "experience_db")
+            self.build_experience_retriever(db_path)
+
+        # Load the demonstration indexer for the app agent if available.
+        if configs["RAG_DEMONSTRATION"]:
+            utils.print_with_color("Creating an demonstration indexer...", "magenta")
+            demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
+            db_path = os.path.join(demonstration_path, "demonstration_db")
+            self.build_human_demonstration_retriever(db_path)

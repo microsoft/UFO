@@ -202,9 +202,9 @@ class BasicAgent(ABC):
         :param state: The state of the agent.
         """
 
-        assert state.agent_class() == type(
-            self
-        ), f"The state is only for agent type of {state.agent_class()}"
+        assert issubclass(
+            type(self), state.agent_class()
+        ), f"The state is only for agent type of {state.agent_class()}, but the current agent is {type(self)}."
 
         self._state = state
 

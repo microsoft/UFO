@@ -11,6 +11,7 @@ from ufo.config.config import Config
 from ufo.module import interactor
 from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.sessions.plan_reader import PlanReader
+from ufo.module.context import ContextNames
 
 configs = Config.get_instance().config_data
 
@@ -99,6 +100,14 @@ class Session(BaseSession):
         if interactor.experience_asker():
             self.experience_saver()
 
+    def _init_context(self) -> None:
+        """
+        Initialize the context.
+        """
+        super()._init_context()
+
+        self.context.set(ContextNames.MODE, "normal")
+
     def create_new_round(self) -> None:
         """
         Create a new round.
@@ -166,6 +175,14 @@ class FollowerSession(BaseSession):
         super().__init__(task, should_evaluate)
 
         self.plan_reader = PlanReader(plan_file)
+
+    def _init_context(self) -> None:
+        """
+        Initialize the context.
+        """
+        super()._init_context()
+
+        self.context.set(ContextNames.MODE, "follower")
 
     def create_new_round(self) -> None:
         """

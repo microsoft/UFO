@@ -277,6 +277,8 @@ class BaseSession(ABC):
         if self._should_evaluate:
             self.evaluation()
 
+        self.print_cost()
+
     @abstractmethod
     def create_new_round(self) -> Optional[BaseRound]:
         """
@@ -418,9 +420,17 @@ class BaseSession(ABC):
 
         if isinstance(self.cost, float) and self.cost > 0:
             formatted_cost = "${:.2f}".format(self.cost)
-            utils.print_with_color(f"Request total cost is {formatted_cost}$", "yellow")
+            utils.print_with_color(
+                f"Total request cost of the session: {formatted_cost}$", "yellow"
+            )
         else:
-            utils.print_with_color(f"Cost is not available for the model {configs['HOST_AGENT']["API_MODEL"]} or {configs['APP_AGENT']["API_MODEL"]}.", "yellow")
+            utils.print_with_color(
+                "Cost is not available for the model {host_model} or {app_model}.".format(
+                    host_model=configs["HOST_AGENT"]["API_MODEL"],
+                    app_model=configs["APP_AGENT"]["API_MODEL"],
+                ),
+                "yellow",
+            )
 
     @property
     def application_window(self) -> UIAWrapper:
@@ -445,6 +455,7 @@ class BaseSession(ABC):
         """
         if self._finish or self.step >= configs["MAX_STEP"]:
             return True
+
         return False
 
     @abstractmethod

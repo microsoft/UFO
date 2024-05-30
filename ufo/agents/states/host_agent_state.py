@@ -7,7 +7,10 @@ from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
-from ufo.module.context import Context
+from ufo.config.config import Config
+from ufo.module.context import Context, ContextNames
+
+configs = Config.get_instance().config_data
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -115,6 +118,7 @@ class ContinueHostAgentState(HostAgentState):
         :param context: The context for the agent and session.
         """
         agent.process(context)
+        self.create_app_agent(agent, context)
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
@@ -133,6 +137,72 @@ class ContinueHostAgentState(HostAgentState):
 
         else:
             return super().next_state(agent)
+
+    def create_app_agent(self, agent: "HostAgent", context: Context) -> AppAgent:
+        """
+        Create the app agent for the host agent.
+        :param agent: The host agent.
+        :return: The app agent.
+        """
+
+        application_window_name = context.get(ContextNames.APPLICATION_PROCESS_NAME)
+        application_root_name = context.get(ContextNames.APPLICATION_ROOT_NAME)
+        request = context.get(ContextNames.REQUEST)
+
+        if context.get(ContextNames.MODE) == "normal":
+
+            agent_name = "AppAgent/{root}/{process}".format(
+                root=application_root_name, process=application_window_name
+            )
+
+            app_agent: AppAgent = agent.create_subagent(
+                "app",
+                agent_name,
+                application_window_name,
+                application_root_name,
+                configs["APP_AGENT"]["VISUAL_MODE"],
+                configs["APPAGENT_PROMPT"],
+                configs["APPAGENT_EXAMPLE_PROMPT"],
+                configs["API_PROMPT"],
+            )
+
+        elif context.get(ContextNames.MODE) == "follower":
+
+            # Load additional app info prompt.
+            app_info_prompt = configs.get("APP_INFO_PROMPT", None)
+
+            agent_name = "FollowerAgent/{root}/{process}".format(
+                root=application_root_name, process=application_window_name
+            )
+
+            # Create the app agent in the follower mode.
+            app_agent = agent.create_subagent(
+                "follower",
+                agent_name,
+                application_window_name,
+                application_root_name,
+                configs["APP_AGENT"]["VISUAL_MODE"],
+                configs["FOLLOWERAHENT_PROMPT"],
+                configs["APPAGENT_EXAMPLE_PROMPT"],
+                configs["API_PROMPT"],
+                app_info_prompt,
+            )
+
+        else:
+            raise ValueError(
+                f"The {context.get(ContextNames.MODE)} mode is not supported."
+            )
+
+        # Create the COM receiver for the app agent.
+        if configs.get("USE_APIS", False):
+            app_agent.Puppeteer.receiver_manager.create_com_receiver(
+                application_root_name, application_window_name
+            )
+
+        # Provision the context for the app agent, including the all retrievers.
+        app_agent.context_provision(request)
+
+        return app_agent
 
     def next_agent(self, agent: "HostAgent") -> AppAgent:
         """
