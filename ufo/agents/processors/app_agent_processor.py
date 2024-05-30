@@ -42,7 +42,7 @@ class AppAgentProcessor(BaseProcessor):
         self.app_agent = agent
         self.host_agent = agent.host
 
-        self._init_processor_from_context()
+        # self._init_processor_from_context()
 
         self._annotation_dict = None
         self._control_info = None
@@ -81,18 +81,18 @@ class AppAgentProcessor(BaseProcessor):
         )
 
         # Get the control elements in the application window if the control items are not provided for reannotation.
-        if type(self._control_reannotate) == list and len(self._control_reannotate) > 0:
-            control_list = self._control_reannotate
+        if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
+            control_list = self.control_reannotate
         else:
             control_list = self.control_inspector.find_control_elements_in_descendants(
-                self._app_window,
+                self.application_window,
                 control_type_list=configs["CONTROL_LIST"],
                 class_name_list=configs["CONTROL_LIST"],
             )
 
         # Get the annotation dictionary for the control items, in a format of {control_label: control_element}.
         self._annotation_dict = self.photographer.get_annotation_dict(
-            self._app_window, control_list, annotation_type="number"
+            self.application_window, control_list, annotation_type="number"
         )
 
         self.prev_plan = self.get_prev_plan()
@@ -102,12 +102,12 @@ class AppAgentProcessor(BaseProcessor):
             self._annotation_dict
         )
         self.photographer.capture_app_window_screenshot(
-            self._app_window, save_path=screenshot_save_path
+            self.application_window, save_path=screenshot_save_path
         )
 
         # Capture the screenshot of the selected control items with annotation and save it.
         self.photographer.capture_app_window_screenshot_with_annotation_dict(
-            self._app_window,
+            self.application_window,
             self.filtered_annotation_dict,
             annotation_type="number",
             save_path=annotated_screenshot_save_path,
@@ -274,7 +274,7 @@ class AppAgentProcessor(BaseProcessor):
                 time.sleep(configs.get("RECTANGLE_TIME", 0))
 
             self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
-                control_selected, self._app_window
+                control_selected, self.application_window
             )
 
             # Save the screenshot of the tagged selected control.
@@ -324,7 +324,7 @@ class AppAgentProcessor(BaseProcessor):
             self.log_path + f"action_step{self.session_step}_selected_controls.png"
         )
         self.photographer.capture_app_window_screenshot_with_rectangle(
-            self._app_window,
+            self.application_window,
             sub_control_list=[control_selected],
             save_path=control_screenshot_save_path,
         )
@@ -339,13 +339,13 @@ class AppAgentProcessor(BaseProcessor):
                 "Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.",
                 "magenta",
             )
-            self._control_reannotate = self.app_agent.Puppeteer.execute_command(
+            self.control_reannotate = self.app_agent.Puppeteer.execute_command(
                 "annotation", self._args, self._annotation_dict
             )
-            if self._control_reannotate is None or len(self._control_reannotate) == 0:
+            if self.control_reannotate is None or len(self.control_reannotate) == 0:
                 self.status = self._agent_status_manager.CONTINUE.value
         else:
-            self._control_reannotate = None
+            self.control_reannotate = None
 
     def update_memory(self) -> None:
         """
@@ -354,7 +354,9 @@ class AppAgentProcessor(BaseProcessor):
         # Create a memory item for the app agent
         app_agent_step_memory = MemoryItem()
 
-        app_root = self.control_inspector.get_application_root_name(self._app_window)
+        app_root = self.control_inspector.get_application_root_name(
+            self.application_window
+        )
 
         # Log additional information for the app agent.
         additional_memory = {
@@ -454,7 +456,7 @@ class AppAgentProcessor(BaseProcessor):
         :return: The control to reannotate.
         """
 
-        return self._control_reannotate
+        return self.control_reannotate
 
     def get_prev_plan(self) -> str:
         """
@@ -559,7 +561,7 @@ class AppAgentProcessor(BaseProcessor):
             )
 
             cropped_icons_dict = self.photographer.get_cropped_icons_dict(
-                self._app_window, annotation_dict
+                self.application_window, annotation_dict
             )
             filtered_icon_dict = model_icon.control_filter(
                 annotation_dict,

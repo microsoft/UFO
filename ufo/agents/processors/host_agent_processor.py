@@ -201,8 +201,8 @@ class HostAgentProcessor(BaseProcessor):
 
         # Switch to the new application window, if it is different from the current application window.
         self.switch_to_new_app_window(new_app_window)
-        self._app_window.set_focus()
-        self._app_window.draw_outline(colour="red", thickness=3)
+        self.application_window.set_focus()
+        self.application_window.draw_outline(colour="red", thickness=3)
 
     def is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
         """
@@ -228,12 +228,15 @@ class HostAgentProcessor(BaseProcessor):
         :param new_app_window: The new application window.
         """
 
-        if new_app_window != self._app_window and self._app_window is not None:
+        if (
+            new_app_window != self.application_window
+            and self.application_window is not None
+        ):
             utils.print_with_color("Switching to a new application...", "magenta")
 
-        self._app_window = new_app_window
+        self.application_window = new_app_window
 
-        self.context.set(ContextNames.APPLICATION_WINDOW, self._app_window)
+        self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
 
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)

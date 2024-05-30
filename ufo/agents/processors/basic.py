@@ -37,8 +37,6 @@ class BaseProcessor(ABC):
         self._context = context
         self._agent = agent
 
-        self._init_processor_from_context()
-
         self.photographer = PhotographerFacade()
         self.control_inspector = ControlInspectorFacade(BACKEND)
 
@@ -208,15 +206,19 @@ class BaseProcessor(ABC):
         )
 
         print(
-            self.context.get(ContextNames.CURRENT_ROUND_ID),
-            current_round_step,
-            current_round_cost,
+            "Round ID: {id}, Round Step: {step}, Round Cost: {cost}".format(
+                id=self.context.get(ContextNames.CURRENT_ROUND_ID),
+                step=current_round_step,
+                cost=current_round_cost,
+            )
         )
 
         print(
-            self.context.get(ContextNames.SESSION_STEP),
-            self.session_step,
-            self.context.get(ContextNames.SESSION_COST),
+            "Session Step: {step1},{step2}, Session Cost: {cost}".format(
+                step1=self.context.get(ContextNames.SESSION_STEP),
+                step2=self.session_step,
+                cost=self.context.get(ContextNames.SESSION_COST),
+            )
         )
 
     @property
@@ -227,24 +229,23 @@ class BaseProcessor(ABC):
         """
         return self._agent
 
-    def _init_processor_from_context(self) -> None:
-        """
-        Initialize the processor from the context.
-        """
+    # def _init_processor_from_context(self) -> None:
+    #     """
+    #     Initialize the processor from the context.
+    #     """
 
-        self.log_path = self.context.get(ContextNames.LOG_PATH)
-        self.request = self.context.get(ContextNames.REQUEST)
-        self.request_logger = self.context.get(ContextNames.REQUEST_LOGGER)
-        self.logger = self.context.get(ContextNames.LOGGER)
-        self.round_step = self.context.get(ContextNames.CURRENT_ROUND_STEP)
-        self.session_step = self.context.get(ContextNames.SESSION_STEP)
-        self.round_num = self.context.get(ContextNames.CURRENT_ROUND_ID)
-        self._app_window = self.context.get(ContextNames.APPLICATION_WINDOW)
-        self._control_reannotate = self.context.get(ContextNames.CONTROL_REANNOTATION)
-        self.application_process_name = self.context.get(
-            ContextNames.APPLICATION_PROCESS_NAME
-        )
-        self.app_root = self.context.get(ContextNames.APPLICATION_ROOT_NAME)
+    # self.log_path = self.context.get(ContextNames.LOG_PATH)
+    # self.request = self.context.get(ContextNames.REQUEST)
+    # self.request_logger = self.context.get(ContextNames.REQUEST_LOGGER)
+    # self.logger = self.context.get(ContextNames.LOGGER)
+    # self._round_step = self.context.get(ContextNames.CURRENT_ROUND_STEP)
+    # self._round_num = self.context.get(ContextNames.CURRENT_ROUND_ID)
+    # self._app_window = self.context.get(ContextNames.APPLICATION_WINDOW)
+    # self._control_reannotate = self.context.get(ContextNames.CONTROL_REANNOTATION)
+    # self.application_process_name = self.context.get(
+    #     ContextNames.APPLICATION_PROCESS_NAME
+    # )
+    # self.app_root = self.context.get(ContextNames.APPLICATION_ROOT_NAME)
 
     @property
     def application_window(self) -> UIAWrapper:
@@ -252,7 +253,103 @@ class BaseProcessor(ABC):
         Get the active window.
         :return: The active window.
         """
-        return self._app_window
+        return self.context.get(ContextNames.APPLICATION_WINDOW)
+
+    @application_window.setter
+    def application_window(self, window: UIAWrapper) -> None:
+        """
+        Set the active window.
+        :param window: The active window.
+        """
+        self.context.set(ContextNames.APPLICATION_WINDOW, window)
+
+    @property
+    def session_step(self) -> int:
+        """
+        Get the session step.
+        :return: The session step.
+        """
+        return self.context.get(ContextNames.SESSION_STEP)
+
+    @session_step.setter
+    def session_step(self, step: int) -> None:
+        """
+        Set the session step.
+        :param step: The session step.
+        """
+        self.context.set(ContextNames.SESSION_STEP, step)
+
+    @property
+    def round_step(self) -> int:
+        """
+        Get the round step.
+        :return: The round step.
+        """
+        return self.context.get(ContextNames.CURRENT_ROUND_STEP)
+
+    @round_step.setter
+    def round_step(self, step: int) -> None:
+        """
+        Set the round step.
+        :param step: The round step.
+        """
+        self.context.set(ContextNames.CURRENT_ROUND_STEP, step)
+
+    @property
+    def application_process_name(self) -> str:
+        """
+        Get the application process name.
+        :return: The application process name.
+        """
+        return self.context.get(ContextNames.APPLICATION_PROCESS_NAME)
+
+    @application_process_name.setter
+    def application_process_name(self, name: str) -> None:
+        """
+        Set the application process name.
+        :param name: The application process name.
+        """
+        self.context.set(ContextNames.APPLICATION_PROCESS_NAME, name)
+
+    @property
+    def app_root(self) -> str:
+        """
+        Get the application root.
+        :return: The application root.
+        """
+        return self.context.get(ContextNames.APPLICATION_ROOT_NAME)
+
+    @app_root.setter
+    def app_root(self, root: str) -> None:
+        """
+        Set the application root.
+        :param root: The application root.
+        """
+        self.context.set(ContextNames.APPLICATION_ROOT_NAME, root)
+
+    @property
+    def control_reannotate(self) -> List[str]:
+        """
+        Get the control reannotation.
+        :return: The control reannotation.
+        """
+        return self.context.get(ContextNames.CONTROL_REANNOTATION)
+
+    @control_reannotate.setter
+    def control_reannotate(self, reannotate: List[str]) -> None:
+        """
+        Set the control reannotation.
+        :param reannotate: The control reannotation.
+        """
+        self.context.set(ContextNames.CONTROL_REANNOTATION, reannotate)
+
+    @property
+    def round_num(self) -> int:
+        """
+        Get the round number.
+        :return: The round number.
+        """
+        return self.context.get(ContextNames.CURRENT_ROUND_ID)
 
     @property
     def control_text(self) -> str:
@@ -277,6 +374,38 @@ class BaseProcessor(ABC):
         :return: The status of the processor.
         """
         return self._status
+
+    @property
+    def log_path(self) -> str:
+        """
+        Get the log path.
+        :return: The log path.
+        """
+        return self.context.get(ContextNames.LOG_PATH)
+
+    @property
+    def request(self) -> str:
+        """
+        Get the request.
+        :return: The request.
+        """
+        return self.context.get(ContextNames.REQUEST)
+
+    @property
+    def request_logger(self) -> str:
+        """
+        Get the request logger.
+        :return: The request logger.
+        """
+        return self.context.get(ContextNames.REQUEST_LOGGER)
+
+    @property
+    def logger(self) -> str:
+        """
+        Get the logger.
+        :return: The logger.
+        """
+        return self.context.get(ContextNames.LOGGER)
 
     @status.setter
     def status(self, status: str) -> None:
