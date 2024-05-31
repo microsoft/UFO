@@ -273,6 +273,7 @@ class AppAgentProcessor(BaseProcessor):
         self._control_label = self._response_json.get("ControlLabel", "")
         self.control_text = self._response_json.get("ControlText", "")
         self._operation = self._response_json.get("Function", "")
+        self.question_list = self._response_json.get("Questions", [])
         self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
 
         # Convert the plan from a string to a list if the plan is a string.
@@ -285,8 +286,6 @@ class AppAgentProcessor(BaseProcessor):
         )
 
         self.status = self._response_json.get("Status", "")
-        self.agent.status = self.status
-
         self.app_agent.print_response(self._response_json)
 
     def execute_action(self) -> None:

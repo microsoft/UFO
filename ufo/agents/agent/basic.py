@@ -4,14 +4,16 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, List, Type, Union
+from typing import TYPE_CHECKING, Dict, List, Type, Union, Optional
 
 from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
 from ufo.agents.states.basic import AgentState, AgentStatus
+from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator import puppeteer
 from ufo.llm import llm_call
 from ufo.module.context import Context
+from ufo.module.interactor import question_asker
 
 
 # Lazy import the retriever factory to aviod long loading time.
@@ -41,7 +43,7 @@ class BasicAgent(ABC):
         self.retriever_factory = retriever.RetrieverFactory()
         self._memory = Memory()
         self._host = None
-        self.processor = None
+        self._processor: Optional[BaseProcessor] = None
         self._state = None
 
     @property
@@ -220,6 +222,46 @@ class BasicAgent(ABC):
         Process the agent.
         """
         pass
+
+    def process_resume(self) -> None:
+        """
+        Resume the process.
+        """
+        if self.processor:
+            self.processor.resume()
+
+    def process_asker(self) -> None:
+        """
+        Ask for the process.
+        """
+        if self.processor:
+            question_list = self.processor.question_list
+
+            utils.print_with_color(
+                "yellow",
+                "Could you please answer the following questions to help me understand your needs?",
+            )
+
+            for index, question in enumerate(question_list):
+                answer = question_asker(question, index)
+                qa_pair = {"question": question, "answer": answer}
+                self.blackboard.add_questions(qa_pair)
+
+    @property
+    def processor(self) -> BaseProcessor:
+        """
+        Get the processor.
+        :return: The processor.
+        """
+        return self._processor
+
+    @processor.setter
+    def processor(self, processor: BaseProcessor) -> None:
+        """
+        Set the processor.
+        :param processor: The processor.
+        """
+        self._processor = processor
 
     @property
     def status_manager(self) -> AgentStatus:

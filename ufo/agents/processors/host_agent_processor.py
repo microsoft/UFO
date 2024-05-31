@@ -151,6 +151,8 @@ class HostAgentProcessor(BaseProcessor):
         self._response_json["Plan"] = self._plan
 
         self.status = self._response_json.get("Status", "")
+        self.question_list = self._response_json.get("Questions", [])
+
         self.app_to_open = self._response_json.get("AppsToOpen", None)
 
         self.host_agent.print_response(self._response_json)
