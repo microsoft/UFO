@@ -85,7 +85,7 @@ class BaseProcessor(ABC):
             return
 
         # Step 6: Update the context.
-        self.update_context()
+        self.update_cost()
 
         # Step 7: Parse the response, if there is no error.
         self.parse_response()
@@ -101,6 +101,9 @@ class BaseProcessor(ABC):
 
         # Step 10: Update the status.
         self.update_status()
+
+        # Step 11: Update the context.
+        self.update_step()
 
     def resume(self) -> None:
         """
@@ -186,16 +189,21 @@ class BaseProcessor(ABC):
         """
         return self._context
 
-    def update_context(self) -> None:
+    def update_cost(self) -> None:
         """
-        Update the context.
+        Update the cost.
+        """
+
+        self.round_cost += self.cost
+        self.session_cost += self.cost
+
+    def update_step(self) -> None:
+        """
+        Update the step.
         """
 
         self.round_step += 1
         self.session_step += 1
-
-        self.round_cost += self.cost
-        self.session_cost += self.cost
 
     @property
     def agent(self) -> BasicAgent:

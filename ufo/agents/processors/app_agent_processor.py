@@ -15,7 +15,7 @@ from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
 from ufo.module import interactor
-from ufo.module.context import Context
+from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -380,8 +380,8 @@ class AppAgentProcessor(BaseProcessor):
         }
 
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
-        self.host_agent.blackboard.add_trajectories(memorized_action)
         self._update_image_blackboard()
+        self.host_agent.blackboard.add_trajectories(memorized_action)
 
     def update_status(self) -> None:
         """
@@ -404,7 +404,9 @@ class AppAgentProcessor(BaseProcessor):
 
             screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
             metadata = {
-                "screenshot application": self.process_name,
+                "screenshot application": self.context.get(
+                    ContextNames.APPLICATION_PROCESS_NAME
+                ),
                 "saving reason": screenshot_saving.get("reason", ""),
             }
             self.app_agent.blackboard.add_image(screenshot_save_path, metadata)

@@ -138,6 +138,7 @@ class Blackboard:
                 screenshot_path
             )
         else:
+            print(f"Screenshot path {screenshot_path} does not exist.")
             screenshot_str = ""
 
         image_memory_item = ImageMemoryItem()
