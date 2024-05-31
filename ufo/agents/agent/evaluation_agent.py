@@ -4,7 +4,8 @@
 
 from typing import Any, Dict, Optional, Tuple
 
-from ufo.agent.basic import BasicAgent
+from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.states.evaluaton_agent_state import EvaluatonAgentStatus
 from ufo.config.config import Config
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 from ufo.utils import json_parser, print_with_color
@@ -81,6 +82,14 @@ class EvaluationAgent(BasicAgent):
         )
 
         return evaagent_prompt_message
+
+    @property
+    def status_manager(self) -> EvaluatonAgentStatus:
+        """
+        Get the status manager.
+        """
+
+        return EvaluatonAgentStatus
 
     def evaluate(self, request: str, log_path: str) -> Tuple[Dict[str, str], float]:
         """

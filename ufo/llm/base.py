@@ -62,6 +62,5 @@ class BaseService(abc.ABC):
                 + completion_tokens * prices[name]["output"] / 1000
             )
         else:
-            print(f"{name} not found in prices")
-            return None
+            return 0
         return cost

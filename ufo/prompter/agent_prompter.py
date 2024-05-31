@@ -40,8 +40,8 @@ class HostAgentPrompter(BasicPrompter):
         return: The prompt for app selection.
         """
         if self.allow_openapp:
-            open_app_guideline = self.prompt_template["open_app_guideline"]
-            open_app_comment = self.prompt_template["open_app_comment"]
+            open_app_guideline = self.prompt_template.get("open_app_guideline", "")
+            open_app_comment = self.prompt_template.get("open_app_comment", "")
         else:
             open_app_guideline = ""
             open_app_comment = ""
@@ -59,8 +59,6 @@ class HostAgentPrompter(BasicPrompter):
 
     def user_prompt_construction(
         self,
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
         prev_plan: List[str],
         user_request: str,
@@ -75,8 +73,6 @@ class HostAgentPrompter(BasicPrompter):
         return: The prompt for action selection.
         """
         prompt = self.prompt_template["user"].format(
-            action_history=json.dumps(action_history),
-            request_history=json.dumps(request_history),
             control_item=json.dumps(control_item),
             prev_plan=json.dumps(prev_plan),
             user_request=user_request,
@@ -88,8 +84,6 @@ class HostAgentPrompter(BasicPrompter):
     def user_content_construction(
         self,
         image_list: List[str],
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
         prev_plan: str,
         user_request: str,
@@ -118,12 +112,7 @@ class HostAgentPrompter(BasicPrompter):
             {
                 "type": "text",
                 "text": self.user_prompt_construction(
-                    request_history,
-                    action_history,
-                    control_item,
-                    prev_plan,
-                    user_request,
-                    retrieved_docs,
+                    control_item, prev_plan, user_request, retrieved_docs
                 ),
             }
         )
@@ -247,8 +236,6 @@ class AppAgentPrompter(BasicPrompter):
 
     def user_prompt_construction(
         self,
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
         prev_plan: List[str],
         user_request: str,
@@ -264,8 +251,6 @@ class AppAgentPrompter(BasicPrompter):
         return: The prompt for action selection.
         """
         prompt = self.prompt_template["user"].format(
-            action_history=json.dumps(action_history),
-            request_history=json.dumps(request_history),
             control_item=json.dumps(control_item),
             prev_plan=json.dumps(prev_plan),
             user_request=user_request,
@@ -277,8 +262,6 @@ class AppAgentPrompter(BasicPrompter):
     def user_content_construction(
         self,
         image_list: List[str],
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
         prev_plan: List[str],
         user_request: str,
@@ -313,8 +296,6 @@ class AppAgentPrompter(BasicPrompter):
             {
                 "type": "text",
                 "text": self.user_prompt_construction(
-                    request_history,
-                    action_history,
                     control_item,
                     prev_plan,
                     user_request,
@@ -481,8 +462,6 @@ class FollowerAgentPrompter(AppAgentPrompter):
 
     def user_prompt_construction(
         self,
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
         prev_plan: List[str],
         user_request: str,
@@ -502,8 +481,6 @@ class FollowerAgentPrompter(AppAgentPrompter):
         return: The prompt for action selection.
         """
         prompt = self.prompt_template["user"].format(
-            action_history=json.dumps(action_history),
-            request_history=json.dumps(request_history),
             control_item=json.dumps(control_item),
             prev_plan=json.dumps(prev_plan),
             user_request=user_request,
@@ -517,8 +494,6 @@ class FollowerAgentPrompter(AppAgentPrompter):
     def user_content_construction(
         self,
         image_list: List[str],
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
         prev_plan: List[str],
         user_request: str,
@@ -558,8 +533,6 @@ class FollowerAgentPrompter(AppAgentPrompter):
             {
                 "type": "text",
                 "text": self.user_prompt_construction(
-                    request_history,
-                    action_history,
                     control_item,
                     prev_plan,
                     user_request,

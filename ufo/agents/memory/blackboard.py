@@ -1,16 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import sys
-
-sys.path.append("../ufo")
-
 import json
 import os
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
-from ufo.agent.basic import Memory, MemoryItem
+from ufo.agents.memory.memory import Memory, MemoryItem
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 
 
@@ -43,16 +39,34 @@ class Blackboard:
         """
         Initialize the blackboard.
         """
-        self._data: Memory = Memory()
+        self._questions: Memory = Memory()
+        self._requests: Memory = Memory()
+        self._trajectories: Memory = Memory()
         self._screenshots: Memory = Memory()
 
     @property
-    def data(self) -> Memory:
+    def questions(self) -> Memory:
         """
         Get the data from the blackboard.
-        :return: The data from the blackboard.
+        :return: The questions from the blackboard.
         """
-        return self._data
+        return self._questions
+
+    @property
+    def requests(self) -> Memory:
+        """
+        Get the data from the blackboard.
+        :return: The requests from the blackboard.
+        """
+        return self._requests
+
+    @property
+    def trajectories(self) -> Memory:
+        """
+        Get the data from the blackboard.
+        :return: The trajectories from the blackboard.
+        """
+        return self._trajectories
 
     @property
     def screenshots(self) -> Memory:
@@ -62,18 +76,49 @@ class Blackboard:
         """
         return self._screenshots
 
-    def add_data(self, data: Union[MemoryItem, Dict[str, str]]) -> None:
+    def add_data(
+        self, data: Union[MemoryItem, Dict[str, str], str], memory: Memory
+    ) -> None:
         """
-        Add the data to the blackboard.
-        :param data: The data to be added. It can be a dictionary or a MemoryItem.
+        Add the data to the a memory in the blackboard.
+        :param data: The data to be added. It can be a dictionary or a MemoryItem or a string.
+        :param memory: The memory to add the data to.
         """
 
         if isinstance(data, dict):
             data_memory = MemoryItem()
             data_memory.set_values_from_dict(data)
-            self._data.add_memory_item(data_memory)
+            memory.add_memory_item(data_memory)
         elif isinstance(data, MemoryItem):
-            self._data.add_memory_item(data)
+            memory.add_memory_item(data)
+        elif isinstance(data, str):
+            data_memory = MemoryItem()
+            data_memory.set_values_from_dict({"text": data})
+            memory.add_memory_item(data_memory)
+
+    def add_questions(self, questions: Union[MemoryItem, Dict[str, str]]) -> None:
+        """
+        Add the data to the blackboard.
+        :param questions: The data to be added. It can be a dictionary or a MemoryItem or a string.
+        """
+
+        self.add_data(questions, self.questions)
+
+    def add_requests(self, requests: Union[MemoryItem, Dict[str, str]]) -> None:
+        """
+        Add the data to the blackboard.
+        :param requests: The data to be added. It can be a dictionary or a MemoryItem or a string.
+        """
+
+        self.add_data(requests, self.requests)
+
+    def add_trajectories(self, trajectories: Union[MemoryItem, Dict[str, str]]) -> None:
+        """
+        Add the data to the blackboard.
+        :param trajectories: The data to be added. It can be a dictionary or a MemoryItem or a string.
+        """
+
+        self.add_data(trajectories, self.trajectories)
 
     def add_image(
         self,
@@ -93,6 +138,7 @@ class Blackboard:
                 screenshot_path
             )
         else:
+            print(f"Screenshot path {screenshot_path} does not exist.")
             screenshot_str = ""
 
         image_memory_item = ImageMemoryItem()
@@ -108,12 +154,26 @@ class Blackboard:
 
         self.screenshots.add_memory_item(image_memory_item)
 
-    def data_to_json(self) -> str:
+    def questions_to_json(self) -> str:
         """
         Convert the data to a dictionary.
         :return: The data in the dictionary format.
         """
-        return self._data.to_json()
+        return self.questions.to_json()
+
+    def requests_to_json(self) -> str:
+        """
+        Convert the data to a dictionary.
+        :return: The data in the dictionary format.
+        """
+        return self.requests.to_json()
+
+    def trajectories_to_json(self) -> str:
+        """
+        Convert the data to a dictionary.
+        :return: The data in the dictionary format.
+        """
+        return self.trajectories.to_json()
 
     def screenshots_to_json(self) -> str:
         """
@@ -122,19 +182,15 @@ class Blackboard:
         """
         return self.screenshots.to_json()
 
-    def data_to_prompt(self) -> List[str]:
+    def texts_to_prompt(self, memory: Memory, prefix: str) -> List[str]:
         """
         Convert the data to a prompt.
         :return: The prompt.
         """
-        user_content = []
-        for data_dict in self.data.list_content:
-            user_content.append(
-                {
-                    "type": "text",
-                    "text": json.dumps(data_dict),
-                }
-            )
+
+        user_content = [
+            {"type": "text", "text": f"{prefix}\n {json.dumps(memory.list_content)}"}
+        ]
 
         return user_content
 
@@ -177,21 +233,36 @@ class Blackboard:
             }
         ]
 
-        return prefix + self.data_to_prompt() + self.screenshots_to_prompt()
+        blackboard_prompt = (
+            prefix
+            + self.texts_to_prompt(self.questions, "[Questions & Answers:]")
+            + self.texts_to_prompt(self.requests, "[Request History:]")
+            + self.texts_to_prompt(self.trajectories, "[Step Trajectories:]")
+            + self.screenshots_to_prompt()
+        )
+
+        return blackboard_prompt
 
     def is_empty(self) -> bool:
         """
         Check if the blackboard is empty.
         :return: True if the blackboard is empty, False otherwise.
         """
-        return self._data.is_empty() and self._screenshots.is_empty()
+        return (
+            self.questions.is_empty()
+            and self.requests.is_empty()
+            and self.trajectories.is_empty()
+            and self.screenshots.is_empty()
+        )
 
     def clear(self) -> None:
         """
         Clear the blackboard.
         """
-        self._data.clear()
-        self._screenshots.clear()
+        self.questions.clear()
+        self.requests.clear()
+        self.trajectories.clear()
+        self.screenshots.clear()
 
 
 if __name__ == "__main__":

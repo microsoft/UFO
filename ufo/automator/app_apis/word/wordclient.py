@@ -5,13 +5,14 @@ from typing import Dict, Type
 
 from ufo.automator.app_apis.basic import WinCOMCommand, WinCOMReceiverBasic
 from ufo.automator.basic import CommandBasic
-from ufo.prompter.agent_prompter import APIPromptLoader
 
 
 class WordWinCOMReceiver(WinCOMReceiverBasic):
     """
     The base class for Windows COM client.
     """
+
+    _command_registry: Dict[str, Type[CommandBasic]] = {}
 
     def get_object_from_process_name(self) -> None:
         """
@@ -26,22 +27,6 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
                 return doc
 
         return None
-
-    def get_default_command_registry(self) -> Dict[str, Type[CommandBasic]]:
-        """
-        Get the default command registry.
-        """
-
-        api_prompt_loader = APIPromptLoader(self.app_root_name)
-        api_prompt = api_prompt_loader.load_com_api_prompt()
-        class_name_dict = api_prompt_loader.filter_api_dict(api_prompt)
-
-        global_name_space = globals()
-        command_registry = self.name_to_command_class(
-            global_name_space, class_name_dict
-        )
-
-        return command_registry
 
     def insert_table(self, rows: int, columns: int) -> object:
         """
@@ -97,6 +82,7 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         return 11
 
 
+@WordWinCOMReceiver.register
 class InsertTableCommand(WinCOMCommand):
     """
     The command to insert a table.
@@ -111,7 +97,15 @@ class InsertTableCommand(WinCOMCommand):
             self.params.get("rows"), self.params.get("columns")
         )
 
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "insert_table"
 
+
+@WordWinCOMReceiver.register
 class SelectTextCommand(WinCOMCommand):
     """
     The command to select text.
@@ -124,7 +118,15 @@ class SelectTextCommand(WinCOMCommand):
         """
         return self.receiver.select_text(self.params.get("text"))
 
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "select_text"
 
+
+@WordWinCOMReceiver.register
 class SelectTableCommand(WinCOMCommand):
     """
     The command to select a table.
@@ -136,3 +138,10 @@ class SelectTableCommand(WinCOMCommand):
         :return: The selected table.
         """
         return self.receiver.select_table(self.params.get("number"))
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "select_table"

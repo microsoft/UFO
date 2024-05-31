@@ -3,7 +3,7 @@
 
 
 from abc import abstractmethod
-from typing import Dict, List
+from typing import Dict, List, Type
 
 import win32com.client
 
@@ -14,6 +14,8 @@ class WinCOMReceiverBasic(ReceiverBasic):
     """
     The base class for Windows COM client.
     """
+
+    _command_registry: Dict[str, Type[CommandBasic]] = {}
 
     def __init__(self, app_root_name: str, process_name: str, clsid: str) -> None:
         """
@@ -30,15 +32,6 @@ class WinCOMReceiverBasic(ReceiverBasic):
 
         self.client = win32com.client.Dispatch(self.clsid)
         self.com_object = self.get_object_from_process_name()
-
-        super().__init__()
-
-    @abstractmethod
-    def get_default_command_registry(self):
-        """
-        The default command registry.
-        """
-        pass
 
     @abstractmethod
     def get_object_from_process_name(self) -> win32com.client.CDispatch:
@@ -75,6 +68,10 @@ class WinCOMReceiverBasic(ReceiverBasic):
             clean_process_name = self.process_name[: -len(suffix)]
         else:
             clean_process_name = self.process_name
+
+        # If the object name list is empty, return an empty string
+        if not object_name_list:
+            return ""
 
         return max(
             object_name_list,
@@ -124,7 +121,7 @@ class WinCOMReceiverBasic(ReceiverBasic):
     @property
     def type_name(self):
         return "COM"
-    
+
     @property
     def xml_format_code(self) -> int:
         pass

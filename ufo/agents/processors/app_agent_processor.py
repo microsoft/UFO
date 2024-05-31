@@ -5,386 +5,23 @@
 import json
 import os
 import time
-from logging import Logger
-from typing import Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Dict, List, Tuple
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agent.agent import AppAgent, HostAgent
-from ufo.agent.basic import MemoryItem
+from ufo.agents.memory.memory import MemoryItem
+from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
 from ufo.module import interactor
-from ufo.module.processors.basic import BaseProcessor
-from ufo.module.state import Status
+from ufo.module.context import Context, ContextNames
 
+if TYPE_CHECKING:
+    from ufo.agents.agent.app_agent import AppAgent
 
 configs = Config.get_instance().config_data
 BACKEND = configs["CONTROL_BACKEND"]
-
-
-class HostAgentProcessor(BaseProcessor):
-    """
-    The processor for the host agent at a single step.
-    """
-
-    def __init__(
-        self,
-        round_num: int,
-        log_path: str,
-        request: str,
-        request_logger: Logger,
-        logger: Logger,
-        host_agent: HostAgent,
-        round_step: int,
-        session_step: int,
-        prev_status: str,
-        app_window=None,
-    ) -> None:
-        """
-        Initialize the host agent processor.
-        :param round_num: The total number of rounds in the session.
-        :param log_path: The log path.
-        :param request: The user request.
-        :param request_logger: The logger for the request string.
-        :param logger: The logger for the response and error.
-        :param host_agent: The host agent to process the session.
-        :param round_step: The number of steps in the round.
-        :param session_step: The global step of the session.
-        :param prev_status: The previous status of the session.
-        :param app_window: The application window.
-        """
-
-        super().__init__(
-            round_num=round_num,
-            log_path=log_path,
-            request=request,
-            request_logger=request_logger,
-            logger=logger,
-            round_step=round_step,
-            session_step=session_step,
-            prev_status=prev_status,
-            app_window=app_window,
-        )
-
-        self.host_agent = host_agent
-
-        self._desktop_screen_url = None
-        self._desktop_windows_dict = None
-        self._desktop_windows_info = None
-        self.app_to_open = None
-
-    def print_step_info(self) -> None:
-        """
-        Print the step information.
-        """
-        utils.print_with_color(
-            "Round {round_num}, Step {step}: Selecting an application.".format(
-                round_num=self.round_num + 1, step=self.round_step + 1
-            ),
-            "magenta",
-        )
-
-    def capture_screenshot(self) -> None:
-        """
-        Capture the screenshot.
-        """
-
-        desktop_save_path = self.log_path + f"action_step{self.session_step}.png"
-
-        # Capture the desktop screenshot for all screens.
-        self.photographer.capture_desktop_screen_screenshot(
-            all_screens=True, save_path=desktop_save_path
-        )
-
-        # Encode the desktop screenshot into base64 format as required by the LLM.
-        self._desktop_screen_url = self.photographer.encode_image_from_path(
-            desktop_save_path
-        )
-
-    def get_control_info(self) -> None:
-        """
-        Get the control information.
-        """
-
-        # Get all available windows on the desktop, into a dictionary with format {index: application object}.
-        self._desktop_windows_dict = self.control_inspector.get_desktop_app_dict(
-            remove_empty=True
-        )
-
-        # Get the textual information of all windows.
-        self._desktop_windows_info = self.control_inspector.get_desktop_app_info(
-            self._desktop_windows_dict
-        )
-
-    def get_prompt_message(self) -> None:
-        """
-        Get the prompt message.
-        """
-
-        # Get the request and action history of the host agent.
-        request_history = self.host_agent.get_request_history_memory().to_json()
-        action_history = self.host_agent.get_global_action_memory().to_json()
-
-        # Get the previous plan from the memory. If the memory is empty, set the plan to an empty string.
-        agent_memory = self.host_agent.memory
-        if agent_memory.length > 0:
-            plan = agent_memory.get_latest_item().to_dict()["Plan"]
-        else:
-            plan = []
-
-        # Construct the prompt message for the host agent.
-        self._prompt_message = self.host_agent.message_constructor(
-            [self._desktop_screen_url],
-            request_history,
-            action_history,
-            self._desktop_windows_info,
-            plan,
-            self.request,
-        )
-
-        # Log the prompt message. Only save them in debug mode.
-        log = json.dumps(
-            {
-                "step": self._step,
-                "prompt": self._prompt_message,
-                "control_items": self._desktop_windows_info,
-                "filted_control_items": self._desktop_windows_info,
-                "status": "",
-            }
-        )
-        self.request_logger.debug(log)
-
-    def get_response(self) -> None:
-        """
-        Get the response from the LLM.
-        """
-
-        # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
-        try:
-            self._response, self._cost = self.host_agent.get_response(
-                self._prompt_message, "HOSTAGENT", use_backup_engine=True
-            )
-        except Exception:
-            self.llm_error_handler()
-
-    def parse_response(self) -> None:
-        """
-        Parse the response.
-        """
-
-        # Try to parse the response. If an error occurs, catch the exception and log the error.
-        try:
-            self._response_json = self.host_agent.response_to_dict(self._response)
-
-        except Exception:
-            self.general_error_handler()
-
-        self.control_label = self._response_json.get("ControlLabel", "")
-        self._control_text = self._response_json.get("ControlText", "")
-
-        # Convert the plan from a string to a list if the plan is a string.
-        self._plan = self.string2list(self._response_json.get("Plan", ""))
-        self._response_json["Plan"] = self._plan
-
-        self._status = self._response_json.get("Status", "")
-        self.app_to_open = self._response_json.get("AppsToOpen", None)
-
-        self.host_agent.print_response(self._response_json)
-
-        if Status.FINISH in self._status.upper() or self._control_text == "":
-            self._status = Status.FINISH
-
-    def execute_action(self) -> None:
-        """
-        Execute the action.
-        """
-
-        # When the required application is not opened, try to open the application and set the focus to the application window.
-        if self.app_to_open is not None:
-            new_app_window = self.host_agent.app_file_manager(self.app_to_open)
-            self._control_text = new_app_window.window_text()
-        else:
-            # Get the application window
-            new_app_window = self._desktop_windows_dict.get(self.control_label, None)
-
-        if new_app_window is None:
-            return
-
-        # Get the root name of the application.
-        self.app_root = self.control_inspector.get_application_root_name(new_app_window)
-
-        # Check if the window interface is available for the visual element.
-        if not self.is_window_interface_available(new_app_window):
-            self._status = Status.ERROR
-            return
-
-        # Switch to the new application window, if it is different from the current application window.
-        self.switch_to_new_app_window(new_app_window)
-        self._app_window.set_focus()
-        self._app_window.draw_outline(colour="red", thickness=3)
-
-    def is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
-        """
-        Check if the window interface is available for the visual element.
-        :param new_app_window: The new application window.
-        :return: True if the window interface is available, False otherwise.
-        """
-        try:
-            new_app_window.is_normal()
-            return True
-        except Exception:
-            utils.print_with_color(
-                "Window interface {title} not available for the visual element.".format(
-                    title=self._control_text
-                ),
-                "red",
-            )
-            return False
-
-    def switch_to_new_app_window(self, new_app_window: UIAWrapper) -> None:
-        """
-        Switch to the new application window if it is different from the current application window.
-        :param new_app_window: The new application window.
-        """
-        if new_app_window is not self._app_window and self._app_window is not None:
-            utils.print_with_color("Switching to a new application...", "magenta")
-            self._app_window.minimize()
-        self._app_window = new_app_window
-
-    def update_memory(self) -> None:
-        """
-        Update the memory of the Agent.
-        """
-
-        # Create a memory item for the host agent at the current step.
-        host_agent_step_memory = MemoryItem()
-
-        # Log additional information for the host agent.
-        additional_memory = {
-            "Step": self.session_step,
-            "RoundStep": self.get_process_step(),
-            "AgentStep": self.host_agent.get_step(),
-            "Round": self.round_num,
-            "ControlLabel": self._control_text,
-            "Action": "set_focus()",
-            "ActionType": "UIControl",
-            "Request": self.request,
-            "Agent": "HostAgent",
-            "AgentName": self.host_agent.name,
-            "Application": self.app_root,
-            "Cost": self._cost,
-            "Results": "",
-        }
-
-        host_agent_step_memory.set_values_from_dict(self._response_json)
-        host_agent_step_memory.set_values_from_dict(additional_memory)
-        self.host_agent.add_memory(host_agent_step_memory)
-
-        # Log the memory item.
-        self.log(host_agent_step_memory.to_dict())
-
-        # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
-        memorized_action = {
-            key: host_agent_step_memory.to_dict().get(key)
-            for key in configs["HISTORY_KEYS"]
-        }
-        self.host_agent.add_global_action_memory(memorized_action)
-
-    def update_status(self) -> None:
-        """
-        Update the status of the session.
-        """
-        self.host_agent.update_step()
-        self.host_agent.update_status(self._status)
-
-        # Wait for the application to be ready after an action is taken before proceeding to the next step.
-        if self._status != Status.FINISH:
-            time.sleep(configs["SLEEP_TIME"])
-
-    def should_create_subagent(self) -> bool:
-        """
-        Check if the app agent should be created.
-        :return: The boolean value indicating if the app agent should be created.
-        """
-
-        # Only create the app agent when the previous status is APP_SELECTION and the processor is HostAgentProcessor.
-        if (
-            isinstance(self, HostAgentProcessor)
-            and self.prev_status == Status.APP_SELECTION
-        ):
-            return True
-        else:
-            return False
-
-    def create_sub_agent(self) -> AppAgent:
-        """
-        Create the app agent.
-        :return: The app agent.
-        """
-
-        # Create the app agent.
-        app_agent = self.host_agent.create_subagent(
-            "app",
-            "AppAgent/{root}/{process}".format(
-                root=self.app_root, process=self._control_text
-            ),
-            self._control_text,
-            self.app_root,
-            configs["APP_AGENT"]["VISUAL_MODE"],
-            configs["APPAGENT_PROMPT"],
-            configs["APPAGENT_EXAMPLE_PROMPT"],
-            configs["API_PROMPT"],
-        )
-
-        # Create the COM receiver for the app agent.
-        if configs.get("USE_APIS", False):
-            app_agent.Puppeteer.receiver_manager.create_com_receiver(
-                self.app_root, self._control_text
-            )
-
-        # Provision the context for the app agent, including the all retrievers.
-        self.app_agent_context_provision(app_agent)
-
-        return app_agent
-
-    def app_agent_context_provision(self, app_agent: AppAgent) -> None:
-        """
-        Provision the context for the app agent.
-        :param app_agent: The app agent to provision the context.
-        """
-
-        # Load the offline document indexer for the app agent if available.
-        if configs["RAG_OFFLINE_DOCS"]:
-            utils.print_with_color(
-                "Loading offline document indexer for {app}...".format(
-                    app=self._control_text
-                ),
-                "magenta",
-            )
-            app_agent.build_offline_docs_retriever()
-
-        # Load the online search indexer for the app agent if available.
-        if configs["RAG_ONLINE_SEARCH"]:
-            utils.print_with_color("Creating a Bing search indexer...", "magenta")
-            app_agent.build_online_search_retriever(
-                self.request, configs["RAG_ONLINE_SEARCH_TOPK"]
-            )
-
-        # Load the experience indexer for the app agent if available.
-        if configs["RAG_EXPERIENCE"]:
-            utils.print_with_color("Creating an experience indexer...", "magenta")
-            experience_path = configs["EXPERIENCE_SAVED_PATH"]
-            db_path = os.path.join(experience_path, "experience_db")
-            app_agent.build_experience_retriever(db_path)
-
-        # Load the demonstration indexer for the app agent if available.
-        if configs["RAG_DEMONSTRATION"]:
-            utils.print_with_color("Creating an demonstration indexer...", "magenta")
-            demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
-            db_path = os.path.join(demonstration_path, "demonstration_db")
-            app_agent.build_human_demonstration_retriever(db_path)
 
 
 class AppAgentProcessor(BaseProcessor):
@@ -392,51 +29,19 @@ class AppAgentProcessor(BaseProcessor):
     The processor for the app agent at a single step.
     """
 
-    def __init__(
-        self,
-        round_num: int,
-        log_path: str,
-        request: str,
-        request_logger: Logger,
-        logger: Logger,
-        app_agent: AppAgent,
-        round_step: int,
-        session_step: int,
-        process_name: str,
-        app_window: UIAWrapper,
-        control_reannotate: Optional[list],
-        prev_status: str,
-    ) -> None:
+    def __init__(self, agent: "AppAgent", context: Context) -> None:
         """
         Initialize the app agent processor.
-        :param round_num: The total number of rounds in the session.
-        :param log_path: The log path.
-        :param request: The user request.
-        :param request_logger: The logger for the request string.
-        :param logger: The logger for the response and error.
-        :param app_agent: The app agent to process the current step.
-        :param round_step: The number of steps in the round.
-        :param session_step: The global step of the session.
-        :param process_name: The process name.
-        :param app_window: The application window.
-        :param control_reannotate: The list of controls to reannotate.
-        :param prev_status: The previous status of the session.
+        :param agent: The app agent who executes the processor.
+        :param context: The context of the session.
         """
 
-        super().__init__(
-            round_num=round_num,
-            log_path=log_path,
-            request=request,
-            request_logger=request_logger,
-            logger=logger,
-            round_step=round_step,
-            session_step=session_step,
-            prev_status=prev_status,
-            app_window=app_window,
-        )
+        super().__init__(agent=agent, context=context)
 
-        self.app_agent = app_agent
-        self.process_name = process_name
+        self.app_agent = agent
+        self.host_agent = agent.host
+
+        # self._init_processor_from_context()
 
         self._annotation_dict = None
         self._control_info = None
@@ -444,7 +49,6 @@ class AppAgentProcessor(BaseProcessor):
         self._args = None
         self._image_url = []
         self.prev_plan = []
-        self._control_reannotate = control_reannotate
         self.control_filter_factory = ControlFilterFactory()
         self.filtered_annotation_dict = None
 
@@ -456,7 +60,7 @@ class AppAgentProcessor(BaseProcessor):
             "Round {round_num}, Step {step}: Taking an action on application {application}.".format(
                 round_num=self.round_num + 1,
                 step=self.round_step + 1,
-                application=self.process_name,
+                application=self.application_process_name,
             ),
             "magenta",
         )
@@ -476,18 +80,18 @@ class AppAgentProcessor(BaseProcessor):
         )
 
         # Get the control elements in the application window if the control items are not provided for reannotation.
-        if type(self._control_reannotate) == list and len(self._control_reannotate) > 0:
-            control_list = self._control_reannotate
+        if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
+            control_list = self.control_reannotate
         else:
             control_list = self.control_inspector.find_control_elements_in_descendants(
-                self._app_window,
+                self.application_window,
                 control_type_list=configs["CONTROL_LIST"],
                 class_name_list=configs["CONTROL_LIST"],
             )
 
         # Get the annotation dictionary for the control items, in a format of {control_label: control_element}.
         self._annotation_dict = self.photographer.get_annotation_dict(
-            self._app_window, control_list, annotation_type="number"
+            self.application_window, control_list, annotation_type="number"
         )
 
         self.prev_plan = self.get_prev_plan()
@@ -497,12 +101,12 @@ class AppAgentProcessor(BaseProcessor):
             self._annotation_dict
         )
         self.photographer.capture_app_window_screenshot(
-            self._app_window, save_path=screenshot_save_path
+            self.application_window, save_path=screenshot_save_path
         )
 
         # Capture the screenshot of the selected control items with annotation and save it.
         self.photographer.capture_app_window_screenshot_with_annotation_dict(
-            self._app_window,
+            self.application_window,
             self.filtered_annotation_dict,
             annotation_type="number",
             save_path=annotated_screenshot_save_path,
@@ -583,19 +187,12 @@ class AppAgentProcessor(BaseProcessor):
             configs["RAG_ONLINE_RETRIEVED_TOPK"],
         )
 
-        # Get the action history and request history of the host agent and feed them into the prompt message.
-        host_agent = self.app_agent.host
-        action_history = host_agent.get_global_action_memory().to_json()
-        request_history = host_agent.get_request_history_memory().to_json()
-
         # Construct the prompt message for the AppAgent.
         self._prompt_message = self.app_agent.message_constructor(
             examples,
             tips,
             external_knowledge_prompt,
             self._image_url,
-            request_history,
-            action_history,
             self.filtered_control_info,
             self.prev_plan,
             self.request,
@@ -621,9 +218,10 @@ class AppAgentProcessor(BaseProcessor):
 
         # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
         try:
-            self._response, self._cost = self.app_agent.get_response(
+            self._response, self.cost = self.app_agent.get_response(
                 self._prompt_message, "APPAGENT", use_backup_engine=True
             )
+
         except Exception:
             self.llm_error_handler()
             return
@@ -641,7 +239,7 @@ class AppAgentProcessor(BaseProcessor):
             self.general_error_handler()
 
         self._control_label = self._response_json.get("ControlLabel", "")
-        self._control_text = self._response_json.get("ControlText", "")
+        self.control_text = self._response_json.get("ControlText", "")
         self._operation = self._response_json.get("Function", "")
         self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
 
@@ -649,7 +247,7 @@ class AppAgentProcessor(BaseProcessor):
         self._plan = self.string2list(self._response_json.get("Plan", ""))
         self._response_json["Plan"] = self._plan
 
-        self._status = self._response_json.get("Status", "")
+        self.status = self._response_json.get("Status", "")
 
         self.app_agent.print_response(self._response_json)
 
@@ -659,7 +257,8 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         try:
-            # Get the selected control item from the annotation dictionary and LLM response. The LLm response is a number index corresponding to the key in the annotation dictionary.
+            # Get the selected control item from the annotation dictionary and LLM response.
+            # The LLm response is a number index corresponding to the key in the annotation dictionary.
             control_selected = self._annotation_dict.get(self._control_label, "")
 
             if control_selected:
@@ -667,7 +266,7 @@ class AppAgentProcessor(BaseProcessor):
                 time.sleep(configs.get("RECTANGLE_TIME", 0))
 
             self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
-                control_selected, self._app_window
+                control_selected, self.application_window
             )
 
             # Save the screenshot of the tagged selected control.
@@ -682,9 +281,12 @@ class AppAgentProcessor(BaseProcessor):
             should_proceed = True
 
             # Safe guard for the action.
-            if self._status.upper() == Status.PENDING and configs["SAFE_GUARD"]:
+            if (
+                self.status.upper() == self._agent_status_manager.PENDING.value
+                and configs["SAFE_GUARD"]
+            ):
                 should_proceed = self._safe_guard_judgement(
-                    self._action, self._control_text
+                    self._action, self.control_text
                 )
 
             # Execute the action if the user decides to proceed or safe guard is not enabled.
@@ -714,7 +316,7 @@ class AppAgentProcessor(BaseProcessor):
             self.log_path + f"action_step{self.session_step}_selected_controls.png"
         )
         self.photographer.capture_app_window_screenshot_with_rectangle(
-            self._app_window,
+            self.application_window,
             sub_control_list=[control_selected],
             save_path=control_screenshot_save_path,
         )
@@ -724,18 +326,18 @@ class AppAgentProcessor(BaseProcessor):
         Handle the screenshot status when the annotation is overlapped and the agent is unable to select the control items.
         """
 
-        if self._status.upper() == Status.SCREENSHOT:
+        if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
             utils.print_with_color(
                 "Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.",
                 "magenta",
             )
-            self._control_reannotate = self.app_agent.Puppeteer.execute_command(
+            self.control_reannotate = self.app_agent.Puppeteer.execute_command(
                 "annotation", self._args, self._annotation_dict
             )
-            if self._control_reannotate is None or len(self._control_reannotate) == 0:
-                self._status = Status.CONTINUE
+            if self.control_reannotate is None or len(self.control_reannotate) == 0:
+                self.status = self._agent_status_manager.CONTINUE.value
         else:
-            self._control_reannotate = None
+            self.control_reannotate = None
 
     def update_memory(self) -> None:
         """
@@ -744,14 +346,15 @@ class AppAgentProcessor(BaseProcessor):
         # Create a memory item for the app agent
         app_agent_step_memory = MemoryItem()
 
-        app_root = self.control_inspector.get_application_root_name(self._app_window)
-        host_agent = self.app_agent.host
+        app_root = self.control_inspector.get_application_root_name(
+            self.application_window
+        )
 
         # Log additional information for the app agent.
         additional_memory = {
             "Step": self.session_step,
-            "RoundStep": self.get_process_step(),
-            "AgentStep": self.app_agent.get_step(),
+            "RoundStep": self.round_step,
+            "AgentStep": self.app_agent.step,
             "Round": self.round_num,
             "Action": self._action,
             "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation),
@@ -775,28 +378,38 @@ class AppAgentProcessor(BaseProcessor):
             key: app_agent_step_memory.to_dict().get(key)
             for key in configs["HISTORY_KEYS"]
         }
-        host_agent.add_global_action_memory(memorized_action)
 
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
-        if self._response_json.get("SaveScreenshot", False):
-
-            screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
-            metadata = {
-                "screenshot thought": self._response_json.get("Thought", ""),
-            }
-
-            self.app_agent.blackboard.add_image(screenshot_save_path, metadata)
+        self._update_image_blackboard()
+        self.host_agent.blackboard.add_trajectories(memorized_action)
 
     def update_status(self) -> None:
         """
         Update the status of the session.
         """
 
-        self.app_agent.update_step()
-        self.app_agent.update_status(self._status)
+        self.app_agent.step += 1
+        self.app_agent.status = self.status
 
-        if self._status != Status.FINISH:
+        if self.status != self._agent_status_manager.FINISH.value:
             time.sleep(configs["SLEEP_TIME"])
+
+    def _update_image_blackboard(self) -> None:
+        """
+        Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
+        """
+        screenshot_saving = self._response_json.get("SaveScreenshot", {})
+
+        if screenshot_saving.get("save", False):
+
+            screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
+            metadata = {
+                "screenshot application": self.context.get(
+                    ContextNames.APPLICATION_PROCESS_NAME
+                ),
+                "saving reason": screenshot_saving.get("reason", ""),
+            }
+            self.app_agent.blackboard.add_image(screenshot_save_path, metadata)
 
     def _safe_guard_judgement(self, action: str, control_text: str) -> bool:
         """
@@ -810,12 +423,15 @@ class AppAgentProcessor(BaseProcessor):
         decision = interactor.sensitive_step_asker(action, control_text)
         if not decision:
             utils.print_with_color("The user decide to stop the task.", "magenta")
-            self._status = Status.FINISH
+            self.status = self._agent_status_manager.FINISH.value
             return False
 
         # Handle the PENDING_AND_FINISH case
-        elif len(self._plan) > 0 and Status.FINISH in self._plan[0]:
-            self._status = Status.FINISH
+        elif (
+            len(self._plan) > 0
+            and self._agent_status_manager.FINISH.value in self._plan[0]
+        ):
+            self.status = self._agent_status_manager.FINISH.value
         return True
 
     def _save_to_xml(self) -> None:
@@ -834,7 +450,7 @@ class AppAgentProcessor(BaseProcessor):
         :return: The control to reannotate.
         """
 
-        return self._control_reannotate
+        return self.control_reannotate
 
     def get_prev_plan(self) -> str:
         """
@@ -939,7 +555,7 @@ class AppAgentProcessor(BaseProcessor):
             )
 
             cropped_icons_dict = self.photographer.get_cropped_icons_dict(
-                self._app_window, annotation_dict
+                self.application_window, annotation_dict
             )
             filtered_icon_dict = model_icon.control_filter(
                 annotation_dict,

@@ -7,29 +7,6 @@ from typing import List
 from ufo.module.basic import BaseSession
 
 
-class UFOClient:
-    """
-    A UFO client to run the UFO system for a single session.
-    """
-
-    def __init__(self, session: BaseSession) -> None:
-        """
-        Initialize a UFO client.
-        """
-
-        self.session = session
-
-    def run(self) -> None:
-        """
-        Run the UFO client.
-        """
-
-        while not self.session.is_finish():
-            self.session.handle()
-
-        self.session.print_cost()
-
-
 class UFOClientManager:
     """
     The manager for the UFO clients.
@@ -40,7 +17,7 @@ class UFOClientManager:
         Initialize a batch UFO client.
         """
 
-        self.session_list = session_list
+        self._session_list = session_list
 
     def run_all(self) -> None:
         """
@@ -48,5 +25,26 @@ class UFOClientManager:
         """
 
         for session in self.session_list:
-            client = UFOClient(session)
-            client.run()
+            session.run()
+
+    @property
+    def session_list(self) -> List[BaseSession]:
+        """
+        Get the session list.
+        :return: The session list.
+        """
+        return self._session_list
+
+    def add_session(self, session: BaseSession) -> None:
+        """
+        Add a session to the session list.
+        :param session: The session to add.
+        """
+        self._session_list.append(session)
+
+    def next_session(self) -> BaseSession:
+        """
+        Get the next session.
+        :return: The next session.
+        """
+        return self._session_list.pop(0)
