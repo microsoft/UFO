@@ -48,9 +48,43 @@ class AppAgentProcessor(BaseProcessor):
         self._operation = None
         self._args = None
         self._image_url = []
+        self._plan = []
+        self.action = ""
         self.prev_plan = []
         self.control_filter_factory = ControlFilterFactory()
         self.filtered_annotation_dict = None
+
+    @property
+    def plan(self) -> str:
+        """
+        Get the plan.
+        :return: The plan.
+        """
+        return self._plan
+
+    @plan.setter
+    def plan(self, plan: List[str]) -> None:
+        """
+        Set the plan.
+        :param plan: The plan.
+        """
+        self._plan = plan
+
+    @property
+    def action(self) -> str:
+        """
+        Get the action.
+        :return: The action.
+        """
+        return self._action
+
+    @action.setter
+    def action(self, action: str) -> None:
+        """
+        Set the action.
+        :param action: The action.
+        """
+        self._action = action
 
     def print_step_info(self) -> None:
         """
@@ -244,15 +278,16 @@ class AppAgentProcessor(BaseProcessor):
         self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
 
         # Convert the plan from a string to a list if the plan is a string.
-        self._plan = self.string2list(self._response_json.get("Plan", ""))
-        self._response_json["Plan"] = self._plan
+        self.plan = self.string2list(self._response_json.get("Plan", ""))
+        self._response_json["Plan"] = self.plan
 
         # Compose the function call and the arguments string.
-        self._action = self.app_agent.Puppeteer.get_command_string(
+        self.action = self.app_agent.Puppeteer.get_command_string(
             self._operation, self._args
         )
 
         self.status = self._response_json.get("Status", "")
+        self.agent.status = self.status
 
         self.app_agent.print_response(self._response_json)
 
@@ -277,31 +312,15 @@ class AppAgentProcessor(BaseProcessor):
             # Save the screenshot of the tagged selected control.
             self.capture_control_screenshot(control_selected)
 
-            # Whether to proceed with the action.
-            should_proceed = True
-
-            # Safe guard for the action.
-            if (
-                self.status.upper() == self._agent_status_manager.PENDING.value
-                and configs["SAFE_GUARD"]
-            ):
-                should_proceed = self._safe_guard_judgement(
-                    self._action, self.control_text
-                )
-
-            # Execute the action if the user decides to proceed or safe guard is not enabled.
-            if should_proceed:
-                if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
-                    self.handle_screenshot_status()
-                else:
-                    self._results = self.app_agent.Puppeteer.execute_command(
-                        self._operation, self._args
-                    )
-                    self.control_reannotate = None
-                if not utils.is_json_serializable(self._results):
-                    self._results = ""
+            if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
+                self.handle_screenshot_status()
             else:
-                self._results = "The user decide to stop the task."
+                self._results = self.app_agent.Puppeteer.execute_command(
+                    self._operation, self._args
+                )
+                self.control_reannotate = None
+            if not utils.is_json_serializable(self._results):
+                self._results = ""
 
                 return
 
@@ -334,8 +353,6 @@ class AppAgentProcessor(BaseProcessor):
         self.control_reannotate = self.app_agent.Puppeteer.execute_command(
             "annotation", self._args, self._annotation_dict
         )
-        if self.control_reannotate is None or len(self.control_reannotate) == 0:
-            self.status = self._agent_status_manager.CONTINUE.value
 
     def update_memory(self) -> None:
         """
@@ -354,7 +371,7 @@ class AppAgentProcessor(BaseProcessor):
             "RoundStep": self.round_step,
             "AgentStep": self.app_agent.step,
             "Round": self.round_num,
-            "Action": self._action,
+            "Action": self.action,
             "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation),
             "Request": self.request,
             "Agent": "ActAgent",
@@ -381,17 +398,6 @@ class AppAgentProcessor(BaseProcessor):
         self._update_image_blackboard()
         self.host_agent.blackboard.add_trajectories(memorized_action)
 
-    def update_status(self) -> None:
-        """
-        Update the status of the session.
-        """
-
-        self.app_agent.step += 1
-        self.app_agent.status = self.status
-
-        if self.status != self._agent_status_manager.FINISH.value:
-            time.sleep(configs["SLEEP_TIME"])
-
     def _update_image_blackboard(self) -> None:
         """
         Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
@@ -409,29 +415,6 @@ class AppAgentProcessor(BaseProcessor):
             }
             self.app_agent.blackboard.add_image(screenshot_save_path, metadata)
 
-    def _safe_guard_judgement(self, action: str, control_text: str) -> bool:
-        """
-        Safe guard for the session.
-        action: The action to be taken.
-        control_text: The text of the control item.
-        return: The boolean value indicating whether to proceed or not.
-        """
-
-        # Ask the user whether to proceed with the action when the status is PENDING.
-        decision = interactor.sensitive_step_asker(action, control_text)
-        if not decision:
-            utils.print_with_color("The user decide to stop the task.", "magenta")
-            self.status = self._agent_status_manager.FINISH.value
-            return False
-
-        # Handle the PENDING_AND_FINISH case
-        elif (
-            len(self._plan) > 0
-            and self._agent_status_manager.FINISH.value in self._plan[0]
-        ):
-            self.status = self._agent_status_manager.FINISH.value
-        return True
-
     def _save_to_xml(self) -> None:
         """
         Save the XML file for the current state. Only work for COM objects.
@@ -441,14 +424,6 @@ class AppAgentProcessor(BaseProcessor):
             log_abs_path, f"xml/action_step{self.session_step}.xml"
         )
         self.app_agent.Puppeteer.save_to_xml(xml_save_path)
-
-    def get_control_reannotate(self) -> List[UIAWrapper]:
-        """
-        Get the control to reannotate.
-        :return: The control to reannotate.
-        """
-
-        return self.control_reannotate
 
     def get_prev_plan(self) -> str:
         """

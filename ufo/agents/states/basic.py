@@ -43,6 +43,7 @@ class AgentStatus(Enum):
     FAIL = "FAIL"
     PENDING = "PENDING"
     CONFIRM = "CONFIRM"
+    SCREENSHOT = "SCREENSHOT"
 
 
 class AgentStateManager(ABC, metaclass=SingletonABCMeta):
