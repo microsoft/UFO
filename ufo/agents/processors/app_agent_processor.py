@@ -291,18 +291,19 @@ class AppAgentProcessor(BaseProcessor):
 
             # Execute the action if the user decides to proceed or safe guard is not enabled.
             if should_proceed:
-                self._results = self.app_agent.Puppeteer.execute_command(
-                    self._operation, self._args
-                )
+                if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
+                    self.handle_screenshot_status()
+                else:
+                    self._results = self.app_agent.Puppeteer.execute_command(
+                        self._operation, self._args
+                    )
+                    self.control_reannotate = None
                 if not utils.is_json_serializable(self._results):
                     self._results = ""
             else:
                 self._results = "The user decide to stop the task."
 
                 return
-
-            # Handle the case when the annotation is overlapped and the agent is unable to select the control items.
-            self.handle_screenshot_status()
 
         except Exception:
             self.general_error_handler()
@@ -326,18 +327,15 @@ class AppAgentProcessor(BaseProcessor):
         Handle the screenshot status when the annotation is overlapped and the agent is unable to select the control items.
         """
 
-        if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
-            utils.print_with_color(
-                "Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.",
-                "magenta",
-            )
-            self.control_reannotate = self.app_agent.Puppeteer.execute_command(
-                "annotation", self._args, self._annotation_dict
-            )
-            if self.control_reannotate is None or len(self.control_reannotate) == 0:
-                self.status = self._agent_status_manager.CONTINUE.value
-        else:
-            self.control_reannotate = None
+        utils.print_with_color(
+            "Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.",
+            "magenta",
+        )
+        self.control_reannotate = self.app_agent.Puppeteer.execute_command(
+            "annotation", self._args, self._annotation_dict
+        )
+        if self.control_reannotate is None or len(self.control_reannotate) == 0:
+            self.status = self._agent_status_manager.CONTINUE.value
 
     def update_memory(self) -> None:
         """
