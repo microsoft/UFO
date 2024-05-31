@@ -4,7 +4,7 @@
 from dataclasses import dataclass, field
 from enum import Enum
 from logging import Logger
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Dict, Optional, Type
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 

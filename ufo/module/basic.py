@@ -36,6 +36,186 @@ from ufo.module.context import Context, ContextNames
 configs = Config.get_instance().config_data
 
 
+class BaseSubRound(ABC):
+    """
+    A subround of a round in UFO.
+    A subround manages a single user request and consists of multiple steps.
+    A round may consists of multiple subrounds of interactions.
+    """
+
+    def __init__(
+        self,
+        request: str,
+        agent: BasicAgent,
+        context: Context,
+        should_evaluate: bool,
+        id: int,
+    ) -> None:
+        """
+        Initialize a subround.
+        :param request: The request of the subround.
+        :param agent: The initial agent of the subround.
+        :param context: The shared context of the subround.
+        :param should_evaluate: Whether to evaluate the subround.
+        :param id: The id of the subround.
+        """
+
+        self._request = request
+        self._context = context
+        self._agent = agent
+        self._state = agent.state
+        self._id = id
+        self._should_evaluate = should_evaluate
+
+        self._init_context()
+
+    def _init_context(self) -> None:
+
+        pass
+
+    def run(self) -> None:
+
+        pass
+
+    def is_finished(self) -> bool:
+
+        pass
+
+    @property
+    def agent(self) -> BasicAgent:
+        """
+        Get the agent of the subround.
+        """
+
+        return self._agent
+
+    @property
+    def state(self) -> AgentState:
+        """
+        Get the status of the subround.
+        """
+
+        return self._state
+
+    def evaluation(self) -> None:
+        """
+        TODO: Evaluate the subround.
+        """
+        pass
+
+    @property
+    def step(self) -> int:
+        """
+        Get the local step of the subround.
+        """
+
+        pass
+
+    @property
+    def cost(self) -> float:
+        """
+        Get the cost of the subround.
+        """
+
+        pass
+
+    def print_cost(self) -> None:
+        """
+        Print the total cost of the subround.
+        """
+
+        pass
+
+    @property
+    def log_path(self) -> str:
+        """
+        The log path of the subround.
+        """
+
+        return self._context.get(ContextNames.LOG_PATH)
+
+    def capture_last_snapshot(self) -> None:
+        """
+        Capture the last snapshot of the application of the subround.
+        """
+
+        current_round_id = self.context.get(ContextNames.CURRENT_ROUND_ID)
+        # Capture the final screenshot
+        screenshot_save_path = (
+            self.log_path
+            + f"action_round_{current_round_id}_sub_round_{self.id}_final.png"
+        )
+
+        if self.application_window is not None:
+
+            PhotographerFacade().capture_app_window_screenshot(
+                self.application_window, save_path=screenshot_save_path
+            )
+
+            # Save the final XML file
+            if configs["LOG_XML"]:
+                log_abs_path = os.path.abspath(self.log_path)
+                xml_save_path = os.path.join(
+                    log_abs_path,
+                    f"xml/action_round_{current_round_id}_sub_round_{self.id}_final.xml",
+                )
+
+                if issubclass(type(self.agent), HostAgent):
+                    app_agent: AppAgent = self.agent.get_active_appagent()
+                    app_agent.Puppeteer.save_to_xml(xml_save_path)
+                elif issubclass(type(self.agent), AppAgent):
+                    app_agent: AppAgent = self.agent
+                    app_agent.Puppeteer.save_to_xml(xml_save_path)
+
+    @property
+    def request(self) -> str:
+        """
+        Get the request of the subround.
+        """
+
+        return self._request
+
+    @property
+    def id(self) -> int:
+        """
+        Return the id of the subround.
+        """
+
+        return self._id
+
+    @property
+    def context(self) -> Context:
+        """
+        Get the context of the subround.
+        """
+
+        return self._context
+
+    @property
+    def application_window(self) -> UIAWrapper:
+        """
+        Get the application of the session.
+        return: The application of the session.
+        """
+        return self._context.get(ContextNames.APPLICATION_WINDOW)
+
+    @application_window.setter
+    def application_window(self, app_window: UIAWrapper) -> None:
+        """
+        Set the application window.
+        :param app_window: The application window.
+        """
+        self._context.set(ContextNames.APPLICATION_WINDOW, app_window)
+
+    @property
+    def evaluation_logger(self) -> logging.Logger:
+        """
+        Get the logger for evaluation.
+        return: The logger for evaluation.
+        """
+        return self.context.get(ContextNames.EVALUATION_LOGGER)
+
+
 class BaseRound(ABC):
     """
     A round of a session in UFO.
