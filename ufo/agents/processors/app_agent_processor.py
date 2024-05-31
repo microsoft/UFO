@@ -247,6 +247,11 @@ class AppAgentProcessor(BaseProcessor):
         self._plan = self.string2list(self._response_json.get("Plan", ""))
         self._response_json["Plan"] = self._plan
 
+        # Compose the function call and the arguments string.
+        self._action = self.app_agent.Puppeteer.get_command_string(
+            self._operation, self._args
+        )
+
         self.status = self._response_json.get("Status", "")
 
         self.app_agent.print_response(self._response_json)
@@ -271,11 +276,6 @@ class AppAgentProcessor(BaseProcessor):
 
             # Save the screenshot of the tagged selected control.
             self.capture_control_screenshot(control_selected)
-
-            # Compose the function call and the arguments string.
-            self._action = self.app_agent.Puppeteer.get_command_string(
-                self._operation, self._args
-            )
 
             # Whether to proceed with the action.
             should_proceed = True

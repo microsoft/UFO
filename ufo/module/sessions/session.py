@@ -211,7 +211,11 @@ class FollowerSession(BaseSession):
             agent = self._host_agent
         else:
             agent = self._host_agent.get_active_appagent()
+
+            # Clear the memory and set the state to continue the app agent.
             agent.clear_memory()
+            agent.blackboard.requests.clear()
+
             agent.set_state(ContinueAppAgentState())
 
             utils.print_with_color(

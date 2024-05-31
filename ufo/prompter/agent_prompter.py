@@ -66,7 +66,6 @@ class HostAgentPrompter(BasicPrompter):
     ) -> str:
         """
         Construct the prompt for action selection.
-        :param action_history: The action history.
         :param control_item: The control item.
         :param user_request: The user request.
         :param retrieved_docs: The retrieved documents.
@@ -92,7 +91,6 @@ class HostAgentPrompter(BasicPrompter):
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.
-        :param action_history: The action history.
         :param control_item: The control item.
         :param user_request: The user request.
         :param retrieved_docs: The retrieved documents.
@@ -244,7 +242,6 @@ class AppAgentPrompter(BasicPrompter):
         """
         Construct the prompt for action selection.
         :param prompt_template: The template of the prompt.
-        :param action_history: The action history.
         :param control_item: The control item.
         :param user_request: The user request.
         :param retrieved_docs: The retrieved documents.
@@ -271,7 +268,6 @@ class AppAgentPrompter(BasicPrompter):
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.
-        :param action_history: The action history.
         :param control_item: The control item.
         :param user_request: The user request.
         :param retrieved_docs: The retrieved documents.
@@ -472,7 +468,6 @@ class FollowerAgentPrompter(AppAgentPrompter):
         """
         Construct the prompt for action selection.
         :param prompt_template: The template of the prompt.
-        :param action_history: The action history.
         :param control_item: The control item.
         :param user_request: The user request.
         :param retrieved_docs: The retrieved documents.
@@ -505,7 +500,6 @@ class FollowerAgentPrompter(AppAgentPrompter):
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.
-        :param action_history: The action history.
         :param control_item: The control item.
         :param user_request: The user request.
         :param retrieved_docs: The retrieved documents.
