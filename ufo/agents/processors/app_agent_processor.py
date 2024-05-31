@@ -295,7 +295,7 @@ class AppAgentProcessor(BaseProcessor):
 
         try:
             # Get the selected control item from the annotation dictionary and LLM response.
-            # The LLm response is a number index corresponding to the key in the annotation dictionary.
+            # The LLM response is a number index corresponding to the key in the annotation dictionary.
             control_selected = self._annotation_dict.get(self._control_label, "")
 
             if control_selected:
