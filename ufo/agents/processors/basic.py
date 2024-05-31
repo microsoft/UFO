@@ -59,11 +59,12 @@ class BaseProcessor(ABC):
         3. Get the control information.
         4. Get the prompt message.
         5. Get the response.
-        6. Update the context.
+        6. Update the cost.
         7. Parse the response.
         8. Execute the action.
         9. Update the memory.
         10. Update the step and status.
+        11. Update the step.
         """
 
         # Step 1: Print the step information.
