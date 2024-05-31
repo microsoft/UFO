@@ -295,7 +295,10 @@ class BaseRound(ABC):
         Check if the round is finished.
         return: True if the round is finished, otherwise False.
         """
-        return self._state.is_round_end()
+        return (
+            self.state.is_round_end()
+            or self.context.get(ContextNames.SESSION_STEP) >= configs["MAX_STEP"]
+        )
 
     @property
     def agent(self) -> BasicAgent:
@@ -596,7 +599,7 @@ class BaseSession(ABC):
         Get the application of the session.
         return: The application of the session.
         """
-        return self._context.get(ContextNames.APPLICATION_WINDOW)
+        return self.context.get(ContextNames.APPLICATION_WINDOW)
 
     @application_window.setter
     def application_window(self, app_window: UIAWrapper) -> None:
@@ -604,7 +607,7 @@ class BaseSession(ABC):
         Set the application window.
         :param app_window: The application window.
         """
-        self._context.set(ContextNames.APPLICATION_WINDOW, app_window)
+        self.context.set(ContextNames.APPLICATION_WINDOW, app_window)
 
     @property
     def step(self) -> int:
