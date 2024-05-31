@@ -41,8 +41,6 @@ class AppAgentProcessor(BaseProcessor):
         self.app_agent = agent
         self.host_agent = agent.host
 
-        # self._init_processor_from_context()
-
         self._annotation_dict = None
         self._control_info = None
         self._operation = None
