@@ -73,10 +73,8 @@ class EvaluationAgentPrompter(BasicPrompter):
     ) -> str:
         """
         Construct the prompt for action selection.
-        :param action_history: The action history.
-        :param control_item: The control item.
-        :param user_request: The user request.
-        :param retrieved_docs: The retrieved documents.
+        :request: The user request(s) to be evaluated.
+        :trajectory: The trajectory of the user action.
         return: The prompt for action selection.
         """
         prompt = self.prompt_template["user"].format(
