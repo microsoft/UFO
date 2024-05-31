@@ -157,11 +157,6 @@ class HostAgentProcessor(BaseProcessor):
 
         self.host_agent.print_response(self._response_json)
 
-        if self.control_text == "":
-            self.status = self._agent_status_manager.FINISH.value
-
-        self.agent.status = self.status
-
     def execute_action(self) -> None:
         """
         Execute the action.
@@ -176,6 +171,8 @@ class HostAgentProcessor(BaseProcessor):
             new_app_window = self._desktop_windows_dict.get(self.control_label, None)
 
         if new_app_window is None:
+
+            self.status = self._agent_status_manager.FINISH.value
             return
 
         # Get the root name of the application.

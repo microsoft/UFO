@@ -249,7 +249,6 @@ class PendingAppAgentState(AppAgentState):
 
     def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
         """
-        TODO
         Handle the agent for the current step.
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
@@ -271,7 +270,6 @@ class PendingAppAgentState(AppAgentState):
         :param agent: The agent for the current step.
         :return: The state for the next step.
         """
-
         agent.status = AppAgentStatus.CONTINUE.value
         return ContinueAppAgentState()
 
