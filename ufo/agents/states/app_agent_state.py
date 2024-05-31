@@ -6,6 +6,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
+from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.agents.states.host_agent_state import (
@@ -13,6 +14,8 @@ from ufo.agents.states.host_agent_state import (
     FinishHostAgentState,
     NoneHostAgentState,
 )
+from ufo.config.config import Config
+from ufo.module import interactor
 from ufo.module.context import Context
 
 # Avoid circular import
@@ -20,6 +23,9 @@ if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
     from ufo.agents.agent.host_agent import HostAgent
     from ufo.agents.states.host_agent_state import HostAgentState
+
+
+configs = Config.get_instance().config_data
 
 
 class AppAgentStatus(Enum):
@@ -177,6 +183,23 @@ class ScreenshotAppAgentState(ContinueAppAgentState):
         """
         return AppAgentStatus.SCREENSHOT.value
 
+    def next_state(self, agent: BasicAgent) -> AgentState:
+
+        agent_processor = agent.processor
+
+        if agent_processor is None:
+
+            agent.status = AppAgentStatus.CONTINUE.value
+            return ContinueAppAgentState()
+
+        control_reannotate = agent_processor.control_reannotate
+
+        if control_reannotate is None or len(control_reannotate) == 0:
+            agent.status = AppAgentStatus.CONTINUE.value
+            return ContinueAppAgentState()
+        else:
+            return super().next_state(agent)
+
 
 @AppAgentStateManager.register
 class SwitchAppAgentState(AppAgentState):
@@ -267,12 +290,25 @@ class ConfirmAppAgentState(AppAgentState):
         :param context: The context for the agent and session.
         """
 
-        self._confirm = self.user_confirm()
+        # If the safe guard is not enabled, the agent should resume the task.
+        if not configs["SAFE_GUARD"]:
+            agent.process_resume()
 
+        agent_processor = agent.processor
+
+        if agent_processor is None:
+            utils.print_with_color("The agent processor is None.", "red")
+            return
+
+        # Get the action and control text from the agent processor to ask the user whether to proceed with the action.
+        action = agent.processor.action
+        control_text = agent.processor.control_text
+
+        self._confirm = self.user_confirm(action=action, control_text=control_text)
+
+        # If the user confirms the action, the agent should resume the task.
         if self._confirm:
             agent.process_resume()
-        else:
-            pass
 
     def is_round_end(self) -> bool:
         """
@@ -281,13 +317,38 @@ class ConfirmAppAgentState(AppAgentState):
         """
         return False
 
-    def user_confirm(self) -> bool:
+    def next_state(self, agent: AppAgent) -> AppAgentState:
+
+        plan = agent.processor.plan
+
+        # If the plan is not empty and the plan contains the finish status, it means the task is finished.
+        # The next state should be FinishAppAgentState.
+        if len(plan) > 0 and AppAgentStatus.FINISH.value in plan[0]:
+            agent.status = AppAgentStatus.FINISH.value
+            return FinishAppAgentState()
+
+        if self._confirm:
+            agent.status = AppAgentStatus.CONTINUE.value
+            return ContinueAppAgentState()
+        else:
+            agent.status = AppAgentStatus.FINISH.value
+            return FinishAppAgentState()
+
+    def user_confirm(self, action: str, control_text: str) -> bool:
         """
-        TODO
-        Handle the agent for the current step.
-        :param context: The context for the agent and session.
+        Ask the user whether to proceed with the action when the status is CONFIRM.
+        :param action: The action to be confirmed.
+        :param control_text: The control text for the action.
+        :return: True if the user confirms the action, False otherwise.
         """
-        pass
+
+        # Ask the user whether to proceed with the action when the status is PENDING.
+        decision = interactor.sensitive_step_asker(action, control_text)
+        if not decision:
+            utils.print_with_color("The user decide to stop the task.", "magenta")
+            return False
+
+        return True
 
     @classmethod
     def name(cls) -> str:

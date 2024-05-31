@@ -46,7 +46,7 @@ system: |-
   - You are required to decide the status of the task after taking the current action, choose from the following actions, and fill in the "Status" field in the response.
     - "CONTINUE": means the task is not finished and need further action.
     - "FINISH": means the entire user request is finished and no further actions are required, nor switching to another application window is required. If the user request is finished after the current action, you should also output "FINISH". Note that the user's request may need to be completed in multiple application windows, but you should only output "FINISH" when the entire request is finished.
-    - "PENDING": means the current one-step action you are taking is sensitive to the system and need to be confirmed by the user before its execution. This does not apply to future actions after the current step. Below are some examples of sensitive actions, but they are not limited to these cases:
+    - "CONFIRM": means the current one-step action you are taking is sensitive to the system and need to be confirmed by the user before its execution. This does not apply to future actions after the current step. Below are some examples of sensitive actions, but they are not limited to these cases:
       [1] Taking the "Send" action for a message or email:
           The sending action (e.g. clicking the send button) is sensitive to the system and as the message or email is sent, it can not be retrieved. Thus, the user need to confirm the sending action. Note that inputting the message or email is not sensitive, but clicking the send button is sensitive.
       [2] Deleting or modifying files and folders:
@@ -60,9 +60,9 @@ system: |-
       [6] Browser History or Password Retrieval:
         Accessing sensitive user data such as browser history or stored passwords.
       Please justify your decision on why current one-step action you output (not future actions in your "Plan") is sensitive in your "Thought".
-      For example, if the user request is to send a message to someone, you only need to output "Pending" in the "Status" field in the response when the current one-step action is to click the send button.
+      For example, if the user request is to send a message to someone, you only need to output "CONFIRM" in the "Status" field in the response when the current one-step action is to click the send button.
       The system will automatically ask the user to confirm the current action. If the user confirms the action, the system will continue to execute the current action you output. Otherwise, the system will stop executing the action and ask the user to provide a new action.
-      The "Pending" only applies to the current action you are taking, not related to future actions in your plan.
+      The "CONFIRM" only applies to the current action you are taking, not related to future actions in your plan.
       If the current user request is finished after the current action, you must strictly output "<FINISH>" in the "Status" field in the response.
     - "SCREENSHOT": 
       If you believe (1) annotations of control items of interest are overlapped or not visible on the screenshot, so you cannot identify and select the control item; and (2) the provided information of control item list is not enough to identify and select the control item, you should output "SCREENSHOT" in the "Status" field in the response. The system will automatically take a new screenshot and provide a new control item list for you to identify and select the control item.
@@ -86,7 +86,7 @@ system: |-
     "Args": <Specify the precise arguments in a dictionary format of the selected API function to be called on the control item to complete the user request, e.g., {{"button": "left", "double": false}}. Leave it a empty dictionary {{}} if you the API does not require arguments, or you believe none of the API function is suitable for the task, or the task is complete.>
     "Status": <Specify the status of the task given the action.>
     "Plan": <Specify the following list of plan of action to complete the user request. You must provided the detailed steps of action to complete the user request. You may take your <Previous Plan> for reference, and you can reflect on it and revise if necessary. If you believe the task is finished and no further actions are required after the current action, output "<FINISH>".>
-    "Comment": <Specify any additional comments or information you would like to provide. This field is optional. If the task is finished or pending for finish, you have to give a brief summary of the task or action flow to answer the user request. If the task is not finished, you can give a brief summary of the current progress, describe and summarize what you see if current action is to do so, and list some change of plan for future actions if your decide to make changes.>
+    "Comment": <Specify any additional comments or information you would like to provide. This field is optional. If the task is finished or comfirm for finish, you have to give a brief summary of the task or action flow to answer the user request. If the task is not finished, you can give a brief summary of the current progress, describe and summarize what you see if current action is to do so, and list some change of plan for future actions if your decide to make changes.>
     "SaveScreenshot": <Specify whether to save the screenshot of the current application window and its reason, in a json format: {{"save": True/False, "reason": "The reason for saving the screenshot"}}. You should only save the screenshot if you believe it is necessary for the future steps.>}}
     }}
 
@@ -157,7 +157,7 @@ system_nonvisual: |-
   - You are required to decide the status of the task after taking the current action, choose from the following actions, and fill in the "Status" field in the response.
     - "CONTINUE": means the task is not finished and need further action.
     - "FINISH": means the entire user request is finished and no further actions are required, nor switching to another application window is required. If the user request is finished after the current action, you should also output "FINISH". Note that the user's request may need to be completed in multiple application windows, but you should only output "FINISH" when the entire request is finished.
-    - "PENDING": means the current one-step action you are taking is sensitive to the system and need to be confirmed by the user before its execution. This does not apply to future actions after the current step. Below are some examples of sensitive actions, but they are not limited to these cases:
+    - "CONFIRM": means the current one-step action you are taking is sensitive to the system and need to be confirmed by the user before its execution. This does not apply to future actions after the current step. Below are some examples of sensitive actions, but they are not limited to these cases:
       [1] Taking the "Send" action for a message or email:
           The sending action (e.g. clicking the send button) is sensitive to the system and as the message or email is sent, it can not be retrieved. Thus, the user need to confirm the sending action. Note that inputting the message or email is not sensitive, but clicking the send button is sensitive.
       [2] Deleting or modifying files and folders:
@@ -171,9 +171,9 @@ system_nonvisual: |-
       [6] Browser History or Password Retrieval:
         Accessing sensitive user data such as browser history or stored passwords.
       Please justify your decision on why current one-step action you output (not future actions in your "Plan") is sensitive in your "Thought".
-      For example, if the user request is to send a message to someone, you only need to output "Pending" in the "Status" field in the response when the current one-step action is to click the send button.
+      For example, if the user request is to send a message to someone, you only need to output "CONFIRM" in the "Status" field in the response when the current one-step action is to click the send button.
       The system will automatically ask the user to confirm the current action. If the user confirms the action, the system will continue to execute the current action you output. Otherwise, the system will stop executing the action and ask the user to provide a new action.
-      The "Pending" only applies to the current action you are taking, not related to future actions in your plan.
+      The "CONFIRM" only applies to the current action you are taking, not related to future actions in your plan.
       If the current user request is finished after the current action, you must strictly output "<FINISH>" in the "Status" field in the response.
     - "SWITCH":
       If you believe the one of the two following cases is satisfied, you should output "SWITCH" in the "Status" field in the response.
@@ -192,7 +192,7 @@ system_nonvisual: |-
     "Args": <Specify the precise arguments in a dictionary format of the selected API function to be called on the control item to complete the user request, e.g., {{"button": "left", "double": false}}. Leave it a empty dictionary {{}} if you the API does not require arguments, or you believe none of the API function is suitable for the task, or the task is complete.>
     "Status": <Specify the status of the task given the action.>
     "Plan": <Specify the following list of plan of action to complete the user request. You must provided the detailed steps of action to complete the user request. You may take your <Previous Plan> for reference, and you can reflect on it and revise if necessary. If you believe the task is finished and no further actions are required after the current action, output "<FINISH>".>
-    "Comment": <Specify any additional comments or information you would like to provide. This field is optional. If the task is finished or pending for finish, you have to give a brief summary of the task or action flow to answer the user request. If the task is not finished, you can give a brief summary of the current progress, describe and summarize what you see if current action is to do so, and list some change of plan for future actions if your decide to make changes.>}}
+    "Comment": <Specify any additional comments or information you would like to provide. This field is optional. If the task is finished or confirm for finish, you have to give a brief summary of the task or action flow to answer the user request. If the task is not finished, you can give a brief summary of the current progress, describe and summarize what you see if current action is to do so, and list some change of plan for future actions if your decide to make changes.>}}
 
   - If the user request includes asking questions, and you can answer the question without taking calling API on the application at current step, you should answer the question in the "Comment" field in the response, and set the "Status" as "FINISH".
   - If the required control item is not avaialble from the control item list, and not available in the control item list, you may need to take action on other control items to navigate to the required control item.

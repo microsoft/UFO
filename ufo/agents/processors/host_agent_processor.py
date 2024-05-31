@@ -155,11 +155,10 @@ class HostAgentProcessor(BaseProcessor):
 
         self.host_agent.print_response(self._response_json)
 
-        if (
-            self._agent_status_manager.FINISH.value in self.status.upper()
-            or self.control_text == ""
-        ):
+        if self.control_text == "":
             self.status = self._agent_status_manager.FINISH.value
+
+        self.agent.status = self.status
 
     def execute_action(self) -> None:
         """
@@ -183,6 +182,7 @@ class HostAgentProcessor(BaseProcessor):
         # Check if the window interface is available for the visual element.
         if not self.is_window_interface_available(new_app_window):
             self.status = self._agent_status_manager.ERROR.value
+
             return
 
         # Switch to the new application window, if it is different from the current application window.
@@ -266,14 +266,3 @@ class HostAgentProcessor(BaseProcessor):
         }
 
         self.host_agent.blackboard.add_trajectories(memorized_action)
-
-    def update_status(self) -> None:
-        """
-        Update the status of the session.
-        """
-        self.host_agent.step += 1
-        self.host_agent.status = self.status
-
-        # Wait for the application to be ready after an action is taken before proceeding to the next step.
-        if self.status != self._agent_status_manager.FINISH.value:
-            time.sleep(configs["SLEEP_TIME"])
