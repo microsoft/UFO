@@ -130,3 +130,20 @@ def find_desktop_path() -> Optional[str]:
     if os.path.exists(local_desktop):
         return local_desktop
     return None
+
+
+def append_string_to_file(file_path: str, string: str) -> None:
+    """
+    Append a string to a file.
+    :param file_path: The path of the file.
+    :param string: The string to append.
+    """
+
+    # If the file doesn't exist, create it.
+    if not os.path.exists(file_path):
+        with open(file_path, "w", encoding="utf-8") as file:
+            pass
+
+    # Append the string to the file.
+    with open(file_path, "a", encoding="utf-8") as file:
+        file.write(string + "\n")

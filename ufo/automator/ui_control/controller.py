@@ -94,7 +94,7 @@ class ControlReceiver(ReceiverBasic):
         """
 
         if configs["INPUT_TEXT_API"] == "set_text":
-            method_name = "set_text"
+            method_name = "set_edit_text"
             args = {"text": params["text"]}
         else:
             method_name = "type_keys"

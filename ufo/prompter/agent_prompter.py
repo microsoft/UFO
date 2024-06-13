@@ -140,7 +140,8 @@ class HostAgentPrompter(BasicPrompter):
                 if key.startswith("example_openapp") and not self.allow_openapp:
                     continue
                 if not self.allow_openapp:
-                    del values["Response"]["AppsToOpen"]
+                    if "AppsToOpen" in values["Response"]:
+                        del values["Response"]["AppsToOpen"]
                 example = template.format(
                     request=values.get("Request"),
                     response=json.dumps(values.get("Response")),

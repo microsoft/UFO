@@ -6,7 +6,6 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
-from ufo.agents.agent.host_agent import HostAgent
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
