@@ -3,7 +3,6 @@
 
 
 import json
-import time
 from typing import TYPE_CHECKING
 
 from pywinauto.controls.uiawrapper import UIAWrapper

@@ -14,7 +14,6 @@ from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
-from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
