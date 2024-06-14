@@ -49,7 +49,7 @@ DEMONSTRATION_SAVED_PATH: "vectordb/demonstration/"
 
 API_PROMPT: "ufo/prompts/share/base/api.yaml"  # The prompt for the API
 CLICK_API: "click_input" # The click API
-INPUT_TEXT_API: "set_text" # The input text API. Can be "type_keys" or "set_text"
+INPUT_TEXT_API: "type_keys" # The input text API. Can be "type_keys" or "set_text"
 INPUT_TEXT_ENTER: False # whether to press enter after typing the text
 
 
