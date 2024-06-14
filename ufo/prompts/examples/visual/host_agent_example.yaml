@@ -22,6 +22,7 @@ example1:
       - (5) Click the Send button to send the email. This action is sensitive and need to be confirmed by the user.
     Comment: |-
       It is time to open the outlook application!
+    Questions: []
     AppsToOpen: |-
       None
 
@@ -47,6 +48,7 @@ example2:
       - (4) Click the Send button to send the message. This action is sensitive and need to be confirmed by the user.
     Comment: |-
       It is time to open the Teams application.
+    Questions: []
     AppsToOpen: |-
       None
 
@@ -74,6 +76,7 @@ example3:
       - (5) Input the text of the Document control named 'framework.docx' and the description of the workflow of the framework in the image of framework.png in the Edit control named 'Type a new message'. These information can be extracted from my history actions.\\n (6) Click the Send button to send the message. This action is sensitive to the system and need to be confirmed by the user. I need to confirm the action before clicking the Send button. If the user confirms the action, the task is finished.
     Comment: |-
       After I get the text of the Document control named 'framework.docx', I need to switch to the image of framework.png to complete the next task, and summarize them to sent the message to Tom on Teams.
+    Questions: []
     AppsToOpen: |-
       None
 
@@ -98,6 +101,7 @@ example4:
       - (3) Click the Send button to send the email. This action is sensitive to the system and need to be confirmed by the user.
     Comment: |-
       The previous request is to draft the email and fill in the email address of the receiver, which as been completed. Now it is time to revise the email to be longer and send it.
+    Questions: []
     AppsToOpen: |-
       None
 
@@ -126,6 +130,7 @@ example5:
       - (8) Once 'Remove All Presentation Notes' is visible, I should click it to remove all notes in the presentation.pptx file. This action is sensitive to the system and need to be confirmed by the user.
     Comment: |-
       I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
+    Questions: []
     AppsToOpen: |-
       None
  
@@ -153,6 +158,7 @@ example6:
       - (5) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
     Comment: |-
       I plan to Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
+    Questions: []
     AppsToOpen: |-
       None
 
@@ -182,6 +188,7 @@ example7:
       - (8) Close the details view by clicking the 'Dismiss detail view' botton.
     Comment: |-
       I plan to use the Microsoft To Do application to set a reminder for the user, and add details and notes to the reminder.
+    Questions: []
     AppsToOpen: |-
       None
 
@@ -207,6 +214,7 @@ example8:
       - (5) Click the 'Send' buttom to send the request to Copilot. This completes the task.
     Comment: |-
       I plan to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx.
+    Questions: []
     AppsToOpen: |-
       None
 
@@ -231,6 +239,36 @@ example9:
       - (4) Input '@Zac, please revise the presentation1.pptx.' in the comment text box.
     Comment: |-
       I plan to leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx.
+    Questions: []
+    AppsToOpen: |-
+      None
+
+
+example10:
+  Request: |-
+      "Send my alias and address to Tom on Teams."
+  Response:
+    Observation: |-
+      The current screenshot does not show any Teams application.
+    Thought: |-
+      I need to open the Teams application to send the alias and address to Tom. According to the application information, I can use the Teams application to send the alias and address to Tom. I need to open the Teams application.
+      Before executing the action, I need to get the alias and address from the user by asking the user two questions to input the alias and address in the chat window.
+    ControlLabel: |-
+      6
+    ControlText: |-
+      Tom Jim | Microsoft Teams
+    Status: |-
+      PENDING
+    Plan:
+      - (1) Open the Tom Jim | Microsoft Teams.
+      - (2) Click the Chat button to open the chat window with Tom. 
+      - (3) Input the alias and address that the user provided in the chat window.
+      - (4) Click the Send button to send the alias and address to Tom. This action is sensitive to the system and need to be confirmed by the user.
+    Comment: |-
+      I plan to use the Teams application to send the alias and address to Tom.
+    Questions:
+      - Can you please provide me with your alias?
+      - Can you please provide me with your address?
     AppsToOpen: |-
       None
 
@@ -248,12 +286,14 @@ example_openapp1:
     ControlText: |-
       PowerPoint
     Status: |-
-      CONTINUE
+      PENDING
     Plan:
       - "Call the function OpenAPP with the arguments {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'} to open the test.pptx file."
       - "When the file is open, delete text in the title and input 'Apple is the best tech Company' in the title."
     Comment: |-
       Since the PowerPoint application is not visible in the screenshot, I will use the function OpenAPP to open the test.pptx file directly from the desktop. Then modify the title of the ppt file after its opened.
+    Questions:
+      - Can you please provide me with the title you want to change to?
     AppsToOpen: {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}
   
 
@@ -276,5 +316,6 @@ example_openapp2:
       - (2) Once the file explorer is open, I need to use the search box to find the label.txt file.,
     Comment: |-
       Since the file explorer application is not visible in the screenshot, I will use the function OpenAPP to open the file explorer file directly.
+    Questions: []
     AppsToOpen: |-
       {'APP': 'powerpnt', 'file_path': ''}

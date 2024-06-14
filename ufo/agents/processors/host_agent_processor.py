@@ -3,7 +3,6 @@
 
 
 import json
-import time
 from typing import TYPE_CHECKING
 
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -151,14 +150,11 @@ class HostAgentProcessor(BaseProcessor):
         self._response_json["Plan"] = self._plan
 
         self.status = self._response_json.get("Status", "")
+        self.question_list = self._response_json.get("Questions", [])
+
         self.app_to_open = self._response_json.get("AppsToOpen", None)
 
         self.host_agent.print_response(self._response_json)
-
-        if self.control_text == "":
-            self.status = self._agent_status_manager.FINISH.value
-
-        self.agent.status = self.status
 
     def execute_action(self) -> None:
         """
@@ -174,6 +170,8 @@ class HostAgentProcessor(BaseProcessor):
             new_app_window = self._desktop_windows_dict.get(self.control_label, None)
 
         if new_app_window is None:
+
+            self.status = self._agent_status_manager.FINISH.value
             return
 
         # Get the root name of the application.

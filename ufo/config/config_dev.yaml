@@ -49,7 +49,7 @@ DEMONSTRATION_SAVED_PATH: "vectordb/demonstration/"
 
 API_PROMPT: "ufo/prompts/share/base/api.yaml"  # The prompt for the API
 CLICK_API: "click_input" # The click API
-INPUT_TEXT_API: "type_keys" # The input text API
+INPUT_TEXT_API: "type_keys" # The input text API. Can be "type_keys" or "set_text"
 INPUT_TEXT_ENTER: False # whether to press enter after typing the text
 
 
@@ -70,6 +70,12 @@ CONTROL_FILTER_MODEL_ICON_NAME: "clip-ViT-B-32"  # The control filter model name
 ALLOW_OPENAPP: FALSE  # Whether to allow the open app action
 LOG_XML: False  # Whether to log the xml file for the at every step.
 SCREENSHOT_TO_MEMORY: True  # Whether to allow the screenshot to memory for the agent's decision making.
+
+
+# For customizations
+USE_CUSTOMIZATION: True  # Whether to use the customization
+QA_PAIR_FILE: "customization/historical_qa.txt"  # The path for the historical QA
+QA_PAIR_NUM: 20  # The number of QA pairs for the customization
 
 # For the evaluation
 EVA_SESSION: True  # Whether to include the session in the evaluation

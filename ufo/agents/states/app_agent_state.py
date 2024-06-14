@@ -248,12 +248,13 @@ class PendingAppAgentState(AppAgentState):
 
     def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
         """
-        TODO
         Handle the agent for the current step.
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
-        pass
+
+        # Ask the user questions to help the agent to proceed.
+        agent.process_asker()
 
     def is_round_end(self) -> bool:
         """
@@ -261,6 +262,15 @@ class PendingAppAgentState(AppAgentState):
         :return: True if the round ends, False otherwise.
         """
         return False
+
+    def next_state(self, agent: AppAgent) -> AppAgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The agent for the current step.
+        :return: The state for the next step.
+        """
+        agent.status = AppAgentStatus.CONTINUE.value
+        return ContinueAppAgentState()
 
     @classmethod
     def name(cls) -> str:

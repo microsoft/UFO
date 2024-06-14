@@ -285,13 +285,6 @@ class AppAgent(BasicAgent):
         self.processor.process()
         self.status = self.processor.status
 
-    def process_resume(self) -> None:
-        """
-        Resume the process.
-        """
-        if self.processor:
-            self.processor.resume()
-
     def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
         """
         Create the Puppeteer interface to automate the app.

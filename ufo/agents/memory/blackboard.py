@@ -8,6 +8,9 @@ from typing import Dict, List, Optional, Union
 
 from ufo.agents.memory.memory import Memory, MemoryItem
 from ufo.automator.ui_control.screenshot import PhotographerFacade
+from ufo.config.config import Config
+
+configs = Config.get_instance().config_data
 
 
 @dataclass
@@ -43,6 +46,11 @@ class Blackboard:
         self._requests: Memory = Memory()
         self._trajectories: Memory = Memory()
         self._screenshots: Memory = Memory()
+
+        if configs.get("USE_CUSTOMIZATION", False):
+            self.load_questions(
+                configs.get("QA_PAIR_FILE", ""), configs.get("QA_PAIR_NUM", -1)
+            )
 
     @property
     def questions(self) -> Memory:
@@ -182,6 +190,16 @@ class Blackboard:
         """
         return self.screenshots.to_json()
 
+    def load_questions(self, file_path: str, last_k=-1) -> None:
+        """
+        Load the data from a file.
+        :param file_path: The path of the file.
+        :param last_k: The number of lines to read from the end of the file. If -1, read all lines.
+        """
+        qa_list = self.read_json_file(file_path, last_k)
+        for qa in qa_list:
+            self.add_questions(qa)
+
     def texts_to_prompt(self, memory: Memory, prefix: str) -> List[str]:
         """
         Convert the data to a prompt.
@@ -263,6 +281,39 @@ class Blackboard:
         self.requests.clear()
         self.trajectories.clear()
         self.screenshots.clear()
+
+    @staticmethod
+    def read_json_file(file_path: str, last_k=-1) -> Dict[str, str]:
+        """
+        Read the json file.
+        :param file_path: The path of the file.
+        :param last_k: The number of lines to read from the end of the file. If -1, read all lines.
+        :return: The data in the file.
+        """
+
+        data_list = []
+
+        # Check if the file exists
+        if os.path.exists(file_path):
+            # Open the file and read the lines
+            with open(file_path, "r", encoding="utf-8") as file:
+                lines = file.readlines()
+
+            # If last_k is not -1, only read the last k lines
+            if last_k != -1:
+                lines = lines[-last_k:]
+
+            # Parse the lines as JSON
+            for line in lines:
+                try:
+                    data = json.loads(line.strip())
+                    data_list.append(data)
+                except json.JSONDecodeError:
+                    print(f"Warning: Unable to parse line as JSON: {line}")
+        else:
+            print(f"File does not exist: {file_path}")
+
+        return data_list
 
 
 if __name__ == "__main__":

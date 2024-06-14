@@ -14,7 +14,6 @@ from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
-from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
@@ -273,6 +272,7 @@ class AppAgentProcessor(BaseProcessor):
         self._control_label = self._response_json.get("ControlLabel", "")
         self.control_text = self._response_json.get("ControlText", "")
         self._operation = self._response_json.get("Function", "")
+        self.question_list = self._response_json.get("Questions", [])
         self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
 
         # Convert the plan from a string to a list if the plan is a string.
@@ -285,8 +285,6 @@ class AppAgentProcessor(BaseProcessor):
         )
 
         self.status = self._response_json.get("Status", "")
-        self.agent.status = self.status
-
         self.app_agent.print_response(self._response_json)
 
     def execute_action(self) -> None:
@@ -296,7 +294,7 @@ class AppAgentProcessor(BaseProcessor):
 
         try:
             # Get the selected control item from the annotation dictionary and LLM response.
-            # The LLm response is a number index corresponding to the key in the annotation dictionary.
+            # The LLM response is a number index corresponding to the key in the annotation dictionary.
             control_selected = self._annotation_dict.get(self._control_label, "")
 
             if control_selected:

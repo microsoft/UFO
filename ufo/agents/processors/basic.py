@@ -10,8 +10,8 @@ from typing import List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
+from ufo import utils
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
@@ -49,6 +49,7 @@ class BaseProcessor(ABC):
         self._control_text = None
         self._response_json = {}
         self._results = None
+        self._question_list = []
         self._agent_status_manager = self.agent.status_manager
 
     def process(self) -> None:
@@ -441,13 +442,34 @@ class BaseProcessor(ABC):
         """
         self._cost = cost
 
+    @property
+    def question_list(self) -> List[str]:
+        """
+        Get the question list.
+        :return: The question list.
+        """
+
+        if type(self._question_list) == str:
+            self._question_list = [self._question_list]
+
+        return self._question_list
+
+    @question_list.setter
+    def question_list(self, question_list: List[str]) -> None:
+        """
+        Set the question list.
+        :param question_list: The question list.
+        """
+        self._question_list = question_list
+
     def is_error(self) -> bool:
         """
         Check if the process is in error.
         :return: The boolean value indicating if the process is in error.
         """
 
-        return self._status == self._agent_status_manager.ERROR.value
+        self.agent.status = self.status
+        return self.status == self._agent_status_manager.ERROR.value
 
     def is_paused(self) -> bool:
         """
@@ -455,9 +477,11 @@ class BaseProcessor(ABC):
         :return: The boolean value indicating if the process is paused.
         """
 
+        self.agent.status = self.status
+
         return (
-            self._status == self._agent_status_manager.PENDING.value
-            or self._status == self._agent_status_manager.CONFIRM.value
+            self.status == self._agent_status_manager.PENDING.value
+            or self.status == self._agent_status_manager.CONFIRM.value
         )
 
     def log(self, response_json: dict) -> None:

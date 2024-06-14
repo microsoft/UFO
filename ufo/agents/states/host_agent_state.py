@@ -245,12 +245,31 @@ class PendingHostAgentState(HostAgentState):
     The class for the pending host agent state.
     """
 
+    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+        """
+        Handle the agent for the current step.
+        :param agent: The agent to handle.
+        :param context: The context for the agent and session.
+        """
+
+        # Ask the user questions to help the agent to proceed.
+        agent.process_asker()
+
     def is_round_end(self) -> bool:
         """
         Check if the round ends.
         :return: True if the round ends, False otherwise.
         """
         return False
+
+    def next_state(self, agent: HostAgent) -> AgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The current agent.
+        :return: The state for the next step.
+        """
+        agent.status = HostAgentStatus.CONTINUE.value
+        return ContinueHostAgentState()
 
     @classmethod
     def name(cls) -> str:

@@ -3,16 +3,19 @@
 
 from __future__ import annotations
 
+import json
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, List, Type, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Type, Union
 
 from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
+
 from ufo.agents.states.basic import AgentState, AgentStatus
 from ufo.automator import puppeteer
+from ufo.config.config import Config
 from ufo.llm import llm_call
 from ufo.module.context import Context
-
+from ufo.module.interactor import question_asker
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
@@ -20,7 +23,10 @@ retriever = utils.LazyImport("..rag.retriever")
 # To avoid circular import
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
+    from ufo.agents.processors.basic import BaseProcessor
     from ufo.agents.memory.blackboard import Blackboard
+
+configs = Config.get_instance().config_data
 
 
 class BasicAgent(ABC):
@@ -41,7 +47,7 @@ class BasicAgent(ABC):
         self.retriever_factory = retriever.RetrieverFactory()
         self._memory = Memory()
         self._host = None
-        self.processor = None
+        self._processor: Optional[BaseProcessor] = None
         self._state = None
 
     @property
@@ -220,6 +226,53 @@ class BasicAgent(ABC):
         Process the agent.
         """
         pass
+
+    def process_resume(self) -> None:
+        """
+        Resume the process.
+        """
+        if self.processor:
+            self.processor.resume()
+
+    def process_asker(self) -> None:
+        """
+        Ask for the process.
+        """
+        if self.processor:
+            question_list = self.processor.question_list
+
+            utils.print_with_color(
+                "Could you please answer the following questions to help me understand your needs and complete the task?",
+                "yellow",
+            )
+
+            for index, question in enumerate(question_list):
+                answer = question_asker(question, index + 1)
+                if not answer.strip():
+                    continue
+                qa_pair = {"question": question, "answer": answer}
+
+                utils.append_string_to_file(
+                    configs["QA_PAIR_FILE"], json.dumps(qa_pair)
+                )
+
+                self.blackboard.add_questions(qa_pair)
+
+    @property
+    def processor(self) -> BaseProcessor:
+        """
+        Get the processor.
+        :return: The processor.
+        """
+        return self._processor
+
+    @processor.setter
+    def processor(self, processor: BaseProcessor) -> None:
+        """
+        Set the processor.
+        :param processor: The processor.
+        """
+        self._processor = processor
 
     @property
     def status_manager(self) -> AgentStatus:
