@@ -1,6 +1,9 @@
 import time
 from typing import Any, Optional
-
+from io import BytesIO
+import base64
+from PIL import Image
+import re
 import google.generativeai as genai
 from ufo.llm.base import BaseService
 from ufo.utils import print_with_color
@@ -102,4 +105,20 @@ class GeminiService(BaseService):
                         prompt_contents.append(prompt)
         return prompt_contents
             
+    def base64_to_image(self, base64_str: str) -> Image.Image:
+        """
+        Converts a base64 encoded image string to a PIL Image object.
+
+        Args:
+            base64_str (str): The base64 encoded image string.
+
+        Returns:
+            Image.Image: The PIL Image object.
+
+        """
+        base64_data = re.sub('^data:image/.+;base64,', '', base64_str)
+        byte_data = base64.b64decode(base64_data)
+        image_data = BytesIO(byte_data)
+        img = Image.open(image_data)
+        return img
             

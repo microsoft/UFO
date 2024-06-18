@@ -66,24 +66,3 @@ class BaseService(abc.ABC):
         else:
             return 0
         return cost
-    
-    def base64_to_image(self, base64_str: str) -> Image.Image:
-        """
-        Converts a base64 encoded image string to a PIL Image object.
-
-        Args:
-            base64_str (str): The base64 encoded image string.
-
-        Returns:
-            Image.Image: The PIL Image object.
-
-        """
-        from io import BytesIO
-        import base64
-        from PIL import Image
-        import re
-        base64_data = re.sub('^data:image/.+;base64,', '', base64_str)
-        byte_data = base64.b64decode(base64_data)
-        image_data = BytesIO(byte_data)
-        img = Image.open(image_data)
-        return img

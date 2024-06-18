@@ -253,7 +253,7 @@ class HostAgent(BasicAgent):
         utils.print_with_color("Status📊: {status}".format(status=status), "blue")
         utils.print_with_color(
             "Next Plan📚: {plan}".format(
-                plan="\n".join(plan)
+                plan= "\n".join(plan) if isinstance(plan, list) else str(plan)
             ),
             "cyan",
         )
