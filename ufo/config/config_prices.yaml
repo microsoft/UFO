@@ -36,6 +36,9 @@ PRICES: {
     "azure/gpt-4o-20240513": {"input": 0.005, "output": 0.015},
     "qwen/qwen-vl-plus": {"input": 0.008, "output": 0.008},
     "qwen/qwen-vl-max": {"input": 0.02, "output": 0.02},
+    "gemini/gemini-1.5-flash": {"input": 0.00035, "output": 0.00105},
+    "gemini/gemini-1.5-pro": {"input": 0.0035, "output": 0.0105},
+    "gemini/gemini-1.0-pro": {"input": 0.0005, "output": 0.0015},
 }
 
 
