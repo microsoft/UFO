@@ -70,7 +70,7 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         if not number or number < 1 or number > tables.Count:
             return f"Table number {number} is out of range."
 
-        tables[number].Select()
+        tables(number).Select()
         return f"Table {number} is selected."
 
     @property
