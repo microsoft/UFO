@@ -146,6 +146,14 @@ class HostAgent(BasicAgent):
 
         return app_agent
 
+    @property
+    def sub_agent_amount(self) -> int:
+        """
+        Get the amount of sub agents.
+        :return: The amount of sub agents.
+        """
+        return len(self.appagent_dict)
+
     def get_active_appagent(self) -> AppAgent:
         """
         Get the active app agent.
@@ -165,19 +173,25 @@ class HostAgent(BasicAgent):
         image_list: List[str],
         os_info: str,
         plan: List[str],
+        prev_subtask: List[Dict[str, str]],
         request: str,
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the message.
         :param image_list: The list of screenshot images.
         :param os_info: The OS information.
+        :param prev_subtask: The previous subtask.
         :param plan: The plan.
         :param request: The request.
         :return: The message.
         """
         hostagent_prompt_system_message = self.prompter.system_prompt_construction()
         hostagent_prompt_user_message = self.prompter.user_content_construction(
-            image_list, os_info, plan, request
+            image_list=image_list,
+            control_item=os_info,
+            prev_subtask=prev_subtask,
+            prev_plan=plan,
+            user_request=request,
         )
 
         if not self.blackboard.is_empty():
@@ -238,7 +252,17 @@ class HostAgent(BasicAgent):
             application = "[The required application needs to be opened.]"
         observation = response_dict.get("Observation")
         thought = response_dict.get("Thought")
-        plan = response_dict.get("Plan")
+        subtask = response_dict.get("CurrentSubtask")
+
+        # Convert the message from a list to a string.
+        message = list(response_dict.get("Message"))
+        message = "\n".join(message)
+
+        # Concatenate the subtask with the plan and convert the plan from a list to a string.
+        plan = list(response_dict.get("Plan"))
+        plan = [subtask] + plan
+        plan = "\n".join(plan)
+
         status = response_dict.get("Status")
         comment = response_dict.get("Comment")
 
@@ -247,16 +271,20 @@ class HostAgent(BasicAgent):
         )
         utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
         utils.print_with_color(
-            "Selected application📲: {application}".format(application=application),
-            "yellow",
-        )
-        utils.print_with_color("Status📊: {status}".format(status=status), "blue")
-        utils.print_with_color(
-            "Next Plan📚: {plan}".format(
-                plan=str(plan) if isinstance(plan[0], dict) else "\n".join(plan)
-            ),
+            "Plans📚: {plan}".format(plan=plan),
             "cyan",
         )
+        utils.print_with_color(
+            "Next Selected application📲: {application}".format(
+                application=application
+            ),
+            "yellow",
+        )
+        utils.print_with_color(
+            "Messages to AppAgent📩: {message}".format(message=message), "cyan"
+        )
+        utils.print_with_color("Status📊: {status}".format(status=status), "blue")
+
         utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
 
     @property

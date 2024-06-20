@@ -60,6 +60,7 @@ class HostAgentPrompter(BasicPrompter):
     def user_prompt_construction(
         self,
         control_item: List[str],
+        prev_subtask: List[Dict[str, str]],
         prev_plan: List[str],
         user_request: str,
         retrieved_docs: str = "",
@@ -67,6 +68,8 @@ class HostAgentPrompter(BasicPrompter):
         """
         Construct the prompt for action selection.
         :param control_item: The control item.
+        :param prev_plan: The previous plan.
+        :param prev_subtask: The previous subtask.
         :param user_request: The user request.
         :param retrieved_docs: The retrieved documents.
         return: The prompt for action selection.
@@ -74,6 +77,7 @@ class HostAgentPrompter(BasicPrompter):
         prompt = self.prompt_template["user"].format(
             control_item=json.dumps(control_item),
             prev_plan=json.dumps(prev_plan),
+            prev_subtask=json.dumps(prev_subtask),
             user_request=user_request,
             retrieved_docs=retrieved_docs,
         )
@@ -84,6 +88,7 @@ class HostAgentPrompter(BasicPrompter):
         self,
         image_list: List[str],
         control_item: List[str],
+        prev_subtask: List[Dict[str, str]],
         prev_plan: str,
         user_request: str,
         retrieved_docs: str = "",
@@ -92,6 +97,8 @@ class HostAgentPrompter(BasicPrompter):
         Construct the prompt for LLMs.
         :param image_list: The list of images.
         :param control_item: The control item.
+        :param prev_subtask: The previous subtask.
+        :param prev_plan: The previous plan.
         :param user_request: The user request.
         :param retrieved_docs: The retrieved documents.
         return: The prompt for LLMs.
@@ -110,7 +117,11 @@ class HostAgentPrompter(BasicPrompter):
             {
                 "type": "text",
                 "text": self.user_prompt_construction(
-                    control_item, prev_plan, user_request, retrieved_docs
+                    control_item=control_item,
+                    prev_subtask=prev_subtask,
+                    prev_plan=prev_plan,
+                    user_request=user_request,
+                    retrieved_docs=retrieved_docs,
                 ),
             }
         )
@@ -236,8 +247,12 @@ class AppAgentPrompter(BasicPrompter):
     def user_prompt_construction(
         self,
         control_item: List[str],
+        prev_subtask: List[Dict[str, str]],
         prev_plan: List[str],
         user_request: str,
+        subtask: str,
+        current_application: str,
+        host_message: List[str],
         retrieved_docs: str = "",
     ) -> str:
         """
@@ -250,8 +265,12 @@ class AppAgentPrompter(BasicPrompter):
         """
         prompt = self.prompt_template["user"].format(
             control_item=json.dumps(control_item),
+            prev_subtask=json.dumps(prev_subtask),
             prev_plan=json.dumps(prev_plan),
             user_request=user_request,
+            subtask=subtask,
+            current_application=current_application,
+            host_message=json.dumps(host_message),
             retrieved_docs=retrieved_docs,
         )
 
@@ -261,8 +280,12 @@ class AppAgentPrompter(BasicPrompter):
         self,
         image_list: List[str],
         control_item: List[str],
+        prev_subtask: List[str],
         prev_plan: List[str],
         user_request: str,
+        subtask: str,
+        current_application: str,
+        host_message: List[str],
         retrieved_docs: str = "",
         include_last_screenshot: bool = True,
     ) -> List[Dict[str, str]]:
@@ -293,10 +316,14 @@ class AppAgentPrompter(BasicPrompter):
             {
                 "type": "text",
                 "text": self.user_prompt_construction(
-                    control_item,
-                    prev_plan,
-                    user_request,
-                    retrieved_docs,
+                    control_item=control_item,
+                    prev_subtask=prev_subtask,
+                    prev_plan=prev_plan,
+                    user_request=user_request,
+                    subtask=subtask,
+                    current_application=current_application,
+                    host_message=host_message,
+                    retrieved_docs=retrieved_docs,
                 ),
             }
         )

@@ -18,6 +18,9 @@ class ContextNames(Enum):
     MODE = "MODE"
     LOG_PATH = "LOG_PATH"
     REQUEST = "REQUEST"
+    SUBTASK = "SUBTASK"
+    PREVIOUS_SUBTASKS = "PREVIOUS_SUBTASKS"
+    HOST_MESSAGE = "HOST_MESSAGE"
     REQUEST_LOGGER = "REQUEST_LOGGER"
     LOGGER = "LOGGER"
     EVALUATION_LOGGER = "EVALUATION_LOGGER"
@@ -30,8 +33,10 @@ class ContextNames(Enum):
     CONTROL_REANNOTATION = "CONTROL_REANNOTATION"
     SESSION_COST = "SESSION_COST"
     ROUND_COST = "ROUND_COST"
+    ROUND_SUBTASK_AMOUNT = "ROUND_SUBTASK_AMOUNT"
     CURRENT_ROUND_STEP = "CURRENT_ROUND_STEP"
     CURRENT_ROUND_COST = "CURRENT_ROUND_COST"
+    CURRENT_ROUND_SUBTASK_AMOUNT = "CURRENT_ROUND_SUBTASK_AMOUNT"
 
     @property
     def default_value(self) -> Any:
@@ -45,12 +50,14 @@ class ContextNames(Enum):
             or self == ContextNames.APPLICATION_PROCESS_NAME
             or self == ContextNames.APPLICATION_ROOT_NAME
             or self == ContextNames.MODE
+            or self == ContextNames.SUBTASK
         ):
             return ""
         elif (
             self == ContextNames.SESSION_STEP
             or self == ContextNames.CURRENT_ROUND_ID
             or self == ContextNames.CURRENT_ROUND_STEP
+            or self == ContextNames.CURRENT_ROUND_SUBTASK_AMOUNT
             or self == ContextNames.ID
         ):
             return 0
@@ -58,9 +65,17 @@ class ContextNames(Enum):
             self == ContextNames.SESSION_COST or self == ContextNames.CURRENT_ROUND_COST
         ):
             return 0.0
-        elif self == ContextNames.ROUND_STEP or self == ContextNames.ROUND_COST:
+        elif (
+            self == ContextNames.ROUND_STEP
+            or self == ContextNames.ROUND_COST
+            or self == ContextNames.ROUND_SUBTASK_AMOUNT
+        ):
             return {}
-        elif self == ContextNames.CONTROL_REANNOTATION:
+        elif (
+            self == ContextNames.CONTROL_REANNOTATION
+            or self == ContextNames.HOST_MESSAGE
+            or self == ContextNames.PREVIOUS_SUBTASKS
+        ):
             return []
         elif (
             self == ContextNames.REQUEST_LOGGER
@@ -85,6 +100,7 @@ class ContextNames(Enum):
             or self == ContextNames.APPLICATION_PROCESS_NAME
             or self == ContextNames.APPLICATION_ROOT_NAME
             or self == ContextNames.MODE
+            or self == ContextNames.SUBTASK
         ):
             return str
         elif (
@@ -92,15 +108,24 @@ class ContextNames(Enum):
             or self == ContextNames.CURRENT_ROUND_ID
             or self == ContextNames.CURRENT_ROUND_STEP
             or self == ContextNames.ID
+            or self == ContextNames.ROUND_SUBTASK_AMOUNT
         ):
             return int
         elif (
             self == ContextNames.SESSION_COST or self == ContextNames.CURRENT_ROUND_COST
         ):
             return float
-        elif self == ContextNames.ROUND_STEP or self == ContextNames.ROUND_COST:
+        elif (
+            self == ContextNames.ROUND_STEP
+            or self == ContextNames.ROUND_COST
+            or self == ContextNames.CURRENT_ROUND_SUBTASK_AMOUNT
+        ):
             return dict
-        elif self == ContextNames.CONTROL_REANNOTATION:
+        elif (
+            self == ContextNames.CONTROL_REANNOTATION
+            or self == ContextNames.HOST_MESSAGE
+            or self == ContextNames.PREVIOUS_SUBTASKS
+        ):
             return list
         elif (
             self == ContextNames.REQUEST_LOGGER
@@ -147,6 +172,8 @@ class Context:
                 self.current_round_step = value
             if key == ContextNames.CURRENT_ROUND_COST:
                 self.current_round_cost = value
+            if key == ContextNames.CURRENT_ROUND_SUBTASK_AMOUNT:
+                self.current_round_subtask_amount = value
         else:
             raise KeyError(f"Key '{key}' is not a valid context name.")
 
@@ -156,6 +183,9 @@ class Context:
         """
         self.set(ContextNames.CURRENT_ROUND_STEP, self.current_round_step)
         self.set(ContextNames.CURRENT_ROUND_COST, self.current_round_cost)
+        self.set(
+            ContextNames.CURRENT_ROUND_SUBTASK_AMOUNT, self.current_round_subtask_amount
+        )
 
     def update_dict(self, key: ContextNames, value: Dict[str, Any]) -> None:
         """
@@ -209,6 +239,24 @@ class Context:
         """
         current_round_id = self._context.get(ContextNames.CURRENT_ROUND_ID.name)
         self._context[ContextNames.ROUND_STEP.name][current_round_id] = value
+
+    @property
+    def current_round_subtask_amount(self) -> int:
+        """
+        Get the current round subtask index.
+        """
+        return self._context.get(ContextNames.ROUND_SUBTASK_AMOUNT.name).get(
+            self._context.get(ContextNames.CURRENT_ROUND_ID.name), 0
+        )
+
+    @current_round_subtask_amount.setter
+    def current_round_subtask_amount(self, value: int) -> None:
+        """
+        Set the current round subtask index.
+        :param value: The value to set.
+        """
+        current_round_id = self._context.get(ContextNames.CURRENT_ROUND_ID.name)
+        self._context[ContextNames.ROUND_SUBTASK_AMOUNT.name][current_round_id] = value
 
     def to_dict(self) -> Dict[str, Any]:
         """

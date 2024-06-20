@@ -87,6 +87,13 @@ class HostAgentState(AgentState):
         """
         return agent
 
+    def is_subtask_end(self) -> bool:
+        """
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
+        """
+        return False
+
 
 @HostAgentStateManager.register
 class FinishHostAgentState(HostAgentState):
@@ -123,7 +130,8 @@ class ContinueHostAgentState(HostAgentState):
         :param context: The context for the agent and session.
         """
         agent.process(context)
-        self.create_app_agent(agent, context)
+        if agent.status == HostAgentStatus.CONTINUE.value:
+            self.create_app_agent(agent, context)
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
