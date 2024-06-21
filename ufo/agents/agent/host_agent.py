@@ -261,7 +261,7 @@ class HostAgent(BasicAgent):
         # Concatenate the subtask with the plan and convert the plan from a list to a string.
         plan = list(response_dict.get("Plan"))
         plan = [subtask] + plan
-        plan = "\n".join(plan)
+        plan = "\n".join([f"({i+1}) " + str(item) for i, item in enumerate(plan)])
 
         status = response_dict.get("Status")
         comment = response_dict.get("Comment")

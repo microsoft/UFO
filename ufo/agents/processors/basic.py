@@ -96,6 +96,11 @@ class BaseProcessor(ABC):
         self.parse_response()
 
         if self.is_error() or self.is_paused():
+            # If the session is pending, update the step and memory, and return.
+            if self.is_pending():
+                self.update_step()
+                self.update_memory()
+
             return
 
         # Step 8: Execute the action.
@@ -556,6 +561,26 @@ class BaseProcessor(ABC):
             self.status == self._agent_status_manager.PENDING.value
             or self.status == self._agent_status_manager.CONFIRM.value
         )
+
+    def is_pending(self) -> bool:
+        """
+        Check if the process is pending.
+        :return: The boolean value indicating if the process is pending.
+        """
+
+        self.agent.status = self.status
+
+        return self.status == self._agent_status_manager.PENDING.value
+
+    def is_confirm(self) -> bool:
+        """
+        Check if the process is confirm.
+        :return: The boolean value indicating if the process is confirm.
+        """
+
+        self.agent.status = self.status
+
+        return self.status == self._agent_status_manager.CONFIRM.value
 
     def log(self, response_json: dict) -> None:
         """
