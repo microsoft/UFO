@@ -234,6 +234,7 @@ class HostAgentProcessor(BaseProcessor):
             "AgentStep": self.host_agent.step,
             "Round": self.round_num,
             "ControlLabel": self.control_text,
+            "SubtaskIndex": -1,
             "Action": "set_focus()",
             "ActionType": "UIControl",
             "Request": self.request,
@@ -249,6 +250,7 @@ class HostAgentProcessor(BaseProcessor):
         self.host_agent.add_memory(self._memory_data)
 
         # Log the memory item.
+        self.context.add_to_structural_logs(self._memory_data.to_dict())
         self.log(self._memory_data.to_dict())
 
         # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.

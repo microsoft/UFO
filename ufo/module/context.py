@@ -1,10 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
 from logging import Logger
-from typing import Any, Dict, Optional, Type
+from typing import Any, Dict, List, Optional, Type, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -37,6 +38,7 @@ class ContextNames(Enum):
     CURRENT_ROUND_STEP = "CURRENT_ROUND_STEP"
     CURRENT_ROUND_COST = "CURRENT_ROUND_COST"
     CURRENT_ROUND_SUBTASK_AMOUNT = "CURRENT_ROUND_SUBTASK_AMOUNT"
+    STRUCTURAL_LOGS = "STRUCTURAL_LOGS"
 
     @property
     def default_value(self) -> Any:
@@ -85,6 +87,8 @@ class ContextNames(Enum):
             return None  # Assuming Logger should be initialized elsewhere
         elif self == ContextNames.APPLICATION_WINDOW:
             return None  # Assuming UIAWrapper should be initialized elsewhere
+        elif self == ContextNames.STRUCTURAL_LOGS:
+            return defaultdict(lambda: defaultdict(list))
         else:
             return None
 
@@ -119,6 +123,7 @@ class ContextNames(Enum):
             self == ContextNames.ROUND_STEP
             or self == ContextNames.ROUND_COST
             or self == ContextNames.CURRENT_ROUND_SUBTASK_AMOUNT
+            or self == ContextNames.STRUCTURAL_LOGS
         ):
             return dict
         elif (
@@ -257,6 +262,45 @@ class Context:
         """
         current_round_id = self._context.get(ContextNames.CURRENT_ROUND_ID.name)
         self._context[ContextNames.ROUND_SUBTASK_AMOUNT.name][current_round_id] = value
+
+    def add_to_structural_logs(self, data: Dict[str, Any]) -> None:
+        """
+        Add data to the structural logs.
+        :param data: The data to add to the structural logs.
+        """
+
+        round_key = data.get("Round", None)
+        subtask_key = data.get("SubtaskIndex", None)
+
+        if round_key is None or subtask_key is None:
+            return
+
+        remaining_items = {key: data[key] for key in data if key not in ["a", "b"]}
+        self._context[ContextNames.STRUCTURAL_LOGS.name][round_key][subtask_key].append(
+            remaining_items
+        )
+
+    def filter_structural_logs(
+        self, round_key: int, subtask_key: int, keys: Union[str, List[str]]
+    ) -> Union[List[Any], List[Dict[str, Any]]]:
+        """
+        Filter the structural logs.
+        :param round_key: The round key.
+        :param subtask_key: The subtask key.
+        :param keys: The keys to filter.
+        :return: The filtered structural logs.
+        """
+
+        structural_logs = self._context[ContextNames.STRUCTURAL_LOGS.name][round_key][
+            subtask_key
+        ]
+
+        if isinstance(keys, str):
+            return [log[keys] for log in structural_logs]
+        elif isinstance(keys, list):
+            return [{key: log[key] for key in keys} for log in structural_logs]
+        else:
+            raise TypeError(f"Keys should be a string or a list of strings.")
 
     def to_dict(self) -> Dict[str, Any]:
         """
