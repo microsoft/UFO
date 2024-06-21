@@ -192,14 +192,14 @@ class ContinueHostAgentState(HostAgentState):
 
             # Create the app agent in the follower mode.
             app_agent = agent.create_subagent(
-                "follower",
-                agent_type=agent_name,
-                agent_name=application_window_name,
-                process_name=application_root_name,
-                api_prompt=configs["APP_AGENT"]["VISUAL_MODE"],
-                is_visual=configs["FOLLOWERAHENT_PROMPT"],
-                main_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
-                example_prompt=configs["API_PROMPT"],
+                agent_type="follower",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
+                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+                main_prompt=configs["FOLLOWERAHENT_PROMPT"],
+                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                api_prompt=configs["API_PROMPT"],
                 app_info_prompt=app_info_prompt,
             )
 
