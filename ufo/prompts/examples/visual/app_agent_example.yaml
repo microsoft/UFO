@@ -3,6 +3,8 @@ version: 1.0
 example1: 
   Request: |-
     My name is Zac. Please send a email to jack@outlook.com to thanks his contribution on the open source.
+  Sub-task: |-
+    Compose an email to send to Jack (jack@outlook.com) to thank him for his contribution to the open source project on the outlook application, using the name Zac.
   Response: 
     Observation: |-
       The screenshot shows that I am on the Main Page of Outlook. The Main Page has a list of control items and email received. The new email editing window is not opened. The last action took effect by opening the Outlook application.
@@ -35,6 +37,8 @@ example1:
 example2: 
   Request: |- 
     My name is Zac. Please send a email to jack@outlook.com to thanks his contribution on the open source.
+  Sub-task: |-
+    Compose an email to send to Jack (jack@outlook.com) to thank him for his contribution to the open source project on the outlook application, using the name Zac.
   Response: 
     Observation: |-
       The screenshot shows that I am on a calendar page of Outlook. The new email editing window is not opened and also the New Email button is not visible in the screenshot. The last action took effect by opening the Outlook windows.
@@ -79,6 +83,8 @@ example2:
 example3: 
   Request: |- 
     Send a message to Tom on Teams to ask him if he can join the meeting at 3pm.
+  Sub-task: |-
+    Compose a message to send to Tom on Teams to ask him if he can join the meeting at 3pm.
   Response: 
     Observation: |-
       The screenshot shows that I am on the chat window of Tom on Teams, the message input box is empty and ready to input. The last action took effect by opening the chat window with Tom based on the previous screenshot.
@@ -108,6 +114,8 @@ example3:
 example4:
   Request: |-
     Draft an email to Amy to ask her how she feels about the new project.
+  Sub-task: |-
+    Draft an email to send to Amy to ask her how she feels about the new project on the outlook application.
   Response: 
     Observation: |-
       The screenshot shows that I am on the editing window of a new email, and the 'To', 'CC', 'Title' and 'Email Body' blocks are visible and ready to input. The title of the email has already been filled. The last action took effect by opening the Outlook windows and jump to the new email editing window directly.
@@ -143,6 +151,8 @@ example4:
 example5:
   Request: |-
     Search for the word 'UFO' in the document.
+  Sub-task: |-
+    Search for the word 'UFO' in the document on the Word application.
   Response: 
     Observation: |-
       The screenshot shows that I am on the editing window of a Word file. The search box is visible and the word 'UFO' is already inputted. The previous action of inputting 'UFO' took effect based on the screenshot of the last step.
@@ -171,11 +181,13 @@ example5:
 example6:
   Request: |-
     Send an message to Tom on Teams by including a (1) the text extracted from framework.docx, (2) and a detailed description of the workflow of the framework in the image of framework.png.
+  Sub-task: |-
+    Extract the full text from the framework.docx.
   Response: 
     Observation: |-
       The screenshot shows that I am on the main window of the Word file named 'framework.docx'. The text of the file, which I am interest, is visible in the screenshot. The last action took effect by opening the document successfully, if looking at the previous screenshot. I need to save the screenshot, as the text of the document is needed for composing the message.
     Thought: |-
-      Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'SWITCH' immediately to switch to the image of framework.png to complete the next task.
+      Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'FINISH' immediately.
     ControlLabel: |-
       83
     ControlText: |-
@@ -184,26 +196,22 @@ example6:
       texts
     Args: {}
     Status: |-
-      SWITCH
+      FINISH
     Plan:
-      - (1) Switch to the image of framework.png to complete the next task, the current status need to set to 'SWITCH'.
-      - (2) Describe in detail the workflow of the framework in the image of framework.png base on the screenshot of the image.
-      - (3) Switch to the Teams application.
-      - (4) Open the chat window with Tom.
-      - (5) Input the text of the Document control named 'framework.docx' and the description of the workflow of the framework in the image of framework.png in the Edit control named 'Type a new message'. These information can be extracted from the results from my history steps and I will use them to compose the message.
-      - (6) Click the Send button to send the message. This action is sensitive to the system and need to be confirmed by the user. I need to confirm the action before clicking the Send button. If the user confirms the action, the task is finished.
+      - <FINISH>
     Comment: |-
-      The partial tasks on 'framework.docx' is completed once I take the current action. I need to set Status immediately to 'SWITCH' to switch to the image of framework.png to complete the next task.
+      The partial tasks on 'framework.docx' is completed once I take the current action. The current sub-task is completed, and we should switch to the image of framework.png to complete the next task.
     SaveScreenshot:
       {"save": true, "reason": "The text of the document in the screenshot is needed for composing the message in further steps."}
   Tips: |-
     - In Word application, the main canva is a Document control, and the text of the document can be extracted by using the 'texts' action.
-    - After extracting the text of the document, I need to set the status as 'SWITCH' immediately to switch to the image of framework.png to complete the next task.
 
 
 example7:
   Request: |-
     Quickly remove all notes in the presentation.pptx, without looping through each slide.
+  Sub-task: |-
+    Remove all notes in the presentation.pptx file quickly without looping through each slide.
   Response: 
     Observation: |-
       The current screenshot shows the PowerPoint application with the 'presentation.pptx' file open. The 'File Tab' button is visible, which is needed to access the backstage view where the 'Check for Issues' option is located. This matches the next step in the previous plan. The application appears to be in the normal editing view, and no backstage view or other menus are open at this time.
@@ -238,6 +246,8 @@ example7:
 example8:
   Request: |-
     How many stars does the Imdiffusion repo have?
+  Sub-task: |-
+    Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
   Response: 
     Observation: |-
       I observe that the Edge browser is visible in the screenshot, with the Google search page opened.
@@ -270,6 +280,8 @@ example8:
 example9: 
   Request: |- 
     Please remind me to get party dinner (5 people) preparation done before 5PM today with steps and notes.
+  Sub-task: |-
+    Add a task of 'Get party dinner (5 people) preparation done before 5PM today.' to the Microsoft To Do application, and set more details for the task, including adding steps and notes.
   Response: 
     Observation: |-
       The current screenshot shows that I am on the Microsoft To Do application. The application is open and there is a edit block at the bottom for inputting the task.
@@ -305,7 +317,9 @@ example9:
 
 example10:
   Request: |-
-      Please create a slide from the meeting_notes.docx in the presentation1.pptx.
+    Please create a slide from the meeting_notes.docx in the presentation1.pptx.
+  Sub-task: |-
+    Create a slide from the meeting_notes.docx in the presentation1.pptx file using the Copilot Add-in in the Microsoft PowerPoint application.
   Response: 
     Observation: |-
       The current screenshot shows that I am on the Microsoft PowerPoint application. The Copilot Add-in is visible in the screenshot.
@@ -336,6 +350,8 @@ example10:
 example11: 
   Request: |-
     create a presentation of watering plant on plant.pptx.
+  Sub-task: |-
+    Create a presentation from the plant.pptx about watering plant using the Copilot Add-in in the Microsoft PowerPoint application.
   Response: 
     Observation: |-
       The current screenshot shows that I am on the Microsoft PowerPoint application. The Copilot Add-in is visible in the screenshot.
