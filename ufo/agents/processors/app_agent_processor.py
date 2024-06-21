@@ -392,13 +392,6 @@ class AppAgentProcessor(BaseProcessor):
         self._memory_data.set_values_from_dict(self._response_json)
         self._memory_data.set_values_from_dict(additional_memory)
 
-        if self.status.upper() == self._agent_status_manager.CONFIRM.value:
-            self._memory_data.set_values_from_dict(
-                {
-                    "UserConfirm": "The user has confirmed the action, and the action has been executed successfully."
-                }
-            )
-
         self.app_agent.add_memory(self._memory_data)
 
         # Log the memory item.
