@@ -171,14 +171,14 @@ class ContinueHostAgentState(HostAgentState):
             )
 
             app_agent: AppAgent = agent.create_subagent(
-                "app",
-                agent_name,
-                application_window_name,
-                application_root_name,
-                configs["APP_AGENT"]["VISUAL_MODE"],
-                configs["APPAGENT_PROMPT"],
-                configs["APPAGENT_EXAMPLE_PROMPT"],
-                configs["API_PROMPT"],
+                agent_type="app",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
+                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+                main_prompt=configs["APPAGENT_PROMPT"],
+                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                api_prompt=configs["API_PROMPT"],
             )
 
         elif context.get(ContextNames.MODE) == "follower":
@@ -193,14 +193,14 @@ class ContinueHostAgentState(HostAgentState):
             # Create the app agent in the follower mode.
             app_agent = agent.create_subagent(
                 "follower",
-                agent_name,
-                application_window_name,
-                application_root_name,
-                configs["APP_AGENT"]["VISUAL_MODE"],
-                configs["FOLLOWERAHENT_PROMPT"],
-                configs["APPAGENT_EXAMPLE_PROMPT"],
-                configs["API_PROMPT"],
-                app_info_prompt,
+                agent_type=agent_name,
+                agent_name=application_window_name,
+                process_name=application_root_name,
+                api_prompt=configs["APP_AGENT"]["VISUAL_MODE"],
+                is_visual=configs["FOLLOWERAHENT_PROMPT"],
+                main_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                example_prompt=configs["API_PROMPT"],
+                app_info_prompt=app_info_prompt,
             )
 
         else:
