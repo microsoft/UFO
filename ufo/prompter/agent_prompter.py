@@ -29,6 +29,7 @@ class HostAgentPrompter(BasicPrompter):
         :param prompt_template: The path of the prompt template.
         :param example_prompt_template: The path of the example prompt template.
         :param api_prompt_template: The path of the api prompt template.
+        :param allow_openapp: Whether to allow open app by the hostagent.
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template)
@@ -212,6 +213,7 @@ class AppAgentPrompter(BasicPrompter):
         :param prompt_template: The path of the prompt template.
         :param example_prompt_template: The path of the example prompt template.
         :param api_prompt_template: The path of the api prompt template.
+        :param root_name: The root name of the app.
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
         self.root_name = root_name
@@ -228,6 +230,7 @@ class AppAgentPrompter(BasicPrompter):
     ) -> str:
         """
         Construct the prompt for app selection.
+        :param additional_examples: The additional examples added to the prompt.
         return: The prompt for app selection.
         """
 
@@ -259,7 +262,12 @@ class AppAgentPrompter(BasicPrompter):
         Construct the prompt for action selection.
         :param prompt_template: The template of the prompt.
         :param control_item: The control item.
+        :param prev_subtask: The previous subtask.
+        :param prev_plan: The previous plan.
         :param user_request: The user request.
+        :param subtask: The subtask.
+        :param current_application: The current application.
+        :param host_message: The host message.
         :param retrieved_docs: The retrieved documents.
         return: The prompt for action selection.
         """
@@ -293,7 +301,12 @@ class AppAgentPrompter(BasicPrompter):
         Construct the prompt for LLMs.
         :param image_list: The list of images.
         :param control_item: The control item.
+        :param prev_subtask: The previous subtask.
+        :param prev_plan: The previous plan.
         :param user_request: The user request.
+        :param subtask: The subtask.
+        :param current_application: The current application.
+        :param host_message: The host message.
         :param retrieved_docs: The retrieved documents.
         return: The prompt for LLMs.
         """
@@ -546,6 +559,8 @@ class FollowerAgentPrompter(AppAgentPrompter):
         Construct the prompt for LLMs.
         :param image_list: The list of images.
         :param control_item: The control item.
+        :param prev_subtask: The previous subtask.
+        :param prev_plan: The previous plan.
         :param user_request: The user request.
         :param subtask: The subtask.
         :param retrieved_docs: The retrieved documents.
