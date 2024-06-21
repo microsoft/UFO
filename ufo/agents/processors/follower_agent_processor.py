@@ -6,6 +6,11 @@ import json
 
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.config.config import Config
+from typing import TYPE_CHECKING
+from ufo.module.context import Context, ContextNames
+
+if TYPE_CHECKING:
+    from ufo.agents.agent.follower_agent import FollowerAgent
 
 configs = Config.get_instance().config_data
 
@@ -14,6 +19,14 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
     """
     The processor for the AppAgent in the follower mode.
     """
+
+    def __init__(self, agent: "FollowerAgent", context: Context) -> None:
+        """
+        Initialize the FollowerAppAgentProcessor.
+        :param app_agent: The AppAgent instance.
+        """
+        super().__init__(agent, context)
+        self.subtask = self.context.get(ContextNames.REQUEST)
 
     def get_prompt_message(self) -> None:
         """
@@ -33,16 +46,19 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
         state_diff = {}
 
         self._prompt_message = self.app_agent.message_constructor(
-            examples,
-            tips,
-            external_knowledge_prompt,
-            self._image_url,
-            self.filtered_control_info,
-            self.prev_plan,
-            self.request,
-            current_state,
-            state_diff,
-            configs["INCLUDE_LAST_SCREENSHOT"],
+            dynamic_examples=examples,
+            dynamic_tips=tips,
+            dynamic_knowledge=external_knowledge_prompt,
+            image_list=self._image_url,
+            control_info=self.filtered_control_info,
+            prev_subtask=[],
+            plan=self.prev_plan,
+            subtask=self.request,
+            request=self.request,
+            host_message=[],
+            current_state=current_state,
+            state_diff=state_diff,
+            include_last_screenshot=configs["INCLUDE_LAST_SCREENSHOT"],
         )
 
         log = json.dumps(

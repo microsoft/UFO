@@ -487,8 +487,12 @@ class FollowerAgentPrompter(AppAgentPrompter):
     def user_prompt_construction(
         self,
         control_item: List[str],
+        prev_subtask: List[str],
         prev_plan: List[str],
         user_request: str,
+        subtask: str,
+        current_application: str,
+        host_message: List[str],
         retrieved_docs: str = "",
         current_state: dict = {},
         state_diff: dict = {},
@@ -497,7 +501,12 @@ class FollowerAgentPrompter(AppAgentPrompter):
         Construct the prompt for action selection.
         :param prompt_template: The template of the prompt.
         :param control_item: The control item.
+        :param prev_subtask: The previous subtask.
+        :param prev_plan: The previous plan.
         :param user_request: The user request.
+        :param subtask: The subtask.
+        :param current_application: The current application.
+        :param host_message: The host message.
         :param retrieved_docs: The retrieved documents.
         :param current_state: The current state of the application.
         :param state_diff: The state difference of the application before and after the action.
@@ -505,8 +514,12 @@ class FollowerAgentPrompter(AppAgentPrompter):
         """
         prompt = self.prompt_template["user"].format(
             control_item=json.dumps(control_item),
+            prev_subtask=json.dumps(prev_subtask),
             prev_plan=json.dumps(prev_plan),
             user_request=user_request,
+            subtask=subtask,
+            current_application=current_application,
+            host_message=json.dumps(host_message),
             retrieved_docs=retrieved_docs,
             current_state=json.dumps(current_state),
             state_diff=json.dumps(state_diff),
@@ -518,8 +531,12 @@ class FollowerAgentPrompter(AppAgentPrompter):
         self,
         image_list: List[str],
         control_item: List[str],
+        prev_subtask: List[str],
         prev_plan: List[str],
         user_request: str,
+        subtask: str,
+        current_application: str,
+        host_message: List[str],
         retrieved_docs: str = "",
         current_state: dict = {},
         state_diff: dict = {},
@@ -530,7 +547,10 @@ class FollowerAgentPrompter(AppAgentPrompter):
         :param image_list: The list of images.
         :param control_item: The control item.
         :param user_request: The user request.
+        :param subtask: The subtask.
         :param retrieved_docs: The retrieved documents.
+        :param current_application: The current application.
+        :param host_message: The host message.
         :param current_state: The current state of the application (Optional).
         :param state_diff: The state difference of the application before and after the action (Optional).
         :param include_last_screenshot: Whether to include the last screenshot as input.
@@ -555,12 +575,16 @@ class FollowerAgentPrompter(AppAgentPrompter):
             {
                 "type": "text",
                 "text": self.user_prompt_construction(
-                    control_item,
-                    prev_plan,
-                    user_request,
-                    retrieved_docs,
-                    current_state,
-                    state_diff,
+                    control_item=control_item,
+                    prev_plan=prev_plan,
+                    prev_subtask=prev_subtask,
+                    user_request=user_request,
+                    subtask=subtask,
+                    current_application=current_application,
+                    host_message=host_message,
+                    retrieved_docs=retrieved_docs,
+                    current_state=current_state,
+                    state_diff=state_diff,
                 ),
             }
         )

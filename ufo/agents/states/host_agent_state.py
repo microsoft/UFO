@@ -130,8 +130,8 @@ class ContinueHostAgentState(HostAgentState):
         :param context: The context for the agent and session.
         """
         agent.process(context)
-        if agent.status == HostAgentStatus.CONTINUE.value:
-            self.create_app_agent(agent, context)
+
+        self.create_app_agent(agent, context)
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """

@@ -95,8 +95,11 @@ class FollowerAgent(AppAgent):
         dynamic_knowledge: str,
         image_list: List[str],
         control_info: str,
+        prev_subtask: List[str],
         plan: List[str],
         request: str,
+        subtask: str,
+        host_message: List[str],
         current_state: Dict[str, str],
         state_diff: Dict[str, str],
         include_last_screenshot: bool,
@@ -108,8 +111,11 @@ class FollowerAgent(AppAgent):
         :param dynamic_knowledge: The dynamic knowledge retrieved from the self-demonstration and human demonstration.
         :param image_list: The list of screenshot images.
         :param control_info: The control information.
+        :param prev_subtask: The previous subtask.
         :param plan: The plan.
         :param request: The request.
+        :param subtask: The subtask.
+        :param host_message: The host message.
         :param current_state: The current state of the app.
         :param state_diff: The state difference between the current state and the previous state.
         :param include_last_screenshot: The flag indicating whether the last screenshot should be included.
@@ -119,14 +125,18 @@ class FollowerAgent(AppAgent):
             dynamic_examples, dynamic_tips
         )
         followagent_prompt_user_message = self.prompter.user_content_construction(
-            image_list,
-            control_info,
-            plan,
-            request,
-            dynamic_knowledge,
-            current_state,
-            state_diff,
-            include_last_screenshot,
+            image_list=image_list,
+            control_item=control_info,
+            prev_subtask=prev_subtask,
+            prev_plan=plan,
+            user_request=request,
+            subtask=subtask,
+            current_application=self._process_name,
+            host_message=host_message,
+            retrieved_docs=dynamic_knowledge,
+            current_state=current_state,
+            state_diff=state_diff,
+            include_last_screenshot=include_last_screenshot,
         )
 
         followagent_prompt_message = self.prompter.prompt_construction(

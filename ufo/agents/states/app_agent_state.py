@@ -150,7 +150,15 @@ class FinishAppAgentState(AppAgentState):
         :return: The state for the next step.
         """
 
-        return ContinueHostAgentState()
+        from ufo.agents.agent.app_agent import AppAgent
+        from ufo.agents.agent.follower_agent import FollowerAgent
+
+        if type(agent) == AppAgent:
+            return ContinueHostAgentState()
+        elif type(agent) == FollowerAgent:
+            return FinishHostAgentState()
+        else:
+            return FinishHostAgentState()
 
     def is_subtask_end(self) -> bool:
         """
