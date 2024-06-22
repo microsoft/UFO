@@ -89,8 +89,11 @@ class AppAgent(BasicAgent):
         dynamic_knowledge: str,
         image_list: List,
         control_info: str,
+        prev_subtask: List[Dict[str, str]],
         plan: List[str],
         request: str,
+        subtask: str,
+        host_message: List[str],
         include_last_screenshot: bool,
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
@@ -101,7 +104,9 @@ class AppAgent(BasicAgent):
         :param image_list: The list of screenshot images.
         :param control_info: The control information.
         :param plan: The plan list.
-        :param request: The request.
+        :param request: The overall user request.
+        :param subtask: The subtask for the current AppAgent to process.
+        :param host_message: The message from the HostAgent.
         :param include_last_screenshot: The flag indicating whether to include the last screenshot.
         :return: The prompt message.
         """
@@ -110,12 +115,16 @@ class AppAgent(BasicAgent):
         )
 
         appagent_prompt_user_message = self.prompter.user_content_construction(
-            image_list,
-            control_info,
-            plan,
-            request,
-            dynamic_knowledge,
-            include_last_screenshot,
+            image_list=image_list,
+            control_item=control_info,
+            prev_subtask=prev_subtask,
+            prev_plan=plan,
+            user_request=request,
+            subtask=subtask,
+            current_application=self._process_name,
+            host_message=host_message,
+            retrieved_docs=dynamic_knowledge,
+            include_last_screenshot=include_last_screenshot,
         )
 
         if not self.blackboard.is_empty():

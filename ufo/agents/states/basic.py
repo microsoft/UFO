@@ -154,6 +154,14 @@ class AgentState(ABC):
         """
         pass
 
+    @abstractmethod
+    def is_subtask_end(self) -> bool:
+        """
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
+        """
+        pass
+
     @classmethod
     @abstractmethod
     def agent_class(cls) -> Type[BasicAgent]:

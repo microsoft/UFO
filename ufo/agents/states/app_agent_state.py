@@ -16,7 +16,7 @@ from ufo.agents.states.host_agent_state import (
 )
 from ufo.config.config import Config
 from ufo.module import interactor
-from ufo.module.context import Context
+from ufo.module.context import Context, ContextNames
 
 # Avoid circular import
 if TYPE_CHECKING:
@@ -99,12 +99,41 @@ class AppAgentState(AgentState):
         state = AppAgentStateManager().get_state(status)
         return state
 
+    def archive_subtask(self, context: "Context") -> None:
+        """
+        Update the subtask of the agent.
+        :param context: The context for the agent and session.
+        """
+
+        subtask = context.get(ContextNames.SUBTASK)
+        previous_subtasks = context.get(ContextNames.PREVIOUS_SUBTASKS)
+
+        if subtask:
+            subtask_info = {"subtask": subtask, "status": self.name()}
+            previous_subtasks.append(subtask_info)
+            context.set(ContextNames.PREVIOUS_SUBTASKS, previous_subtasks)
+
+    def is_round_end(self) -> bool:
+        """
+        Check if the round ends.
+        :return: True if the round ends, False otherwise.
+        """
+        return False
+
 
 @AppAgentStateManager.register
 class FinishAppAgentState(AppAgentState):
     """
     The class for the finish app agent state.
     """
+
+    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+        """
+        :param agent: The agent for the current step.
+        :param context: The context for the agent and session.
+        """
+
+        self.archive_subtask(context)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
@@ -121,14 +150,22 @@ class FinishAppAgentState(AppAgentState):
         :return: The state for the next step.
         """
 
-        return FinishHostAgentState()
+        from ufo.agents.agent.app_agent import AppAgent
+        from ufo.agents.agent.follower_agent import FollowerAgent
 
-    def is_round_end(self) -> bool:
+        if type(agent) == AppAgent:
+            return ContinueHostAgentState()
+        elif type(agent) == FollowerAgent:
+            return FinishHostAgentState()
+        else:
+            return FinishHostAgentState()
+
+    def is_subtask_end(self) -> bool:
         """
-        Check if the round ends.
-        :return: True if the round ends, False otherwise.
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
         """
-        return False
+        return True
 
     @classmethod
     def name(cls) -> str:
@@ -153,10 +190,10 @@ class ContinueAppAgentState(AppAgentState):
         """
         agent.process(context)
 
-    def is_round_end(self) -> bool:
+    def is_subtask_end(self) -> bool:
         """
-        Check if the round ends.
-        :return: True if the round ends, False otherwise.
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
         """
         return False
 
@@ -200,12 +237,28 @@ class ScreenshotAppAgentState(ContinueAppAgentState):
         else:
             return super().next_state(agent)
 
+    def is_subtask_end(self) -> bool:
+        """
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
+        """
+        return False
+
 
 @AppAgentStateManager.register
 class SwitchAppAgentState(AppAgentState):
     """
     The class for the switch app agent state.
     """
+
+    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+        """
+        Handle the agent for the current step.
+        :param agent: The agent for the current step.
+        :param context: The context for the agent and session.
+        """
+
+        self.archive_subtask(context)
 
     def next_state(self, agent: "AppAgent") -> HostAgentState:
         """
@@ -224,12 +277,12 @@ class SwitchAppAgentState(AppAgentState):
         """
         return agent.host
 
-    def is_round_end(self) -> bool:
+    def is_subtask_end(self) -> bool:
         """
-        Check if the round ends.
-        :return: True if the round ends, False otherwise.
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
         """
-        return False
+        return True
 
     @classmethod
     def name(cls) -> str:
@@ -256,13 +309,6 @@ class PendingAppAgentState(AppAgentState):
         # Ask the user questions to help the agent to proceed.
         agent.process_asker()
 
-    def is_round_end(self) -> bool:
-        """
-        Check if the round ends.
-        :return: True if the round ends, False otherwise.
-        """
-        return False
-
     def next_state(self, agent: AppAgent) -> AppAgentState:
         """
         Get the next state of the agent.
@@ -271,6 +317,13 @@ class PendingAppAgentState(AppAgentState):
         """
         agent.status = AppAgentStatus.CONTINUE.value
         return ContinueAppAgentState()
+
+    def is_subtask_end(self) -> bool:
+        """
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
+        """
+        return False
 
     @classmethod
     def name(cls) -> str:
@@ -320,13 +373,6 @@ class ConfirmAppAgentState(AppAgentState):
         if self._confirm:
             agent.process_resume()
 
-    def is_round_end(self) -> bool:
-        """
-        Check if the round ends.
-        :return: True if the round ends, False otherwise.
-        """
-        return False
-
     def next_state(self, agent: AppAgent) -> AppAgentState:
 
         plan = agent.processor.plan
@@ -360,6 +406,13 @@ class ConfirmAppAgentState(AppAgentState):
 
         return True
 
+    def is_subtask_end(self) -> bool:
+        """
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
+        """
+        return False
+
     @classmethod
     def name(cls) -> str:
         """
@@ -374,6 +427,15 @@ class ErrorAppAgentState(AppAgentState):
     """
     The class for the error app agent state.
     """
+
+    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+        """
+        Handle the agent for the current step.
+        :param agent: The agent for the current step.
+        :param context: The context for the agent and session.
+        """
+
+        self.archive_subtask(context)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
@@ -398,6 +460,13 @@ class ErrorAppAgentState(AppAgentState):
         """
         return True
 
+    def is_subtask_end(self) -> bool:
+        """
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
+        """
+        return True
+
     @classmethod
     def name(cls) -> str:
         """
@@ -412,6 +481,15 @@ class FailAppAgentState(AppAgentState):
     """
     The class for the fail app agent state.
     """
+
+    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+        """
+        Handle the agent for the current step.
+        :param agent: The agent for the current step.
+        :param context: The context for the agent and session.
+        """
+
+        self.archive_subtask(context)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
@@ -435,6 +513,13 @@ class FailAppAgentState(AppAgentState):
         :return: True if the round ends, False otherwise.
         """
         return False
+
+    def is_subtask_end(self) -> bool:
+        """
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
+        """
+        return True
 
     @classmethod
     def name(cls) -> str:
@@ -467,10 +552,10 @@ class NoneAppAgentState(AppAgentState):
         """
         return NoneHostAgentState
 
-    def is_round_end(self) -> bool:
+    def is_subtask_end(self) -> bool:
         """
-        Check if the round ends.
-        :return: True if the round ends, False otherwise.
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
         """
         return True
 

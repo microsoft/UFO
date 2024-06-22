@@ -15,14 +15,14 @@ click_input:
 
 set_edit_text:
   summary: |-
-    "set_edit_text" is to input text to the control item.
+    "set_edit_text" is to add new text to the control item. If there is already text in the control item, the new text will be appended to the end of the existing text.
   class_name: |-
     SetEditTextCommand
   usage: |-
     [1] API call: set_edit_text(text="")
     [2] Args:
-      - text: The text input to the Edit control item. It will change the content of current text in the edit block. Set text ='' if you want to clear current text in the block. You must also use Double Backslash escape character to escape the single quote in the string argument.
-    [3] Example: set_edit_text(text="Hello World.")
+      - text: The text input to the Edit control item. You must also use Double Backslash escape character to escape the single quote in the string argument.
+    [3] Example: set_edit_text(text="Hello World. \\n I enjoy the reading of the book 'The Lord of the Rings'. It's a great book.")
     [4] Available control item: [Edit]
     [5] Return: None
 
@@ -39,14 +39,16 @@ annotation:
     [4] Available control item: All control items.
     [5] Return: None
 
+
 summary:
   summary: |-
-    "summary" is to summarize your observation of the current application window base on the clean screenshot. 
+    "summary" is to summarize your observation of the current application window base on the clean screenshot, or base on available control items. 
+  class_name: |-
     SummaryCommand
   usage: |-
     [1] API call: summary(text="")
     [2] Args: None
-    [3] Example: summary(text="The image shows a workflow of a AI agent framework. \\n The framework has three components.")
+    [3] Example: summary(text="The image shows a workflow of a AI agent framework. \\n The framework has three components: the 'data collection', the 'data processing' and the 'data analysis'.")
     [4] Available control item: All control items.
     [5] Return: the summary of the image.
 
@@ -62,7 +64,6 @@ texts:
     [4] All control items.
     [5] Return: the text content of the control item.
 
-
 wheel_mouse_input:
   summary: |-
     "wheel_mouse_input" is to scroll the control item. It typical apply to a ScrollBar type of control item when user request is to scroll the control item, or the targeted control item is not visible nor available in the control item list, but you know the control item is in the application window and you need to scroll to find it.
@@ -75,7 +76,6 @@ wheel_mouse_input:
     [3] Example: wheel_mouse_input(wheel_dist=-20)
     [4] All control items.
     [5] Return: None
-
 
 keyboard_input:
   summary: |-
@@ -92,4 +92,6 @@ keyboard_input:
       - keyboard_input(keys="{TAB 2}") --> Press the Tab key twice.
     [4] Available control item: All control items.
     [5] Return: None
+
+
   

@@ -310,8 +310,6 @@ class Blackboard:
                     data_list.append(data)
                 except json.JSONDecodeError:
                     print(f"Warning: Unable to parse line as JSON: {line}")
-        else:
-            print(f"File does not exist: {file_path}")
 
         return data_list
 

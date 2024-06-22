@@ -10,7 +10,6 @@ from typing import TYPE_CHECKING, Dict, List, Tuple
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
@@ -47,7 +46,6 @@ class AppAgentProcessor(BaseProcessor):
         self._image_url = []
         self._plan = []
         self.action = ""
-        self.prev_plan = []
         self.control_filter_factory = ControlFilterFactory()
         self.filtered_annotation_dict = None
 
@@ -88,9 +86,10 @@ class AppAgentProcessor(BaseProcessor):
         Print the step information.
         """
         utils.print_with_color(
-            "Round {round_num}, Step {step}: Taking an action on application {application}.".format(
+            "Round {round_num}, Step {step}, AppAgent: Completing the subtask [{subtask}] on application [{application}].".format(
                 round_num=self.round_num + 1,
                 step=self.round_step + 1,
+                subtask=self.subtask,
                 application=self.application_process_name,
             ),
             "magenta",
@@ -110,6 +109,14 @@ class AppAgentProcessor(BaseProcessor):
             self.log_path + f"action_step{self.session_step}_concat.png"
         )
 
+        self._memory_data.set_values_from_dict(
+            {
+                "CleanScreenshot": screenshot_save_path,
+                "AnnotatedScreenshot": annotated_screenshot_save_path,
+                "ConcatScreenshot": concat_screenshot_save_path,
+            }
+        )
+
         # Get the control elements in the application window if the control items are not provided for reannotation.
         if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
             control_list = self.control_reannotate
@@ -124,8 +131,6 @@ class AppAgentProcessor(BaseProcessor):
         self._annotation_dict = self.photographer.get_annotation_dict(
             self.application_window, control_list, annotation_type="number"
         )
-
-        self.prev_plan = self.get_prev_plan()
 
         # Attempt to filter out irrelevant control items based on the previous plan.
         self.filtered_annotation_dict = self.get_filtered_annotation_dict(
@@ -220,14 +225,17 @@ class AppAgentProcessor(BaseProcessor):
 
         # Construct the prompt message for the AppAgent.
         self._prompt_message = self.app_agent.message_constructor(
-            examples,
-            tips,
-            external_knowledge_prompt,
-            self._image_url,
-            self.filtered_control_info,
-            self.prev_plan,
-            self.request,
-            configs["INCLUDE_LAST_SCREENSHOT"],
+            dynamic_examples=examples,
+            dynamic_tips=tips,
+            dynamic_knowledge=external_knowledge_prompt,
+            image_list=self._image_url,
+            control_info=self.filtered_control_info,
+            prev_subtask=self.previous_subtasks,
+            plan=self.prev_plan,
+            request=self.request,
+            subtask=self.subtask,
+            host_message=self.host_message,
+            include_last_screenshot=configs["INCLUDE_LAST_SCREENSHOT"],
         )
 
         # Log the prompt message. Only save them in debug mode.
@@ -331,6 +339,11 @@ class AppAgentProcessor(BaseProcessor):
         control_screenshot_save_path = (
             self.log_path + f"action_step{self.session_step}_selected_controls.png"
         )
+
+        self._memory_data.set_values_from_dict(
+            {"SelectedControlScreenshot": control_screenshot_save_path}
+        )
+
         self.photographer.capture_app_window_screenshot_with_rectangle(
             self.application_window,
             sub_control_list=[control_selected],
@@ -354,8 +367,6 @@ class AppAgentProcessor(BaseProcessor):
         """
         Update the memory of the Agent.
         """
-        # Create a memory item for the app agent
-        app_agent_step_memory = MemoryItem()
 
         app_root = self.control_inspector.get_application_root_name(
             self.application_window
@@ -367,6 +378,8 @@ class AppAgentProcessor(BaseProcessor):
             "RoundStep": self.round_step,
             "AgentStep": self.app_agent.step,
             "Round": self.round_num,
+            "Subtask": self.subtask,
+            "SubtaskIndex": self.round_subtask_amount,
             "Action": self.action,
             "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation),
             "Request": self.request,
@@ -376,18 +389,21 @@ class AppAgentProcessor(BaseProcessor):
             "Cost": self._cost,
             "Results": self._results,
         }
-        app_agent_step_memory.set_values_from_dict(self._response_json)
-        app_agent_step_memory.set_values_from_dict(additional_memory)
+        self._memory_data.set_values_from_dict(self._response_json)
+        self._memory_data.set_values_from_dict(additional_memory)
 
-        self.app_agent.add_memory(app_agent_step_memory)
+        if self.status.upper() == self._agent_status_manager.CONFIRM.value:
+            self._memory_data.set_values_from_dict({"UserConfirm": "Yes"})
+
+        self.app_agent.add_memory(self._memory_data)
 
         # Log the memory item.
-        self.log(app_agent_step_memory.to_dict())
+        self.context.add_to_structural_logs(self._memory_data.to_dict())
+        self.log(self._memory_data.to_dict())
 
         # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
         memorized_action = {
-            key: app_agent_step_memory.to_dict().get(key)
-            for key in configs["HISTORY_KEYS"]
+            key: self._memory_data.to_dict().get(key) for key in configs["HISTORY_KEYS"]
         }
 
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
@@ -420,20 +436,6 @@ class AppAgentProcessor(BaseProcessor):
             log_abs_path, f"xml/action_step{self.session_step}.xml"
         )
         self.app_agent.Puppeteer.save_to_xml(xml_save_path)
-
-    def get_prev_plan(self) -> str:
-        """
-        Retrieves the previous plan from the agent's memory.
-        :return: The previous plan, or an empty string if the agent's memory is empty.
-        """
-        agent_memory = self.app_agent.memory
-
-        if agent_memory.length > 0:
-            prev_plan = agent_memory.get_latest_item().to_dict()["Plan"]
-        else:
-            prev_plan = []
-
-        return prev_plan
 
     def demonstration_prompt_helper(self) -> Tuple[List[str], List[str]]:
         """

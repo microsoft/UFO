@@ -10,8 +10,9 @@ from typing import List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ufo.agents.agent.basic import BasicAgent
 from ufo import utils
+from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.memory.memory import MemoryItem
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
@@ -48,6 +49,7 @@ class BaseProcessor(ABC):
         self._control_label = None
         self._control_text = None
         self._response_json = {}
+        self._memory_data = MemoryItem()
         self._results = None
         self._question_list = []
         self._agent_status_manager = self.agent.status_manager
@@ -94,6 +96,11 @@ class BaseProcessor(ABC):
         self.parse_response()
 
         if self.is_error() or self.is_paused():
+            # If the session is pending, update the step and memory, and return.
+            if self.is_pending():
+                self.update_step()
+                self.update_memory()
+
             return
 
         # Step 8: Execute the action.
@@ -224,6 +231,21 @@ class BaseProcessor(ABC):
         return self._agent
 
     @property
+    def prev_plan(self) -> List[str]:
+        """
+        Get the previous plan.
+        :return: The previous plan of the agent.
+        """
+        agent_memory = self.agent.memory
+
+        if agent_memory.length > 0:
+            prev_plan = agent_memory.get_latest_item().to_dict().get("Plan", [])
+        else:
+            prev_plan = []
+
+        return prev_plan
+
+    @property
     def application_window(self) -> UIAWrapper:
         """
         Get the active window.
@@ -270,6 +292,14 @@ class BaseProcessor(ABC):
         :param cost: The round cost.
         """
         self.context.set(ContextNames.CURRENT_ROUND_COST, cost)
+
+    @property
+    def round_subtask_amount(self) -> int:
+        """
+        Get the round subtask amount.
+        :return: The round subtask amount.
+        """
+        return self.context.get(ContextNames.CURRENT_ROUND_SUBTASK_AMOUNT)
 
     @property
     def session_step(self) -> int:
@@ -415,6 +445,54 @@ class BaseProcessor(ABC):
         """
         return self.context.get(ContextNames.LOGGER)
 
+    @property
+    def subtask(self) -> str:
+        """
+        Get the subtask.
+        :return: The subtask.
+        """
+        return self.context.get(ContextNames.SUBTASK)
+
+    @subtask.setter
+    def subtask(self, subtask: str) -> None:
+        """
+        Set the subtask.
+        :param subtask: The subtask.
+        """
+        self.context.set(ContextNames.SUBTASK, subtask)
+
+    @property
+    def host_message(self) -> List[str]:
+        """
+        Get the host message.
+        :return: The host message.
+        """
+        return self.context.get(ContextNames.HOST_MESSAGE)
+
+    @host_message.setter
+    def host_message(self, message: List[str]) -> None:
+        """
+        Set the host message.
+        :param message: The host message.
+        """
+        self.context.set(ContextNames.HOST_MESSAGE, message)
+
+    @property
+    def previous_subtasks(self) -> List[str]:
+        """
+        Get the previous subtasks.
+        :return: The previous subtasks.
+        """
+        return self.context.get(ContextNames.PREVIOUS_SUBTASKS)
+
+    @previous_subtasks.setter
+    def previous_subtasks(self, subtasks: List[str]) -> None:
+        """
+        Set the previous subtasks.
+        :param subtasks: The previous subtasks.
+        """
+        self.context.set(ContextNames.PREVIOUS_SUBTASKS, subtasks)
+
     @status.setter
     def status(self, status: str) -> None:
         """
@@ -483,6 +561,26 @@ class BaseProcessor(ABC):
             self.status == self._agent_status_manager.PENDING.value
             or self.status == self._agent_status_manager.CONFIRM.value
         )
+
+    def is_pending(self) -> bool:
+        """
+        Check if the process is pending.
+        :return: The boolean value indicating if the process is pending.
+        """
+
+        self.agent.status = self.status
+
+        return self.status == self._agent_status_manager.PENDING.value
+
+    def is_confirm(self) -> bool:
+        """
+        Check if the process is confirm.
+        :return: The boolean value indicating if the process is confirm.
+        """
+
+        self.agent.status = self.status
+
+        return self.status == self._agent_status_manager.CONFIRM.value
 
     def log(self, response_json: dict) -> None:
         """

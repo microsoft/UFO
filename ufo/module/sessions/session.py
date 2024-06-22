@@ -218,11 +218,6 @@ class FollowerSession(BaseSession):
 
             agent.set_state(ContinueAppAgentState())
 
-            utils.print_with_color(
-                "Starting step {round}:".format(round=self.total_rounds), "yellow"
-            )
-            utils.print_with_color(request, "cyan")
-
         round = BaseRound(
             request=request,
             agent=agent,

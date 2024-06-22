@@ -8,7 +8,6 @@ from typing import TYPE_CHECKING
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
@@ -46,7 +45,7 @@ class HostAgentProcessor(BaseProcessor):
         Print the step information.
         """
         utils.print_with_color(
-            "Round {round_num}, Step {step}: Selecting an application.".format(
+            "Round {round_num}, Step {step}, HostAgent: Analyzing the user intent and decomposing the request...".format(
                 round_num=self.round_num + 1, step=self.round_step + 1
             ),
             "magenta",
@@ -58,6 +57,8 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         desktop_save_path = self.log_path + f"action_step{self.session_step}.png"
+
+        self._memory_data.set_values_from_dict({"CleanScreenshot": desktop_save_path})
 
         # Capture the desktop screenshot for all screens.
         self.photographer.capture_desktop_screen_screenshot(
@@ -89,19 +90,13 @@ class HostAgentProcessor(BaseProcessor):
         Get the prompt message.
         """
 
-        # Get the previous plan from the memory. If the memory is empty, set the plan to an empty string.
-        agent_memory = self.host_agent.memory
-        if agent_memory.length > 0:
-            plan = agent_memory.get_latest_item().to_dict()["Plan"]
-        else:
-            plan = []
-
         # Construct the prompt message for the host agent.
         self._prompt_message = self.host_agent.message_constructor(
-            [self._desktop_screen_url],
-            self._desktop_windows_info,
-            plan,
-            self.request,
+            image_list=[self._desktop_screen_url],
+            os_info=self._desktop_windows_info,
+            plan=self.prev_plan,
+            prev_subtask=self.previous_subtasks,
+            request=self.request,
         )
 
         # Log the prompt message. Only save them in debug mode.
@@ -144,6 +139,8 @@ class HostAgentProcessor(BaseProcessor):
 
         self.control_label = self._response_json.get("ControlLabel", "")
         self.control_text = self._response_json.get("ControlText", "")
+        self.subtask = self._response_json.get("CurrentSubtask", "")
+        self.host_message = self._response_json.get("Message", [])
 
         # Convert the plan from a string to a list if the plan is a string.
         self._plan = self.string2list(self._response_json.get("Plan", ""))
@@ -230,9 +227,6 @@ class HostAgentProcessor(BaseProcessor):
         Update the memory of the Agent.
         """
 
-        # Create a memory item for the host agent at the current step.
-        host_agent_step_memory = MemoryItem()
-
         # Log additional information for the host agent.
         additional_memory = {
             "Step": self.session_step,
@@ -240,6 +234,7 @@ class HostAgentProcessor(BaseProcessor):
             "AgentStep": self.host_agent.step,
             "Round": self.round_num,
             "ControlLabel": self.control_text,
+            "SubtaskIndex": -1,
             "Action": "set_focus()",
             "ActionType": "UIControl",
             "Request": self.request,
@@ -250,17 +245,17 @@ class HostAgentProcessor(BaseProcessor):
             "Results": "",
         }
 
-        host_agent_step_memory.set_values_from_dict(self._response_json)
-        host_agent_step_memory.set_values_from_dict(additional_memory)
-        self.host_agent.add_memory(host_agent_step_memory)
+        self._memory_data.set_values_from_dict(self._response_json)
+        self._memory_data.set_values_from_dict(additional_memory)
+        self.host_agent.add_memory(self._memory_data)
 
         # Log the memory item.
-        self.log(host_agent_step_memory.to_dict())
+        self.context.add_to_structural_logs(self._memory_data.to_dict())
+        self.log(self._memory_data.to_dict())
 
         # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
         memorized_action = {
-            key: host_agent_step_memory.to_dict().get(key)
-            for key in configs["HISTORY_KEYS"]
+            key: self._memory_data.to_dict().get(key) for key in configs["HISTORY_KEYS"]
         }
 
         self.host_agent.blackboard.add_trajectories(memorized_action)
