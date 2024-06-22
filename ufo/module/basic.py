@@ -274,6 +274,7 @@ class BaseRound(ABC):
                 )
 
                 if issubclass(type(self.agent), HostAgent):
+
                     app_agent: AppAgent = self.agent.get_active_appagent()
                     app_agent.Puppeteer.save_to_xml(xml_save_path)
                 elif issubclass(type(self.agent), AppAgent):
