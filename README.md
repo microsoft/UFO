@@ -33,6 +33,11 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 📢 News
+- 📅 2024-06-25: **New Release for v0.2.1!**  We are excited to announce the release of version 0.2.1! This update includes several new features and improvements:
+    1. **HostAgent Refactor:** We've refactored the HostAgent to enhance its efficiency in managing AppAgents within UFO.
+    2. **Evaluation Agent:** Introducing an evaluation agent that assesses task completion and provides real-time feedback.
+    3. **Google Gemini Support:** UFO now supports Google Gemini as the inference engine. Refer to our detailed guide in [README.md](/model_worker/readme.md).
+    4. **Customized User Agents:** Users can now create customized agents by simply answering a few questions.
 - 📅 2024-05-21: We have reached 5K stars!✨
 - 📅 2024-05-08: **New Release for v0.1.1!** We've made some significant updates! Previously known as AppAgent and ActAgent, we've rebranded them to HostAgent and AppAgent to better align with their functionalities. Explore the latest enhancements:
     1. **Learning from Human Demonstration:** UFO now supports learning from human demonstration! Utilize the [Windows Step Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47) to record your steps and demonstrate them for UFO. Refer to our detailed guide in [README.md](/record_processor/README.md) for more information.
