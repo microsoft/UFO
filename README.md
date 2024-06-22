@@ -130,7 +130,7 @@ You can utilize non-visual models (e.g., GPT-4) for each agent by configuring th
 Optionally, you can set a backup language model (LLM) engine in the `BACKUP_AGENT` field to handle cases where the primary engines fail during inference. Ensure you configure these settings accurately to leverage non-visual models effectively.
 
 #### NOTE
-💡 UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](./model_worker/readme.md) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev`.yaml.
+💡 UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](./model_worker/README.md) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev`.yaml.
 
 ### 📔 Step 3: Additional Setting for RAG (optional).
 If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file.
