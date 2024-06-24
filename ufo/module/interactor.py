@@ -61,6 +61,22 @@ def experience_asker() -> bool:
         return False
 
 
+def question_asker(question: str, index: int) -> str:
+    """
+    Ask for the user input for the question.
+    :param question: The question to ask.
+    :param index: The index of the question.
+    :return: The user input.
+    """
+
+    utils.print_with_color(
+        """[Question {index}:] {question}""".format(index=index, question=question),
+        "cyan",
+    )
+
+    return input()
+
+
 def sensitive_step_asker(action, control_text) -> bool:
     """
     Ask for confirmation for sensitive steps.

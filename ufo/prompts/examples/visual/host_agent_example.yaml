@@ -7,21 +7,22 @@ example1:
     Observation: |-
       I observe that the outlook application is visible in the screenshot, with the title of 'Mail - Outlook - Zac'. I can see a list of emails in the application.
     Thought: |-
-      I need to open the email application to send a email. According to the screenshot and the application information, I can see the Outlook application named as 'Mail - Outlook - Zac', so the application window do not need to be set focused. I need to open the 'Mail - Outlook - Zac' application to open it.
+      The user request can be solely complete on the outlook application. I need to open the outlook application for the current sub-task. If successful, no further sub-tasks are needed.
+    CurrentSubtask: |- 
+      Compose an email to send to Jack (jack@outlook.com) to thank him for his contribution to the open source project on the outlook application, using the name Zac.
+    Message:
+      - (1) The name of the sender is Zac.
+      - (2) The email composed should be detailed and professional.
     ControlLabel: |-
       12
     ControlText: |-
       Mail - Outlook - Zac
     Status: |-  
       CONTINUE
-    Plan:
-      - (1) Open the windows of outlook application.
-      - (2) Input the email address of the receiver.
-      - (3) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.
-      - (4) Input the content of the email. I need to input 'Dear Jack,\\nI hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.\\nYour commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.\\nYour code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.\\nPlease know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.\\nOnce again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.\\nBest regards,\\nZac'.
-      - (5) Click the Send button to send the email. This action is sensitive and need to be confirmed by the user.
+    Plan: []
     Comment: |-
       It is time to open the outlook application!
+    Questions: []
     AppsToOpen: |-
       None
 
@@ -33,23 +34,24 @@ example2:
     Observation: |-
       I observe an empty desktop with no application opened, the target application Teams is not visible in the screenshot.
     Thought: |-
-      I need to open the Teams application to send a message. Although I can not see the Teams application in the screenshot, I can see the Teams application named as 'Mike Lee | Microsoft Teams' in the list of available applications, so the application window need to be set focused. I need to open the 'Mike Lee | Microsoft Teams' application and set it focused to open it.
+      The user request can be solely complete on the Teams application. I need to open the Teams application to send a message.
+    CurrentSubtask: |-
+      Compose a message to send to Tom on Teams to ask him if he can join the meeting at 3pm.
+    Message:
+      - (1) You need to find Tom on Teams.
+      - (2) The message should be polite.
     ControlLabel: |-
       6
     ControlText: |-
       Mike Lee | Microsoft Teams
     Status: |-
       CONTINUE
-    Plan:
-      - (1) Open the windows of Teams application.
-      - (2) Click the Chat button to open the chat window with Tom.
-      - (3) Input the message. I need to input 'Hi Tom, can you join the meeting at 3pm?'
-      - (4) Click the Send button to send the message. This action is sensitive and need to be confirmed by the user.
+    Plan: []
     Comment: |-
       It is time to open the Teams application.
+    Questions: []
     AppsToOpen: |-
       None
-
 
 
 example3: 
@@ -59,7 +61,11 @@ example3:
     Observation: |-
       I observe the next targeted application framework.png is not visible on the screenshot.
     Thought: |-
-      Base on the step history, I have completed all tasks in the framework.docx needed to be done. To complete the following user request, now it is time to switch to the image of framework.png to complete the next task. I need to set the image viewer focused to open the image of framework.png.
+      The previous sub-task that extracts the text from the 'framework.docx' is completed. Now, I need to switch to the image of 'framework.png' to complete the next sub-task and then summarize them to send the message to Tom on Teams.
+    CurrentSubtask: |-
+      Summarize the details of the workflow of the framework in the image of framework.png.
+    Message:
+      - (1) Please summarize the workflow of the framework in the image of framework.png in detail.
     ControlLabel: |-
       21
     ControlText: |- 
@@ -67,39 +73,40 @@ example3:
     Status: |-
       CONTINUE
     Plan:
-      - (1) Open the image of framework.png to complete the next task.
-      - (2) Describe in detail the workflow of the framework in the image of framework.png base on the screenshot of the image.
-      - (3) Switch to the Teams application.\
-      - (4) Open the chat window with Tom. 
-      - (5) Input the text of the Document control named 'framework.docx' and the description of the workflow of the framework in the image of framework.png in the Edit control named 'Type a new message'. These information can be extracted from my history actions.\\n (6) Click the Send button to send the message. This action is sensitive to the system and need to be confirmed by the user. I need to confirm the action before clicking the Send button. If the user confirms the action, the task is finished.
+      - Send the message to Tom on Teams by including the text extracted from 'framework.docx' and a detailed description of the workflow of the framework in the image of 'framework.png' you completed previously.
     Comment: |-
       After I get the text of the Document control named 'framework.docx', I need to switch to the image of framework.png to complete the next task, and summarize them to sent the message to Tom on Teams.
+    Questions: []
     AppsToOpen: |-
       None
 
 
 example4:
   Request: |-
-    "Revise the email to be longer and send."
+    Revise the email to be longer and send.
   Response: 
     Observation: |-
       I observe that the outlook application is visible in the screenshot, and a new email draft is opened, with its title, receiver email address and email body already filled in.
     Thought: |-
-      Base on the history actions and previous request completed, I have already draft the email and fill in the email address of the receiver. Now it is time to revise the email to be longer and send.
+      The current request follows the previous request, which can be solely completed on the outlook application. I need to revise the email to be longer and send it.
+    CurrentSubtask: |-
+      Revise the email that has been drafted on the outlook application to be longer, and send it out.
+    Message:
+      - (1) The email body should be more detailed and comprehensive.
+      - (2) The email should be sent out.
     ControlLabel: |-
       21
     ControlText: |-
       Mail - Outlook - Zac
     Status: |-
       CONTINUE
-    Plan:
-      - (1) Open the Mail - Outlook - Zac to complete the next task.
-      - (2) Base on previous email draft, revise the email body to be more detail using SetText API.
-      - (3) Click the Send button to send the email. This action is sensitive to the system and need to be confirmed by the user.
+    Plan: []
     Comment: |-
       The previous request is to draft the email and fill in the email address of the receiver, which as been completed. Now it is time to revise the email to be longer and send it.
+    Questions: []
     AppsToOpen: |-
       None
+
 
 example5:
   Request: |-
@@ -108,24 +115,22 @@ example5:
     Observation: |-
       I observe that the powerpoint application is visible in the screenshot, and the presentation.pptx is opened.
     Thought: |-
-      I need to set focus on the powerpoint application to remove all notes in the presentation.pptx file. To make the task more efficient, I need to use some fast but niche tricks in the 'file' view, and not to delete note one by one.
+      The user request can be solely complete on the powerpoint application. I need to open the powerpoint application to complete the user request.
+    CurrentSubtask: |-
+      Remove all notes in the presentation.pptx file quickly without looping through each slide.
+    Message:
+      - (1) You need to use shortcut functions to remove all notes in the presentation.pptx file.
+      - (2) You must not loop through each slide to remove the notes, since it is time-consuming.
     ControlLabel: |-
       21
     ControlText: |-
       presentation - PowerPoint
     Status: |-
       CONTINUE
-    Plan:
-      - (1) Open and set focus the presentation - PowerPoint.
-      - (2) Click the 'File' button at the upper left corner, to open a menu.
-      - (3) Click the 'Info' ListItem, to access the 'Info' page.
-      - (4) Click the 'Check for Issues' MenuItem, to open a menu for checking. 
-      - (5) Click the 'Inspect Document', to open a document inspector. 
-      - (6) Click the 'Inspect' button, to inspect the ppt for notes. 
-      - (7) I should now find and click the 'Remove All Presentation Notes'. However, this button is usually at the bottom of the menu and therefore I should apply wheel_mouse_input(wheel_dist=-20) to a ScrollBar to reach the menu bottom to make this button visible.
-      - (8) Once 'Remove All Presentation Notes' is visible, I should click it to remove all notes in the presentation.pptx file. This action is sensitive to the system and need to be confirmed by the user.
+    Plan: []
     Comment: |-
       I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
+    Questions: []
     AppsToOpen: |-
       None
  
@@ -138,21 +143,22 @@ example6:
     Observation: |-
       I observe that a Edge browser is visible in the screenshot, and the Google page is opened.
     Thought: |-
-      I need to use the Google opened in  Edge browser to search for the Imdiffusion repo on github. I need to set focus on the Edge browser to complete the next task.
+      To get the number of stars the Imdiffusion repo has, I need to open the Edge browser and search for the Imdiffusion repo on github. This can be completed on the Edge browser.
+    CurrentSubtask: |-
+      Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
+    Message:
+      - (1) You can to find the Imdiffusion repo on github with Google search.
+      - (2) Summarize the number of stars the Imdiffusion repo page visually.
     ControlLabel: |-  
       7
     ControlText: |- 
       Google - Microsoft​ Edge
     Status: |-
       CONTINUE
-    Plan:
-      - (1) Open and set focus the Google - Microsoft​ Edge.
-      - (2) Set text of 'Imdiffusion GitHub' in the search box of Google. The control type of the search box is usually in a type of ComboBox.
-      - (3) Click Google Search to search for the Imdiffusion repo on github.
-      - (4) Once the searched results are visible, click the Imdiffusion repo Hyperlink in the search results to open the repo page.
-      - (5) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
+    Plan: []
     Comment: |-
       I plan to Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
+    Questions: []
     AppsToOpen: |-
       None
 
@@ -164,24 +170,22 @@ example7:
     Observation: |-
       The current screenshot does not show any reminder application or calendar application.
     Thought: |-
-      I need to open a reminder application to set a reminder for the user. According to the application information, I can use Microsoft To Do to set a reminder for the user. I need to open the Microsoft To Do application.
+      The user request can be solely complete on the Microsoft To Do application. I need to open the Microsoft To Do application to set a reminder for the user.
+    CurrentSubtask: |-
+      Add a task of 'Get party dinner (5 people) preparation done before 5PM today.' to the Microsoft To Do application, and set more details for the task, including adding steps and notes.
+    Message:
+      - (1) You need to add a task to remind the user to get party dinner (5 people) preparation done before 5PM today.
+      - (2) You need to add detailed steps and notes to the task.
     ControlLabel: |-
       6
     ControlText: |-
       Microsoft To Do
     Status: |-
       CONTINUE
-    Plan:
-      - (1) Open the Microsoft To Do application. 
-      - (2) Add a task of by inputing 'Get party dinner (5 people) preparation done before 5PM today.' to the edit block.  
-      - (3) Click the ListItem of the task that was just created to set more details. 
-      - (4) Add a step 1 for the task by inputing 'Menu Planning and Ingredient Acquisition' in the Add step edit control. 
-      - (5) Add a step 2 for the task by inputing 'Meal Preparation Schedule' in the  Add step edit control following the step one. 
-      - (6) Add a step 3 for the task by inputing 'Setting Up the Dining Area' in the  Add step edit control following the step two. 
-      - (7) Add a note to this task in the 'Add note' edit blocking at the bottom by inputing 'Considering preferences, dietary restrictions and food allergiesof the guests.'. 
-      - (8) Close the details view by clicking the 'Dismiss detail view' botton.
+    Plan: []
     Comment: |-
       I plan to use the Microsoft To Do application to set a reminder for the user, and add details and notes to the reminder.
+    Questions: []
     AppsToOpen: |-
       None
 
@@ -192,53 +196,103 @@ example8:
     Observation: |-
       The current screenshot does not show any the powerpoint application or the word application.
     Thought: |-
-      I need to open the powerpoint application and the word application to complete the user request. According to the application information, I can use the powerpoint application to create a slide from the meeting_notes.docx and add it to the presentation1.pptx. I need to open the powerpoint application and the word application.
+      The user request can be solely complete on the powerpoint application. I need to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx.
+    CurrentSubtask: |-
+      Create a slide from the meeting_notes.docx in the presentation1.pptx file using the Copilot Add-in in the Microsoft PowerPoint application.
+    Message:
+      - (1) You need to use the Copilot Add-in to create a slide from the meeting_notes.docx in the presentation1.pptx, since this is the fastest way to complete the task.
     ControlLabel: |-
       4
     ControlText: |-
       presentation1 - PowerPoint
     Status: |-
       CONTINUE
-    Plan:
-      - (1) Open the presentation1 - PowerPoint. 
-      - (2) Double click the Copilot Add-in to open the Copilot that can help to create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide from the meeting_notes.docx. 
-      - (3) Click the 'Create presentation from file' button to open a file picker. 
-      - (4) Select and click the meeting_notes.docx file in the file picker. 
-      - (5) Click the 'Send' buttom to send the request to Copilot. This completes the task.
+    Plan: []
     Comment: |-
       I plan to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx.
-
-      {"Observation": "The current screenshot does not show any the powerpoint application or the word application.",
-        "Thought": "I need to open the powerpoint application and the word application to complete the user request. According to the application information, I can use the powerpoint application to create a slide from the meeting_notes.docx and add it to the presentation1.pptx. I need to open the powerpoint application and the word application.",
-        "ControlLabel": "4",
-        "ControlText": "presentation1 - PowerPoint",
-        "Status": "CONTINUE",
-        "Plan": "(1) Open the presentation1 - PowerPoint. \\n (2) Double click the Copilot Add-in to open the Copilot that can help to create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide from the meeting_notes.docx. \\n (3) Click the 'Create presentation from file' button to open a file picker. \\n (4) Select and click the meeting_notes.docx file in the file picker. \\n (5) Click the 'Send' buttom to send the request to Copilot. This completes the task.",
-        "Comment": "I plan to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx."}
+    Questions: []
     AppsToOpen: |-
       None
 
 example9:
   Request: |-
-      "Please @Zac to revise the presentation1.pptx."
+      Please @Zac to revise the presentation1.pptx.
   Response: 
     Observation: |-
       The current screenshot shows the powerpoint application is visible, and the presentation1.pptx is opened.
     Thought: |-
-      I need to set focus on the powerpoint application and leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx.
+      The user request can be solely complete on the powerpoint application, without the need to open any other applications.
+    CurrentSubtask: |-
+      Leave a comment in the current slide of the presentation1.pptx to remind Zac to revise the presentation1.pptx.
+    Message: []
     ControlLabel: |-
       4
     ControlText: |-
       presentation1 - PowerPoint
     Status: |-
       CONTINUE
-    Plan:
-      - (1) Open the presentation1 - PowerPoint. 
-      - (2) Click the Insert Button to open the Insert menu. 
-      - (3) Click the Comment button to open the comment text box. 
-      - (4) Input '@Zac, please revise the presentation1.pptx.' in the comment text box.
+    Plan: []
     Comment: |-
       I plan to leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx.
+    Questions: []
+    AppsToOpen: |-
+      None
+
+
+example10:
+  Request: |-
+      Send my alias and address to Tom on Teams.
+  Response:
+    Observation: |-
+      The current screenshot does not show any Teams application.
+    Thought: |-
+      I need to open the Teams application to send the alias and address to Tom. Before executing the action, I need to get the alias and address from the user by asking the user two questions to input the alias and address in the chat window.
+    CurrentSubtask: |-
+      Send the alias and address to Tom on Teams.
+    Message:
+      - (1) Use the answer from the user of the alias and address to compose the message.
+    ControlLabel: |-
+      6
+    ControlText: |-
+      Tom Jim | Microsoft Teams
+    Status: |-
+      PENDING
+    Plan: []
+    Comment: |-
+      I plan to use the Teams application to send the alias and address to Tom.
+    Questions:
+      - Can you please provide me with your alias?
+      - Can you please provide me with your address?
+    AppsToOpen: |-
+      None
+
+
+example11:
+  Request: |-
+      Summarize and add all to do items on Microsoft To Do from the meeting notes email, and write a summary on the meeting_notes.docx.
+  Response:
+    Observation: |-
+      The current screenshot shows the Microsoft To Do application is visible, and outlook application and the meeting_notes.docx are available in the list of applications.
+    Thought: |-
+      The user request can be decomposed into three sub-tasks: (1) Summarize all to do items on Microsoft To Do from the meeting_notes email, (2) Add all to do items to Microsoft To Do, and (3) Write a summary on the meeting_notes.docx. I need to open the Microsoft To Do application to complete the first two sub-tasks.
+      Each sub-task will be completed in individual applications sequentially.
+    CurrentSubtask: |-
+      Summarized all to do items from the meeting notes email in Outlook.
+    Message:
+      - (1) You need to first search for the meeting notes email in Outlook to summarize.
+      - (2) Only summarize the to do items from the meeting notes email, without any redundant information.
+    ControlLabel: |-
+      16
+    ControlText: |-
+      Mail - Outlook - Jim
+    Status: |-
+      CONTINUE
+    Plan:
+      - Add all to do items previously summarized from the meeting notes email to one-by-one Microsoft To Do.
+      - Write a summary about the meeting notes email on the meeting_notes.docx.
+    Comment: |-
+      I plan to first summarize all to do items from the meeting notes email in Outlook.
+    Questions: []
     AppsToOpen: |-
       None
 
@@ -250,18 +304,21 @@ example_openapp1:
     Observation: |-
       I observe that the PowerPoint application is not visible in the screenshot, nor available in the list of applications. So I need to open the PowerPoint application and the test.pptx file.,
     Thought: |- 
-      I need to open test.pptx through function OpenAPP directly, as I can not observe it in the screenshot. After that, I will proceed to modify the title of the ppt file.,
+      The user request can be solely complete on the PowerPoint application. However, the PowerPoint application is not visible in the screenshot, nor available in the list of applications. I need to first open the PowerPoint application and the test.pptx file to modify the title.
+    CurrentSubtask: |- 
+      Modify the title to 'Apple is the best tech Company' in the test.pptx file.
+    Message: []
     ControlLabel: |-
       2
     ControlText: |-
       PowerPoint
     Status: |-
-      CONTINUE
-    Plan:
-      - "Call the function OpenAPP with the arguments {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'} to open the test.pptx file."
-      - "When the file is open, delete text in the title and input 'Apple is the best tech Company' in the title."
+      PENDING
+    Plan: []
     Comment: |-
       Since the PowerPoint application is not visible in the screenshot, I will use the function OpenAPP to open the test.pptx file directly from the desktop. Then modify the title of the ppt file after its opened.
+    Questions:
+      - Can you please provide me with the title you want to change to?
     AppsToOpen: {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}
   
 
@@ -273,16 +330,18 @@ example_openapp2:
       I observe that the file explorer is not visible in the screenshot, nor available in the list of applications. So I need to open the file explorer application and find the label.txt file.
     Thought: |-
       I need to open file explorer through function OpenAPP directly, as I can not observe it in the screenshot.
+    CurrentSubtask: |-
+      Find the label.txt file in the file explorer.
+    Message: []
     ControlLabel: |-
       3
     ControlText: 
       Explorer
     Status: |-
       CONTINUE
-    Plan:
-      - "(1) Call the function OpenAPP with the arguments {'APP': 'powerpnt', 'file_path': ''} to open the file explorer APP."
-      - (2) Once the file explorer is open, I need to use the search box to find the label.txt file.,
+    Plan: []
     Comment: |-
       Since the file explorer application is not visible in the screenshot, I will use the function OpenAPP to open the file explorer file directly.
+    Questions: []
     AppsToOpen: |-
       {'APP': 'powerpnt', 'file_path': ''}

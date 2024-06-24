@@ -7,8 +7,7 @@
 /deprecated/*
 /test/*.ipynb
 /logs/*
-/ufo/modules/*
-/ufo/agents/*
+/customization/*
 __pycache__/
 **/__pycache__/
 *.pyc

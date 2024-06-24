@@ -4,7 +4,6 @@
 import abc
 from importlib import import_module
 
-
 class BaseService(abc.ABC):
     @abc.abstractmethod
     def __init__(self, *args, **kwargs):
@@ -22,6 +21,7 @@ class BaseService(abc.ABC):
             "azure_ad": "OpenAIService",
             "qwen": "QwenService",
             "ollama": "OllamaService",
+            "gemini": "GeminiService",
             "placeholder": "PlaceHolderService",
         }
         service_name = service_map.get(name, None)
@@ -30,6 +30,8 @@ class BaseService(abc.ABC):
                 module = import_module(".openai", package="ufo.llm")
             else:
                 module = import_module("." + name.lower(), package="ufo.llm")
+        else:
+            raise ValueError(f"Service {name} not found.")
         return getattr(module, service_name)
 
     def get_cost_estimator(
@@ -53,6 +55,8 @@ class BaseService(abc.ABC):
             name = str("azure/" + model)
         elif api_type.lower() == "qwen":
             name = str("qwen/" + model)
+        elif api_type.lower() == "gemini":
+            name = str("gemini/" + model)
 
         if name in prices:
             cost = (
@@ -60,6 +64,5 @@ class BaseService(abc.ABC):
                 + completion_tokens * prices[name]["output"] / 1000
             )
         else:
-            print(f"{name} not found in prices")
-            return None
+            return 0
         return cost

@@ -3,6 +3,8 @@ version: 1.0
 example1: 
   Request: |-
     My name is Zac. Please send a email to jack@outlook.com to thanks his contribution on the open source.
+  Sub-task: |-
+    Compose an email to send to Jack (jack@outlook.com) to thank him for his contribution to the open source project on the outlook application, using the name Zac.
   Response: 
     Observation: |-
       The screenshot shows that I am on the Main Page of Outlook. The Main Page has a list of control items and email received. The new email editing window is not opened. The last action took effect by opening the Outlook application.
@@ -25,6 +27,8 @@ example1:
       - (4) Click the Send button to send the email.
     Comment: |-
       After I click the New Email button, the New Email window will be opened and available for composing the email.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
   Tips: |-
     - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
     - You need to draft the content of the email and send it to the receiver. 
@@ -33,6 +37,8 @@ example1:
 example2: 
   Request: |- 
     My name is Zac. Please send a email to jack@outlook.com to thanks his contribution on the open source.
+  Sub-task: |-
+    Compose an email to send to Jack (jack@outlook.com) to thank him for his contribution to the open source project on the outlook application, using the name Zac.
   Response: 
     Observation: |-
       The screenshot shows that I am on a calendar page of Outlook. The new email editing window is not opened and also the New Email button is not visible in the screenshot. The last action took effect by opening the Outlook windows.
@@ -66,6 +72,8 @@ example2:
       - (5) Click the Send button to send the email.
     Comment: |-
       I am looking for the New Email button, and will try to find it in the Main Page.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
   Tips: |-
     - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
     - Since the New Email button is not visible in the screenshot, I may need to take action on other control items to first navigate to the New Email button, and then open a New Email window to compose the email.
@@ -75,6 +83,8 @@ example2:
 example3: 
   Request: |- 
     Send a message to Tom on Teams to ask him if he can join the meeting at 3pm.
+  Sub-task: |-
+    Compose a message to send to Tom on Teams to ask him if he can join the meeting at 3pm.
   Response: 
     Observation: |-
       The screenshot shows that I am on the chat window of Tom on Teams, the message input box is empty and ready to input. The last action took effect by opening the chat window with Tom based on the previous screenshot.
@@ -94,6 +104,8 @@ example3:
       - (1) Click the Send button to send the message. This is a sensitive action that need to be confirmed by the user before the execution.
     Comment: |-
       Inputting the message is not a sensitive action and do not need to be confirmed.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
   Tips: |-
     - Sending a message is a sensitive action and need to be confirmed.
 
@@ -102,6 +114,8 @@ example3:
 example4:
   Request: |-
     Draft an email to Amy to ask her how she feels about the new project.
+  Sub-task: |-
+    Draft an email to send to Amy to ask her how she feels about the new project on the outlook application.
   Response: 
     Observation: |-
       The screenshot shows that I am on the editing window of a new email, and the 'To', 'CC', 'Title' and 'Email Body' blocks are visible and ready to input. The title of the email has already been filled. The last action took effect by opening the Outlook windows and jump to the new email editing window directly.
@@ -127,6 +141,8 @@ example4:
       - <FINISH>
     Comment: |-
       I revised the previous plan base on the screenshot since I observe that New Email window has already opened and the title of email has already been inputted. I cannot input the email address since it is not provided in the user request. Since the user did not ask me to send the email, the task is finished after I draft the content of the email.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
   Tips: |-
     - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
     - You need to draft the content of the email and send it to the receiver. Use polite language when drafting the email.
@@ -135,6 +151,8 @@ example4:
 example5:
   Request: |-
     Search for the word 'UFO' in the document.
+  Sub-task: |-
+    Search for the word 'UFO' in the document on the Word application.
   Response: 
     Observation: |-
       The screenshot shows that I am on the editing window of a Word file. The search box is visible and the word 'UFO' is already inputted. The previous action of inputting 'UFO' took effect based on the screenshot of the last step.
@@ -154,6 +172,8 @@ example5:
       - <FINISH>
     Comment: |-
       I searched for the word 'UFO' in the document successfully. The user should view the search result.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
   Tips: |-
     - If there are steps already taken (e.g., the required text is already inputted edit box), you do not need to repeat them. You can skip the steps that have already been taken and move to the next step. 
 
@@ -161,11 +181,13 @@ example5:
 example6:
   Request: |-
     Send an message to Tom on Teams by including a (1) the text extracted from framework.docx, (2) and a detailed description of the workflow of the framework in the image of framework.png.
+  Sub-task: |-
+    Extract the full text from the framework.docx.
   Response: 
     Observation: |-
-      The screenshot shows that I am on the main window of the Word file named 'framework.docx'. The text of the file, which I am interest, is visible in the screenshot. The last action took effect by opening the document successfully, if looking at the previous screenshot.
+      The screenshot shows that I am on the main window of the Word file named 'framework.docx'. The text of the file, which I am interest, is visible in the screenshot. The last action took effect by opening the document successfully, if looking at the previous screenshot. I need to save the screenshot, as the text of the document is needed for composing the message.
     Thought: |-
-      Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'APP_SELECTION' immediately to switch to the image of framework.png to complete the next task.
+      Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'FINISH' immediately.
     ControlLabel: |-
       83
     ControlText: |-
@@ -174,24 +196,22 @@ example6:
       texts
     Args: {}
     Status: |-
-      APP_SELECTION
+      FINISH
     Plan:
-      - (1) Switch to the image of framework.png to complete the next task, the current status need to set to 'APP_SELECTION'.
-      - (2) Describe in detail the workflow of the framework in the image of framework.png base on the screenshot of the image.
-      - (3) Switch to the Teams application.
-      - (4) Open the chat window with Tom.
-      - (5) Input the text of the Document control named 'framework.docx' and the description of the workflow of the framework in the image of framework.png in the Edit control named 'Type a new message'. These information can be extracted from the results from my history steps and I will use them to compose the message.
-      - (6) Click the Send button to send the message. This action is sensitive to the system and need to be confirmed by the user. I need to confirm the action before clicking the Send button. If the user confirms the action, the task is finished.
+      - <FINISH>
     Comment: |-
-      The partial tasks on 'framework.docx' is completed once I take the current action. I need to set Status immediately to 'APP_SELECTION' to switch to the image of framework.png to complete the next task.
+      The partial tasks on 'framework.docx' is completed once I take the current action. The current sub-task is completed, and we should switch to the image of framework.png to complete the next task.
+    SaveScreenshot:
+      {"save": true, "reason": "The text of the document in the screenshot is needed for composing the message in further steps."}
   Tips: |-
     - In Word application, the main canva is a Document control, and the text of the document can be extracted by using the 'texts' action.
-    - After extracting the text of the document, I need to set the status as 'APP_SELECTION' immediately to switch to the image of framework.png to complete the next task.
 
 
 example7:
   Request: |-
     Quickly remove all notes in the presentation.pptx, without looping through each slide.
+  Sub-task: |-
+    Remove all notes in the presentation.pptx file quickly without looping through each slide.
   Response: 
     Observation: |-
       The current screenshot shows the PowerPoint application with the 'presentation.pptx' file open. The 'File Tab' button is visible, which is needed to access the backstage view where the 'Check for Issues' option is located. This matches the next step in the previous plan. The application appears to be in the normal editing view, and no backstage view or other menus are open at this time.
@@ -216,6 +236,8 @@ example7:
       - (6) Once 'Remove All Presentation Notes' is visible, I should click it to remove all notes in the presentation.pptx file. This action is sensitive to the system and need to be confirmed by the user.
     Comment: |-
       I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
   Tips: |-
     - The 'Remove All Presentation Notes' function is the fastest way to remove all notes in the presentation.pptx file. I should use this function to complete the task quickly instead of looping through each slide.
     - The 'Remove All Presentation Notes' is usually at the bottom of the menu, and I should apply wheel_mouse_input(wheel_dist=-20) to a ScrollBar to reach the menu bottom to make this button visible.
@@ -224,6 +246,8 @@ example7:
 example8:
   Request: |-
     How many stars does the Imdiffusion repo have?
+  Sub-task: |-
+    Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
   Response: 
     Observation: |-
       I observe that the Edge browser is visible in the screenshot, with the Google search page opened.
@@ -245,6 +269,8 @@ example8:
       - (3) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
     Comment: |-
       I plan to use Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
   Tips: |-
     - The search box is usually in a type of ComboBox.
     - The number of stars of a Github repo page can be found in the repo page visually.
@@ -254,6 +280,8 @@ example8:
 example9: 
   Request: |- 
     Please remind me to get party dinner (5 people) preparation done before 5PM today with steps and notes.
+  Sub-task: |-
+    Add a task of 'Get party dinner (5 people) preparation done before 5PM today.' to the Microsoft To Do application, and set more details for the task, including adding steps and notes.
   Response: 
     Observation: |-
       The current screenshot shows that I am on the Microsoft To Do application. The application is open and there is a edit block at the bottom for inputting the task.
@@ -270,14 +298,17 @@ example9:
     Status: |-
       CONTINUE
     Plan:
-      - (1) Click the ListItem of the task that was just created to set more details.
-      - (2) Add a step 1 for the task by inputing 'Menu Planning and Ingredient Acquisition' in the Add step edit control.
-      - (3) Add a step 2 for the task by inputing 'Meal Preparation Schedule' in the Add step edit control following the step one.
-      - (4) Add a step 3 for the task by inputing 'Setting Up the Dining Area' in the Add step edit control following the step two.
-      - (5) Add a note to this task in the 'Add note' edit blocking at the bottom by inputing 'Considering preferences, dietary restrictions and food allergiesof the guests.'.
-      - (6) Close the details view by clicking the 'Dismiss detail view' botton.
+      - (1) After inputting the task, press the Enter key to create the task.
+      - (2) Click the ListItem of the task that was just created to set more details.
+      - (3) Add a step 1 for the task by inputing 'Menu Planning and Ingredient Acquisition' in the Add step edit control.
+      - (4) Add a step 2 for the task by inputing 'Meal Preparation Schedule' in the Add step edit control following the step one.
+      - (5) Add a step 3 for the task by inputing 'Setting Up the Dining Area' in the Add step edit control following the step two.
+      - (6) Add a note to this task in the 'Add note' edit blocking at the bottom by inputing 'Considering preferences, dietary restrictions and food allergiesof the guests.'.
+      - (7) Close the details view by clicking the 'Dismiss detail view' botton.
     Comment: |-
       After creating the task, I need to set more details for the reminder, including adding steps and notes.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
   Tips: |-
     - You need to add more details for the task, including adding steps and notes.
     - You need to add each step one by one and add notes to the task.
@@ -286,7 +317,9 @@ example9:
 
 example10:
   Request: |-
-      Please create a slide from the meeting_notes.docx in the presentation1.pptx.
+    Please create a slide from the meeting_notes.docx in the presentation1.pptx.
+  Sub-task: |-
+    Create a slide from the meeting_notes.docx in the presentation1.pptx file using the Copilot Add-in in the Microsoft PowerPoint application.
   Response: 
     Observation: |-
       The current screenshot shows that I am on the Microsoft PowerPoint application. The Copilot Add-in is visible in the screenshot.
@@ -306,6 +339,8 @@ example10:
       - (1) Click the 'Create presentation from file' button to open a file picker.
       - (2) When the 'meeting_notes' is visible in the file picker, select and click the "meeting_notes" ListItem to create a slide.
       - (3) Click the 'Send' buttom to send the request to Copilot. This completes the task.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
     Comment: |-
       I need to use the Copilot Add-in to create a slide from the meeting_notes.docx.
   Tips: |-
@@ -314,28 +349,32 @@ example10:
 
 example11: 
   Request: |-
-    Save the presentation1.pptx into pdf format.
+    create a presentation of watering plant on plant.pptx.
+  Sub-task: |-
+    Create a presentation from the plant.pptx about watering plant using the Copilot Add-in in the Microsoft PowerPoint application.
   Response: 
     Observation: |-
-      The current screenshot shows the powerpoint application is visible, and the presentation1.pptx is opened.
-    Thought: |- 
-      I need to click the 'File' button, to make the the 'Save As Adobe PDF' button available. Then I need to click the 'Save As Adobe PDF' button to save the presentation1.pptx into pdf format. If the 'Save As Adobe PDF' button is not visible in the screenshot, I may need to use the 'Save a Copy' button to manually save the presentation1.pptx into pdf format.
+      The current screenshot shows that I am on the Microsoft PowerPoint application. The Copilot Add-in is visible in the screenshot.
+    Thought: |-
+      I need to click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide about a specific topic, such as watering plant, from the plant.pptx.
     ControlLabel: |-
-      34
+      60
     ControlText: |-
-      File
-    Function: |-  
+      Copilot
+    Function: |- 
       click_input
     Args: 
       {"button": "left", "double": false}
     Status: |-
       CONTINUE
     Plan:
-      - (1) Click the "Save As Adobe PDF" button to open the save as dialog. 
-      - (2) Click the "Save" button to save the presentation1.pptx into pdf format. This completes the task.
+      - (1) Click the 'Create presentation about' button to input the topic 'watering plant'.
+      - (2) Input the topic 'watering plant' in the edit control after the text of 'Create presentation about'.
+      - (3) Click the 'Send' button to send the request to Copilot. This completes the task.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
     Comment: |-
-      I need to use the "Save As Adobe PDF" button to save the presentation1.pptx into pdf format.
+      I need to use the Copilot Add-in to create a presentation from the plant.pptx about watering plant.
   Tips: |-
-    - Saving the presentation1.pptx into pdf format can be done by clicking the "Save As Adobe PDF" button.
-    - If the "Save As Adobe PDF" button is not visible in the screenshot, you may need to use the "Save a Copy" button to manually save the presentation1.pptx into pdf format.
+    - The Copilot Add-in can directly create a presentation from the plant.pptx. You need to use the Copilot Add-in to complete the task.
 

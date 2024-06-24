@@ -3,7 +3,7 @@
 
 
 from abc import abstractmethod
-from typing import Dict, List
+from typing import Dict, List, Type
 
 import win32com.client
 
@@ -14,6 +14,8 @@ class WinCOMReceiverBasic(ReceiverBasic):
     """
     The base class for Windows COM client.
     """
+
+    _command_registry: Dict[str, Type[CommandBasic]] = {}
 
     def __init__(self, app_root_name: str, process_name: str, clsid: str) -> None:
         """
@@ -31,17 +33,8 @@ class WinCOMReceiverBasic(ReceiverBasic):
         self.client = win32com.client.Dispatch(self.clsid)
         self.com_object = self.get_object_from_process_name()
 
-        super().__init__()
-
     @abstractmethod
-    def get_default_command_registry(self):
-        """
-        The default command registry.
-        """
-        pass
-
-    @abstractmethod
-    def get_object_from_process_name(self) -> None:
+    def get_object_from_process_name(self) -> win32com.client.CDispatch:
         """
         Get the object from the process name.
         :param process_name: The process name.
@@ -85,11 +78,55 @@ class WinCOMReceiverBasic(ReceiverBasic):
         )
 
     @property
+    def full_path(self) -> str:
+        """
+        Get the full path of the process.
+        :return: The full path of the process.
+        """
+        try:
+            full_path = self.com_object.FullName
+            return full_path
+        except:
+            return ""
+
+    def save(self) -> None:
+        """
+        Save the current state of the app.
+        """
+        try:
+            self.com_object.Save()
+        except:
+            pass
+
+    def save_to_xml(self, file_path: str) -> None:
+        """
+        Save the current state of the app to XML.
+        :param file_path: The file path to save the XML.
+        """
+        try:
+            self.com_object.SaveAs(file_path, self.xml_format_code)
+        except:
+            pass
+
+    def close(self) -> None:
+        """
+        Close the app.
+        """
+        try:
+            self.com_object.Close()
+        except:
+            pass
+
+    @property
     def type_name(self):
         return "COM"
 
+    @property
+    def xml_format_code(self) -> int:
+        pass
+
     @staticmethod
-    def longest_common_substring_length(str1, str2) -> int:
+    def longest_common_substring_length(str1: str, str2: str) -> int:
         """
         Get the longest common substring of two strings.
         :param str1: The first string.

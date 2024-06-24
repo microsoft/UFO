@@ -21,7 +21,7 @@ class HostAgentPrompter(BasicPrompter):
         prompt_template: str,
         example_prompt_template: str,
         api_prompt_template: str,
-        allow_openapp=False,
+        allow_openapp: bool = False,
     ):
         """
         Initialize the ApplicationAgentPrompter.
@@ -29,6 +29,7 @@ class HostAgentPrompter(BasicPrompter):
         :param prompt_template: The path of the prompt template.
         :param example_prompt_template: The path of the example prompt template.
         :param api_prompt_template: The path of the api prompt template.
+        :param allow_openapp: Whether to allow open app by the hostagent.
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template)
@@ -40,8 +41,8 @@ class HostAgentPrompter(BasicPrompter):
         return: The prompt for app selection.
         """
         if self.allow_openapp:
-            open_app_guideline = self.prompt_template["open_app_guideline"]
-            open_app_comment = self.prompt_template["open_app_comment"]
+            open_app_guideline = self.prompt_template.get("open_app_guideline", "")
+            open_app_comment = self.prompt_template.get("open_app_comment", "")
         else:
             open_app_guideline = ""
             open_app_comment = ""
@@ -59,26 +60,25 @@ class HostAgentPrompter(BasicPrompter):
 
     def user_prompt_construction(
         self,
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
+        prev_subtask: List[Dict[str, str]],
         prev_plan: List[str],
         user_request: str,
         retrieved_docs: str = "",
     ) -> str:
         """
         Construct the prompt for action selection.
-        :param action_history: The action history.
         :param control_item: The control item.
+        :param prev_plan: The previous plan.
+        :param prev_subtask: The previous subtask.
         :param user_request: The user request.
         :param retrieved_docs: The retrieved documents.
         return: The prompt for action selection.
         """
         prompt = self.prompt_template["user"].format(
-            action_history=json.dumps(action_history),
-            request_history=json.dumps(request_history),
             control_item=json.dumps(control_item),
             prev_plan=json.dumps(prev_plan),
+            prev_subtask=json.dumps(prev_subtask),
             user_request=user_request,
             retrieved_docs=retrieved_docs,
         )
@@ -88,18 +88,18 @@ class HostAgentPrompter(BasicPrompter):
     def user_content_construction(
         self,
         image_list: List[str],
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
+        prev_subtask: List[Dict[str, str]],
         prev_plan: str,
         user_request: str,
         retrieved_docs: str = "",
-    ) -> List[Dict]:
+    ) -> List[Dict[str, str]]:
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.
-        :param action_history: The action history.
         :param control_item: The control item.
+        :param prev_subtask: The previous subtask.
+        :param prev_plan: The previous plan.
         :param user_request: The user request.
         :param retrieved_docs: The retrieved documents.
         return: The prompt for LLMs.
@@ -118,12 +118,11 @@ class HostAgentPrompter(BasicPrompter):
             {
                 "type": "text",
                 "text": self.user_prompt_construction(
-                    request_history,
-                    action_history,
-                    control_item,
-                    prev_plan,
-                    user_request,
-                    retrieved_docs,
+                    control_item=control_item,
+                    prev_subtask=prev_subtask,
+                    prev_plan=prev_plan,
+                    user_request=user_request,
+                    retrieved_docs=retrieved_docs,
                 ),
             }
         )
@@ -153,7 +152,8 @@ class HostAgentPrompter(BasicPrompter):
                 if key.startswith("example_openapp") and not self.allow_openapp:
                     continue
                 if not self.allow_openapp:
-                    del values["Response"]["AppsToOpen"]
+                    if "AppsToOpen" in values["Response"]:
+                        del values["Response"]["AppsToOpen"]
                 example = template.format(
                     request=values.get("Request"),
                     response=json.dumps(values.get("Response")),
@@ -213,6 +213,7 @@ class AppAgentPrompter(BasicPrompter):
         :param prompt_template: The path of the prompt template.
         :param example_prompt_template: The path of the example prompt template.
         :param api_prompt_template: The path of the api prompt template.
+        :param root_name: The root name of the app.
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
         self.root_name = root_name
@@ -229,6 +230,7 @@ class AppAgentPrompter(BasicPrompter):
     ) -> str:
         """
         Construct the prompt for app selection.
+        :param additional_examples: The additional examples added to the prompt.
         return: The prompt for app selection.
         """
 
@@ -247,28 +249,36 @@ class AppAgentPrompter(BasicPrompter):
 
     def user_prompt_construction(
         self,
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
+        prev_subtask: List[Dict[str, str]],
         prev_plan: List[str],
         user_request: str,
+        subtask: str,
+        current_application: str,
+        host_message: List[str],
         retrieved_docs: str = "",
     ) -> str:
         """
         Construct the prompt for action selection.
         :param prompt_template: The template of the prompt.
-        :param action_history: The action history.
         :param control_item: The control item.
+        :param prev_subtask: The previous subtask.
+        :param prev_plan: The previous plan.
         :param user_request: The user request.
+        :param subtask: The subtask.
+        :param current_application: The current application.
+        :param host_message: The host message.
         :param retrieved_docs: The retrieved documents.
         return: The prompt for action selection.
         """
         prompt = self.prompt_template["user"].format(
-            action_history=json.dumps(action_history),
-            request_history=json.dumps(request_history),
             control_item=json.dumps(control_item),
+            prev_subtask=json.dumps(prev_subtask),
             prev_plan=json.dumps(prev_plan),
             user_request=user_request,
+            subtask=subtask,
+            current_application=current_application,
+            host_message=json.dumps(host_message),
             retrieved_docs=retrieved_docs,
         )
 
@@ -277,20 +287,26 @@ class AppAgentPrompter(BasicPrompter):
     def user_content_construction(
         self,
         image_list: List[str],
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
+        prev_subtask: List[str],
         prev_plan: List[str],
         user_request: str,
+        subtask: str,
+        current_application: str,
+        host_message: List[str],
         retrieved_docs: str = "",
         include_last_screenshot: bool = True,
-    ) -> List[Dict]:
+    ) -> List[Dict[str, str]]:
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.
-        :param action_history: The action history.
         :param control_item: The control item.
+        :param prev_subtask: The previous subtask.
+        :param prev_plan: The previous plan.
         :param user_request: The user request.
+        :param subtask: The subtask.
+        :param current_application: The current application.
+        :param host_message: The host message.
         :param retrieved_docs: The retrieved documents.
         return: The prompt for LLMs.
         """
@@ -313,12 +329,14 @@ class AppAgentPrompter(BasicPrompter):
             {
                 "type": "text",
                 "text": self.user_prompt_construction(
-                    request_history,
-                    action_history,
-                    control_item,
-                    prev_plan,
-                    user_request,
-                    retrieved_docs,
+                    control_item=control_item,
+                    prev_subtask=prev_subtask,
+                    prev_plan=prev_plan,
+                    user_request=user_request,
+                    subtask=subtask,
+                    current_application=current_application,
+                    host_message=host_message,
+                    retrieved_docs=retrieved_docs,
                 ),
             }
         )
@@ -481,11 +499,13 @@ class FollowerAgentPrompter(AppAgentPrompter):
 
     def user_prompt_construction(
         self,
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
+        prev_subtask: List[str],
         prev_plan: List[str],
         user_request: str,
+        subtask: str,
+        current_application: str,
+        host_message: List[str],
         retrieved_docs: str = "",
         current_state: dict = {},
         state_diff: dict = {},
@@ -493,20 +513,26 @@ class FollowerAgentPrompter(AppAgentPrompter):
         """
         Construct the prompt for action selection.
         :param prompt_template: The template of the prompt.
-        :param action_history: The action history.
         :param control_item: The control item.
+        :param prev_subtask: The previous subtask.
+        :param prev_plan: The previous plan.
         :param user_request: The user request.
+        :param subtask: The subtask.
+        :param current_application: The current application.
+        :param host_message: The host message.
         :param retrieved_docs: The retrieved documents.
         :param current_state: The current state of the application.
         :param state_diff: The state difference of the application before and after the action.
         return: The prompt for action selection.
         """
         prompt = self.prompt_template["user"].format(
-            action_history=json.dumps(action_history),
-            request_history=json.dumps(request_history),
             control_item=json.dumps(control_item),
+            prev_subtask=json.dumps(prev_subtask),
             prev_plan=json.dumps(prev_plan),
             user_request=user_request,
+            subtask=subtask,
+            current_application=current_application,
+            host_message=json.dumps(host_message),
             retrieved_docs=retrieved_docs,
             current_state=json.dumps(current_state),
             state_diff=json.dumps(state_diff),
@@ -517,11 +543,13 @@ class FollowerAgentPrompter(AppAgentPrompter):
     def user_content_construction(
         self,
         image_list: List[str],
-        request_history: List[str],
-        action_history: List[str],
         control_item: List[str],
+        prev_subtask: List[str],
         prev_plan: List[str],
         user_request: str,
+        subtask: str,
+        current_application: str,
+        host_message: List[str],
         retrieved_docs: str = "",
         current_state: dict = {},
         state_diff: dict = {},
@@ -530,10 +558,14 @@ class FollowerAgentPrompter(AppAgentPrompter):
         """
         Construct the prompt for LLMs.
         :param image_list: The list of images.
-        :param action_history: The action history.
         :param control_item: The control item.
+        :param prev_subtask: The previous subtask.
+        :param prev_plan: The previous plan.
         :param user_request: The user request.
+        :param subtask: The subtask.
         :param retrieved_docs: The retrieved documents.
+        :param current_application: The current application.
+        :param host_message: The host message.
         :param current_state: The current state of the application (Optional).
         :param state_diff: The state difference of the application before and after the action (Optional).
         :param include_last_screenshot: Whether to include the last screenshot as input.
@@ -558,14 +590,16 @@ class FollowerAgentPrompter(AppAgentPrompter):
             {
                 "type": "text",
                 "text": self.user_prompt_construction(
-                    request_history,
-                    action_history,
-                    control_item,
-                    prev_plan,
-                    user_request,
-                    retrieved_docs,
-                    current_state,
-                    state_diff,
+                    control_item=control_item,
+                    prev_plan=prev_plan,
+                    prev_subtask=prev_subtask,
+                    user_request=user_request,
+                    subtask=subtask,
+                    current_application=current_application,
+                    host_message=host_message,
+                    retrieved_docs=retrieved_docs,
+                    current_state=current_state,
+                    state_diff=state_diff,
                 ),
             }
         )

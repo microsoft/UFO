@@ -6,7 +6,7 @@ from datetime import datetime
 
 from ufo.config.config import Config
 from ufo.module.client import UFOClientManager
-from ufo.module.session import SessionFactory
+from ufo.module.sessions.session import SessionFactory
 
 configs = Config.get_instance().config_data
 
@@ -33,6 +33,7 @@ args.add_argument(
     type=str,
     default="",
 )
+
 
 parsed_args = args.parse_args()
 

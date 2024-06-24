@@ -1,8 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import os
 from collections import deque
-from typing import Dict, List, Optional
+from typing import Any, Deque, Dict, List, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -30,11 +31,11 @@ class AppPuppeteer:
 
         self._process_name = process_name
         self._app_root_name = app_root_name
-        self.command_queue = deque()
+        self.command_queue: Deque[CommandBasic] = deque()
         self.receiver_manager = ReceiverManager()
 
     def create_command(
-        self, command_name: str, params: Dict, *args, **kwargs
+        self, command_name: str, params: Dict[str, Any], *args, **kwargs
     ) -> Optional[CommandBasic]:
         """
         Create the command.
@@ -42,7 +43,7 @@ class AppPuppeteer:
         :param params: The arguments for the command.
         """
         receiver = self.receiver_manager.get_receiver(command_name)
-        command = receiver.get_command_registry().get(command_name.lower(), None)
+        command = receiver.command_registry.get(command_name.lower(), None)
 
         if receiver is None:
             raise ValueError(f"Receiver for command {command_name} is not found.")
@@ -62,7 +63,9 @@ class AppPuppeteer:
 
         return receiver.type_name
 
-    def execute_command(self, command_name: str, params: Dict, *args, **kwargs) -> str:
+    def execute_command(
+        self, command_name: str, params: Dict[str, Any], *args, **kwargs
+    ) -> str:
         """
         Execute the command.
         :param command_name: The command name.
@@ -83,7 +86,9 @@ class AppPuppeteer:
             command = self.command_queue.popleft()
             results.append(command.execute())
 
-    def add_command(self, command_name: str, params: Dict, *args, **kwargs) -> None:
+    def add_command(
+        self, command_name: str, params: Dict[str, Any], *args, **kwargs
+    ) -> None:
         """
         Add the command to the command queue.
         :param command_name: The command name.
@@ -99,8 +104,49 @@ class AppPuppeteer:
         """
         return len(self.command_queue)
 
+    @property
+    def full_path(self) -> str:
+        """
+        Get the full path of the process. Only works for COM receiver.
+        :return: The full path of the process.
+        """
+        com_receiver = self.receiver_manager.com_receiver
+        if com_receiver is not None:
+            return com_receiver.full_path
+
+        return ""
+
+    def save(self) -> None:
+        """
+        Save the current state of the app. Only works for COM receiver.
+        """
+        com_receiver = self.receiver_manager.com_receiver
+        if com_receiver is not None:
+            com_receiver.save()
+
+    def save_to_xml(self, file_path: str) -> None:
+        """
+        Save the current state of the app to XML. Only works for COM receiver.
+        :param file_path: The file path to save the XML.
+        """
+        com_receiver = self.receiver_manager.com_receiver
+        dir_path = os.path.dirname(file_path)
+        if not os.path.exists(dir_path):
+            os.makedirs(dir_path)
+
+        if com_receiver is not None:
+            com_receiver.save_to_xml(file_path)
+
+    def close(self) -> None:
+        """
+        Close the app. Only works for COM receiver.
+        """
+        com_receiver = self.receiver_manager.com_receiver
+        if com_receiver is not None:
+            com_receiver.close()
+
     @staticmethod
-    def get_command_string(command_name: str, params: Dict) -> str:
+    def get_command_string(command_name: str, params: Dict[str, str]) -> str:
         """
         Generate a function call string.
         :param command_name: The function name.
@@ -126,8 +172,8 @@ class ReceiverManager:
 
         self.receiver_registry = {}
         self.receiver_factories = {}
-        self.ui_control_receiver = None
-        self.com_receiver = None
+        self.ui_control_receiver: Optional[ControlReceiver] = None
+        self.com_receiver: Optional[WinCOMReceiverBasic] = None
 
         self.load_receiver_factories()
 

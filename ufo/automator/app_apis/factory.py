@@ -5,6 +5,7 @@ from typing import Type
 
 from ufo.automator.app_apis.basic import WinCOMReceiverBasic
 from ufo.automator.app_apis.word.wordclient import WordWinCOMReceiver
+from ufo.automator.app_apis.excel.excelclient import ExcelWinCOMReceiver
 from ufo.automator.basic import ReceiverFactory
 from ufo.utils import print_with_color
 
@@ -29,7 +30,7 @@ class COMReceiverFactory(ReceiverFactory):
 
         if clsid is None or com_receiver is None:
             print_with_color(
-                f"Win32COM API is not supported for {process_name}.", "yellow"
+                f"Warning: Win32COM API is not supported for {process_name}.", "yellow"
             )
             return None
 
@@ -41,7 +42,10 @@ class COMReceiverFactory(ReceiverFactory):
         :param app_root_name: The app root name.
         :return: The COM client.
         """
-        win_com_client_mapping = {"WINWORD.EXE": WordWinCOMReceiver}
+        win_com_client_mapping = {
+            "WINWORD.EXE": WordWinCOMReceiver,
+            "EXCEL.EXE": ExcelWinCOMReceiver,
+        }
 
         com_receiver = win_com_client_mapping.get(app_root_name, None)
 

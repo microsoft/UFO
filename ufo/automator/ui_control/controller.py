@@ -21,13 +21,14 @@ class ControlReceiver(ReceiverBasic):
     The control receiver class.
     """
 
+    _command_registry: Dict[str, Type[CommandBasic]] = {}
+
     def __init__(self, control: UIAWrapper, application: UIAWrapper):
         """
         Initialize the control receiver.
         :param control: The control element.
         :param application: The application element.
         """
-        super().__init__()
 
         self.control = control
 
@@ -35,24 +36,6 @@ class ControlReceiver(ReceiverBasic):
             self.control.set_focus()
             self.wait_enabled()
         self.application = application
-
-    def get_default_command_registry(self) -> Dict[str, Type[CommandBasic]]:
-        """
-        Get the default command registry.
-        """
-
-        api_prompt_loader = APIPromptLoader("")
-        api_prompt = api_prompt_loader.load_ui_api_prompt()
-        class_name_dict = api_prompt_loader.filter_api_dict(api_prompt)
-
-        global_name_space = globals()
-        command_registry = self.name_to_command_class(
-            global_name_space, class_name_dict
-        )
-
-        command_registry[""] = NoActionCommand
-
-        return command_registry
 
     @property
     def type_name(self):
@@ -111,7 +94,7 @@ class ControlReceiver(ReceiverBasic):
         """
 
         if configs["INPUT_TEXT_API"] == "set_text":
-            method_name = "set_text"
+            method_name = "set_edit_text"
             args = {"text": params["text"]}
         else:
             method_name = "type_keys"
@@ -244,6 +227,14 @@ class ControlCommand(CommandBasic):
     def execute(self):
         pass
 
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return "control_command"
+
 
 class AtomicCommand(ControlCommand):
     """
@@ -275,7 +266,16 @@ class AtomicCommand(ControlCommand):
         """
         return self.receiver.atomic_execution(self.method_name, self.params)
 
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return "atomic_command"
 
+
+@ControlReceiver.register
 class ClickInputCommand(ControlCommand):
     """
     The click input command class.
@@ -288,7 +288,16 @@ class ClickInputCommand(ControlCommand):
         """
         return self.receiver.click_input(self.params)
 
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return "click_input"
 
+
+@ControlReceiver.register
 class SummaryCommand(ControlCommand):
     """
     The summary command class to summarize the application screenshot.
@@ -301,7 +310,16 @@ class SummaryCommand(ControlCommand):
         """
         return self.receiver.summary(self.params)
 
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return "summary"
 
+
+@ControlReceiver.register
 class SetEditTextCommand(ControlCommand):
     """
     The set edit text command class.
@@ -315,7 +333,16 @@ class SetEditTextCommand(ControlCommand):
 
         return self.receiver.set_edit_text(self.params)
 
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return "set_edit_text"
 
+
+@ControlReceiver.register
 class GetTextsCommand(ControlCommand):
     """
     The get texts command class.
@@ -328,7 +355,16 @@ class GetTextsCommand(ControlCommand):
         """
         return self.receiver.texts()
 
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return "texts"
 
+
+@ControlReceiver.register
 class WheelMouseInputCommand(ControlCommand):
     """
     The wheel mouse input command class.
@@ -341,7 +377,16 @@ class WheelMouseInputCommand(ControlCommand):
         """
         return self.receiver.wheel_mouse_input(self.params)
 
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return "wheel_mouse_input"
 
+
+@ControlReceiver.register
 class AnnotationCommand(ControlCommand):
     """
     The annotation command class.
@@ -369,7 +414,16 @@ class AnnotationCommand(ControlCommand):
         """
         return self.receiver.annotation(self.params, self.annotation_dict)
 
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return "annotation"
 
+
+@ControlReceiver.register
 class keyboardInputCommand(ControlCommand):
     """
     The keyborad input command class.
@@ -382,7 +436,16 @@ class keyboardInputCommand(ControlCommand):
         """
         return self.receiver.keyboard_input(self.params)
 
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return "keyboard_input"
 
+
+@ControlReceiver.register
 class NoActionCommand(ControlCommand):
     """
     The no action command class.
@@ -394,3 +457,11 @@ class NoActionCommand(ControlCommand):
         :return: The result of the no action command.
         """
         return self.receiver.no_action()
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return ""

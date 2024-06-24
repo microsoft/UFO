@@ -69,7 +69,6 @@ class Config:
         :param configs: The configuration dictionary.
         :param agent: The agent name.
         """
-
         if configs[agent]["API_TYPE"].lower() == "aoai":
             if "deployments" not in configs[agent]["API_BASE"]:
                 configs[agent]["API_BASE"] = (
@@ -101,6 +100,7 @@ class Config:
         """
         cls.update_api_base(configs, "HOST_AGENT")
         cls.update_api_base(configs, "APP_AGENT")
+        cls.update_api_base(configs, "BACKUP_AGENT")
 
         return configs
 
