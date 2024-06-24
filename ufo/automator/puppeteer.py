@@ -8,7 +8,7 @@ from typing import Any, Deque, Dict, List, Optional
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.automator.app_apis.basic import WinCOMReceiverBasic
-from ufo.automator.app_apis.factory import COMReceiverFactory
+from ufo.automator.app_apis.factory import COMReceiverFactory, WEBReceiverFactory
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
 from ufo.automator.ui_control.controller import (
     ControlReceiver,
@@ -174,6 +174,7 @@ class ReceiverManager:
         self.receiver_factories = {}
         self.ui_control_receiver: Optional[ControlReceiver] = None
         self.com_receiver: Optional[WinCOMReceiverBasic] = None
+        self.web_receiver: Optional[WinCOMReceiverBasic] = None
 
         self.load_receiver_factories()
 
@@ -185,6 +186,7 @@ class ReceiverManager:
 
         self.__register_receiver_factory("UIControl", UIControlReceiverFactory())
         self.__register_receiver_factory("COM", COMReceiverFactory())
+        self.__register_receiver_factory("WEB", WEBReceiverFactory())
 
     def __register_receiver_factory(
         self, factory_name: str, factory: ReceiverFactory
@@ -221,6 +223,15 @@ class ReceiverManager:
         self.com_receiver = factory.create_receiver(app_root_name, process_name)
         self.__update_receiver_registry()
         return self.com_receiver
+    
+    
+    def create_web_receiver(self) -> WinCOMReceiverBasic:
+        factory = self.receiver_factories.get("WEB")
+        
+        self.web_receiver = factory.create_receiver()
+        self.__update_receiver_registry()
+        return self.web_receiver
+
 
     def __update_receiver_registry(self) -> None:
         """

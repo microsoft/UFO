@@ -202,6 +202,7 @@ class ContinueHostAgentState(HostAgentState):
 
         # Create the COM receiver for the app agent.
         if configs.get("USE_APIS", False):
+            print(application_root_name, application_window_name)
             app_agent.Puppeteer.receiver_manager.create_com_receiver(
                 application_root_name, application_window_name
             )

@@ -6,6 +6,7 @@ from typing import Type
 from ufo.automator.app_apis.basic import WinCOMReceiverBasic
 from ufo.automator.app_apis.word.wordclient import WordWinCOMReceiver
 from ufo.automator.app_apis.excel.excelclient import ExcelWinCOMReceiver
+from ufo.automator.app_apis.web.webclient import WebWinCOMReceiver
 from ufo.automator.basic import ReceiverFactory
 from ufo.utils import print_with_color
 
@@ -62,6 +63,41 @@ class COMReceiverFactory(ReceiverFactory):
             "EXCEL.EXE": "Excel.Application",
             "POWERPNT.EXE": "PowerPoint.Application",
             "olk.exe": "Outlook.Application",
+            
         }
 
         return win_com_map.get(app_root_name, None)
+
+class WEBReceiverFactory(ReceiverFactory):
+    """
+    The factory class for the COM receiver.
+    """
+    def create_receiver(
+        self
+    ) -> WinCOMReceiverBasic:
+        """
+        Create the web receiver.
+        :param app_root_name: The app root name.
+        :param process_name: The process name.
+        :return: The receiver.
+        """
+
+        web_receiver = self.__web_client_mapper()
+        # clsid = self.__app_root_mapping()
+        # web browser does not support clsid. Use Selenium
+        if web_receiver is None:
+            print_with_color(
+                "Waring: WEB API is not supported for browser"
+            )
+        return web_receiver()
+
+    def __web_client_mapper(self) -> Type[WinCOMReceiverBasic]:
+        """
+        Map the app root to the corresponding WEB client.
+        :param app_root_name: The browser root name.
+        :return: The WEB client.
+        """
+
+        com_receiver = WebWinCOMReceiver()
+
+        return com_receiver

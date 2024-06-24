@@ -170,7 +170,7 @@ class HostAgentProcessor(BaseProcessor):
             new_app_window = self._desktop_windows_dict.get(self.control_label, None)
 
         if new_app_window is None:
-
+            
             self.status = self._agent_status_manager.FINISH.value
             return
 

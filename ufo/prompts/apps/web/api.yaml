@@ -1,0 +1,43 @@
+insert_table:
+  summary: |-
+    "insert_table" is to insert a table to a Word document.
+  class_name: |-
+    InsertTableCommand
+  usage: |-
+    [1] API call: insert_table(rows: int, columns: int) 
+    [2] Args:
+      - rows: The number of rows in the table.
+      - columns: The number of columns in the table.
+    [3] Example: insert_table(rows=3, columns=3)
+    [4] Available control item: The Document control item in the Word app.
+    [5] Return: None
+
+
+select_text:
+  summary: |-
+    "select_text" is to select the text in a Word document for further operations, such as changing the font size or color.
+  class_name: |-
+    SelectTextCommand
+  usage: |-
+    [1] API call: select_text(text: str) 
+    [2] Args:
+      - text: The exact text to be selected.
+    [3] Example: select_text(text="Hello")
+    [4] Available control item: The Document control item in the Word app.
+    [5] Return: A string of the selected text if successful, otherwise a text not found message.
+
+
+select_table:
+  summary: |-
+    "select_table" is to select a table in a Word document for further operations, such as deleting the table or changing the border color.
+  class_name: |-
+    SelectTableCommand
+  usage: |-
+    [1] API call: select_table(number: int) 
+    [2] Args:
+      - number: The index number of the table to be selected.
+    [3] Example: select_table(number=1)
+    [4] Available control item: The Document control item in the Word app.
+    [5] Return: A string of the selected table if successful, otherwise an out of range message.
+
+  

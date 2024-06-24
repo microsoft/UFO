@@ -38,29 +38,34 @@ class WebWinCOMReceiver(WinCOMReceiverBasic):
         crawler.warmup()
         return crawler
 
-    def basic_usage(self, url: str) -> str:
+    def run_crawler(self, url: str, only_text: bool = False, screenshot: bool = False, 
+                    chunking_strategy: Optional[Type] = None, extraction_strategy: Optional[Type] = None,
+                    css_selector: Optional[str] = None, **kwargs) -> str:
         """
-        Fetch the HTML content of the webpage.
-        :return: The HTML content.
+        Run the crawler with various options.
+        :param url: The URL of the webpage.
+        :param only_text: Whether to fetch only text.
+        :param screenshot: Whether to take a screenshot.
+        :param chunking_strategy: The chunking strategy to apply.
+        :param extraction_strategy: The extraction strategy to apply.
+        :param css_selector: The CSS selector for targeted extraction.
+        :return: The result content.
         """
-        result = self.client.run(url=url, only_text=True)
-        return result.model_dump().items()['markdown']
+        result = self.client.run(
+            url=url,
+            only_text=only_text,
+            screenshot=screenshot,
+            chunking_strategy=chunking_strategy(**kwargs) if chunking_strategy else RegexChunking(),
+            extraction_strategy=extraction_strategy(**kwargs) if extraction_strategy else None,
+            css_selector=css_selector
+        )
 
-    def screenshot_usage(self, url: str) -> str:
-        result = self.client.run(url=url, screenshot=True)
-        with open("screenshot.png", "wb") as f:
-            f.write(base64.b64decode(result.screenshot))
-        return result.model_dump().items()['markdown']
+        if screenshot:
+            with open("screenshot.png", "wb") as f:
+                f.write(base64.b64decode(result.screenshot))
+            return "Screenshot saved to 'screenshot.png'"
 
-    def add_chunking_strategy(self, url: str, strategy, **kwargs) -> str:
-        result = self.client.run(url=url, chunking_strategy=strategy(**kwargs))
-        
-        return result.model_dump().items()['markdown']
-
-    def add_extraction_strategy(self, url: str, strategy, **kwargs) -> str:
-        result = self.client.run(url=url, extraction_strategy=strategy(**kwargs))
-
-        return result.model_dump().items()['markdown']
+        return result.model_dump().get('markdown', '')
 
     @property
     def type_name(self):
@@ -71,78 +76,29 @@ class WebWinCOMReceiver(WinCOMReceiverBasic):
         return 0  # This might not be applicable for web, adjust accordingly
 
 
-# class WebClient(WebCOMReceiverBasic):
-#     """
-#     The class for handling specific webpage actions.
-#     """
-
-#     def get_page_content(self) -> str:
-#         """
-#         Fetch the HTML content of the webpage.
-#         :return: The HTML content.
-#         """
-#         result = self.client.run(url=self.url, only_text=True)
-#         return result.html
-
-
-@WebWinCOMReceiver.register
-class BasicFetchContentCommand(WinCOMCommand):
+class RunCrawlerCommand(WinCOMCommand):
     """
-    The command to find an element by its ID.
+    The command to run the crawler with various options.
     """
 
     def execute(self):
         """
-        Execute the command to find an element by ID.
-        :return: The HTML of the found element.
+        Execute the command to run the crawler.
+        :return: The result content.
         """
-        return self.receiver.basic_usage(self.params.get("url"))
+        return self.receiver.run_crawler(
+            url=self.params.get("url"),
+            only_text=self.params.get("only_text", False),
+            screenshot=self.params.get("screenshot", False),
+            chunking_strategy=self.params.get("chunking_strategy", RegexChunking()),
+            extraction_strategy=self.params.get("extraction_strategy", None),
+            css_selector=self.params.get("css_selector", None),
+            **self.params.get("kwargs", {})
+        )
 
     @classmethod
     def name(cls) -> str:
         """
         The name of the command.
         """
-        return "basic_fetch_content"
-
-
-@WebWinCOMReceiver.register
-class FetchContentScreenshotCommand(WinCOMCommand):
-    """
-    The command to find elements by their tag name.
-    """
-
-    def execute(self):
-        """
-        Execute the command to find elements by tag name.
-        :return: A list of found elements.
-        """
-        return self.receiver.screenshot_usage(self.params.get("url"))
-
-    @classmethod
-    def name(cls) -> str:
-        """
-        The name of the command.
-        """
-        return "fetch_content_with_screenshot"
-
-
-@WebWinCOMReceiver.register
-class FetchContentScreenshotCommand(WinCOMCommand):
-    """
-    The command to find elements by their tag name.
-    """
-
-    def execute(self):
-        """
-        Execute the command to find elements by tag name.
-        :return: A list of found elements.
-        """
-        return self.receiver.find_elements_by_tag(self.params.get("tag_name"))
-
-    @classmethod
-    def name(cls) -> str:
-        """
-        The name of the command.
-        """
-        return "fetch_content_with_screenshot"
+        return "run_crawler"
