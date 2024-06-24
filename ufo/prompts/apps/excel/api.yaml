@@ -11,4 +11,21 @@ table2markdown:
     [4] Available control item: Any control item in the Excel app.
     [5] Return: the markdown format string of the table content of the sheet.
 
+insert_excel_table:
+  summary: |-
+    "insert_excel_table" is to insert a table to the Excel sheet. The table is a list of list of strings or numbers.
+  class_name: |-
+    InsertExcelTable
+  usage: |-
+    [1] API call: insert_excel_table(table: List[List[Any]], sheet_name: str, start_row: int, start_col: int)
+    [2] Args:
+      - table: The table content to insert. The table is a list of list of strings or numbers.
+      - sheet_name: The name of the sheet to insert the table.
+      - start_row: The start row to insert the table, starting from 1.
+      - start_col: The start column to insert the table, starting from 1.
+    [3] Example: insert_excel_table(table=[['Name', 'Age', 'Gender'], ['Alice', 30, 'Female'], ['Bob', 25, 'Male'], ['Charlie', 35, 'Male']], sheet_name="Sheet1", start_row=1, start_col=1)
+    [4] Available control item: Any control item in the Excel app.
+    [5] Return: The table content is inserted to the Excel sheet.
+
+
   
