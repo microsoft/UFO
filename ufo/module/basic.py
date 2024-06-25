@@ -312,7 +312,7 @@ class BaseSession(ABC):
     1. Begins with the ''CONTINUE'' state for the HostAgent to select an application.
     2. After the application is selected, the session moves to the ''CONTINUE'' state for the AppAgent to select an action. This process continues until all the actions are completed.
     3. When all the actions are completed for the current user request at a round, the session moves to the ''FINISH'' state.
-    4. The session will ask the user if they want to continue with another request. If the user wants to continue, the session will start a new round and move to the ''SWITCH'' state.
+    4. The session will ask the user if they want to continue with another request. If the user wants to continue, the session will start a new round.
     5. If the user does not want to continue, the session will transition to the ''COMPLETE'' state.
     6. The session will be evaluated if the evaluation is enabled.
     7. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
