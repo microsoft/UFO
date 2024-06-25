@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from typing import Any, Dict, Type
+from typing import Any, Dict, List, Type
 
 import pandas as pd
 
@@ -53,6 +53,23 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
 
         return df.to_markdown(index=False)
 
+    def insert_excel_table(
+        self, sheet_name: str, table: List[List[Any]], start_row: int, start_col: int
+    ):
+        """
+        Insert a table into the sheet.
+        :param sheet_name: The sheet name.
+        :param table: The list of lists of values to be inserted.
+        :param start_row: The start row.
+        :param start_col: The start column.
+        """
+        sheet = self.com_object.Sheets(sheet_name)
+        for i, row in enumerate(table):
+            for j, value in enumerate(row):
+                sheet.Cells(start_row + i, start_col + j).Value = value
+
+        return table
+
     @staticmethod
     def format_value(value: Any) -> str:
         """
@@ -92,3 +109,29 @@ class GetSheetContent(WinCOMCommand):
         The name of the command.
         """
         return "table2markdown"
+
+
+@ExcelWinCOMReceiver.register
+class InsertExcelTable(WinCOMCommand):
+    """
+    The command to insert a table.
+    """
+
+    def execute(self):
+        """
+        Execute the command to insert a table.
+        :return: The inserted table.
+        """
+        return self.receiver.insert_excel_table(
+            sheet_name=self.params.get("sheet_name", 1),
+            table=self.params.get("table"),
+            start_row=self.params.get("start_row", 1),
+            start_column=self.params.get("start_col", 1),
+        )
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "insert_excel_table"
