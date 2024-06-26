@@ -126,7 +126,7 @@ class InsertExcelTable(WinCOMCommand):
             sheet_name=self.params.get("sheet_name", 1),
             table=self.params.get("table"),
             start_row=self.params.get("start_row", 1),
-            start_column=self.params.get("start_col", 1),
+            start_col=self.params.get("start_col", 1),
         )
 
     @classmethod
