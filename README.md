@@ -222,7 +222,7 @@ You may use them to debug, replay, or analyze the agent output.
 
 ## ❓Get help 
 * ❔GitHub Issues (prefered)
-* For other communications, please contact ufo-agent@microsoft.com
+* For other communications, please contact [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com).
 ---
 
 ## 🎬 Demo Examples
@@ -251,8 +251,6 @@ https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4f
 Please consult the [WindowsBench](https://arxiv.org/pdf/2402.07939.pdf) provided in Section A of the Appendix within our technical report. Here are some tips (and requirements) to aid in completing your request:
 
 - Prior to UFO execution of your request, ensure that the targeted application is active (though it may be minimized).
-- Occasionally, requests to GPT-V may trigger content safety measures. UFO will attempt to retry regardless, but adjusting the size or scale of the application window may prove helpful. We are actively solving this issue.
-- Currently, UFO supports a limited set of applications and UI controls that are compatible with the Windows **UI Automation** API. Our future plans include extending support to the Win32 API to enhance its capabilities.
 - Please note that the output of GPT-V may not consistently align with the same request. If unsuccessful with your initial attempt, consider trying again.
 
 
@@ -263,7 +261,7 @@ If you use UFO in your research, please cite our paper:
 ```
 @article{ufo,
   title={{UFO: A UI-Focused Agent for Windows OS Interaction}},
-  author={Zhang, Chaoyun and Li, Liqun and He, Shilin and  Zhang, Xu and Qiao, Bo and  Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and  Zhang, Qi},
+  author={Zhang, Chaoyun and Li, Liqun and He, Shilin and Zhang, Xu and Qiao, Bo and  Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and  Zhang, Qi},
   journal={arXiv preprint arXiv:2402.07939},
   year={2024}
 }

@@ -13,7 +13,6 @@ __pycache__/
 *.pyc
 *.ipynb
 /.VSCodeCounter
-/documents/*
 
 # Ignore the config file
 ufo/config/config.yaml
