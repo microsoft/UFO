@@ -21,10 +21,7 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         """
         object_name_list = [doc.Name for doc in self.client.Documents]
         matched_object = self.app_match(object_name_list)
-        print(f"this is object list{object_name_list}")
-        print(f"this is matched_object{matched_object}")
         for doc in self.client.Documents:
-            print(f"doc list{doc}")
             if doc.Name == matched_object:
                 return doc
 

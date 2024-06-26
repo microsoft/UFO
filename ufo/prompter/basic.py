@@ -60,7 +60,6 @@ class BasicPrompter(ABC):
                 print_with_color(f"Error loading prompt template: {exc}", "yellow")
         else:
             raise FileNotFoundError(f"Prompt template not found at {path}")
-
         return prompt
 
     @staticmethod

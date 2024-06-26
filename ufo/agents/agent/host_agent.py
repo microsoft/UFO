@@ -208,6 +208,7 @@ class HostAgent(BasicAgent):
         ).get_desktop_app_dict(remove_empty=True)
         if not results:
             self.status = "ERROR in openning the application or file."
+            print("open failed!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
             return None
         app_window = file_manager.find_window_by_app_name(desktop_windows_dict)
         app_name = app_window.window_text()

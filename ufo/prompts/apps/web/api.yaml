@@ -1,43 +1,15 @@
-insert_table:
+run_crawler:
   summary: |-
-    "insert_table" is to insert a table to a Word document.
+    "run_crawler" is to run crawler to fetch html data from webpage, and return markdown code of test in html data. This function should be always called when you want to fetch any data from webpage directly. Once you finished crawling and get 
+    html data, you should clean them according to the users' request and return the cleaned data in markdown code format in your comment part of the response, then you can to the later process.
   class_name: |-
-    InsertTableCommand
+    RunCrawlerCommand
   usage: |-
-    [1] API call: insert_table(rows: int, columns: int) 
+    [1] API call: run_crawler(url: str) 
     [2] Args:
-      - rows: The number of rows in the table.
-      - columns: The number of columns in the table.
-    [3] Example: insert_table(rows=3, columns=3)
-    [4] Available control item: The Document control item in the Word app.
-    [5] Return: None
+      - url: The url of which specific website which you want to fetch html data from. The url is usually got from the control text of address bar from the current opened webpage. 
+              You should update the url when you are navigating to a new webpage.
+    [3] Example: run_crawler(url='https://www.google.com')
+    [4] Available control item: None
+    [5] Return: The html data info in markdown code format
 
-
-select_text:
-  summary: |-
-    "select_text" is to select the text in a Word document for further operations, such as changing the font size or color.
-  class_name: |-
-    SelectTextCommand
-  usage: |-
-    [1] API call: select_text(text: str) 
-    [2] Args:
-      - text: The exact text to be selected.
-    [3] Example: select_text(text="Hello")
-    [4] Available control item: The Document control item in the Word app.
-    [5] Return: A string of the selected text if successful, otherwise a text not found message.
-
-
-select_table:
-  summary: |-
-    "select_table" is to select a table in a Word document for further operations, such as deleting the table or changing the border color.
-  class_name: |-
-    SelectTableCommand
-  usage: |-
-    [1] API call: select_table(number: int) 
-    [2] Args:
-      - number: The index number of the table to be selected.
-    [3] Example: select_table(number=1)
-    [4] Available control item: The Document control item in the Word app.
-    [5] Return: A string of the selected table if successful, otherwise an out of range message.
-
-  

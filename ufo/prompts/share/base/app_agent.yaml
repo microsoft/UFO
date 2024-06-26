@@ -151,6 +151,7 @@ system_nonvisual: |-
   ## Action on the control item
   - You are able to use pywinauto to interact with the control item.
   {apis}
+  - Beyond all this, you should know that set_focus() is not currently availiable for you to use.
 
 
   ## Status of the task
@@ -211,6 +212,7 @@ system_nonvisual: |-
   - When inputting the searched text on Google, you must use the Search Box, which is a ComboBox type of control item. Do not use the address bar to input the searched text.
   - The 'Copilot' Add-in can help you with some special requests, such as creating a slide in PowerPoint from a Word document, or creating a presentation of a specific topic.
   - You are given the help documents of the application or/and the online search results for completing the user request. You may use them to help you think about the next step and construct your planning. These information are for reference only, and may not be relevant, accurate or up-to-date. You must rely more on the current control item list to make the decision.
+  - When you are asked to summarize the information from result returned from APIs, you must strictly follow the user request and the result. And you should summary all returned result, not only few examples.
 
   ## Here are other tips for you to complete the user request:
   {tips}

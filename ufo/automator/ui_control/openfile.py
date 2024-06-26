@@ -68,6 +68,7 @@ class FileController:
             try:
                 exec(code_snippet, globals())
                 time.sleep(3)  # wait for the app to boot
+                # retry
                 return True
 
             except Exception as e:

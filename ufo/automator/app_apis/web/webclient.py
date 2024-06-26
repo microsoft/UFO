@@ -11,26 +11,26 @@ from functools import lru_cache
 
 from typing import Dict, Type
 
-from ufo.automator.app_apis.basic import WinCOMCommand, WinCOMReceiverBasic
-from ufo.automator.basic import CommandBasic
+from ufo.automator.basic import CommandBasic, ReceiverBasic
 
 
 
-class WebWinCOMReceiver(WinCOMReceiverBasic):
+
+class WebWinCOMReceiver(ReceiverBasic):
     """
     The base class for Web COM client using crawl4ai.
     """
 
     _command_registry: Dict[str, Type[CommandBasic]] = {}
 
-    def __init__(self, url: str) -> None:
+    def __init__(self) -> None:
         """
         Initialize the Web COM client.
         :param url: The URL of the webpage.
         """
         self.client = self.create_crawler()
-        self.chunking_strategy = ChunkingStrategy()
-        self.extraction_strategy = ExtractionStrategy()
+        self.chunking_strategy = RegexChunking(patterns=["\n\n"])
+        self.extraction_strategy = None
 
     @lru_cache()
     def create_crawler(self):
@@ -51,12 +51,13 @@ class WebWinCOMReceiver(WinCOMReceiverBasic):
         :param css_selector: The CSS selector for targeted extraction.
         :return: The result content.
         """
+        print("-----------------------------callig crawler-------------------------------")
         result = self.client.run(
             url=url,
             only_text=only_text,
             screenshot=screenshot,
-            chunking_strategy=chunking_strategy(**kwargs) if chunking_strategy else RegexChunking(),
-            extraction_strategy=extraction_strategy(**kwargs) if extraction_strategy else None,
+            chunking_strategy=self.chunking_strategy,
+            extraction_strategy=self.extraction_strategy,
             css_selector=css_selector
         )
 
@@ -64,7 +65,6 @@ class WebWinCOMReceiver(WinCOMReceiverBasic):
             with open("screenshot.png", "wb") as f:
                 f.write(base64.b64decode(result.screenshot))
             return "Screenshot saved to 'screenshot.png'"
-
         return result.model_dump().get('markdown', '')
 
     @property
@@ -76,7 +76,8 @@ class WebWinCOMReceiver(WinCOMReceiverBasic):
         return 0  # This might not be applicable for web, adjust accordingly
 
 
-class RunCrawlerCommand(WinCOMCommand):
+@WebWinCOMReceiver.register
+class RunCrawlerCommand(CommandBasic):
     """
     The command to run the crawler with various options.
     """

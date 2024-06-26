@@ -67,14 +67,14 @@ class COMReceiverFactory(ReceiverFactory):
         }
 
         return win_com_map.get(app_root_name, None)
-
+from ufo.automator.basic import ReceiverBasic
 class WEBReceiverFactory(ReceiverFactory):
     """
     The factory class for the COM receiver.
     """
     def create_receiver(
         self
-    ) -> WinCOMReceiverBasic:
+    ) -> ReceiverBasic:
         """
         Create the web receiver.
         :param app_root_name: The app root name.
@@ -82,22 +82,11 @@ class WEBReceiverFactory(ReceiverFactory):
         :return: The receiver.
         """
 
-        web_receiver = self.__web_client_mapper()
+        web_receiver = WebWinCOMReceiver()
         # clsid = self.__app_root_mapping()
         # web browser does not support clsid. Use Selenium
         if web_receiver is None:
             print_with_color(
                 "Waring: WEB API is not supported for browser"
             )
-        return web_receiver()
-
-    def __web_client_mapper(self) -> Type[WinCOMReceiverBasic]:
-        """
-        Map the app root to the corresponding WEB client.
-        :param app_root_name: The browser root name.
-        :return: The WEB client.
-        """
-
-        com_receiver = WebWinCOMReceiver()
-
-        return com_receiver
+        return web_receiver

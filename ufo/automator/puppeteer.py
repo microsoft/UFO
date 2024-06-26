@@ -225,7 +225,7 @@ class ReceiverManager:
         return self.com_receiver
     
     
-    def create_web_receiver(self) -> WinCOMReceiverBasic:
+    def create_web_receiver(self) -> ReceiverBasic:
         factory = self.receiver_factories.get("WEB")
         
         self.web_receiver = factory.create_receiver()
@@ -244,6 +244,9 @@ class ReceiverManager:
             )
         if self.com_receiver is not None:
             self.receiver_registry.update(self.com_receiver.self_command_mapping())
+
+        if self.web_receiver is not None:
+            self.receiver_registry.update(self.web_receiver.self_command_mapping())
 
     def get_receiver(self, command_name: str) -> ReceiverBasic:
         """

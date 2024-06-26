@@ -369,7 +369,7 @@ class AppAgentPrompter(BasicPrompter):
         if self.app_api_prompt_template:
 
             api_list += [
-                "- There are additional shortcut APIs for your operations. You should **prioritize** using these APIs if they are available since they are more reliable and efficient. The avaliable APIs are: {apis}".format(
+                "- There are additional shortcut APIs for your operations. You must **prioritize** using these APIs if they are available since they are more reliable and efficient, if you are trying to fetch html data from webpage, you must use run_crawler when it's availiable for you. The avaliable APIs are: {apis}".format(
                     apis=list(self.app_api_prompt_template.keys())
                 )
             ]
@@ -564,6 +564,8 @@ class APIPromptLoader:
             "EXCEL.EXE": "EXCEL_API_PROMPT",
             "POWERPNT.EXE": "POWERPOINT_API_PROMPT",
             "olk.exe": "OUTLOOK_API_PROMPT",
+            "msedge.exe": "WEB_API_PROMPT",
+            "chrome.exe": "WEB_API_PROMPT",
         }
 
         # Get the config key of app

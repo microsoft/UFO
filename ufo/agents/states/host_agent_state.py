@@ -202,11 +202,14 @@ class ContinueHostAgentState(HostAgentState):
 
         # Create the COM receiver for the app agent.
         if configs.get("USE_APIS", False):
-            print(application_root_name, application_window_name)
-            app_agent.Puppeteer.receiver_manager.create_com_receiver(
-                application_root_name, application_window_name
-            )
-
+            if 'word' in application_window_name.lower() or 'excel' in application_window_name.lower():
+                app_agent.Puppeteer.receiver_manager.create_com_receiver(
+                    application_root_name, application_window_name
+                )
+            if 'edge' in application_window_name.lower() or 'chromd' in application_window_name.lower():
+                app_agent.Puppeteer.receiver_manager.create_web_receiver()
+                # except Exception as e:
+                #     print(f"error in creating web receiver {e}")
         # Provision the context for the app agent, including the all retrievers.
         app_agent.context_provision(request)
 
