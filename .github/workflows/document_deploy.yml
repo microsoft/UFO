@@ -28,12 +28,6 @@ jobs:
       - name: Deploy to GitHub Pages
         run: |
           cd documents
-            if [ -f "../mkdocs.yml" ]; then
-              cd ..
-              mkdocs gh-deploy --force
-            else
-              echo "Config file 'mkdocs.yml' does not exist."
-              exit 1
-            fi
+          mkdocs gh-deploy --config-file mkdocs.yml --force
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
