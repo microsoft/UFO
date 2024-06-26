@@ -26,14 +26,14 @@ jobs:
           pip install mkdocs mkdocs-material
 
       - name: Deploy to GitHub Pages
-        run: 
-        cd documents
-          if [ -f "../mkdocs.yml" ]; then
-            cd ..
-            mkdocs gh-deploy --force
-          else
-            echo "Config file 'mkdocs.yml' does not exist."
-            exit 1
-          fi
+        run: |
+          cd docs
+            if [ -f "../mkdocs.yml" ]; then
+              cd ..
+              mkdocs gh-deploy --force
+            else
+              echo "Config file 'mkdocs.yml' does not exist."
+              exit 1
+            fi
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
