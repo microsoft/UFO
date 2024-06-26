@@ -28,6 +28,7 @@ API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
 API_MODEL: "gpt-4-vision-preview",  # The OpenAI model
 ```
 
+
 #### Azure OpenAI (AOAI)
 ```bash
 VISUAL_MODE: True, # Whether to use the visual mode
