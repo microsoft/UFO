@@ -27,7 +27,7 @@ jobs:
 
       - name: Deploy to GitHub Pages
         run: |
-          cd docs
+          cd documents
             if [ -f "../mkdocs.yml" ]; then
               cd ..
               mkdocs gh-deploy --force
