@@ -9,6 +9,7 @@
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
 ![Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)&ensp;
+[![YouTube Video Views](https://img.shields.io/youtube/views/QT_OhygMVXU?style=social&label=YOUTUBE)](https://www.youtube.com/watch?v=QT_OhygMVXU)&ensp;
 <!-- [![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/UFO_Agent)](https://twitter.com/intent/follow?screen_name=UFO_Agent) -->
 
 </div>
@@ -24,7 +25,7 @@
 <b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="24"> operates as a dual-agent framework, encompassing:
 - <b>HostAgent (Previously AppAgent) 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
 - <b>AppAgent (Previously ActAgent) 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
-- <b>Control Interaction 🎮</b>, is tasked with translating actions from HostAgent and AppAgent into interactions with the application and its UI controls. It's essential that the targeted controls are compatible with the Windows **UI Automation** API.
+- <b>Control Interaction 🎮</b>, is tasked with translating actions from HostAgent and AppAgent into interactions with the application and its UI controls. It's essential that the targeted controls are compatible with the Windows **UI Automation** or **Win32** API.
 
 Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](https://arxiv.org/abs/2402.07939).
 <h1 align="center">
@@ -70,10 +71,11 @@ These sources provide insights into the evolving landscape of technology and the
 ## 💥 Highlights
 
 - [x] **First Windows Agent** - UFO is the pioneering agent framework capable of translating user requests in natural language into actionable operations on Windows OS.
-- [x] **RAG Enhanced** - UFO is enhanced by Retrieval Augmented Generation (RAG) from heterogeneous sources to promote its ability, including offling help documents and online search engine.
-- [x] **Interactive Mode** - UFO facilitates multiple sub-requests from users within the same session, enabling the completion of complex tasks seamlessly.
-- [x] **Action Safeguard** - UFO incorporates safeguards to prompt user confirmation for sensitive actions, enhancing security and preventing inadvertent operations.
-- [x] **Easy Extension** - UFO offers extensibility, allowing for the integration of additional functionalities and control types to tackle diverse and intricate tasks with ease.
+- [x] **Agent as an Expert** - UFO is enhanced by Retrieval Augmented Generation (RAG) from heterogeneous sources, including offline help documents, online search engines, and human demonstrations, making the agent an application "expert".
+- [x] **Rich Skill Set** - UFO is equipped with a diverse set of skills to support comprehensive automation, such as mouse, keyboard, native API, and "Copilot".
+- [x] **Interactive Mode** - UFO facilitates multiple sub-requests from users within the same session, enabling the seamless completion of complex tasks.
+- [x] **Agent Customization** - UFO allows users to customize their own agents by providing additional information. The agent will proactively query users for details when necessary to better tailor its behavior.
+- [x] **Scalable AppAgent Creation** - UFO offers extensibility, allowing users and app developers to create their own AppAgents in an easy and scalable way.
 
 
 ## ✨ Getting Started
