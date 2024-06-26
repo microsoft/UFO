@@ -26,8 +26,8 @@ jobs:
           pip install mkdocs mkdocs-material
 
       - name: Deploy to GitHub Pages
+        env:
+          GITHUB_TOKEN: ${{ secrets.ACTIONS_DEPLOY_KEY }}
         run: |
           cd documents
-          mkdocs gh-deploy --config-file mkdocs.yml --force
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          mkdocs gh-deploy --config-file mkdocs.yml --force --remote-name origin --remote-url https://github.com/${{ github.repository }}.git
