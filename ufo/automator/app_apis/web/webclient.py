@@ -51,7 +51,7 @@ class WebWinCOMReceiver(ReceiverBasic):
         :param css_selector: The CSS selector for targeted extraction.
         :return: The result content.
         """
-        print("-----------------------------callig crawler-------------------------------")
+
         result = self.client.run(
             url=url,
             only_text=only_text,

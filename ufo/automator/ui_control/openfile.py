@@ -128,7 +128,6 @@ class FileController:
         title_pattern = self.app_map.get_app_name(self.APP)
         if title_pattern is None:
             return None
-        print(title_pattern)
         for window_id, window_wrapper in desktop_windows_dict.items():
             print("wrapper name:", window_wrapper.window_text())
             if (
