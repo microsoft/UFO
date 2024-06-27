@@ -38,6 +38,7 @@ class ContextNames(Enum):
 ```
 Each attribute is a string that represents a specific aspect of the session context, ensuring that all necessary information is accessible and manageable within the application.
 
+
 ## Attributes Description
 
 - `ID`: The ID of the session.
