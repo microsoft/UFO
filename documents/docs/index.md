@@ -34,6 +34,7 @@ Both agents leverage the multi-modal capabilities of Visual Language Model (VLM)
 ## 🚀 Quick Start
 Please follow the [Quick Start Guide](./getting_started/quick_start.md) to get started with UFO.
 
+
 ## 💥 Highlights
 
 - [x] **First Windows Agent** - UFO is the pioneering agent framework capable of translating user requests in natural language into actionable operations on Windows OS.

@@ -77,6 +77,15 @@ Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction.
 Please enter your request to be completed🛸:
 ```
 
+
+###  Step 4 🎥: Execution Logs 
+
+You can find the screenshots taken and request & response logs in the following folder:
+```
+./ufo/logs/<your_task_name>/
+```
+You may use them to debug, replay, or analyze the agent output.
+
 #### ⚠️Reminder:  ####
 - Before UFO executing your request, please make sure the targeted applications are active on the system.
 - The GPT-V accepts screenshots of your desktop and application GUI as input. Please ensure that no sensitive or confidential information is visible or captured during the execution process. For further information, refer to [DISCLAIMER.md](https://github.com/microsoft/UFO/blob/vyokky/dev/DISCLAIMER.md).

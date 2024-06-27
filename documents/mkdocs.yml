@@ -1,16 +1,14 @@
 site_name: UFO Documentation
 nav:
   - Home: index.md
+  - Project Directory Structure: project_directory_structure.md
   - Getting Started: 
     - Quick Start: getting_started/quick_start.md
     - More Guidance: getting_started/more_guidance.md
-  - Project: 
-      - Project Directory Structure: project/project_directory_structure.md
+  - Modules:
       - Session: project/session.md
       - Round: project/round.md
-      - Agent: project/agent.md
       - Context: project/context.md
-      - Automator: project/automator.md
   - Configurations: 
       - User Configuration: configurations/user_configuration.md
       - Developer Configuration: configurations/developer_configuration.md
@@ -32,6 +30,7 @@ nav:
       - Ollama: supported_models/ollama.md
       - Custom Model: supported_models/custom_model.md
   - Agents:
+      - Overview: agents/overview.md
       - Agent Design:
           - Memory: agents/design/memory.md
           - Blackboard: agents/design/blackboard.md
@@ -46,11 +45,14 @@ nav:
       - Help Document Provision: creating_app_agent/help_document_provision.md
       - Demonstration Provision: creating_app_agent/demonstration_provision.md
       - Warpping App-Native API: creating_app_agent/warpping_app_native_api.md
+  - Automator:
+      - Overview: automator/overview.md
+      - UI Automator: automator/ui_automator.md
+      - Web Automator: automator/web_automator.md
+      - WinCom Automator: automator/wincom_automator.md
   - Evaluation:
-      - Evaluation: evaluation/evaluation.md
-      - Evaluation Session: evaluation/evaluation_session.md
-      - Evaluation Round: evaluation/evaluation_round.md
-      - Evaluation Agent: evaluation/evaluation_agent.md
+      - Overview: evaluation/overview.md
+      - Evaluation Process: evaluation/evaluation_process.md
   - Prompts:
       - Basic Prompts: prompts/basic_prompts.md
       - Examples Prompts: prompts/examples_prompts.md
@@ -70,8 +72,24 @@ nav:
 markdown_extensions:
   - pymdownx.tasklist
 
+# theme:
+#   name: readthedocs
+
 theme:
   name: readthedocs
+
+plugins:
+    - search
+    - mkdocstrings:
+        handlers:
+            python:
+                paths: ["../ufo"]
+                options:
+                    docstring_style: sphinx
+                    docstring_section_style: list
+                    merge_init_into_class: true
+                    show_docstring_returns: true
+
 
 # theme:
 #   name: material
@@ -83,4 +101,4 @@ theme:
 #     code: Roboto Mono
 
   # logo: ./assets/ufo_blue.png
-  favicon: ./assets/ufo_blue.png
+favicon: ./assets/ufo_blue.png
