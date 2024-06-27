@@ -34,13 +34,13 @@ class WebWinCOMReceiver(ReceiverBasic):
 
     @lru_cache()
     def create_crawler(self):
-        crawler = WebCrawler(verbose=True)
+        crawler = WebCrawler(verbose=False)
         crawler.warmup()
         return crawler
 
     def run_crawler(self, url: str, only_text: bool = False, screenshot: bool = False, 
                     chunking_strategy: Optional[Type] = None, extraction_strategy: Optional[Type] = None,
-                    css_selector: Optional[str] = None, **kwargs) -> str:
+                    css_selector: Optional[str] = None, verbose=False, **kwargs) -> str:
         """
         Run the crawler with various options.
         :param url: The URL of the webpage.
