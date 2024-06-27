@@ -2,6 +2,7 @@
 
 A `Round` is a single interaction between the user and UFO that processes a single user request. A `Round` is responsible for orchestrating the `HostAgent` and `AppAgent` to fulfill the user's request.
 
+
 ## Round Lifecycle
 
 In a `Round`, the following steps are executed:
