@@ -39,7 +39,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 - 📅 2024-06-25: **New Release for v0.2.1!**  We are excited to announce the release of version 0.2.1! This update includes several new features and improvements:
     1. **HostAgent Refactor:** We've refactored the HostAgent to enhance its efficiency in managing AppAgents within UFO.
     2. **Evaluation Agent:** Introducing an evaluation agent that assesses task completion and provides real-time feedback.
-    3. **Google Gemini Support:** UFO now supports Google Gemini as the inference engine. Refer to our detailed guide in [README.md](/model_worker/readme.md).
+    3. **Google Gemini Support:** UFO now supports Google Gemini as the inference engine. Refer to our detailed guide in [Documentation](https://microsoft.github.io/UFO/supported_models/gemini/).
     4. **Customized User Agents:** Users can now create customized agents by simply answering a few questions.
 - 📅 2024-05-21: We have reached 5K stars!✨
 - 📅 2024-05-08: **New Release for v0.1.1!** We've made some significant updates! Previously known as AppAgent and ActAgent, we've rebranded them to HostAgent and AppAgent to better align with their functionalities. Explore the latest enhancements:
@@ -134,7 +134,7 @@ You can utilize non-visual models (e.g., GPT-4) for each agent by configuring th
 Optionally, you can set a backup language model (LLM) engine in the `BACKUP_AGENT` field to handle cases where the primary engines fail during inference. Ensure you configure these settings accurately to leverage non-visual models effectively.
 
 #### NOTE 💡 
-UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](./model_worker/README.md) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev.yaml`.
+UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](https://microsoft.github.io/UFO/supported_models/overview/) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev.yaml`.
 
 ### 📔 Step 3: Additional Setting for RAG (optional).
 If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file.
@@ -223,6 +223,7 @@ You may use them to debug, replay, or analyze the agent output.
 
 
 ## ❓Get help 
+* Please first check our our documentation [here](https://microsoft.github.io/UFO/).
 * ❔GitHub Issues (prefered)
 * For other communications, please contact [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com).
 ---
