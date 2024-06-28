@@ -237,6 +237,7 @@ class BaseRound(ABC):
     def log_path(self) -> str:
         """
         Get the log path of the round.
+
         return: The log path of the round.
         """
         return self._context.get(ContextNames.LOG_PATH)
@@ -244,6 +245,7 @@ class BaseRound(ABC):
     def capture_last_snapshot(self, sub_round_id: Optional[int] = None) -> None:
         """
         Capture the last snapshot of the application, including the screenshot and the XML file if configured.
+        :param sub_round_id: The id of the sub-round, default is None.
         """
 
         # Capture the final screenshot
@@ -306,16 +308,7 @@ class BaseRound(ABC):
 
 class BaseSession(ABC):
     """
-    A basic session in UFO. A session consists of multiple rounds of interactions.
-    The handle function is the core function to handle the session. UFO runs with the state transition and handles the different states, using the state pattern.
-    A session follows the following steps:
-    1. Begins with the ''CONTINUE'' state for the HostAgent to select an application.
-    2. After the application is selected, the session moves to the ''CONTINUE'' state for the AppAgent to select an action. This process continues until all the actions are completed.
-    3. When all the actions are completed for the current user request at a round, the session moves to the ''FINISH'' state.
-    4. The session will ask the user if they want to continue with another request. If the user wants to continue, the session will start a new round and move to the ''SWITCH'' state.
-    5. If the user does not want to continue, the session will transition to the ''COMPLETE'' state.
-    6. The session will be evaluated if the evaluation is enabled.
-    7. At this point, the session will ask the user if they want to save the experience. If the user wants to save the experience, the session will save the experience and terminate.
+    A basic session in UFO. A session consists of multiple rounds of interactions and conversations.
     """
 
     def __init__(self, task: str, should_evaluate: bool, id: int) -> None:

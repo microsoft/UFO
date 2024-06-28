@@ -8,12 +8,14 @@
 [![arxiv](https://img.shields.io/badge/Paper-arXiv:202402.07939-b31b1b.svg)](https://arxiv.org/abs/2402.07939)&ensp;
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
-![Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)&ensp;
+[![Documentation](https://img.shields.io/badge/Documentation-%230ABAB5?style=flat&logo=readthedocs&logoColor=black)](https://microsoft.github.io/UFO/)&ensp;
+[![YouTube](https://img.shields.io/badge/YouTube-white?logo=youtube&logoColor=%23FF0000)](https://www.youtube.com/watch?v=QT_OhygMVXU)&ensp;
 <!-- [![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/UFO_Agent)](https://twitter.com/intent/follow?screen_name=UFO_Agent) -->
+<!-- ![Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)&ensp; -->
 
 </div>
 
-**UFO** is a **UI-Focused** dual-agent framework to fulfill user requests on **Windows OS** by seamlessly navigating and operating within individual or spanning multiple applications.
+**UFO** is a **UI-Focused** multi-agent framework to fulfill user requests on **Windows OS** by seamlessly navigating and operating within individual or spanning multiple applications.
 
 <h1 align="center">
     <img src="./assets/overview_n.png"/> 
@@ -21,10 +23,10 @@
 
 
 ## 🕌 Framework
-<b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="24"> operates as a dual-agent framework, encompassing:
-- <b>HostAgent (Previously AppAgent) 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
-- <b>AppAgent (Previously ActAgent) 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
-- <b>Control Interaction 🎮</b>, is tasked with translating actions from HostAgent and AppAgent into interactions with the application and its UI controls. It's essential that the targeted controls are compatible with the Windows **UI Automation** API.
+<b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="24"> operates as a multi-agent framework, encompassing:
+- <b>HostAgent 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
+- <b>AppAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
+- <b>Control Interaction 🎮</b>, is tasked with translating actions from HostAgent and AppAgent into interactions with the application and its UI controls. It's essential that the targeted controls are compatible with the Windows **UI Automation** or **Win32** API.
 
 Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](https://arxiv.org/abs/2402.07939).
 <h1 align="center">
@@ -33,10 +35,11 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 📢 News
+- 📅 2024-06-28: We are thrilled to announce that our official introduction video is now available on [YouTube](https://www.youtube.com/watch?v=QT_OhygMVXU)! Additionally, you can check out the early version of our [documentation](https://microsoft.github.io/UFO/). We welcome your contributions and feedback!
 - 📅 2024-06-25: **New Release for v0.2.1!**  We are excited to announce the release of version 0.2.1! This update includes several new features and improvements:
     1. **HostAgent Refactor:** We've refactored the HostAgent to enhance its efficiency in managing AppAgents within UFO.
     2. **Evaluation Agent:** Introducing an evaluation agent that assesses task completion and provides real-time feedback.
-    3. **Google Gemini Support:** UFO now supports Google Gemini as the inference engine. Refer to our detailed guide in [README.md](/model_worker/readme.md).
+    3. **Google Gemini Support:** UFO now supports Google Gemini as the inference engine. Refer to our detailed guide in [Documentation](https://microsoft.github.io/UFO/supported_models/gemini/).
     4. **Customized User Agents:** Users can now create customized agents by simply answering a few questions.
 - 📅 2024-05-21: We have reached 5K stars!✨
 - 📅 2024-05-08: **New Release for v0.1.1!** We've made some significant updates! Previously known as AppAgent and ActAgent, we've rebranded them to HostAgent and AppAgent to better align with their functionalities. Explore the latest enhancements:
@@ -44,7 +47,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
     2. **Win32 Support:** We've incorporated support for [Win32](https://learn.microsoft.com/en-us/windows/win32/controls/window-controls) as a control backend, enhancing our UI automation capabilities.
     3. **Extended Application Interaction:** UFO now goes beyond UI controls, allowing interaction with your application through keyboard inputs and native APIs! Presently, we support Word ([examples](/ufo/prompts/apps/word/api.yaml)), with more to come soon. Customize and build your own interactions.
     4. **Control Filtering:** Streamline LLM's action process by using control filters to remove irrelevant control items. Enable them in [config_dev.yaml](/ufo/config/config_dev.yaml) under the `control filtering` section at the bottom.
-- 📅 2024-03-25: **New Release for v0.0.1!** Check out our exciting new features:
+- 📅 2024-03-25: **New Release for v0.0.1!** Check out our exciting new features.
     1. We now support creating your help documents for each Windows application to become an app expert. Check the [README](./learner/README.md) for more details!
     2. UFO now supports RAG from offline documents and online Bing search.
     3. You can save the task completion trajectory into its memory for UFO's reference, improving its future success rate!
@@ -70,10 +73,11 @@ These sources provide insights into the evolving landscape of technology and the
 ## 💥 Highlights
 
 - [x] **First Windows Agent** - UFO is the pioneering agent framework capable of translating user requests in natural language into actionable operations on Windows OS.
-- [x] **RAG Enhanced** - UFO is enhanced by Retrieval Augmented Generation (RAG) from heterogeneous sources to promote its ability, including offling help documents and online search engine.
-- [x] **Interactive Mode** - UFO facilitates multiple sub-requests from users within the same session, enabling the completion of complex tasks seamlessly.
-- [x] **Action Safeguard** - UFO incorporates safeguards to prompt user confirmation for sensitive actions, enhancing security and preventing inadvertent operations.
-- [x] **Easy Extension** - UFO offers extensibility, allowing for the integration of additional functionalities and control types to tackle diverse and intricate tasks with ease.
+- [x] **Agent as an Expert** - UFO is enhanced by Retrieval Augmented Generation (RAG) from heterogeneous sources, including offline help documents, online search engines, and human demonstrations, making the agent an application "expert".
+- [x] **Rich Skill Set** - UFO is equipped with a diverse set of skills to support comprehensive automation, such as mouse, keyboard, native API, and "Copilot".
+- [x] **Interactive Mode** - UFO facilitates multiple sub-requests from users within the same session, enabling the seamless completion of complex tasks.
+- [x] **Agent Customization** - UFO allows users to customize their own agents by providing additional information. The agent will proactively query users for details when necessary to better tailor its behavior.
+- [x] **Scalable AppAgent Creation** - UFO offers extensibility, allowing users and app developers to create their own AppAgents in an easy and scalable way.
 
 
 ## ✨ Getting Started
@@ -105,7 +109,7 @@ API_TYPE: "openai" , # The API type, "openai" for the OpenAI API.
 API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint.
 API_KEY: "sk-",  # The OpenAI API key, begin with sk-
 API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model by now that accepts visual input
+API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
 ```
 
 #### Azure OpenAI (AOAI)
@@ -115,7 +119,7 @@ API_TYPE: "aoai" , # The API type, "aoai" for the Azure OpenAI.
 API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
 API_KEY: "YOUR_KEY",  # The aoai API key
 API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model by now that accepts visual input
+API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
 API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 ```
 You can also non-visial model (e.g., GPT-4) for each agent, by setting `VISUAL_MODE: False` and proper `API_MODEL` (openai) and `API_DEPLOYMENT_ID` (aoai). You can also optionally set an backup LLM engine in the field of `BACKUP_AGENT` if the above engines failed during the inference.
@@ -129,8 +133,8 @@ You can utilize non-visual models (e.g., GPT-4) for each agent by configuring th
 
 Optionally, you can set a backup language model (LLM) engine in the `BACKUP_AGENT` field to handle cases where the primary engines fail during inference. Ensure you configure these settings accurately to leverage non-visual models effectively.
 
-#### NOTE
-💡 UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](./model_worker/README.md) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev`.yaml.
+#### NOTE 💡 
+UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](https://microsoft.github.io/UFO/supported_models/overview/) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev.yaml`.
 
 ### 📔 Step 3: Additional Setting for RAG (optional).
 If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file.
@@ -219,8 +223,9 @@ You may use them to debug, replay, or analyze the agent output.
 
 
 ## ❓Get help 
+* Please first check our our documentation [here](https://microsoft.github.io/UFO/).
 * ❔GitHub Issues (prefered)
-* For other communications, please contact ufo-agent@microsoft.com
+* For other communications, please contact [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com).
 ---
 
 ## 🎬 Demo Examples
@@ -249,8 +254,6 @@ https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4f
 Please consult the [WindowsBench](https://arxiv.org/pdf/2402.07939.pdf) provided in Section A of the Appendix within our technical report. Here are some tips (and requirements) to aid in completing your request:
 
 - Prior to UFO execution of your request, ensure that the targeted application is active (though it may be minimized).
-- Occasionally, requests to GPT-V may trigger content safety measures. UFO will attempt to retry regardless, but adjusting the size or scale of the application window may prove helpful. We are actively solving this issue.
-- Currently, UFO supports a limited set of applications and UI controls that are compatible with the Windows **UI Automation** API. Our future plans include extending support to the Win32 API to enhance its capabilities.
 - Please note that the output of GPT-V may not consistently align with the same request. If unsuccessful with your initial attempt, consider trying again.
 
 
@@ -261,7 +264,7 @@ If you use UFO in your research, please cite our paper:
 ```
 @article{ufo,
   title={{UFO: A UI-Focused Agent for Windows OS Interaction}},
-  author={Zhang, Chaoyun and Li, Liqun and He, Shilin and  Zhang, Xu and Qiao, Bo and  Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and  Zhang, Qi},
+  author={Zhang, Chaoyun and Li, Liqun and He, Shilin and Zhang, Xu and Qiao, Bo and  Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and  Zhang, Qi},
   journal={arXiv preprint arXiv:2402.07939},
   year={2024}
 }
@@ -270,7 +273,7 @@ If you use UFO in your research, please cite our paper:
 ## 📝 Todo List
 - [x] RAG enhanced UFO.
 - [x] Support more control using Win32 API.
-- [ ] Documentation.
+- [x] [Documentation](https://microsoft.github.io/UFO/).
 - [ ] Support local host GUI interaction model.
 - [ ] Chatbox GUI for UFO.
 
