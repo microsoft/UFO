@@ -27,4 +27,5 @@ A: It depends on the language model you are using. Most of LLMs support multiple
 ## Q8: It shows the error `Error making API request: ('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))` when I run UFO. What should I do?
 A: This means the LLM endpoint is not accessible. You can check the network connection (e.g. VPN) and the status of the LLM endpoint. 
 
-To get more support, please submit an issue on the [GitHub Issues](https://github.com/microsoft/UFO/issues), or send an email to [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com).
+!!! tip
+    To get more support, please submit an issue on the [GitHub Issues](https://github.com/microsoft/UFO/issues), or send an email to [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com).
