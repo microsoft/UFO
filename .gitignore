@@ -26,8 +26,9 @@ vectordb/docs/*
 vectordb/experience/*
 vectordb/demonstration/*
 
-# Ignore the data files
+# Ignore the data files and scripts
 tasks/*
+scripts/*
 
 # Don't ignore the example files
 !vectordb/docs/example/

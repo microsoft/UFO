@@ -13,16 +13,8 @@ nav:
       - User Configuration: configurations/user_configuration.md
       - Developer Configuration: configurations/developer_configuration.md
       - Model Pricing: configurations/pricing_configuration.md
-  - Advanced Usage: 
-      - Reinforcing AppAgent:
-        - Learning from Demonstration: advanced_usage/learning_from_demonstration.md
-        - Learning from Bing Search: advanced_usage/learning_from_bing_search.md
-        - Experience Learning: advanced_usage/experience_learning.md
-        - Learning from Help Document: advanced_usage/learning_from_help_document.md
-      - Follower Mode: advanced_usage/follower_model.md
-      - Control Filtering: advanced_usage/control_filtering.md
-      - Customization: advanced_usage/customization.md
   - Supported Models: 
+      - Overview: supported_models/overview.md
       - OpenAI: supported_models/openai.md
       - Azure OpenAI: supported_models/azure_openai.md
       - Qwen: supported_models/qwen.md
@@ -41,10 +33,11 @@ nav:
       - AppAgent: agents/app_agent.md
       - FollowerAgent: agents/follower_agent.md
       - EvaluationAgent: agents/evaluation.md
-  - Creating Your AppAgent: 
-      - Help Document Provision: creating_app_agent/help_document_provision.md
-      - Demonstration Provision: creating_app_agent/demonstration_provision.md
-      - Warpping App-Native API: creating_app_agent/warpping_app_native_api.md
+  - Prompts:
+      - Overview: prompts/overview.md
+      - Basic Prompts: prompts/basic_prompts.md
+      - Examples Prompts: prompts/examples_prompts.md
+      - API Prompts: prompts/api_prompts.md
   - Automator:
       - Overview: automator/overview.md
       - UI Automator: automator/ui_automator.md
@@ -53,15 +46,25 @@ nav:
   - Evaluation:
       - Overview: evaluation/overview.md
       - Evaluation Process: evaluation/evaluation_process.md
-  - Prompts:
-      - Basic Prompts: prompts/basic_prompts.md
-      - Examples Prompts: prompts/examples_prompts.md
-      - API Prompts: prompts/api_prompts.md
-  - Logs: 
+  - Logs:
+      - Overview: logs/overview.md
       - Request Logs: logs/request_logs.md
       - Step Logs: logs/step_logs.md
       - Evaluation Logs: logs/evaluation_logs.md
       - Screenshots: logs/screenshots.md
+  - Advanced Usage: 
+      - Reinforcing AppAgent:
+        - Learning from Demonstration: advanced_usage/learning_from_demonstration.md
+        - Learning from Bing Search: advanced_usage/learning_from_bing_search.md
+        - Experience Learning: advanced_usage/experience_learning.md
+        - Learning from Help Document: advanced_usage/learning_from_help_document.md
+      - Follower Mode: advanced_usage/follower_model.md
+      - Control Filtering: advanced_usage/control_filtering.md
+      - Customization: advanced_usage/customization.md
+  - Creating Your AppAgent: 
+      - Help Document Provision: creating_app_agent/help_document_provision.md
+      - Demonstration Provision: creating_app_agent/demonstration_provision.md
+      - Warpping App-Native API: creating_app_agent/warpping_app_native_api.md
   - About:
       - Contributing: about/CONTRIBUTING.md
       - License: about/LICENSE.md
