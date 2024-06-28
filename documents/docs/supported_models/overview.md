@@ -12,3 +12,7 @@ Please refer to the following sections for more information on the supported mod
 | `QWEN` | [QWEN API](./qwen.md) |
 | `Ollama` | [Ollama API](./ollama.md) |
 | `Custom` | [Custom API](./custom_model.md) |
+
+
+!!! info
+    Each model is implemented as a separate class in the `ufo/llm` directory, and uses the functions `chat_completion` defined in the `BaseService` class of the `ufo/llm/base.py` file to obtain responses from the model.
