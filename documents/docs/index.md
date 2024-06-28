@@ -9,7 +9,7 @@
 
 ## Introduction
 
-**UFO** is a **UI-Focused** dual-agent framework to fulfill user requests on **Windows OS** by seamlessly navigating and operating within individual or spanning multiple applications.
+**UFO** is a **UI-Focused** multi-agent framework to fulfill user requests on **Windows OS** by seamlessly navigating and operating within individual or spanning multiple applications.
 
 <h1 align="center">
     <img src="./img/overview_n.png"/> 
@@ -18,7 +18,7 @@
 
 
 ## 🕌 Framework
-<b>UFO</b> <img src="./img/ufo_blue.png" alt="UFO Image" width="24"> operates as a dual-agent framework, encompassing:
+<b>UFO</b> <img src="./img/ufo_blue.png" alt="UFO Image" width="24"> operates as a multi-agent framework, encompassing:
 
 - <b>HostAgent 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
 

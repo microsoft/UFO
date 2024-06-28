@@ -35,7 +35,7 @@ def chat_completion(
         pass
 ```
 
-### Step 3
+## Step 3
 After implementing the LLM model class, you can configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the custom LLM model. The following is an example configuration for the custom LLM model:
 
 ```yaml
@@ -45,5 +45,5 @@ After implementing the LLM model class, you can configure the `HOST_AGENT` and `
     API_MODEL: "YOUR_MODEL",  # The custom LLM model name.
 ```
 
-### Step 4
+## Step 4
 After configuring the `HOST_AGENT` and `APP_AGENT` with the custom LLM model, you can start using UFO to interact with the custom LLM model for various tasks on Windows OS. Please refer to the [Quick Start Guide](../getting_started/quick_start.md) for more details on how to get started with UFO.
