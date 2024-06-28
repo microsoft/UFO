@@ -15,30 +15,38 @@ class ContextNames(Enum):
     The context names.
     """
 
-    ID: str = "ID"
-    MODE = "MODE"
-    LOG_PATH = "LOG_PATH"
-    REQUEST = "REQUEST"
-    SUBTASK = "SUBTASK"
-    PREVIOUS_SUBTASKS = "PREVIOUS_SUBTASKS"
-    HOST_MESSAGE = "HOST_MESSAGE"
-    REQUEST_LOGGER = "REQUEST_LOGGER"
-    LOGGER = "LOGGER"
-    EVALUATION_LOGGER = "EVALUATION_LOGGER"
-    ROUND_STEP = "ROUND_STEP"
-    SESSION_STEP = "SESSION_STEP"
-    CURRENT_ROUND_ID = "CURRENT_ROUND_ID"
-    APPLICATION_WINDOW = "APPLICATION_WINDOW"
-    APPLICATION_PROCESS_NAME = "APPLICATION_PROCESS_NAME"
-    APPLICATION_ROOT_NAME = "APPLICATION_ROOT_NAME"
-    CONTROL_REANNOTATION = "CONTROL_REANNOTATION"
-    SESSION_COST = "SESSION_COST"
-    ROUND_COST = "ROUND_COST"
-    ROUND_SUBTASK_AMOUNT = "ROUND_SUBTASK_AMOUNT"
-    CURRENT_ROUND_STEP = "CURRENT_ROUND_STEP"
-    CURRENT_ROUND_COST = "CURRENT_ROUND_COST"
-    CURRENT_ROUND_SUBTASK_AMOUNT = "CURRENT_ROUND_SUBTASK_AMOUNT"
-    STRUCTURAL_LOGS = "STRUCTURAL_LOGS"
+    ID = "ID"  # The ID of the session
+    MODE = "MODE"  # The mode of the session
+    LOG_PATH = "LOG_PATH"  # The folder path to store the logs
+    REQUEST = "REQUEST"  # The current request
+    SUBTASK = "SUBTASK"  # The current subtask processed by the AppAgent
+    PREVIOUS_SUBTASKS = (
+        "PREVIOUS_SUBTASKS"  # The previous subtasks processed by the AppAgent
+    )
+    HOST_MESSAGE = "HOST_MESSAGE"  # The message from the HostAgent sent to the AppAgent
+    REQUEST_LOGGER = "REQUEST_LOGGER"  # The logger for the LLM request
+    LOGGER = "LOGGER"  # The logger for the session
+    EVALUATION_LOGGER = "EVALUATION_LOGGER"  # The logger for the evaluation
+    ROUND_STEP = "ROUND_STEP"  # The step of all rounds
+    SESSION_STEP = "SESSION_STEP"  # The step of the current session
+    CURRENT_ROUND_ID = "CURRENT_ROUND_ID"  # The ID of the current round
+    APPLICATION_WINDOW = "APPLICATION_WINDOW"  # The window of the application
+    APPLICATION_PROCESS_NAME = (
+        "APPLICATION_PROCESS_NAME"  # The process name of the application
+    )
+    APPLICATION_ROOT_NAME = "APPLICATION_ROOT_NAME"  # The root name of the application
+    CONTROL_REANNOTATION = "CONTROL_REANNOTATION"  # The re-annotation of the control provided by the AppAgent
+    SESSION_COST = "SESSION_COST"  # The cost of the session
+    ROUND_COST = "ROUND_COST"  # The cost of all rounds
+    ROUND_SUBTASK_AMOUNT = (
+        "ROUND_SUBTASK_AMOUNT"  # The amount of subtasks in all rounds
+    )
+    CURRENT_ROUND_STEP = "CURRENT_ROUND_STEP"  # The step of the current round
+    CURRENT_ROUND_COST = "CURRENT_ROUND_COST"  # The cost of the current round
+    CURRENT_ROUND_SUBTASK_AMOUNT = (
+        "CURRENT_ROUND_SUBTASK_AMOUNT"  # The amount of subtasks in the current round
+    )
+    STRUCTURAL_LOGS = "STRUCTURAL_LOGS"  # The structural logs of the session
 
     @property
     def default_value(self) -> Any:
