@@ -9,12 +9,12 @@ To use the OpenAI API, you need to create an account on the [OpenAI website](htt
 After obtaining the API key, you can configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the OpenAI API. The following is an example configuration for the OpenAI API:
 
 ```yaml
-    VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
-    API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
-    API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
-    API_KEY: "sk-",  # The OpenAI API key, begin with sk-
-    API_VERSION: "2024-02-15-preview", # The version of the API, "2024-02-15-preview" by default
-    API_MODEL: "gpt-4-vision-preview",  # The OpenAI model name, "gpt-4-vision-preview" by default. You may also use "gpt-4o" for using the GPT-4O model.
+VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
+API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
+API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
+API_KEY: "sk-",  # The OpenAI API key, begin with sk-
+API_VERSION: "2024-02-15-preview", # The version of the API, "2024-02-15-preview" by default
+API_MODEL: "gpt-4-vision-preview",  # The OpenAI model name, "gpt-4-vision-preview" by default. You may also use "gpt-4o" for using the GPT-4O model.
 ```
 
 !!! tip

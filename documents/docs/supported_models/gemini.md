@@ -14,10 +14,10 @@ pip install -U google-generativeai==0.7.0
 Configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the Google Gemini API. The following is an example configuration for the Google Gemini API:
 
 ```yaml
-    VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
-    API_TYPE: "Gemini" ,
-    API_KEY: "YOUR_KEY",  
-    API_MODEL: "YOUR_MODEL"
+VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
+API_TYPE: "Gemini" ,
+API_KEY: "YOUR_KEY",  
+API_MODEL: "YOUR_MODEL"
 ```
 
 !!! tip

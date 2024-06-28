@@ -24,10 +24,10 @@ ollama run YOUR_MODEL
 After obtaining the API key, you can configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the Ollama API. The following is an example configuration for the Ollama API:
 
 ```yaml
-    VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
-    API_TYPE: "Ollama" ,
-    API_BASE: "YOUR_ENDPOINT",   
-    API_MODEL: "YOUR_MODEL"
+VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
+API_TYPE: "Ollama" ,
+API_BASE: "YOUR_ENDPOINT",   
+API_MODEL: "YOUR_MODEL"
 ```
 
 !!!tip

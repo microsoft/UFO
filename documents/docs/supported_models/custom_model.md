@@ -39,10 +39,10 @@ def chat_completion(
 After implementing the LLM model class, you can configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the custom LLM model. The following is an example configuration for the custom LLM model:
 
 ```yaml
-    VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
-    API_TYPE: "custom_model" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
-    API_BASE: "YOUR_ENDPOINT", #  The custom LLM API address.
-    API_MODEL: "YOUR_MODEL",  # The custom LLM model name.
+VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
+API_TYPE: "custom_model" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
+API_BASE: "YOUR_ENDPOINT", #  The custom LLM API address.
+API_MODEL: "YOUR_MODEL",  # The custom LLM model name.
 ```
 
 ## Step 4
