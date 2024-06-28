@@ -24,8 +24,8 @@
 
 ## 🕌 Framework
 <b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="24"> operates as a multi-agent framework, encompassing:
-- <b>HostAgent (Previously AppAgent) 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
-- <b>AppAgent (Previously ActAgent) 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
+- <b>HostAgent 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
+- <b>AppAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
 - <b>Control Interaction 🎮</b>, is tasked with translating actions from HostAgent and AppAgent into interactions with the application and its UI controls. It's essential that the targeted controls are compatible with the Windows **UI Automation** or **Win32** API.
 
 Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](https://arxiv.org/abs/2402.07939).
