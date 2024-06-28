@@ -14,7 +14,7 @@ Below are the configuration options for the LLMs, using OpenAI and Azure OpenAI 
 | `API_TYPE` | The API type: "openai" for the OpenAI API, "aoai" for the AOAI API. | String | "openai" |
 | `API_BASE` | The API endpoint for the LLM | String | "https://api.openai.com/v1/chat/completions" |
 | `API_KEY` | The API key for the LLM | String | "sk-" |
-| `API_VERSION` | The version of the LLM model | String | "2024-02-15-preview" |
+| `API_VERSION` | The version of the API | String | "2024-02-15-preview" |
 | `API_MODEL` | The LLM model name | String | "gpt-4-vision-preview" |
 
 ### For Azure OpenAI (AOAI) API

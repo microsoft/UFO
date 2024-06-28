@@ -46,13 +46,14 @@ You can also non-visial model (e.g., GPT-4) for each agent, by setting `VISUAL_M
 ####  Non-Visual Model Configuration
 You can utilize non-visual models (e.g., GPT-4) for each agent by configuring the following settings in the `config.yaml` file:
 
-- ```VISUAL_MODE: False # To enable non-visual mode.```
-- Specify the appropriate `API_MODEL` (OpenAI) and `API_DEPLOYMENT_ID` (AOAI) for each agent.
+!!! info
+    - ```VISUAL_MODE: False```
+    - Specify the appropriate `API_MODEL` (OpenAI) and `API_DEPLOYMENT_ID` (AOAI) for each agent.
 
 Optionally, you can set a backup language model (LLM) engine in the `BACKUP_AGENT` field to handle cases where the primary engines fail during inference. Ensure you configure these settings accurately to leverage non-visual models effectively.
 
-#### NOTE 💡
-UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](https://github.com/microsoft/UFO/tree/main/model_worker) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev.yaml`.
+!!! note
+    UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](../supported_models/overview.md) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev.yaml`.
 
 
 ### 🎉 Step 3: Start UFO
@@ -86,6 +87,6 @@ You can find the screenshots taken and request & response logs in the following 
 ```
 You may use them to debug, replay, or analyze the agent output.
 
-#### ⚠️Reminder:  ####
-- Before UFO executing your request, please make sure the targeted applications are active on the system.
-- The GPT-V accepts screenshots of your desktop and application GUI as input. Please ensure that no sensitive or confidential information is visible or captured during the execution process. For further information, refer to [DISCLAIMER.md](https://github.com/microsoft/UFO/blob/vyokky/dev/DISCLAIMER.md).
+!!! note
+    - Before UFO executing your request, please make sure the targeted applications are active on the system.
+    - The GPT-V accepts screenshots of your desktop and application GUI as input. Please ensure that no sensitive or confidential information is visible or captured during the execution process. For further information, refer to [DISCLAIMER.md](https://github.com/microsoft/UFO/blob/vyokky/dev/DISCLAIMER.md).
