@@ -29,7 +29,7 @@ def run(self) -> None:
 
         # If the subtask ends, capture the last snapshot of the application.
         if self.state.is_subtask_end():
-            time.sleep(3)
+            time.sleep(configs["SLEEP_TIME"])
             self.capture_last_snapshot(sub_round_id=self.subtask_amount)
             self.subtask_amount += 1
 
