@@ -7,13 +7,13 @@ To use the Azure OpenAI API, you need to create an account on the [Azure OpenAI 
 After obtaining the API key, you can configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the Azure OpenAI API. The following is an example configuration for the Azure OpenAI API:
 
 ```yaml
-    VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
-    API_TYPE: "aoai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
-    API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
-    API_KEY: "YOUR_KEY",  # The aoai API key
-    API_VERSION: "2024-02-15-preview", # The version of the API, "2024-02-15-preview" by default
-    API_MODEL: "gpt-4-vision-preview",  # The OpenAI model name, "gpt-4-vision-preview" by default. You may also use "gpt-4o" for using the GPT-4O model.
-    API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
+VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
+API_TYPE: "aoai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
+API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
+API_KEY: "YOUR_KEY",  # The aoai API key
+API_VERSION: "2024-02-15-preview", # The version of the API, "2024-02-15-preview" by default
+API_MODEL: "gpt-4-vision-preview",  # The OpenAI model name, "gpt-4-vision-preview" by default. You may also use "gpt-4o" for using the GPT-4O model.
+API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 ```
 
 If you want to use AAD for authentication, you should also set the following configuration:

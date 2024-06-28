@@ -18,7 +18,7 @@ ollama run YOUR_MODEL
 ```
 
 !!!info
-    info When serving LLMs via Ollama, it will by default start a server at `http://localhost:11434`, which will later be used as the API base in `config.yaml`.
+    When serving LLMs via Ollama, it will by default start a server at `http://localhost:11434`, which will later be used as the API base in `config.yaml`.
 
 ## Step 3
 After obtaining the API key, you can configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the `config_template.yaml` file to `config.yaml`) to use the Ollama API. The following is an example configuration for the Ollama API:
