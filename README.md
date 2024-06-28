@@ -47,7 +47,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
     2. **Win32 Support:** We've incorporated support for [Win32](https://learn.microsoft.com/en-us/windows/win32/controls/window-controls) as a control backend, enhancing our UI automation capabilities.
     3. **Extended Application Interaction:** UFO now goes beyond UI controls, allowing interaction with your application through keyboard inputs and native APIs! Presently, we support Word ([examples](/ufo/prompts/apps/word/api.yaml)), with more to come soon. Customize and build your own interactions.
     4. **Control Filtering:** Streamline LLM's action process by using control filters to remove irrelevant control items. Enable them in [config_dev.yaml](/ufo/config/config_dev.yaml) under the `control filtering` section at the bottom.
-- 📅 2024-03-25: **New Release for v0.0.1!** Check out our exciting new features:
+- 📅 2024-03-25: **New Release for v0.0.1!** Check out our exciting new features.
     1. We now support creating your help documents for each Windows application to become an app expert. Check the [README](./learner/README.md) for more details!
     2. UFO now supports RAG from offline documents and online Bing search.
     3. You can save the task completion trajectory into its memory for UFO's reference, improving its future success rate!
@@ -273,7 +273,7 @@ If you use UFO in your research, please cite our paper:
 ## 📝 Todo List
 - [x] RAG enhanced UFO.
 - [x] Support more control using Win32 API.
-- [ ] Documentation.
+- [x] [Documentation](https://microsoft.github.io/UFO/).
 - [ ] Support local host GUI interaction model.
 - [ ] Chatbox GUI for UFO.
 
