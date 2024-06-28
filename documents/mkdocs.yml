@@ -70,7 +70,7 @@ nav:
       - License: about/LICENSE.md
       - Disclaimer: about/DISCLAIMER.md
       - Support: about/SUPPORT.md
-      - FAQ: about/faq.md
+  - FAQ: faq.md
 
 markdown_extensions:
   - pymdownx.tasklist
