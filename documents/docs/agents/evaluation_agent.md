@@ -15,8 +15,11 @@ The `EvaluationAgent` takes the following inputs for evaluation:
 | Action Trajectories | The action trajectories executed by the `HostAgent` and `AppAgent`. | List of Strings |
 | Screenshots | The screenshots captured during the execution. | List of Images |
 
+For more details on how to construct the inputs, please refer to the `EvaluationAgentPrompter` class in `ufo/prompter/eva_prompter.py`.
+
 !!! tip
     You can configure whether to use all screenshots or only the first and last screenshot for evaluation in the `config_dev.yaml` file.
+
 
 ## Evaluation Outputs
 The `EvaluationAgent` generates the following outputs after evaluation:
