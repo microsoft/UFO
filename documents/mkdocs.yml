@@ -32,7 +32,7 @@ nav:
       - HostAgent: agents/host_agent.md
       - AppAgent: agents/app_agent.md
       - FollowerAgent: agents/follower_agent.md
-      - EvaluationAgent: agents/evaluation.md
+      - EvaluationAgent: agents/evaluation_agent.md
   - Prompts:
       - Overview: prompts/overview.md
       - Basic Prompts: prompts/basic_prompts.md
@@ -43,9 +43,6 @@ nav:
       - UI Automator: automator/ui_automator.md
       - Web Automator: automator/web_automator.md
       - WinCom Automator: automator/wincom_automator.md
-  - Evaluation:
-      - Overview: evaluation/overview.md
-      - Evaluation Process: evaluation/evaluation_process.md
   - Logs:
       - Overview: logs/overview.md
       - Request Logs: logs/request_logs.md
@@ -58,7 +55,7 @@ nav:
         - Learning from Bing Search: advanced_usage/learning_from_bing_search.md
         - Experience Learning: advanced_usage/experience_learning.md
         - Learning from Help Document: advanced_usage/learning_from_help_document.md
-      - Follower Mode: advanced_usage/follower_model.md
+      - Follower Mode: advanced_usage/follower_mode.md
       - Control Filtering: advanced_usage/control_filtering.md
       - Customization: advanced_usage/customization.md
   - Creating Your AppAgent: 

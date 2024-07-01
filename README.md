@@ -28,7 +28,7 @@
 - <b>AppAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
 - <b>Control Interaction 🎮</b>, is tasked with translating actions from HostAgent and AppAgent into interactions with the application and its UI controls. It's essential that the targeted controls are compatible with the Windows **UI Automation** or **Win32** API.
 
-Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](https://arxiv.org/abs/2402.07939).
+Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](https://arxiv.org/abs/2402.07939) and [Documentation](https://microsoft.github.io/UFO/).
 <h1 align="center">
     <img src="./assets/framework_v2.png"/> 
 </h1>
