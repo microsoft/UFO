@@ -14,7 +14,7 @@ In the normal workflow, only the `HostAgent` and `AppAgent` are involved in the 
 Please see below the orchestration of the agents in UFO:
 
 <h1 align="center">
-    <img src="/img/framework_v2.png"/> 
+    <img src="../img/agents.png" alt="Agents Image" width="80%">
 </h1>
 
 ## Main Components
