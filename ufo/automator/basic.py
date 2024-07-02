@@ -75,12 +75,21 @@ class CommandBasic(ABC):
 
     @abstractmethod
     def execute(self):
+        """
+        Execute the command.
+        """
         pass
 
     def undo(self):
+        """
+        Undo the command.
+        """
         pass
 
     def redo(self):
+        """
+        Redo the command.
+        """
         self.execute()
 
     @classmethod

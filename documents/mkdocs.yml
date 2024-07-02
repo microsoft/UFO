@@ -41,8 +41,9 @@ nav:
   - Automator:
       - Overview: automator/overview.md
       - UI Automator: automator/ui_automator.md
+      - API Automator: automator/wincom_automator.md
       - Web Automator: automator/web_automator.md
-      - WinCom Automator: automator/wincom_automator.md
+      - AI Tool: automator/ai_tool_automator.md
   - Logs:
       - Overview: logs/overview.md
       - Request Logs: logs/request_logs.md
