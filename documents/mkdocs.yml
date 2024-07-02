@@ -35,7 +35,7 @@ nav:
       - EvaluationAgent: agents/evaluation_agent.md
   - Prompts:
       - Overview: prompts/overview.md
-      - Basic Prompts: prompts/basic_prompts.md
+      - Basic Prompts: prompts/basic_template.md
       - Examples Prompts: prompts/examples_prompts.md
       - API Prompts: prompts/api_prompts.md
   - Automator:

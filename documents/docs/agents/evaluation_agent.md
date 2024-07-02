@@ -30,6 +30,10 @@ The `EvaluationAgent` generates the following outputs after evaluation:
 | Sub-score | The sub-score of the evaluation in decomposing the evaluation into multiple sub-goals. | List of Dictionaries |
 | Complete | The completion status of the evaluation, can be `yes`, `no`, or `unsure`. | String |
 
+
+!!!info
+    The log of the evaluation results will be saved in the `logs/{task_name}/evaluation.log` file.
+
 The `EvaluationAgent` employs the CoT mechanism to first decompose the evaluation into multiple sub-goals and then evaluate each sub-goal separately. The sub-scores are then aggregated to determine the overall completion status of the evaluation.
 
 # Reference
