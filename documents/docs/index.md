@@ -65,7 +65,7 @@ UFO sightings have garnered attention from various media outlets, including:
 
 ## ❓Get help 
 * ❔GitHub Issues (prefered)
-* For other communications, please contact ufo-agent@microsoft.com
+* For other communications, please contact [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com)
 ---
 
 ## 🎬 Demo Examples
