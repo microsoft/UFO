@@ -81,9 +81,23 @@ The `HostAgent` progresses through different states, as defined in the `ufo/agen
 | `ERROR` | An error occurred during the processing of the user's request, and the `HostAgent` is unable to proceed. |
 | `FAIL` | The `HostAgent` believes the task is unachievable and cannot proceed further. |
 | `PENDING` | The `HostAgent` is waiting for additional information from the user to proceed. |
-| `CONFIRM` | The `HostAgent` is confirming the user's request before proceeding. |
+<!-- | `CONFIRM` | The `HostAgent` is confirming the user's request before proceeding. | -->
+
+The state machine diagram for the `HostAgent` is shown below:
+<h1 align="center">
+    <img src="../../img/host_state_machine.png"/> 
+</h1>
+
 
 The `HostAgent` transitions between these states based on the user's request, the application information, and the progress of the `AppAgents` in executing the sub-tasks.
+
+
+## Task Decomposition
+Upon receiving the user's request, the `HostAgent` decomposes it into sub-tasks and assigns each sub-task to an `AppAgent` for execution. The `HostAgent` determines the appropriate application to fulfill the user's request based on the application information and the user's request. It then orchestrates the `AppAgents` to execute the necessary actions to complete the sub-tasks. We show the task decomposition process in the following figure:
+
+<h1 align="center">
+    <img src="../../img/desomposition.png" alt="Task Decomposition Image" width="100%">
+</h1>
 
 ## Creating and Registering AppAgents
 When the `HostAgent` determines the need for a new `AppAgent` to fulfill a sub-task, it creates an instance of the `AppAgent` and registers it with the `HostAgent`, by calling the `create_subagent` method:

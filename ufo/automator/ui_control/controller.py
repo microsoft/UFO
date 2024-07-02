@@ -44,8 +44,7 @@ class ControlReceiver(ReceiverBasic):
     def atomic_execution(self, method_name: str, params: Dict[str, Any]) -> str:
         """
         Atomic execution of the action on the control elements.
-        :param control: The control element to execute the action.
-        :param method: The method to execute.
+        :param method_name: The name of the method to execute.
         :param params: The arguments of the method.
         :return: The result of the action.
         """
@@ -137,7 +136,6 @@ class ControlReceiver(ReceiverBasic):
     def texts(self) -> str:
         """
         Get the text of the control element.
-        :param args: The arguments of the text method.
         :return: The text of the control element.
         """
         return self.control.texts()

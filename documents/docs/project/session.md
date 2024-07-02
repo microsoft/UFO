@@ -1,6 +1,10 @@
 # Session
 
-A `Session` is a conversation instance between the user and UFO. It is a continuous interaction that starts when the user initiates a request and ends when the request is completed. UFO supports multiple requests within the same session. Each request is processed sequentially, by a `Round` of interaction, until the user's request is fulfilled.
+A `Session` is a conversation instance between the user and UFO. It is a continuous interaction that starts when the user initiates a request and ends when the request is completed. UFO supports multiple requests within the same session. Each request is processed sequentially, by a `Round` of interaction, until the user's request is fulfilled. We show the relationship between `Session` and `Round` in the following figure:
+
+<h1 align="center">
+    <img src="../../img/session.png" alt="Session and Round Image" width="80%">
+</h1>
 
 ## Session Lifecycle
 

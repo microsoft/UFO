@@ -6,6 +6,7 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
+from ufo.agents.agent.host_agent import HostAgent
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
@@ -301,6 +302,14 @@ class ErrorHostAgentState(HostAgentState):
         """
         return True
 
+    def next_state(self, agent: HostAgent) -> AgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The current agent.
+        :return: The state for the next step.
+        """
+        return FinishHostAgentState()
+
     @classmethod
     def name(cls) -> str:
         """
@@ -322,6 +331,14 @@ class FailHostAgentState(HostAgentState):
         :return: True if the round ends, False otherwise.
         """
         return True
+
+    def next_state(self, agent: HostAgent) -> AgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The current agent.
+        :return: The state for the next step.
+        """
+        return FinishHostAgentState()
 
     @classmethod
     def name(cls) -> str:

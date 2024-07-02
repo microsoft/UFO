@@ -78,9 +78,14 @@ The `AppAgent` state is managed by a state machine that determines the next acti
 | `FINISH` | The `AppAgent` has completed the current sub-task. |
 | `ERROR` | The `AppAgent` encountered an error during execution. |
 | `FAIL` | The `AppAgent` believes the current sub-task is unachievable. |
-| `PENDING` | The `AppAgent` is waiting for user input or external information to proceed. |
+<!-- | `PENDING` | The `AppAgent` is waiting for user input or external information to proceed. | -->
 | `CONFIRM` | The `AppAgent` is confirming the user's input or action. |
 | `SCREENSHOT` | The `AppAgent` believes the current screenshot is not clear in annotating the control and requests a new screenshot. |
+
+The state machine diagram for the `AppAgent` is shown below:
+<h1 align="center">
+    <img src="../../img/app_state_machine.png"/> 
+</h1>
 
 The `AppAgent` progresses through these states to execute the necessary actions within the application and fulfill the sub-task assigned by the `HostAgent`.
 

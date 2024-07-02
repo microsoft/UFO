@@ -115,6 +115,8 @@ Each state class inherits from the `AgentState` class and must implement the met
 
 ::: agents.states.basic.AgentState
 
+!!!tip
+    The state machine diagrams for the `HostAgent` and `AppAgent` are shown in their respective documents.
 
 !!!tip
     A `Round` calls the `handle`, `next_state`, and `next_agent` methods of the current state to process the user request and determine the next state and agent to handle the request, and orchestrates the agents to execute the necessary actions.

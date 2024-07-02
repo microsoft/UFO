@@ -49,7 +49,7 @@ class ReceiverBasic(ABC):
     def register(cls, command_class: Type[CommandBasic]) -> Type[CommandBasic]:
         """
         Decorator to register the state class to the state manager.
-        :param state_class: The state class to be registered.
+        :param command_class: The state class to be registered.
         """
         cls._command_registry[command_class.name()] = command_class
         return command_class
