@@ -5,6 +5,16 @@ The objective of the `EvaluationAgent` is to evaluate whether a `Session` or `Ro
     The `EvaluationAgent` is fully LLM-driven and conducts evaluations based on the action trajectories and screenshots. It may not by 100% accurate since LLM may make mistakes.
 
 
+## Configuration
+To enable the `EvaluationAgent`, you can configure the following parameters in the `config_dev.yaml` file to evaluate the task completion status at different levels:
+
+| Configuration Option      | Description                                   | Type    | Default Value |
+|---------------------------|-----------------------------------------------|---------|---------------|
+| `EVA_SESSION`             | Whether to include the session in the evaluation. | Boolean | True          |
+| `EVA_ROUND`               | Whether to include the round in the evaluation.   | Boolean | False         |
+| `EVA_ALL_SCREENSHOTS`     | Whether to include all the screenshots in the evaluation. | Boolean | True          |
+
+
 ## Evaluation Inputs
 The `EvaluationAgent` takes the following inputs for evaluation:
 
@@ -18,7 +28,7 @@ The `EvaluationAgent` takes the following inputs for evaluation:
 For more details on how to construct the inputs, please refer to the `EvaluationAgentPrompter` class in `ufo/prompter/eva_prompter.py`.
 
 !!! tip
-    You can configure whether to use all screenshots or only the first and last screenshot for evaluation in the `config_dev.yaml` file.
+    You can configure whether to use all screenshots or only the first and last screenshot for evaluation in the `EVA_ALL_SCREENSHOTS` of the `config_dev.yaml` file.
 
 
 ## Evaluation Outputs
