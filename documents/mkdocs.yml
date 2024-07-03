@@ -54,11 +54,12 @@ nav:
       - Evaluation Logs: logs/evaluation_logs.md
       - Screenshots: logs/screenshots_logs.md
   - Advanced Usage: 
-      - Reinforcing AppAgent:
-        - Learning from Demonstration: advanced_usage/reinforce_appagent/learning_from_demonstration.md
+      - Reinforcing AppAgent: 
+        - Overview: advanced_usage/reinforce_appagent/overview.md
+        - Learning from Help Document: advanced_usage/reinforce_appagent/learning_from_help_document.md
         - Learning from Bing Search: advanced_usage/reinforce_appagent/learning_from_bing_search.md
         - Experience Learning: advanced_usage/reinforce_appagent/experience_learning.md
-        - Learning from Help Document: advanced_usage/learning_from_help_document.md
+        - Learning from User Demonstration: advanced_usage/reinforce_appagent/learning_from_demonstration.md
       - Follower Mode: advanced_usage/follower_mode.md
       - Control Filtering: 
         - Overview: advanced_usage/control_filtering/overview.md
@@ -73,6 +74,7 @@ nav:
   - About:
       - Contributing: about/CONTRIBUTING.md
       - License: about/LICENSE.md
+      - Code of Conduct: about/CODE_OF_CONDUCT.md
       - Disclaimer: about/DISCLAIMER.md
       - Support: about/SUPPORT.md
   - FAQ: faq.md
@@ -92,7 +94,7 @@ plugins:
     - mkdocstrings:
         handlers:
             python:
-                paths: ["../ufo"]
+                paths: ["../ufo", "../record_processor"]
                 options:
                     docstring_style: sphinx
                     docstring_section_style: list

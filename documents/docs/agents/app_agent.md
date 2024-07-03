@@ -6,6 +6,10 @@ An `AppAgent` is responsible for iteratively executing actions on the selected a
 2. **Comprehension Enhancement** - The `AppAgent` is enhanced by Retrieval Augmented Generation (RAG) from heterogeneous sources, including external knowledge bases, and demonstration libraries, making the agent an application "expert".
 3. **Versatile Skill Set** - The `AppAgent` is equipped with a diverse set of skills to support comprehensive automation, such as mouse, keyboard, native APIs, and "Copilot".
 
+!!! tip
+    You can find the how to enhance the `AppAgent` with external knowledge bases and demonstration libraries in the [Reinforcing AppAgent](../advanced_usage/reinforce_appagent/overview.md) documentation.
+
+
 We show the framework of the `AppAgent` in the following diagram:
 
 <h1 align="center">

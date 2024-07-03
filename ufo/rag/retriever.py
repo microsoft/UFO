@@ -135,14 +135,14 @@ class ExperienceRetriever(Retriever):
     def __init__(self, db_path) -> None:
         """
         Create a new ExperienceRetriever.
-        :appname: The name of the application.
+        :param db_path: The path to the database.
         """
         self.indexer = self.get_indexer(db_path)
 
     def get_indexer(self, db_path: str):
         """
         Create an experience indexer.
-        :param query: The query to create an indexer for.
+        :param db_path: The path to the database.
         """
 
         try:

@@ -253,7 +253,7 @@ class IconControlFilter(BasicControlFilter):
         """
         Filters control items based on their scores and returns the top-k items.
         :param control_dicts: The dictionary of all control items.
-        :param cropped_icons: The dictionary of the cropped icons.
+        :param cropped_icons_dict: The dictionary of the cropped icons.
         :param plans: The plans to compare the control icons against.
         :param top_k: The number of top items to return.
         :return: The list of top-k control items based on their scores.
