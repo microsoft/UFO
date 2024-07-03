@@ -1,6 +1,5 @@
 site_name: UFO Documentation
 
-google_analytics: ['G-FX17ZGJYGC', 'mkdocs.org']
 
 nav:
   - Home: index.md
@@ -85,10 +84,19 @@ markdown_extensions:
   - admonition
 
 # theme:
-#   name: readthedocs
+#   name: material
+#   palette:
+#     primary: blue
+#     accent: light-blue
+#   font:
+#     text: Roboto
+#     code: Roboto Mono
 
 theme:
   name: readthedocs
+  analytics:
+    - gtag: G-FX17ZGJYGC
+
 
 plugins:
     - search
@@ -103,14 +111,7 @@ plugins:
                     show_docstring_returns: true
 
 
-# theme:
-#   name: material
-#   palette:
-#     primary: blue
-#     accent: light-blue
-#   font:
-#     text: Roboto
-#     code: Roboto Mono
+
 
   # logo: ./assets/ufo_blue.png
 favicon: ./assets/ufo_blue.png
