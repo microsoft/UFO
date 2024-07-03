@@ -22,14 +22,28 @@ To interact with the application, the `AppAgent` receives the following inputs:
 | Sub-Task | The sub-task description to be executed by the `AppAgent`, assigned by the `HostAgent`. | String |
 | Current Application | The name of the application to be interacted with. | String |
 | Control Information | Index, name and control type of available controls in the application. | List of Dictionaries |
-| Application Screenshots | Screenshots of the application to provide context to the `AppAgent`. | Image |
+| Application Screenshots | Screenshots of the application, including a clean screenshot, an annotated screenshot with labeled controls, and a screenshot with a rectangle around the selected control at the previous step (optional). | List of Strings |
 | Previous Sub-Tasks | The previous sub-tasks and their completion status. | List of Strings |
 | Previous Plan | The previous plan for the following steps. | List of Strings |
 | HostAgent Message | The message from the `HostAgent` for the completion of the sub-task. | String |
 | Retrived Information | The retrieved information from external knowledge bases or demonstration libraries. | String |
 | Blackboard | The shared memory space for storing and sharing information among the agents. | Dictionary |
 
+
+Below is an example of the annotated application screenshot with labeled controls. This follow the [Set-of-Mark](https://arxiv.org/pdf/2310.11441) paradigm.
+<h1 align="center">
+    <img src="../../img/screenshots.png" alt="AppAgent Image" width="90%">
+</h1>
+
+
 By processing these inputs, the `AppAgent` determines the necessary actions to fulfill the user's request within the application.
+
+!!! tip
+    Whether to concatenate the clean screenshot and annotated screenshot can be configured in the `CONCAT_SCREENSHOT` field in the `config_dev.yaml` file.
+
+!!! tip
+     Whether to include the screenshot with a rectangle around the selected control at the previous step can be configured in the `INCLUDE_LAST_SCREENSHOT` field in the `config_dev.yaml` file.
+
 
 ## AppAgent Output
 

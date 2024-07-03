@@ -49,7 +49,7 @@ nav:
       - Request Logs: logs/request_logs.md
       - Step Logs: logs/step_logs.md
       - Evaluation Logs: logs/evaluation_logs.md
-      - Screenshots: logs/screenshots.md
+      - Screenshots: logs/screenshots_logs.md
   - Advanced Usage: 
       - Reinforcing AppAgent:
         - Learning from Demonstration: advanced_usage/learning_from_demonstration.md
