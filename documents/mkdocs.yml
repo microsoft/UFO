@@ -1,4 +1,7 @@
 site_name: UFO Documentation
+
+google_analytics: ['G-FX17ZGJYGC', 'mkdocs.org']
+
 nav:
   - Home: index.md
   - Project Directory Structure: project_directory_structure.md
@@ -6,9 +9,9 @@ nav:
     - Quick Start: getting_started/quick_start.md
     - More Guidance: getting_started/more_guidance.md
   - Basic Modules:
-      - Session: project/session.md
-      - Round: project/round.md
-      - Context: project/context.md
+      - Session: modules/session.md
+      - Round: modules/round.md
+      - Context: modules/context.md
   - Configurations: 
       - User Configuration: configurations/user_configuration.md
       - Developer Configuration: configurations/developer_configuration.md
@@ -52,9 +55,9 @@ nav:
       - Screenshots: logs/screenshots_logs.md
   - Advanced Usage: 
       - Reinforcing AppAgent:
-        - Learning from Demonstration: advanced_usage/learning_from_demonstration.md
-        - Learning from Bing Search: advanced_usage/learning_from_bing_search.md
-        - Experience Learning: advanced_usage/experience_learning.md
+        - Learning from Demonstration: advanced_usage/reinforce_appagent/learning_from_demonstration.md
+        - Learning from Bing Search: advanced_usage/reinforce_appagent/learning_from_bing_search.md
+        - Experience Learning: advanced_usage/reinforce_appagent/experience_learning.md
         - Learning from Help Document: advanced_usage/learning_from_help_document.md
       - Follower Mode: advanced_usage/follower_mode.md
       - Control Filtering: advanced_usage/control_filtering.md
