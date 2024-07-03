@@ -26,10 +26,25 @@ The `EvaluationAgent` generates the following outputs after evaluation:
 
 | Output | Description | Type |
 | --- | --- | --- |
-| Reason | The detailed reason for your judgment, by observing the screenshot differences and the <Execution Trajectory>. | String |
-| Sub-score | The sub-score of the evaluation in decomposing the evaluation into multiple sub-goals. | List of Dictionaries |
-| Complete | The completion status of the evaluation, can be `yes`, `no`, or `unsure`. | String |
+| reason | The detailed reason for your judgment, by observing the screenshot differences and the <Execution Trajectory>. | String |
+| sub_scores | The sub-score of the evaluation in decomposing the evaluation into multiple sub-goals. | List of Dictionaries |
+| complete | The completion status of the evaluation, can be `yes`, `no`, or `unsure`. | String |
 
+Below is an example of the evaluation output:
+
+```json
+{
+    "reason": "The agent successfully completed the task of sending 'hello' to Zac on Microsoft Teams. 
+    The initial screenshot shows the Microsoft Teams application with the chat window of Chaoyun Zhang open. 
+    The agent then focused on the chat window, input the message 'hello', and clicked the Send button. 
+    The final screenshot confirms that the message 'hello' was sent to Zac.", 
+    "sub_scores": {
+        "correct application focus": "yes", 
+        "correct message input": "yes", 
+        "message sent successfully": "yes"
+        }, 
+    "complete": "yes"}
+```
 
 !!!info
     The log of the evaluation results will be saved in the `logs/{task_name}/evaluation.log` file.
