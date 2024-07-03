@@ -60,7 +60,11 @@ nav:
         - Experience Learning: advanced_usage/reinforce_appagent/experience_learning.md
         - Learning from Help Document: advanced_usage/learning_from_help_document.md
       - Follower Mode: advanced_usage/follower_mode.md
-      - Control Filtering: advanced_usage/control_filtering.md
+      - Control Filtering: 
+        - Overview: advanced_usage/control_filtering/overview.md
+        - Text Filtering: advanced_usage/control_filtering/text_filtering.md
+        - Semantic Filtering: advanced_usage/control_filtering/semantic_filtering.md
+        - Icon Filtering: advanced_usage/control_filtering/icon_filtering.md
       - Customization: advanced_usage/customization.md
   - Creating Your AppAgent: 
       - Help Document Provision: creating_app_agent/help_document_provision.md
