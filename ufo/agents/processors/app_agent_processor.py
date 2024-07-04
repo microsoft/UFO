@@ -406,6 +406,15 @@ class AppAgentProcessor(BaseProcessor):
             key: self._memory_data.to_dict().get(key) for key in configs["HISTORY_KEYS"]
         }
 
+        if self.is_confirm():
+
+            if self._is_resumed:
+                self._memory_data.set_values_from_dict({"UserConfirm": "Yes"})
+                memorized_action["UserConfirm"] = "Yes"
+            else:
+                self._memory_data.set_values_from_dict({"UserConfirm": "No"})
+                memorized_action["UserConfirm"] = "No"
+
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
         self._update_image_blackboard()
         self.host_agent.blackboard.add_trajectories(memorized_action)

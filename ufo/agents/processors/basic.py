@@ -53,6 +53,7 @@ class BaseProcessor(ABC):
         self._results = None
         self._question_list = []
         self._agent_status_manager = self.agent.status_manager
+        self._is_resumed = False
 
     def process(self) -> None:
         """
@@ -120,6 +121,8 @@ class BaseProcessor(ABC):
         Resume the process of action execution after the session is paused.
         """
 
+        self._is_resumed = True
+
         # Step 1: Execute the action.
         self.execute_action()
 
@@ -131,6 +134,8 @@ class BaseProcessor(ABC):
 
         # Step 4: Update the step.
         self.update_step()
+
+        self._is_resumed = False
 
     @abstractmethod
     def print_step_info(self) -> None:

@@ -356,6 +356,9 @@ class ConfirmAppAgentState(AppAgentState):
         # If the safe guard is not enabled, the agent should resume the task.
         if not configs["SAFE_GUARD"]:
             agent.process_resume()
+            self._confirm = True
+
+            return
 
         agent_processor = agent.processor
 
