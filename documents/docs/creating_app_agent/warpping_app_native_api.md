@@ -210,16 +210,16 @@ class WinCOMCommand(CommandBasic):
 Example:
 ```python
 def execute(self):
-        """
-        Execute the command to insert a table.
-        :return: The inserted table.
-        """
-        return self.receiver.insert_excel_table(
-            sheet_name=self.params.get("sheet_name", 1),
-            table=self.params.get("table"),
-            start_row=self.params.get("start_row", 1),
-            start_col=self.params.get("start_col", 1),
-        )
+    """
+    Execute the command to insert a table.
+    :return: The inserted table.
+    """
+    return self.receiver.insert_excel_table(
+        sheet_name=self.params.get("sheet_name", 1),
+        table=self.params.get("table"),
+        start_row=self.params.get("start_row", 1),
+        start_col=self.params.get("start_col", 1),
+    )
 ```
 
 3. **Register the Command Class:**
@@ -284,24 +284,24 @@ EXCEL_API_PROMPT: "ufo/prompts/apps/excel/api.yaml"
 Example:
 ```python
 def load_com_api_prompt(self) -> Dict[str, str]:
-        """
-        Load the prompt template for COM APIs.
-        :return: The prompt template for COM APIs.
-        """
-        app2configkey_mapper = {
-            "WINWORD.EXE": "WORD_API_PROMPT",
-            "EXCEL.EXE": "EXCEL_API_PROMPT",
-            "POWERPNT.EXE": "POWERPOINT_API_PROMPT",
-            "olk.exe": "OUTLOOK_API_PROMPT",
-        }
+    """
+    Load the prompt template for COM APIs.
+    :return: The prompt template for COM APIs.
+    """
+    app2configkey_mapper = {
+        "WINWORD.EXE": "WORD_API_PROMPT",
+        "EXCEL.EXE": "EXCEL_API_PROMPT",
+        "POWERPNT.EXE": "POWERPOINT_API_PROMPT",
+        "olk.exe": "OUTLOOK_API_PROMPT",
+    }
 
-        config_key = app2configkey_mapper.get(self.root_name, None)
-        prompt_address = configs.get(config_key, None)
+    config_key = app2configkey_mapper.get(self.root_name, None)
+    prompt_address = configs.get(config_key, None)
 
-        if prompt_address:
-            return AppAgentPrompter.load_prompt_template(prompt_address, None)
-        else:
-            return {}
+    if prompt_address:
+        return AppAgentPrompter.load_prompt_template(prompt_address, None)
+    else:
+        return {}
 ```
 
 You shoud add the following data to the `app2configkey_mapper` dictionary:
