@@ -137,9 +137,17 @@ Optionally, you can set a backup language model (LLM) engine in the `BACKUP_AGEN
 UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](https://microsoft.github.io/UFO/supported_models/overview/) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev.yaml`.
 
 ### 📔 Step 3: Additional Setting for RAG (optional).
-If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file.
+If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file. 
 
-#### RAG from Offline Help Document
+We provide the following options for RAG to enhance UFO's capabilities:
+- **[Offline Help Document](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_help_document/)**: Enable UFO to retrieve information from offline help documents.
+- **[Online Bing Search Engine](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_bing_search/)**: Enhance UFO's capabilities by utilizing the most up-to-date online search results.
+- **[Self-Experience](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/experience_learning/)**: Save task completion trajectories into UFO's memory for future reference.
+- **[User-Demonstration](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_demonstration/)**: Boost UFO's capabilities through user demonstration.
+
+Consult their respective documentation for more information on how to configure these settings.
+
+<!-- #### RAG from Offline Help Document
 Before enabling this function, you need to create an offline indexer for your help document. Please refer to the [README](./learner/README.md) to learn how to create an offline vectored database for retrieval. You can enable this function by setting the following configuration:
 ```bash
 ## RAG Configuration for the offline docs
@@ -184,7 +192,7 @@ You can enable this function by setting the following configuration:
 ## RAG Configuration for demonstration
 RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
 RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the demonstration examples.
-```
+``` -->
 
 
 ### 🎉 Step 4: Start UFO
