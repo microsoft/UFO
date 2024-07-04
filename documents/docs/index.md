@@ -65,7 +65,7 @@ UFO sightings have garnered attention from various media outlets, including:
 
 ## ❓Get help 
 * ❔GitHub Issues (prefered)
-* For other communications, please contact ufo-agent@microsoft.com
+* For other communications, please contact [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com)
 ---
 
 ## 🎬 Demo Examples
@@ -100,3 +100,13 @@ If you use UFO in your research, please cite our paper:
 
 ## 🎨 Related Project
 You may also find [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file) useful, a code-first LLM agent framework for seamlessly planning and executing data analytics tasks.
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FX17ZGJYGC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-FX17ZGJYGC');
+</script>

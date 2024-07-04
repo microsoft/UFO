@@ -301,6 +301,14 @@ class ErrorHostAgentState(HostAgentState):
         """
         return True
 
+    def next_state(self, agent: HostAgent) -> AgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The current agent.
+        :return: The state for the next step.
+        """
+        return FinishHostAgentState()
+
     @classmethod
     def name(cls) -> str:
         """
@@ -322,6 +330,14 @@ class FailHostAgentState(HostAgentState):
         :return: True if the round ends, False otherwise.
         """
         return True
+
+    def next_state(self, agent: HostAgent) -> AgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The current agent.
+        :return: The state for the next step.
+        """
+        return FinishHostAgentState()
 
     @classmethod
     def name(cls) -> str:

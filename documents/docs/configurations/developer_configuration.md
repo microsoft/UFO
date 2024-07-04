@@ -14,7 +14,7 @@ The following parameters are included in the system configuration of the UFO age
 | `RECTANGLE_TIME`        | The time in seconds for the rectangle display around the selected control.                              | Integer  | 1             |
 | `SAFE_GUARD`            | Whether to use the safe guard to ask for user confirmation before performing sensitive operations.      | Boolean  | True          |
 | `CONTROL_LIST`          | The list of widgets allowed to be selected.                                                             | List     | ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem"] |
-| `HISTORY_KEYS`          | The keys of the step history added to the blackboard for agent decision-making.                         | List     | ["Step", "Thought", "ControlText", "Subtask", "Action", "Comment", "Results", "UserConfirm"] |
+| `HISTORY_KEYS`          | The keys of the step history added to the [`Blackboard`](../agents/design/blackboard.md) for agent decision-making.                         | List     | ["Step", "Thought", "ControlText", "Subtask", "Action", "Comment", "Results", "UserConfirm"] |
 | `ANNOTATION_COLORS`     | The colors assigned to different control types for annotation.                                          | Dictionary | {"Button": "#FFF68F", "Edit": "#A5F0B5", "TabItem": "#A5E7F0", "Document": "#FFD18A", "ListItem": "#D9C3FE", "MenuItem": "#E7FEC3", "ScrollBar": "#FEC3F8", "TreeItem": "#D6D6D6", "Hyperlink": "#91FFEB", "ComboBox": "#D8B6D4"} |
 | `PRINT_LOG`             | Whether to print the log in the console.                                                                | Boolean  | False         |
 | `CONCAT_SCREENSHOT`     | Whether to concatenate the screenshots into a single image for the LLM input.                          | Boolean  | False         |
@@ -24,7 +24,7 @@ The following parameters are included in the system configuration of the UFO age
 | `USE_APIS`              | Whether to allow the use of application APIs.                                                           | Boolean  | True          |
 | `ALLOW_OPENAPP`         | Whether to allow the open app action in `HostAgent`.                                                    | Boolean  | False         |
 | `LOG_XML`               | Whether to log the XML file at every step.                                                              | Boolean  | False         |
-| `SCREENSHOT_TO_MEMORY`  | Whether to allow the screenshot to memory for the agent's decision making.                              | Boolean  | True          |
+| `SCREENSHOT_TO_MEMORY`  | Whether to allow the screenshot to [`Blackboard`](../agents/design/blackboard.md) for the agent's decision making.                              | Boolean  | True          |
 
 ## Main Prompt Configuration
 

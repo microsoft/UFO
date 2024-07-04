@@ -107,23 +107,38 @@ class BasicPrompter(ABC):
 
     @abstractmethod
     def system_prompt_construction(self) -> str:
+        """
+        Construct the system prompt for LLM.
+        """
 
         pass
 
     @abstractmethod
     def user_prompt_construction(self) -> str:
+        """
+        Construct the textual user prompt for LLM based on the `user` field in the prompt template.
+        """
 
         pass
 
     @abstractmethod
     def user_content_construction(self) -> str:
+        """
+        Construct the full user content for LLM, including the user prompt and images.
+        """
 
         pass
 
     def examples_prompt_helper(self) -> str:
+        """
+        A helper function to construct the examples prompt for in-context learning.
+        """
 
         pass
 
     def api_prompt_helper(self) -> str:
+        """
+        A helper function to construct the API list and descriptions for the prompt.
+        """
 
         pass

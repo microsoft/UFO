@@ -42,8 +42,8 @@ class ExperienceSummarizer:
     def build_prompt(self, log_partition: dict) -> list:
         """
         Build the prompt.
-        :param logs: The logs.
-        :param user_request: The user request.
+        :param log_partition: The log partition.
+        return: The prompt.
         """
         experience_prompter = ExperiencePrompter(
             self.is_visual,

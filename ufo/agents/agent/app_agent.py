@@ -143,7 +143,7 @@ class AppAgent(BasicAgent):
     def print_response(self, response_dict: Dict) -> None:
         """
         Print the response.
-        :param response: The response dictionary.
+        :param response_dict: The response dictionary to print.
         """
 
         control_text = response_dict.get("ControlText")
@@ -349,7 +349,7 @@ class AppAgent(BasicAgent):
     def context_provision(self, request: str = "") -> None:
         """
         Provision the context for the app agent.
-        :param app_agent: The app agent to provision the context.
+        :param request: The request sent to the Bing search retriever.
         """
 
         # Load the offline document indexer for the app agent if available.

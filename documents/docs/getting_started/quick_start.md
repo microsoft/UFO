@@ -55,8 +55,23 @@ Optionally, you can set a backup language model (LLM) engine in the `BACKUP_AGEN
 !!! note
     UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](../supported_models/overview.md) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev.yaml`.
 
+### 📔 Step 3: Additional Setting for RAG (optional).
+If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file. 
 
-### 🎉 Step 3: Start UFO
+We provide the following options for RAG to enhance UFO's capabilities:
+
+- **[Offline Help Document](../advanced_usage/reinforce_appagent/learning_from_help_document.md)**: Enable UFO to retrieve information from offline help documents.
+
+- **[Online Bing Search Engine](../advanced_usage/reinforce_appagent/learning_from_bing_search.md)**: Enhance UFO's capabilities by utilizing the most up-to-date online search results.
+
+- **[Self-Experience](../advanced_usage/reinforce_appagent/experience_learning.md)**: Save task completion trajectories into UFO's memory for future reference.
+
+- **[User-Demonstration](../advanced_usage/reinforce_appagent/learning_from_demonstration.md)**: Boost UFO's capabilities through user demonstration.
+
+!!!tip
+    Consult their respective documentation for more information on how to configure these settings.
+
+### 🎉 Step 4: Start UFO
 
 #### ⌨️ You can execute the following on your Windows command Line (CLI):
 
@@ -79,7 +94,7 @@ Please enter your request to be completed🛸:
 ```
 
 
-###  Step 4 🎥: Execution Logs 
+###  Step 5 🎥: Execution Logs 
 
 You can find the screenshots taken and request & response logs in the following folder:
 ```
@@ -88,5 +103,7 @@ You can find the screenshots taken and request & response logs in the following 
 You may use them to debug, replay, or analyze the agent output.
 
 !!! note
-    - Before UFO executing your request, please make sure the targeted applications are active on the system.
-    - The GPT-V accepts screenshots of your desktop and application GUI as input. Please ensure that no sensitive or confidential information is visible or captured during the execution process. For further information, refer to [DISCLAIMER.md](https://github.com/microsoft/UFO/blob/vyokky/dev/DISCLAIMER.md).
+    Before UFO executing your request, please make sure the targeted applications are active on the system.
+
+!!! note
+    The GPT-V accepts screenshots of your desktop and application GUI as input. Please ensure that no sensitive or confidential information is visible or captured during the execution process. For further information, refer to [DISCLAIMER.md](https://github.com/microsoft/UFO/blob/vyokky/dev/DISCLAIMER.md).
