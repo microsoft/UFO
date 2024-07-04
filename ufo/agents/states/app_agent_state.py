@@ -367,8 +367,8 @@ class ConfirmAppAgentState(AppAgentState):
             return
 
         # Get the action and control text from the agent processor to ask the user whether to proceed with the action.
-        action = agent.processor.action
-        control_text = agent.processor.control_text
+        action = agent_processor.action
+        control_text = agent_processor.control_text
 
         self._confirm = self.user_confirm(action=action, control_text=control_text)
 
