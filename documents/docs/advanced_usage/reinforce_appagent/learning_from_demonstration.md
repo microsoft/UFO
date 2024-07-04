@@ -50,7 +50,7 @@ You can find a demo video of learning from user demonstrations:
 ## Activating Learning from User Demonstrations
 
 ### Step 1: User Demonstration
-Please follow the steps in the [User Demonstration Provision](../../creating_app_agent/demonstration_provision.md) document to provide help documents to the AppAgent.
+Please follow the steps in the [User Demonstration Provision](../../creating_app_agent/demonstration_provision.md) document to provide user demonstrations.
 
 ### Step 2: Configure the AppAgent
 Configure the following parameters to allow UFO to use RAG from user demonstrations:
