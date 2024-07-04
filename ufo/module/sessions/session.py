@@ -176,7 +176,7 @@ class FollowerSession(BaseSession):
         """
         Initialize a session.
         :param task: The name of current task.
-        :param plan_dir: The path of the plan file to follow.
+        :param plan_file: The path of the plan file to follow.
         :param should_evaluate: Whether to evaluate the session.
         :param id: The id of the session.
         """

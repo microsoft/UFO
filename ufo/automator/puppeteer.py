@@ -26,7 +26,6 @@ class AppPuppeteer:
         Initialize the app puppeteer.
         :param process_name: The process name of the app.
         :param app_root_name: The app root name, e.g., WINWORD.EXE.
-        :param ui_control_interface: The UI control interface instance in pywinauto.
         """
 
         self._process_name = process_name

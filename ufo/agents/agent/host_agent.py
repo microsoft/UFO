@@ -244,7 +244,7 @@ class HostAgent(BasicAgent):
     def print_response(self, response_dict: Dict) -> None:
         """
         Print the response.
-        :param response: The response.
+        :param response_dict: The response dictionary to print.
         """
 
         application = response_dict.get("ControlText")
