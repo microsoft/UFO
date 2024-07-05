@@ -6,7 +6,6 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
-from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.agents.states.host_agent_state import (
@@ -15,7 +14,6 @@ from ufo.agents.states.host_agent_state import (
     NoneHostAgentState,
 )
 from ufo.config.config import Config
-from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 
 # Avoid circular import
@@ -39,7 +37,6 @@ class AppAgentStatus(Enum):
     FAIL = "FAIL"
     PENDING = "PENDING"
     CONFIRM = "CONFIRM"
-    SWITCH = "SWITCH"
     SCREENSHOT = "SCREENSHOT"
 
 
@@ -246,54 +243,6 @@ class ScreenshotAppAgentState(ContinueAppAgentState):
 
 
 @AppAgentStateManager.register
-class SwitchAppAgentState(AppAgentState):
-    """
-    The class for the switch app agent state.
-    """
-
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
-        """
-        Handle the agent for the current step.
-        :param agent: The agent for the current step.
-        :param context: The context for the agent and session.
-        """
-
-        self.archive_subtask(context)
-
-    def next_state(self, agent: "AppAgent") -> HostAgentState:
-        """
-        The next state of the agent.
-        :param agent: The agent for the current step.
-        :return: The state for the next step.
-        """
-
-        return ContinueHostAgentState()
-
-    def next_agent(self, agent: "AppAgent") -> BasicAgent:
-        """
-        Get the agent for the next step.
-        :param agent: The agent for the current step.
-        :return: The agent for the next step.
-        """
-        return agent.host
-
-    def is_subtask_end(self) -> bool:
-        """
-        Check if the subtask ends.
-        :return: True if the subtask ends, False otherwise.
-        """
-        return True
-
-    @classmethod
-    def name(cls) -> str:
-        """
-        The class name of the state.
-        :return: The name of the state.
-        """
-        return AppAgentStatus.SWITCH.value
-
-
-@AppAgentStateManager.register
 class PendingAppAgentState(AppAgentState):
     """
     The class for the pending app agent state.
@@ -356,24 +305,21 @@ class ConfirmAppAgentState(AppAgentState):
         # If the safe guard is not enabled, the agent should resume the task.
         if not configs["SAFE_GUARD"]:
             agent.process_resume()
+            self._confirm = True
 
-        agent_processor = agent.processor
-
-        if agent_processor is None:
-            utils.print_with_color("The agent processor is None.", "red")
             return
 
-        # Get the action and control text from the agent processor to ask the user whether to proceed with the action.
-        action = agent.processor.action
-        control_text = agent.processor.control_text
-
-        self._confirm = self.user_confirm(action=action, control_text=control_text)
-
+        self._confirm = agent.process_comfirmation()
         # If the user confirms the action, the agent should resume the task.
         if self._confirm:
             agent.process_resume()
 
     def next_state(self, agent: AppAgent) -> AppAgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The agent for the current step.
+        :return: The state for the next step.
+        """
 
         plan = agent.processor.plan
 
@@ -388,23 +334,7 @@ class ConfirmAppAgentState(AppAgentState):
             return ContinueAppAgentState()
         else:
             agent.status = AppAgentStatus.FINISH.value
-            return FinishAppAgentState()
-
-    def user_confirm(self, action: str, control_text: str) -> bool:
-        """
-        Ask the user whether to proceed with the action when the status is CONFIRM.
-        :param action: The action to be confirmed.
-        :param control_text: The control text for the action.
-        :return: True if the user confirms the action, False otherwise.
-        """
-
-        # Ask the user whether to proceed with the action when the status is PENDING.
-        decision = interactor.sensitive_step_asker(action, control_text)
-        if not decision:
-            utils.print_with_color("The user decide to stop the task.", "magenta")
-            return False
-
-        return True
+            return FinishHostAgentState()
 
     def is_subtask_end(self) -> bool:
         """
@@ -451,7 +381,7 @@ class ErrorAppAgentState(AppAgentState):
         :param agent: The agent for the current step.
         :return: The state for the next step.
         """
-        return FinishHostAgentState
+        return FinishHostAgentState()
 
     def is_round_end(self) -> bool:
         """
@@ -505,7 +435,7 @@ class FailAppAgentState(AppAgentState):
         :param agent: The agent for the current step.
         :return: The state for the next step.
         """
-        return FinishHostAgentState
+        return FinishHostAgentState()
 
     def is_round_end(self) -> bool:
         """
@@ -550,7 +480,7 @@ class NoneAppAgentState(AppAgentState):
         :param agent: The agent for the current step.
         :return: The state for the next step.
         """
-        return NoneHostAgentState
+        return NoneHostAgentState()
 
     def is_subtask_end(self) -> bool:
         """

@@ -143,8 +143,8 @@ class HostAgentProcessor(BaseProcessor):
         self.host_message = self._response_json.get("Message", [])
 
         # Convert the plan from a string to a list if the plan is a string.
-        self._plan = self.string2list(self._response_json.get("Plan", ""))
-        self._response_json["Plan"] = self._plan
+        self.plan = self.string2list(self._response_json.get("Plan", ""))
+        self._response_json["Plan"] = self.plan
 
         self.status = self._response_json.get("Status", "")
         self.question_list = self._response_json.get("Questions", [])
@@ -184,6 +184,8 @@ class HostAgentProcessor(BaseProcessor):
         self.switch_to_new_app_window(new_app_window)
         self.application_window.set_focus()
         self.application_window.draw_outline(colour="red", thickness=3)
+
+        self.action = "set_focus()"
 
     def is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
         """
@@ -235,7 +237,7 @@ class HostAgentProcessor(BaseProcessor):
             "Round": self.round_num,
             "ControlLabel": self.control_text,
             "SubtaskIndex": -1,
-            "Action": "set_focus()",
+            "Action": self.action,
             "ActionType": "UIControl",
             "Request": self.request,
             "Agent": "HostAgent",

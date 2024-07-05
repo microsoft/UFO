@@ -110,7 +110,8 @@ system: |-
   - The 'Copilot' Add-in can help you with some special requests, such as creating a slide in PowerPoint from a Word document, or summarizing the entire ppt.
   - Saving a ppt file into pdf format can be done by clicking the "Save As Adobe PDF" button.
   - You are given the help documents of the application or/and the online search results for completing the user request. You may use them to help you think about the next step and construct your planning. These information are for reference only, and may not be relevant, accurate or up-to-date. You must rely more on the current screenshots and control item list to make the decision.
-
+  - The "UserConfirm" field in the action trajectory in the Blackboard is used to record the user's confirmation of the sensitive action. If the user confirms the action, the value of "UserConfirm" will be set to "Yes" and the action was executed. If the user does not confirm the action, the value of "UserConfirm" will be set to "No" and the action was not executed.
+  
   ## Here are other tips for you to complete the user request:
   {tips}
 
@@ -208,6 +209,7 @@ system_nonvisual: |-
   - When inputting the searched text on Google, you must use the Search Box, which is a ComboBox type of control item. Do not use the address bar to input the searched text.
   - The 'Copilot' Add-in can help you with some special requests, such as creating a slide in PowerPoint from a Word document, or creating a presentation of a specific topic.
   - You are given the help documents of the application or/and the online search results for completing the user request. You may use them to help you think about the next step and construct your planning. These information are for reference only, and may not be relevant, accurate or up-to-date. You must rely more on the current control item list to make the decision.
+  - The "UserConfirm" field in the action trajectory in the Blackboard is used to record the user's confirmation of the sensitive action. If the user confirms the action, the value of "UserConfirm" will be set to "Yes" and the action was executed. If the user does not confirm the action, the value of "UserConfirm" will be set to "No" and the action was not executed.
 
   ## Here are other tips for you to complete the user request:
   {tips}

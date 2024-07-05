@@ -49,7 +49,7 @@ class DemonstrationSummarizer:
         Initialize the DemonstrationSummarizer.
         :param is_visual: Whether the request is for visual model.
         :param prompt_template: The path of the prompt template.
-        :param example_prompt_template: The path of the example prompt template.
+        :param demonstration_prompt_template: The path of the example prompt template for demonstration.
         :param api_prompt_template: The path of the api prompt template.
         """
         self.is_visual = is_visual

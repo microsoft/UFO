@@ -44,26 +44,8 @@ class AppAgentProcessor(BaseProcessor):
         self._operation = None
         self._args = None
         self._image_url = []
-        self._plan = []
-        self.action = ""
         self.control_filter_factory = ControlFilterFactory()
         self.filtered_annotation_dict = None
-
-    @property
-    def plan(self) -> str:
-        """
-        Get the plan.
-        :return: The plan.
-        """
-        return self._plan
-
-    @plan.setter
-    def plan(self, plan: List[str]) -> None:
-        """
-        Set the plan.
-        :param plan: The plan.
-        """
-        self._plan = plan
 
     @property
     def action(self) -> str:
@@ -405,6 +387,15 @@ class AppAgentProcessor(BaseProcessor):
         memorized_action = {
             key: self._memory_data.to_dict().get(key) for key in configs["HISTORY_KEYS"]
         }
+
+        if self.is_confirm():
+
+            if self._is_resumed:
+                self._memory_data.set_values_from_dict({"UserConfirm": "Yes"})
+                memorized_action["UserConfirm"] = "Yes"
+            else:
+                self._memory_data.set_values_from_dict({"UserConfirm": "No"})
+                memorized_action["UserConfirm"] = "No"
 
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
         self._update_image_blackboard()

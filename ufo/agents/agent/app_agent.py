@@ -13,6 +13,7 @@ from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.automator import puppeteer
 from ufo.config.config import Config
+from ufo.module import interactor
 from ufo.module.context import Context
 from ufo.prompter.agent_prompter import AppAgentPrompter
 
@@ -300,6 +301,21 @@ class AppAgent(BasicAgent):
         :return: The Puppeteer interface.
         """
         return puppeteer.AppPuppeteer(self._process_name, self._app_root_name)
+
+    def process_comfirmation(self) -> bool:
+        """
+        Process the user confirmation.
+        :return: The decision.
+        """
+        action = self.processor.action
+        control_text = self.processor.control_text
+
+        decision = interactor.sensitive_step_asker(action, control_text)
+
+        if not decision:
+            utils.print_with_color("The user has canceled the action.", "red")
+
+        return decision
 
     @property
     def status_manager(self) -> AppAgentStatus:

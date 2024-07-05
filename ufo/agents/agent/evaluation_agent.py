@@ -107,6 +107,12 @@ class EvaluationAgent(BasicAgent):
 
         return result, cost
 
+    def process_comfirmation(self) -> None:
+        """
+        Comfirmation, currently do nothing.
+        """
+        pass
+
     def print_response(self, response_dict: Dict[str, Any]) -> None:
         """
         Print the response of the evaluation.

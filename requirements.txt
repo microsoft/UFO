@@ -15,9 +15,11 @@ psutil==5.9.8
 beautifulsoup4==4.12.3
 sentence-transformers==2.5.1
 pandas==1.4.3
+html2text==2024.2.26
 ##For Qwen
 #dashscope==1.15.0
 ##For removing stopwords
 #nltk==3.8.1
 ##For Gemini
 #google-generativeai==0.7.0
+

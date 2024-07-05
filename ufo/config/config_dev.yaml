@@ -55,6 +55,13 @@ INPUT_TEXT_ENTER: False # whether to press enter after typing the text
 
 ## APIs related
 USE_APIS: True  # Whether to use the API
+APP_API_PROMPT_ADDRESS: {
+    "WINWORD.EXE": "ufo/prompts/apps/word/api.yaml",
+    "EXCEL.EXE": "ufo/prompts/apps/excel/api.yaml",
+    "msedge.exe": "ufo/prompts/apps/web/api.yaml",
+    "chrome.exe": "ufo/prompts/apps/web/api.yaml"
+}  # The prompt for the app API
+
 WORD_API_PROMPT: "ufo/prompts/apps/word/api.yaml"  # The prompt for the word API
 EXCEL_API_PROMPT: "ufo/prompts/apps/excel/api.yaml"  # The prompt for the word API
 
