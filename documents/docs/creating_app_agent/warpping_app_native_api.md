@@ -12,16 +12,16 @@ The `Receiver` is a class that receives the native API calls from the `AppAgent`
 
 To create a `Receiver` class, follow these steps:
 
-**1. Create a Folder for Your Application:**
+#### 1. Create a Folder for Your Application
 
 - Navigate to the `ufo/automator/app_api/` directory.
 - Create a folder named after your application.
 
-**2. Create a Python File:**
+#### 2. Create a Python File
 
 - Inside the folder you just created, add a Python file named after your application, for example, `{your_application}_client.py`.
 
-**3. Define the Receiver Class:**
+#### 3. Define the Receiver Class
 
 - In the Python file, define a class named `{Your_Receiver}`, inheriting from the `ReceiverBasic` class located in `ufo/automator/basic.py`.
 - Initialize the `Your_Receiver` class with the object that executes the native API calls. For example, if your API is based on a `com` object, initialize the `com` object in the `__init__` method of the `Your_Receiver` class.
@@ -52,7 +52,7 @@ class WinCOMReceiverBasic(ReceiverBasic):
 ```
 ---
 
-**4. Define Methods to Execute Native API Calls:**
+#### 4. Define Methods to Execute Native API Calls
 
 - Define the methods in the `Your_Receiver` class to execute the native API calls.
 
@@ -77,7 +77,7 @@ def table2markdown(self, sheet_name: str) -> str:
 ---
 
 
-**5. Create a Factory Class:**
+#### 5. Create a Factory Class
 
 - Create your Factory class inheriting from the `APIReceiverFactory` class to manage multiple `Receiver` classes that share the same API type.
 - Implement the `create_receiver` and `name` methods in the `ReceiverFactory` class. The `create_receiver` method should return the `Receiver` class.
@@ -134,7 +134,7 @@ The `Receiver` class is now ready to receive the native API calls from the `AppA
 
 Commands are the actions that the `AppAgent` can execute on the application. To create a command for the native API, you need to create a `Command` class that contains the method to execute the native API calls.
 
-**1. Create a Command Class:**
+#### 1. Create a Command Class
 
 - Create a `Command` class in the same Python file where the `Receiver` class is located. The `Command` class should inherit from the `CommandBasic` class located in `ufo/automator/basic.py`.
 
@@ -167,7 +167,7 @@ class WinCOMCommand(CommandBasic):
 ```
 ---
 
-**2. Define the Execute Method:**
+#### 2. Define the Execute Method
 
 - Define the `execute` method in the `Command` class to call the receiver to execute the native API calls.
 
@@ -204,11 +204,11 @@ The `Command` class is now registered in the `Receiver` class and available for 
 
 To let the `AppAgent` know the usage of the native API calls, you need to provide prompt descriptions.
 
-**1. Create an api.yaml File:**
+#### 1. Create an api.yaml File
 
     - Create an `api.yaml` file in the `ufo/prompts/apps/{your_app_name}` directory.
 
-**2. Define Prompt Descriptions:**
+#### 2. Define Prompt Descriptions
 
 - Define the prompt descriptions for the native API calls in the `api.yaml` file.
 
@@ -234,7 +234,7 @@ usage: |-
     The `table2markdown` is the name of the native API call. It `MUST` match the `name()` defined in the corresponding `Command` class!
 
 
-**3. Register the Prompt Address in config_dev.yaml:**
+#### 3. Register the Prompt Address in `config_dev.yaml`
     
 - Register the prompt address by adding to the `APP_API_PROMPT_ADDRESS` field of `config_dev.yaml` file with the application program name as the key and the prompt file address as the value.
 
