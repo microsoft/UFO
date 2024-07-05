@@ -92,12 +92,17 @@ class ControlReceiver(ReceiverBasic):
         :return: The result of the set edit text action.
         """
 
+        text = params.get("text", "")
+
         if configs["INPUT_TEXT_API"] == "set_text":
             method_name = "set_edit_text"
-            args = {"text": params["text"]}
+            args = {"text": text}
         else:
             method_name = "type_keys"
-            args = {"keys": params["text"], "pause": 0.1, "with_spaces": True}
+            text = text.replace("\n", "{ENTER}")
+            text = text.replace("\t", "{TAB}")
+
+            args = {"keys": text, "pause": 0.1, "with_spaces": True}
         try:
             result = self.atomic_execution(method_name, args)
             if (

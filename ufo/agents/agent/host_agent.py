@@ -241,6 +241,12 @@ class HostAgent(BasicAgent):
         self.processor.process()
         self.status = self.processor.status
 
+    def process_comfirmation(self) -> None:
+        """
+        TODO: Process the confirmation.
+        """
+        pass
+
     def print_response(self, response_dict: Dict) -> None:
         """
         Print the response.

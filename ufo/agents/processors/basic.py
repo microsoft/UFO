@@ -54,6 +54,8 @@ class BaseProcessor(ABC):
         self._question_list = []
         self._agent_status_manager = self.agent.status_manager
         self._is_resumed = False
+        self._action = None
+        self._plan = None
 
     def process(self) -> None:
         """
@@ -417,6 +419,38 @@ class BaseProcessor(ABC):
         :return: The status of the processor.
         """
         return self._status
+
+    @property
+    def action(self) -> str:
+        """
+        Get the action.
+        :return: The action.
+        """
+        return self._action
+
+    @action.setter
+    def action(self, action: str) -> None:
+        """
+        Set the action.
+        :param action: The action.
+        """
+        self._action = action
+
+    @property
+    def plan(self) -> str:
+        """
+        Get the plan of the agent.
+        :return: The plan.
+        """
+        return self._plan
+
+    @plan.setter
+    def plan(self, plan: str) -> None:
+        """
+        Set the plan of the agent.
+        :param plan: The plan.
+        """
+        self._plan = plan
 
     @property
     def log_path(self) -> str:

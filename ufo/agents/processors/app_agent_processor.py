@@ -44,26 +44,8 @@ class AppAgentProcessor(BaseProcessor):
         self._operation = None
         self._args = None
         self._image_url = []
-        self._plan = []
-        self.action = ""
         self.control_filter_factory = ControlFilterFactory()
         self.filtered_annotation_dict = None
-
-    @property
-    def plan(self) -> str:
-        """
-        Get the plan.
-        :return: The plan.
-        """
-        return self._plan
-
-    @plan.setter
-    def plan(self, plan: List[str]) -> None:
-        """
-        Set the plan.
-        :param plan: The plan.
-        """
-        self._plan = plan
 
     @property
     def action(self) -> str:
