@@ -279,24 +279,18 @@ EXCEL_API_PROMPT: "ufo/prompts/apps/excel/api.yaml"
 
 4. **Register the Prompt Address in APIPromptLoader:**
     
-    - Register the prompt address in the `APIPromptLoader.load_com_api_prompt` method in the `ufo/prompter/agent_prompter.py` file.
+    - Register the prompt address in the `APIPromptLoader.load_api_prompt` method in the `ufo/prompter/agent_prompter.py` file.
 
 Example:
 ```python
-def load_com_api_prompt(self) -> Dict[str, str]:
+def load_api_prompt(self) -> Dict[str, str]:
     """
     Load the prompt template for COM APIs.
     :return: The prompt template for COM APIs.
     """
-    app2configkey_mapper = {
-        "WINWORD.EXE": "WORD_API_PROMPT",
-        "EXCEL.EXE": "EXCEL_API_PROMPT",
-        "POWERPNT.EXE": "POWERPOINT_API_PROMPT",
-        "olk.exe": "OUTLOOK_API_PROMPT",
-    }
+    prompt_address = configs["APP_API_PROMPT_ADDRESS"].get(self.root_name, None)
 
-    config_key = app2configkey_mapper.get(self.root_name, None)
-    prompt_address = configs.get(config_key, None)
+    print(prompt_address)
 
     if prompt_address:
         return AppAgentPrompter.load_prompt_template(prompt_address, None)

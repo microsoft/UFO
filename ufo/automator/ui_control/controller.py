@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Type, Union
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
+from ufo.automator.puppeteer import ReceiverManager
 from ufo.config.config import Config
 from ufo.utils import print_with_color
 
@@ -203,13 +204,28 @@ class ControlReceiver(ReceiverBasic):
                 break
 
 
+@ReceiverManager.register
 class UIControlReceiverFactory(ReceiverFactory):
     """
     The factory class for the control receiver.
     """
 
     def create_receiver(self, control, application):
+        """
+        Create the control receiver.
+        :param control: The control element.
+        :param application: The application element.
+        :return: The control receiver.
+        """
         return ControlReceiver(control, application)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the receiver factory.
+        :return: The name of the receiver factory.
+        """
+        return "UIControl"
 
 
 class ControlCommand(CommandBasic):

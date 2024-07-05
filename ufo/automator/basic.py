@@ -4,9 +4,7 @@
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Type
-
-from ufo.utils import print_with_color
+from typing import Dict, List, Type
 
 
 class ReceiverBasic(ABC):
@@ -50,6 +48,7 @@ class ReceiverBasic(ABC):
         """
         Decorator to register the state class to the state manager.
         :param command_class: The state class to be registered.
+        :return: The state class.
         """
         cls._command_registry[command_class.name()] = command_class
         return command_class
@@ -106,3 +105,17 @@ class ReceiverFactory(ABC):
     @abstractmethod
     def create_receiver(self, *args, **kwargs):
         pass
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the receiver factory.
+        """
+        return cls.__class__.__name__
+
+    @classmethod
+    def is_api(cls) -> bool:
+        """
+        Check if the receiver factory is to create an API receiver.
+        """
+        return False
