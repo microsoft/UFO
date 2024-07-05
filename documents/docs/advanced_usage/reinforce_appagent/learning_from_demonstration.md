@@ -8,36 +8,11 @@ For complex tasks, users can demonstrate the task using [Step Recorder](https://
 
 ## Mechanism
 
-### Step 1: Record the Task
-- **Tool**: [Step Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47)
-- **Output**: Zip file containing the task description and action trajectories
+UFO use the [Step Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47) tool to record the task and action trajectories. The recorded demonstration is saved as a zip file. The `DemonstrationSummarizer` class extracts and summarizes the demonstration. The summarized demonstration is saved in the `DEMONSTRATION_SAVED_PATH` as specified in the `config_dev.yaml` file. When the AppAgent encounters a similar task, the `DemonstrationRetriever` class retrieves the saved demonstration from the demonstration database and generates a plan based on the retrieved demonstration.
 
-### Step 2: Save the Demonstration
-- **Action**: Save the recorded demonstration as a zip file
+!!! info
+    You can find how to record the task and action trajectories using the Step Recorder tool in the [User Demonstration Provision](../../creating_app_agent/demonstration_provision.md) document.
 
-### Step 3: Extract and Summarize the Demonstration
-- **Tool**: `DemonstrationSummarizer`
-- **Process**:
-  1. Extract the zip file
-  2. Summarize the demonstration
-- **Configuration**: Save the summarized demonstration in the `DEMONSTRATION_SAVED_PATH` as specified in the `config_dev.yaml` file
-
-### Step 4: Retrieve and Utilize the Demonstration
-- **When**: AppAgent encounters a similar task
-- **Action**: Retrieve the saved demonstration from the demonstration database
-- **Tool**: `DemonstrationRetriever`
-- **Outcome**: Generate a plan based on the retrieved demonstration
-
-### Demonstration Workflow Diagram
-```mermaid
-graph TD;
-    A[User Records Task] --> B[Save as Zip File]
-    B --> C[Extract Zip File]
-    C --> D[Summarize with DemonstrationSummarizer]
-    D --> E[Save in DEMONSTRATION_SAVED_PATH]
-    F[AppAgent Encounters Similar Task] --> G[Retrieve Demonstration from Database]
-    G --> H[Generate Plan]
-```
 
 You can find a demo video of learning from user demonstrations:
 
@@ -45,7 +20,6 @@ You can find a demo video of learning from user demonstrations:
 
 <br>
 
-<br>
 
 ## Activating Learning from User Demonstrations
 

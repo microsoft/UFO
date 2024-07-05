@@ -10,7 +10,6 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
 from ufo.config.config import Config
-from ufo.prompter.agent_prompter import APIPromptLoader
 from ufo.utils import print_with_color
 
 configs = Config.get_instance().config_data
