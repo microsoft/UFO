@@ -26,7 +26,7 @@ The advantage of using the command design pattern in the agent framework is that
 
 ## Receiver
 
-The `Receiver` is a central component in the Automator application that performs actions on the application. It provides functionalities to interact with the application and execute the action. All available actions are registered in the `Receiver` with the `ReceiverManager` class.
+The `Receiver` is a central component in the Automator application that performs actions on the application. It provides functionalities to interact with the application and execute the action. All available actions are registered in the with the `ReceiverManager` class.
 
 You can find the reference for a basic `Receiver` class below:
 
