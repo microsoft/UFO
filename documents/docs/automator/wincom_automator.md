@@ -11,6 +11,9 @@ There are several configurations that need to be set up before using the API Aut
 | `USE_APIS`              | Whether to allow the use of application APIs.                                                           | Boolean  | True          |
 | `APP_API_PROMPT_ADDRESS`      | The prompt address for the application API. | Dict | {"WINWORD.EXE": "ufo/prompts/apps/word/api.yaml", "EXCEL.EXE": "ufo/prompts/apps/excel/api.yaml", "msedge.exe": "ufo/prompts/apps/web/api.yaml", "chrome.exe": "ufo/prompts/apps/web/api.yaml"} |
 
+!!! note
+    Only `WINWORD.EXE` and `EXCEL.EXE` are currently supported by the API Automator. 
+
 
 ## Receiver
 The base class for the receiver of the API Automator is the `WinCOMReceiverBasic` class defined in the `ufo/automator/app_apis/basic` module. It is initialized with the application's win32 com object and provides functionalities to interact with the application's native API. Below is the reference for the `WinCOMReceiverBasic` class:
