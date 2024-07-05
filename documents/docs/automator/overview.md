@@ -51,13 +51,21 @@ You can find the reference for a basic `Command` class below:
             ...
     
 
-## Invoker
+## Invoker (AppPuppeteer)
 
 The `AppPuppeteer` plays the role of the invoker in the Automator application. It triggers the commands to be executed by the receivers. The `AppPuppeteer` equips the `AppAgent` with the capability to interact with the application's UI controls. It provides functionalities to translate action strings into specific actions and execute them. All available actions are registered in the `Puppeteer` with the `ReceiverManager` class.
 
 You can find the implementation of the `AppPuppeteer` class in the `ufo/automator/puppeteer.py` file, and its reference is shown below.
 
 ::: automator.puppeteer.AppPuppeteer
+
+<br>
+
+
+## Receiver Manager
+The `ReceiverManager` manages all the receivers and commands in the Automator application. It provides functionalities to register and retrieve receivers and commands. It is a complementary component to the `AppPuppeteer`.
+
+::: automator.puppeteer.ReceiverManager
 
 <br>
 
