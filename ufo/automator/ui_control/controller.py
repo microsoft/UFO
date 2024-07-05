@@ -9,8 +9,8 @@ from typing import Any, Dict, List, Optional, Type, Union
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
+from ufo.automator.puppeteer import ReceiverManager
 from ufo.config.config import Config
-from ufo.prompter.agent_prompter import APIPromptLoader
 from ufo.utils import print_with_color
 
 configs = Config.get_instance().config_data
@@ -92,12 +92,17 @@ class ControlReceiver(ReceiverBasic):
         :return: The result of the set edit text action.
         """
 
+        text = params.get("text", "")
+
         if configs["INPUT_TEXT_API"] == "set_text":
             method_name = "set_edit_text"
-            args = {"text": params["text"]}
+            args = {"text": text}
         else:
             method_name = "type_keys"
-            args = {"keys": params["text"], "pause": 0.1, "with_spaces": True}
+            text = text.replace("\n", "{ENTER}")
+            text = text.replace("\t", "{TAB}")
+
+            args = {"keys": text, "pause": 0.1, "with_spaces": True}
         try:
             result = self.atomic_execution(method_name, args)
             if (
@@ -199,13 +204,28 @@ class ControlReceiver(ReceiverBasic):
                 break
 
 
+@ReceiverManager.register
 class UIControlReceiverFactory(ReceiverFactory):
     """
     The factory class for the control receiver.
     """
 
     def create_receiver(self, control, application):
+        """
+        Create the control receiver.
+        :param control: The control element.
+        :param application: The application element.
+        :return: The control receiver.
+        """
         return ControlReceiver(control, application)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the receiver factory.
+        :return: The name of the receiver factory.
+        """
+        return "UIControl"
 
 
 class ControlCommand(CommandBasic):

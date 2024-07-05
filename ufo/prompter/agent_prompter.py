@@ -223,7 +223,7 @@ class AppAgentPrompter(BasicPrompter):
         self.app_api_prompt_template = None
 
         if configs.get("USE_APIS", False):
-            self.app_api_prompt_template = self.app_prompter.load_com_api_prompt()
+            self.app_api_prompt_template = self.app_prompter.load_api_prompt()
 
     def system_prompt_construction(
         self, additional_examples: List[str] = [], tips: List[str] = []
@@ -620,22 +620,12 @@ class APIPromptLoader:
         self.root_name = root_name
         self.api_prompt_key = "class_name"
 
-    def load_com_api_prompt(self) -> Dict[str, str]:
+    def load_api_prompt(self) -> Dict[str, str]:
         """
         Load the prompt template for COM APIs.
         :return: The prompt template for COM APIs.
         """
-        app2configkey_mapper = {
-            "WINWORD.EXE": "WORD_API_PROMPT",
-            "EXCEL.EXE": "EXCEL_API_PROMPT",
-            "POWERPNT.EXE": "POWERPOINT_API_PROMPT",
-            "olk.exe": "OUTLOOK_API_PROMPT",
-        }
-
-        # Get the config key of app
-        config_key = app2configkey_mapper.get(self.root_name, None)
-        # Get the prompt address from config
-        prompt_address = configs.get(config_key, None)
+        prompt_address = configs["APP_API_PROMPT_ADDRESS"].get(self.root_name, None)
 
         if prompt_address:
             return AppAgentPrompter.load_prompt_template(prompt_address, None)

@@ -23,7 +23,7 @@ from typing import Dict, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ufo import utils
+from ufo import automator, utils
 from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent

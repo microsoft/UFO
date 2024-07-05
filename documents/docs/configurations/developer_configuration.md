@@ -70,8 +70,7 @@ These prompt configuration parameters are used for the application and control A
 | Configuration Option   | Description                         | Type   | Default Value                              |
 |------------------------|-------------------------------------|--------|--------------------------------------------|
 | `API_PROMPT`           | The prompt for the UI automation API. | String | "ufo/prompts/share/base/api.yaml"          |
-| `WORD_API_PROMPT`      | The prompt for the Word APIs.       | String | "ufo/prompts/apps/word/api.yaml"           |
-| `EXCEL_API_PROMPT`     | The prompt for the Excel APIs.      | String | "ufo/prompts/apps/excel/api.yaml"          |
+| `APP_API_PROMPT_ADDRESS`      | The prompt address for the application API. | Dict | {"WINWORD.EXE": "ufo/prompts/apps/word/api.yaml", "EXCEL.EXE": "ufo/prompts/apps/excel/api.yaml", "msedge.exe": "ufo/prompts/apps/web/api.yaml", "chrome.exe": "ufo/prompts/apps/web/api.yaml"} |
 
 ## pywinauto Configuration
 

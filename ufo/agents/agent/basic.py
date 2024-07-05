@@ -260,6 +260,13 @@ class BasicAgent(ABC):
 
                 self.blackboard.add_questions(qa_pair)
 
+    @abstractmethod
+    def process_comfirmation(self) -> None:
+        """
+        Confirm the process.
+        """
+        pass
+
     @property
     def processor(self) -> BaseProcessor:
         """
