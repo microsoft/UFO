@@ -39,7 +39,7 @@ class AppPuppeteer:
         :param command_name: The command name.
         :param params: The arguments for the command.
         """
-        receiver = self.receiver_manager.get_receiver(command_name)
+        receiver = self.receiver_manager.get_receiver_from_command_name(command_name)
         command = receiver.command_registry.get(command_name.lower(), None)
 
         if receiver is None:
@@ -56,7 +56,7 @@ class AppPuppeteer:
         :param command_name: The command name.
         :return: The command types.
         """
-        receiver = self.receiver_manager.get_receiver(command_name)
+        receiver = self.receiver_manager.get_receiver_from_command_name(command_name)
 
         return receiver.type_name
 
@@ -182,11 +182,11 @@ class ReceiverManager:
         :param control: The control element.
         :return: The UI controller receiver.
         """
-        factory: ReceiverFactory = self._receiver_factory_registry.get("UIControl").get(
+        factory: ReceiverFactory = self.receiver_factory_registry.get("UIControl").get(
             "factory"
         )
         self.ui_control_receiver = factory.create_receiver(control, application)
-        self._receiver_list.append(self.ui_control_receiver)
+        self.receiver_list.append(self.ui_control_receiver)
         self._update_receiver_registry()
 
         return self.ui_control_receiver
@@ -197,7 +197,7 @@ class ReceiverManager:
         :param app_root_name: The app root name.
         :param process_name: The process name.
         """
-        for receiver_factory_dict in self._receiver_factory_registry.values():
+        for receiver_factory_dict in self.receiver_factory_registry.values():
 
             # Check if the receiver is API
             if receiver_factory_dict.get("is_api"):
@@ -205,7 +205,7 @@ class ReceiverManager:
                     app_root_name, process_name
                 )
                 if receiver is not None:
-                    self._receiver_list.append(receiver)
+                    self.receiver_list.append(receiver)
 
         self._update_receiver_registry()
 
@@ -214,11 +214,11 @@ class ReceiverManager:
         Update the receiver registry. A receiver registry is a dictionary that maps the command name to the receiver.
         """
 
-        for receiver in self._receiver_list:
+        for receiver in self.receiver_list:
             if receiver is not None:
                 self.receiver_registry.update(receiver.self_command_mapping())
 
-    def get_receiver(self, command_name: str) -> ReceiverBasic:
+    def get_receiver_from_command_name(self, command_name: str) -> ReceiverBasic:
         """
         Get the receiver from the command name.
         :param command_name: The command name.
@@ -230,12 +230,30 @@ class ReceiverManager:
         return receiver
 
     @property
+    def receiver_list(self) -> List[ReceiverBasic]:
+        """
+        Get the receiver list.
+        :return: The receiver list.
+        """
+        return self._receiver_list
+
+    @property
+    def receiver_factory_registry(
+        self,
+    ) -> Dict[str, Dict[str, Union[str, ReceiverFactory]]]:
+        """
+        Get the receiver factory registry.
+        :return: The receiver factory registry.
+        """
+        return self._receiver_factory_registry
+
+    @property
     def com_receiver(self) -> WinCOMReceiverBasic:
         """
         Get the COM receiver.
         :return: The COM receiver.
         """
-        for receiver in self._receiver_list:
+        for receiver in self.receiver_list:
             if issubclass(receiver.__class__, WinCOMReceiverBasic):
                 return receiver
 
