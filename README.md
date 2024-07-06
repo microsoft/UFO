@@ -26,29 +26,30 @@
 <b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="24"> operates as a multi-agent framework, encompassing:
 - <b>HostAgent 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
 - <b>AppAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
-- <b>Control Interaction 🎮</b>, is tasked with translating actions from HostAgent and AppAgent into interactions with the application and its UI controls. It's essential that the targeted controls are compatible with the Windows **UI Automation** or **Win32** API.
+- <b>Application Automator 🎮</b>, is tasked with translating actions from HostAgent and AppAgent into interactions with the application and through UI controls, native APIs or AI tools. Check out more details [here](https://microsoft.github.io/UFO/automator/overview/).
 
-Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](https://arxiv.org/abs/2402.07939) and [Documentation](https://microsoft.github.io/UFO/).
+Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](https://arxiv.org/abs/2402.07939) and [documentation](https://microsoft.github.io/UFO/).
 <h1 align="center">
     <img src="./assets/framework_v2.png"/> 
 </h1>
 
 
 ## 📢 News
-- 📅 2024-06-28: We are thrilled to announce that our official introduction video is now available on [YouTube](https://www.youtube.com/watch?v=QT_OhygMVXU)! Additionally, you can check out the early version of our [documentation](https://microsoft.github.io/UFO/). We welcome your contributions and feedback!
+- 📅 2024-07-06: We have a **New Release for v1.0.0!**.  You can check out our [documentation](https://microsoft.github.io/UFO/). We welcome your contributions and feedback!
+- 📅 2024-06-28: We are thrilled to announce that our official introduction video is now available on [YouTube](https://www.youtube.com/watch?v=QT_OhygMVXU)!
 - 📅 2024-06-25: **New Release for v0.2.1!**  We are excited to announce the release of version 0.2.1! This update includes several new features and improvements:
     1. **HostAgent Refactor:** We've refactored the HostAgent to enhance its efficiency in managing AppAgents within UFO.
     2. **Evaluation Agent:** Introducing an evaluation agent that assesses task completion and provides real-time feedback.
-    3. **Google Gemini Support:** UFO now supports Google Gemini as the inference engine. Refer to our detailed guide in [Documentation](https://microsoft.github.io/UFO/supported_models/gemini/).
+    3. **Google Gemini Support:** UFO now supports Google Gemini as the inference engine. Refer to our detailed guide in [documentation](https://microsoft.github.io/UFO/supported_models/gemini/).
     4. **Customized User Agents:** Users can now create customized agents by simply answering a few questions.
 - 📅 2024-05-21: We have reached 5K stars!✨
 - 📅 2024-05-08: **New Release for v0.1.1!** We've made some significant updates! Previously known as AppAgent and ActAgent, we've rebranded them to HostAgent and AppAgent to better align with their functionalities. Explore the latest enhancements:
-    1. **Learning from Human Demonstration:** UFO now supports learning from human demonstration! Utilize the [Windows Step Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47) to record your steps and demonstrate them for UFO. Refer to our detailed guide in [README.md](/record_processor/README.md) for more information.
+    1. **Learning from Human Demonstration:** UFO now supports learning from human demonstration! Utilize the [Windows Step Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47) to record your steps and demonstrate them for UFO. Refer to our detailed guide in [README.md](https://microsoft.github.io/UFO/creating_app_agent/demonstration_provision/) for more information.
     2. **Win32 Support:** We've incorporated support for [Win32](https://learn.microsoft.com/en-us/windows/win32/controls/window-controls) as a control backend, enhancing our UI automation capabilities.
     3. **Extended Application Interaction:** UFO now goes beyond UI controls, allowing interaction with your application through keyboard inputs and native APIs! Presently, we support Word ([examples](/ufo/prompts/apps/word/api.yaml)), with more to come soon. Customize and build your own interactions.
     4. **Control Filtering:** Streamline LLM's action process by using control filters to remove irrelevant control items. Enable them in [config_dev.yaml](/ufo/config/config_dev.yaml) under the `control filtering` section at the bottom.
 - 📅 2024-03-25: **New Release for v0.0.1!** Check out our exciting new features.
-    1. We now support creating your help documents for each Windows application to become an app expert. Check the [README](./learner/README.md) for more details!
+    1. We now support creating your help documents for each Windows application to become an app expert. Check the [README](https://microsoft.github.io/UFO/creating_app_agent/help_document_provision/) for more details!
     2. UFO now supports RAG from offline documents and online Bing search.
     3. You can save the task completion trajectory into its memory for UFO's reference, improving its future success rate!
     4. You can customize different GPT models for AppAgent and ActAgent. Text-only models (e.g., GPT-4) are now supported!
@@ -99,7 +100,7 @@ pip install -r requirements.txt
 ```
 
 ### ⚙️ Step 2: Configure the LLMs
-Before running UFO, you need to provide your LLM configurations **individually for HostAgent and AppAgent**. You can create your own config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` and editing config for **APP_AGENT** and **ACTION_AGENT** as follows: 
+Before running UFO, you need to provide your LLM configurations **individually for HostAgent and AppAgent**. You can create your own config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` and editing config for **HOST_AGENT** and **APP_AGENT** as follows: 
 
 
 #### OpenAI
@@ -140,10 +141,10 @@ UFO also supports other LLMs and advanced configurations, such as customize your
 If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file. 
 
 We provide the following options for RAG to enhance UFO's capabilities:
-- **[Offline Help Document](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_help_document/)**: Enable UFO to retrieve information from offline help documents.
-- **[Online Bing Search Engine](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_bing_search/)**: Enhance UFO's capabilities by utilizing the most up-to-date online search results.
-- **[Self-Experience](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/experience_learning/)**: Save task completion trajectories into UFO's memory for future reference.
-- **[User-Demonstration](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_demonstration/)**: Boost UFO's capabilities through user demonstration.
+- [Offline Help Document](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_help_document/)* Enable UFO to retrieve information from offline help documents.
+- [Online Bing Search Engine](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_bing_search/): Enhance UFO's capabilities by utilizing the most up-to-date online search results.
+- [Self-Experience](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/experience_learning/): Save task completion trajectories into UFO's memory for future reference.
+- [User-Demonstration](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_demonstration/): Boost UFO's capabilities through user demonstration.
 
 Consult their respective documentation for more information on how to configure these settings.
 
@@ -253,7 +254,6 @@ In this example, we will demonstrate how to utilize UFO to extract text from Wor
 
 
 https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4fc32e0
-
 
 
 
