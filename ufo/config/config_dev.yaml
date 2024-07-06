@@ -60,7 +60,7 @@ APP_API_PROMPT_ADDRESS: {
     "EXCEL.EXE": "ufo/prompts/apps/excel/api.yaml",
     "msedge.exe": "ufo/prompts/apps/web/api.yaml",
     "chrome.exe": "ufo/prompts/apps/web/api.yaml"
-}  # The prompt for the app API
+}  # The prompt address for the app API. The key is the app program name, and the value is the prompt address.
 
 WORD_API_PROMPT: "ufo/prompts/apps/word/api.yaml"  # The prompt for the word API
 EXCEL_API_PROMPT: "ufo/prompts/apps/excel/api.yaml"  # The prompt for the word API
