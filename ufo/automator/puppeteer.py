@@ -73,7 +73,7 @@ class AppPuppeteer:
         command = self.create_command(command_name, params, *args, **kwargs)
         return command.execute()
 
-    def execute_all_commands(self) -> List:
+    def execute_all_commands(self) -> List[Any]:
         """
         Execute all the commands in the command queue.
         :return: The execution results.
@@ -82,6 +82,8 @@ class AppPuppeteer:
         while self.command_queue:
             command = self.command_queue.popleft()
             results.append(command.execute())
+
+        return results
 
     def add_command(
         self, command_name: str, params: Dict[str, Any], *args, **kwargs
