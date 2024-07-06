@@ -35,7 +35,8 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 📢 News
-- 📅 2024-06-28: We are thrilled to announce that our official introduction video is now available on [YouTube](https://www.youtube.com/watch?v=QT_OhygMVXU)! Additionally, you can check out the early version of our [documentation](https://microsoft.github.io/UFO/). We welcome your contributions and feedback!
+- 📅 2024-07-06: We have a **New Release for v1.0.0!**.  You can check out our [documentation](https://microsoft.github.io/UFO/). We welcome your contributions and feedback!
+- 📅 2024-06-28: We are thrilled to announce that our official introduction video is now available on [YouTube](https://www.youtube.com/watch?v=QT_OhygMVXU)!
 - 📅 2024-06-25: **New Release for v0.2.1!**  We are excited to announce the release of version 0.2.1! This update includes several new features and improvements:
     1. **HostAgent Refactor:** We've refactored the HostAgent to enhance its efficiency in managing AppAgents within UFO.
     2. **Evaluation Agent:** Introducing an evaluation agent that assesses task completion and provides real-time feedback.
@@ -99,7 +100,7 @@ pip install -r requirements.txt
 ```
 
 ### ⚙️ Step 2: Configure the LLMs
-Before running UFO, you need to provide your LLM configurations **individually for HostAgent and AppAgent**. You can create your own config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` and editing config for **APP_AGENT** and **ACTION_AGENT** as follows: 
+Before running UFO, you need to provide your LLM configurations **individually for HostAgent and AppAgent**. You can create your own config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` and editing config for **HOST_AGENT** and **APP_AGENT** as follows: 
 
 
 #### OpenAI
@@ -253,7 +254,6 @@ In this example, we will demonstrate how to utilize UFO to extract text from Wor
 
 
 https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4fc32e0
-
 
 
 
