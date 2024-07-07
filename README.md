@@ -49,7 +49,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
     3. **Extended Application Interaction:** UFO now goes beyond UI controls, allowing interaction with your application through keyboard inputs and native APIs! Presently, we support Word ([examples](/ufo/prompts/apps/word/api.yaml)), with more to come soon. Customize and build your own interactions.
     4. **Control Filtering:** Streamline LLM's action process by using control filters to remove irrelevant control items. Enable them in [config_dev.yaml](/ufo/config/config_dev.yaml) under the `control filtering` section at the bottom.
 - 📅 2024-03-25: **New Release for v0.0.1!** Check out our exciting new features.
-    1. We now support creating your help documents for each Windows application to become an app expert. Check the [README](https://microsoft.github.io/UFO/creating_app_agent/help_document_provision/) for more details!
+    1. We now support creating your help documents for each Windows application to become an app expert. Check the [documentation](https://microsoft.github.io/UFO/creating_app_agent/help_document_provision/) for more details!
     2. UFO now supports RAG from offline documents and online Bing search.
     3. You can save the task completion trajectory into its memory for UFO's reference, improving its future success rate!
     4. You can customize different GPT models for AppAgent and ActAgent. Text-only models (e.g., GPT-4) are now supported!
@@ -141,7 +141,7 @@ UFO also supports other LLMs and advanced configurations, such as customize your
 If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file. 
 
 We provide the following options for RAG to enhance UFO's capabilities:
-- [Offline Help Document](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_help_document/)* Enable UFO to retrieve information from offline help documents.
+- [Offline Help Document](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_help_document/) Enable UFO to retrieve information from offline help documents.
 - [Online Bing Search Engine](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_bing_search/): Enhance UFO's capabilities by utilizing the most up-to-date online search results.
 - [Self-Experience](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/experience_learning/): Save task completion trajectories into UFO's memory for future reference.
 - [User-Demonstration](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_demonstration/): Boost UFO's capabilities through user demonstration.
