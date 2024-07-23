@@ -25,7 +25,9 @@ class ControlReceiver(ReceiverBasic):
 
     _command_registry: Dict[str, Type[CommandBasic]] = {}
 
-    def __init__(self, control: UIAWrapper, application: UIAWrapper):
+    def __init__(
+        self, control: Optional[UIAWrapper], application: Optional[UIAWrapper]
+    ) -> None:
         """
         Initialize the control receiver.
         :param control: The control element.
@@ -33,11 +35,13 @@ class ControlReceiver(ReceiverBasic):
         """
 
         self.control = control
+        self.application = application
 
         if control:
             self.control.set_focus()
             self.wait_enabled()
-        self.application = application
+        elif application:
+            self.application.set_focus()
 
     @property
     def type_name(self):
