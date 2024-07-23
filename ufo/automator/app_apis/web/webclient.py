@@ -51,7 +51,7 @@ class WebReceiver(ReceiverBasic):
         except requests.RequestException as e:
             print(f"Error fetching the URL: {e}")
 
-        return f"Error fetching the URL: {e}"
+            return f"Error fetching the URL: {e}"
 
     @property
     def type_name(self):

@@ -378,3 +378,33 @@ example11:
   Tips: |-
     - The Copilot Add-in can directly create a presentation from the plant.pptx. You need to use the Copilot Add-in to complete the task.
 
+
+example12: 
+  Request: |-
+    Add a title slide to the presentation.pptx on its first slide with the title 'Project Update'.
+  Sub-task: |-
+    Add a title slide to the presentation.pptx on its first slide with the title 'Project Update'.
+  Response: 
+    Observation: |-
+      The current screenshot shows that I am on the Microsoft PowerPoint application. The first slide of the presentation.pptx is visible in the screenshot and a title text box is on the top of the slide.
+    Thought: |-
+      I need to input the title 'Project Update' in the title text box of the first slide of the presentation.pptx. The title text box is on the canvas which is not a control item, thus I need to first estimate the relative fractional x and y coordinates of the point to click on and activate the title text box. The estimated coordinates of the point to click on are (0.35, 0.4).
+    ControlLabel: |-
+      ""
+    ControlText: |-
+      ""
+    Function: |- 
+      click_on_coordinates
+    Args: 
+      {"x": 0.35, "y": 0.4, "button": "left", "double": false}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) Input the title 'Project Update' in the title text box of the first slide of the presentation.pptx.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
+    Comment: |-
+      I need to estimate the relative fractional x and y coordinates of the point to click on and activate the title text box, so that I can input the title 'Project Update'.
+  Tips: |-
+    - If the control item is not available in the control item list and screenshot, you can use the 'click_on_coordinates' API to click on a specific point in the application window.
+
