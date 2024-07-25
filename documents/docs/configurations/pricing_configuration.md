@@ -18,6 +18,8 @@ PRICES: {
     "openai/gpt-4-turbo": {"input":0.01,"output": 0.03},
     "openai/gpt-4o": {"input": 0.005,"output": 0.015},
     "openai/gpt-4o-2024-05-13": {"input": 0.005, "output": 0.015},
+    "openai/gpt-4o-mini": {"input": 0.00015,"output": 0.0006},
+    "openai/gpt-4o-mini-2024-07-18": {"input": 0.00015,"output": 0.0006},
     "openai/gpt-3.5-turbo-0125": {"input": 0.0005, "output": 0.0015},
     "openai/gpt-3.5-turbo-1106": {"input": 0.001, "output": 0.002},
     "openai/gpt-3.5-turbo-instruct": {"input": 0.0015, "output": 0.002},
