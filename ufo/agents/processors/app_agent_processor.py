@@ -365,7 +365,7 @@ class AppAgentProcessor(BaseProcessor):
             "Action": self.action,
             "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation),
             "Request": self.request,
-            "Agent": "ActAgent",
+            "Agent": "AppAgent",
             "AgentName": self.app_agent.name,
             "Application": app_root,
             "Cost": self._cost,

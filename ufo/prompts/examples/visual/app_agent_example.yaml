@@ -408,3 +408,33 @@ example12:
   Tips: |-
     - If the control item is not available in the control item list and screenshot, you can use the 'click_on_coordinates' API to click on a specific point in the application window.
 
+
+example13:
+  Request: |-
+    Fill the information for top 3 events one by one in the forms of private Event Bookings web page.
+  Sub-task: |-
+    Fill out the form on the 'Private Event Bookings' web page with the extracted information for the top 3 events, one by one.
+  Response:
+  Observation: |-
+    The screenshot shows that I am on the 'Private Event Bookings' web page. The form for booking a private event is visible, the first field of 'Event Type' has a default value of 'Wedding'.
+  Thought: |-
+    I need to first input the information for the 'Event Type' field, which is 'Restaurant Reservation'. However, the 'Event Type' field is already filled with 'Wedding'. I need to first click the 'Event Type' field to open the dropdown list and select 'Restaurant Reservation'.
+  ControlLabel: |-
+    70
+  ControlText: |-
+    Event Type
+  Function: |-
+    click_input
+  Args:
+    {"button": "left", "double": false}
+  Status: |-
+    CONTINUE
+  Plan:
+    - (1) Click the 'Event Type' field to open the dropdown list.
+    - (2) Select 'Restaurant Reservation' from the dropdown list.
+    - (3) Input the information for the 'Event Name' field, which is 'Birthday Party'.
+    - (4) Input the information for the 'Event Date' field, which is '2022-12-25'.
+    - (5) Input the information for the 'Event Time' field, which is '18:00'.
+    - (6) Click the 'Submit' button to submit the form.
+  Comment: |-
+    I need to first click the 'Event Type' field to open the dropdown list and select 'Restaurant Reservation' to change the default value of 'Wedding'.

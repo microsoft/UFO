@@ -4,7 +4,7 @@ SLEEP_TIME: 5  # The sleep time between each step to wait for the window to be r
 RECTANGLE_TIME: 1
 
 SAFE_GUARD: True  # Whether to use the safe guard to prevent the model from doing sensitve operations.
-CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem"] 
+CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner"] 
 # The list of widgets that allowed to be selected, in uia backend, it will be used for filter the control_type, while in win32 backend, it will be used for filter the class_name.
 HISTORY_KEYS: ["Step", "Thought", "ControlText", "Subtask", "Action", "Comment", "Results", "UserConfirm"]  # The keys of the action history for the next step.
 ANNOTATION_COLORS: {

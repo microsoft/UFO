@@ -235,7 +235,7 @@ class HostAgentProcessor(BaseProcessor):
             "RoundStep": self.round_step,
             "AgentStep": self.host_agent.step,
             "Round": self.round_num,
-            "ControlLabel": self.control_text,
+            "ControlLabel": self.control_label,
             "SubtaskIndex": -1,
             "Action": self.action,
             "ActionType": "UIControl",
