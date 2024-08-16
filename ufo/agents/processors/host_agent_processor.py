@@ -51,6 +51,7 @@ class HostAgentProcessor(BaseProcessor):
             "magenta",
         )
 
+    @BaseProcessor.method_timer
     def capture_screenshot(self) -> None:
         """
         Capture the screenshot.
@@ -70,6 +71,7 @@ class HostAgentProcessor(BaseProcessor):
             desktop_save_path
         )
 
+    @BaseProcessor.method_timer
     def get_control_info(self) -> None:
         """
         Get the control information.
@@ -85,6 +87,7 @@ class HostAgentProcessor(BaseProcessor):
             self._desktop_windows_dict
         )
 
+    @BaseProcessor.method_timer
     def get_prompt_message(self) -> None:
         """
         Get the prompt message.
@@ -111,6 +114,7 @@ class HostAgentProcessor(BaseProcessor):
         )
         self.request_logger.debug(log)
 
+    @BaseProcessor.method_timer
     def get_response(self) -> None:
         """
         Get the response from the LLM.
@@ -125,6 +129,7 @@ class HostAgentProcessor(BaseProcessor):
         except Exception:
             self.llm_error_handler()
 
+    @BaseProcessor.method_timer
     def parse_response(self) -> None:
         """
         Parse the response.
@@ -153,6 +158,7 @@ class HostAgentProcessor(BaseProcessor):
 
         self.host_agent.print_response(self._response_json)
 
+    @BaseProcessor.method_timer
     def execute_action(self) -> None:
         """
         Execute the action.
@@ -170,6 +176,12 @@ class HostAgentProcessor(BaseProcessor):
 
             self.status = self._agent_status_manager.FINISH.value
             return
+
+        self._control_log = {
+            "control_class": new_app_window.element_info.class_name,
+            "control_type": new_app_window.element_info.control_type,
+            "control_automation_id": new_app_window.element_info.automation_id,
+        }
 
         # Get the root name of the application.
         self.app_root = self.control_inspector.get_application_root_name(new_app_window)
@@ -249,6 +261,9 @@ class HostAgentProcessor(BaseProcessor):
 
         self._memory_data.set_values_from_dict(self._response_json)
         self._memory_data.set_values_from_dict(additional_memory)
+        self._memory_data.set_values_from_dict(self._control_log)
+        self._memory_data.set_values_from_dict({"time_cost": self._time_cost})
+
         self.host_agent.add_memory(self._memory_data)
 
         # Log the memory item.

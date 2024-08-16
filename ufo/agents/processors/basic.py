@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 
 
+from functools import wraps
 import json
 import time
 import traceback
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Any, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -56,6 +57,14 @@ class BaseProcessor(ABC):
         self._is_resumed = False
         self._action = None
         self._plan = None
+
+        self._control_log = {
+            "control_class": None,
+            "control_type": None,
+            "control_automation_id": None,
+        }
+
+        self._time_cost = {}
 
     def process(self) -> None:
         """
@@ -138,6 +147,18 @@ class BaseProcessor(ABC):
         self.update_step()
 
         self._is_resumed = False
+
+    @classmethod
+    def method_timer(cls, func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            start_time = time.time()
+            result = func(self, *args, **kwargs)
+            end_time = time.time()
+            self._time_cost[func.__name__] = end_time - start_time
+            return result
+
+        return wrapper
 
     @abstractmethod
     def print_step_info(self) -> None:
@@ -684,7 +705,7 @@ class BaseProcessor(ABC):
         return
 
     @staticmethod
-    def string2list(string: str) -> List[str]:
+    def string2list(string: Any) -> List[str]:
         """
         Convert a string to a list of string if the input is a string.
         :param string: The string.
