@@ -76,6 +76,9 @@ Below is the list of available commands in the API Automator that are currently 
 
 
 !!! tip
+    Please refer to the `ufo/prompts/apps/{app_name}/api.yaml` file for the prompt details for the commands.
+
+!!! tip
     You can customize the commands by adding new command classes to the `ufo/automator/app_apis/{app_name}/` module.
 
   

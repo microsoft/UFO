@@ -56,3 +56,7 @@ Below is the list of available commands in the Web Automator that are currently 
 | Command Name | Function Name | Description |
 |--------------|---------------|-------------|
 | `WebCrawlerCommand` | `web_crawler` | Get the content of a web page into a markdown format. |
+
+
+!!! tip
+    Please refer to the `ufo/prompts/apps/web/api.yaml` file for the prompt details for the `WebCrawlerCommand` command.

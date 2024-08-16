@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from typing import Any, Dict, List, Type
+from typing import Any, Dict, List, Type, Union
 
 import pandas as pd
 
@@ -30,10 +30,10 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
 
         return None
 
-    def table2markdown(self, sheet_name: str) -> str:
+    def table2markdown(self, sheet_name: Union[str, int]) -> str:
         """
         Convert the table in the sheet to a markdown table string.
-        :param sheet_name: The sheet name.
+        :param sheet_name: The sheet name (str), or the sheet index (int), starting from 1.
         :return: The markdown table string.
         """
 
