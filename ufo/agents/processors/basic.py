@@ -150,6 +150,12 @@ class BaseProcessor(ABC):
 
     @classmethod
     def method_timer(cls, func):
+        """
+        Decorator to calculate the time cost of the method.
+        :param func: The method to be decorated.
+        :return: The decorated method.
+        """
+
         @wraps(func)
         def wrapper(self, *args, **kwargs):
             start_time = time.time()
