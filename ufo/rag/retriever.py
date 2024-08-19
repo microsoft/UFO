@@ -3,13 +3,11 @@
 
 from abc import ABC, abstractmethod
 
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
 from ufo.config.config import get_offline_learner_indexer_config
 from ufo.rag import web_search
-from ufo.utils import print_with_color
-
+from ufo.utils import print_with_color, get_hugginface_embedding
 
 class RetrieverFactory:
     """
@@ -112,10 +110,7 @@ class OfflineDocRetriever(Retriever):
             return None
 
         try:
-            embeddings = HuggingFaceEmbeddings(
-                model_name="sentence-transformers/all-mpnet-base-v2"
-            )
-            db = FAISS.load_local(path, embeddings)
+            db = FAISS.load_local(path, get_hugginface_embedding())
             return db
         except:
             print_with_color(
@@ -146,10 +141,7 @@ class ExperienceRetriever(Retriever):
         """
 
         try:
-            embeddings = HuggingFaceEmbeddings(
-                model_name="sentence-transformers/all-mpnet-base-v2"
-            )
-            db = FAISS.load_local(db_path, embeddings)
+            db = FAISS.load_local(db_path, get_hugginface_embedding())
             return db
         except:
             print_with_color(
@@ -216,10 +208,7 @@ class DemonstrationRetriever(Retriever):
         """
 
         try:
-            embeddings = HuggingFaceEmbeddings(
-                model_name="sentence-transformers/all-mpnet-base-v2"
-            )
-            db = FAISS.load_local(db_path, embeddings)
+            db = FAISS.load_local(db_path, get_hugginface_embedding())
             return db
         except:
             print_with_color(

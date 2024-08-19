@@ -294,7 +294,7 @@ class AppAgentProcessor(BaseProcessor):
             # Get the selected control item from the annotation dictionary and LLM response.
             # The LLM response is a number index corresponding to the key in the annotation dictionary.
 
-            if control_selected:
+            if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True) and control_selected:
                 control_selected.draw_outline(colour="red", thickness=3)
                 time.sleep(configs.get("RECTANGLE_TIME", 0))
 

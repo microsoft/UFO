@@ -9,6 +9,7 @@ from typing import Any, Callable, Literal, Optional
 
 import openai
 from openai import AzureOpenAI, OpenAI
+import functools
 
 from ufo.llm.base import BaseService
 
@@ -30,28 +31,17 @@ class OpenAIService(BaseService):
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config["PRICES"]
         assert self.api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
-        self.client: OpenAI = (
-            OpenAI(
-                base_url=self.config_llm["API_BASE"],
-                api_key=self.config_llm["API_KEY"],
-                max_retries=self.max_retry,
-                timeout=self.config["TIMEOUT"],
-            )
-            if self.api_type == "openai"
-            else AzureOpenAI(
-                max_retries=self.max_retry,
-                timeout=self.config["TIMEOUT"],
-                api_version=self.config_llm["API_VERSION"],
-                azure_endpoint=self.config_llm["API_BASE"],
-                api_key=(
-                    self.config_llm["API_KEY"]
-                    if self.api_type == "aoai"
-                    else self.get_openai_token()
-                ),
-            )
+        
+        self.client: OpenAI = OpenAIService.get_openai_client(
+            self.api_type,
+            self.config_llm["API_BASE"],
+            self.max_retry,
+            self.config["TIMEOUT"],
+            self.config_llm.get("API_KEY"),
+            self.config_llm.get("API_VERSION"),
+            aad_api_scope_base = self.config_llm.get("AAD_API_SCOPE_BASE", ""),
+            aad_tenant_id = self.config_llm.get("AAD_TENANT_ID", ""),
         )
-        if self.api_type == "azure_ad":
-            self.auto_refresh_token()
 
     def chat_completion(
         self,
@@ -141,9 +131,55 @@ class OpenAIService(BaseService):
             # Handle API error, e.g. retry or log
             raise Exception(f"OpenAI API returned an API Error: {e}")
 
-    def get_openai_token(
-        self,
-        token_cache_file: str = "cloudgpt-apim-token-cache.bin",
+    @functools.lru_cache()
+    @staticmethod
+    def get_openai_client(
+        api_type: str,
+        api_base: str,
+        max_retry: int,
+        timeout: int,
+        api_key: Optional[str] = None,
+        api_version: Optional[str] = None,
+        aad_api_scope_base: Optional[str] = None,
+        aad_tenant_id: Optional[str] = None,
+    ) -> OpenAI:
+        if api_type == "openai":
+            client = OpenAI(
+                base_url=api_base,
+                api_key=api_key,
+                max_retries=max_retry,
+                timeout=timeout,
+            )
+        else:
+            if api_key:
+                client = AzureOpenAI(
+                    max_retries=max_retry,
+                    timeout=timeout,
+                    api_version=api_version,
+                    azure_endpoint=api_base,
+                    api_key=api_key,
+                )
+            else:
+                assert aad_api_scope_base and aad_tenant_id, "AAD API scope base and tenant ID must be specified"
+                token_provider = OpenAIService.get_aad_token_provider(
+                    aad_api_scope_base=aad_api_scope_base,
+                    aad_tenant_id=aad_tenant_id,
+                )
+                client = AzureOpenAI(
+                    max_retries=max_retry,
+                    timeout=timeout,
+                    api_version=api_version,
+                    azure_endpoint=api_base,
+                    azure_ad_token_provider=token_provider,
+                )
+        return client
+
+    @functools.lru_cache()
+    @staticmethod
+    def get_aad_token_provider(
+        aad_api_scope_base: str,
+        aad_tenant_id: str,
+        token_cache_file: str = "aoai-token-cache.bin",
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
         use_azure_cli: Optional[bool] = None,
@@ -151,14 +187,14 @@ class OpenAIService(BaseService):
         use_managed_identity: Optional[bool] = None,
         use_device_code: Optional[bool] = None,
         **kwargs,
-    ) -> str:
+    ) -> Callable[[], str]:
         """
         acquire token from Azure AD for OpenAI
 
         Parameters
         ----------
         token_cache_file : str, optional
-            path to the token cache file, by default 'cloudgpt-apim-token-cache.bin' in the current directory
+            path to the token cache file, by default 'aoai-token-cache.bin' in the current directory
         client_id : Optional[str], optional
             client id for AAD app, by default None
         client_secret : Optional[str], optional
@@ -193,12 +229,13 @@ class OpenAIService(BaseService):
             DeviceCodeCredential,
             ManagedIdentityCredential,
             TokenCachePersistenceOptions,
+            get_bearer_token_provider,
         )
         from azure.identity.broker import InteractiveBrowserBrokerCredential
 
-        api_scope_base = "api://" + self.config_llm["AAD_API_SCOPE_BASE"]
+        api_scope_base = "api://" + aad_api_scope_base
 
-        tenant_id = self.config_llm["AAD_TENANT_ID"]
+        tenant_id = aad_tenant_id
         scope = api_scope_base + "/.default"
 
         token_cache_option = TokenCachePersistenceOptions(
@@ -309,79 +346,10 @@ class OpenAIService(BaseService):
                 )
                 raise e
 
+        
         try:
-            token = identity.get_token(scope)
-            return token.token
+            return get_bearer_token_provider(identity, scope)
         except Exception as e:
             print("failed to acquire token from AAD for OpenAI", e)
             raise e
 
-    def auto_refresh_token(
-        self,
-        token_cache_file: str = "cloudgpt-apim-token-cache.bin",
-        interval: datetime.timedelta = datetime.timedelta(minutes=15),
-        on_token_update: callable = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-    ) -> callable:
-        """
-        helper function for auto refreshing token from your organization
-
-        Parameters
-        ----------
-        token_cache_file : str, optional
-            path to the token cache file, by default 'apim-token-cache.bin' in the current directory
-        interval : datetime.timedelta, optional
-            interval for refreshing token, by default 15 minutes
-        on_token_update : callable, optional
-            callback function to be called when token is updated, by default None. In the callback function, you can get token from openai.api_key
-
-        Returns
-        -------
-        callable
-            a callable function that can be used to stop the auto refresh thread
-        """
-
-        import threading
-
-        def update_token():
-            import openai
-
-            openai.api_type = (
-                "azure"
-                if self.config_llm["API_TYPE"] == "azure_ad"
-                else self.config_llm["API_TYPE"]
-            )
-            openai.base_url = self.config_llm["API_BASE"]
-            openai.api_version = self.config_llm["API_VERSION"]
-            openai.api_key = self.get_openai_token(
-                token_cache_file=token_cache_file,
-                client_id=client_id,
-                client_secret=client_secret,
-            )
-
-            if on_token_update is not None:
-                on_token_update()
-
-        def refresh_token_thread():
-            import time
-
-            while True:
-                try:
-                    update_token()
-                except Exception as e:
-                    print("failed to acquire token from AAD for your organization", e)
-                time.sleep(interval.total_seconds())
-
-        try:
-            update_token()
-        except Exception as e:
-            raise Exception("failed to acquire token from AAD for your organization", e)
-
-        thread = threading.Thread(target=refresh_token_thread, daemon=True)
-        thread.start()
-
-        def stop():
-            thread.stop()
-
-        return stop

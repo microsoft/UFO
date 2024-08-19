@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import importlib
+import functools
 import json
 import os
 from typing import Optional, Any, Dict
@@ -147,3 +148,10 @@ def append_string_to_file(file_path: str, string: str) -> None:
     # Append the string to the file.
     with open(file_path, "a", encoding="utf-8") as file:
         file.write(string + "\n")
+
+@functools.lru_cache(maxsize=5)
+def get_hugginface_embedding(
+    model_name: str = "sentence-transformers/all-mpnet-base-v2"
+):
+    from langchain_community.embeddings import HuggingFaceEmbeddings
+    return HuggingFaceEmbeddings(model_name=model_name)

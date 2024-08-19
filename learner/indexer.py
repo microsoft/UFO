@@ -1,9 +1,9 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+from ufo.utils import get_hugginface_embedding
 from . import xml_loader
 from .utils import load_json_file, save_json_file, print_with_color
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 import os
 
@@ -39,9 +39,7 @@ def create_indexer(app: str, docs: str, format: str, incremental: bool, save_pat
     )
 
     if format == "xml":
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-mpnet-base-v2"
-        )
+        embeddings = get_hugginface_embedding()
     else:
         raise ValueError("Invalid format: " + format)
 
