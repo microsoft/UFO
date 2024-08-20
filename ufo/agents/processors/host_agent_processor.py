@@ -195,7 +195,8 @@ class HostAgentProcessor(BaseProcessor):
         # Switch to the new application window, if it is different from the current application window.
         self.switch_to_new_app_window(new_app_window)
         self.application_window.set_focus()
-        self.application_window.draw_outline(colour="red", thickness=3)
+        if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
+            self.application_window.draw_outline(colour="red", thickness=3)
 
         self.action = "set_focus()"
 

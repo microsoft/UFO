@@ -4,11 +4,10 @@
 import requests
 from langchain.docstore.document import Document
 from langchain.text_splitter import HTMLHeaderTextSplitter
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
 from ufo.config.config import Config
-from ufo.utils import print_with_color
+from ufo.utils import get_hugginface_embedding, print_with_color
 
 configs = Config.get_instance().config_data
 
@@ -112,10 +111,7 @@ class BingSearchWeb:
         :param query: The query to create an indexer for.
         :return: The created indexer.
         """
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-mpnet-base-v2"
-        )
 
-        db = FAISS.from_documents(documents, embeddings)
+        db = FAISS.from_documents(documents, get_hugginface_embedding())
 
         return db

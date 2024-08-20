@@ -6,13 +6,12 @@ from typing import Tuple
 
 import yaml
 from langchain.docstore.document import Document
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
 from ufo.experience.parser import ExperienceLogLoader
 from ufo.llm.llm_call import get_completion
 from ufo.prompter.experience_prompter import ExperiencePrompter
-from ufo.utils import json_parser
+from ufo.utils import get_hugginface_embedding, json_parser
 
 
 class ExperienceSummarizer:
@@ -175,14 +174,11 @@ class ExperienceSummarizer:
             request = summary["request"]
             document_list.append(Document(page_content=request, metadata=summary))
 
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-mpnet-base-v2"
-        )
-        db = FAISS.from_documents(document_list, embeddings)
+        db = FAISS.from_documents(document_list, get_hugginface_embedding())
 
         # Check if the db exists, if not, create a new one.
         if os.path.exists(db_path):
-            prev_db = FAISS.load_local(db_path, embeddings)
+            prev_db = FAISS.load_local(db_path, get_hugginface_embedding())
             db.merge_from(prev_db)
 
         db.save_local(db_path)

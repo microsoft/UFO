@@ -3,6 +3,9 @@ MAX_STEP: 100  # The max step limit for completing the user request
 SLEEP_TIME: 5  # The sleep time between each step to wait for the window to be ready
 RECTANGLE_TIME: 1
 
+# Skip rendering visual outline on screen if not necessary
+SHOW_VISUAL_OUTLINE_ON_SCREEN: False
+
 SAFE_GUARD: True  # Whether to use the safe guard to prevent the model from doing sensitve operations.
 CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner"] 
 # The list of widgets that allowed to be selected, in uia backend, it will be used for filter the control_type, while in win32 backend, it will be used for filter the class_name.
@@ -49,8 +52,10 @@ DEMONSTRATION_SAVED_PATH: "vectordb/demonstration/"
 
 API_PROMPT: "ufo/prompts/share/base/api.yaml"  # The prompt for the API
 CLICK_API: "click_input" # The click API
+AFTER_CLICK_WAIT: 0 # The wait time after clicking in seconds, even if the value is 0, there will be a small pause. Default 0.09 in pywinauto.
 INPUT_TEXT_API: "type_keys" # The input text API. Can be "type_keys" or "set_text"
 INPUT_TEXT_ENTER: False # whether to press enter after typing the text
+INPUT_TEXT_INTER_KEY_PAUSE: 0 # The pause time between each key press in seconds. Even if the value is 0, there will be a small pause. Default 0.05 in pywinauto
 
 
 ## APIs related
@@ -88,3 +93,6 @@ QA_PAIR_NUM: 20  # The number of QA pairs for the customization
 EVA_SESSION: True  # Whether to include the session in the evaluation
 EVA_ROUND: FALSE
 EVA_ALL_SCREENSHOTS: True  # Whether to include all the screenshots in the evaluation
+
+# Image saving performance
+DEFAULT_PNG_COMPRESS_LEVEL: 1  # The compress level for the PNG image, 0-9, 0 is no compress, 1 is the fastest, 9 is the best compress

@@ -7,6 +7,7 @@ from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 import pyautogui
+import pywinauto
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.win32structures import RECT
 
@@ -17,6 +18,9 @@ from ufo.utils import print_with_color
 
 configs = Config.get_instance().config_data
 
+if configs.get("AFTER_CLICK_WAIT", None) is not None:
+    pywinauto.timings.Timings.after_clickinput_wait = configs["AFTER_CLICK_WAIT"]
+    pywinauto.timings.Timings.after_click_wait = configs["AFTER_CLICK_WAIT"]
 
 class ControlReceiver(ReceiverBasic):
     """
@@ -143,6 +147,7 @@ class ControlReceiver(ReceiverBasic):
         """
 
         text = params.get("text", "")
+        inter_key_pause = configs.get("INPUT_TEXT_INTER_KEY_PAUSE", 0.1)
 
         if configs["INPUT_TEXT_API"] == "set_text":
             method_name = "set_edit_text"
@@ -152,7 +157,7 @@ class ControlReceiver(ReceiverBasic):
             text = text.replace("\n", "{ENTER}")
             text = text.replace("\t", "{TAB}")
 
-            args = {"keys": text, "pause": 0.1, "with_spaces": True}
+            args = {"keys": text, "pause": inter_key_pause, "with_spaces": True}
         try:
             result = self.atomic_execution(method_name, args)
             if (
@@ -175,7 +180,7 @@ class ControlReceiver(ReceiverBasic):
                 text_to_type = args["text"]
                 keys_to_send = clear_text_keys + text_to_type
                 method_name = "type_keys"
-                args = {"keys": keys_to_send, "pause": 0.1, "with_spaces": True}
+                args = {"keys": keys_to_send, "pause": inter_key_pause, "with_spaces": True}
                 return self.atomic_execution(method_name, args)
             else:
                 return f"An error occurred: {e}"
