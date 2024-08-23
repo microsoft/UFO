@@ -31,7 +31,7 @@ class OpenAIService(BaseService):
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config["PRICES"]
         assert self.api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
-        
+
         self.client: OpenAI = OpenAIService.get_openai_client(
             self.api_type,
             self.config_llm["API_BASE"],
@@ -39,8 +39,8 @@ class OpenAIService(BaseService):
             self.config["TIMEOUT"],
             self.config_llm.get("API_KEY"),
             self.config_llm.get("API_VERSION"),
-            aad_api_scope_base = self.config_llm.get("AAD_API_SCOPE_BASE", ""),
-            aad_tenant_id = self.config_llm.get("AAD_TENANT_ID", ""),
+            aad_api_scope_base=self.config_llm.get("AAD_API_SCOPE_BASE", ""),
+            aad_tenant_id=self.config_llm.get("AAD_TENANT_ID", ""),
         )
 
     def chat_completion(
@@ -160,7 +160,9 @@ class OpenAIService(BaseService):
                     api_key=api_key,
                 )
             else:
-                assert aad_api_scope_base and aad_tenant_id, "AAD API scope base and tenant ID must be specified"
+                assert (
+                    aad_api_scope_base and aad_tenant_id
+                ), "AAD API scope base and tenant ID must be specified"
                 token_provider = OpenAIService.get_aad_token_provider(
                     aad_api_scope_base=aad_api_scope_base,
                     aad_tenant_id=aad_tenant_id,
@@ -346,10 +348,8 @@ class OpenAIService(BaseService):
                 )
                 raise e
 
-        
         try:
             return get_bearer_token_provider(identity, scope)
         except Exception as e:
             print("failed to acquire token from AAD for OpenAI", e)
             raise e
-
