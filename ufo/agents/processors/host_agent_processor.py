@@ -269,7 +269,7 @@ class HostAgentProcessor(BaseProcessor):
 
         # Log the memory item.
         self.context.add_to_structural_logs(self._memory_data.to_dict())
-        self.log(self._memory_data.to_dict())
+        # self.log(self._memory_data.to_dict())
 
         # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
         memorized_action = {

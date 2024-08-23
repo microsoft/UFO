@@ -22,6 +22,7 @@ if configs.get("AFTER_CLICK_WAIT", None) is not None:
     pywinauto.timings.Timings.after_clickinput_wait = configs["AFTER_CLICK_WAIT"]
     pywinauto.timings.Timings.after_click_wait = configs["AFTER_CLICK_WAIT"]
 
+
 class ControlReceiver(ReceiverBasic):
     """
     The control receiver class.
@@ -59,15 +60,20 @@ class ControlReceiver(ReceiverBasic):
         :return: The result of the action.
         """
 
+        import traceback
+
         try:
             method = getattr(self.control, method_name)
+            print(f"control: {self.control.element_info}")
+
             result = method(**params)
         except AttributeError:
             message = f"{self.control} doesn't have a method named {method_name}"
             print_with_color(f"Warning: {message}", "yellow")
             result = message
         except Exception as e:
-            message = f"An error occurred: {e}"
+            full_traceback = traceback.format_exc()
+            message = f"An error occurred: {full_traceback}"
             print_with_color(f"Warning: {message}", "yellow")
             result = message
         return result
@@ -180,7 +186,11 @@ class ControlReceiver(ReceiverBasic):
                 text_to_type = args["text"]
                 keys_to_send = clear_text_keys + text_to_type
                 method_name = "type_keys"
-                args = {"keys": keys_to_send, "pause": inter_key_pause, "with_spaces": True}
+                args = {
+                    "keys": keys_to_send,
+                    "pause": inter_key_pause,
+                    "with_spaces": True,
+                }
                 return self.atomic_execution(method_name, args)
             else:
                 return f"An error occurred: {e}"

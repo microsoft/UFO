@@ -256,6 +256,9 @@ class UIABackendStrategy(BackendStrategy):
 
         for elem, elem_type, elem_name, elem_rect in elem_info_list:
             element_info = UIAElementInfoFix(elem, True)
+            elem_type_name = UIABackendStrategy._get_uia_control_name_map().get(
+                elem_type, ""
+            )
 
             # handle is not needed, skip fetching
             element_info._cached_handle = 0
@@ -271,7 +274,7 @@ class UIABackendStrategy(BackendStrategy):
             rect.bottom = elem_rect.bottom
             element_info._cached_rect = rect
             element_info._cached_name = elem_name
-            element_info._cached_control_type = elem_type
+            element_info._cached_control_type = elem_type_name
 
             # currently rich text is not used, skip fetching but use name as alternative
             # this could be reverted if some control requires rich text
@@ -296,6 +299,11 @@ class UIABackendStrategy(BackendStrategy):
     def _get_uia_control_id_map():
         iuia = pywinauto.uia_defines.IUIA()
         return iuia.known_control_types
+
+    @staticmethod
+    def _get_uia_control_name_map():
+        iuia = pywinauto.uia_defines.IUIA()
+        return iuia.known_control_type_ids
 
     @staticmethod
     @functools.lru_cache()

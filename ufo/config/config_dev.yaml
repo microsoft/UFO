@@ -55,7 +55,7 @@ CLICK_API: "click_input" # The click API
 AFTER_CLICK_WAIT: 0 # The wait time after clicking in seconds, even if the value is 0, there will be a small pause. Default 0.09 in pywinauto.
 INPUT_TEXT_API: "type_keys" # The input text API. Can be "type_keys" or "set_text"
 INPUT_TEXT_ENTER: False # whether to press enter after typing the text
-INPUT_TEXT_INTER_KEY_PAUSE: 0 # The pause time between each key press in seconds. Even if the value is 0, there will be a small pause. Default 0.05 in pywinauto
+INPUT_TEXT_INTER_KEY_PAUSE: 0.05 # The pause time between each key press in seconds. Even if the value is 0, there will be a small pause. Default 0.05 in pywinauto
 
 
 ## APIs related
