@@ -3,24 +3,21 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
-from typing import Callable, cast, Dict, List
-
-import time
-import psutil
-import pywinauto
-from pywinauto import Desktop
-from pywinauto.controls.uiawrapper import UIAWrapper
-import pywinauto.uia_defines
-from pywinauto.uia_element_info import UIAElementInfo
-import uiautomation as auto
 import functools
+import time
+from abc import ABC, abstractmethod
+from typing import Callable, Dict, List, Optional, cast
 
 import comtypes.gen.UIAutomationClient as UIAutomationClient_dll
-
+import psutil
+import pywinauto
+import pywinauto.uia_defines
+import uiautomation as auto
+from pywinauto import Desktop
+from pywinauto.controls.uiawrapper import UIAWrapper
+from pywinauto.uia_element_info import UIAElementInfo
 
 from ufo.config.config import Config
-
 
 configs = Config.get_instance().config_data
 
@@ -192,7 +189,7 @@ class UIABackendStrategy(BackendStrategy):
 
     def find_control_elements_in_descendants(
         self,
-        window: UIAWrapper,
+        window: Optional[UIAWrapper],
         control_type_list: List[str] = [],
         class_name_list: List[str] = [],
         title_list: List[str] = [],
