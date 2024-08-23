@@ -42,7 +42,7 @@ class EvaluationAgentPrompter(BasicPrompter):
         self.app_api_prompt_template = None
 
         if configs.get("USE_APIS", False):
-            self.app_api_prompt_template = self.app_prompter.load_com_api_prompt()
+            self.app_api_prompt_template = self.app_prompter.load_api_prompt()
 
     def system_prompt_construction(self) -> str:
         """

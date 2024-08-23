@@ -37,13 +37,9 @@ class ControlFilterFactory:
         """
         Appends the given control_info to the filtered_control_dict if it is not already present.
         For example, if the filtered_control_dict is empty, it will be updated with the control_info. The operation is performed in place.
-
-        Args:
-            filtered_control_dict (dict): The dictionary of filtered control information.
-            control_dicts (dict): The control information to be appended.
-
-        Returns:
-            dict: The updated filtered_control_dict dictionary.
+        :param filtered_control_dict: The dictionary of filtered control information.
+        :param control_dicts: The control information to be appended.
+        :return: The updated filtered_control_dict dictionary.
         """
         if control_dicts:
             filtered_control_dict.update(
@@ -59,13 +55,9 @@ class ControlFilterFactory:
     def get_plans(plan: List[str], topk_plan: int) -> List[str]:
         """
         Parses the given plan and returns a list of plans up to the specified topk_plan.
-
-        Args:
-            plan (str): The plan to be parsed.
-            topk_plan (int): The maximum number of plans to be returned.
-
-        Returns:
-            list: A list of plans up to the specified topk_plan.
+        :param plan: The plan to be parsed.
+        :param topk_plan: The maximum number of plans to be returned.
+        :return: A list of plans up to the specified topk_plan.
         """
         return plan[:topk_plan]
 
@@ -80,10 +72,8 @@ class BasicControlFilter:
     def __new__(cls, model_path):
         """
         Creates a new instance of BasicControlFilter.
-        Args:
-            model_path (str): The path to the model.
-        Returns:
-            BasicControlFilter: The BasicControlFilter instance.
+        :param model_path: The path to the model.
+        :return: The BasicControlFilter instance.
         """
         if model_path not in cls._instances:
             instance = super(BasicControlFilter, cls).__new__(cls)
@@ -95,10 +85,8 @@ class BasicControlFilter:
     def load_model(model_path):
         """
         Loads the model from the given model path.
-        Args:
-            model_path (str): The path to the model.
-        Returns:
-            SentenceTransformer: The loaded SentenceTransformer model.
+        :param model_path: The path to the model.
+        :return: The loaded model.
         """
         import sentence_transformers
 
@@ -107,34 +95,28 @@ class BasicControlFilter:
     def get_embedding(self, content):
         """
         Encodes the given object into an embedding.
-        Args:
-            content: The content to encode.
-        Returns:
-            The embedding of the object.
+        :param content: The content to encode.
+        :return: The embedding of the object.
         """
+
         return self.model.encode(content)
 
     @abstractmethod
     def control_filter(self, control_dicts, plans, **kwargs):
         """
         Calculates the cosine similarity between the embeddings of the given keywords and the control item.
-        Args:
-            control_dicts (dic): The control item to be compared with the plans.
-            plans (str): The plans to be used for calculating the similarity.
-        Returns:
-            float: The cosine similarity between the embeddings of the keywords and the control item.
+        :param control_dicts: The control item to be compared with the plans.
+        :param plans: The plans to be used for calculating the similarity.
+        :return: The filtered control items.
         """
         pass
 
     @staticmethod
     def plans_to_keywords(plans: List[str]) -> List[str]:
         """
-        Gets keywords from the plan.
-        We only consider the words in the plan that are alphabetic or Chinese characters.
-        Args:
-            plans (list): The plan to be parsed.
-        Returns:
-            list: A list of keywords extracted from the plan.
+        Gets keywords from the plan. We only consider the words in the plan that are alphabetic or Chinese characters.
+        :param plans: The plan to be parsed.
+        :return: A list of keywords extracted from the plan.
         """
 
         keywords = []
@@ -151,13 +133,9 @@ class BasicControlFilter:
     @staticmethod
     def remove_stopwords(keywords):
         """
-        Removes stopwords from the given list of keywords.
-        Note:
-            If you are using stopwords for the first time, you need to download them using nltk.download('stopwords').
-        Args:
-            keywords (list): A list of keywords.
-        Returns:
-            list: A list of keywords with the stopwords removed.
+        Removes stopwords from the given list of keywords. If you are using stopwords for the first time, you need to download them using nltk.download('stopwords').
+        :param keywords: The list of keywords to be filtered.
+        :return: The list of keywords with the stopwords removed.
         """
 
         try:
@@ -173,9 +151,12 @@ class BasicControlFilter:
         return [keyword for keyword in keywords if keyword in stopwords_list]
 
     @staticmethod
-    def cos_sim(embedding1, embedding2):
+    def cos_sim(embedding1, embedding2) -> float:
         """
         Computes the cosine similarity between two embeddings.
+        :param embedding1: The first embedding.
+        :param embedding2: The second embedding.
+        :return: The cosine similarity between the two embeddings.
         """
         import sentence_transformers
 
@@ -191,9 +172,9 @@ class TextControlFilter:
     def control_filter(control_dicts: Dict, plans: List[str]) -> Dict:
         """
         Filters control items based on keywords.
-        Args:
-            control_dicts (dict): A dictionary of control items to be filtered.
-            plans (list): A list of plans for the following steps.
+        :param control_dicts: The dictionary of control items to be filtered.
+        :param plans: The list of plans to be used for filtering.
+        :return: The filtered control items.
         """
         filtered_control_dict = {}
 
@@ -216,12 +197,11 @@ class SemanticControlFilter(BasicControlFilter):
     def control_filter_score(self, control_text, plans):
         """
         Calculates the score for a control item based on the similarity between its text and a set of keywords.
-        Args:
-            control_text (str): The text of the control item.
-            plans (list): The plan to be used for calculating the similarity.
-        Returns:
-            float: The score (0-1) indicating the similarity between the control text and the keywords.
+        :param control_text: The text of the control item.
+        :param plans: The plan to be used for calculating the similarity.
+        :return: The score (0-1) indicating the similarity between the control text and the keywords.
         """
+
         plan_embedding = self.get_embedding(plans)
         control_text_embedding = self.get_embedding(control_text)
         return max(self.cos_sim(control_text_embedding, plan_embedding).tolist()[0])
@@ -229,10 +209,10 @@ class SemanticControlFilter(BasicControlFilter):
     def control_filter(self, control_dicts, plans, top_k):
         """
         Filters control items based on their similarity to a set of keywords.
-        Args:
-            control_dicts (dict): A dictionary of control items to be filtered.
-            plans (list): A list of plans.
-            top_k (int): The number of top control items to be selected.
+        :param control_dicts: The dictionary of control items to be filtered.
+        :param plans: The list of plans to be used for filtering.
+        :param top_k: The number of top control items to return.
+        :return: The filtered control items.
         """
         scores_items = []
         filtered_control_dict = {}
@@ -260,12 +240,11 @@ class IconControlFilter(BasicControlFilter):
     def control_filter_score(self, control_icon, plans):
         """
         Calculates the score of a control icon based on its similarity to the given keywords.
-        Args:
-            control_icon: The control icon image.
-            plan: The plan to compare the control icon against.
-        Returns:
-            The maximum similarity score between the control icon and the keywords.
+        :param control_icon: The control icon image.
+        :param plans: The plan to compare the control icon against.
+        :return: The maximum similarity score between the control icon and the keywords.
         """
+
         plans_embedding = self.get_embedding(plans)
         control_icon_embedding = self.get_embedding(control_icon)
         return max(self.cos_sim(control_icon_embedding, plans_embedding).tolist()[0])
@@ -273,14 +252,13 @@ class IconControlFilter(BasicControlFilter):
     def control_filter(self, control_dicts, cropped_icons_dict, plans, top_k):
         """
         Filters control items based on their scores and returns the top-k items.
-        Args:
-            control_dicts: The dictionary of all control items.
-            cropped_icons: The dictionary of the cropped icons.
-            plans: The plans to compare the control icons against.
-            top_k: The number of top items to return.
-        Returns:
-            The list of top-k control items based on their scores.
+        :param control_dicts: The dictionary of all control items.
+        :param cropped_icons_dict: The dictionary of the cropped icons.
+        :param plans: The plans to compare the control icons against.
+        :param top_k: The number of top items to return.
+        :return: The list of top-k control items based on their scores.
         """
+
         scores_items = []
         filtered_control_dict = {}
 

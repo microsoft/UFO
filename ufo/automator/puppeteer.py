@@ -3,17 +3,15 @@
 
 import os
 from collections import deque
-from typing import Any, Deque, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Deque, Dict, List, Optional, Type, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.automator.app_apis.basic import WinCOMReceiverBasic
-from ufo.automator.app_apis.factory import COMReceiverFactory
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
-from ufo.automator.ui_control.controller import (
-    ControlReceiver,
-    UIControlReceiverFactory,
-)
+
+if TYPE_CHECKING:
+    from ufo.automator.ui_control.controller import ControlReceiver
 
 
 class AppPuppeteer:
@@ -26,7 +24,6 @@ class AppPuppeteer:
         Initialize the app puppeteer.
         :param process_name: The process name of the app.
         :param app_root_name: The app root name, e.g., WINWORD.EXE.
-        :param ui_control_interface: The UI control interface instance in pywinauto.
         """
 
         self._process_name = process_name
@@ -42,7 +39,7 @@ class AppPuppeteer:
         :param command_name: The command name.
         :param params: The arguments for the command.
         """
-        receiver = self.receiver_manager.get_receiver(command_name)
+        receiver = self.receiver_manager.get_receiver_from_command_name(command_name)
         command = receiver.command_registry.get(command_name.lower(), None)
 
         if receiver is None:
@@ -59,7 +56,7 @@ class AppPuppeteer:
         :param command_name: The command name.
         :return: The command types.
         """
-        receiver = self.receiver_manager.get_receiver(command_name)
+        receiver = self.receiver_manager.get_receiver_from_command_name(command_name)
 
         return receiver.type_name
 
@@ -76,7 +73,7 @@ class AppPuppeteer:
         command = self.create_command(command_name, params, *args, **kwargs)
         return command.execute()
 
-    def execute_all_commands(self) -> List:
+    def execute_all_commands(self) -> List[Any]:
         """
         Execute all the commands in the command queue.
         :return: The execution results.
@@ -85,6 +82,8 @@ class AppPuppeteer:
         while self.command_queue:
             command = self.command_queue.popleft()
             results.append(command.execute())
+
+        return results
 
     def add_command(
         self, command_name: str, params: Dict[str, Any], *args, **kwargs
@@ -165,76 +164,63 @@ class ReceiverManager:
     The class for the receiver manager.
     """
 
+    _receiver_factory_registry: Dict[str, Dict[str, Union[str, ReceiverFactory]]] = {}
+
     def __init__(self):
         """
         Initialize the receiver manager.
         """
 
         self.receiver_registry = {}
-        self.receiver_factories = {}
         self.ui_control_receiver: Optional[ControlReceiver] = None
-        self.com_receiver: Optional[WinCOMReceiverBasic] = None
 
-        self.load_receiver_factories()
-
-    def load_receiver_factories(self) -> None:
-        """
-        Load the receiver factories. Now we have two types of receiver factories: UI control receiver factory and COM receiver factory.
-        A receiver factory is responsible for creating the receiver for the specific type of receiver.
-        """
-
-        self.__register_receiver_factory("UIControl", UIControlReceiverFactory())
-        self.__register_receiver_factory("COM", COMReceiverFactory())
-
-    def __register_receiver_factory(
-        self, factory_name: str, factory: ReceiverFactory
-    ) -> None:
-        """
-        Register the receiver factory.
-        :param factory_name: The factory name.
-        :param factory: The factory instance.
-        """
-        self.receiver_factories[factory_name] = factory
+        self._receiver_list: List[ReceiverBasic] = []
 
     def create_ui_control_receiver(
         self, control: UIAWrapper, application: UIAWrapper
-    ) -> ControlReceiver:
+    ) -> "ControlReceiver":
         """
         Build the UI controller.
         :param control: The control element.
-        :return: The UI controller.
+        :return: The UI controller receiver.
         """
-        factory = self.receiver_factories.get("UIControl")
+        factory: ReceiverFactory = self.receiver_factory_registry.get("UIControl").get(
+            "factory"
+        )
         self.ui_control_receiver = factory.create_receiver(control, application)
-        self.__update_receiver_registry()
+        self.receiver_list.append(self.ui_control_receiver)
+        self._update_receiver_registry()
 
         return self.ui_control_receiver
 
-    def create_com_receiver(self, app_root_name, process_name) -> WinCOMReceiverBasic:
+    def create_api_receiver(self, app_root_name: str, process_name: str) -> None:
         """
-        Get the COM client.
+        Get the API receiver.
         :param app_root_name: The app root name.
         :param process_name: The process name.
-
         """
-        factory = self.receiver_factories.get("COM")
-        self.com_receiver = factory.create_receiver(app_root_name, process_name)
-        self.__update_receiver_registry()
-        return self.com_receiver
+        for receiver_factory_dict in self.receiver_factory_registry.values():
 
-    def __update_receiver_registry(self) -> None:
+            # Check if the receiver is API
+            if receiver_factory_dict.get("is_api"):
+                receiver = receiver_factory_dict.get("factory").create_receiver(
+                    app_root_name, process_name
+                )
+                if receiver is not None:
+                    self.receiver_list.append(receiver)
+
+        self._update_receiver_registry()
+
+    def _update_receiver_registry(self) -> None:
         """
         Update the receiver registry. A receiver registry is a dictionary that maps the command name to the receiver.
         """
 
-        if self.ui_control_receiver is not None:
-            self.receiver_registry.update(
-                self.ui_control_receiver.self_command_mapping()
-            )
-        if self.com_receiver is not None:
-            self.receiver_registry.update(self.com_receiver.self_command_mapping())
+        for receiver in self.receiver_list:
+            if receiver is not None:
+                self.receiver_registry.update(receiver.self_command_mapping())
 
-    def get_receiver(self, command_name: str) -> ReceiverBasic:
+    def get_receiver_from_command_name(self, command_name: str) -> ReceiverBasic:
         """
         Get the receiver from the command name.
         :param command_name: The command name.
@@ -244,3 +230,48 @@ class ReceiverManager:
         if receiver is None:
             raise ValueError(f"Receiver for command {command_name} is not found.")
         return receiver
+
+    @property
+    def receiver_list(self) -> List[ReceiverBasic]:
+        """
+        Get the receiver list.
+        :return: The receiver list.
+        """
+        return self._receiver_list
+
+    @property
+    def receiver_factory_registry(
+        self,
+    ) -> Dict[str, Dict[str, Union[str, ReceiverFactory]]]:
+        """
+        Get the receiver factory registry.
+        :return: The receiver factory registry.
+        """
+        return self._receiver_factory_registry
+
+    @property
+    def com_receiver(self) -> WinCOMReceiverBasic:
+        """
+        Get the COM receiver.
+        :return: The COM receiver.
+        """
+        for receiver in self.receiver_list:
+            if issubclass(receiver.__class__, WinCOMReceiverBasic):
+                return receiver
+
+        return None
+
+    @classmethod
+    def register(cls, receiver_factory_class: Type[ReceiverFactory]) -> ReceiverFactory:
+        """
+        Decorator to register the receiver factory class to the receiver manager.
+        :param receiver_factory_class: The receiver factory class to be registered.
+        :return: The receiver factory class instance.
+        """
+
+        cls._receiver_factory_registry[receiver_factory_class.name()] = {
+            "factory": receiver_factory_class(),
+            "is_api": receiver_factory_class.is_api(),
+        }
+
+        return receiver_factory_class()

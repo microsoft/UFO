@@ -6,7 +6,6 @@ from typing import Tuple
 
 import yaml
 from langchain.docstore.document import Document
-from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
 from record_processor.parser.demonstration_record import DemonstrationRecord
@@ -49,7 +48,7 @@ class DemonstrationSummarizer:
         Initialize the DemonstrationSummarizer.
         :param is_visual: Whether the request is for visual model.
         :param prompt_template: The path of the prompt template.
-        :param example_prompt_template: The path of the example prompt template.
+        :param demonstration_prompt_template: The path of the example prompt template for demonstration.
         :param api_prompt_template: The path of the api prompt template.
         """
         self.is_visual = is_visual
@@ -183,14 +182,11 @@ class DemonstrationSummarizer:
             request = summary["request"]
             document_list.append(Document(page_content=request, metadata=summary))
 
-        embeddings = HuggingFaceEmbeddings(
-            model_name="sentence-transformers/all-mpnet-base-v2"
-        )
-        db = FAISS.from_documents(document_list, embeddings)
+        db = FAISS.from_documents(document_list, get_hugginface_embedding())
 
         # Check if the db exists, if not, create a new one.
         if os.path.exists(db_path):
-            prev_db = FAISS.load_local(db_path, embeddings)
+            prev_db = FAISS.load_local(db_path, get_hugginface_embedding())
             db.merge_from(prev_db)
 
         db.save_local(db_path)

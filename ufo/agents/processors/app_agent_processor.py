@@ -44,26 +44,8 @@ class AppAgentProcessor(BaseProcessor):
         self._operation = None
         self._args = None
         self._image_url = []
-        self._plan = []
-        self.action = ""
         self.control_filter_factory = ControlFilterFactory()
         self.filtered_annotation_dict = None
-
-    @property
-    def plan(self) -> str:
-        """
-        Get the plan.
-        :return: The plan.
-        """
-        return self._plan
-
-    @plan.setter
-    def plan(self, plan: List[str]) -> None:
-        """
-        Set the plan.
-        :param plan: The plan.
-        """
-        self._plan = plan
 
     @property
     def action(self) -> str:
@@ -95,6 +77,7 @@ class AppAgentProcessor(BaseProcessor):
             "magenta",
         )
 
+    @BaseProcessor.method_timer
     def capture_screenshot(self) -> None:
         """
         Capture the screenshot.
@@ -189,6 +172,7 @@ class AppAgentProcessor(BaseProcessor):
 
             self._save_to_xml()
 
+    @BaseProcessor.method_timer
     def get_control_info(self) -> None:
         """
         Get the control information.
@@ -209,6 +193,7 @@ class AppAgentProcessor(BaseProcessor):
             )
         )
 
+    @BaseProcessor.method_timer
     def get_prompt_message(self) -> None:
         """
         Get the prompt message for the AppAgent.
@@ -250,6 +235,7 @@ class AppAgentProcessor(BaseProcessor):
         )
         self.request_logger.debug(log)
 
+    @BaseProcessor.method_timer
     def get_response(self) -> None:
         """
         Get the response from the LLM.
@@ -265,6 +251,7 @@ class AppAgentProcessor(BaseProcessor):
             self.llm_error_handler()
             return
 
+    @BaseProcessor.method_timer
     def parse_response(self) -> None:
         """
         Parse the response.
@@ -295,19 +282,27 @@ class AppAgentProcessor(BaseProcessor):
         self.status = self._response_json.get("Status", "")
         self.app_agent.print_response(self._response_json)
 
+    @BaseProcessor.method_timer
     def execute_action(self) -> None:
         """
         Execute the action.
         """
 
+        control_selected = self._annotation_dict.get(self._control_label, "")
+
         try:
             # Get the selected control item from the annotation dictionary and LLM response.
             # The LLM response is a number index corresponding to the key in the annotation dictionary.
-            control_selected = self._annotation_dict.get(self._control_label, "")
 
-            if control_selected:
+            if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True) and control_selected:
                 control_selected.draw_outline(colour="red", thickness=3)
                 time.sleep(configs.get("RECTANGLE_TIME", 0))
+
+                self._control_log = {
+                    "control_class": control_selected.element_info.class_name,
+                    "control_type": control_selected.element_info.control_type,
+                    "control_automation_id": control_selected.element_info.automation_id,
+                }
 
             self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
                 control_selected, self.application_window
@@ -383,7 +378,7 @@ class AppAgentProcessor(BaseProcessor):
             "Action": self.action,
             "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation),
             "Request": self.request,
-            "Agent": "ActAgent",
+            "Agent": "AppAgent",
             "AgentName": self.app_agent.name,
             "Application": app_root,
             "Cost": self._cost,
@@ -391,6 +386,8 @@ class AppAgentProcessor(BaseProcessor):
         }
         self._memory_data.set_values_from_dict(self._response_json)
         self._memory_data.set_values_from_dict(additional_memory)
+        self._memory_data.set_values_from_dict(self._control_log)
+        self._memory_data.set_values_from_dict({"time_cost": self._time_cost})
 
         if self.status.upper() == self._agent_status_manager.CONFIRM.value:
             self._memory_data.set_values_from_dict({"UserConfirm": "Yes"})
@@ -405,6 +402,15 @@ class AppAgentProcessor(BaseProcessor):
         memorized_action = {
             key: self._memory_data.to_dict().get(key) for key in configs["HISTORY_KEYS"]
         }
+
+        if self.is_confirm():
+
+            if self._is_resumed:
+                self._memory_data.set_values_from_dict({"UserConfirm": "Yes"})
+                memorized_action["UserConfirm"] = "Yes"
+            else:
+                self._memory_data.set_values_from_dict({"UserConfirm": "No"})
+                memorized_action["UserConfirm"] = "No"
 
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
         self._update_image_blackboard()

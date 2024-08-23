@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 
 
+from functools import wraps
 import json
 import time
 import traceback
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Any, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -53,6 +54,17 @@ class BaseProcessor(ABC):
         self._results = None
         self._question_list = []
         self._agent_status_manager = self.agent.status_manager
+        self._is_resumed = False
+        self._action = None
+        self._plan = None
+
+        self._control_log = {
+            "control_class": None,
+            "control_type": None,
+            "control_automation_id": None,
+        }
+
+        self._time_cost = {}
 
     def process(self) -> None:
         """
@@ -120,6 +132,8 @@ class BaseProcessor(ABC):
         Resume the process of action execution after the session is paused.
         """
 
+        self._is_resumed = True
+
         # Step 1: Execute the action.
         self.execute_action()
 
@@ -131,6 +145,26 @@ class BaseProcessor(ABC):
 
         # Step 4: Update the step.
         self.update_step()
+
+        self._is_resumed = False
+
+    @classmethod
+    def method_timer(cls, func):
+        """
+        Decorator to calculate the time cost of the method.
+        :param func: The method to be decorated.
+        :return: The decorated method.
+        """
+
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            start_time = time.time()
+            result = func(self, *args, **kwargs)
+            end_time = time.time()
+            self._time_cost[func.__name__] = end_time - start_time
+            return result
+
+        return wrapper
 
     @abstractmethod
     def print_step_info(self) -> None:
@@ -414,6 +448,38 @@ class BaseProcessor(ABC):
         return self._status
 
     @property
+    def action(self) -> str:
+        """
+        Get the action.
+        :return: The action.
+        """
+        return self._action
+
+    @action.setter
+    def action(self, action: str) -> None:
+        """
+        Set the action.
+        :param action: The action.
+        """
+        self._action = action
+
+    @property
+    def plan(self) -> str:
+        """
+        Get the plan of the agent.
+        :return: The plan.
+        """
+        return self._plan
+
+    @plan.setter
+    def plan(self, plan: str) -> None:
+        """
+        Set the plan of the agent.
+        :param plan: The plan.
+        """
+        self._plan = plan
+
+    @property
     def log_path(self) -> str:
         """
         Get the log path.
@@ -645,7 +711,7 @@ class BaseProcessor(ABC):
         return
 
     @staticmethod
-    def string2list(string: str) -> List[str]:
+    def string2list(string: Any) -> List[str]:
         """
         Convert a string to a list of string if the input is a string.
         :param string: The string.

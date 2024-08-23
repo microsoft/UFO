@@ -37,7 +37,6 @@ class WinCOMReceiverBasic(ReceiverBasic):
     def get_object_from_process_name(self) -> win32com.client.CDispatch:
         """
         Get the object from the process name.
-        :param process_name: The process name.
         """
         pass
 
@@ -69,7 +68,6 @@ class WinCOMReceiverBasic(ReceiverBasic):
         else:
             clean_process_name = self.process_name
 
-        # If the object name list is empty, return an empty string
         if not object_name_list:
             return ""
 

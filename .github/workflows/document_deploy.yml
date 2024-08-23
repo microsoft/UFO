@@ -1,0 +1,35 @@
+name: Deploy MkDocs site
+
+on:
+  push:
+    branches:
+      - main  # 当推送到主分支时触发
+      - vyokky/dev  # 当推送到 vyokky_dev 分支时触发
+    paths:
+      - 'documents/**'  # 当 docs 目录中的文件变化时触发
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Set up Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.9'
+
+      - name: Install MkDocs and dependencies
+        run: |
+          pip install mkdocs mkdocs-material mkdocstrings mkdocstrings[python]
+
+      - name: Deploy to GitHub Pages
+        run: |
+          cd documents
+          mkdocs gh-deploy --config-file mkdocs.yml --force
+        env:
+          github_token: ${{ secrets.GITHUB_TOKEN }}

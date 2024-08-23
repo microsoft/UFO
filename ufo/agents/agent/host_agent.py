@@ -241,10 +241,16 @@ class HostAgent(BasicAgent):
         self.processor.process()
         self.status = self.processor.status
 
+    def process_comfirmation(self) -> None:
+        """
+        TODO: Process the confirmation.
+        """
+        pass
+
     def print_response(self, response_dict: Dict) -> None:
         """
         Print the response.
-        :param response: The response.
+        :param response_dict: The response dictionary to print.
         """
 
         application = response_dict.get("ControlText")
@@ -255,7 +261,7 @@ class HostAgent(BasicAgent):
         subtask = response_dict.get("CurrentSubtask")
 
         # Convert the message from a list to a string.
-        message = list(response_dict.get("Message"))
+        message = list(response_dict.get("Message", ""))
         message = "\n".join(message)
 
         # Concatenate the subtask with the plan and convert the plan from a list to a string.

@@ -142,7 +142,9 @@ class BasicAgent(ABC):
     ) -> str:
         """
         Get the response for the prompt.
-        :param prompt: The prompt.
+        :param message: The message for LLMs.
+        :param namescope: The namescope for the LLMs.
+        :param use_backup_engine: Whether to use the backup engine.
         :return: The response.
         """
         response_string, cost = llm_call.get_completion(
@@ -258,6 +260,13 @@ class BasicAgent(ABC):
 
                 self.blackboard.add_questions(qa_pair)
 
+    @abstractmethod
+    def process_comfirmation(self) -> None:
+        """
+        Confirm the process.
+        """
+        pass
+
     @property
     def processor(self) -> BaseProcessor:
         """
@@ -309,7 +318,6 @@ class BasicAgent(ABC):
     def print_response(self) -> None:
         """
         Print the response.
-        :param response: The response.
         """
         pass
 

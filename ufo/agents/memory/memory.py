@@ -99,7 +99,7 @@ class Memory:
     def load(self, content: List[MemoryItem]) -> None:
         """
         Load the data from the memory.
-        :param key: The key of the data.
+        :param content: The content to load.
         """
         self._content = content
 

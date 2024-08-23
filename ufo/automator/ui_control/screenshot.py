@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import base64
+import functools
 import mimetypes
 import os
 from abc import ABC, abstractmethod
@@ -16,6 +17,7 @@ from ufo.config.config import Config
 
 configs = Config.get_instance().config_data
 
+DEFAULT_PNG_COMPRESS_LEVEL = int(configs["DEFAULT_PNG_COMPRESS_LEVEL"])
 
 class Photographer(ABC):
     """
@@ -47,7 +49,7 @@ class ControlPhotographer(Photographer):
         # Capture single window screenshot
         screenshot = self.control.capture_as_image()
         if save_path is not None:
-            screenshot.save(save_path)
+            screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
         return screenshot
 
 
@@ -71,7 +73,7 @@ class DesktopPhotographer(Photographer):
         """
         screenshot = ImageGrab.grab(all_screens=self.all_screens)
         if save_path is not None:
-            screenshot.save(save_path)
+            screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
         return screenshot
 
 
@@ -172,7 +174,7 @@ class RectangleDecorator(PhotographerDecorator):
                     screenshot, coordinate=adjusted_rect, color=self.color
                 )
         if save_path is not None:
-            screenshot.save(save_path)
+            screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
         return screenshot
 
 
@@ -228,8 +230,33 @@ class AnnotationDecorator(PhotographerDecorator):
         :param button_color: The color of the button.
         return: The image with the control rectangle and label.
         """
-        _ = ImageDraw.Draw(image)
-        font = ImageFont.truetype("arial.ttf", font_size)
+        button_img = AnnotationDecorator._get_button_img(
+            label_text,
+            botton_margin=botton_margin,
+            border_width=border_width,
+            font_size=font_size,
+            font_color=font_color,
+            border_color=border_color,
+            button_color=button_color,
+        )
+        # put button on source image
+        image.paste(button_img, (coordinate[0], coordinate[1]))
+        return image
+    
+    @staticmethod
+    @functools.lru_cache(maxsize=2048, typed=False)
+    def _get_button_img(
+        label_text: str,
+        botton_margin: int = 5,
+        border_width: int = 2,
+        font_size: int = 25,
+        font_color: str = "#000000",
+        border_color: str = "#FF0000",
+        button_color: str = "#FFF68F",
+    ):
+        font = AnnotationDecorator._get_font(
+            "arial.ttf", font_size
+        )
         text_size = font.getbbox(label_text)
 
         # set button size + margins
@@ -250,10 +277,12 @@ class AnnotationDecorator(PhotographerDecorator):
             outline=border_color,
             width=border_width,
         )
+        return button_img
 
-        # put button on source image
-        image.paste(button_img, (coordinate[0], coordinate[1]))
-        return image
+    @staticmethod
+    @functools.lru_cache(maxsize=64, typed=False)
+    def _get_font(name: str, size: int):
+        return ImageFont.truetype(name, size)
 
     @staticmethod
     def number_to_letter(n: int):
@@ -335,7 +364,7 @@ class AnnotationDecorator(PhotographerDecorator):
             )
 
         if save_path is not None:
-            screenshot_annotated.save(save_path)
+            screenshot_annotated.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
 
         return screenshot_annotated
 
@@ -537,7 +566,7 @@ class PhotographerFacade:
         result.paste(image2, (image1.width, 0))
 
         # Save the result
-        result.save(output_path)
+        result.save(output_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
 
         return result
 
@@ -550,7 +579,7 @@ class PhotographerFacade:
         :return: The base64 string.
         """
         buffered = BytesIO()
-        image.save(buffered, format="PNG")
+        image.save(buffered, format="PNG", optimize=True)
         return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
     @staticmethod

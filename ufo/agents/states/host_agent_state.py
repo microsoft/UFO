@@ -210,7 +210,7 @@ class ContinueHostAgentState(HostAgentState):
 
         # Create the COM receiver for the app agent.
         if configs.get("USE_APIS", False):
-            app_agent.Puppeteer.receiver_manager.create_com_receiver(
+            app_agent.Puppeteer.receiver_manager.create_api_receiver(
                 application_root_name, application_window_name
             )
 
@@ -301,6 +301,14 @@ class ErrorHostAgentState(HostAgentState):
         """
         return True
 
+    def next_state(self, agent: HostAgent) -> AgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The current agent.
+        :return: The state for the next step.
+        """
+        return FinishHostAgentState()
+
     @classmethod
     def name(cls) -> str:
         """
@@ -322,6 +330,14 @@ class FailHostAgentState(HostAgentState):
         :return: True if the round ends, False otherwise.
         """
         return True
+
+    def next_state(self, agent: HostAgent) -> AgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The current agent.
+        :return: The state for the next step.
+        """
+        return FinishHostAgentState()
 
     @classmethod
     def name(cls) -> str:

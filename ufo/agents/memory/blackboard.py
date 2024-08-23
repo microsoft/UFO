@@ -136,7 +136,6 @@ class Blackboard:
         """
         Add the image to the blackboard.
         :param screenshot_path: The path of the image.
-        :param screenshot_str: The string of the image, optional.
         :param metadata: The metadata of the image.
         """
 

@@ -13,6 +13,7 @@ from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.automator import puppeteer
 from ufo.config.config import Config
+from ufo.module import interactor
 from ufo.module.context import Context
 from ufo.prompter.agent_prompter import AppAgentPrompter
 
@@ -143,7 +144,7 @@ class AppAgent(BasicAgent):
     def print_response(self, response_dict: Dict) -> None:
         """
         Print the response.
-        :param response: The response dictionary.
+        :param response_dict: The response dictionary to print.
         """
 
         control_text = response_dict.get("ControlText")
@@ -301,6 +302,21 @@ class AppAgent(BasicAgent):
         """
         return puppeteer.AppPuppeteer(self._process_name, self._app_root_name)
 
+    def process_comfirmation(self) -> bool:
+        """
+        Process the user confirmation.
+        :return: The decision.
+        """
+        action = self.processor.action
+        control_text = self.processor.control_text
+
+        decision = interactor.sensitive_step_asker(action, control_text)
+
+        if not decision:
+            utils.print_with_color("The user has canceled the action.", "red")
+
+        return decision
+
     @property
     def status_manager(self) -> AppAgentStatus:
         """
@@ -349,7 +365,7 @@ class AppAgent(BasicAgent):
     def context_provision(self, request: str = "") -> None:
         """
         Provision the context for the app agent.
-        :param app_agent: The app agent to provision the context.
+        :param request: The request sent to the Bing search retriever.
         """
 
         # Load the offline document indexer for the app agent if available.
