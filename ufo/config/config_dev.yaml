@@ -1,6 +1,6 @@
 CONTROL_BACKEND: "uia"  # The backend for control action, currently we support uia and win32
 MAX_STEP: 100  # The max step limit for completing the user request
-SLEEP_TIME: 5  # The sleep time between each step to wait for the window to be ready
+SLEEP_TIME: 3  # The sleep time between each step to wait for the window to be ready
 RECTANGLE_TIME: 1
 
 # Skip rendering visual outline on screen if not necessary
