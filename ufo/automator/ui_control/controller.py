@@ -64,8 +64,6 @@ class ControlReceiver(ReceiverBasic):
 
         try:
             method = getattr(self.control, method_name)
-            print(f"control: {self.control.element_info}")
-
             result = method(**params)
         except AttributeError:
             message = f"{self.control} doesn't have a method named {method_name}"
