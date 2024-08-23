@@ -37,8 +37,8 @@ class OpenAIService(BaseService):
             self.config_llm["API_BASE"],
             self.max_retry,
             self.config["TIMEOUT"],
-            self.config_llm.get("API_KEY"),
-            self.config_llm.get("API_VERSION"),
+            self.config_llm.get("API_KEY", ""),
+            self.config_llm.get("API_VERSION", ""),
             aad_api_scope_base = self.config_llm.get("AAD_API_SCOPE_BASE", ""),
             aad_tenant_id = self.config_llm.get("AAD_TENANT_ID", ""),
         )
@@ -144,6 +144,8 @@ class OpenAIService(BaseService):
         aad_tenant_id: Optional[str] = None,
     ) -> OpenAI:
         if api_type == "openai":
+            assert api_key, "OpenAI API key must be specified"
+            assert api_base, "OpenAI API base URL must be specified"
             client = OpenAI(
                 base_url=api_base,
                 api_key=api_key,
@@ -151,7 +153,9 @@ class OpenAIService(BaseService):
                 timeout=timeout,
             )
         else:
-            if api_key:
+            assert api_version, "Azure OpenAI API version must be specified"
+            if api_type == "aoai":
+                assert api_key, "Azure OpenAI API key must be specified"
                 client = AzureOpenAI(
                     max_retries=max_retry,
                     timeout=timeout,
