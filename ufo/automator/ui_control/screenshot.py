@@ -19,6 +19,7 @@ configs = Config.get_instance().config_data
 
 DEFAULT_PNG_COMPRESS_LEVEL = int(configs["DEFAULT_PNG_COMPRESS_LEVEL"])
 
+
 class Photographer(ABC):
     """
     Abstract class for the photographer.
@@ -242,7 +243,7 @@ class AnnotationDecorator(PhotographerDecorator):
         # put button on source image
         image.paste(button_img, (coordinate[0], coordinate[1]))
         return image
-    
+
     @staticmethod
     @functools.lru_cache(maxsize=2048, typed=False)
     def _get_button_img(
@@ -254,9 +255,7 @@ class AnnotationDecorator(PhotographerDecorator):
         border_color: str = "#FF0000",
         button_color: str = "#FFF68F",
     ):
-        font = AnnotationDecorator._get_font(
-            "arial.ttf", font_size
-        )
+        font = AnnotationDecorator._get_font("arial.ttf", font_size)
         text_size = font.getbbox(label_text)
 
         # set button size + margins
@@ -364,7 +363,9 @@ class AnnotationDecorator(PhotographerDecorator):
             )
 
         if save_path is not None:
-            screenshot_annotated.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
+            screenshot_annotated.save(
+                save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL
+            )
 
         return screenshot_annotated
 

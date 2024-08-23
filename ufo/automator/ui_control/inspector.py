@@ -88,9 +88,10 @@ class BackendStrategy(ABC):
 class UIAElementInfoFix(UIAElementInfo):
     _cached_rect = None
     _time_delay_marker = False
-    
+
     def sleep(self, ms: float = 0):
         import time
+
         if UIAElementInfoFix._time_delay_marker:
             ms = max(20, ms)
         else:
@@ -105,33 +106,38 @@ class UIAElementInfoFix(UIAElementInfo):
             before = time.time()
             result = func(self, *args, **kvargs)
             if time.time() - before > 0.020:
-                print(f"[❌][{name}][{hash(self._element)}] lookup took {(time.time() - before) * 1000:.2f} ms")
+                print(
+                    f"[❌][{name}][{hash(self._element)}] lookup took {(time.time() - before) * 1000:.2f} ms"
+                )
                 UIAElementInfoFix._time_delay_marker = True
             elif time.time() - before > 0.005:
-                print(f"[⚠️][{name}][{hash(self._element)}]Control type lookup took {(time.time() - before) * 1000:.2f} ms")
+                print(
+                    f"[⚠️][{name}][{hash(self._element)}]Control type lookup took {(time.time() - before) * 1000:.2f} ms"
+                )
                 UIAElementInfoFix._time_delay_marker = True
             else:
                 # print(f"[✅][{name}][{hash(self._element)}]Control type lookup took {(time.time() - before) * 1000:.2f} ms")
                 UIAElementInfoFix._time_delay_marker = False
             return result
+
         return dec
 
     @_time_wrap
     def _get_current_name(self):
         return super()._get_current_name()
-    
+
     @_time_wrap
     def _get_current_rich_text(self):
         return super()._get_current_rich_text()
 
     @_time_wrap
     def _get_current_class_name(self):
-        return super()._get_current_class_name()    
-    
+        return super()._get_current_class_name()
+
     @_time_wrap
     def _get_current_control_type(self):
         return super()._get_current_control_type()
-    
+
     @_time_wrap
     def _get_current_rectangle(self):
         bound_rect = self._element.CurrentBoundingRectangle
@@ -141,16 +147,16 @@ class UIAElementInfoFix(UIAElementInfo):
         rect.right = bound_rect.right
         rect.bottom = bound_rect.bottom
         return rect
-    
+
     def _get_cached_rectangle(self) -> tuple[int, int, int, int]:
         if self._cached_rect is None:
             self._cached_rect = self._get_current_rectangle()
         return self._cached_rect
-    
+
     @property
     def rectangle(self):
         return self._get_cached_rectangle()
-    
+
 
 class UIABackendStrategy(BackendStrategy):
     """
@@ -179,11 +185,8 @@ class UIABackendStrategy(BackendStrategy):
             ]
 
         uia_desktop_windows: List[UIAWrapper] = [
-            UIAWrapper(
-                UIAElementInfo(
-                    handle_or_elem=window.handle
-                )
-            ) for window in desktop_windows
+            UIAWrapper(UIAElementInfo(handle_or_elem=window.handle))
+            for window in desktop_windows
         ]
         return uia_desktop_windows
 
@@ -211,19 +214,23 @@ class UIABackendStrategy(BackendStrategy):
 
         if window is None:
             return []
-        
-        assert class_name_list is None or len(class_name_list) == 0, "class_name_list is not supported for UIA backend"
+
+        assert (
+            class_name_list is None or len(class_name_list) == 0
+        ), "class_name_list is not supported for UIA backend"
 
         _, iuia_dll = UIABackendStrategy._get_uia_defs()
         window_elem_info = cast(UIAElementInfo, window.element_info)
-        window_elem_com_ref = cast(UIAutomationClient_dll.IUIAutomationElement, window_elem_info._element)
-        
+        window_elem_com_ref = cast(
+            UIAutomationClient_dll.IUIAutomationElement, window_elem_info._element
+        )
+
         condition = UIABackendStrategy._get_control_filter_condition(
             control_type_list,
             is_visible,
             is_enabled,
         )
-        
+
         cache_request = UIABackendStrategy._get_cache_request()
 
         com_elem_array = window_elem_com_ref.FindAllBuildCache(
@@ -233,21 +240,29 @@ class UIABackendStrategy(BackendStrategy):
         )
 
         elem_info_list = [
-            (elem, elem.CachedControlType, elem.CachedName, elem.CachedBoundingRectangle)
-            for elem in (com_elem_array.GetElement(n) for n in range(min(com_elem_array.Length, 300)))
+            (
+                elem,
+                elem.CachedControlType,
+                elem.CachedName,
+                elem.CachedBoundingRectangle,
+            )
+            for elem in (
+                com_elem_array.GetElement(n)
+                for n in range(min(com_elem_array.Length, 300))
+            )
         ]
 
         control_elements: List[UIAWrapper] = []
-        
+
         for elem, elem_type, elem_name, elem_rect in elem_info_list:
             element_info = UIAElementInfoFix(elem, True)
-        
+
             # handle is not needed, skip fetching
             element_info._cached_handle = 0
-            
+
             # visibility is determined by filter condition
             element_info._cached_visible = True
-            
+
             # fill the values with pre-fetched data
             rect = pywinauto.win32structures.RECT()
             rect.left = elem_rect.left
@@ -261,22 +276,22 @@ class UIABackendStrategy(BackendStrategy):
             # currently rich text is not used, skip fetching but use name as alternative
             # this could be reverted if some control requires rich text
             element_info._cached_rich_text = elem_name
-            
+
             # class name is not used directly, could pre-fetch in future
             # element_info.class_name
-            
+
             uia_interface = UIAWrapper(element_info)
-            
+
             def __hash__(self):
                 return hash(self.element_info._element)
+
             # current __hash__ is not referring to a COM property (RuntimeId), which is costly to fetch
             uia_interface.__hash__ = __hash__
 
             control_elements.append(uia_interface)
-            
+
         return control_elements
-    
-    
+
     @staticmethod
     def _get_uia_control_id_map():
         iuia = pywinauto.uia_defines.IUIA()
@@ -291,7 +306,7 @@ class UIABackendStrategy(BackendStrategy):
         cache_request.AddProperty(iuia_dll.UIA_NamePropertyId)
         cache_request.AddProperty(iuia_dll.UIA_BoundingRectanglePropertyId)
         return cache_request
-    
+
     @staticmethod
     def _get_control_filter_condition(
         control_type_list: List[str] = [],
@@ -299,28 +314,38 @@ class UIABackendStrategy(BackendStrategy):
         is_enabled: bool = True,
     ):
         iuia_com, iuia_dll = UIABackendStrategy._get_uia_defs()
-        condition = iuia_com.CreateAndConditionFromArray([
-            iuia_com.CreatePropertyCondition(
-                iuia_dll.UIA_IsEnabledPropertyId, is_enabled
-            ),
-            iuia_com.CreatePropertyCondition(
-                # visibility is determined by IsOffscreen property
-                iuia_dll.UIA_IsOffscreenPropertyId, not is_visible
-            ),
-            iuia_com.CreatePropertyCondition(
-                iuia_dll.UIA_IsControlElementPropertyId, True
-            ),
-            iuia_com.CreateOrConditionFromArray([
+        condition = iuia_com.CreateAndConditionFromArray(
+            [
                 iuia_com.CreatePropertyCondition(
-                    iuia_dll.UIA_ControlTypePropertyId, 
-                    control_type if control_type is int 
-                    else UIABackendStrategy._get_uia_control_id_map()[control_type]
-                )
-                for control_type in control_type_list
-            ]),
-        ])
+                    iuia_dll.UIA_IsEnabledPropertyId, is_enabled
+                ),
+                iuia_com.CreatePropertyCondition(
+                    # visibility is determined by IsOffscreen property
+                    iuia_dll.UIA_IsOffscreenPropertyId,
+                    not is_visible,
+                ),
+                iuia_com.CreatePropertyCondition(
+                    iuia_dll.UIA_IsControlElementPropertyId, True
+                ),
+                iuia_com.CreateOrConditionFromArray(
+                    [
+                        iuia_com.CreatePropertyCondition(
+                            iuia_dll.UIA_ControlTypePropertyId,
+                            (
+                                control_type
+                                if control_type is int
+                                else UIABackendStrategy._get_uia_control_id_map()[
+                                    control_type
+                                ]
+                            ),
+                        )
+                        for control_type in control_type_list
+                    ]
+                ),
+            ]
+        )
         return condition
-        
+
     @staticmethod
     def _get_uia_defs():
         iuia = pywinauto.uia_defines.IUIA()
@@ -538,6 +563,7 @@ class ControlInspectorFacade:
             control_info["label"] = key
             control_info_list.append(control_info)
         return control_info_list
+
     @staticmethod
     def get_check_state(control_item: auto.Control) -> bool | None:
         """
@@ -548,11 +574,21 @@ class ControlInspectorFacade:
         is_checked = None
         is_selected = None
         try:
-            assert isinstance(control_item, auto.Control), f'{control_item =} is not a Control'
-            is_checked = control_item.GetLegacyIAccessiblePattern().State & auto.AccessibleState.Checked == auto.AccessibleState.Checked
+            assert isinstance(
+                control_item, auto.Control
+            ), f"{control_item =} is not a Control"
+            is_checked = (
+                control_item.GetLegacyIAccessiblePattern().State
+                & auto.AccessibleState.Checked
+                == auto.AccessibleState.Checked
+            )
             if is_checked:
                 return is_checked
-            is_selected = control_item.GetLegacyIAccessiblePattern().State & auto.AccessibleState.Selected == auto.AccessibleState.Selected
+            is_selected = (
+                control_item.GetLegacyIAccessiblePattern().State
+                & auto.AccessibleState.Selected
+                == auto.AccessibleState.Selected
+            )
             if is_selected:
                 return is_selected
             return None
@@ -560,7 +596,7 @@ class ControlInspectorFacade:
             # print(f'item {control_item} not available for check state.')
             # print(e)
             return None
-    
+
     @staticmethod
     def get_control_info(
         window: UIAWrapper, field_list: List[str] = []
@@ -577,7 +613,7 @@ class ControlInspectorFacade:
             if len(field_list) > 0 and prop_name not in field_list:
                 return
             control_info[prop_name] = prop_value_func()
-            
+
         try:
             assign("control_type", lambda: window.element_info.control_type)
             assign("control_id", lambda: window.element_info.control_id)
