@@ -297,6 +297,35 @@ example11:
       None
 
 
+example12:
+  Request: |-
+      Go to the web page of Bikes - Trek Bikes, and get the name of each bike and its price of the whole page and its following pages into a table in Book1 excel file. You need to get information for first 3 pages.
+  Response:
+    Observation: |-
+      The current screenshot shows the Edge browser is visible.
+    Thought: |-
+      The user request should be completed on the Edge browser first. After all the information is collected, I need to switch to the Excel application to write the information into the Book1 excel file.
+    CurrentSubtask:
+      Extract the name and price of each bike from the 'Bikes - Trek Bikes' web page, including all its following pages.
+    Message: 
+      - (1) You should use the web_crawler API to get markdown content of the web page, and extract the name and price of each bike by yourself.
+      - (2) There may be multiple pages of the website. Once you finish extracting the information from the current page, you need to scroll down to the bottom of the page to find a button to navigate to the next page.
+      - (3) Check if the results contain the information of required information. If so, do not repeat the extraction with the web_crawler API.
+      - (3) You must extract the information for first 3 pages.
+    ControlLabel: |-
+      4
+    ControlText: |-
+      Bikes - Trek Bikes - Microsoft Edge
+    Status: |-
+      CONTINUE
+    Plan: 
+      - Create a table in Book1 excel file to write the information of the name and price of each bike.
+    Comment: |-
+      I need to first use the web_crawler API to get the name and price of each bike on the web page of Bikes - Trek Bikes.
+    Questions: []
+    AppsToOpen: |-
+      None
+
 example_openapp1:
   Request: 
     open a ppt file on my desktop named test.pptx and modify the title to Apple is the best tech Company

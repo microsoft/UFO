@@ -1,5 +1,5 @@
 <h1 align="center">
-    <b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="40">: A <b>U</b>I-<b>F</b>ocused Agent for Windows <b>O</b>S Interaction
+    <b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="40">: A <b>U</b>I-<b>Fo</b>cused Agent for Windows OS Interaction
 </h1>
 
 
@@ -35,6 +35,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 📢 News
+- 📅 2024-09-08: We have a **New Release for v1.1.0!**, to allows UFO to click on any region of the application and reduces its latency by up tp 1/3!
 - 📅 2024-07-06: We have a **New Release for v1.0.0!**.  You can check out our [documentation](https://microsoft.github.io/UFO/). We welcome your contributions and feedback!
 - 📅 2024-06-28: We are thrilled to announce that our official introduction video is now available on [YouTube](https://www.youtube.com/watch?v=QT_OhygMVXU)!
 - 📅 2024-06-25: **New Release for v0.2.1!**  We are excited to announce the release of version 0.2.1! This update includes several new features and improvements:
@@ -52,7 +53,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
     1. We now support creating your help documents for each Windows application to become an app expert. Check the [documentation](https://microsoft.github.io/UFO/creating_app_agent/help_document_provision/) for more details!
     2. UFO now supports RAG from offline documents and online Bing search.
     3. You can save the task completion trajectory into its memory for UFO's reference, improving its future success rate!
-    4. You can customize different GPT models for AppAgent and ActAgent. Text-only models (e.g., GPT-4) are now supported!
+    4. You can customize different GPT models for HostAgent and AppAgent. Text-only models (e.g., GPT-4) are now supported!
 - 📅 2024-02-14: Our [technical report](https://arxiv.org/abs/2402.07939) is online!
 - 📅 2024-02-10: UFO is released on GitHub🎈. Happy Chinese New year🐉!
 

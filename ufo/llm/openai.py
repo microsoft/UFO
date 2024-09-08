@@ -2,10 +2,14 @@
 # Licensed under the MIT License.
 
 import datetime
-from typing import Any, Optional
+import os
+import shutil
+import sys
+from typing import Any, Callable, Literal, Optional
 
 import openai
 from openai import AzureOpenAI, OpenAI
+import functools
 
 from ufo.llm.base import BaseService
 
@@ -27,28 +31,17 @@ class OpenAIService(BaseService):
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config["PRICES"]
         assert self.api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
-        self.client: OpenAI = (
-            OpenAI(
-                base_url=self.config_llm["API_BASE"],
-                api_key=self.config_llm["API_KEY"],
-                max_retries=self.max_retry,
-                timeout=self.config["TIMEOUT"],
-            )
-            if self.api_type == "openai"
-            else AzureOpenAI(
-                max_retries=self.max_retry,
-                timeout=self.config["TIMEOUT"],
-                api_version=self.config_llm["API_VERSION"],
-                azure_endpoint=self.config_llm["API_BASE"],
-                api_key=(
-                    self.config_llm["API_KEY"]
-                    if self.api_type == "aoai"
-                    else self.get_openai_token()
-                ),
-            )
+
+        self.client: OpenAI = OpenAIService.get_openai_client(
+            self.api_type,
+            self.config_llm["API_BASE"],
+            self.max_retry,
+            self.config["TIMEOUT"],
+            self.config_llm.get("API_KEY", ""),
+            self.config_llm.get("API_VERSION", ""),
+            aad_api_scope_base=self.config_llm.get("AAD_API_SCOPE_BASE", ""),
+            aad_tenant_id=self.config_llm.get("AAD_TENANT_ID", ""),
         )
-        if self.api_type == "azure_ad":
-            self.auto_refresh_token()
 
     def chat_completion(
         self,
@@ -138,185 +131,229 @@ class OpenAIService(BaseService):
             # Handle API error, e.g. retry or log
             raise Exception(f"OpenAI API returned an API Error: {e}")
 
-    def get_openai_token(
-        self,
-        token_cache_file: str = "apim-token-cache.bin",
+    @functools.lru_cache()
+    @staticmethod
+    def get_openai_client(
+        api_type: str,
+        api_base: str,
+        max_retry: int,
+        timeout: int,
+        api_key: Optional[str] = None,
+        api_version: Optional[str] = None,
+        aad_api_scope_base: Optional[str] = None,
+        aad_tenant_id: Optional[str] = None,
+    ) -> OpenAI:
+        if api_type == "openai":
+            assert api_key, "OpenAI API key must be specified"
+            assert api_base, "OpenAI API base URL must be specified"
+            client = OpenAI(
+                base_url=api_base,
+                api_key=api_key,
+                max_retries=max_retry,
+                timeout=timeout,
+            )
+        else:
+            assert api_version, "Azure OpenAI API version must be specified"
+            if api_type == "aoai":
+                assert api_key, "Azure OpenAI API key must be specified"
+                client = AzureOpenAI(
+                    max_retries=max_retry,
+                    timeout=timeout,
+                    api_version=api_version,
+                    azure_endpoint=api_base,
+                    api_key=api_key,
+                )
+            else:
+                assert (
+                    aad_api_scope_base and aad_tenant_id
+                ), "AAD API scope base and tenant ID must be specified"
+                token_provider = OpenAIService.get_aad_token_provider(
+                    aad_api_scope_base=aad_api_scope_base,
+                    aad_tenant_id=aad_tenant_id,
+                )
+                client = AzureOpenAI(
+                    max_retries=max_retry,
+                    timeout=timeout,
+                    api_version=api_version,
+                    azure_endpoint=api_base,
+                    azure_ad_token_provider=token_provider,
+                )
+        return client
+
+    @functools.lru_cache()
+    @staticmethod
+    def get_aad_token_provider(
+        aad_api_scope_base: str,
+        aad_tenant_id: str,
+        token_cache_file: str = "aoai-token-cache.bin",
         client_id: Optional[str] = None,
         client_secret: Optional[str] = None,
-    ) -> str:
+        use_azure_cli: Optional[bool] = None,
+        use_broker_login: Optional[bool] = None,
+        use_managed_identity: Optional[bool] = None,
+        use_device_code: Optional[bool] = None,
+        **kwargs,
+    ) -> Callable[[], str]:
         """
-        acquire token from Azure AD for your organization
+        acquire token from Azure AD for OpenAI
 
         Parameters
         ----------
         token_cache_file : str, optional
-            path to the token cache file, by default 'apim-token-cache.bin' in the current directory
+            path to the token cache file, by default 'aoai-token-cache.bin' in the current directory
         client_id : Optional[str], optional
             client id for AAD app, by default None
         client_secret : Optional[str], optional
             client secret for AAD app, by default None
+        use_azure_cli : Optional[bool], optional
+            use Azure CLI for authentication, by default None. If AzCli has been installed and logged in,
+            it will be used for authentication. This is recommended for headless environments and AzCLI takes
+            care of token cache and token refresh.
+        use_broker_login : Optional[bool], optional
+            use broker login for authentication, by default None.
+            If not specified, it will be enabled for known supported environments (e.g. Windows, macOS, WSL, VSCode),
+            but sometimes it may not always could cache the token for long-term usage.
+            In such cases, you can disable it by setting it to False.
+        use_managed_identity : Optional[bool], optional
+            use managed identity for authentication, by default None.
+            If not specified, it will use user assigned managed identity if client_id is specified,
+            For use system assigned managed identity, client_id could be None but need to set use_managed_identity to True.
+        use_device_code : Optional[bool], optional
+            use device code for authentication, by default None. If not specified, it will use interactive login on supported platform.
 
         Returns
         -------
         str
-            access token for your own organization
+            access token for OpenAI
         """
-        import os
 
         import msal
+        from azure.identity import (
+            AuthenticationRecord,
+            AzureCliCredential,
+            ClientSecretCredential,
+            DeviceCodeCredential,
+            ManagedIdentityCredential,
+            TokenCachePersistenceOptions,
+            get_bearer_token_provider,
+        )
+        from azure.identity.broker import InteractiveBrowserBrokerCredential
 
-        cache = msal.SerializableTokenCache()
+        api_scope_base = "api://" + aad_api_scope_base
 
-        def save_cache():
-            if token_cache_file is not None and cache.has_state_changed:
+        tenant_id = aad_tenant_id
+        scope = api_scope_base + "/.default"
+
+        token_cache_option = TokenCachePersistenceOptions(
+            name=token_cache_file,
+            enable_persistence=True,
+            allow_unencrypted_storage=True,
+        )
+
+        def save_auth_record(auth_record: AuthenticationRecord):
+            try:
                 with open(token_cache_file, "w") as cache_file:
-                    cache_file.write(cache.serialize())
+                    cache_file.write(auth_record.serialize())
+            except Exception as e:
+                print("failed to save auth record", e)
 
-        if os.path.exists(token_cache_file):
-            cache.deserialize(open(token_cache_file, "r").read())
-
-        authority = (
-            "https://login.microsoftonline.com/" + self.config_llm["AAD_TENANT_ID"]
-        )
-        api_scope_base = "api://" + self.config_llm["AAD_API_SCOPE_BASE"]
-
-        if client_id is not None and client_secret is not None:
-            app = msal.ConfidentialClientApplication(
-                client_id=client_id,
-                client_credential=client_secret,
-                authority=authority,
-                token_cache=cache,
-            )
-            result = app.acquire_token_for_client(
-                scopes=[
-                    api_scope_base + "/.default",
-                ]
-            )
-            if "access_token" in result:
-                return result["access_token"]
-            else:
-                print(result.get("error"))
-                print(result.get("error_description"))
-                raise Exception(
-                    "Authentication failed for acquiring AAD token for your organization"
-                )
-
-        scopes = [api_scope_base + "/" + self.config_llm["AAD_API_SCOPE"]]
-        app = msal.PublicClientApplication(
-            self.config_llm["AAD_API_SCOPE_BASE"],
-            authority=authority,
-            token_cache=cache,
-        )
-        result = None
-        for account in app.get_accounts():
+        def load_auth_record() -> Optional[AuthenticationRecord]:
             try:
-                result = app.acquire_token_silent(scopes, account=account)
-                if result is not None and "access_token" in result:
-                    save_cache()
-                    return result["access_token"]
-                result = None
-            except Exception:
-                continue
+                if not os.path.exists(token_cache_file):
+                    return None
+                with open(token_cache_file, "r") as cache_file:
+                    return AuthenticationRecord.deserialize(cache_file.read())
+            except Exception as e:
+                print("failed to load auth record", e)
+                return None
 
-        accounts_in_cache = cache.find(msal.TokenCache.CredentialType.ACCOUNT)
-        for account in accounts_in_cache:
-            try:
-                refresh_token = cache.find(
-                    msal.CredentialType.REFRESH_TOKEN,
-                    query={"home_account_id": account["home_account_id"]},
-                )[0]
-                result = app.acquire_token_by_refresh_token(
-                    refresh_token["secret"], scopes=scopes
+        auth_record: Optional[AuthenticationRecord] = load_auth_record()
+
+        current_auth_mode: Literal[
+            "client_secret",
+            "managed_identity",
+            "az_cli",
+            "interactive",
+            "device_code",
+            "none",
+        ] = "none"
+
+        implicit_mode = not (
+            use_managed_identity or use_azure_cli or use_broker_login or use_device_code
+        )
+
+        if use_managed_identity or (implicit_mode and client_id is not None):
+            if not use_managed_identity and client_secret is not None:
+                assert (
+                    client_id is not None
+                ), "client_id must be specified with client_secret"
+                current_auth_mode = "client_secret"
+                identity = ClientSecretCredential(
+                    client_id=client_id,
+                    client_secret=client_secret,
+                    tenant_id=tenant_id,
+                    cache_persistence_options=token_cache_option,
+                    authentication_record=auth_record,
                 )
-                if result is not None and "access_token" in result:
-                    save_cache()
-                    return result["access_token"]
-                result = None
-            except Exception:
-                pass
-
-        if result is None:
-            print("no token available from cache, acquiring token from AAD")
-            # The pattern to acquire a token looks like this.
-            flow = app.initiate_device_flow(scopes=scopes)
-            print(flow["message"])
-            result = app.acquire_token_by_device_flow(flow=flow)
-            if result is not None and "access_token" in result:
-                save_cache()
-                return result["access_token"]
             else:
-                print(result.get("error"))
-                print(result.get("error_description"))
-                raise Exception(
-                    "Authentication failed for acquiring AAD token for your organization"
+                current_auth_mode = "managed_identity"
+                if client_id is None:
+                    # using default managed identity
+                    identity = ManagedIdentityCredential(
+                        cache_persistence_options=token_cache_option,
+                    )
+                else:
+                    identity = ManagedIdentityCredential(
+                        client_id=client_id,
+                        cache_persistence_options=token_cache_option,
+                    )
+        elif use_azure_cli or (implicit_mode and shutil.which("az") is not None):
+            current_auth_mode = "az_cli"
+            identity = AzureCliCredential(tenant_id=tenant_id)
+        else:
+            if implicit_mode:
+                # enable broker login for known supported envs if not specified using use_device_code
+                if sys.platform.startswith("darwin") or sys.platform.startswith(
+                    "win32"
+                ):
+                    use_broker_login = True
+                elif os.environ.get("WSL_DISTRO_NAME", "") != "":
+                    use_broker_login = True
+                elif os.environ.get("TERM_PROGRAM", "") == "vscode":
+                    use_broker_login = True
+                else:
+                    use_broker_login = False
+            if use_broker_login:
+                current_auth_mode = "interactive"
+                identity = InteractiveBrowserBrokerCredential(
+                    tenant_id=tenant_id,
+                    cache_persistence_options=token_cache_option,
+                    use_default_broker_account=True,
+                    parent_window_handle=msal.PublicClientApplication.CONSOLE_WINDOW_HANDLE,
+                    authentication_record=auth_record,
+                )
+            else:
+                current_auth_mode = "device_code"
+                identity = DeviceCodeCredential(
+                    tenant_id=tenant_id,
+                    cache_persistence_options=token_cache_option,
+                    authentication_record=auth_record,
                 )
 
-    def auto_refresh_token(
-        self,
-        token_cache_file: str = "apim-token-cache.bin",
-        interval: datetime.timedelta = datetime.timedelta(minutes=15),
-        on_token_update: callable = None,
-        client_id: Optional[str] = None,
-        client_secret: Optional[str] = None,
-    ) -> callable:
-        """
-        helper function for auto refreshing token from your organization
+            try:
+                auth_record = identity.authenticate(scopes=[scope])
+                if auth_record:
+                    save_auth_record(auth_record)
 
-        Parameters
-        ----------
-        token_cache_file : str, optional
-            path to the token cache file, by default 'apim-token-cache.bin' in the current directory
-        interval : datetime.timedelta, optional
-            interval for refreshing token, by default 15 minutes
-        on_token_update : callable, optional
-            callback function to be called when token is updated, by default None. In the callback function, you can get token from openai.api_key
-
-        Returns
-        -------
-        callable
-            a callable function that can be used to stop the auto refresh thread
-        """
-
-        import threading
-
-        def update_token():
-            import openai
-
-            openai.api_type = (
-                "azure"
-                if self.config_llm["API_TYPE"] == "azure_ad"
-                else self.config_llm["API_TYPE"]
-            )
-            openai.base_url = self.config_llm["API_BASE"]
-            openai.api_version = self.config_llm["API_VERSION"]
-            openai.api_key = self.get_openai_token(
-                token_cache_file=token_cache_file,
-                client_id=client_id,
-                client_secret=client_secret,
-            )
-
-            if on_token_update is not None:
-                on_token_update()
-
-        def refresh_token_thread():
-            import time
-
-            while True:
-                try:
-                    update_token()
-                except Exception as e:
-                    print("failed to acquire token from AAD for your organization", e)
-                time.sleep(interval.total_seconds())
+            except Exception as e:
+                print(
+                    f"failed to acquire token from AAD for OpenAI using {current_auth_mode}",
+                    e,
+                )
+                raise e
 
         try:
-            update_token()
+            return get_bearer_token_provider(identity, scope)
         except Exception as e:
-            raise Exception("failed to acquire token from AAD for your organization", e)
-
-        thread = threading.Thread(target=refresh_token_thread, daemon=True)
-        thread.start()
-
-        def stop():
-            thread.stop()
-
-        return stop
+            print("failed to acquire token from AAD for OpenAI", e)
+            raise e

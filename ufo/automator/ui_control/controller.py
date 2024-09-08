@@ -4,9 +4,12 @@
 import time
 import warnings
 from abc import abstractmethod
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
+import pyautogui
+import pywinauto
 from pywinauto.controls.uiawrapper import UIAWrapper
+from pywinauto.win32structures import RECT
 
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
 from ufo.automator.puppeteer import ReceiverManager
@@ -14,6 +17,10 @@ from ufo.config.config import Config
 from ufo.utils import print_with_color
 
 configs = Config.get_instance().config_data
+
+if configs.get("AFTER_CLICK_WAIT", None) is not None:
+    pywinauto.timings.Timings.after_clickinput_wait = configs["AFTER_CLICK_WAIT"]
+    pywinauto.timings.Timings.after_click_wait = configs["AFTER_CLICK_WAIT"]
 
 
 class ControlReceiver(ReceiverBasic):
@@ -23,7 +30,9 @@ class ControlReceiver(ReceiverBasic):
 
     _command_registry: Dict[str, Type[CommandBasic]] = {}
 
-    def __init__(self, control: UIAWrapper, application: UIAWrapper):
+    def __init__(
+        self, control: Optional[UIAWrapper], application: Optional[UIAWrapper]
+    ) -> None:
         """
         Initialize the control receiver.
         :param control: The control element.
@@ -31,11 +40,13 @@ class ControlReceiver(ReceiverBasic):
         """
 
         self.control = control
+        self.application = application
 
         if control:
             self.control.set_focus()
             self.wait_enabled()
-        self.application = application
+        elif application:
+            self.application.set_focus()
 
     @property
     def type_name(self):
@@ -49,6 +60,8 @@ class ControlReceiver(ReceiverBasic):
         :return: The result of the action.
         """
 
+        import traceback
+
         try:
             method = getattr(self.control, method_name)
             result = method(**params)
@@ -57,7 +70,8 @@ class ControlReceiver(ReceiverBasic):
             print_with_color(f"Warning: {message}", "yellow")
             result = message
         except Exception as e:
-            message = f"An error occurred: {e}"
+            full_traceback = traceback.format_exc()
+            message = f"An error occurred: {full_traceback}"
             print_with_color(f"Warning: {message}", "yellow")
             result = message
         return result
@@ -76,6 +90,50 @@ class ControlReceiver(ReceiverBasic):
         else:
             return self.atomic_execution("click_input", params)
 
+    def click_on_coordinates(self, params: Dict[str, str]) -> str:
+        """
+        Click on the coordinates of the control element.
+        :param params: The arguments of the click on coordinates method.
+        :return: The result of the click on coordinates action.
+        """
+
+        # Get the relative coordinates fraction of the application window.
+        x = float(params.get("x", 0))
+        y = float(params.get("y", 0))
+
+        button = params.get("button", "left")
+        double = params.get("double", False)
+
+        # Get the absolute coordinates of the application window.
+        tranformed_x, tranformed_y = self.transform_point(x, y)
+
+        pyautogui.click(
+            tranformed_x, tranformed_y, button=button, clicks=2 if double else 1
+        )
+
+        return ""
+
+    def drag_on_coordinates(self, params: Dict[str, str]) -> str:
+        """
+        Drag on the coordinates of the control element.
+        :param params: The arguments of the drag on coordinates method.
+        :return: The result of the drag on coordinates action.
+        """
+
+        start = self.transform_point(
+            float(params.get("start_x", 0)), float(params.get("start_y", 0))
+        )
+        end = self.transform_point(
+            float(params.get("end_x", 0)), float(params.get("end_y", 0))
+        )
+
+        button = params.get("button", "left")
+
+        pyautogui.moveTo(start[0], start[1])
+        pyautogui.dragTo(end[0], end[1], button=button)
+
+        return ""
+
     def summary(self, params: Dict[str, str]) -> str:
         """
         Visual summary of the control element.
@@ -93,6 +151,7 @@ class ControlReceiver(ReceiverBasic):
         """
 
         text = params.get("text", "")
+        inter_key_pause = configs.get("INPUT_TEXT_INTER_KEY_PAUSE", 0.1)
 
         if configs["INPUT_TEXT_API"] == "set_text":
             method_name = "set_edit_text"
@@ -102,7 +161,7 @@ class ControlReceiver(ReceiverBasic):
             text = text.replace("\n", "{ENTER}")
             text = text.replace("\t", "{TAB}")
 
-            args = {"keys": text, "pause": 0.1, "with_spaces": True}
+            args = {"keys": text, "pause": inter_key_pause, "with_spaces": True}
         try:
             result = self.atomic_execution(method_name, args)
             if (
@@ -125,7 +184,11 @@ class ControlReceiver(ReceiverBasic):
                 text_to_type = args["text"]
                 keys_to_send = clear_text_keys + text_to_type
                 method_name = "type_keys"
-                args = {"keys": keys_to_send, "pause": 0.1, "with_spaces": True}
+                args = {
+                    "keys": keys_to_send,
+                    "pause": inter_key_pause,
+                    "with_spaces": True,
+                }
                 return self.atomic_execution(method_name, args)
             else:
                 return f"An error occurred: {e}"
@@ -136,7 +199,15 @@ class ControlReceiver(ReceiverBasic):
         :param params: The arguments of the keyboard input method.
         :return: The result of the keyboard input action.
         """
-        return self.atomic_execution("type_keys", params)
+
+        control_focus = params.get("control_focus", True)
+        keys = params.get("keys", "")
+
+        if control_focus:
+            self.atomic_execution("type_keys", {"keys": keys})
+        else:
+            pyautogui.typewrite(keys)
+        return keys
 
     def texts(self) -> str:
         """
@@ -202,6 +273,24 @@ class ControlReceiver(ReceiverBasic):
             if timeout <= 0:
                 warnings.warn(f"Timeout: {self.control} is not visible.")
                 break
+
+    def transform_point(self, fraction_x: float, fraction_y: float) -> Tuple[int, int]:
+        """
+        Transform the relative coordinates to the absolute coordinates.
+        :param fraction_x: The relative x coordinate.
+        :param fraction_y: The relative y coordinate.
+        :return: The absolute coordinates.
+        """
+        application_rect: RECT = self.application.rectangle()
+        application_x = application_rect.left
+        application_y = application_rect.top
+        application_width = application_rect.width()
+        application_height = application_rect.height()
+
+        x = application_x + int(application_width * fraction_x)
+        y = application_y + int(application_height * fraction_y)
+
+        return x, y
 
 
 @ReceiverManager.register
@@ -313,6 +402,50 @@ class ClickInputCommand(ControlCommand):
         :return: The name of the atomic command.
         """
         return "click_input"
+
+
+@ControlReceiver.register
+class ClickOnCoordinatesCommand(ControlCommand):
+    """
+    The click on coordinates command class.
+    """
+
+    def execute(self) -> str:
+        """
+        Execute the click on coordinates command.
+        :return: The result of the click on coordinates command.
+        """
+        return self.receiver.click_on_coordinates(self.params)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return "click_on_coordinates"
+
+
+@ControlReceiver.register
+class DragOnCoordinatesCommand(ControlCommand):
+    """
+    The drag on coordinates command class.
+    """
+
+    def execute(self) -> str:
+        """
+        Execute the drag on coordinates command.
+        :return: The result of the drag on coordinates command.
+        """
+        return self.receiver.drag_on_coordinates(self.params)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the atomic command.
+        :return: The name of the atomic command.
+        """
+        return "drag_on_coordinates"
 
 
 @ControlReceiver.register

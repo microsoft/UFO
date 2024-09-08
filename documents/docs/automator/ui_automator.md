@@ -65,10 +65,15 @@ Below is the list of available commands in the UI Automator that are currently s
 | Command Name | Function Name | Description |
 |--------------|---------------|-------------|
 | `ClickInputCommand` | `click_input` | Click the control item with the mouse. |
+| `ClickOnCoordinatesCommand` | `click_on_coordinates` | Click on the specific fractional coordinates of the application window. |
+| `DragOnCoordinatesCommand` | `drag_on_coordinates` | Drag the mouse on the specific fractional coordinates of the application window. |
 | `SetEditTextCommand` | `set_edit_text` | Add new text to the control item. |
 | `GetTextsCommand` | `texts` | Get the text of the control item. |
 | `WheelMouseInputCommand` | `wheel_mouse_input` | Scroll the control item. |
 | `KeyboardInputCommand` | `keyboard_input` | Simulate the keyboard input. |
+
+!!! tip
+    Please refer to the `ufo/prompts/share/base/api.yaml` file for the detailed API documentation of the UI Automator.
 
 !!! tip
     You can customize the commands by adding new command classes to the `ufo/automator/ui_control/controller/ControlCommand` module.

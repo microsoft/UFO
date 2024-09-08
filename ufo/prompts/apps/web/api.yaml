@@ -1,6 +1,6 @@
 web_crawler:
   summary: |-
-    "web_crawler" is to run crawler to fetch content from the entire web page, and return markdown format of the web page. You should call this API when you want to fetch the content of the web page for further processing, extraction, or analysis.
+    "web_crawler" is to run crawler to fetch content from the entire web page, and return markdown format of the web page. You should call this API when you want to fetch the content of the web page for further processing, extraction, or analysis. Note that the API will return the entire content of the web page, and you need to extract the information you need by yourself. Do not use this API to fetch the content of the web page that you do not have permission to access.
   class_name: |-
     WebCrawlerCommand
   usage: |-
@@ -10,4 +10,4 @@ web_crawler:
       - ignore_link: Whether to ignore the link in the html data. Default is False.
     [3] Example: web_crawler(url='https://www.google.com', ignore_link=False)
     [4] Available control item: All
-    [5] Return: The webpage content string in markdown format.
+    [5] Return: The entire webpage content string in a markdown format.
