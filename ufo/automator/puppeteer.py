@@ -56,9 +56,14 @@ class AppPuppeteer:
         :param command_name: The command name.
         :return: The command types.
         """
-        receiver = self.receiver_manager.get_receiver_from_command_name(command_name)
 
-        return receiver.type_name
+        try:
+            receiver = self.receiver_manager.get_receiver_from_command_name(
+                command_name
+            )
+            return receiver.type_name
+        except:
+            return ""
 
     def execute_command(
         self, command_name: str, params: Dict[str, Any], *args, **kwargs

@@ -7,7 +7,7 @@ import mimetypes
 import os
 from abc import ABC, abstractmethod
 from io import BytesIO
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Tuple
 
 from PIL import Image, ImageDraw, ImageFont, ImageGrab
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -18,6 +18,7 @@ from ufo.config.config import Config
 configs = Config.get_instance().config_data
 
 DEFAULT_PNG_COMPRESS_LEVEL = int(configs["DEFAULT_PNG_COMPRESS_LEVEL"])
+
 
 class Photographer(ABC):
     """
@@ -98,12 +99,12 @@ class PhotographerDecorator(Photographer):
         return self.photographer.capture(save_path)
 
     @staticmethod
-    def coordinate_adjusted(window_rect: RECT, control_rect: RECT):
+    def coordinate_adjusted(window_rect: RECT, control_rect: RECT) -> Tuple:
         """
         Adjust the coordinates of the control rectangle to the window rectangle.
         :param window_rect: The window rectangle.
         :param control_rect: The control rectangle.
-        :return: The adjusted control rectangle.
+        :return: The adjusted control rectangle (left, top, right, bottom), relative to the window rectangle.
         """
         # (left, top, right, bottom)
         adjusted_rect = (
@@ -242,7 +243,7 @@ class AnnotationDecorator(PhotographerDecorator):
         # put button on source image
         image.paste(button_img, (coordinate[0], coordinate[1]))
         return image
-    
+
     @staticmethod
     @functools.lru_cache(maxsize=2048, typed=False)
     def _get_button_img(
@@ -254,9 +255,7 @@ class AnnotationDecorator(PhotographerDecorator):
         border_color: str = "#FF0000",
         button_color: str = "#FFF68F",
     ):
-        font = AnnotationDecorator._get_font(
-            "arial.ttf", font_size
-        )
+        font = AnnotationDecorator._get_font("arial.ttf", font_size)
         text_size = font.getbbox(label_text)
 
         # set button size + margins
@@ -364,7 +363,9 @@ class AnnotationDecorator(PhotographerDecorator):
             )
 
         if save_path is not None:
-            screenshot_annotated.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
+            screenshot_annotated.save(
+                save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL
+            )
 
         return screenshot_annotated
 

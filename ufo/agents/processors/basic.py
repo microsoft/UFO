@@ -64,6 +64,7 @@ class BaseProcessor(ABC):
             "control_automation_id": None,
         }
 
+        self._total_time_cost = 0
         self._time_cost = {}
 
     def process(self) -> None:
@@ -80,8 +81,10 @@ class BaseProcessor(ABC):
         8. Execute the action.
         9. Update the memory.
         10. Update the step and status.
-        11. Update the step.
+        11. Save the log.
         """
+
+        start_time = time.time()
 
         # Step 1: Print the step information.
         self.print_step_info()
@@ -124,8 +127,10 @@ class BaseProcessor(ABC):
         # Step 10: Update the status.
         self.update_status()
 
-        # Step 11: Update the context.
-        self.update_step()
+        self._total_time_cost = time.time() - start_time
+
+        # Step 11: Save the log.
+        self.log_save()
 
     def resume(self) -> None:
         """
@@ -232,6 +237,19 @@ class BaseProcessor(ABC):
         if self.status != self._agent_status_manager.FINISH.value:
             time.sleep(configs["SLEEP_TIME"])
 
+        self.round_step += 1
+        self.session_step += 1
+
+    def log_save(self) -> None:
+        """
+        Save the log.
+        """
+
+        self._memory_data.set_values_from_dict(
+            {"total_time_cost": self._total_time_cost}
+        )
+        self.log(self._memory_data.to_dict())
+
     @property
     def context(self) -> Context:
         """
@@ -247,14 +265,6 @@ class BaseProcessor(ABC):
 
         self.round_cost += self.cost
         self.session_cost += self.cost
-
-    def update_step(self) -> None:
-        """
-        Update the step.
-        """
-
-        self.round_step += 1
-        self.session_step += 1
 
     @property
     def agent(self) -> BasicAgent:

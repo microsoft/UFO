@@ -11,9 +11,11 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
+from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
+
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -294,34 +296,47 @@ class AppAgentProcessor(BaseProcessor):
             # Get the selected control item from the annotation dictionary and LLM response.
             # The LLM response is a number index corresponding to the key in the annotation dictionary.
 
-            if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True) and control_selected:
-                control_selected.draw_outline(colour="red", thickness=3)
-                time.sleep(configs.get("RECTANGLE_TIME", 0))
+            if control_selected:
+
+                if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
+                    control_selected.draw_outline(colour="red", thickness=3)
+                    time.sleep(configs.get("RECTANGLE_TIME", 0))
+
+                control_coordinates = PhotographerDecorator.coordinate_adjusted(
+                    self.application_window.rectangle(), control_selected.rectangle()
+                )
 
                 self._control_log = {
                     "control_class": control_selected.element_info.class_name,
                     "control_type": control_selected.element_info.control_type,
                     "control_automation_id": control_selected.element_info.automation_id,
+                    "control_friendly_class_name": control_selected.friendly_class_name(),
+                    "control_coordinates": {
+                        "left": control_coordinates[0],
+                        "top": control_coordinates[1],
+                        "right": control_coordinates[2],
+                        "bottom": control_coordinates[3],
+                    },
                 }
 
-            self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
-                control_selected, self.application_window
-            )
-
-            # Save the screenshot of the tagged selected control.
-            self.capture_control_screenshot(control_selected)
-
-            if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
-                self.handle_screenshot_status()
-            else:
-                self._results = self.app_agent.Puppeteer.execute_command(
-                    self._operation, self._args
+                self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
+                    control_selected, self.application_window
                 )
-                self.control_reannotate = None
-            if not utils.is_json_serializable(self._results):
-                self._results = ""
 
-                return
+                # Save the screenshot of the tagged selected control.
+                self.capture_control_screenshot(control_selected)
+
+                if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
+                    self.handle_screenshot_status()
+                else:
+                    self._results = self.app_agent.Puppeteer.execute_command(
+                        self._operation, self._args
+                    )
+                    self.control_reannotate = None
+                if not utils.is_json_serializable(self._results):
+                    self._results = ""
+
+                    return
 
         except Exception:
             self.general_error_handler()
@@ -396,7 +411,7 @@ class AppAgentProcessor(BaseProcessor):
 
         # Log the memory item.
         self.context.add_to_structural_logs(self._memory_data.to_dict())
-        self.log(self._memory_data.to_dict())
+        # self.log(self._memory_data.to_dict())
 
         # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
         memorized_action = {
