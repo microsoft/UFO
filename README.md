@@ -35,6 +35,7 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
 
 
 ## 📢 News
+- 📅 2024-09-08: We have a **New Release for v1.1.0!**, to allows UFO to click on any region of the application and reduces its latency by up tp 1/3!
 - 📅 2024-07-06: We have a **New Release for v1.0.0!**.  You can check out our [documentation](https://microsoft.github.io/UFO/). We welcome your contributions and feedback!
 - 📅 2024-06-28: We are thrilled to announce that our official introduction video is now available on [YouTube](https://www.youtube.com/watch?v=QT_OhygMVXU)!
 - 📅 2024-06-25: **New Release for v0.2.1!**  We are excited to announce the release of version 0.2.1! This update includes several new features and improvements:
