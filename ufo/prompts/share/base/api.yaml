@@ -6,9 +6,10 @@ click_input:
   usage: |-
     [1] API call: click_input(button: str, double: bool)
     [2] Args:
-      - button: 'The mouse button to click. One of ''left'', ''right'', ''middle'' or ''x'' (Default: ''left'')'
-      - double: 'Whether to perform a double click or not (Default: False)'
-    [3] Example: click_input(button="left", double=False)
+      - button: The mouse button to click. One of ''left'', ''right'', ''middle'' or ''x'' (Default: ''left'')
+      - double: Whether to perform a double click or not (Default: False)'
+      - pressed: The keybord key to press while clicking. For example, ''CONTROL'' for the Control key (Default: None)
+    [3] Example: click_input(button="left", double=False), click_input(button="right", double=True, pressed="CONTROL")
     [4] Available control item: All control items.
     [5] Return: None
 

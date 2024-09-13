@@ -148,9 +148,6 @@ class BaseProcessor(ABC):
         # Step 3: Update the status.
         self.update_status()
 
-        # Step 4: Update the step.
-        self.update_step()
-
         self._is_resumed = False
 
     @classmethod
