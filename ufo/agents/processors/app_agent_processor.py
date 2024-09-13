@@ -290,7 +290,7 @@ class AppAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
-        control_selected = self._annotation_dict.get(self._control_label, "")
+        control_selected = self._annotation_dict.get(self._control_label, None)
 
         try:
             # Get the selected control item from the annotation dictionary and LLM response.
