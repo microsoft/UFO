@@ -18,7 +18,7 @@ from ufo.utils import print_with_color
 
 configs = Config.get_instance().config_data
 
-if configs.get("AFTER_CLICK_WAIT", None) is not None:
+if configs is not None and configs.get("AFTER_CLICK_WAIT", None) is not None:
     pywinauto.timings.Timings.after_clickinput_wait = configs["AFTER_CLICK_WAIT"]
     pywinauto.timings.Timings.after_click_wait = configs["AFTER_CLICK_WAIT"]
 
