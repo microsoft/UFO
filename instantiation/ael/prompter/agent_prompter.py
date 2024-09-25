@@ -197,7 +197,7 @@ class ActionPrefillPrompter(BasicPrompter):
         """
         from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 
-        init_image = os.path.join(log_path, "0.png")
+        init_image = os.path.join(log_path, "screenshot.png")
         init_image_url = EvaluationAgentPrompter.load_single_screenshot(init_image)
         return init_image_url
 

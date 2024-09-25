@@ -130,42 +130,6 @@ class ActionPrefillFlow(AppAgentProcessor):
         # add not replace
         self.prefill_logger.info(json.dumps(history_json))
 
-
-    @ staticmethod
-    def filter_control_info(control_ui_tree, task):
-        """
-        Get the filtered control information with the given task.
-
-        Return:
-            The filtered control information.
-        """
-        control_filter_type = configs["CONTROL_FILTER_TYPE"]
-
-        if len(control_filter_type) == 0:
-            return control_ui_tree
-
-        control_filter_type_lower = [control_filter_type_lower.lower(
-        ) for control_filter_type_lower in control_filter_type]
-
-        filtered_control_info = []
-
-        keywords = ControlFilterFactory.items_to_keywords([task])
-        if len(keywords) == 0:
-            return control_ui_tree
-        if 'text' in control_filter_type_lower:
-            model_text = ControlFilterFactory.create_control_filter(
-                'text')
-            # filter the control information with bfs search
-            filtered_control_info = model_text.bfs_filter(
-                filtered_control_info, control_ui_tree, keywords)
-        # temp only support use one method
-        elif 'semantic' in control_filter_type_lower:
-            model_semantic = ControlFilterFactory.create_control_filter(
-                'semantic', configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"])
-            filtered_control_info = model_semantic.bfs_filter(
-                filtered_control_info, control_ui_tree, keywords)
-        return filtered_control_info
-
     def get_target_file(self, given_task: str, doc_files_description: dict):
         """
         Get the target file based on the semantic similarity of given task and the template file decription.
@@ -189,6 +153,11 @@ class ActionPrefillFlow(AppAgentProcessor):
         error_msg = ""
         # update the canvas state and control states
         self.update_state(file_path)
+
+        screenshot_path = self.log_path_configs + "/screenshot.png"
+        self.photographer.capture_app_window_screenshot(self.app_env.app_window, screenshot_path)
+
+
         # filter the controls
         filter_control_state = self.filtered_control_info
         # filter the apis

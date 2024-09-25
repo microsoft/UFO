@@ -1,4 +1,3 @@
-<!-- BEGIN MICROSOFT SECURITY.MD V0.0.9 BLOCK --
 
 ## Introduction of Instantiation
 
@@ -38,10 +37,50 @@ After the process is completed, a new folder will be created alongside the origi
     "instantiated_plan": [
         {
             "step 1": "select the target text 'text to edit'",
+            "controlLabel": "",
+            "controlText": "",
+            "function": "select_text",
+            "args": {
+                "text": "text to edit"
+            }
+        },
+        {
             "step 2": "type in 'hello'",
+            "controlLabel": "101",
+            "controlText": "Edit",
+            "function": "type_keys",
+            "args": {
+                "text": "hello"
+            }
+        },
+        {
             "step 3": "select the typed text 'hello'",
+            "controlLabel": "",
+            "controlText": "",
+            "function": "select_text",
+            "args": {
+                "text": "hello"
+            }
+        },
+        {
             "step 4": "click the font dropdown",
+            "controlLabel": "",
+            "controlText": "Consolas",
+            "function": "click_input",
+            "args": {
+                "button": "left",
+                "double": false
+            }
+        },
+        {
             "step 5": "set the font to Arial",
+            "controlLabel": "",
+            "controlText": "Arial",
+            "function": "click_input",
+            "args": {
+                "button": "left",
+                "double": false
+            }
         }
     ],
     "request_comment": "The task involves typing a specific string 'hello' and setting the font type to Arial, which can be executed locally within Word."
@@ -71,6 +110,3 @@ The screenshot will be sent to the action prefill agent, which will provide a mo
 ##### 3. Filter task
 
 The completed task will be evaluated by a filter agent, which will assess it and return feedback. If the task is deemed a good instance, it will be saved in `instantiation/tasks/your_folder_name_new/good_instances`; otherwise, it will follow the same process for poor instances.
-
-
-<!-- END MICROSOFT SECURITY.MD BLOCK -->
