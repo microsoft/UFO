@@ -238,23 +238,6 @@ You may use them to debug, replay, or analyze the agent output.
 * For other communications, please contact [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com).
 ---
 
-## 🎬 Demo Examples
-
-We present two demo videos that complete user request on Windows OS using UFO. For more case study, please consult our [technical report](https://arxiv.org/abs/2402.07939).
-
-#### 1️⃣🗑️ Example 1: Deleting all notes on a PowerPoint presentation.
-In this example, we will demonstrate how to efficiently use UFO to delete all notes on a PowerPoint presentation with just a few simple steps. Explore this functionality to enhance your productivity and work smarter, not harder!
-
-
-https://github.com/microsoft/UFO/assets/11352048/cf60c643-04f7-4180-9a55-5fb240627834
-
-
-
-#### 2️⃣📧 Example 2: Composing an email using text from multiple sources.
-In this example, we will demonstrate how to utilize UFO to extract text from Word documents, describe an image, compose an email, and send it seamlessly. Enjoy the versatility and efficiency of cross-application experiences with UFO!
-
-
-https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4fc32e0
 
 
 
