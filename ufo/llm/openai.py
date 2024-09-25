@@ -29,7 +29,7 @@ class OpenAIService(BaseService):
         self.config = config
         self.api_type = self.config_llm["API_TYPE"].lower()
         self.max_retry = self.config["MAX_RETRY"]
-        self.prices = self.config["PRICES"]
+        self.prices = self.config.get("PRICES", {})
         assert self.api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
 
         self.client: OpenAI = OpenAIService.get_openai_client(
