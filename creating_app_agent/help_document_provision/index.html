@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Help Document Provision - UFO Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Help Document Provision";
+        var mkdocs_page_input_path = "creating_app_agent/help_document_provision.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Basic Modules</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/session/">Session</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/round/">Round</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/context/">Context</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configurations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configurations/user_configuration/">User Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configurations/developer_configuration/">Developer Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configurations/pricing_configuration/">Model Pricing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Supported Models</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/openai/">OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/azure_openai/">Azure OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/gemini/">Gemini</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/qwen/">Qwen</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/ollama/">Ollama</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/custom_model/">Custom Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agents</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Design</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/memory/">Memory</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/state/">State</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/prompter/">Prompter</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/processor/">Processor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/host_agent/">HostAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/app_agent/">AppAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/follower_agent/">FollowerAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/evaluation_agent/">EvaluationAgent</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompts</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/basic_template/">Basic Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/examples_prompts/">Examples Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/api_prompts/">API Prompts</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Automator</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/ui_automator/">UI Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/wincom_automator/">API Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/web_automator/">Web Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/ai_tool_automator/">AI Tool</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Logs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/request_logs/">Request Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/step_logs/">Step Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/evaluation_logs/">Evaluation Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/screenshots_logs/">Screenshots</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Advanced Usage</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Reinforcing AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_help_document/">Learning from Help Document</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_bing_search/">Learning from Bing Search</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_demonstration/">Learning from User Demonstration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/follower_mode/">Follower Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Control Filtering</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/text_filtering/">Text Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/semantic_filtering/">Semantic Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/icon_filtering/">Icon Filtering</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/customization/">Customization</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Creating Your AppAgent</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Help Document Provision</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#how-to-provide-help-documents-to-the-appagent">How to Provide Help Documents to the AppAgent?</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#step-1-prepare-help-documents-and-metadata">Step 1: Prepare Help Documents and Metadata</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-2-place-help-documents-in-the-appagent-directory">Step 2: Place Help Documents in the AppAgent Directory</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#step-3-create-a-help-document-indexer">Step 3: Create a Help Document Indexer</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#how-to-use-help-documents-to-enhance-the-appagent">How to Use Help Documents to Enhance the AppAgent?</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../demonstration_provision/">Demonstration Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../warpping_app_native_api/">Warpping App-Native API</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Creating Your AppAgent</li>
+      <li class="breadcrumb-item active">Help Document Provision</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="providing-help-documents-to-the-appagent">Providing Help Documents to the AppAgent</h1>
+<p>Help documents provide guidance to the <code>AppAgent</code> in executing specific tasks. The <code>AppAgent</code> uses these documents to understand the context of the task and the steps required to execute it, effectively becoming an expert in the application.</p>
+<h2 id="how-to-provide-help-documents-to-the-appagent">How to Provide Help Documents to the AppAgent?</h2>
+<h3 id="step-1-prepare-help-documents-and-metadata">Step 1: Prepare Help Documents and Metadata</h3>
+<p>Currently, UFO supports processing help documents in XML format, which is the default format for official help documents of Microsoft apps. More formats will be supported in the future.</p>
+<p>To create a dedicated document for a specific task of an app, save it in a file named, for example, <code>task.xml</code>. This document should be accompanied by a metadata file with the same prefix but with the <code>.meta</code> extension, such as <code>task.xml.meta</code>. The metadata file should include:</p>
+<ul>
+<li><code>title</code>: Describes the task at a high level.</li>
+<li><code>Content-Summary</code>: Summarizes the content of the help document.</li>
+</ul>
+<p>These two files are used for similarity search with user requests, so it is important to write them carefully. Examples of a help document and its metadata can be found <a href="https://github.com/microsoft/UFO/blob/main/learner/doc_example/ppt-copilot.xml">here</a> and <a href="https://github.com/microsoft/UFO/blob/main/learner/doc_example/ppt-copilot.xml.meta">here</a>.</p>
+<h3 id="step-2-place-help-documents-in-the-appagent-directory">Step 2: Place Help Documents in the AppAgent Directory</h3>
+<p>Once you have prepared all help documents and their metadata, place them into a folder. Sub-folders for the help documents are allowed, but ensure that each help document and its corresponding metadata are placed in the same directory.</p>
+<h3 id="step-3-create-a-help-document-indexer">Step 3: Create a Help Document Indexer</h3>
+<p>After organizing your documents in a folder named <code>path_of_the_docs</code>, you can create an offline indexer to support RAG for UFO. Follow these steps:</p>
+<pre><code class="language-bash"># Assume you are in the cloned UFO folder
+python -m learner --app &lt;app_name&gt; --docs &lt;path_of_the_docs&gt;
+</code></pre>
+<ul>
+<li>Replace <code>&lt;app_name&gt;</code> with the name of the application, such as PowerPoint or WeChat.</li>
+<li>Replace <code>&lt;path_of_the_docs&gt;</code> with the full path to the folder containing all your documents.</li>
+</ul>
+<p>This command will create an offline indexer for all documents in the <code>path_of_the_docs</code> folder using Faiss and embedding with sentence transformer (additional embeddings will be supported soon). By default, the created index will be placed <a href="https://github.com/microsoft/UFO/tree/main/vectordb/docs">here</a>.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Ensure the <code>app_name</code> is accurately defined, as it is used to match the offline indexer in online RAG.</p>
+</div>
+<h3 id="how-to-use-help-documents-to-enhance-the-appagent">How to Use Help Documents to Enhance the AppAgent?</h3>
+<p>After creating the offline indexer, you can find the guidance on how to use the help documents to enhance the AppAgent in the <a href="../../advanced_usage/reinforce_appagent/learning_from_help_document/">Learning from Help Documents</a> section.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../overview/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../demonstration_provision/" class="btn btn-neutral float-right" title="Demonstration Provision">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../demonstration_provision/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

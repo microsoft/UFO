@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>Developer Configuration - UFO Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Developer Configuration";
+        var mkdocs_page_input_path = "configurations/developer_configuration.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Basic Modules</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/session/">Session</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/round/">Round</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/context/">Context</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configurations</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../user_configuration/">User Configuration</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">Developer Configuration</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#system-configuration">System Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#main-prompt-configuration">Main Prompt Configuration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#main-prompt-templates">Main Prompt Templates</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#example-prompt-templates">Example Prompt Templates</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#experience-and-demonstration-learning">Experience and Demonstration Learning</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#application-api-configuration">Application API Configuration</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#pywinauto-configuration">pywinauto Configuration</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#control-filtering">Control Filtering</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#customizations">Customizations</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#evaluation">Evaluation</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pricing_configuration/">Model Pricing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Supported Models</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/openai/">OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/azure_openai/">Azure OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/gemini/">Gemini</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/qwen/">Qwen</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/ollama/">Ollama</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/custom_model/">Custom Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agents</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Design</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/memory/">Memory</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/state/">State</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/prompter/">Prompter</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/processor/">Processor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/host_agent/">HostAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/app_agent/">AppAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/follower_agent/">FollowerAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/evaluation_agent/">EvaluationAgent</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompts</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/basic_template/">Basic Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/examples_prompts/">Examples Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/api_prompts/">API Prompts</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Automator</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/ui_automator/">UI Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/wincom_automator/">API Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/web_automator/">Web Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/ai_tool_automator/">AI Tool</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Logs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/request_logs/">Request Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/step_logs/">Step Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/evaluation_logs/">Evaluation Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/screenshots_logs/">Screenshots</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Advanced Usage</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Reinforcing AppAgent</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_help_document/">Learning from Help Document</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_bing_search/">Learning from Bing Search</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_demonstration/">Learning from User Demonstration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/follower_mode/">Follower Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Control Filtering</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/text_filtering/">Text Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/semantic_filtering/">Semantic Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/icon_filtering/">Icon Filtering</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/customization/">Customization</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Creating Your AppAgent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/help_document_provision/">Help Document Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/warpping_app_native_api/">Warpping App-Native API</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configurations</li>
+      <li class="breadcrumb-item active">Developer Configuration</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="developer-configuration">Developer Configuration</h1>
+<p>This section provides detailed information on how to configure the UFO agent for developers. The configuration file <code>config_dev.yaml</code> is located in the <code>ufo/config</code> directory and contains various settings and switches to customize the UFO agent for development purposes.</p>
+<h2 id="system-configuration">System Configuration</h2>
+<p>The following parameters are included in the system configuration of the UFO agent:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONTROL_BACKEND</code></td>
+<td>The backend for control action, currently supporting <code>uia</code> and <code>win32</code>.</td>
+<td>String</td>
+<td>"uia"</td>
+</tr>
+<tr>
+<td><code>MAX_STEP</code></td>
+<td>The maximum step limit for completing the user request in a session.</td>
+<td>Integer</td>
+<td>100</td>
+</tr>
+<tr>
+<td><code>SLEEP_TIME</code></td>
+<td>The sleep time in seconds between each step to wait for the window to be ready.</td>
+<td>Integer</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>RECTANGLE_TIME</code></td>
+<td>The time in seconds for the rectangle display around the selected control.</td>
+<td>Integer</td>
+<td>1</td>
+</tr>
+<tr>
+<td><code>SAFE_GUARD</code></td>
+<td>Whether to use the safe guard to ask for user confirmation before performing sensitive operations.</td>
+<td>Boolean</td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>CONTROL_LIST</code></td>
+<td>The list of widgets allowed to be selected.</td>
+<td>List</td>
+<td>["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem"]</td>
+</tr>
+<tr>
+<td><code>HISTORY_KEYS</code></td>
+<td>The keys of the step history added to the <a href="../../agents/design/blackboard/"><code>Blackboard</code></a> for agent decision-making.</td>
+<td>List</td>
+<td>["Step", "Thought", "ControlText", "Subtask", "Action", "Comment", "Results", "UserConfirm"]</td>
+</tr>
+<tr>
+<td><code>ANNOTATION_COLORS</code></td>
+<td>The colors assigned to different control types for annotation.</td>
+<td>Dictionary</td>
+<td>{"Button": "#FFF68F", "Edit": "#A5F0B5", "TabItem": "#A5E7F0", "Document": "#FFD18A", "ListItem": "#D9C3FE", "MenuItem": "#E7FEC3", "ScrollBar": "#FEC3F8", "TreeItem": "#D6D6D6", "Hyperlink": "#91FFEB", "ComboBox": "#D8B6D4"}</td>
+</tr>
+<tr>
+<td><code>PRINT_LOG</code></td>
+<td>Whether to print the log in the console.</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>CONCAT_SCREENSHOT</code></td>
+<td>Whether to concatenate the screenshots into a single image for the LLM input.</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>INCLUDE_LAST_SCREENSHOT</code></td>
+<td>Whether to include the screenshot from the last step in the observation.</td>
+<td>Boolean</td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>LOG_LEVEL</code></td>
+<td>The log level for the UFO agent.</td>
+<td>String</td>
+<td>"DEBUG"</td>
+</tr>
+<tr>
+<td><code>REQUEST_TIMEOUT</code></td>
+<td>The call timeout in seconds for the LLM model.</td>
+<td>Integer</td>
+<td>250</td>
+</tr>
+<tr>
+<td><code>USE_APIS</code></td>
+<td>Whether to allow the use of application APIs.</td>
+<td>Boolean</td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>ALLOW_OPENAPP</code></td>
+<td>Whether to allow the open app action in <code>HostAgent</code>.</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>LOG_XML</code></td>
+<td>Whether to log the XML file at every step.</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>SCREENSHOT_TO_MEMORY</code></td>
+<td>Whether to allow the screenshot to <a href="../../agents/design/blackboard/"><code>Blackboard</code></a> for the agent's decision making.</td>
+<td>Boolean</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+<h2 id="main-prompt-configuration">Main Prompt Configuration</h2>
+<h3 id="main-prompt-templates">Main Prompt Templates</h3>
+<p>The main prompt templates include the prompts in the UFO agent for both <code>system</code> and <code>user</code> roles.</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HOSTAGENT_PROMPT</code></td>
+<td>The main prompt template for the <code>HostAgent</code>.</td>
+<td>String</td>
+<td>"ufo/prompts/share/base/host_agent.yaml"</td>
+</tr>
+<tr>
+<td><code>APPAGENT_PROMPT</code></td>
+<td>The main prompt template for the <code>AppAgent</code>.</td>
+<td>String</td>
+<td>"ufo/prompts/share/base/app_agent.yaml"</td>
+</tr>
+<tr>
+<td><code>FOLLOWERAGENT_PROMPT</code></td>
+<td>The main prompt template for the <code>FollowerAgent</code>.</td>
+<td>String</td>
+<td>"ufo/prompts/share/base/app_agent.yaml"</td>
+</tr>
+<tr>
+<td><code>EVALUATION_PROMPT</code></td>
+<td>The prompt template for the evaluation.</td>
+<td>String</td>
+<td>"ufo/prompts/evaluation/evaluate.yaml"</td>
+</tr>
+</tbody>
+</table>
+<p>Lite versions of the main prompt templates can be found in the <code>ufo/prompts/share/lite</code> directory to reduce the input size for specific token limits.</p>
+<h3 id="example-prompt-templates">Example Prompt Templates</h3>
+<p>Example prompt templates are used for demonstration purposes in the UFO agent.</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>HOSTAGENT_EXAMPLE_PROMPT</code></td>
+<td>The example prompt template for the <code>HostAgent</code> used for demonstration.</td>
+<td>String</td>
+<td>"ufo/prompts/examples/{mode}/host_agent_example.yaml"</td>
+</tr>
+<tr>
+<td><code>APPAGENT_EXAMPLE_PROMPT</code></td>
+<td>The example prompt template for the <code>AppAgent</code> used for demonstration.</td>
+<td>String</td>
+<td>"ufo/prompts/examples/{mode}/app_agent_example.yaml"</td>
+</tr>
+</tbody>
+</table>
+<p>Lite versions of the example prompt templates can be found in the <code>ufo/prompts/examples/lite/{mode}</code> directory to reduce the input size for demonstration purposes.</p>
+<h3 id="experience-and-demonstration-learning">Experience and Demonstration Learning</h3>
+<p>These configuration parameters are used for experience and demonstration learning in the UFO agent.</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EXPERIENCE_PROMPT</code></td>
+<td>The prompt for self-experience learning.</td>
+<td>String</td>
+<td>"ufo/prompts/experience/experience_summary.yaml"</td>
+</tr>
+<tr>
+<td><code>EXPERIENCE_SAVED_PATH</code></td>
+<td>The path to save the experience learning data.</td>
+<td>String</td>
+<td>"vectordb/experience/"</td>
+</tr>
+<tr>
+<td><code>DEMONSTRATION_PROMPT</code></td>
+<td>The prompt for user demonstration learning.</td>
+<td>String</td>
+<td>"ufo/prompts/demonstration/demonstration_summary.yaml"</td>
+</tr>
+<tr>
+<td><code>DEMONSTRATION_SAVED_PATH</code></td>
+<td>The path to save the demonstration learning data.</td>
+<td>String</td>
+<td>"vectordb/demonstration/"</td>
+</tr>
+</tbody>
+</table>
+<h3 id="application-api-configuration">Application API Configuration</h3>
+<p>These prompt configuration parameters are used for the application and control APIs in the UFO agent.</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>API_PROMPT</code></td>
+<td>The prompt for the UI automation API.</td>
+<td>String</td>
+<td>"ufo/prompts/share/base/api.yaml"</td>
+</tr>
+<tr>
+<td><code>APP_API_PROMPT_ADDRESS</code></td>
+<td>The prompt address for the application API.</td>
+<td>Dict</td>
+<td>{"WINWORD.EXE": "ufo/prompts/apps/word/api.yaml", "EXCEL.EXE": "ufo/prompts/apps/excel/api.yaml", "msedge.exe": "ufo/prompts/apps/web/api.yaml", "chrome.exe": "ufo/prompts/apps/web/api.yaml"}</td>
+</tr>
+</tbody>
+</table>
+<h2 id="pywinauto-configuration">pywinauto Configuration</h2>
+<p>The API configuration parameters are used for the pywinauto API in the UFO agent.</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CLICK_API</code></td>
+<td>The API used for click action, can be <code>click_input</code> or <code>click</code>.</td>
+<td>String</td>
+<td>"click_input"</td>
+</tr>
+<tr>
+<td><code>INPUT_TEXT_API</code></td>
+<td>The API used for input text action, can be <code>type_keys</code> or <code>set_text</code>.</td>
+<td>String</td>
+<td>"type_keys"</td>
+</tr>
+<tr>
+<td><code>INPUT_TEXT_ENTER</code></td>
+<td>Whether to press enter after typing the text.</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+</tbody>
+</table>
+<h2 id="control-filtering">Control Filtering</h2>
+<p>The control filtering configuration parameters are used for control filtering in the agent's observation.</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONTROL_FILTER</code></td>
+<td>The control filter type, can be <code>TEXT</code>, <code>SEMANTIC</code>, or <code>ICON</code>.</td>
+<td>List</td>
+<td>[]</td>
+</tr>
+<tr>
+<td><code>CONTROL_FILTER_TOP_K_PLAN</code></td>
+<td>The control filter effect on top k plans from the agent.</td>
+<td>Integer</td>
+<td>2</td>
+</tr>
+<tr>
+<td><code>CONTROL_FILTER_TOP_K_SEMANTIC</code></td>
+<td>The control filter top k for semantic similarity.</td>
+<td>Integer</td>
+<td>15</td>
+</tr>
+<tr>
+<td><code>CONTROL_FILTER_TOP_K_ICON</code></td>
+<td>The control filter top k for icon similarity.</td>
+<td>Integer</td>
+<td>15</td>
+</tr>
+<tr>
+<td><code>CONTROL_FILTER_MODEL_SEMANTIC_NAME</code></td>
+<td>The control filter model name for semantic similarity.</td>
+<td>String</td>
+<td>"all-MiniLM-L6-v2"</td>
+</tr>
+<tr>
+<td><code>CONTROL_FILTER_MODEL_ICON_NAME</code></td>
+<td>The control filter model name for icon similarity.</td>
+<td>String</td>
+<td>"clip-ViT-B-32"</td>
+</tr>
+</tbody>
+</table>
+<h2 id="customizations">Customizations</h2>
+<p>The customization configuration parameters are used for customizations in the UFO agent.</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>USE_CUSTOMIZATION</code></td>
+<td>Whether to enable the customization.</td>
+<td>Boolean</td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>QA_PAIR_FILE</code></td>
+<td>The path for the historical QA pairs.</td>
+<td>String</td>
+<td>"customization/historical_qa.txt"</td>
+</tr>
+<tr>
+<td><code>QA_PAIR_NUM</code></td>
+<td>The number of QA pairs for the customization.</td>
+<td>Integer</td>
+<td>20</td>
+</tr>
+</tbody>
+</table>
+<h2 id="evaluation">Evaluation</h2>
+<p>The evaluation configuration parameters are used for the evaluation in the UFO agent.</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EVA_SESSION</code></td>
+<td>Whether to include the session in the evaluation.</td>
+<td>Boolean</td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>EVA_ROUND</code></td>
+<td>Whether to include the round in the evaluation.</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>EVA_ALL_SCREENSHOTS</code></td>
+<td>Whether to include all the screenshots in the evaluation.</td>
+<td>Boolean</td>
+<td>True</td>
+</tr>
+</tbody>
+</table>
+<p>You can customize the configuration parameters in the <code>config_dev.yaml</code> file to suit your development needs and enhance the functionality of the UFO agent.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../user_configuration/" class="btn btn-neutral float-left" title="User Configuration"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../pricing_configuration/" class="btn btn-neutral float-right" title="Model Pricing">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../user_configuration/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../pricing_configuration/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
