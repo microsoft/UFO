@@ -1,7 +1,8 @@
 import gymnasium as gym
+import time
 
 from ael.config.config import Config
-import win32com.client as win32
+from ufo.automator.app_apis.word.wordclient import WordWinCOMReceiver
 
 configs = Config.get_instance().config_data
 
@@ -22,24 +23,27 @@ class WindowsAppEnv(gym.Env):
         """
         super(WindowsAppEnv, self).__init__()
         self.app_window = None
-        self.app_root_name = task_json_object.app_object.root_name
+        self.app_root_name = task_json_object.app_object.app_root_name
+        self.process_name = task_json_object.app_object.description.lower()
         self.win_app = task_json_object.app_object.win_app
-        self.app_instance = win32.gencache.EnsureDispatch(self.app_root_name)
+        self.client_clsid = task_json_object.app_object.client_clsid
+        self.win_com_receiver = WordWinCOMReceiver(self.app_root_name, self.process_name, self.client_clsid)
 
     def start(self, seed):
         """
         Start the Window env.
         :param seed: The seed file to start the env.
         """
-        # close all the previous windows
-
         from ufo.automator.ui_control import openfile
 
-        file_controller = openfile.FileController(BACKEND)        
+        file_controller = openfile.FileController(BACKEND)
         file_controller.execute_code({"APP": self.win_app, "file_path": seed})
 
     def close(self):
         """
         Close the Window env.
         """
-        self.app_instance.Quit()
+        com_object = self.win_com_receiver.get_object_from_process_name()
+        com_object.Close()
+        self.win_com_receiver.client.Quit()
+        time.sleep(1)

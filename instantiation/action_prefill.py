@@ -24,7 +24,8 @@ class AppEnum(Enum):
         self.description = description
         self.file_extension = file_extension
         self.win_app = win_app
-        self.root_name = description + '.Application'
+        self.app_root_name = win_app.upper() + '.EXE'
+        self.client_clsid = description + '.Application'
 
 class TaskObject(ABC):
     """
@@ -304,6 +305,7 @@ def main():
 
     try:
         for index, task_file in enumerate(all_task_files, start = 1):
+            print(f"Task starts: {index} / {len(all_task_files)}")
             task_json_object = TaskJsonObject(task_file)
             task_path_object = TaskPathObject(task_file)
             
