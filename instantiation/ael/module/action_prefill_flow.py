@@ -155,8 +155,7 @@ class ActionPrefillFlow(AppAgentProcessor):
         self.update_state(file_path)
 
         screenshot_path = self.log_path_configs + "/screenshot.png"
-        self.photographer.capture_app_window_screenshot(self.app_env.app_window, screenshot_path)
-
+        self.photographer.capture_desktop_screen_screenshot(save_path = screenshot_path)
 
         # filter the controls
         filter_control_state = self.filtered_control_info

@@ -1,7 +1,7 @@
 import gymnasium as gym
 
 from ael.config.config import Config
-from ael.automator.word import app_control as control
+import win32com.client as win32
 
 configs = Config.get_instance().config_data
 
@@ -14,21 +14,17 @@ class WindowsAppEnv(gym.Env):
     The Windows App Environment.
     """
 
-    def __init__(self, app_root_name, process_name: str):
+    def __init__(self, task_json_object):
         """
         Initialize the Windows App Environment.
         :param app_root_name: The root name of the app.
         :param process_name: The process name of the app.
         """
         super(WindowsAppEnv, self).__init__()
-        # app window
         self.app_window = None
-        # app root name like: 'Word.Application'
-        self._app_root_name = app_root_name
-        # process name like : 'Word'
-        self._process_name = process_name
-        # app control instance
-        self.app_control = control.AppControl(self._app_root_name)
+        self.app_root_name = task_json_object.app_object.root_name
+        self.win_app = task_json_object.app_object.win_app
+        self.app_instance = win32.gencache.EnsureDispatch(self.app_root_name)
 
     def start(self, seed):
         """
@@ -36,17 +32,14 @@ class WindowsAppEnv(gym.Env):
         :param seed: The seed file to start the env.
         """
         # close all the previous windows
-        self.app_control.open_file_with_app(seed)
-        
-        from ufo.automator.ui_control.inspector import ControlInspectorFacade
 
-        desktop_windows = ControlInspectorFacade(BACKEND).get_desktop_windows()
-        self.app_window = desktop_windows[0]
-        self.app_window.set_focus()
+        from ufo.automator.ui_control import openfile
 
+        file_controller = openfile.FileController(BACKEND)        
+        file_controller.execute_code({"APP": self.win_app, "file_path": seed})
 
     def close(self):
         """
         Close the Window env.
         """
-        self.app_control.quit()
+        self.app_instance.Quit()

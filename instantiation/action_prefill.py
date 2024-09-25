@@ -15,14 +15,15 @@ class AppEnum(Enum):
     Define the apps can be used in the instantiation.
     """
 
-    WORD = 1, 'Word', '.docx'
-    EXCEL = 2, 'Excel', '.xlsx'
-    POWERPOINT = 3, 'PowerPoint', '.pptx'
+    WORD = 1, 'Word', '.docx', 'winword'
+    EXCEL = 2, 'Excel', '.xlsx', 'excel'
+    POWERPOINT = 3, 'PowerPoint', '.pptx', 'powerpnt'
 
-    def __init__(self, id, description, file_extension):
+    def __init__(self, id, description, file_extension, win_app):
         self.id = id
         self.description = description
         self.file_extension = file_extension
+        self.win_app = win_app
         self.root_name = description + '.Application'
 
 class TaskObject(ABC):
@@ -218,7 +219,7 @@ class ProcessProducer():
         from instantiation.ael.env.state_manager import WindowsAppEnv
 
         self.task_object = ObjectMethodService(task_dir_name, task_config_object, task_json_object, task_path_object)
-        self.app_env = WindowsAppEnv(task_json_object.app_object.root_name, task_json_object.app_object.description)
+        self.app_env = WindowsAppEnv(task_json_object)
 
         self.action_prefill_flow = ActionPrefillFlow(task_json_object.app_object.description.lower(), self.app_env)
         self.action_prefill_flow.init_flow(task_path_object.task)
