@@ -2,10 +2,10 @@
 cache/
 controls_cache/
 tasks/*
+!tasks/action_prefill
 templates/word/*
 prefill_logs/*
-requirements.txt
-ael/utils/
-ael/config/*
-!ael/config/config.py
-ael/prompts/*
+controller/utils/
+controller/config/*
+!controller/config/config.py
+controller/prompts/*

@@ -1,0 +1,9 @@
+{
+    "app": "word",
+    "unique_id": "2",
+    "task": "Run a macro in Word",
+    "refined_steps": [
+        "1. In the Macrio name box that appears, type the name of the macro you want to run",
+        "2. Click the Run button to execute the selected macro"
+    ]
+}

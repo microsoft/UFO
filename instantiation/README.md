@@ -1,19 +1,36 @@
-
 ## Introduction of Instantiation
 
 **The instantiation process aims to filter and modify instructions according to the current environment.**
 
 By using this process, we can obtain clearer and more specific instructions, making them more suitable for the execution of the UFO.
 
+
 ## How to use
 
-The tasks that need instantiation should exist as a folder of JSON files, with the default folder path set to `instantiation/tasks`. This path can be changed in the `.yaml` file. For example, a task stored in `instantiation/tasks/action_prefill/` may look like this:
+#### 1. Install packages
+
+You should install relative packages in the UFO root folder:
+
+```python
+pip install -r requirements.txt
+```
+
+#### 2. Prepare files
+
+There are files need preparing before running the task.
+
+##### 2.1. Tasks as JSON
+
+The tasks that need to be instantiated should exist as a folder of JSON files, with the default folder path set to `instantiation/tasks`. This path can be changed in the `instantiation/controller/config/config.yaml` file, or you can use command in terminal, which is claimed in **3. Start running**. For example, a task stored in  `instantiation/tasks/action_prefill/` may look like this:
 
 ```json
 {
+    // The app you want to use
     "app": "word",
-    "task": "Type in hello and set font type as Arial",
+    // The unique id to distinguish different task 
     "unique_id": "1",
+    // The task and steps to be instantiated
+    "task": "Type in hello and set font type as Arial",
     "refined_steps": [
         "type in 'hello'",
         "Set the font to Arial"
@@ -21,18 +38,76 @@ The tasks that need instantiation should exist as a folder of JSON files, with t
 }
 ```
 
-You can instantiate the tasks by running the following command in the terminal:
+##### 2.2. Templates and the description
+
+You should place a app file as the reference for the instantiation. You should place them in the folder named by the app.
+
+For example, if you have `template1.docx` for Word, it can be existed in  `instantiation/templates/word/template1.docx`. 
+
+What's more, for each app folder, a `instantiation/templates/word/description.json` file should be contained, and you can describe each template files in details. It may look like:
+
+```json
+{
+    "template1.docx":"A doc with a rectangle shape",
+    "template2.docx":"A doc with a line of text",
+    "template3.docx":"A doc with a chart"
+}
+```
+
+##### 2.3.  Final structure
+
+Check the mentioned files:
+
+* [X] JSON files to be instantiated
+* [X] Templates as references for instantiations
+* [X] Description file in JSON format
+
+Then, the structure of files can be:
+
+```bash
+instantiation/
+|
+├── tasks/
+│   ├── action_prefill/
+│   |   ├── task1.json
+│   |   ├── task2.json
+|   |   └── task3.json
+|   └── ...
+|   
+├── templates/
+│   ├── word/
+│   |   ├── template1.docx
+│   |   ├── template2.docx
+|   |   ├── template3.docx
+|   |   └── description.json
+|   └── ...
+└──...
+```
+
+
+#### 3. Start running
+
+Run the `instantiation/action_prefill.py` file. You can do it by typing the following command in the terminal:
 
 ```
 python instantiation/action_prefill.py
 ```
 
-After the process is completed, a new folder will be created alongside the original one, named `action_prefill_new`, containing the instantiated task, which will look like:
+You can use `--task` to set the task folder you want to use, the default is `action_prefill`:
+
+```bash
+python instantiation/action_prefill.py --task your_task_folder_name
+```
+
+After the process is completed, a new folder will be created alongside the original one, named `action_prefill_instantiated`, containing the instantiated task, which will look like:
 
 ```json
 {
+    // The unique id to distinguish different task 
     "unique_id": "1",
+    // The chosen template path
     "instantial_template_path": "cached template file path",
+    // The instantiated task and steps
     "instantiated_request": "Type 'hello' and set the font type to Arial in the Word document.",
     "instantiated_plan": [
         {
@@ -83,9 +158,13 @@ After the process is completed, a new folder will be created alongside the origi
             }
         }
     ],
+    // The comment for the instantiated task
     "request_comment": "The task involves typing a specific string 'hello' and setting the font type to Arial, which can be executed locally within Word."
 }
 ```
+
+And there will also be `action_prefill_templates` folder, which stores the copied chosen templates for each tasks.
+
 
 ## Workflow
 
@@ -109,4 +188,4 @@ The screenshot will be sent to the action prefill agent, which will provide a mo
 
 ##### 3. Filter task
 
-The completed task will be evaluated by a filter agent, which will assess it and return feedback. If the task is deemed a good instance, it will be saved in `instantiation/tasks/your_folder_name_new/good_instances`; otherwise, it will follow the same process for poor instances.
+The completed task will be evaluated by a filter agent, which will assess it and return feedback. If the task is deemed a good instance, it will be saved in `instantiation/tasks/your_folder_name_instantiated/instances_pass`; otherwise, it will follow the same process for poor instances.

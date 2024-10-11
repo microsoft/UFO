@@ -3,10 +3,11 @@
 
 from ufo.config.config import Config
 
+
 class Config(Config):
     _instance = None
 
-    def __init__(self, config_path = "instantiation/ael/config/"):
+    def __init__(self, config_path="instantiation/controller/config/"):
         self.config_data = self.load_config(config_path)
 
     @staticmethod
@@ -17,11 +18,11 @@ class Config(Config):
         """
         if Config._instance is None:
             Config._instance = Config()
-        
+
         return Config._instance
 
     def optimize_configs(self, configs):
         self.update_api_base(configs, "ACTION_PREFILL_AGENT")
         self.update_api_base(configs, "FILTER_AGENT")
-        
+
         return configs
