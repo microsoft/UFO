@@ -76,6 +76,7 @@ class AppPuppeteer:
         """
 
         command = self.create_command(command_name, params, *args, **kwargs)
+
         return command.execute()
 
     def execute_all_commands(self) -> List[Any]:

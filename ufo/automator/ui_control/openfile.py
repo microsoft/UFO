@@ -1,4 +1,5 @@
 import time
+from typing import Dict
 
 import psutil
 from pywinauto import Desktop
@@ -33,10 +34,12 @@ class FileController:
             "notepad",
             "msteams:",
             "ms-todo:",
+            "calc",
+            "ms-clock:",
         ]
         self.app_map = AppMappings()
 
-    def execute_code(self, args: dict) -> bool:
+    def execute_code(self, args: Dict) -> bool:
         """
         Execute the code to open some files.
         :param args: The arguments of the code, which should at least contains name of APP and the file path we want to open
@@ -114,7 +117,7 @@ class FileController:
                 return True
         return False
 
-    def open_third_party_APP(self, args: dict) -> bool:
+    def open_third_party_APP(self, args: Dict) -> bool:
         # TODO: open third party app
         pass
 
