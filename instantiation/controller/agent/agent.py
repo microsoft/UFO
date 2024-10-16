@@ -3,8 +3,8 @@
 
 from typing import Dict, List
 
-from instantiation.controller.prompter.agent_prompter import (
-    ActionPrefillPrompter, FilterPrompter)
+from instantiation.controller.prompter.agent_prompter import (FilterPrompter,
+                                                              PrefillPrompter)
 from ufo.agents.agent.basic import BasicAgent
 
 
@@ -76,7 +76,7 @@ class FilterAgent(BasicAgent):
         pass
 
 
-class ActionPrefillAgent(BasicAgent):
+class PrefillAgent(BasicAgent):
     """
     The Agent for task instantialization and action sequence generation.
     """
@@ -91,7 +91,7 @@ class ActionPrefillAgent(BasicAgent):
         api_prompt: str,
     ):
         """
-        Initialize the ActionPrefillAgent.
+        Initialize the PrefillAgent.
         :param name: The name of the agent.
         :param process_name: The name of the process.
         :param is_visual: The flag indicating whether the agent is visual or not.
@@ -104,7 +104,7 @@ class ActionPrefillAgent(BasicAgent):
         self._complete = False
         self._name = name
         self._status = None
-        self.prompter: ActionPrefillPrompter = self.get_prompter(
+        self.prompter: PrefillPrompter = self.get_prompter(
             is_visual, main_prompt, example_prompt, api_prompt
         )
         self._process_name = process_name
@@ -119,7 +119,7 @@ class ActionPrefillAgent(BasicAgent):
         :return: The prompt.
         """
 
-        return ActionPrefillPrompter(is_visual, main_prompt, example_prompt, api_prompt)
+        return PrefillPrompter(is_visual, main_prompt, example_prompt, api_prompt)
 
     def message_constructor(
         self,
@@ -130,7 +130,7 @@ class ActionPrefillAgent(BasicAgent):
         log_path: str,
     ) -> List[str]:
         """
-        Construct the prompt message for the ActionPrefillAgent.
+        Construct the prompt message for the PrefillAgent.
         :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
         :param given_task: The given task.
         :param reference_steps: The reference steps.
@@ -139,17 +139,15 @@ class ActionPrefillAgent(BasicAgent):
         :return: The prompt message.
         """
 
-        action_prefill_agent_prompt_system_message = (
-            self.prompter.system_prompt_construction(dynamic_examples)
+        prefill_agent_prompt_system_message = self.prompter.system_prompt_construction(
+            dynamic_examples
         )
-        action_prefill_agent_prompt_user_message = (
-            self.prompter.user_content_construction(
-                given_task, reference_steps, doc_control_state, log_path
-            )
+        prefill_agent_prompt_user_message = self.prompter.user_content_construction(
+            given_task, reference_steps, doc_control_state, log_path
         )
         appagent_prompt_message = self.prompter.prompt_construction(
-            action_prefill_agent_prompt_system_message,
-            action_prefill_agent_prompt_user_message,
+            prefill_agent_prompt_system_message,
+            prefill_agent_prompt_user_message,
         )
 
         return appagent_prompt_message

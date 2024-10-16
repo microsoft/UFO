@@ -2,10 +2,9 @@
 cache/
 controls_cache/
 tasks/*
-!tasks/action_prefill
+!tasks/prefill
 templates/word/*
-prefill_logs/*
+logs/*
 controller/utils/
-controller/config/*
-!controller/config/config.py
+config/config.yaml
 controller/prompts/*

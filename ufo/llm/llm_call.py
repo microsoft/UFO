@@ -54,8 +54,8 @@ def get_completions(
         agent_type = "HOST_AGENT"
     elif agent.lower() in ["app", "appagent"]:
         agent_type = "APP_AGENT"
-    elif agent.lower() == "action_prefill":
-        agent_type = "ACTION_PREFILL_AGENT"
+    elif agent.lower() == "prefill":
+        agent_type = "PREFILL_AGENT"
     elif agent.lower() == "filter":
         agent_type = "FILTER_AGENT"
     elif agent.lower() == "backup":

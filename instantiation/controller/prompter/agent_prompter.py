@@ -163,9 +163,9 @@ class FilterPrompter(BasicPrompter):
         return self.retrived_documents_prompt_helper(header, separator, example_list)
 
 
-class ActionPrefillPrompter(BasicPrompter):
+class PrefillPrompter(BasicPrompter):
     """
-    Load the prompt for the ActionPrefillAgent.
+    Load the prompt for the PrefillAgent.
     """
 
     def __init__(
@@ -176,7 +176,7 @@ class ActionPrefillPrompter(BasicPrompter):
         api_prompt_template: str,
     ):
         """
-        Initialize the ActionPrefillPrompter.
+        Initialize the PrefillPrompter.
         :param is_visual: The flag indicating whether the prompter is visual or not.
         :param prompt_template: The prompt template.
         :param example_prompt_template: The example prompt template.
