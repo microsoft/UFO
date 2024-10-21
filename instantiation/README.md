@@ -6,7 +6,7 @@ By using this process, we can obtain clearer and more specific instructions, mak
 
 ## How to Use
 
-#### 1. Install Packages
+### 1. Install Packages
 
 You should install the necessary packages in the UFO root folder:
 
@@ -14,13 +14,13 @@ You should install the necessary packages in the UFO root folder:
 pip install -r requirements.txt
 ```
 
-#### 2. Configure the LLMs
+### 2. Configure the LLMs
 
 Before using the instantiation section, you need to provide your LLM configurations in `config.yaml` and `config_dev.yaml` located in the `instantiation/config` folder.
 
-`config_dev.yaml` specifies the paths of relevant files and contains default settings.
+- `config_dev.yaml` specifies the paths of relevant files and contains default settings. The match strategy for the control filter supports options: `'contains'`, `'fuzzy'`, and `'regex'`, allowing flexible matching between application windows and target files.
 
-`config.yaml` stores the agent information. You should copy the `config.yaml.template` file and fill it out according to the provided hints.
+- `config.yaml` stores the agent information. You should copy the `config.yaml.template` file and fill it out according to the provided hints.
 
 You will configure the prefill agent and the filter agent individually. The prefill agent is used to prepare the task, while the filter agent evaluates the quality of the prefilled task. You can choose different LLMs for each.
 
@@ -28,13 +28,13 @@ You will configure the prefill agent and the filter agent individually. The pref
 
 Once you have filled out the template, rename it to `config.yaml` to complete the LLM configuration.
 
-#### 3. Prepare Files
+### 3. Prepare Files
 
 Certain files need to be prepared before running the task.
 
-##### 3.1. Tasks as JSON
+#### 3.1. Tasks as JSON
 
-The tasks that need to be instantiated should be organized in a folder of JSON files, with the default folder path set to `instantiation/tasks`. This path can be changed in the `instantiation/config/config.yaml` file, or you can specify it in the terminal, as mentioned in **3. Start Running**. For example, a task stored in `instantiation/tasks/prefill/` may look like this:
+The tasks that need to be instantiated should be organized in a folder of JSON files, with the default folder path set to `instantiation/tasks`. This path can be changed in the `instantiation/config/config.yaml` file, or you can specify it in the terminal, as mentioned in **4. Start Running**. For example, a task stored in `instantiation/tasks/prefill/` may look like this:
 
 ```json
 {
@@ -51,7 +51,7 @@ The tasks that need to be instantiated should be organized in a folder of JSON f
 }
 ```
 
-##### 3.2. Templates and Descriptions
+#### 3.2. Templates and Descriptions
 
 You should place an app file as a reference for instantiation in a folder named after the app.
 
@@ -69,13 +69,13 @@ Additionally, for each app folder, there should be a `description.json` file loc
 
 If a `description.json` file is not present, one template file will be selected at random.
 
-##### 3.3. Final Structure
+#### 3.3. Final Structure
 
 Ensure the following files are in place:
 
-* [X] JSON files to be instantiated
-* [X] Templates as references for instantiation
-* [X] Description file in JSON format
+- [X] JSON files to be instantiated
+- [X] Templates as references for instantiation
+- [X] Description file in JSON format
 
 The structure of the files can be:
 
@@ -99,7 +99,7 @@ instantiation/
 └── ...
 ```
 
-#### 4. Start Running
+### 4. Start Running
 
 Run the `instantiation/action_prefill.py` file in module mode. You can do this by typing the following command in the terminal:
 
@@ -120,7 +120,7 @@ After the process is completed, a new folder named `prefill_instantiated` will b
     // A unique ID to distinguish different tasks 
     "unique_id": "1",
     // The chosen template path
-    "instantial_template_path": "cached template file path",
+    "instantial_template_path": "copied template file path",
     // The instantiated task and steps
     "instantiated_request": "Type 'hello' and set the font type to Arial in the Word document.",
     "instantiated_plan": [
@@ -172,8 +172,12 @@ After the process is completed, a new folder named `prefill_instantiated` will b
             }
         }
     ],
-    // The comment for the instantiated task
-    "request_comment": "The task involves typing the specific string 'hello' and setting the font type to Arial, which can be executed locally within Word."
+    "duration_sec": {
+        "choose_template": 10.650701761245728,
+        "prefill": 44.23913502693176,
+        "filter": 3.746831178665161,
+        "total": 58.63666796684265
+    }
 }
 ```
 
@@ -187,18 +191,26 @@ There are three key steps in the instantiation process:
 2. Prefill the task using the current screenshot.
 3. Filter the established task.
 
-##### 1. Choose Template File
+#### 1. Choose Template File
 
 Templates for your app must be defined and described in `instantiation/templates/app`. For instance, if you want to instantiate tasks for the Word application, place the relevant `.docx` files in `instantiation/templates/word`, along with a `description.json` file.
 
 The appropriate template will be selected based on how well its description matches the instruction.
 
-##### 2. Prefill the Task
+#### 2. Prefill the Task
 
 After selecting the template file, it will be opened, and a screenshot will be taken. If the template file is currently in use, errors may occur.
 
 The screenshot will be sent to the action prefill agent, which will return a modified task.
 
-##### 3. Filter Task
+#### 3. Filter Task
 
-The completed task will be evaluated by a filter agent, which will assess it and provide feedback. If the task is deemed a good instance, it will be saved in `instantiation/tasks/your_folder_name_instantiated/instances_pass`; otherwise, it will follow the same process for poor instances.
+The completed task will be evaluated by a filter agent, which will assess it and provide feedback. If the task is deemed a good instance, it will be saved in `instantiation/tasks/your_folder_name_instantiated/instances_pass/`; otherwise, it will be saved in `instantiation/tasks/your_folder_name_instantiated/instances_fail/`.
+
+All encountered error messages and tracebacks are saved in `instantiation/tasks/your_folder_name_instantiated/instances_error/`.
+
+## Notes
+
+1. Users should be careful to save the original files while using this project; otherwise, the files will be closed when the app is shut down.
+
+2. After starting the project, users should not close the app window while the program is taking screenshots.

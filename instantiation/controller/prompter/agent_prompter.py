@@ -38,7 +38,7 @@ class FilterPrompter(BasicPrompter):
         Construct the prompt for APIs.
         :param apis: The APIs.
         :param verbose: The verbosity level.
-        return: The prompt for APIs.
+        :return: The prompt for APIs.
         """
 
         # Construct the prompt for APIs
@@ -85,7 +85,7 @@ class FilterPrompter(BasicPrompter):
         """
         Construct the prompt for the system.
         :param app: The app name.
-        return: The prompt for the system.
+        :return: The prompt for the system.
         """
 
         try:
@@ -99,7 +99,7 @@ class FilterPrompter(BasicPrompter):
         """
         Construct the prompt for the user.
         :param request: The user request.
-        return: The prompt for the user.
+        :return: The prompt for the user.
         """
         prompt = self.prompt_template["user"].format(request=request)
         return prompt
@@ -107,11 +107,8 @@ class FilterPrompter(BasicPrompter):
     def user_content_construction(self, request: str) -> List[Dict]:
         """
         Construct the prompt for LLMs.
-        :param action_history: The action history.
-        :param control_item: The control item.
-        :param user_request: The user request.
-        :param retrieved_docs: The retrieved documents.
-        return: The prompt for LLMs.
+        :param request: The user request.
+        :return: The prompt for LLMs.
         """
 
         user_content = []
@@ -130,10 +127,10 @@ class FilterPrompter(BasicPrompter):
     ) -> str:
         """
         Construct the prompt for examples.
-        :param examples: The examples.
         :param header: The header of the prompt.
         :param separator: The separator of the prompt.
-        return: The prompt for examples.
+        :param additional_examples: The additional examples.
+        :return: The prompt for examples.
         """
 
         template = """
@@ -191,9 +188,8 @@ class PrefillPrompter(BasicPrompter):
     def api_prompt_helper(self, verbose: int = 1) -> str:
         """
         Construct the prompt for APIs.
-        :param apis: The APIs.
         :param verbose: The verbosity level.
-        return: The prompt for APIs.
+        :return: The prompt for APIs.
         """
 
         # Construct the prompt for APIs
@@ -223,7 +219,7 @@ class PrefillPrompter(BasicPrompter):
         """
         Construct the prompt for the system.
         :param additional_examples: The additional examples.
-        return: The prompt for the system.
+        :return: The prompt for the system.
         """
 
         examples = self.examples_prompt_helper(additional_examples=additional_examples)
@@ -238,7 +234,7 @@ class PrefillPrompter(BasicPrompter):
         :param given_task: The given task.
         :param reference_steps: The reference steps.
         :param doc_control_state: The document control state.
-        return: The prompt for the user.
+        :return: The prompt for the user.
         """
 
         prompt = self.prompt_template["user"].format(
@@ -253,6 +249,7 @@ class PrefillPrompter(BasicPrompter):
         """
         Load the first and last screenshots from the log path.
         :param log_path: The path of the log.
+        :return: The screenshot URL.
         """
         from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 
@@ -269,11 +266,11 @@ class PrefillPrompter(BasicPrompter):
     ) -> List[Dict]:
         """
         Construct the prompt for LLMs.
-        :param action_history: The action history.
-        :param control_item: The control item.
-        :param user_request: The user request.
-        :param retrieved_docs: The retrieved documents.
-        return: The prompt for LLMs.
+        :param given_task: The given task.
+        :param reference_steps: The reference steps.
+        :param doc_control_state: The document control state.
+        :param log_path: The path of the log.
+        :return: The prompt for LLMs.
         """
 
         user_content = []
@@ -304,10 +301,10 @@ class PrefillPrompter(BasicPrompter):
     ) -> str:
         """
         Construct the prompt for examples.
-        :param examples: The examples.
         :param header: The header of the prompt.
         :param separator: The separator of the prompt.
-        return: The prompt for examples
+        :param additional_examples: The additional examples.
+        :return: The prompt for examples.
         """
 
         template = """

@@ -7,4 +7,3 @@ templates/word/*
 logs/*
 controller/utils/
 config/config.yaml
-controller/prompts/*

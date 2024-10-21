@@ -8,6 +8,7 @@ CONTROL_BACKEND: "uia"  # The backend for control action
 CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner"] 
 PRINT_LOG: False  # Whether to print the log  
 LOG_LEVEL: "DEBUG"  # The log level
+MATCH_STRATEGY: "regex"  # The match strategy for the control filter, support 'contains', 'fuzzy', 'regex'
 
 PREFILL_PROMPT: "instantiation/controller/prompts/{mode}/prefill.yaml"  # The prompt for the action prefill
 FILTER_PROMPT: "instantiation/controller/prompts/{mode}/filter.yaml"  # The prompt for the filter

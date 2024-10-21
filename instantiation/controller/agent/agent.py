@@ -3,8 +3,10 @@
 
 from typing import Dict, List
 
-from instantiation.controller.prompter.agent_prompter import (FilterPrompter,
-                                                              PrefillPrompter)
+from instantiation.controller.prompter.agent_prompter import (
+    FilterPrompter,
+    PrefillPrompter
+)
 from ufo.agents.agent.basic import BasicAgent
 
 
@@ -44,6 +46,11 @@ class FilterAgent(BasicAgent):
     def get_prompter(self, is_visual, main_prompt, example_prompt, api_prompt) -> str:
         """
         Get the prompt for the agent.
+        This is the abstract method from BasicAgent that needs to be implemented.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt.
+        :param example_prompt: The example prompt.
+        :param api_prompt: The API prompt.
         :return: The prompt.
         """
 
@@ -56,7 +63,6 @@ class FilterAgent(BasicAgent):
         :param app: The name of the operated app.
         :return: The prompt message.
         """
-
         filter_agent_prompt_system_message = self.prompter.system_prompt_construction(
             app=app
         )
@@ -72,6 +78,7 @@ class FilterAgent(BasicAgent):
     def process_comfirmation(self) -> None:
         """
         Confirm the process.
+        This is the abstract method from BasicAgent that needs to be implemented.
         """
         pass
 
@@ -112,11 +119,12 @@ class PrefillAgent(BasicAgent):
     def get_prompter(self, is_visual, main_prompt, example_prompt, api_prompt) -> str:
         """
         Get the prompt for the agent.
+        This is the abstract method from BasicAgent that needs to be implemented.
         :param is_visual: The flag indicating whether the agent is visual or not.
         :param main_prompt: The main prompt.
         :param example_prompt: The example prompt.
         :param api_prompt: The API prompt.
-        :return: The prompt.
+        :return: The prompt string.
         """
 
         return PrefillPrompter(is_visual, main_prompt, example_prompt, api_prompt)
@@ -155,5 +163,6 @@ class PrefillAgent(BasicAgent):
     def process_comfirmation(self) -> None:
         """
         Confirm the process.
+        This is the abstract method from BasicAgent that needs to be implemented.
         """
         pass
