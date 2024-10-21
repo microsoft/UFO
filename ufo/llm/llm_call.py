@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+from typing import Any, Dict, List, Tuple
+
 from ufo.utils import print_with_color
+
 from ..config.config import Config
-from typing import Tuple
-
 from .base import BaseService
-
 
 configs = Config.get_instance().config_data
 
@@ -16,15 +16,10 @@ def get_completion(
 ) -> Tuple[str, float]:
     """
     Get completion for the given messages.
-
-    Args:
-        messages (list): List of messages to be used for completion.
-        agent (str, optional): Type of agent. Possible values are 'hostagent', 'appagent' or 'backup'.
-        use_backup_engine (bool, optional): Flag indicating whether to use the backup engine or not.
-
-    Returns:
-        tuple: A tuple containing the completion response (str) and the cost (float).
-
+    :param messages: List of messages to be used for completion.
+    :param agent: Type of agent. Possible values are 'hostagent', 'appagent' or 'backup'.
+    :param use_backup_engine: Flag indicating whether to use the backup engine or not.
+    :return: A tuple containing the completion response and the cost.
     """
 
     responses, cost = get_completions(
@@ -38,17 +33,13 @@ def get_completions(
 ) -> Tuple[list, float]:
     """
     Get completions for the given messages.
-
-    Args:
-        messages (list): List of messages to be used for completion.
-        agent (str, optional): Type of agent. Possible values are 'hostagent', 'appagent' or 'BACKUP'.
-        use_backup_engine (bool, optional): Flag indicating whether to use the backup engine or not.
-        n (int, optional): Number of completions to generate.
-
-    Returns:
-        tuple: A tuple containing the completion responses (list of str) and the cost (float).
-
+    :param messages: List of messages to be used for completion.
+    :param agent: Type of agent. Possible values are 'hostagent', 'appagent' or 'backup'.
+    :param use_backup_engine: Flag indicating whether to use the backup engine or not.
+    :param n: Number of completions to generate.
+    :return: A tuple containing the completion responses and the cost.
     """
+
     if agent.lower() in ["host", "hostagent"]:
         agent_type = "HOST_AGENT"
     elif agent.lower() in ["app", "appagent"]:
