@@ -113,7 +113,7 @@ class BaseProcessor(ABC):
         if self.is_error() or self.is_paused():
             # If the session is pending, update the step and memory, and return.
             if self.is_pending():
-                self.update_step()
+                self.update_status()
                 self.update_memory()
 
             return

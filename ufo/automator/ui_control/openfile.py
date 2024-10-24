@@ -36,6 +36,7 @@ class FileController:
             "ms-todo:",
             "calc",
             "ms-clock:",
+            "mspaint",
         ]
         self.app_map = AppMappings()
 
@@ -161,6 +162,9 @@ class AppMappings:
         "firefox": "Firefox",
         "excel": "Excel",
         "ms-settings:": "Settings",
+        "calc": "Calculator",
+        "ms-clock:": "Clock",
+        "mspaint": "Paint",
     }
 
     app_process_map = {
@@ -176,6 +180,9 @@ class AppMappings:
         "firefox": ["firefox.exe", "firefox"],
         "excel": ["EXCEL.EXE", "excel"],
         "ms-settings:": ["SystemSettings.exe", "ms-settings"],
+        "ms-clock": ["Time.exe", "ms-clock"],
+        "calc": ["CalculatorApp.exe", "calc"],
+        "mspaint": ["mspaint.exe", "mspaint"],
     }
 
     @classmethod
