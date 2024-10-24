@@ -2,8 +2,8 @@ import logging
 import re
 import time
 
-from pywinauto import Desktop
 from fuzzywuzzy import fuzz
+from pywinauto import Desktop
 
 from instantiation.config.config import Config
 from ufo.automator.puppeteer import ReceiverManager
@@ -101,8 +101,10 @@ class WindowsAppEnv:
             combined_name_2 = f"{doc_name}.*{app_name}"
             pattern_1 = re.compile(combined_name_1, flags=re.IGNORECASE)
             pattern_2 = re.compile(combined_name_2, flags=re.IGNORECASE)
-            return re.search(pattern_1, window_title) is not None or \
-                    re.search(pattern_2, window_title) is not None
+            return (
+                re.search(pattern_1, window_title) is not None
+                or re.search(pattern_2, window_title) is not None
+            )
         else:
             logging.exception(f"Unknown match strategy: {_MATCH_STRATEGY}")
             raise ValueError(f"Unknown match strategy: {_MATCH_STRATEGY}")

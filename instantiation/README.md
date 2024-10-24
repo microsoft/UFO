@@ -172,7 +172,7 @@ After the process is completed, a new folder named `prefill_instantiated` will b
             }
         }
     ],
-    "duration_sec": {
+    "execution_time": {
         "choose_template": 10.650701761245728,
         "prefill": 44.23913502693176,
         "filter": 3.746831178665161,

@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Tuple
 from instantiation.config.config import Config
 from instantiation.controller.agent.agent import PrefillAgent
 from instantiation.controller.env.env_manager import WindowsAppEnv
+from instantiation.instantiation import AppEnum
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
@@ -25,16 +26,22 @@ class PrefillFlow(AppAgentProcessor):
 
     _app_prefill_agent_dict: Dict[str, PrefillAgent] = {}
 
-    def __init__(self, task_object: Any, environment: WindowsAppEnv = None) -> None:
+    def __init__(
+        self,
+        app_object: AppEnum,
+        task_file_name: str,
+        environment: WindowsAppEnv = None,
+    ) -> None:
         """
-        Initialize the prefill flow.
-        :param task_object: The object containing task details (should have app_object and task_file_name).
-        :param environment: The environment of the app (optional).
+        Initialize the prefill flow with the application context.
+        :param app_object: The application enum object representing the app to be automated.
+        :param task_file_name: The name of the task file for logging and tracking.
+        :param environment: The environment of the app, defaults to a new WindowsAppEnv if not provided.
         """
-        self.task_object = task_object
-        self._app_name = task_object.app_object.description.lower()
-        self._task_file_name = task_object.task_file_name
-        self._app_env = environment or WindowsAppEnv(task_object.app_object)
+        self.execution_time = 0
+        self._task_file_name = task_file_name
+        self._app_name = app_object.description.lower()
+        self._app_env = environment or WindowsAppEnv(app_object)
 
         # Create or reuse a PrefillAgent for the app
         if self._app_name not in PrefillFlow._app_prefill_agent_dict:
@@ -70,39 +77,46 @@ class PrefillFlow(AppAgentProcessor):
             self._log_path_configs, "prefill_responses.json", "w", _configs
         )
 
-    def execute(self, template_copied_path: str) -> Dict[str, Any]:
+    def execute(
+        self, template_copied_path: str, original_task: str, refined_steps: List[str]
+    ) -> Tuple[str, List[str]]:
         """
         Start the execution by retrieving the instantiated result.
         :param template_copied_path: The path of the copied template to use.
-        :return: The updated task object after execution.
+        :param original_task: The original task to refine.
+        :param refined_steps: The steps to guide the refinement process.
+        :return: The refined task and corresponding action plans.
         """
-        self._instantiate_task(template_copied_path)
-        return self.task_object
+        start_time = time.time()
+        instantiated_request, instantiated_plan = self._instantiate_task(
+            template_copied_path, original_task, refined_steps
+        )
+        self.execution_time = round(time.time() - start_time, 3)
+        return instantiated_request, instantiated_plan
 
-    def _instantiate_task(self, template_copied_path: str) -> None:
+    def _instantiate_task(
+        self, template_copied_path: str, original_task: str, refined_steps: List[str]
+    ) -> Tuple[str, List[str]]:
         """
         Retrieve and process the instantiated result for the task.
         Interacts with the PrefillAgent to refine the task and generate action plans.
         :param template_copied_path: The path of the copied template to use.
+        :param original_task: The original task to refine.
+        :param refined_steps: The steps to guide the refinement process.
+        :return: The refined task and corresponding action plans.
         """
         self._app_env.start(template_copied_path)
 
         try:
             # Retrieve prefill actions and task plan
             instantiated_request, instantiated_plan = self._get_prefill_actions(
-                self.task_object.task,
-                self.task_object.refined_steps,
+                original_task,
+                refined_steps,
                 template_copied_path,
             )
 
-            print(f"Original Task: {self.task_object.task}")
+            print(f"Original Task: {original_task}")
             print(f"Prefilled Task: {instantiated_request}")
-
-            # Update task object attributes
-            self.task_object.set_attributes(
-                instantiated_request=instantiated_request,
-                instantiated_plan=instantiated_plan,
-            )
 
         except Exception as e:
             logging.exception(f"Error in prefilling task: {e}")
@@ -110,6 +124,7 @@ class PrefillFlow(AppAgentProcessor):
 
         finally:
             self._app_env.close()
+        return instantiated_request, instantiated_plan
 
     def _update_state(self, file_path: str) -> None:
         """
@@ -161,10 +176,10 @@ class PrefillFlow(AppAgentProcessor):
         :return: The refined task and corresponding action plans.
         """
         self._update_state(file_path)
-
+        execution_time = 0
         # Save a screenshot of the app state
         screenshot_path = os.path.join(self._log_path_configs, "screenshot.png")
-        self._save_screenshot(self.task_object.task_file_name, screenshot_path)
+        self._save_screenshot(self._task_file_name, screenshot_path)
 
         # Construct prompt message for the PrefillAgent
         prompt_message = self._prefill_agent.message_constructor(
@@ -184,12 +199,12 @@ class PrefillFlow(AppAgentProcessor):
             response_string, _ = self._prefill_agent.get_response(
                 prompt_message, "prefill", use_backup_engine=True, configs=_configs
             )
-            end_time = time.time()
+            execution_time = round(time.time() - start_time, 3)
 
             # Parse and log the response
             response_json = self._prefill_agent.response_to_dict(response_string)
-            new_task = response_json["new_task"]
-            action_plans = response_json["actions_plan"]
+            instantiated_request = response_json["new_task"]
+            instantiated_plan = response_json["actions_plan"]
 
         except Exception as e:
             self._status = "ERROR"
@@ -197,10 +212,9 @@ class PrefillFlow(AppAgentProcessor):
             raise
         finally:
             # Log the response and execution time
-            duration_sec = end_time - start_time
-            self._log_response(response_json, duration_sec)
+            self._log_response(response_json, execution_time)
 
-        return new_task, action_plans
+        return instantiated_request, instantiated_plan
 
     def _log_message(self, prompt_message: str) -> None:
         """
@@ -214,15 +228,17 @@ class PrefillFlow(AppAgentProcessor):
         }
         self._message_logger.info(json.dumps(messages_log_entry, indent=4))
 
-    def _log_response(self, response_json: Dict[str, Any], duration_sec: float) -> None:
+    def _log_response(
+        self, response_json: Dict[str, Any], execution_time: float
+    ) -> None:
         """
-        Log the response received from PrefillAgent along with execution duration.
+        Log the response received from PrefillAgent along with execution time.
         :param response_json: Response data from PrefillAgent.
-        :param duration_sec: Time taken for the PrefillAgent call.
+        :param execution_time: Time taken for the PrefillAgent call.
         """
         response_log_entry = {
             "step": self._execute_step,
-            "duration_sec": duration_sec,
+            "execution_time": execution_time,
             "agent_response": response_json,
             "error": "",
         }

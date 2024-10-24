@@ -1,6 +1,7 @@
 import json
 import os
 import random
+import time
 import warnings
 from datetime import datetime
 from typing import Dict
@@ -11,7 +12,7 @@ from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
 
 from instantiation.config.config import Config
-from instantiation.instantiation import TaskObject
+from instantiation.instantiation import AppEnum
 
 configs = Config.get_instance().config_data
 
@@ -19,12 +20,15 @@ configs = Config.get_instance().config_data
 class ChooseTemplateFlow:
     _SENTENCE_TRANSFORMERS_PREFIX = "sentence-transformers/"
 
-    def __init__(self, task_object: TaskObject):
+    def __init__(self, app_object: AppEnum, task_file_name: str):
         """
-        Initialize the flow with the given task object.
-        :param task_object: An instance of TaskObject, representing the task context.
+        Initialize the flow with the given task context.
+        :param app_object: An instance of AppEnum, representing the application context.
+        :param task_file_name: The name of the task file.
         """
-        self.task_object = task_object
+        self._app_object = app_object
+        self._task_file_name = task_file_name
+        self.execution_time = 0
         self._embedding_model = self._load_embedding_model(
             model_name=configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"]
         )
@@ -34,8 +38,9 @@ class ChooseTemplateFlow:
         Execute the flow and return the copied template path.
         :return: The path to the copied template file.
         """
-        template_copied_path=self._choose_template_and_copy()
-
+        start_time = time.time()
+        template_copied_path = self._choose_template_and_copy()
+        self.execution_time = round(time.time() - start_time, 3)
         return template_copied_path
 
     def _create_copied_file(
@@ -50,7 +55,7 @@ class ChooseTemplateFlow:
         """
         os.makedirs(copy_to_folder_path, exist_ok=True)
         time_start = datetime.now()
-        template_extension = self.task_object.app_object.file_extension
+        template_extension = self._app_object.file_extension
 
         if not file_name:
             copied_template_path = os.path.join(
@@ -61,11 +66,11 @@ class ChooseTemplateFlow:
             copied_template_path = os.path.join(
                 copy_to_folder_path, file_name + template_extension
             )
-            with open(copy_from_path, "rb") as f:
-                ori_content = f.read()
-            with open(copied_template_path, "wb") as f:
-                f.write(ori_content)
-                
+        with open(copy_from_path, "rb") as f:
+            ori_content = f.read()
+        with open(copied_template_path, "wb") as f:
+            f.write(ori_content)
+
         return copied_template_path
 
     def _get_chosen_file_path(self) -> str:
@@ -75,7 +80,7 @@ class ChooseTemplateFlow:
         """
         templates_description_path = os.path.join(
             configs["TEMPLATE_PATH"],
-            self.task_object.app_object.description.lower(),
+            self._app_object.description.lower(),
             "description.json",
         )
 
@@ -88,7 +93,7 @@ class ChooseTemplateFlow:
             )
             template_folder = os.path.join(
                 configs["TEMPLATE_PATH"],
-                self.task_object.app_object.description.lower(),
+                self._app_object.description.lower(),
             )
             template_files = [
                 f
@@ -104,7 +109,7 @@ class ChooseTemplateFlow:
             return chosen_template_file
 
         chosen_file_path = self._choose_target_template_file(
-            self.task_object.task, templates_file_description
+            self._task_file_name, templates_file_description
         )
         print(f"Chosen template file: {chosen_file_path}")
         return chosen_file_path
@@ -117,20 +122,20 @@ class ChooseTemplateFlow:
         chosen_template_file_path = self._get_chosen_file_path()
         chosen_template_full_path = os.path.join(
             configs["TEMPLATE_PATH"],
-            self.task_object.app_object.description.lower(),
+            self._app_object.description.lower(),
             chosen_template_file_path,
         )
 
         target_template_folder_path = os.path.join(
-            configs["TASKS_HUB"], self.task_object.task_dir_name + "_templates"
+            configs["TASKS_HUB"],
+            os.path.dirname(os.path.dirname(self._task_file_name)) + "_templates",
         )
 
         template_copied_path = self._create_copied_file(
             chosen_template_full_path,
             target_template_folder_path,
-            self.task_object.task_file_name,
+            self._task_file_name,
         )
-        self.task_object.instantial_template_path = template_copied_path
 
         return template_copied_path
 
@@ -143,24 +148,21 @@ class ChooseTemplateFlow:
         :param doc_files_description: A dictionary of template file descriptions.
         :return: The path to the chosen template file.
         """
-        candidates = list(doc_files_description.values())
-        file_doc_descriptions = {
-            doc_file_description: doc
-            for doc, doc_file_description in doc_files_description.items()
+        file_doc_map = {
+            desc: file_name for file_name, desc in doc_files_description.items()
         }
+        db = FAISS.from_texts(
+            list(doc_files_description.values()), self._embedding_model
+        )
+        most_similar = db.similarity_search(given_task, k=1)
 
-        db = FAISS.from_texts(candidates, self._embedding_model)
-        doc_descriptions = db.similarity_search(given_task, k=1)
+        if not most_similar:
+            raise ValueError("No similar templates found.")
 
-        if not doc_descriptions:
-            raise Exception("No similar templates found.")
-
-        doc_description = doc_descriptions[0].page_content
-        doc = file_doc_descriptions[doc_description]
-        return doc
+        return file_doc_map[most_similar[0].page_content]
 
     @staticmethod
-    def _load_embedding_model(model_name: str):
+    def _load_embedding_model(model_name: str) -> CacheBackedEmbeddings:
         """
         Load the embedding model.
         :param model_name: The name of the embedding model to load.

@@ -7,7 +7,8 @@ OPENAI_API_MODEL: "gpt-4-0125-preview"  # The only OpenAI model by now that acce
 CONTROL_BACKEND: "uia"  # The backend for control action
 CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner"] 
 PRINT_LOG: False  # Whether to print the log  
-LOG_LEVEL: "DEBUG"  # The log level
+LOG_LEVEL: "INFO"  # The log level
+LOG_FORMAT: "%(asctime)s - %(levelname)s - %(message)s"
 MATCH_STRATEGY: "regex"  # The match strategy for the control filter, support 'contains', 'fuzzy', 'regex'
 
 PREFILL_PROMPT: "instantiation/controller/prompts/{mode}/prefill.yaml"  # The prompt for the action prefill

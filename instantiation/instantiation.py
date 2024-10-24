@@ -9,9 +9,10 @@ import os
 import sys
 import time
 import traceback
-import textwrap
 from enum import Enum
-from typing import Tuple
+from typing import Any, Dict, Tuple
+
+from instantiation.config.config import Config
 
 # Add the project root to the system path.
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -28,8 +29,10 @@ args = argparse.ArgumentParser()
 args.add_argument("--task", help="The name of the task.", type=str, default="prefill")
 parsed_args = args.parse_args()
 
+_configs = Config.get_instance().config_data
 logging.basicConfig(
-    level=logging.WARNING, format="%(asctime)s - %(levelname)s - %(message)s"
+    level=_configs.get("LOG_LEVEL", "INFO"),
+    format=_configs.get("LOG_FORMAT", "%(asctime)s - %(levelname)s - %(message)s"),
 )
 
 
@@ -80,14 +83,6 @@ class TaskObject:
         for key, value in task_json_file.items():
             setattr(self, key.lower().replace(" ", "_"), value)
 
-        self.json_fields = [
-            "unique_id",
-            "instantiated_request",
-            "instantiated_plan",
-            "instantial_template_path",
-            "request_comment",
-        ]
-
     def choose_app_from_json(self, task_json_file: dict) -> AppEnum:
         """
         Generate an app object by traversing AppEnum based on the app specified in the JSON.
@@ -98,23 +93,6 @@ class TaskObject:
             if app.description.lower() == task_json_file["app"].lower():
                 return app
         raise ValueError("Not a correct App")
-
-    def to_json(self) -> dict:
-        """
-        Convert the object to a JSON object.
-        :return: The JSON object.
-        """
-        return {
-            key: getattr(self, key) for key in self.json_fields if hasattr(self, key)
-        }
-
-    def set_attributes(self, **kwargs) -> None:
-        """
-        Add all input fields as attributes.
-        :param kwargs: The fields to be added.
-        """
-        for key, value in kwargs.items():
-            setattr(self, key, value)
 
 
 class InstantiationProcess:
@@ -147,41 +125,50 @@ class InstantiationProcess:
         Execute the process for one task.
         :param task_object: The TaskObject containing task details.
         """
-        from instantiation.controller.workflow.choose_template_flow import (
-            ChooseTemplateFlow,
-        )
+        from instantiation.controller.workflow.choose_template_flow import \
+            ChooseTemplateFlow
         from instantiation.controller.workflow.filter_flow import FilterFlow
         from instantiation.controller.workflow.prefill_flow import PrefillFlow
 
         try:
             start_time = time.time()
 
-            # Measure time for ChooseTemplateFlow
-            start_choose_template_time = time.time()
-            template_copied_path = ChooseTemplateFlow(task_object).execute()
-            choose_template_duration = time.time() - start_choose_template_time
+            app_object = task_object.app_object
+            task_file_name = task_object.task_file_name
+            choose_template_flow = ChooseTemplateFlow(app_object, task_file_name)
+            template_copied_path = choose_template_flow.execute()
 
-            # Measure time for PrefillFlow
-            start_prefill_time = time.time()
-            instantiated_task = PrefillFlow(task_object).execute(template_copied_path)
-            prefill_duration = time.time() - start_prefill_time
+            prefill_flow = PrefillFlow(app_object, task_file_name)
+            instantiated_request, instantiated_plan = prefill_flow.execute(
+                template_copied_path, task_object.task, task_object.refined_steps
+            )
 
             # Measure time for FilterFlow
-            start_filter_time = time.time()
-            is_quality_good = FilterFlow(task_object).execute(instantiated_task)
-            filter_duration = time.time() - start_filter_time
+            filter_flow = FilterFlow(app_object, task_file_name)
+            is_quality_good, request_comment, request_type = filter_flow.execute(
+                instantiated_request
+            )
 
-            # Calculate total duration
-            total_duration = time.time() - start_time
+            total_execution_time = round(time.time() - start_time, 3)
 
-            durations = {
-                "choose_template": choose_template_duration,
-                "prefill": prefill_duration,
-                "filter": filter_duration,
-                "total": total_duration,
+            execution_time_list = {
+                "choose_template": choose_template_flow.execution_time,
+                "prefill": prefill_flow.execution_time,
+                "filter": filter_flow.execution_time,
+                "total": total_execution_time,
             }
 
-            self._save_instantiated_task(task_object, is_quality_good, durations)
+            instantiated_task_info = {
+                "unique_id": task_object.unique_id,
+                "instantiated_request": instantiated_request,
+                "instantiated_plan": instantiated_plan,
+                "request_comment": request_comment,
+                "execution_time_list": execution_time_list,
+            }
+
+            self._save_instantiated_task(
+                instantiated_task_info, task_object.task_file_base_name, is_quality_good
+            )
 
         except Exception as e:
             logging.exception(f"Error processing task: {str(e)}")
@@ -190,25 +177,28 @@ class InstantiationProcess:
     
 
     def _save_instantiated_task(
-        self, task_object: TaskObject, is_quality_good: bool, durations: dict
+        self,
+        instantiated_task_info: Dict[str, Any],
+        task_file_base_name: str,
+        is_quality_good: bool,
     ) -> None:
         """
-        Save the instantiated task along with duration information to the pass/fail folder.
-        :param task_object: The task object to save.
-        :param is_quality_good: Indicator of whether the task quality is good.
-        :param durations: A dictionary containing duration information for each flow.
+        Save the instantiated task information to a JSON file.
+        :param instantiated_task_info: A dictionary containing instantiated task details.
+        :param task_file_base_name: The base name of the task file.
+        :param is_quality_good: Indicates whether the quality of the task is good.
         """
-        pass_path, fail_path = self._get_instance_folder_path()
-        task_json = task_object.to_json()
-        task_json["duration_sec"] = durations
+        # Convert the dictionary to a JSON string
+        task_json = json.dumps(instantiated_task_info, ensure_ascii=False, indent=4)
 
-        target_folder = pass_path if is_quality_good else fail_path
-        new_task_path = os.path.join(target_folder, task_object.task_file_base_name)
-
+        target_folder = self._get_instance_folder_path()[is_quality_good]
+        new_task_path = os.path.join(target_folder, task_file_base_name)
         os.makedirs(os.path.dirname(new_task_path), exist_ok=True)
 
         with open(new_task_path, "w", encoding="utf-8") as f:
-            json.dump(task_json, f, ensure_ascii=False)
+            f.write(task_json)
+
+        print(f"Task saved to {new_task_path}")
 
     def _get_instance_folder_path(self) -> Tuple[str, str]:
         """
@@ -230,7 +220,7 @@ class InstantiationProcess:
             configs["TASKS_HUB"], "prefill_instantiated", "instances_error"
         )
         os.makedirs(error_folder, exist_ok=True)
-        
+
         # Ensure the file name has the .json extension
         error_file_path = os.path.join(error_folder, task_file_base_name)
 
@@ -240,12 +230,11 @@ class InstantiationProcess:
 
         error_log = {
             "error_message": message,
-            "traceback": formatted_traceback  # Keep original traceback line breaks
+            "traceback": formatted_traceback,  # Keep original traceback line breaks
         }
 
         with open(error_file_path, "w", encoding="utf-8") as f:
             json.dump(error_log, f, indent=4, ensure_ascii=False)
-
 
 
 def main():
