@@ -1,0 +1,9 @@
+{
+    "app": "word",
+    "unique_id": "3",
+    "task": "Deleting undwanted recovered Word files",
+    "refined_steps": [
+        "1. Open the Word document containing the items you wish to delete",
+        "2. Select and delete the selected text"
+    ]
+}

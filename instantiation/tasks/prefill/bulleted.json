@@ -1,0 +1,9 @@
+{
+    "app": "word",
+    "unique_id": "5",
+    "task": "Turning lines of text into a bulleted list in Word",
+    "refined_steps": [
+        "1. Place the cursor at the beginning of the line of text you want to turn into a bulleted list",
+        "2. Click the Bullets button in the Paragraph group on the Home tab and choose a bullet style"
+    ]
+}
