@@ -54,11 +54,11 @@ class FilterFlow:
         :return: Tuple containing task quality flag, comment, and task type.
         """
         start_time = time.time()
-        is_quality_good, request_comment, request_type = self._get_filtered_result(
+        is_quality_good, filter_result, request_type = self._get_filtered_result(
             instantiated_request
         )
         self.execution_time = round(time.time() - start_time, 3)
-        return is_quality_good, request_comment, request_type
+        return is_quality_good, filter_result, request_type
 
     def _initialize_logs(self) -> None:
         """
@@ -78,6 +78,7 @@ class FilterFlow:
         :param instantiated_request: Request object containing task details.
         :return: Tuple containing task quality flag, request comment, and request type.
         """
+        # Construct the prompt message for the filter agent
         prompt_message = self._filter_agent.message_constructor(
             instantiated_request,
             self._app_name,
@@ -85,6 +86,7 @@ class FilterFlow:
         prompt_json = json.dumps(prompt_message, indent=4)
         self._filter_message_logger.info(prompt_json)
 
+        # Get the response from the filter agent
         try:
             start_time = time.time()
             response_string, _ = self._filter_agent.get_response(

@@ -21,7 +21,7 @@ if _configs:
 
 class PrefillFlow(AppAgentProcessor):
     """
-    Manages the prefill flow by refining plan steps and interacting with the UI using automation tools.
+    Class to manage the prefill process by refining planning steps and automating UI interactions
     """
 
     _app_prefill_agent_dict: Dict[str, PrefillAgent] = {}
@@ -251,6 +251,7 @@ class PrefillFlow(AppAgentProcessor):
         :param save_path: The path where the screenshot will be saved.
         """
         try:
+            # Find the window matching the document name
             matched_window = self._app_env.find_matching_window(doc_name)
             if matched_window:
                 screenshot = self._photographer.capture_app_window_screenshot(
