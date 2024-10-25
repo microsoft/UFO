@@ -172,6 +172,7 @@ After the process is completed, a new folder named `prefill_instantiated` will b
             }
         }
     ],
+    "request_comment": "The task involves using the drawing tool in the Word desktop app, which is a feature available within Word and does not require any external applications or subjective considerations.",
     "execution_time": {
         "choose_template": 10.650701761245728,
         "prefill": 44.23913502693176,
