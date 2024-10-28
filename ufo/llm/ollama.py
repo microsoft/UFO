@@ -1,9 +1,9 @@
 import base64
 import copy
 import io
-import json
+
 import time
-from typing import Any, Optional
+from typing import Any, Optional, Dict, List
 
 import requests
 from PIL import Image
@@ -14,7 +14,16 @@ from .base import BaseService
 
 
 class OllamaService(BaseService):
+    """
+    A service class for Ollama models.
+    """
+
     def __init__(self, config, agent_type: str):
+        """
+        Initialize the Ollama service.
+        :param config: The configuration.
+        :param agent_type: The agent type.
+        """
         self.config_llm = config[agent_type]
         self.config = config
         self.max_retry = self.config["MAX_RETRY"]
@@ -22,30 +31,24 @@ class OllamaService(BaseService):
 
     def chat_completion(
         self,
-        messages,
-        n,
+        messages: List[Dict[str, str]],
+        n: int = 1,
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ):
+    ) -> Any:
         """
         Generates completions for a given list of messages.
-
-        Args:
-            messages (List[str]): The list of messages to generate completions for.
-            n (int): The number of completions to generate for each message.
-            temperature (float, optional): Controls the randomness of the generated completions. Higher values (e.g., 0.8) make the completions more random, while lower values (e.g., 0.2) make the completions more focused and deterministic. If not provided, the default value from the model configuration will be used.
-            max_tokens (int, optional): The maximum number of tokens in the generated completions. If not provided, the default value from the model configuration will be used.
-            top_p (float, optional): Controls the diversity of the generated completions. Higher values (e.g., 0.8) make the completions more diverse, while lower values (e.g., 0.2) make the completions more focused. If not provided, the default value from the model configuration will be used.
-            **kwargs: Additional keyword arguments to be passed to the underlying completion method.
-
-        Returns:
-            List[str], None:A list of generated completions for each message and the cost set to be None.
-
-        Raises:
-            Exception: If an error occurs while making the API request.
+        :param messages: The list of messages to generate completions for.
+        :param n: The number of completions to generate for each message.
+        :param temperature: Controls the randomness of the generated completions. Higher values (e.g., 0.8) make the completions more random, while lower values (e.g., 0.2) make the completions more focused and deterministic. If not provided, the default value from the model configuration will be used.
+        :param max_tokens: The maximum number of tokens in the generated completions. If not provided, the default value from the model configuration will be used.
+        :param top_p: Controls the diversity of the generated completions. Higher values (e.g., 0.8) make the completions more diverse, while lower values (e.g., 0.2) make the completions more focused. If not provided, the default value from the model configuration will be used.
+        :param kwargs: Additional keyword arguments to be passed to the underlying completion method.
+        :return: A list of generated completions for each message and the cost set to be None.
         """
+
         temperature = (
             temperature if temperature is not None else self.config["TEMPERATURE"]
         )
@@ -78,28 +81,23 @@ class OllamaService(BaseService):
 
     def _chat_completion(
         self,
-        messages,
+        messages: List[Dict[str, str]],
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
     ):
         """
-        Perform chat completion using the OpenAI API.
-
-        Args:
-            messages: A list of message objects containing 'role' and 'content' keys.
-            temperature: The temperature parameter controls the randomness of the output.
-            max_tokens: The maximum number of tokens to generate in the response.
-            top_p: The cumulative probability of the most likely tokens to include in the response.
-            **kwargs: Additional keyword arguments.
-
-        Returns:
-            The generated response as a string.
-
-        Raises:
-            Exception: If the API request fails with a non-200 status code.
+        Perform 1 chat completion using the Ollama API.
+        :param messages: A list of message objects containing 'role' and 'content' keys.
+        :param temperature: The temperature parameter controls the randomness of the output.
+        :param max_tokens: The maximum number of tokens to generate in the response.
+        :param top_p: The cumulative probability of the most likely tokens to include in the response.
+        :param kwargs: Additional keyword arguments.
+        :return: The generated response as a string.
+        :raises: Exception: If the API request fails with a non-200 status code.
         """
+
         api_endpoint = "/api/chat"
         payload = {
             "model": self.config_llm["API_MODEL"],
@@ -121,15 +119,11 @@ class OllamaService(BaseService):
 
         return response
 
-    def resize_base64_image(self, base64_str):
+    def resize_base64_image(self, base64_str: str) -> str:
         """
         Resize a base64 encoded image.
-
-        Args:
-            base64_str (str): The base64 encoded image string.
-
-        Returns:
-            str: The resized base64 encoded image string.
+        :param base64_str: The base64 encoded image string.
+        :return: The resized base64 encoded image string.
         """
         image_data = base64.b64decode(base64_str)
         image = Image.open(io.BytesIO(image_data))
@@ -147,16 +141,13 @@ class OllamaService(BaseService):
 
         return base64.b64encode(buffer.getvalue()).decode()
 
-    def _process_messages(self, messages):
+    def _process_messages(self, messages: List[Dict[str, str]]) -> List[Dict[str, str]]:
         """
         Process the given messages and modify their content and images.
-
-        Args:
-            messages (list): A list of messages to be processed.
-
-        Returns:
-            list: The processed messages with modified content and images.
+        :param messages: A list of messages to be processed.
+        :return: The processed messages with modified content and images.
         """
+
         _messages = copy.deepcopy(messages)
         tmp_image_text = tmp_image = None
         for i, message in enumerate(_messages):
@@ -175,18 +166,15 @@ class OllamaService(BaseService):
                 message["images"] = [self.resize_base64_image(tmp_image)]
         return _messages
 
-    def _request_api(self, api_path: str, payload: Any, stream: bool = False):
+    def _request_api(self, api_path: str, payload: Any, stream: bool = False) -> Any:
         """
         Sends a POST request to the specified API path with the given payload.
-
-        Args:
-            api_path (str): The path of the API endpoint.
-            payload (Any): The payload to be sent with the request.
-            stream (bool, optional): Whether to stream the response. Defaults to False.
-
-        Returns:
-            Response: The response object returned by the API.
+        :param api_path: The path of the API endpoint.
+        :param payload: The payload to be sent with the request.
+        :param stream: Whether to stream the response.
+        :return: The response object returned by the API.
         """
+
         url = f"{self.config_llm['API_BASE']}{api_path}"
         response = requests.post(
             url=url, json=payload, timeout=self.timeout, stream=stream

@@ -68,7 +68,7 @@ UFO sightings have garnered attention from various media outlets, including:
 * For other communications, please contact [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com)
 ---
 
-## 🎬 Demo Examples
+<!-- ## 🎬 Demo Examples
 
 We present two demo videos that complete user request on Windows OS using UFO. For more case study, please consult our [technical report](https://arxiv.org/abs/2402.07939).
 
@@ -82,7 +82,7 @@ In this example, we will demonstrate how to efficiently use UFO to delete all no
 #### 2️⃣📧 Example 2: Composing an email using text from multiple sources.
 In this example, we will demonstrate how to utilize UFO to extract text from Word documents, describe an image, compose an email, and send it seamlessly. Enjoy the versatility and efficiency of cross-application experiences with UFO!
 
-<iframe width="560" height="315" src="https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4fc32e0" frameborder="0" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4fc32e0" frameborder="0" allowfullscreen></iframe> -->
 
 &nbsp;
 ## 📚 Citation

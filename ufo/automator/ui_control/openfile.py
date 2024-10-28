@@ -1,4 +1,5 @@
 import time
+from typing import Dict
 
 import psutil
 from pywinauto import Desktop
@@ -36,17 +37,20 @@ class FileController:
             "notepad",
             "msteams:",
             "ms-todo:",
+            "calc",
+            "ms-clock:",
+            "mspaint",
         ]
         self.app_map = AppMappings()
 
-    def execute_code(self, args: dict) -> bool:
+    def execute_code(self, args: Dict) -> bool:
         """
         Execute the code to open some files.
         :param args: The arguments of the code, which should at least contains name of APP and the file path we want to open
         (ps. filepath can be empty.)
         :return: The result of the execution or error.
         """
-        self.APP = args["APP"]
+        self.APP = args.get("APP", "")
         self.file_path = args.get("file_path", "")
         self.check_open_status()
         if self.openstatus:
@@ -117,7 +121,7 @@ class FileController:
                 return True
         return False
 
-    def open_third_party_APP(self, args: dict) -> bool:
+    def open_third_party_APP(self, args: Dict) -> bool:
         # TODO: open third party app
         pass
 
@@ -161,6 +165,9 @@ class AppMappings:
         "firefox": "Firefox",
         "excel": "Excel",
         "ms-settings:": "Settings",
+        "calc": "Calculator",
+        "ms-clock:": "Clock",
+        "mspaint": "Paint",
     }
 
     app_process_map = {
@@ -176,6 +183,9 @@ class AppMappings:
         "firefox": ["firefox.exe", "firefox"],
         "excel": ["EXCEL.EXE", "excel"],
         "ms-settings:": ["SystemSettings.exe", "ms-settings"],
+        "ms-clock": ["Time.exe", "ms-clock"],
+        "calc": ["CalculatorApp.exe", "calc"],
+        "mspaint": ["mspaint.exe", "mspaint"],
     }
 
     @classmethod

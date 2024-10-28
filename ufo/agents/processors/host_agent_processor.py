@@ -188,20 +188,20 @@ class HostAgentProcessor(BaseProcessor):
         self.app_root = self.control_inspector.get_application_root_name(new_app_window)
 
         # Check if the window interface is available for the visual element.
-        if not self.is_window_interface_available(new_app_window):
+        if not self._is_window_interface_available(new_app_window):
             self.status = self._agent_status_manager.ERROR.value
 
             return
 
         # Switch to the new application window, if it is different from the current application window.
-        self.switch_to_new_app_window(new_app_window)
+        self._switch_to_new_app_window(new_app_window)
         self.application_window.set_focus()
         if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
             self.application_window.draw_outline(colour="red", thickness=3)
 
         self.action = "set_focus()"
 
-    def is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
+    def _is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
         """
         Check if the window interface is available for the visual element.
         :param new_app_window: The new application window.
@@ -219,14 +219,30 @@ class HostAgentProcessor(BaseProcessor):
             )
             return False
 
-    def switch_to_new_app_window(self, new_app_window: UIAWrapper) -> None:
+    def _is_same_window(self, window1: UIAWrapper, window2: UIAWrapper) -> bool:
+        """
+        Check if two windows are the same.
+        :param window1: The first window.
+        :param window2: The second window.
+        :return: True if the two windows are the same, False otherwise.
+        """
+
+        equal = False
+
+        try:
+            equal = window1 == window2
+        except:
+            pass
+        return equal
+
+    def _switch_to_new_app_window(self, new_app_window: UIAWrapper) -> None:
         """
         Switch to the new application window if it is different from the current application window.
         :param new_app_window: The new application window.
         """
 
         if (
-            new_app_window != self.application_window
+            not self._is_same_window(new_app_window, self.application_window)
             and self.application_window is not None
         ):
             utils.print_with_color("Switching to a new application...", "magenta")
