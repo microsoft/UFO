@@ -73,7 +73,7 @@ class DesktopPhotographer(Photographer):
         :return: The screenshot.
         """
         screenshot = ImageGrab.grab(all_screens=self.all_screens)
-        if save_path is not None:
+        if save_path is not None and screenshot is not None:
             screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
         return screenshot
 
@@ -174,7 +174,7 @@ class RectangleDecorator(PhotographerDecorator):
                 screenshot = self.draw_rectangles(
                     screenshot, coordinate=adjusted_rect, color=self.color
                 )
-        if save_path is not None:
+        if save_path is not None and screenshot is not None:
             screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
         return screenshot
 
@@ -362,7 +362,7 @@ class AnnotationDecorator(PhotographerDecorator):
                 ),
             )
 
-        if save_path is not None:
+        if save_path is not None and screenshot_annotated is not None:
             screenshot_annotated.save(
                 save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL
             )
