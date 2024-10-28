@@ -2,10 +2,10 @@ import logging
 import re
 import time
 
+from config.config import Config
 from fuzzywuzzy import fuzz
 from pywinauto import Desktop
 
-from instantiation.config.config import Config
 from ufo.automator.puppeteer import ReceiverManager
 
 # Load configuration settings
@@ -28,14 +28,16 @@ class WindowsAppEnv:
         super().__init__()
         self.app_window = None
         self.app_root_name = app_object.app_root_name
-        self.process_name = app_object.description.lower()
+        self.app_name = app_object.description.lower()
         self.win_app = app_object.win_app
         self._receive_factory = ReceiverManager._receiver_factory_registry["COM"][
             "factory"
         ]
         self.win_com_receiver = self._receive_factory.create_receiver(
-            self.app_root_name, self.process_name
+            self.app_root_name, self.app_name
         )
+
+        self._all_controls = None
 
     def start(self, copied_template_path: str) -> None:
         """
@@ -77,6 +79,8 @@ class WindowsAppEnv:
         for window in windows_list:
             window_title = window.element_info.name.lower()
             if self._match_window_name(window_title, doc_name):
+                # Cache all controls for the window
+                self._all_controls = window.children()
                 return window
         return None
 
@@ -87,7 +91,7 @@ class WindowsAppEnv:
         :param doc_name: The document name associated with the application.
         :return: True if a match is found based on the strategy; False otherwise.
         """
-        app_name = self.process_name
+        app_name = self.app_name
         doc_name = doc_name.lower()
 
         if _MATCH_STRATEGY == "contains":

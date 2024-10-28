@@ -4,9 +4,9 @@ import os
 import time
 from typing import Dict, Tuple
 
-from instantiation.config.config import Config
-from instantiation.controller.agent.agent import FilterAgent
-from instantiation.instantiation import AppEnum
+from config.config import Config
+from controller.agent.agent import FilterAgent
+
 from ufo.module.basic import BaseSession
 
 _configs = Config.get_instance().config_data
@@ -19,14 +19,14 @@ class FilterFlow:
 
     _app_filter_agent_dict: Dict[str, FilterAgent] = {}
 
-    def __init__(self, app_object: AppEnum, task_file_name: str) -> None:
+    def __init__(self, app_name: str, task_file_name: str) -> None:
         """
         Initialize the filter flow for a task.
         :param app_object: Application object containing task details.
         :param task_file_name: Name of the task file being processed.
         """
         self.execution_time = 0
-        self._app_name = app_object.description.lower()
+        self._app_name = app_name
         self._log_path_configs = _configs["FILTER_LOG_PATH"].format(task=task_file_name)
         self._filter_agent = self._get_or_create_filter_agent()
         self._initialize_logs()

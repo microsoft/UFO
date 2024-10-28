@@ -4,10 +4,10 @@ import os
 import time
 from typing import Any, Dict, List, Tuple
 
-from instantiation.config.config import Config
-from instantiation.controller.agent.agent import PrefillAgent
-from instantiation.controller.env.env_manager import WindowsAppEnv
-from instantiation.instantiation import AppEnum
+from config.config import Config
+from controller.agent.agent import PrefillAgent
+from controller.env.env_manager import WindowsAppEnv
+
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
@@ -28,9 +28,8 @@ class PrefillFlow(AppAgentProcessor):
 
     def __init__(
         self,
-        app_object: AppEnum,
+        environment: WindowsAppEnv,
         task_file_name: str,
-        environment: WindowsAppEnv = None,
     ) -> None:
         """
         Initialize the prefill flow with the application context.
@@ -39,9 +38,9 @@ class PrefillFlow(AppAgentProcessor):
         :param environment: The environment of the app, defaults to a new WindowsAppEnv if not provided.
         """
         self.execution_time = 0
+        self._app_env = environment
         self._task_file_name = task_file_name
-        self._app_name = app_object.description.lower()
-        self._app_env = environment or WindowsAppEnv(app_object)
+        self._app_name = self._app_env.app_name
 
         # Create or reuse a PrefillAgent for the app
         if self._app_name not in PrefillFlow._app_prefill_agent_dict:
