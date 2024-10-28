@@ -187,20 +187,20 @@ class HostAgentProcessor(BaseProcessor):
         self.app_root = self.control_inspector.get_application_root_name(new_app_window)
 
         # Check if the window interface is available for the visual element.
-        if not self.is_window_interface_available(new_app_window):
+        if not self._is_window_interface_available(new_app_window):
             self.status = self._agent_status_manager.ERROR.value
 
             return
 
         # Switch to the new application window, if it is different from the current application window.
-        self.switch_to_new_app_window(new_app_window)
+        self._switch_to_new_app_window(new_app_window)
         self.application_window.set_focus()
         if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
             self.application_window.draw_outline(colour="red", thickness=3)
 
         self.action = "set_focus()"
 
-    def is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
+    def _is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
         """
         Check if the window interface is available for the visual element.
         :param new_app_window: The new application window.
@@ -234,7 +234,7 @@ class HostAgentProcessor(BaseProcessor):
             pass
         return equal
 
-    def switch_to_new_app_window(self, new_app_window: UIAWrapper) -> None:
+    def _switch_to_new_app_window(self, new_app_window: UIAWrapper) -> None:
         """
         Switch to the new application window if it is different from the current application window.
         :param new_app_window: The new application window.
