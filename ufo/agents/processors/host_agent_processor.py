@@ -218,6 +218,22 @@ class HostAgentProcessor(BaseProcessor):
             )
             return False
 
+    def _is_same_window(self, window1: UIAWrapper, window2: UIAWrapper) -> bool:
+        """
+        Check if two windows are the same.
+        :param window1: The first window.
+        :param window2: The second window.
+        :return: True if the two windows are the same, False otherwise.
+        """
+
+        equal = False
+
+        try:
+            equal = window1 == window2
+        except:
+            pass
+        return equal
+
     def switch_to_new_app_window(self, new_app_window: UIAWrapper) -> None:
         """
         Switch to the new application window if it is different from the current application window.
@@ -225,7 +241,7 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         if (
-            new_app_window != self.application_window
+            not self._is_same_window(new_app_window, self.application_window)
             and self.application_window is not None
         ):
             utils.print_with_color("Switching to a new application...", "magenta")
