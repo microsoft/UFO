@@ -21,7 +21,9 @@ class SessionFactory:
     The factory class to create a session.
     """
 
-    def create_session(self, task: str, mode: str, plan: str) -> BaseSession:
+    def create_session(
+        self, task: str, mode: str, plan: str, request: str = ""
+    ) -> BaseSession:
         """
         Create a session.
         :param task: The name of current task.
@@ -29,7 +31,9 @@ class SessionFactory:
         :return: The created session.
         """
         if mode == "normal":
-            return [Session(task, configs.get("EVA_SESSION", False), id=0)]
+            return [
+                Session(task, configs.get("EVA_SESSION", False), id=0, request=request)
+            ]
         elif mode == "follower":
             # If the plan is a folder, create a follower session for each plan file in the folder.
             if self.is_folder(plan):
@@ -96,6 +100,21 @@ class Session(BaseSession):
     A session for UFO.
     """
 
+    def __init__(
+        self, task: str, should_evaluate: bool, id: int, request: str = ""
+    ) -> None:
+        """
+        Initialize a session.
+        :param task: The name of current task.
+        :param should_evaluate: Whether to evaluate the session.
+        :param id: The id of the session.
+        :param request: The user request of the session, optional. If not provided, UFO will ask the user to input the request.
+        """
+
+        super().__init__(task, should_evaluate, id)
+
+        self._init_request = request
+
     def run(self) -> None:
         """
         Run the session.
@@ -145,10 +164,15 @@ class Session(BaseSession):
         Get the request for the host agent.
         :return: The request for the host agent.
         """
-
         if self.total_rounds == 0:
-            utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
-            return interactor.first_request()
+
+            # If the request is provided via command line, use it directly.
+            if self._init_request:
+                return self._init_request
+            # Otherwise, ask the user to input the request.
+            else:
+                utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
+                return interactor.first_request()
         else:
             request, iscomplete = interactor.new_request()
             if iscomplete:

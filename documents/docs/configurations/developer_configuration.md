@@ -101,6 +101,7 @@ The customization configuration parameters are used for customizations in the UF
 
 | Configuration Option   | Description                                  | Type    | Default Value                         |
 |------------------------|----------------------------------------------|---------|---------------------------------------|
+| `ASK_QUESTION`         | Whether to ask the user for a question.      | Boolean | True                                  |
 | `USE_CUSTOMIZATION`    | Whether to enable the customization.         | Boolean | True                                  |
 | `QA_PAIR_FILE`         | The path for the historical QA pairs.        | String  | "customization/historical_qa.txt"     |
 | `QA_PAIR_NUM`          | The number of QA pairs for the customization.| Integer | 20                                    |

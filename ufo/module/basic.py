@@ -259,9 +259,16 @@ class BaseRound(ABC):
 
         if self.application_window is not None:
 
-            PhotographerFacade().capture_app_window_screenshot(
-                self.application_window, save_path=screenshot_save_path
-            )
+            try:
+                PhotographerFacade().capture_app_window_screenshot(
+                    self.application_window, save_path=screenshot_save_path
+                )
+
+            except Exception as e:
+                utils.print_with_color(
+                    f"Warning: The last snapshot capture failed, due to the error: {e}",
+                    "yellow",
+                )
 
             # Save the final XML file
             if configs["LOG_XML"]:
@@ -629,9 +636,16 @@ class BaseSession(ABC):
 
         if self.application_window is not None:
 
-            PhotographerFacade().capture_app_window_screenshot(
-                self.application_window, save_path=screenshot_save_path
-            )
+            try:
+                PhotographerFacade().capture_app_window_screenshot(
+                    self.application_window, save_path=screenshot_save_path
+                )
+
+            except Exception as e:
+                utils.print_with_color(
+                    f"Warning: The last snapshot capture failed, due to the error: {e}",
+                    "yellow",
+                )
 
             # Save the final XML file
             if configs["LOG_XML"]:

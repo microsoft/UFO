@@ -33,6 +33,13 @@ args.add_argument(
     type=str,
     default="",
 )
+args.add_argument(
+    "--request",
+    "-r",
+    help="The description of the request, optional. If not provided, UFO will ask the user to input the request.",
+    type=str,
+    default="",
+)
 
 
 parsed_args = args.parse_args()
@@ -49,7 +56,10 @@ def main():
     python -m ufo -t task_name -m follower -p path_to_plan_file_or_folder
     """
     sessions = SessionFactory().create_session(
-        task=parsed_args.task, mode=parsed_args.mode, plan=parsed_args.plan
+        task=parsed_args.task,
+        mode=parsed_args.mode,
+        plan=parsed_args.plan,
+        request=parsed_args.request,
     )
 
     clients = UFOClientManager(sessions)
