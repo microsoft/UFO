@@ -4,8 +4,8 @@ import os
 import time
 from typing import Dict, Tuple
 
-from config.config import Config
-from controller.agent.agent import FilterAgent
+from instantiation.config.config import Config
+from instantiation.controller.agent.agent import FilterAgent
 
 from ufo.module.basic import BaseSession
 

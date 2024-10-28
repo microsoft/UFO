@@ -7,7 +7,7 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict
 
-from config.config import Config
+from instantiation.config.config import Config
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
 from langchain_community.embeddings import HuggingFaceEmbeddings

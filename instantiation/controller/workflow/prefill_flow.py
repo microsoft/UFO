@@ -4,9 +4,9 @@ import os
 import time
 from typing import Any, Dict, List, Tuple
 
-from config.config import Config
-from controller.agent.agent import PrefillAgent
-from controller.env.env_manager import WindowsAppEnv
+from instantiation.config.config import Config
+from instantiation.controller.agent.agent import PrefillAgent
+from instantiation.controller.env.env_manager import WindowsAppEnv
 
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator.ui_control.inspector import ControlInspectorFacade

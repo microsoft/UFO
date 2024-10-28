@@ -3,7 +3,7 @@
 
 from typing import Dict, List
 
-from controller.prompter.agent_prompter import FilterPrompter, PrefillPrompter
+from instantiation.controller.prompter.agent_prompter import FilterPrompter, PrefillPrompter
 
 from ufo.agents.agent.basic import BasicAgent
 

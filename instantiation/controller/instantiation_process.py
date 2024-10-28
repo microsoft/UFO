@@ -7,7 +7,7 @@ import traceback
 from enum import Enum
 from typing import Any, Dict
 
-from config.config import Config
+from instantiation.config.config import Config
 
 from ufo.module.basic import BaseSession
 
@@ -108,10 +108,10 @@ class InstantiationProcess:
         Execute the process for one task.
         :param task_object: The TaskObject containing task details.
         """
-        from controller.env.env_manager import WindowsAppEnv
-        from controller.workflow.choose_template_flow import ChooseTemplateFlow
-        from controller.workflow.filter_flow import FilterFlow
-        from controller.workflow.prefill_flow import PrefillFlow
+        from instantiation.controller.env.env_manager import WindowsAppEnv
+        from instantiation.controller.workflow.choose_template_flow import ChooseTemplateFlow
+        from instantiation.controller.workflow.filter_flow import FilterFlow
+        from instantiation.controller.workflow.prefill_flow import PrefillFlow
 
         # Initialize the app environment and the task file name.
         app_object = task_object.app_object

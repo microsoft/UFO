@@ -31,7 +31,7 @@ def main() -> None:
     
     task_dir_name = parse_arguments().task.lower()
 
-    from controller.instantiation_process import InstantiationProcess
+    from instantiation.controller.instantiation_process import InstantiationProcess
     InstantiationProcess().instantiate_files(task_dir_name)
 
 

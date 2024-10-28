@@ -237,7 +237,7 @@ class BasicAgent(ABC):
             self.processor.resume()
 
 
-    def process_asker(self, configs = configs) -> None:
+    def process_asker(self, ask_user: bool = True) -> None:
         """
         Ask for the process.
         :param ask_user: Whether to ask the user for the questions.

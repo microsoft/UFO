@@ -2,7 +2,7 @@ import logging
 import re
 import time
 
-from config.config import Config
+from instantiation.config.config import Config
 from fuzzywuzzy import fuzz
 from pywinauto import Desktop
 
