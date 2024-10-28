@@ -33,9 +33,8 @@ class PrefillFlow(AppAgentProcessor):
     ) -> None:
         """
         Initialize the prefill flow with the application context.
-        :param app_object: The application enum object representing the app to be automated.
+        :param environment: The environment of the app.
         :param task_file_name: The name of the task file for logging and tracking.
-        :param environment: The environment of the app, defaults to a new WindowsAppEnv if not provided.
         """
         self.execution_time = 0
         self._app_env = environment

@@ -26,10 +26,12 @@ def parse_arguments() -> argparse.Namespace:
 
 def main() -> None:
     """Main entry point of the script."""
-    add_project_root_to_sys_path()  # Ensure project root is added
+    # Add the project root to the system path.
+    add_project_root_to_sys_path() 
+    
     task_dir_name = parse_arguments().task.lower()
-    from controller.instantiation_process import InstantiationProcess
 
+    from controller.instantiation_process import InstantiationProcess
     InstantiationProcess().instantiate_files(task_dir_name)
 
 
