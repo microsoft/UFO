@@ -430,11 +430,38 @@ example13:
   Status: |-
     CONTINUE
   Plan:
-    - (1) Click the 'Event Type' field to open the dropdown list.
-    - (2) Select 'Restaurant Reservation' from the dropdown list.
-    - (3) Input the information for the 'Event Name' field, which is 'Birthday Party'.
-    - (4) Input the information for the 'Event Date' field, which is '2022-12-25'.
-    - (5) Input the information for the 'Event Time' field, which is '18:00'.
-    - (6) Click the 'Submit' button to submit the form.
+    - (1) Select 'Restaurant Reservation' from the dropdown list.
+    - (2) Input the information for the 'Event Name' field, which is 'Birthday Party'.
+    - (3) Input the information for the 'Event Date' field, which is '2022-12-25'.
+    - (4) Input the information for the 'Event Time' field, which is '18:00'.
+    - (5) Click the 'Submit' button to submit the form.
   Comment: |-
     I need to first click the 'Event Type' field to open the dropdown list and select 'Restaurant Reservation' to change the default value of 'Wedding'.
+
+
+  example14:
+  Request: |-
+    Activate the repair process for the Square button in Power Automate | calculator, and In a different calculator app, ctrl + click the square button for repair.
+  Sub-task: |-
+    Activate the repair process for the Square button in Power Automate | calculator.
+  Response:
+  Observation: |-
+    The current screenshot shows the 'Power Automate | calculator' application with a dialog box for selecting UI elements. The repair selector is not visible in the screenshot.
+  Thought: |-
+    Based on the assigned sub-task and the current screenshot, I need to click first navigate to the repair selector, not running it. The first step is to click the 'More actions' button to open the dropdown list, and then click the 'Edit' button to open the edit mode. In the edit mode, I need to click the 'Repair' button to open the Edit dialog box.
+  ControlLabel: |-
+    58
+  ControlText: |-
+    More actions
+  Function: |-
+    click_input
+  Args:
+    {"button": "left", "double": false}
+  Status: |-
+    CONTINUE
+  Plan:
+    - (1) After open the dropdown list, click the 'Edit' button to open the edit dialog box.
+    - (2) In the edit dialog box, click the 'Open selector builder for selected UI element' to open the selector builder. I must NOT click the 'Save' button as the repair process is not completed yet and no changes should be saved.
+    - (3) Click the 'Repair' button to activate the repair process for the Square button. After clicking the 'Repair' button, the repair process will be activated and the sub-task will be FINISH immediately. I need to set the status as FINISH and handover to the HostAgent.
+  Comment: |-
+    I need to navigate to the repair selector by clicking the 'More actions' button, then the 'Edit' button, then the 'Open selector builder for selected UI element' button, and finally the 'Repair' button to activate the repair process for the Square button in Power Automate | calculator.

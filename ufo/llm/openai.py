@@ -1,11 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import datetime
+
 import os
 import shutil
 import sys
-from typing import Any, Callable, Literal, Optional
+from typing import Any, Callable, Literal, Optional, List, Dict
 
 import openai
 from openai import AzureOpenAI, OpenAI
@@ -19,7 +19,7 @@ class OpenAIService(BaseService):
     The OpenAI service class to interact with the OpenAI API.
     """
 
-    def __init__(self, config, agent_type: str) -> None:
+    def __init__(self, config: Dict[str, Any], agent_type: str) -> None:
         """
         Create an OpenAI service instance.
         :param config: The configuration for the OpenAI service.
@@ -45,8 +45,8 @@ class OpenAIService(BaseService):
 
     def chat_completion(
         self,
-        messages,
-        n,
+        messages: List[Dict[str, str]],
+        n: int,
         stream: bool = False,
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
@@ -55,30 +55,17 @@ class OpenAIService(BaseService):
     ):
         """
         Generates completions for a given conversation using the OpenAI Chat API.
-
-        Args:
-            messages (List[Dict[str, str]]): The list of messages in the conversation.
-                Each message should have a 'role' (either 'system', 'user', or 'assistant')
-                and 'content' (the content of the message).
-            n (int): The number of completions to generate.
-            stream (bool, optional): Whether to stream the API response. Defaults to False.
-            temperature (float, optional): The temperature parameter for randomness in the output.
-                Higher values (e.g., 0.8) make the output more random, while lower values (e.g., 0.2) make it more deterministic.
-                If not provided, the default value from the configuration will be used.
-            max_tokens (int, optional): The maximum number of tokens in the generated completion.
-                If not provided, the default value from the configuration will be used.
-            top_p (float, optional): The top-p parameter for nucleus sampling.
-                It specifies the cumulative probability threshold for selecting the next token.
-                If not provided, the default value from the configuration will be used.
-            **kwargs: Additional keyword arguments to pass to the OpenAI API.
-
-        Returns:
-            Tuple[List[str], float]: A tuple containing a list of generated completions and the estimated cost.
-
-        Raises:
-            Exception: If there is an error in the OpenAI API request, such as a timeout, connection failure, invalid request, authentication error,
-                permission error, rate limit error, or API error.
+        :param messages: The list of messages in the conversation.
+        :param n: The number of completions to generate.
+        :param stream: Whether to stream the API response.
+        :param temperature: The temperature parameter for randomness in the output.
+        :param max_tokens: The maximum number of tokens in the generated completion.
+        :param top_p: The top-p parameter for nucleus sampling.
+        :param kwargs: Additional keyword arguments to pass to the OpenAI API.
+        :return: A tuple containing a list of generated completions and the estimated cost.
+        :raises: Exception if there is an error in the OpenAI API request
         """
+
         model = self.config_llm["API_MODEL"]
 
         temperature = (
@@ -143,6 +130,18 @@ class OpenAIService(BaseService):
         aad_api_scope_base: Optional[str] = None,
         aad_tenant_id: Optional[str] = None,
     ) -> OpenAI:
+        """
+        Create an OpenAI client based on the API type.
+        :param api_type: The type of the API.
+        :param api_base: The base URL of the API.
+        :param max_retry: The maximum number of retries for the API request.
+        :param timeout: The timeout for the API request.
+        :param api_key: The API key for the OpenAI API.
+        :param api_version: The API version for the Azure OpenAI API.
+        :param aad_api_scope_base: The AAD API scope base for the Azure OpenAI API.
+        :param aad_tenant_id: The AAD tenant ID for the Azure OpenAI API.
+        :return: The OpenAI client.
+        """
         if api_type == "openai":
             assert api_key, "OpenAI API key must be specified"
             assert api_base, "OpenAI API base URL must be specified"
@@ -195,36 +194,17 @@ class OpenAIService(BaseService):
         **kwargs,
     ) -> Callable[[], str]:
         """
-        acquire token from Azure AD for OpenAI
-
-        Parameters
-        ----------
-        token_cache_file : str, optional
-            path to the token cache file, by default 'aoai-token-cache.bin' in the current directory
-        client_id : Optional[str], optional
-            client id for AAD app, by default None
-        client_secret : Optional[str], optional
-            client secret for AAD app, by default None
-        use_azure_cli : Optional[bool], optional
-            use Azure CLI for authentication, by default None. If AzCli has been installed and logged in,
-            it will be used for authentication. This is recommended for headless environments and AzCLI takes
-            care of token cache and token refresh.
-        use_broker_login : Optional[bool], optional
-            use broker login for authentication, by default None.
-            If not specified, it will be enabled for known supported environments (e.g. Windows, macOS, WSL, VSCode),
-            but sometimes it may not always could cache the token for long-term usage.
-            In such cases, you can disable it by setting it to False.
-        use_managed_identity : Optional[bool], optional
-            use managed identity for authentication, by default None.
-            If not specified, it will use user assigned managed identity if client_id is specified,
-            For use system assigned managed identity, client_id could be None but need to set use_managed_identity to True.
-        use_device_code : Optional[bool], optional
-            use device code for authentication, by default None. If not specified, it will use interactive login on supported platform.
-
-        Returns
-        -------
-        str
-            access token for OpenAI
+        Acquire token from Azure AD for OpenAI.
+        :param aad_api_scope_base: The base scope for the Azure AD API.
+        :param aad_tenant_id: The tenant ID for the Azure AD API.
+        :param token_cache_file: The path to the token cache file.
+        :param client_id: The client ID for the AAD app.
+        :param client_secret: The client secret for the AAD app.
+        :param use_azure_cli: Use Azure CLI for authentication.
+        :param use_broker_login: Use broker login for authentication.
+        :param use_managed_identity: Use managed identity for authentication.
+        :param use_device_code: Use device code for authentication.
+        :return: The access token for OpenAI.
         """
 
         import msal

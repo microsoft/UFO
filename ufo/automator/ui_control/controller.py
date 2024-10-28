@@ -107,6 +107,8 @@ class ControlReceiver(ReceiverBasic):
         # Get the absolute coordinates of the application window.
         tranformed_x, tranformed_y = self.transform_point(x, y)
 
+        self.application.set_focus()
+
         pyautogui.click(
             tranformed_x, tranformed_y, button=button, clicks=2 if double else 1
         )
@@ -128,6 +130,8 @@ class ControlReceiver(ReceiverBasic):
         )
 
         button = params.get("button", "left")
+
+        self.application.set_focus()
 
         pyautogui.moveTo(start[0], start[1])
         pyautogui.dragTo(end[0], end[1], button=button)
@@ -327,6 +331,7 @@ class ControlCommand(CommandBasic):
         Initialize the command.
         :param receiver: The receiver of the command.
         """
+
         self.receiver = receiver
         self.params = params if params is not None else {}
 
@@ -437,6 +442,7 @@ class DragOnCoordinatesCommand(ControlCommand):
         Execute the drag on coordinates command.
         :return: The result of the drag on coordinates command.
         """
+
         return self.receiver.drag_on_coordinates(self.params)
 
     @classmethod

@@ -1,22 +1,29 @@
 import base64
 import copy
 import io
-import json
 import os
 import shutil
 import time
 from http import HTTPStatus
-from typing import Any, Optional
+from typing import Any, Dict, List, Optional
 
 import dashscope
 from PIL import Image
 
-from ufo.utils import print_with_color
 from ufo.llm.base import BaseService
+from ufo.utils import print_with_color
 
 
 class QwenService(BaseService):
+    """
+    A service class for Qwen models.
+    """
+
     def __init__(self, config, agent_type: str):
+        """
+        :param config: The configuration.
+        :param agent_type: The agent type.
+        """
         self.config_llm = config[agent_type]
         self.config = config
         self.max_retry = self.config["MAX_RETRY"]
@@ -28,27 +35,21 @@ class QwenService(BaseService):
 
     def chat_completion(
         self,
-        messages,
-        n,
+        messages: List[Dict[str, str]],
+        n: int = 1,
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ):
+    ) -> Any:
         """
         Generates chat completions based on the given messages.
-        Args:
-            messages (List[str]): List of messages in the conversation.
-            n (int): Number of completions to generate.
-            temperature (float, optional): Controls the randomness of the output. Higher values make the output more random. Defaults to None.
-            max_tokens (int, optional): Maximum number of tokens in the generated completions. Defaults to None.
-            top_p (float, optional): Controls the diversity of the output. Higher values make the output more diverse. Defaults to None.
-            **kwargs: Additional keyword arguments.
-        Returns:
-            Tuple[List[str], float]: A tuple containing a list of generated completions and the total cost.
-        Raises:
-            ValueError: If the API response does not contain the expected content.
-            Exception: If there is an error making the API request.
+        :param messages: The list of messages to generate completions for.
+        :param n: The number of completions to generate.
+        :param temperature: Controls the randomness of the output. Higher values make the output more random. If not provided, the default value from the model configuration will be used.
+        :param max_tokens: The maximum number of tokens in the generated completions. If not provided, the default value from the model configuration will be used.
+        :param top_p: Controls the diversity of the output. Higher values make the output more diverse. If not provided, the default value from the model configuration will be used.
+        :return: A tuple containing a list of generated completions and the total cost.
         """
         temperature = (
             temperature if temperature is not None else self.config["TEMPERATURE"]
@@ -93,9 +94,7 @@ class QwenService(BaseService):
                         else:
                             shutil.rmtree(self.tmp_dir, ignore_errors=True)
                             responses.append(
-                                response.output.choices[0].message.content[0][
-                                        "text"
-                                    ]
+                                response.output.choices[0].message.content[0]["text"]
                             )
                             cost += _cost
                             break
@@ -109,14 +108,11 @@ class QwenService(BaseService):
 
         return responses, cost
 
-    def process_messages(self, messages):
+    def process_messages(self, messages: List[Dict[str, str]]) -> List[Dict[str, str]]:
         """
         Process the given messages and save any images included in the content.
-        Args:
-            messages (list): A list of messages to process.
-        Returns:
-            list: The processed messages with images saved.
-            Path: The path to the saved tmp images.
+        :param messages: The list of messages to process.
+        :return: The processed messages with images saved.
         """
 
         def save_image_from_base64(base64_str, path, filename):

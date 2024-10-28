@@ -261,7 +261,7 @@ class PendingHostAgentState(HostAgentState):
         """
 
         # Ask the user questions to help the agent to proceed.
-        agent.process_asker()
+        agent.process_asker(ask_user=configs.get("ASK_QUESTION", False))
 
     def is_round_end(self) -> bool:
         """

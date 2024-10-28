@@ -348,7 +348,8 @@ example_openapp1:
       Since the PowerPoint application is not visible in the screenshot, I will use the function OpenAPP to open the test.pptx file directly from the desktop. Then modify the title of the ppt file after its opened.
     Questions:
       - Can you please provide me with the title you want to change to?
-    AppsToOpen: {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}
+    AppsToOpen: 
+      {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}
   
 
 example_openapp2:
@@ -372,5 +373,5 @@ example_openapp2:
     Comment: |-
       Since the file explorer application is not visible in the screenshot, I will use the function OpenAPP to open the file explorer file directly.
     Questions: []
-    AppsToOpen: |-
+    AppsToOpen: 
       {'APP': 'powerpnt', 'file_path': ''}

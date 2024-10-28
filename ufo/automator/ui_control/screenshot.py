@@ -49,7 +49,7 @@ class ControlPhotographer(Photographer):
         :return: The screenshot."""
         # Capture single window screenshot
         screenshot = self.control.capture_as_image()
-        if save_path is not None:
+        if save_path is not None and screenshot is not None:
             screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
         return screenshot
 
