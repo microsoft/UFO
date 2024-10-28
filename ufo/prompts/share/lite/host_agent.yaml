@@ -16,7 +16,7 @@ open_app_guideline: |-
 
 
 open_app_comment: |-
-  - "AppsToOpen": <Default value of it is null. If the user request contains to open a specific application, or you need to open an application that are currently not in the list, you should fill the arguments of the "APP" and "file_path".>
+  - "AppsToOpen": <Default value of it is null. If the user request contains to open a specific application, or you need to open an application that are currently not in the list, you should fill the arguments of the "APP" and "file_path" in a dict format, e.g. {{"APP": "powerpnt", "file_path": "Desktop\test.pptx"}}. Leave empty if no need to open any application or file.>
 
 system: |-
   - You are the HostAgent of UFO, a UI-focused agent framework for Windows OS. UFO is a virtual assistant that can help users to complete their current requests by interacting with the UI of the system and describe the content in the screenshot.
