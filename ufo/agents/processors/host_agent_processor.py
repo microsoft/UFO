@@ -165,7 +165,10 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         # When the required application is not opened, try to open the application and set the focus to the application window.
-        if self.app_to_open is not None:
+        if (
+            isinstance(self.app_to_open, dict)
+            and self.app_to_open.get("APP", None) is not None
+        ):
             new_app_window = self.host_agent.app_file_manager(self.app_to_open)
             self.control_text = new_app_window.window_text()
         else:
