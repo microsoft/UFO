@@ -1,0 +1,10 @@
+{
+    "app": "word",
+    "unique_id": "1",
+    "task": "Draw or write your signature in the Word desktop app",
+    "refined_steps": [
+        "1. Select tool",
+        "2. Draw or write a signature in the Word desktop app",
+        "3. Use your mouse, pen, or touch screen to draw or write your signature"
+    ]
+}

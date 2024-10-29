@@ -657,7 +657,7 @@ class BaseSession(ABC):
                     app_agent.Puppeteer.save_to_xml(xml_save_path)
 
     @staticmethod
-    def initialize_logger(log_path: str, log_filename: str) -> logging.Logger:
+    def initialize_logger(log_path: str, log_filename: str, mode='a', configs = configs) -> logging.Logger:
         """
         Initialize logging.
         log_path: The path of the log file.
@@ -672,7 +672,7 @@ class BaseSession(ABC):
             logger.handlers = []
 
         log_file_path = os.path.join(log_path, log_filename)
-        file_handler = logging.FileHandler(log_file_path, encoding="utf-8")
+        file_handler = logging.FileHandler(log_file_path, mode = mode, encoding="utf-8")
         formatter = logging.Formatter("%(message)s")
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)

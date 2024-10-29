@@ -21,7 +21,8 @@ if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
 
 configs = Config.get_instance().config_data
-BACKEND = configs["CONTROL_BACKEND"]
+if configs is not None:
+    BACKEND = configs["CONTROL_BACKEND"]
 
 
 class AppAgentProcessor(BaseProcessor):
@@ -494,7 +495,8 @@ class AppAgentProcessor(BaseProcessor):
         return examples, tips
 
     def get_filtered_annotation_dict(
-        self, annotation_dict: Dict[str, UIAWrapper]
+        self, annotation_dict: Dict[str, UIAWrapper],
+        configs = configs
     ) -> Dict[str, UIAWrapper]:
         """
         Get the filtered annotation dictionary.

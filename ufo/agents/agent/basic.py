@@ -138,7 +138,7 @@ class BasicAgent(ABC):
 
     @classmethod
     def get_response(
-        cls, message: List[dict], namescope: str, use_backup_engine: bool
+        cls, message: List[dict], namescope: str, use_backup_engine: bool, configs = configs
     ) -> str:
         """
         Get the response for the prompt.
@@ -148,7 +148,7 @@ class BasicAgent(ABC):
         :return: The response.
         """
         response_string, cost = llm_call.get_completion(
-            message, namescope, use_backup_engine=use_backup_engine
+            message, namescope, use_backup_engine=use_backup_engine, configs = configs
         )
         return response_string, cost
 
@@ -235,6 +235,7 @@ class BasicAgent(ABC):
         """
         if self.processor:
             self.processor.resume()
+
 
     def process_asker(self, ask_user: bool = True) -> None:
         """
