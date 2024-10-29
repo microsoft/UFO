@@ -319,7 +319,7 @@ class AppAgentPrompter(BasicPrompter):
             if include_last_screenshot:
                 screenshot_text += ["Screenshot for the last step:"]
 
-                screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
+            screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
 
             for i, image in enumerate(image_list):
                 user_content.append({"type": "text", "text": screenshot_text[i]})
@@ -580,7 +580,7 @@ class FollowerAgentPrompter(AppAgentPrompter):
             if include_last_screenshot:
                 screenshot_text += ["Screenshot for the last step:"]
 
-                screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
+            screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
 
             for i, image in enumerate(image_list):
                 user_content.append({"type": "text", "text": screenshot_text[i]})
