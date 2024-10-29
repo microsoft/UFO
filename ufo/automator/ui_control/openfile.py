@@ -50,6 +50,7 @@ class FileController:
         (ps. filepath can be empty.)
         :return: The result of the execution or error.
         """
+
         self.APP = args.get("APP", "")
         self.file_path = args.get("file_path", "")
         self.check_open_status()
