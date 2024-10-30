@@ -13,6 +13,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageGrab
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.win32structures import RECT
 
+from ufo import utils
 from ufo.config.config import Config
 
 configs = Config.get_instance().config_data
@@ -581,6 +582,7 @@ class PhotographerFacade:
         """
         buffered = BytesIO()
         image.save(buffered, format="PNG", optimize=True)
+
         return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
     @staticmethod
@@ -591,6 +593,13 @@ class PhotographerFacade:
         :param mime_type: The mime type of the image.
         :return: The base64 string.
         """
+
+        # If image path not exist, return an empty image string
+        if not os.path.exists(image_path):
+
+            utils.print_with_color(f"Waring: {image_path} does not exist.", "yellow")
+            empty_image_string = "data:image/png;base64,"
+            return empty_image_string
 
         file_name = os.path.basename(image_path)
         mime_type = (
