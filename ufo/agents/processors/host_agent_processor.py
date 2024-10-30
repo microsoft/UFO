@@ -170,7 +170,8 @@ class HostAgentProcessor(BaseProcessor):
             and self.app_to_open.get("APP", None) is not None
         ):
             new_app_window = self.host_agent.app_file_manager(self.app_to_open)
-            self.control_text = new_app_window.window_text()
+            if new_app_window is not None:
+                self.control_text = new_app_window.window_text()
         else:
             # Get the application window
             new_app_window = self._desktop_windows_dict.get(self.control_label, None)
