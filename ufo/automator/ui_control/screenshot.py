@@ -609,8 +609,9 @@ class PhotographerFacade:
             encoded_image = base64.b64encode(image_file.read()).decode("ascii")
 
         if mime_type is None or not mime_type.startswith("image/"):
-            print(
-                "Warning: mime_type is not specified or not an image mime type. Defaulting to png."
+            utils.print_with_color(
+                "Warning: mime_type is not specified or not an image mime type. Defaulting to png.",
+                "yellow",
             )
             mime_type = "image/png"
 
