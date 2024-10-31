@@ -1,8 +1,6 @@
-import base64
 import re
 import time
-from io import BytesIO
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import anthropic
 from PIL import Image
@@ -90,14 +88,12 @@ class ClaudeService(BaseService):
 
         return responses, cost
 
-    def process_messages(self, messages: List[Dict[str, str]]) -> List[str]:
+    def process_messages(self, messages: List[Dict[str, str]]) -> Tuple[str, Dict]:
         """
-        Processes a list of messages and extracts system and user prompts.
-        Args:
-            messages (List[Dict[str, str]]): A list of message dictionaries.
-        Returns:
-            system_prompt (str): The system prompt.
-            user_prompt (List[str]): A tuple containing the system prompt (str) and the user prompt (dict).
+        Processes the messages to generate the system and user prompts.
+
+        :param messages: A list of message dictionaries.
+        :return: A tuple containing the system prompt (str) and the user prompt (dict).
         """
 
         system_prompt = ""
