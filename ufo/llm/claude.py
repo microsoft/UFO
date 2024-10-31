@@ -91,7 +91,6 @@ class ClaudeService(BaseService):
     def process_messages(self, messages: List[Dict[str, str]]) -> Tuple[str, Dict]:
         """
         Processes the messages to generate the system and user prompts.
-
         :param messages: A list of message dictionaries.
         :return: A tuple containing the system prompt (str) and the user prompt (dict).
         """
