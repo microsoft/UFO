@@ -29,6 +29,7 @@ class BaseService(abc.ABC):
             "qwen": "QwenService",
             "ollama": "OllamaService",
             "gemini": "GeminiService",
+            "claude": "ClaudeService",
             "placeholder": "PlaceHolderService",
         }
         service_name = service_map.get(name, None)
@@ -67,6 +68,8 @@ class BaseService(abc.ABC):
             name = str("qwen/" + model)
         elif api_type.lower() == "gemini":
             name = str("gemini/" + model)
+        elif api_type.lower() == "claude":
+            name = str("claude/" + model)
 
         if name in prices:
             cost = (

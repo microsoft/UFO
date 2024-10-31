@@ -9,6 +9,7 @@ Please refer to the following sections for more information on the supported mod
 | `OPENAI` | [OpenAI API](./openai.md) |
 | `Azure OpenAI (AOAI)` | [Azure OpenAI API](./azure_openai.md) |
 | `Gemini` | [Gemini API](./gemini.md) |
+| `Claude` | [Claude API](./claude.md) |
 | `QWEN` | [QWEN API](./qwen.md) |
 | `Ollama` | [Ollama API](./ollama.md) |
 | `Custom` | [Custom API](./custom_model.md) |
