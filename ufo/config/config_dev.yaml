@@ -25,9 +25,9 @@ ANNOTATION_COLORS: {
     }
 
 PRINT_LOG: False  # Whether to print the log  
-CONCAT_SCREENSHOT: False  # Whether to concat the screenshot for the control item
+CONCAT_SCREENSHOT: True  # Whether to concat the screenshot for the control item
 LOG_LEVEL: "DEBUG"  # The log level
-INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the observation
+INCLUDE_LAST_SCREENSHOT: False  # Whether to include the last screenshot in the observation
 REQUEST_TIMEOUT: 250  # The call timeout for the GPT-V model
 
 HOSTAGENT_PROMPT: "ufo/prompts/share/base/host_agent.yaml"  # The prompt for the app selection
@@ -97,4 +97,4 @@ EVA_ROUND: FALSE
 EVA_ALL_SCREENSHOTS: True  # Whether to include all the screenshots in the evaluation
 
 # Image saving performance
-DEFAULT_PNG_COMPRESS_LEVEL: 1  # The compress level for the PNG image, 0-9, 0 is no compress, 1 is the fastest, 9 is the best compress
+DEFAULT_PNG_COMPRESS_LEVEL: 9  # The compress level for the PNG image, 0-9, 0 is no compress, 1 is the fastest, 9 is the best compress
