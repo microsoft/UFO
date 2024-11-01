@@ -67,7 +67,7 @@ class ClaudeService(BaseService):
                         system=system_prompt,
                         messages=user_prompt,
                     )
-                    responses.append(response.content.text)
+                    responses.append(response.content[0].text)
                     prompt_tokens = response.usage.input_tokens
                     completion_tokens = response.usage.output_tokens
                     cost += self.get_cost_estimator(
@@ -88,11 +88,13 @@ class ClaudeService(BaseService):
 
         return responses, cost
 
-    def process_messages(self, messages: List[Dict[str, str]]) -> Tuple[str, Dict]:
+    def process_messages(
+        self, messages: List[Dict[str, str]]
+    ) -> Tuple[str, list[Dict]]:
         """
         Processes the messages to generate the system and user prompts.
         :param messages: A list of message dictionaries.
-        :return: A tuple containing the system prompt (str) and the user prompt (dict).
+        :return: A tuple containing the system prompt (str) and the user prompt (list).
         """
 
         system_prompt = ""
@@ -118,10 +120,10 @@ class ClaudeService(BaseService):
                                     "source": {
                                         "type": "base64",
                                         "media_type": media_type,
-                                        "base64_data": base64_data,
+                                        "data": base64_data,
                                     },
                                 }
                             )
                         else:
                             raise ValueError("Invalid image URL")
-        return system_prompt, user_prompt
+        return system_prompt, [user_prompt]
