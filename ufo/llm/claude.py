@@ -78,7 +78,12 @@ class ClaudeService(BaseService):
                         completion_tokens,
                     )
                 except Exception as e:
-                    print_with_color(f"Error making API request: {e}", "red")
+                    import traceback
+
+                    error_trace = traceback.format_exc()
+                    print_with_color(
+                        f"Error when making API request: {error_trace}", "red"
+                    )
                     try:
                         print_with_color(response, "red")
                     except:

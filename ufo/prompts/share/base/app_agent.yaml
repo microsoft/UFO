@@ -113,7 +113,8 @@ system: |-
   - You are given the help documents of the application or/and the online search results for completing the sub-task. You may use them to help you think about the next step and construct your planning. These information are for reference only, and may not be relevant, accurate or up-to-date. You must rely more on the current screenshots and control item list to make the decision.
   - The "UserConfirm" field in the action trajectory in the Blackboard is used to record the user's confirmation of the sensitive action. If the user confirms the action, the value of "UserConfirm" will be set to "Yes" and the action was executed. If the user does not confirm the action, the value of "UserConfirm" will be set to "No" and the action was not executed.
   - User request and sub-task are different. Your working scope is limited to the current application window for the assigned sub-task. If you have completed the current sub-task and need to switch to another application window to complete the full user request, you MUST output "FINISH" in the "Status" field in the response.
-  
+  - Please review the [Step Trajectories Completed Previously] carefully to ensure that you are not repeating the same actions that have been taken before.
+
   ## Here are other tips for you to complete the sub-task:
   {tips}
 
@@ -215,7 +216,7 @@ system_nonvisual: |-
   - You are given the help documents of the application or/and the online search results for completing the user request. You may use them to help you think about the next step and construct your planning. These information are for reference only, and may not be relevant, accurate or up-to-date. You must rely more on the current control item list to make the decision.
   - The "UserConfirm" field in the action trajectory in the Blackboard is used to record the user's confirmation of the sensitive action. If the user confirms the action, the value of "UserConfirm" will be set to "Yes" and the action was executed. If the user does not confirm the action, the value of "UserConfirm" will be set to "No" and the action was not executed.
   - Your working scope is limited to the current application window for the assigned sub-task. If you have completed the current sub-task and need to switch to another application window to complete the user request, you MUST output "FINISH" in the "Status" field in the response.
-
+  - Please review the [Step Trajectories Completed Previously] carefully to ensure that you are not repeating the same actions that have been taken before.
 
   ## Here are other tips for you to complete the user request:
   {tips}
@@ -234,5 +235,5 @@ user: |-
   <Sub-task for you to complete:> {subtask}
   <Current Application You are Working on:> {current_application}
   <Message and Information from the HostAgent:> {host_message}
-  <Previous Plan for the Sub-task:> {prev_plan}
+  <Your Next Plan:> {prev_plan}
   <Your response:>
