@@ -6,7 +6,7 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 
 
-from robin_script_translator import *
+from ufo.pad.robin_script_translator import *
 
 
 class Action2Pad(ABC):
@@ -99,7 +99,10 @@ class ActionMapping:
         :param action: The UFO action.
         :return: The Robin action class.
         """
-        return ActionMapping.get_action(action.get("Function", ""))(
+
+        robin_action_class = ActionMapping.get_action(action.get("Function", ""))
+
+        return robin_action_class(
             parameters=action.get("Args", ""),
             control_info=action.get("ControlText", ""),
         )

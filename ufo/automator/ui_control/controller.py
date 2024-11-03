@@ -409,6 +409,31 @@ class ClickInputCommand(ControlCommand):
         """
         return "click_input"
 
+    def to_robin_action(self):
+        """
+        Convert the command to a Robin action.
+        :return: The Robin action.
+        """
+
+        from ufo.pad.robin_script_translator import (
+            UIAutomationPressButton,
+            WebAutomationClickAction,
+        )
+
+        control_name = self.receiver.control.element_info.name
+        if (
+            "power bi" in control_name.lower()
+            or "team chat" in control_name.lower()
+            or "new tab" in control_name.lower()
+        ):
+            return UIAutomationPressButton(
+                parameters={"Button": f"appmask['{control_name}']"}
+            )
+        else:
+            return WebAutomationClickAction(
+                parameters={"Control": f"appmask['{control_name}']"}
+            )
+
 
 @ControlReceiver.register
 class ClickOnCoordinatesCommand(ControlCommand):
@@ -498,6 +523,17 @@ class SetEditTextCommand(ControlCommand):
         :return: The name of the atomic command.
         """
         return "set_edit_text"
+
+    def to_robin_action(self):
+        """
+        Convert the command to a Robin action.
+        :return: The Robin action.
+        """
+
+        from ufo.pad.robin_script_translator import MouseAndKeyboardSendKeys
+
+        text = self.params.get("text")
+        return MouseAndKeyboardSendKeys(parameters={"TextToSend": f"'{text}'"})
 
 
 @ControlReceiver.register

@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from typing import Dict, List, Type
+from ufo.pad import translator
 
 
 class ReceiverBasic(ABC):
@@ -95,6 +96,21 @@ class CommandBasic(ABC):
     @abstractmethod
     def name(cls):
         return cls.__class__.__name__
+
+    def to_robin_action(self):
+        """
+        Convert the command to a Robin action.
+        """
+
+        from ufo.pad import robin_script_translator
+
+        return robin_script_translator.WaitAction()
+
+    def to_robin_string(self):
+        """
+        Convert the command to a Robin action string.
+        """
+        return self.to_robin_action().to_string()
 
 
 class ReceiverFactory(ABC):

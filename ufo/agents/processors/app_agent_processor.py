@@ -11,11 +11,11 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
-from ufo.automator.ui_control.screenshot import PhotographerDecorator
+from ufo.automator.basic import CommandBasic
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
+from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
-
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -332,9 +332,15 @@ class AppAgentProcessor(BaseProcessor):
                 if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
                     self.handle_screenshot_status()
                 else:
-                    self._results = self.app_agent.Puppeteer.execute_command(
+
+                    command = self.app_agent.Puppeteer.create_command(
                         self._operation, self._args
                     )
+
+                    self._results = command.execute()
+
+                    self.robin_script_saver(command)
+
                     self.control_reannotate = None
                 if not utils.is_json_serializable(self._results):
                     self._results = ""
@@ -343,6 +349,21 @@ class AppAgentProcessor(BaseProcessor):
 
         except Exception:
             self.general_error_handler()
+
+    def robin_script_saver(self, command: CommandBasic) -> None:
+        """
+        Save the command to the robin script runtime file.
+        :param command: The command to save.
+        """
+
+        pad_action = command.to_robin_string()
+        pad_string = f"@@source: 'Recorder'\n{pad_action}\n"
+
+        pad_save_path = self.log_path + f"robin_script_runtime.txt"
+
+        # Append the action to the robin script runtime file.
+        with open(pad_save_path, "a") as file:
+            file.write(pad_string)
 
     def capture_control_screenshot(self, control_selected: UIAWrapper) -> None:
         """
