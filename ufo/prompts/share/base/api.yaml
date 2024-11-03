@@ -78,7 +78,7 @@ annotation:
 
 summary:
   summary: |-
-    "summary" is to summarize your observation of the current application window base on the clean screenshot, or base on available control items. You must use your vision to summarize the image with required information using the argument "text". Do not add information that is not in the image.
+    "summary" is to summarize your observation of the current application window base on the clean screenshot, or base on available control items. You must use your vision to summarize the image with required information using the argument "text". You can use this API to record required information of the image, or to describe the image for further analysis.
   class_name: |-
     SummaryCommand
   usage: |-
