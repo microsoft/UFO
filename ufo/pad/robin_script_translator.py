@@ -3,7 +3,7 @@
 
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import ABC
 from typing import Any, Dict, List
 
 
@@ -53,13 +53,24 @@ class RobinAction(ABC):
     Robin action class. Represents an action used by Microsoft Power Automate Desktop.
     """
 
-    def __init__(self, action_type: str, parameters: Dict[str, Any]):
+    _action_type = ""
+    _default_parameters = {}
+
+    def __init__(self, parameters: Dict[str, Any] = {}):
         """
         Initialize the Robin action.
         :param action_type: The type of the action.
         """
-        self._action_type = action_type
-        self._parameters = parameters
+        self._action_type = self.__class__._action_type
+
+        if not parameters:
+            self._parameters = self.__class__._default_parameters
+        else:
+            for key, value in self.__class__._default_parameters.items():
+                if key not in parameters:
+                    parameters[key] = value
+
+            self._parameters = parameters
 
     @property
     def action_type(self) -> str:
@@ -90,15 +101,65 @@ class RobinAction(ABC):
         return f"{self.action_type} {parameters_str}"
 
 
+class WebAutomationClickAction(RobinAction):
+    """
+    Robin action class for the Click action in web automation.
+    """
+
+    _action_type = "WebAutomation.Click.Click"
+    _default_parameters = {
+        "BrowserInstance": "Browser",
+        "Control": "",
+        "ClickType": "WebAutomation.ClickType.LeftClick",
+        "MouseClick": True,
+    }
+
+
+class UIAutomationPressButton(RobinAction):
+    """
+    Robin action class for the Click action in web automation.
+    """
+
+    _action_type = "UIAutomation.PressButton"
+    _default_parameters = {
+        "Button": "",
+        "ClickType": "WebAutomation.ClickType.LeftClick",
+        "MouseClick": True,
+    }
+
+
+class WaitAction(RobinAction):
+    """
+    Robin action class for the Click action in web automation.
+    """
+
+    _action_type = "WAIT"
+    _default_parameters = {"duration": 2}
+
+    def to_string(self):
+        return f"{self.action_type} {self.parameters['duration']}"
+
+
+class MouseAndKeyboardSendKeys(RobinAction):
+    """
+    Robin action class for the Click action in web automation.
+    """
+
+    _action_type = "MouseAndKeyboard.SendKeys.FocusAndSendKeysByInstanceOrHandle"
+    _default_parameters = {"TextToSend": "", "WindowInstance": "Browser_2"}
+
+
 if __name__ == "__main__":
     # Create a sequence generator
     sequence_generator = RobinActionSequenceGenerator()
 
     # Create a list of Robin actions
     actions = [
-        RobinAction("Click", {"x": 100, "y": 200}),
-        RobinAction("Type", {"text": "Hello, World!"}),
-        RobinAction("Wait", {"seconds": 2}),
+        WebAutomationClickAction(),
+        WebAutomationClickAction(),
+        WebAutomationClickAction(),
+        WebAutomationClickAction(),
+        WebAutomationClickAction(),
     ]
 
     # Generate and save the sequence of actions to a file
