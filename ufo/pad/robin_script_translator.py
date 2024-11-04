@@ -146,7 +146,7 @@ class MouseAndKeyboardSendKeys(RobinAction):
     """
 
     _action_type = "MouseAndKeyboard.SendKeys.FocusAndSendKeysByInstanceOrHandle"
-    _default_parameters = {"TextToSend": "", "WindowInstance": "Browser_2"}
+    _default_parameters = {"TextToSend": "", "WindowInstance": "Browser"}
 
 
 if __name__ == "__main__":
