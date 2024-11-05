@@ -426,13 +426,9 @@ class ClickInputCommand(ControlCommand):
             or "team chat" in control_name.lower()
             or "new tab" in control_name.lower()
         ):
-            return UIAutomationPressButton(
-                parameters={"Button": f"appmask['{control_name}']"}
-            )
+            return UIAutomationPressButton(parameters={"Button": f"'{control_name}'"})
         else:
-            return WebAutomationClickAction(
-                parameters={"Control": f"appmask['{control_name}']"}
-            )
+            return WebAutomationClickAction(parameters={"Control": f"'{control_name}'"})
 
 
 @ControlReceiver.register
