@@ -408,6 +408,7 @@ class AppAgentProcessor(BaseProcessor):
 
         # Log additional information for the app agent.
         additional_memory = {
+            "StartTimestamp": self.timestamp,
             "Step": self.session_step,
             "RoundStep": self.round_step,
             "AgentStep": self.app_agent.step,

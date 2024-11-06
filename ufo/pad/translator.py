@@ -5,7 +5,6 @@ from __future__ import annotations
 
 from abc import ABC, abstractmethod
 
-
 from ufo.pad.robin_script_translator import *
 
 

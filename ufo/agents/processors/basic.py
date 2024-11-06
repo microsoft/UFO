@@ -57,6 +57,7 @@ class BaseProcessor(ABC):
         self._is_resumed = False
         self._action = None
         self._plan = None
+        self._timestamp = time.time()
 
         self._control_log = {
             "control_class": None,
@@ -236,6 +237,14 @@ class BaseProcessor(ABC):
 
         self.round_step += 1
         self.session_step += 1
+
+    @property
+    def timestamp(self) -> float:
+        """
+        Get the timestamp.
+        :return: The timestamp.
+        """
+        return self._timestamp
 
     def log_save(self) -> None:
         """
