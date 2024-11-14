@@ -13,6 +13,7 @@ MATCH_STRATEGY: "regex"  # The match strategy for the control filter, support 'c
 PREFILL_PROMPT: "instantiation/controller/prompts/{mode}/prefill.yaml"  # The prompt for the action prefill
 FILTER_PROMPT: "instantiation/controller/prompts/{mode}/filter.yaml"  # The prompt for the filter
 PREFILL_EXAMPLE_PROMPT: "instantiation/controller/prompts/{mode}/prefill_example.yaml"  # The prompt for the action prefill example
+EXECUTE_PROMPT: "instantiation/controller/prompts/{mode}/execute.yaml"  # The prompt for the action execute
 API_PROMPT: "ufo/prompts/share/lite/api.yaml"  # The prompt for the API
 
 # Exploration Configuration
@@ -29,3 +30,4 @@ CONTROL_FILTER_TOP_K_PLAN: 2  # The control filter effect on top k plans from UF
 LOG_PATH: "instantiation/logs/{task}"
 PREFILL_LOG_PATH: "instantiation/logs/{task}/prefill/"
 FILTER_LOG_PATH: "instantiation/logs/{task}/filter/"
+EXECUTE_LOG_PATH: "instantiation/logs/{task}/execute/"

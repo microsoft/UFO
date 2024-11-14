@@ -50,7 +50,7 @@ class BaseProcessor(ABC):
         self._cost = 0
         self._control_label = None
         self._control_text = None
-        self._response_json = {}
+        self._response = {}
         self._memory_data = MemoryItem()
         self._results = None
         self._question_list = []

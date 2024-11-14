@@ -7,6 +7,8 @@ import traceback
 from enum import Enum
 from typing import Any, Dict
 
+from zmq import Context
+
 from instantiation.config.config import Config
 
 from ufo.module.basic import BaseSession
@@ -91,7 +93,6 @@ class InstantiationProcess:
             _configs["TASKS_HUB"], task_dir_name, "*"
         )
         all_task_files = glob.glob(all_task_file_path)
-
         for index, task_file in enumerate(all_task_files, start=1):
             print(f"Task starts: {index} / {len(all_task_files)}")
             try:
@@ -112,6 +113,7 @@ class InstantiationProcess:
         from instantiation.controller.workflow.choose_template_flow import ChooseTemplateFlow
         from instantiation.controller.workflow.filter_flow import FilterFlow
         from instantiation.controller.workflow.prefill_flow import PrefillFlow
+        from instantiation.controller.workflow.execute_flow import ExecuteFlow
 
         # Initialize the app environment and the task file name.
         app_object = task_object.app_object
@@ -139,6 +141,12 @@ class InstantiationProcess:
             is_quality_good, filter_result, request_type = filter_flow.execute(
                 instantiated_request
             )
+            from instantiation.controller.workflow.execute_flow import Context 
+            context = Context()
+            execute_flow = ExecuteFlow(app_env, task_file_name, context)
+            is_quality_good, execute_result = execute_flow.execute(
+                instantiated_request, instantiated_plan
+            )
 
             # Calculate total execution time for the process
             total_execution_time = round(time.time() - start_time, 3)
@@ -148,11 +156,15 @@ class InstantiationProcess:
                 "choose_template": choose_template_flow.execution_time,
                 "prefill": prefill_flow.execution_time,
                 "filter": filter_flow.execution_time,
+                "execute": execute_flow.execution_time,
                 "total": total_execution_time,
             }
 
             # Prepare the result structure to capture the filter result
-            result = {"filter": filter_result}
+            result = {
+                "filter": filter_result,
+                "execute": execute_result,  
+            }
 
             # Create a summary of the instantiated task information
             instantiated_task_info = {

@@ -2,8 +2,6 @@ import argparse
 import os
 import sys
 
-
-# Add the project root to the system path.
 def add_project_root_to_sys_path() -> None:
     """Add project root to system path if not already present."""
     current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -14,7 +12,6 @@ def add_project_root_to_sys_path() -> None:
 
 def parse_arguments() -> argparse.Namespace:
     """Parse command-line arguments.
-
     :return: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser()
