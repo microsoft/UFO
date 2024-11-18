@@ -37,7 +37,7 @@ class AppAgent(BasicAgent):
         skip_prompter: bool = False,
     ) -> None:
         """
-        Initialize the AppAgent.
+        Initialize the AppAgent.TODO:simplify related init
         :name: The name of the agent.
         :param process_name: The process name of the app.
         :param app_root_name: The root name of the app.

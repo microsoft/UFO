@@ -39,7 +39,6 @@ class PrefillFlow(AppAgentProcessor):
         self._app_env = environment
         self._task_file_name = task_file_name
         self._app_name = self._app_env.app_name
-
         # Create or reuse a PrefillAgent for the app
         if self._app_name not in PrefillFlow._app_prefill_agent_dict:
             PrefillFlow._app_prefill_agent_dict[self._app_name] = PrefillAgent(

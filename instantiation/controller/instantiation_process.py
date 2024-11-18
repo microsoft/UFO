@@ -9,6 +9,8 @@ from typing import Any, Dict
 
 from zmq import Context
 
+from zmq import Context
+
 from instantiation.config.config import Config
 from ufo.module.basic import BaseSession
 
@@ -115,6 +117,7 @@ class InstantiationProcess:
         from instantiation.controller.workflow.execute_flow import Context, ExecuteFlow
         from instantiation.controller.workflow.filter_flow import FilterFlow
         from instantiation.controller.workflow.prefill_flow import PrefillFlow
+        from instantiation.controller.workflow.execute_flow import ExecuteFlow
 
         # Initialize the app environment and the task file name.
         app_object = task_object.app_object
@@ -155,6 +158,7 @@ class InstantiationProcess:
                 "choose_template": choose_template_flow.execution_time,
                 "prefill": prefill_flow.execution_time,
                 "filter": filter_flow.execution_time,
+                "execute": execute_flow.execution_time,
                 "execute": execute_flow.execution_time,
                 "total": total_execution_time,
             }

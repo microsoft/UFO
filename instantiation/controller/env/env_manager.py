@@ -28,6 +28,7 @@ class WindowsAppEnv:
         :param app_object: The app object containing information about the application.
         """
         super().__init__()
+        # FIX: 私有属性修改
         self.app_window = None
         self.app_root_name = app_object.app_root_name
         self.app_name = app_object.description.lower()
@@ -38,6 +39,7 @@ class WindowsAppEnv:
         self.win_com_receiver = self._receive_factory.create_receiver(
             self.app_root_name, self.app_name
         )
+        self._control_inspector = ControlInspectorFacade(_BACKEND)
         self._control_inspector = ControlInspectorFacade(_BACKEND)
 
         self._all_controls = None
@@ -79,11 +81,13 @@ class WindowsAppEnv:
         """
         desktop = Desktop(backend=_BACKEND)
         windows_list = desktop.windows()
+        # windows_list = self._control_inspector.get_desktop_windows()
         for window in windows_list:
             window_title = window.element_info.name.lower()
             if self._match_window_name(window_title, doc_name):
                 # Cache all controls for the window
                 self._all_controls = window.children()
+                self.app_window = window
                 self.app_window = window
                 return window
         return None
