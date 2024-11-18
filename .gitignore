@@ -35,3 +35,6 @@ scripts/*
 !vectordb/demonstration/example.yaml
 
 .vscode
+
+# Ignore the logs
+logs 3/*

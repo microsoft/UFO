@@ -330,13 +330,10 @@ class AppAgentProcessor(BaseProcessor):
                 # Save the screenshot of the tagged selected control.
                 self.capture_control_screenshot(control_selected)
 
-                if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
-                    self.handle_screenshot_status()
-                else:
-                    self._results = self.app_agent.Puppeteer.execute_command(
-                        self._operation, self._args
-                    )
-                    self.control_reannotate = None
+                self._results = self.app_agent.Puppeteer.execute_command(
+                    self._operation, self._args
+                )
+                self.control_reannotate = None
                 if not utils.is_json_serializable(self._results):
                     self._results = ""
 
@@ -439,7 +436,7 @@ class AppAgentProcessor(BaseProcessor):
         """
         Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
         """
-        screenshot_saving = self._response_json.get("SaveScreenshot", {})
+        screenshot_saving = self._response.get("SaveScreenshot", {})
 
         if screenshot_saving.get("save", False):
 

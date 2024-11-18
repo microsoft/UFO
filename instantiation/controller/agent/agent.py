@@ -3,9 +3,14 @@
 
 from typing import Dict, List
 
-from instantiation.controller.prompter.agent_prompter import FilterPrompter, PrefillPrompter
-
+from instantiation.controller.prompter.agent_prompter import (
+    ExecutePrompter,
+    FilterPrompter,
+    PrefillPrompter,
+)
+from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.memory.memory import Memory
 
 
 class FilterAgent(BasicAgent):
@@ -164,3 +169,38 @@ class PrefillAgent(BasicAgent):
         This is the abstract method from BasicAgent that needs to be implemented.
         """
         pass
+
+
+class ExecuteAgent(AppAgent):
+    """
+    The Agent for task execution.
+    """
+
+    def __init__(
+        self,
+        name: str,
+        process_name: str,
+        app_root_name: str,
+        is_visual: bool,
+        main_prompt: str,
+        example_prompt: str,
+        api_prompt: str,
+    ):
+        """
+        Initialize the ExecuteAgent.
+        :param name: The name of the agent.
+        :param process_name: The name of the process.
+        :param is_visual: The flag indicating whether the agent is visual or not.
+        :param main_prompt: The main prompt.
+        :param example_prompt: The example prompt.
+        :param api_prompt: The API prompt.
+        """
+
+        self._step = 0
+        self._complete = False
+        self._name = name
+        self._status = None
+        self._process_name = process_name
+        self._app_root_name = app_root_name
+        self._memory = Memory()
+        self.Puppeteer = self.create_puppeteer_interface()

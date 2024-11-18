@@ -6,7 +6,6 @@ from typing import Dict, Tuple
 
 from instantiation.config.config import Config
 from instantiation.controller.agent.agent import FilterAgent
-
 from ufo.module.basic import BaseSession
 
 _configs = Config.get_instance().config_data

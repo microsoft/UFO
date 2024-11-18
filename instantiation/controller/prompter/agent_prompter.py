@@ -332,3 +332,41 @@ class PrefillPrompter(BasicPrompter):
         example_list += [json.dumps(example) for example in additional_examples]
 
         return self.retrived_documents_prompt_helper(header, separator, example_list)
+
+
+class ExecutePrompter(BasicPrompter):
+    """
+    Load the prompt for the ExecuteAgent.
+    """
+
+    def __init__(
+        self,
+        is_visual: bool,
+        prompt_template: str,
+        example_prompt_template: str,
+        api_prompt_template: str,
+    ):
+        """
+        Initialize the ExecutePrompter.
+        :param is_visual: The flag indicating whether the prompter is visual or not.
+        :param prompt_template: The prompt template.
+        :param example_prompt_template: The example prompt template.
+        :param api_prompt_template: The API prompt template.
+        """
+
+        super().__init__(is_visual, prompt_template, example_prompt_template)
+        self.api_prompt_template = self.load_prompt_template(
+            api_prompt_template, is_visual
+        )
+
+    def load_screenshots(self, log_path: str) -> str:
+        """
+        Load the first and last screenshots from the log path.
+        :param log_path: The path of the log.
+        :return: The screenshot URL.
+        """
+        from ufo.prompter.eva_prompter import EvaluationAgentPrompter
+
+        init_image = os.path.join(log_path, "screenshot.png")
+        init_image_url = EvaluationAgentPrompter.load_single_screenshot(init_image)
+        return init_image_url

@@ -7,11 +7,12 @@ from datetime import datetime
 from pathlib import Path
 from typing import Dict
 
-from instantiation.config.config import Config
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
+
+from instantiation.config.config import Config
 
 _configs = Config.get_instance().config_data
 

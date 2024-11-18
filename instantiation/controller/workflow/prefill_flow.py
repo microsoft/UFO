@@ -7,7 +7,6 @@ from typing import Any, Dict, List, Tuple
 from instantiation.config.config import Config
 from instantiation.controller.agent.agent import PrefillAgent
 from instantiation.controller.env.env_manager import WindowsAppEnv
-
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
@@ -120,8 +119,6 @@ class PrefillFlow(AppAgentProcessor):
             logging.exception(f"Error in prefilling task: {e}")
             raise
 
-        finally:
-            self._app_env.close()
         return instantiated_request, instantiated_plan
 
     def _update_state(self, file_path: str) -> None:
