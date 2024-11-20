@@ -212,6 +212,14 @@ The completed task will be evaluated by a filter agent, which will assess it and
 
 All encountered error messages and tracebacks are saved in `instantiation/tasks/your_folder_name_instantiated/instances_error/`.
 
+
+#### 4. Execute Task
+
+The instantiated plans will be executed by a execute task. In the execution process, all the implemented steps and the screenshots will be saved, which are shown in `instantiation/log/your_folder_name_instantiated/execute/`.
+
+If the task is deemed a good instance, it will be saved in `instantiation/tasks/your_folder_name_instantiated/instances_pass/`; otherwise, it will be saved in `instantiation/tasks/your_folder_name_instantiated/instances_fail/`.
+
+All encountered error messages and tracebacks are saved in `instantiation/tasks/your_folder_name_instantiated/instances_error/`.
 ## Notes
 
 1. Users should be careful to save the original files while using this project; otherwise, the files will be closed when the app is shut down.

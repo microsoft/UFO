@@ -36,5 +36,5 @@ EXECUTE_LOG_PATH: "instantiation/logs/{task}/execute/"
 # Screenshot Configuration
 RECTANGLE_TIME: 1
 SHOW_VISUAL_OUTLINE_ON_SCREEN: False
-INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the observation
+INCLUDE_LAST_SCREENSHOT: False  # Whether to include the last screenshot in the observation
 CONCAT_SCREENSHOT: False  # Whether to concat the screenshot for the control item

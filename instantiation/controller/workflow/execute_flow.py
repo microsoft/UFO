@@ -40,11 +40,10 @@ class ExecuteFlow(AppAgentProcessor):
         self._task_file_name = task_file_name
         self._app_name = self._app_env.app_name
 
-        log_path = _configs["EXECUTE_LOG_PATH"].format(task=task_file_name)
-        os.makedirs(log_path, exist_ok=True)
+        self._log_path = _configs["EXECUTE_LOG_PATH"].format(task=task_file_name)
         self._initialize_logs()
 
-        self.context.set(ContextNames.LOG_PATH, log_path)
+        self.context.set(ContextNames.LOG_PATH, self._log_path)
         self.application_window = self._app_env.find_matching_window(task_file_name)
         self.app_agent = self._get_or_create_execute_agent()
 
@@ -84,11 +83,10 @@ class ExecuteFlow(AppAgentProcessor):
         """
         Initialize logging for execute messages and responses.
         """
-        os.makedirs(self.log_path, exist_ok=True)
+        os.makedirs(self._log_path, exist_ok=True)
         self._execute_message_logger = BaseSession.initialize_logger(
-            self.log_path, "execute_log.json", "w", _configs
+            self._log_path, "execute_log.json", "w", _configs
         )
-
 
     def _get_executeed_result(self, instantiated_plan) -> Tuple[bool, str, str]:
         """
@@ -100,6 +98,7 @@ class ExecuteFlow(AppAgentProcessor):
 
         self.step_index = 0
         is_quality_good = True  # Initialize as True
+        all_steps_data = {}
 
         try:
             # Initialize the API receiver
@@ -112,6 +111,7 @@ class ExecuteFlow(AppAgentProcessor):
             
             for _, step_plan in enumerate(instantiated_plan):
                 try:
+                    step_start_time = time.time()
                     self.capture_screenshot()
                     self.step_index += 1
                     print(f"Executing step {self.step_index}: {step_plan}")
@@ -123,8 +123,13 @@ class ExecuteFlow(AppAgentProcessor):
                     control_selected = self.get_selected_controller()
                     self.capture_control_screenshot(control_selected)
                     self.execute_action(control_selected)
+                    self._time_cost = round(time.time() - step_start_time, 3)
                     self._log_step_message()
-                    self._execute_message_logger.info(json.dumps(self.app_agent.memory.to_json(), indent=4))
+
+                    # Log the step execution message
+                    step_data = self._memory_data.to_dict()
+                    all_steps_data[f"Step {self.step_index}"] = step_data
+
 
                 except Exception as step_error:
                     # Handle errors specific to the step execution
@@ -136,8 +141,9 @@ class ExecuteFlow(AppAgentProcessor):
                     continue  # Continue with the next step
 
             print("Execution complete.")
-
+            self._execute_message_logger.info(json.dumps(all_steps_data, indent=4))
             self._app_env.close()
+            
             # Return the evaluation result
             if is_quality_good:
                 return "Execution completed successfully."
@@ -148,7 +154,8 @@ class ExecuteFlow(AppAgentProcessor):
             # Log and handle unexpected errors during the entire process
             logging.exception(f"Unexpected error during execution: {e}")
             self._execute_message_logger.error(f"Execution failed: {e}")
-            return False, f"Execution failed: {str(e)}", "Error"
+            return f"Execution failed: {str(e)}", "Error"
+
 
     def _parse_step_plan(self, step_plan) -> None:
         """
@@ -268,7 +275,6 @@ class ExecuteFlow(AppAgentProcessor):
         :param step_execution_result: The execution result of the current step.
         """
         step_memory = {
-            "Step": self.step_index, 
             "Subtask": self.subtask,  
             "Action": self.action,  
             "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation),  # 操作类型
@@ -278,8 +284,6 @@ class ExecuteFlow(AppAgentProcessor):
         }
         self._memory_data.set_values_from_dict(step_memory)
 
-        self.app_agent.add_memory(self._memory_data)
-
 
     def capture_screenshot(self) -> None:
         """
@@ -287,12 +291,12 @@ class ExecuteFlow(AppAgentProcessor):
         """
 
         # Define the paths for the screenshots saved.
-        screenshot_save_path = self.log_path + f"action_step{self.step_index}.png"
+        screenshot_save_path = self._log_path + f"action_step{self.step_index}.png"
         annotated_screenshot_save_path = (
-            self.log_path + f"action_step{self.step_index}_annotated.png"
+            self._log_path + f"action_step{self.step_index}_annotated.png"
         )
         concat_screenshot_save_path = (
-            self.log_path + f"action_step{self.step_index}_concat.png"
+            self._log_path + f"action_step{self.step_index}_concat.png"
         )
         self._memory_data.set_values_from_dict(
             {
@@ -317,10 +321,10 @@ class ExecuteFlow(AppAgentProcessor):
         # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
         if _configs["INCLUDE_LAST_SCREENSHOT"] and self.step_index > 0:
             last_screenshot_save_path = (
-                self.log_path + f"action_step{self.step_index - 1}.png"
+                self._log_path + f"action_step{self.step_index - 1}.png"
             )
             last_control_screenshot_save_path = (
-                self.log_path
+                self._log_path
                 + f"action_step{self.step_index - 1}_selected_controls.png"
             )
             self._image_url += [

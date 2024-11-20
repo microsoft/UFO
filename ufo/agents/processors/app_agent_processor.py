@@ -136,8 +136,7 @@ class AppAgentProcessor(BaseProcessor):
         )
 
         # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
-        # if configs["INCLUDE_LAST_SCREENSHOT"]:
-        if False:
+        if configs["INCLUDE_LAST_SCREENSHOT"]:
             last_screenshot_save_path = (
                 self.log_path + f"action_step{self.session_step - 1}.png"
             )

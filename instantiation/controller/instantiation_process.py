@@ -195,7 +195,7 @@ class InstantiationProcess:
         :param error: The exception raised during processing.
         """
         error_folder = os.path.join(
-            _configs["TASKS_HUB"], "prefill_instantiated", "instances_error"
+            _configs["TASKS_HUB"], "instantiated", "instances_error"
         )
         os.makedirs(error_folder, exist_ok=True)
 
@@ -229,7 +229,7 @@ class InstantiationProcess:
         task_json = json.dumps(instantiated_task_info, ensure_ascii=False, indent=4)
 
         # Define folder paths for passing and failing instances
-        instance_folder = os.path.join(_configs["TASKS_HUB"], "prefill_instantiated")
+        instance_folder = os.path.join(_configs["TASKS_HUB"], "instantiated_results")
         pass_folder = os.path.join(instance_folder, "instances_pass")
         fail_folder = os.path.join(instance_folder, "instances_fail")
         target_folder = pass_folder if is_quality_good else fail_folder
