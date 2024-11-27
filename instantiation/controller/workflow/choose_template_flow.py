@@ -31,6 +31,7 @@ class ChooseTemplateFlow:
         :param file_extension: The file extension of the template.
         :param task_file_name: The name of the task file.
         """
+
         self._app_name = app_name
         self._file_extension = file_extension
         self._task_file_name = task_file_name
@@ -44,6 +45,7 @@ class ChooseTemplateFlow:
         Execute the flow and return the copied template path.
         :return: The path to the copied template file.
         """
+
         start_time = time.time()
         template_copied_path = self._choose_template_and_copy()
         self.execution_time = round(time.time() - start_time, 3)
@@ -59,6 +61,7 @@ class ChooseTemplateFlow:
         :param file_name: Optional; the name of the task file.
         :return: The path to the newly created cache file.
         """
+
         os.makedirs(copy_to_folder_path, exist_ok=True)
         copied_template_path = self._generate_copied_file_path(
             copy_to_folder_path, file_name
@@ -78,6 +81,7 @@ class ChooseTemplateFlow:
         :param file_name: Optional; the name of the task file.
         :return: The path to the newly created file.
         """
+
         template_extension = self._file_extension
         if file_name:
             return str(folder_path / f"{file_name}{template_extension}")
@@ -89,6 +93,7 @@ class ChooseTemplateFlow:
         Choose the most relevant template file based on the task.
         :return: The path to the most relevant template file.
         """
+
         templates_description_path = (
             Path(_configs["TEMPLATE_PATH"]) / self._app_name / "description.json"
         )
@@ -109,6 +114,7 @@ class ChooseTemplateFlow:
         Select a random template file from the template folder.
         :return: The path to the randomly selected template file.
         """
+
         template_folder = Path(_configs["TEMPLATE_PATH"]) / self._app_name
         template_files = [f for f in template_folder.iterdir() if f.is_file()]
 
@@ -124,6 +130,7 @@ class ChooseTemplateFlow:
         Choose the template and copy it to the cache folder.
         :return: The path to the copied template file.
         """
+
         chosen_template_file_path = self._get_chosen_file_path()
         chosen_template_full_path = (
             Path(_configs["TEMPLATE_PATH"]) / self._app_name / chosen_template_file_path
@@ -146,6 +153,7 @@ class ChooseTemplateFlow:
         :param doc_files_description: A dictionary of template file descriptions.
         :return: The path to the chosen template file.
         """
+
         file_doc_map = {
             desc: file_name for file_name, desc in doc_files_description.items()
         }
@@ -166,6 +174,7 @@ class ChooseTemplateFlow:
         :param model_name: The name of the embedding model to load.
         :return: The loaded embedding model.
         """
+        
         store = LocalFileStore(_configs["CONTROL_EMBEDDING_CACHE_PATH"])
         if not model_name.startswith(ChooseTemplateFlow._SENTENCE_TRANSFORMERS_PREFIX):
             model_name = ChooseTemplateFlow._SENTENCE_TRANSFORMERS_PREFIX + model_name

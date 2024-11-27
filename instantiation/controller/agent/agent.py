@@ -4,13 +4,11 @@
 from typing import Dict, List, Optional
 
 from instantiation.controller.prompter.agent_prompter import (
-    FilterPrompter,
-    PrefillPrompter,
-    ExecuteEvalAgentPrompter,
-)
+    ExecuteEvalAgentPrompter, FilterPrompter, PrefillPrompter)
 from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
+
 
 class FilterAgent(BasicAgent):
     """
@@ -45,15 +43,20 @@ class FilterAgent(BasicAgent):
         )
         self._process_name = process_name
 
-    def get_prompter(self, is_visual, main_prompt, example_prompt, api_prompt) -> str:
+    def get_prompter(
+        self,
+        is_visual,
+        main_prompt: str,
+        example_prompt: str,
+        api_prompt: str
+    ) -> FilterPrompter:
         """
         Get the prompt for the agent.
-        This is the abstract method from BasicAgent that needs to be implemented.
         :param is_visual: The flag indicating whether the agent is visual or not.
         :param main_prompt: The main prompt.
         :param example_prompt: The example prompt.
         :param api_prompt: The API prompt.
-        :return: The prompt.
+        :return: The prompt string.
         """
 
         return FilterPrompter(is_visual, main_prompt, example_prompt, api_prompt)
@@ -65,6 +68,7 @@ class FilterAgent(BasicAgent):
         :param app: The name of the operated app.
         :return: The prompt message.
         """
+
         filter_agent_prompt_system_message = self.prompter.system_prompt_construction(
             app=app
         )
@@ -82,6 +86,7 @@ class FilterAgent(BasicAgent):
         Confirm the process.
         This is the abstract method from BasicAgent that needs to be implemented.
         """
+
         pass
 
 
@@ -167,6 +172,7 @@ class PrefillAgent(BasicAgent):
         Confirm the process.
         This is the abstract method from BasicAgent that needs to be implemented.
         """
+
         pass
 
 
@@ -185,10 +191,7 @@ class ExecuteAgent(AppAgent):
         Initialize the ExecuteAgent.
         :param name: The name of the agent.
         :param process_name: The name of the process.
-        :param is_visual: The flag indicating whether the agent is visual or not.
-        :param main_prompt: The main prompt.
-        :param example_prompt: The example prompt.
-        :param api_prompt: The API prompt.
+        :param app_root_name: The name of the app root.
         """
 
         self._step = 0
@@ -198,6 +201,7 @@ class ExecuteAgent(AppAgent):
         self._process_name = process_name
         self._app_root_name = app_root_name
         self.Puppeteer = self.create_puppeteer_interface()
+
 
 class ExecuteEvalAgent(EvaluationAgent):
     """
@@ -231,7 +235,7 @@ class ExecuteEvalAgent(EvaluationAgent):
             example_prompt=example_prompt,
             api_prompt=api_prompt,
         )
-        
+
     def get_prompter(
         self,
         is_visual,

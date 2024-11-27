@@ -2,12 +2,13 @@ import glob
 import json
 import os
 import time
-import trace
 import traceback
-from enum import Enum
-from typing import Any, Dict, Optional
 from contextlib import contextmanager
+from enum import Enum
+from typing import Any, Dict
+
 from instantiation.config.config import Config
+from ufo.module.context import Context
 
 # Set the environment variable for the run configuration.
 os.environ["RUN_CONFIGS"] = "True"
@@ -15,12 +16,14 @@ os.environ["RUN_CONFIGS"] = "True"
 # Load configuration data.
 _configs = Config.get_instance().config_data
 
+
 @contextmanager
 def stage_context(stage_name):
     try:
         yield stage_name
     except Exception as e:
         raise e
+
 
 class AppEnum(Enum):
     """
@@ -38,6 +41,7 @@ class AppEnum(Enum):
         :param file_extension: The file extension of the app.
         :param win_app: The windows app name of the app.
         """
+
         self.id = id
         self.description = description
         self.file_extension = file_extension
@@ -56,6 +60,7 @@ class TaskObject:
         :param task_dir_name: The name of the directory containing the task.
         :param task_file: The task file to load from.
         """
+
         self.task_dir_name = task_dir_name
         self.task_file = task_file
         self.task_file_base_name = os.path.basename(task_file)
@@ -74,6 +79,7 @@ class TaskObject:
         :param task_json_file: The JSON file of the task.
         :return: The app object.
         """
+
         for app in AppEnum:
             if app.description.lower() == task_json_file["app"].lower():
                 return app
@@ -91,6 +97,7 @@ class InstantiationProcess:
         Instantiate all the task files.
         :param task_dir_name: The name of the task directory.
         """
+
         all_task_file_path: str = os.path.join(
             _configs["TASKS_HUB"], task_dir_name, "*"
         )
@@ -107,14 +114,13 @@ class InstantiationProcess:
         Execute the process for one task.
         :param task_object: The TaskObject containing task details.
         """
+
         from instantiation.controller.env.env_manager import WindowsAppEnv
-        from instantiation.controller.workflow.choose_template_flow import (
-            ChooseTemplateFlow,
-        )
-        from instantiation.controller.workflow.execute_flow import Context, ExecuteFlow
+        from instantiation.controller.workflow.choose_template_flow import \
+            ChooseTemplateFlow
+        from instantiation.controller.workflow.execute_flow import ExecuteFlow
         from instantiation.controller.workflow.filter_flow import FilterFlow
         from instantiation.controller.workflow.prefill_flow import PrefillFlow
-        from instantiation.controller.workflow.execute_flow import ExecuteFlow
 
         # Initialize the app environment and the task file name.
         app_object = task_object.app_object
@@ -132,7 +138,7 @@ class InstantiationProcess:
             "instantiated_request": None,
             "instantiated_plan": None,
             "result": {},
-            "time_cost": {}
+            "time_cost": {},
         }  # Initialize with a basic structure to avoid "used before assignment" error
 
         try:
@@ -169,7 +175,9 @@ class InstantiationProcess:
             with stage_context("execute") as stage:
                 context = Context()
                 execute_flow = ExecuteFlow(app_env, task_file_name, context)
-                execute_result, _ = execute_flow.execute(task_object.task, instantiated_plan)
+                execute_result, _ = execute_flow.execute(
+                    task_object.task, instantiated_plan
+                )
                 is_completed = execute_result["complete"]
                 instantiated_task_info["result"]["execute"] = execute_result
                 instantiated_task_info["time_cost"]["execute"] = execute_flow.execution_time
@@ -189,7 +197,10 @@ class InstantiationProcess:
         finally:
             app_env.close()
             self._save_instantiated_task(
-                instantiated_task_info, task_object.task_file_base_name, is_quality_good, is_completed
+                instantiated_task_info,
+                task_object.task_file_base_name,
+                is_quality_good,
+                is_completed,
             )
 
     def _save_instantiated_task(
@@ -206,6 +217,7 @@ class InstantiationProcess:
         :param is_quality_good: Indicates whether the quality of the task is good.
         :param is_completed: Indicates whether the task is completed.
         """
+        
         # Convert the dictionary to a JSON string
         task_json = json.dumps(instantiated_task_info, ensure_ascii=False, indent=4)
 

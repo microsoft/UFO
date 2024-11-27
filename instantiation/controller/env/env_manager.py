@@ -1,7 +1,7 @@
 import logging
 import re
 import time
-from typing import Optional
+
 from fuzzywuzzy import fuzz
 from pywinauto import Desktop
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -27,6 +27,7 @@ class WindowsAppEnv:
         Initializes the Windows Application Environment.
         :param app_object: The app object containing information about the application.
         """
+
         super().__init__()
         self.app_window = None
         self.app_root_name = app_object.app_root_name
@@ -47,6 +48,7 @@ class WindowsAppEnv:
         Starts the Windows environment.
         :param copied_template_path: The file path to the copied template to start the environment.
         """
+
         from ufo.automator.ui_control import openfile
 
         file_controller = openfile.FileController(_BACKEND)
@@ -62,6 +64,7 @@ class WindowsAppEnv:
         """
         Closes the Windows environment.
         """
+
         try:
             com_object = self.win_com_receiver.get_object_from_process_name()
             com_object.Close()
@@ -77,6 +80,7 @@ class WindowsAppEnv:
         :param doc_name: The document name associated with the application.
         :return: The matched window or None if no match is found.
         """
+
         desktop = Desktop(backend=_BACKEND)
         windows_list = desktop.windows()
         for window in windows_list:
@@ -96,6 +100,7 @@ class WindowsAppEnv:
         :param doc_name: The document name associated with the application.
         :return: True if a match is found based on the strategy; False otherwise.
         """
+
         app_name = self.app_name
         doc_name = doc_name.lower()
 
@@ -127,6 +132,7 @@ class WindowsAppEnv:
         :param control_text: The text content of the control for additional context.
         :return: True if a match is found based on the strategy; False otherwise.
         """
+
         control_content = (
             control_to_match.window_text() if control_to_match.window_text() else ""
         )  # Default to empty string

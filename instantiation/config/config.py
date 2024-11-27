@@ -12,6 +12,7 @@ class Config(Config):
         Initializes the Config class.
         :param config_path: The path to the config file.
         """
+
         self.config_data = self.load_config(config_path)
 
     @staticmethod
@@ -20,6 +21,7 @@ class Config(Config):
         Get the instance of the Config class.
         :return: The instance of the Config class.
         """
+
         if Config._instance is None:
             Config._instance = Config()
 
@@ -31,6 +33,7 @@ class Config(Config):
         :param configs: The configurations to optimize.
         :return: The optimized configurations.
         """
+        
         self.update_api_base(configs, "PREFILL_AGENT")
         self.update_api_base(configs, "FILTER_AGENT")
 

@@ -252,6 +252,7 @@ class PrefillPrompter(BasicPrompter):
         :param log_path: The path of the log.
         :return: The screenshot URL.
         """
+        
         from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 
         init_image = os.path.join(log_path, "screenshot.png")
@@ -334,10 +335,12 @@ class PrefillPrompter(BasicPrompter):
 
         return self.retrived_documents_prompt_helper(header, separator, example_list)
 
+
 class ExecuteEvalAgentPrompter(EvaluationAgentPrompter):
     """
     Execute the prompt for the ExecuteEvalAgent.
     """
+
     def __init__(
         self,
         is_visual: bool,
@@ -354,13 +357,21 @@ class ExecuteEvalAgentPrompter(EvaluationAgentPrompter):
         :param api_prompt_template: The path of the api prompt template.
         :param root_name: The name of the root application.
         """
-        super().__init__(is_visual, prompt_template, example_prompt_template, api_prompt_template, root_name)
+
+        super().__init__(
+            is_visual,
+            prompt_template,
+            example_prompt_template,
+            api_prompt_template,
+            root_name,
+        )
 
     @staticmethod
     def load_logs(log_path: str) -> List[Dict[str, str]]:
         """
         Load logs from the log path.
         """
+
         log_file_path = os.path.join(log_path, "execute_log.json")
         with open(log_file_path, "r") as f:
             logs = f.readlines()

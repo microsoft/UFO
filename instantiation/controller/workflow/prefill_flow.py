@@ -35,6 +35,7 @@ class PrefillFlow(AppAgentProcessor):
         :param environment: The environment of the app.
         :param task_file_name: The name of the task file for logging and tracking.
         """
+
         self.execution_time = 0
         self._app_env = environment
         self._task_file_name = task_file_name
@@ -83,6 +84,7 @@ class PrefillFlow(AppAgentProcessor):
         :param refined_steps: The steps to guide the refinement process.
         :return: The refined task and corresponding action plans.
         """
+
         start_time = time.time()
         instantiated_request, instantiated_plan = self._instantiate_task(
             template_copied_path, original_task, refined_steps
@@ -101,6 +103,7 @@ class PrefillFlow(AppAgentProcessor):
         :param refined_steps: The steps to guide the refinement process.
         :return: The refined task and corresponding action plans.
         """
+
         self._app_env.start(template_copied_path)
 
         try:
@@ -125,6 +128,7 @@ class PrefillFlow(AppAgentProcessor):
         Update the current state of the app by inspecting UI elements.
         :param file_path: Path of the app file to inspect.
         """
+
         print(f"Updating the app state using the file: {file_path}")
 
         # Retrieve control elements in the app window
@@ -169,6 +173,7 @@ class PrefillFlow(AppAgentProcessor):
         :param file_path: Path to the task template.
         :return: The refined task and corresponding action plans.
         """
+
         self._update_state(file_path)
         execution_time = 0
         # Save a screenshot of the app state
@@ -215,6 +220,7 @@ class PrefillFlow(AppAgentProcessor):
         Log the constructed prompt message for the PrefillAgent.
         :param prompt_message: The message constructed for PrefillAgent.
         """
+
         messages_log_entry = {
             "step": self._execute_step,
             "messages": prompt_message,
@@ -230,6 +236,7 @@ class PrefillFlow(AppAgentProcessor):
         :param response_json: Response data from PrefillAgent.
         :param execution_time: Time taken for the PrefillAgent call.
         """
+
         response_log_entry = {
             "step": self._execute_step,
             "execution_time": execution_time,
@@ -244,6 +251,7 @@ class PrefillFlow(AppAgentProcessor):
         :param doc_name: The name or description of the document to match the window.
         :param save_path: The path where the screenshot will be saved.
         """
+        
         try:
             # Find the window matching the document name
             matched_window = self._app_env.find_matching_window(doc_name)
