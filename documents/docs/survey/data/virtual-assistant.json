@@ -1,0 +1,114 @@
+[
+  {
+    "Name": "Proagent: From Robotic Process Automation to Agentic Process Automation",
+    "Platform": "Web and Computer",
+    "Date": "November 2023",
+    "Paper_Url": "https://arxiv.org/abs/2311.10751",
+    "Highlight": "Introduces dynamic workflows where agents interpret and execute tasks flexibly, surpassing traditional RPA systems.",
+    "Code_Url": "https://github.com/OpenBMB/ProAgent"
+  },
+  {
+    "Name": "Intelligent Agents with LLM-based Process Automation",
+    "Platform": "Android",
+    "Date": "August 2024",
+    "Paper_Url": "https://dl.acm.org/doi/abs/10.1145/3637528.3671646",
+    "Highlight": "Integrates LLM reasoning capabilities with a modular design that supports task decomposition, object detection, and robust action prediction in GUI environments.",
+    "Code_Url": "/"
+  },
+  {
+    "Name": "VizAbility: Enhancing Chart Accessibility with LLM-based Conversational Interaction",
+    "Platform": "Computer",
+    "Date": "October 2024",
+    "Paper_Url": "https://dl.acm.org/doi/abs/10.1145/3654777.3676414",
+    "Highlight": "Integrates structured chart navigation with LLM-powered conversational capabilities, enabling visually impaired users to query in natural language.",
+    "Code_Url": "https://dwr.bc.edu/vizability/"
+  },
+  {
+    "Name": "GPTVoiceTasker: LLM-powered Virtual Assistant for Smartphone",
+    "Platform": "Android",
+    "Date": "January 2024",
+    "Paper_Url": "https://arxiv.org/abs/2401.14268",
+    "Highlight": "Integrates LLMs for natural command interpretation and real-time GUI interactions, using a graph-based local database to record and replicate interactions.",
+    "Code_Url": "https://github.com/vuminhduc796/GPTVoiceTasker"
+  },
+  {
+    "Name": "AutoTask: Executing Arbitrary Voice Commands by Exploring and Learning from Mobile GUI",
+    "Platform": "Android",
+    "Date": "December 2023",
+    "Paper_Url": "https://arxiv.org/abs/2312.16062",
+    "Highlight": "Operates without predefined scripts or configurations, autonomously exploring GUI environments.",
+    "Code_Url": "https://github.com/BowenBryanWang/AutoTask"
+  },
+  {
+    "Name": "AssistEditor: Multi-Agent Collaboration for GUI Workflow Automation in Video Creation",
+    "Platform": "Windows",
+    "Date": "October 2024",
+    "Paper_Url": "https://dl.acm.org/doi/abs/10.1145/3664647.3684998",
+    "Highlight": "Employs a multi-agent collaboration framework where agents specialize in roles to integrate user requirements into video editing workflows.",
+    "Code_Url": "/"
+  },
+  {
+    "Name": "PromptRPA: Generating Robotic Process Automation on Smartphones from Textual Prompts",
+    "Platform": "Android",
+    "Date": "April 2024",
+    "Paper_Url": "https://arxiv.org/abs/2404.02475",
+    "Highlight": "Integrates user feedback loops for continuous improvement, addressing interface evolution and task variability.",
+    "Code_Url": "/"
+  },
+  {
+    "Name": "EasyAsk: An In-App Contextual Tutorial Search Assistant for Older Adults with Voice and Touch Inputs",
+    "Platform": "Android",
+    "Date": "September 2024",
+    "Paper_Url": "https://dl.acm.org/doi/abs/10.1145/3678516",
+    "Highlight": "Combines voice and touch inputs, supplementing incomplete or ambiguous queries with in-app contextual information.",
+    "Code_Url": "/"
+  },
+  {
+    "Name": "OpenAdapt: Open Source Generative Process Automation",
+    "Platform": "Computer",
+    "Date": "June 2023",
+    "Paper_Url": "/",
+    "Highlight": "Learns task automation by observing user interactions, eliminating manual scripting.",
+    "Code_Url": "https://github.com/OpenAdaptAI/OpenAdapt"
+  },
+  {
+    "Name": "Introduction to AgentSea Platform",
+    "Platform": "Computer and Web",
+    "Date": "August 2022",
+    "Paper_Url": "/",
+    "Highlight": "Offers a modular toolkit adhering to the UNIX philosophy, allowing developers to create custom AI agents for diverse GUI environments.",
+    "Code_Url": "https://www.agentsea.ai/"
+  },
+  {
+    "Name": "Open Interpreter: A natural language interface for computers",
+    "Platform": "Computer, Web, Android",
+    "Date": "October 2024",
+    "Paper_Url": "/",
+    "Highlight": "Executes code locally, providing full access to system resources and libraries, overcoming limitations of cloud-based services.",
+    "Code_Url": "https://github.com/OpenInterpreter/open-interpreter"
+  },
+  {
+    "Name": "Multion AI: Ai agents that act on your behalf",
+    "Platform": "Web",
+    "Date": "September 2023",
+    "Paper_Url": "/",
+    "Highlight": "Performs autonomous web actions via natural language commands.",
+    "Code_Url": "https://www.multion.ai/"
+  },
+  {
+    "Name": "Honor introduces magicos 9.0",
+    "Platform": "Mobile (MagicOS 9.0)",
+    "Date": "October 2024",
+    "Paper_Url": "/",
+    "Highlight": "Leverages MagicLM to understand and execute complex tasks across applications, learning user habits to provide personalized assistance.",
+    "Code_Url": "https://www.fonearena.com/blog/438680/honor-magicos-9-0-features.html"
+  },
+  {
+    "Name": "Create desktop flows using Record with Copilot (preview)",
+    "Platform": "Windows",
+    "Date": "October 2024",
+    "Paper_Url": "/",
+    "Highlight": "Translates natural language descriptions of desired automations into executable workflows.",
+    "Code_Url": "https://learn.microsoft.com/en-us/power-automate/desktop-flows/create-flow-using-ai-recorder"
+  }
+]

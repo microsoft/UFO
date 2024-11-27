@@ -1,0 +1,394 @@
+[
+    {
+        "Name": "Reinforcement Learning on Web Interfaces Using Workflow-Guided Exploration",
+        "Platform": "Web",
+        "Date": "February 2018",
+        "Paper_Url": "http://arxiv.org/abs/1802.08802v1",
+        "Highlight": "Evaluates agents on basic web interactions like clicking, typing, and form navigation.",
+        "Code_Url": "https://github.com/Farama-Foundation/miniwob-plusplus"
+    },
+    {
+        "Name": "Grounding Open-Domain Instructions to Automate Web Support Tasks",
+        "Platform": "Web",
+        "Date": "March 2021",
+        "Paper_Url": "http://arxiv.org/abs/2103.16057v2",
+        "Highlight": "Uses ThingTalk for mapping natural language to web actions, enabling precise web-based task execution in real HTML environments.",
+        "Code_Url": "https://github.com/xnancy/russ"
+    },
+    {
+        "Name": "WebShop: Towards Scalable Real-World Web Interaction with Grounded Language Agents",
+        "Platform": "Web",
+        "Date": "July 2022",
+        "Paper_Url": "http://arxiv.org/abs/2207.01206v4",
+        "Highlight": "Simulates e-commerce navigation with real-world products, challenging agents with instruction comprehension, multi-page navigation, and strategic exploration.",
+        "Code_Url": "https://webshop-pnlp.github.io/"
+    },
+    {
+        "Name": "Mind2Web: Towards a Generalist Agent for the Web",
+        "Platform": "Web",
+        "Date": "June 2023",
+        "Paper_Url": "http://arxiv.org/abs/2306.06070v3",
+        "Highlight": "Tests adaptability on real-world, dynamic websites across domains.",
+        "Code_Url": "https://github.com/OSU-NLP-Group/Mind2Web"
+    },
+    {
+        "Name": "WebArena: A Realistic Web Environment for Building Autonomous Agents",
+        "Platform": "Web",
+        "Date": "July 2023",
+        "Paper_Url": "http://arxiv.org/abs/2307.13854v4",
+        "Highlight": "Simulates realistic, multi-tab browsing on Docker-hosted websites, focusing on complex, long-horizon tasks that mirror real online interactions.",
+        "Code_Url": "https://webarena.dev/"
+    },
+    {
+        "Name": "VisualWebArena: Evaluating Multimodal Agents on Realistic Visual Web Tasks",
+        "Platform": "Web",
+        "Date": "January 2024",
+        "Paper_Url": "http://arxiv.org/abs/2401.13649v2",
+        "Highlight": "Assesses multimodal agents on visually grounded tasks, requiring both visual and textual interaction capabilities in web environments.",
+        "Code_Url": "https://jykoh.com/vwa"
+    },
+    {
+        "Name": "On the Multi-turn Instruction Following for Conversational Web Agents",
+        "Platform": "Web",
+        "Date": "February 2024",
+        "Paper_Url": "http://arxiv.org/abs/2402.15057v1",
+        "Highlight": "Introduces conversational web navigation with multi-turn interactions, supported by a specialized multi-turn web dataset.",
+        "Code_Url": "https://github.com/magicgh/self-map"
+    },
+    {
+        "Name": "MMInA: Benchmarking Multihop Multimodal Internet Agents",
+        "Platform": "Web",
+        "Date": "April 2024",
+        "Paper_Url": "http://arxiv.org/abs/2404.09992v1",
+        "Highlight": "Tests multihop, multimodal tasks on real-world websites, requiring agents to handle cross-page information extraction and reasoning for complex tasks.",
+        "Code_Url": "https://mmina.cliangyu.com/"
+    },
+    {
+        "Name": "WebCanvas: Benchmarking Web Agents in Online Environments",
+        "Platform": "Web",
+        "Date": "June 2024",
+        "Paper_Url": "http://arxiv.org/abs/2406.12373v3",
+        "Highlight": "Provides intermediate action tracking for realistic task assessment, along with an updated Mind2Web-Live dataset and tools for annotation.",
+        "Code_Url": "https://huggingface.co/datasets/iMeanAI/Mind2Web-Live"
+    },
+    {
+        "Name": "AutoWebGLM: Bootstrap And Reinforce A Large Language Model-based Web Navigating Agent",
+        "Platform": "Web",
+        "Date": "April 2024",
+        "Paper_Url": "https://arxiv.org/abs/2404.03648",
+        "Highlight": "Bilingual web browsing benchmark with 10,000 browsing traces, supporting evaluation across language-specific environments.",
+        "Code_Url": "https://github.com/THUDM/AutoWebGLM"
+    },
+    {
+        "Name": "WorkArena: How Capable Are Web Agents at Solving Common Knowledge Work Tasks?",
+        "Platform": "Web",
+        "Date": "March 2024",
+        "Paper_Url": "http://arxiv.org/abs/2403.07718v5",
+        "Highlight": "Focuses on real-world enterprise software interactions, targeting tasks frequently performed by knowledge workers.",
+        "Code_Url": "https://github.com/ServiceNow/WorkArena"
+    },
+    {
+        "Name": "VideoWebArena: Evaluating Long Context Multimodal Agents with Video Understanding Web Tasks",
+        "Platform": "Web",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.19100v1",
+        "Highlight": "Focuses on long-context multimodal agents using video tutorials for task completion.",
+        "Code_Url": "https://github.com/ljang0/videowebarena"
+    },
+    {
+        "Name": "Caution for the Environment: Multimodal Agents are Susceptible to Environmental Distractions",
+        "Platform": "Web",
+        "Date": "August 2024",
+        "Paper_Url": "http://arxiv.org/abs/2408.02544v1",
+        "Highlight": "Evaluates the 'faithfulness' of multimodal GUI agents by assessing their susceptibility to environmental distractions, such as pop-ups or misleading recommendations.",
+        "Code_Url": "https://github.com/xbmxb/EnvDistraction"
+    },
+    {
+        "Name": "WebVLN: Vision-and-Language Navigation on Websites",
+        "Platform": "Web",
+        "Date": "December 25, 2023",
+        "Paper_Url": "http://arxiv.org/abs/2312.15820v1",
+        "Highlight": "Combines navigation and question-answering on shopping sites, integrating visual and textual content for unified web interaction evaluation.",
+        "Code_Url": "https://github.com/WebVLN/WebVLN"
+    },
+    {
+        "Name": "WebLINX: Real-World Website Navigation with Multi-Turn Dialogue",
+        "Platform": "Web",
+        "Date": "February 2024",
+        "Paper_Url": "http://arxiv.org/abs/2402.05930v2",
+        "Highlight": "Focuses on conversational navigation, requiring agents to follow multi-turn user instructions in realistic, dialogue-based web tasks.",
+        "Code_Url": "https://mcgill-nlp.github.io/weblinx/"
+    },
+    {
+        "Name": "ST-WebAgentBench: A Benchmark for Evaluating Safety and Trustworthiness in Web Agents",
+        "Platform": "Web",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.06703v2",
+        "Highlight": "Evaluates policy-driven safety in web agents, using the Completion under Policy metric to ensure compliance in enterprise-like environments.",
+        "Code_Url": "https://sites.google.com/view/st-webagentbench/home"
+    },
+    {
+        "Name": "Exposing Limitations of Language Model Agents in Sequential-Task Compositions on the Web",
+        "Platform": "Web",
+        "Date": "November 2023",
+        "Paper_Url": "http://arxiv.org/abs/2311.18751v2",
+        "Highlight": "Tests agents on sequential, compositional tasks that require state management across multiple steps, simulating real-world automation scenarios.",
+        "Code_Url": "https://github.com/google-research/google-research/tree/master/compositional_rl/compwob"
+    },
+    {
+        "Name": "Tur [k] ingBench: A Challenge Benchmark for Web Agents",
+        "Platform": "Web",
+        "Date": "March 2024",
+        "Paper_Url": "https://arxiv.org/abs/2403.11905",
+        "Highlight": "Uses natural HTML tasks from crowdsourcing to assess interaction skills with real-world web layouts and elements.",
+        "Code_Url": "https://turkingbench.github.io"
+    },
+    {
+        "Name": "NaviQAte: Functionality-Guided Web Application Navigation",
+        "Platform": "Web",
+        "Date": "September 2024",
+        "Paper_Url": "http://arxiv.org/abs/2409.10741v1",
+        "Highlight": "Frames web navigation as functionality-driven question-answering, allowing agents to generalize across diverse web tasks and optimize navigation efficiency.",
+        "Code_Url": "https://anonymous.4open.science/r/naviqate"
+    },
+    {
+        "Name": "VisualWebBench: How Far Have Multimodal LLMs Evolved in Web Page Understanding and Grounding?",
+        "Platform": "Web",
+        "Date": "April 2024",
+        "Paper_Url": "http://arxiv.org/abs/2404.05955v1",
+        "Highlight": "Provides a fine-grained assessment of multimodal large language models (MLLMs) on web-specific tasks.",
+        "Code_Url": "https://visualwebbench.github.io/"
+    },
+    {
+        "Name": "WONDERBREAD: A Benchmark for Evaluating Multimodal Foundation Models on Business Process Management Tasks",
+        "Platform": "Web",
+        "Date": "June 2024",
+        "Paper_Url": "http://arxiv.org/abs/2406.13264v2",
+        "Highlight": "Focuses on business process management (BPM) tasks like documentation, knowledge transfer, and process improvement.",
+        "Code_Url": "https://github.com/HazyResearch/wonderbread"
+    },
+    {
+        "Name": "WebOlympus: An Open Platform for Web Agents on Live Websites",
+        "Platform": "Web",
+        "Date": "November 2024",
+        "Paper_Url": "https://aclanthology.org/2024.emnlp-demo.20/",
+        "Highlight": "An open platform for web agents that simplifies running demos, evaluations, and data collection for web agents on live websites.",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "AndroidEnv: A Reinforcement Learning Platform for Android",
+        "Platform": "Android",
+        "Date": "May 2021",
+        "Paper_Url": "http://arxiv.org/abs/2105.13231v1",
+        "Highlight": "Provides an open-source platform based on the Android ecosystem with over 100 tasks across approximately 30 apps, focusing on reinforcement learning for various Android interactions.",
+        "Code_Url": "https://github.com/google-deepmind/android_env"
+    },
+    {
+        "Name": "Mapping Natural Language Instructions to Mobile UI Action Sequences",
+        "Platform": "Android",
+        "Date": "May 2020",
+        "Paper_Url": "http://arxiv.org/abs/2005.03776v2",
+        "Highlight": "Includes a corpus of natural language instructions paired with UI actions across four task categories, aiding in grounding language to UI interactions.",
+        "Code_Url": "https://github.com/google-research/google-research/tree/master/seq2act"
+    },
+    {
+        "Name": "Mobile-Env: Building Qualified Evaluation Benchmarks for LLM-GUI Interaction",
+        "Platform": "Android",
+        "Date": "May 14, 2023",
+        "Paper_Url": "http://arxiv.org/abs/2305.08144v4",
+        "Highlight": "Comprehensive toolkit for Android GUI benchmarks to enable controlled evaluations of real-world app interactions.",
+        "Code_Url": "https://github.com/X-LANCE/Mobile-Env"
+    },
+    {
+        "Name": "Benchmarking Mobile Device Control Agents across Diverse Configurations",
+        "Platform": "Android",
+        "Date": "April 2024",
+        "Paper_Url": "http://arxiv.org/abs/2404.16660v2",
+        "Highlight": "Benchmarks mobile device control agents on realistic tasks, incorporating UI layout and language randomization to evaluate generalization capabilities.",
+        "Code_Url": "https://b-moca.github.io/"
+    },
+    {
+        "Name": "AndroidWorld: A Dynamic Benchmarking Environment for Autonomous Agents",
+        "Platform": "Android",
+        "Date": "May 2024",
+        "Paper_Url": "http://arxiv.org/abs/2405.14573v3",
+        "Highlight": "Offers a dynamic Android environment, allowing for diverse natural language instruction testing.",
+        "Code_Url": "https://github.com/google-research/android_world"
+    },
+    {
+        "Name": "Mobile-Agent: Autonomous Multi-Modal Mobile Device Agent with Visual Perception",
+        "Platform": "Android",
+        "Date": "February 2022",
+        "Paper_Url": "http://arxiv.org/abs/2401.16158v2",
+        "Highlight": "Benchmark based on mainstream Android apps, designed to test common mobile interactions.",
+        "Code_Url": "https://github.com/X-PLUG/MobileAgent"
+    },
+    {
+        "Name": "AutoDroid: LLM-powered Task Automation in Android",
+        "Platform": "Android",
+        "Date": "August 2023",
+        "Paper_Url": "http://arxiv.org/abs/2308.15272v4",
+        "Highlight": "Android Task Automation benchmark supports exploration and task recording in real apps with corresponding GUI action traces.",
+        "Code_Url": "https://github.com/MobileLLM/AutoDroid"
+    },
+    {
+        "Name": "Android in the Wild: A Large-Scale Dataset for Android Device Control",
+        "Platform": "Android",
+        "Date": "July 19, 2023",
+        "Paper_Url": "http://arxiv.org/abs/2307.10088v2",
+        "Highlight": "A large-scale dataset inspired by PIXELHELP, covering diverse Android interactions.",
+        "Code_Url": "https://github.com/google-research/google-research/tree/master/android_in_the_wild"
+    },
+    {
+        "Name": "Understanding the Weakness of Large Language Model Agents within a Complex Android Environment",
+        "Platform": "Android",
+        "Date": "February 2024",
+        "Paper_Url": "http://arxiv.org/abs/2402.06596v1",
+        "Highlight": "Focuses on daily cross-app and constrained tasks within the Android ecosystem, providing single-app and multi-app interaction scenarios.",
+        "Code_Url": "https://github.com/AndroidArenaAgent/AndroidArena"
+    },
+    {
+        "Name": "AndroidLab: Training and Systematic Benchmarking of Android Autonomous Agents",
+        "Platform": "Android",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.24024v2",
+        "Highlight": "Provides a structured evaluation framework with 138 tasks across nine apps, supporting both text-only and multimodal agent evaluations on Android.",
+        "Code_Url": "https://github.com/THUDM/Android-Lab"
+    },
+    {
+        "Name": "LlamaTouch: A Faithful and Scalable Testbed for Mobile UI Task Automation",
+        "Platform": "Android",
+        "Date": "April 2024",
+        "Paper_Url": "http://arxiv.org/abs/2404.16054v2",
+        "Highlight": "Enables faithful and scalable evaluations for mobile UI task automation by matching task execution traces against annotated essential states.",
+        "Code_Url": "https://github.com/LlamaTouch/LlamaTouch"
+    },
+    {
+        "Name": "MobileAgentBench: An Efficient and User-Friendly Benchmark for Mobile LLM Agents",
+        "Platform": "Android",
+        "Date": "June 2024",
+        "Paper_Url": "http://arxiv.org/abs/2406.08184v1",
+        "Highlight": "Provides a fully autonomous evaluation process on real Android devices with flexibility in judging success conditions across multiple paths to completion.",
+        "Code_Url": "https://mobileagentbench.github.io/"
+    },
+    {
+        "Name": "Mobile-Bench: An Evaluation Benchmark for LLM-based Mobile Agents",
+        "Platform": "Android",
+        "Date": "July 2024",
+        "Paper_Url": "http://arxiv.org/abs/2407.00993v1",
+        "Highlight": "Supports both UI and API-based actions in multi-app scenarios, testing agents on single and multi-task structures with a checkpoint-based evaluation approach.",
+        "Code_Url": "https://github.com/XiaoMi/MobileBench"
+    },
+    {
+        "Name": "MobileSafetyBench: Evaluating Safety of Autonomous Agents in Mobile Device Control",
+        "Platform": "Android",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.17520v1",
+        "Highlight": "Prioritizes safety evaluation in mobile control tasks, focusing on helpfulness, privacy, and legal compliance.",
+        "Code_Url": "https://mobilesafetybench.github.io/"
+    },
+    {
+        "Name": "SPA-Bench: A Comprehensive Benchmark for SmartPhone Agent Evaluation",
+        "Platform": "Android",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.15164v1",
+        "Highlight": "Extensive evaluation framework supporting single-app and cross-app tasks in English and Chinese, providing a plug-and-play structure for diverse task scenarios.",
+        "Code_Url": "https://spa-bench.github.io"
+    },
+    {
+        "Name": "VisualAgentBench: Towards Large Multimodal Models as Visual Foundation Agents",
+        "Platform": "Web, Android, Game, Virtual Embodied",
+        "Date": "August 2024",
+        "Paper_Url": "http://arxiv.org/abs/2408.06327v1",
+        "Highlight": "First benchmark designed for visual foundation agents across GUI and multimodal tasks, focusing on vision-centric interactions in Android, web, and game environments.",
+        "Code_Url": "https://github.com/THUDM/VisualAgentBench/"
+    },
+    {
+        "Name": "OSWorld: Benchmarking Multimodal Agents for Open-Ended Tasks in Real Computer Environments",
+        "Platform": "Linux, Windows, macOS, Web",
+        "Date": "April 2024",
+        "Paper_Url": "http://arxiv.org/abs/2404.07972v2",
+        "Highlight": "Scalable, real computer environment for multimodal agents, supporting task setup, execution-based evaluation, and interactive learning across Ubuntu, Windows, and macOS.",
+        "Code_Url": "https://os-world.github.io/"
+    },
+    {
+        "Name": "Windows Agent Arena: Evaluating Multi-Modal OS Agents at Scale",
+        "Platform": "Windows",
+        "Date": "September 2024",
+        "Paper_Url": "http://arxiv.org/abs/2409.08264v2",
+        "Highlight": "Adaptation of OSWorld focusing exclusively on Windows OS with diverse multi-step tasks, enabling agents to use a wide range of applications and tools.",
+        "Code_Url": "https://microsoft.github.io/WindowsAgentArena"
+    },
+    {
+        "Name": "OmniACT: A Dataset and Benchmark for Enabling Multimodal Generalist Autonomous Agents for Desktop and Web",
+        "Platform": "MacOS, Linux, Windows, Web",
+        "Date": "February 2024",
+        "Paper_Url": "http://arxiv.org/abs/2402.17553v3",
+        "Highlight": "Assesses agents\u2019 capability to generate executable programs for computer tasks across desktop and web applications in various OS environments, prioritizing multimodal challenges.",
+        "Code_Url": "https://huggingface.co/datasets/Writer/omniact"
+    },
+    {
+        "Name": "VideoGUI: A Benchmark for GUI Automation from Instructional Videos",
+        "Platform": "Windows, Web",
+        "Date": "June 2024",
+        "Paper_Url": "http://arxiv.org/abs/2406.10227v1",
+        "Highlight": "Focuses on visual-centric tasks from instructional videos, emphasizing planning and action precision in applications like Adobe Photoshop and Premiere Pro.",
+        "Code_Url": "https://showlab.github.io/videogui"
+    },
+    {
+        "Name": "Spider2-V: How Far Are Multimodal Agents From Automating Data Science and Engineering Workflows?",
+        "Platform": "Linux",
+        "Date": "July 2024",
+        "Paper_Url": "http://arxiv.org/abs/2407.10956v1",
+        "Highlight": "Benchmarks agents across data science and engineering workflows in authentic enterprise software environments, covering tasks from data ingestion to visualization.",
+        "Code_Url": "https://spider2-v.github.io"
+    },
+    {
+        "Name": "GUI Action Narrator: Where and When Did That Action Take Place?",
+        "Platform": "Windows",
+        "Date": "June 2024",
+        "Paper_Url": "http://arxiv.org/abs/2406.13719v1",
+        "Highlight": "Emphasizes GUI action narration using cursor-based prompts in video format, covering a variety of GUI interactions like clicks, typing, and dragging.",
+        "Code_Url": "https://showlab.github.io/GUI-Narrator"
+    },
+    {
+        "Name": "OfficeBench: Benchmarking Language Agents across Multiple Applications for Office Automation",
+        "Platform": "Linux",
+        "Date": "July 2024",
+        "Paper_Url": "http://arxiv.org/abs/2407.19056v1",
+        "Highlight": "Tests cross-application automation in office workflows with complex multi-step tasks across applications like Word and Excel, assessing operational integration in realistic scenarios.",
+        "Code_Url": "https://github.com/zlwang-cs/OfficeBench"
+    },
+    {
+        "Name": "Read Anywhere Pointed: Layout-aware GUI Screen Reading with Tree-of-Lens Grounding",
+        "Platform": "Windows",
+        "Date": "June 2024",
+        "Paper_Url": "http://arxiv.org/abs/2406.19263v2",
+        "Highlight": "The first benchmark focused on task-oriented desktop GUI automation.",
+        "Code_Url": "https://showlab.github.io/assistgui/"
+    },
+    {
+        "Name": "AgentStudio: A Toolkit for Building General Virtual Agents",
+        "Platform": "Mobile, Web, and Computer",
+        "Date": "March 2024",
+        "Paper_Url": "http://arxiv.org/abs/2403.17918v2",
+        "Highlight": "Evaluates GUI screen readers' ability to describe both content and layout information.",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "CRAB: Cross-environment Agent Benchmark for Multimodal Language Model Agents",
+        "Platform": "Windows, Linux, macOS",
+        "Date": "July 2024",
+        "Paper_Url": "http://arxiv.org/abs/2407.01511v2",
+        "Highlight": "Open toolkit for creating and benchmarking general-purpose virtual agents, supporting complex interactions across diverse software applications.",
+        "Code_Url": "https://computer-agents.github.io/agent-studio/"
+    },
+    {
+        "Name": "SeeClick: Harnessing GUI Grounding for Advanced Visual GUI Agents",
+        "Platform": "Linux, Android",
+        "Date": "August 2021",
+        "Paper_Url": "http://arxiv.org/abs/2401.10935v2",
+        "Highlight": "Cross-environment benchmark evaluating agents across mobile and desktop devices, using a graph-based evaluation method to handle multiple correct paths and task flexibility.",
+        "Code_Url": "https://github.com/crab-benchmark"
+    }
+]

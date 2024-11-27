@@ -1,0 +1,693 @@
+:root {
+    --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    --sidebar-width: 280px;
+    --primary-color: #196a65;
+    --secondary-color: #84d7e1;
+    --background-color: #f8fafb;
+    --text-primary: #2d3748;
+    --text-secondary: #4a5568;
+    --border-color: #e2e8f0;
+    
+    /* Increased font sizes */
+    --font-size-xs: 0.875rem;    /* 14px */
+    --font-size-sm: 1rem;        /* 16px */
+    --font-size-base: 1.125rem;  /* 18px */
+    --font-size-lg: 1.25rem;     /* 20px */
+    --font-size-xl: 1.5rem;      /* 24px */
+    --font-size-2xl: 1.875rem;   /* 30px */
+    --font-size-3xl: 2.25rem;    /* 36px */
+    --font-size-4xl: 2.75rem;    /* 44px */
+}
+
+body {
+    font-family: var(--font-family);
+    background: var(--background-color);
+    color: var(--text-primary);
+    line-height: 1.6;
+}
+
+/* Typography */
+h1 {
+    font-size: var(--font-size-4xl);
+    font-weight: 700;
+    color: var(--primary-color);
+    margin-bottom: 1.5rem;
+    letter-spacing: -0.025em;
+}
+
+h2 {
+    font-size: var(--font-size-xl);
+    font-weight: 400;
+    color: var(--text-secondary);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Layout */
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+    background: #fff;
+    min-height: 100vh;
+}
+
+#content {
+    width: 100%;
+    padding: 2rem;
+    min-height: 100vh;
+    transition: all 0.3s;
+    background: var(--background-color);
+}
+
+.container-fluid {
+    max-width: none;
+    padding: 0 2rem;
+}
+
+/* Card Styles */
+.card {
+    background: #fff;
+    border-radius: 16px;
+    border: none;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    transition: all 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+    transform: translateY(-2px);
+}
+
+/* Filter Section */
+.filter-row {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    margin-bottom: 2rem;
+}
+
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group label {
+    font-weight: 500;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+    font-size: var(--font-size-base);
+}
+
+/* Button Styles */
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: 10px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    font-size: var(--font-size-base);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    border: none;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #145854;
+    transform: translateY(-1px);
+}
+
+/* Table Styles */
+.dataTables_wrapper {
+    background: #fff;
+    padding: 2rem;
+    border-radius: 16px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+table.dataTable {
+    border-collapse: separate !important;
+    border-spacing: 0 0.5rem !important;
+    margin: 1rem 0 !important;
+}
+
+table.dataTable thead th {
+    border: none;
+    background: var(--background-color);
+    color: var(--text-secondary);
+    font-weight: 600;
+    padding: 1.25rem;
+    font-size: var(--font-size-lg);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+table.dataTable tbody td {
+    padding: 1.25rem;
+    border: none;
+    background: #fff;
+    font-size: var(--font-size-lg);
+    vertical-align: middle;
+    line-height: 1.6;
+}
+
+/* Action Buttons */
+.action-btn {
+    padding: 0.625rem 1.25rem;
+    border-radius: 8px;
+    font-size: var(--font-size-base);
+    font-weight: 500;
+    transition: all 0.2s ease;
+    margin: 0 0.25rem;
+}
+
+.paper-btn {
+    background: #e6f7f6;
+    color: var(--primary-color);
+}
+
+.paper-btn:hover {
+    background: #d1f1ef;
+    color: var(--primary-color);
+}
+
+.code-btn {
+    background: #e6f7ed;
+    color: #147a4f;
+}
+
+.code-btn:hover {
+    background: #d1f1e1;
+    color: #147a4f;
+}
+
+/* Search and Length Controls */
+.dataTables_length select,
+.dataTables_filter input,
+.form-control,
+.form-select {
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.75rem 1rem;
+    font-size: var(--font-size-base);
+    color: var(--text-primary);
+    background-color: #fff;
+    transition: all 0.2s ease;
+    height: auto;
+}
+
+.dataTables_length select:focus,
+.dataTables_filter input:focus,
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(25, 106, 101, 0.1);
+    outline: none;
+}
+
+/* Pagination */
+.dataTables_paginate .paginate_button {
+    padding: 0.75rem 1.5rem !important;
+    margin: 0 0.25rem !important;
+    border-radius: 8px !important;
+    border: none !important;
+    background: #fff !important;
+    color: var(--text-primary) !important;
+    font-weight: 500 !important;
+    font-size: var(--font-size-lg) !important;
+    transition: all 0.2s ease !important;
+}
+
+.dataTables_paginate .paginate_button:hover {
+    background: var(--background-color) !important;
+    color: var(--primary-color) !important;
+}
+
+.dataTables_paginate .paginate_button.current {
+    background: var(--primary-color) !important;
+    color: #fff !important;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    :root {
+        --font-size-4xl: 2.25rem;  /* Slightly smaller on mobile */
+        --font-size-3xl: 2rem;
+        --font-size-2xl: 1.75rem;
+        --font-size-xl: 1.375rem;
+        --font-size-lg: 1.25rem;
+        --font-size-base: 1.125rem;
+        --font-size-sm: 1rem;
+        --font-size-xs: 0.875rem;
+    }
+    
+    .container-fluid {
+        padding: 0 1rem;
+    }
+    
+    .filter-row {
+        padding: 1.25rem;
+    }
+    
+    .dataTables_wrapper {
+        padding: 1.25rem;
+    }
+    
+    table.dataTable tbody td {
+        padding: 1rem;
+    }
+    
+    .action-btn {
+        padding: 0.5rem 1rem;
+    }
+}
+
+/* Sidebar styles */
+#sidebar {
+    min-width: var(--sidebar-width);
+    max-width: var(--sidebar-width);
+    background: linear-gradient(135deg, #0a2e2c 0%, #196a65 100%);
+    color: #fff;
+    transition: all 0.3s;
+    height: 100vh;
+    position: sticky;
+    top: 0;
+    box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+}
+
+#sidebar.active {
+    margin-left: calc(-1 * var(--sidebar-width));
+}
+
+#sidebar .sidebar-header {
+    padding: 20px;
+    background: rgba(0, 0, 0, 0.1);
+}
+
+#sidebar .sidebar-header h3 {
+    color: #fff;
+    font-size: var(--font-size-2xl);
+    margin: 0;
+    font-weight: 600;
+}
+
+#sidebar ul.components {
+    padding: 20px 0;
+}
+
+#sidebar ul li a {
+    padding: 15px 20px;
+    font-size: var(--font-size-lg);
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    transition: all 0.3s;
+    border-left: 4px solid transparent;
+}
+
+#sidebar ul li a i {
+    margin-right: 10px;
+    width: 20px;
+    text-align: center;
+}
+
+#sidebar ul li a:hover {
+    background: rgba(255,255,255,0.1);
+    color: #fff;
+    border-left-color: #84d7e1;
+}
+
+#sidebar ul li.active > a {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border-left-color: #84d7e1;
+}
+
+/* Submenu styles */
+#sidebar ul ul {
+    background: rgba(255,255,255,0.1);
+}
+
+#sidebar ul ul a {
+    padding-left: 40px;
+    font-size: var(--font-size-base);
+}
+
+#sidebar .dropdown-toggle::after {
+    display: block;
+    position: absolute;
+    top: 50%;
+    right: 20px;
+    transform: translateY(-50%);
+}
+
+/* Navbar styles */
+#sidebarCollapse {
+    background: transparent;
+    border: none;
+    padding: 12px;
+    margin: 15px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    color: #196a65;
+    font-size: 20px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#sidebarCollapse:hover {
+    background: rgba(25, 106, 101, 0.1);
+    transform: scale(1.05);
+}
+
+#sidebarCollapse:active {
+    transform: scale(0.95);
+}
+
+#sidebarCollapse i {
+    color: #196a65;
+}
+
+#sidebarCollapse .navbar-toggler-icon {
+    width: 1.5em;
+    height: 1.5em;
+    background-image: none;
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+#sidebarCollapse .navbar-toggler-icon::before,
+#sidebarCollapse .navbar-toggler-icon::after,
+#sidebarCollapse .navbar-toggler-icon {
+    width: 25px;
+    height: 2px;
+    background-color: #196a65;
+    display: inline-block;
+    transition: all 0.3s ease;
+}
+
+#sidebarCollapse .navbar-toggler-icon::before,
+#sidebarCollapse .navbar-toggler-icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+}
+
+#sidebarCollapse .navbar-toggler-icon::before {
+    top: -8px;
+}
+
+#sidebarCollapse .navbar-toggler-icon::after {
+    bottom: -8px;
+}
+
+#sidebarCollapse[aria-expanded="true"] .navbar-toggler-icon {
+    background-color: transparent;
+}
+
+#sidebarCollapse[aria-expanded="true"] .navbar-toggler-icon::before {
+    transform: rotate(45deg);
+    top: 0;
+}
+
+#sidebarCollapse[aria-expanded="true"] .navbar-toggler-icon::after {
+    transform: rotate(-45deg);
+    bottom: 0;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    #sidebar {
+        margin-left: calc(-1 * var(--sidebar-width));
+    }
+    #sidebar.active {
+        margin-left: 0;
+    }
+    #content {
+        padding: 15px;
+    }
+    .table {
+        font-size: var(--font-size-base);
+    }
+    .table thead th {
+        font-size: var(--font-size-lg);
+        padding: 12px;
+    }
+    .table tbody td {
+        padding: 10px 12px;
+    }
+    h1 {
+        font-size: calc(var(--font-size-h1) * 0.8);
+    }
+    .form-select, .form-control {
+        font-size: calc(var(--font-size-base) * 0.95);
+    }
+}
+
+/* Description text */
+p.text-center {
+    font-size: var(--font-size-lg);
+    color: #2c3e50;
+    max-width: 800px;
+    margin: 0 auto 30px;
+}
+
+/* Links in table */
+table.dataTable tbody td a {
+    font-size: var(--font-size-base);
+    text-decoration: none;
+    font-weight: 500;
+}
+
+/* Search box */
+.dataTables_filter input {
+    font-size: var(--font-size-base);
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #dee2e6;
+}
+
+/* DataTables info text */
+.dataTables_info {
+    font-size: var(--font-size-lg);
+    color: var(--text-secondary);
+    padding-top: 1rem;
+}
+
+.dataTables_length,
+.dataTables_filter,
+.dataTables_info {
+    font-size: var(--font-size-lg);
+    margin: 1rem 0;
+}
+
+.dataTables_length select,
+.dataTables_filter input {
+    font-size: var(--font-size-lg);
+    padding: 0.75rem 1rem;
+}
+
+/* Column widths */
+table.dataTable .column-title {
+    width: 30% !important;
+}
+
+table.dataTable .column-platform {
+    width: 12% !important;
+}
+
+table.dataTable .column-date {
+    width: 10% !important;
+}
+
+table.dataTable .column-highlight {
+    width: 30% !important;
+}
+
+table.dataTable .column-links {
+    width: 10% !important;
+}
+
+table.dataTable .column-category {
+    width: 8% !important;
+}
+
+/* Table header and cell styles */
+table.dataTable thead th {
+    padding: 15px 10px !important;
+    font-weight: 600;
+    white-space: nowrap;
+    background-color: #f8f9fa;
+    border-bottom: 2px solid #dee2e6 !important;
+}
+
+table.dataTable tbody td {
+    padding: 12px 10px !important;
+    vertical-align: middle;
+    border-bottom: 1px solid #dee2e6;
+}
+
+/* DataTables controls styling */
+.dataTables_length,
+.dataTables_filter,
+.dataTables_info,
+.dataTables_paginate {
+    margin: 15px 0;
+    padding: 0 15px;
+    font-size: var(--font-size-base);
+}
+
+.dataTables_length select,
+.dataTables_filter input {
+    font-size: var(--font-size-base) !important;
+    padding: 6px 12px !important;
+    border: 1px solid #dee2e6 !important;
+    border-radius: 8px !important;
+    background-color: #fff !important;
+}
+
+.dataTables_length select {
+    min-width: 80px !important;
+}
+
+/* Pagination styling */
+.paginate_button {
+    font-size: var(--font-size-base) !important;
+}
+
+/* Responsive styles */
+@media screen and (max-width: 992px) {
+    table.dataTable thead th,
+    table.dataTable tbody td {
+        padding: 10px 8px !important;
+    }
+
+    .dataTables_scrollBody {
+        min-height: 300px;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    table.dataTable thead th,
+    table.dataTable tbody td {
+        padding: 8px 6px !important;
+        font-size: calc(var(--font-size-base) * 0.9);
+    }
+
+    .dataTables_scrollBody {
+        min-height: 200px;
+    }
+
+    .dataTables_wrapper {
+        padding: 0 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .button-container {
+        gap: 4px;
+    }
+    
+    .action-btn {
+        min-width: 60px;
+        padding: 4px 8px;
+    }
+}
+
+/* Make sure the table fills the container */
+.table-responsive {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+/* Ensure content area takes remaining width */
+.wrapper {
+    display: flex;
+    width: 100%;
+    align-items: stretch;
+}
+
+/* DatePicker Styles */
+.datepicker {
+    padding: 25px !important;
+    border-radius: 16px !important;
+    border: none !important;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15) !important;
+    font-family: var(--font-family) !important;
+    background: #fff !important;
+    width: 400px !important;
+    font-size: var(--font-size-lg) !important;
+}
+
+.datepicker table {
+    width: 100% !important;
+}
+
+.datepicker table tr td,
+.datepicker table tr th {
+    border-radius: 12px !important;
+    padding: 15px !important;
+    font-size: var(--font-size-lg) !important;
+    width: 48px !important;
+    height: 48px !important;
+    line-height: 1.2 !important;
+}
+
+.datepicker .datepicker-switch,
+.datepicker .prev,
+.datepicker .next {
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+    padding: 20px !important;
+    font-size: var(--font-size-xl) !important;
+}
+
+.datepicker thead tr:first-child {
+    border-bottom: 2px solid rgba(0,0,0,0.1) !important;
+    margin-bottom: 15px !important;
+}
+
+.datepicker thead th {
+    font-weight: 600 !important;
+    color: var(--text-secondary) !important;
+    font-size: var(--font-size-lg) !important;
+    padding: 15px !important;
+}
+
+.datepicker table tr td.active,
+.datepicker table tr td.active:hover,
+.datepicker table tr td.active.disabled,
+.datepicker table tr td.active.disabled:hover {
+    background: var(--primary-color) !important;
+    color: #fff !important;
+    text-shadow: none !important;
+    border: none !important;
+    font-weight: 600 !important;
+}
+
+.datepicker table tr td:hover {
+    background: rgba(25, 106, 101, 0.1) !important;
+    color: var(--primary-color) !important;
+}
+
+.datepicker table tr td.today,
+.datepicker table tr td.today:hover {
+    background-color: rgba(132, 215, 225, 0.3) !important;
+    color: var(--primary-color) !important;
+    font-weight: 600 !important;
+}
+
+/* Input field styles */
+input[type="text"].form-control.datepicker {
+    font-size: var(--font-size-lg) !important;
+    padding: 12px 16px !important;
+    height: auto !important;
+}

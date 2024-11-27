@@ -1,0 +1,378 @@
+[
+    {
+        "Name": "Web Agents with World Models: Learning and Leveraging Environment Dynamics in Web Navigation",
+        "Platform": "Web",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.13232v1",
+        "Highlight": "Uses a world model to predict state changes before committing actions, improving task success rates and minimizing unnecessary interactions with the environment",
+        "Code_Url": "https://github.com/kyle8581/WMA-Agents"
+    },
+    {
+        "Name": "A Real-World WebAgent with Planning, Long Context Understanding, and Program Synthesis",
+        "Platform": "Web",
+        "Date": "July 2023",
+        "Paper_Url": "http://arxiv.org/abs/2307.12856v4",
+        "Highlight": "Leverages specialized LLMs to achieve HTML-based task planning and programmatic action execution",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "LASER: LLM Agent with State-Space Exploration for Web Navigation",
+        "Platform": "Web",
+        "Date": "September 2023",
+        "Paper_Url": "http://arxiv.org/abs/2309.08172v2",
+        "Highlight": "Uses a state-space exploration approach, allowing it to handle novel situations with flexible backtracking",
+        "Code_Url": "https://github.com/Mayer123/LASER"
+    },
+    {
+        "Name": "WebVoyager: Building an End-to-End Web Agent with Large Multimodal Models",
+        "Platform": "Web",
+        "Date": "January 2024",
+        "Paper_Url": "http://arxiv.org/abs/2401.13919v4",
+        "Highlight": "Integrates visual and textual cues within real-world, rendered web pages, enhancing its ability to navigate complex web structures",
+        "Code_Url": "https://github.com/MinorJerry/WebVoyager"
+    },
+    {
+        "Name": "AutoWebGLM: A Large Language Model-based Web Navigating Agent",
+        "Platform": "Web",
+        "Date": "April 2024",
+        "Paper_Url": "https://arxiv.org/abs/2404.03648",
+        "Highlight": "Its HTML simplification method for efficient webpage comprehension and its bilingual benchmark",
+        "Code_Url": "https://github.com/THUDM/AutoWebGLM"
+    },
+    {
+        "Name": "OpenAgents: An Open Platform for Language Agents in the Wild",
+        "Platform": "Web",
+        "Date": "October 2023",
+        "Paper_Url": "http://arxiv.org/abs/2310.10634v1",
+        "Highlight": "Democratizes access to language agents by providing an open-source, multi-agent framework optimized for real-world tasks",
+        "Code_Url": "https://github.com/xlang-ai/OpenAgents"
+    },
+    {
+        "Name": "GPT-4V(ision) is a Generalist Web Agent, if Grounded",
+        "Platform": "Web",
+        "Date": "January 2024",
+        "Paper_Url": "http://arxiv.org/abs/2401.01614v2",
+        "Highlight": "Its use of GPT-4V's multimodal capabilities to integrate both visual and HTML information, allowing for more accurate task performance on dynamic web content",
+        "Code_Url": "https://github.com/OSU-NLP-Group/SeeAct"
+    },
+    {
+        "Name": "Dual-View Visual Contextualization for Web Navigation",
+        "Platform": "Web",
+        "Date": "February 2024",
+        "Paper_Url": "http://arxiv.org/abs/2402.04476v2",
+        "Highlight": "Dual-view contextualization",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "Agent-E: From Autonomous Web Navigation to Foundational Design Principles in Agentic Systems",
+        "Platform": "Web",
+        "Date": "July 2024",
+        "Paper_Url": "http://arxiv.org/abs/2407.13032v1",
+        "Highlight": "Hierarchical architecture and adaptive DOM perception",
+        "Code_Url": "https://github.com/EmergenceAI/Agent-E"
+    },
+    {
+        "Name": "Tree Search for Language Model Agents",
+        "Platform": "Web",
+        "Date": "July 2024",
+        "Paper_Url": "http://arxiv.org/abs/2407.01476v2",
+        "Highlight": "Novel inference-time search algorithm that enhances the agent\u2019s ability to perform multi-step planning and decision-making",
+        "Code_Url": "https://jykoh.com/search-agents"
+    },
+    {
+        "Name": "WebPilot: A Versatile and Autonomous Multi-Agent System for Web Task Execution with Strategic Exploration",
+        "Platform": "Web",
+        "Date": "August 2024",
+        "Paper_Url": "http://arxiv.org/abs/2408.15978v1",
+        "Highlight": "Dual optimization strategy (Global and Local) with Monte Carlo Tree Search (MCTS), allowing dynamic adaptation to complex, real-world web environments",
+        "Code_Url": "https://yaoz720.github.io/WebPilot/"
+    },
+    {
+        "Name": "Beyond Browsing: API-Based Web Agents",
+        "Platform": "Web",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.16464v1",
+        "Highlight": "Hybrid Agent seamlessly integrates web browsing and API calls",
+        "Code_Url": "https://github.com/yueqis/API-Based-Agent"
+    },
+    {
+        "Name": "AgentOccam: A Simple Yet Strong Baseline for LLM-Based Web Agents",
+        "Platform": "Web",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.13825v1",
+        "Highlight": "Simple design that optimizes the observation and action spaces",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "NNetscape Navigator: Complex Demonstrations for Web Agents Without a Demonstrator",
+        "Platform": "Web",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.02907v1",
+        "Highlight": "Trains web agents using synthetic demonstrations, eliminating the need for expensive human input",
+        "Code_Url": "https://github.com/MurtyShikhar/Nnetnav"
+    },
+    {
+        "Name": "NaviQAte: Functionality-Guided Web Application Navigation",
+        "Platform": "Web",
+        "Date": "September 2024",
+        "Paper_Url": "http://arxiv.org/abs/2409.10741v1",
+        "Highlight": "Frames web navigation as a question-and-answer task",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "OpenWebAgent: An Open Toolkit to Enable Web Agents on Large Language Models",
+        "Platform": "Web",
+        "Date": "August 2024",
+        "Paper_Url": "https://aclanthology.org/2024.acl-demos.8/",
+        "Highlight": "Modular design that allows developers to seamlessly integrate various models to automate web tasks",
+        "Code_Url": "https://github.com/THUDM/OpenWebAgent/"
+    },
+    {
+        "Name": "Steward: Natural Language Web Automation",
+        "Platform": "Web",
+        "Date": "September 2024",
+        "Paper_Url": "http://arxiv.org/abs/2409.15441v1",
+        "Highlight": "Ability to automate web interactions using natural language instructions",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "Is Your LLM Secretly a World Model of the Internet? Model-Based Planning for Web Agents",
+        "Platform": "Web",
+        "Date": "November 2024",
+        "Paper_Url": "http://arxiv.org/abs/2411.06559v1",
+        "Highlight": "Pioneers the use of LLMs as world models for planning in complex web environments",
+        "Code_Url": "https://github.com/OSU-NLP-Group/WebDreamer"
+    },
+    {
+        "Name": "Agent Q: Advanced Reasoning and Learning for Autonomous AI Agents",
+        "Platform": "Web",
+        "Date": "August 13, 2024",
+        "Paper_Url": "http://arxiv.org/abs/2408.07199v1",
+        "Highlight": "Combination of MCTS-guided search and self-critique mechanisms enables iterative improvement in reasoning and task execution",
+        "Code_Url": "https://github.com/sentient-engineering/agent-q"
+    },
+    {
+        "Name": "VisionTasker: Mobile Task Automation Using Vision Based UI Understanding and LLM Task Planning",
+        "Platform": "Android",
+        "Date": "December 18, 2023",
+        "Paper_Url": "http://arxiv.org/abs/2312.11190v2",
+        "Highlight": "Vision-based UI understanding approach, which allows it to interpret UI semantics directly from screenshots without view hierarchy dependencies",
+        "Code_Url": "https://github.com/AkimotoAyako/VisionTasker"
+    },
+    {
+        "Name": "DroidBot-GPT: GPT-powered UI Automation for Android",
+        "Platform": "Android",
+        "Date": "April 14th, 2023.",
+        "Paper_Url": "http://arxiv.org/abs/2304.07061v5",
+        "Highlight": "Automates Android applications without modifications to either the app or the model",
+        "Code_Url": "https://github.com/MobileLLM/DroidBot-GPT"
+    },
+    {
+        "Name": "CoCo-Agent: A Comprehensive Cognitive MLLM Agent for Smartphone GUI Automation",
+        "Platform": "Android",
+        "Date": "February 19, 2024",
+        "Paper_Url": "http://arxiv.org/abs/2402.11941v3",
+        "Highlight": "Its dual approach of Comprehensive Environment Perception and Conditional Action Prediction",
+        "Code_Url": "https://github.com/xbmxb/CoCo-Agent"
+    },
+    {
+        "Name": "You Only Look at Screens: Multimodal Chain-of-Action Agents",
+        "Platform": "Android",
+        "Date": "September 2023",
+        "Paper_Url": "http://arxiv.org/abs/2309.11436v4",
+        "Highlight": "Its direct interaction with GUI elements. Its chain-of-action mechanism enables it to leverage both past and planned actions",
+        "Code_Url": "https://github.com/cooelf/Auto-GUI"
+    },
+    {
+        "Name": "GPT-4V in Wonderland: Large Multimodal Models for Zero-Shot Smartphone GUI Navigation",
+        "Platform": "IOS and Android",
+        "Date": "November 13th, 2023",
+        "Paper_Url": "http://arxiv.org/abs/2311.07562v1",
+        "Highlight": "Using set-of-mark prompting with GPT-4V for precise GUI navigation on smartphones",
+        "Code_Url": "https://github.com/zzxslp/MM-Navigator"
+    },
+    {
+        "Name": "AppAgent: Multimodal Agents as Smartphone Users",
+        "Platform": "Android",
+        "Date": "December 2023",
+        "Paper_Url": "http://arxiv.org/abs/2312.13771v2",
+        "Highlight": "Its ability to perform tasks on any smartphone app using a human-like interaction method",
+        "Code_Url": "https://appagent-official.github.io/"
+    },
+    {
+        "Name": "AppAgent v2: Advanced Agent for Flexible Mobile Interactions",
+        "Platform": "Android",
+        "Date": "August 2024",
+        "Paper_Url": "http://arxiv.org/abs/2408.11824v3",
+        "Highlight": "Enhances adaptability and precision in mobile environments by combining structured data parsing with visual features",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "ScreenAgent: A Vision Language Model-driven Computer Control Agent",
+        "Platform": "Linux and Windows",
+        "Date": "February 2024",
+        "Paper_Url": "http://arxiv.org/abs/2402.07945v1",
+        "Highlight": "Integrated planning-acting-reflecting pipeline that simulates a continuous thought process",
+        "Code_Url": "https://github.com/niuzaisheng/ScreenAgent"
+    },
+    {
+        "Name": "AutoDroid: LLM-powered Task Automation in Android",
+        "Platform": "Android",
+        "Date": "August 2023",
+        "Paper_Url": "http://arxiv.org/abs/2308.15272v4",
+        "Highlight": "Its use of app-specific knowledge and a multi-granularity query optimization module to reduce the computational cost",
+        "Code_Url": "https://autodroid-sys.github.io/"
+    },
+    {
+        "Name": "Android in the Zoo: Chain-of-Action-Thought for GUI Agents",
+        "Platform": "Android",
+        "Date": "March 2024",
+        "Paper_Url": "http://arxiv.org/abs/2403.02713v2",
+        "Highlight": "The integration of a chain-of-action-thought process, which explicitly maps each action to screen descriptions, reasoning steps, and anticipated outcomes",
+        "Code_Url": "https://github.com/ZhangL-HKU/CoAT"
+    },
+    {
+        "Name": "Mobile-Agent: Autonomous Multi-Modal Mobile Device Agent with Visual Perception",
+        "Platform": "Android",
+        "Date": "January 2024",
+        "Paper_Url": "http://arxiv.org/abs/2401.16158v2",
+        "Highlight": "Vision-centric approach that eliminates dependency on system-specific data",
+        "Code_Url": "https://github.com/X-PLUG/MobileAgent"
+    },
+    {
+        "Name": "Mobile-Agent-v2: Mobile Device Operation Assistant with Effective Navigation via Multi-Agent Collaboration",
+        "Platform": "Android and Harmony",
+        "Date": "June 2024",
+        "Paper_Url": "http://arxiv.org/abs/2406.01014v1",
+        "Highlight": "Multi-agent architecture enhances task navigation for long-sequence operations",
+        "Code_Url": "https://github.com/X-PLUG/MobileAgent"
+    },
+    {
+        "Name": "MobileExperts: A Dynamic Tool-Enabled Agent Team in Mobile Devices",
+        "Platform": "Android",
+        "Date": "July 2024",
+        "Paper_Url": "http://arxiv.org/abs/2407.03913v1",
+        "Highlight": "Code-combined tool formulation method and double-layer planning mechanism for collaborative task execution",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "Lightweight Multi-Modal Android App Control",
+        "Platform": "Android",
+        "Date": "October 2024",
+        "Paper_Url": "https://arxiv.org/abs/2410.17883",
+        "Highlight": "Balances computational efficiency and natural language understanding",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "MobA: A Two-Level Agent System for Efficient Mobile Task Automation",
+        "Platform": "Android",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.13757v1",
+        "Highlight": "Two-level agent system that separates task planning and execution into two specialized agents",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "UFO: A UI-Focused Agent for Windows OS Interaction",
+        "Platform": "Windows",
+        "Date": "February 2024",
+        "Paper_Url": "https://arxiv.org/abs/2402.07939",
+        "Highlight": "Its dual-agent system that seamlessly navigates and interacts with multiple applications to fulfill complex user requests in natural language on Windows OS",
+        "Code_Url": "https://github.com/microsoft/UFO"
+    },
+    {
+        "Name": "OS-Copilot: Towards Generalist Computer Agents with Self-Improvement",
+        "Platform": "Linux and MacOS",
+        "Date": "February 2024",
+        "Paper_Url": "http://arxiv.org/abs/2402.07456v2",
+        "Highlight": "Self-directed learning capability, allowing it to adapt to new applications by autonomously generating and refining tools",
+        "Code_Url": "https://os-copilot.github.io/"
+    },
+    {
+        "Name": "Cradle: Empowering Foundation Agents Towards General Computer Control",
+        "Platform": "Windows",
+        "Date": "March 2024",
+        "Paper_Url": "http://arxiv.org/abs/2403.03186v3",
+        "Highlight": "Its generalizability across various digital environments, allowing it to operate without relying on internal APIs",
+        "Code_Url": "https://baai-agents.github.io/Cradle/"
+    },
+    {
+        "Name": "Agent S: An Open Agentic Framework that Uses Computers Like a Human",
+        "Platform": "Ubuntu and Windows",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.08164v1",
+        "Highlight": "Experience-augmented hierarchical planning",
+        "Code_Url": "https://github.com/simular-ai/Agent-S"
+    },
+    {
+        "Name": "GUI Action Narrator: Where and When Did That Action Take Place?",
+        "Platform": "Windows",
+        "Date": "June 2024",
+        "Paper_Url": "http://arxiv.org/abs/2406.13719v1",
+        "Highlight": "Uses the cursor as a focal point to improve understanding of high-resolution GUI actions",
+        "Code_Url": "https://showlab.github.io/GUI-Narrator"
+    },
+    {
+        "Name": "A Zero-Shot Language Agent for Computer Control with Structured Reflection",
+        "Platform": "Computer",
+        "Date": "October 2023",
+        "Paper_Url": "http://arxiv.org/abs/2310.08740v3",
+        "Highlight": "Zero-shot capability in performing computer control tasks",
+        "Code_Url": "https://github.com/google-research/google-research/tree/master/zero_shot_structured_reflection"
+    },
+    {
+        "Name": "AutoGLM: Autonomous Foundation Agents for GUIs",
+        "Platform": "Web and Android",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2411.00820v1",
+        "Highlight": "Self-evolving online curriculum RL framework, which enables continuous improvement by interacting with real-world environments",
+        "Code_Url": "https://xiao9905.github.io/AutoGLM/"
+    },
+    {
+        "Name": "TinyClick: Single-Turn Agent for Empowering GUI Automation",
+        "Platform": "Web, Mobile, and Windows",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.11871v2",
+        "Highlight": "Compact size (0.27B parameters) with high performance",
+        "Code_Url": "https://huggingface.co/Samsung/TinyClick"
+    },
+    {
+        "Name": "OSCAR: Operating System Control via State-Aware Reasoning and Re-Planning",
+        "Platform": "Computer and Mobile",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.18963v1",
+        "Highlight": "Ability to adapt to real-time feedback and dynamically adjust its actions",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "AgentStore: Scalable Integration of Heterogeneous Agents As Specialized Generalist Computer Assistant",
+        "Platform": "Computer and Mobile",
+        "Date": "October 2024",
+        "Paper_Url": "http://arxiv.org/abs/2410.18603v1",
+        "Highlight": "Dynamically integrate a wide variety of heterogeneous agents, enabling both specialized and generalist capabilities",
+        "Code_Url": "https://chengyou-jia.github.io/AgentStore-Home/"
+    },
+    {
+        "Name": "MMAC-Copilot: Multi-modal Agent Collaboration Operating System Copilot",
+        "Platform": "Windows, Mobile applications, and game environments",
+        "Date": "April 2024",
+        "Paper_Url": "http://arxiv.org/abs/2404.18074v2",
+        "Highlight": "Collaborative multi-agent architecture where agents specialize in specific tasks",
+        "Code_Url": "/"
+    },
+    {
+        "Name": "Auto-Intent",
+        "Platform": "Web",
+        "Date": "October 2024",
+        "Paper_Url": "https://arxiv.org/abs/2410.22552",
+        "Highlight": "Introduces a unique self-exploration strategy to generate semantically diverse intent hints",
+        "Code_Url": ""
+    },
+    {
+        "Name": "AdaptAgent",
+        "Platform": "Web",
+        "Date": "November 2024",
+        "Paper_Url": "https://arxiv.org/abs/2411.13451",
+        "Highlight": "Adapts to unseen tasks with just 1–2 multimodal human demonstrations",
+        "Code_Url": ""
+    }
+]
