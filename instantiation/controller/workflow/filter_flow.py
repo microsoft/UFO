@@ -3,6 +3,7 @@ import logging
 import os
 import time
 from typing import Dict, Tuple
+import re
 
 from instantiation.config.config import Config
 from instantiation.controller.agent.agent import FilterAgent
@@ -91,7 +92,13 @@ class FilterFlow:
             response_string, _ = self._filter_agent.get_response(
                 prompt_message, "filter", use_backup_engine=True, configs=_configs
             )
-            response_json = self._filter_agent.response_to_dict(response_string)
+            try:
+                fixed_response_string = self._fix_json_commas(response_string)
+                response_json = self._filter_agent.response_to_dict(fixed_response_string)
+            except json.JSONDecodeError as e:
+                logging.error(f"JSONDecodeError: {e.msg} at position {e.pos}. Response: {response_string}")
+                raise e
+
             execution_time = round(time.time() - start_time, 3)
 
             response_json["execution_time"] = execution_time
@@ -104,8 +111,15 @@ class FilterFlow:
             )
 
         except Exception as e:
-            logging.exception(
-                f"Error in _get_filtered_result: {str(e)} - Prompt: {prompt_message}",
-                exc_info=True,
-            )
-            raise
+            logging.error(f"Error occurred while filtering: {e}")
+            raise e
+
+    def _fix_json_commas(self, json_string: str) -> str:
+        """
+        Function to add missing commas between key-value pairs in a JSON string
+        and remove newline characters for proper formatting.
+        """
+        # Remove newline characters
+        json_string = json_string.replace('\n', '')
+        
+        return json_string

@@ -262,29 +262,29 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         # Try to parse the response. If an error occurs, catch the exception and log the error.
-        # try:
-        #     self._response_json = self.app_agent.response_to_dict(self._response)
+        try:
+            self._response_json = self.app_agent.response_to_dict(self._response)
 
-        # except Exception:
-        #     self.general_error_handler()
-        # FIXME:The cationing  of the namefiled affect the code could not get the data from the json
-        self._control_label = self._response.get("controlLabel", "")
-        self.control_text = self._response.get("controlText", "")
-        self._operation = self._response.get("function", "")
-        self.question_list = self._response.get("questions", [])
-        self._args = utils.revise_line_breaks(self._response.get("args", ""))
+        except Exception:
+            self.general_error_handler()
+
+        self._control_label = self._response_json.get("ControlLabel", "")
+        self.control_text = self._response_json.get("ControlText", "")
+        self._operation = self._response_json.get("Function", "")
+        self.question_list = self._response_json.get("Questions", [])
+        self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
 
         # Convert the plan from a string to a list if the plan is a string.
-        self.plan = self.string2list(self._response.get("plan", ""))
-        self._response["plan"] = self.plan
+        self.plan = self.string2list(self._response_json.get("Plan", ""))
+        self._response_json["Plan"] = self.plan
 
         # Compose the function call and the arguments string.
         self.action = self.app_agent.Puppeteer.get_command_string(
             self._operation, self._args
         )
 
-        self.status = self._response.get("status", "")
-        # self.app_agent.print_response(self._response)
+        self.status = self._response_json.get("Status", "")
+        self.app_agent.print_response(self._response_json)
 
     @BaseProcessor.method_timer
     def execute_action(self) -> None:
@@ -293,9 +293,6 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         control_selected = self._annotation_dict.get(self._control_label, None)
-        control_selected_2 = self._annotation_dict.get(self.control_text, None)
-        if control_selected is None and control_selected_2 is not None:
-            control_selected = control_selected_2
 
         try:
             # Get the selected control item from the annotation dictionary and LLM response.
@@ -404,7 +401,7 @@ class AppAgentProcessor(BaseProcessor):
             "Cost": self._cost,
             "Results": self._results,
         }
-        self._memory_data.set_values_from_dict(self._response)
+        self._memory_data.set_values_from_dict(self._response_json)
         self._memory_data.set_values_from_dict(additional_memory)
         self._memory_data.set_values_from_dict(self._control_log)
         self._memory_data.set_values_from_dict({"time_cost": self._time_cost})
@@ -440,7 +437,6 @@ class AppAgentProcessor(BaseProcessor):
         """
         Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
         """
-        screenshot_saving = self._response.get("SaveScreenshot", {})
         screenshot_saving = self._response.get("SaveScreenshot", {})
 
         if screenshot_saving.get("save", False):

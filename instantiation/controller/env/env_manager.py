@@ -1,7 +1,7 @@
 import logging
 import re
 import time
-
+from typing import Optional
 from fuzzywuzzy import fuzz
 from pywinauto import Desktop
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -28,7 +28,6 @@ class WindowsAppEnv:
         :param app_object: The app object containing information about the application.
         """
         super().__init__()
-        # FIX: 私有属性修改
         self.app_window = None
         self.app_root_name = app_object.app_root_name
         self.app_name = app_object.description.lower()
@@ -39,7 +38,6 @@ class WindowsAppEnv:
         self.win_com_receiver = self._receive_factory.create_receiver(
             self.app_root_name, self.app_name
         )
-        self._control_inspector = ControlInspectorFacade(_BACKEND)
         self._control_inspector = ControlInspectorFacade(_BACKEND)
 
         self._all_controls = None
@@ -81,7 +79,6 @@ class WindowsAppEnv:
         """
         desktop = Desktop(backend=_BACKEND)
         windows_list = desktop.windows()
-        # windows_list = self._control_inspector.get_desktop_windows()
         for window in windows_list:
             window_title = window.element_info.name.lower()
             if self._match_window_name(window_title, doc_name):
@@ -116,63 +113,6 @@ class WindowsAppEnv:
             return (
                 re.search(pattern_1, window_title) is not None
                 or re.search(pattern_2, window_title) is not None
-            )
-        else:
-            logging.exception(f"Unknown match strategy: {_MATCH_STRATEGY}")
-            raise ValueError(f"Unknown match strategy: {_MATCH_STRATEGY}")
-
-    def find_matching_controller(self, control_label: str, control_text: str) -> object:
-        """
-        Finds a matching controller based on the control label and control text.
-        :param control_label: The label of the control to identify it.
-        :param control_text: The text content of the control for additional context.
-        :return: The matched controller object or None if no match is found.
-        """
-        # self._all_controls = self._control_inspector.find_control_elements_in_descendants(self.win_com_receiver)
-        try:
-            # Retrieve controls to match against
-            for control in self._all_controls:
-                if self._match_controller(control, control_label, control_text):
-                    return control
-        except Exception as e:
-            # Log the error or handle it as needed
-            logging.exception(f"Error finding matching controller: {e}")
-            # Assume log_error is a method for logging errors
-            raise
-        # No match found
-        return None
-
-    def _match_controller(
-        self, control_to_match: UIAWrapper, control_label: str, control_text: str
-    ) -> bool:
-        """
-        Matches the controller based on the strategy specified in the config file.
-        :param control_to_match: The control object to match against.
-        :param control_label: The label of the control to identify it.
-        :param control_text: The text content of the control for additional context.
-        :return: True if a match is found based on the strategy; False otherwise.
-        """
-        control_name = (
-            control_to_match.class_name() if control_to_match.class_name() else ""
-        )  # 默认空字符串
-        control_content = (
-            control_to_match.window_text() if control_to_match.window_text() else ""
-        )  # 默认空字符串
-
-        if _MATCH_STRATEGY == "contains":
-            return control_label in control_name and control_text in control_content
-        elif _MATCH_STRATEGY == "fuzzy":
-            similarity_label = fuzz.partial_ratio(control_name, control_label)
-            similarity_text = fuzz.partial_ratio(control_content, control_text)
-            return similarity_label >= 70 and similarity_text >= 70
-        elif _MATCH_STRATEGY == "regex":
-            combined_name_1 = f"{control_label}.*{control_text}"
-            combined_name_2 = f"{control_text}.*{control_label}"
-            pattern_1 = re.compile(combined_name_1, flags=re.IGNORECASE)
-            pattern_2 = re.compile(combined_name_2, flags=re.IGNORECASE)
-
-            return (re.search(pattern_1, control_name) is not None) or (
-                re.search(pattern_2, control_name) is not None
             )
         else:
             logging.exception(f"Unknown match strategy: {_MATCH_STRATEGY}")

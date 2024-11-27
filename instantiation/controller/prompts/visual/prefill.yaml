@@ -59,33 +59,33 @@ system: |-
   ### Action Call Format
   - The action call format is the same as the available actions in the API list.You are required to provide the action call format in a JSON format:
     {{
-      "step <The number of the step>": <The step description the function of the action,which is also the subtask completed by the current action>
-      "controlLabel": <Specify the precise annotated label of the control item to be selected, adhering strictly to the provided options in the field of "label" in the <Doc Control State:>. If you believe none of the control item is suitable for the task or the task is complete, kindly output a empty string ''.>
-      "controlText": <Specify the precise control_text of the control item to be selected, adhering strictly to the provided options in the field of "control_text" in the <Doc Control State:>.The control text must match exactly with the selected control label. 
+      "Step <The number of the step>": <The step description the function of the action,which is also the subtask completed by the current action>
+      "ControlLabel": <Specify the precise annotated label of the control item to be selected, adhering strictly to the provided options in the field of "label" in the <Doc Control State:>. If you believe none of the control item is suitable for the task or the task is complete, kindly output a empty string ''.>
+      "ControlText": <Specify the precise control_text of the control item to be selected, adhering strictly to the provided options in the field of "control_text" in the <Doc Control State:>.The control text must match exactly with the selected control label. 
       If the function to call don't need specify controlText or the task is complete,you can kindly output an empty string ''.
       If the function to call need to specify controlText and none of the control item is suitable for the task,you should input a possible control name.> 
-      "function": <Specify the precise API function name without arguments to be called on the control item to complete the user request, e.g., click_input. Leave it a empty string "" if you believe none of the API function is suitable for the task or the task is complete.>
-      "args": <Specify the precise arguments in a dictionary format of the selected API function to be called on the control item to complete the user request, e.g., {{"control_id":"1","button": "left", "double": false}}. Leave it a empty dictionary {{}} if you the API does not require arguments, or you believe none of the API function is suitable for the task, or the task is complete.>
+      "Function": <Specify the precise API function name without arguments to be called on the control item to complete the user request, e.g., click_input. Leave it a empty string "" if you believe none of the API function is suitable for the task or the task is complete.>
+      "Args": <Specify the precise arguments in a dictionary format of the selected API function to be called on the control item to complete the user request, e.g., {{"control_id":"1","button": "left", "double": false}}. Leave it a empty dictionary {{}} if you the API does not require arguments, or you believe none of the API function is suitable for the task, or the task is complete.>
     }}
 
     e.g.
       {{
-          "step 1": "change the borders",
-          "controlLabel": "",
-          "controlText": "Borders",
-          "function": "click_input",
-          "args": {{
+          "Step 1": "change the borders",
+          "ControlLabel": "",
+          "ControlText": "Borders",
+          "Function": "click_input",
+          "Args": {{
               "button": "left",
               "double": false
           }}
       }}
 
       {{
-        "step 2": "change the borders",
-          "controlLabel": "101",
-          "controlText": "Borders",
-          "function": "click_input",
-          "args": {{
+        "Step 2": "change the borders",
+          "ControlLabel": "101",
+          "ControlText": "Borders",
+          "Function": "click_input",
+          "Args": {{
               "control_id": "101",
               "button": "left",
               "double": false
@@ -93,11 +93,11 @@ system: |-
       }}
 
       {{
-          "step 3": "select the target text",
-          "controlLabel": "",
-          "controlText": "",
-          "function": "select_text",
-          "args": {{
+          "Step 3": "select the target text",
+          "ControlLabel": "",
+          "ControlText": "",
+          "Function": "select_text",
+          "Args": {{
               "text": "Test For Fun"
           }}
       }}

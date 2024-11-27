@@ -7,3 +7,4 @@ templates/word/*
 logs/*
 controller/utils/
 config/config.yaml
+tasks/prefill

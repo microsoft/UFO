@@ -1,25 +1,26 @@
 import glob
 import json
-import logging
 import os
 import time
+import trace
 import traceback
 from enum import Enum
-from typing import Any, Dict
-
-from zmq import Context
-
-from zmq import Context
-
+from typing import Any, Dict, Optional
+from contextlib import contextmanager
 from instantiation.config.config import Config
-from ufo.module.basic import BaseSession
 
 # Set the environment variable for the run configuration.
-os.environ["RUN_CONFIGS"] = "false"
+os.environ["RUN_CONFIGS"] = "True"
 
 # Load configuration data.
 _configs = Config.get_instance().config_data
 
+@contextmanager
+def stage_context(stage_name):
+    try:
+        yield stage_name
+    except Exception as e:
+        raise e
 
 class AppEnum(Enum):
     """
@@ -96,12 +97,8 @@ class InstantiationProcess:
         all_task_files = glob.glob(all_task_file_path)
         for index, task_file in enumerate(all_task_files, start=1):
             print(f"Task starts: {index} / {len(all_task_files)}")
-            try:
-                task_object = TaskObject(task_dir_name, task_file)
-                self.instantiate_single_file(task_object)
-            except Exception as e:
-                logging.exception(f"Error in task {index}: {str(e)}")
-                self._handle_error(task_object.task_file_base_name, e)
+            task_object = TaskObject(task_dir_name, task_file)
+            self.instantiate_single_file(task_object)
 
         print("All tasks have been processed.")
 
@@ -124,106 +121,90 @@ class InstantiationProcess:
         app_name = app_object.description.lower()
         app_env = WindowsAppEnv(app_object)
         task_file_name = task_object.task_file_name
-        task_file_base_name = task_object.task_file_base_name
+
+        stage = None  # To store which stage the error occurred at
+        is_quality_good = False
+        is_completed = ""
+        instantiated_task_info = {
+            "unique_id": task_object.unique_id,
+            "original_task": task_object.task,
+            "original_steps": task_object.refined_steps,
+            "instantiated_request": None,
+            "instantiated_plan": None,
+            "result": {},
+            "time_cost": {}
+        }  # Initialize with a basic structure to avoid "used before assignment" error
 
         try:
             start_time = time.time()
 
             # Initialize the template flow and execute it to copy the template
-            choose_template_flow = ChooseTemplateFlow(
-                app_name, app_object.file_extension, task_file_name
-            )
-            template_copied_path = choose_template_flow.execute()
+            with stage_context("choose_template") as stage:
+                choose_template_flow = ChooseTemplateFlow(
+                    app_name, app_object.file_extension, task_file_name
+                )
+                template_copied_path = choose_template_flow.execute()
+                instantiated_task_info["time_cost"]["choose_template"] = choose_template_flow.execution_time
 
             # Initialize the prefill flow and execute it with the copied template and task details
-            prefill_flow = PrefillFlow(app_env, task_file_name)
-            instantiated_request, instantiated_plan = prefill_flow.execute(
-                template_copied_path, task_object.task, task_object.refined_steps
-            )
+            with stage_context("prefill") as stage:
+                prefill_flow = PrefillFlow(app_env, task_file_name)
+                instantiated_request, instantiated_plan = prefill_flow.execute(
+                    template_copied_path, task_object.task, task_object.refined_steps
+                )
+                instantiated_task_info["instantiated_request"] = instantiated_request
+                instantiated_task_info["instantiated_plan"] = instantiated_plan
+                instantiated_task_info["time_cost"]["prefill"] = prefill_flow.execution_time
 
             # Initialize the filter flow to evaluate the instantiated request
-            filter_flow = FilterFlow(app_name, task_file_name)
-            is_quality_good, filter_result, request_type = filter_flow.execute(
-                instantiated_request
-            )
-            context = Context()
-            execute_flow = ExecuteFlow(app_env, task_file_name, context)
-            execute_result = execute_flow.execute(instantiated_plan)
+            with stage_context("filter") as stage:
+                filter_flow = FilterFlow(app_name, task_file_name)
+                is_quality_good, filter_result, request_type = filter_flow.execute(
+                    instantiated_request
+                )
+                instantiated_task_info["result"]["filter"] = filter_result
+                instantiated_task_info["time_cost"]["filter"] = filter_flow.execution_time
+
+            # Initialize the execute flow and execute it with the instantiated plan
+            with stage_context("execute") as stage:
+                context = Context()
+                execute_flow = ExecuteFlow(app_env, task_file_name, context)
+                execute_result, _ = execute_flow.execute(task_object.task, instantiated_plan)
+                is_completed = execute_result["complete"]
+                instantiated_task_info["result"]["execute"] = execute_result
+                instantiated_task_info["time_cost"]["execute"] = execute_flow.execution_time
 
             # Calculate total execution time for the process
-            total_execution_time = round(time.time() - start_time, 3)
+            instantiation_time = round(time.time() - start_time, 3)
+            instantiated_task_info["time_cost"]["total"] = instantiation_time
 
-            # Prepare a dictionary to store the execution time for each stage
-            execution_time = {
-                "choose_template": choose_template_flow.execution_time,
-                "prefill": prefill_flow.execution_time,
-                "filter": filter_flow.execution_time,
-                "execute": execute_flow.execution_time,
-                "execute": execute_flow.execution_time,
-                "total": total_execution_time,
-            }
-
-            # Prepare the result structure to capture the filter result
-            result = {
-                "filter": filter_result,
-                "execute": execute_result,
-            }
-
-            # Create a summary of the instantiated task information
-            instantiated_task_info = {
-                "unique_id": task_object.unique_id,
-                "original_task": task_object.task,
-                "original_steps": task_object.refined_steps,
-                "instantiated_request": instantiated_request,
-                "instantiated_plan": instantiated_plan,
-                "result": result,
-                "execution_time": execution_time,
-            }
-
-            # Save the instantiated task information using the designated method
-            self._save_instantiated_task(
-                instantiated_task_info, task_object.task_file_base_name, is_quality_good
-            )
         except Exception as e:
-            logging.exception(f"Error processing task: {str(e)}")
-            raise
+            instantiated_task_info["error"] = {
+                "stage": stage,
+                "type": str(e.__class__),
+                "error_message": str(e),
+                "traceback": traceback.format_exc(),
+            }
 
-    def _handle_error(self, task_file_base_name: str, error: Exception) -> None:
-        """
-        Handle error logging for task processing.
-        :param task_file_base_name: The base name of the task file.
-        :param error: The exception raised during processing.
-        """
-        error_folder = os.path.join(
-            _configs["TASKS_HUB"], "instantiated", "instances_error"
-        )
-        os.makedirs(error_folder, exist_ok=True)
-
-        err_logger = BaseSession.initialize_logger(
-            error_folder, task_file_base_name, "w", _configs
-        )
-
-        # Use splitlines to keep the original line breaks in traceback
-        formatted_traceback = traceback.format_exc()
-
-        error_log = {
-            "error_message": str(error),
-            "traceback": formatted_traceback,  # Keep original traceback line breaks
-        }
-
-        err_logger.error(json.dumps(error_log, ensure_ascii=False, indent=4))
+        finally:
+            app_env.close()
+            self._save_instantiated_task(
+                instantiated_task_info, task_object.task_file_base_name, is_quality_good, is_completed
+            )
 
     def _save_instantiated_task(
         self,
         instantiated_task_info: Dict[str, Any],
         task_file_base_name: str,
         is_quality_good: bool,
+        is_completed: str,
     ) -> None:
         """
         Save the instantiated task information to a JSON file.
         :param instantiated_task_info: A dictionary containing instantiated task details.
         :param task_file_base_name: The base name of the task file.
         :param is_quality_good: Indicates whether the quality of the task is good.
+        :param is_completed: Indicates whether the task is completed.
         """
         # Convert the dictionary to a JSON string
         task_json = json.dumps(instantiated_task_info, ensure_ascii=False, indent=4)
@@ -232,7 +213,14 @@ class InstantiationProcess:
         instance_folder = os.path.join(_configs["TASKS_HUB"], "instantiated_results")
         pass_folder = os.path.join(instance_folder, "instances_pass")
         fail_folder = os.path.join(instance_folder, "instances_fail")
-        target_folder = pass_folder if is_quality_good else fail_folder
+        unsure_folder = os.path.join(instance_folder, "instances_unsure")
+
+        if is_completed == "unsure":
+            target_folder = unsure_folder
+        elif is_completed == "yes" and is_quality_good:
+            target_folder = pass_folder
+        else:
+            target_folder = fail_folder
 
         new_task_path = os.path.join(target_folder, task_file_base_name)
         os.makedirs(os.path.dirname(new_task_path), exist_ok=True)

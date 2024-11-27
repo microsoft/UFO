@@ -116,7 +116,7 @@ class PrefillFlow(AppAgentProcessor):
 
         except Exception as e:
             logging.exception(f"Error in prefilling task: {e}")
-            raise
+            raise e
 
         return instantiated_request, instantiated_plan
 
@@ -203,7 +203,7 @@ class PrefillFlow(AppAgentProcessor):
         except Exception as e:
             self._status = "ERROR"
             logging.exception(f"Error in prefilling task: {e}")
-            raise
+            raise e
         finally:
             # Log the response and execution time
             self._log_response(response_json, execution_time)
@@ -259,4 +259,4 @@ class PrefillFlow(AppAgentProcessor):
             print(f"Screenshot saved to {save_path}")
         except Exception as e:
             logging.exception(f"Failed to save screenshot: {e}")
-            raise
+            raise e

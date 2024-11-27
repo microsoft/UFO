@@ -3,9 +3,10 @@
 
 import json
 import os
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from ufo.prompter.basic import BasicPrompter
+from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 
 
 class FilterPrompter(BasicPrompter):
@@ -333,40 +334,35 @@ class PrefillPrompter(BasicPrompter):
 
         return self.retrived_documents_prompt_helper(header, separator, example_list)
 
-
-class ExecutePrompter(BasicPrompter):
+class ExecuteEvalAgentPrompter(EvaluationAgentPrompter):
     """
-    Load the prompt for the ExecuteAgent.
+    Execute the prompt for the ExecuteEvalAgent.
     """
-
     def __init__(
         self,
         is_visual: bool,
         prompt_template: str,
         example_prompt_template: str,
         api_prompt_template: str,
+        root_name: Optional[str] = None,
     ):
         """
-        Initialize the ExecutePrompter.
-        :param is_visual: The flag indicating whether the prompter is visual or not.
-        :param prompt_template: The prompt template.
-        :param example_prompt_template: The example prompt template.
-        :param api_prompt_template: The API prompt template.
+        Initialize the CustomEvaluationAgentPrompter.
+        :param is_visual: Whether the request is for visual model.
+        :param prompt_template: The path of the prompt template.
+        :param example_prompt_template: The path of the example prompt template.
+        :param api_prompt_template: The path of the api prompt template.
+        :param root_name: The name of the root application.
         """
+        super().__init__(is_visual, prompt_template, example_prompt_template, api_prompt_template, root_name)
 
-        super().__init__(is_visual, prompt_template, example_prompt_template)
-        self.api_prompt_template = self.load_prompt_template(
-            api_prompt_template, is_visual
-        )
-
-    def load_screenshots(self, log_path: str) -> str:
+    @staticmethod
+    def load_logs(log_path: str) -> List[Dict[str, str]]:
         """
-        Load the first and last screenshots from the log path.
-        :param log_path: The path of the log.
-        :return: The screenshot URL.
+        Load logs from the log path.
         """
-        from ufo.prompter.eva_prompter import EvaluationAgentPrompter
-
-        init_image = os.path.join(log_path, "screenshot.png")
-        init_image_url = EvaluationAgentPrompter.load_single_screenshot(init_image)
-        return init_image_url
+        log_file_path = os.path.join(log_path, "execute_log.json")
+        with open(log_file_path, "r") as f:
+            logs = f.readlines()
+            logs = [json.loads(log) for log in logs]
+        return logs

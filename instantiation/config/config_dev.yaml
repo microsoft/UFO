@@ -8,13 +8,11 @@ CONTROL_BACKEND: "uia"  # The backend for control action
 CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner"] 
 PRINT_LOG: False  # Whether to print the log  
 LOG_LEVEL: "INFO"  # The log level
-MATCH_STRATEGY: "regex"  # The match strategy for the control filter, support 'contains', 'fuzzy', 'regex'
+MATCH_STRATEGY: "fuzzy"  # The match strategy for the control filter, support 'contains', 'fuzzy', 'regex'
 
 PREFILL_PROMPT: "instantiation/controller/prompts/{mode}/prefill.yaml"  # The prompt for the action prefill
 FILTER_PROMPT: "instantiation/controller/prompts/{mode}/filter.yaml"  # The prompt for the filter
 PREFILL_EXAMPLE_PROMPT: "instantiation/controller/prompts/{mode}/prefill_example.yaml"  # The prompt for the action prefill example
-EXECUTE_PROMPT: "instantiation/controller/prompts/{mode}/execute.yaml"  # The prompt for the action execute
-EXECUTE_PROMPT: "instantiation/controller/prompts/{mode}/execute.yaml"  # The prompt for the action execute
 API_PROMPT: "ufo/prompts/share/lite/api.yaml"  # The prompt for the API
 
 # Exploration Configuration
@@ -33,8 +31,4 @@ PREFILL_LOG_PATH: "instantiation/logs/{task}/prefill/"
 FILTER_LOG_PATH: "instantiation/logs/{task}/filter/"
 EXECUTE_LOG_PATH: "instantiation/logs/{task}/execute/"
 
-# Screenshot Configuration
-RECTANGLE_TIME: 1
-SHOW_VISUAL_OUTLINE_ON_SCREEN: False
-INCLUDE_LAST_SCREENSHOT: False  # Whether to include the last screenshot in the observation
-CONCAT_SCREENSHOT: False  # Whether to concat the screenshot for the control item
+MAX_STEPS: 30  # The max step for the execute_flow
