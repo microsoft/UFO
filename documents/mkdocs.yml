@@ -4,6 +4,9 @@ site_name: UFO Documentation
 nav:
   - Home: index.md
   - Project Directory Structure: project_directory_structure.md
+  - LLM-Brained GUI Agent Survey:
+    - Overview: gui-agent-survey/webpage/introduction.md
+    - Searchable Page: gui-agent-survey/webpage/index.html
   - Getting Started: 
     - Quick Start: getting_started/quick_start.md
     - More Guidance: getting_started/more_guidance.md
