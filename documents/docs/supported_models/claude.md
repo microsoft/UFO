@@ -1,4 +1,4 @@
-# Google Gemini
+# Anthropic Claude
 
 ## Step 1
 To use the Claude API, you need to create an account on the [Claude website](https://www.anthropic.com/) and access the API key.
