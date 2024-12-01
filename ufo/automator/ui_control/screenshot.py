@@ -573,6 +573,15 @@ class PhotographerFacade:
         return result
 
     @staticmethod
+    def load_image(image_path: str) -> Image.Image:
+        """
+        Load an image from the path.
+        :param image_path: The path of the image.
+        :return: The image.
+        """
+        return Image.open(image_path)
+
+    @staticmethod
     def image_to_base64(image: Image.Image) -> str:
         """
         Convert image to base64 string.
@@ -584,6 +593,24 @@ class PhotographerFacade:
         image.save(buffered, format="PNG", optimize=True)
 
         return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+    @staticmethod
+    def encode_image(image: Image.Image, mime_type: Optional[str] = None) -> str:
+        """
+        Encode an image to base64 string.
+        :param image: The image to encode.
+        :param mime_type: The mime type of the image.
+        :return: The base64 string.
+        """
+        buffered = BytesIO()
+        image.save(buffered, format="PNG", optimize=True)
+        encoded_image = base64.b64encode(buffered.getvalue()).decode("ascii")
+
+        if mime_type is None:
+            mime_type = "image/png"
+
+        image_url = f"data:{mime_type};base64," + encoded_image
+        return image_url
 
     @staticmethod
     def encode_image_from_path(image_path: str, mime_type: Optional[str] = None) -> str:
