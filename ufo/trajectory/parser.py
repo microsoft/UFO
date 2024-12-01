@@ -18,10 +18,12 @@ class Trajectory:
     _response_file = "response.json"
     _evaluation_file = "evaluation.json"
 
-    _clean_screenshot_key = "CleanScreenshot"
-    _annotated_screenshot_key = "AnnotatedScreenshot"
-    _concat_screenshot_key = "ConcatScreenshot"
-    _selected_control_screenshot_key = "SelectedControlScreenshot"
+    _screenshot_keys = [
+        "CleanScreenshot",
+        "AnnotatedScreenshot",
+        "ConcatScreenshot",
+        "SelectedControlScreenshot",
+    ]
 
     def __init__(self, file_path: str) -> None:
         """
@@ -45,7 +47,8 @@ class Trajectory:
 
         for log in enumerate(textual_logs):
             step_log = json.loads(log)
-            self.log["ScreenshotImages"] = self._load_step_screenshot(step_log)
+            step_log["ScreenshotImages"] = self._load_step_screenshots(step_log)
+
             step_data.append(step_log)
 
         return step_data
@@ -79,25 +82,17 @@ class Trajectory:
 
         return None
 
-    def _load_step_screenshot(self, step_log: Dict[str, Any]) -> Dict[str, Image.Image]:
+    def _load_step_screenshots(
+        self, step_log: Dict[str, Any]
+    ) -> Dict[str, Image.Image]:
         """
         Load the screenshot data from the file.
         :param step_log: The step log.
         :return: The screenshot data.
         """
         screenshot_data = {
-            self._clean_screenshot_key: self._load_single_screenshot(
-                step_log, self._clean_screenshot_key
-            ),
-            self._annotated_screenshot_key: self._load_single_screenshot(
-                step_log, self._annotated_screenshot_key
-            ),
-            self._concat_screenshot_key: self._load_single_screenshot(
-                step_log, self._concat_screenshot_key
-            ),
-            self._selected_control_screenshot_key: self._load_single_screenshot(
-                step_log, self._selected_control_screenshot_key
-            ),
+            key: self._load_single_screenshot(step_log, key)
+            for key in self._screenshot_keys
         }
 
         return screenshot_data
@@ -111,7 +106,11 @@ class Trajectory:
 
         if os.path.exists(evaluation_log_path):
             with open(evaluation_log_path, "r", encoding="utf-8") as file:
-                evaluation_data = json.load(file)
+
+                try:
+                    evaluation_data = json.load(file)
+                except:
+                    evaluation_data = {}
 
         return evaluation_data
 
