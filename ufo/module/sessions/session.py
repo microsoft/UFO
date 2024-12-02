@@ -395,37 +395,3 @@ class BatchSession(BaseSession):
         """
         request_memory = self._host_agent.blackboard.requests
         return request_memory.to_json()
-
-    def quit(self):
-        try:
-            control_inspector = ControlInspectorFacade("uia")
-            ControlInspectorFacade.close_window_by_class_name("bosa_sdm_msword")
-            control_list = control_inspector.find_control_elements_in_descendants(
-                self.application_window
-            )
-            for control_item in control_list:
-                try:
-                    if (
-                        control_item.friendly_class_name() == "Dialog"
-                        and control_item.window_text()
-                        not in [
-                            "Navigation",
-                            "Help",
-                            "Editor",
-                            "Accessibility",
-                            "Styles",
-                        ]
-                    ):
-                        print(f"finding dialog {control_item.window_text()}")
-                        control_item.close()
-                except Exception as e:
-                    print(f"Failed to close dialog: {e}")
-            self.client = win32com.client.Dispatch("Word.Application")
-            for doc in self.client.Documents:
-                doc.Close(False)  # Argument False indicates not to save changes
-            self.application_window.close()
-        except Exception as e:
-            print("Error while closing word:", e)
-        finally:
-            os.system("taskkill /f /im WINWORD.EXE")
-            time.sleep(configs["SLEEP_TIME"])

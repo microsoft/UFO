@@ -36,7 +36,7 @@ class PlanReader:
         :return: The task name.
         """
 
-        return self.plan.get("new_problem", "")
+        return self.plan.get("task", "")
 
     def get_steps(self) -> List[str]:
         """
