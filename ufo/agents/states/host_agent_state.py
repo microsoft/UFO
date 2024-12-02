@@ -164,7 +164,10 @@ class ContinueHostAgentState(HostAgentState):
         application_root_name = context.get(ContextNames.APPLICATION_ROOT_NAME)
         request = context.get(ContextNames.REQUEST)
 
-        if context.get(ContextNames.MODE) == "normal":
+        if (
+            context.get(ContextNames.MODE) == "normal"
+            or context.get(ContextNames.MODE) == "batch_normal"
+        ):
 
             agent_name = "AppAgent/{root}/{process}".format(
                 root=application_root_name, process=application_window_name

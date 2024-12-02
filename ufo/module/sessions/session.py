@@ -2,11 +2,14 @@
 # Licensed under the MIT License.
 
 import os
+import time
 from typing import List
+import win32com.client
 
 from ufo import utils
 from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
+from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.config.config import Config
 from ufo.module import interactor
 from ufo.module.basic import BaseRound, BaseSession
@@ -42,6 +45,13 @@ class SessionFactory:
                 return [
                     FollowerSession(task, plan, configs.get("EVA_SESSION", False), id=0)
                 ]
+        elif mode == "batch_normal":
+            if self.is_folder(plan):
+                return self.create_batch_session_in_batch(task, plan)
+            else:
+                return [
+                    BatchSession(task, plan, configs.get("EVA_SESSION", False), id=0)
+                ]
         else:
             raise ValueError(f"The {mode} mode is not supported.")
 
@@ -58,6 +68,27 @@ class SessionFactory:
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
         sessions = [
             FollowerSession(
+                f"{task}/{file_name}",
+                plan_file,
+                configs.get("EVA_SESSION", False),
+                id=i,
+            )
+            for i, (file_name, plan_file) in enumerate(zip(file_names, plan_files))
+        ]
+
+        return sessions
+
+    def create_batch_session_in_batch(self, task: str, plan: str) -> List[BaseSession]:
+        """
+        Create a follower session.
+        :param task: The name of current task.
+        :param plan: The path folder of all plan files.
+        :return: The list of created follower sessions.
+        """
+        plan_files = self.get_plan_files(plan)
+        file_names = [self.get_file_name_without_extension(f) for f in plan_files]
+        sessions = [
+            BatchSession(
                 f"{task}/{file_name}",
                 plan_file,
                 configs.get("EVA_SESSION", False),
@@ -277,3 +308,124 @@ class FollowerSession(BaseSession):
         """
 
         return self.plan_reader.get_task()
+
+
+class BatchSession(BaseSession):
+    """
+    A session for UFO.
+    """
+
+    def __init__(
+        self, task: str, plan_file: str, should_evaluate: bool, id: int
+    ) -> None:
+        """
+        Initialize a session.
+        :param task: The name of current task.
+        :param plan_file: The path of the plan file to follow.
+        :param should_evaluate: Whether to evaluate the session.
+        :param id: The id of the session.
+        """
+
+        super().__init__(task, should_evaluate, id)
+        self.plan_reader = PlanReader(plan_file)
+
+    def run(self) -> None:
+        """
+        Run the session.
+        """
+        super().run()
+
+        # Save the experience if the user asks so.
+        # if interactor.experience_asker():
+        #     self.experience_saver()
+
+    def _init_context(self) -> None:
+        """
+        Initialize the context.
+        """
+        super()._init_context()
+
+        self.context.set(ContextNames.MODE, "batch_normal")
+
+    def create_new_round(self) -> None:
+        """
+        Create a new round.
+        """
+
+        # Get a request for the new round.
+        request = self.next_request()
+        print(request)
+
+        # Create a new round and return None if the session is finished.
+
+        if self.is_finished():
+            return None
+
+        self._host_agent.set_state(ContinueHostAgentState())
+
+        round = BaseRound(
+            request=request,
+            agent=self._host_agent,
+            context=self.context,
+            should_evaluate=configs.get("EVA_ROUND", False),
+            id=self.total_rounds,
+        )
+
+        self.add_round(round.id, round)
+
+        return round
+
+    def next_request(self) -> str:
+        """
+        Get the request for the host agent.
+        :return: The request for the host agent.
+        """
+
+        if self.total_rounds == 0:
+            return self.plan_reader.get_host_request()
+        else:
+            # Next request
+            self._finish = True
+            return "N"
+
+    def request_to_evaluate(self) -> bool:
+        """
+        Check if the session should be evaluated.
+        :return: True if the session should be evaluated, False otherwise.
+        """
+        request_memory = self._host_agent.blackboard.requests
+        return request_memory.to_json()
+
+    def quit(self):
+        try:
+            control_inspector = ControlInspectorFacade("uia")
+            ControlInspectorFacade.close_window_by_class_name("bosa_sdm_msword")
+            control_list = control_inspector.find_control_elements_in_descendants(
+                self.application_window
+            )
+            for control_item in control_list:
+                try:
+                    if (
+                        control_item.friendly_class_name() == "Dialog"
+                        and control_item.window_text()
+                        not in [
+                            "Navigation",
+                            "Help",
+                            "Editor",
+                            "Accessibility",
+                            "Styles",
+                        ]
+                    ):
+                        print(f"finding dialog {control_item.window_text()}")
+                        control_item.close()
+                except Exception as e:
+                    print(f"Failed to close dialog: {e}")
+            self.client = win32com.client.Dispatch("Word.Application")
+            for doc in self.client.Documents:
+                doc.Close(False)  # Argument False indicates not to save changes
+            self.application_window.close()
+        except Exception as e:
+            print("Error while closing word:", e)
+        finally:
+            os.system("taskkill /f /im WINWORD.EXE")
+            time.sleep(configs["SLEEP_TIME"])
