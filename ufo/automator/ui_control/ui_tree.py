@@ -31,10 +31,12 @@ class UITree:
         :param root: The root element of the UI tree.
         """
 
+        # Get the adjusted rectangle and relative rectangle, left, top, right, bottom
         adjusted_rect = PhotographerDecorator.coordinate_adjusted(
             self.root.element_info.rectangle, root.element_info.rectangle
         )
 
+        # Get the relative rectangle in ratio, left, top, right, bottom
         relative_rect = PhotographerDecorator.coordinate_adjusted_to_relative(
             self.root.element_info.rectangle, root.element_info.rectangle
         )
