@@ -18,7 +18,7 @@ from ufo.config.config import Config
 
 configs = Config.get_instance().config_data
 
-DEFAULT_PNG_COMPRESS_LEVEL = int(configs["DEFAULT_PNG_COMPRESS_LEVEL"])
+DEFAULT_PNG_COMPRESS_LEVEL = int(configs.get("DEFAULT_PNG_COMPRESS_LEVEL", 0))
 
 
 class Photographer(ABC):
