@@ -19,6 +19,10 @@ API_PROMPT: "ufo/prompts/share/lite/api.yaml"  # The prompt for the API
 TASKS_HUB: "instantiation/tasks"  # The tasks hub for the exploration
 TEMPLATE_PATH: "instantiation/templates"  # The template path for the exploration
 
+# Result Configuration
+RESULT_HUB: "instantiation/results/{mode}"  # The result hub, mode is 'instantiation' or 'execution'
+RESULT_SCHEMA: "instantiation/result_schema.json"  # The JSON Schema for the result log
+
 # For control filtering
 CONTROL_FILTER_TYPE: []  # The list of control filter type, support 'TEXT', 'SEMANTIC', 'ICON'
 CONTROL_FILTER_MODEL_SEMANTIC_NAME: "all-MiniLM-L6-v2"  # The control filter model name of semantic similarity

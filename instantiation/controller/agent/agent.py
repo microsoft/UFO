@@ -45,7 +45,7 @@ class FilterAgent(BasicAgent):
 
     def get_prompter(
         self,
-        is_visual,
+        is_visual: bool,
         main_prompt: str,
         example_prompt: str,
         api_prompt: str
@@ -123,7 +123,7 @@ class PrefillAgent(BasicAgent):
         )
         self._process_name = process_name
 
-    def get_prompter(self, is_visual, main_prompt, example_prompt, api_prompt) -> str:
+    def get_prompter(self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str) -> str:
         """
         Get the prompt for the agent.
         This is the abstract method from BasicAgent that needs to be implemented.
@@ -238,7 +238,7 @@ class ExecuteEvalAgent(EvaluationAgent):
 
     def get_prompter(
         self,
-        is_visual,
+        is_visual: bool,
         prompt_template: str,
         example_prompt_template: str,
         api_prompt_template: str,

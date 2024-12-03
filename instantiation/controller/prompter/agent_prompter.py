@@ -102,6 +102,7 @@ class FilterPrompter(BasicPrompter):
         :param request: The user request.
         :return: The prompt for the user.
         """
+
         prompt = self.prompt_template["user"].format(request=request)
         return prompt
 
@@ -370,6 +371,7 @@ class ExecuteEvalAgentPrompter(EvaluationAgentPrompter):
     def load_logs(log_path: str) -> List[Dict[str, str]]:
         """
         Load logs from the log path.
+        :param log_path: The path of the log.
         """
 
         log_file_path = os.path.join(log_path, "execute_log.json")

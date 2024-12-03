@@ -24,7 +24,7 @@ class ChooseTemplateFlow:
 
     _SENTENCE_TRANSFORMERS_PREFIX = "sentence-transformers/"
 
-    def __init__(self, app_name: str, file_extension: str, task_file_name: str):
+    def __init__(self, app_name: str, task_file_name: str, file_extension: str):
         """
         Initialize the flow with the given task context.
         :param app_name: The name of the application.
@@ -35,7 +35,7 @@ class ChooseTemplateFlow:
         self._app_name = app_name
         self._file_extension = file_extension
         self._task_file_name = task_file_name
-        self.execution_time = 0
+        self.execution_time = None
         self._embedding_model = self._load_embedding_model(
             model_name=_configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"]
         )
@@ -47,8 +47,12 @@ class ChooseTemplateFlow:
         """
 
         start_time = time.time()
-        template_copied_path = self._choose_template_and_copy()
-        self.execution_time = round(time.time() - start_time, 3)
+        try:
+            template_copied_path = self._choose_template_and_copy()
+        except Exception as e:
+            raise e
+        finally:
+            self.execution_time = round(time.time() - start_time, 3)
         return template_copied_path
 
     def _create_copied_file(

@@ -14,8 +14,8 @@ system: |-
   ## Response Format
   Your response should be strictly structured in a JSON format, consisting of three distinct parts with the following keys and corresponding content:
   {{
-  "judge": true or false depends on you think this task whether can be performed.
-  "thought": "Outline the reason why you give the judgement."
+  "judge": true or false depends on you think this task whether can be performed,
+  "thought": "Outline the reason why you give the judgement.",
   "type": "None/Non_task/App_involve/Env/Others"
   }}
   Make sure you answer must be strictly in JSON format only, without other redundant text such as json header. Otherwise it will crash the system.

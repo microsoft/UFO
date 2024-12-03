@@ -49,17 +49,18 @@ system: |-
   ## Response Format
   - You are required to response in a JSON format, consisting of several distinct parts with the following keys and corresponding content:
     {{
-      "observation": <Outline the observation of the provided doc file environment based on the given Canvas State and Control State>,
-      "thought": <Outline your thinking and logic of your New Task and the actions to take,consider the observation of environment and avaiable controls actions>,
-      "new_task":<Give the detailed New Task based on Given Task and the observation of doc environment>,
-      "actions_plan":<Give the detailed step-by-step actions plan based on the Available Actions and the observation of doc environment.,
+      "Observation": <Outline the observation of the provided doc file environment based on the given Canvas State and Control State>,
+      "Thought": <Outline your thinking and logic of your New Task and the actions to take,consider the observation of environment and avaiable controls actions>,
+      "New_task":<Give the detailed New Task based on Given Task and the observation of doc environment>,
+      "Actions_plan":<Give the detailed step-by-step actions plan based on the Available Actions and the observation of doc environment.,
       The format should be a list of action call format separated by "\n">
     }}
   
   ### Action Call Format
   - The action call format is the same as the available actions in the API list.You are required to provide the action call format in a JSON format:
     {{
-      "Step <The number of the step>": <The step description the function of the action,which is also the subtask completed by the current action>
+      "Step": <The number of the step>
+      "Subtask": <The step description the function of the action,which is also the subtask completed by the current action>
       "ControlLabel": <Specify the precise annotated label of the control item to be selected, adhering strictly to the provided options in the field of "label" in the <Doc Control State:>. If you believe none of the control item is suitable for the task or the task is complete, kindly output a empty string ''.>
       "ControlText": <Specify the precise control_text of the control item to be selected, adhering strictly to the provided options in the field of "control_text" in the <Doc Control State:>.The control text must match exactly with the selected control label. 
       If the function to call don't need specify controlText or the task is complete,you can kindly output an empty string ''.
@@ -70,7 +71,8 @@ system: |-
 
     e.g.
       {{
-          "Step 1": "change the borders",
+          "Step": 1
+          "Subtask": "change the borders",
           "ControlLabel": "",
           "ControlText": "Borders",
           "Function": "click_input",
@@ -81,7 +83,8 @@ system: |-
       }}
 
       {{
-        "Step 2": "change the borders",
+          "Step": 2, 
+          "Subtask": "change the borders",
           "ControlLabel": "101",
           "ControlText": "Borders",
           "Function": "click_input",
@@ -93,7 +96,8 @@ system: |-
       }}
 
       {{
-          "Step 3": "select the target text",
+          "Step": 3, 
+          "Subtask": "select the target text",
           "ControlLabel": "",
           "ControlText": "",
           "Function": "select_text",
@@ -102,12 +106,12 @@ system: |-
           }}
       }}
 
-  - The <actions_plan> field must be strictly in a format separated each action call by "\n". The list format should be like this:
+  - The <Actions_plan> field must be strictly in a format separated each action call by "\n". The list format should be like this:
   "action call 1\naction call 2\naction call 3"
-  - If you think the original task don't need to be detailed, you can directly copy the original task to the "new_task".
+  - If you think the original task don't need to be detailed, you can directly copy the original task to the "New_task".
   - You should review the apis function carefully and if the function to call need to specify target control,the 'controlText' field
   cannot be set empty.
-  - The "step" description should be consistent with the action and also the thought.
+  - The "Subtask" description should be consistent with the action and also the thought.
 
   ## Here are some examples for you to complete the user request:
   {examples}

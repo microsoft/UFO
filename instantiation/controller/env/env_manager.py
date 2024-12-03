@@ -1,14 +1,13 @@
 import logging
 import re
-import time
+from typing import Optional
+import psutil
 
 from fuzzywuzzy import fuzz
 from pywinauto import Desktop
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from instantiation.config.config import Config
-from ufo.automator.puppeteer import ReceiverManager
-from ufo.automator.ui_control.inspector import ControlInspectorFacade
 
 # Load configuration settings
 _configs = Config.get_instance().config_data
@@ -28,20 +27,10 @@ class WindowsAppEnv:
         :param app_object: The app object containing information about the application.
         """
 
-        super().__init__()
         self.app_window = None
         self.app_root_name = app_object.app_root_name
         self.app_name = app_object.description.lower()
         self.win_app = app_object.win_app
-        self._receive_factory = ReceiverManager._receiver_factory_registry["COM"][
-            "factory"
-        ]
-        self.win_com_receiver = self._receive_factory.create_receiver(
-            self.app_root_name, self.app_name
-        )
-        self._control_inspector = ControlInspectorFacade(_BACKEND)
-
-        self._all_controls = None
 
     def start(self, copied_template_path: str) -> None:
         """
@@ -62,19 +51,54 @@ class WindowsAppEnv:
 
     def close(self) -> None:
         """
-        Closes the Windows environment.
+        Tries to gracefully close the application; if it fails or is not closed, forcefully terminates the process.
         """
 
         try:
-            com_object = self.win_com_receiver.get_object_from_process_name()
-            com_object.Close()
-            self.win_com_receiver.client.Quit()
-            time.sleep(1)
+            # Attempt to close gracefully
+            if self.app_window:
+                self.app_window.close()
+            
+            # Check if process is still running
+            if self._is_window_open():
+                logging.warning("Application is still running after graceful close. Attempting to forcefully terminate.")
+                self._force_kill()
+            else:
+                logging.info("Application closed gracefully.")
         except Exception as e:
-            logging.exception(f"Failed to close the application: {e}")
-            raise
+            logging.warning(f"Graceful close failed: {e}. Attempting to forcefully terminate the process.")
+            self._force_kill()
+    
+    def _is_window_open(self) -> bool:
+        """
+        Checks if the specific application window is still open.
+        """
 
-    def find_matching_window(self, doc_name: str) -> object:
+        try:
+            # Ensure the app_window object is still valid and visible
+            if self.app_window.is_enabled():
+                return True
+            return False
+        except Exception as e:
+            logging.error(f"Error while checking window status: {e}")
+            return False
+
+    def _force_kill(self) -> None:
+        """
+        Forcefully terminates the application process by its name.
+        """
+
+        for proc in psutil.process_iter(['pid', 'name']):
+            if self.win_app.lower() in proc.info['name'].lower():
+                try:
+                    proc.kill()
+                    logging.info(f"Process {self.win_app} (PID: {proc.info['pid']}) forcefully terminated.")
+                    return
+                except Exception as kill_exception:
+                    logging.error(f"Failed to kill process {proc.info['name']} (PID: {proc.info['pid']}): {kill_exception}")
+        logging.error(f"No matching process found for {self.win_app}.")
+
+    def find_matching_window(self, doc_name: str) -> Optional[UIAWrapper]:
         """
         Finds a matching window based on the process name and the configured matching strategy.
         :param doc_name: The document name associated with the application.
@@ -86,8 +110,6 @@ class WindowsAppEnv:
         for window in windows_list:
             window_title = window.element_info.name.lower()
             if self._match_window_name(window_title, doc_name):
-                # Cache all controls for the window
-                self._all_controls = window.children()
                 self.app_window = window
                 self.app_window = window
                 return window
@@ -123,7 +145,7 @@ class WindowsAppEnv:
             logging.exception(f"Unknown match strategy: {_MATCH_STRATEGY}")
             raise ValueError(f"Unknown match strategy: {_MATCH_STRATEGY}")
 
-    def is_matched_controller(
+    def is_matched_controller( 
         self, control_to_match: UIAWrapper, control_text: str
     ) -> bool:
         """

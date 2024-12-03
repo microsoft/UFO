@@ -2,7 +2,7 @@ import json
 import logging
 import os
 import time
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Any
 
 from instantiation.config.config import Config
 from instantiation.controller.agent.agent import FilterAgent
@@ -21,11 +21,11 @@ class FilterFlow:
     def __init__(self, app_name: str, task_file_name: str) -> None:
         """
         Initialize the filter flow for a task.
-        :param app_object: Application object containing task details.
+        :param app_name: Name of the application being processed.
         :param task_file_name: Name of the task file being processed.
         """
 
-        self.execution_time = 0
+        self.execution_time = None
         self._app_name = app_name
         self._log_path_configs = _configs["FILTER_LOG_PATH"].format(task=task_file_name)
         self._filter_agent = self._get_or_create_filter_agent()
@@ -48,7 +48,7 @@ class FilterFlow:
             ) 
         return FilterFlow._app_filter_agent_dict[self._app_name]
 
-    def execute(self, instantiated_request: str) -> Tuple[bool, str, str]:
+    def execute(self, instantiated_request: str) -> Dict[str, Any]:
         """
         Execute the filter flow: Filter the task and save the result.
         :param instantiated_request: Request object to be filtered.
@@ -56,12 +56,20 @@ class FilterFlow:
         """
 
         start_time = time.time()
-        is_quality_good, filter_result, request_type = self._get_filtered_result(
-            instantiated_request
-        )
-        self.execution_time = round(time.time() - start_time, 3)
-        return is_quality_good, filter_result, request_type
-
+        try:
+            judge, thought, request_type = self._get_filtered_result(
+                instantiated_request
+            )
+        except Exception as e:
+            raise e
+        finally:
+            self.execution_time = round(time.time() - start_time, 3)
+        return {
+            "judge": judge,
+            "thought": thought,
+            "request_type": request_type,
+        }
+    
     def _initialize_logs(self) -> None:
         """
         Initialize logging for filter messages and responses.
@@ -117,7 +125,6 @@ class FilterFlow:
                 response_json["thought"],
                 response_json["type"],
             )
-
         except Exception as e:
             logging.error(f"Error occurred while filtering: {e}")
             raise e
@@ -126,6 +133,8 @@ class FilterFlow:
         """
         Function to add missing commas between key-value pairs in a JSON string
         and remove newline characters for proper formatting.
+        :param json_string: The JSON string to be fixed.
+        :return: The fixed JSON string.
         """
 
         # Remove newline characters
