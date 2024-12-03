@@ -13,6 +13,7 @@ try {
     Install-PythonPackages -Package "wheel"
     Install-PythonPackages -Package "pywinauto"
     Install-PythonPackages -Package "uiautomation"
+    Install-PythonPackages -Package "openai" -Arguments "--upgrade"
 
     # Install Python packages from requirements.txt using Python's pip module
     if (Test-Path $requirementsFile) {
