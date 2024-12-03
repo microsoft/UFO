@@ -1,11 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from typing import Any, Dict
-from ufo.automator.ui_control.screenshot import PhotographerDecorator
-from pywinauto.controls.uiawrapper import UIAWrapper
 import json
 import traceback
+from typing import Any, Dict, List
+
+from pywinauto.controls.uiawrapper import UIAWrapper
+
+from ufo.automator.ui_control.screenshot import PhotographerDecorator
 
 
 class UITree:
@@ -25,10 +27,11 @@ class UITree:
         except Exception as e:
             self._ui_tree = {"error": traceback.format_exc()}
 
-    def _get_ui_tree(self, root: UIAWrapper) -> Dict[str, Any]:
+    def _get_ui_tree(self, root: UIAWrapper, level: int = 0) -> Dict[str, Any]:
         """
         Get the UI tree.
         :param root: The root element of the UI tree.
+        :param level: The level of the root element.
         """
 
         # Get the adjusted rectangle and relative rectangle, left, top, right, bottom
@@ -62,12 +65,13 @@ class UITree:
                 "right": relative_rect[2],
                 "bottom": relative_rect[3],
             },
+            "level": level,
             "children": [],
         }
 
         for child in root.children():
             try:
-                ui_tree["children"].append(self._get_ui_tree(child))
+                ui_tree["children"].append(self._get_ui_tree(child, level + 1))
             except Exception as e:
                 ui_tree["error"] = traceback.format_exc()
 
@@ -87,3 +91,32 @@ class UITree:
         """
         with open(file_path, "w") as file:
             json.dump(self.ui_tree, file, indent=4)
+
+    def flatten_ui_tree(self):
+        """
+        Flatten the UI tree into a list in width-first order.
+        """
+
+        def flatten_tree(tree: Dict[str, Any], result: List[Dict[str, Any]]):
+            """
+            Flatten the tree.
+            :param tree: The tree to flatten.
+            :param result: The result list.
+            """
+
+            tree_info = {
+                "name": tree["name"],
+                "control_type": tree["control_type"],
+                "rectangle": tree["rectangle"],
+                "adjusted_rectangle": tree["adjusted_rectangle"],
+                "relative_rectangle": tree["relative_rectangle"],
+                "level": tree["level"],
+            }
+
+            result.append(tree_info)
+            for child in tree.get("children", []):
+                flatten_tree(child, result)
+
+        result = []
+        flatten_tree(self.ui_tree, result)
+        return result
