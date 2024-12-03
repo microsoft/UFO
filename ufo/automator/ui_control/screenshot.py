@@ -117,6 +117,27 @@ class PhotographerDecorator(Photographer):
 
         return adjusted_rect
 
+    @staticmethod
+    def coordinate_adjusted_to_relative(window_rect: RECT, control_rect: RECT) -> Tuple:
+        """
+        Adjust the coordinates of the control rectangle to the window rectangle.
+        :param window_rect: The window rectangle.
+        :param control_rect: The control rectangle.
+        :return: The adjusted control rectangle (left, top, right, bottom), relative to the window rectangle.
+        """
+        # (left, top, right, bottom)
+        width = window_rect.right - window_rect.left
+        height = window_rect.bottom - window_rect.top
+
+        relative_rect = (
+            float(control_rect.left - window_rect.left) / width,
+            float(control_rect.top - window_rect.top) / height,
+            float(control_rect.right - window_rect.left) / width,
+            float(control_rect.bottom - window_rect.top) / height,
+        )
+
+        return relative_rect
+
 
 class RectangleDecorator(PhotographerDecorator):
     """
