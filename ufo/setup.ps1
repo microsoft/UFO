@@ -12,6 +12,7 @@ try {
     Install-PythonPackages -Package "pip" -Arguments "--upgrade"
     Install-PythonPackages -Package "wheel"
     Install-PythonPackages -Package "pywinauto"
+    Install-PythonPackages -Package "uiautomation"
 
     # Install Python packages from requirements.txt using Python's pip module
     if (Test-Path $requirementsFile) {
