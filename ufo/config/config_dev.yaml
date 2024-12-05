@@ -98,3 +98,7 @@ EVA_ALL_SCREENSHOTS: True  # Whether to include all the screenshots in the evalu
 
 # Image saving performance
 DEFAULT_PNG_COMPRESS_LEVEL: 9  # The compress level for the PNG image, 0-9, 0 is no compress, 1 is the fastest, 9 is the best compress
+
+
+# Save UI tree
+SAVE_UI_TREE: False  # Whether to save the UI tree

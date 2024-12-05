@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import json
+import os
 import traceback
 from typing import Any, Dict, List
 
@@ -89,6 +90,12 @@ class UITree:
         Save the UI tree to a JSON file.
         :param file_path: The file path to save the UI tree.
         """
+
+        # Check if the file directory exists. If not, create it.
+        save_dir = os.path.dirname(file_path)
+        if not os.path.exists(save_dir):
+            os.makedirs(save_dir)
+
         with open(file_path, "w") as file:
             json.dump(self.ui_tree, file, indent=4)
 
