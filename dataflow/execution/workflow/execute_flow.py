@@ -8,13 +8,15 @@ from dataflow.execution.agent.execute_agent import ExecuteAgent
 from dataflow.execution.agent.execute_eval_agent import ExecuteEvalAgent
 from ufo import utils
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
+from ufo.automator.app_apis.basic import WinCOMReceiverBasic
 from ufo.config.config import Config as UFOConfig
 from ufo.module.basic import BaseSession, Context, ContextNames
+from ufo.automator.ui_control.screenshot import PhotographerDecorator
 
 _configs = InstantiationConfig.get_instance().config_data
 _ufo_configs = UFOConfig.get_instance().config_data
-if _configs is not None:
-    BACKEND = _configs["CONTROL_BACKEND"]
+if _ufo_configs is not None:
+    BACKEND = _ufo_configs["CONTROL_BACKEND"]
 
 
 class ExecuteFlow(AppAgentProcessor):
@@ -137,17 +139,19 @@ class ExecuteFlow(AppAgentProcessor):
         # Initialize the step counter and capture the initial screenshot.
         self.session_step = 0
         try:
+            time.sleep(1)
             # Initialize the API receiver
             self.app_agent.Puppeteer.receiver_manager.create_api_receiver(
                 self.app_agent._app_root_name, self.app_agent._process_name
             )
             # Initialize the control receiver
-            current_receiver = self.app_agent.Puppeteer.receiver_manager.receiver_list[0]
+            current_receiver = self.app_agent.Puppeteer.receiver_manager.receiver_list[-1]
+
             if current_receiver is not None:
                 self.application_window = self._app_env.find_matching_window(self._task_file_name)
                 current_receiver.com_object = current_receiver.get_object_from_process_name()
 
-            self.init_capture_screenshot()
+            self.init_and_final_capture_screenshot()
         except Exception as error:
             raise RuntimeError(f"Execution initialization failed. {error}")
         
@@ -171,7 +175,6 @@ class ExecuteFlow(AppAgentProcessor):
                     instantiated_plan[index]["Success"] = True
                     instantiated_plan[index]["ControlLabel"] = self._control_label
                     instantiated_plan[index]["MatchedControlText"] = self._matched_control
-                    
                 except Exception as ControllerNotFoundError:
                     instantiated_plan[index]["Success"] = False
                     raise ControllerNotFoundError
@@ -181,6 +184,23 @@ class ExecuteFlow(AppAgentProcessor):
                     f"Step {self.session_step} execution failed. {error}"
                 )
                 raise err_info
+        # capture the final screenshot
+        self.session_step += 1
+        time.sleep(1)
+        self.init_and_final_capture_screenshot()
+        # save the final state of the app
+
+        win_com_receiver = None
+        for receiver in reversed(self.app_agent.Puppeteer.receiver_manager.receiver_list):
+            if isinstance(receiver, WinCOMReceiverBasic):
+                if receiver.client is not None:
+                    win_com_receiver = receiver
+                    break
+
+        if win_com_receiver is not None:
+            win_com_receiver.save()
+            time.sleep(1)
+            win_com_receiver.client.Quit()
 
         print("Execution complete.")
 
@@ -194,7 +214,6 @@ class ExecuteFlow(AppAgentProcessor):
         step_start_time = time.time()
         self.print_step_info()
         self.capture_screenshot()
-        self.select_controller()
         self.execute_action()
         self.time_cost = round(time.time() - step_start_time, 3)
         self.log_save()
@@ -251,22 +270,8 @@ class ExecuteFlow(AppAgentProcessor):
 
         self.status = step_plan.get("Status", "")
 
-    def select_controller(self) -> None:
-        """
-        Select the controller.
-        """
 
-        if self.control_text == "":
-            return 
-        for key, control in self.filtered_annotation_dict.items():
-            if self._app_env.is_matched_controller(control, self.control_text):
-                self._control_label = key
-                self._matched_control = control.window_text() 
-                return
-        # If the control is not found, raise an error.
-        raise RuntimeError(f"Control with text '{self.control_text}' not found.")
-
-    def init_capture_screenshot(self) -> None:
+    def init_and_final_capture_screenshot(self) -> None:
         """
         Capture the screenshot.
         """
@@ -286,7 +291,71 @@ class ExecuteFlow(AppAgentProcessor):
         # Capture the control screenshot.
         control_selected = self._app_env.app_window
         self.capture_control_screenshot(control_selected)
+    
+    def execute_action(self) -> None:
+        """
+        Execute the action.
+        """
+        
+        control_selected = None
+        # Find the matching window and control.
+        self.application_window = self._app_env.find_matching_window(self._task_file_name)
+        if self.control_text == "":
+            control_selected =  self.application_window 
+        else:
+            self._control_label, control_selected = self._app_env.find_matching_controller(
+                self.filtered_annotation_dict, self.control_text
+                )
+            self._matched_control = control_selected.window_text()
 
+        if not control_selected:
+            # If the control is not found, raise an error.
+            raise RuntimeError(f"Control with text '{self.control_text}' not found.")
+
+        try:
+            # Get the selected control item from the annotation dictionary and LLM response.
+            # The LLM response is a number index corresponding to the key in the annotation dictionary.
+            if control_selected:
+
+                if _ufo_configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
+                    control_selected.draw_outline(colour="red", thickness=3)
+                    time.sleep(_ufo_configs.get("RECTANGLE_TIME", 0))
+
+                control_coordinates = PhotographerDecorator.coordinate_adjusted(
+                    self.application_window.rectangle(), control_selected.rectangle()
+                )
+
+                self._control_log = {
+                    "control_class": control_selected.element_info.class_name,
+                    "control_type": control_selected.element_info.control_type,
+                    "control_automation_id": control_selected.element_info.automation_id,
+                    "control_friendly_class_name": control_selected.friendly_class_name(),
+                    "control_coordinates": {
+                        "left": control_coordinates[0],
+                        "top": control_coordinates[1],
+                        "right": control_coordinates[2],
+                        "bottom": control_coordinates[3],
+                    },
+                }
+
+                self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
+                    control_selected, self.application_window
+                )
+
+                # Save the screenshot of the tagged selected control.
+                self.capture_control_screenshot(control_selected)
+
+                self._results = self.app_agent.Puppeteer.execute_command(
+                    self._operation, self._args
+                )
+                self.control_reannotate = None
+                if not utils.is_json_serializable(self._results):
+                    self._results = ""
+
+                    return
+
+        except Exception:
+            self.general_error_handler()
 
     def general_error_handler(self) -> None:
         """

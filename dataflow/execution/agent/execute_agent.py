@@ -1,8 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from typing import Dict, List, Optional
-
 from ufo.agents.agent.app_agent import AppAgent
 
 

@@ -11,11 +11,12 @@ from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.module.basic import BaseSession
+from ufo.config.config import Config as UFOConfig
 
-# Load configuration data
 _configs = Config.get_instance().config_data
-if _configs:
-    _BACKEND = _configs["CONTROL_BACKEND"]
+_ufo_configs = UFOConfig.get_instance().config_data
+if _ufo_configs is not None:
+    _BACKEND = _ufo_configs["CONTROL_BACKEND"]
 
 
 class PrefillFlow(AppAgentProcessor):
@@ -142,8 +143,8 @@ class PrefillFlow(AppAgentProcessor):
         # Retrieve control elements in the app window
         control_list = self._control_inspector.find_control_elements_in_descendants(
             self._app_env.app_window,
-            control_type_list=_configs["CONTROL_LIST"],
-            class_name_list=_configs["CONTROL_LIST"],
+            control_type_list=_ufo_configs["CONTROL_LIST"],
+            class_name_list=_ufo_configs["CONTROL_LIST"],
         )
 
         # Capture UI control annotations

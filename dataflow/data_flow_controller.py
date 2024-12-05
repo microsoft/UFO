@@ -2,7 +2,7 @@ import os
 import time
 import traceback
 from enum import Enum
-from typing import Any, Dict
+from typing import Any, Dict, Optional, List
 from jsonschema import validate, ValidationError
 
 from dataflow.env.env_manager import WindowsAppEnv
@@ -131,7 +131,7 @@ class DataFlowController:
         self.task_info = self.init_task_info()
         self.result_hub = _configs["RESULT_HUB"].format(task_type=task_type)
 
-    def init_task_info(self) -> dict: 
+    def init_task_info(self) -> Dict[str, Any]: 
         """
         Initialize the task information.
         :return: The initialized task information.
@@ -158,7 +158,7 @@ class DataFlowController:
             }
         return init_task_info
 
-    def _load_schema(self, task_type: str) -> dict:
+    def _load_schema(self, task_type: str) -> Dict[str, Any]:
         """
         load the schema based on the task_type.
         :param task_type: The task_type of the task object (dataflow, instantiation, or execution).
@@ -170,9 +170,10 @@ class DataFlowController:
         elif task_type == "execution" or task_type == "dataflow":
             return load_json_file(_configs["EXECUTION_RESULT_SCHEMA"])
 
-    def execute_instantiation(self):
+    def execute_instantiation(self) -> Optional[List[Dict[str, Any]]]:
         """
         Execute the instantiation process.
+        :return: The instantiation plan if successful.
         """
 
         print_with_color(f"Instantiating task {self.task_object.task_file_name}...", "blue")
@@ -191,6 +192,7 @@ class DataFlowController:
                 init_params=[self.app_env],
                 execute_params=[template_copied_path, self.task_object.task, self.task_object.refined_steps]
             )
+            self.app_env.close()
 
             if prefill_result:
                 self.instantiation_single_flow(
@@ -200,7 +202,7 @@ class DataFlowController:
                 )
                 return prefill_result["instantiated_plan"]
 
-    def execute_execution(self, request: str, plan: dict) -> None:
+    def execute_execution(self, request: str, plan: Dict[str, any]) -> None:
         """
         Execute the execution process.
         :param request: The task request to be executed.
@@ -253,7 +255,7 @@ class DataFlowController:
             flow_type: str, 
             init_params=None, 
             execute_params=None
-        ) -> Any:
+        ) -> Optional[Dict[str, Any]]:
         """
         Execute a single flow process in the instantiation phase.
         :param flow_class: The flow class to instantiate.
@@ -337,7 +339,7 @@ class DataFlowController:
         return self.task_info["instantiation_result"]["choose_template"]["result"]
     
     @property
-    def instantiated_plan(self) -> list[dict[str, Any]]:
+    def instantiated_plan(self) -> List[Dict[str, Any]]:
         """
         Get the instantiated plan from the task information.
         :return: The instantiated plan.
@@ -346,7 +348,7 @@ class DataFlowController:
         return self.task_info["instantiation_result"]["prefill"]["result"]["instantiated_plan"]
 
     @instantiated_plan.setter
-    def instantiated_plan(self, value: list[dict[str, Any]]) -> None:
+    def instantiated_plan(self, value: List[Dict[str, Any]]) -> None:
         """
         Set the instantiated plan in the task information.
         :param value: New value for the instantiated plan.
@@ -379,8 +381,6 @@ class DataFlowController:
             raise e
 
         finally:
-            if self.app_env:
-                self.app_env.close()
             # Update or record the total time cost of the process
             total_time = round(time.time() - start_time, 3)
             new_total_time = self.task_info.get("time_cost", {}).get("total", 0) + total_time

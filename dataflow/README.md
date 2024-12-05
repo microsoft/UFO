@@ -8,7 +8,11 @@ Dataflow uses UFO to implement `instantiation`, `execution`, and `dataflow` for 
 
 You can use `instantiation` and `execution` independently if you only need to perform one specific part of the process. When both steps are required for a task, the `dataflow` process streamlines them, allowing you to execute tasks from start to finish in a single pipeline.
 
-## HOW TO USE
+The overall processing of dataflow is as below. Given a task-plan data, the LLMwill instantiatie the task-action data, including choosing template, prefill, filter.
+
+![](../assets\dataflow\overview.png)
+
+## How To Use
 
 ### 1. Install Packages
 
@@ -65,8 +69,7 @@ Additionally, for each app folder, there should be a `description.json` file loc
 ```json
 {
     "template1.docx": "A document with a rectangle shape",
-    "template2.docx": "A document with a line of text",
-    "template3.docx": "A document with a chart"
+    "template2.docx": "A document with a line of text"
 }
 ```
 
@@ -105,52 +108,44 @@ dataflow/
 └── ...
 ```
 
-### 4. How To Use
+### 4. Start Running
 
-After finishing the previous steps, you can use the following commands in the command line. We provide single / batch process, for which you need to give the single file path / folder path.
+After finishing the previous steps, you can use the following commands in the command line. We provide single / batch process, for which you need to give the single file path / folder path. Determine the type of path provided by the user and automatically decide whether to process a single task or batch tasks.
 
 Also, you can choose to use `instantiation` / `execution` sections individually, or use them as a whole section, which is named as `dataflow`.
 
-1. **Single Task Processing**
+The default task hub is set to be `"TASKS_HUB"` in `dataflow/config_dev.yaml`.
 
-- Dataflow Task:
-  ```bash
-  python -m dataflow single dataflow /task_dir/task_file_name
+1. Dataflow Task:
+
+- ```bash
+  python -m dataflow -dataflow --task_path path_to_task_file
   ```
 
 * Instantiation Task:
+
   ```bash
-  python -m dataflow single instantiation /task_dir/task_file_name
+  python -m dataflow -instantiation --task_path path_to_task_file
   ```
 * Execution Task:
-  ```bash
-  python -m dataflow single execution /task_dir/task_file_name
-  ```
 
-2. **Batch Task Processing**
-
-* Dataflow Task Batch:
   ```bash
-  python -m dataflow batch dataflow /path/to/task_dir/
-  ```
-* Instantiation Task Batch:
-  ```bash
-  python -m dataflow batch instantiation /path/to/task_dir/
-  ```
-* Execution Task Batch:
-  ```bash
-  python -m dataflow batch execution /path/to/task_dir/
+  python -m dataflow -execution --task_path path_to_task_file
   ```
 
 ## Workflow
 
 ### Instantiation
 
-There are four key steps in the instantiation process:
+There are three key steps in the instantiation process:
 
 1. `Choose a template` file according to the specified app and instruction.
 2. `Prefill` the task using the current screenshot.
 3. `Filter` the established task.
+
+Given the initial task, the dataflow first choose a template (`Phase 1`), the prefill the initial task based on word envrionment to obtain task-action data (`Phase 2`). Finnally, it will filter the established task to evaluate the quality of task-action data.
+
+![](../assets\dataflow\instantiation.png)
 
 #### 1. Choose Template File
 
@@ -171,6 +166,10 @@ The completed task will be evaluated by a filter agent, which will assess it and
 ### Execution
 
 The instantiated plans will be executed by a execute task. After execution, evalution agent will evaluation the quality of the entire execution process.
+
+In this phase, given the task-action data, the execution process will match the real controller based on word environment and execute the plan step by step.
+
+![](../assets\dataflow\execution.png)
 
 ## Result
 
@@ -296,6 +295,142 @@ his section illustrates the structure of the result of the task, organized in a 
     }
 }
 ```
+
+## Quick Start
+
+We prepare two cases to show the dataflow, which can be found in `dataflow\tasks\prefill`. So after installing required packages, you can type the following command in the command line:
+
+```
+python -m dataflow -dataflow
+```
+
+And you can see the hints showing in the terminal, which means the dataflow is working.
+
+### Structure of related files
+
+After the two tasks are finished, the task and output files would appear as follows:
+
+UFO/
+├── dataflow/
+│   └── results/
+│       ├── saved_document/       	# Directory for saved documents
+│       │   ├── bulleted.docx     	# Result of the "bulleted" task
+│       │   └── rotate.docx       	# Result of the "rotate" task
+│       ├── dataflow/            		 # Dataflow results directory
+│       │   ├── execution_pass/   	# Successfully executed tasks
+│       │   │   ├── bulleted.json 	# Execution result for the "bulleted" task
+│       │   │   ├── rotate.json  	 # Execution result for the "rotate" task
+│       │   │   └── ...
+└── ...
+
+### Result files
+
+The result stucture of bulleted task is shown as below. This document provides a detailed breakdown of the task execution process for turning lines of text into a bulleted list in Word. It includes the original task description, execution results, and time analysis for each step.
+
+* **`unique_id`** : The identifier for the task, in this case, `"5"`.
+* **`app`** : The application being used, which is `"word"`.
+* **`original`** : Contains the original task description and the steps.
+
+  * **`original_task`** : Describes the task in simple terms (turning text into a bulleted list).
+  * **`original_steps`** : Lists the steps required to perform the task.
+* **`execution_result`** : Provides the result of executing the task.
+
+  * **`result`** : Describes the outcome of the execution, including a success message and sub-scores for each part of the task. The `complete: "yes"` means the evaluation agent think the execution process is successful! The `sub_score` is the evaluation of each subtask, corresponding to the ` instantiated_plan` in the  `prefill`.
+  * **`error`** : If any error occurred during execution, it would be reported here, but it's `null` in this case.
+* **`instantiation_result`** : Details the instantiation of the task (setting up the task for execution).
+
+  * **`choose_template`** : Path to the template or document created during the task (in this case, the bulleted list document).
+  * **`prefill`** : Describes the `instantiated_request` and  `instantiated_plan` and the steps involved, such as selecting text and clicking buttons, which is the result of prefill flow. The `Success` and `MatchedControlText` is added in the execution process. **`Success`** indicates whether the subtask was executed successfully. **`MatchedControlText`** refers to the control text that was matched during the execution process based on the plan.
+  * **`instantiation_evaluation`** : Provides feedback on the task's feasibility and the evaluation of the request, which is result of the filter flow. **`"judge": true`** : This indicates that the evaluation of the task was positive, meaning the task is considered valid or successfully judged. And the `thought ` is the detailed reason.
+* **`time_cost`** : The time spent on different parts of the task, including template selection, prefill, instantiation evaluation, and execution. Total time is also given.
+
+This structure follows your description and provides the necessary details in a consistent format.
+
+```json
+{
+    "unique_id": "5",
+    "app": "word",
+    "original": {
+        "original_task": "Turning lines of text into a bulleted list in Word",
+        "original_steps": [
+            "1. Place the cursor at the beginning of the line of text you want to turn into a bulleted list",
+            "2. Click the Bullets button in the Paragraph group on the Home tab and choose a bullet style"
+        ]
+    },
+    "execution_result": {
+        "result": {
+            "reason": "The agent successfully selected the text 'text to edit' and then clicked on the 'Bullets' button in the Word application. The final screenshot shows that the text 'text to edit' has been converted into a bulleted list.",
+            "sub_scores": {
+                "text selection": "yes",
+                "bulleted list conversion": "yes"
+            },
+            "complete": "yes"
+        },
+        "error": null
+    },
+    "instantiation_result": {
+        "choose_template": {
+            "result": "dataflow\\results\\saved_document\\bulleted.docx",
+            "error": null
+        },
+        "prefill": {
+            "result": {
+                "instantiated_request": "Turn the line of text 'text to edit' into a bulleted list in Word.",
+                "instantiated_plan": [
+                    {
+                        "Step": 1,
+                        "Subtask": "Place the cursor at the beginning of the text 'text to edit'",
+                        "ControlLabel": null,
+                        "ControlText": "",
+                        "Function": "select_text",
+                        "Args": {
+                            "text": "text to edit"
+                        },
+                        "Success": true,
+                        "MatchedControlText": null
+                    },
+                    {
+                        "Step": 2,
+                        "Subtask": "Click the Bullets button in the Paragraph group on the Home tab",
+                        "ControlLabel": "61",
+                        "ControlText": "Bullets",
+                        "Function": "click_input",
+                        "Args": {
+                            "button": "left",
+                            "double": false
+                        },
+                        "Success": true,
+                        "MatchedControlText": "Bullets"
+                    }
+                ]
+            },
+            "error": null
+        },
+        "instantiation_evaluation": {
+            "result": {
+                "judge": true,
+                "thought": "The task is specific and involves a basic function in Word that can be executed locally without any external dependencies.",
+                "request_type": "None"
+            },
+            "error": null
+        }
+    },
+    "time_cost": {
+        "choose_template": 0.012,
+        "prefill": 15.649,
+        "instantiation_evaluation": 2.469,
+        "execute": 5.824,
+        "execute_eval": 8.702,
+        "total": 43.522
+    }
+}
+```
+
+### Log files
+
+The corresponding logs can be found in the directories `logs/bulleted` and `logs/rotate`, as shown below. Detailed logs for each workflow are recorded, capturing every step of the execution process.
+
+![img](../assets\dataflow\result_example.png)
 
 ## Notes
 

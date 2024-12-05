@@ -292,37 +292,34 @@ class AppAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
-        control_selected = self._annotation_dict.get(self._control_label, None)
+        control_selected = self._annotation_dict.get(self._control_label, "")
 
         try:
             # Get the selected control item from the annotation dictionary and LLM response.
             # The LLM response is a number index corresponding to the key in the annotation dictionary.
 
-            if self._operation:
+            if control_selected:
 
                 if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
                     control_selected.draw_outline(colour="red", thickness=3)
                     time.sleep(configs.get("RECTANGLE_TIME", 0))
 
-                if control_selected:
-                    control_coordinates = PhotographerDecorator.coordinate_adjusted(
-                        self.application_window.rectangle(),
-                        control_selected.rectangle(),
-                    )
-                    self._control_log = {
-                        "control_class": control_selected.element_info.class_name,
-                        "control_type": control_selected.element_info.control_type,
-                        "control_automation_id": control_selected.element_info.automation_id,
-                        "control_friendly_class_name": control_selected.friendly_class_name(),
-                        "control_coordinates": {
-                            "left": control_coordinates[0],
-                            "top": control_coordinates[1],
-                            "right": control_coordinates[2],
-                            "bottom": control_coordinates[3],
-                        },
-                    }
-                else:
-                    self._control_log = {}
+                control_coordinates = PhotographerDecorator.coordinate_adjusted(
+                    self.application_window.rectangle(), control_selected.rectangle()
+                )
+
+                self._control_log = {
+                    "control_class": control_selected.element_info.class_name,
+                    "control_type": control_selected.element_info.control_type,
+                    "control_automation_id": control_selected.element_info.automation_id,
+                    "control_friendly_class_name": control_selected.friendly_class_name(),
+                    "control_coordinates": {
+                        "left": control_coordinates[0],
+                        "top": control_coordinates[1],
+                        "right": control_coordinates[2],
+                        "bottom": control_coordinates[3],
+                    },
+                }
 
                 self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
                     control_selected, self.application_window
@@ -331,10 +328,13 @@ class AppAgentProcessor(BaseProcessor):
                 # Save the screenshot of the tagged selected control.
                 self.capture_control_screenshot(control_selected)
 
-                self._results = self.app_agent.Puppeteer.execute_command(
-                    self._operation, self._args
-                )
-                self.control_reannotate = None
+                if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
+                    self.handle_screenshot_status()
+                else:
+                    self._results = self.app_agent.Puppeteer.execute_command(
+                        self._operation, self._args
+                    )
+                    self.control_reannotate = None
                 if not utils.is_json_serializable(self._results):
                     self._results = ""
 
@@ -437,7 +437,7 @@ class AppAgentProcessor(BaseProcessor):
         """
         Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
         """
-        screenshot_saving = self._response.get("SaveScreenshot", {})
+        screenshot_saving = self._response_json.get("SaveScreenshot", {})
 
         if screenshot_saving.get("save", False):
 

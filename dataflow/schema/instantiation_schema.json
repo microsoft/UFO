@@ -90,11 +90,9 @@
         "choose_template": { "type": ["number", "null"] },
         "prefill":{ "type": ["number", "null"] },
         "instantiation_evaluation": { "type": ["number", "null"] },
-        "total": { "type": ["number", "null"] },
-        "execute": { "type": ["number", "null"] },
-        "execute_eval": { "type": ["number", "null"] }
+        "total": { "type": ["number", "null"] }
       },
-      "required": ["choose_template", "prefill", "instantiation_evaluation", "total", "execute", "execute_eval"]
+      "required": ["choose_template", "prefill", "instantiation_evaluation", "total"]
     }
   },
   "required": ["unique_id", "app", "original", "execution_result", "instantiation_result", "time_cost"]

@@ -1,0 +1,11 @@
+{
+    "app": "word",
+    "unique_id": "108",
+    "task": "Put a watermark on all pages in Word for Office 365",
+    "refined_steps": [
+        "1.On the **Design** tab, select **Watermark**.",
+        "2.Select **Custom Watermark**.",
+        "3.Choose **Text watermark** and type your text in the **Text** box.",
+        "4.Select **OK**."
+    ]
+}
