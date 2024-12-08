@@ -251,13 +251,11 @@ class BaseRound(ABC):
 
         # Capture the final screenshot
         if sub_round_id is None:
-            screenshot_save_path = (
-                self.log_path + f"action_round_{self.id}_step_{self.step}_final.png"
-            )
+            screenshot_save_path = self.log_path + f"action_round_{self.id}_final.png"
         else:
             screenshot_save_path = (
                 self.log_path
-                + f"action_round_{self.id}_sub_round_{sub_round_id}_step_{self.step}_final.png"
+                + f"action_round_{self.id}_sub_round_{sub_round_id}_final.png"
             )
 
         if self.application_window is not None:
@@ -278,10 +276,16 @@ class BaseRound(ABC):
 
                 ui_tree_path = os.path.join(self.log_path, "ui_trees")
 
+                ui_tree_file_name = (
+                    f"ui_tree_round_{self.id}_final.json"
+                    if sub_round_id is None
+                    else f"ui_tree_round_{self.id}_sub_round_{sub_round_id}_final.json"
+                )
+
                 step_ui_tree.save_ui_tree_to_json(
                     os.path.join(
                         ui_tree_path,
-                        f"ui_tree_round_{self.id}_sub_round_{sub_round_id}_step_{self.step}_final.json",
+                        ui_tree_file_name,
                     )
                 )
 
@@ -660,6 +664,20 @@ class BaseSession(ABC):
                 utils.print_with_color(
                     f"Warning: The last snapshot capture failed, due to the error: {e}",
                     "yellow",
+                )
+
+            if configs.get("SAVE_UI_TREE", False):
+                step_ui_tree = ui_tree.UITree(self.application_window)
+
+                ui_tree_path = os.path.join(self.log_path, "ui_trees")
+
+                ui_tree_file_name = "ui_tree_final.json"
+
+                step_ui_tree.save_ui_tree_to_json(
+                    os.path.join(
+                        ui_tree_path,
+                        ui_tree_file_name,
+                    )
                 )
 
             # Save the final XML file

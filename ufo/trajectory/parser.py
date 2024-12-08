@@ -304,7 +304,14 @@ class Trajectory:
         """
 
         return (
-            max([self.step_log[i].get("Round") for i in range(len(self.step_log))]) + 1
+            max(
+                [
+                    self.step_log[i].get("Round")
+                    for i in range(len(self.step_log))
+                    if isinstance(self.step_log[i].get("Round"), int)
+                ]
+            )
+            + 1
         )
 
     @property
