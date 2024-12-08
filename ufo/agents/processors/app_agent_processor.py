@@ -11,7 +11,6 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
-from ufo.agents.states.basic import AgentStatus
 from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
@@ -292,34 +291,37 @@ class AppAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
-        control_selected = self._annotation_dict.get(self._control_label, "")
+        control_selected = self._annotation_dict.get(self._control_label, None)
 
         try:
             # Get the selected control item from the annotation dictionary and LLM response.
             # The LLM response is a number index corresponding to the key in the annotation dictionary.
 
-            if control_selected:
+            if self._operation:
 
                 if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
                     control_selected.draw_outline(colour="red", thickness=3)
                     time.sleep(configs.get("RECTANGLE_TIME", 0))
 
-                control_coordinates = PhotographerDecorator.coordinate_adjusted(
-                    self.application_window.rectangle(), control_selected.rectangle()
-                )
-
-                self._control_log = {
-                    "control_class": control_selected.element_info.class_name,
-                    "control_type": control_selected.element_info.control_type,
-                    "control_automation_id": control_selected.element_info.automation_id,
-                    "control_friendly_class_name": control_selected.friendly_class_name(),
-                    "control_coordinates": {
-                        "left": control_coordinates[0],
-                        "top": control_coordinates[1],
-                        "right": control_coordinates[2],
-                        "bottom": control_coordinates[3],
-                    },
-                }
+                if control_selected:
+                    control_coordinates = PhotographerDecorator.coordinate_adjusted(
+                        self.application_window.rectangle(),
+                        control_selected.rectangle(),
+                    )
+                    self._control_log = {
+                        "control_class": control_selected.element_info.class_name,
+                        "control_type": control_selected.element_info.control_type,
+                        "control_automation_id": control_selected.element_info.automation_id,
+                        "control_friendly_class_name": control_selected.friendly_class_name(),
+                        "control_coordinates": {
+                            "left": control_coordinates[0],
+                            "top": control_coordinates[1],
+                            "right": control_coordinates[2],
+                            "bottom": control_coordinates[3],
+                        },
+                    }
+                else:
+                    self._control_log = {}
 
                 self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
                     control_selected, self.application_window

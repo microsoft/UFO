@@ -236,7 +236,7 @@ class ReceiverManager:
         :param command_name: The command name.
         :return: The mapped receiver.
         """
-        receiver = self.receiver_registry.get(command_name, None)#select text, click input, etc.
+        receiver = self.receiver_registry.get(command_name, None)
         if receiver is None:
             raise ValueError(f"Receiver for command {command_name} is not found.")
         return receiver
