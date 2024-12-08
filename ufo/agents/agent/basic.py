@@ -98,7 +98,7 @@ class BasicAgent(ABC):
         """
         return self.host.blackboard
 
-    def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
+    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
         """
         Create the puppeteer interface.
         """

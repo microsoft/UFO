@@ -157,7 +157,7 @@ In the `AppAgent`, it calls the `build_human_demonstration_retriever` to build a
 
 
 ## Skill Set for Automation
-The `AppAgent` is equipped with a versatile skill set to support comprehensive automation within the application by calling the `create_puppteer_interface` method. The skills include:
+The `AppAgent` is equipped with a versatile skill set to support comprehensive automation within the application by calling the `create_puppeteer_interface` method. The skills include:
 
 | Skill | Description |
 | --- | --- |
