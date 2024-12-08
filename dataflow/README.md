@@ -24,16 +24,49 @@ pip install -r requirements.txt
 
 ### 2. Configure the LLMs
 
-Before using the instantiation section, you need to provide your LLM configurations in `config.yaml` and `config_dev.yaml` located in the dataflow `/config ` folder.
+Before running dataflow, you need to provide your LLM configurations **individually for PrefillAgent and FilterAgent**. You can create your own config file `dataflow/config/config.yaml`, by copying the `dataflow/config/config.yaml.template` and editing config for **PREFILL_AGENT** and **FILTER_AGENT** as follows:
 
-- `config_dev.yaml` specifies the paths of relevant files and contains default settings. The match strategy for the window match and control filter supports options: `'contains'`, `'fuzzy'`, and `'regex'`, allowing flexible matching strategy for users.
-- `config.yaml` stores the agent information. You should copy the `config.yaml.template` file and fill it out according to the provided hints.
+#### OpenAI
 
-You will configure the prefill agent and the filter agent individually. The prefill agent is used to prepare the task, while the filter agent evaluates the quality of the prefilled task. You can choose different LLMs for each.
+```bash
+VISUAL_MODE: True, # Whether to use the visual mode
+API_TYPE: "openai" , # The API type, "openai" for the OpenAI API.  
+API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint.
+API_KEY: "sk-",  # The OpenAI API key, begin with sk-
+API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
+```
+
+#### Azure OpenAI (AOAI)
+
+```bash
+VISUAL_MODE: True, # Whether to use the visual mode
+API_TYPE: "aoai" , # The API type, "aoai" for the Azure OpenAI.  
+API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
+API_KEY: "YOUR_KEY",  # The aoai API key
+API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
+API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
+```
+
+You can also non-visial model (e.g., GPT-4) for each agent, by setting `VISUAL_MODE: False` and proper `API_MODEL` (openai) and `API_DEPLOYMENT_ID` (aoai).
+
+#### Non-Visual Model Configuration
+
+You can utilize non-visual models (e.g., GPT-4) for each agent by configuring the following settings in the `config.yaml` file:
+
+- ``VISUAL_MODE: False # To enable non-visual mode.``
+- Specify the appropriate `API_MODEL` (OpenAI) and `API_DEPLOYMENT_ID` (AOAI) for each agent.
+
+Ensure you configure these settings accurately to leverage non-visual models effectively.
+
+#### Other Configurations
+
+`config_dev.yaml` specifies the paths of relevant files and contains default settings. The match strategy for the window match and control filter supports options:  `'contains'`, `'fuzzy'`, and `'regex'`, allowing flexible matching strategy for users. The `MAX_STEPS` is the max step for the execute_flow, which can be set by users.
+
+#### NOTE 💡
 
 **BE CAREFUL!** If you are using GitHub or other open-source tools, do not expose your `config.yaml` online, as it contains your private keys.
-
-Once you have filled out the template, rename it to `config.yaml` to complete the LLM configuration.
 
 ### 3. Prepare Files
 
