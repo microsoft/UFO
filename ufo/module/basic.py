@@ -639,8 +639,6 @@ class BaseSession(ABC):
                 log_path=self.log_path,
                 eva_all_screenshots=False,
             )
-        finally:
-            result, cost = "", 0
 
         # Add additional information to the evaluation result.
         additional_info = {"level": "session", "request": requests, "id": 0}
