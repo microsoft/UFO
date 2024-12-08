@@ -188,6 +188,7 @@ class ReceiverManager:
         """
         Build the UI controller.
         :param control: The control element.
+        :param application: The application window.
         :return: The UI controller receiver.
         """
 
