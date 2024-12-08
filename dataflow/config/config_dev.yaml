@@ -1,9 +1,5 @@
 version: 0.1
 
-AOAI_DEPLOYMENT: "gpt-4-visual-preview"  # Your AOAI deployment if apply
-API_VERSION: "2024-02-15-preview" # "2024-02-15-preview" by default.
-OPENAI_API_MODEL: "gpt-4-0125-preview"  # The only OpenAI model by now that accepts visual input
-
 CONTROL_BACKEND: "uia"  # The backend for control action
 CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner"] 
 PRINT_LOG: False  # Whether to print the log  
