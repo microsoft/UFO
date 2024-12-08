@@ -623,6 +623,10 @@ class PhotographerFacade:
         :param mime_type: The mime type of the image.
         :return: The base64 string.
         """
+
+        if image is None:
+            return "data:image/png;base64,"
+
         buffered = BytesIO()
         image.save(buffered, format="PNG", optimize=True)
         encoded_image = base64.b64encode(buffered.getvalue()).decode("ascii")

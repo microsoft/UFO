@@ -625,7 +625,22 @@ class BaseSession(ABC):
         )
 
         requests = self.request_to_evaluate()
-        result, cost = evaluator.evaluate(request=requests, log_path=self.log_path)
+
+        # Evaluate the session, first use the default setting, if failed, then disable the screenshot evaluation.
+        try:
+            result, cost = evaluator.evaluate(
+                request=requests,
+                log_path=self.log_path,
+                eva_all_screenshots=configs.get("EVA_ALL_SCREENSHOTS", True),
+            )
+        except Exception as e:
+            result, cost = evaluator.evaluate(
+                request=requests,
+                log_path=self.log_path,
+                eva_all_screenshots=False,
+            )
+        finally:
+            result, cost = "", 0
 
         # Add additional information to the evaluation result.
         additional_info = {"level": "session", "request": requests, "id": 0}
