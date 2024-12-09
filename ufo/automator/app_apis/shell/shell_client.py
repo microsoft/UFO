@@ -21,7 +21,7 @@ class ShellReceiver(ReceiverBasic):
         Initialize the shell client.
         """
 
-    def run(self, params: Dict[str, Any]) -> Any:
+    def run_shell(self, params: Dict[str, Any]) -> Any:
         """
         Run the command.
         :param params: The parameters of the command.
@@ -39,7 +39,7 @@ class ShellReceiver(ReceiverBasic):
 
     @property
     def xml_format_code(self) -> int:
-        return 0  # This might not be applicable for web, adjust accordingly
+        return 0  # This might not be applicable for shell commands.
 
 
 class ShellCommand(CommandBasic):
@@ -76,7 +76,7 @@ class RunShellCommand(ShellCommand):
         Execute the command to run the crawler.
         :return: The result content.
         """
-        return self.receiver.run(params=self.params)
+        return self.receiver.run_shell(params=self.params)
 
     @classmethod
     def name(cls) -> str:
