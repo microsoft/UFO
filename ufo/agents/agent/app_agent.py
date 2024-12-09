@@ -58,7 +58,6 @@ class AppAgent(BasicAgent):
         self.online_doc_retriever = None
         self.experience_retriever = None
         self.human_demonstration_retriever = None
-
         self.Puppeteer = self.create_puppteer_interface()
         self.set_state(ContinueAppAgentState())
 

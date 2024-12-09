@@ -1,9 +1,0 @@
-# Ignore files
-cache/
-controls_cache/
-tasks/*
-!tasks/prefill
-templates/word/*
-logs/*
-controller/utils/
-config/config.yaml
