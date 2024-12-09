@@ -59,7 +59,6 @@ class AppAgent(BasicAgent):
         self.experience_retriever = None
         self.human_demonstration_retriever = None
 
-        self.Puppeteer = self.create_puppeteer_interface()
         self.set_state(ContinueAppAgentState())
 
     def get_prompter(

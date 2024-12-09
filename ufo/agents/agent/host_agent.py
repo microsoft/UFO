@@ -16,6 +16,7 @@ from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
+from ufo.automator import puppeteer
 from ufo.automator.ui_control import openfile
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.config.config import Config
@@ -239,7 +240,16 @@ class HostAgent(BasicAgent):
         """
         self.processor = HostAgentProcessor(agent=self, context=context)
         self.processor.process()
+
+        # Sync the status with the processor.
         self.status = self.processor.status
+
+    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
+        """
+        Create the Puppeteer interface to automate the app.
+        :return: The Puppeteer interface.
+        """
+        return puppeteer.AppPuppeteer("", "")
 
     def process_comfirmation(self) -> None:
         """

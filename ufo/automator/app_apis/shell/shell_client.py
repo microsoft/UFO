@@ -83,4 +83,4 @@ class RunShellCommand(ShellCommand):
         """
         The name of the command.
         """
-        return "shell_run"
+        return "run_shell"

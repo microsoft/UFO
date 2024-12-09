@@ -26,6 +26,7 @@ class HostAgentStatus(Enum):
     ERROR = "ERROR"
     FINISH = "FINISH"
     CONTINUE = "CONTINUE"
+    ASSIGN = "ASSIGN"
     FAIL = "FAIL"
     PENDING = "PENDING"
     CONFIRM = "CONFIRM"
@@ -131,8 +132,6 @@ class ContinueHostAgentState(HostAgentState):
         """
         agent.process(context)
 
-        self.create_app_agent(agent, context)
-
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
         Get the next state of the agent.
@@ -226,7 +225,7 @@ class ContinueHostAgentState(HostAgentState):
         :return: The agent for the next step.
         """
 
-        if agent.status == HostAgentStatus.CONTINUE.value:
+        if agent.status == HostAgentStatus.ASSIGN.value:
             return agent.get_active_appagent()
         else:
             return agent
@@ -245,6 +244,59 @@ class ContinueHostAgentState(HostAgentState):
         :return: The class name of the state.
         """
         return HostAgentStatus.CONTINUE.value
+
+
+@HostAgentStateManager.register
+class AssignHostAgentState(HostAgentState):
+    """
+    The class for the assign host agent state.
+    """
+
+    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+        """
+        Handle the agent for the current step.
+        :param agent: The agent to handle.
+        :param context: The context for the agent and session.
+        """
+        pass
+
+    def next_state(self, agent: "HostAgent") -> AppAgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The current agent.
+        :return: The state for the next step.
+        """
+
+        # Transition to the app agent state.
+        # Lazy import to avoid circular dependency.
+
+        from ufo.agents.states.app_agent_state import ContinueAppAgentState
+
+        return ContinueAppAgentState()
+
+    def next_agent(self, agent: "HostAgent") -> AppAgent:
+        """
+        Get the agent for the next step.
+        :param agent: The agent for the current step.
+        :return: The agent for the next step.
+        """
+
+        return agent.get_active_appagent()
+
+    def is_round_end(self) -> bool:
+        """
+        Check if the round ends.
+        :return: True if the round ends, False otherwise.
+        """
+        return False
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The class name of the state.
+        :return: The class name of the state.
+        """
+        return HostAgentStatus.ASSIGN.value
 
 
 @HostAgentStateManager.register

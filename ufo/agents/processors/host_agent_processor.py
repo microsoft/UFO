@@ -17,6 +17,7 @@ BACKEND = configs["CONTROL_BACKEND"]
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
+    from ufo.agents.agent.app_agent import AppAgent
 
 
 class HostAgentProcessor(BaseProcessor):
@@ -155,6 +156,7 @@ class HostAgentProcessor(BaseProcessor):
         self.question_list = self._response_json.get("Questions", [])
 
         self.app_to_open = self._response_json.get("AppsToOpen", None)
+        self.bash_command = self._response_json.get("Bash", None)
 
         self.host_agent.print_response(self._response_json)
 
@@ -164,45 +166,19 @@ class HostAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
-        # When the required application is not opened, try to open the application and set the focus to the application window.
-        if (
-            isinstance(self.app_to_open, dict)
-            and self.app_to_open.get("APP", None) is not None
-        ):
-            new_app_window = self.host_agent.app_file_manager(self.app_to_open)
-            if new_app_window is not None:
-                self.control_text = new_app_window.window_text()
-        else:
-            # Get the application window
-            new_app_window = self._desktop_windows_dict.get(self.control_label, None)
+        new_app_window = self._desktop_windows_dict.get(self.control_label, None)
 
-        if new_app_window is None:
+        if self.status == self._agent_status_manager.ASSIGN.value:
 
-            self.status = self._agent_status_manager.FINISH.value
-            return
+            if new_app_window is None:
+                self.status = self._agent_status_manager.FINISH.value
+                return
+            else:
+                self._app_agent_creation(new_app_window)
 
-        self._control_log = {
-            "control_class": new_app_window.element_info.class_name,
-            "control_type": new_app_window.element_info.control_type,
-            "control_automation_id": new_app_window.element_info.automation_id,
-        }
+        elif self.status == self._agent_status_manager.CONTINUE.value:
 
-        # Get the root name of the application.
-        self.app_root = self.control_inspector.get_application_root_name(new_app_window)
-
-        # Check if the window interface is available for the visual element.
-        if not self._is_window_interface_available(new_app_window):
-            self.status = self._agent_status_manager.ERROR.value
-
-            return
-
-        # Switch to the new application window, if it is different from the current application window.
-        self._switch_to_new_app_window(new_app_window)
-        self.application_window.set_focus()
-        if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
-            self.application_window.draw_outline(colour="red", thickness=3)
-
-        self.action = "set_focus()"
+            self._run_shell_command()
 
     def _is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
         """
@@ -257,6 +233,54 @@ class HostAgentProcessor(BaseProcessor):
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
+    def _app_agent_creation(self, application_window: UIAWrapper) -> None:
+        """
+        Create the app agent for the host agent.
+        :param application_window: The application window.
+        """
+
+        self._control_log = {
+            "control_class": application_window.element_info.class_name,
+            "control_type": application_window.element_info.control_type,
+            "control_automation_id": application_window.element_info.automation_id,
+        }
+
+        # Get the root name of the application.
+        self.app_root = self.control_inspector.get_application_root_name(
+            application_window
+        )
+
+        # Check if the window interface is available for the visual element.
+        if not self._is_window_interface_available(application_window):
+            self.status = self._agent_status_manager.ERROR.value
+
+            return
+
+        # Switch to the new application window, if it is different from the current application window.
+        self._switch_to_new_app_window(application_window)
+        self.application_window.set_focus()
+        if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
+            self.application_window.draw_outline(colour="red", thickness=3)
+
+        self.action = "set_focus()"
+
+        self.create_app_agent(self.control_text, self.app_root)
+
+    def _run_shell_command(self) -> None:
+        """
+        Run the shell command.
+        """
+        puppeteer = self.agent.create_puppeteer_interface()
+        puppeteer.receiver_manager.create_api_receiver(self.app_root, self.control_text)
+
+        self._results = self.agent.Puppeteer.execute_command(
+            "run_shell", {"command": self.bash_command}
+        )
+
+        self.action = self.agent.Puppeteer.get_command_string(
+            "run_shell", {"command": self.bash_command}
+        )
+
     def update_memory(self) -> None:
         """
         Update the memory of the Agent.
@@ -277,7 +301,7 @@ class HostAgentProcessor(BaseProcessor):
             "AgentName": self.host_agent.name,
             "Application": self.app_root,
             "Cost": self._cost,
-            "Results": "",
+            "Results": self._results,
         }
 
         self._memory_data.set_values_from_dict(self._response_json)
@@ -297,3 +321,71 @@ class HostAgentProcessor(BaseProcessor):
         }
 
         self.host_agent.blackboard.add_trajectories(memorized_action)
+
+    def create_app_agent(
+        self, application_window_name: str, application_root_name: str
+    ) -> AppAgent:
+        """
+        Create the app agent for the host agent.
+        :param agent: The host agent.
+        :param application_window_name: The application window name.
+        :param application_root_name: The application root name.
+        :return: The app agent.
+        """
+
+        request = self.context.get(ContextNames.REQUEST)
+
+        if self.context.get(ContextNames.MODE) == "normal":
+
+            agent_name = "AppAgent/{root}/{process}".format(
+                root=application_root_name, process=application_window_name
+            )
+
+            app_agent: AppAgent = self.agent.create_subagent(
+                agent_type="app",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
+                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+                main_prompt=configs["APPAGENT_PROMPT"],
+                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                api_prompt=configs["API_PROMPT"],
+            )
+
+        elif self.context.get(ContextNames.MODE) == "follower":
+
+            # Load additional app info prompt.
+            app_info_prompt = configs.get("APP_INFO_PROMPT", None)
+
+            agent_name = "FollowerAgent/{root}/{process}".format(
+                root=application_root_name, process=application_window_name
+            )
+
+            # Create the app agent in the follower mode.
+            app_agent = self.agent.create_subagent(
+                agent_type="follower",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
+                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+                main_prompt=configs["FOLLOWERAHENT_PROMPT"],
+                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                api_prompt=configs["API_PROMPT"],
+                app_info_prompt=app_info_prompt,
+            )
+
+        else:
+            raise ValueError(
+                f"The {self.context.get(ContextNames.MODE)} mode is not supported."
+            )
+
+        # Create the COM receiver for the app agent.
+        if configs.get("USE_APIS", False):
+            app_agent.Puppeteer.receiver_manager.create_api_receiver(
+                application_root_name, application_window_name
+            )
+
+        # Provision the context for the app agent, including the all retrievers.
+        app_agent.context_provision(request)
+
+        return app_agent
