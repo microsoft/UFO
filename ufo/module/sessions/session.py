@@ -5,6 +5,7 @@ import os
 from typing import List
 import psutil
 import time
+import json
 import win32com.client
 from ufo import utils
 from ufo.agents.states.app_agent_state import ContinueAppAgentState
@@ -84,8 +85,19 @@ class SessionFactory:
         :param plan: The path folder of all plan files.
         :return: The list of created follower sessions.
         """
+        is_record = configs.get("RECORD_SESSION_DONE", True)
         plan_files = self.get_plan_files(plan)
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
+        if is_record:
+            file_path = configs.get("RECORD_TASK_STATUS_PATH", "task_done.json")
+            if not os.path.exists(file_path):
+                self.task_done = {f: False for f in file_names}
+                json.dump(
+                    self.task_done,
+                    open(file_path, "w"),
+                    indent=4,
+                )
+
         sessions = [
             FromFileSession(
                 f"{task}/{file_name}",
@@ -328,6 +340,7 @@ class FromFileSession(BaseSession):
         super().__init__(task, should_evaluate, id)
         self.plan_reader = PlanReader(plan_file)
         self.close = self.plan_reader.get_close()
+        self.task_name = task.split("/")[1]
 
     def _init_context(self) -> None:
         """
@@ -424,8 +437,11 @@ class FromFileSession(BaseSession):
                 word_app.WindowState = 1  # wdWindowStateMaximize
             except Exception as e:
                 print(f"An error occurred: {e}", "red")
-
-        super().run()
+        try:
+            super().run()
+            self.record_task_done()
+        except:
+            pass
         # Close the APP if the files ask so.
         if self.close:
             if object_name:
@@ -447,3 +463,18 @@ class FromFileSession(BaseSession):
         """
         request_memory = self._host_agent.blackboard.requests
         return request_memory.to_json()
+
+    def record_task_done(self) -> None:
+        """
+        Record the task done.
+        """
+        is_record = configs.get("RECORD_TASK_STATUS", True)
+        if is_record:
+            file_path = configs.get("TASK_STATUS_FILE", "task_done.json")
+            task_done = json.load(open(file_path, "r"))
+            task_done[self.task_name] = True
+            json.dump(
+                task_done,
+                open(file_path, "w"),
+                indent=4,
+            )

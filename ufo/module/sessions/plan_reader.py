@@ -3,8 +3,6 @@
 
 import json
 import os
-import time
-import win32com.client
 from typing import List, Optional
 
 from ufo.config.config import Config
@@ -135,3 +133,11 @@ class PlanReader:
         """
 
         return not self.remaining_steps
+
+    def get_root_path(self) -> str:
+        """
+        Get the root path of the plan.
+        :return: The root path of the plan.
+        """
+
+        return os.path.dirname(os.path.abspath(self.plan_file))
