@@ -2,11 +2,12 @@
 # Licensed under the MIT License.
 
 
-from functools import wraps
 import json
+import os
 import time
 import traceback
 from abc import ABC, abstractmethod
+from functools import wraps
 from typing import Any, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -494,6 +495,14 @@ class BaseProcessor(ABC):
         :return: The log path.
         """
         return self.context.get(ContextNames.LOG_PATH)
+
+    @property
+    def ui_tree_path(self) -> str:
+        """
+        Get the UI tree path.
+        :return: The UI tree path.
+        """
+        return os.path.join(self.log_path, "ui_trees")
 
     @property
     def request(self) -> str:

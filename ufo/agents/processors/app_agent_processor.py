@@ -11,6 +11,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
+from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
@@ -133,6 +134,15 @@ class AppAgentProcessor(BaseProcessor):
             annotation_type="number",
             save_path=annotated_screenshot_save_path,
         )
+
+        if configs.get("SAVE_UI_TREE", False):
+            if self.application_window is not None:
+                step_ui_tree = ui_tree.UITree(self.application_window)
+                step_ui_tree.save_ui_tree_to_json(
+                    os.path.join(
+                        self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
+                    )
+                )
 
         # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
         if configs["INCLUDE_LAST_SCREENSHOT"]:
@@ -292,6 +302,9 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         control_selected = self._annotation_dict.get(self._control_label, None)
+        self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
+            control_selected, self.application_window
+        )
 
         try:
             # Get the selected control item from the annotation dictionary and LLM response.
@@ -322,10 +335,6 @@ class AppAgentProcessor(BaseProcessor):
                     }
                 else:
                     self._control_log = {}
-
-                self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
-                    control_selected, self.application_window
-                )
 
                 # Save the screenshot of the tagged selected control.
                 self.capture_control_screenshot(control_selected)

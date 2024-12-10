@@ -30,6 +30,7 @@ from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
 from ufo.agents.states.basic import AgentState, AgentStatus
 from ufo.automator.ui_control.screenshot import PhotographerFacade
+from ufo.automator.ui_control import ui_tree
 from ufo.config.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.module.context import Context, ContextNames
@@ -270,6 +271,24 @@ class BaseRound(ABC):
                     "yellow",
                 )
 
+            if configs.get("SAVE_UI_TREE", False):
+                step_ui_tree = ui_tree.UITree(self.application_window)
+
+                ui_tree_path = os.path.join(self.log_path, "ui_trees")
+
+                ui_tree_file_name = (
+                    f"ui_tree_round_{self.id}_final.json"
+                    if sub_round_id is None
+                    else f"ui_tree_round_{self.id}_sub_round_{sub_round_id}_final.json"
+                )
+
+                step_ui_tree.save_ui_tree_to_json(
+                    os.path.join(
+                        ui_tree_path,
+                        ui_tree_file_name,
+                    )
+                )
+
             # Save the final XML file
             if configs["LOG_XML"]:
                 log_abs_path = os.path.abspath(self.log_path)
@@ -346,7 +365,6 @@ class BaseSession(ABC):
             configs["HOSTAGENT_PROMPT"],
             configs["HOSTAGENT_EXAMPLE_PROMPT"],
             configs["API_PROMPT"],
-            configs["ALLOW_OPENAPP"],
         )
 
     def run(self) -> None:
@@ -606,7 +624,20 @@ class BaseSession(ABC):
         )
 
         requests = self.request_to_evaluate()
-        result, cost = evaluator.evaluate(request=requests, log_path=self.log_path)
+
+        # Evaluate the session, first use the default setting, if failed, then disable the screenshot evaluation.
+        try:
+            result, cost = evaluator.evaluate(
+                request=requests,
+                log_path=self.log_path,
+                eva_all_screenshots=configs.get("EVA_ALL_SCREENSHOTS", True),
+            )
+        except Exception as e:
+            result, cost = evaluator.evaluate(
+                request=requests,
+                log_path=self.log_path,
+                eva_all_screenshots=False,
+            )
 
         # Add additional information to the evaluation result.
         additional_info = {"level": "session", "request": requests, "id": 0}
@@ -645,6 +676,20 @@ class BaseSession(ABC):
                 utils.print_with_color(
                     f"Warning: The last snapshot capture failed, due to the error: {e}",
                     "yellow",
+                )
+
+            if configs.get("SAVE_UI_TREE", False):
+                step_ui_tree = ui_tree.UITree(self.application_window)
+
+                ui_tree_path = os.path.join(self.log_path, "ui_trees")
+
+                ui_tree_file_name = "ui_tree_final.json"
+
+                step_ui_tree.save_ui_tree_to_json(
+                    os.path.join(
+                        ui_tree_path,
+                        ui_tree_file_name,
+                    )
                 )
 
             # Save the final XML file

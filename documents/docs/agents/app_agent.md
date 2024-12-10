@@ -96,7 +96,6 @@ The `AppAgent` state is managed by a state machine that determines the next acti
 | `FINISH` | The `AppAgent` has completed the current sub-task. |
 | `ERROR` | The `AppAgent` encountered an error during execution. |
 | `FAIL` | The `AppAgent` believes the current sub-task is unachievable. |
-<!-- | `PENDING` | The `AppAgent` is waiting for user input or external information to proceed. | -->
 | `CONFIRM` | The `AppAgent` is confirming the user's input or action. |
 | `SCREENSHOT` | The `AppAgent` believes the current screenshot is not clear in annotating the control and requests a new screenshot. |
 
@@ -158,7 +157,7 @@ In the `AppAgent`, it calls the `build_human_demonstration_retriever` to build a
 
 
 ## Skill Set for Automation
-The `AppAgent` is equipped with a versatile skill set to support comprehensive automation within the application by calling the `create_puppteer_interface` method. The skills include:
+The `AppAgent` is equipped with a versatile skill set to support comprehensive automation within the application by calling the `create_puppeteer_interface` method. The skills include:
 
 | Skill | Description |
 | --- | --- |

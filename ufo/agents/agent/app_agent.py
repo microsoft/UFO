@@ -58,7 +58,9 @@ class AppAgent(BasicAgent):
         self.online_doc_retriever = None
         self.experience_retriever = None
         self.human_demonstration_retriever = None
-        self.Puppeteer = self.create_puppteer_interface()
+
+        self.Puppeteer = self.create_puppeteer_interface()
+
         self.set_state(ContinueAppAgentState())
 
     def get_prompter(
@@ -294,7 +296,7 @@ class AppAgent(BasicAgent):
         self.processor.process()
         self.status = self.processor.status
 
-    def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
+    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
         """
         Create the Puppeteer interface to automate the app.
         :return: The Puppeteer interface.
