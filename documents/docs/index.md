@@ -16,7 +16,6 @@
 </h1>
 
 
-
 ## 🕌 Framework
 <b>UFO</b> <img src="./img/ufo_blue.png" alt="UFO Image" width="24"> operates as a multi-agent framework, encompassing:
 
@@ -86,20 +85,24 @@ In this example, we will demonstrate how to utilize UFO to extract text from Wor
 
 &nbsp;
 ## 📚 Citation
-Our technical report paper can be found [here](https://arxiv.org/abs/2402.07939). Note that previous AppAgent and ActAgent in the paper are renamed to HostAgent and AppAgent in the code base to better reflect their functions.
+Our technical report paper can be found [here](https://arxiv.org/abs/2402.07939). Note that previous HostAgent and AppAgent in the paper are renamed to HostAgent and AppAgent in the code base to better reflect their functions.
 If you use UFO in your research, please cite our paper:
 ```
 @article{ufo,
   title={{UFO: A UI-Focused Agent for Windows OS Interaction}},
-  author={Zhang, Chaoyun and Li, Liqun and He, Shilin and  Zhang, Xu and Qiao, Bo and  Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and  Zhang, Qi},
+  author={Zhang, Chaoyun and Li, Liqun and He, Shilin and Zhang, Xu and Qiao, Bo and  Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and Zhang, Qi},
   journal={arXiv preprint arXiv:2402.07939},
   year={2024}
 }
 ```
 
+## 🎨 Related Projects
 
-## 🎨 Related Project
-You may also find [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file) useful, a code-first LLM agent framework for seamlessly planning and executing data analytics tasks.
+If you're interested in data analytics agent frameworks, check out [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file), a code-first LLM agent framework designed for seamlessly planning and executing data analytics tasks.
+
+For more information on GUI agents, refer to our survey paper: [Large Language Model-Brained GUI Agents: A Survey](https://arxiv.org/abs/2411.18279). You can also explore the survey through:
+- [GitHub Repository](https://github.com/vyokky/LLM-Brained-GUI-Agents-Survey)
+- [Searchable Website](https://vyokky.github.io/LLM-Brained-GUI-Agents-Survey/)
 
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FX17ZGJYGC"></script>
