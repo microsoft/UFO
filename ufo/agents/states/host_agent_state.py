@@ -143,14 +143,7 @@ class ContinueHostAgentState(HostAgentState):
         # Transition to the app agent state.
         # Lazy import to avoid circular dependency.
 
-        if agent.status == HostAgentStatus.CONTINUE.value:
-
-            from ufo.agents.states.app_agent_state import ContinueAppAgentState
-
-            return ContinueAppAgentState()
-
-        else:
-            return super().next_state(agent)
+        return super().next_state(agent)
 
     def create_app_agent(self, agent: "HostAgent", context: Context) -> AppAgent:
         """
