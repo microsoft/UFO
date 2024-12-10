@@ -226,7 +226,6 @@ class HostAgentProcessor(BaseProcessor):
         self.application_window = new_app_window
 
         self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
-
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
