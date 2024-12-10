@@ -2,10 +2,10 @@
 # Licensed under the MIT License.
 
 import os
-import time
 from typing import List
+import psutil
+import time
 import win32com.client
-
 from ufo import utils
 from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
@@ -46,10 +46,10 @@ class SessionFactory:
                 ]
         elif mode == "batch_normal":
             if self.is_folder(plan):
-                return self.create_batch_session_in_batch(task, plan)
+                return self.create_sessions_in_batch(task, plan)
             else:
                 return [
-                    BatchSession(task, plan, configs.get("EVA_SESSION", False), id=0)
+                    FromFileSession(task, plan, configs.get("EVA_SESSION", False), id=0)
                 ]
         else:
             raise ValueError(f"The {mode} mode is not supported.")
@@ -77,7 +77,7 @@ class SessionFactory:
 
         return sessions
 
-    def create_batch_session_in_batch(self, task: str, plan: str) -> List[BaseSession]:
+    def create_sessions_in_batch(self, task: str, plan: str) -> List[BaseSession]:
         """
         Create a follower session.
         :param task: The name of current task.
@@ -87,7 +87,7 @@ class SessionFactory:
         plan_files = self.get_plan_files(plan)
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
         sessions = [
-            BatchSession(
+            FromFileSession(
                 f"{task}/{file_name}",
                 plan_file,
                 configs.get("EVA_SESSION", False),
@@ -309,9 +309,9 @@ class FollowerSession(BaseSession):
         return self.plan_reader.get_task()
 
 
-class BatchSession(BaseSession):
+class FromFileSession(BaseSession):
     """
-    A session for UFO.
+    A session for UFO from files.
     """
 
     def __init__(
@@ -327,16 +327,7 @@ class BatchSession(BaseSession):
 
         super().__init__(task, should_evaluate, id)
         self.plan_reader = PlanReader(plan_file)
-
-    def run(self) -> None:
-        """
-        Run the session.
-        """
-        super().run()
-
-        # Save the experience if the user asks so.
-        # if interactor.experience_asker():
-        #     self.experience_saver()
+        self.close = self.plan_reader.get_close()
 
     def _init_context(self) -> None:
         """
@@ -353,10 +344,8 @@ class BatchSession(BaseSession):
 
         # Get a request for the new round.
         request = self.next_request()
-        print(request)
 
         # Create a new round and return None if the session is finished.
-
         if self.is_finished():
             return None
 
@@ -383,9 +372,73 @@ class BatchSession(BaseSession):
         if self.total_rounds == 0:
             return self.plan_reader.get_host_request()
         else:
-            # Next request
             self._finish = True
-            return "N"
+            return
+
+    def get_app_name(self, object_name: str) -> str:
+        """
+        Get the application name based on the object name.
+        :param object_name: The name of the object.
+        :return: The application name.
+        """
+        application_mapping = {
+            ".docx": "WINWORD.EXE",
+            ".xlsx": "EXCEL.EXE",
+            ".pptx": "POWERPNT.EXE",
+            # "outlook": "olk.exe",
+            # "onenote": "ONENOTE.EXE",
+        }
+        self.app_name = application_mapping.get(object_name)
+        return self.app_name
+
+    def get_app_com(self, object_name: str) -> str:
+        """
+        Get the COM object name based on the object name.
+        :param object_name: The name of the object.
+        :return: The COM object name.
+        """
+        application_mapping = {
+            ".docx": "Word.Application",
+            ".xlsx": "Excel.Application",
+            ".pptx": "PowerPoint.Application",
+        }
+        self.app_name = application_mapping.get(object_name)
+        return self.app_name
+
+    def run(self) -> None:
+        """
+        Run the session.
+        """
+        object_name = self.plan_reader.get_operation_object()
+        if object_name:
+            suffix = os.path.splitext(object_name)[1]
+            app_name = self.get_app_name(suffix)
+            app_com = self.get_app_com(suffix)
+            file = self.plan_reader.get_file_path()
+            code_snippet = f"import os\nos.system('start {app_name} \"{file}\"')"
+            code_snippet = code_snippet.replace("\\", "\\\\")  # escape backslashes
+            try:
+                exec(code_snippet, globals())
+                time.sleep(3)  # wait for the app to boot
+                word_app = win32com.client.Dispatch(app_com)
+                word_app.WindowState = 1  # wdWindowStateMaximize
+            except Exception as e:
+                print(f"An error occurred: {e}", "red")
+
+        super().run()
+        # Close the APP if the files ask so.
+        if self.close:
+            if object_name:
+                for process in psutil.process_iter(["name"]):
+                    if process.info["name"] == app_name:
+                        os.system(f"taskkill /f /im {app_name}")
+                        time.sleep(1)
+            else:
+                app_names = ["WINWORD.EXE", "EXCEL.EXE", "POWERPNT.EXE"]
+                for process in psutil.process_iter(["name"]):
+                    if process.info["name"] in app_names:
+                        os.system(f"taskkill /f /im {process.info['name']}")
+                        time.sleep(1)
 
     def request_to_evaluate(self) -> bool:
         """
