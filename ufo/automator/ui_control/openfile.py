@@ -9,7 +9,10 @@ from ufo.config.config import Config
 
 configs = Config.get_instance().config_data
 
-BACKEND = configs["CONTROL_BACKEND"]
+if configs is not None:
+    BACKEND = configs["CONTROL_BACKEND"]
+else:
+    BACKEND = "uia"
 
 
 class FileController:
@@ -17,9 +20,9 @@ class FileController:
     Control block for open file / specific APP and proceed the operation.
     """
 
-    def __init__(self):
+    def __init__(self, backend=BACKEND):
 
-        self.backend = BACKEND
+        self.backend = backend
         self.file_path = ""
         self.APP = ""
         self.apptype = ""

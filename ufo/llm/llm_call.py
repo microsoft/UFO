@@ -12,7 +12,7 @@ configs = Config.get_instance().config_data
 
 
 def get_completion(
-    messages, agent: str = "APP", use_backup_engine: bool = True
+    messages, agent: str = "APP", use_backup_engine: bool = True, configs = configs
 ) -> Tuple[str, float]:
     """
     Get completion for the given messages.
@@ -23,13 +23,14 @@ def get_completion(
     """
 
     responses, cost = get_completions(
-        messages, agent=agent, use_backup_engine=use_backup_engine, n=1
+        messages, agent=agent, use_backup_engine=use_backup_engine, n=1, configs = configs
     )
     return responses[0], cost
 
 
 def get_completions(
-    messages, agent: str = "APP", use_backup_engine: bool = True, n: int = 1
+    messages, agent: str = "APP", use_backup_engine: bool = True, n: int = 1,
+    configs = configs
 ) -> Tuple[list, float]:
     """
     Get completions for the given messages.
@@ -44,6 +45,10 @@ def get_completions(
         agent_type = "HOST_AGENT"
     elif agent.lower() in ["app", "appagent"]:
         agent_type = "APP_AGENT"
+    elif agent.lower() == "prefill":
+        agent_type = "PREFILL_AGENT"
+    elif agent.lower() == "filter":
+        agent_type = "FILTER_AGENT"
     elif agent.lower() == "backup":
         agent_type = "BACKUP_AGENT"
     else:

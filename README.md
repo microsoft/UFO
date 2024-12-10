@@ -240,6 +240,7 @@ You may use them to debug, replay, or analyze the agent output.
 * For other communications, please contact [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com).
 ---
 
+
 <!-- ## 🎬 Demo Examples
 
 We present two demo videos that complete user request on Windows OS using UFO. For more case study, please consult our [technical report](https://arxiv.org/abs/2402.07939).
@@ -257,6 +258,8 @@ In this example, we will demonstrate how to utilize UFO to extract text from Wor
 
 
 https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4fc32e0 -->
+
+
 
 
 

@@ -21,7 +21,8 @@ from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
 configs = Config.get_instance().config_data
-BACKEND = configs["CONTROL_BACKEND"]
+if configs is not None:
+    BACKEND = configs["CONTROL_BACKEND"]
 
 
 class BaseProcessor(ABC):
