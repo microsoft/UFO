@@ -17,7 +17,6 @@ BACKEND = configs["CONTROL_BACKEND"]
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
-    from ufo.agents.agent.app_agent import AppAgent
 
 
 class HostAgentProcessor(BaseProcessor):
