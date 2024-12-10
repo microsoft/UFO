@@ -294,9 +294,9 @@ If you use UFO in your research, please cite our paper:
 
 
 ## 🎨 Related Projects
-If you're interested in data analytics agent frameworks, check out [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file), a code-first LLM agent framework designed for seamlessly planning and executing data analytics tasks.
+1. If you're interested in data analytics agent frameworks, check out [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file), a code-first LLM agent framework designed for seamlessly planning and executing data analytics tasks.
 
-For more information on GUI agents, refer to our survey paper: [Large Language Model-Brained GUI Agents: A Survey](https://arxiv.org/abs/2411.18279). You can also explore the survey through:
+2. For more information on GUI agents, refer to our survey paper: [Large Language Model-Brained GUI Agents: A Survey](https://arxiv.org/abs/2411.18279). You can also explore the survey through:
 - [Paper](https://arxiv.org/abs/2411.18279)
 - [GitHub Repository](https://github.com/vyokky/LLM-Brained-GUI-Agents-Survey)
 - [Searchable Website](https://vyokky.github.io/LLM-Brained-GUI-Agents-Survey/)
