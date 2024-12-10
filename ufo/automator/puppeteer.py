@@ -192,6 +192,7 @@ class ReceiverManager:
         :return: The UI controller receiver.
         """
 
+        # control can be None
         if not application:
             return None
 
