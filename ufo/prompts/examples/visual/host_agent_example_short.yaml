@@ -326,9 +326,9 @@ example13:
       Modify the title to 'Apple is the best tech Company' in the test.pptx file.
     Message: []
     ControlLabel: |-
-      2
+      None
     ControlText: |-
-      PowerPoint
+      None
     Status: |-
       CONTINUE
     Plan: []
@@ -350,9 +350,9 @@ example14:
       Find the label.txt file in the file explorer.
     Message: []
     ControlLabel: |-
-      3
+      None
     ControlText: 
-      Explorer
+      None
     Status: |-
       CONTINUE
     Plan: []

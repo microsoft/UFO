@@ -151,10 +151,7 @@ class ContinueHostAgentState(HostAgentState):
         :return: The agent for the next step.
         """
 
-        if agent.status == HostAgentStatus.ASSIGN.value:
-            return agent.get_active_appagent()
-        else:
-            return agent
+        return agent
 
     def is_round_end(self) -> bool:
         """

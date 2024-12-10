@@ -266,8 +266,10 @@ class HostAgentProcessor(BaseProcessor):
         """
         Run the shell command.
         """
-        puppeteer = self.agent.create_puppeteer_interface()
-        puppeteer.receiver_manager.create_api_receiver(self.app_root, self.control_text)
+        self.agent.create_puppeteer_interface()
+        self.agent.Puppeteer.receiver_manager.create_api_receiver(
+            self.app_root, self.control_text
+        )
 
         self._results = self.agent.Puppeteer.execute_command(
             "run_shell", {"command": self.bash_command}

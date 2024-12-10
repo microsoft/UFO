@@ -337,6 +337,7 @@ class HostAgent(BasicAgent):
             application = "[The required application needs to be opened.]"
         observation = response_dict.get("Observation")
         thought = response_dict.get("Thought")
+        bash_command = response_dict.get("Bash", None)
         subtask = response_dict.get("CurrentSubtask")
 
         # Convert the message from a list to a string.
@@ -355,6 +356,10 @@ class HostAgent(BasicAgent):
             "Observations👀: {observation}".format(observation=observation), "cyan"
         )
         utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
+        if bash_command:
+            utils.print_with_color(
+                "Running Bash Command🔧: {bash}".format(bash=bash_command), "yellow"
+            )
         utils.print_with_color(
             "Plans📚: {plan}".format(plan=plan),
             "cyan",
