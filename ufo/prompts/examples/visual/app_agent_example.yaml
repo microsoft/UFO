@@ -33,85 +33,7 @@ example1:
     - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
     - You need to draft the content of the email and send it to the receiver. 
 
-
-example2: 
-  Request: |- 
-    My name is Zac. Please send a email to jack@outlook.com to thanks his contribution on the open source.
-  Sub-task: |-
-    Compose an email to send to Jack (jack@outlook.com) to thank him for his contribution to the open source project on the outlook application, using the name Zac.
-  Response: 
-    Observation: |-
-      The screenshot shows that I am on a calendar page of Outlook. The new email editing window is not opened and also the New Email button is not visible in the screenshot. The last action took effect by opening the Outlook windows.
-    Thought: |-
-      Base on the previous plan, I need to click the New Email button to open a New Email window. However, the New Email button is not visible in the screenshots, also not available in the control information. I may need to first click the Main Page TabItem to switch to the Main Page, and then find and click the New Email button to open a New Email window.
-    ControlLabel: |-
-      34
-    ControlText: |-
-      Main Page
-    Function: |-
-      click_input
-    Args:
-      {"button": "left", "double": false}
-    Status: |-
-      CONTINUE
-    Plan:
-      - (1) Find the New Email button in the Main Page and click it to open a New Email window. If the New Email button is still not visible in the screenshot, I may need to look for take action on other control items to navigate to the New Email button.
-      - (2) Input the email address of the receiver.
-      - (3) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.
-      - (4) Input the content of the email. I need to input 
-      
-        'Dear Jack,
-        I hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.
-        Your commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.
-        Your code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.
-        
-        Please know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.
-        Once again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.
-        Best regards,
-        Zac'.
-      - (5) Click the Send button to send the email.
-    Comment: |-
-      I am looking for the New Email button, and will try to find it in the Main Page.
-    SaveScreenshot:
-      {"save": false, "reason": ""}
-  Tips: |-
-    - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
-    - Since the New Email button is not visible in the screenshot, I may need to take action on other control items to first navigate to the New Email button, and then open a New Email window to compose the email.
-
-
-
-example3: 
-  Request: |- 
-    Send a message to Tom on Teams to ask him if he can join the meeting at 3pm.
-  Sub-task: |-
-    Compose a message to send to Tom on Teams to ask him if he can join the meeting at 3pm.
-  Response: 
-    Observation: |-
-      The screenshot shows that I am on the chat window of Tom on Teams, the message input box is empty and ready to input. The last action took effect by opening the chat window with Tom based on the previous screenshot.
-    Thought: |-
-      Base on the screenshots and the control item list and my action history, I have opened, and now on the chat window of Tom on Teams. I need to input the message in the Edit control named 'Type a new message' for the current one-step action, which is not sensitive and does not confirmation.
-    ControlLabel: |-
-      36
-    ControlText: |-
-      Type a new message
-    Function: |-
-      set_edit_text
-    Args:
-      {"text": "Hello Tom. It's 3 PM. Are you available to join the meeting now?"}
-    Status: |-
-      CONTINUE
-    Plan:
-      - (1) Click the Send button to send the message. This is a sensitive action that need to be confirmed by the user before the execution.
-    Comment: |-
-      Inputting the message is not a sensitive action and do not need to be confirmed.
-    SaveScreenshot:
-      {"save": false, "reason": ""}
-  Tips: |-
-    - Sending a message is a sensitive action and need to be confirmed.
-
-
-
-example4:
+example2:
   Request: |-
     Draft an email to Amy to ask her how she feels about the new project.
   Sub-task: |-
@@ -148,7 +70,7 @@ example4:
     - You need to draft the content of the email and send it to the receiver. Use polite language when drafting the email.
 
 
-example5:
+example3:
   Request: |-
     Search for the word 'UFO' in the document.
   Sub-task: |-
@@ -178,7 +100,7 @@ example5:
     - If there are steps already taken (e.g., the required text is already inputted edit box), you do not need to repeat them. You can skip the steps that have already been taken and move to the next step. 
 
 
-example6:
+example4:
   Request: |-
     Send an message to Tom on Teams by including a (1) the text extracted from framework.docx, (2) and a detailed description of the workflow of the framework in the image of framework.png.
   Sub-task: |-
@@ -207,7 +129,7 @@ example6:
     - In Word application, the main canva is a Document control, and the text of the document can be extracted by using the 'texts' action.
 
 
-example7:
+example5:
   Request: |-
     Quickly remove all notes in the presentation.pptx, without looping through each slide.
   Sub-task: |-
@@ -243,7 +165,7 @@ example7:
     - The 'Remove All Presentation Notes' is usually at the bottom of the menu, and I should apply wheel_mouse_input(wheel_dist=-20) to a ScrollBar to reach the menu bottom to make this button visible.
 
 
-example8:
+example6:
   Request: |-
     How many stars does the Imdiffusion repo have?
   Sub-task: |-
@@ -277,7 +199,7 @@ example8:
 
 
 
-example9: 
+example7: 
   Request: |- 
     Please remind me to get party dinner (5 people) preparation done before 5PM today with steps and notes.
   Sub-task: |-
@@ -315,7 +237,7 @@ example9:
 
 
 
-example10:
+example8:
   Request: |-
     Please create a slide from the meeting_notes.docx in the presentation1.pptx.
   Sub-task: |-
@@ -347,39 +269,7 @@ example10:
     - The Copilot Add-in can directly create a slide from the meeting_notes.docx. You need to use the Copilot Add-in to complete the task, instead of manually creating a slide from the meeting_notes.docx.
 
 
-example11: 
-  Request: |-
-    create a presentation of watering plant on plant.pptx.
-  Sub-task: |-
-    Create a presentation from the plant.pptx about watering plant using the Copilot Add-in in the Microsoft PowerPoint application.
-  Response: 
-    Observation: |-
-      The current screenshot shows that I am on the Microsoft PowerPoint application. The Copilot Add-in is visible in the screenshot.
-    Thought: |-
-      I need to click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide about a specific topic, such as watering plant, from the plant.pptx.
-    ControlLabel: |-
-      60
-    ControlText: |-
-      Copilot
-    Function: |- 
-      click_input
-    Args: 
-      {"button": "left", "double": false}
-    Status: |-
-      CONTINUE
-    Plan:
-      - (1) Click the 'Create presentation about' button to input the topic 'watering plant'.
-      - (2) Input the topic 'watering plant' in the edit control after the text of 'Create presentation about'.
-      - (3) Click the 'Send' button to send the request to Copilot. This completes the task.
-    SaveScreenshot:
-      {"save": false, "reason": ""}
-    Comment: |-
-      I need to use the Copilot Add-in to create a presentation from the plant.pptx about watering plant.
-  Tips: |-
-    - The Copilot Add-in can directly create a presentation from the plant.pptx. You need to use the Copilot Add-in to complete the task.
-
-
-example12: 
+example9: 
   Request: |-
     Add a title slide to the presentation.pptx on its first slide with the title 'Project Update'.
   Sub-task: |-
@@ -409,7 +299,7 @@ example12:
     - If the control item is not available in the control item list and screenshot, you can use the 'click_on_coordinates' API to click on a specific point in the application window.
 
 
-example13:
+example10:
   Request: |-
     Fill the information for top 3 events one by one in the forms of private Event Bookings web page.
   Sub-task: |-
@@ -437,31 +327,3 @@ example13:
     - (5) Click the 'Submit' button to submit the form.
   Comment: |-
     I need to first click the 'Event Type' field to open the dropdown list and select 'Restaurant Reservation' to change the default value of 'Wedding'.
-
-
-  example14:
-  Request: |-
-    Activate the repair process for the Square button in Power Automate | calculator, and In a different calculator app, ctrl + click the square button for repair.
-  Sub-task: |-
-    Activate the repair process for the Square button in Power Automate | calculator.
-  Response:
-  Observation: |-
-    The current screenshot shows the 'Power Automate | calculator' application with a dialog box for selecting UI elements. The repair selector is not visible in the screenshot.
-  Thought: |-
-    Based on the assigned sub-task and the current screenshot, I need to click first navigate to the repair selector, not running it. The first step is to click the 'More actions' button to open the dropdown list, and then click the 'Edit' button to open the edit mode. In the edit mode, I need to click the 'Repair' button to open the Edit dialog box.
-  ControlLabel: |-
-    58
-  ControlText: |-
-    More actions
-  Function: |-
-    click_input
-  Args:
-    {"button": "left", "double": false}
-  Status: |-
-    CONTINUE
-  Plan:
-    - (1) After open the dropdown list, click the 'Edit' button to open the edit dialog box.
-    - (2) In the edit dialog box, click the 'Open selector builder for selected UI element' to open the selector builder. I must NOT click the 'Save' button as the repair process is not completed yet and no changes should be saved.
-    - (3) Click the 'Repair' button to activate the repair process for the Square button. After clicking the 'Repair' button, the repair process will be activated and the sub-task will be FINISH immediately. I need to set the status as FINISH and handover to the HostAgent.
-  Comment: |-
-    I need to navigate to the repair selector by clicking the 'More actions' button, then the 'Edit' button, then the 'Open selector builder for selected UI element' button, and finally the 'Repair' button to activate the repair process for the Square button in Power Automate | calculator.
