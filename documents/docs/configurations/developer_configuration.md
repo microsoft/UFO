@@ -24,6 +24,7 @@ The following parameters are included in the system configuration of the UFO age
 | `USE_APIS`              | Whether to allow the use of application APIs.                                                           | Boolean  | True          |
 | `LOG_XML`               | Whether to log the XML file at every step.                                                              | Boolean  | False         |
 | `SCREENSHOT_TO_MEMORY`  | Whether to allow the screenshot to [`Blackboard`](../agents/design/blackboard.md) for the agent's decision making.                              | Boolean  | True          |
+| `SAVE_UI_TREE`          | Whether to save the UI tree in the log.                                                                 | Boolean  | False         |
 
 ## Main Prompt Configuration
 

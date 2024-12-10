@@ -5,7 +5,8 @@ The `HostAgent` assumes three primary responsibilities:
 1. **User Engagement**: The `HostAgent` engages with the user to understand their request and analyze their intent. It also conversates with the user to gather additional information when necessary.
 2. **AppAgent Management**: The `HostAgent` manages the creation and registration of `AppAgents` to fulfill the user's request. It also orchestrates the interaction between the `AppAgents` and the application.
 3. **Task Management**: The `HostAgent` analyzes the user's request, to decompose it into sub-tasks and distribute them among the `AppAgents`. It also manages the scheduling, orchestration, coordination, and monitoring of the `AppAgents` to ensure the successful completion of the user's request.
-4. **Communication**: The `HostAgent` communicates with the `AppAgents` to exchange information. It also manages the `Blackboard` to store and share information among the agents, as shown below:
+4. **Bash Command Execution**: The `HostAgent` can execute bash commands to open applications or execute system commands to support the user's request and the `AppAgents`' execution.
+5. **Communication**: The `HostAgent` communicates with the `AppAgents` to exchange information. It also manages the `Blackboard` to store and share information among the agents, as shown below:
 
 <h1 align="center">
     <img src="../../img/blackboard.png" alt="Blackboard Image" width="80%">

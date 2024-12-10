@@ -46,6 +46,7 @@ nav:
       - UI Automator: automator/ui_automator.md
       - API Automator: automator/wincom_automator.md
       - Web Automator: automator/web_automator.md
+      - Bash Automator: automator/bash_automator.md
       - AI Tool: automator/ai_tool_automator.md
   - Logs:
       - Overview: logs/overview.md
@@ -53,6 +54,7 @@ nav:
       - Step Logs: logs/step_logs.md
       - Evaluation Logs: logs/evaluation_logs.md
       - Screenshots: logs/screenshots_logs.md
+      - UI Tree: logs/ui_tree_logs.md
   - Advanced Usage: 
       - Reinforcing AppAgent: 
         - Overview: advanced_usage/reinforce_appagent/overview.md
