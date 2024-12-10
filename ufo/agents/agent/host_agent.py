@@ -4,10 +4,7 @@
 
 from __future__ import annotations
 
-import time
 from typing import Dict, List, Union
-
-from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent
@@ -17,8 +14,6 @@ from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
 from ufo.automator import puppeteer
-from ufo.automator.ui_control import openfile
-from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.config.config import Config
 from ufo.module.context import Context
 from ufo.prompter.agent_prompter import HostAgentPrompter
@@ -60,7 +55,6 @@ class HostAgent(BasicAgent):
         main_prompt: str,
         example_prompt: str,
         api_prompt: str,
-        allow_openapp=False,
     ) -> None:
         """
         Initialize the HostAgent.
@@ -72,7 +66,7 @@ class HostAgent(BasicAgent):
         """
         super().__init__(name=name)
         self.prompter = self.get_prompter(
-            is_visual, main_prompt, example_prompt, api_prompt, allow_openapp
+            is_visual, main_prompt, example_prompt, api_prompt
         )
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
@@ -91,7 +85,6 @@ class HostAgent(BasicAgent):
         main_prompt: str,
         example_prompt: str,
         api_prompt: str,
-        allow_openapp=False,
     ) -> HostAgentPrompter:
         """
         Get the prompt for the agent.
@@ -101,9 +94,7 @@ class HostAgent(BasicAgent):
         :param api_prompt: The API prompt file path.
         :return: The prompter instance.
         """
-        return HostAgentPrompter(
-            is_visual, main_prompt, example_prompt, api_prompt, allow_openapp
-        )
+        return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
 
     def create_subagent(
         self,
@@ -207,32 +198,6 @@ class HostAgent(BasicAgent):
         )
 
         return hostagent_prompt_message
-
-    def app_file_manager(self, app_file_info: Dict[str, str]) -> UIAWrapper:
-        """
-        Open the application or file for the user.
-        :param app_file_info: The information of the application or file. {'APP': name of app, 'file_path': path}
-        :return: The window of the application.
-        """
-
-        utils.print_with_color("Opening the required application or file...", "yellow")
-        file_manager = openfile.FileController()
-        results = file_manager.execute_code(app_file_info)
-        time.sleep(configs.get("SLEEP_TIME", 5))
-        desktop_windows_dict = ControlInspectorFacade(
-            configs["CONTROL_BACKEND"]
-        ).get_desktop_app_dict(remove_empty=True)
-        if not results:
-            self.status = "ERROR in openning the application or file."
-            return None
-        app_window = file_manager.find_window_by_app_name(desktop_windows_dict)
-        app_name = app_window.window_text()
-
-        utils.print_with_color(
-            f"The application {app_name} has been opened successfully.", "green"
-        )
-
-        return app_window
 
     def process(self, context: Context) -> None:
         """

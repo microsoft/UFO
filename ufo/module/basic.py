@@ -365,7 +365,6 @@ class BaseSession(ABC):
             configs["HOSTAGENT_PROMPT"],
             configs["HOSTAGENT_EXAMPLE_PROMPT"],
             configs["API_PROMPT"],
-            configs["ALLOW_OPENAPP"],
         )
 
     def run(self) -> None:
