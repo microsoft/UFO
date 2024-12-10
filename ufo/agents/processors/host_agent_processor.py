@@ -170,7 +170,7 @@ class HostAgentProcessor(BaseProcessor):
             self._select_application(new_app_window)
 
         # If the bash command is not empty, run the shell command.
-        if self.bash_command is not None:
+        if self.bash_command:
             self._run_shell_command()
 
         # If the new application window is None and the bash command is None, set the status to FINISH.

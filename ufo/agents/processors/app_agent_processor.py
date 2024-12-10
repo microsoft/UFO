@@ -301,6 +301,9 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         control_selected = self._annotation_dict.get(self._control_label, None)
+        self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
+            control_selected, self.application_window
+        )
 
         try:
             # Get the selected control item from the annotation dictionary and LLM response.
@@ -331,10 +334,6 @@ class AppAgentProcessor(BaseProcessor):
                     }
                 else:
                     self._control_log = {}
-
-                self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
-                    control_selected, self.application_window
-                )
 
                 # Save the screenshot of the tagged selected control.
                 self.capture_control_screenshot(control_selected)

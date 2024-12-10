@@ -49,7 +49,7 @@ class BasicAgent(ABC):
         self._host = None
         self._processor: Optional[BaseProcessor] = None
         self._state = None
-        self.Puppeteer = self.create_puppeteer_interface()
+        self.Puppeteer: puppeteer.AppPuppeteer = None
 
     @property
     def status(self) -> str:

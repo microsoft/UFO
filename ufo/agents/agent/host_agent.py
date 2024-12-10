@@ -83,6 +83,7 @@ class HostAgent(BasicAgent):
         self._active_appagent = None
         self._blackboard = Blackboard()
         self.set_state(ContinueHostAgentState())
+        self.Puppeteer = self.create_puppeteer_interface()
 
     def get_prompter(
         self,
