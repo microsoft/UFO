@@ -75,7 +75,7 @@ Below is a table of the fields in the UI tree logs:
 
 :::automator.ui_control.ui_tree.UITree
 
-
+<br>
 
 !!!note
     Save the UI tree logs may increase the latency of the system. It is recommended to set the `SAVE_UI_TREE` flag to `False` when you do not need the UI tree logs.
