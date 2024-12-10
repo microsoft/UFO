@@ -258,7 +258,17 @@ class AssignHostAgentState(HostAgentState):
         :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
-        pass
+        application_window_name = context.get(ContextNames.APPLICATION_PROCESS_NAME)
+        application_root_name = context.get(ContextNames.APPLICATION_ROOT_NAME)
+        request = context.get(ContextNames.REQUEST)
+        mode = context.get(ContextNames.MODE)
+
+        agent.create_app_agent(
+            application_window_name=application_window_name,
+            application_root_name=application_root_name,
+            request=request,
+            mode=mode,
+        )
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """

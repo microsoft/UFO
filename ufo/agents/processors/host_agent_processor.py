@@ -39,7 +39,6 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = None
         self._desktop_windows_dict = None
         self._desktop_windows_info = None
-        self.app_to_open = None
 
     def print_step_info(self) -> None:
         """
@@ -154,8 +153,6 @@ class HostAgentProcessor(BaseProcessor):
 
         self.status = self._response_json.get("Status", "")
         self.question_list = self._response_json.get("Questions", [])
-
-        self.app_to_open = self._response_json.get("AppsToOpen", None)
         self.bash_command = self._response_json.get("Bash", None)
 
         self.host_agent.print_response(self._response_json)
@@ -168,17 +165,18 @@ class HostAgentProcessor(BaseProcessor):
 
         new_app_window = self._desktop_windows_dict.get(self.control_label, None)
 
-        if self.status == self._agent_status_manager.ASSIGN.value:
+        # If the new application window is available, select the application.
+        if new_app_window is not None:
+            self._select_application(new_app_window)
 
-            if new_app_window is None:
-                self.status = self._agent_status_manager.FINISH.value
-                return
-            else:
-                self._app_agent_creation(new_app_window)
-
-        elif self.status == self._agent_status_manager.CONTINUE.value:
-
+        # If the bash command is not empty, run the shell command.
+        if self.bash_command is not None:
             self._run_shell_command()
+
+        # If the new application window is None and the bash command is None, set the status to FINISH.
+        if new_app_window is None and self.bash_command is None:
+            self.status = self._agent_status_manager.FINISH.value
+            return
 
     def _is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
         """
@@ -233,7 +231,7 @@ class HostAgentProcessor(BaseProcessor):
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
-    def _app_agent_creation(self, application_window: UIAWrapper) -> None:
+    def _select_application(self, application_window: UIAWrapper) -> None:
         """
         Create the app agent for the host agent.
         :param application_window: The application window.
@@ -263,8 +261,6 @@ class HostAgentProcessor(BaseProcessor):
             self.application_window.draw_outline(colour="red", thickness=3)
 
         self.action = "set_focus()"
-
-        self.create_app_agent(self.control_text, self.app_root)
 
     def _run_shell_command(self) -> None:
         """
@@ -321,71 +317,3 @@ class HostAgentProcessor(BaseProcessor):
         }
 
         self.host_agent.blackboard.add_trajectories(memorized_action)
-
-    def create_app_agent(
-        self, application_window_name: str, application_root_name: str
-    ) -> AppAgent:
-        """
-        Create the app agent for the host agent.
-        :param agent: The host agent.
-        :param application_window_name: The application window name.
-        :param application_root_name: The application root name.
-        :return: The app agent.
-        """
-
-        request = self.context.get(ContextNames.REQUEST)
-
-        if self.context.get(ContextNames.MODE) == "normal":
-
-            agent_name = "AppAgent/{root}/{process}".format(
-                root=application_root_name, process=application_window_name
-            )
-
-            app_agent: AppAgent = self.agent.create_subagent(
-                agent_type="app",
-                agent_name=agent_name,
-                process_name=application_window_name,
-                app_root_name=application_root_name,
-                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
-                main_prompt=configs["APPAGENT_PROMPT"],
-                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
-                api_prompt=configs["API_PROMPT"],
-            )
-
-        elif self.context.get(ContextNames.MODE) == "follower":
-
-            # Load additional app info prompt.
-            app_info_prompt = configs.get("APP_INFO_PROMPT", None)
-
-            agent_name = "FollowerAgent/{root}/{process}".format(
-                root=application_root_name, process=application_window_name
-            )
-
-            # Create the app agent in the follower mode.
-            app_agent = self.agent.create_subagent(
-                agent_type="follower",
-                agent_name=agent_name,
-                process_name=application_window_name,
-                app_root_name=application_root_name,
-                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
-                main_prompt=configs["FOLLOWERAHENT_PROMPT"],
-                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
-                api_prompt=configs["API_PROMPT"],
-                app_info_prompt=app_info_prompt,
-            )
-
-        else:
-            raise ValueError(
-                f"The {self.context.get(ContextNames.MODE)} mode is not supported."
-            )
-
-        # Create the COM receiver for the app agent.
-        if configs.get("USE_APIS", False):
-            app_agent.Puppeteer.receiver_manager.create_api_receiver(
-                application_root_name, application_window_name
-            )
-
-        # Provision the context for the app agent, including the all retrievers.
-        app_agent.context_provision(request)
-
-        return app_agent

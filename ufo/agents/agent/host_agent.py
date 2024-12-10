@@ -251,6 +251,75 @@ class HostAgent(BasicAgent):
         """
         return puppeteer.AppPuppeteer("", "")
 
+    def create_app_agent(
+        self,
+        application_window_name: str,
+        application_root_name: str,
+        request: str,
+        mode: str,
+    ) -> AppAgent:
+        """
+        Create the app agent for the host agent.
+        :param application_window_name: The name of the application window.
+        :param application_root_name: The name of the application root.
+        :param request: The user request.
+        :param mode: The mode of the session.
+        :return: The app agent.
+        """
+
+        if mode == "normal":
+
+            agent_name = "AppAgent/{root}/{process}".format(
+                root=application_root_name, process=application_window_name
+            )
+
+            app_agent: AppAgent = self.create_subagent(
+                agent_type="app",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
+                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+                main_prompt=configs["APPAGENT_PROMPT"],
+                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                api_prompt=configs["API_PROMPT"],
+            )
+
+        elif mode == "follower":
+
+            # Load additional app info prompt.
+            app_info_prompt = configs.get("APP_INFO_PROMPT", None)
+
+            agent_name = "FollowerAgent/{root}/{process}".format(
+                root=application_root_name, process=application_window_name
+            )
+
+            # Create the app agent in the follower mode.
+            app_agent = self.create_subagent(
+                agent_type="follower",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
+                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+                main_prompt=configs["FOLLOWERAHENT_PROMPT"],
+                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                api_prompt=configs["API_PROMPT"],
+                app_info_prompt=app_info_prompt,
+            )
+
+        else:
+            raise ValueError(f"The {mode} mode is not supported.")
+
+        # Create the COM receiver for the app agent.
+        if configs.get("USE_APIS", False):
+            app_agent.Puppeteer.receiver_manager.create_api_receiver(
+                application_root_name, application_window_name
+            )
+
+        # Provision the context for the app agent, including the all retrievers.
+        app_agent.context_provision(request)
+
+        return app_agent
+
     def process_comfirmation(self) -> None:
         """
         TODO: Process the confirmation.
