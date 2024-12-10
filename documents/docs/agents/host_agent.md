@@ -45,7 +45,7 @@ With the inputs provided, the `HostAgent` generates the following outputs:
 | Status | The status of the agent, mapped to the `AgentState`. | String |
 | Comment | Additional comments or information provided to the user. | String |
 | Questions | The questions to be asked to the user for additional information. | List of Strings |
-| AppsToOpen | The application to be opened to execute the sub-task if it is not already open. | Dictionary |
+| Bash | The bash command to be executed by the `HostAgent`. It can be used to open applications or execute system commands. | String |
 
 
 Below is an example of the `HostAgent` output:
@@ -62,7 +62,7 @@ Below is an example of the `HostAgent` output:
     "Status": "AgentState",
     "Comment": "Additional comments",
     "Questions": ["Question 1", "Question 2"],
-    "AppsToOpen": {"APP": "powerpnt", "file_path": ""}
+    "Bash": "Bash command"
 }
 ```
 
@@ -76,7 +76,8 @@ The `HostAgent` progresses through different states, as defined in the `ufo/agen
 
 | State | Description |
 | --- | --- |
-| `CONTINUE` | The `HostAgent` is ready to process the user's request and emloy the `Processor` to decompose it into sub-tasks and assign them to the `AppAgents`. |
+| `CONTINUE` | The `HostAgent` is ready to process the user's request and emloy the `Processor` to decompose it into sub-tasks. |
+| `ASSIGN` | The `HostAgent` is assigning the sub-tasks to the `AppAgents` for execution. |
 | `FINISH` | The overall task is completed, and the `HostAgent` is ready to return the results to the user. |
 | `ERROR` | An error occurred during the processing of the user's request, and the `HostAgent` is unable to proceed. |
 | `FAIL` | The `HostAgent` believes the task is unachievable and cannot proceed further. |
