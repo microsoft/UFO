@@ -71,6 +71,12 @@ nav:
       - Help Document Provision: creating_app_agent/help_document_provision.md
       - Demonstration Provision: creating_app_agent/demonstration_provision.md
       - Warpping App-Native API: creating_app_agent/warpping_app_native_api.md
+  - Dataflow:
+      - Overview: dataflow/overview.md
+      - Instantiation: dataflow/instantiation.md
+      - Execution: dataflow/execution.md
+      - Windows App Environment: dataflow/windows_app_env.md
+      - Result Schema: dataflow/result_schema.md
   - About:
       - Contributing: about/CONTRIBUTING.md
       - License: about/LICENSE.md
@@ -103,7 +109,7 @@ plugins:
     - mkdocstrings:
         handlers:
             python:
-                paths: ["../ufo", "../record_processor"]
+                paths: ["../ufo", "../record_processor", "../dataflow"]
                 options:
                     docstring_style: sphinx
                     docstring_section_style: list
