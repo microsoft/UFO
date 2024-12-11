@@ -10,7 +10,9 @@ You can use `instantiation` and `execution` independently if you only need to pe
 
 The overall processing of dataflow is as below. Given a task-plan data, the LLMwill instantiatie the task-action data, including choosing template, prefill, filter.
 
-![](../assets\dataflow\overview.png)
+<h1 align="center">
+    <img src="../assets/dataflow/overview.png"/> 
+</h1>
 
 ## How To Use
 
@@ -118,7 +120,7 @@ Ensure the following files are in place:
 
 The structure of the files can be:
 
-```bash
+```txt
 dataflow/
 |
 ├── tasks
@@ -178,8 +180,9 @@ There are three key steps in the instantiation process:
 
 Given the initial task, the dataflow first choose a template (`Phase 1`), the prefill the initial task based on word envrionment to obtain task-action data (`Phase 2`). Finnally, it will filter the established task to evaluate the quality of task-action data.
 
-![](../assets\dataflow\instantiation.png)
-
+<h1 align="center">
+    <img src="../assets/dataflow/instantiation.png"/> 
+</h1>
 #### 1. Choose Template File
 
 Templates for your app must be defined and described in `dataflow/templates/app`. For instance, if you want to instantiate tasks for the Word application, place the relevant `.docx` files in dataflow `/templates/word `, along with a `description.json` file.
@@ -202,13 +205,16 @@ The instantiated plans will be executed by a execute task. After execution, eval
 
 In this phase, given the task-action data, the execution process will match the real controller based on word environment and execute the plan step by step.
 
-![](../assets\dataflow\execution.png)
+<h1 align="center">
+    <img src="../assets/dataflow/execution.png"/> 
+</h1>
+
 
 ## Result
 
 The structure of the results of the task is as below:
 
-```
+```txt
 UFO/
 ├── dataflow/                       # Root folder for dataflow
 │   └── results/                    # Directory for storing task processing results
@@ -343,6 +349,7 @@ And you can see the hints showing in the terminal, which means the dataflow is w
 
 After the two tasks are finished, the task and output files would appear as follows:
 
+```bash
 UFO/
 ├── dataflow/
 │   └── results/
@@ -355,6 +362,7 @@ UFO/
 │       │   │   ├── rotate.json  	 # Execution result for the "rotate" task
 │       │   │   └── ...
 └── ...
+```
 
 ### Result files
 
@@ -463,7 +471,9 @@ This structure follows your description and provides the necessary details in a 
 
 The corresponding logs can be found in the directories `logs/bulleted` and `logs/rotate`, as shown below. Detailed logs for each workflow are recorded, capturing every step of the execution process.
 
-![img](../assets\dataflow\result_example.png)
+<h1 align="center">
+    <img src="../assets/dataflow/result_example.png"/> 
+</h1>
 
 ## Notes
 
