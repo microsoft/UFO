@@ -49,6 +49,7 @@ class BasicAgent(ABC):
         self._host = None
         self._processor: Optional[BaseProcessor] = None
         self._state = None
+        self.Puppeteer: puppeteer.AppPuppeteer = None
 
     @property
     def status(self) -> str:
@@ -98,7 +99,7 @@ class BasicAgent(ABC):
         """
         return self.host.blackboard
 
-    def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
+    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
         """
         Create the puppeteer interface.
         """
@@ -138,7 +139,7 @@ class BasicAgent(ABC):
 
     @classmethod
     def get_response(
-        cls, message: List[dict], namescope: str, use_backup_engine: bool
+        cls, message: List[dict], namescope: str, use_backup_engine: bool, configs = configs
     ) -> str:
         """
         Get the response for the prompt.
@@ -148,7 +149,7 @@ class BasicAgent(ABC):
         :return: The response.
         """
         response_string, cost = llm_call.get_completion(
-            message, namescope, use_backup_engine=use_backup_engine
+            message, namescope, use_backup_engine=use_backup_engine, configs = configs
         )
         return response_string, cost
 
@@ -229,12 +230,19 @@ class BasicAgent(ABC):
         """
         pass
 
+    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
+        """
+        Create the puppeteer interface.
+        """
+        pass
+
     def process_resume(self) -> None:
         """
         Resume the process.
         """
         if self.processor:
             self.processor.resume()
+
 
     def process_asker(self, ask_user: bool = True) -> None:
         """

@@ -13,7 +13,8 @@ from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
 configs = Config.get_instance().config_data
-BACKEND = configs["CONTROL_BACKEND"]
+if configs is not None:
+    BACKEND = configs["CONTROL_BACKEND"]
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
@@ -38,7 +39,6 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = None
         self._desktop_windows_dict = None
         self._desktop_windows_info = None
-        self.app_to_open = None
 
     def print_step_info(self) -> None:
         """
@@ -153,8 +153,7 @@ class HostAgentProcessor(BaseProcessor):
 
         self.status = self._response_json.get("Status", "")
         self.question_list = self._response_json.get("Questions", [])
-
-        self.app_to_open = self._response_json.get("AppsToOpen", None)
+        self.bash_command = self._response_json.get("Bash", None)
 
         self.host_agent.print_response(self._response_json)
 
@@ -164,45 +163,20 @@ class HostAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
-        # When the required application is not opened, try to open the application and set the focus to the application window.
-        if (
-            isinstance(self.app_to_open, dict)
-            and self.app_to_open.get("APP", None) is not None
-        ):
-            new_app_window = self.host_agent.app_file_manager(self.app_to_open)
-            if new_app_window is not None:
-                self.control_text = new_app_window.window_text()
-        else:
-            # Get the application window
-            new_app_window = self._desktop_windows_dict.get(self.control_label, None)
+        new_app_window = self._desktop_windows_dict.get(self.control_label, None)
 
-        if new_app_window is None:
+        # If the new application window is available, select the application.
+        if new_app_window is not None:
+            self._select_application(new_app_window)
 
+        # If the bash command is not empty, run the shell command.
+        if self.bash_command:
+            self._run_shell_command()
+
+        # If the new application window is None and the bash command is None, set the status to FINISH.
+        if new_app_window is None and self.bash_command is None:
             self.status = self._agent_status_manager.FINISH.value
             return
-
-        self._control_log = {
-            "control_class": new_app_window.element_info.class_name,
-            "control_type": new_app_window.element_info.control_type,
-            "control_automation_id": new_app_window.element_info.automation_id,
-        }
-
-        # Get the root name of the application.
-        self.app_root = self.control_inspector.get_application_root_name(new_app_window)
-
-        # Check if the window interface is available for the visual element.
-        if not self._is_window_interface_available(new_app_window):
-            self.status = self._agent_status_manager.ERROR.value
-
-            return
-
-        # Switch to the new application window, if it is different from the current application window.
-        self._switch_to_new_app_window(new_app_window)
-        self.application_window.set_focus()
-        if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
-            self.application_window.draw_outline(colour="red", thickness=3)
-
-        self.action = "set_focus()"
 
     def _is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
         """
@@ -253,9 +227,56 @@ class HostAgentProcessor(BaseProcessor):
         self.application_window = new_app_window
 
         self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
-
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
+
+    def _select_application(self, application_window: UIAWrapper) -> None:
+        """
+        Create the app agent for the host agent.
+        :param application_window: The application window.
+        """
+
+        self._control_log = {
+            "control_class": application_window.element_info.class_name,
+            "control_type": application_window.element_info.control_type,
+            "control_automation_id": application_window.element_info.automation_id,
+        }
+
+        # Get the root name of the application.
+        self.app_root = self.control_inspector.get_application_root_name(
+            application_window
+        )
+
+        # Check if the window interface is available for the visual element.
+        if not self._is_window_interface_available(application_window):
+            self.status = self._agent_status_manager.ERROR.value
+
+            return
+
+        # Switch to the new application window, if it is different from the current application window.
+        self._switch_to_new_app_window(application_window)
+        self.application_window.set_focus()
+        if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
+            self.application_window.draw_outline(colour="red", thickness=3)
+
+        self.action = "set_focus()"
+
+    def _run_shell_command(self) -> None:
+        """
+        Run the shell command.
+        """
+        self.agent.create_puppeteer_interface()
+        self.agent.Puppeteer.receiver_manager.create_api_receiver(
+            self.app_root, self.control_text
+        )
+
+        self._results = self.agent.Puppeteer.execute_command(
+            "run_shell", {"command": self.bash_command}
+        )
+
+        self.action = self.agent.Puppeteer.get_command_string(
+            "run_shell", {"command": self.bash_command}
+        )
 
     def update_memory(self) -> None:
         """
@@ -277,7 +298,7 @@ class HostAgentProcessor(BaseProcessor):
             "AgentName": self.host_agent.name,
             "Application": self.app_root,
             "Cost": self._cost,
-            "Results": "",
+            "Results": self._results,
         }
 
         self._memory_data.set_values_from_dict(self._response_json)

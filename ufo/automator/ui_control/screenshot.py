@@ -18,7 +18,11 @@ from ufo.config.config import Config
 
 configs = Config.get_instance().config_data
 
-DEFAULT_PNG_COMPRESS_LEVEL = int(configs["DEFAULT_PNG_COMPRESS_LEVEL"])
+if configs is not None:
+    DEFAULT_PNG_COMPRESS_LEVEL = int(configs.get("DEFAULT_PNG_COMPRESS_LEVEL", 0))
+else:
+    DEFAULT_PNG_COMPRESS_LEVEL = 6
+
 
 
 class Photographer(ABC):
@@ -116,6 +120,27 @@ class PhotographerDecorator(Photographer):
         )
 
         return adjusted_rect
+
+    @staticmethod
+    def coordinate_adjusted_to_relative(window_rect: RECT, control_rect: RECT) -> Tuple:
+        """
+        Adjust the coordinates of the control rectangle to the window rectangle.
+        :param window_rect: The window rectangle.
+        :param control_rect: The control rectangle.
+        :return: The adjusted control rectangle (left, top, right, bottom), relative to the window rectangle.
+        """
+        # (left, top, right, bottom)
+        width = window_rect.right - window_rect.left
+        height = window_rect.bottom - window_rect.top
+
+        relative_rect = (
+            float(control_rect.left - window_rect.left) / width,
+            float(control_rect.top - window_rect.top) / height,
+            float(control_rect.right - window_rect.left) / width,
+            float(control_rect.bottom - window_rect.top) / height,
+        )
+
+        return relative_rect
 
 
 class RectangleDecorator(PhotographerDecorator):
@@ -573,6 +598,15 @@ class PhotographerFacade:
         return result
 
     @staticmethod
+    def load_image(image_path: str) -> Image.Image:
+        """
+        Load an image from the path.
+        :param image_path: The path of the image.
+        :return: The image.
+        """
+        return Image.open(image_path)
+
+    @staticmethod
     def image_to_base64(image: Image.Image) -> str:
         """
         Convert image to base64 string.
@@ -584,6 +618,28 @@ class PhotographerFacade:
         image.save(buffered, format="PNG", optimize=True)
 
         return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+    @staticmethod
+    def encode_image(image: Image.Image, mime_type: Optional[str] = None) -> str:
+        """
+        Encode an image to base64 string.
+        :param image: The image to encode.
+        :param mime_type: The mime type of the image.
+        :return: The base64 string.
+        """
+
+        if image is None:
+            return "data:image/png;base64,"
+
+        buffered = BytesIO()
+        image.save(buffered, format="PNG", optimize=True)
+        encoded_image = base64.b64encode(buffered.getvalue()).decode("ascii")
+
+        if mime_type is None:
+            mime_type = "image/png"
+
+        image_url = f"data:{mime_type};base64," + encoded_image
+        return image_url
 
     @staticmethod
     def encode_image_from_path(image_path: str, mime_type: Optional[str] = None) -> str:

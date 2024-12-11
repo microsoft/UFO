@@ -20,7 +20,7 @@ The `HostAgent` logs contain the following fields:
 | Status | The status of the agent, mapped to the `AgentState`. | String |
 | Comment | Additional comments or information provided to the user. | String |
 | Questions | The questions to be asked to the user for additional information. | List of Strings |
-| AppsToOpen | The application to be opened to execute the sub-task if it is not already open. | Dictionary |
+| Bash | The bash command to be executed by the `HostAgent`. It can be used to open applications or execute system commands. | String |
 
 
 ### Additional Information
@@ -40,6 +40,10 @@ The `HostAgent` logs contain the following fields:
 | Cost | The cost of the step. | Float |
 | Results | The results of the step, set to an empty string. | String |
 | CleanScreenshot | The image path of the desktop screenshot. | String |
+| AnnotatedScreenshot | The image path of the annotated application screenshot. | String |
+| ConcatScreenshot | The image path of the concatenated application screenshot. | String |
+| SelectedControlScreenshot | The image path of the selected control screenshot. | String |
+| time_cost | The time cost of each step in the process. | Dictionary |
 
 
 
@@ -83,6 +87,7 @@ The `AppAgent` logs contain the following fields:
 | CleanScreenshot | The image path of the desktop screenshot. | String |
 | AnnotatedScreenshot | The image path of the annotated application screenshot. | String |
 | ConcatScreenshot | The image path of the concatenated application screenshot. | String |
+| time_cost | The time cost of each step in the process. | Dictionary |
 
 !!! tip
     You can use the following python code to read the request log:

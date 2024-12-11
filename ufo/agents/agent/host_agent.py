@@ -4,10 +4,7 @@
 
 from __future__ import annotations
 
-import time
 from typing import Dict, List, Union
-
-from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent
@@ -16,8 +13,7 @@ from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
-from ufo.automator.ui_control import openfile
-from ufo.automator.ui_control.inspector import ControlInspectorFacade
+from ufo.automator import puppeteer
 from ufo.config.config import Config
 from ufo.module.context import Context
 from ufo.prompter.agent_prompter import HostAgentPrompter
@@ -59,7 +55,6 @@ class HostAgent(BasicAgent):
         main_prompt: str,
         example_prompt: str,
         api_prompt: str,
-        allow_openapp=False,
     ) -> None:
         """
         Initialize the HostAgent.
@@ -71,7 +66,7 @@ class HostAgent(BasicAgent):
         """
         super().__init__(name=name)
         self.prompter = self.get_prompter(
-            is_visual, main_prompt, example_prompt, api_prompt, allow_openapp
+            is_visual, main_prompt, example_prompt, api_prompt
         )
         self.offline_doc_retriever = None
         self.online_doc_retriever = None
@@ -82,6 +77,7 @@ class HostAgent(BasicAgent):
         self._active_appagent = None
         self._blackboard = Blackboard()
         self.set_state(ContinueHostAgentState())
+        self.Puppeteer = self.create_puppeteer_interface()
 
     def get_prompter(
         self,
@@ -89,7 +85,6 @@ class HostAgent(BasicAgent):
         main_prompt: str,
         example_prompt: str,
         api_prompt: str,
-        allow_openapp=False,
     ) -> HostAgentPrompter:
         """
         Get the prompt for the agent.
@@ -99,9 +94,7 @@ class HostAgent(BasicAgent):
         :param api_prompt: The API prompt file path.
         :return: The prompter instance.
         """
-        return HostAgentPrompter(
-            is_visual, main_prompt, example_prompt, api_prompt, allow_openapp
-        )
+        return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
 
     def create_subagent(
         self,
@@ -206,32 +199,6 @@ class HostAgent(BasicAgent):
 
         return hostagent_prompt_message
 
-    def app_file_manager(self, app_file_info: Dict[str, str]) -> UIAWrapper:
-        """
-        Open the application or file for the user.
-        :param app_file_info: The information of the application or file. {'APP': name of app, 'file_path': path}
-        :return: The window of the application.
-        """
-
-        utils.print_with_color("Opening the required application or file...", "yellow")
-        file_manager = openfile.FileController()
-        results = file_manager.execute_code(app_file_info)
-        time.sleep(configs.get("SLEEP_TIME", 5))
-        desktop_windows_dict = ControlInspectorFacade(
-            configs["CONTROL_BACKEND"]
-        ).get_desktop_app_dict(remove_empty=True)
-        if not results:
-            self.status = "ERROR in openning the application or file."
-            return None
-        app_window = file_manager.find_window_by_app_name(desktop_windows_dict)
-        app_name = app_window.window_text()
-
-        utils.print_with_color(
-            f"The application {app_name} has been opened successfully.", "green"
-        )
-
-        return app_window
-
     def process(self, context: Context) -> None:
         """
         Process the agent.
@@ -239,7 +206,85 @@ class HostAgent(BasicAgent):
         """
         self.processor = HostAgentProcessor(agent=self, context=context)
         self.processor.process()
+
+        # Sync the status with the processor.
         self.status = self.processor.status
+
+    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
+        """
+        Create the Puppeteer interface to automate the app.
+        :return: The Puppeteer interface.
+        """
+        return puppeteer.AppPuppeteer("", "")
+
+    def create_app_agent(
+        self,
+        application_window_name: str,
+        application_root_name: str,
+        request: str,
+        mode: str,
+    ) -> AppAgent:
+        """
+        Create the app agent for the host agent.
+        :param application_window_name: The name of the application window.
+        :param application_root_name: The name of the application root.
+        :param request: The user request.
+        :param mode: The mode of the session.
+        :return: The app agent.
+        """
+
+        if mode == "normal":
+
+            agent_name = "AppAgent/{root}/{process}".format(
+                root=application_root_name, process=application_window_name
+            )
+
+            app_agent: AppAgent = self.create_subagent(
+                agent_type="app",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
+                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+                main_prompt=configs["APPAGENT_PROMPT"],
+                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                api_prompt=configs["API_PROMPT"],
+            )
+
+        elif mode == "follower":
+
+            # Load additional app info prompt.
+            app_info_prompt = configs.get("APP_INFO_PROMPT", None)
+
+            agent_name = "FollowerAgent/{root}/{process}".format(
+                root=application_root_name, process=application_window_name
+            )
+
+            # Create the app agent in the follower mode.
+            app_agent = self.create_subagent(
+                agent_type="follower",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
+                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+                main_prompt=configs["FOLLOWERAHENT_PROMPT"],
+                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                api_prompt=configs["API_PROMPT"],
+                app_info_prompt=app_info_prompt,
+            )
+
+        else:
+            raise ValueError(f"The {mode} mode is not supported.")
+
+        # Create the COM receiver for the app agent.
+        if configs.get("USE_APIS", False):
+            app_agent.Puppeteer.receiver_manager.create_api_receiver(
+                application_root_name, application_window_name
+            )
+
+        # Provision the context for the app agent, including the all retrievers.
+        app_agent.context_provision(request)
+
+        return app_agent
 
     def process_comfirmation(self) -> None:
         """
@@ -258,6 +303,7 @@ class HostAgent(BasicAgent):
             application = "[The required application needs to be opened.]"
         observation = response_dict.get("Observation")
         thought = response_dict.get("Thought")
+        bash_command = response_dict.get("Bash", None)
         subtask = response_dict.get("CurrentSubtask")
 
         # Convert the message from a list to a string.
@@ -276,6 +322,10 @@ class HostAgent(BasicAgent):
             "Observations👀: {observation}".format(observation=observation), "cyan"
         )
         utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
+        if bash_command:
+            utils.print_with_color(
+                "Running Bash Command🔧: {bash}".format(bash=bash_command), "yellow"
+            )
         utils.print_with_color(
             "Plans📚: {plan}".format(plan=plan),
             "cyan",

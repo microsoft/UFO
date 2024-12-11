@@ -1,6 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import sys
+
+sys.path.append("..")
+sys.path.append("../..")
+sys.path.append("./")
 
 from typing import Any, Dict, Optional, Tuple
 
@@ -9,6 +14,7 @@ from ufo.agents.states.evaluaton_agent_state import EvaluatonAgentStatus
 from ufo.config.config import Config
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 from ufo.utils import json_parser, print_with_color
+
 
 configs = Config.get_instance().config_data
 
@@ -64,17 +70,21 @@ class EvaluationAgent(BasicAgent):
             root_name=root_name,
         )
 
-    def message_constructor(self, log_path: str, request: str) -> None:
+    def message_constructor(
+        self, log_path: str, request: str, eva_all_screenshots: bool = True
+    ) -> Dict[str, Any]:
         """
         Construct the message.
         :param log_path: The path to the log file.
         :param request: The request.
+        :param eva_all_screenshots: The flag indicating whether to evaluate all screenshots.
+        :return: The message.
         """
 
         evaagent_prompt_system_message = self.prompter.system_prompt_construction()
 
         evaagent_prompt_user_message = self.prompter.user_content_construction(
-            log_path=log_path, request=request
+            log_path=log_path, request=request, eva_all_screenshots=eva_all_screenshots
         )
 
         evaagent_prompt_message = self.prompter.prompt_construction(
@@ -91,14 +101,18 @@ class EvaluationAgent(BasicAgent):
 
         return EvaluatonAgentStatus
 
-    def evaluate(self, request: str, log_path: str) -> Tuple[Dict[str, str], float]:
+    def evaluate(
+        self, request: str, log_path: str, eva_all_screenshots: bool = True
+    ) -> Tuple[Dict[str, str], float]:
         """
         Evaluate the task completion.
         :param log_path: The path to the log file.
         :return: The evaluation result and the cost of LLM.
         """
 
-        message = self.message_constructor(log_path=log_path, request=request)
+        message = self.message_constructor(
+            log_path=log_path, request=request, eva_all_screenshots=eva_all_screenshots
+        )
         result, cost = self.get_response(
             message=message, namescope="app", use_backup_engine=True
         )

@@ -22,9 +22,9 @@ The following parameters are included in the system configuration of the UFO age
 | `LOG_LEVEL`             | The log level for the UFO agent.                                                                        | String   | "DEBUG"       |
 | `REQUEST_TIMEOUT`       | The call timeout in seconds for the LLM model.                                                          | Integer  | 250           |
 | `USE_APIS`              | Whether to allow the use of application APIs.                                                           | Boolean  | True          |
-| `ALLOW_OPENAPP`         | Whether to allow the open app action in `HostAgent`.                                                    | Boolean  | False         |
 | `LOG_XML`               | Whether to log the XML file at every step.                                                              | Boolean  | False         |
 | `SCREENSHOT_TO_MEMORY`  | Whether to allow the screenshot to [`Blackboard`](../agents/design/blackboard.md) for the agent's decision making.                              | Boolean  | True          |
+| `SAVE_UI_TREE`          | Whether to save the UI tree in the log.                                                                 | Boolean  | False         |
 
 ## Main Prompt Configuration
 

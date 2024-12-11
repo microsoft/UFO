@@ -28,17 +28,18 @@
 - <b>AppAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
 - <b>Application Automator 🎮</b>, is tasked with translating actions from HostAgent and AppAgent into interactions with the application and through UI controls, native APIs or AI tools. Check out more details [here](https://microsoft.github.io/UFO/automator/overview/).
 
-Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](https://arxiv.org/abs/2402.07939) and [documentation](https://microsoft.github.io/UFO/).
+Both agents leverage the multi-modal capabilities of GPT-4V(o) to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](https://arxiv.org/abs/2402.07939) and [documentation](https://microsoft.github.io/UFO/).
 <h1 align="center">
     <img src="./assets/framework_v2.png"/> 
 </h1>
 
 
 ## 📢 News
+- 📅 2024-12-13: We have released the code and sample data for Large Action Model (LAM) data collection with UFO! Please checkout our code here. HostAgent also support bash command now!
 - 📅 2024-09-08: We have a **New Release for v1.1.0!**, to allows UFO to click on any region of the application and reduces its latency by up tp 1/3!
 - 📅 2024-07-06: We have a **New Release for v1.0.0!**.  You can check out our [documentation](https://microsoft.github.io/UFO/). We welcome your contributions and feedback!
 - 📅 2024-06-28: We are thrilled to announce that our official introduction video is now available on [YouTube](https://www.youtube.com/watch?v=QT_OhygMVXU)!
-- 📅 2024-06-25: **New Release for v0.2.1!**  We are excited to announce the release of version 0.2.1! This update includes several new features and improvements:
+<!-- - 📅 2024-06-25: **New Release for v0.2.1!**  We are excited to announce the release of version 0.2.1! This update includes several new features and improvements:
     1. **HostAgent Refactor:** We've refactored the HostAgent to enhance its efficiency in managing AppAgents within UFO.
     2. **Evaluation Agent:** Introducing an evaluation agent that assesses task completion and provides real-time feedback.
     3. **Google Gemini && Claude Support:** UFO now supports Google Gemini and Cluade as the inference engine. Refer to our detailed guide in [Gemini documentation](https://microsoft.github.io/UFO/supported_models/gemini/) or [Claude documentation](https://microsoft.github.io/UFO/supported_models/claude/).
@@ -53,7 +54,8 @@ Both agents leverage the multi-modal capabilities of GPT-Vision to comprehend th
     1. We now support creating your help documents for each Windows application to become an app expert. Check the [documentation](https://microsoft.github.io/UFO/creating_app_agent/help_document_provision/) for more details!
     2. UFO now supports RAG from offline documents and online Bing search.
     3. You can save the task completion trajectory into its memory for UFO's reference, improving its future success rate!
-    4. You can customize different GPT models for HostAgent and AppAgent. Text-only models (e.g., GPT-4) are now supported!
+    4. You can customize different GPT models for HostAgent and AppAgent. Text-only models (e.g., GPT-4) are now supported! -->
+- 📅 ...
 - 📅 2024-02-14: Our [technical report](https://arxiv.org/abs/2402.07939) is online!
 - 📅 2024-02-10: UFO is released on GitHub🎈. Happy Chinese New year🐉!
 
@@ -238,7 +240,8 @@ You may use them to debug, replay, or analyze the agent output.
 * For other communications, please contact [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com).
 ---
 
-## 🎬 Demo Examples
+
+<!-- ## 🎬 Demo Examples
 
 We present two demo videos that complete user request on Windows OS using UFO. For more case study, please consult our [technical report](https://arxiv.org/abs/2402.07939).
 
@@ -254,7 +257,9 @@ https://github.com/microsoft/UFO/assets/11352048/cf60c643-04f7-4180-9a55-5fb2406
 In this example, we will demonstrate how to utilize UFO to extract text from Word documents, describe an image, compose an email, and send it seamlessly. Enjoy the versatility and efficiency of cross-application experiences with UFO!
 
 
-https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4fc32e0
+https://github.com/microsoft/UFO/assets/11352048/aa41ad47-fae7-4334-8e0b-ba71c4fc32e0 -->
+
+
 
 
 
@@ -288,9 +293,13 @@ If you use UFO in your research, please cite our paper:
 
 
 
-## 🎨 Related Project
-You may also find [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file) useful, a code-first LLM agent framework for seamlessly planning and executing data analytics tasks.
+## 🎨 Related Projects
+1. If you're interested in data analytics agent frameworks, check out [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file), a code-first LLM agent framework designed for seamlessly planning and executing data analytics tasks.
 
+2. For more information on GUI agents, refer to our survey paper: [Large Language Model-Brained GUI Agents: A Survey](https://arxiv.org/abs/2411.18279). You can also explore the survey through:
+- [Paper](https://arxiv.org/abs/2411.18279)
+- [GitHub Repository](https://github.com/vyokky/LLM-Brained-GUI-Agents-Survey)
+- [Searchable Website](https://vyokky.github.io/LLM-Brained-GUI-Agents-Survey/)
 
 ## ⚠️ Disclaimer
 By choosing to run the provided code, you acknowledge and agree to the following terms and conditions regarding the functionality and data handling practices in [DISCLAIMER.md](./DISCLAIMER.md)

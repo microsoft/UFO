@@ -7,6 +7,7 @@ from ufo.automator.app_apis.basic import WinCOMReceiverBasic
 from ufo.automator.app_apis.excel.excelclient import ExcelWinCOMReceiver
 from ufo.automator.app_apis.word.wordclient import WordWinCOMReceiver
 from ufo.automator.app_apis.web.webclient import WebReceiver
+from ufo.automator.app_apis.shell.shell_client import ShellReceiver
 from ufo.automator.basic import ReceiverBasic, ReceiverFactory
 from ufo.automator.puppeteer import ReceiverManager
 from ufo.utils import print_with_color
@@ -123,3 +124,33 @@ class WebReceiverFactory(APIReceiverFactory):
         The name of the factory.
         """
         return "Web"
+
+
+@ReceiverManager.register
+class ShellReceiverFactory(APIReceiverFactory):
+    """
+    The factory class for the API receiver.
+    """
+
+    def create_receiver(self, *args, **kwargs) -> ReceiverBasic:
+        """
+        Create the web receiver.
+        :param app_root_name: The app root name.
+        :return: The receiver.
+        """
+
+        return ShellReceiver()
+
+    @property
+    def supported_app_roots(self):
+        """
+        Get the supported app roots.
+        """
+        return
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the factory.
+        """
+        return "Shell"
