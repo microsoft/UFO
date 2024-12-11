@@ -64,7 +64,6 @@ class HostAgentState(AgentState):
     def agent_class(cls) -> Type[HostAgent]:
         """
         Handle the agent for the current step.
-        :param agent: The agent class of the state.
         """
         from ufo.agents.agent.host_agent import HostAgent
 
