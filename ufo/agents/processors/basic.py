@@ -746,20 +746,6 @@ class BaseProcessor(ABC):
 
         self.logger.info(json.dumps(response_json))
 
-    def error_log(self, response_str: str, error: str) -> None:
-        """
-        Error handler for the session.
-        """
-        log = json.dumps(
-            {
-                "step": self.session_step,
-                "status": self._agent_status_manager.ERROR.value,
-                "response": response_str,
-                "error": error,
-            }
-        )
-        self.logger.info(log)
-
     @property
     def name(self) -> str:
         """
