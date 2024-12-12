@@ -271,6 +271,27 @@ class HostAgent(BasicAgent):
                 api_prompt=configs["API_PROMPT"],
                 app_info_prompt=app_info_prompt,
             )
+        elif mode == "batch_normal":
+
+            # Load additional app info prompt.
+            app_info_prompt = configs.get("APP_INFO_PROMPT", None)
+
+            agent_name = "FollowerAgent/{root}/{process}".format(
+                root=application_root_name, process=application_window_name
+            )
+
+            # Create the app agent in the follower mode.
+            app_agent = self.create_subagent(
+                agent_type="follower",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
+                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+                main_prompt=configs["FOLLOWERAHENT_PROMPT"],
+                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                api_prompt=configs["API_PROMPT"],
+                app_info_prompt=app_info_prompt,
+            )
 
         else:
             raise ValueError(f"The {mode} mode is not supported.")

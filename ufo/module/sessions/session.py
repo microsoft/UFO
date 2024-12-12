@@ -85,11 +85,12 @@ class SessionFactory:
         :param plan: The path folder of all plan files.
         :return: The list of created follower sessions.
         """
-        is_record = configs.get("RECORD_SESSION_DONE", True)
+        is_record = configs.get("TASK_STATUS", True)
         plan_files = self.get_plan_files(plan)
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
+        is_done_files = []
         if is_record:
-            file_path = configs.get("RECORD_TASK_STATUS_PATH", "task_done.json")
+            file_path = configs.get("TASK_STATUS_FILE", "tasks_status.json")
             if not os.path.exists(file_path):
                 self.task_done = {f: False for f in file_names}
                 json.dump(
@@ -97,6 +98,9 @@ class SessionFactory:
                     open(file_path, "w"),
                     indent=4,
                 )
+            else:
+                self.task_done = json.load(open(file_path, "r"))
+                is_done_files = [f for f in file_names if self.task_done.get(f, False)]
 
         sessions = [
             FromFileSession(
@@ -106,6 +110,7 @@ class SessionFactory:
                 id=i,
             )
             for i, (file_name, plan_file) in enumerate(zip(file_names, plan_files))
+            if file_name not in is_done_files
         ]
 
         return sessions
@@ -440,9 +445,12 @@ class FromFileSession(BaseSession):
         try:
             super().run()
             self.record_task_done()
-        except:
-            pass
-        # Close the APP if the files ask so.
+        except Exception as e:
+            import traceback
+
+            traceback.print_exc()
+            print(f"An error occurred: {e}")
+        # Close the APP if the user ask so.
         if self.close:
             if object_name:
                 for process in psutil.process_iter(["name"]):
@@ -468,9 +476,9 @@ class FromFileSession(BaseSession):
         """
         Record the task done.
         """
-        is_record = configs.get("RECORD_TASK_STATUS", True)
+        is_record = configs.get("TASK_STATUS", True)
         if is_record:
-            file_path = configs.get("TASK_STATUS_FILE", "task_done.json")
+            file_path = configs.get("TASK_STATUS_FILE", "tasks_status.json")
             task_done = json.load(open(file_path, "r"))
             task_done[self.task_name] = True
             json.dump(
