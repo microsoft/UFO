@@ -10,6 +10,7 @@ from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.follower_agent import FollowerAgent
+from ufo.agents.agent.batch_agent import BatchAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
@@ -39,6 +40,8 @@ class AgentFactory:
             return AppAgent(*args, **kwargs)
         elif agent_type == "follower":
             return FollowerAgent(*args, **kwargs)
+        elif agent_type == "batch_normal":
+            return BatchAgent(*args, **kwargs)
         else:
             raise ValueError("Invalid agent type: {}".format(agent_type))
 
@@ -276,13 +279,13 @@ class HostAgent(BasicAgent):
             # Load additional app info prompt.
             app_info_prompt = configs.get("APP_INFO_PROMPT", None)
 
-            agent_name = "FollowerAgent/{root}/{process}".format(
+            agent_name = "BatchAgent/{root}/{process}".format(
                 root=application_root_name, process=application_window_name
             )
 
-            # Create the app agent in the follower mode.
+            # Create the app agent in the batch_normal mode.
             app_agent = self.create_subagent(
-                agent_type="follower",
+                agent_type="batch_normal",
                 agent_name=agent_name,
                 process_name=application_window_name,
                 app_root_name=application_root_name,
