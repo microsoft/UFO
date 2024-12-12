@@ -186,7 +186,7 @@ class BaseProcessor(ABC):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
             try:
-                result = func(self, *args, **kwargs)
+                func(self, *args, **kwargs)
             except Exception as e:
                 self._exeception_traceback[func.__name__] = {
                     "type": str(type(e).__name__),
