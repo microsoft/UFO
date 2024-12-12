@@ -146,16 +146,21 @@ class BaseProcessor(ABC):
 
         self._is_resumed = True
 
-        # Step 1: Execute the action.
-        self.execute_action()
+        try:
+            # Step 1: Execute the action.
+            self.execute_action()
 
-        # Step 2: Update the memory.
-        self.update_memory()
+            # Step 2: Update the memory.
+            self.update_memory()
 
-        # Step 3: Update the status.
-        self.update_status()
+            # Step 3: Update the status.
+            self.update_status()
 
-        self._is_resumed = False
+        except StopIteration:
+            # Error was handled and logged in the exception capture decorator.
+            # Simply return here to stop the process early.
+            self._is_resumed = False
+            return
 
     @classmethod
     def method_timer(cls, func):
