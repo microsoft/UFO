@@ -90,7 +90,10 @@ class SessionFactory:
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
         is_done_files = []
         if is_record:
-            file_path = configs.get("TASK_STATUS_FILE", "tasks_status.json")
+            file_path = configs.get(
+                "TASK_STATUS_FILE",
+                os.path.join(os.path.dirname(plan), "tasks_status.json"),
+            )
             if not os.path.exists(file_path):
                 self.task_done = {f: False for f in file_names}
                 json.dump(
@@ -343,6 +346,7 @@ class FromFileSession(BaseSession):
         """
 
         super().__init__(task, should_evaluate, id)
+        self.plan_file = plan_file
         self.plan_reader = PlanReader(plan_file)
         self.close = self.plan_reader.get_close()
         self.task_name = task.split("/")[1]
@@ -478,7 +482,10 @@ class FromFileSession(BaseSession):
         """
         is_record = configs.get("TASK_STATUS", True)
         if is_record:
-            file_path = configs.get("TASK_STATUS_FILE", "tasks_status.json")
+            file_path = configs.get(
+                "TASK_STATUS_FILE",
+                os.path.join(self.plan_file, "../..", "tasks_status.json"),
+            )
             task_done = json.load(open(file_path, "r"))
             task_done[self.task_name] = True
             json.dump(

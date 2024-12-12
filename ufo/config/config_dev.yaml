@@ -105,5 +105,5 @@ SAVE_UI_TREE: False  # Whether to save the UI tree
 
 # Record the status of the tasks
 TASK_STATUS: True  # Whether to record the status of the tasks in batch execution mode.
-TASK_STATUS_FILE: "tasks_status.json"  # The path for the task status file.
+# TASK_STATUS_FILE # The path for the task status file.
 
