@@ -350,6 +350,7 @@ class FromFileSession(BaseSession):
         self.plan_reader = PlanReader(plan_file)
         self.close = self.plan_reader.get_close()
         self.task_name = task.split("/")[1]
+        self.object_name = ""
 
     def _init_context(self) -> None:
         """
@@ -431,21 +432,7 @@ class FromFileSession(BaseSession):
         """
         Run the session.
         """
-        object_name = self.plan_reader.get_operation_object()
-        if object_name:
-            suffix = os.path.splitext(object_name)[1]
-            app_name = self.get_app_name(suffix)
-            app_com = self.get_app_com(suffix)
-            file = self.plan_reader.get_file_path()
-            code_snippet = f"import os\nos.system('start {app_name} \"{file}\"')"
-            code_snippet = code_snippet.replace("\\", "\\\\")  # escape backslashes
-            try:
-                exec(code_snippet, globals())
-                time.sleep(3)  # wait for the app to boot
-                word_app = win32com.client.Dispatch(app_com)
-                word_app.WindowState = 1  # wdWindowStateMaximize
-            except Exception as e:
-                print(f"An error occurred: {e}", "red")
+        self.setup_application_environment()
         try:
             super().run()
             self.record_task_done()
@@ -455,11 +442,17 @@ class FromFileSession(BaseSession):
             traceback.print_exc()
             print(f"An error occurred: {e}")
         # Close the APP if the user ask so.
+        self.terminate_application_processes()
+
+    def terminate_application_processes(self):
+        """
+        Terminates specific application processes based on the provided conditions.
+        """
         if self.close:
-            if object_name:
+            if self.object_name:
                 for process in psutil.process_iter(["name"]):
-                    if process.info["name"] == app_name:
-                        os.system(f"taskkill /f /im {app_name}")
+                    if process.info["name"] == self.app_name:
+                        os.system(f"taskkill /f /im {self.app_name}")
                         time.sleep(1)
             else:
                 app_names = ["WINWORD.EXE", "EXCEL.EXE", "POWERPNT.EXE"]
@@ -467,6 +460,31 @@ class FromFileSession(BaseSession):
                     if process.info["name"] in app_names:
                         os.system(f"taskkill /f /im {process.info['name']}")
                         time.sleep(1)
+
+    def setup_application_environment(self):
+        """
+        Sets up the application environment by determining the application name and
+        command based on the operation object, and then launching the application.
+
+        Raises:
+            Exception: If an error occurs during the execution of the command or
+                       while interacting with the application via COM.
+        """
+        self.object_name = self.plan_reader.get_operation_object()
+        if self.object_name:
+            suffix = os.path.splitext(self.object_name)[1]
+            self.app_name = self.get_app_name(suffix)
+            app_com = self.get_app_com(suffix)
+            file = self.plan_reader.get_file_path()
+            code_snippet = f"import os\nos.system('start {self.app_name} \"{file}\"')"
+            code_snippet = code_snippet.replace("\\", "\\\\")  # escape backslashes
+            try:
+                exec(code_snippet, globals())
+                time.sleep(3)  # wait for the app to boot
+                word_app = win32com.client.Dispatch(app_com)
+                word_app.WindowState = 1  # wdWindowStateMaximize
+            except Exception as e:
+                print(f"An error occurred: {e}")
 
     def request_to_evaluate(self) -> bool:
         """
