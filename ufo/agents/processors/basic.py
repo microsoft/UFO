@@ -159,8 +159,10 @@ class BaseProcessor(ABC):
         except StopIteration:
             # Error was handled and logged in the exception capture decorator.
             # Simply return here to stop the process early.
+            pass
+
+        finally:
             self._is_resumed = False
-            return
 
     @classmethod
     def method_timer(cls, func):
