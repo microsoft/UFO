@@ -85,7 +85,10 @@ class Trajectory:
         :screenshot_path: The path to the screenshot, e.g. "screenshot.png".
         :return: The screenshot data.
         """
-        image = PhotographerFacade.load_image(screenshot_path)
+        if os.path.exists(screenshot_path):
+            image = PhotographerFacade.load_image(screenshot_path)
+        else:
+            image = None
         return image
 
     def _load_single_screenshot(
@@ -154,7 +157,10 @@ class Trajectory:
             self.file_path, f"action_round_{round_number}_final.png"
         )
 
-        round_final_screenshot = self.load_screenshot(round_final_screenshot_path)
+        if os.path.exists(round_final_screenshot_path):
+            round_final_screenshot = self.load_screenshot(round_final_screenshot_path)
+        else:
+            round_final_screenshot = None
 
         subtask_number = self.get_subtask(self.file_path, round_number)
         subtask_final_screenshot_paths = []

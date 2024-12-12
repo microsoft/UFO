@@ -8,7 +8,7 @@ import time
 import traceback
 from abc import ABC, abstractmethod
 from functools import wraps
-from typing import Any, List
+from typing import Any, Dict, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -68,6 +68,7 @@ class BaseProcessor(ABC):
 
         self._total_time_cost = 0
         self._time_cost = {}
+        self._exeception_traceback = {}
 
     def process(self) -> None:
         """
@@ -88,51 +89,55 @@ class BaseProcessor(ABC):
 
         start_time = time.time()
 
-        # Step 1: Print the step information.
-        self.print_step_info()
+        try:
+            # Step 1: Print the step information.
+            self.print_step_info()
 
-        # Step 2: Capture the screenshot.
-        self.capture_screenshot()
+            # Step 2: Capture the screenshot.
+            self.capture_screenshot()
 
-        # Step 3: Get the control information.
-        self.get_control_info()
+            # Step 3: Get the control information.
+            self.get_control_info()
 
-        # Step 4: Get the prompt message.
-        self.get_prompt_message()
+            # Step 4: Get the prompt message.
+            self.get_prompt_message()
 
-        # Step 5: Get the response.
-        self.get_response()
+            # Step 5: Get the response.
+            self.get_response()
 
-        if self.is_error():
+            # Step 6: Update the context.
+            self.update_cost()
+
+            # Step 7: Parse the response, if there is no error.
+            self.parse_response()
+
+            if self.is_pending() or self.is_paused():
+                # If the session is pending, update the step and memory, and return.
+                if self.is_pending():
+                    self.update_status()
+                    self.update_memory()
+
+                return
+
+            # Step 8: Execute the action.
+            self.execute_action()
+
+            # Step 9: Update the memory.
+            self.update_memory()
+
+            # Step 10: Update the status.
+            self.update_status()
+
+            self._total_time_cost = time.time() - start_time
+
+            # Step 11: Save the log.
+            self.log_save()
+
+        except StopIteration:
+            # Error was handled and logged in the exception capture decorator.
+            # Simply return here to stop the process early.
+
             return
-
-        # Step 6: Update the context.
-        self.update_cost()
-
-        # Step 7: Parse the response, if there is no error.
-        self.parse_response()
-
-        if self.is_error() or self.is_paused():
-            # If the session is pending, update the step and memory, and return.
-            if self.is_pending():
-                self.update_status()
-                self.update_memory()
-
-            return
-
-        # Step 8: Execute the action.
-        self.execute_action()
-
-        # Step 9: Update the memory.
-        self.update_memory()
-
-        # Step 10: Update the status.
-        self.update_status()
-
-        self._total_time_cost = time.time() - start_time
-
-        # Step 11: Save the log.
-        self.log_save()
 
     def resume(self) -> None:
         """
@@ -169,6 +174,49 @@ class BaseProcessor(ABC):
             return result
 
         return wrapper
+
+    @classmethod
+    def exception_capture(cls, func):
+        """
+        Decorator to capture the exception of the method.
+        :param func: The method to be decorated.
+        :return: The decorated method.
+        """
+
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            try:
+                result = func(self, *args, **kwargs)
+            except Exception as e:
+                self._exeception_traceback[func.__name__] = {
+                    "type": str(type(e).__name__),
+                    "message": str(e),
+                    "traceback": traceback.format_exc(),
+                }
+
+                utils.print_with_color(f"Error Occurs at {func.__name__}", "red")
+                utils.print_with_color(
+                    self._exeception_traceback[func.__name__]["traceback"], "red"
+                )
+                if self._response is not None:
+                    utils.print_with_color("Response: ", "red")
+                    utils.print_with_color(self._response, "red")
+                self._status = self._agent_status_manager.ERROR.value
+                self.sync_memory()
+                self.add_to_memory({"error": self._exeception_traceback})
+                self.add_to_memory({"Status": self._status})
+                self.log_save()
+
+                raise StopIteration("Error occurred during step.")
+
+        return wrapper
+
+    @abstractmethod
+    def sync_memory(self) -> None:
+        """
+        Sync the memory of the Agent.
+        """
+        pass
 
     @abstractmethod
     def print_step_info(self) -> None:
@@ -239,12 +287,19 @@ class BaseProcessor(ABC):
         self.round_step += 1
         self.session_step += 1
 
+    def add_to_memory(self, data_dict: Dict[str, Any]) -> None:
+        """
+        Add the data to the memory.
+        :param data_dict: The data dictionary to be added to the memory.
+        """
+        self._memory_data.add_values_from_dict(data_dict)
+
     def log_save(self) -> None:
         """
         Save the log.
         """
 
-        self._memory_data.set_values_from_dict(
+        self._memory_data.add_values_from_dict(
             {"total_time_cost": self._total_time_cost}
         )
         self.log(self._memory_data.to_dict())
@@ -431,6 +486,22 @@ class BaseProcessor(ABC):
         :return: The round number.
         """
         return self.context.get(ContextNames.CURRENT_ROUND_ID)
+
+    @property
+    def control_label(self) -> str:
+        """
+        Get the control label.
+        :return: The control label.
+        """
+        return self._control_label
+
+    @control_label.setter
+    def control_label(self, label: str) -> None:
+        """
+        Set the control label.
+        :param label: The control label.
+        """
+        self._control_label = label
 
     @property
     def control_text(self) -> str:
@@ -665,7 +736,7 @@ class BaseProcessor(ABC):
 
         return self.status == self._agent_status_manager.CONFIRM.value
 
-    def log(self, response_json: dict) -> None:
+    def log(self, response_json: Dict[str, Any]) -> None:
         """
         Set the result of the session, and log the result.
         result: The result of the session.
@@ -696,36 +767,6 @@ class BaseProcessor(ABC):
         :return: The name of the processor.
         """
         return self.__class__.__name__
-
-    def general_error_handler(self) -> None:
-        """
-        Error handler for the general error.
-        """
-        error_trace = traceback.format_exc()
-        utils.print_with_color(f"Error Occurs at {self.name}", "red")
-        utils.print_with_color(str(error_trace), "red")
-        utils.print_with_color(self._response, "red")
-        self.error_log(self._response, str(error_trace))
-        self._status = self._agent_status_manager.ERROR.value
-
-    def llm_error_handler(self) -> None:
-        """
-        Error handler for the LLM error.
-        """
-        error_trace = traceback.format_exc()
-        log = json.dumps(
-            {
-                "step": self.session_step,
-                "prompt": self._prompt_message,
-                "status": str(error_trace),
-            }
-        )
-        utils.print_with_color(
-            "Error occurs when calling LLM: {e}".format(e=str(error_trace)), "red"
-        )
-        self.request_logger.info(log)
-        self._status = self._agent_status_manager.ERROR.value
-        return
 
     @staticmethod
     def string2list(string: Any) -> List[str]:

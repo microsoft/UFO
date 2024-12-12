@@ -95,13 +95,13 @@ class Blackboard:
 
         if isinstance(data, dict):
             data_memory = MemoryItem()
-            data_memory.set_values_from_dict(data)
+            data_memory.add_values_from_dict(data)
             memory.add_memory_item(data_memory)
         elif isinstance(data, MemoryItem):
             memory.add_memory_item(data)
         elif isinstance(data, str):
             data_memory = MemoryItem()
-            data_memory.set_values_from_dict({"text": data})
+            data_memory.add_values_from_dict({"text": data})
             memory.add_memory_item(data_memory)
 
     def add_questions(self, questions: Union[MemoryItem, Dict[str, str]]) -> None:
@@ -149,7 +149,7 @@ class Blackboard:
             screenshot_str = ""
 
         image_memory_item = ImageMemoryItem()
-        image_memory_item.set_values_from_dict(
+        image_memory_item.add_values_from_dict(
             {
                 ImageMemoryItemNames.METADATA: metadata.get(
                     ImageMemoryItemNames.METADATA
