@@ -1,8 +1,12 @@
 # Execution
 
-The instantiated plans will be executed by a execute task. After execution, evalution agent will evaluation the quality of the entire execution process.
+The instantiated plans will be executed by a `execute` task. After execution, `evalution` agent will evaluation the quality of the entire execution process.
 
 In this phase, given the task-action data, the execution process will match the real controller based on word environment and execute the plan step by step.
+
+<h1 align="center">
+    <img src="../../img/execution.png"/> 
+</h1>
 
 ## ExecuteFlow
 
@@ -14,37 +18,37 @@ The `ExecuteFlow` class is designed to facilitate the execution and evaluation o
 The **task execution** in the `ExecuteFlow` class follows a structured sequence to ensure accurate and traceable task performance:  
 
 1. **Initialization**:  
-   - Load configuration settings and log paths.  
-   - Find the application window matching the task.  
-   - Retrieve or create an `ExecuteAgent` for executing the task.  
+    - Load configuration settings and log paths.  
+    - Find the application window matching the task.  
+    - Retrieve or create an `ExecuteAgent` for executing the task.  
 
 2. **Plan Execution**:  
-   - Loop through each step in the `instantiated_plan`.  
-   - Parse the step to extract information like subtasks, control text, and the required operation.  
+    - Loop through each step in the `instantiated_plan`.  
+    - Parse the step to extract information like subtasks, control text, and the required operation.  
 
 3. **Action Execution**:  
-   - Find the control in the application window that matches the specified control text.  
-   - If no matching control is found, raise an error.  
-   - Perform the specified action (e.g., click, input text) using the agent's Puppeteer framework.  
-   - Capture screenshots of the application window and selected controls for logging and debugging.  
+    - Find the control in the application window that matches the specified control text.  
+    - If no matching control is found, raise an error.  
+    - Perform the specified action (e.g., click, input text) using the agent's Puppeteer framework.  
+    - Capture screenshots of the application window and selected controls for logging and debugging.  
 
 4. **Result Logging**:  
-   - Log details of the step execution, including control information, performed action, and results.  
+    - Log details of the step execution, including control information, performed action, and results.  
 
 5. **Finalization**:  
-   - Save the final state of the application window.  
-   - Quit the application client gracefully.  
+    - Save the final state of the application window.  
+    - Quit the application client gracefully.  
 
-Input of `ExecuteAgent`
+Here's the table with just the `execute` and `__init__` methods of the `ExecuteFlow` class:
 
-| **Parameter**    | **Type** | **Description**                                                               |
-|-------------------|----------|-------------------------------------------------------------------------------|
-| `name`           | `str`    | The name of the agent. Used for identification and logging purposes.         |
-| `process_name`   | `str`    | The name of the application process that the agent interacts with.           |
-| `app_root_name`  | `str`    | The name of the root application window or main UI component being targeted. |
+| **Method Name** | **Inputs** | **Outputs** |
+|-----------------|------------|-------------|
+| `__init__` | `task_file_name: str`, `context: Context`, `environment: WindowsAppEnv` | Initializes the class with task file, context, environment, logging setup, and prepares agents for execution. |
+| `execute` | `request: str`, `instantiated_plan: List[Dict[str, Any]]` | Returns a tuple containing the executed plan and evaluation result. |
+
 ---
 
-### Evaluation  
+## Evaluation  
 
 The **evaluation** process in the `ExecuteFlow` class is designed to assess the performance of the executed task based on predefined prompts:  
 
@@ -62,14 +66,14 @@ The **evaluation** process in the `ExecuteFlow` class is designed to assess the 
 
 # Reference
 
-### ExecuteFlow
+## ExecuteFlow
 
 ::: execution.workflow.execute_flow.ExecuteFlow
 
-### ExecuteAgent
+## ExecuteAgent
 
 ::: execution.agent.execute_agent.ExecuteAgent
 
-### ExecuteEvalAgent
+## ExecuteEvalAgent
 
 ::: execution.agent.execute_eval_agent.ExecuteEvalAgent

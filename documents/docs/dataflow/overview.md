@@ -64,7 +64,7 @@ Ensure you configure these settings accurately to leverage non-visual models eff
 
 #### Other Configurations
 
-`config_dev.yaml` specifies the paths of relevant files and contains default settings. The match strategy for the window match and control filter supports options:  `'contains'`, `'fuzzy'`, and `'regex'`, allowing flexible matching strategy for users. The `MAX_STEPS` is the max step for the execute_flow, which can be set by users. 
+`config_dev.yaml` specifies the paths of relevant files and contains default settings. The match strategy for the window match and control filter supports options:  `'contains'`, `'fuzzy'`, and `'regex'`, allowing flexible matching strategy for users. The `MAX_STEPS` is the max step for the execute_flow, which can be set by users.
 
 !!!note
     The specific implementation and invocation method of the matching strategy can refer to [windows_app_env](./windows_app_env.md).
@@ -171,6 +171,11 @@ python -m dataflow -instantiation --task_path path_to_task_file
 python -m dataflow -execution --task_path path_to_task_file
 ```
 
+!!! note
+
+    1. Users should be careful to save the original files while using this project; otherwise, the files will be closed when the app is shut down.
+    2. After starting the project, users should not close the app window while the program is taking screenshots.
+
 ## Workflow
 
 ### Instantiation
@@ -181,165 +186,24 @@ There are three key steps in the instantiation process:
 2. `Prefill` the task using the current screenshot.
 3. `Filter` the established task.
 
-Given the initial task, the dataflow first choose a template (`Phase 1`), the prefill the initial task based on word envrionment to obtain task-action data (`Phase 2`). Finnally, it will filter the established task to evaluate the quality of task-action data.
+Given the initial task, the dataflow first choose a template (`Phase 1`), the prefill the initial task based on word envrionment to obtain task-action data (`Phase 2`). Finnally, it will filter the established task to evaluate the quality of task-action data. (`Phase 3`)
 
-<h1 align="center">
-    <img src="../../img/instantiation.png"/> 
-</h1>
-#### 1. Choose Template File
-
-Templates for your app must be defined and described in `dataflow/templates/app`. For instance, if you want to instantiate tasks for the Word application, place the relevant `.docx` files in dataflow `/templates/word `, along with a `description.json` file.
-
-The appropriate template will be selected based on how well its description matches the instruction.
-
-#### 2. Prefill the Task
-
-After selecting the template file, it will be opened, and a screenshot will be taken. If the template file is currently in use, errors may occur.
-
-The screenshot will be sent to the action prefill agent, which will return a modified task.
-
-#### 3. Filter Task
-
-The completed task will be evaluated by a filter agent, which will assess it and provide feedback.
-
-The more detailed code design documentation for instantiation can be found in [instantiation](./instantiation.md).
+!!! note
+    The more detailed code design documentation for instantiation can be found in [instantiation](./instantiation.md).
 
 ### Execution
 
 The instantiated plans will be executed by a execute task. After execution, evalution agent will evaluation the quality of the entire execution process.
 
-In this phase, given the task-action data, the execution process will match the real controller based on word environment and execute the plan step by step.
-
-<h1 align="center">
-    <img src="../../img/execution.png"/> 
-</h1>
-
-The more detailed code design documentation for execution can be found in [execution](./execution.md).
+!!! note
+    The more detailed code design documentation for execution can be found in [execution](./execution.md).
 
 ## Result
 
-The structure of the results of the task is as below:
+The results will be saved in the `results\` directory under `instantiation`, `execution`, and `dataflow`, and will be further stored in subdirectories based on the execution outcomes.
 
-```txt
-UFO/
-├── dataflow/                       # Root folder for dataflow
-│   └── results/                    # Directory for storing task processing results
-│       ├── saved_document/         # Directory for final document results
-│       ├── instantiation/          # Directory for instantiation results
-│       │   ├── instantiation_pass/ # Tasks successfully instantiated
-│       │   └── instantiation_fail/ # Tasks that failed instantiation
-│       ├── execution/              # Directory for execution results
-│       │   ├── execution_pass/     # Tasks successfully executed
-│       │   ├── execution_fail/     # Tasks that failed execution
-│       │   └── execution_unsure/   # Tasks with uncertain execution results
-│       ├── dataflow/               # Directory for dataflow results
-│       │   ├── execution_pass/     # Tasks successfully executed
-│       │   ├── execution_fail/     # Tasks that failed execution
-│       │   └── execution_unsure/   # Tasks with uncertain execution results
-│       └── ...
-└── ...
-```
-
-1. **General Description:**
-
-   This directory structure organizes the results of task processing into specific categories, including instantiation, execution, and dataflow outcomes.
-2. **Instantiation:**
-
-   The `instantiation` directory contains subfolders for tasks that were successfully instantiated (`instantiation_pass`) and those that failed during instantiation (`instantiation_fail`).
-3. **Execution:**
-
-   Results of task execution are stored under the `execution` directory, categorized into successful tasks (`execution_pass`), failed tasks (`execution_fail`), and tasks with uncertain outcomes (`execution_unsure`).
-4. **Dataflow Results:**
-
-   The `dataflow` directory similarly holds results of tasks based on execution success, failure, or uncertainty, providing a comprehensive view of the data processing pipeline.
-5. **Saved Documents:**
-
-   Instantiated results are separately stored in the `saved_document` directory for easy access and reference.
-
-### Description
-
-This section illustrates the structure of the result of the task, organized in a hierarchical format to describe the various fields and their purposes. The result data include `unique_id`，``app``, `original`, `execution_result`, `instantiation_result`, `time_cost`.
-
-#### 1. **Field Descriptions**
-
-- **Hierarchy**: The data is presented in a hierarchical manner to allow for a clearer understanding of field relationships.
-- **Type Description**: The type of each field (e.g., `string`, `array`, `object`) clearly specifies the format of the data.
-- **Field Purpose**: Each field has a brief description outlining its function.
-
-#### 2. **Execution Results and Errors**
-
-- **execution_result**: Contains the results of task execution, including subtask performance, completion status, and any encountered errors.
-- **instantiation_result**: Describes the process of task instantiation, including template selection, prefilled tasks, and instantiation evaluation.
-- **error**: If an error occurs during task execution, this field will contain the relevant error information.
-
-#### 3. **Time Consumption**
-
-- **time_cost**: The time spent on each phase of the task, from template selection to task execution, is recorded to analyze task efficiency.
-
-### Example Data
-
-```json
-{
-    "unique_id": "102",
-    "app": "word",
-    "original": {
-        "original_task": "Find which Compatibility Mode you are in for Word",
-        "original_steps": [
-            "1.Click the **File** tab.",
-            "2.Click **Info**.",
-            "3.Check the **Compatibility Mode** indicator at the bottom of the document preview pane."
-        ]
-    },
-    "execution_result": {
-        "result": {
-            "reason": "The agent successfully identified the compatibility mode of the Word document.",
-            "sub_scores": {
-                "correct identification of compatibility mode": "yes"
-            },
-            "complete": "yes"
-        },
-        "error": null
-    },
-    "instantiation_result": {
-        "choose_template": {
-            "result": "dataflow\\results\\saved_document\\102.docx",
-            "error": null
-        },
-        "prefill": {
-            "result": {
-                "instantiated_request": "Identify the Compatibility Mode of the Word document.",
-                "instantiated_plan": [
-                    {
-                        "Step": 1,
-                        "Subtask": "Identify the Compatibility Mode",
-                        "Function": "summary",
-                        "Args": {
-                            "text": "The document is in '102 - Compatibility Mode'."
-                        },
-                        "Success": true
-                    }
-                ]
-            },
-            "error": null
-        },
-        "instantiation_evaluation": {
-            "result": {
-                "judge": true,
-                "thought": "Identifying the Compatibility Mode of a Word document is a task that can be executed locally within Word."
-            },
-            "error": null
-        }
-    },
-    "time_cost": {
-        "choose_template": 0.017,
-        "prefill": 11.304,
-        "instantiation_evaluation": 2.38,
-        "total": 34.584,
-        "execute": 0.946,
-        "execute_eval": 10.381
-    }
-}
-```
+!!! note
+    The more detailed information of result can be found in [result](./result.md).
 
 ## Quick Start
 
@@ -370,108 +234,7 @@ UFO/
 └── ...
 ```
 
-### Result files
-
-The result stucture of bulleted task is shown as below. This document provides a detailed breakdown of the task execution process for turning lines of text into a bulleted list in Word. It includes the original task description, execution results, and time analysis for each step.
-
-* **`unique_id`** : The identifier for the task, in this case, `"5"`.
-* **`app`** : The application being used, which is `"word"`.
-* **`original`** : Contains the original task description and the steps.
-
-  * **`original_task`** : Describes the task in simple terms (turning text into a bulleted list).
-  * **`original_steps`** : Lists the steps required to perform the task.
-* **`execution_result`** : Provides the result of executing the task.
-
-  * **`result`** : Describes the outcome of the execution, including a success message and sub-scores for each part of the task. The `complete: "yes"` means the evaluation agent think the execution process is successful! The `sub_score` is the evaluation of each subtask, corresponding to the ` instantiated_plan` in the  `prefill`.
-  * **`error`** : If any error occurred during execution, it would be reported here, but it's `null` in this case.
-* **`instantiation_result`** : Details the instantiation of the task (setting up the task for execution).
-
-  * **`choose_template`** : Path to the template or document created during the task (in this case, the bulleted list document).
-  * **`prefill`** : Describes the `instantiated_request` and  `instantiated_plan` and the steps involved, such as selecting text and clicking buttons, which is the result of prefill flow. The `Success` and `MatchedControlText` is added in the execution process. **`Success`** indicates whether the subtask was executed successfully. **`MatchedControlText`** refers to the control text that was matched during the execution process based on the plan.
-  * **`instantiation_evaluation`** : Provides feedback on the task's feasibility and the evaluation of the request, which is result of the filter flow. **`"judge": true`** : This indicates that the evaluation of the task was positive, meaning the task is considered valid or successfully judged. And the `thought ` is the detailed reason.
-* **`time_cost`** : The time spent on different parts of the task, including template selection, prefill, instantiation evaluation, and execution. Total time is also given.
-
-This structure follows your description and provides the necessary details in a consistent format.
-
-```json
-{
-    "unique_id": "5",
-    "app": "word",
-    "original": {
-        "original_task": "Turning lines of text into a bulleted list in Word",
-        "original_steps": [
-            "1. Place the cursor at the beginning of the line of text you want to turn into a bulleted list",
-            "2. Click the Bullets button in the Paragraph group on the Home tab and choose a bullet style"
-        ]
-    },
-    "execution_result": {
-        "result": {
-            "reason": "The agent successfully selected the text 'text to edit' and then clicked on the 'Bullets' button in the Word application. The final screenshot shows that the text 'text to edit' has been converted into a bulleted list.",
-            "sub_scores": {
-                "text selection": "yes",
-                "bulleted list conversion": "yes"
-            },
-            "complete": "yes"
-        },
-        "error": null
-    },
-    "instantiation_result": {
-        "choose_template": {
-            "result": "dataflow\\results\\saved_document\\bulleted.docx",
-            "error": null
-        },
-        "prefill": {
-            "result": {
-                "instantiated_request": "Turn the line of text 'text to edit' into a bulleted list in Word.",
-                "instantiated_plan": [
-                    {
-                        "Step": 1,
-                        "Subtask": "Place the cursor at the beginning of the text 'text to edit'",
-                        "ControlLabel": null,
-                        "ControlText": "",
-                        "Function": "select_text",
-                        "Args": {
-                            "text": "text to edit"
-                        },
-                        "Success": true,
-                        "MatchedControlText": null
-                    },
-                    {
-                        "Step": 2,
-                        "Subtask": "Click the Bullets button in the Paragraph group on the Home tab",
-                        "ControlLabel": "61",
-                        "ControlText": "Bullets",
-                        "Function": "click_input",
-                        "Args": {
-                            "button": "left",
-                            "double": false
-                        },
-                        "Success": true,
-                        "MatchedControlText": "Bullets"
-                    }
-                ]
-            },
-            "error": null
-        },
-        "instantiation_evaluation": {
-            "result": {
-                "judge": true,
-                "thought": "The task is specific and involves a basic function in Word that can be executed locally without any external dependencies.",
-                "request_type": "None"
-            },
-            "error": null
-        }
-    },
-    "time_cost": {
-        "choose_template": 0.012,
-        "prefill": 15.649,
-        "instantiation_evaluation": 2.469,
-        "execute": 5.824,
-        "execute_eval": 8.702,
-        "total": 43.522
-    }
-}
-```
+The specific results can be referenced in the [result](./result.md) in JSON format along with example data.
 
 ### Log files
 
@@ -481,7 +244,7 @@ The corresponding logs can be found in the directories `logs/bulleted` and `logs
     <img src="../../img/result_example.png"/> 
 </h1>
 
-## Reference
+# Reference
 
 ### AppEnum
 
@@ -494,7 +257,3 @@ The corresponding logs can be found in the directories `logs/bulleted` and `logs
 ### DataFlowController
 
 ::: data_flow_controller.DataFlowController
-
-!!! note
-    1. Users should be careful to save the original files while using this project; otherwise, the files will be closed when the app is shut down.
-    2. After starting the project, users should not close the app window while the program is taking screenshots.
