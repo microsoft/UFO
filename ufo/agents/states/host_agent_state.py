@@ -198,13 +198,14 @@ class AssignHostAgentState(HostAgentState):
         :param agent: The current agent.
         :return: The state for the next step.
         """
-
+        
         # Transition to the app agent state.
         # Lazy import to avoid circular dependency.
 
         from ufo.agents.states.app_agent_state import ContinueAppAgentState
 
         return ContinueAppAgentState()
+
 
     def next_agent(self, agent: "HostAgent") -> AppAgent:
         """

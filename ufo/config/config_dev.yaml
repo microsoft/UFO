@@ -101,3 +101,9 @@ DEFAULT_PNG_COMPRESS_LEVEL: 9  # The compress level for the PNG image, 0-9, 0 is
 
 # Save UI tree
 SAVE_UI_TREE: False  # Whether to save the UI tree
+
+
+# Record the status of the tasks
+TASK_STATUS: True  # Whether to record the status of the tasks in batch execution mode.
+# TASK_STATUS_FILE # The path for the task status file.
+
