@@ -51,6 +51,7 @@ class HostAgentProcessor(BaseProcessor):
             "magenta",
         )
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def capture_screenshot(self) -> None:
         """
@@ -59,7 +60,7 @@ class HostAgentProcessor(BaseProcessor):
 
         desktop_save_path = self.log_path + f"action_step{self.session_step}.png"
 
-        self._memory_data.set_values_from_dict({"CleanScreenshot": desktop_save_path})
+        self._memory_data.add_values_from_dict({"CleanScreenshot": desktop_save_path})
 
         # Capture the desktop screenshot for all screens.
         self.photographer.capture_desktop_screen_screenshot(
@@ -71,6 +72,7 @@ class HostAgentProcessor(BaseProcessor):
             desktop_save_path
         )
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_control_info(self) -> None:
         """
@@ -87,6 +89,7 @@ class HostAgentProcessor(BaseProcessor):
             self._desktop_windows_dict
         )
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_prompt_message(self) -> None:
         """
@@ -114,6 +117,7 @@ class HostAgentProcessor(BaseProcessor):
         )
         self.request_logger.debug(log)
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_response(self) -> None:
         """
@@ -121,26 +125,18 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
-        try:
-            self._response, self.cost = self.host_agent.get_response(
-                self._prompt_message, "HOSTAGENT", use_backup_engine=True
-            )
+        self._response, self.cost = self.host_agent.get_response(
+            self._prompt_message, "HOSTAGENT", use_backup_engine=True
+        )
 
-        except Exception:
-            self.llm_error_handler()
-
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def parse_response(self) -> None:
         """
         Parse the response.
         """
 
-        # Try to parse the response. If an error occurs, catch the exception and log the error.
-        try:
-            self._response_json = self.host_agent.response_to_dict(self._response)
-
-        except Exception:
-            self.general_error_handler()
+        self._response_json = self.host_agent.response_to_dict(self._response)
 
         self.control_label = self._response_json.get("ControlLabel", "")
         self.control_text = self._response_json.get("ControlText", "")
@@ -157,6 +153,7 @@ class HostAgentProcessor(BaseProcessor):
 
         self.host_agent.print_response(self._response_json)
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def execute_action(self) -> None:
         """
@@ -278,12 +275,10 @@ class HostAgentProcessor(BaseProcessor):
             "run_shell", {"command": self.bash_command}
         )
 
-    def update_memory(self) -> None:
+    def sync_memory(self):
         """
-        Update the memory of the Agent.
+        Sync the memory of the HostAgent.
         """
-
-        # Log additional information for the host agent.
         additional_memory = {
             "Step": self.session_step,
             "RoundStep": self.round_step,
@@ -299,12 +294,21 @@ class HostAgentProcessor(BaseProcessor):
             "Application": self.app_root,
             "Cost": self._cost,
             "Results": self._results,
+            "error": self._exeception_traceback,
         }
 
-        self._memory_data.set_values_from_dict(self._response_json)
-        self._memory_data.set_values_from_dict(additional_memory)
-        self._memory_data.set_values_from_dict(self._control_log)
-        self._memory_data.set_values_from_dict({"time_cost": self._time_cost})
+        self.add_to_memory(self._response_json)
+        self.add_to_memory(additional_memory)
+        self.add_to_memory(self._control_log)
+        self.add_to_memory({"time_cost": self._time_cost})
+
+    def update_memory(self) -> None:
+        """
+        Update the memory of the Agent.
+        """
+
+        # Sync the memory
+        self.sync_memory()
 
         self.host_agent.add_memory(self._memory_data)
 

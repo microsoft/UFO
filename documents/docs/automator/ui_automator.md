@@ -21,7 +21,7 @@ There are several configurations that need to be set up before using the UI Auto
 
 ## Receiver
 
-The receiver of the UI Automator is the `ControlReceiver` class defined in the `ufo/automator/ui_control/controller/control_receiver` module. It is initialized with the application's window handle and control wrapper that executes the actions. . The `ControlReceiver` provides functionalities to interact with the application's UI controls. Below is the reference for the `ControlReceiver` class:
+The receiver of the UI Automator is the `ControlReceiver` class defined in the `ufo/automator/ui_control/controller/control_receiver` module. It is initialized with the application's window handle and control wrapper that executes the actions. The `ControlReceiver` provides functionalities to interact with the application's UI controls. Below is the reference for the `ControlReceiver` class:
 
 ::: automator.ui_control.controller.ControlReceiver
 

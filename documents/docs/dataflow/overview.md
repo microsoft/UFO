@@ -1,3 +1,7 @@
+# Introduction
+
+This repository contains the implementation of the **Data Collection** process for training the **Large Action Models** (LAMs) in the paper of [Large Action Models: From Inception to Implementation]. The **Data Collection** process is designed to streamline task processing, ensuring that all necessary steps are seamlessly integrated from initialization to execution. This module is part of the [**UFO**](https://arxiv.org/abs/2402.07939) project.
+
 # Dataflow
 
 Dataflow uses UFO to implement `instantiation`, `execution`, and `dataflow` for a given task, with options for batch processing and single processing.
