@@ -1,3 +1,37 @@
+<h1 align="center">
+    Large Action Models: From Inception to Implementation
+</h1>
+
+
+<div align="center">
+
+[![arxiv](https://img.shields.io/badge/Paper-arXiv:202402.07939-b31b1b.svg)](https://arxiv.org/abs/2402.07939)&ensp;
+![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
+[![Documentation](https://img.shields.io/badge/Documentation-%230ABAB5?style=flat&logo=readthedocs&logoColor=black)](https://microsoft.github.io/UFO/dataflow/overview/)&ensp;
+<!-- [![YouTube](https://img.shields.io/badge/YouTube-white?logo=youtube&logoColor=%23FF0000)](https://www.youtube.com/watch?v=QT_OhygMVXU)&ensp; -->
+<!-- [![X (formerly Twitter) Follow](https://img.shields.io/twitter/follow/UFO_Agent)](https://twitter.com/intent/follow?screen_name=UFO_Agent) -->
+<!-- ![Welcome](https://img.shields.io/badge/contributions-welcome-brightgreen.svg?style=flat)&ensp; -->
+
+</div>
+
+
+# Introduction
+
+This repository contains the implementation of the **Data Collection** process for training the **Large Action Models** (LAMs) in the [**UFO**](https://arxiv.org/abs/2402.07939) project. The **Data Collection** process is designed to streamline task processing, ensuring that all necessary steps are seamlessly integrated from initialization to execution. This module is part of the [**UFO**](https://arxiv.org/abs/2402.07939) project.
+
+If you find this project useful, please consider giving a star ⭐, and cite our paper:
+
+```bibtex
+@article{UFO2024,
+  title={Large Action Models: From Inception to Implementation},
+  author={Microsoft},
+  year={2024}
+}
+```
+
+
+
 # Dataflow
 
 Dataflow uses UFO to implement `instantiation`, `execution`, and `dataflow` for a given task, with options for batch processing and single processing.
