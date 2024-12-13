@@ -235,10 +235,16 @@ class HostAgent(BasicAgent):
         :return: The app agent.
         """
 
-        if mode == "normal":
+        if mode == "normal" or "batch_normal":
 
-            agent_name = "AppAgent/{root}/{process}".format(
-                root=application_root_name, process=application_window_name
+            agent_name = (
+                "AppAgent/{root}/{process}".format(
+                    root=application_root_name, process=application_window_name
+                )
+                if mode == "normal"
+                else "BatchAgent/{root}/{process}".format(
+                    root=application_root_name, process=application_window_name
+                )
             )
 
             app_agent: AppAgent = self.create_subagent(
@@ -272,26 +278,6 @@ class HostAgent(BasicAgent):
                 example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
                 api_prompt=configs["API_PROMPT"],
                 app_info_prompt=app_info_prompt,
-            )
-        elif mode == "batch_normal":
-
-            # Load additional app info prompt.
-            app_info_prompt = configs.get("APP_INFO_PROMPT", None)
-
-            agent_name = "BatchAgent/{root}/{process}".format(
-                root=application_root_name, process=application_window_name
-            )
-
-            # Create the app agent in the batch_normal mode.
-            app_agent: AppAgent = self.create_subagent(
-                agent_type="app",
-                agent_name=agent_name,
-                process_name=application_window_name,
-                app_root_name=application_root_name,
-                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
-                main_prompt=configs["APPAGENT_PROMPT"],
-                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
-                api_prompt=configs["API_PROMPT"],
             )
 
         else:

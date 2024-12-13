@@ -25,6 +25,7 @@ class PlanReader:
         with open(plan_file, "r") as f:
             self.plan = json.load(f)
         self.remaining_steps = self.get_steps()
+        self.support_apps = ["word", "excel", "powerpoint"]
 
     def get_close(self) -> bool:
         """
@@ -56,7 +57,7 @@ class PlanReader:
         :return: The operation object.
         """
 
-        return self.plan.get("object", None)
+        return self.plan.get("object", None).lower()
 
     def get_initial_request(self) -> str:
         """
@@ -99,6 +100,14 @@ class PlanReader:
 
         return os.path.join(file_path, file)
 
+    def get_support_apps(self) -> List[str]:
+        """
+        Get the support apps in the plan.
+        :return: The support apps in the plan.
+        """
+
+        return self.support_apps
+
     def get_host_request(self) -> str:
         """
         Get the request for the host agent.
@@ -107,7 +116,7 @@ class PlanReader:
 
         task = self.get_task()
         object_name = self.get_operation_object()
-        if object_name:
+        if object_name in self.support_apps:
             request = task
         else:
             request = f"Open the application of {task}. You must output the selected application with their control text and label even if it is already open."

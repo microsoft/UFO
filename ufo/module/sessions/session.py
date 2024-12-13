@@ -348,6 +348,7 @@ class FromFileSession(BaseSession):
         super().__init__(task, should_evaluate, id)
         self.plan_file = plan_file
         self.plan_reader = PlanReader(plan_file)
+        self.support_apps = self.plan_reader.get_support_apps()
         self.close = self.plan_reader.get_close()
         self.task_name = task.split("/")[1]
         self.object_name = ""
@@ -474,13 +475,15 @@ class FromFileSession(BaseSession):
         if self.object_name:
             suffix = os.path.splitext(self.object_name)[1]
             self.app_name = self.get_app_name(suffix)
-            app_com = self.get_app_com(suffix)
+            if self.app_name not in self.support_apps:
+                return  # The app is not supported, so we don't need to setup the environment.
             file = self.plan_reader.get_file_path()
             code_snippet = f"import os\nos.system('start {self.app_name} \"{file}\"')"
             code_snippet = code_snippet.replace("\\", "\\\\")  # escape backslashes
             try:
                 exec(code_snippet, globals())
-                time.sleep(3)  # wait for the app to boot
+                app_com = self.get_app_com(suffix)
+                time.sleep(2)  # wait for the app to boot
                 word_app = win32com.client.Dispatch(app_com)
                 word_app.WindowState = 1  # wdWindowStateMaximize
             except Exception as e:
