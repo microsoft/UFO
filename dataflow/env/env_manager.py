@@ -78,8 +78,8 @@ class WindowsAppEnv:
 
         try:
             # Ensure the app_window object is still valid and visible
-            if self.app_window and not self.app_window.is_visible():
-                process = psutil.Process(self.app_window.process_id)
+            if self.app_window and self.app_window.process_id():
+                process = psutil.Process(self.app_window.process_id())
                 if process.is_running():
                     print(f"Killing process: {self.app_window.process_id}")
                     process.terminate()
