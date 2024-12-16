@@ -40,7 +40,7 @@ def blackboard_to_prompt(self) -> List[str]:
         prefix
         + self.texts_to_prompt(self.questions, "[Questions & Answers:]")
         + self.texts_to_prompt(self.requests, "[Request History:]")
-        + self.texts_to_prompt(self.trajectories, "[Step Trajectories:]")
+        + self.texts_to_prompt(self.trajectories, "[Step Trajectories Completed Previously:]")
         + self.screenshots_to_prompt()
     )
 

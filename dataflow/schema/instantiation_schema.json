@@ -1,0 +1,99 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "type": "object",
+  "properties": {
+    "unique_id": { "type": "string" },
+    "app": { "type": "string" },
+    "original": {
+      "type": "object",
+      "properties": {
+        "original_task": { "type": "string" },
+        "original_steps": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      },
+      "required": ["original_task", "original_steps"]
+    },
+    "execution_result": {
+      "type": ["object", "null"],
+      "properties": {
+        "result": {
+          "type":"null"
+        },
+        "error": {
+          "type":"null"
+        }
+      }
+    },
+    "instantiation_result": {
+      "type": "object",
+      "properties": {
+        "choose_template": {
+          "type": "object",
+          "properties": {
+            "result": { "type": ["string", "null"] },
+            "error": { "type": ["null", "string"] }
+          },
+          "required": ["result", "error"]
+        },
+        "prefill": {
+          "type": ["object", "null"],
+          "properties": {
+            "result": {
+              "type": ["object", "null"],
+              "properties": {
+                "instantiated_request": { "type": "string" },
+                "instantiated_plan": {
+                  "type":["array", "null"],
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "Step": { "type": "integer" },
+                      "Subtask": { "type": "string" },
+                      "ControlLabel": { "type": ["string", "null"] },
+                      "ControlText": { "type": "string" },
+                      "Function": { "type": "string" },
+                      "Args": { "type": "object", "additionalProperties": true }
+                    },
+                    "required": ["Step", "Subtask", "Function", "Args"]
+                  }
+                }
+              },
+              "required": ["instantiated_request", "instantiated_plan"]
+            },
+            "error": { "type": ["null", "string"] }
+          },
+          "required": ["result", "error"]
+        },
+        "instantiation_evaluation": {
+          "type": "object",
+          "properties": {
+            "result": {
+              "type": ["object", "null"],
+              "properties": {
+                "judge": { "type": "boolean" },
+                "thought": { "type": "string" },
+                "request_type": { "type": "string" }
+              },
+              "required": ["judge", "thought", "request_type"]
+            },
+            "error": { "type": ["null", "string"] }
+          },
+          "required": ["result", "error"]
+        }
+      }
+    },
+    "time_cost": {
+      "type": "object",
+      "properties": {
+        "choose_template": { "type": ["number", "null"] },
+        "prefill":{ "type": ["number", "null"] },
+        "instantiation_evaluation": { "type": ["number", "null"] },
+        "total": { "type": ["number", "null"] }
+      },
+      "required": ["choose_template", "prefill", "instantiation_evaluation", "total"]
+    }
+  },
+  "required": ["unique_id", "app", "original", "execution_result", "instantiation_result", "time_cost"]
+}

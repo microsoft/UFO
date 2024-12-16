@@ -76,6 +76,7 @@ class AppPuppeteer:
         """
 
         command = self.create_command(command_name, params, *args, **kwargs)
+
         return command.execute()
 
     def execute_all_commands(self) -> List[Any]:
@@ -187,8 +188,14 @@ class ReceiverManager:
         """
         Build the UI controller.
         :param control: The control element.
+        :param application: The application window.
         :return: The UI controller receiver.
         """
+
+        # control can be None
+        if not application:
+            return None
+
         factory: ReceiverFactory = self.receiver_factory_registry.get("UIControl").get(
             "factory"
         )

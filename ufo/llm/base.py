@@ -3,6 +3,8 @@
 
 import abc
 from importlib import import_module
+from typing import Dict
+
 
 class BaseService(abc.ABC):
     @abc.abstractmethod
@@ -14,7 +16,12 @@ class BaseService(abc.ABC):
         pass
 
     @staticmethod
-    def get_service(name):
+    def get_service(name: str) -> "BaseService":
+        """
+        Get the service class based on the name.
+        :param name: The name of the service.
+        :return: The service class.
+        """
         service_map = {
             "openai": "OpenAIService",
             "aoai": "OpenAIService",
@@ -22,6 +29,7 @@ class BaseService(abc.ABC):
             "qwen": "QwenService",
             "ollama": "OllamaService",
             "gemini": "GeminiService",
+            "claude": "ClaudeService",
             "placeholder": "PlaceHolderService",
         }
         service_name = service_map.get(name, None)
@@ -35,20 +43,23 @@ class BaseService(abc.ABC):
         return getattr(module, service_name)
 
     def get_cost_estimator(
-        self, api_type, model, prices, prompt_tokens, completion_tokens
+        self,
+        api_type: str,
+        model: str,
+        prices: Dict[str, float],
+        prompt_tokens: int,
+        completion_tokens: int,
     ) -> float:
         """
         Calculates the cost estimate for using a specific model based on the number of prompt tokens and completion tokens.
-
-        Args:
-            model (str): The name of the model.
-            prices (dict): A dictionary containing the prices for different models.
-            prompt_tokens (int): The number of prompt tokens used.
-            completion_tokens (int): The number of completion tokens used.
-
-        Returns:
-            float: The estimated cost for using the model.
+        :param api_type: The type of api used.
+        :param model: The name of the model.
+        :param prices: A dictionary containing the prices for different models.
+        :param prompt_tokens: The number of prompt tokens used.
+        :param completion_tokens: The number of completion tokens used.
+        :return: The estimated cost for using the model.
         """
+
         if api_type.lower() == "openai":
             name = str(api_type + "/" + model)
         elif api_type.lower() in ["aoai", "azure_ad"]:
@@ -57,6 +68,8 @@ class BaseService(abc.ABC):
             name = str("qwen/" + model)
         elif api_type.lower() == "gemini":
             name = str("gemini/" + model)
+        elif api_type.lower() == "claude":
+            name = str("claude/" + model)
 
         if name in prices:
             cost = (

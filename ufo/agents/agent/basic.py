@@ -49,6 +49,7 @@ class BasicAgent(ABC):
         self._host = None
         self._processor: Optional[BaseProcessor] = None
         self._state = None
+        self.Puppeteer: puppeteer.AppPuppeteer = None
 
     @property
     def status(self) -> str:
@@ -98,7 +99,7 @@ class BasicAgent(ABC):
         """
         return self.host.blackboard
 
-    def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
+    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
         """
         Create the puppeteer interface.
         """
@@ -138,7 +139,7 @@ class BasicAgent(ABC):
 
     @classmethod
     def get_response(
-        cls, message: List[dict], namescope: str, use_backup_engine: bool
+        cls, message: List[dict], namescope: str, use_backup_engine: bool, configs = configs
     ) -> str:
         """
         Get the response for the prompt.
@@ -148,7 +149,7 @@ class BasicAgent(ABC):
         :return: The response.
         """
         response_string, cost = llm_call.get_completion(
-            message, namescope, use_backup_engine=use_backup_engine
+            message, namescope, use_backup_engine=use_backup_engine, configs = configs
         )
         return response_string, cost
 
@@ -229,6 +230,12 @@ class BasicAgent(ABC):
         """
         pass
 
+    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
+        """
+        Create the puppeteer interface.
+        """
+        pass
+
     def process_resume(self) -> None:
         """
         Resume the process.
@@ -236,27 +243,37 @@ class BasicAgent(ABC):
         if self.processor:
             self.processor.resume()
 
-    def process_asker(self) -> None:
+
+    def process_asker(self, ask_user: bool = True) -> None:
         """
         Ask for the process.
+        :param ask_user: Whether to ask the user for the questions.
         """
         if self.processor:
             question_list = self.processor.question_list
 
-            utils.print_with_color(
-                "Could you please answer the following questions to help me understand your needs and complete the task?",
-                "yellow",
-            )
+            if ask_user:
+                utils.print_with_color(
+                    "Could you please answer the following questions to help me understand your needs and complete the task?",
+                    "yellow",
+                )
 
             for index, question in enumerate(question_list):
-                answer = question_asker(question, index + 1)
-                if not answer.strip():
-                    continue
-                qa_pair = {"question": question, "answer": answer}
+                if ask_user:
+                    answer = question_asker(question, index + 1)
+                    if not answer.strip():
+                        continue
+                    qa_pair = {"question": question, "answer": answer}
 
-                utils.append_string_to_file(
-                    configs["QA_PAIR_FILE"], json.dumps(qa_pair)
-                )
+                    utils.append_string_to_file(
+                        configs["QA_PAIR_FILE"], json.dumps(qa_pair)
+                    )
+
+                else:
+                    qa_pair = {
+                        "question": question,
+                        "answer": "The answer for the question is not available, please proceed with your own knowledge or experience, or leave it as a placeholder. Do not ask the same question again.",
+                    }
 
                 self.blackboard.add_questions(qa_pair)
 
