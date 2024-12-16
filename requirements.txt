@@ -1,3 +1,5 @@
+pyautogui
+uiautomation
 art==6.1
 colorama==0.4.6
 langchain==0.1.11
