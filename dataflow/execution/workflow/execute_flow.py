@@ -52,7 +52,7 @@ class ExecuteFlow(AppAgentProcessor):
         self.app_agent = self._get_or_create_execute_agent()
         self.eval_agent = self._get_or_create_evaluation_agent()
 
-        self._matched_control = None    # Matched control for the current step.
+        self._matched_control = None  # Matched control for the current step.
 
     def _get_or_create_execute_agent(self) -> ExecuteAgent:
         """
@@ -107,7 +107,7 @@ class ExecuteFlow(AppAgentProcessor):
         :param instantiated_plan: Instantiated plan containing steps to execute.
         :return: Tuple containing task quality flag, comment, and task type.
         """
-        
+
         start_time = time.time()
         try:
             executed_plan = self.execute_plan(instantiated_plan)
@@ -118,13 +118,15 @@ class ExecuteFlow(AppAgentProcessor):
 
         start_time = time.time()
         try:
-            result, _ = self.eval_agent.evaluate(request=request, log_path=self.log_path)
+            result, _ = self.eval_agent.evaluate(
+                request=request, log_path=self.log_path
+            )
             utils.print_with_color(f"Result: {result}", "green")
         except Exception as error:
             raise RuntimeError(f"Evaluation failed. {error}")
         finally:
             self.eval_time = round(time.time() - start_time, 3)
-        
+
         return executed_plan, result
 
     def execute_plan(
@@ -145,16 +147,22 @@ class ExecuteFlow(AppAgentProcessor):
                 self.app_agent._app_root_name, self.app_agent._process_name
             )
             # Initialize the control receiver
-            current_receiver = self.app_agent.Puppeteer.receiver_manager.receiver_list[-1]
+            current_receiver = self.app_agent.Puppeteer.receiver_manager.receiver_list[
+                -1
+            ]
 
             if current_receiver is not None:
-                self.application_window = self._app_env.find_matching_window(self._task_file_name)
-                current_receiver.com_object = current_receiver.get_object_from_process_name()
+                self.application_window = self._app_env.find_matching_window(
+                    self._task_file_name
+                )
+                current_receiver.com_object = (
+                    current_receiver.get_object_from_process_name()
+                )
 
             self.init_and_final_capture_screenshot()
         except Exception as error:
             raise RuntimeError(f"Execution initialization failed. {error}")
-        
+
         # Initialize the success flag for each step.
         for index, step_plan in enumerate(instantiated_plan):
             instantiated_plan[index]["Success"] = None
@@ -174,7 +182,9 @@ class ExecuteFlow(AppAgentProcessor):
                     self.process()
                     instantiated_plan[index]["Success"] = True
                     instantiated_plan[index]["ControlLabel"] = self._control_label
-                    instantiated_plan[index]["MatchedControlText"] = self._matched_control
+                    instantiated_plan[index][
+                        "MatchedControlText"
+                    ] = self._matched_control
                 except Exception as ControllerNotFoundError:
                     instantiated_plan[index]["Success"] = False
                     raise ControllerNotFoundError
@@ -191,7 +201,9 @@ class ExecuteFlow(AppAgentProcessor):
         # save the final state of the app
 
         win_com_receiver = None
-        for receiver in reversed(self.app_agent.Puppeteer.receiver_manager.receiver_list):
+        for receiver in reversed(
+            self.app_agent.Puppeteer.receiver_manager.receiver_list
+        ):
             if isinstance(receiver, WinCOMReceiverBasic):
                 if receiver.client is not None:
                     win_com_receiver = receiver
@@ -247,7 +259,7 @@ class ExecuteFlow(AppAgentProcessor):
             "Application": self.app_agent._app_root_name,
             "TimeCost": self.time_cost,
         }
-        self._memory_data.set_values_from_dict(step_memory)
+        self._memory_data.add_values_from_dict(step_memory)
         self.log(self._memory_data.to_dict())
 
     def _parse_step_plan(self, step_plan: Dict[str, Any]) -> None:
@@ -270,7 +282,6 @@ class ExecuteFlow(AppAgentProcessor):
 
         self.status = step_plan.get("Status", "")
 
-
     def init_and_final_capture_screenshot(self) -> None:
         """
         Capture the screenshot.
@@ -279,7 +290,7 @@ class ExecuteFlow(AppAgentProcessor):
         # Define the paths for the screenshots saved.
         screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
 
-        self._memory_data.set_values_from_dict(
+        self._memory_data.add_values_from_dict(
             {
                 "CleanScreenshot": screenshot_save_path,
             }
@@ -291,17 +302,19 @@ class ExecuteFlow(AppAgentProcessor):
         # Capture the control screenshot.
         control_selected = self._app_env.app_window
         self.capture_control_screenshot(control_selected)
-    
+
     def execute_action(self) -> None:
         """
         Execute the action.
         """
-        
+
         control_selected = None
         # Find the matching window and control.
-        self.application_window = self._app_env.find_matching_window(self._task_file_name)
+        self.application_window = self._app_env.find_matching_window(
+            self._task_file_name
+        )
         if self.control_text == "":
-            control_selected =  self.application_window 
+            control_selected = self.application_window
         else:
             self._control_label, control_selected = self._app_env.find_matching_controller(
                 self.filtered_annotation_dict, self.control_text

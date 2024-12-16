@@ -13,6 +13,7 @@ __pycache__/
 *.pyc
 *.ipynb
 /.VSCodeCounter
+/analysis/*
 
 # Ignore the config file
 ufo/config/config.yaml
@@ -35,3 +36,6 @@ scripts/*
 !vectordb/demonstration/example.yaml
 
 .vscode
+
+# Ignore the record files
+tasks_status.json

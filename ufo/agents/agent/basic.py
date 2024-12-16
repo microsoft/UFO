@@ -49,6 +49,7 @@ class BasicAgent(ABC):
         self._host = None
         self._processor: Optional[BaseProcessor] = None
         self._state = None
+        self.Puppeteer: puppeteer.AppPuppeteer = None
 
     @property
     def status(self) -> str:
@@ -98,7 +99,7 @@ class BasicAgent(ABC):
         """
         return self.host.blackboard
 
-    def create_puppteer_interface(self) -> puppeteer.AppPuppeteer:
+    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
         """
         Create the puppeteer interface.
         """
@@ -226,6 +227,12 @@ class BasicAgent(ABC):
     def process(self, context: Context) -> None:
         """
         Process the agent.
+        """
+        pass
+
+    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
+        """
+        Create the puppeteer interface.
         """
         pass
 

@@ -8,6 +8,7 @@ The Automator application is a tool that allows UFO to automate and take actions
 - [UI Automator](./ui_automator.md) - This action type is used to interact with the application's UI controls, such as buttons, text boxes, and menus. UFO uses the **UIA** or **Win32** APIs to interact with the application's UI controls.
 - [API](./wincom_automator.md) - This action type is used to interact with the application's native API. Users and app developers can create their own API actions to interact with specific applications.
 - [Web](./web_automator.md) - This action type is used to interact with web applications. UFO uses the [**crawl4ai**](https://github.com/unclecode/crawl4ai) library to extract information from web pages.
+- [Bash](./bash_automator.md) - This action type is used to interact with the command line interface (CLI) of an application.
 - [AI Tool](./ai_tool_automator.md) - This action type is used to interact with the LLM-based AI tools.
 
 ## Action Design Patterns

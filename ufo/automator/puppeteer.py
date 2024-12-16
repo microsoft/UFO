@@ -188,10 +188,12 @@ class ReceiverManager:
         """
         Build the UI controller.
         :param control: The control element.
+        :param application: The application window.
         :return: The UI controller receiver.
         """
 
-        if not control or not application:
+        # control can be None
+        if not application:
             return None
 
         factory: ReceiverFactory = self.receiver_factory_registry.get("UIControl").get(

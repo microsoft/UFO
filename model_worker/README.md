@@ -19,6 +19,23 @@ pip install -U google-generativeai==0.7.0
 NOTE: `API_MODEL` is the model name of Gemini LLM API. 
 You can find the model name in the [Gemini LLM model list](https://ai.google.dev/gemini-api).
 If you meet the `429 Resource has been exhausted (e.g. check quota).`, it may because the rate limit of your Gemini API.
+### If you use Claude as the Agent
+
+1. Create an account on [Claude](https://www.anthropic.com/) and get your API key.
+2. Install the required packages anthropic or install the `requirement.txt` with uncommenting the Claude.
+```bash
+pip install -U anthropic==0.37.1
+```
+3. Add following configuration to `config.yaml`:
+```json showLineNumbers
+{
+    "API_TYPE": "claude" ,
+    "API_KEY": "YOUR_KEY",  
+    "API_MODEL": "YOUR_MODEL"
+}
+```
+NOTE: `API_MODEL` is the model name of Claude LLM API. 
+You can find the model name in the [Claude LLM model list](https://www.anthropic.com/pricing#anthropic-api).
 
 ### If you use QWEN as the Agent
 

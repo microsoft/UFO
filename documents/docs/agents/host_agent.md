@@ -5,7 +5,8 @@ The `HostAgent` assumes three primary responsibilities:
 1. **User Engagement**: The `HostAgent` engages with the user to understand their request and analyze their intent. It also conversates with the user to gather additional information when necessary.
 2. **AppAgent Management**: The `HostAgent` manages the creation and registration of `AppAgents` to fulfill the user's request. It also orchestrates the interaction between the `AppAgents` and the application.
 3. **Task Management**: The `HostAgent` analyzes the user's request, to decompose it into sub-tasks and distribute them among the `AppAgents`. It also manages the scheduling, orchestration, coordination, and monitoring of the `AppAgents` to ensure the successful completion of the user's request.
-4. **Communication**: The `HostAgent` communicates with the `AppAgents` to exchange information. It also manages the `Blackboard` to store and share information among the agents, as shown below:
+4. **Bash Command Execution**: The `HostAgent` can execute bash commands to open applications or execute system commands to support the user's request and the `AppAgents`' execution.
+5. **Communication**: The `HostAgent` communicates with the `AppAgents` to exchange information. It also manages the `Blackboard` to store and share information among the agents, as shown below:
 
 <h1 align="center">
     <img src="../../img/blackboard.png" alt="Blackboard Image" width="80%">
@@ -45,7 +46,7 @@ With the inputs provided, the `HostAgent` generates the following outputs:
 | Status | The status of the agent, mapped to the `AgentState`. | String |
 | Comment | Additional comments or information provided to the user. | String |
 | Questions | The questions to be asked to the user for additional information. | List of Strings |
-| AppsToOpen | The application to be opened to execute the sub-task if it is not already open. | Dictionary |
+| Bash | The bash command to be executed by the `HostAgent`. It can be used to open applications or execute system commands. | String |
 
 
 Below is an example of the `HostAgent` output:
@@ -62,7 +63,7 @@ Below is an example of the `HostAgent` output:
     "Status": "AgentState",
     "Comment": "Additional comments",
     "Questions": ["Question 1", "Question 2"],
-    "AppsToOpen": {"APP": "powerpnt", "file_path": ""}
+    "Bash": "Bash command"
 }
 ```
 
@@ -76,7 +77,8 @@ The `HostAgent` progresses through different states, as defined in the `ufo/agen
 
 | State | Description |
 | --- | --- |
-| `CONTINUE` | The `HostAgent` is ready to process the user's request and emloy the `Processor` to decompose it into sub-tasks and assign them to the `AppAgents`. |
+| `CONTINUE` | The `HostAgent` is ready to process the user's request and emloy the `Processor` to decompose it into sub-tasks. |
+| `ASSIGN` | The `HostAgent` is assigning the sub-tasks to the `AppAgents` for execution. |
 | `FINISH` | The overall task is completed, and the `HostAgent` is ready to return the results to the user. |
 | `ERROR` | An error occurred during the processing of the user's request, and the `HostAgent` is unable to proceed. |
 | `FAIL` | The `HostAgent` believes the task is unachievable and cannot proceed further. |

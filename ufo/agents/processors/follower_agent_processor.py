@@ -28,6 +28,8 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
         super().__init__(agent, context)
         self.subtask = self.context.get(ContextNames.REQUEST)
 
+    @AppAgentProcessor.exception_capture
+    @AppAgentProcessor.method_timer
     def get_prompt_message(self) -> None:
         """
         Get the prompt message for the AppAgent in the follower mode. It may accept additional prompts as input.
