@@ -1,14 +1,21 @@
 # WindowsAppEnv
 
-`WindowsAppEnv` class represents the environment for controlling a Windows application. It provides methods for starting, stopping, and interacting with Windows applications, including window matching based on configurable strategies.
+The usage scenarios for the `WindowsAppEnv` class are as follows:
+
+* **Opening a specified document.**
+* **Matching document windows** using different strategies (`contains`, `fuzzy`, and `regex`).
+* **Matching the controls** required for each step in the instantiated plan using various strategies (`contains`, `fuzzy`, and `regex`).
+* **Closing a specified document.**
+
+The following sections provide a detailed explanation of the **matching strategies for windows and controls**, as well as their usage methods.
 
 ## Matching Strategies
 
-In the `WindowsAppEnv` class, matching strategies are rules that determine how to match `window` or `control` names with a given document name or target text. Based on the configuration file, three different matching strategies can be selected: `contains`, `fuzzy`, and `regex`. 
+In the `WindowsAppEnv` class, matching strategies are rules that determine how to match `window` or `control` names with a given document name or target text. Based on the configuration file, three different matching strategies can be selected: `contains`, `fuzzy`, and `regex`.
 
-* `Contains` Matching is the simplest strategy, suitable when the window and document names match exactly.
-* `Fuzzy` Matching is more flexible and can match even when there are spelling errors or partial matches between the window title and document name.
-* `s` Matching offers the most flexibility, ideal for complex matching patterns in window titles.
+* `Contains` matching is the simplest strategy, suitable when the window and document names match exactly.
+* `Fuzzy` matching is more flexible and can match even when there are spelling errors or partial matches between the window title and document name.
+* `Regex` matching offers the most flexibility, ideal for complex matching patterns in window titles.
 
 ### 1. **Window Matching** Example
 
@@ -74,6 +81,6 @@ else:
 - `app_env.find_matching_controller(filtered_annotation_dict, control_text)` will calculate the matching score for each control based on the defined strategy and return the control with the highest match score.
 - If a match is found, it will return the control object (`control_selected`) and its key (`controller_key`), which can be used for further interaction.
 
+# Reference
 
-### Reference
 ::: env.env_manager.WindowsAppEnv

@@ -79,7 +79,7 @@ nav:
       - Instantiation: dataflow/instantiation.md
       - Execution: dataflow/execution.md
       - Windows App Environment: dataflow/windows_app_env.md
-      - Result Schema: dataflow/result_schema.md
+      - Result: dataflow/result.md
   - About:
       - Contributing: about/CONTRIBUTING.md
       - License: about/LICENSE.md
