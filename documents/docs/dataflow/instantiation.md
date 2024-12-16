@@ -18,25 +18,11 @@ Templates for your app must be defined and described in `dataflow/templates/app`
 
 The `ChooseTemplateFlow` uses semantic matching, where task descriptions are compared with template descriptions using embeddings and FAISS for efficient nearest neighbor search. If semantic matching fails, a random template is chosen from the available files.
 
-Here is the table summarizing the inputs and outputs of the `__init__` and `execute` methods of `ChooseTemplateFlow` class:
-
-| Method Name | Inputs | Outputs |
-|-------------|--------|---------|
-| `__init__`  | `app_name: str`, `task_file_name: str`, `file_extension: str` | Initializes the class with the provided parameters and loads the embedding model. |
-| `execute`   | None   | Returns the path to the copied template file (`template_copied_path`). | 
-
 ## 2. Prefill the Task
 
 ### PrefillFlow
 
 The `PrefillFlow` class orchestrates the refinement of task plans and UI interactions by leveraging `PrefillAgent` for task planning and action generation. It automates UI control updates, captures screenshots, and manages logs for messages and responses during execution.
-
-Here is the table summarizing the inputs and outputs of the `__init__` and `execute` methods of the `PrefillFlow` class:
-
-| Method Name | Inputs | Outputs |
-|-------------|--------|---------|
-| `__init__`  | `app_name: str`, `task_file_name: str`, `environment: WindowsAppEnv` | Initializes the class with the application context, including the prefill agent and logging setup. |
-| `execute`   | `template_copied_path: str`, `original_task: str`, `refined_steps: List[str]` | Returns a dictionary containing the refined task and corresponding action plans. |
 
 ### PrefillAgent
 
@@ -47,13 +33,7 @@ The `PrefillAgent` class facilitates task instantiation and action sequence gene
 ### FilterFlow
 
 The `FilterFlow` class is designed to process and refine task plans by leveraging a `FilterAgent`. The `FilterFlow` class acts as a bridge between the instantiation of tasks and the execution of a filtering process, aiming to refine task steps and prefill task-related files based on predefined filtering criteria.
-
-Here is a table summarizing the inputs and outputs of the `__init__` and `execute` methods of the `FilterFlow` class:
-
-| Method Name         | Inputs                                  | Outputs                                                                                                                                                                                                                                                                                            |
-|---------------------|-----------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `__init__`           | `app_name: str`, `task_file_name: str`  | Initializes the class with the application context and log file paths. Sets up the `FilterAgent` and logging infrastructure for filtering tasks.                                                                                                                                                     |
-| `execute`            | `instantiated_request: str`             | Returns a dictionary containing the `judge` (task quality flag), `thought` (task comment), and `request_type` (task type) after filtering the provided task request.                                                                                                       
+                       
 
 ### FilterAgent
 The `FilterAgent` class is a specialized agent used to evaluate whether an instantiated task is correct. It inherits from the BasicAgent class and includes several methods and attributes to handle its functionality.

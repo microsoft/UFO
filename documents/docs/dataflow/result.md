@@ -56,13 +56,13 @@ The result data includes the following fields:
 | **`unique_id`**                   | A unique identifier for the task.                                                                                 |
 | **`app`**                         | The name of the application that processes the task.                                                              |
 | **`original`**                    | Contains details about the original task, including:                                                              |
-| ---**`original_task`**            | A description of the original task.                                                                               |
-| ---**`original_steps`**           | A list of steps involved in the original task.                                                                    |
+| **`original.original_task`**            | A description of the original task.                                                                               |
+| **`original.original_steps`**           | A list of steps involved in the original task.                                                                    |
 | **`execution_result`**            | Stores the result of task `execution`, including any errors encountered and execution evaluation.               |
 | **`instantiation_result`**        | Provides details of the `instantiation`process, including:                                                      |
-| ---**`choose_template`**          | The template selection result and any associated errors.                                                          |
-| ---**`prefill`**                  | Information about pre-filled task, including the instantiated request and plan.                                   |
-| ---**`instantiation_evaluation`** | Evaluation results of the instantiated task, including judgments and feedback.                                    |
+| **`instantiation_result.choose_template`**          | The template selection result and any associated errors.                                                          |
+| **`instantiation_result.prefill`**                  | Information about pre-filled task, including the instantiated request and plan.                                   |
+| **`instantiation_result.instantiation_evaluation`** | Evaluation results of the instantiated task, including judgments and feedback.                                    |
 | **`time_cost`**                   | Tracks the time taken for various stages of the process, such as template selection, pre-filling, and evaluation. |
 
 ## Instantiation Result Schema
@@ -73,42 +73,40 @@ The instantiation schema in `"dataflow/schema/instantiation_schema.json"` define
 
 ### **Schema Tabular Description**
 
-| Field Name                                     | Type                | Description                                          | Required |
-| ---------------------------------------------- | ------------------- | ---------------------------------------------------- | -------- |
-| **unique_id**                            | `string`          | A unique identifier for the task.                    | Yes      |
-| **app**                                  | `string`          | The application name executing the task.             | Yes      |
-| **original**                             | `object`          | Contains details of the original task.               | Yes      |
-| ├──**original_task**                  | `string`          | The main task described as a text.                   | Yes      |
-| └──**original_steps**                 | `array[string]`   | Steps of the task in sequence.                       | Yes      |
-| **execution_result**                     | `object`/`null` | Represents the result of the task execution.         | Yes      |
-| ├──**result**                         | `null`            | Indicates the execution result is null.              | No       |
-| └──**error**                          | `null`            | Indicates the execution error is null.               | No       |
-| **instantiation_result**                 | `object`          | Contains details about the task instantiation.       | Yes      |
-| ├──**choose_template**                | `object`          | The result of template selection.                    | Yes      |
-| │   ├──**result**                    | `string`/`null` | The result of the template selection.                | Yes      |
-| │   └──**error**                     | `string`/`null` | Errors, if any, during template selection.           | Yes      |
-| ├──**prefill**                        | `object`/`null` | Results from the prefill stage.                      | Yes      |
-| │   ├──**result**                    | `object`/`null` | Contains details of instantiated requests and plans. | Yes      |
-| │   │   ├──**instantiated_request** | `string`          | The instantiated task request.                       | Yes      |
-| │   │   └──**instantiated_plan**    | `array[object]`   | Contains details of the instantiated steps.          | Yes      |
-| │   │       ├──**Step**             | `integer`         | The step sequence number.                            | Yes      |
-| │   │       ├──**Subtask**          | `string`          | The description of the subtask.                      | Yes      |
-| │   │       ├──**ControlLabel**     | `string`/`null` | Control label for the step.                          | No       |
-| │   │       ├──**ControlText**      | `string`          | Contextual text for the step.                        | Yes      |
-| │   │       ├──**Function**         | `string`          | The function executed in this step.                  | Yes      |
-| │   │       └──**Args**             | `object`          | Parameters required for the function.                | Yes      |
-| │   └──**error**                     | `string`/`null` | Errors, if any, during the prefill process.          | Yes      |
-| ├──**instantiation_evaluation**       | `object`          | The result of instantiation evaluation.              | Yes      |
-| │   ├──**result**                    | `object`/`null` | Contains detailed evaluation results.                | Yes      |
-| │   │   ├──**judge**                | `boolean`         | Indicates whether the evaluation passed.             | Yes      |
-| │   │   ├──**thought**              | `string`          | Feedback or observations from the evaluator.         | Yes      |
-| │   │   └──**request_type**         | `string`          | Classification of the request type.                  | Yes      |
-| │   └──**error**                     | `string`/`null` | Errors, if any, during the evaluation.               | Yes      |
-| **time_cost**                            | `object`          | Contains timing information for task stages.         | Yes      |
-| ├──**choose_template**                | `number`/`null` | Time taken for the template selection stage.         | Yes      |
-| ├──**prefill**                        | `number`/`null` | Time taken for the prefill stage.                    | Yes      |
-| ├──**instantiation_evaluation**       | `number`/`null` | Time taken for the evaluation stage.                 | Yes      |
-| └──**total**                          | `number`/`null` | Total time taken for the task.                       | Yes      |
+| **Field**                           | **Description**                                                                                             |
+| ----------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| **`unique_id`**                   | A unique identifier for the task.                                                                                 |
+| **`app`**                         | The name of the application that processes the task.                                                              |
+| **`original`**                    | Contains details about the original task, including:                                                              |
+| **`original.original_task`**            | A description of the original task.                                                                               |
+| **`original.original_steps`**           | A list of steps involved in the original task.                                                                    |
+| **`execution_result`**            | Stores the result of task execution, including any errors encountered and execution evaluation.                    |
+| **`execution_result.result`**           | Indicates the execution result (or null if not applicable).                                                       |
+| **`execution_result.error`**            | Details any errors encountered during task execution.                                                             |
+| **`instantiation_result`**        | Provides details of the instantiation process, including:                                                          |
+| **`instantiation_result.choose_template`**          | The template selection result and any associated errors.                                                          |
+| **`instantiation_result.prefill`**                  | Information about pre-filled tasks, including the instantiated request and plan.                                  |
+| **`instantiation_result.prefill.result`**           | Contains details of instantiated requests and plans.                                                              |
+| **`instantiation_result.prefill.result.instantiated_request`** | The instantiated task request.                                                                                    |
+| **`instantiation_result.prefill.result.instantiated_plan`**    | Contains details of the instantiated steps.                                                                       |
+| **`instantiation_result.prefill.result.instantiated_plan.step`** | The step sequence number.                                                                                         |
+| **`instantiation_result.prefill.result.instantiated_plan.subtask`** | The description of the subtask.                                                                                  |
+| **`instantiation_result.prefill.result.instantiated_plan.control_label`** | Control label for the step (or null if not applicable).                                                           |
+| **`instantiation_result.prefill.result.instantiated_plan.control_text`** | Contextual text for the step.                                                                                     |
+| **`instantiation_result.prefill.result.instantiated_plan.function`** | The function executed in this step.                                                                               |
+| **`instantiation_result.prefill.result.instantiated_plan.args`**     | Parameters required for the function.                                                                             |
+| **`instantiation_result.prefill.error`**             | Errors, if any, during the prefill process.                                                                       |
+| **`instantiation_result.instantiation_evaluation`** | Evaluation results of the instantiated task, including judgments and feedback.                                    |
+| **`instantiation_result.instantiation_evaluation.result`** | Contains detailed evaluation results.                                                                             |
+| **`instantiation_result.instantiation_evaluation.result.judge`** | Indicates whether the evaluation passed.                                                                          |
+| **`instantiation_result.instantiation_evaluation.result.thought`** | Feedback or observations from the evaluator.                                                                      |
+| **`instantiation_result.instantiation_evaluation.result.request_type`** | Classification of the request type.                                                                               |
+| **`instantiation_result.instantiation_evaluation.error`** | Errors, if any, during the evaluation.                                                                            |
+| **`time_cost`**                   | Tracks the time taken for various stages of the process, such as template selection, pre-filling, and evaluation. |
+| **`time_cost.choose_template`**          | Time taken for the template selection stage.                                                                      |
+| **`time_cost.prefill`**                  | Time taken for the prefill stage.                                                                                 |
+| **`time_cost.instantiation_evaluation`** | Time taken for the evaluation stage.                                                                              |
+| **`time_cost.total`**                   | Total time taken for the task.                                                                                    |
 
 ---
 
@@ -204,46 +202,40 @@ These additions ensure precise tracking of execution outcomes and step-by-step c
 
 ### **Schema Tabular Description**
 
-| Field Name                                       | Type                | Description                                           | Required |
-| ------------------------------------------------ | ------------------- | ----------------------------------------------------- | -------- |
-| **unique_id**                              | `string`          | A unique identifier for the task.                     | Yes      |
-| **app**                                    | `string`          | The application name executing the task.              | Yes      |
-| **original**                               | `object`          | Contains details of the original task.                | Yes      |
-| ├──**original_task**                    | `string`          | The main task described as a text.                    | Yes      |
-| └──**original_steps**                   | `array[string]`   | Steps of the task in sequence.                        | Yes      |
-| **execution_result**                       | `object`/`null` | Represents the result of the task execution.          | Yes      |
-| ├──**result**                           | `null`            | Indicates the execution result is null.               | No       |
-| └──**error**                            | `null`            | Indicates the execution error is null.                | No       |
-| **instantiation_result**                   | `object`          | Contains details about the task instantiation.        | Yes      |
-| ├──**choose_template**                  | `object`          | The result of template selection.                     | Yes      |
-| │   ├──**result**                      | `string`/`null` | The result of the template selection.                 | Yes      |
-| │   └──**error**                       | `string`/`null` | Errors, if any, during template selection.            | Yes      |
-| ├──**prefill**                          | `object`/`null` | Results from the prefill stage.                       | Yes      |
-| │   ├──**result**                      | `object`/`null` | Contains details of instantiated requests and plans.  | Yes      |
-| │   │   ├──**instantiated_request**   | `string`          | The instantiated task request.                        | Yes      |
-| │   │   └──**instantiated_plan**      | `array[object]`   | Contains details of the instantiated steps.           | Yes      |
-| │   │       ├──**Step**               | `integer`         | The step sequence number.                             | Yes      |
-| │   │       ├──**Subtask**            | `string`          | The description of the subtask.                       | Yes      |
-| │   │       ├──**ControlLabel**       | `string`/`null` | Control label for the step.                           | No       |
-| │   │       ├──**ControlText**        | `string`          | Contextual text for the step.                         | Yes      |
-| │   │       ├──**Function**           | `string`          | The function executed in this step.                   | Yes      |
-| │   │       └──**Args**               | `object`          | Parameters required for the function.                 | Yes      |
-| │   │       └──**Success**            | `object`          | If the step is executed sucessfully without errors.   | Yes      |
-| │   │       └──**MatchedControlText** | `object`          | The final matched control text in the execution flow. | Yes      |
-| │   └──**error**                       | `string`/`null` | Errors, if any, during the prefill process.           | Yes      |
-| ├──**instantiation_evaluation**         | `object`          | The result of instantiation evaluation.               | Yes      |
-| │   ├──**result**                      | `object`/`null` | Contains detailed evaluation results.                 | Yes      |
-| │   │   ├──**judge**                  | `boolean`         | Indicates whether the evaluation passed.              | Yes      |
-| │   │   ├──**thought**                | `string`          | Feedback or observations from the evaluator.          | Yes      |
-| │   │   └──**request_type**           | `string`          | Classification of the request type.                   | Yes      |
-| │   └──**error**                       | `string`/`null` | Errors, if any, during the evaluation.                | Yes      |
-| **time_cost**                              | `object`          | Contains timing information for task stages.          | Yes      |
-| ├──**choose_template**                  | `number`/`null` | Time taken for the template selection stage.          | Yes      |
-| ├──**prefill**                          | `number`/`null` | Time taken for the prefill stage.                     | Yes      |
-| ├──**instantiation_evaluation**         | `number`/`null` | Time taken for the evaluation stage.                  | Yes      |
-| ├──**execute**                          | `number`/`null` | Time taken for the execute stage.                     | Yes      |
-| ├──**execute_eval**                     | `number`/`null` | Time taken for the execute evaluation stage.          | Yes      |
-| └──**total**                            | `number`/`null` | Total time taken for the task.                        | Yes      |
+| **Field**                          | **Description**                                                                                  |
+|------------------------------------|--------------------------------------------------------------------------------------------------|
+| **`unique_id`**                    | A unique identifier for the task.                                                               |
+| **`app`**                          | The name of the application that processes the task.                                            |
+| **`original`**                     | Contains details about the original task, including:                                            |
+| **`original.original_task`**       | A description of the original task.                                                             |
+| **`original.original_steps`**      | A list of steps involved in the original task.                                                  |
+| **`execution_result`**             | Represents the result of task execution, including any errors encountered and execution evaluation. |
+| **`execution_result.result`**      | Indicates the result of the task execution.                                                     |
+| **`execution_result.error`**       | Indicates any errors that occurred during execution.                                            |
+| **`instantiation_result`**         | Provides details about the task instantiation, including:                                       |
+| **`instantiation_result.choose_template.result`** | The template selection result.                                                                |
+| **`instantiation_result.choose_template.error`**  | Errors, if any, during template selection.                                                    |
+| **`instantiation_result.prefill.result.instantiated_request`** | The instantiated task request.                                                              |
+| **`instantiation_result.prefill.result.instantiated_plan.Step`** | The step sequence number.                                                                   |
+| **`instantiation_result.prefill.result.instantiated_plan.Subtask`** | The description of the subtask.                                                           |
+| **`instantiation_result.prefill.result.instantiated_plan.ControlLabel`** | Control label for the step.                                                               |
+| **`instantiation_result.prefill.result.instantiated_plan.ControlText`** | Contextual text for the step.                                                             |
+| **`instantiation_result.prefill.result.instantiated_plan.Function`** | The function executed in this step.                                                       |
+| **`instantiation_result.prefill.result.instantiated_plan.Args`** | Parameters required for the function.                                                     |
+| **`instantiation_result.prefill.result.instantiated_plan.Success`** | Indicates if the step was executed successfully without errors.                             |
+| **`instantiation_result.prefill.result.instantiated_plan.MatchedControlText`** | The final matched control text in the execution flow.                                  |
+| **`instantiation_result.prefill.error`**          | Errors, if any, during the prefill process.                                                  |
+| **`instantiation_result.instantiation_evaluation.result.judge`** | Indicates whether the evaluation passed.                                                |
+| **`instantiation_result.instantiation_evaluation.result.thought`** | Feedback or observations from the evaluator.                                              |
+| **`instantiation_result.instantiation_evaluation.result.request_type`** | Classification of the request type.                                                      |
+| **`instantiation_result.instantiation_evaluation.error`** | Errors, if any, during the evaluation.                                                    |
+| **`time_cost`**                    | Tracks the time taken for various stages of the process, including:                            |
+| **`time_cost.choose_template`**    | Time taken for the template selection stage.                                                   |
+| **`time_cost.prefill`**            | Time taken for the prefill stage.                                                              |
+| **`time_cost.instantiation_evaluation`** | Time taken for the evaluation stage.                                                      |
+| **`time_cost.execute`**            | Time taken for the execute stage.                                                              |
+| **`time_cost.execute_eval`**       | Time taken for the execute evaluation stage.                                                   |
+| **`time_cost.total`**              | Total time taken for the task.                                                                 |
 
 ### Example Data
 

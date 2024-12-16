@@ -39,13 +39,6 @@ The **task execution** in the `ExecuteFlow` class follows a structured sequence 
     - Save the final state of the application window.  
     - Quit the application client gracefully.  
 
-Here's the table with just the `execute` and `__init__` methods of the `ExecuteFlow` class:
-
-| **Method Name** | **Inputs** | **Outputs** |
-|-----------------|------------|-------------|
-| `__init__` | `task_file_name: str`, `context: Context`, `environment: WindowsAppEnv` | Initializes the class with task file, context, environment, logging setup, and prepares agents for execution. |
-| `execute` | `request: str`, `instantiated_plan: List[Dict[str, Any]]` | Returns a tuple containing the executed plan and evaluation result. |
-
 ---
 
 ## Evaluation  
