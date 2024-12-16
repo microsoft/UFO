@@ -162,8 +162,9 @@ class ControlReceiver(ReceiverBasic):
             args = {"text": text}
         else:
             method_name = "type_keys"
-            text = text.replace("\n", "{ENTER}")
-            text = text.replace("\t", "{TAB}")
+
+            # Transform the text according to the tags.
+            text = TextTransformer.transform_text(text, "all")
 
             args = {"keys": text, "pause": inter_key_pause, "with_spaces": True}
         try:
@@ -622,3 +623,79 @@ class NoActionCommand(ControlCommand):
         :return: The name of the atomic command.
         """
         return ""
+
+
+class TextTransformer:
+    """
+    The text transformer class.
+    """
+
+    @staticmethod
+    def transform_text(text: str, transform_tag: str) -> str:
+        """
+        Transform the text.
+        :param text: The text to transform.
+        :param transform_tag: The tag to transform.
+        :return: The transformed text.
+        """
+
+        if transform_tag == "all":
+            transform_tag = "+\n\t^%"
+
+        if "\n" in transform_tag:
+            text = TextTransformer.transform_enter(text)
+        if "\t" in transform_tag:
+            text = TextTransformer.transform_tab(text)
+        if "+" in transform_tag:
+            text = TextTransformer.transform_plus(text)
+        if "^" in transform_tag:
+            text = TextTransformer.transform_caret(text)
+        if "%" in transform_tag:
+            text = TextTransformer.transform_percent(text)
+
+        return text
+
+    @staticmethod
+    def transform_enter(text: str) -> str:
+        """
+        Transform the enter key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("\n", "{ENTER}")
+
+    @staticmethod
+    def transform_tab(text: str) -> str:
+        """
+        Transform the tab key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("\t", "{TAB}")
+
+    @staticmethod
+    def transform_plus(text: str) -> str:
+        """
+        Transform the plus key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("+", "{+}")
+
+    @staticmethod
+    def transform_caret(text: str) -> str:
+        """
+        Transform the caret key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("^", "{^}")
+
+    @staticmethod
+    def transform_percent(text: str) -> str:
+        """
+        Transform the percent key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("%", "{%}")

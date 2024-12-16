@@ -107,7 +107,7 @@ class COMReceiverFactory(APIReceiverFactory):
         clsid = self.__app_root_mappping(app_root_name)
 
         if clsid is None or com_receiver is None:
-            print_with_color(f"Warning: Win32COM API is not supported for {process_name}.", "yellow")
+            # print_with_color(f"Warning: Win32COM API is not supported for {process_name}.", "yellow")
             return None
 
         return com_receiver(app_root_name, process_name, clsid)

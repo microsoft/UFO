@@ -92,11 +92,11 @@ RAG_ONLINE_SEARCH_TOPK: 5  # The topk for the online search
 RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
 
 ## RAG Configuration for experience
-RAG_EXPERIENCE: True  # Whether to use the RAG from its self-experience.
+RAG_EXPERIENCE: False  # Whether to use the RAG from its self-experience.
 RAG_EXPERIENCE_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
 
 ## RAG Configuration for demonstration
-RAG_DEMONSTRATION: True  # Whether to use the RAG from its user demonstration.
+RAG_DEMONSTRATION: False  # Whether to use the RAG from its user demonstration.
 RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
 RAG_DEMONSTRATION_COMPLETION_N: 3  # The number of completion choices for the demonstration result
 

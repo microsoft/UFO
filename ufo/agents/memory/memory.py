@@ -54,7 +54,7 @@ class MemoryItem:
         if key not in self._memory_attributes:
             self._memory_attributes.append(key)
 
-    def set_values_from_dict(self, values: Dict[str, Any]) -> None:
+    def add_values_from_dict(self, values: Dict[str, Any]) -> None:
         """
         Add fields to the memory item.
         :param values: The values of the fields.

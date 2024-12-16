@@ -11,6 +11,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
+from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
@@ -80,6 +81,7 @@ class AppAgentProcessor(BaseProcessor):
             "magenta",
         )
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def capture_screenshot(self) -> None:
         """
@@ -95,7 +97,7 @@ class AppAgentProcessor(BaseProcessor):
             self.log_path + f"action_step{self.session_step}_concat.png"
         )
 
-        self._memory_data.set_values_from_dict(
+        self._memory_data.add_values_from_dict(
             {
                 "CleanScreenshot": screenshot_save_path,
                 "AnnotatedScreenshot": annotated_screenshot_save_path,
@@ -133,6 +135,15 @@ class AppAgentProcessor(BaseProcessor):
             annotation_type="number",
             save_path=annotated_screenshot_save_path,
         )
+
+        if configs.get("SAVE_UI_TREE", False):
+            if self.application_window is not None:
+                step_ui_tree = ui_tree.UITree(self.application_window)
+                step_ui_tree.save_ui_tree_to_json(
+                    os.path.join(
+                        self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
+                    )
+                )
 
         # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
         if configs["INCLUDE_LAST_SCREENSHOT"]:
@@ -175,6 +186,7 @@ class AppAgentProcessor(BaseProcessor):
 
             self._save_to_xml()
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_control_info(self) -> None:
         """
@@ -196,6 +208,7 @@ class AppAgentProcessor(BaseProcessor):
             )
         )
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_prompt_message(self) -> None:
         """
@@ -238,36 +251,27 @@ class AppAgentProcessor(BaseProcessor):
         )
         self.request_logger.debug(log)
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_response(self) -> None:
         """
         Get the response from the LLM.
         """
 
-        # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
-        try:
-            self._response, self.cost = self.app_agent.get_response(
-                self._prompt_message, "APPAGENT", use_backup_engine=True
-            )
+        self._response, self.cost = self.app_agent.get_response(
+            self._prompt_message, "APPAGENT", use_backup_engine=True
+        )
 
-        except Exception:
-            self.llm_error_handler()
-            return
-
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def parse_response(self) -> None:
         """
         Parse the response.
         """
 
-        # Try to parse the response. If an error occurs, catch the exception and log the error.
-        try:
-            self._response_json = self.app_agent.response_to_dict(self._response)
+        self._response_json = self.app_agent.response_to_dict(self._response)
 
-        except Exception:
-            self.general_error_handler()
-
-        self._control_label = self._response_json.get("ControlLabel", "")
+        self.control_label = self._response_json.get("ControlLabel", "")
         self.control_text = self._response_json.get("ControlText", "")
         self._operation = self._response_json.get("Function", "")
         self.question_list = self._response_json.get("Questions", [])
@@ -285,6 +289,7 @@ class AppAgentProcessor(BaseProcessor):
         self.status = self._response_json.get("Status", "")
         self.app_agent.print_response(self._response_json)
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def execute_action(self) -> None:
         """
@@ -292,58 +297,50 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         control_selected = self._annotation_dict.get(self._control_label, None)
+        self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
+            control_selected, self.application_window
+        )
 
-        try:
-            # Get the selected control item from the annotation dictionary and LLM response.
-            # The LLM response is a number index corresponding to the key in the annotation dictionary.
+        if self._operation:
 
-            if self._operation:
+            if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
+                control_selected.draw_outline(colour="red", thickness=3)
+                time.sleep(configs.get("RECTANGLE_TIME", 0))
 
-                if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
-                    control_selected.draw_outline(colour="red", thickness=3)
-                    time.sleep(configs.get("RECTANGLE_TIME", 0))
-
-                if control_selected:
-                    control_coordinates = PhotographerDecorator.coordinate_adjusted(
-                        self.application_window.rectangle(),
-                        control_selected.rectangle(),
-                    )
-                    self._control_log = {
-                        "control_class": control_selected.element_info.class_name,
-                        "control_type": control_selected.element_info.control_type,
-                        "control_automation_id": control_selected.element_info.automation_id,
-                        "control_friendly_class_name": control_selected.friendly_class_name(),
-                        "control_coordinates": {
-                            "left": control_coordinates[0],
-                            "top": control_coordinates[1],
-                            "right": control_coordinates[2],
-                            "bottom": control_coordinates[3],
-                        },
-                    }
-                else:
-                    self._control_log = {}
-
-                self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
-                    control_selected, self.application_window
+            if control_selected:
+                control_coordinates = PhotographerDecorator.coordinate_adjusted(
+                    self.application_window.rectangle(),
+                    control_selected.rectangle(),
                 )
+                self._control_log = {
+                    "control_class": control_selected.element_info.class_name,
+                    "control_type": control_selected.element_info.control_type,
+                    "control_automation_id": control_selected.element_info.automation_id,
+                    "control_friendly_class_name": control_selected.friendly_class_name(),
+                    "control_coordinates": {
+                        "left": control_coordinates[0],
+                        "top": control_coordinates[1],
+                        "right": control_coordinates[2],
+                        "bottom": control_coordinates[3],
+                    },
+                }
+            else:
+                self._control_log = {}
 
-                # Save the screenshot of the tagged selected control.
-                self.capture_control_screenshot(control_selected)
+            # Save the screenshot of the tagged selected control.
+            self.capture_control_screenshot(control_selected)
 
-                if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
-                    self.handle_screenshot_status()
-                else:
-                    self._results = self.app_agent.Puppeteer.execute_command(
-                        self._operation, self._args
-                    )
-                    self.control_reannotate = None
-                if not utils.is_json_serializable(self._results):
-                    self._results = ""
+            if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
+                self.handle_screenshot_status()
+            else:
+                self._results = self.app_agent.Puppeteer.execute_command(
+                    self._operation, self._args
+                )
+                self.control_reannotate = None
+            if not utils.is_json_serializable(self._results):
+                self._results = ""
 
-                    return
-
-        except Exception:
-            self.general_error_handler()
+                return
 
     def capture_control_screenshot(self, control_selected: UIAWrapper) -> None:
         """
@@ -354,7 +351,7 @@ class AppAgentProcessor(BaseProcessor):
             self.log_path + f"action_step{self.session_step}_selected_controls.png"
         )
 
-        self._memory_data.set_values_from_dict(
+        self._memory_data.add_values_from_dict(
             {"SelectedControlScreenshot": control_screenshot_save_path}
         )
 
@@ -377,9 +374,9 @@ class AppAgentProcessor(BaseProcessor):
             "annotation", self._args, self._annotation_dict
         )
 
-    def update_memory(self) -> None:
+    def sync_memory(self):
         """
-        Update the memory of the Agent.
+        Sync the memory of the AppAgent.
         """
 
         app_root = self.control_inspector.get_application_root_name(
@@ -402,14 +399,23 @@ class AppAgentProcessor(BaseProcessor):
             "Application": app_root,
             "Cost": self._cost,
             "Results": self._results,
+            "error": self._exeception_traceback,
         }
-        self._memory_data.set_values_from_dict(self._response_json)
-        self._memory_data.set_values_from_dict(additional_memory)
-        self._memory_data.set_values_from_dict(self._control_log)
-        self._memory_data.set_values_from_dict({"time_cost": self._time_cost})
+        self.add_to_memory(self._response_json)
+        self.add_to_memory(additional_memory)
+        self.add_to_memory(self._control_log)
+        self.add_to_memory({"time_cost": self._time_cost})
 
         if self.status.upper() == self._agent_status_manager.CONFIRM.value:
-            self._memory_data.set_values_from_dict({"UserConfirm": "Yes"})
+            self._memory_data.add_values_from_dict({"UserConfirm": "Yes"})
+
+    def update_memory(self) -> None:
+        """
+        Update the memory of the Agent.
+        """
+
+        # Sync the memory of the AppAgent.
+        self.sync_memory()
 
         self.app_agent.add_memory(self._memory_data)
 
@@ -425,10 +431,10 @@ class AppAgentProcessor(BaseProcessor):
         if self.is_confirm():
 
             if self._is_resumed:
-                self._memory_data.set_values_from_dict({"UserConfirm": "Yes"})
+                self._memory_data.add_values_from_dict({"UserConfirm": "Yes"})
                 memorized_action["UserConfirm"] = "Yes"
             else:
-                self._memory_data.set_values_from_dict({"UserConfirm": "No"})
+                self._memory_data.add_values_from_dict({"UserConfirm": "No"})
                 memorized_action["UserConfirm"] = "No"
 
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
@@ -495,8 +501,7 @@ class AppAgentProcessor(BaseProcessor):
         return examples, tips
 
     def get_filtered_annotation_dict(
-        self, annotation_dict: Dict[str, UIAWrapper],
-        configs = configs
+        self, annotation_dict: Dict[str, UIAWrapper], configs=configs
     ) -> Dict[str, UIAWrapper]:
         """
         Get the filtered annotation dictionary.

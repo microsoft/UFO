@@ -44,8 +44,6 @@ Response:
     Comment: |-
         I plan to first summarize all to do items from the meeting notes email in Outlook.
     Questions: []
-    AppsToOpen: |-
-        None
 ```
 
 - **AppAgent**:

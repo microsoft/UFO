@@ -21,7 +21,6 @@ class HostAgentPrompter(BasicPrompter):
         prompt_template: str,
         example_prompt_template: str,
         api_prompt_template: str,
-        allow_openapp: bool = False,
     ):
         """
         Initialize the ApplicationAgentPrompter.
@@ -29,34 +28,21 @@ class HostAgentPrompter(BasicPrompter):
         :param prompt_template: The path of the prompt template.
         :param example_prompt_template: The path of the example prompt template.
         :param api_prompt_template: The path of the api prompt template.
-        :param allow_openapp: Whether to allow open app by the hostagent.
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template)
-        self.allow_openapp = allow_openapp
 
     def system_prompt_construction(self) -> str:
         """
         Construct the prompt for app selection.
         return: The prompt for app selection.
         """
-        if self.allow_openapp:
-            open_app_guideline = self.prompt_template.get("open_app_guideline", "")
-            open_app_comment = self.prompt_template.get("open_app_comment", "")
-        else:
-            open_app_guideline = ""
-            open_app_comment = ""
         apis = self.api_prompt_helper(verbose=0)
         examples = self.examples_prompt_helper()
 
         system_key = "system" if self.is_visual else "system_nonvisual"
 
-        return self.prompt_template[system_key].format(
-            apis=apis,
-            examples=examples,
-            open_app_guideline=open_app_guideline,
-            open_app_comment=open_app_comment,
-        )
+        return self.prompt_template[system_key].format(apis=apis, examples=examples)
 
     def user_prompt_construction(
         self,
@@ -149,11 +135,6 @@ class HostAgentPrompter(BasicPrompter):
         for key, values in self.example_prompt_template.items():
 
             if key.startswith("example"):
-                if key.startswith("example_openapp") and not self.allow_openapp:
-                    continue
-                if not self.allow_openapp:
-                    if "AppsToOpen" in values["Response"]:
-                        del values["Response"]["AppsToOpen"]
                 example = template.format(
                     request=values.get("Request"),
                     response=json.dumps(values.get("Response")),
@@ -319,7 +300,7 @@ class AppAgentPrompter(BasicPrompter):
             if include_last_screenshot:
                 screenshot_text += ["Screenshot for the last step:"]
 
-                screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
+            screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
 
             for i, image in enumerate(image_list):
                 user_content.append({"type": "text", "text": screenshot_text[i]})
@@ -580,7 +561,7 @@ class FollowerAgentPrompter(AppAgentPrompter):
             if include_last_screenshot:
                 screenshot_text += ["Screenshot for the last step:"]
 
-                screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
+            screenshot_text += ["Current Screenshots:", "Annotated Screenshot:"]
 
             for i, image in enumerate(image_list):
                 user_content.append({"type": "text", "text": screenshot_text[i]})

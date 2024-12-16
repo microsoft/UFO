@@ -9,6 +9,7 @@ from ufo.config.config import get_offline_learner_indexer_config
 from ufo.rag import web_search
 from ufo.utils import print_with_color, get_hugginface_embedding
 
+
 class RetrieverFactory:
     """
     Factory class to create retrievers.
@@ -113,12 +114,12 @@ class OfflineDocRetriever(Retriever):
             db = FAISS.load_local(path, get_hugginface_embedding())
             return db
         except:
-            print_with_color(
-                "Warning: Failed to load offline indexer from {path}.".format(
-                    path=path
-                ),
-                "yellow",
-            )
+            # print_with_color(
+            #     "Warning: Failed to load offline indexer from {path}.".format(
+            #         path=path
+            #     ),
+            #     "yellow",
+            # )
             return None
 
 
@@ -144,12 +145,12 @@ class ExperienceRetriever(Retriever):
             db = FAISS.load_local(db_path, get_hugginface_embedding())
             return db
         except:
-            print_with_color(
-                "Warning: Failed to load experience indexer from {path}.".format(
-                    path=db_path
-                ),
-                "yellow",
-            )
+            # print_with_color(
+            #     "Warning: Failed to load experience indexer from {path}.".format(
+            #         path=db_path
+            #     ),
+            #     "yellow",
+            # )
             return None
 
 
@@ -211,10 +212,10 @@ class DemonstrationRetriever(Retriever):
             db = FAISS.load_local(db_path, get_hugginface_embedding())
             return db
         except:
-            print_with_color(
-                "Warning: Failed to load demonstration indexer from {path}.".format(
-                    path=db_path
-                ),
-                "yellow",
-            )
+            # print_with_color(
+            #     "Warning: Failed to load demonstration indexer from {path}.".format(
+            #         path=db_path
+            #     ),
+            #     "yellow",
+            # )
             return None
