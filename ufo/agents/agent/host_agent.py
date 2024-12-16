@@ -39,6 +39,8 @@ class AgentFactory:
             return AppAgent(*args, **kwargs)
         elif agent_type == "follower":
             return FollowerAgent(*args, **kwargs)
+        elif agent_type == "batch_normal":
+            return AppAgent(*args, **kwargs)
         else:
             raise ValueError("Invalid agent type: {}".format(agent_type))
 
@@ -233,10 +235,16 @@ class HostAgent(BasicAgent):
         :return: The app agent.
         """
 
-        if mode == "normal":
+        if mode == "normal" or "batch_normal":
 
-            agent_name = "AppAgent/{root}/{process}".format(
-                root=application_root_name, process=application_window_name
+            agent_name = (
+                "AppAgent/{root}/{process}".format(
+                    root=application_root_name, process=application_window_name
+                )
+                if mode == "normal"
+                else "BatchAgent/{root}/{process}".format(
+                    root=application_root_name, process=application_window_name
+                )
             )
 
             app_agent: AppAgent = self.create_subagent(

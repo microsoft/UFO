@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import json
+import os
 from typing import List, Optional
 
 from ufo.config.config import Config
@@ -20,9 +21,19 @@ class PlanReader:
         :param plan_file: The path of the plan file.
         """
 
+        self.plan_file = plan_file
         with open(plan_file, "r") as f:
             self.plan = json.load(f)
         self.remaining_steps = self.get_steps()
+        self.support_apps = ["word", "excel", "powerpoint"]
+
+    def get_close(self) -> bool:
+        """
+        Check if the plan is closed.
+        :return: True if the plan need closed, False otherwise.
+        """
+
+        return self.plan.get("close", False)
 
     def get_task(self) -> str:
         """
@@ -46,7 +57,7 @@ class PlanReader:
         :return: The operation object.
         """
 
-        return self.plan.get("object", "")
+        return self.plan.get("object", None).lower()
 
     def get_initial_request(self) -> str:
         """
@@ -76,6 +87,42 @@ class PlanReader:
 
         return request
 
+    def get_file_path(self):
+
+        file_path = os.path.dirname(os.path.abspath(self.plan_file)).replace(
+            "tasks", "files"
+        )
+        file = os.path.basename(
+            self.plan.get(
+                "object",
+            )
+        )
+
+        return os.path.join(file_path, file)
+
+    def get_support_apps(self) -> List[str]:
+        """
+        Get the support apps in the plan.
+        :return: The support apps in the plan.
+        """
+
+        return self.support_apps
+
+    def get_host_request(self) -> str:
+        """
+        Get the request for the host agent.
+        :return: The request for the host agent.
+        """
+
+        task = self.get_task()
+        object_name = self.get_operation_object()
+        if object_name in self.support_apps:
+            request = task
+        else:
+            request = f"Open the application of {task}. You must output the selected application with their control text and label even if it is already open."
+
+        return request
+
     def next_step(self) -> Optional[str]:
         """
         Get the next step in the plan.
@@ -95,3 +142,11 @@ class PlanReader:
         """
 
         return not self.remaining_steps
+
+    def get_root_path(self) -> str:
+        """
+        Get the root path of the plan.
+        :return: The root path of the plan.
+        """
+
+        return os.path.dirname(os.path.abspath(self.plan_file))

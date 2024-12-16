@@ -5,7 +5,7 @@
 
 <div align="center">
 
-[![arxiv](https://img.shields.io/badge/Paper-arXiv:202402.07939-b31b1b.svg)](https://arxiv.org/abs/2402.07939)&ensp;
+[![arxiv](https://img.shields.io/badge/Paper-arXiv:2412.10047-b31b1b.svg)](https://arxiv.org/abs/2412.10047)&ensp;
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
 [![Documentation](https://img.shields.io/badge/Documentation-%230ABAB5?style=flat&logo=readthedocs&logoColor=black)](https://microsoft.github.io/UFO/dataflow/overview/)&ensp;
@@ -20,13 +20,17 @@
 
 This repository contains the implementation of the **Data Collection** process for training the **Large Action Models** (LAMs) in the [**UFO**](https://arxiv.org/abs/2402.07939) project. The **Data Collection** process is designed to streamline task processing, ensuring that all necessary steps are seamlessly integrated from initialization to execution. This module is part of the [**UFO**](https://arxiv.org/abs/2402.07939) project.
 
-If you find this project useful, please consider giving a star ⭐, and cite our paper:
+If you find this project useful, please give a star ⭐, and consider to cite our paper:
 
 ```bibtex
-@article{UFO2024,
-  title={Large Action Models: From Inception to Implementation},
-  author={Microsoft},
-  year={2024}
+@misc{wang2024largeactionmodelsinception,
+      title={Large Action Models: From Inception to Implementation}, 
+      author={Lu Wang and Fangkai Yang and Chaoyun Zhang and Junting Lu and Jiaxu Qian and Shilin He and Pu Zhao and Bo Qiao and Ray Huang and Si Qin and Qisheng Su and Jiayi Ye and Yudi Zhang and Jian-Guang Lou and Qingwei Lin and Saravan Rajmohan and Dongmei Zhang and Qi Zhang},
+      year={2024},
+      eprint={2412.10047},
+      archivePrefix={arXiv},
+      primaryClass={cs.AI},
+      url={https://arxiv.org/abs/2412.10047}, 
 }
 ```
 
