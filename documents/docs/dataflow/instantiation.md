@@ -26,16 +26,16 @@ The `PrefillFlow` class orchestrates the refinement of task plans and UI interac
 
 ### PrefillAgent
 
-The `PrefillAgent` class facilitates task instantiation and action sequence generation by constructing tailored prompt messages using the `PrefillPrompter`. It integrates system, user, and dynamic context to generate actionable inputs for automation workflows.
+The `PrefillAgent` class facilitates task instantiation and action sequence generation by constructing tailored prompt messages using the `PrefillPrompter`. It integrates system, user, and dynamic context to generate actionable inputs for down-stream workflows.
 
 ## 3. Filter Task
 
 ### FilterFlow
 
 The `FilterFlow` class is designed to process and refine task plans by leveraging a `FilterAgent`. The `FilterFlow` class acts as a bridge between the instantiation of tasks and the execution of a filtering process, aiming to refine task steps and prefill task-related files based on predefined filtering criteria.
-                       
 
 ### FilterAgent
+
 The `FilterAgent` class is a specialized agent used to evaluate whether an instantiated task is correct. It inherits from the BasicAgent class and includes several methods and attributes to handle its functionality.
 
 # Reference
