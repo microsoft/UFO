@@ -25,6 +25,9 @@ The following parameters are included in the system configuration of the UFO age
 | `LOG_XML`               | Whether to log the XML file at every step.                                                              | Boolean  | False         |
 | `SCREENSHOT_TO_MEMORY`  | Whether to allow the screenshot to [`Blackboard`](../agents/design/blackboard.md) for the agent's decision making.                              | Boolean  | True          |
 | `SAVE_UI_TREE`          | Whether to save the UI tree in the log.                                                                 | Boolean  | False         |
+| `SAVE_EXPERIENCE`       | Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not. By default, it is "always_not" | String   | "always_not"  |
+| `TASK_STATUS`           | Whether to record the status of the tasks in batch execution mode.                                     | Boolean  | True         |
+
 
 ## Main Prompt Configuration
 
