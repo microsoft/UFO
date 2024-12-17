@@ -40,6 +40,13 @@ args.add_argument(
     default="",
 )
 args.add_argument(
+    "--agent_settings",
+    "-a",
+    help="The agent settings.",
+    type=str,
+    default="",
+)
+args.add_argument(
     "--run_arena",
     "-r",
     help="The payload",
@@ -58,8 +65,6 @@ import argparse
 
 from ufo.module.sessions.service_session import ServiceSession
 from ufo.config.config import Config
-
-configs = Config.get_instance().config_data
 
 session_dir = "sessions"
 
@@ -81,7 +86,7 @@ def main():
     """
 
     if (parsed_args.run_arena):
-        run_ufo_session(instruction=parsed_args.instruction)
+        run_ufo_session(instruction=parsed_args.instruction, agent_settings=parsed_args.agent_settings)
     else:
         sessions = SessionFactory().create_session(
             task=parsed_args.task, mode=parsed_args.mode, plan=parsed_args.plan
@@ -90,10 +95,13 @@ def main():
         clients = UFOClientManager(sessions)
         clients.run_all()
 
-def run_ufo_session(instruction: str) -> Dict:
+def run_ufo_session(instruction: str, agent_settings: str = "") -> Dict:
     print("Running UFO session")
 
     try:
+        agent_settings_json = json.loads(agent_settings)
+        set_config(agent_settings_json)
+
         session_id = str(uuid4())
         session = ServiceSession(session_id, configs.get("EVA_SESSION", False), id=0)
         session._request = instruction
@@ -125,6 +133,48 @@ def run_ufo_session(instruction: str) -> Dict:
         with open(session_file, "w") as f:
             json.dump(session_info, f)
 
-if __name__ == "__main__":
-    run_ufo_session(instruction=parsed_args.instruction)
+def set_config(agent_settings_json: dict = {}):
+    if agent_settings_json is not None and len(agent_settings_json) > 0:
+        
+        llm_type = agent_settings_json.get("llm_type")
+        llm_endpoint = agent_settings_json.get("llm_endpoint")
+        llm_auth = agent_settings_json.get("llm_auth", {})
+        auth_type = llm_auth.get("type")
+        token = llm_auth.get("token")
+        
+        if llm_type == "azure" and auth_type == "Identity":
+            configs["HOST_AGENT"]["API_TYPE"] = "azure_ad"
+            configs["APP_AGENT"]["API_TYPE"] = "azure_ad"
+            configs["HOST_AGENT"]["API_BASE"] = llm_endpoint
+            configs["APP_AGENT"]["API_BASE"] = llm_endpoint
+            configs["BACKUP_AGENT"]["API_BASE"] = llm_endpoint
+            configs["BACKUP_AGENT"]["API_BASE"] = llm_endpoint
 
+        elif llm_type == "azure" and auth_type == "api-key":
+            configs["HOST_AGENT"]["API_TYPE"] = "aoai"
+            configs["HOST_AGENT"]["API_BASE"] = llm_endpoint
+            configs["APP_AGENT"]["API_TYPE"] = "aoai"
+            configs["APP_AGENT"]["API_BASE"] = llm_endpoint
+            configs["BACKUP_AGENT"]["API_TYPE"] = "aoai"
+            configs["BACKUP_AGENT"]["API_BASE"] = llm_endpoint
+        elif llm_type == "oai":
+            configs["HOST_AGENT"]["API_TYPE"] = "openai"
+            configs["HOST_AGENT"]["API_BASE"] = "https://api.openai.com/v1/chat/completions"
+            configs["APP_AGENT"]["API_TYPE"] = "openai"
+            configs["APP_AGENT"]["API_BASE"] = "https://api.openai.com/v1/chat/completions"
+            configs["BACKUP_AGENT"]["API_TYPE"] = "openai"
+            configs["BACKUP_AGENT"]["API_BASE"] = "https://api.openai.com/v1/chat/completions"
+
+        configs["HOST_AGENT"]["API_KEY"] = token
+        configs["APP_AGENT"]["API_KEY"] = token
+        configs["BACKUP_AGENT"]["API_KEY"] = token
+        configs["HOST_AGENT"]["API_MODEL"] = "gpt-4-vision-preview"
+        configs["APP_AGENT"]["API_MODEL"] = "gpt-4-vision-preview"
+        configs["BACKUP_AGENT"]["API_MODEL"] = "gpt-4-vision-preview"
+
+        print("config seeting" + configs["HOST_AGENT"]["API_TYPE"])
+        print("config Key" + configs["HOST_AGENT"]["API_KEY"])
+        print("config Endpoint   " + configs["HOST_AGENT"]["API_BASE"])
+
+if __name__ == "__main__":
+    main()
