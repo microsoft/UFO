@@ -19,7 +19,6 @@ Include any specific details or instructions for UFO to notice by adding comment
 </p>
 
 
-
 ### Step 3: Review and Save the Recorded Demonstrations
 
 Review the recorded steps and save them to a ZIP file. Refer to the [sample_record.zip](https://github.com/microsoft/UFO/blob/main/record_processor/example/sample_record.zip) for an example of recorded steps for a specific request, such as "sending an email to example@gmail.com to say hi."

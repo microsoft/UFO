@@ -1,6 +1,6 @@
 CONTROL_BACKEND: "uia"  # The backend for control action, currently we support uia and win32
 MAX_STEP: 100  # The max step limit for completing the user request
-SLEEP_TIME: 3  # The sleep time between each step to wait for the window to be ready
+SLEEP_TIME: 1  # The sleep time between each step to wait for the window to be ready
 RECTANGLE_TIME: 1
 
 # Skip rendering visual outline on screen if not necessary
@@ -9,7 +9,8 @@ SHOW_VISUAL_OUTLINE_ON_SCREEN: False
 SAFE_GUARD: True  # Whether to use the safe guard to prevent the model from doing sensitve operations.
 CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner"] 
 # The list of widgets that allowed to be selected, in uia backend, it will be used for filter the control_type, while in win32 backend, it will be used for filter the class_name.
-HISTORY_KEYS: ["Step", "Thought", "ControlText", "Subtask", "Action", "Comment", "Results", "UserConfirm"]  # The keys of the action history for the next step.
+HISTORY_KEYS: ["Step", "ControlText", "Subtask", "Action", "Results", "UserConfirm"]  # The keys of the action history for the next step.
+
 ANNOTATION_COLORS: {
         "Button": "#FFF68F",
         "Edit": "#A5F0B5",
@@ -24,9 +25,9 @@ ANNOTATION_COLORS: {
     }
 
 PRINT_LOG: False  # Whether to print the log  
-CONCAT_SCREENSHOT: False  # Whether to concat the screenshot for the control item
+CONCAT_SCREENSHOT: True  # Whether to concat the screenshot for the control item
 LOG_LEVEL: "DEBUG"  # The log level
-INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the observation
+INCLUDE_LAST_SCREENSHOT: False  # Whether to include the last screenshot in the observation
 REQUEST_TIMEOUT: 250  # The call timeout for the GPT-V model
 
 HOSTAGENT_PROMPT: "ufo/prompts/share/base/host_agent.yaml"  # The prompt for the app selection
@@ -79,12 +80,12 @@ CONTROL_FILTER_TOP_K_ICON: 15  # The control filter top k for icon similarity
 CONTROL_FILTER_MODEL_SEMANTIC_NAME: "all-MiniLM-L6-v2"  # The control filter model name of semantic similarity
 CONTROL_FILTER_MODEL_ICON_NAME: "clip-ViT-B-32"  # The control filter model name of icon similarity
 
-ALLOW_OPENAPP: FALSE  # Whether to allow the open app action
 LOG_XML: False  # Whether to log the xml file for the at every step.
 SCREENSHOT_TO_MEMORY: True  # Whether to allow the screenshot to memory for the agent's decision making.
 
 
 # For customizations
+ASK_QUESTION: True  # Whether to allow the agent to ask questions
 USE_CUSTOMIZATION: True  # Whether to use the customization
 QA_PAIR_FILE: "customization/historical_qa.txt"  # The path for the historical QA
 QA_PAIR_NUM: 20  # The number of QA pairs for the customization
@@ -95,4 +96,14 @@ EVA_ROUND: FALSE
 EVA_ALL_SCREENSHOTS: True  # Whether to include all the screenshots in the evaluation
 
 # Image saving performance
-DEFAULT_PNG_COMPRESS_LEVEL: 1  # The compress level for the PNG image, 0-9, 0 is no compress, 1 is the fastest, 9 is the best compress
+DEFAULT_PNG_COMPRESS_LEVEL: 9  # The compress level for the PNG image, 0-9, 0 is no compress, 1 is the fastest, 9 is the best compress
+
+
+# Save UI tree
+SAVE_UI_TREE: False  # Whether to save the UI tree
+
+
+# Record the status of the tasks
+TASK_STATUS: True  # Whether to record the status of the tasks in batch execution mode.
+# TASK_STATUS_FILE # The path for the task status file.
+

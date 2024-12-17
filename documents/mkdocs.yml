@@ -20,6 +20,7 @@ nav:
       - OpenAI: supported_models/openai.md
       - Azure OpenAI: supported_models/azure_openai.md
       - Gemini: supported_models/gemini.md
+      - Claude: supported_models/claude.md
       - Qwen: supported_models/qwen.md
       - Ollama: supported_models/ollama.md
       - Custom Model: supported_models/custom_model.md
@@ -45,6 +46,7 @@ nav:
       - UI Automator: automator/ui_automator.md
       - API Automator: automator/wincom_automator.md
       - Web Automator: automator/web_automator.md
+      - Bash Automator: automator/bash_automator.md
       - AI Tool: automator/ai_tool_automator.md
   - Logs:
       - Overview: logs/overview.md
@@ -52,6 +54,7 @@ nav:
       - Step Logs: logs/step_logs.md
       - Evaluation Logs: logs/evaluation_logs.md
       - Screenshots: logs/screenshots_logs.md
+      - UI Tree: logs/ui_tree_logs.md
   - Advanced Usage: 
       - Reinforcing AppAgent: 
         - Overview: advanced_usage/reinforce_appagent/overview.md
@@ -71,6 +74,12 @@ nav:
       - Help Document Provision: creating_app_agent/help_document_provision.md
       - Demonstration Provision: creating_app_agent/demonstration_provision.md
       - Warpping App-Native API: creating_app_agent/warpping_app_native_api.md
+  - Dataflow:
+      - Overview: dataflow/overview.md
+      - Instantiation: dataflow/instantiation.md
+      - Execution: dataflow/execution.md
+      - Windows App Environment: dataflow/windows_app_env.md
+      - Result: dataflow/result.md
   - About:
       - Contributing: about/CONTRIBUTING.md
       - License: about/LICENSE.md
@@ -103,7 +112,7 @@ plugins:
     - mkdocstrings:
         handlers:
             python:
-                paths: ["../ufo", "../record_processor"]
+                paths: ["../ufo", "../record_processor", "../dataflow"]
                 options:
                     docstring_style: sphinx
                     docstring_section_style: list

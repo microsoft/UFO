@@ -18,43 +18,15 @@ example1:
     ControlText: |-
       Mail - Outlook - Zac
     Status: |-  
-      CONTINUE
+      ASSIGN
     Plan: []
     Comment: |-
       It is time to open the outlook application!
     Questions: []
-    AppsToOpen: |-
-      None
+    Bash: None
 
 
 example2: 
-  Request: |-
-    Send a message to Tom on Teams to ask him if he can join the meeting at 3pm.
-  Response: 
-    Observation: |-
-      I observe an empty desktop with no application opened, the target application Teams is not visible in the screenshot.
-    Thought: |-
-      The user request can be solely complete on the Teams application. I need to open the Teams application to send a message.
-    CurrentSubtask: |-
-      Compose a message to send to Tom on Teams to ask him if he can join the meeting at 3pm.
-    Message:
-      - (1) You need to find Tom on Teams.
-      - (2) The message should be polite.
-    ControlLabel: |-
-      6
-    ControlText: |-
-      Mike Lee | Microsoft Teams
-    Status: |-
-      CONTINUE
-    Plan: []
-    Comment: |-
-      It is time to open the Teams application.
-    Questions: []
-    AppsToOpen: |-
-      None
-
-
-example3: 
   Request: |-
     Send an message to Tom on Teams by including a (1) the text extracted from framework.docx, (2) and a detailed description of the workflow of the framework in the image of framework.png.
   Response: 
@@ -71,44 +43,17 @@ example3:
     ControlText: |- 
       framework.png | image
     Status: |-
-      CONTINUE
+      ASSIGN
     Plan:
       - Send the message to Tom on Teams by including the text extracted from 'framework.docx' and a detailed description of the workflow of the framework in the image of 'framework.png' you completed previously.
     Comment: |-
       After I get the text of the Document control named 'framework.docx', I need to switch to the image of framework.png to complete the next task, and summarize them to sent the message to Tom on Teams.
     Questions: []
-    AppsToOpen: |-
-      None
+    Bash: None
 
 
-example4:
-  Request: |-
-    Revise the email to be longer and send.
-  Response: 
-    Observation: |-
-      I observe that the outlook application is visible in the screenshot, and a new email draft is opened, with its title, receiver email address and email body already filled in.
-    Thought: |-
-      The current request follows the previous request, which can be solely completed on the outlook application. I need to revise the email to be longer and send it.
-    CurrentSubtask: |-
-      Revise the email that has been drafted on the outlook application to be longer, and send it out.
-    Message:
-      - (1) The email body should be more detailed and comprehensive.
-      - (2) The email should be sent out.
-    ControlLabel: |-
-      21
-    ControlText: |-
-      Mail - Outlook - Zac
-    Status: |-
-      CONTINUE
-    Plan: []
-    Comment: |-
-      The previous request is to draft the email and fill in the email address of the receiver, which as been completed. Now it is time to revise the email to be longer and send it.
-    Questions: []
-    AppsToOpen: |-
-      None
 
-
-example5:
+example3:
   Request: |-
     Quickly remove all notes in the presentation.pptx, without looping through each slide.
   Response: 
@@ -126,17 +71,16 @@ example5:
     ControlText: |-
       presentation - PowerPoint
     Status: |-
-      CONTINUE
+      ASSIGN
     Plan: []
     Comment: |-
       I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
     Questions: []
-    AppsToOpen: |-
-      None
+    Bash: None
  
 
 
-example6:
+example4:
   Request: |-
     How many stars does the Imdiffusion repo have?
   Response: 
@@ -154,16 +98,15 @@ example6:
     ControlText: |- 
       Google - Microsoft​ Edge
     Status: |-
-      CONTINUE
+      ASSIGN
     Plan: []
     Comment: |-
       I plan to Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
     Questions: []
-    AppsToOpen: |-
-      None
+    Bash: None
 
 
-example7: 
+example5: 
   Request: |-
       Please remind me to get party dinner (5 people) preparation done before 5PM today with steps and notes.
   Response: 
@@ -181,15 +124,14 @@ example7:
     ControlText: |-
       Microsoft To Do
     Status: |-
-      CONTINUE
+      ASSIGN
     Plan: []
     Comment: |-
       I plan to use the Microsoft To Do application to set a reminder for the user, and add details and notes to the reminder.
     Questions: []
-    AppsToOpen: |-
-      None
+    Bash: None
 
-example8: 
+example6: 
   Request: |- 
       Please create a slide from the meeting_notes.docx in the presentation1.pptx.
   Response: 
@@ -206,40 +148,15 @@ example8:
     ControlText: |-
       presentation1 - PowerPoint
     Status: |-
-      CONTINUE
+      ASSIGN
     Plan: []
     Comment: |-
       I plan to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx.
     Questions: []
-    AppsToOpen: |-
-      None
-
-example9:
-  Request: |-
-      Please @Zac to revise the presentation1.pptx.
-  Response: 
-    Observation: |-
-      The current screenshot shows the powerpoint application is visible, and the presentation1.pptx is opened.
-    Thought: |-
-      The user request can be solely complete on the powerpoint application, without the need to open any other applications.
-    CurrentSubtask: |-
-      Leave a comment in the current slide of the presentation1.pptx to remind Zac to revise the presentation1.pptx.
-    Message: []
-    ControlLabel: |-
-      4
-    ControlText: |-
-      presentation1 - PowerPoint
-    Status: |-
-      CONTINUE
-    Plan: []
-    Comment: |-
-      I plan to leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx.
-    Questions: []
-    AppsToOpen: |-
-      None
+    Bash: None
 
 
-example10:
+example7:
   Request: |-
       Send my alias and address to Tom on Teams.
   Response:
@@ -263,11 +180,10 @@ example10:
     Questions:
       - Can you please provide me with your alias?
       - Can you please provide me with your address?
-    AppsToOpen: |-
-      None
+    Bash: None
 
 
-example11:
+example8:
   Request: |-
       Summarize and add all to do items on Microsoft To Do from the meeting notes email, and write a summary on the meeting_notes.docx.
   Response:
@@ -286,47 +202,16 @@ example11:
     ControlText: |-
       Mail - Outlook - Jim
     Status: |-
-      CONTINUE
+      ASSIGN
     Plan:
       - Add all to do items previously summarized from the meeting notes email to one-by-one Microsoft To Do.
       - Write a summary about the meeting notes email on the meeting_notes.docx.
     Comment: |-
       I plan to first summarize all to do items from the meeting notes email in Outlook.
     Questions: []
-    AppsToOpen: |-
-      None
+    Bash: None
 
-
-example12:
-  Request: |-
-      Go to the web page of Bikes - Trek Bikes, and get the name of each bike and its price of the whole page and its following pages into a table in Book1 excel file. You need to get information for first 3 pages.
-  Response:
-    Observation: |-
-      The current screenshot shows the Edge browser is visible.
-    Thought: |-
-      The user request should be completed on the Edge browser first. After all the information is collected, I need to switch to the Excel application to write the information into the Book1 excel file.
-    CurrentSubtask:
-      Extract the name and price of each bike from the 'Bikes - Trek Bikes' web page, including all its following pages.
-    Message: 
-      - (1) You should use the web_crawler API to get markdown content of the web page, and extract the name and price of each bike by yourself.
-      - (2) There may be multiple pages of the website. Once you finish extracting the information from the current page, you need to scroll down to the bottom of the page to find a button to navigate to the next page.
-      - (3) Check if the results contain the information of required information. If so, do not repeat the extraction with the web_crawler API.
-      - (3) You must extract the information for first 3 pages.
-    ControlLabel: |-
-      4
-    ControlText: |-
-      Bikes - Trek Bikes - Microsoft Edge
-    Status: |-
-      CONTINUE
-    Plan: 
-      - Create a table in Book1 excel file to write the information of the name and price of each bike.
-    Comment: |-
-      I need to first use the web_crawler API to get the name and price of each bike on the web page of Bikes - Trek Bikes.
-    Questions: []
-    AppsToOpen: |-
-      None
-
-example_openapp1:
+example9:
   Request: 
     open a ppt file on my desktop named test.pptx and modify the title to Apple is the best tech Company
   Response: 
@@ -338,20 +223,19 @@ example_openapp1:
       Modify the title to 'Apple is the best tech Company' in the test.pptx file.
     Message: []
     ControlLabel: |-
-      2
+      None
     ControlText: |-
-      PowerPoint
+      None
     Status: |-
-      PENDING
+      CONTINUE
     Plan: []
     Comment: |-
-      Since the PowerPoint application is not visible in the screenshot, I will use the function OpenAPP to open the test.pptx file directly from the desktop. Then modify the title of the ppt file after its opened.
-    Questions:
-      - Can you please provide me with the title you want to change to?
-    AppsToOpen: {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}
+      Since the PowerPoint application is not visible in the screenshot, I will use the bash command to open the PowerPoint application directly. Then modify the title to 'Apple is the best tech Company' in the test.pptx file.
+    Questions: []
+    Bash: start powerpnt "Desktop\test.pptx"
   
 
-example_openapp2:
+example10:
   Request: |- 
     open file explorer APP for me and find label.txt file.
   Response: 
@@ -363,14 +247,13 @@ example_openapp2:
       Find the label.txt file in the file explorer.
     Message: []
     ControlLabel: |-
-      3
+      None
     ControlText: 
-      Explorer
+      None
     Status: |-
       CONTINUE
     Plan: []
     Comment: |-
-      Since the file explorer application is not visible in the screenshot, I will use the function OpenAPP to open the file explorer file directly.
+      Since the file explorer application is not visible in the screenshot, I will use the bash command to open the file explorer application directly. Then find the label.txt file in the file explorer.
     Questions: []
-    AppsToOpen: |-
-      {'APP': 'powerpnt', 'file_path': ''}
+    Bash: start explorer

@@ -17,7 +17,6 @@ Once called, an agent follows a series of steps to process the user's request de
 | 8 | Execute the action based on the response. | `execute_action` |
 | 9 | Update the memory and blackboard. | `update_memory` |
 | 10 | Update the status of the agent. | `update_status` |
-| 11 | Update the step information. | `update_step` |
 
 At each step, the `Processor` processes the user's request by invoking the corresponding method sequentially to execute the necessary actions.
 

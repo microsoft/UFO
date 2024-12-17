@@ -26,6 +26,7 @@ class HostAgentStatus(Enum):
     ERROR = "ERROR"
     FINISH = "FINISH"
     CONTINUE = "CONTINUE"
+    ASSIGN = "ASSIGN"
     FAIL = "FAIL"
     PENDING = "PENDING"
     CONFIRM = "CONFIRM"
@@ -63,7 +64,6 @@ class HostAgentState(AgentState):
     def agent_class(cls) -> Type[HostAgent]:
         """
         Handle the agent for the current step.
-        :param agent: The agent class of the state.
         """
         from ufo.agents.agent.host_agent import HostAgent
 
@@ -131,8 +131,6 @@ class ContinueHostAgentState(HostAgentState):
         """
         agent.process(context)
 
-        self.create_app_agent(agent, context)
-
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
         Get the next state of the agent.
@@ -143,81 +141,7 @@ class ContinueHostAgentState(HostAgentState):
         # Transition to the app agent state.
         # Lazy import to avoid circular dependency.
 
-        if agent.status == HostAgentStatus.CONTINUE.value:
-
-            from ufo.agents.states.app_agent_state import ContinueAppAgentState
-
-            return ContinueAppAgentState()
-
-        else:
-            return super().next_state(agent)
-
-    def create_app_agent(self, agent: "HostAgent", context: Context) -> AppAgent:
-        """
-        Create the app agent for the host agent.
-        :param agent: The host agent.
-        :param context: The context for the agent and session.
-        :return: The app agent.
-        """
-
-        application_window_name = context.get(ContextNames.APPLICATION_PROCESS_NAME)
-        application_root_name = context.get(ContextNames.APPLICATION_ROOT_NAME)
-        request = context.get(ContextNames.REQUEST)
-
-        if context.get(ContextNames.MODE) == "normal":
-
-            agent_name = "AppAgent/{root}/{process}".format(
-                root=application_root_name, process=application_window_name
-            )
-
-            app_agent: AppAgent = agent.create_subagent(
-                agent_type="app",
-                agent_name=agent_name,
-                process_name=application_window_name,
-                app_root_name=application_root_name,
-                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
-                main_prompt=configs["APPAGENT_PROMPT"],
-                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
-                api_prompt=configs["API_PROMPT"],
-            )
-
-        elif context.get(ContextNames.MODE) == "follower":
-
-            # Load additional app info prompt.
-            app_info_prompt = configs.get("APP_INFO_PROMPT", None)
-
-            agent_name = "FollowerAgent/{root}/{process}".format(
-                root=application_root_name, process=application_window_name
-            )
-
-            # Create the app agent in the follower mode.
-            app_agent = agent.create_subagent(
-                agent_type="follower",
-                agent_name=agent_name,
-                process_name=application_window_name,
-                app_root_name=application_root_name,
-                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
-                main_prompt=configs["FOLLOWERAHENT_PROMPT"],
-                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
-                api_prompt=configs["API_PROMPT"],
-                app_info_prompt=app_info_prompt,
-            )
-
-        else:
-            raise ValueError(
-                f"The {context.get(ContextNames.MODE)} mode is not supported."
-            )
-
-        # Create the COM receiver for the app agent.
-        if configs.get("USE_APIS", False):
-            app_agent.Puppeteer.receiver_manager.create_api_receiver(
-                application_root_name, application_window_name
-            )
-
-        # Provision the context for the app agent, including the all retrievers.
-        app_agent.context_provision(request)
-
-        return app_agent
+        return super().next_state(agent)
 
     def next_agent(self, agent: "HostAgent") -> AppAgent:
         """
@@ -226,10 +150,7 @@ class ContinueHostAgentState(HostAgentState):
         :return: The agent for the next step.
         """
 
-        if agent.status == HostAgentStatus.CONTINUE.value:
-            return agent.get_active_appagent()
-        else:
-            return agent
+        return agent
 
     def is_round_end(self) -> bool:
         """
@@ -248,6 +169,70 @@ class ContinueHostAgentState(HostAgentState):
 
 
 @HostAgentStateManager.register
+class AssignHostAgentState(HostAgentState):
+    """
+    The class for the assign host agent state.
+    """
+
+    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+        """
+        Handle the agent for the current step.
+        :param agent: The agent to handle.
+        :param context: The context for the agent and session.
+        """
+        application_window_name = context.get(ContextNames.APPLICATION_PROCESS_NAME)
+        application_root_name = context.get(ContextNames.APPLICATION_ROOT_NAME)
+        request = context.get(ContextNames.REQUEST)
+        mode = context.get(ContextNames.MODE)
+
+        agent.create_app_agent(
+            application_window_name=application_window_name,
+            application_root_name=application_root_name,
+            request=request,
+            mode=mode,
+        )
+
+    def next_state(self, agent: "HostAgent") -> AppAgentState:
+        """
+        Get the next state of the agent.
+        :param agent: The current agent.
+        :return: The state for the next step.
+        """
+        
+        # Transition to the app agent state.
+        # Lazy import to avoid circular dependency.
+
+        from ufo.agents.states.app_agent_state import ContinueAppAgentState
+
+        return ContinueAppAgentState()
+
+
+    def next_agent(self, agent: "HostAgent") -> AppAgent:
+        """
+        Get the agent for the next step.
+        :param agent: The agent for the current step.
+        :return: The agent for the next step.
+        """
+
+        return agent.get_active_appagent()
+
+    def is_round_end(self) -> bool:
+        """
+        Check if the round ends.
+        :return: True if the round ends, False otherwise.
+        """
+        return False
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The class name of the state.
+        :return: The class name of the state.
+        """
+        return HostAgentStatus.ASSIGN.value
+
+
+@HostAgentStateManager.register
 class PendingHostAgentState(HostAgentState):
     """
     The class for the pending host agent state.
@@ -261,7 +246,7 @@ class PendingHostAgentState(HostAgentState):
         """
 
         # Ask the user questions to help the agent to proceed.
-        agent.process_asker()
+        agent.process_asker(ask_user=configs.get("ASK_QUESTION", False))
 
     def is_round_end(self) -> bool:
         """

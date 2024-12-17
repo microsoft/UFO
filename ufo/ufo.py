@@ -21,14 +21,21 @@ args.add_argument(
 args.add_argument(
     "--mode",
     "-m",
-    help="mode of the task. Default is normal, it can be set to 'follower' if you want to run the follower agent.",
+    help="mode of the task. Default is normal, it can be set to 'follower' if you want to run the follower agent. Also, it can be set to 'batch_normal' if you want to run the batch normal agent.",
     type=str,
     default="normal",
 )
 args.add_argument(
     "--plan",
     "-p",
-    help="The path of the plan file or folder. It is only required for the follower mode.",
+    help="The path of the plan file or folder. It is only required for the follower mode and batch_normal mode.",
+    type=str,
+    default="",
+)
+args.add_argument(
+    "--request",
+    "-r",
+    help="The description of the request, optional. If not provided, UFO will ask the user to input the request.",
     type=str,
     default="",
 )
@@ -83,13 +90,19 @@ def main():
 
     To use follower mode that follows a plan file or folder, run the following command:
     python -m ufo -t task_name -m follower -p path_to_plan_file_or_folder
+
+    To use batch mode that follows a plan file or folder, run the following command:
+    python -m ufo -t task_name -m batch_normal -p path_to_plan_file_or_folder
     """
 
     if (parsed_args.run_arena):
         run_ufo_session(instruction=parsed_args.instruction, agent_settings=parsed_args.agent_settings)
     else:
         sessions = SessionFactory().create_session(
-            task=parsed_args.task, mode=parsed_args.mode, plan=parsed_args.plan
+            task=parsed_args.task,
+            mode=parsed_args.mode,
+            plan=parsed_args.plan,
+            request=parsed_args.request,
         )
 
         clients = UFOClientManager(sessions)

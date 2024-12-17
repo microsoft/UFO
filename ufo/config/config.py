@@ -14,7 +14,10 @@ class Config:
 
     def __init__(self):
         # Load config here
-        self.config_data = self.load_config()
+        if os.getenv("RUN_CONFIGS", "true").lower() != "false":
+            self.config_data = self.load_config()
+        else:
+            self.config_data = None
 
     @staticmethod
     def get_instance():
@@ -26,7 +29,7 @@ class Config:
             Config._instance = Config()
         return Config._instance
 
-    def load_config(self, config_path="ufo/config/") -> dict:
+    def load_config(self, config_path = "ufo/config/") -> dict:
         """
         Load the configuration from a YAML file and environment variables.
 
@@ -45,14 +48,13 @@ class Config:
             # Update configs with YAML data
             if yaml_data:
                 configs.update(yaml_data)
-            with open(path + "config_dev.yaml", "r") as file:
-                yaml_dev_data = yaml.safe_load(file)
-            with open(path + "config_prices.yaml", "r") as file:
-                yaml_prices_data = yaml.safe_load(file)
-            # Update configs with YAML data
-            if yaml_data:
+            if os.path.exists(path + "config_dev.yaml"):
+                with open(path + "config_dev.yaml", "r") as file:
+                    yaml_dev_data = yaml.safe_load(file)
                 configs.update(yaml_dev_data)
-            if yaml_prices_data:
+            if os.path.exists(path + "config_prices.yaml"):
+                with open(path + "config_prices.yaml", "r") as file:
+                    yaml_prices_data = yaml.safe_load(file)
                 configs.update(yaml_prices_data)
         except FileNotFoundError:
             print_with_color(
@@ -69,6 +71,12 @@ class Config:
         :param configs: The configuration dictionary.
         :param agent: The agent name.
         """
+
+        # Check if the agent is in the configurations
+        if agent not in configs:
+            Warning(f"Agent {agent} not found in the configurations.")
+            return
+
         if configs[agent]["API_TYPE"].lower() == "aoai":
             if "deployments" not in configs[agent]["API_BASE"]:
                 configs[agent]["API_BASE"] = (

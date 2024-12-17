@@ -18,7 +18,7 @@ from ufo.utils import print_with_color
 
 configs = Config.get_instance().config_data
 
-if configs.get("AFTER_CLICK_WAIT", None) is not None:
+if configs is not None and configs.get("AFTER_CLICK_WAIT", None) is not None:
     pywinauto.timings.Timings.after_clickinput_wait = configs["AFTER_CLICK_WAIT"]
     pywinauto.timings.Timings.after_click_wait = configs["AFTER_CLICK_WAIT"]
 
@@ -107,6 +107,8 @@ class ControlReceiver(ReceiverBasic):
         # Get the absolute coordinates of the application window.
         tranformed_x, tranformed_y = self.transform_point(x, y)
 
+        self.application.set_focus()
+
         pyautogui.click(
             tranformed_x, tranformed_y, button=button, clicks=2 if double else 1
         )
@@ -128,6 +130,8 @@ class ControlReceiver(ReceiverBasic):
         )
 
         button = params.get("button", "left")
+
+        self.application.set_focus()
 
         pyautogui.moveTo(start[0], start[1])
         pyautogui.dragTo(end[0], end[1], button=button)
@@ -158,8 +162,9 @@ class ControlReceiver(ReceiverBasic):
             args = {"text": text}
         else:
             method_name = "type_keys"
-            text = text.replace("\n", "{ENTER}")
-            text = text.replace("\t", "{TAB}")
+
+            # Transform the text according to the tags.
+            text = TextTransformer.transform_text(text, "all")
 
             args = {"keys": text, "pause": inter_key_pause, "with_spaces": True}
         try:
@@ -327,6 +332,7 @@ class ControlCommand(CommandBasic):
         Initialize the command.
         :param receiver: The receiver of the command.
         """
+
         self.receiver = receiver
         self.params = params if params is not None else {}
 
@@ -437,6 +443,7 @@ class DragOnCoordinatesCommand(ControlCommand):
         Execute the drag on coordinates command.
         :return: The result of the drag on coordinates command.
         """
+
         return self.receiver.drag_on_coordinates(self.params)
 
     @classmethod
@@ -616,3 +623,79 @@ class NoActionCommand(ControlCommand):
         :return: The name of the atomic command.
         """
         return ""
+
+
+class TextTransformer:
+    """
+    The text transformer class.
+    """
+
+    @staticmethod
+    def transform_text(text: str, transform_tag: str) -> str:
+        """
+        Transform the text.
+        :param text: The text to transform.
+        :param transform_tag: The tag to transform.
+        :return: The transformed text.
+        """
+
+        if transform_tag == "all":
+            transform_tag = "+\n\t^%"
+
+        if "\n" in transform_tag:
+            text = TextTransformer.transform_enter(text)
+        if "\t" in transform_tag:
+            text = TextTransformer.transform_tab(text)
+        if "+" in transform_tag:
+            text = TextTransformer.transform_plus(text)
+        if "^" in transform_tag:
+            text = TextTransformer.transform_caret(text)
+        if "%" in transform_tag:
+            text = TextTransformer.transform_percent(text)
+
+        return text
+
+    @staticmethod
+    def transform_enter(text: str) -> str:
+        """
+        Transform the enter key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("\n", "{ENTER}")
+
+    @staticmethod
+    def transform_tab(text: str) -> str:
+        """
+        Transform the tab key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("\t", "{TAB}")
+
+    @staticmethod
+    def transform_plus(text: str) -> str:
+        """
+        Transform the plus key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("+", "{+}")
+
+    @staticmethod
+    def transform_caret(text: str) -> str:
+        """
+        Transform the caret key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("^", "{^}")
+
+    @staticmethod
+    def transform_percent(text: str) -> str:
+        """
+        Transform the percent key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("%", "{%}")

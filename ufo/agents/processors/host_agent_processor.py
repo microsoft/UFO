@@ -13,7 +13,8 @@ from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
 configs = Config.get_instance().config_data
-BACKEND = configs["CONTROL_BACKEND"]
+if configs is not None:
+    BACKEND = configs["CONTROL_BACKEND"]
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
@@ -38,7 +39,6 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = None
         self._desktop_windows_dict = None
         self._desktop_windows_info = None
-        self.app_to_open = None
 
     def print_step_info(self) -> None:
         """
@@ -51,6 +51,7 @@ class HostAgentProcessor(BaseProcessor):
             "magenta",
         )
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def capture_screenshot(self) -> None:
         """
@@ -59,7 +60,7 @@ class HostAgentProcessor(BaseProcessor):
 
         desktop_save_path = self.log_path + f"action_step{self.session_step}.png"
 
-        self._memory_data.set_values_from_dict({"CleanScreenshot": desktop_save_path})
+        self._memory_data.add_values_from_dict({"CleanScreenshot": desktop_save_path})
 
         # Capture the desktop screenshot for all screens.
         self.photographer.capture_desktop_screen_screenshot(
@@ -71,6 +72,7 @@ class HostAgentProcessor(BaseProcessor):
             desktop_save_path
         )
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_control_info(self) -> None:
         """
@@ -87,6 +89,7 @@ class HostAgentProcessor(BaseProcessor):
             self._desktop_windows_dict
         )
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_prompt_message(self) -> None:
         """
@@ -114,6 +117,7 @@ class HostAgentProcessor(BaseProcessor):
         )
         self.request_logger.debug(log)
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_response(self) -> None:
         """
@@ -121,26 +125,18 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
-        try:
-            self._response, self.cost = self.host_agent.get_response(
-                self._prompt_message, "HOSTAGENT", use_backup_engine=True
-            )
+        self._response, self.cost = self.host_agent.get_response(
+            self._prompt_message, "HOSTAGENT", use_backup_engine=True
+        )
 
-        except Exception:
-            self.llm_error_handler()
-
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def parse_response(self) -> None:
         """
         Parse the response.
         """
 
-        # Try to parse the response. If an error occurs, catch the exception and log the error.
-        try:
-            self._response_json = self.host_agent.response_to_dict(self._response)
-
-        except Exception:
-            self.general_error_handler()
+        self._response_json = self.host_agent.response_to_dict(self._response)
 
         self.control_label = self._response_json.get("ControlLabel", "")
         self.control_text = self._response_json.get("ControlText", "")
@@ -153,54 +149,33 @@ class HostAgentProcessor(BaseProcessor):
 
         self.status = self._response_json.get("Status", "")
         self.question_list = self._response_json.get("Questions", [])
-
-        self.app_to_open = self._response_json.get("AppsToOpen", None)
+        self.bash_command = self._response_json.get("Bash", None)
 
         self.host_agent.print_response(self._response_json)
 
+    @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def execute_action(self) -> None:
         """
         Execute the action.
         """
 
-        # When the required application is not opened, try to open the application and set the focus to the application window.
-        if self.app_to_open is not None:
-            new_app_window = self.host_agent.app_file_manager(self.app_to_open)
-            self.control_text = new_app_window.window_text()
-        else:
-            # Get the application window
-            new_app_window = self._desktop_windows_dict.get(self.control_label, None)
+        new_app_window = self._desktop_windows_dict.get(self.control_label, None)
 
-        if new_app_window is None:
+        # If the new application window is available, select the application.
+        if new_app_window is not None:
+            self._select_application(new_app_window)
 
+        # If the bash command is not empty, run the shell command.
+        if self.bash_command:
+            self._run_shell_command()
+
+        # If the new application window is None and the bash command is None, set the status to FINISH.
+        if new_app_window is None and self.bash_command is None:
             self.status = self._agent_status_manager.FINISH.value
             return
 
-        self._control_log = {
-            "control_class": new_app_window.element_info.class_name,
-            "control_type": new_app_window.element_info.control_type,
-            "control_automation_id": new_app_window.element_info.automation_id,
-        }
-
-        # Get the root name of the application.
-        self.app_root = self.control_inspector.get_application_root_name(new_app_window)
-
-        # Check if the window interface is available for the visual element.
-        if not self.is_window_interface_available(new_app_window):
-            self.status = self._agent_status_manager.ERROR.value
-
-            return
-
-        # Switch to the new application window, if it is different from the current application window.
-        self.switch_to_new_app_window(new_app_window)
-        self.application_window.set_focus()
-        if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
-            self.application_window.draw_outline(colour="red", thickness=3)
-
-        self.action = "set_focus()"
-
-    def is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
+    def _is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
         """
         Check if the window interface is available for the visual element.
         :param new_app_window: The new application window.
@@ -218,14 +193,30 @@ class HostAgentProcessor(BaseProcessor):
             )
             return False
 
-    def switch_to_new_app_window(self, new_app_window: UIAWrapper) -> None:
+    def _is_same_window(self, window1: UIAWrapper, window2: UIAWrapper) -> bool:
+        """
+        Check if two windows are the same.
+        :param window1: The first window.
+        :param window2: The second window.
+        :return: True if the two windows are the same, False otherwise.
+        """
+
+        equal = False
+
+        try:
+            equal = window1 == window2
+        except:
+            pass
+        return equal
+
+    def _switch_to_new_app_window(self, new_app_window: UIAWrapper) -> None:
         """
         Switch to the new application window if it is different from the current application window.
         :param new_app_window: The new application window.
         """
 
         if (
-            new_app_window != self.application_window
+            not self._is_same_window(new_app_window, self.application_window)
             and self.application_window is not None
         ):
             utils.print_with_color("Switching to a new application...", "magenta")
@@ -233,16 +224,61 @@ class HostAgentProcessor(BaseProcessor):
         self.application_window = new_app_window
 
         self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
-
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
-    def update_memory(self) -> None:
+    def _select_application(self, application_window: UIAWrapper) -> None:
         """
-        Update the memory of the Agent.
+        Create the app agent for the host agent.
+        :param application_window: The application window.
         """
 
-        # Log additional information for the host agent.
+        self._control_log = {
+            "control_class": application_window.element_info.class_name,
+            "control_type": application_window.element_info.control_type,
+            "control_automation_id": application_window.element_info.automation_id,
+        }
+
+        # Get the root name of the application.
+        self.app_root = self.control_inspector.get_application_root_name(
+            application_window
+        )
+
+        # Check if the window interface is available for the visual element.
+        if not self._is_window_interface_available(application_window):
+            self.status = self._agent_status_manager.ERROR.value
+
+            return
+
+        # Switch to the new application window, if it is different from the current application window.
+        self._switch_to_new_app_window(application_window)
+        self.application_window.set_focus()
+        if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
+            self.application_window.draw_outline(colour="red", thickness=3)
+
+        self.action = "set_focus()"
+
+    def _run_shell_command(self) -> None:
+        """
+        Run the shell command.
+        """
+        self.agent.create_puppeteer_interface()
+        self.agent.Puppeteer.receiver_manager.create_api_receiver(
+            self.app_root, self.control_text
+        )
+
+        self._results = self.agent.Puppeteer.execute_command(
+            "run_shell", {"command": self.bash_command}
+        )
+
+        self.action = self.agent.Puppeteer.get_command_string(
+            "run_shell", {"command": self.bash_command}
+        )
+
+    def sync_memory(self):
+        """
+        Sync the memory of the HostAgent.
+        """
         additional_memory = {
             "Step": self.session_step,
             "RoundStep": self.round_step,
@@ -257,13 +293,22 @@ class HostAgentProcessor(BaseProcessor):
             "AgentName": self.host_agent.name,
             "Application": self.app_root,
             "Cost": self._cost,
-            "Results": "",
+            "Results": self._results,
+            "error": self._exeception_traceback,
         }
 
-        self._memory_data.set_values_from_dict(self._response_json)
-        self._memory_data.set_values_from_dict(additional_memory)
-        self._memory_data.set_values_from_dict(self._control_log)
-        self._memory_data.set_values_from_dict({"time_cost": self._time_cost})
+        self.add_to_memory(self._response_json)
+        self.add_to_memory(additional_memory)
+        self.add_to_memory(self._control_log)
+        self.add_to_memory({"time_cost": self._time_cost})
+
+    def update_memory(self) -> None:
+        """
+        Update the memory of the Agent.
+        """
+
+        # Sync the memory
+        self.sync_memory()
 
         self.host_agent.add_memory(self._memory_data)
 
