@@ -19,7 +19,7 @@ try {
     $jsonEscaped = $agent_settings -replace '"', '\"'
 
     # Build the command to execute
-    $command = "py -m ufo --instruction `"$instruction`" --run_arena `"true`" --agent_settings `'$jsonEscaped`'"
+    $command = "py -m ufo --request `"$instruction`" --agent_settings `'$jsonEscaped`'"
 
     # Execute the command
     Invoke-Expression $command
