@@ -105,5 +105,7 @@ SAVE_UI_TREE: False  # Whether to save the UI tree
 
 # Record the status of the tasks
 TASK_STATUS: True  # Whether to record the status of the tasks in batch execution mode.
-# TASK_STATUS_FILE # The path for the task status file.
+
+# Experience saving
+SAVE_EXPERIENCE: "always_not"  # Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not. By default, it is "always_not"
 
