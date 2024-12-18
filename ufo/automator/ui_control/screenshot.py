@@ -24,7 +24,6 @@ else:
     DEFAULT_PNG_COMPRESS_LEVEL = 6
 
 
-
 class Photographer(ABC):
     """
     Abstract class for the photographer.
@@ -428,6 +427,7 @@ class PhotographerFacade:
     """
 
     _instance = None
+    _empty_image_string = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
 
     def __new__(cls):
         """
@@ -619,8 +619,8 @@ class PhotographerFacade:
 
         return base64.b64encode(buffered.getvalue()).decode("utf-8")
 
-    @staticmethod
-    def encode_image(image: Image.Image, mime_type: Optional[str] = None) -> str:
+    @classmethod
+    def encode_image(cls, image: Image.Image, mime_type: Optional[str] = None) -> str:
         """
         Encode an image to base64 string.
         :param image: The image to encode.
@@ -629,7 +629,7 @@ class PhotographerFacade:
         """
 
         if image is None:
-            return "data:image/png;base64,"
+            return cls._empty_image_string
 
         buffered = BytesIO()
         image.save(buffered, format="PNG", optimize=True)
@@ -641,8 +641,10 @@ class PhotographerFacade:
         image_url = f"data:{mime_type};base64," + encoded_image
         return image_url
 
-    @staticmethod
-    def encode_image_from_path(image_path: str, mime_type: Optional[str] = None) -> str:
+    @classmethod
+    def encode_image_from_path(
+        cls, image_path: str, mime_type: Optional[str] = None
+    ) -> str:
         """
         Encode an image file to base64 string.
         :param image_path: The path of the image file.
@@ -654,8 +656,7 @@ class PhotographerFacade:
         if not os.path.exists(image_path):
 
             utils.print_with_color(f"Waring: {image_path} does not exist.", "yellow")
-            empty_image_string = "data:image/png;base64,"
-            return empty_image_string
+            return cls._empty_image_string
 
         file_name = os.path.basename(image_path)
         mime_type = (

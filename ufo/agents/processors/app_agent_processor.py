@@ -301,6 +301,9 @@ class AppAgentProcessor(BaseProcessor):
             control_selected, self.application_window
         )
 
+        # Save the screenshot of the tagged selected control.
+        self.capture_control_screenshot(control_selected)
+
         if self._operation:
 
             if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
@@ -326,9 +329,6 @@ class AppAgentProcessor(BaseProcessor):
                 }
             else:
                 self._control_log = {}
-
-            # Save the screenshot of the tagged selected control.
-            self.capture_control_screenshot(control_selected)
 
             if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
                 self.handle_screenshot_status()
