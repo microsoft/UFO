@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+
 from typing import Any, Dict, Optional, Tuple
 
 from ufo.agents.agent.basic import BasicAgent
@@ -166,3 +167,11 @@ if __name__ == "__main__":
         example_prompt="",
         api_prompt=configs["API_PROMPT"],
     )
+
+    request = "Can you open paint and draw a circle of radius 200px?"
+    log_path = "./logs/test_paint5"
+    results = eva_agent.evaluate(
+        request=request, log_path=log_path, eva_all_screenshots=True
+    )
+
+    print(results)
