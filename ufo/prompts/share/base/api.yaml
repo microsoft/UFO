@@ -37,14 +37,16 @@ drag_on_coordinates:
   class_name: |-
     DragOnCoordinatesCommand
   usage: |-
-    [1] API call: drag_on_coordinates(start_x: float, start_y: float, end_x: float, end_y: float, button: str = "left")
+    [1] API call: drag_on_coordinates(start_x: float, start_y: float, end_x: float, end_y: float, button: str = "left", duration: float = 1.0, key_hold: str = None)
     [2] Args:
       - start_x: The relative fractional x-coordinate of the starting point to drag from, ranging from 0.0 to 1.0. The origin is the top-left corner of the application window.
       - start_y: The relative fractional y-coordinate of the starting point to drag from, ranging from 0.0 to 1.0. The origin is the top-left corner of the application window.
       - end_x: The relative fractional x-coordinate of the ending point to drag to, ranging from 0.0 to 1.0. The origin is the top-left corner of the application window.
       - end_y: The relative fractional y-coordinate of the ending point to drag to, ranging from 0.0 to 1.0. The origin is the top-left corner of the application window.
       - button: The mouse button to drag. One of 'left', 'right'. (Default: 'left')
-    [3] Example: drag_on_coordinates(start_x=0.1, start_y=0.1, end_x=0.9, end_y=0.9, button="left")
+      - duration: The duration of the drag action in seconds. (Default: 1.0)
+      - key_hold: The keybord key to hold while dragging. For example, 'shift' for the shift key (Default: None)
+    [3] Example: drag_on_coordinates(start_x=0.1, start_y=0.1, end_x=0.9, end_y=0.9, button="left", duration=1.0, key_hold="shift")
     [4] Available control item: Control item is not required for this API.
     [5] Return: None
 
