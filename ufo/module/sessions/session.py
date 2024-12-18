@@ -171,8 +171,16 @@ class Session(BaseSession):
         """
         super().run()
         # Save the experience if the user asks so.
-        if interactor.experience_asker():
+
+        save_experience = configs.get("SAVE_EXPERIENCE", "always_not")
+
+        if save_experience == "always":
             self.experience_saver()
+        elif save_experience == "ask":
+            if interactor.experience_asker():
+                self.experience_saver()
+        elif save_experience == "always_not":
+            pass
 
     def _init_context(self) -> None:
         """
