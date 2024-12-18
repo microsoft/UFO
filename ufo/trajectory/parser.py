@@ -30,6 +30,8 @@ class Trajectory:
         "SelectedControlScreenshot",
     ]
 
+    _step_screenshot_key = "ScreenshotImages"
+
     def __init__(self, file_path: str) -> None:
         """
         :param file_path: The file path to the trajectory data.
@@ -56,8 +58,15 @@ class Trajectory:
             textual_logs = file.readlines()
 
         for log in textual_logs:
-            step_log = json.loads(log)
-            step_log["ScreenshotImages"] = self._load_step_screenshots(step_log)
+            try:
+                log = log.strip()
+                step_log = json.loads(log)
+                step_log[self._step_screenshot_key] = self._load_step_screenshots(
+                    step_log
+                )
+
+            except json.JSONDecodeError:
+                continue
 
             step_data.append(step_log)
 
@@ -315,6 +324,22 @@ class Trajectory:
                     self.step_log[i].get("Round")
                     for i in range(len(self.step_log))
                     if isinstance(self.step_log[i].get("Round"), int)
+                ]
+            )
+            + 1
+        )
+
+    @property
+    def step_number(self) -> int:
+        """
+        :return: The total number of steps.
+        """
+        return (
+            max(
+                [
+                    self.step_log[i].get("Step")
+                    for i in range(len(self.step_log))
+                    if isinstance(self.step_log[i].get("Step"), int)
                 ]
             )
             + 1
