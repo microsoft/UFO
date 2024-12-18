@@ -593,7 +593,11 @@ class BaseSession(ABC):
         Check if the session is ended.
         return: True if the session is ended, otherwise False.
         """
-        if self._finish or self.step >= configs["MAX_STEP"]:
+        if (
+            self._finish
+            or self.step >= configs["MAX_STEP"]
+            or self.total_rounds >= configs["MAX_ROUND"]
+        ):
             return True
 
         if self.is_error():
