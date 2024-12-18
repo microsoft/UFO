@@ -1,12 +1,6 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import sys
-
-sys.path.append("..")
-sys.path.append("../..")
-sys.path.append("./")
-
 from typing import Any, Dict, Optional, Tuple
 
 from ufo.agents.agent.basic import BasicAgent

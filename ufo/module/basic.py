@@ -23,7 +23,7 @@ from typing import Dict, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ufo import automator, utils
+from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
@@ -593,7 +593,11 @@ class BaseSession(ABC):
         Check if the session is ended.
         return: True if the session is ended, otherwise False.
         """
-        if self._finish or self.step >= configs["MAX_STEP"]:
+        if (
+            self._finish
+            or self.step >= configs["MAX_STEP"]
+            or self.total_rounds >= configs["MAX_ROUND"]
+        ):
             return True
 
         if self.is_error():
@@ -702,7 +706,9 @@ class BaseSession(ABC):
                     app_agent.Puppeteer.save_to_xml(xml_save_path)
 
     @staticmethod
-    def initialize_logger(log_path: str, log_filename: str, mode='a', configs = configs) -> logging.Logger:
+    def initialize_logger(
+        log_path: str, log_filename: str, mode="a", configs=configs
+    ) -> logging.Logger:
         """
         Initialize logging.
         log_path: The path of the log file.
@@ -717,7 +723,7 @@ class BaseSession(ABC):
             logger.handlers = []
 
         log_file_path = os.path.join(log_path, log_filename)
-        file_handler = logging.FileHandler(log_file_path, mode = mode, encoding="utf-8")
+        file_handler = logging.FileHandler(log_file_path, mode=mode, encoding="utf-8")
         formatter = logging.Formatter("%(message)s")
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
