@@ -12,7 +12,7 @@ configs = Config.get_instance().config_data
 
 
 def get_completion(
-    messages, agent: str = "APP", use_backup_engine: bool = True, configs = configs
+    messages, agent: str = "APP", use_backup_engine: bool = True, configs=configs
 ) -> Tuple[str, float]:
     """
     Get completion for the given messages.
@@ -23,14 +23,17 @@ def get_completion(
     """
 
     responses, cost = get_completions(
-        messages, agent=agent, use_backup_engine=use_backup_engine, n=1, configs = configs
+        messages, agent=agent, use_backup_engine=use_backup_engine, n=1, configs=configs
     )
     return responses[0], cost
 
 
 def get_completions(
-    messages, agent: str = "APP", use_backup_engine: bool = True, n: int = 1,
-    configs = configs
+    messages,
+    agent: str = "APP",
+    use_backup_engine: bool = True,
+    n: int = 1,
+    configs=configs,
 ) -> Tuple[list, float]:
     """
     Get completions for the given messages.
@@ -57,7 +60,9 @@ def get_completions(
     api_type = configs[agent_type]["API_TYPE"]
     try:
         api_type_lower = api_type.lower()
-        service = BaseService.get_service(api_type_lower)
+        service = BaseService.get_service(
+            api_type_lower, configs[agent_type]["API_MODEL"].lower()
+        )
         if service:
             response, cost = service(configs, agent_type=agent_type).chat_completion(
                 messages, n
