@@ -1,5 +1,6 @@
 CONTROL_BACKEND: "uia"  # The backend for control action, currently we support uia and win32
 MAX_STEP: 100  # The max step limit for completing the user request
+MAX_ROUND: 10  # The max round limit for completing the user request
 SLEEP_TIME: 1  # The sleep time between each step to wait for the window to be ready
 RECTANGLE_TIME: 1
 
@@ -96,7 +97,7 @@ EVA_ROUND: FALSE
 EVA_ALL_SCREENSHOTS: True  # Whether to include all the screenshots in the evaluation
 
 # Image saving performance
-DEFAULT_PNG_COMPRESS_LEVEL: 9  # The compress level for the PNG image, 0-9, 0 is no compress, 1 is the fastest, 9 is the best compress
+DEFAULT_PNG_COMPRESS_LEVEL: 1  # The compress level for the PNG image, 0-9, 0 is no compress, 1 is the fastest, 9 is the best compress
 
 
 # Save UI tree
@@ -105,5 +106,7 @@ SAVE_UI_TREE: False  # Whether to save the UI tree
 
 # Record the status of the tasks
 TASK_STATUS: True  # Whether to record the status of the tasks in batch execution mode.
-# TASK_STATUS_FILE # The path for the task status file.
+
+# Experience saving
+SAVE_EXPERIENCE: "ask"  # Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not. By default, it is "always_not"
 

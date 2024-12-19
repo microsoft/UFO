@@ -10,6 +10,7 @@ The following parameters are included in the system configuration of the UFO age
 |-------------------------|---------------------------------------------------------------------------------------------------------|----------|---------------|
 | `CONTROL_BACKEND`       | The backend for control action, currently supporting `uia` and `win32`.                                 | String   | "uia"         |
 | `MAX_STEP`              | The maximum step limit for completing the user request in a session.                                    | Integer  | 100           |
+| `MAX_ROUND`             | The maximum round limit for completing the user request in a session.                                   | Integer  | 10            |
 | `SLEEP_TIME`            | The sleep time in seconds between each step to wait for the window to be ready.                         | Integer  | 5             |
 | `RECTANGLE_TIME`        | The time in seconds for the rectangle display around the selected control.                              | Integer  | 1             |
 | `SAFE_GUARD`            | Whether to use the safe guard to ask for user confirmation before performing sensitive operations.      | Boolean  | True          |
@@ -25,6 +26,9 @@ The following parameters are included in the system configuration of the UFO age
 | `LOG_XML`               | Whether to log the XML file at every step.                                                              | Boolean  | False         |
 | `SCREENSHOT_TO_MEMORY`  | Whether to allow the screenshot to [`Blackboard`](../agents/design/blackboard.md) for the agent's decision making.                              | Boolean  | True          |
 | `SAVE_UI_TREE`          | Whether to save the UI tree in the log.                                                                 | Boolean  | False         |
+| `SAVE_EXPERIENCE`       | Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not. By default, it is "always_not" | String   | "always_not"  |
+| `TASK_STATUS`           | Whether to record the status of the tasks in batch execution mode.                                     | Boolean  | True         |
+
 
 ## Main Prompt Configuration
 

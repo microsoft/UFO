@@ -2,13 +2,14 @@
 # Licensed under the MIT License.
 
 import os
+import sys
 from typing import Tuple
 
 import yaml
 from langchain.docstore.document import Document
 from langchain_community.vectorstores import FAISS
 
-from ufo.experience.parser import ExperienceLogLoader
+from ufo.experience.experience_parser import ExperienceLogLoader
 from ufo.llm.llm_call import get_completion
 from ufo.prompter.experience_prompter import ExperiencePrompter
 from ufo.utils import get_hugginface_embedding, json_parser
@@ -107,8 +108,8 @@ class ExperienceSummarizer:
         for log_partition in logs:
             prompt = self.build_prompt(log_partition)
             summary, cost = self.get_summary(prompt)
-            summary["request"] = ExperienceLogLoader.get_user_request(log_partition)
-            summary["app_list"] = ExperienceLogLoader.get_app_list(log_partition)
+            summary["request"] = log_partition.get("subtask")
+            summary["app_list"] = [log_partition.get("application")]
             summaries.append(summary)
             total_cost += cost
 
@@ -121,8 +122,7 @@ class ExperienceSummarizer:
         :param log_path: The path of the log file.
         """
         replay_loader = ExperienceLogLoader(log_path)
-        logs = replay_loader.create_logs()
-        return logs
+        return replay_loader.subtask_partition
 
     @staticmethod
     def create_or_update_yaml(summaries: list, yaml_path: str):
@@ -184,3 +184,25 @@ class ExperienceSummarizer:
         db.save_local(db_path)
 
         print(f"Updated vector DB successfully: {db_path}")
+
+
+if __name__ == "__main__":
+
+    from ufo.config.config import Config
+
+    configs = Config.get_instance().config_data
+
+    # Initialize the ExperienceSummarizer
+
+    summarizer = ExperienceSummarizer(
+        configs["APP_AGENT"]["VISUAL_MODE"],
+        configs["EXPERIENCE_PROMPT"],
+        configs["APPAGENT_EXAMPLE_PROMPT"],
+        configs["API_PROMPT"],
+    )
+
+    log_path = "logs/test_exp"
+
+    experience = summarizer.read_logs(log_path)
+    summaries, cost = summarizer.get_summary_list(experience)
+    print(summaries, cost)
