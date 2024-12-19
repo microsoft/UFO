@@ -7,9 +7,9 @@ from datetime import datetime
 from ufo.config.config import Config
 from ufo.module.client import UFOClientManager
 from ufo.module.sessions.session import SessionFactory
-import json
 
 configs = Config.get_instance().config_data
+
 
 args = argparse.ArgumentParser()
 args.add_argument(
@@ -40,15 +40,10 @@ args.add_argument(
     type=str,
     default="",
 )
-args.add_argument(
-    "--agent_settings",
-    "-a",
-    help="The agent settings.",
-    type=str,
-    default="",
-)
+
 
 parsed_args = args.parse_args()
+
 
 def main():
     """
@@ -63,16 +58,6 @@ def main():
     To use batch mode that follows a plan file or folder, run the following command:
     python -m ufo -t task_name -m batch_normal -p path_to_plan_file_or_folder
     """
-
-    # Set config if agent setting exist.
-    if parsed_args.agent_settings is not None and parsed_args.agent_settings != "":
-        try:
-            agent_settings_json = json.loads(parsed_args.agent_settings)
-        except json.JSONDecodeError:
-            agent_settings_json = {}
-        
-        set_config(agent_settings_json)
-    
     sessions = SessionFactory().create_session(
         task=parsed_args.task,
         mode=parsed_args.mode,
@@ -83,43 +68,6 @@ def main():
     clients = UFOClientManager(sessions)
     clients.run_all()
 
-def set_config(agent_settings_json: dict = {}):
-    if agent_settings_json is not None and len(agent_settings_json) > 0:
-        llm_type = agent_settings_json.get("llm_type")
-        llm_endpoint = agent_settings_json.get("llm_endpoint")
-        llm_auth = agent_settings_json.get("llm_auth", {})
-        auth_type = llm_auth.get("type")
-        token = llm_auth.get("token")
-        
-        if llm_type == "azure" and auth_type == "Identity":
-            configs["HOST_AGENT"]["API_TYPE"] = "azure_ad"
-            configs["APP_AGENT"]["API_TYPE"] = "azure_ad"
-            configs["HOST_AGENT"]["API_BASE"] = llm_endpoint
-            configs["APP_AGENT"]["API_BASE"] = llm_endpoint
-            configs["BACKUP_AGENT"]["API_BASE"] = llm_endpoint
-            configs["BACKUP_AGENT"]["API_BASE"] = llm_endpoint
-
-        elif llm_type == "azure" and auth_type == "api-key":
-            configs["HOST_AGENT"]["API_TYPE"] = "aoai"
-            configs["HOST_AGENT"]["API_BASE"] = llm_endpoint
-            configs["APP_AGENT"]["API_TYPE"] = "aoai"
-            configs["APP_AGENT"]["API_BASE"] = llm_endpoint
-            configs["BACKUP_AGENT"]["API_TYPE"] = "aoai"
-            configs["BACKUP_AGENT"]["API_BASE"] = llm_endpoint
-        elif llm_type == "oai":
-            configs["HOST_AGENT"]["API_TYPE"] = "openai"
-            configs["HOST_AGENT"]["API_BASE"] = "https://api.openai.com/v1/chat/completions"
-            configs["APP_AGENT"]["API_TYPE"] = "openai"
-            configs["APP_AGENT"]["API_BASE"] = "https://api.openai.com/v1/chat/completions"
-            configs["BACKUP_AGENT"]["API_TYPE"] = "openai"
-            configs["BACKUP_AGENT"]["API_BASE"] = "https://api.openai.com/v1/chat/completions"
-
-        configs["HOST_AGENT"]["API_KEY"] = token
-        configs["APP_AGENT"]["API_KEY"] = token
-        configs["BACKUP_AGENT"]["API_KEY"] = token
-        configs["HOST_AGENT"]["API_MODEL"] = "gpt-4-vision-preview"
-        configs["APP_AGENT"]["API_MODEL"] = "gpt-4-vision-preview"
-        configs["BACKUP_AGENT"]["API_MODEL"] = "gpt-4-vision-preview"
 
 if __name__ == "__main__":
     main()
