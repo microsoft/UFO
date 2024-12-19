@@ -6,6 +6,7 @@ The UFO project is organized into a well-defined directory structure to facilita
  ┣ 📂learner                 # Folder to build the vector database for help documents
  ┣ 📂model_worker            # Folder to store tools for deploying your own model
  ┣ 📂record_processor        # Folder to parse human demonstrations from Windows Step Recorder and build the vector database
+ ┣ 📂dataflow                # Folder for the code of data collection pipeline for Large Action Model (LAM)
  ┣ 📂vetordb                 # Folder to store all data in the vector database for RAG (Retrieval-Augmented Generation)
  ┣ 📂logs                    # Folder to store logs, generated after the program starts
  ┗ 📂ufo                     # Directory containing main project code
@@ -17,6 +18,7 @@ The UFO project is organized into a well-defined directory structure to facilita
     ┣ 📂prompter             # Prompt constructor for the agent
     ┣ 📂prompts              # Prompt templates and files to construct the full prompt
     ┣ 📂rag                  # Implementation of RAG from different sources to enhance agents' abilities
+    ┣ 📂trajectory           # Implementation of loading and parsing trajectories of task completion
     ┣ 📂utils                # Utility functions
     ┣ 📂config               # Configuration files
         ┣ 📜config.yaml      # User configuration file for LLM and other settings
@@ -37,6 +39,9 @@ The UFO project is organized into a well-defined directory structure to facilita
 ### [model_worker](https://github.com/microsoft/UFO/tree/main/model_worker)
 - **Purpose:** Contains tools and scripts necessary for deploying custom models.
 - **Details:** This includes model deployment configurations, and management tools for integrating custom models into the project.
+### [dataflow](https://github.com/microsoft/UFO/tree/main/dataflow)
+- **Purpose:** Contains the code for the data collection pipeline for the Large Action Model (LAM).
+- **Details:** This directory includes scripts and tools for collecting and processing data to train the Large Action Model, improving the agents' performance and capabilities.
 ### [record_processor](https://github.com/microsoft/UFO/tree/main/record_processor)
 - **Purpose:** Parses human demonstrations recorded using the Windows Step Recorder and builds the vector database.
 - **Details:** This directory includes parsers, data processing scripts, and tools to convert human demonstrations into a format suitable for agent's retrieval.
@@ -74,6 +79,9 @@ The UFO project is organized into a well-defined directory structure to facilita
     #### [rag](https://github.com/microsoft/UFO/tree/main/ufo/rag)
     - **Purpose:** Implements Retrieval-Augmented Generation (RAG) from different sources to enhance the agents' abilities.
     - **etails:** This directory includes scripts and tools for integrating various data sources into the RAG framework, improving the accuracy and relevance of the agents' outputs.
+    #### [trajectory](https://github.com/microsoft/UFO/tree/main/ufo/trajectory)
+    - **Purpose:** Implements loading and parsing of task completion trajectories.
+    - **Details:** This directory includes tools and scripts to load and parse task completion trajectories, enabling agents to learn from past experiences or for evaluation purposes.
     #### [utils](https://github.com/microsoft/UFO/tree/main/ufo/utils)
     - **Purpose:** Contains utility functions.
     - **Details:** This directory includes helper functions, common utilities, and other reusable code snippets that support the project's operations.
