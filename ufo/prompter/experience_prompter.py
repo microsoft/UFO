@@ -191,6 +191,8 @@ class ExperiencePrompter(BasicPrompter):
                     print_with_color(
                         f"waring: The Response of the example {key} is empty.", "yellow"
                     )
+                    continue
+
                 response["Tips"] = self.example_prompt_template[key].get("Tips")
                 example = template.format(
                     request=self.example_prompt_template[key].get("Request"),
