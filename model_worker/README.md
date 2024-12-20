@@ -99,8 +99,62 @@ NOTE: `API_BASE` is the URL started in the Ollama LLM server and `API_MODEL` is 
 
 NOTE: You should create a new Python script `custom_model.py` in the ufo/llm folder like the format of the `placeholder.py`, which needs to inherit `BaseService` as the parent class, as well as the `__init__` and `chat_completion` methods. At the same time, you need to add the dynamic import of your file in the `get_service` method of `BaseService`.
 
-####EXAMPLE
-Also, ufo provides the usage of ***LLaVA-1.5*** and ***CogAgent*** as the example.
+#### EXAMPLE
+You can use the following code as example:
+```bash
+def chat_completion(self, messages, n, **kwargs):
+    retries = 0
+    while retries < self.max_retry:
+        try:
+            # Construct the request payload
+            payload = {
+                "messages": messages,
+                "n": n,
+            }
+
+            # Optionally, you can pass extra parameters through kwargs
+            payload.update(kwargs)
+
+            # Make the actual API request
+            response = self._make_api_request(payload)
+
+            # Process the response (you can adjust this based on your API's format)
+            return response
+
+        except Exception as e:
+            retries += 1
+            if retries >= self.max_retry:
+                raise
+    raise Exception("Max retries reached. Unable to get response from the API.")
+
+def _make_api_request(self, payload):
+    # Config as you wished
+    headers = {
+            "Authorization": f"Bearer {self.api_key}",
+            "Content-Type": "application/json"
+        }
+
+    try:
+        # Send POST request to the API endpoint
+        response = requests.post(
+            self.api_base,
+            headers=headers,
+            json=payload,
+            timeout=self.timeout
+        )
+
+        # Check if the request was successful
+        response.raise_for_status()
+
+        # Return the JSON response from the API
+        return response.json()
+
+    except requests.exceptions.RequestException as e:
+        raise
+
+```
+
+Also, UFO provides the usage of ***LLaVA-1.5*** and ***CogAgent*** as the example.
 
 1.1 Download the essential libs of your custom model.
 
