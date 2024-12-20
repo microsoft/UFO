@@ -100,7 +100,7 @@ NOTE: `API_BASE` is the URL started in the Ollama LLM server and `API_MODEL` is 
 NOTE: You should create a new Python script `custom_model.py` in the ufo/llm folder like the format of the `placeholder.py`, which needs to inherit `BaseService` as the parent class, as well as the `__init__` and `chat_completion` methods. At the same time, you need to add the dynamic import of your file in the `get_service` method of `BaseService`.
 
 #### EXAMPLE
-You can use the following code as example:
+You can use the following code as an example to configure your own model:
 ```bash
 def chat_completion(self, messages, n, **kwargs):
     retries = 0
