@@ -4,6 +4,7 @@
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints
 /test/*
+/testing/*
 /deprecated/*
 /test/*.ipynb
 /logs/*

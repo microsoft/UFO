@@ -579,6 +579,16 @@ class PhotographerFacade:
         :return: The concatenated image.
         """
         # Open the images
+        if not os.path.exists(image1_path):
+            utils.print_with_color(f"Waring: {image1_path} does not exist.", "yellow")
+
+            return Image.new("RGB", (0, 0))
+
+        if not os.path.exists(image2_path):
+            utils.print_with_color(f"Waring: {image2_path} does not exist.", "yellow")
+
+            return Image.new("RGB", (0, 0))
+
         image1 = Image.open(image1_path)
         image2 = Image.open(image2_path)
 
