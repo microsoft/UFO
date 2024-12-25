@@ -60,11 +60,7 @@ class BaseProcessor(ABC):
         self._action = None
         self._plan = None
 
-        self._control_log = {
-            "control_class": None,
-            "control_type": None,
-            "control_automation_id": None,
-        }
+        self._control_log = None
 
         self._total_time_cost = 0
         self._time_cost = {}

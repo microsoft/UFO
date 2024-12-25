@@ -5,18 +5,18 @@
 import json
 import os
 import time
-from typing import TYPE_CHECKING, Dict, List, Tuple
+from dataclasses import asdict, dataclass, field
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control import ui_tree
-from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
+from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
-
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -24,6 +24,45 @@ if TYPE_CHECKING:
 configs = Config.get_instance().config_data
 if configs is not None:
     BACKEND = configs["CONTROL_BACKEND"]
+
+
+@dataclass
+class AppAgentAdditionalMemory:
+    """
+    The additional memory data for the AppAgent.
+    """
+
+    Step: int
+    RoundStep: int
+    AgentStep: int
+    Round: int
+    Subtask: str
+    SubtaskIndex: int
+    Action: str
+    ActionType: str
+    Request: str
+    Agent: str
+    AgentName: str
+    Application: str
+    Cost: float
+    Results: str
+    error: str
+    time_cost: Dict[str, float]
+    ControlLog: Dict[str, Any]
+    UserConfirm: Optional[str] = None
+
+
+@dataclass
+class AppAgentControlLog:
+    """
+    The control log data for the AppAgent.
+    """
+
+    control_class: str = ""
+    control_type: str = ""
+    control_automation_id: str = ""
+    control_friendly_class_name: str = ""
+    control_coordinates: Dict[str, int] = field(default_factory=dict)
 
 
 class AppAgentProcessor(BaseProcessor):
@@ -315,20 +354,21 @@ class AppAgentProcessor(BaseProcessor):
                     self.application_window.rectangle(),
                     control_selected.rectangle(),
                 )
-                self._control_log = {
-                    "control_class": control_selected.element_info.class_name,
-                    "control_type": control_selected.element_info.control_type,
-                    "control_automation_id": control_selected.element_info.automation_id,
-                    "control_friendly_class_name": control_selected.friendly_class_name(),
-                    "control_coordinates": {
+
+                self._control_log = AppAgentControlLog(
+                    control_class=control_selected.element_info.class_name,
+                    control_type=control_selected.element_info.control_type,
+                    control_automation_id=control_selected.element_info.automation_id,
+                    control_friendly_class_name=control_selected.friendly_class_name(),
+                    control_coordinates={
                         "left": control_coordinates[0],
                         "top": control_coordinates[1],
                         "right": control_coordinates[2],
                         "bottom": control_coordinates[3],
                     },
-                }
+                )
             else:
-                self._control_log = {}
+                self._control_log = AppAgentControlLog()
 
             if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
                 self.handle_screenshot_status()
@@ -383,31 +423,40 @@ class AppAgentProcessor(BaseProcessor):
             self.application_window
         )
 
-        # Log additional information for the app agent.
-        additional_memory = {
-            "Step": self.session_step,
-            "RoundStep": self.round_step,
-            "AgentStep": self.app_agent.step,
-            "Round": self.round_num,
-            "Subtask": self.subtask,
-            "SubtaskIndex": self.round_subtask_amount,
-            "Action": self.action,
-            "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation),
-            "Request": self.request,
-            "Agent": "AppAgent",
-            "AgentName": self.app_agent.name,
-            "Application": app_root,
-            "Cost": self._cost,
-            "Results": self._results,
-            "error": self._exeception_traceback,
-        }
-        self.add_to_memory(self._response_json)
-        self.add_to_memory(additional_memory)
-        self.add_to_memory(self._control_log)
-        self.add_to_memory({"time_cost": self._time_cost})
+        action_type = self.app_agent.Puppeteer.get_command_types(self._operation)
 
-        if self.status.upper() == self._agent_status_manager.CONFIRM.value:
-            self._memory_data.add_values_from_dict({"UserConfirm": "Yes"})
+        # Create the additional memory data for the log.
+        additional_memory = AppAgentAdditionalMemory(
+            Step=self.session_step,
+            RoundStep=self.round_step,
+            AgentStep=self.app_agent.step,
+            Round=self.round_num,
+            Subtask=self.subtask,
+            SubtaskIndex=self.round_subtask_amount,
+            Action=self.action,
+            ActionType=action_type,
+            Request=self.request,
+            Agent="AppAgent",
+            AgentName=self.app_agent.name,
+            Application=app_root,
+            Cost=self._cost,
+            Results=self._results,
+            error=self._exeception_traceback,
+            time_cost=self._time_cost,
+            ControlLog=asdict(self._control_log),
+            UserConfirm=(
+                "Yes"
+                if self.status.upper()
+                == self._agent_status_manager.CONFIRM.value.upper()
+                else None
+            ),
+        )
+
+        # Log the original response from the LLM.
+        self.add_to_memory(self._response_json)
+
+        # Log the additional memory data for the AppAgent.
+        self.add_to_memory(asdict(additional_memory))
 
     def update_memory(self) -> None:
         """

@@ -3,7 +3,8 @@
 
 
 import json
-from typing import TYPE_CHECKING
+from dataclasses import asdict, dataclass
+from typing import TYPE_CHECKING, Any, Dict
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -18,6 +19,42 @@ if configs is not None:
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
+
+
+@dataclass
+class HostAgentAdditionalMemory:
+    """
+    The additional memory for the host agent.
+    """
+
+    Step: int
+    RoundStep: int
+    AgentStep: int
+    Round: int
+    ControlLabel: str
+    SubtaskIndex: int
+    Action: str
+    ActionType: str
+    Request: str
+    Agent: str
+    AgentName: str
+    Application: str
+    Cost: float
+    Results: str
+    error: str
+    time_cost: Dict[str, float]
+    ControlLog: Dict[str, Any]
+
+
+@dataclass
+class HostAgentControlLog:
+    """
+    The control log data for the HostAgent.
+    """
+
+    control_class: str = ""
+    control_type: str = ""
+    control_automation_id: str = ""
 
 
 class HostAgentProcessor(BaseProcessor):
@@ -233,11 +270,11 @@ class HostAgentProcessor(BaseProcessor):
         :param application_window: The application window.
         """
 
-        self._control_log = {
-            "control_class": application_window.element_info.class_name,
-            "control_type": application_window.element_info.control_type,
-            "control_automation_id": application_window.element_info.automation_id,
-        }
+        self._control_log = HostAgentControlLog(
+            control_class=application_window.element_info.class_name,
+            control_type=application_window.element_info.control_type,
+            control_automation_id=application_window.element_info.automation_id,
+        )
 
         # Get the root name of the application.
         self.app_root = self.control_inspector.get_application_root_name(
@@ -279,28 +316,29 @@ class HostAgentProcessor(BaseProcessor):
         """
         Sync the memory of the HostAgent.
         """
-        additional_memory = {
-            "Step": self.session_step,
-            "RoundStep": self.round_step,
-            "AgentStep": self.host_agent.step,
-            "Round": self.round_num,
-            "ControlLabel": self.control_label,
-            "SubtaskIndex": -1,
-            "Action": self.action,
-            "ActionType": "UIControl",
-            "Request": self.request,
-            "Agent": "HostAgent",
-            "AgentName": self.host_agent.name,
-            "Application": self.app_root,
-            "Cost": self._cost,
-            "Results": self._results,
-            "error": self._exeception_traceback,
-        }
+
+        additional_memory = HostAgentAdditionalMemory(
+            Step=self.session_step,
+            RoundStep=self.round_step,
+            AgentStep=self.host_agent.step,
+            Round=self.round_num,
+            ControlLabel=self.control_label,
+            SubtaskIndex=-1,
+            Action=self.action,
+            ActionType="Bash" if self.bash_command else "UIControl",
+            Request=self.request,
+            Agent="HostAgent",
+            AgentName=self.host_agent.name,
+            Application=self.app_root,
+            Cost=self._cost,
+            Results=self._results,
+            error=self._exeception_traceback,
+            time_cost=self._time_cost,
+            ControlLog=asdict(self._control_log),
+        )
 
         self.add_to_memory(self._response_json)
-        self.add_to_memory(additional_memory)
-        self.add_to_memory(self._control_log)
-        self.add_to_memory({"time_cost": self._time_cost})
+        self.add_to_memory(asdict(additional_memory))
 
     def update_memory(self) -> None:
         """
