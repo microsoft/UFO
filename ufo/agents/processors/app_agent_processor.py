@@ -87,6 +87,20 @@ class AppAgentRequestLog:
     prompt: Dict[str, Any]
 
 
+@dataclass
+class ActionInfo:
+    """
+    The action information data for the AppAgent.
+    """
+
+    function: str = ""
+    args: Dict[str, Any] = field(default_factory=dict)
+    control_label: Optional[str] = None
+    control_text: Optional[str] = None
+    results: Optional[str] = None
+    repeat_times: Optional[int] = None
+
+
 class AppAgentProcessor(BaseProcessor):
     """
     The processor for the app agent at a single step.
