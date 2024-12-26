@@ -4,12 +4,14 @@
 
 import json
 from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict
 
-from ufo.agents.processors.app_agent_processor import AppAgentProcessor
+from ufo.agents.processors.app_agent_processor import (
+    AppAgentProcessor,
+    AppAgentRequestLog,
+)
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
-from typing import Any, Dict, List
 
 if TYPE_CHECKING:
     from ufo.agents.agent.follower_agent import FollowerAgent
@@ -18,27 +20,13 @@ configs = Config.get_instance().config_data
 
 
 @dataclass
-class FollowerAgentRequestLog:
+class FollowerAgentRequestLog(AppAgentRequestLog):
     """
     The request log data for the AppAgent.
     """
 
-    step: int
-    dynamic_examples: List[str]
-    dynamic_tips: List[str]
-    dynamic_knowledge: List[str]
-    image_list: List[str]
-    prev_subtask: List[str]
-    plan: List[str]
-    request: str
-    control_info: List[Dict[str, str]]
-    subtask: str
-    host_message: str
     current_state: Dict[str, Any]
     state_diff: Dict[str, Any]
-    blackboard_prompt: List[str]
-    include_last_screenshot: bool
-    prompt: Dict[str, Any]
 
 
 class FollowerAppAgentProcessor(AppAgentProcessor):
