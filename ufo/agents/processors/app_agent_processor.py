@@ -386,26 +386,7 @@ class AppAgentProcessor(BaseProcessor):
                 control_selected.draw_outline(colour="red", thickness=3)
                 time.sleep(configs.get("RECTANGLE_TIME", 0))
 
-            if control_selected:
-                control_coordinates = PhotographerDecorator.coordinate_adjusted(
-                    self.application_window.rectangle(),
-                    control_selected.rectangle(),
-                )
-
-                self._control_log = AppAgentControlLog(
-                    control_class=control_selected.element_info.class_name,
-                    control_type=control_selected.element_info.control_type,
-                    control_automation_id=control_selected.element_info.automation_id,
-                    control_friendly_class_name=control_selected.friendly_class_name(),
-                    control_coordinates={
-                        "left": control_coordinates[0],
-                        "top": control_coordinates[1],
-                        "right": control_coordinates[2],
-                        "bottom": control_coordinates[3],
-                    },
-                )
-            else:
-                self._control_log = AppAgentControlLog()
+            self._control_log = self._get_control_log(control_selected)
 
             if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
                 self.handle_screenshot_status()
@@ -418,6 +399,37 @@ class AppAgentProcessor(BaseProcessor):
                 self._results = ""
 
                 return
+
+    def _get_control_log(
+        self, control_selected: Optional[UIAWrapper]
+    ) -> AppAgentControlLog:
+        """
+        Get the control log data for the selected control.
+        :param control_selected: The selected control item.
+        :return: The control log data for the selected control.
+        """
+
+        if not control_selected:
+            return AppAgentControlLog()
+
+        control_coordinates = PhotographerDecorator.coordinate_adjusted(
+            self.application_window.rectangle(), control_selected.rectangle()
+        )
+
+        control_log = AppAgentControlLog(
+            control_class=control_selected.element_info.class_name,
+            control_type=control_selected.element_info.control_type,
+            control_automation_id=control_selected.element_info.automation_id,
+            control_friendly_class_name=control_selected.friendly_class_name(),
+            control_coordinates={
+                "left": control_coordinates[0],
+                "top": control_coordinates[1],
+                "right": control_coordinates[2],
+                "bottom": control_coordinates[3],
+            },
+        )
+
+        return control_log
 
     def capture_control_screenshot(self, control_selected: UIAWrapper) -> None:
         """
