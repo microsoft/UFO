@@ -65,6 +65,28 @@ class AppAgentControlLog:
     control_coordinates: Dict[str, int] = field(default_factory=dict)
 
 
+@dataclass
+class AppAgentRequestLog:
+    """
+    The request log data for the AppAgent.
+    """
+
+    step: int
+    dynamic_examples: List[str]
+    dynamic_tips: List[str]
+    dynamic_knowledge: List[str]
+    image_list: List[str]
+    prev_subtask: List[str]
+    plan: List[str]
+    request: str
+    control_info: List[Dict[str, str]]
+    subtask: str
+    host_message: str
+    blackboard_prompt: List[str]
+    include_last_screenshot: bool
+    prompt: Dict[str, Any]
+
+
 class AppAgentProcessor(BaseProcessor):
     """
     The processor for the app agent at a single step.
@@ -263,6 +285,11 @@ class AppAgentProcessor(BaseProcessor):
             configs["RAG_ONLINE_RETRIEVED_TOPK"],
         )
 
+        if not self.app_agent.blackboard.is_empty():
+            blackboard_prompt = self.app_agent.blackboard.blackboard_to_prompt()
+        else:
+            blackboard_prompt = []
+
         # Construct the prompt message for the AppAgent.
         self._prompt_message = self.app_agent.message_constructor(
             dynamic_examples=examples,
@@ -275,20 +302,30 @@ class AppAgentProcessor(BaseProcessor):
             request=self.request,
             subtask=self.subtask,
             host_message=self.host_message,
+            blackboard_prompt=blackboard_prompt,
             include_last_screenshot=configs["INCLUDE_LAST_SCREENSHOT"],
         )
 
         # Log the prompt message. Only save them in debug mode.
-        log = json.dumps(
-            {
-                "step": self.session_step,
-                "prompt": self._prompt_message,
-                "control_items": self._control_info,
-                "filted_control_items": self.filtered_control_info,
-                "status": "",
-            }
+        request_data = AppAgentRequestLog(
+            step=self.session_step,
+            dynamic_examples=examples,
+            dynamic_tips=tips,
+            dynamic_knowledge=external_knowledge_prompt,
+            image_list=self._image_url,
+            prev_subtask=self.previous_subtasks,
+            plan=self.prev_plan,
+            request=self.request,
+            control_info=self.filtered_control_info,
+            subtask=self.subtask,
+            host_message=self.host_message,
+            blackboard_prompt=blackboard_prompt,
+            include_last_screenshot=configs["INCLUDE_LAST_SCREENSHOT"],
+            prompt=self._prompt_message,
         )
-        self.request_logger.debug(log)
+
+        request_log_str = json.dumps(asdict(request_data), indent=4, ensure_ascii=False)
+        self.request_logger.debug(request_log_str)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer

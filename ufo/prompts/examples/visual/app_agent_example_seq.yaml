@@ -174,7 +174,6 @@ example6:
     - The number of stars of a Github repo page can be found in the repo page visually.
 
 
-
 example7: 
   Request: |- 
     Please remind me to get party dinner (5 people) preparation done before 5PM today with steps and notes.
@@ -191,14 +190,17 @@ example7:
         ControlLabel: 19
         ControlText: Add a task in “My Day”
         Status: CONTINUE
+      - Function: keyboard_input
+        Args: {keys: "{ENTER}", control_focus: true}
+        ControlLabel: 19
+        ControlText: Add a task in “My Day”
     Plan:
-      - (1) After inputting the task, press the Enter key to create the task.
-      - (2) Click the ListItem of the task that was just created to set more details.
-      - (3) Add a step 1 for the task by inputing 'Menu Planning and Ingredient Acquisition' in the Add step edit control.
-      - (4) Add a step 2 for the task by inputing 'Meal Preparation Schedule' in the Add step edit control following the step one.
-      - (5) Add a step 3 for the task by inputing 'Setting Up the Dining Area' in the Add step edit control following the step two.
-      - (6) Add a note to this task in the 'Add note' edit blocking at the bottom by inputing 'Considering preferences, dietary restrictions and food allergiesof the guests.'.
-      - (7) Close the details view by clicking the 'Dismiss detail view' botton.
+      - (1) Click the ListItem of the task that was just created to set more details.
+      - (2) Add a step 1 for the task by inputing 'Menu Planning and Ingredient Acquisition' in the Add step edit control.
+      - (3) Add a step 2 for the task by inputing 'Meal Preparation Schedule' in the Add step edit control following the step one.
+      - (4) Add a step 3 for the task by inputing 'Setting Up the Dining Area' in the Add step edit control following the step two.
+      - (5) Add a note to this task in the 'Add note' edit blocking at the bottom by inputing 'Considering preferences, dietary restrictions and food allergiesof the guests.'.
+      - (6) Close the details view by clicking the 'Dismiss detail view' botton.
     Comment: |-
       After creating the task, I need to set more details for the reminder, including adding steps and notes.
     SaveScreenshot:

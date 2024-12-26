@@ -96,6 +96,7 @@ class AppAgent(BasicAgent):
         request: str,
         subtask: str,
         host_message: List[str],
+        blackboard_prompt: List[Dict[str, str]],
         include_last_screenshot: bool,
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
@@ -109,6 +110,7 @@ class AppAgent(BasicAgent):
         :param request: The overall user request.
         :param subtask: The subtask for the current AppAgent to process.
         :param host_message: The message from the HostAgent.
+        :param blackboard_prompt: The prompt message from the blackboard.
         :param include_last_screenshot: The flag indicating whether to include the last screenshot.
         :return: The prompt message.
         """
@@ -129,9 +131,7 @@ class AppAgent(BasicAgent):
             include_last_screenshot=include_last_screenshot,
         )
 
-        if not self.blackboard.is_empty():
-
-            blackboard_prompt = self.blackboard.blackboard_to_prompt()
+        if blackboard_prompt:
             appagent_prompt_user_message = (
                 blackboard_prompt + appagent_prompt_user_message
             )

@@ -3,16 +3,42 @@
 
 
 import json
+from dataclasses import asdict, dataclass
+from typing import TYPE_CHECKING
 
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.config.config import Config
-from typing import TYPE_CHECKING
 from ufo.module.context import Context, ContextNames
+from typing import Any, Dict, List
 
 if TYPE_CHECKING:
     from ufo.agents.agent.follower_agent import FollowerAgent
 
 configs = Config.get_instance().config_data
+
+
+@dataclass
+class FollowerAgentRequestLog:
+    """
+    The request log data for the AppAgent.
+    """
+
+    step: int
+    dynamic_examples: List[str]
+    dynamic_tips: List[str]
+    dynamic_knowledge: List[str]
+    image_list: List[str]
+    prev_subtask: List[str]
+    plan: List[str]
+    request: str
+    control_info: List[Dict[str, str]]
+    subtask: str
+    host_message: str
+    current_state: Dict[str, Any]
+    state_diff: Dict[str, Any]
+    blackboard_prompt: List[str]
+    include_last_screenshot: bool
+    prompt: Dict[str, Any]
 
 
 class FollowerAppAgentProcessor(AppAgentProcessor):
@@ -43,6 +69,11 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             configs["RAG_ONLINE_RETRIEVED_TOPK"],
         )
 
+        if not self.app_agent.blackboard.is_empty():
+            blackboard_prompt = self.app_agent.blackboard.blackboard_to_prompt()
+        else:
+            blackboard_prompt = []
+
         # Get the current state of the application and the state difference between the current state and the previous state.
         current_state = {}
         state_diff = {}
@@ -60,16 +91,26 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             host_message=[],
             current_state=current_state,
             state_diff=state_diff,
+            blackboard_prompt=blackboard_prompt,
             include_last_screenshot=configs["INCLUDE_LAST_SCREENSHOT"],
         )
 
-        log = json.dumps(
-            {
-                "step": self.session_step,
-                "prompt": self._prompt_message,
-                "control_items": self._control_info,
-                "filted_control_items": self.filtered_control_info,
-                "status": "",
-            }
+        request_data = FollowerAgentRequestLog(
+            step=self.session_step,
+            dynamic_examples=examples,
+            dynamic_tips=tips,
+            dynamic_knowledge=external_knowledge_prompt,
+            image_list=self._image_url,
+            prev_subtask=[],
+            plan=self.prev_plan,
+            request=self.request,
+            control_info=self.filtered_control_info,
+            subtask=self.request,
+            host_message=[],
+            blackboard_prompt=blackboard_prompt,
+            include_last_screenshot=configs["INCLUDE_LAST_SCREENSHOT"],
+            prompt=self._prompt_message,
         )
-        self.request_logger.debug(log)
+
+        request_log_str = json.dumps(asdict(request_data), indent=4, ensure_ascii=False)
+        self.request_logger.debug(request_log_str)

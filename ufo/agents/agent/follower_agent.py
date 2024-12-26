@@ -102,6 +102,7 @@ class FollowerAgent(AppAgent):
         host_message: List[str],
         current_state: Dict[str, str],
         state_diff: Dict[str, str],
+        blackboard_prompt: List[Dict[str, str]],
         include_last_screenshot: bool,
     ) -> List[Dict[str, str]]:
         """
@@ -118,6 +119,7 @@ class FollowerAgent(AppAgent):
         :param host_message: The host message.
         :param current_state: The current state of the app.
         :param state_diff: The state difference between the current state and the previous state.
+        :param blackboard_prompt: The blackboard prompt.
         :param include_last_screenshot: The flag indicating whether the last screenshot should be included.
         :return: The prompt message.
         """

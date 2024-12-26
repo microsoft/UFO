@@ -170,6 +170,7 @@ class HostAgent(BasicAgent):
         plan: List[str],
         prev_subtask: List[Dict[str, str]],
         request: str,
+        blackboard_prompt: List[Dict[str, str]],
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the message.
@@ -189,8 +190,7 @@ class HostAgent(BasicAgent):
             user_request=request,
         )
 
-        if not self.blackboard.is_empty():
-            blackboard_prompt = self.blackboard.blackboard_to_prompt()
+        if blackboard_prompt:
             hostagent_prompt_user_message = (
                 blackboard_prompt + hostagent_prompt_user_message
             )

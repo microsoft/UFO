@@ -4,7 +4,7 @@
 
 import json
 from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Any, Dict, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -55,6 +55,22 @@ class HostAgentControlLog:
     control_class: str = ""
     control_type: str = ""
     control_automation_id: str = ""
+
+
+@dataclass
+class HostAgentRequestLog:
+    """
+    The request log data for the AppAgent.
+    """
+
+    step: int
+    image_list: List[str]
+    os_info: Dict[str, str]
+    plan: List[str]
+    prev_subtask: List[str]
+    request: str
+    blackboard_prompt: List[str]
+    prompt: Dict[str, Any]
 
 
 class HostAgentProcessor(BaseProcessor):
@@ -133,6 +149,11 @@ class HostAgentProcessor(BaseProcessor):
         Get the prompt message.
         """
 
+        if not self.host_agent.blackboard.is_empty():
+            blackboard_prompt = self.host_agent.blackboard.blackboard_to_prompt()
+        else:
+            blackboard_prompt = []
+
         # Construct the prompt message for the host agent.
         self._prompt_message = self.host_agent.message_constructor(
             image_list=[self._desktop_screen_url],
@@ -140,19 +161,23 @@ class HostAgentProcessor(BaseProcessor):
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
             request=self.request,
+            blackboard_prompt=blackboard_prompt,
+        )
+
+        request_data = HostAgentRequestLog(
+            step=self.session_step,
+            image_list=[self._desktop_screen_url],
+            os_info=self._desktop_windows_info,
+            plan=self.prev_plan,
+            prev_subtask=self.previous_subtasks,
+            request=self.request,
+            blackboard_prompt=blackboard_prompt,
+            prompt=self._prompt_message,
         )
 
         # Log the prompt message. Only save them in debug mode.
-        log = json.dumps(
-            {
-                "step": self.session_step,
-                "prompt": self._prompt_message,
-                "control_items": self._desktop_windows_info,
-                "filted_control_items": self._desktop_windows_info,
-                "status": "",
-            }
-        )
-        self.request_logger.debug(log)
+        request_log_str = json.dumps(asdict(request_data), indent=4, ensure_ascii=False)
+        self.request_logger.debug(request_log_str)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
