@@ -23,7 +23,7 @@ if TYPE_CHECKING:
 
 configs = Config.get_instance().config_data
 if configs is not None:
-    BACKEND = configs["CONTROL_BACKEND"]
+    BACKEND = configs.get("CONTROL_BACKEND", "uia")
 
 
 @dataclass
@@ -172,8 +172,8 @@ class AppAgentProcessor(BaseProcessor):
         else:
             control_list = self.control_inspector.find_control_elements_in_descendants(
                 self.application_window,
-                control_type_list=configs["CONTROL_LIST"],
-                class_name_list=configs["CONTROL_LIST"],
+                control_type_list=configs.get("CONTROL_LIST", []),
+                class_name_list=configs.get("CONTROL_LIST", []),
             )
 
         # Get the annotation dictionary for the control items, in a format of {control_label: control_element}.
@@ -207,7 +207,7 @@ class AppAgentProcessor(BaseProcessor):
                 )
 
         # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
-        if configs["INCLUDE_LAST_SCREENSHOT"]:
+        if configs.get("INCLUDE_LAST_SCREENSHOT", True):
             last_screenshot_save_path = (
                 self.log_path + f"action_step{self.session_step - 1}.png"
             )
@@ -224,7 +224,7 @@ class AppAgentProcessor(BaseProcessor):
             ]
 
         # Whether to concatenate the screenshots of clean screenshot and annotated screenshot into one image.
-        if configs["CONCAT_SCREENSHOT"]:
+        if configs.get("CONCAT_SCREENSHOT", False):
             self.photographer.concat_screenshots(
                 screenshot_save_path,
                 annotated_screenshot_save_path,
@@ -243,8 +243,7 @@ class AppAgentProcessor(BaseProcessor):
             self._image_url += [screenshot_url, screenshot_annotated_url]
 
         # Save the XML file for the current state.
-        if configs["LOG_XML"]:
-
+        if configs.get("LOG_XML", False):
             self._save_to_xml()
 
     @BaseProcessor.exception_capture
@@ -281,8 +280,8 @@ class AppAgentProcessor(BaseProcessor):
         # Get the external knowledge prompt for the AppAgent using the offline and online retrievers.
         external_knowledge_prompt = self.app_agent.external_knowledge_prompt_helper(
             self.request,
-            configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"],
-            configs["RAG_ONLINE_RETRIEVED_TOPK"],
+            configs.get("RAG_OFFLINE_DOCS_RETRIEVED_TOPK", 0),
+            configs.get("RAG_ONLINE_RETRIEVED_TOPK", 0),
         )
 
         if not self.app_agent.blackboard.is_empty():
@@ -303,7 +302,7 @@ class AppAgentProcessor(BaseProcessor):
             subtask=self.subtask,
             host_message=self.host_message,
             blackboard_prompt=blackboard_prompt,
-            include_last_screenshot=configs["INCLUDE_LAST_SCREENSHOT"],
+            include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
         )
 
         # Log the prompt message. Only save them in debug mode.
@@ -320,7 +319,7 @@ class AppAgentProcessor(BaseProcessor):
             subtask=self.subtask,
             host_message=self.host_message,
             blackboard_prompt=blackboard_prompt,
-            include_last_screenshot=configs["INCLUDE_LAST_SCREENSHOT"],
+            include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
             prompt=self._prompt_message,
         )
 
@@ -523,7 +522,8 @@ class AppAgentProcessor(BaseProcessor):
 
         # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
         memorized_action = {
-            key: self._memory_data.to_dict().get(key) for key in configs["HISTORY_KEYS"]
+            key: self._memory_data.to_dict().get(key)
+            for key in configs.get("HISTORY_KEYS", [])
         }
 
         if self.is_confirm():
