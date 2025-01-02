@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Dict, List
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.processors.basic import BaseProcessor
+from ufo.agents.processors.basic import BaseProcessor, BaseControlLog
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
@@ -44,17 +44,6 @@ class HostAgentAdditionalMemory:
     error: str
     time_cost: Dict[str, float]
     ControlLog: Dict[str, Any]
-
-
-@dataclass
-class HostAgentControlLog:
-    """
-    The control log data for the HostAgent.
-    """
-
-    control_class: str = ""
-    control_type: str = ""
-    control_automation_id: str = ""
 
 
 @dataclass
@@ -227,8 +216,6 @@ class HostAgentProcessor(BaseProcessor):
         # If the new application window is available, select the application.
         if new_app_window is not None:
             self._select_application(new_app_window)
-        else:
-            self._control_log = HostAgentControlLog()
 
         # If the bash command is not empty, run the shell command.
         if self.bash_command:
@@ -297,7 +284,7 @@ class HostAgentProcessor(BaseProcessor):
         :param application_window: The application window.
         """
 
-        self._control_log = HostAgentControlLog(
+        self._control_log = BaseControlLog(
             control_class=application_window.element_info.class_name,
             control_type=application_window.element_info.control_type,
             control_automation_id=application_window.element_info.automation_id,

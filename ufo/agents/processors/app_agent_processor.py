@@ -6,14 +6,14 @@ import json
 import os
 import time
 from dataclasses import asdict, dataclass, field
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.processors.basic import BaseProcessor
-from ufo.automator.ui_control import ui_tree
+from ufo.agents.processors.basic import BaseControlLog, BaseProcessor
 from ufo.automator.puppeteer import AppPuppeteer
+from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.config.config import Config
@@ -54,14 +54,11 @@ class AppAgentAdditionalMemory:
 
 
 @dataclass
-class AppAgentControlLog:
+class AppAgentControlLog(BaseControlLog):
     """
     The control log data for the AppAgent.
     """
 
-    control_class: str = ""
-    control_type: str = ""
-    control_automation_id: str = ""
     control_friendly_class_name: str = ""
     control_coordinates: Dict[str, int] = field(default_factory=dict)
 
@@ -86,6 +83,17 @@ class AppAgentRequestLog:
     blackboard_prompt: List[str]
     include_last_screenshot: bool
     prompt: Dict[str, Any]
+
+
+@dataclass
+class ActionExecutionLog:
+    """
+    The action execution log data.
+    """
+
+    status: str = ""
+    error: str = ""
+    results: str = ""
 
 
 class OneStepAction:
@@ -252,6 +260,7 @@ class AppAgentProcessor(BaseProcessor):
         self._image_url = []
         self.control_filter_factory = ControlFilterFactory()
         self.filtered_annotation_dict = None
+        self.screenshot_save_path = None
 
     @property
     def action(self) -> str:
@@ -292,6 +301,8 @@ class AppAgentProcessor(BaseProcessor):
 
         # Define the paths for the screenshots saved.
         screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
+        self.screenshot_save_path = screenshot_save_path
+
         annotated_screenshot_save_path = (
             self.log_path + f"action_step{self.session_step}_annotated.png"
         )
@@ -505,6 +516,42 @@ class AppAgentProcessor(BaseProcessor):
         self.status = self._response_json.get("Status", "")
         self.app_agent.print_response(self._response_json)
 
+    # @BaseProcessor.exception_capture
+    # @BaseProcessor.method_timer
+    # def execute_action(self) -> None:
+    #     """
+    #     Execute the action.
+    #     """
+
+    #     control_selected = self._annotation_dict.get(self._control_label, None)
+    #     # Save the screenshot of the tagged selected control.
+    #     self.capture_control_screenshot(control_selected)
+
+    #     self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
+    #         control_selected, self.application_window
+    #     )
+
+    #     if self._operation:
+
+    #         if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
+    #             if control_selected:
+    #                 control_selected.draw_outline(colour="red", thickness=3)
+    #                 time.sleep(configs.get("RECTANGLE_TIME", 0))
+
+    #         self._control_log = self._get_control_log(control_selected)
+
+    #         if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
+    #             self.handle_screenshot_status()
+    #         else:
+    #             self._results = self.app_agent.Puppeteer.execute_command(
+    #                 self._operation, self._args
+    #             )
+    #             self.control_reannotate = None
+    #         if not utils.is_json_serializable(self._results):
+    #             self._results = ""
+
+    #             return
+
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def execute_action(self) -> None:
@@ -512,34 +559,96 @@ class AppAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
+        action = OneStepAction(
+            function=self._operation,
+            args=self._args,
+            control_label=self._control_label,
+            control_text=self.control_text,
+            status=self.status,
+        )
+
+        execution_log, control_log = self.single_action_flow(action)
+        self._results = asdict(execution_log)
+        self._control_log = control_log
+
         control_selected = self._annotation_dict.get(self._control_label, None)
         # Save the screenshot of the tagged selected control.
         self.capture_control_screenshot(control_selected)
 
+    def single_action_flow(
+        self, action: OneStepAction, early_stop: bool = False
+    ) -> Tuple[ActionExecutionLog, AppAgentControlLog]:
+        """
+        Execute a single action.
+        :param action: The action to execute.
+        :param early_stop: Whether to stop the execution.
+        :return: The execution result and the control log if available.
+        """
+
+        if early_stop:
+            return ActionExecutionLog(
+                status="error", error="Early stop due to error in previous action."
+            )
+
+        control_selected: UIAWrapper = self._annotation_dict.get(
+            action.control_label, None
+        )
+
+        # If the control is selected, but not available, return an error.
+        if control_selected is not None and not self._control_validation(
+            control_selected
+        ):
+
+            return (
+                ActionExecutionLog(
+                    status="error",
+                    error="Control is not available.",
+                ),
+                AppAgentControlLog(),
+            )
+
+        # Create the control receiver.
         self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
             control_selected, self.application_window
         )
 
-        if self._operation:
+        if action.function:
 
             if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
                 if control_selected:
                     control_selected.draw_outline(colour="red", thickness=3)
                     time.sleep(configs.get("RECTANGLE_TIME", 0))
 
-            self._control_log = self._get_control_log(control_selected)
+            control_log = self._get_control_log(control_selected)
 
-            if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
-                self.handle_screenshot_status()
-            else:
-                self._results = self.app_agent.Puppeteer.execute_command(
+            try:
+                results = self.app_agent.Puppeteer.execute_command(
                     self._operation, self._args
                 )
-                self.control_reannotate = None
-            if not utils.is_json_serializable(self._results):
-                self._results = ""
+                if not utils.is_json_serializable(results):
+                    results = ""
 
-                return
+                return (
+                    ActionExecutionLog(
+                        status="success",
+                        results=results,
+                    ),
+                    control_log,
+                )
+            except Exception as e:
+                return ActionExecutionLog(status="error", error=str(e)), control_log
+
+    def _control_validation(self, control: UIAWrapper) -> bool:
+        """
+        Validate the action.
+        :param action: The action to validate.
+        :return: The validation result.
+        """
+        try:
+            control.is_enabled()
+            return True
+        except:
+            return False
 
     def _get_control_log(
         self, control_selected: Optional[UIAWrapper]
@@ -572,10 +681,12 @@ class AppAgentProcessor(BaseProcessor):
 
         return control_log
 
-    def capture_control_screenshot(self, control_selected: UIAWrapper) -> None:
+    def capture_control_screenshot(
+        self, control_selected: Union[UIAWrapper, List[UIAWrapper]]
+    ) -> None:
         """
         Capture the screenshot of the selected control.
-        :param control_selected: The selected control item.
+        :param control_selected: The selected control item or a list of selected control items.
         """
         control_screenshot_save_path = (
             self.log_path + f"action_step{self.session_step}_selected_controls.png"
@@ -585,10 +696,17 @@ class AppAgentProcessor(BaseProcessor):
             {"SelectedControlScreenshot": control_screenshot_save_path}
         )
 
+        sub_control_list = (
+            control_selected
+            if isinstance(control_selected, list)
+            else [control_selected]
+        )
+
         self.photographer.capture_app_window_screenshot_with_rectangle(
             self.application_window,
-            sub_control_list=[control_selected],
+            sub_control_list=sub_control_list,
             save_path=control_screenshot_save_path,
+            background_screenshot_path=self.screenshot_save_path,
         )
 
     def handle_screenshot_status(self) -> None:

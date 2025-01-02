@@ -183,13 +183,18 @@ class RectangleDecorator(PhotographerDecorator):
         draw.rectangle(coordinate, outline=color, width=width)
         return image
 
-    def capture(self, save_path: str):
+    def capture(self, save_path: str, background_screenshot_path: Optional[str] = None):
         """
         Capture a screenshot with rectangles.
         :param save_path: The path to save the screenshot.
+        :param background_screenshot_path: The path of the background screenshot, optional. If provided, the rectangle will be drawn on the background screenshot instead of the control screenshot.
         :return: The screenshot with rectangles.
         """
-        screenshot = self.photographer.capture()
+        screenshot = (
+            self.photographer.capture()
+            if background_screenshot_path is None
+            else Image.open(background_screenshot_path)
+        )
         window_rect = self.photographer.control.rectangle()
 
         for control in self.sub_control_list:
@@ -467,6 +472,7 @@ class PhotographerFacade:
         color: str = "red",
         width=3,
         sub_control_list: List[UIAWrapper] = None,
+        background_screenshot_path: Optional[str] = None,
         save_path: Optional[str] = None,
     ) -> Image.Image:
         """
@@ -476,11 +482,13 @@ class PhotographerFacade:
         :param color: The color of the rectangle.
         :param width: The width of the rectangle.
         :param sub_control_list: The list of the controls to draw rectangles on.
+        :param background_screenshot_path: The path of the background screenshot, optional. If provided, the rectangle will be drawn on the background screenshot instead of the control screenshot.
+        :param save_path: The path to save the screenshot.
         :return: The screenshot.
         """
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
         screenshot = RectangleDecorator(screenshot, color, width, sub_control_list)
-        return screenshot.capture(save_path)
+        return screenshot.capture(save_path, background_screenshot_path)
 
     def capture_app_window_screenshot_with_annotation_dict(
         self,

@@ -11,6 +11,7 @@ from functools import wraps
 from typing import Any, Dict, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
+from dataclasses import dataclass
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
@@ -23,6 +24,17 @@ from ufo.module.context import Context, ContextNames
 configs = Config.get_instance().config_data
 if configs is not None:
     BACKEND = configs["CONTROL_BACKEND"]
+
+
+@dataclass
+class BaseControlLog:
+    """
+    The control log data for the HostAgent.
+    """
+
+    control_class: str = ""
+    control_type: str = ""
+    control_automation_id: str = ""
 
 
 class BaseProcessor(ABC):
@@ -60,7 +72,7 @@ class BaseProcessor(ABC):
         self._action = None
         self._plan = None
 
-        self._control_log = None
+        self._control_log = BaseControlLog()
 
         self._total_time_cost = 0
         self._time_cost = {}
