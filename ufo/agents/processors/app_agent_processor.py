@@ -13,6 +13,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control import ui_tree
+from ufo.automator.puppeteer import AppPuppeteer
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.config.config import Config
@@ -87,18 +88,144 @@ class AppAgentRequestLog:
     prompt: Dict[str, Any]
 
 
-@dataclass
-class ActionInfo:
-    """
-    The action information data for the AppAgent.
-    """
+class OneStepAction:
 
-    function: str = ""
-    args: Dict[str, Any] = field(default_factory=dict)
-    control_label: Optional[str] = None
-    control_text: Optional[str] = None
-    results: Optional[str] = None
-    repeat_times: Optional[int] = None
+    def __init__(
+        self,
+        function: str = "",
+        args: Dict[str, Any] = {},
+        control_label: str = "",
+        control_text: str = "",
+        status: str = "",
+        results: Optional[str] = None,
+    ):
+        self._function = function
+        self._args = args
+        self._control_label = control_label
+        self._control_text = control_text
+        self._status = status
+        self._results = results
+
+    @property
+    def function(self) -> str:
+        """
+        Get the function name.
+        :return: The function.
+        """
+        return self._function
+
+    @property
+    def args(self) -> Dict[str, Any]:
+        """
+        Get the arguments.
+        :return: The arguments.
+        """
+        return self._args
+
+    @property
+    def control_label(self) -> str:
+        """
+        Get the control label.
+        :return: The control label.
+        """
+        return self._control_label
+
+    @property
+    def control_text(self) -> str:
+        """
+        Get the control text.
+        :return: The control text.
+        """
+        return self._control_text
+
+    @property
+    def status(self) -> str:
+        """
+        Get the status.
+        :return: The status.
+        """
+        return self._status
+
+    @property
+    def results(self) -> str:
+        """
+        Get the results.
+        :return: The results.
+        """
+        return self._results
+
+    @results.setter
+    def results(self, results: str) -> None:
+        """
+        Set the results.
+        :param results: The results.
+        """
+        self._results = results
+
+    @classmethod
+    def is_same_action(cls, action1: "OneStepAction", action2: "OneStepAction") -> bool:
+        """
+        Check whether the two actions are the same.
+        :param action1: The first action.
+        :param action2: The second action.
+        :return: Whether the two actions are the same.
+        """
+        return (
+            action1.function == action2.function
+            and action1.args == action2.args
+            and action1.control_text == action2.control_text
+        )
+
+    def count_repeative_times(self, previous_actions: List["OneStepAction"]) -> int:
+        """
+        Get the times of the same action in the previous actions.
+        :param previous_actions: The previous actions.
+        :return: The times of the same action in the previous actions.
+        """
+        return sum(
+            1 for action in previous_actions if self.is_same_action(self, action)
+        )
+
+    def to_dict(
+        self, previous_actions: Optional[List["OneStepAction"]]
+    ) -> Dict[str, Any]:
+        """
+        Convert the action to a dictionary.
+        :param previous_actions: The previous actions.
+        :return: The dictionary of the action.
+        """
+
+        action_dict = {
+            "Function": self.function,
+            "Args": self.args,
+            "ControlLabel": self.control_label,
+            "ControlText": self.control_text,
+            "Status": self.status,
+            "Results": self.results,
+        }
+
+        # Add the repetitive times of the same action in the previous actions if the previous actions are provided.
+        if previous_actions:
+            action_dict["RepetitiveTimes"] = self.count_repeative_times(
+                previous_actions
+            )
+
+        return action_dict
+
+    def to_string(self, previous_actions: Optional[List["OneStepAction"]]) -> str:
+        """
+        Convert the action to a string.
+        :param previous_actions: The previous actions.
+        :return: The string of the action.
+        """
+        return json.dumps(self.to_dict(previous_actions), ensure_ascii=False)
+
+    def execute(self, puppeteer: AppPuppeteer) -> Any:
+        """
+        Execute the action.
+        :param executor: The executor.
+        """
+        return puppeteer.execute_command(self.function, self.args)
 
 
 class AppAgentProcessor(BaseProcessor):
@@ -396,8 +523,9 @@ class AppAgentProcessor(BaseProcessor):
         if self._operation:
 
             if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
-                control_selected.draw_outline(colour="red", thickness=3)
-                time.sleep(configs.get("RECTANGLE_TIME", 0))
+                if control_selected:
+                    control_selected.draw_outline(colour="red", thickness=3)
+                    time.sleep(configs.get("RECTANGLE_TIME", 0))
 
             self._control_log = self._get_control_log(control_selected)
 

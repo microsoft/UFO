@@ -3,7 +3,7 @@
 
 import os
 from abc import ABC, abstractmethod
-from typing import Dict, List, Union
+from typing import Dict, List
 
 import yaml
 

@@ -10,6 +10,9 @@ from typing import Dict, List, Union
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
+from ufo.agents.processors.app_agent_action_seq_processor import (
+    AppAgentActionSequenceProcessor,
+)
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.automator import puppeteer
 from ufo.config.config import Config
@@ -292,7 +295,12 @@ class AppAgent(BasicAgent):
         Process the agent.
         :param context: The context.
         """
-        self.processor = AppAgentProcessor(agent=self, context=context)
+        if configs.get("ACTION_SEQUENCE", False):
+            self.processor = AppAgentActionSequenceProcessor(
+                agent=self, context=context
+            )
+        else:
+            self.processor = AppAgentProcessor(agent=self, context=context)
         self.processor.process()
         self.status = self.processor.status
 

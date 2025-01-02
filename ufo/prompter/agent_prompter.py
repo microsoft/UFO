@@ -222,7 +222,12 @@ class AppAgentPrompter(BasicPrompter):
         # Remove empty lines
         tips_prompt = "\n".join(filter(None, tips_prompt.split("\n")))
 
-        system_key = "system" if self.is_visual else "system_nonvisual"
+        if configs.get("ACTION_SEQUENCE", False):
+            system_key = "system_as"
+        else:
+            system_key = "system"
+        if not self.is_visual:
+            system_key += "_nonvisual"
 
         return self.prompt_template[system_key].format(
             apis=apis, examples=examples, tips=tips_prompt

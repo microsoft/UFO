@@ -10,7 +10,7 @@ example1:
       The screenshot shows that I am on the Main Page of Outlook. The Main Page has a list of control items and email received. The new email editing window is not opened. The last action took effect by opening the Outlook application.
     Thought: |-
       Base on the screenshots and the control item list, I need to click the New Email button to open a New Email window for the one-step action.
-    Actions:
+    ActionList:
       - Function: click_input
         Args: {"button": "left", "double": false}
         ControlLabel: 1
@@ -33,26 +33,36 @@ example2:
   Request: |-
     Draft an email to Amy to ask her how she feels about the new project.
   Sub-task: |-
-    Draft an email to send to Amy to ask her how she feels about the new project on the outlook application.
+    Draft an email to send to Amy (amy@gmail.com) to ask her how she feels about the new project on the outlook application.
   Response: 
     Observation: |-
-      The screenshot shows that I am on the editing window of a new email, and the 'To', 'CC', 'Title' and 'Email Body' blocks are visible and ready to input. The title of the email has already been filled. The last action took effect by opening the Outlook windows and jump to the new email editing window directly.
+      The screenshot shows that I am on the editing window of a new email, and the 'To', 'CC', 'Title' and 'Email Body' blocks are visible and ready to input. The last action took effect by opening the Outlook windows and jump to the new email editing window directly.
     Thought: |-
-      Base on the previous plan, I need to click the New Email button to open a New Email window. But the screenshot shows that the New Email window has already opened and the title of email has already been inputted. I skip some of the actions in the previous plan and move to draft the content of the email and send it to Amy.
-    Actions:
+      Base on the previous plan, I need to click the New Email button to open a New Email window. But the screenshot shows that the New Email window has already opened. I can now take mutiple actions of filling the fields of 'To', 'Title' and 'Email Body' at a single step.
+    ActionList:
+      - Function: set_edit_text
+        Args: {"text": "amy@gmail.com"}
+        ControlLabel: 33
+        ControlText: To
+        Status: CONTINUE
+      - Function: set_edit_text
+        Args: {"text": "Inquiry about the Feedback on the New Project"}
+        ControlLabel: 34
+        ControlText: Title
+        Status: CONTINUE
       - Function: set_edit_text
         Args: {"text": "Dear Amy,\\n\\nI hope this message finds you well. I am writing to ask how you feel about the new project. Let me know if you have any concerns.\\n\\nBest regards,\\n[Sender's Name]"}
         ControlLabel: 36
         ControlText: Email Body
         Status: FINISH
     Plan:
-      - <FINISH>
+      - (1) After I draft the content of the email, the task is finished. I do not need to send the email since the user did not ask me to send it.
     Comment: |-
       I revised the previous plan base on the screenshot since I observe that New Email window has already opened and the title of email has already been inputted. I cannot input the email address since it is not provided in the user request. Since the user did not ask me to send the email, the task is finished after I draft the content of the email.
     SaveScreenshot:
       {"save": false, "reason": ""}
   Tips: |-
-    - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
+    - The user only asked me to draft an email to Amy to ask her how she feels about the new project. I do not need to send the email since the user did not ask me to send it.
     - You need to draft the content of the email and send it to the receiver. Use polite language when drafting the email.
 
 
@@ -66,7 +76,7 @@ example3:
       The screenshot shows that I am on the editing window of a Word file. The search box is visible and the word 'UFO' is already inputted. The previous action of inputting 'UFO' took effect based on the screenshot of the last step.
     Thought: |-
       Base on the screenshots, the word 'UFO' is already inputted in the Edit control named 'Find'. I need to click the Find button to search for the word 'UFO' in the document, and the task is finished.
-    Actions:
+    ActionList:
       - Function: click_input
         Args: {"button": "left", "double": false}
         ControlLabel: 59
@@ -92,7 +102,7 @@ example4:
       The screenshot shows that I am on the main window of the Word file named 'framework.docx'. The text of the file, which I am interest, is visible in the screenshot. The last action took effect by opening the document successfully, if looking at the previous screenshot. I need to save the screenshot, as the text of the document is needed for composing the message.
     Thought: |-
       Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'FINISH' immediately.
-    Actions:
+    ActionList:
       - Function: texts
         Args: {}
         ControlLabel: 83
@@ -118,7 +128,7 @@ example5:
       The current screenshot shows the PowerPoint application with the 'presentation.pptx' file open. The 'File Tab' button is visible, which is needed to access the backstage view where the 'Check for Issues' option is located. This matches the next step in the previous plan. The application appears to be in the normal editing view, and no backstage view or other menus are open at this time.
     Thought: |-
       The user request to do it quickly. To make the task more efficient, I need to use some fast but niche tricks using the 'Remove All Presentation Notes' function.  To do so, I need to first click the 'File' button to open the menu.
-    Actions:
+    ActionList:
       - Function: click_input
         Args: {"button": "left", "double": false}
         ControlLabel: 59
@@ -149,8 +159,8 @@ example6:
     Observation: |-
       I observe that the Edge browser is visible in the screenshot, with the Google search page opened.
     Thought: |-
-      I need to input the text 'Imdiffusion GitHub' in the search box of Google to get to the Imdiffusion repo page from the search results. The search box is usually in a type of ComboBox.
-    Actions:
+      I need to input the text 'Imdiffusion GitHub' in the search box of Google to get to the Imdiffusion repo page from the search results. The search box is usually in a type of ComboBox. Then, I can click the "Search" button to search for the Imdiffusion repo on GitHub at the same step.
+    ActionList:
       - Function: set_edit_text
         Args: {"text": "Imdiffusion GitHub"}
         ControlLabel: 36
@@ -162,9 +172,8 @@ example6:
         ControlText: 搜一搜
         Status: CONTINUE
     Plan:
-      - (1) After input 'Imdiffusion GitHub', click Google Search to search for the Imdiffusion repo on github.
-      - (2) Once the searched results are visible, click the Imdiffusion repo Hyperlink in the searched results to open the repo page.
-      - (3) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
+      - (1) Once the searched results are visible, click the Imdiffusion repo Hyperlink in the searched results to open the repo page.
+      - (2) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
     Comment: |-
       I plan to use Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
     SaveScreenshot:
@@ -183,15 +192,15 @@ example7:
     Observation: |-
       The current screenshot shows that I am on the Microsoft To Do application. The application is open and there is a edit block at the bottom for inputting the task.
     Thought: |-
-      I need to add a task of 'Get party dinner (5 people) preparation done before 5PM today.' to the edit block of 'Add a task in “My Day”'. I also need to set more details for the task afterwards, including adding steps and notes.
-    Action:
+      I need to add a task of 'Get party dinner (5 people) preparation done before 5PM today.' to the edit block of 'Add a task in “My Day”'. After adding the task, I need to press the 'ENTER' key to submit the task.
+    ActionList:
       - Function: set_edit_text
-        Args: {"text": "Get party dinner (5 people) preparation done before 5PM today."}
+        Args: {text: "Get party dinner (5 people) preparation done before 5PM today."}
         ControlLabel: 19
         ControlText: Add a task in “My Day”
         Status: CONTINUE
       - Function: keyboard_input
-        Args: {keys: "{ENTER}", control_focus: true}
+        Args: {"keys": "{ENTER}", "control_focus": true}
         ControlLabel: 19
         ControlText: Add a task in “My Day”
     Plan:
@@ -221,7 +230,7 @@ example8:
       The current screenshot shows that I am on the Microsoft PowerPoint application. The Copilot Add-in is visible in the screenshot.
     Thought: |-
       I need to click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide from the meeting_notes.docx.
-    Action:
+    ActionList:
       - Function: click_input
         Args: {"button": "left", "double": false}
         ControlLabel: 60
@@ -249,7 +258,7 @@ example9:
       The current screenshot shows that I am on the Microsoft PowerPoint application. The first slide of the presentation.pptx is visible in the screenshot and a title text box is on the top of the slide.
     Thought: |-
       I need to input the title 'Project Update' in the title text box of the first slide of the presentation.pptx. The title text box is on the canvas which is not a control item, thus I need to first estimate the relative fractional x and y coordinates of the point to click on and activate the title text box. The estimated coordinates of the point to click on are (0.35, 0.4).
-    Actions:
+    ActionList:
       - Function: click_on_coordinates
         Args: {"x": 0.35, "y": 0.4, "button": "left", "double": false}
         ControlLabel: ""
@@ -275,7 +284,7 @@ example10:
       The screenshot shows that I am on the 'Private Event Bookings' web page. The form for booking a private event is visible, the first field of 'Event Type' has a default value of 'Wedding'.
     Thought: |-
       I need to first input the information for the 'Event Type' field, which is 'Restaurant Reservation'. However, the 'Event Type' field is already filled with 'Wedding'. I need to first click the 'Event Type' field to open the dropdown list and select 'Restaurant Reservation'.
-    Actions:
+    ActionList:
       - Function: click_input
         Args: {"button": "left", "double": false}
         ControlLabel: 70

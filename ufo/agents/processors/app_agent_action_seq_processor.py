@@ -14,6 +14,7 @@ from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.agents.processors.app_agent_processor import (
     AppAgentProcessor,
+    OneStepAction,
     AppAgentAdditionalMemory,
     AppAgentControlLog,
 )
@@ -71,33 +72,66 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
         Execute the action.
         """
 
-        control_selected = self._annotation_dict.get(self._control_label, None)
-        # Save the screenshot of the tagged selected control.
-        self.capture_control_screenshot(control_selected)
+        outcome_list: List[Dict[str, Any]] = []
+
+        action_sequence = self._response_json.get("ActionList", [])
+        for action_dict in action_sequence:
+            action = OneStepAction(**action_dict)
+            outcome = self.single_action_flow(action)
+            outcome_list.append(outcome)
+            if outcome["status"] == "error":
+                self._results = outcome["error"]
+                break
+
+    def single_action_flow(self, action: OneStepAction) -> Dict[str, Any]:
+        """
+        Execute a single action.
+        :param action: The action to execute.
+        :return: The execution result.
+        """
+        control_selected: UIAWrapper = self._annotation_dict.get(
+            action.control_label, None
+        )
+
+        if control_selected is not None:
+            try:
+                control_selected.is_enabled()
+            except:
+                return {
+                    "status": "error",
+                    "error": "Control is not available.",
+                    "results": "",
+                    "control_log": AppAgentControlLog(),
+                }
 
         self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
             control_selected, self.application_window
         )
 
-        if self._operation:
+        self.capture_control_screenshot(control_selected)
+
+        if action.function:
 
             if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
-                control_selected.draw_outline(colour="red", thickness=3)
-                time.sleep(configs.get("RECTANGLE_TIME", 0))
+                if control_selected:
+                    control_selected.draw_outline(colour="red", thickness=3)
+                    time.sleep(configs.get("RECTANGLE_TIME", 0))
 
-            self._control_log = self._get_control_log(control_selected)
+            control_log = self._get_control_log(control_selected)
 
-            if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
-                self.handle_screenshot_status()
-            else:
-                self._results = self.app_agent.Puppeteer.execute_command(
-                    self._operation, self._args
-                )
-                self.control_reannotate = None
+            results = self.app_agent.Puppeteer.execute_command(
+                self._operation, self._args
+            )
+
             if not utils.is_json_serializable(self._results):
-                self._results = ""
+                results = ""
 
-                return
+            return {
+                "status": "success",
+                "error": "",
+                "results": results,
+                "control_log": control_log,
+            }
 
     def capture_control_screenshot(self, control_selected: UIAWrapper) -> None:
         """

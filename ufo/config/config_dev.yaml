@@ -4,6 +4,8 @@ MAX_ROUND: 10  # The max round limit for completing the user request
 SLEEP_TIME: 1  # The sleep time between each step to wait for the window to be ready
 RECTANGLE_TIME: 1
 
+ACTION_SEQUENCE: false  # Whether to output the action sequence. If true, the agent may predict and execute multiple actions in one step.
+
 # Skip rendering visual outline on screen if not necessary
 SHOW_VISUAL_OUTLINE_ON_SCREEN: False
 
@@ -42,6 +44,7 @@ EVALUATION_PROMPT: "ufo/prompts/evaluation/evaluate.yaml"  # The prompt for the 
 HOSTAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/host_agent_example.yaml"  # The prompt for the app selection
 # Lite version: "ufo/prompts/examples/lite/{mode}/host_agent_example.yaml"
 APPAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/app_agent_example.yaml"  # The prompt for the action selection
+APPAGENT_EXAMPLE_PROMPT_AS: "ufo/prompts/examples/{mode}/app_agent_example_seq.yaml"  # The prompt for the action selection with sequence
 # Lite version: "ufo/prompts/examples/lite/{mode}/app_agent_example.yaml"
 
 ## For experience learning
