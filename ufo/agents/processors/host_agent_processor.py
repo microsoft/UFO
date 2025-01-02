@@ -227,6 +227,8 @@ class HostAgentProcessor(BaseProcessor):
         # If the new application window is available, select the application.
         if new_app_window is not None:
             self._select_application(new_app_window)
+        else:
+            self._control_log = HostAgentControlLog()
 
         # If the bash command is not empty, run the shell command.
         if self.bash_command:
