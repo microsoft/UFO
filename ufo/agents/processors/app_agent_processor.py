@@ -455,7 +455,9 @@ class AppAgentProcessor(BaseProcessor):
             Action=self.actions.to_list_of_dicts(
                 previous_actions=all_previous_success_actions
             ),
-            ActionSuccess=self.actions.to_list_of_dicts(success_only=True),
+            ActionSuccess=self.actions.to_list_of_dicts(
+                success_only=True, previous_actions=all_previous_success_actions
+            ),
             ActionType=action_type,
             Request=self.request,
             Agent="AppAgent",

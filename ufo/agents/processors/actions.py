@@ -2,7 +2,10 @@
 # Licensed under the MIT License.
 
 
-from __future__ import annotations
+import sys
+
+sys.path.append("./")
+
 
 import json
 import time
@@ -400,10 +403,13 @@ class ActionSequence:
         :param previous_actions: The previous actions.
         :return: The dictionary of the action sequence.
         """
+
+        print(previous_actions)
         action_list = []
         for action in self.actions:
             if success_only and action.status != "success":
                 continue
+            print(previous_actions)
             action_list.append(action.to_dict(previous_actions))
         return action_list
 
@@ -504,3 +510,35 @@ class ActionSequence:
             action.print_result()
             index += 1
         utils.print_with_color(f"Final status: {self.status}", "yellow")
+
+
+if __name__ == "__main__":
+
+    action1 = OneStepAction(
+        function="click",
+        args={"button": "left"},
+        control_label="1",
+        control_text="OK",
+        status="success",
+        results=ActionExecutionLog(status="success"),
+    )
+
+    action2 = OneStepAction(
+        function="click",
+        args={"button": "right"},
+        control_label="2",
+        control_text="NotOK",
+        status="success",
+        results=ActionExecutionLog(status="success"),
+    )
+
+    action_sequence = ActionSequence([action1, action2])
+
+    previous_actions = [
+        {"Function": "click", "Args": {"button": "left"}, "ControlText": "OK"},
+        {"Function": "click", "Args": {"button": "right"}, "ControlText": "OK"},
+        {"Function": "click", "Args": {"button": "left"}, "ControlText": "OK"},
+        {"Function": "click", "Args": {"button": "left"}, "ControlText": "OK"},
+    ]
+
+    print(action_sequence.to_list_of_dicts(previous_actions=previous_actions))
