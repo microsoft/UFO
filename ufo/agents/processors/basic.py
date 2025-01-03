@@ -7,34 +7,29 @@ import os
 import time
 import traceback
 from abc import ABC, abstractmethod
+from dataclasses import asdict, dataclass
 from functools import wraps
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
-from dataclasses import dataclass
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.memory.memory import MemoryItem
+from ufo.automator.puppeteer import AppPuppeteer
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
+from ufo.agents.processors.actions import (
+    ActionSequence,
+    OneStepAction,
+    BaseControlLog,
+)
 
 configs = Config.get_instance().config_data
 if configs is not None:
     BACKEND = configs["CONTROL_BACKEND"]
-
-
-@dataclass
-class BaseControlLog:
-    """
-    The control log data for the HostAgent.
-    """
-
-    control_class: str = ""
-    control_type: str = ""
-    control_automation_id: str = ""
 
 
 class BaseProcessor(ABC):
@@ -65,18 +60,16 @@ class BaseProcessor(ABC):
         self._control_text = None
         self._response_json = {}
         self._memory_data = MemoryItem()
-        self._results = None
         self._question_list = []
         self._agent_status_manager = self.agent.status_manager
         self._is_resumed = False
-        self._action = None
+        self._function_calls = None
         self._plan = None
-
-        self._control_log = BaseControlLog()
 
         self._total_time_cost = 0
         self._time_cost = {}
         self._exeception_traceback = {}
+        self._actions: Optional[ActionSequence] = None
 
     def process(self) -> None:
         """
@@ -358,6 +351,21 @@ class BaseProcessor(ABC):
 
         return prev_plan
 
+    # @property
+    # def prev_action(self) -> str:
+    #     """
+    #     Get the previous action.
+    #     :return: The previous action of the agent.
+    #     """
+    #     agent_memory = self.agent.memory
+
+    #     if agent_memory.length > 0:
+    #         prev_action = agent_memory.get_latest_item().to_dict().get("Action", "")
+    #     else:
+    #         prev_action = ""
+
+    #     return prev_action
+
     @property
     def application_window(self) -> UIAWrapper:
         """
@@ -543,20 +551,35 @@ class BaseProcessor(ABC):
         return self._status
 
     @property
-    def action(self) -> str:
+    def function_calls(self) -> str:
         """
         Get the action.
         :return: The action.
         """
-        return self._action
+        return self._function_calls
 
-    @action.setter
-    def action(self, action: str) -> None:
+    @function_calls.setter
+    def function_calls(self, function_calls: str) -> None:
         """
         Set the action.
         :param action: The action.
         """
-        self._action = action
+        self._function_calls = function_calls
+
+    def actions(self) -> Optional[ActionSequence]:
+        """
+        Get the actions.
+        :return: The actions.
+        """
+        return self._actions
+
+    @actions.setter
+    def actions(self, actions: Optional[ActionSequence]) -> None:
+        """
+        Set the actions.
+        :param actions: The actions to be executed.
+        """
+        self._actions = actions
 
     @property
     def plan(self) -> str:

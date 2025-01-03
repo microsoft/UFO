@@ -14,11 +14,16 @@ from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.agents.processors.app_agent_processor import (
     AppAgentProcessor,
-    OneStepAction,
     AppAgentAdditionalMemory,
-    AppAgentControlLog,
-    ActionExecutionLog,
 )
+
+from ufo.agents.processors.actions import (
+    ActionExecutionLog,
+    ActionSequence,
+    BaseControlLog,
+    OneStepAction,
+)
+
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.automator.ui_control.screenshot import PhotographerDecorator
@@ -48,22 +53,17 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
 
         self._response_json = self.app_agent.response_to_dict(self._response)
 
-        self.control_label = self._response_json.get("ControlLabel", "")
-        self.control_text = self._response_json.get("ControlText", "")
-        self._operation = self._response_json.get("Function", "")
         self.question_list = self._response_json.get("Questions", [])
-        self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
 
         # Convert the plan from a string to a list if the plan is a string.
         self.plan = self.string2list(self._response_json.get("Plan", ""))
         self._response_json["Plan"] = self.plan
 
         # Compose the function call and the arguments string.
-        self.action = self.app_agent.Puppeteer.get_command_string(
+        self.function_calls = self.app_agent.Puppeteer.get_command_string(
             self._operation, self._args
         )
 
-        self.status = self._response_json.get("Status", "")
         self.app_agent.print_response(self._response_json)
 
     @BaseProcessor.exception_capture
@@ -73,24 +73,43 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
         Execute the action.
         """
 
-        outcome_list: List[Dict[str, Any]] = []
-        success_list: List[Dict[str, Any]] = []
-        control_log_list: List[Dict[str, Any]] = []
+        action_sequence_dict = self._response_json.get("ActionList", [])
+        action_list = [
+            OneStepAction(**action_dict) for action_dict in action_sequence_dict
+        ]
+        self.actions = ActionSequence(action_list)
+        self.function_calls = self.actions.get_function_calls()
 
-        action_sequence = self._response_json.get("ActionList", [])
+        self.actions.execute_all(
+            puppeteer=self.app_agent.Puppeteer,
+            control_dict=self._annotation_dict,
+            application_window=self.application_window,
+        )
 
-        early_stop = False
+        self.status = self.actions.status
 
-        for action_dict in enumerate(action_sequence):
-            action = OneStepAction(**action_dict)
-            execution_log, control_log = self.single_action_flow(action, early_stop)
-            outcome_list.append(asdict(execution_log))
-            control_log_list.append(asdict(control_log))
+        success_control_adjusted_coords = self.actions.get_success_control_coords()
+        self.capture_control_screenshot_from_adjusted_coords(
+            control_adjusted_coords=success_control_adjusted_coords
+        )
 
-            if execution_log.status == "error":
-                early_stop = True
-            if not early_stop:
-                success_list.append(asdict(execution_log))
+    def capture_control_screenshot_from_adjusted_coords(
+        self, control_adjusted_coords: List[Dict[str, Any]]
+    ) -> None:
+        """
+        Capture the screenshot of the selected control.
+        :param control_selected: The selected control item or a list of selected control items.
+        """
+        control_screenshot_save_path = (
+            self.log_path + f"action_step{self.session_step}_selected_controls.png"
+        )
 
-        self._results = outcome_list
-        self._control_logs = control_log_list
+        self._memory_data.add_values_from_dict(
+            {"SelectedControlScreenshot": control_screenshot_save_path}
+        )
+        self.photographer.capture_app_window_screenshot_with_rectangle_from_adjusted_coords(
+            self.application_window,
+            control_adjusted_coords=control_adjusted_coords,
+            save_path=control_screenshot_save_path,
+            background_screenshot_path=self.screenshot_save_path,
+        )

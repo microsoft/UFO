@@ -11,7 +11,13 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.processors.basic import BaseControlLog, BaseProcessor
+from ufo.agents.processors.actions import (
+    ActionExecutionLog,
+    ActionSequence,
+    BaseControlLog,
+    OneStepAction,
+)
+from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
@@ -39,8 +45,9 @@ class AppAgentAdditionalMemory:
     Round: int
     Subtask: str
     SubtaskIndex: int
+    FunctionCall: List[str]
     Action: str
-    ActionType: str
+    ActionType: List[str]
     Request: str
     Agent: str
     AgentName: str
@@ -85,157 +92,6 @@ class AppAgentRequestLog:
     prompt: Dict[str, Any]
 
 
-@dataclass
-class ActionExecutionLog:
-    """
-    The action execution log data.
-    """
-
-    status: str = ""
-    error: str = ""
-    results: str = ""
-
-
-class OneStepAction:
-
-    def __init__(
-        self,
-        function: str = "",
-        args: Dict[str, Any] = {},
-        control_label: str = "",
-        control_text: str = "",
-        status: str = "",
-        results: Optional[str] = None,
-    ):
-        self._function = function
-        self._args = args
-        self._control_label = control_label
-        self._control_text = control_text
-        self._status = status
-        self._results = results
-
-    @property
-    def function(self) -> str:
-        """
-        Get the function name.
-        :return: The function.
-        """
-        return self._function
-
-    @property
-    def args(self) -> Dict[str, Any]:
-        """
-        Get the arguments.
-        :return: The arguments.
-        """
-        return self._args
-
-    @property
-    def control_label(self) -> str:
-        """
-        Get the control label.
-        :return: The control label.
-        """
-        return self._control_label
-
-    @property
-    def control_text(self) -> str:
-        """
-        Get the control text.
-        :return: The control text.
-        """
-        return self._control_text
-
-    @property
-    def status(self) -> str:
-        """
-        Get the status.
-        :return: The status.
-        """
-        return self._status
-
-    @property
-    def results(self) -> str:
-        """
-        Get the results.
-        :return: The results.
-        """
-        return self._results
-
-    @results.setter
-    def results(self, results: str) -> None:
-        """
-        Set the results.
-        :param results: The results.
-        """
-        self._results = results
-
-    @classmethod
-    def is_same_action(cls, action1: "OneStepAction", action2: "OneStepAction") -> bool:
-        """
-        Check whether the two actions are the same.
-        :param action1: The first action.
-        :param action2: The second action.
-        :return: Whether the two actions are the same.
-        """
-        return (
-            action1.function == action2.function
-            and action1.args == action2.args
-            and action1.control_text == action2.control_text
-        )
-
-    def count_repeative_times(self, previous_actions: List["OneStepAction"]) -> int:
-        """
-        Get the times of the same action in the previous actions.
-        :param previous_actions: The previous actions.
-        :return: The times of the same action in the previous actions.
-        """
-        return sum(
-            1 for action in previous_actions if self.is_same_action(self, action)
-        )
-
-    def to_dict(
-        self, previous_actions: Optional[List["OneStepAction"]]
-    ) -> Dict[str, Any]:
-        """
-        Convert the action to a dictionary.
-        :param previous_actions: The previous actions.
-        :return: The dictionary of the action.
-        """
-
-        action_dict = {
-            "Function": self.function,
-            "Args": self.args,
-            "ControlLabel": self.control_label,
-            "ControlText": self.control_text,
-            "Status": self.status,
-            "Results": self.results,
-        }
-
-        # Add the repetitive times of the same action in the previous actions if the previous actions are provided.
-        if previous_actions:
-            action_dict["RepetitiveTimes"] = self.count_repeative_times(
-                previous_actions
-            )
-
-        return action_dict
-
-    def to_string(self, previous_actions: Optional[List["OneStepAction"]]) -> str:
-        """
-        Convert the action to a string.
-        :param previous_actions: The previous actions.
-        :return: The string of the action.
-        """
-        return json.dumps(self.to_dict(previous_actions), ensure_ascii=False)
-
-    def execute(self, puppeteer: AppPuppeteer) -> Any:
-        """
-        Execute the action.
-        :param executor: The executor.
-        """
-        return puppeteer.execute_command(self.function, self.args)
-
-
 class AppAgentProcessor(BaseProcessor):
     """
     The processor for the app agent at a single step.
@@ -261,22 +117,6 @@ class AppAgentProcessor(BaseProcessor):
         self.control_filter_factory = ControlFilterFactory()
         self.filtered_annotation_dict = None
         self.screenshot_save_path = None
-
-    @property
-    def action(self) -> str:
-        """
-        Get the action.
-        :return: The action.
-        """
-        return self._action
-
-    @action.setter
-    def action(self, action: str) -> None:
-        """
-        Set the action.
-        :param action: The action.
-        """
-        self._action = action
 
     def print_step_info(self) -> None:
         """
@@ -508,11 +348,6 @@ class AppAgentProcessor(BaseProcessor):
         self.plan = self.string2list(self._response_json.get("Plan", ""))
         self._response_json["Plan"] = self.plan
 
-        # Compose the function call and the arguments string.
-        self.action = self.app_agent.Puppeteer.get_command_string(
-            self._operation, self._args
-        )
-
         self.status = self._response_json.get("Status", "")
         self.app_agent.print_response(self._response_json)
 
@@ -566,120 +401,18 @@ class AppAgentProcessor(BaseProcessor):
             control_text=self.control_text,
             status=self.status,
         )
-
-        execution_log, control_log = self.single_action_flow(action)
-        self._results = asdict(execution_log)
-        self._control_log = control_log
-
         control_selected = self._annotation_dict.get(self._control_label, None)
+
         # Save the screenshot of the tagged selected control.
         self.capture_control_screenshot(control_selected)
 
-    def single_action_flow(
-        self, action: OneStepAction, early_stop: bool = False
-    ) -> Tuple[ActionExecutionLog, AppAgentControlLog]:
-        """
-        Execute a single action.
-        :param action: The action to execute.
-        :param early_stop: Whether to stop the execution.
-        :return: The execution result and the control log if available.
-        """
-
-        if early_stop:
-            return ActionExecutionLog(
-                status="error", error="Early stop due to error in previous action."
-            )
-
-        control_selected: UIAWrapper = self._annotation_dict.get(
-            action.control_label, None
+        self.actions: ActionSequence = ActionSequence(actions=[action])
+        self.function_calls = self.actions.get_function_calls()
+        self.actions.execute_all(
+            puppeteer=self.app_agent.Puppeteer,
+            control_dict=self._annotation_dict,
+            application_window=self.application_window,
         )
-
-        # If the control is selected, but not available, return an error.
-        if control_selected is not None and not self._control_validation(
-            control_selected
-        ):
-
-            return (
-                ActionExecutionLog(
-                    status="error",
-                    error="Control is not available.",
-                ),
-                AppAgentControlLog(),
-            )
-
-        # Create the control receiver.
-        self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
-            control_selected, self.application_window
-        )
-
-        if action.function:
-
-            if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
-                if control_selected:
-                    control_selected.draw_outline(colour="red", thickness=3)
-                    time.sleep(configs.get("RECTANGLE_TIME", 0))
-
-            control_log = self._get_control_log(control_selected)
-
-            try:
-                results = self.app_agent.Puppeteer.execute_command(
-                    self._operation, self._args
-                )
-                if not utils.is_json_serializable(results):
-                    results = ""
-
-                return (
-                    ActionExecutionLog(
-                        status="success",
-                        results=results,
-                    ),
-                    control_log,
-                )
-            except Exception as e:
-                return ActionExecutionLog(status="error", error=str(e)), control_log
-
-    def _control_validation(self, control: UIAWrapper) -> bool:
-        """
-        Validate the action.
-        :param action: The action to validate.
-        :return: The validation result.
-        """
-        try:
-            control.is_enabled()
-            return True
-        except:
-            return False
-
-    def _get_control_log(
-        self, control_selected: Optional[UIAWrapper]
-    ) -> AppAgentControlLog:
-        """
-        Get the control log data for the selected control.
-        :param control_selected: The selected control item.
-        :return: The control log data for the selected control.
-        """
-
-        if not control_selected:
-            return AppAgentControlLog()
-
-        control_coordinates = PhotographerDecorator.coordinate_adjusted(
-            self.application_window.rectangle(), control_selected.rectangle()
-        )
-
-        control_log = AppAgentControlLog(
-            control_class=control_selected.element_info.class_name,
-            control_type=control_selected.element_info.control_type,
-            control_automation_id=control_selected.element_info.automation_id,
-            control_friendly_class_name=control_selected.friendly_class_name(),
-            control_coordinates={
-                "left": control_coordinates[0],
-                "top": control_coordinates[1],
-                "right": control_coordinates[2],
-                "bottom": control_coordinates[3],
-            },
-        )
-
-        return control_log
 
     def capture_control_screenshot(
         self, control_selected: Union[UIAWrapper, List[UIAWrapper]]
@@ -731,7 +464,10 @@ class AppAgentProcessor(BaseProcessor):
             self.application_window
         )
 
-        action_type = self.app_agent.Puppeteer.get_command_types(self._operation)
+        action_type = [
+            self.app_agent.Puppeteer.get_command_types(action.function)
+            for action in self.actions.actions
+        ]
 
         # Create the additional memory data for the log.
         additional_memory = AppAgentAdditionalMemory(
@@ -741,17 +477,18 @@ class AppAgentProcessor(BaseProcessor):
             Round=self.round_num,
             Subtask=self.subtask,
             SubtaskIndex=self.round_subtask_amount,
-            Action=self.action,
+            FunctionCall=self.function_calls,
+            Action=self.actions.to_list_of_dicts(),
             ActionType=action_type,
             Request=self.request,
             Agent="AppAgent",
             AgentName=self.app_agent.name,
             Application=app_root,
             Cost=self._cost,
-            Results=self._results,
+            Results=self.actions.get_results(),
             error=self._exeception_traceback,
             time_cost=self._time_cost,
-            ControlLog=asdict(self._control_log),
+            ControlLog=asdict(self.actions.get_control_logs()),
             UserConfirm=(
                 "Yes"
                 if self.status.upper()

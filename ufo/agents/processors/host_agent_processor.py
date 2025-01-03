@@ -9,7 +9,8 @@ from typing import TYPE_CHECKING, Any, Dict, List
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.processors.basic import BaseProcessor, BaseControlLog
+from ufo.agents.processors.actions import OneStepAction
+from ufo.agents.processors.basic import BaseControlLog, BaseProcessor
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
@@ -284,6 +285,13 @@ class HostAgentProcessor(BaseProcessor):
         :param application_window: The application window.
         """
 
+        self.actions = OneStepAction(
+            control_label=self.control_label,
+            control_text=self.control_text,
+            status=self.status,
+            function="set_focus()",
+        )
+
         self._control_log = BaseControlLog(
             control_class=application_window.element_info.class_name,
             control_type=application_window.element_info.control_type,
@@ -307,7 +315,7 @@ class HostAgentProcessor(BaseProcessor):
         if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
             self.application_window.draw_outline(colour="red", thickness=3)
 
-        self.action = "set_focus()"
+        self.function_calls = "set_focus()"
 
     def _run_shell_command(self) -> None:
         """
@@ -318,11 +326,19 @@ class HostAgentProcessor(BaseProcessor):
             self.app_root, self.control_text
         )
 
-        self._results = self.agent.Puppeteer.execute_command(
+        self.actions = OneStepAction(
+            control_label=self.control_label,
+            control_text=self.control_text,
+            status=self.status,
+            function="run_shell",
+            args={"command": self.bash_command},
+        )
+
+        self.actions.results = self.agent.Puppeteer.execute_command(
             "run_shell", {"command": self.bash_command}
         )
 
-        self.action = self.agent.Puppeteer.get_command_string(
+        self.function_calls = self.agent.Puppeteer.get_command_string(
             "run_shell", {"command": self.bash_command}
         )
 
@@ -338,14 +354,14 @@ class HostAgentProcessor(BaseProcessor):
             Round=self.round_num,
             ControlLabel=self.control_label,
             SubtaskIndex=-1,
-            Action=self.action,
+            Action=self.function_calls,
             ActionType="Bash" if self.bash_command else "UIControl",
             Request=self.request,
             Agent="HostAgent",
             AgentName=self.host_agent.name,
             Application=self.app_root,
             Cost=self._cost,
-            Results=self._results,
+            Results=asdict(self.actions.results),
             error=self._exeception_traceback,
             time_cost=self._time_cost,
             ControlLog=asdict(self._control_log),
