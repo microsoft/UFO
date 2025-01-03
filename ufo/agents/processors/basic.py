@@ -69,7 +69,7 @@ class BaseProcessor(ABC):
         self._total_time_cost = 0
         self._time_cost = {}
         self._exeception_traceback = {}
-        self._actions: Optional[ActionSequence] = None
+        self._actions = ActionSequence()
 
     def process(self) -> None:
         """
@@ -551,7 +551,7 @@ class BaseProcessor(ABC):
         """
         self._function_calls = function_calls
 
-    def actions(self) -> Optional[ActionSequence]:
+    def actions(self) -> ActionSequence:
         """
         Get the actions.
         :return: The actions.
@@ -559,7 +559,7 @@ class BaseProcessor(ABC):
         return self._actions
 
     @actions.setter
-    def actions(self, actions: Optional[ActionSequence]) -> None:
+    def actions(self, actions: ActionSequence) -> None:
         """
         Set the actions.
         :param actions: The actions to be executed.

@@ -9,7 +9,11 @@ from typing import TYPE_CHECKING, Any, Dict, List
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.processors.actions import OneStepAction
+from ufo.agents.processors.actions import (
+    ActionExecutionLog,
+    ActionSequence,
+    OneStepAction,
+)
 from ufo.agents.processors.basic import BaseControlLog, BaseProcessor
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
@@ -35,6 +39,7 @@ class HostAgentAdditionalMemory:
     ControlLabel: str
     SubtaskIndex: int
     Action: str
+    FunctionCall: str
     ActionType: str
     Request: str
     Agent: str
@@ -285,18 +290,20 @@ class HostAgentProcessor(BaseProcessor):
         :param application_window: The application window.
         """
 
-        self.actions = OneStepAction(
+        action = OneStepAction(
             control_label=self.control_label,
             control_text=self.control_text,
             status=self.status,
-            function="set_focus()",
+            function="set_focus",
         )
 
-        self._control_log = BaseControlLog(
+        action.control_log = BaseControlLog(
             control_class=application_window.element_info.class_name,
             control_type=application_window.element_info.control_type,
             control_automation_id=application_window.element_info.automation_id,
         )
+
+        self.actions = ActionSequence([action])
 
         # Get the root name of the application.
         self.app_root = self.control_inspector.get_application_root_name(
@@ -326,7 +333,7 @@ class HostAgentProcessor(BaseProcessor):
             self.app_root, self.control_text
         )
 
-        self.actions = OneStepAction(
+        action = OneStepAction(
             control_label=self.control_label,
             control_text=self.control_text,
             status=self.status,
@@ -334,13 +341,24 @@ class HostAgentProcessor(BaseProcessor):
             args={"command": self.bash_command},
         )
 
-        self.actions.results = self.agent.Puppeteer.execute_command(
+        try:
+            return_value = self.agent.Puppeteer.execute_command(
+                "run_shell", {"command": self.bash_command}
+            )
+            error = ""
+        except Exception as e:
+            return_value = ""
+            error = str(e)
+
+        action.results = ActionExecutionLog(
+            return_value=return_value, status=self.status, error=error
+        )
+
+        self.function_calls = action.command_string(
             "run_shell", {"command": self.bash_command}
         )
 
-        self.function_calls = self.agent.Puppeteer.get_command_string(
-            "run_shell", {"command": self.bash_command}
-        )
+        self.actions: ActionSequence = ActionSequence([action])
 
     def sync_memory(self):
         """
@@ -354,17 +372,18 @@ class HostAgentProcessor(BaseProcessor):
             Round=self.round_num,
             ControlLabel=self.control_label,
             SubtaskIndex=-1,
-            Action=self.function_calls,
+            FunctionCall=self.function_calls,
+            Action=self.actions.to_list_of_dicts(),
             ActionType="Bash" if self.bash_command else "UIControl",
             Request=self.request,
             Agent="HostAgent",
             AgentName=self.host_agent.name,
             Application=self.app_root,
             Cost=self._cost,
-            Results=asdict(self.actions.results),
+            Results=self.actions.get_results(),
             error=self._exeception_traceback,
             time_cost=self._time_cost,
-            ControlLog=asdict(self._control_log),
+            ControlLog=self.actions.get_control_logs(),
         )
 
         self.add_to_memory(self._response_json)

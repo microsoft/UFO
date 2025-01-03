@@ -7,17 +7,13 @@ from __future__ import annotations
 import json
 import time
 from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.automator.puppeteer import AppPuppeteer
-from ufo.automator.ui_control.inspector import ControlInspectorFacade
-from ufo.automator.ui_control.screenshot import (
-    PhotographerDecorator,
-    PhotographerFacade,
-)
+from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.config.config import Config
 
 
@@ -117,6 +113,14 @@ class OneStepAction:
         :return: The control log.
         """
         return self._control_log
+
+    @control_log.setter
+    def control_log(self, control_log: BaseControlLog) -> None:
+        """
+        Set the control log.
+        :param control_log: The control log.
+        """
+        self._control_log = control_log
 
     @property
     def results(self) -> ActionExecutionLog:

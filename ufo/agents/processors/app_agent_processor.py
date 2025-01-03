@@ -4,7 +4,6 @@
 
 import json
 import os
-import time
 from dataclasses import asdict, dataclass, field
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
@@ -12,16 +11,13 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.processors.actions import (
-    ActionExecutionLog,
     ActionSequence,
     BaseControlLog,
     OneStepAction,
 )
 from ufo.agents.processors.basic import BaseProcessor
-from ufo.automator.puppeteer import AppPuppeteer
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
-from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
@@ -364,42 +360,6 @@ class AppAgentProcessor(BaseProcessor):
         self.status = self._response_json.get("Status", "")
         self.app_agent.print_response(self._response_json)
 
-    # @BaseProcessor.exception_capture
-    # @BaseProcessor.method_timer
-    # def execute_action(self) -> None:
-    #     """
-    #     Execute the action.
-    #     """
-
-    #     control_selected = self._annotation_dict.get(self._control_label, None)
-    #     # Save the screenshot of the tagged selected control.
-    #     self.capture_control_screenshot(control_selected)
-
-    #     self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
-    #         control_selected, self.application_window
-    #     )
-
-    #     if self._operation:
-
-    #         if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
-    #             if control_selected:
-    #                 control_selected.draw_outline(colour="red", thickness=3)
-    #                 time.sleep(configs.get("RECTANGLE_TIME", 0))
-
-    #         self._control_log = self._get_control_log(control_selected)
-
-    #         if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
-    #             self.handle_screenshot_status()
-    #         else:
-    #             self._results = self.app_agent.Puppeteer.execute_command(
-    #                 self._operation, self._args
-    #             )
-    #             self.control_reannotate = None
-    #         if not utils.is_json_serializable(self._results):
-    #             self._results = ""
-
-    #             return
-
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def execute_action(self) -> None:
@@ -506,7 +466,7 @@ class AppAgentProcessor(BaseProcessor):
             Results=self.actions.get_results(),
             error=self._exeception_traceback,
             time_cost=self._time_cost,
-            ControlLog=asdict(self.actions.get_control_logs()),
+            ControlLog=self.actions.get_control_logs(),
             UserConfirm=(
                 "Yes"
                 if self.status.upper()
