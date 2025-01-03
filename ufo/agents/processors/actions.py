@@ -148,32 +148,32 @@ class OneStepAction:
         # Return the function call string
         return f"{self.function}({args_str})"
 
-    @classmethod
-    def is_same_action(cls, action1: "OneStepAction", action2: "OneStepAction") -> bool:
+    def is_same_action(self, action_to_compare: Dict[str, Any]) -> bool:
         """
         Check whether the two actions are the same.
         :param action1: The first action.
         :param action2: The second action.
         :return: Whether the two actions are the same.
         """
+
         return (
-            action1.function == action2.function
-            and action1.args == action2.args
-            and action1.control_text == action2.control_text
+            self.function == action_to_compare.get("Function")
+            and self.args == action_to_compare.get("Args")
+            and self.control_text == action_to_compare.get("ControlText")
         )
 
-    def count_repeative_times(self, previous_actions: List["OneStepAction"]) -> int:
+    def count_repeative_times(
+        self, previous_actions: Optional[List[Dict[str, Any]]]
+    ) -> int:
         """
         Get the times of the same action in the previous actions.
         :param previous_actions: The previous actions.
         :return: The times of the same action in the previous actions.
         """
-        return sum(
-            1 for action in previous_actions if self.is_same_action(self, action)
-        )
+        return sum(1 for action in previous_actions if self.is_same_action(action))
 
     def to_dict(
-        self, previous_actions: Optional[List["OneStepAction"]]
+        self, previous_actions: Optional[List[Dict[str, Any]]]
     ) -> Dict[str, Any]:
         """
         Convert the action to a dictionary.
@@ -192,7 +192,7 @@ class OneStepAction:
 
         # Add the repetitive times of the same action in the previous actions if the previous actions are provided.
         if previous_actions:
-            action_dict["Repetitive_Times"] = self.count_repeative_times(
+            action_dict["RepetitiveTimes"] = self.count_repeative_times(
                 previous_actions
             )
 
@@ -385,7 +385,7 @@ class ActionSequence:
     def to_list_of_dicts(
         self,
         success_only: bool = False,
-        previous_actions: Optional[List[OneStepAction]] = None,
+        previous_actions: Optional[List[Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
         """
         Convert the action sequence to a dictionary.

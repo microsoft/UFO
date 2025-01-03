@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import os
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
@@ -100,6 +100,7 @@ class AppAgent(BasicAgent):
         subtask: str,
         host_message: List[str],
         blackboard_prompt: List[Dict[str, str]],
+        last_success_actions: List[Dict[str, Any]],
         include_last_screenshot: bool,
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
@@ -114,6 +115,7 @@ class AppAgent(BasicAgent):
         :param subtask: The subtask for the current AppAgent to process.
         :param host_message: The message from the HostAgent.
         :param blackboard_prompt: The prompt message from the blackboard.
+        :param last_success_actions: The list of successful actions in the last step.
         :param include_last_screenshot: The flag indicating whether to include the last screenshot.
         :return: The prompt message.
         """
@@ -131,6 +133,7 @@ class AppAgent(BasicAgent):
             current_application=self._process_name,
             host_message=host_message,
             retrieved_docs=dynamic_knowledge,
+            last_success_actions=last_success_actions,
             include_last_screenshot=include_last_screenshot,
         )
 

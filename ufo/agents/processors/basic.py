@@ -351,21 +351,6 @@ class BaseProcessor(ABC):
 
         return prev_plan
 
-    # @property
-    # def prev_action(self) -> str:
-    #     """
-    #     Get the previous action.
-    #     :return: The previous action of the agent.
-    #     """
-    #     agent_memory = self.agent.memory
-
-    #     if agent_memory.length > 0:
-    #         prev_action = agent_memory.get_latest_item().to_dict().get("Action", "")
-    #     else:
-    #         prev_action = ""
-
-    #     return prev_action
-
     @property
     def application_window(self) -> UIAWrapper:
         """

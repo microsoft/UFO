@@ -46,7 +46,8 @@ class AppAgentAdditionalMemory:
     Subtask: str
     SubtaskIndex: int
     FunctionCall: List[str]
-    Action: str
+    Action: List[Dict[str, Any]]
+    ActionSuccess: List[Dict[str, Any]]
     ActionType: List[str]
     Request: str
     Agent: str
@@ -88,6 +89,7 @@ class AppAgentRequestLog:
     subtask: str
     host_message: str
     blackboard_prompt: List[str]
+    last_success_actions: List[Dict[str, Any]]
     include_last_screenshot: bool
     prompt: Dict[str, Any]
 
@@ -281,6 +283,8 @@ class AppAgentProcessor(BaseProcessor):
         else:
             blackboard_prompt = []
 
+        last_success_actions = self.get_last_success_actions()
+
         # Construct the prompt message for the AppAgent.
         self._prompt_message = self.app_agent.message_constructor(
             dynamic_examples=examples,
@@ -294,6 +298,7 @@ class AppAgentProcessor(BaseProcessor):
             subtask=self.subtask,
             host_message=self.host_message,
             blackboard_prompt=blackboard_prompt,
+            last_success_actions=last_success_actions,
             include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
         )
 
@@ -469,6 +474,8 @@ class AppAgentProcessor(BaseProcessor):
             for action in self.actions.actions
         ]
 
+        all_previous_success_actions = self.get_all_success_actions()
+
         # Create the additional memory data for the log.
         additional_memory = AppAgentAdditionalMemory(
             Step=self.session_step,
@@ -478,7 +485,10 @@ class AppAgentProcessor(BaseProcessor):
             Subtask=self.subtask,
             SubtaskIndex=self.round_subtask_amount,
             FunctionCall=self.function_calls,
-            Action=self.actions.to_list_of_dicts(),
+            Action=self.actions.to_list_of_dicts(
+                previous_actions=all_previous_success_actions
+            ),
+            ActionSuccess=self.actions.to_list_of_dicts(success_only=True),
             ActionType=action_type,
             Request=self.request,
             Agent="AppAgent",
@@ -535,6 +545,43 @@ class AppAgentProcessor(BaseProcessor):
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
         self._update_image_blackboard()
         self.host_agent.blackboard.add_trajectories(memorized_action)
+
+    def get_all_success_actions(self) -> List[Dict[str, Any]]:
+        """
+        Get the previous action.
+        :return: The previous action of the agent.
+        """
+        agent_memory = self.app_agent.memory
+
+        if agent_memory.length > 0:
+            success_action_memory = agent_memory.filter_memory_from_keys(
+                ["ActionSuccess"]
+            )
+            success_actions = []
+            for success_action in success_action_memory:
+                success_actions += success_action.get("ActionSuccess", [])
+
+        else:
+            success_actions = []
+
+        return success_actions
+
+    def get_last_success_actions(self) -> List[Dict[str, Any]]:
+        """
+        Get the previous action.
+        :return: The previous action of the agent.
+        """
+        agent_memory = self.app_agent.memory
+
+        if agent_memory.length > 0:
+            last_success_actions = (
+                agent_memory.get_latest_item().to_dict().get("ActionSuccess", [])
+            )
+
+        else:
+            last_success_actions = []
+
+        return last_success_actions
 
     def _update_image_blackboard(self) -> None:
         """

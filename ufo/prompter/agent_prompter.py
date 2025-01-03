@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import json
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
 from ufo.config.config import Config
 from ufo.prompter.basic import BasicPrompter
@@ -243,6 +243,7 @@ class AppAgentPrompter(BasicPrompter):
         current_application: str,
         host_message: List[str],
         retrieved_docs: str = "",
+        last_success_actions: List[Dict[str, Any]] = [],
     ) -> str:
         """
         Construct the prompt for action selection.
@@ -255,6 +256,7 @@ class AppAgentPrompter(BasicPrompter):
         :param current_application: The current application.
         :param host_message: The host message.
         :param retrieved_docs: The retrieved documents.
+        :param last_success_actions: The list of successful actions in the last step.
         return: The prompt for action selection.
         """
         prompt = self.prompt_template["user"].format(
@@ -266,6 +268,7 @@ class AppAgentPrompter(BasicPrompter):
             current_application=current_application,
             host_message=json.dumps(host_message),
             retrieved_docs=retrieved_docs,
+            last_success_actions=json.dumps(last_success_actions),
         )
 
         return prompt
@@ -281,6 +284,7 @@ class AppAgentPrompter(BasicPrompter):
         current_application: str,
         host_message: List[str],
         retrieved_docs: str = "",
+        last_success_actions: List[Dict[str, Any]] = [],
         include_last_screenshot: bool = True,
     ) -> List[Dict[str, str]]:
         """
@@ -323,6 +327,7 @@ class AppAgentPrompter(BasicPrompter):
                     current_application=current_application,
                     host_message=host_message,
                     retrieved_docs=retrieved_docs,
+                    last_success_actions=last_success_actions,
                 ),
             }
         )
