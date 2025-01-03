@@ -24,7 +24,7 @@ try {
     $env:PYTHONIOENCODING = "utf-8"
 
     # Build the command to execute
-    $command = "python -m windows_arena --request `"$instruction`" --agent_settings `'$jsonEscaped`'"
+    $command = "py -m windows_arena --request `"$instruction`" --agent_settings `'$jsonEscaped`'"
 
     # Execute the command and redirect output and error streams to the log file
     Invoke-Expression $command 2>&1 | Tee-Object -FilePath $outputFile -Append
