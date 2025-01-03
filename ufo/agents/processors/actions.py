@@ -166,15 +166,20 @@ class OneStepAction:
             and self.control_text == action_to_compare.get("ControlText")
         )
 
-    def count_repeative_times(
-        self, previous_actions: Optional[List[Dict[str, Any]]]
-    ) -> int:
+    def count_repeat_times(self, previous_actions: List[Dict[str, Any]]) -> int:
         """
         Get the times of the same action in the previous actions.
         :param previous_actions: The previous actions.
         :return: The times of the same action in the previous actions.
         """
-        return sum(1 for action in previous_actions if self.is_same_action(action))
+
+        count = 0
+        for action in previous_actions[::-1]:
+            if self.is_same_action(action):
+                count += 1
+            else:
+                break
+        return count
 
     def to_dict(
         self, previous_actions: Optional[List[Dict[str, Any]]]
@@ -196,7 +201,7 @@ class OneStepAction:
 
         # Add the repetitive times of the same action in the previous actions if the previous actions are provided.
         if previous_actions:
-            action_dict["RepeatTimes"] = self.count_repeative_times(previous_actions)
+            action_dict["RepeatTimes"] = self.count_repeat_times(previous_actions)
 
         return action_dict
 
