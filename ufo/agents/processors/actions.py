@@ -316,6 +316,24 @@ class OneStepAction:
 
         return control_log
 
+    def print_result(self) -> None:
+        """
+        Print the action execution result.
+        """
+
+        utils.print_with_color(
+            "Selected item🕹️: {control_text}, Label: {label}".format(
+                control_text=self.control_text, label=self.control_label
+            ),
+            "yellow",
+        )
+        utils.print_with_color(
+            "Action applied⚒️: {action}".format(action=self.command_string), "blue"
+        )
+        utils.print_with_color(
+            "Execution result📜: {result}📜".format(result=asdict(self.results))
+        )
+
 
 class ActionSequence:
     """
@@ -466,3 +484,16 @@ class ActionSequence:
             for action in self.actions
             if not is_success_only or action.results.status == "success"
         ]
+
+    def print_all_results(self, success_only: bool = False) -> None:
+        """
+        Print the action execution result.
+        """
+        index = 1
+        for action in self.actions:
+            if success_only and action.results.status != "success":
+                continue
+            utils.print_with_color(f"Action {index}: {action.command_string}", "blue")
+            action.print_result()
+            index += 1
+        utils.print_with_color(f"Final status: {self.status}", "yellow")

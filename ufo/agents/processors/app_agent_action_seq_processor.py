@@ -59,12 +59,7 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
         self.plan = self.string2list(self._response_json.get("Plan", ""))
         self._response_json["Plan"] = self.plan
 
-        # Compose the function call and the arguments string.
-        self.function_calls = self.app_agent.Puppeteer.get_command_string(
-            self._operation, self._args
-        )
-
-        self.app_agent.print_response(self._response_json)
+        self.app_agent.print_action_sequence_response(self._response_json)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -73,9 +68,9 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
         Execute the action.
         """
 
-        action_sequence_dict = self._response_json.get("ActionList", [])
+        action_sequence_dicts = self._response_json.get("ActionList", [])
         action_list = [
-            OneStepAction(**action_dict) for action_dict in action_sequence_dict
+            OneStepAction(**action_dict) for action_dict in action_sequence_dicts
         ]
         self.actions = ActionSequence(action_list)
         self.function_calls = self.actions.get_function_calls()
@@ -92,6 +87,8 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
         self.capture_control_screenshot_from_adjusted_coords(
             control_adjusted_coords=success_control_adjusted_coords
         )
+
+        self.actions.print_all_results()
 
     def capture_control_screenshot_from_adjusted_coords(
         self, control_adjusted_coords: List[Dict[str, Any]]

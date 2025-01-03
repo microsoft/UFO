@@ -200,6 +200,71 @@ class AppAgent(BasicAgent):
                 "yellow",
             )
 
+    def print_action_sequence_response(self, response_dict: Dict) -> None:
+        """
+        Print the response.
+        :param response_dict: The response dictionary to print.
+        """
+
+        action_sequence_dicts = response_dict.get("ActionList", [])
+
+        observation = response_dict.get("Observation")
+        thought = response_dict.get("Thought")
+        plan = response_dict.get("Plan")
+        comment = response_dict.get("Comment")
+
+        utils.print_with_color(
+            "Observations👀: {observation}".format(observation=observation), "cyan"
+        )
+        utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
+
+        for index, action_dict in enumerate(action_sequence_dicts):
+            utils.print_with_color("Action {index}:".format(index=index + 1), "magenta")
+
+            control_text = action_dict.get("ControlText")
+            control_label = action_dict.get("ControlLabel")
+            if not control_text and not control_label:
+                control_text = "[No control selected.]"
+                control_label = "[No control label selected.]"
+            function = action_dict.get("Function")
+            args = utils.revise_line_breaks(action_dict.get("Args"))
+
+            # Generate the function call string
+            action = self.Puppeteer.get_command_string(function, args)
+            status = action_dict.get("Status")
+
+            utils.print_with_color(
+                "Selected item🕹️: {control_text}, Label: {label}".format(
+                    control_text=control_text, label=control_label
+                ),
+                "yellow",
+            )
+            utils.print_with_color(
+                "Action applied⚒️: {action}".format(action=action), "blue"
+            )
+            utils.print_with_color(
+                "Status after the action📊: {status}".format(status=status), "blue"
+            )
+
+        utils.print_with_color(
+            "Next Plan📚: {plan}".format(plan="\n".join(plan)), "cyan"
+        )
+        utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
+
+        screenshot_saving = response_dict.get("SaveScreenshot", {})
+
+        if screenshot_saving.get("save", False):
+            utils.print_with_color(
+                "Notice: The current screenshot📸 is saved to the blackboard.",
+                "yellow",
+            )
+            utils.print_with_color(
+                "Saving reason: {reason}".format(
+                    reason=screenshot_saving.get("reason")
+                ),
+                "yellow",
+            )
+
     def external_knowledge_prompt_helper(
         self, request: str, offline_top_k: int, online_top_k: int
     ) -> str:
