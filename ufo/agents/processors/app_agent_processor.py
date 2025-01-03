@@ -380,7 +380,6 @@ class AppAgentProcessor(BaseProcessor):
         self.capture_control_screenshot(control_selected)
 
         self.actions: ActionSequence = ActionSequence(actions=[action])
-        self.function_calls = self.actions.get_function_calls()
         self.actions.execute_all(
             puppeteer=self.app_agent.Puppeteer,
             control_dict=self._annotation_dict,
@@ -452,7 +451,7 @@ class AppAgentProcessor(BaseProcessor):
             Round=self.round_num,
             Subtask=self.subtask,
             SubtaskIndex=self.round_subtask_amount,
-            FunctionCall=self.function_calls,
+            FunctionCall=self.actions.get_function_calls(),
             Action=self.actions.to_list_of_dicts(
                 previous_actions=all_previous_success_actions
             ),

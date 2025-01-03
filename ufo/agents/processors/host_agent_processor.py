@@ -322,8 +322,6 @@ class HostAgentProcessor(BaseProcessor):
         if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
             self.application_window.draw_outline(colour="red", thickness=3)
 
-        self.function_calls = "set_focus()"
-
     def _run_shell_command(self) -> None:
         """
         Run the shell command.
@@ -354,10 +352,6 @@ class HostAgentProcessor(BaseProcessor):
             return_value=return_value, status=self.status, error=error
         )
 
-        self.function_calls = action.command_string(
-            "run_shell", {"command": self.bash_command}
-        )
-
         self.actions: ActionSequence = ActionSequence([action])
 
     def sync_memory(self):
@@ -372,7 +366,7 @@ class HostAgentProcessor(BaseProcessor):
             Round=self.round_num,
             ControlLabel=self.control_label,
             SubtaskIndex=-1,
-            FunctionCall=self.function_calls,
+            FunctionCall=self.actions.get_function_calls(),
             Action=self.actions.to_list_of_dicts(),
             ActionType="Bash" if self.bash_command else "UIControl",
             Request=self.request,

@@ -63,7 +63,6 @@ class BaseProcessor(ABC):
         self._question_list = []
         self._agent_status_manager = self.agent.status_manager
         self._is_resumed = False
-        self._function_calls = None
         self._plan = None
 
         self._total_time_cost = 0
@@ -534,22 +533,6 @@ class BaseProcessor(ABC):
         :return: The status of the processor.
         """
         return self._status
-
-    @property
-    def function_calls(self) -> str:
-        """
-        Get the action.
-        :return: The action.
-        """
-        return self._function_calls
-
-    @function_calls.setter
-    def function_calls(self, function_calls: str) -> None:
-        """
-        Set the action.
-        :param action: The action.
-        """
-        self._function_calls = function_calls
 
     def actions(self) -> ActionSequence:
         """
