@@ -3,9 +3,7 @@ param (
     [string]$agent_settings = ""
 )
 
-$scriptFolder = "\\host.lan\Data"
-$RepoPath = Join-Path -Path $scriptFolder -ChildPath "mm_agents"
-$RepoPath = Join-Path -Path $RepoPath -ChildPath "UFO"
+$RepoPath = "$PSScriptRoot\.."
 $outputFile = "$PSScriptRoot\Ufo-runningLogs.txt"
 
 # Store the current directory

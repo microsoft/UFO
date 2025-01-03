@@ -1,8 +1,3 @@
-$scriptFolder = "\\host.lan\Data"
-
-# Load the shared setup-tools module
-Import-Module (Join-Path $scriptFolder -ChildPath "setup-tools.psm1")
-
 # Initialize the script folder to the directory of the current script
 $requirementsFile = "$PSScriptRoot\..\requirements.txt"
 $outputFile = "$PSScriptRoot\Logs.txt"
