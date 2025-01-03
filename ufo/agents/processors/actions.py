@@ -192,9 +192,7 @@ class OneStepAction:
 
         # Add the repetitive times of the same action in the previous actions if the previous actions are provided.
         if previous_actions:
-            action_dict["RepetitiveTimes"] = self.count_repeative_times(
-                previous_actions
-            )
+            action_dict["RepeatTimes"] = self.count_repeative_times(previous_actions)
 
         return action_dict
 

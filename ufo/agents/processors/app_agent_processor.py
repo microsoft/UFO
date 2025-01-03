@@ -283,7 +283,14 @@ class AppAgentProcessor(BaseProcessor):
         else:
             blackboard_prompt = []
 
+        # Get the last successful actions of the AppAgent.
         last_success_actions = self.get_last_success_actions()
+        action_keys = ["Function", "Args", "ControlText", "Results", "RepeatTimes"]
+
+        filtered_last_success_actions = [
+            {key: action.get(key, "") for key in action_keys}
+            for action in last_success_actions
+        ]
 
         # Construct the prompt message for the AppAgent.
         self._prompt_message = self.app_agent.message_constructor(
@@ -298,7 +305,7 @@ class AppAgentProcessor(BaseProcessor):
             subtask=self.subtask,
             host_message=self.host_message,
             blackboard_prompt=blackboard_prompt,
-            last_success_actions=last_success_actions,
+            last_success_actions=filtered_last_success_actions,
             include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
         )
 
@@ -316,6 +323,7 @@ class AppAgentProcessor(BaseProcessor):
             subtask=self.subtask,
             host_message=self.host_message,
             blackboard_prompt=blackboard_prompt,
+            last_success_actions=filtered_last_success_actions,
             include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
             prompt=self._prompt_message,
         )
