@@ -293,7 +293,7 @@ class HostAgentProcessor(BaseProcessor):
         action = OneStepAction(
             control_label=self.control_label,
             control_text=self.control_text,
-            status=self.status,
+            after_status=self.status,
             function="set_focus",
         )
 
@@ -334,7 +334,7 @@ class HostAgentProcessor(BaseProcessor):
         action = OneStepAction(
             control_label=self.control_label,
             control_text=self.control_text,
-            status=self.status,
+            after_status=self.status,
             function="run_shell",
             args={"command": self.bash_command},
         )

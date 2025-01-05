@@ -50,7 +50,7 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
                 args=action_dict.get("Args", {}),
                 control_label=action_dict.get("ControlLabel", ""),
                 control_text=action_dict.get("ControlText", ""),
-                status=action_dict.get("Status", "CONTINUE"),
+                after_status=action_dict.get("Status", "CONTINUE"),
             )
             for action_dict in action_sequence_dicts
         ]

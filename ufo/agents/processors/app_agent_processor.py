@@ -373,7 +373,7 @@ class AppAgentProcessor(BaseProcessor):
             args=self._args,
             control_label=self._control_label,
             control_text=self.control_text,
-            status=self.status,
+            after_status=self.status,
         )
         control_selected = self._annotation_dict.get(self._control_label, None)
 

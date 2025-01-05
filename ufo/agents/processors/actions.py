@@ -56,7 +56,7 @@ class OneStepAction:
         args: Dict[str, Any] = {},
         control_label: str = "",
         control_text: str = "",
-        status: str = "",
+        after_status: str = "",
         results: Optional[ActionExecutionLog] = None,
         configs=Config.get_instance().config_data,
     ):
@@ -64,7 +64,7 @@ class OneStepAction:
         self._args = args
         self._control_label = control_label
         self._control_text = control_text
-        self._status = status
+        self._after_status = after_status
         self._results = ActionExecutionLog() if results is None else results
         self._configs = configs
         self._control_log = BaseControlLog()
@@ -102,12 +102,12 @@ class OneStepAction:
         return self._control_text
 
     @property
-    def status(self) -> str:
+    def after_status(self) -> str:
         """
         Get the status.
         :return: The status.
         """
-        return self._status
+        return self._after_status
 
     @property
     def control_log(self) -> BaseControlLog:
@@ -519,7 +519,7 @@ if __name__ == "__main__":
         args={"button": "left"},
         control_label="1",
         control_text="OK",
-        status="success",
+        after_status="success",
         results=ActionExecutionLog(status="success"),
     )
 
@@ -528,7 +528,7 @@ if __name__ == "__main__":
         args={"button": "right"},
         control_label="2",
         control_text="NotOK",
-        status="success",
+        after_status="success",
         results=ActionExecutionLog(status="success"),
     )
 
