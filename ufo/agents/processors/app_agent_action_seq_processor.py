@@ -45,7 +45,14 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
 
         action_sequence_dicts = self._response_json.get("ActionList", [])
         action_list = [
-            OneStepAction(**action_dict) for action_dict in action_sequence_dicts
+            OneStepAction(
+                function=action_dict.get("Function", ""),
+                args=action_dict.get("Args", {}),
+                control_label=action_dict.get("ControlLabel", ""),
+                control_text=action_dict.get("ControlText", ""),
+                status=action_dict.get("Status", "CONTINUE"),
+            )
+            for action_dict in action_sequence_dicts
         ]
         self.actions = ActionSequence(action_list)
         self.function_calls = self.actions.get_function_calls()

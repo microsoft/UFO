@@ -408,7 +408,7 @@ class ActionSequence:
 
         action_list = []
         for action in self.actions:
-            if success_only and action.status != "success":
+            if success_only and action.results.status != "success":
                 continue
             action_list.append(action.to_dict(previous_actions))
         return action_list
@@ -448,7 +448,7 @@ class ActionSequence:
 
             action.action_flow(puppeteer, control_dict, application_window)
 
-            if action.status == "error":
+            if action.results.status != "success":
                 early_stop = True
 
     def get_results(self, success_only: bool = False) -> List[Dict[str, Any]]:
