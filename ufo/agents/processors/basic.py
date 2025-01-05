@@ -534,6 +534,7 @@ class BaseProcessor(ABC):
         """
         return self._status
 
+    @property
     def actions(self) -> ActionSequence:
         """
         Get the actions.

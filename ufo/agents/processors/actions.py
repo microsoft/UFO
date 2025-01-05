@@ -273,7 +273,9 @@ class OneStepAction:
                     control_selected.draw_outline(colour="red", thickness=3)
                     time.sleep(self._configs.get("RECTANGLE_TIME", 0))
 
-            self._control_log = self._get_control_log(control_selected)
+            self._control_log = self._get_control_log(
+                control_selected=control_selected, application_window=application_window
+            )
 
             try:
                 return_value = self.execute(puppeteer=puppeteer)
@@ -404,12 +406,10 @@ class ActionSequence:
         :return: The dictionary of the action sequence.
         """
 
-        print(previous_actions)
         action_list = []
         for action in self.actions:
             if success_only and action.status != "success":
                 continue
-            print(previous_actions)
             action_list.append(action.to_dict(previous_actions))
         return action_list
 
