@@ -282,7 +282,6 @@ class AppAgentProcessor(BaseProcessor):
         # Get the last successful actions of the AppAgent.
         last_success_actions = self.get_last_success_actions()
 
-        print(f"Last success actions: {last_success_actions}")
         action_keys = ["Function", "Args", "ControlText", "Results", "RepeatTimes"]
 
         filtered_last_success_actions = [
@@ -448,8 +447,6 @@ class AppAgentProcessor(BaseProcessor):
         action_success = self.actions.to_list_of_dicts(
             success_only=True, previous_actions=all_previous_success_actions
         )
-
-        print(f"Action success: {action_success}")
 
         # Create the additional memory data for the log.
         additional_memory = AppAgentAdditionalMemory(
