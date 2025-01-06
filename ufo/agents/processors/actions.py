@@ -342,8 +342,12 @@ class OneStepAction:
         utils.print_with_color(
             "Action applied⚒️: {action}".format(action=self.command_string), "blue"
         )
+
+        result_color = "red" if self.results.status != "success" else "green"
+
         utils.print_with_color(
-            "Execution result📜: {result}📜".format(result=asdict(self.results))
+            "Execution result📜: {result}".format(result=asdict(self.results)),
+            result_color,
         )
 
 

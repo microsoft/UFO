@@ -34,7 +34,7 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
         self.plan = self.string2list(self._response_json.get("Plan", ""))
         self._response_json["Plan"] = self.plan
 
-        self.app_agent.print_action_sequence_response(self._response_json)
+        self.app_agent.print_response(self._response_json, print_action=False)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
