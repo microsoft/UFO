@@ -346,7 +346,7 @@ class AppAgent(BasicAgent):
         Process the user confirmation.
         :return: The decision.
         """
-        action = self.processor.action
+        action = self.processor.actions
         control_text = self.processor.control_text
 
         decision = interactor.sensitive_step_asker(action, control_text)
