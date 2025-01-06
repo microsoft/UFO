@@ -228,13 +228,11 @@ class EvaluationAgentPrompter(BasicPrompter):
             "Step": log.get("Step"),
             "Observation": log.get("Observation"),
             "Thought": log.get("Thought"),
-            "ControlLabel": log.get("ControlLabel"),
-            "ControlText": log.get("ControlText"),
             "Plan": log.get("Plan"),
             "Comment": log.get("Comment"),
             "Action": log.get("Action"),
             "Application": log.get("Application"),
-            "Results": log.get("Results"),
+            # "Results": log.get("Results"),
         }
 
         return step_trajectory

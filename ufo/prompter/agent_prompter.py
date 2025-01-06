@@ -345,12 +345,17 @@ class AppAgentPrompter(BasicPrompter):
         :param examples: The examples.
         :param header: The header of the prompt.
         :param separator: The separator of the prompt.
+        :param additional_examples: The additional examples added to the prompt.
         return: The prompt for examples.
         """
 
         template = """
         [User Request]:
             {request}
+        [Sub-Task]:
+            {subtask}
+        [Tips]:
+            {tips}
         [Response]:
             {response}"""
 
@@ -360,6 +365,8 @@ class AppAgentPrompter(BasicPrompter):
             if key.startswith("example"):
                 example = template.format(
                     request=self.example_prompt_template[key].get("Request"),
+                    subtask=self.example_prompt_template[key].get("Sub-task"),
+                    tips=self.example_prompt_template[key].get("Tips"),
                     response=json.dumps(
                         self.example_prompt_template[key].get("Response")
                     ),
@@ -369,6 +376,20 @@ class AppAgentPrompter(BasicPrompter):
         example_list += [json.dumps(example) for example in additional_examples]
 
         return self.retrived_documents_prompt_helper(header, separator, example_list)
+
+    def action2action_sequence(self, action: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Convert the action to an action sequence.
+        :param action: The action.
+        return: The action sequence.
+        """
+        return {
+            "Function": action.get("Function", ""),
+            "Args": action.get("Args", {}),
+            "ControlLabel": action.get("ControlLabel", ""),
+            "ControlText": action.get("ControlText", ""),
+            "Status": action.get("Status", "CONTINUE"),
+        }
 
     def api_prompt_helper(self, verbose: int = 1) -> str:
         """

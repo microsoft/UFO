@@ -203,6 +203,7 @@ example7:
         Args: {"keys": "{ENTER}", "control_focus": true}
         ControlLabel: 19
         ControlText: Add a task in “My Day”
+        Status: FINISH
     Plan:
       - (1) Click the ListItem of the task that was just created to set more details.
       - (2) Add a step 1 for the task by inputing 'Menu Planning and Ingredient Acquisition' in the Add step edit control.

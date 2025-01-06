@@ -157,7 +157,7 @@ class HostAgent(BasicAgent):
         return self._active_appagent
 
     @property
-    def blackboard(self):
+    def blackboard(self) -> Blackboard:
         """
         Get the blackboard.
         """

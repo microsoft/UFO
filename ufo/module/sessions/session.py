@@ -503,6 +503,7 @@ class FromFileSession(BaseSession):
         :return: True if the session should be evaluated, False otherwise.
         """
         request_memory = self._host_agent.blackboard.requests
+
         return request_memory.to_json()
 
     def record_task_done(self) -> None:

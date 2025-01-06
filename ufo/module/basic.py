@@ -115,7 +115,7 @@ class BaseRound(ABC):
                 self.subtask_amount += 1
 
         self.agent.blackboard.add_requests(
-            {"request_{i}".format(i=self.id), self.request}
+            {"request_{i}".format(i=self.id): self.request}
         )
 
         if self.application_window is not None:

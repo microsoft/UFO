@@ -198,7 +198,7 @@ class OneStepAction:
             "Args": self.args,
             "ControlLabel": self.control_label,
             "ControlText": self.control_text,
-            "Status": self.status,
+            "Status": self.after_status,
             "Results": asdict(self.results),
         }
 
@@ -358,7 +358,7 @@ class ActionSequence:
             actions = []
             self._status = "FINISH"
         else:
-            self._status = actions[0].status
+            self._status = actions[0].after_status
 
         self._actions = actions
         self._length = len(actions)
@@ -444,7 +444,7 @@ class ActionSequence:
                 action.results = ActionExecutionLog(
                     status="error", error="Early stop due to error in previous action."
                 )
-            self._status = action.status
+            self._status = action.after_status
 
             action.action_flow(puppeteer, control_dict, application_window)
 
