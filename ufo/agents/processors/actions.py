@@ -446,11 +446,14 @@ class ActionSequence:
         for action in self.actions:
             if early_stop:
                 action.results = ActionExecutionLog(
-                    status="error", error="Early stop due to error in previous action."
+                    status="error", error="Early stop due to error in previous actions."
                 )
             self._status = action.after_status
 
             action.action_flow(puppeteer, control_dict, application_window)
+
+            # Sleep for a while to avoid the UI being too busy.
+            time.sleep(1)
 
             if action.results.status != "success":
                 early_stop = True
