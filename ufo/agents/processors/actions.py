@@ -511,7 +511,7 @@ class ActionSequence:
             if success_only and action.results.status != "success":
                 continue
             if self.length > 1:
-                utils.print_with_color(f"Action {index}:", "blue")
+                utils.print_with_color(f"Action {index}:", "cyan")
             action.print_result()
             index += 1
         utils.print_with_color(f"Final status: {self.status}", "yellow")
