@@ -91,7 +91,6 @@ class FollowerAgent(AppAgent):
     def message_constructor(
         self,
         dynamic_examples: str,
-        dynamic_tips: str,
         dynamic_knowledge: str,
         image_list: List[str],
         control_info: str,
@@ -108,7 +107,6 @@ class FollowerAgent(AppAgent):
         """
         Construct the prompt message for the FollowAgent.
         :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
-        :param dynamic_tips: The dynamic tips retrieved from the self-demonstration and human demonstration.
         :param dynamic_knowledge: The dynamic knowledge retrieved from the self-demonstration and human demonstration.
         :param image_list: The list of screenshot images.
         :param control_info: The control information.
@@ -124,7 +122,7 @@ class FollowerAgent(AppAgent):
         :return: The prompt message.
         """
         followagent_prompt_system_message = self.prompter.system_prompt_construction(
-            dynamic_examples, dynamic_tips
+            dynamic_examples
         )
         followagent_prompt_user_message = self.prompter.user_content_construction(
             image_list=image_list,

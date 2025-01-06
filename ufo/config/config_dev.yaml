@@ -44,7 +44,7 @@ EVALUATION_PROMPT: "ufo/prompts/evaluation/evaluate.yaml"  # The prompt for the 
 HOSTAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/host_agent_example.yaml"  # The prompt for the app selection
 # Lite version: "ufo/prompts/examples/lite/{mode}/host_agent_example.yaml"
 APPAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/app_agent_example.yaml"  # The prompt for the action selection
-APPAGENT_EXAMPLE_PROMPT_AS: "ufo/prompts/examples/{mode}/app_agent_example_seq.yaml"  # The prompt for the action selection with sequence
+APPAGENT_EXAMPLE_PROMPT_AS: "ufo/prompts/examples/{mode}/app_agent_example_as.yaml"  # The prompt for the action selection with sequence
 # Lite version: "ufo/prompts/examples/lite/{mode}/app_agent_example.yaml"
 
 ## For experience learning

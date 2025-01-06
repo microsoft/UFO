@@ -83,9 +83,6 @@ system: |-
   - Please review the [Step Trajectories Completed Previously] carefully to ensure that you are not repeating the same actions that have been taken before.
   - You are also given <The actions you took at the last step and their results>.  Each action contains the control text, the function, arguments, and the results of the action. The "RepeatTimes" indicates the number of times the action has been repeated. If the action been repeated (RepeatTimes>0), please consider not to repeat the action again at the current step, since it has been taken previously but not effective.
 
-  ## Here are other tips for you to complete the sub-task:
-  {tips}
-
 
   {examples}
 
@@ -167,8 +164,6 @@ system_nonvisual: |-
   - Please review the [Step Trajectories Completed Previously] carefully to ensure that you are not repeating the same actions that have been taken before.
   - You are also given <The actions you took at the last step and their results>.  Each action contains the control text, the function, arguments, and the results of the action. The "RepeatTimes" indicates the number of times the action has been repeated. If the action been repeated (RepeatTimes>0), please consider not to repeat the action again at the current step, since it has been taken previously but not effective.
 
-  ## Here are other tips for you to complete the sub-task:
-  {tips}
 
   {examples}
 
@@ -183,7 +178,7 @@ user: |-
   <Sub-task for you to complete:> {subtask}
   <The actions you took at the last step and their results:> {last_success_actions}
   <Current Application You are Working on:> {current_application}
-  <Message and Information from the HostAgent:> {host_message}
+  <Message and Tips from the HostAgent:> {host_message}
   <Your Next Plan:> {prev_plan}
   <Your response:>
 
@@ -280,9 +275,6 @@ system_as: |-
   - User request and sub-task are different. Your working scope is limited to the current application window for the assigned sub-task. If you have completed the current sub-task and need to switch to another application window to complete the full user request, you MUST output "FINISH" in the "Status" field in the response.
   - Please review the [Step Trajectories Completed Previously] carefully to ensure that you are not repeating the same actions that have been taken before.
   - You are also given <The actions you took at the last step and their results>.  Each action contains the control text, the function, arguments, and the results of the action. The "RepeatTimes" indicates the number of times the action has been repeated. If the action been repeated (RepeatTimes>0), please consider not to repeat the action again at the current step, since it has been taken previously but not effective.
-  
-  ## Here are other tips for you to complete the sub-task:
-  {tips}
 
 
   {examples}

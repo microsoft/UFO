@@ -206,9 +206,7 @@ class AppAgentPrompter(BasicPrompter):
         if configs.get("USE_APIS", False):
             self.app_api_prompt_template = self.app_prompter.load_api_prompt()
 
-    def system_prompt_construction(
-        self, additional_examples: List[str] = [], tips: List[str] = []
-    ) -> str:
+    def system_prompt_construction(self, additional_examples: List[str] = []) -> str:
         """
         Construct the prompt for app selection.
         :param additional_examples: The additional examples added to the prompt.
@@ -217,10 +215,6 @@ class AppAgentPrompter(BasicPrompter):
 
         apis = self.api_prompt_helper(verbose=1)
         examples = self.examples_prompt_helper(additional_examples=additional_examples)
-        tips_prompt = "\n".join(tips)
-
-        # Remove empty lines
-        tips_prompt = "\n".join(filter(None, tips_prompt.split("\n")))
 
         if configs.get("ACTION_SEQUENCE", False):
             system_key = "system_as"
@@ -229,9 +223,7 @@ class AppAgentPrompter(BasicPrompter):
         if not self.is_visual:
             system_key += "_nonvisual"
 
-        return self.prompt_template[system_key].format(
-            apis=apis, examples=examples, tips=tips_prompt
-        )
+        return self.prompt_template[system_key].format(apis=apis, examples=examples)
 
     def user_prompt_construction(
         self,
@@ -338,7 +330,7 @@ class AppAgentPrompter(BasicPrompter):
         self,
         header: str = "## Response Examples",
         separator: str = "Example",
-        additional_examples: List[str] = [],
+        additional_examples: List[Dict[str, Any]] = [],
     ) -> str:
         """
         Construct the prompt for examples.
@@ -359,37 +351,57 @@ class AppAgentPrompter(BasicPrompter):
         [Response]:
             {response}"""
 
+        if configs.get("ACTION_SEQUENCE", False):
+            for example in additional_examples:
+                example["Response"] = self.action2action_sequence(
+                    example.get("Response", {})
+                )
+
+        example_dict = [
+            self.example_prompt_template[key]
+            for key in self.example_prompt_template.keys()
+            if key.startswith("example")
+        ] + additional_examples
+
         example_list = []
 
-        for key in self.example_prompt_template.keys():
-            if key.startswith("example"):
-                example = template.format(
-                    request=self.example_prompt_template[key].get("Request"),
-                    subtask=self.example_prompt_template[key].get("Sub-task"),
-                    tips=self.example_prompt_template[key].get("Tips"),
-                    response=json.dumps(
-                        self.example_prompt_template[key].get("Response")
-                    ),
-                )
-                example_list.append(example)
-
-        example_list += [json.dumps(example) for example in additional_examples]
+        for example in example_dict:
+            example_str = template.format(
+                request=example.get("Request"),
+                subtask=example.get("Sub-task"),
+                tips=example.get("Tips"),
+                response=json.dumps(example.get("Response")),
+            )
+            example_list.append(example_str)
 
         return self.retrived_documents_prompt_helper(header, separator, example_list)
 
-    def action2action_sequence(self, action: Dict[str, Any]) -> Dict[str, Any]:
+    @staticmethod
+    def action2action_sequence(response: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Convert the action to an action sequence.
-        :param action: The action.
+        Delete the key in the example["Response"], and replaced it with the key "ActionList".
+        :param example: The action.
         return: The action sequence.
         """
-        return {
-            "Function": action.get("Function", ""),
-            "Args": action.get("Args", {}),
-            "ControlLabel": action.get("ControlLabel", ""),
-            "ControlText": action.get("ControlText", ""),
-            "Status": action.get("Status", "CONTINUE"),
-        }
+        action_list = [
+            {
+                "Function": response.get("Function", ""),
+                "Args": response.get("Args", {}),
+                "Status": response.get("Status", "CONTINUE"),
+                "ControlLabel": response.get("ControlLabel", ""),
+                "ControlText": response.get("ControlText", ""),
+            }
+        ]
+
+        # Delete the keys in the response
+        from copy import deepcopy
+
+        response_copy = deepcopy(response)
+        for key in ["Function", "Args", "Status", "ControlLabel", "ControlText"]:
+            response_copy.pop(key, None)
+        response_copy["ActionList"] = action_list
+
+        return response_copy
 
     def api_prompt_helper(self, verbose: int = 1) -> str:
         """

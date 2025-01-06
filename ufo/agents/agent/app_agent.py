@@ -90,7 +90,6 @@ class AppAgent(BasicAgent):
     def message_constructor(
         self,
         dynamic_examples: str,
-        dynamic_tips: str,
         dynamic_knowledge: str,
         image_list: List,
         control_info: str,
@@ -106,7 +105,6 @@ class AppAgent(BasicAgent):
         """
         Construct the prompt message for the AppAgent.
         :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
-        :param dynamic_tips: The dynamic tips retrieved from the self-demonstration and human demonstration.
         :param dynamic_knowledge: The dynamic knowledge retrieved from the external knowledge base.
         :param image_list: The list of screenshot images.
         :param control_info: The control information.
@@ -120,7 +118,7 @@ class AppAgent(BasicAgent):
         :return: The prompt message.
         """
         appagent_prompt_system_message = self.prompter.system_prompt_construction(
-            dynamic_examples, dynamic_tips
+            dynamic_examples
         )
 
         appagent_prompt_user_message = self.prompter.user_content_construction(
@@ -250,13 +248,17 @@ class AppAgent(BasicAgent):
 
         return retrieved_docs
 
-    def rag_experience_retrieve(self, request: str, experience_top_k: int) -> str:
+    def rag_experience_retrieve(
+        self, request: str, experience_top_k: int
+    ) -> List[Dict[str, Any]]:
         """
         Retrieving experience examples for the user request.
         :param request: The user request.
         :param experience_top_k: The number of documents to retrieve.
-        :return: The retrieved examples and tips string.
+        :return: The retrieved examples and tips dictionary.
         """
+
+        retrieved_docs = []
 
         # Retrieve experience examples. Only retrieve the examples that are related to the current application.
         experience_docs = self.experience_retriever.retrieve(
@@ -267,13 +269,21 @@ class AppAgent(BasicAgent):
         )
 
         if experience_docs:
-            examples = [doc.metadata.get("example", {}) for doc in experience_docs]
-            tips = [doc.metadata.get("Tips", "") for doc in experience_docs]
-        else:
-            examples = []
-            tips = []
+            for doc in experience_docs:
+                example_request = doc.metadata.get("request", "")
+                response = doc.metadata.get("example", {})
+                tips = doc.metadata.get("Tips", "")
+                subtask = doc.metadata.get("Sub-task", "")
+                retrieved_docs.append(
+                    {
+                        "Request": example_request,
+                        "Response": response,
+                        "Sub-task": subtask,
+                        "Tips": tips,
+                    }
+                )
 
-        return examples, tips
+        return retrieved_docs
 
     def rag_demonstration_retrieve(self, request: str, demonstration_top_k: int) -> str:
         """
@@ -283,14 +293,27 @@ class AppAgent(BasicAgent):
         :return: The retrieved examples and tips string.
         """
 
+        retrieved_docs = []
+
         # Retrieve demonstration examples.
         demonstration_docs = self.human_demonstration_retriever.retrieve(
             request, demonstration_top_k
         )
 
         if demonstration_docs:
-            examples = [doc.metadata.get("example", {}) for doc in demonstration_docs]
-            tips = [doc.metadata.get("Tips", "") for doc in demonstration_docs]
+            for doc in demonstration_docs:
+                example_request = doc.metadata.get("request", "")
+                response = doc.metadata.get("example", {})
+                subtask = doc.metadata.get("Sub-task", "")
+                tips = doc.metadata.get("Tips", "")
+                retrieved_docs.append(
+                    {
+                        "Request": example_request,
+                        "Response": response,
+                        "Sub-task": subtask,
+                        "Tips": tips,
+                    }
+                )
         else:
             examples = []
             tips = []

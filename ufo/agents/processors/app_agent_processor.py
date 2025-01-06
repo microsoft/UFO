@@ -75,7 +75,6 @@ class AppAgentRequestLog:
 
     step: int
     dynamic_examples: List[str]
-    dynamic_tips: List[str]
     dynamic_knowledge: List[str]
     image_list: List[str]
     prev_subtask: List[str]
@@ -265,7 +264,7 @@ class AppAgentProcessor(BaseProcessor):
         Get the prompt message for the AppAgent.
         """
 
-        examples, tips = self.demonstration_prompt_helper()
+        retrieved_results = self.demonstration_prompt_helper()
 
         # Get the external knowledge prompt for the AppAgent using the offline and online retrievers.
         external_knowledge_prompt = self.app_agent.external_knowledge_prompt_helper(
@@ -291,8 +290,7 @@ class AppAgentProcessor(BaseProcessor):
 
         # Construct the prompt message for the AppAgent.
         self._prompt_message = self.app_agent.message_constructor(
-            dynamic_examples=examples,
-            dynamic_tips=tips,
+            dynamic_examples=retrieved_results,
             dynamic_knowledge=external_knowledge_prompt,
             image_list=self._image_url,
             control_info=self.filtered_control_info,
@@ -309,8 +307,7 @@ class AppAgentProcessor(BaseProcessor):
         # Log the prompt message. Only save them in debug mode.
         request_data = AppAgentRequestLog(
             step=self.session_step,
-            dynamic_examples=examples,
-            dynamic_tips=tips,
+            dynamic_examples=retrieved_results,
             dynamic_knowledge=external_knowledge_prompt,
             image_list=self._image_url,
             prev_subtask=self.previous_subtasks,
@@ -359,7 +356,9 @@ class AppAgentProcessor(BaseProcessor):
         self._response_json["Plan"] = self.plan
 
         self.status = self._response_json.get("Status", "")
-        self.app_agent.print_response(self._response_json)
+        self.app_agent.print_response(
+            response_dict=self._response_json, print_action=True
+        )
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -582,37 +581,25 @@ class AppAgentProcessor(BaseProcessor):
         )
         self.app_agent.Puppeteer.save_to_xml(xml_save_path)
 
-    def demonstration_prompt_helper(self) -> Tuple[List[str], List[str]]:
+    def demonstration_prompt_helper(self) -> List[Dict[str, Any]]:
         """
         Get the examples and tips for the AppAgent using the demonstration retriever.
         :return: The examples and tips for the AppAgent.
         """
 
+        retrieved_results = []
         # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
         if configs["RAG_EXPERIENCE"]:
-            experience_examples, experience_tips = (
-                self.app_agent.rag_experience_retrieve(
-                    self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
-                )
+            retrieved_results += self.app_agent.rag_experience_retrieve(
+                self.subtask, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
             )
-        else:
-            experience_examples = []
-            experience_tips = []
 
         if configs["RAG_DEMONSTRATION"]:
-            demonstration_examples, demonstration_tips = (
-                self.app_agent.rag_demonstration_retrieve(
-                    self.request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
-                )
+            retrieved_results += self.app_agent.rag_demonstration_retrieve(
+                self.subtask, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
             )
-        else:
-            demonstration_examples = []
-            demonstration_tips = []
 
-        examples = experience_examples + demonstration_examples
-        tips = experience_tips + demonstration_tips
-
-        return examples, tips
+        return retrieved_results
 
     def get_filtered_annotation_dict(
         self, annotation_dict: Dict[str, UIAWrapper], configs=configs

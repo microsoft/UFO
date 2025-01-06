@@ -510,7 +510,8 @@ class ActionSequence:
         for action in self.actions:
             if success_only and action.results.status != "success":
                 continue
-            utils.print_with_color(f"Action {index}: {action.command_string}", "blue")
+            if self.length > 1:
+                utils.print_with_color(f"Action {index}:", "blue")
             action.print_result()
             index += 1
         utils.print_with_color(f"Final status: {self.status}", "yellow")

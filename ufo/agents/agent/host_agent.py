@@ -235,6 +235,11 @@ class HostAgent(BasicAgent):
         :return: The app agent.
         """
 
+        if configs.get("ACTION_SEQUENCE", False):
+            example_prompt = configs["APPAGENT_EXAMPLE_PROMPT_AS"]
+        else:
+            example_prompt = configs["APPAGENT_EXAMPLE_PROMPT"]
+
         if mode == "normal" or "batch_normal":
 
             agent_name = (
@@ -254,7 +259,7 @@ class HostAgent(BasicAgent):
                 app_root_name=application_root_name,
                 is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
                 main_prompt=configs["APPAGENT_PROMPT"],
-                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                example_prompt=example_prompt,
                 api_prompt=configs["API_PROMPT"],
             )
 
@@ -275,7 +280,7 @@ class HostAgent(BasicAgent):
                 app_root_name=application_root_name,
                 is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
                 main_prompt=configs["FOLLOWERAHENT_PROMPT"],
-                example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
+                example_prompt=example_prompt,
                 api_prompt=configs["API_PROMPT"],
                 app_info_prompt=app_info_prompt,
             )

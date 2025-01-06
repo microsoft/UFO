@@ -327,3 +327,7 @@ example10:
       - (5) Click the 'Submit' button to submit the form.
     Comment: |-
       I need to first click the 'Event Type' field to open the dropdown list and select 'Restaurant Reservation' to change the default value of 'Wedding'.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
+  Tips: |-
+    - If the field is already filled with a default value, you need to first click on the field to open the dropdown list and select the correct value.

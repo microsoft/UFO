@@ -68,7 +68,6 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
 
         self._prompt_message = self.app_agent.message_constructor(
             dynamic_examples=examples,
-            dynamic_tips=tips,
             dynamic_knowledge=external_knowledge_prompt,
             image_list=self._image_url,
             control_info=self.filtered_control_info,
@@ -86,7 +85,6 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
         request_data = FollowerAgentRequestLog(
             step=self.session_step,
             dynamic_examples=examples,
-            dynamic_tips=tips,
             dynamic_knowledge=external_knowledge_prompt,
             image_list=self._image_url,
             prev_subtask=[],
