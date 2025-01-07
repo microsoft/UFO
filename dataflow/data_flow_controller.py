@@ -393,8 +393,8 @@ class DataFlowController:
             self.task_type + "_pass",
         )
         source_template_path = os.path.join(
-            self.result_hub,
-            "save_document",
+            os.path.dirname(self.result_hub),
+            "saved_document",
         )
         target_file_path = os.path.join(
             path,
@@ -404,14 +404,20 @@ class DataFlowController:
             path,
             "files",
         )
-        os.makedirs(os.path.dirname(target_file_path), exist_ok=True)
-        os.makedirs(os.path.dirname(target_template_path), exist_ok=True)
+        os.makedirs((target_file_path), exist_ok=True)
+        os.makedirs((target_template_path), exist_ok=True)
 
         for file in os.listdir(source_files_path):
             if file.endswith(".json"):
-                file_path = os.path.join(source_files_path, file)
+                source_file = os.path.join(source_files_path, file)
+                target_file = os.path.join(target_file_path, file)
+                target_object = os.path.join(
+                    target_template_path, file.replace(".json", ".docx")
+                )
                 is_successed = transfer_json_file(
-                    file_path, target_template_path, load_json_file(file_path)
+                    target_file,
+                    target_object,
+                    load_json_file(source_file),
                 )
                 if is_successed:
                     shutil.copy(

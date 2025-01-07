@@ -220,6 +220,7 @@ class ChooseTemplateFlow:
         response_json = json.loads(response_string)
         file_name = list(response_json.keys())[0]
         if file_name not in doc_files_description:
+            print(f"Template {file_name} not found in the description.")
             raise ValueError("No similar templates found.")
         return file_name
 
