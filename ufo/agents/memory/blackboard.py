@@ -103,6 +103,8 @@ class Blackboard:
             data_memory = MemoryItem()
             data_memory.add_values_from_dict({"text": data})
             memory.add_memory_item(data_memory)
+        else:
+            print(f"Warning: Unsupported data type: {type(data)} when adding data.")
 
     def add_questions(self, questions: Union[MemoryItem, Dict[str, str]]) -> None:
         """

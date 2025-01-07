@@ -109,6 +109,7 @@ class ExperienceSummarizer:
             prompt = self.build_prompt(log_partition)
             summary, cost = self.get_summary(prompt)
             summary["request"] = log_partition.get("subtask")
+            summary["Sub-task"] = log_partition.get("subtask")
             summary["app_list"] = [log_partition.get("application")]
             summaries.append(summary)
             total_cost += cost

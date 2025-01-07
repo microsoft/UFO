@@ -1,29 +1,91 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-
 import json
 import os
-import time
-from typing import TYPE_CHECKING, Dict, List, Tuple
+from dataclasses import asdict, dataclass, field
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
+from ufo.agents.processors.actions import (
+    ActionSequence,
+    BaseControlLog,
+    OneStepAction,
+)
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control import ui_tree
-from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
-
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
 
 configs = Config.get_instance().config_data
 if configs is not None:
-    BACKEND = configs["CONTROL_BACKEND"]
+    BACKEND = configs.get("CONTROL_BACKEND", "uia")
+
+
+@dataclass
+class AppAgentAdditionalMemory:
+    """
+    The additional memory data for the AppAgent.
+    """
+
+    Step: int
+    RoundStep: int
+    AgentStep: int
+    Round: int
+    Subtask: str
+    SubtaskIndex: int
+    FunctionCall: List[str]
+    Action: List[Dict[str, Any]]
+    ActionSuccess: List[Dict[str, Any]]
+    ActionType: List[str]
+    Request: str
+    Agent: str
+    AgentName: str
+    Application: str
+    Cost: float
+    Results: str
+    error: str
+    time_cost: Dict[str, float]
+    ControlLog: Dict[str, Any]
+    UserConfirm: Optional[str] = None
+
+
+@dataclass
+class AppAgentControlLog(BaseControlLog):
+    """
+    The control log data for the AppAgent.
+    """
+
+    control_friendly_class_name: str = ""
+    control_coordinates: Dict[str, int] = field(default_factory=dict)
+
+
+@dataclass
+class AppAgentRequestLog:
+    """
+    The request log data for the AppAgent.
+    """
+
+    step: int
+    dynamic_examples: List[str]
+    dynamic_knowledge: List[str]
+    image_list: List[str]
+    prev_subtask: List[str]
+    plan: List[str]
+    request: str
+    control_info: List[Dict[str, str]]
+    subtask: str
+    host_message: str
+    blackboard_prompt: List[str]
+    last_success_actions: List[Dict[str, Any]]
+    include_last_screenshot: bool
+    prompt: Dict[str, Any]
 
 
 class AppAgentProcessor(BaseProcessor):
@@ -50,22 +112,7 @@ class AppAgentProcessor(BaseProcessor):
         self._image_url = []
         self.control_filter_factory = ControlFilterFactory()
         self.filtered_annotation_dict = None
-
-    @property
-    def action(self) -> str:
-        """
-        Get the action.
-        :return: The action.
-        """
-        return self._action
-
-    @action.setter
-    def action(self, action: str) -> None:
-        """
-        Set the action.
-        :param action: The action.
-        """
-        self._action = action
+        self.screenshot_save_path = None
 
     def print_step_info(self) -> None:
         """
@@ -90,6 +137,8 @@ class AppAgentProcessor(BaseProcessor):
 
         # Define the paths for the screenshots saved.
         screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
+        self.screenshot_save_path = screenshot_save_path
+
         annotated_screenshot_save_path = (
             self.log_path + f"action_step{self.session_step}_annotated.png"
         )
@@ -111,8 +160,8 @@ class AppAgentProcessor(BaseProcessor):
         else:
             control_list = self.control_inspector.find_control_elements_in_descendants(
                 self.application_window,
-                control_type_list=configs["CONTROL_LIST"],
-                class_name_list=configs["CONTROL_LIST"],
+                control_type_list=configs.get("CONTROL_LIST", []),
+                class_name_list=configs.get("CONTROL_LIST", []),
             )
 
         # Get the annotation dictionary for the control items, in a format of {control_label: control_element}.
@@ -146,7 +195,7 @@ class AppAgentProcessor(BaseProcessor):
                 )
 
         # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
-        if configs["INCLUDE_LAST_SCREENSHOT"]:
+        if configs.get("INCLUDE_LAST_SCREENSHOT", True):
             last_screenshot_save_path = (
                 self.log_path + f"action_step{self.session_step - 1}.png"
             )
@@ -163,7 +212,7 @@ class AppAgentProcessor(BaseProcessor):
             ]
 
         # Whether to concatenate the screenshots of clean screenshot and annotated screenshot into one image.
-        if configs["CONCAT_SCREENSHOT"]:
+        if configs.get("CONCAT_SCREENSHOT", False):
             self.photographer.concat_screenshots(
                 screenshot_save_path,
                 annotated_screenshot_save_path,
@@ -182,8 +231,7 @@ class AppAgentProcessor(BaseProcessor):
             self._image_url += [screenshot_url, screenshot_annotated_url]
 
         # Save the XML file for the current state.
-        if configs["LOG_XML"]:
-
+        if configs.get("LOG_XML", False):
             self._save_to_xml()
 
     @BaseProcessor.exception_capture
@@ -215,19 +263,33 @@ class AppAgentProcessor(BaseProcessor):
         Get the prompt message for the AppAgent.
         """
 
-        examples, tips = self.demonstration_prompt_helper()
+        retrieved_results = self.demonstration_prompt_helper()
 
         # Get the external knowledge prompt for the AppAgent using the offline and online retrievers.
         external_knowledge_prompt = self.app_agent.external_knowledge_prompt_helper(
             self.request,
-            configs["RAG_OFFLINE_DOCS_RETRIEVED_TOPK"],
-            configs["RAG_ONLINE_RETRIEVED_TOPK"],
+            configs.get("RAG_OFFLINE_DOCS_RETRIEVED_TOPK", 0),
+            configs.get("RAG_ONLINE_RETRIEVED_TOPK", 0),
         )
+
+        if not self.app_agent.blackboard.is_empty():
+            blackboard_prompt = self.app_agent.blackboard.blackboard_to_prompt()
+        else:
+            blackboard_prompt = []
+
+        # Get the last successful actions of the AppAgent.
+        last_success_actions = self.get_last_success_actions()
+
+        action_keys = ["Function", "Args", "ControlText", "Results", "RepeatTimes"]
+
+        filtered_last_success_actions = [
+            {key: action.get(key, "") for key in action_keys}
+            for action in last_success_actions
+        ]
 
         # Construct the prompt message for the AppAgent.
         self._prompt_message = self.app_agent.message_constructor(
-            dynamic_examples=examples,
-            dynamic_tips=tips,
+            dynamic_examples=retrieved_results,
             dynamic_knowledge=external_knowledge_prompt,
             image_list=self._image_url,
             control_info=self.filtered_control_info,
@@ -236,20 +298,31 @@ class AppAgentProcessor(BaseProcessor):
             request=self.request,
             subtask=self.subtask,
             host_message=self.host_message,
-            include_last_screenshot=configs["INCLUDE_LAST_SCREENSHOT"],
+            blackboard_prompt=blackboard_prompt,
+            last_success_actions=filtered_last_success_actions,
+            include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
         )
 
         # Log the prompt message. Only save them in debug mode.
-        log = json.dumps(
-            {
-                "step": self.session_step,
-                "prompt": self._prompt_message,
-                "control_items": self._control_info,
-                "filted_control_items": self.filtered_control_info,
-                "status": "",
-            }
+        request_data = AppAgentRequestLog(
+            step=self.session_step,
+            dynamic_examples=retrieved_results,
+            dynamic_knowledge=external_knowledge_prompt,
+            image_list=self._image_url,
+            prev_subtask=self.previous_subtasks,
+            plan=self.prev_plan,
+            request=self.request,
+            control_info=self.filtered_control_info,
+            subtask=self.subtask,
+            host_message=self.host_message,
+            blackboard_prompt=blackboard_prompt,
+            last_success_actions=filtered_last_success_actions,
+            include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
+            prompt=self._prompt_message,
         )
-        self.request_logger.debug(log)
+
+        request_log_str = json.dumps(asdict(request_data), indent=4, ensure_ascii=False)
+        self.request_logger.debug(request_log_str)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -281,13 +354,10 @@ class AppAgentProcessor(BaseProcessor):
         self.plan = self.string2list(self._response_json.get("Plan", ""))
         self._response_json["Plan"] = self.plan
 
-        # Compose the function call and the arguments string.
-        self.action = self.app_agent.Puppeteer.get_command_string(
-            self._operation, self._args
-        )
-
         self.status = self._response_json.get("Status", "")
-        self.app_agent.print_response(self._response_json)
+        self.app_agent.print_response(
+            response_dict=self._response_json, print_action=True
+        )
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -296,56 +366,31 @@ class AppAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
+        action = OneStepAction(
+            function=self._operation,
+            args=self._args,
+            control_label=self._control_label,
+            control_text=self.control_text,
+            after_status=self.status,
+        )
         control_selected = self._annotation_dict.get(self._control_label, None)
+
         # Save the screenshot of the tagged selected control.
         self.capture_control_screenshot(control_selected)
 
-        self.app_agent.Puppeteer.receiver_manager.create_ui_control_receiver(
-            control_selected, self.application_window
+        self.actions: ActionSequence = ActionSequence(actions=[action])
+        self.actions.execute_all(
+            puppeteer=self.app_agent.Puppeteer,
+            control_dict=self._annotation_dict,
+            application_window=self.application_window,
         )
 
-        if self._operation:
-
-            if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
-                control_selected.draw_outline(colour="red", thickness=3)
-                time.sleep(configs.get("RECTANGLE_TIME", 0))
-
-            if control_selected:
-                control_coordinates = PhotographerDecorator.coordinate_adjusted(
-                    self.application_window.rectangle(),
-                    control_selected.rectangle(),
-                )
-                self._control_log = {
-                    "control_class": control_selected.element_info.class_name,
-                    "control_type": control_selected.element_info.control_type,
-                    "control_automation_id": control_selected.element_info.automation_id,
-                    "control_friendly_class_name": control_selected.friendly_class_name(),
-                    "control_coordinates": {
-                        "left": control_coordinates[0],
-                        "top": control_coordinates[1],
-                        "right": control_coordinates[2],
-                        "bottom": control_coordinates[3],
-                    },
-                }
-            else:
-                self._control_log = {}
-
-            if self.status.upper() == self._agent_status_manager.SCREENSHOT.value:
-                self.handle_screenshot_status()
-            else:
-                self._results = self.app_agent.Puppeteer.execute_command(
-                    self._operation, self._args
-                )
-                self.control_reannotate = None
-            if not utils.is_json_serializable(self._results):
-                self._results = ""
-
-                return
-
-    def capture_control_screenshot(self, control_selected: UIAWrapper) -> None:
+    def capture_control_screenshot(
+        self, control_selected: Union[UIAWrapper, List[UIAWrapper]]
+    ) -> None:
         """
         Capture the screenshot of the selected control.
-        :param control_selected: The selected control item.
+        :param control_selected: The selected control item or a list of selected control items.
         """
         control_screenshot_save_path = (
             self.log_path + f"action_step{self.session_step}_selected_controls.png"
@@ -355,10 +400,17 @@ class AppAgentProcessor(BaseProcessor):
             {"SelectedControlScreenshot": control_screenshot_save_path}
         )
 
+        sub_control_list = (
+            control_selected
+            if isinstance(control_selected, list)
+            else [control_selected]
+        )
+
         self.photographer.capture_app_window_screenshot_with_rectangle(
             self.application_window,
-            sub_control_list=[control_selected],
+            sub_control_list=sub_control_list,
             save_path=control_screenshot_save_path,
+            background_screenshot_path=self.screenshot_save_path,
         )
 
     def handle_screenshot_status(self) -> None:
@@ -383,31 +435,53 @@ class AppAgentProcessor(BaseProcessor):
             self.application_window
         )
 
-        # Log additional information for the app agent.
-        additional_memory = {
-            "Step": self.session_step,
-            "RoundStep": self.round_step,
-            "AgentStep": self.app_agent.step,
-            "Round": self.round_num,
-            "Subtask": self.subtask,
-            "SubtaskIndex": self.round_subtask_amount,
-            "Action": self.action,
-            "ActionType": self.app_agent.Puppeteer.get_command_types(self._operation),
-            "Request": self.request,
-            "Agent": "AppAgent",
-            "AgentName": self.app_agent.name,
-            "Application": app_root,
-            "Cost": self._cost,
-            "Results": self._results,
-            "error": self._exeception_traceback,
-        }
-        self.add_to_memory(self._response_json)
-        self.add_to_memory(additional_memory)
-        self.add_to_memory(self._control_log)
-        self.add_to_memory({"time_cost": self._time_cost})
+        action_type = [
+            self.app_agent.Puppeteer.get_command_types(action.function)
+            for action in self.actions.actions
+        ]
 
-        if self.status.upper() == self._agent_status_manager.CONFIRM.value:
-            self._memory_data.add_values_from_dict({"UserConfirm": "Yes"})
+        all_previous_success_actions = self.get_all_success_actions()
+
+        action_success = self.actions.to_list_of_dicts(
+            success_only=True, previous_actions=all_previous_success_actions
+        )
+
+        # Create the additional memory data for the log.
+        additional_memory = AppAgentAdditionalMemory(
+            Step=self.session_step,
+            RoundStep=self.round_step,
+            AgentStep=self.app_agent.step,
+            Round=self.round_num,
+            Subtask=self.subtask,
+            SubtaskIndex=self.round_subtask_amount,
+            FunctionCall=self.actions.get_function_calls(),
+            Action=self.actions.to_list_of_dicts(
+                previous_actions=all_previous_success_actions
+            ),
+            ActionSuccess=action_success,
+            ActionType=action_type,
+            Request=self.request,
+            Agent="AppAgent",
+            AgentName=self.app_agent.name,
+            Application=app_root,
+            Cost=self._cost,
+            Results=self.actions.get_results(),
+            error=self._exeception_traceback,
+            time_cost=self._time_cost,
+            ControlLog=self.actions.get_control_logs(),
+            UserConfirm=(
+                "Yes"
+                if self.status.upper()
+                == self._agent_status_manager.CONFIRM.value.upper()
+                else None
+            ),
+        )
+
+        # Log the original response from the LLM.
+        self.add_to_memory(self._response_json)
+
+        # Log the additional memory data for the AppAgent.
+        self.add_to_memory(asdict(additional_memory))
 
     def update_memory(self) -> None:
         """
@@ -425,7 +499,8 @@ class AppAgentProcessor(BaseProcessor):
 
         # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
         memorized_action = {
-            key: self._memory_data.to_dict().get(key) for key in configs["HISTORY_KEYS"]
+            key: self._memory_data.to_dict().get(key)
+            for key in configs.get("HISTORY_KEYS", [])
         }
 
         if self.is_confirm():
@@ -440,6 +515,43 @@ class AppAgentProcessor(BaseProcessor):
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
         self._update_image_blackboard()
         self.host_agent.blackboard.add_trajectories(memorized_action)
+
+    def get_all_success_actions(self) -> List[Dict[str, Any]]:
+        """
+        Get the previous action.
+        :return: The previous action of the agent.
+        """
+        agent_memory = self.app_agent.memory
+
+        if agent_memory.length > 0:
+            success_action_memory = agent_memory.filter_memory_from_keys(
+                ["ActionSuccess"]
+            )
+            success_actions = []
+            for success_action in success_action_memory:
+                success_actions += success_action.get("ActionSuccess", [])
+
+        else:
+            success_actions = []
+
+        return success_actions
+
+    def get_last_success_actions(self) -> List[Dict[str, Any]]:
+        """
+        Get the previous action.
+        :return: The previous action of the agent.
+        """
+        agent_memory = self.app_agent.memory
+
+        if agent_memory.length > 0:
+            last_success_actions = (
+                agent_memory.get_latest_item().to_dict().get("ActionSuccess", [])
+            )
+
+        else:
+            last_success_actions = []
+
+        return last_success_actions
 
     def _update_image_blackboard(self) -> None:
         """
@@ -468,40 +580,28 @@ class AppAgentProcessor(BaseProcessor):
         )
         self.app_agent.Puppeteer.save_to_xml(xml_save_path)
 
-    def demonstration_prompt_helper(self) -> Tuple[List[str], List[str]]:
+    def demonstration_prompt_helper(self) -> List[Dict[str, Any]]:
         """
         Get the examples and tips for the AppAgent using the demonstration retriever.
         :return: The examples and tips for the AppAgent.
         """
 
+        retrieved_results = []
         # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
         if configs["RAG_EXPERIENCE"]:
-            experience_examples, experience_tips = (
-                self.app_agent.rag_experience_retrieve(
-                    self.request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
-                )
+            retrieved_results += self.app_agent.rag_experience_retrieve(
+                self.subtask, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
             )
-        else:
-            experience_examples = []
-            experience_tips = []
 
         if configs["RAG_DEMONSTRATION"]:
-            demonstration_examples, demonstration_tips = (
-                self.app_agent.rag_demonstration_retrieve(
-                    self.request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
-                )
+            retrieved_results += self.app_agent.rag_demonstration_retrieve(
+                self.subtask, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
             )
-        else:
-            demonstration_examples = []
-            demonstration_tips = []
 
-        examples = experience_examples + demonstration_examples
-        tips = experience_tips + demonstration_tips
-
-        return examples, tips
+        return retrieved_results
 
     def get_filtered_annotation_dict(
-        self, annotation_dict: Dict[str, UIAWrapper], configs=configs
+        self, annotation_dict: Dict[str, UIAWrapper], configs: Dict[str, Any] = configs
     ) -> Dict[str, UIAWrapper]:
         """
         Get the filtered annotation dictionary.

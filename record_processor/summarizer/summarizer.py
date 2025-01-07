@@ -12,6 +12,7 @@ from record_processor.parser.demonstration_record import DemonstrationRecord
 from record_processor.utils import json_parser
 from ufo.llm.llm_call import get_completions
 from ufo.prompter.demonstration_prompter import DemonstrationPrompter
+from ufo.utils import get_hugginface_embedding
 
 
 class DemonstrationSummarizer:
