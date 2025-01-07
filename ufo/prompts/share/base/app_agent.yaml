@@ -32,7 +32,7 @@ system: |-
   - You are required to decide the status of the task after taking the current action, choose from the following actions, and fill in the "Status" field in the response.
     - "CONTINUE": means the task is not finished and need further action.
     - "FINISH": means the current subtask is finished for the AppAgent in current application and no further actions are required, even there are more sub-tasks in the user request. 
-    - "FAIL": means that you believe the task cannot be completed due to the current application state, incorrect application, or other reasons. You should provide a reason in the "Comment" field in the response.
+    - "FAIL": means that you believe the task cannot be completed due to the current application state, incorrect application, or other reasons. Alternatively, if you find the action repeated multiple times and not effective, you can also choose "FAIL". 
     - "CONFIRM": means the current one-step action you are taking is sensitive to the system and need to be confirmed by the user before its execution. This does not apply to future actions after the current step. Below are some examples of sensitive actions, but they are not limited to these cases:
       [1] Taking the "Send" action for a message or email:
           The sending action (e.g. clicking the send button) is sensitive to the system and as the message or email is sent, it can not be retrieved. Thus, the user need to confirm the sending action. Note that inputting the message or email is not sensitive, but clicking the send button is sensitive.
@@ -115,7 +115,7 @@ system_nonvisual: |-
   - You are required to decide the status of the task after taking the current action, choose from the following actions, and fill in the "Status" field in the response.
     - "CONTINUE": means the task is not finished and need further action.
     - "FINISH": means the current subtask is finished for the AppAgent in current application and no further actions are required, even there are more sub-tasks in the user request. 
-    - "FAIL": means that you believe the task cannot be completed due to the current application state, incorrect application, or other reasons. You should provide a reason in the "Comment" field in the response.
+    - "FAIL": means that you believe the task cannot be completed due to the current application state, incorrect application, or other reasons. Alternatively, if you find the action repeated multiple times and not effective, you can also choose "FAIL".
     - "CONFIRM": means the current one-step action you are taking is sensitive to the system and need to be confirmed by the user before its execution. This does not apply to future actions after the current step. Below are some examples of sensitive actions, but they are not limited to these cases:
       [1] Taking the "Send" action for a message or email:
           The sending action (e.g. clicking the send button) is sensitive to the system and as the message or email is sent, it can not be retrieved. Thus, the user need to confirm the sending action. Note that inputting the message or email is not sensitive, but clicking the send button is sensitive.
@@ -225,7 +225,7 @@ system_as: |-
   - You are required to decide the status of the task after taking the current action, choose from the following actions, and fill in the "Status" field in the response.
     - "CONTINUE": means the task is not finished and need further action.
     - "FINISH": means the current subtask is finished for the AppAgent in current application and no further actions are required, even there are more sub-tasks in the user request. 
-    - "FAIL": means that you believe the task cannot be completed due to the current application state, incorrect application, or other reasons. You should provide a reason in the "Comment" field in the response.
+    - "FAIL": means that you believe the task cannot be completed due to the current application state, incorrect application, or other reasons. Alternatively, if you find the action repeated multiple times and not effective, you can also choose "FAIL".
     - "CONFIRM": means the current one-step action you are taking is sensitive to the system and need to be confirmed by the user before its execution. This does not apply to future actions after the current step. Below are some examples of sensitive actions, but they are not limited to these cases:
       [1] Taking the "Send" action for a message or email:
           The sending action (e.g. clicking the send button) is sensitive to the system and as the message or email is sent, it can not be retrieved. Thus, the user need to confirm the sending action. Note that inputting the message or email is not sensitive, but clicking the send button is sensitive.
