@@ -455,7 +455,7 @@ class ActionSequence:
                 action.action_flow(puppeteer, control_dict, application_window)
 
                 # Sleep for a while to avoid the UI being too busy.
-                time.sleep(1)
+                time.sleep(0.5)
 
             if action.results.status != "success":
                 early_stop = True
