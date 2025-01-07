@@ -17,7 +17,7 @@ TEMPLATE_PROMPT: "dataflow/prompts/instantiation/{mode}/template.yaml"  # The pr
 
 # Transfer Configuration
 TRANSFER_RESULT: True # Whether to transfer the result to the UFO batch mode
-TRANSFER_RESULT_RESULT: "../datas"  # The transfer result path
+TRANSFER_RESULT_HUB: "../datas"  # The transfer result path
 
 # Default Task Configuration
 TASKS_HUB: "dataflow/tasks/prefill"  # The default tasks hub for batch dataflow
