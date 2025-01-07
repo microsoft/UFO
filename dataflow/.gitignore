@@ -4,7 +4,6 @@ controls_cache/
 controller/utils/
 config/config.yaml
 tasks/
-templates/word
 logs/
 results/
 _logs
