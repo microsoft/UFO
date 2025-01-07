@@ -237,10 +237,10 @@ class Session(BaseSession):
                 self._finish = True
             return request
 
-    def request_to_evaluate(self) -> bool:
+    def request_to_evaluate(self) -> str:
         """
-        Check if the session should be evaluated.
-        :return: True if the session should be evaluated, False otherwise.
+        Get the request to evaluate.
+        return: The request(s) to evaluate.
         """
         request_memory = self._host_agent.blackboard.requests
         return request_memory.to_json()
@@ -328,10 +328,10 @@ class FollowerSession(BaseSession):
         else:
             return self.plan_reader.next_step()
 
-    def request_to_evaluate(self) -> bool:
+    def request_to_evaluate(self) -> str:
         """
-        Check if the session should be evaluated.
-        :return: True if the session should be evaluated, False otherwise.
+        Get the request to evaluate.
+        return: The request(s) to evaluate.
         """
 
         return self.plan_reader.get_task()
@@ -501,13 +501,12 @@ class FromFileSession(BaseSession):
             except Exception as e:
                 print(f"An error occurred: {e}")
 
-    def request_to_evaluate(self) -> bool:
+    def request_to_evaluate(self) -> str:
         """
-        Check if the session should be evaluated.
-        :return: True if the session should be evaluated, False otherwise.
+        Get the request to evaluate.
+        return: The request(s) to evaluate.
         """
-        request_memory = self._host_agent.blackboard.requests
-        return request_memory.to_json()
+        return self.plan_reader.get_task()
 
     def record_task_done(self) -> None:
         """

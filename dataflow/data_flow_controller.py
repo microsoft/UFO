@@ -4,6 +4,7 @@ import traceback
 from enum import Enum
 from typing import Any, Dict, Optional, List
 from jsonschema import validate, ValidationError
+import shutil
 
 from dataflow.env.env_manager import WindowsAppEnv
 from dataflow.instantiation.workflow.choose_template_flow import ChooseTemplateFlow
@@ -13,7 +14,7 @@ from dataflow.execution.workflow.execute_flow import ExecuteFlow
 from dataflow.config.config import Config
 
 from ufo.utils import print_with_color
-from learner.utils import load_json_file, save_json_file
+from learner.utils import load_json_file, save_json_file, transfer_json_file
 
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.module.context import Context
@@ -382,6 +383,44 @@ class DataFlowController:
             "instantiated_plan"
         ] = value
 
+    def transfer_result(self, path) -> None:
+        """
+        Transfer the result to the result hub.
+        """
+        os.makedirs(path, exist_ok=True)
+        source_files_path = os.path.join(
+            self.result_hub,
+            self.task_type + "_pass",
+        )
+        source_template_path = os.path.join(
+            self.result_hub,
+            "save_document",
+        )
+        target_file_path = os.path.join(
+            path,
+            "tasks",
+        )
+        target_template_path = os.path.join(
+            path,
+            "files",
+        )
+        os.makedirs(os.path.dirname(target_file_path), exist_ok=True)
+        os.makedirs(os.path.dirname(target_template_path), exist_ok=True)
+
+        for file in os.listdir(source_files_path):
+            if file.endswith(".json"):
+                file_path = os.path.join(source_files_path, file)
+                is_successed = transfer_json_file(
+                    file_path, target_template_path, load_json_file(file_path)
+                )
+                if is_successed:
+                    shutil.copy(
+                        os.path.join(
+                            source_template_path, file.replace(".json", ".docx")
+                        ),
+                        target_template_path,
+                    )
+
     def run(self) -> None:
         """
         Run the instantiation and execution process.
@@ -414,3 +453,6 @@ class DataFlowController:
             self.task_info["time_cost"]["total"] = round(new_total_time, 3)
 
             self.save_result()
+
+        if _configs["TRANSFER_RESULT"]:
+            self.transfer_result(_configs["TRANSFER_RESULT_HUB"])
