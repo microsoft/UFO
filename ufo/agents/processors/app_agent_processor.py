@@ -324,7 +324,7 @@ class AppAgentProcessor(BaseProcessor):
             prompt=self._prompt_message,
         )
 
-        request_log_str = json.dumps(asdict(request_data), indent=4, ensure_ascii=False)
+        request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
         self.request_logger.debug(request_log_str)
 
     @BaseProcessor.exception_capture
