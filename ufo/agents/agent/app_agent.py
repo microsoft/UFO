@@ -97,6 +97,7 @@ class AppAgent(BasicAgent):
         plan: List[str],
         request: str,
         subtask: str,
+        current_application: str,
         host_message: List[str],
         blackboard_prompt: List[Dict[str, str]],
         last_success_actions: List[Dict[str, Any]],
@@ -111,6 +112,7 @@ class AppAgent(BasicAgent):
         :param plan: The plan list.
         :param request: The overall user request.
         :param subtask: The subtask for the current AppAgent to process.
+        :param current_application: The current application name.
         :param host_message: The message from the HostAgent.
         :param blackboard_prompt: The prompt message from the blackboard.
         :param last_success_actions: The list of successful actions in the last step.
@@ -128,7 +130,7 @@ class AppAgent(BasicAgent):
             prev_plan=plan,
             user_request=request,
             subtask=subtask,
-            current_application=self._process_name,
+            current_application=current_application,
             host_message=host_message,
             retrieved_docs=dynamic_knowledge,
             last_success_actions=last_success_actions,
