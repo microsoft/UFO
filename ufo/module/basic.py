@@ -115,7 +115,7 @@ class BaseRound(ABC):
                 self.subtask_amount += 1
 
         self.agent.blackboard.add_requests(
-            {"request_{i}".format(i=self.id), self.request}
+            {"request_{i}".format(i=self.id): self.request}
         )
 
         if self.application_window is not None:
@@ -357,6 +357,7 @@ class BaseSession(ABC):
         self._context = Context()
         self._init_context()
         self._finish = False
+        self._results = {}
 
         self._host_agent: HostAgent = AgentFactory.create_agent(
             "host",
@@ -531,6 +532,14 @@ class BaseSession(ABC):
         else:
             return self._rounds[self.total_rounds - 1]
 
+    @property
+    def results(self) -> Dict[str, str]:
+        """
+        Get the evaluation results of the session.
+        return: The evaluation results of the session.
+        """
+        return self._results
+
     def experience_saver(self) -> None:
         """
         Save the current trajectory as agent experience.
@@ -646,6 +655,8 @@ class BaseSession(ABC):
         # Add additional information to the evaluation result.
         additional_info = {"level": "session", "request": requests, "id": 0}
         result.update(additional_info)
+
+        self.results = result
 
         self.cost += cost
 
