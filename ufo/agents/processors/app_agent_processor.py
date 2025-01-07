@@ -1,11 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-
 import json
 import os
 from dataclasses import asdict, dataclass, field
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -602,7 +601,7 @@ class AppAgentProcessor(BaseProcessor):
         return retrieved_results
 
     def get_filtered_annotation_dict(
-        self, annotation_dict: Dict[str, UIAWrapper], configs=configs
+        self, annotation_dict: Dict[str, UIAWrapper], configs: Dict[str, Any] = configs
     ) -> Dict[str, UIAWrapper]:
         """
         Get the filtered annotation dictionary.
