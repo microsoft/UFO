@@ -83,6 +83,7 @@ class OpenAIService(BaseService):
                 max_tokens=max_tokens,
                 top_p=top_p,
                 stream=stream,
+                response_format={"type": "json_object"},
                 **kwargs,
             )
 

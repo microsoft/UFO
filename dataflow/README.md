@@ -189,21 +189,21 @@ Also, you can choose to use `instantiation` / `execution` sections individually,
 
 The default task hub is set to be `"TASKS_HUB"` in `dataflow/config_dev.yaml`.
 
-1. Dataflow Task:
+* Dataflow Task:
 
-- ```bash
-  python -m dataflow -dataflow --task_path path_to_task_file
+  ```bash
+  python -m dataflow --dataflow --task_path path_to_task_file
   ```
 
 * Instantiation Task:
 
   ```bash
-  python -m dataflow -instantiation --task_path path_to_task_file
+  python -m dataflow --instantiation --task_path path_to_task_file
   ```
 * Execution Task:
 
   ```bash
-  python -m dataflow -execution --task_path path_to_task_file
+  python -m dataflow --execution --task_path path_to_task_file
   ```
 
 ## Workflow
@@ -221,6 +221,7 @@ Given the initial task, the dataflow first choose a template (`Phase 1`), the pr
 <h1 align="center">
     <img src="../assets/dataflow/instantiation.png"/> 
 </h1>
+
 #### 1. Choose Template File
 
 Templates for your app must be defined and described in `dataflow/templates/app`. For instance, if you want to instantiate tasks for the Word application, place the relevant `.docx` files in dataflow `/templates/word `, along with a `description.json` file.

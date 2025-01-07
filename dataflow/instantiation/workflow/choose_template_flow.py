@@ -11,6 +11,7 @@ from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
 from langchain_community.embeddings import HuggingFaceEmbeddings
 from langchain_community.vectorstores import FAISS
+from dataflow.instantiation.agent.template_agent import TemplateAgent
 
 from dataflow.config.config import Config
 
@@ -140,15 +141,41 @@ class ChooseTemplateFlow:
             Path(_configs["TEMPLATE_PATH"]) / self._app_name / chosen_template_file_path
         )
 
-        target_template_folder_path = Path(_configs["RESULT_HUB"].format(task_type = "saved_document")) / (
-            os.path.dirname(os.path.dirname(self._task_file_name))
-        )
+        target_template_folder_path = Path(
+            _configs["RESULT_HUB"].format(task_type="saved_document")
+        ) / (os.path.dirname(os.path.dirname(self._task_file_name)))
 
         return self._create_copied_file(
             chosen_template_full_path, target_template_folder_path, self._task_file_name
         )
 
     def _choose_target_template_file(
+        self, given_task: str, doc_files_description: Dict[str, str]
+    ) -> str:
+        """
+        Get the target file based on the semantic similarity of the given task and the template file descriptions.
+        :param given_task: The task to be matched.
+        :param doc_files_description: A dictionary of template file descriptions.
+        :return: The path to the chosen template file.
+        """
+
+        if _configs["TEMPLATE_METHOD"] == "SemanticSimilarity":
+            return self._choose_target_template_file_semantic(
+                given_task, doc_files_description
+            )
+        elif _configs["TEMPLATE_METHOD"] == "LLM":
+            self.template_agent = TemplateAgent(
+                "template",
+                is_visual=True,
+                main_prompt=_configs["TEMPLATE_PROMPT"],
+            )
+            return self._choose_target_template_file_llm(
+                given_task, doc_files_description
+            )
+        else:
+            raise ValueError("Invalid TEMPLATE_METHOD.")
+
+    def _choose_target_template_file_semantic(
         self, given_task: str, doc_files_description: Dict[str, str]
     ) -> str:
         """
@@ -168,8 +195,33 @@ class ChooseTemplateFlow:
 
         if not most_similar:
             raise ValueError("No similar templates found.")
-
         return file_doc_map[most_similar[0].page_content]
+
+    def _choose_target_template_file_llm(
+        self, given_task: str, doc_files_description: Dict[str, str]
+    ) -> str:
+        """
+        Get the target file based on the LLM of the given task and the template file descriptions.
+        :param given_task: The task to be matched.
+        :param doc_files_description: A dictionary of template file descriptions.
+        :return: The path to the chosen template file.
+        """
+
+        prompt_message = self.template_agent.message_constructor(
+            doc_files_description, given_task
+        )
+        response_string, _ = self.template_agent.get_response(
+            prompt_message, "prefill", use_backup_engine=True, configs=_configs
+        )
+        if response_string is None:
+            raise ValueError("No similar templates found.")
+        elif "```json" in response_string:
+            response_string = response_string[7:-3]
+        response_json = json.loads(response_string)
+        file_name = list(response_json.keys())[0]
+        if file_name not in doc_files_description:
+            raise ValueError("No similar templates found.")
+        return file_name
 
     @staticmethod
     def _load_embedding_model(model_name: str) -> CacheBackedEmbeddings:
@@ -178,7 +230,7 @@ class ChooseTemplateFlow:
         :param model_name: The name of the embedding model to load.
         :return: The loaded embedding model.
         """
-        
+
         store = LocalFileStore(_configs["CONTROL_EMBEDDING_CACHE_PATH"])
         if not model_name.startswith(ChooseTemplateFlow._SENTENCE_TRANSFORMERS_PREFIX):
             model_name = ChooseTemplateFlow._SENTENCE_TRANSFORMERS_PREFIX + model_name

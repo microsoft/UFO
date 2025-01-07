@@ -39,3 +39,4 @@ scripts/*
 
 # Ignore the record files
 tasks_status.json
+datas

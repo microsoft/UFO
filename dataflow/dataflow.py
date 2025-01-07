@@ -11,23 +11,28 @@ def parse_args() -> argparse.Namespace:
     """
     Parse command-line arguments. Automatically detect batch or single mode.
     """
-    parser = argparse.ArgumentParser(description="Run tasks automatically in single or batch mode.")
-    
+    parser = argparse.ArgumentParser(
+        description="Run tasks automatically in single or batch mode."
+    )
+
     # Add options for -dataflow, -instantiation, and -execution
     parser.add_argument(
-        "-dataflow", 
-        action="store_const", const="dataflow", 
-        help="Indicates that the task type is dataflow."
+        "--dataflow",
+        action="store_const",
+        const="dataflow",
+        help="Indicates that the task type is dataflow.",
     )
     parser.add_argument(
-        "-instantiation", 
-        action="store_const", const="instantiation", 
-        help="Indicates that the task type is instantiation."
+        "--instantiation",
+        action="store_const",
+        const="instantiation",
+        help="Indicates that the task type is instantiation.",
     )
     parser.add_argument(
-        "-execution", 
-        action="store_const", const="execution", 
-        help="Indicates that the task type is execution."
+        "--execution",
+        action="store_const",
+        const="execution",
+        help="Indicates that the task type is execution.",
     )
 
     # Task path argument
@@ -68,7 +73,9 @@ def process_task(task_path: str, task_type: str) -> None:
         flow_controller.run()
         print_with_color(f"Task {task_path} completed successfully.", "green")
     except Exception as e:
-        print_with_color(f"Error processing {task_path}: {traceback.format_exc()}", "red")
+        print_with_color(
+            f"Error processing {task_path}: {traceback.format_exc()}", "red"
+        )
 
 
 def process_batch(task_dir: str, task_type: str) -> None:
@@ -100,7 +107,10 @@ def main():
 
     # Ensure that a task type has been provided; if not, raise an error
     if not any([args.dataflow, args.instantiation, args.execution]):
-        print_with_color("Error: You must specify one of the task types (-dataflow, -instantiation, or -execution).", "red")
+        print_with_color(
+            "Error: You must specify one of the task types (-dataflow, -instantiation, or -execution).",
+            "red",
+        )
         return
 
     task_type = args.dataflow or args.instantiation or args.execution

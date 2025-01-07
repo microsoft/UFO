@@ -402,6 +402,7 @@ class FromFileSession(BaseSession):
         """
 
         if self.total_rounds == 0:
+            utils.print_with_color(self.plan_reader.get_host_request(), "cyan")
             return self.plan_reader.get_host_request()
         else:
             self._finish = True
@@ -480,10 +481,13 @@ class FromFileSession(BaseSession):
                        while interacting with the application via COM.
         """
         self.object_name = self.plan_reader.get_operation_object()
+        print("object_name:", self.object_name)
         if self.object_name:
             suffix = os.path.splitext(self.object_name)[1]
             self.app_name = self.get_app_name(suffix)
+            print("app_name:", self.app_name)
             if self.app_name not in self.support_apps:
+                print(f"The app {self.app_name} is not supported.")
                 return  # The app is not supported, so we don't need to setup the environment.
             file = self.plan_reader.get_file_path()
             code_snippet = f"import os\nos.system('start {self.app_name} \"{file}\"')"

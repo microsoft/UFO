@@ -25,7 +25,7 @@ class PlanReader:
         with open(plan_file, "r") as f:
             self.plan = json.load(f)
         self.remaining_steps = self.get_steps()
-        self.support_apps = ["word", "excel", "powerpoint"]
+        self.support_apps = ["WINWORD.EXE", "EXCEL.EXE", "POWERPNT.EXE"]
 
     def get_close(self) -> bool:
         """
@@ -119,7 +119,7 @@ class PlanReader:
         if object_name in self.support_apps:
             request = task
         else:
-            request = f"Open the application of {task}. You must output the selected application with their control text and label even if it is already open."
+            request = f"Your task is '{task}'. And open the application of {object_name}. You must output the selected application with their control text and label even if it is already open."
 
         return request
 
