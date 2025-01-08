@@ -119,8 +119,10 @@ class PlanReader:
         if object_name in self.support_apps:
             request = task
         else:
-            request = f"Your task is '{task}'. And open the application of {object_name}. You must output the selected application with their control text and label even if it is already open."
-
+            request = (
+                f"Your task is '{task}'. And open the application of {object_name}. "
+                "You must output the selected application with their control text and label even if it is already open."
+            )
         return request
 
     def next_step(self) -> Optional[str]:
