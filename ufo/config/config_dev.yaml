@@ -1,5 +1,5 @@
 CONTROL_BACKEND: "uia"  # The backend for control action, currently we support uia and win32
-MAX_STEP: 10  # The max step limit for completing the user request
+MAX_STEP: 100  # The max step limit for completing the user request
 SLEEP_TIME: 1  # The sleep time between each step to wait for the window to be ready
 RECTANGLE_TIME: 1
 
@@ -85,7 +85,7 @@ SCREENSHOT_TO_MEMORY: True  # Whether to allow the screenshot to memory for the 
 
 
 # For customizations
-ASK_QUESTION: True  # Whether to allow the agent to ask questions
+ASK_QUESTION: False  # Whether to allow the agent to ask questions
 USE_CUSTOMIZATION: True  # Whether to use the customization
 QA_PAIR_FILE: "customization/historical_qa.txt"  # The path for the historical QA
 QA_PAIR_NUM: 20  # The number of QA pairs for the customization
@@ -100,7 +100,7 @@ DEFAULT_PNG_COMPRESS_LEVEL: 9  # The compress level for the PNG image, 0-9, 0 is
 
 
 # Save UI tree
-SAVE_UI_TREE: True  # Whether to save the UI tree
+SAVE_UI_TREE: False  # Whether to save the UI tree
 
 
 # Record the status of the tasks

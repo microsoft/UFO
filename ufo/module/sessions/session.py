@@ -481,7 +481,6 @@ class FromFileSession(BaseSession):
                        while interacting with the application via COM.
         """
         self.object_name = self.plan_reader.get_operation_object()
-        print("object_name:", self.object_name)
         if self.object_name:
             suffix = os.path.splitext(self.object_name)[1]
             self.app_name = self.get_app_name(suffix)
