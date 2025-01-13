@@ -98,7 +98,12 @@ def transfer_json_file(file_path, template_path, data):
     :param file_path: The path to the file to save.
     """
     tmp_data = {}
-    if data["instantiation_result"]["instantiation_evaluation"]["result"]["judge"]:
+    if (
+        data.get("instantiation_result", {})
+        .get("instantiation_evaluation", {})
+        .get("result", {})
+        .get("judge", None)
+    ):
         tmp_data["task"] = data["instantiation_result"]["prefill"]["result"][
             "instantiated_request"
         ]

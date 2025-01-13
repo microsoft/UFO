@@ -189,6 +189,8 @@ Also, you can choose to use `instantiation` / `execution` sections individually,
 
 The default task hub is set to be `"TASKS_HUB"` in `dataflow/config_dev.yaml`.
 
+You can use `"TEMPLATE_METHOD"` in `dataflow/config_dev.yaml` to use `LLM` or `SemanticSimilarity` as the backend of the template choose.
+
 * Dataflow Task:
 
   ```bash

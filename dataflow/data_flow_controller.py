@@ -383,7 +383,7 @@ class DataFlowController:
             "instantiated_plan"
         ] = value
 
-    def transfer_result(self, path) -> None:
+    def reformat_to_batch(self, path) -> None:
         """
         Transfer the result to the result hub.
         """
@@ -460,5 +460,5 @@ class DataFlowController:
 
             self.save_result()
 
-        if _configs["TRANSFER_RESULT"]:
-            self.transfer_result(_configs["TRANSFER_RESULT_HUB"])
+        if _configs["REFORMAT_TO_BATCH"]:
+            self.reformat_to_batch(_configs["REFORMAT_TO_BATCH_HUB"])

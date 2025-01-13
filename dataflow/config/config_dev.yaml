@@ -16,8 +16,8 @@ TEMPLATE_METHOD: "LLM"  # The method for the template, support 'SemanticSimilari
 TEMPLATE_PROMPT: "dataflow/prompts/instantiation/{mode}/template.yaml"  # The prompt for the template
 
 # Transfer Configuration
-TRANSFER_RESULT: True # Whether to transfer the result to the UFO batch mode
-TRANSFER_RESULT_HUB: "datasUFO"  # The transfer result path
+REFORMAT_TO_BATCH: True # Whether to transfer the result of dataflow to the UFO batch mode
+REFORMAT_TO_BATCH_HUB: "datasUFO"  # The transfer result path
 
 # Default Task Configuration
 TASKS_HUB: "dataflow/tasks/prefill"  # The default tasks hub for batch dataflow

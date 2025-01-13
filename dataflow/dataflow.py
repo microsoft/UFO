@@ -108,7 +108,7 @@ def main():
     # Ensure that a task type has been provided; if not, raise an error
     if not any([args.dataflow, args.instantiation, args.execution]):
         print_with_color(
-            "Error: You must specify one of the task types (-dataflow, -instantiation, or -execution).",
+            "Error: You must specify one of the task types (--dataflow, --instantiation, or --execution).",
             "red",
         )
         return
