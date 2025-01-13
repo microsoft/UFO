@@ -189,7 +189,7 @@ Also, you can choose to use `instantiation` / `execution` sections individually,
 
 The default task hub is set to be `"TASKS_HUB"` in `dataflow/config_dev.yaml`.
 
-You can use `"TEMPLATE_METHOD"` in `dataflow/config_dev.yaml` to use `LLM` or `SemanticSimilarity` as the backend of the template choose.
+You can use `"TEMPLATE_METHOD"` in `dataflow/config_dev.yaml` to choose `LLM` or `SemanticSimilarity` as the backend for the template selection function. If you choose `LLM`, since the visual version is being used, you need to manually generate screenshots in the `templates/"YOUR_APP"/images` directory, and the filenames should match the template name and the screenshots should in `PNG` format.
 
 * Dataflow Task:
 
