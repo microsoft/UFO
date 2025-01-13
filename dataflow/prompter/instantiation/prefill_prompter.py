@@ -161,7 +161,7 @@ class PrefillPrompter(BasicPrompter):
             {request}
         [Response]:
             {response}
-        [Tip]
+        [Tips]:
             {tip}
         """
 

@@ -138,7 +138,7 @@ class FilterPrompter(BasicPrompter):
             {request}
         [Response]:
             {response}
-        [Tip]
+        [Tips]:
             {tip}
         """
 

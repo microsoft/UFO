@@ -1,9 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import json
-from typing import Dict, List
+from typing import Any, Dict, List
+
+
 from ufo.prompter.basic import BasicPrompter
+from ufo.experience.experience_parser import ExperienceLogLoader
+from ufo.utils import print_with_color
 
 
 class ExperiencePrompter(BasicPrompter):
@@ -49,7 +52,9 @@ class ExperiencePrompter(BasicPrompter):
 
         return prompt
 
-    def user_content_construction(self, log_partition: list) -> List[Dict[str, str]]:
+    def user_content_construction(
+        self, subtask_partition: Dict[str, Any]
+    ) -> List[Dict[str, str]]:
         """
         Construct the prompt for LLMs.
         :param log_partition: The log partition.
@@ -60,43 +65,74 @@ class ExperiencePrompter(BasicPrompter):
         user_content = []
 
         # Get the total steps of the log partition.
-        step_num = log_partition.get("step_num")
+        log_partition: List[Dict[str, Any]] = subtask_partition.get("logs")
 
-        task_start = False
+        if self.is_visual:
+            user_content.append(
+                {"type": "text", "text": "[Initial Application Screenshot]:"}
+            )
 
-        for step in range(step_num):
-            step_log = log_partition["step_{num}".format(num=step)]
+            image_url = (
+                log_partition[0]
+                .get(ExperienceLogLoader._image_url_key, {})
+                .get("CleanScreenshot")
+            )
 
-            # If it is the first action, add the initial screenshot and start the task.
-            if step_log["is_first_action"]:
-                task_start = True
-                if self.is_visual:
-                    user_content.append(
-                        {"type": "text", "text": "[Initial Application Screenshot]:"}
-                    )
-                    user_content.append(
-                        {
-                            "type": "image_url",
-                            "image_url": {"url": step_log["screenshot"]["raw"]},
-                        }
-                    )
-                user_content.append({"type": "text", "text": "[Agent Trajectory]:"})
+            user_content.append(
+                {
+                    "type": "image_url",
+                    "image_url": {"url": image_url},
+                }
+            )
 
-            # Add the response of the step.
-            if task_start:
-                user_content.append(
-                    {"type": "text", "text": json.dumps(step_log["response"])}
-                )
+        filtered_logs = self._filter_logs(log_partition)
+        text_prompt = f"""[Agent Trajectory]:
+        {filtered_logs}
+        [Task to be completed]:
+        {subtask_partition.get("subtask")}
+        """
 
-        # Add the user request.
-        user_content.append(
-            {
-                "type": "text",
-                "text": self.user_prompt_construction(log_partition.get("request")),
-            }
-        )
+        user_content.append({"type": "text", "text": text_prompt})
 
         return user_content
+
+    def _filter_log(self, log: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Filter the logs to only include the necessary fields.
+        :param log: The log.
+        return: The filtered log.
+        """
+
+        _keys = [
+            "Subtask",
+            "Step",
+            "Observation",
+            "Thought",
+            "ControlLabel",
+            "ControlText",
+            "Function",
+            "Plan",
+            "Comment",
+            "Action",
+            "Application",
+            "Results",
+            "error",
+        ]
+
+        filtered_log = {key: log.get(key) for key in _keys}
+
+        return filtered_log
+
+    def _filter_logs(self, logs: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
+        """
+        Filter the logs to only include the necessary fields.
+        :param logs: The logs.
+        return: The filtered logs.
+        """
+
+        filtered_logs = [self._filter_log(log) for log in logs]
+
+        return filtered_logs
 
     def api_prompt_helper(self, verbose: int = 1) -> str:
         """
@@ -150,7 +186,13 @@ class ExperiencePrompter(BasicPrompter):
 
         for key in self.example_prompt_template.keys():
             if key.startswith("example"):
-                response = self.example_prompt_template[key].get("Response")
+                response = self.example_prompt_template[key].get("Response", {})
+                if not response:
+                    print_with_color(
+                        f"waring: The Response of the example {key} is empty.", "yellow"
+                    )
+                    continue
+
                 response["Tips"] = self.example_prompt_template[key].get("Tips")
                 example = template.format(
                     request=self.example_prompt_template[key].get("Request"),

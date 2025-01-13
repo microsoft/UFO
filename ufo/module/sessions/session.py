@@ -179,6 +179,12 @@ class Session(BaseSession):
         elif save_experience == "ask":
             if interactor.experience_asker():
                 self.experience_saver()
+
+        elif save_experience == "auto":
+            task_completed = self.results.get("task_completed", "no")
+            if task_completed.lower() == "yes":
+                self.experience_saver()
+
         elif save_experience == "always_not":
             pass
 

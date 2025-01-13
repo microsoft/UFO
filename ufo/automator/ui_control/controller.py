@@ -129,12 +129,22 @@ class ControlReceiver(ReceiverBasic):
             float(params.get("end_x", 0)), float(params.get("end_y", 0))
         )
 
+        duration = float(params.get("duration", 1))
+
         button = params.get("button", "left")
+
+        key_hold = params.get("key_hold", None)
 
         self.application.set_focus()
 
+        if key_hold:
+            pyautogui.keyDown(key_hold)
+
         pyautogui.moveTo(start[0], start[1])
-        pyautogui.dragTo(end[0], end[1], button=button)
+        pyautogui.dragTo(end[0], end[1], button=button, duration=duration)
+
+        if key_hold:
+            pyautogui.keyUp(key_hold)
 
         return ""
 
@@ -211,7 +221,7 @@ class ControlReceiver(ReceiverBasic):
         if control_focus:
             self.atomic_execution("type_keys", {"keys": keys})
         else:
-            pyautogui.typewrite(keys)
+            self.application.type_keys(keys=keys)
         return keys
 
     def texts(self) -> str:

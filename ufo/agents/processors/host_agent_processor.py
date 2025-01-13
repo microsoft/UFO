@@ -3,12 +3,18 @@
 
 
 import json
-from typing import TYPE_CHECKING
+from dataclasses import asdict, dataclass
+from typing import TYPE_CHECKING, Any, Dict, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.processors.basic import BaseProcessor
+from ufo.agents.processors.actions import (
+    ActionExecutionLog,
+    ActionSequence,
+    OneStepAction,
+)
+from ufo.agents.processors.basic import BaseControlLog, BaseProcessor
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
@@ -18,6 +24,48 @@ if configs is not None:
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
+
+
+@dataclass
+class HostAgentAdditionalMemory:
+    """
+    The additional memory for the host agent.
+    """
+
+    Step: int
+    RoundStep: int
+    AgentStep: int
+    Round: int
+    ControlLabel: str
+    SubtaskIndex: int
+    Action: str
+    FunctionCall: str
+    ActionType: str
+    Request: str
+    Agent: str
+    AgentName: str
+    Application: str
+    Cost: float
+    Results: str
+    error: str
+    time_cost: Dict[str, float]
+    ControlLog: Dict[str, Any]
+
+
+@dataclass
+class HostAgentRequestLog:
+    """
+    The request log data for the AppAgent.
+    """
+
+    step: int
+    image_list: List[str]
+    os_info: Dict[str, str]
+    plan: List[str]
+    prev_subtask: List[str]
+    request: str
+    blackboard_prompt: List[str]
+    prompt: Dict[str, Any]
 
 
 class HostAgentProcessor(BaseProcessor):
@@ -96,6 +144,11 @@ class HostAgentProcessor(BaseProcessor):
         Get the prompt message.
         """
 
+        if not self.host_agent.blackboard.is_empty():
+            blackboard_prompt = self.host_agent.blackboard.blackboard_to_prompt()
+        else:
+            blackboard_prompt = []
+
         # Construct the prompt message for the host agent.
         self._prompt_message = self.host_agent.message_constructor(
             image_list=[self._desktop_screen_url],
@@ -103,19 +156,23 @@ class HostAgentProcessor(BaseProcessor):
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
             request=self.request,
+            blackboard_prompt=blackboard_prompt,
+        )
+
+        request_data = HostAgentRequestLog(
+            step=self.session_step,
+            image_list=[self._desktop_screen_url],
+            os_info=self._desktop_windows_info,
+            plan=self.prev_plan,
+            prev_subtask=self.previous_subtasks,
+            request=self.request,
+            blackboard_prompt=blackboard_prompt,
+            prompt=self._prompt_message,
         )
 
         # Log the prompt message. Only save them in debug mode.
-        log = json.dumps(
-            {
-                "step": self.session_step,
-                "prompt": self._prompt_message,
-                "control_items": self._desktop_windows_info,
-                "filted_control_items": self._desktop_windows_info,
-                "status": "",
-            }
-        )
-        self.request_logger.debug(log)
+        request_log_str = json.dumps(asdict(request_data), indent=4, ensure_ascii=False)
+        self.request_logger.debug(request_log_str)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -233,11 +290,20 @@ class HostAgentProcessor(BaseProcessor):
         :param application_window: The application window.
         """
 
-        self._control_log = {
-            "control_class": application_window.element_info.class_name,
-            "control_type": application_window.element_info.control_type,
-            "control_automation_id": application_window.element_info.automation_id,
-        }
+        action = OneStepAction(
+            control_label=self.control_label,
+            control_text=self.control_text,
+            after_status=self.status,
+            function="set_focus",
+        )
+
+        action.control_log = BaseControlLog(
+            control_class=application_window.element_info.class_name,
+            control_type=application_window.element_info.control_type,
+            control_automation_id=application_window.element_info.automation_id,
+        )
+
+        self.actions = ActionSequence([action])
 
         # Get the root name of the application.
         self.app_root = self.control_inspector.get_application_root_name(
@@ -256,8 +322,6 @@ class HostAgentProcessor(BaseProcessor):
         if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
             self.application_window.draw_outline(colour="red", thickness=3)
 
-        self.action = "set_focus()"
-
     def _run_shell_command(self) -> None:
         """
         Run the shell command.
@@ -267,40 +331,57 @@ class HostAgentProcessor(BaseProcessor):
             self.app_root, self.control_text
         )
 
-        self._results = self.agent.Puppeteer.execute_command(
-            "run_shell", {"command": self.bash_command}
+        action = OneStepAction(
+            control_label=self.control_label,
+            control_text=self.control_text,
+            after_status=self.status,
+            function="run_shell",
+            args={"command": self.bash_command},
         )
 
-        self.action = self.agent.Puppeteer.get_command_string(
-            "run_shell", {"command": self.bash_command}
+        try:
+            return_value = self.agent.Puppeteer.execute_command(
+                "run_shell", {"command": self.bash_command}
+            )
+            error = ""
+        except Exception as e:
+            return_value = ""
+            error = str(e)
+
+        action.results = ActionExecutionLog(
+            return_value=return_value, status=self.status, error=error
         )
+
+        self.actions: ActionSequence = ActionSequence([action])
 
     def sync_memory(self):
         """
         Sync the memory of the HostAgent.
         """
-        additional_memory = {
-            "Step": self.session_step,
-            "RoundStep": self.round_step,
-            "AgentStep": self.host_agent.step,
-            "Round": self.round_num,
-            "ControlLabel": self.control_label,
-            "SubtaskIndex": -1,
-            "Action": self.action,
-            "ActionType": "UIControl",
-            "Request": self.request,
-            "Agent": "HostAgent",
-            "AgentName": self.host_agent.name,
-            "Application": self.app_root,
-            "Cost": self._cost,
-            "Results": self._results,
-            "error": self._exeception_traceback,
-        }
+
+        additional_memory = HostAgentAdditionalMemory(
+            Step=self.session_step,
+            RoundStep=self.round_step,
+            AgentStep=self.host_agent.step,
+            Round=self.round_num,
+            ControlLabel=self.control_label,
+            SubtaskIndex=-1,
+            FunctionCall=self.actions.get_function_calls(),
+            Action=self.actions.to_list_of_dicts(),
+            ActionType="Bash" if self.bash_command else "UIControl",
+            Request=self.request,
+            Agent="HostAgent",
+            AgentName=self.host_agent.name,
+            Application=self.app_root,
+            Cost=self._cost,
+            Results=self.actions.get_results(),
+            error=self._exeception_traceback,
+            time_cost=self._time_cost,
+            ControlLog=self.actions.get_control_logs(),
+        )
 
         self.add_to_memory(self._response_json)
-        self.add_to_memory(additional_memory)
-        self.add_to_memory(self._control_log)
-        self.add_to_memory({"time_cost": self._time_cost})
+        self.add_to_memory(asdict(additional_memory))
 
     def update_memory(self) -> None:
         """

@@ -283,7 +283,7 @@ class Context:
         if round_key is None or subtask_key is None:
             return
 
-        remaining_items = {key: data[key] for key in data if key not in ["a", "b"]}
+        remaining_items = {key: data[key] for key in data}
         self._context[ContextNames.STRUCTURAL_LOGS.name][round_key][subtask_key].append(
             remaining_items
         )

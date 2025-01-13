@@ -139,17 +139,22 @@ class BasicAgent(ABC):
 
     @classmethod
     def get_response(
-        cls, message: List[dict], namescope: str, use_backup_engine: bool, configs = configs
+        cls,
+        message: List[dict],
+        namescope: str,
+        use_backup_engine: bool,
+        configs=configs,
     ) -> str:
         """
         Get the response for the prompt.
         :param message: The message for LLMs.
         :param namescope: The namescope for the LLMs.
         :param use_backup_engine: Whether to use the backup engine.
+        :param configs: The configurations.
         :return: The response.
         """
         response_string, cost = llm_call.get_completion(
-            message, namescope, use_backup_engine=use_backup_engine, configs = configs
+            message, namescope, use_backup_engine=use_backup_engine, configs=configs
         )
         return response_string, cost
 
@@ -243,18 +248,21 @@ class BasicAgent(ABC):
         if self.processor:
             self.processor.resume()
 
-
     def process_asker(self, ask_user: bool = True) -> None:
         """
         Ask for the process.
         :param ask_user: Whether to ask the user for the questions.
         """
+
+        _ask_message = "Could you please answer the following questions to help me understand your needs and complete the task?"
+        _none_answer_message = "The answer for the question is not available, please proceed with your own knowledge or experience, or leave it as a placeholder. Do not ask the same question again."
+
         if self.processor:
             question_list = self.processor.question_list
 
             if ask_user:
                 utils.print_with_color(
-                    "Could you please answer the following questions to help me understand your needs and complete the task?",
+                    _ask_message,
                     "yellow",
                 )
 
@@ -272,7 +280,7 @@ class BasicAgent(ABC):
                 else:
                     qa_pair = {
                         "question": question,
-                        "answer": "The answer for the question is not available, please proceed with your own knowledge or experience, or leave it as a placeholder. Do not ask the same question again.",
+                        "answer": _none_answer_message,
                     }
 
                 self.blackboard.add_questions(qa_pair)
