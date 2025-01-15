@@ -40,3 +40,6 @@ scripts/*
 
 # Ignore the record files
 tasks_status.json
+
+# Ignore the logs
+windows_arena/Ufo-runningLogs.txt

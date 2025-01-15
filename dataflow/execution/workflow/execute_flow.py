@@ -316,12 +316,11 @@ class ExecuteFlow(AppAgentProcessor):
         if self.control_text == "":
             control_selected = self.application_window
         else:
-            self._control_label, control_selected = (
-                self._app_env.find_matching_controller(
-                    self.filtered_annotation_dict, self.control_text
+            self._control_label, control_selected = self._app_env.find_matching_controller(
+                self.filtered_annotation_dict, self.control_text
                 )
-            )
-            self._matched_control = control_selected.window_text()
+            if control_selected:
+                self._matched_control = control_selected.window_text()
 
         if not control_selected:
             # If the control is not found, raise an error.
