@@ -89,7 +89,7 @@ SCREENSHOT_TO_MEMORY: True  # Whether to allow the screenshot to memory for the 
 
 
 # For customizations
-ASK_QUESTION: True  # Whether to allow the agent to ask questions
+ASK_QUESTION: False  # Whether to allow the agent to ask questions
 USE_CUSTOMIZATION: True  # Whether to use the customization
 QA_PAIR_FILE: "customization/historical_qa.txt"  # The path for the historical QA
 QA_PAIR_NUM: 20  # The number of QA pairs for the customization
