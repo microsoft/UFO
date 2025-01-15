@@ -316,3 +316,15 @@ class Context:
         :return: The dictionary of the context.
         """
         return self._context
+
+    def from_dict(self, context_dict: Dict[str, Any]) -> None:
+        """
+        Load the context from a dictionary.
+        :param context_dict: The dictionary of the context.
+        """
+        for key in ContextNames:
+            if key.name in context_dict:
+                self._context[key.name] = context_dict.get(key.name)
+
+        # Sync the current round step and cost
+        self._sync_round_values()
