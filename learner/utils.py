@@ -92,9 +92,9 @@ def save_json_file(file_path, data):
         json.dump(data, file, indent=4)
 
 
-def transfer_json_file(file_path, template_path, data):
+def reformat_json_file(file_path, template_path, data):
     """
-    Save a JSON file.
+    Reformat the JSON file to batch format.
     :param file_path: The path to the file to save.
     """
     tmp_data = {}
