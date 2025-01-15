@@ -4,7 +4,7 @@ click_input:
   class_name: |-
     ClickInputCommand
   usage: |-
-    [1] API call: click_input(button: str, double: bool)
+    [1] API call: click_input(button: str, double: bool = False, pressed: str = None)
     [2] Args:
       - button: The mouse button to click. One of ''left'', ''right'', ''middle'' or ''x'' (Default: ''left'')
       - double: Whether to perform a double click or not (Default: False)'

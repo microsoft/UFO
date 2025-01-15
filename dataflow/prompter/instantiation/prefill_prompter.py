@@ -140,7 +140,7 @@ class FilterPrompter(BasicPrompter):
             {request}
         [Response]:
             {response}
-        [Tip]
+        [Tips]:
             {tip}
         """
 
@@ -253,7 +253,7 @@ class PrefillPrompter(BasicPrompter):
         :param log_path: The path of the log.
         :return: The screenshot URL.
         """
-        
+
         from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 
         init_image = os.path.join(log_path, "screenshot.png")
@@ -315,7 +315,7 @@ class PrefillPrompter(BasicPrompter):
             {request}
         [Response]:
             {response}
-        [Tip]
+        [Tips]:
             {tip}
         """
 

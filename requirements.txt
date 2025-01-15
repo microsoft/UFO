@@ -17,6 +17,8 @@ sentence-transformers==2.5.1
 pandas==1.4.3
 html2text==2024.2.26
 uiautomation==2.0.20
+pyautogui==0.9.54
+
 ##For Qwen
 #dashscope==1.15.0
 ##For removing stopwords

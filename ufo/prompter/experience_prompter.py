@@ -1,12 +1,12 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import json
 from typing import Any, Dict, List
 
 
 from ufo.prompter.basic import BasicPrompter
 from ufo.experience.experience_parser import ExperienceLogLoader
+from ufo.utils import print_with_color
 
 
 class ExperiencePrompter(BasicPrompter):
@@ -186,7 +186,13 @@ class ExperiencePrompter(BasicPrompter):
 
         for key in self.example_prompt_template.keys():
             if key.startswith("example"):
-                response = self.example_prompt_template[key].get("Response")
+                response = self.example_prompt_template[key].get("Response", {})
+                if not response:
+                    print_with_color(
+                        f"waring: The Response of the example {key} is empty.", "yellow"
+                    )
+                    continue
+
                 response["Tips"] = self.example_prompt_template[key].get("Tips")
                 example = template.format(
                     request=self.example_prompt_template[key].get("Request"),

@@ -5,11 +5,14 @@
 from __future__ import annotations
 
 import os
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Union
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
+from ufo.agents.processors.app_agent_action_seq_processor import (
+    AppAgentActionSequenceProcessor,
+)
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.automator import puppeteer
 from ufo.config.config import Config
@@ -87,7 +90,6 @@ class AppAgent(BasicAgent):
     def message_constructor(
         self,
         dynamic_examples: str,
-        dynamic_tips: str,
         dynamic_knowledge: str,
         image_list: List,
         control_info: str,
@@ -95,25 +97,30 @@ class AppAgent(BasicAgent):
         plan: List[str],
         request: str,
         subtask: str,
+        current_application: str,
         host_message: List[str],
+        blackboard_prompt: List[Dict[str, str]],
+        last_success_actions: List[Dict[str, Any]],
         include_last_screenshot: bool,
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the prompt message for the AppAgent.
         :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
-        :param dynamic_tips: The dynamic tips retrieved from the self-demonstration and human demonstration.
         :param dynamic_knowledge: The dynamic knowledge retrieved from the external knowledge base.
         :param image_list: The list of screenshot images.
         :param control_info: The control information.
         :param plan: The plan list.
         :param request: The overall user request.
         :param subtask: The subtask for the current AppAgent to process.
+        :param current_application: The current application name.
         :param host_message: The message from the HostAgent.
+        :param blackboard_prompt: The prompt message from the blackboard.
+        :param last_success_actions: The list of successful actions in the last step.
         :param include_last_screenshot: The flag indicating whether to include the last screenshot.
         :return: The prompt message.
         """
         appagent_prompt_system_message = self.prompter.system_prompt_construction(
-            dynamic_examples, dynamic_tips
+            dynamic_examples
         )
 
         appagent_prompt_user_message = self.prompter.user_content_construction(
@@ -123,15 +130,14 @@ class AppAgent(BasicAgent):
             prev_plan=plan,
             user_request=request,
             subtask=subtask,
-            current_application=self._process_name,
+            current_application=current_application,
             host_message=host_message,
             retrieved_docs=dynamic_knowledge,
+            last_success_actions=last_success_actions,
             include_last_screenshot=include_last_screenshot,
         )
 
-        if not self.blackboard.is_empty():
-
-            blackboard_prompt = self.blackboard.blackboard_to_prompt()
+        if blackboard_prompt:
             appagent_prompt_user_message = (
                 blackboard_prompt + appagent_prompt_user_message
             )
@@ -142,10 +148,13 @@ class AppAgent(BasicAgent):
 
         return appagent_prompt_message
 
-    def print_response(self, response_dict: Dict) -> None:
+    def print_response(
+        self, response_dict: Dict[str, Any], print_action: bool = True
+    ) -> None:
         """
         Print the response.
         :param response_dict: The response dictionary to print.
+        :param print_action: The flag indicating whether to print the action.
         """
 
         control_text = response_dict.get("ControlText")
@@ -168,16 +177,17 @@ class AppAgent(BasicAgent):
             "Observations👀: {observation}".format(observation=observation), "cyan"
         )
         utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
-        utils.print_with_color(
-            "Selected item🕹️: {control_text}, Label: {label}".format(
-                control_text=control_text, label=control_label
-            ),
-            "yellow",
-        )
-        utils.print_with_color(
-            "Action applied⚒️: {action}".format(action=action), "blue"
-        )
-        utils.print_with_color("Status📊: {status}".format(status=status), "blue")
+        if print_action:
+            utils.print_with_color(
+                "Selected item🕹️: {control_text}, Label: {label}".format(
+                    control_text=control_text, label=control_label
+                ),
+                "yellow",
+            )
+            utils.print_with_color(
+                "Action applied⚒️: {action}".format(action=action), "blue"
+            )
+            utils.print_with_color("Status📊: {status}".format(status=status), "blue")
         utils.print_with_color(
             "Next Plan📚: {plan}".format(plan="\n".join(plan)), "cyan"
         )
@@ -240,13 +250,17 @@ class AppAgent(BasicAgent):
 
         return retrieved_docs
 
-    def rag_experience_retrieve(self, request: str, experience_top_k: int) -> str:
+    def rag_experience_retrieve(
+        self, request: str, experience_top_k: int
+    ) -> List[Dict[str, Any]]:
         """
         Retrieving experience examples for the user request.
         :param request: The user request.
         :param experience_top_k: The number of documents to retrieve.
-        :return: The retrieved examples and tips string.
+        :return: The retrieved examples and tips dictionary.
         """
+
+        retrieved_docs = []
 
         # Retrieve experience examples. Only retrieve the examples that are related to the current application.
         experience_docs = self.experience_retriever.retrieve(
@@ -257,13 +271,21 @@ class AppAgent(BasicAgent):
         )
 
         if experience_docs:
-            examples = [doc.metadata.get("example", {}) for doc in experience_docs]
-            tips = [doc.metadata.get("Tips", "") for doc in experience_docs]
-        else:
-            examples = []
-            tips = []
+            for doc in experience_docs:
+                example_request = doc.metadata.get("request", "")
+                response = doc.metadata.get("example", {})
+                tips = doc.metadata.get("Tips", "")
+                subtask = doc.metadata.get("Sub-task", "")
+                retrieved_docs.append(
+                    {
+                        "Request": example_request,
+                        "Response": response,
+                        "Sub-task": subtask,
+                        "Tips": tips,
+                    }
+                )
 
-        return examples, tips
+        return retrieved_docs
 
     def rag_demonstration_retrieve(self, request: str, demonstration_top_k: int) -> str:
         """
@@ -273,14 +295,27 @@ class AppAgent(BasicAgent):
         :return: The retrieved examples and tips string.
         """
 
+        retrieved_docs = []
+
         # Retrieve demonstration examples.
         demonstration_docs = self.human_demonstration_retriever.retrieve(
             request, demonstration_top_k
         )
 
         if demonstration_docs:
-            examples = [doc.metadata.get("example", {}) for doc in demonstration_docs]
-            tips = [doc.metadata.get("Tips", "") for doc in demonstration_docs]
+            for doc in demonstration_docs:
+                example_request = doc.metadata.get("request", "")
+                response = doc.metadata.get("example", {})
+                subtask = doc.metadata.get("Sub-task", "")
+                tips = doc.metadata.get("Tips", "")
+                retrieved_docs.append(
+                    {
+                        "Request": example_request,
+                        "Response": response,
+                        "Sub-task": subtask,
+                        "Tips": tips,
+                    }
+                )
         else:
             examples = []
             tips = []
@@ -292,7 +327,12 @@ class AppAgent(BasicAgent):
         Process the agent.
         :param context: The context.
         """
-        self.processor = AppAgentProcessor(agent=self, context=context)
+        if configs.get("ACTION_SEQUENCE", False):
+            self.processor = AppAgentActionSequenceProcessor(
+                agent=self, context=context
+            )
+        else:
+            self.processor = AppAgentProcessor(agent=self, context=context)
         self.processor.process()
         self.status = self.processor.status
 
@@ -308,7 +348,7 @@ class AppAgent(BasicAgent):
         Process the user confirmation.
         :return: The decision.
         """
-        action = self.processor.action
+        action = self.processor.actions
         control_text = self.processor.control_text
 
         decision = interactor.sensitive_step_asker(action, control_text)

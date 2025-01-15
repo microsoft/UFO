@@ -221,7 +221,7 @@ class ControlReceiver(ReceiverBasic):
         if control_focus:
             self.atomic_execution("type_keys", {"keys": keys})
         else:
-            pyautogui.typewrite(keys)
+            self.application.type_keys(keys=keys)
         return keys
 
     def texts(self) -> str:

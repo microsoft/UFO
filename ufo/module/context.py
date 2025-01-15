@@ -283,7 +283,7 @@ class Context:
         if round_key is None or subtask_key is None:
             return
 
-        remaining_items = {key: data[key] for key in data if key not in ["a", "b"]}
+        remaining_items = {key: data[key] for key in data}
         self._context[ContextNames.STRUCTURAL_LOGS.name][round_key][subtask_key].append(
             remaining_items
         )
@@ -316,3 +316,15 @@ class Context:
         :return: The dictionary of the context.
         """
         return self._context
+
+    def from_dict(self, context_dict: Dict[str, Any]) -> None:
+        """
+        Load the context from a dictionary.
+        :param context_dict: The dictionary of the context.
+        """
+        for key in ContextNames:
+            if key.name in context_dict:
+                self._context[key.name] = context_dict.get(key.name)
+
+        # Sync the current round step and cost
+        self._sync_round_values()
