@@ -3,7 +3,7 @@ colorama==0.4.6
 langchain==0.1.11
 langchain_community==0.0.27
 msal==1.25.0
-openai==1.13.3
+openai==1.59.7
 Pillow==10.3.0
 pywin32==306
 pywinauto==0.6.8
