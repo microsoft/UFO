@@ -4,6 +4,7 @@ import traceback
 from enum import Enum
 from typing import Any, Dict, Optional, List
 from jsonschema import validate, ValidationError
+import shutil
 
 from dataflow.env.env_manager import WindowsAppEnv
 from dataflow.instantiation.workflow.choose_template_flow import ChooseTemplateFlow
@@ -13,7 +14,7 @@ from dataflow.execution.workflow.execute_flow import ExecuteFlow
 from dataflow.config.config import Config
 
 from ufo.utils import print_with_color
-from learner.utils import load_json_file, save_json_file
+from learner.utils import load_json_file, save_json_file, reformat_json_file
 
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.module.context import Context
@@ -24,16 +25,14 @@ os.environ["RUN_CONFIGS"] = "True"
 # Load configuration data.
 _configs = Config.get_instance().config_data
 
-INSTANTIATION_RESULT_MAP = {
-    True: "instantiation_pass",
-    False: "instantiation_fail"
-}
+INSTANTIATION_RESULT_MAP = {True: "instantiation_pass", False: "instantiation_fail"}
 
 EXECUTION_RESULT_MAP = {
     "yes": "execution_pass",
     "no": "execution_fail",
-    "unsure": "execution_unsure"
+    "unsure": "execution_unsure",
 }
+
 
 class AppEnum(Enum):
     """
@@ -87,9 +86,9 @@ class TaskObject:
         for app in AppEnum:
             if app.description.lower() == task_app.lower():
                 return app
-        raise ValueError("Not a correct App") 
-    
-    def _init_attr(self, task_type:str, task_json_file:Dict[str, Any]) -> None:
+        raise ValueError("The APP in the task file is not supported.")
+
+    def _init_attr(self, task_type: str, task_json_file: Dict[str, Any]) -> None:
         """
         Initialize the attributes of the task object.
         :param task_type: The task_type of the task object (dataflow, instantiation, or execution).
@@ -103,10 +102,11 @@ class TaskObject:
             self.app = task_json_file.get("app")
             self.unique_id = task_json_file.get("unique_id")
             original = task_json_file.get("original", {})
-            self.task = original.get("original_task", None) 
+            self.task = original.get("original_task", None)
             self.refined_steps = original.get("original_steps", None)
         else:
             raise ValueError(f"Unsupported task_type: {task_type}")
+
 
 class DataFlowController:
     """
@@ -126,12 +126,12 @@ class DataFlowController:
         self.task_file_name = self.task_object.task_file_name
 
         self.schema = self._load_schema(task_type)
-        
+
         self.task_type = task_type
         self.task_info = self.init_task_info()
         self.result_hub = _configs["RESULT_HUB"].format(task_type=task_type)
 
-    def init_task_info(self) -> Dict[str, Any]: 
+    def init_task_info(self) -> Dict[str, Any]:
         """
         Initialize the task information.
         :return: The initialized task information.
@@ -176,29 +176,38 @@ class DataFlowController:
         :return: The instantiation plan if successful.
         """
 
-        print_with_color(f"Instantiating task {self.task_object.task_file_name}...", "blue")
+        print_with_color(
+            f"Instantiating task {self.task_object.task_file_name}...", "blue"
+        )
 
         template_copied_path = self.instantiation_single_flow(
-            ChooseTemplateFlow, "choose_template", 
+            ChooseTemplateFlow,
+            "choose_template",
             init_params=[self.task_object.app_object.file_extension],
-            execute_params=[]
+            execute_params=[],
         )
 
         if template_copied_path:
             self.app_env.start(template_copied_path)
 
             prefill_result = self.instantiation_single_flow(
-                PrefillFlow, "prefill", 
+                PrefillFlow,
+                "prefill",
                 init_params=[self.app_env],
-                execute_params=[template_copied_path, self.task_object.task, self.task_object.refined_steps]
+                execute_params=[
+                    template_copied_path,
+                    self.task_object.task,
+                    self.task_object.refined_steps,
+                ],
             )
             self.app_env.close()
 
             if prefill_result:
                 self.instantiation_single_flow(
-                    FilterFlow, "instantiation_evaluation",
+                    FilterFlow,
+                    "instantiation_evaluation",
                     init_params=[],
-                    execute_params=[prefill_result["instantiated_request"]]
+                    execute_params=[prefill_result["instantiated_request"]],
                 )
                 return prefill_result["instantiated_plan"]
 
@@ -217,10 +226,10 @@ class DataFlowController:
             # Initialize the execution context and flow
             context = Context()
             execute_flow = ExecuteFlow(self.task_file_name, context, self.app_env)
-            
+
             # Execute the plan
             executed_plan, execute_result = execute_flow.execute(request, plan)
-            
+
             # Update the instantiated plan
             self.instantiated_plan = executed_plan
             # Record execution results and time metrics
@@ -248,14 +257,13 @@ class DataFlowController:
             else:
                 self.task_info["time_cost"]["execute_eval"] = None
 
-
     def instantiation_single_flow(
-            self, 
-            flow_class: AppAgentProcessor, 
-            flow_type: str, 
-            init_params=None, 
-            execute_params=None
-        ) -> Optional[Dict[str, Any]]:
+        self,
+        flow_class: AppAgentProcessor,
+        flow_type: str,
+        init_params=None,
+        execute_params=None,
+    ) -> Optional[Dict[str, Any]]:
         """
         Execute a single flow process in the instantiation phase.
         :param flow_class: The flow class to instantiate.
@@ -264,7 +272,7 @@ class DataFlowController:
         :param execute_params: The execution parameters for the flow.
         :return: The result of the flow process.
         """
-        
+
         flow_instance = None
         try:
             flow_instance = flow_class(self.app_name, self.task_file_name, *init_params)
@@ -283,7 +291,7 @@ class DataFlowController:
                 self.task_info["time_cost"][flow_type] = flow_instance.execution_time
             else:
                 self.task_info["time_cost"][flow_type] = None
-    
+
     def save_result(self) -> None:
         """
         Validate and save the instantiated task result.
@@ -304,11 +312,17 @@ class DataFlowController:
 
         if self.task_type == "instantiation":
             # Determine the quality of the instantiation
-            if not self.task_info["instantiation_result"]["instantiation_evaluation"]["result"]:
+            if not self.task_info["instantiation_result"]["instantiation_evaluation"][
+                "result"
+            ]:
                 target_file = INSTANTIATION_RESULT_MAP[False]
             else:
-                is_quality_good = self.task_info["instantiation_result"]["instantiation_evaluation"]["result"]["judge"]
-                target_file = INSTANTIATION_RESULT_MAP.get(is_quality_good, INSTANTIATION_RESULT_MAP[False])
+                is_quality_good = self.task_info["instantiation_result"][
+                    "instantiation_evaluation"
+                ]["result"]["judge"]
+                target_file = INSTANTIATION_RESULT_MAP.get(
+                    is_quality_good, INSTANTIATION_RESULT_MAP[False]
+                )
 
         else:
             # Determine the completion status of the execution
@@ -316,10 +330,14 @@ class DataFlowController:
                 target_file = EXECUTION_RESULT_MAP["no"]
             else:
                 is_completed = self.task_info["execution_result"]["result"]["complete"]
-                target_file = EXECUTION_RESULT_MAP.get(is_completed, EXECUTION_RESULT_MAP["no"])
+                target_file = EXECUTION_RESULT_MAP.get(
+                    is_completed, EXECUTION_RESULT_MAP["no"]
+                )
 
         # Construct the full path to save the result
-        new_task_path = os.path.join(self.result_hub, target_file, self.task_object.task_file_base_name)
+        new_task_path = os.path.join(
+            self.result_hub, target_file, self.task_object.task_file_base_name
+        )
         os.makedirs(os.path.dirname(new_task_path), exist_ok=True)
         save_json_file(new_task_path, self.task_info)
 
@@ -327,8 +345,10 @@ class DataFlowController:
 
         # If validation failed, indicate that the saved result may need further inspection
         if validation_error:
-            print("The saved task result does not conform to the expected schema and may require review.")
-    
+            print(
+                "The saved task result does not conform to the expected schema and may require review."
+            )
+
     @property
     def template_copied_path(self) -> str:
         """
@@ -337,7 +357,7 @@ class DataFlowController:
         """
 
         return self.task_info["instantiation_result"]["choose_template"]["result"]
-    
+
     @property
     def instantiated_plan(self) -> List[Dict[str, Any]]:
         """
@@ -345,7 +365,9 @@ class DataFlowController:
         :return: The instantiated plan.
         """
 
-        return self.task_info["instantiation_result"]["prefill"]["result"]["instantiated_plan"]
+        return self.task_info["instantiation_result"]["prefill"]["result"][
+            "instantiated_plan"
+        ]
 
     @instantiated_plan.setter
     def instantiated_plan(self, value: List[Dict[str, Any]]) -> None:
@@ -354,8 +376,56 @@ class DataFlowController:
         :param value: New value for the instantiated plan.
         """
 
-        self.task_info.setdefault("instantiation_result", {}).setdefault("prefill", {}).setdefault("result", {})
-        self.task_info["instantiation_result"]["prefill"]["result"]["instantiated_plan"] = value
+        self.task_info.setdefault("instantiation_result", {}).setdefault(
+            "prefill", {}
+        ).setdefault("result", {})
+        self.task_info["instantiation_result"]["prefill"]["result"][
+            "instantiated_plan"
+        ] = value
+
+    def reformat_to_batch(self, path) -> None:
+        """
+        Transfer the result to the result hub.
+        """
+        os.makedirs(path, exist_ok=True)
+        source_files_path = os.path.join(
+            self.result_hub,
+            self.task_type + "_pass",
+        )
+        source_template_path = os.path.join(
+            os.path.dirname(self.result_hub),
+            "saved_document",
+        )
+        target_file_path = os.path.join(
+            path,
+            "tasks",
+        )
+        target_template_path = os.path.join(
+            path,
+            "files",
+        )
+        os.makedirs((target_file_path), exist_ok=True)
+        os.makedirs((target_template_path), exist_ok=True)
+
+        for file in os.listdir(source_files_path):
+            if file.endswith(".json"):
+                source_file = os.path.join(source_files_path, file)
+                target_file = os.path.join(target_file_path, file)
+                target_object = os.path.join(
+                    target_template_path, file.replace(".json", ".docx")
+                )
+                is_successed = reformat_json_file(
+                    target_file,
+                    target_object,
+                    load_json_file(source_file),
+                )
+                if is_successed:
+                    shutil.copy(
+                        os.path.join(
+                            source_template_path, file.replace(".json", ".docx")
+                        ),
+                        target_template_path,
+                    )
 
     def run(self) -> None:
         """
@@ -383,7 +453,12 @@ class DataFlowController:
         finally:
             # Update or record the total time cost of the process
             total_time = round(time.time() - start_time, 3)
-            new_total_time = self.task_info.get("time_cost", {}).get("total", 0) + total_time
+            new_total_time = (
+                self.task_info.get("time_cost", {}).get("total", 0) + total_time
+            )
             self.task_info["time_cost"]["total"] = round(new_total_time, 3)
 
             self.save_result()
+
+        if _configs["REFORMAT_TO_BATCH"]:
+            self.reformat_to_batch(_configs["REFORMAT_TO_BATCH_HUB"])

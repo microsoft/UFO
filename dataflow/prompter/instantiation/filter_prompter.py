@@ -2,7 +2,6 @@
 # Licensed under the MIT License.
 
 import json
-
 from typing import Dict, List
 
 from ufo.prompter.basic import BasicPrompter
