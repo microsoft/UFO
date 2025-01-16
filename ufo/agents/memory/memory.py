@@ -27,6 +27,14 @@ class MemoryItem:
             if key in self._memory_attributes
         }
 
+    def from_dict(self, data: Dict[str, str]) -> None:
+        """
+        Convert the dictionary to a MemoryItem.
+        :param data: The dictionary.
+        """
+        for key, value in data.items():
+            self.set_value(key, value)
+
     def to_json(self) -> str:
         """
         Convert the memory item to a JSON string.
@@ -156,6 +164,24 @@ class Memory:
         return json.dumps(
             [item.to_dict() for item in self._content if item is not None]
         )
+
+    def to_list_of_dicts(self) -> List[Dict[str, str]]:
+        """
+        Convert the memory to a list of dictionaries.
+        :return: The list of dictionaries.
+        """
+        return [item.to_dict() for item in self._content]
+
+    def from_list_of_dicts(self, data: List[Dict[str, str]]) -> None:
+        """
+        Convert the list of dictionaries to the memory.
+        :param data: The list of dictionaries.
+        """
+        self._content = []
+        for item in data:
+            memory_item = MemoryItem()
+            memory_item.from_dict(item)
+            self._content.append(memory_item)
 
     def get_latest_item(self) -> MemoryItem:
         """

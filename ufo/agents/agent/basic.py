@@ -83,6 +83,14 @@ class BasicAgent(ABC):
         """
         return self._memory
 
+    @memory.setter
+    def memory(self, memory: Memory) -> None:
+        """
+        Set the memory of the agent.
+        :param memory: The memory of the agent.
+        """
+        self._memory = memory
+
     @property
     def name(self) -> str:
         """
@@ -182,6 +190,16 @@ class BasicAgent(ABC):
         :param step: The step of the agent.
         """
         self._step = step
+
+    def set_memory_from_list_of_dicts(self, data: List[Dict[str, str]]) -> None:
+        """
+        Set the memory from the list of dictionaries.
+        :param data: The list of dictionaries.
+        """
+
+        assert isinstance(data, list), "The data should be a list of dictionaries."
+
+        self._memory.from_list_of_dicts(data)
 
     def add_memory(self, memory_item: MemoryItem) -> None:
         """
