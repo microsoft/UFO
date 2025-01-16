@@ -315,7 +315,10 @@ class Context:
         Convert the context to a dictionary.
         :return: The dictionary of the context.
         """
-        return self._context
+
+        import copy
+
+        return copy.deepcopy(self._context)
 
     def from_dict(self, context_dict: Dict[str, Any]) -> None:
         """
