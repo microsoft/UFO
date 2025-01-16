@@ -21,6 +21,7 @@ class MemoryItem:
         Convert the MemoryItem to a dictionary.
         :return: The dictionary.
         """
+
         return {
             key: value
             for key, value in self.__dict__.items()
