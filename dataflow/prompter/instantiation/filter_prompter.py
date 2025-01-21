@@ -2,11 +2,9 @@
 # Licensed under the MIT License.
 
 import json
-import os
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 from ufo.prompter.basic import BasicPrompter
-from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 
 
 class FilterPrompter(BasicPrompter):
@@ -140,7 +138,7 @@ class FilterPrompter(BasicPrompter):
             {request}
         [Response]:
             {response}
-        [Tip]
+        [Tips]:
             {tip}
         """
 

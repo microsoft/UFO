@@ -179,6 +179,12 @@ class Session(BaseSession):
         elif save_experience == "ask":
             if interactor.experience_asker():
                 self.experience_saver()
+
+        elif save_experience == "auto":
+            task_completed = self.results.get("complete", "no")
+            if task_completed.lower() == "yes":
+                self.experience_saver()
+
         elif save_experience == "always_not":
             pass
 
@@ -237,10 +243,10 @@ class Session(BaseSession):
                 self._finish = True
             return request
 
-    def request_to_evaluate(self) -> bool:
+    def request_to_evaluate(self) -> str:
         """
-        Check if the session should be evaluated.
-        :return: True if the session should be evaluated, False otherwise.
+        Get the request to evaluate.
+        return: The request(s) to evaluate.
         """
         request_memory = self._host_agent.blackboard.requests
         return request_memory.to_json()
@@ -328,10 +334,10 @@ class FollowerSession(BaseSession):
         else:
             return self.plan_reader.next_step()
 
-    def request_to_evaluate(self) -> bool:
+    def request_to_evaluate(self) -> str:
         """
-        Check if the session should be evaluated.
-        :return: True if the session should be evaluated, False otherwise.
+        Get the request to evaluate.
+        return: The request(s) to evaluate.
         """
 
         return self.plan_reader.get_task()
@@ -402,6 +408,7 @@ class FromFileSession(BaseSession):
         """
 
         if self.total_rounds == 0:
+            utils.print_with_color(self.plan_reader.get_host_request(), "cyan")
             return self.plan_reader.get_host_request()
         else:
             self._finish = True
@@ -483,7 +490,9 @@ class FromFileSession(BaseSession):
         if self.object_name:
             suffix = os.path.splitext(self.object_name)[1]
             self.app_name = self.get_app_name(suffix)
+            print("app_name:", self.app_name)
             if self.app_name not in self.support_apps:
+                print(f"The app {self.app_name} is not supported.")
                 return  # The app is not supported, so we don't need to setup the environment.
             file = self.plan_reader.get_file_path()
             code_snippet = f"import os\nos.system('start {self.app_name} \"{file}\"')"
@@ -497,13 +506,12 @@ class FromFileSession(BaseSession):
             except Exception as e:
                 print(f"An error occurred: {e}")
 
-    def request_to_evaluate(self) -> bool:
+    def request_to_evaluate(self) -> str:
         """
-        Check if the session should be evaluated.
-        :return: True if the session should be evaluated, False otherwise.
+        Get the request to evaluate.
+        return: The request(s) to evaluate.
         """
-        request_memory = self._host_agent.blackboard.requests
-        return request_memory.to_json()
+        return self.plan_reader.get_task()
 
     def record_task_done(self) -> None:
         """

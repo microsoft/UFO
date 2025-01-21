@@ -66,7 +66,7 @@ example2:
     SaveScreenshot:
       {"save": false, "reason": ""}
   Tips: |-
-    - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
+    - The user only asked me to draft an email to Amy to ask her how she feels about the new project. I do not need to send the email since the user did not ask me to send it.
     - You need to draft the content of the email and send it to the receiver. Use polite language when drafting the email.
 
 
@@ -327,3 +327,7 @@ example10:
       - (5) Click the 'Submit' button to submit the form.
     Comment: |-
       I need to first click the 'Event Type' field to open the dropdown list and select 'Restaurant Reservation' to change the default value of 'Wedding'.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
+  Tips: |-
+    - If the field is already filled with a default value, you need to first click on the field to open the dropdown list and select the correct value.

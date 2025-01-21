@@ -318,16 +318,16 @@ class Trajectory:
         :return: The total number of rounds.
         """
 
-        return (
-            max(
-                [
-                    self.step_log[i].get("Round")
-                    for i in range(len(self.step_log))
-                    if isinstance(self.step_log[i].get("Round"), int)
-                ]
-            )
-            + 1
-        )
+        round_numbers = [
+            self.step_log[i].get("Round")
+            for i in range(len(self.step_log))
+            if isinstance(self.step_log[i].get("Round"), int)
+        ]
+
+        if len(round_numbers) == 0:
+            return 0
+
+        return max(round_numbers) + 1
 
     @property
     def step_number(self) -> int:

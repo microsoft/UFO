@@ -4,6 +4,7 @@
 # Ignore Jupyter Notebook checkpoints
 .ipynb_checkpoints
 /test/*
+/testing/*
 /deprecated/*
 /test/*.ipynb
 /logs/*
@@ -39,3 +40,6 @@ scripts/*
 
 # Ignore the record files
 tasks_status.json
+datas
+_datas
+datasUFO

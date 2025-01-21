@@ -83,6 +83,14 @@ class BasicAgent(ABC):
         """
         return self._memory
 
+    @memory.setter
+    def memory(self, memory: Memory) -> None:
+        """
+        Set the memory of the agent.
+        :param memory: The memory of the agent.
+        """
+        self._memory = memory
+
     @property
     def name(self) -> str:
         """
@@ -150,6 +158,7 @@ class BasicAgent(ABC):
         :param message: The message for LLMs.
         :param namescope: The namescope for the LLMs.
         :param use_backup_engine: Whether to use the backup engine.
+        :param configs: The configurations.
         :return: The response.
         """
         response_string, cost = llm_call.get_completion(
@@ -181,6 +190,16 @@ class BasicAgent(ABC):
         :param step: The step of the agent.
         """
         self._step = step
+
+    def set_memory_from_list_of_dicts(self, data: List[Dict[str, str]]) -> None:
+        """
+        Set the memory from the list of dictionaries.
+        :param data: The list of dictionaries.
+        """
+
+        assert isinstance(data, list), "The data should be a list of dictionaries."
+
+        self._memory.from_list_of_dicts(data)
 
     def add_memory(self, memory_item: MemoryItem) -> None:
         """
@@ -252,12 +271,16 @@ class BasicAgent(ABC):
         Ask for the process.
         :param ask_user: Whether to ask the user for the questions.
         """
+
+        _ask_message = "Could you please answer the following questions to help me understand your needs and complete the task?"
+        _none_answer_message = "The answer for the question is not available, please proceed with your own knowledge or experience, or leave it as a placeholder. Do not ask the same question again."
+
         if self.processor:
             question_list = self.processor.question_list
 
             if ask_user:
                 utils.print_with_color(
-                    "Could you please answer the following questions to help me understand your needs and complete the task?",
+                    _ask_message,
                     "yellow",
                 )
 
@@ -275,7 +298,7 @@ class BasicAgent(ABC):
                 else:
                     qa_pair = {
                         "question": question,
-                        "answer": "The answer for the question is not available, please proceed with your own knowledge or experience, or leave it as a placeholder. Do not ask the same question again.",
+                        "answer": _none_answer_message,
                     }
 
                 self.blackboard.add_questions(qa_pair)

@@ -1,10 +1,11 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from typing import  List, Optional
+from typing import List
 
 from dataflow.prompter.instantiation.filter_prompter import FilterPrompter
 from ufo.agents.agent.basic import BasicAgent
+
 
 class FilterAgent(BasicAgent):
     """
@@ -40,11 +41,7 @@ class FilterAgent(BasicAgent):
         self._process_name = process_name
 
     def get_prompter(
-        self,
-        is_visual: bool,
-        main_prompt: str,
-        example_prompt: str,
-        api_prompt: str
+        self, is_visual: bool, main_prompt: str, example_prompt: str, api_prompt: str
     ) -> FilterPrompter:
         """
         Get the prompt for the agent.

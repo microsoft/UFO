@@ -183,13 +183,21 @@ class RectangleDecorator(PhotographerDecorator):
         draw.rectangle(coordinate, outline=color, width=width)
         return image
 
-    def capture(self, save_path: str):
+    def capture(self, save_path: str, background_screenshot_path: Optional[str] = None):
         """
         Capture a screenshot with rectangles.
         :param save_path: The path to save the screenshot.
+        :param background_screenshot_path: The path of the background screenshot, optional. If provided, the rectangle will be drawn on the background screenshot instead of the control screenshot.
         :return: The screenshot with rectangles.
         """
-        screenshot = self.photographer.capture()
+
+        if background_screenshot_path is not None and os.path.exists(
+            background_screenshot_path
+        ):
+            screenshot = Image.open(background_screenshot_path)
+        else:
+            screenshot = self.photographer.capture()
+
         window_rect = self.photographer.control.rectangle()
 
         for control in self.sub_control_list:
@@ -198,6 +206,41 @@ class RectangleDecorator(PhotographerDecorator):
                 adjusted_rect = self.coordinate_adjusted(window_rect, control_rect)
                 screenshot = self.draw_rectangles(
                     screenshot, coordinate=adjusted_rect, color=self.color
+                )
+        if save_path is not None and screenshot is not None:
+            screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
+        return screenshot
+
+    def capture_from_adjusted_coords(
+        self,
+        control_adjusted_coords: List[Dict[str, Dict[str, float]]],
+        save_path: str,
+        background_screenshot_path: Optional[str] = None,
+    ):
+        """
+        Capture a screenshot with rectangles when the adjusted coordinates are provided.
+        :param control_adjusted_coords: The adjusted coordinates of the control rectangles.
+        :param save_path: The path to save the screenshot.
+        :param background_screenshot_path: The path of the background screenshot, optional. If provided, the rectangle will be drawn on the background screenshot instead of the control screenshot.
+        :return: The screenshot with rectangles.
+        """
+        if background_screenshot_path is not None and os.path.exists(
+            background_screenshot_path
+        ):
+            screenshot = Image.open(background_screenshot_path)
+        else:
+            screenshot = self.photographer.capture()
+
+        for control_adjusted_coord in control_adjusted_coords:
+            if control_adjusted_coord:
+                control_rect = (
+                    control_adjusted_coord["left"],
+                    control_adjusted_coord["top"],
+                    control_adjusted_coord["right"],
+                    control_adjusted_coord["bottom"],
+                )
+                screenshot = self.draw_rectangles(
+                    screenshot, coordinate=control_rect, color=self.color
                 )
         if save_path is not None and screenshot is not None:
             screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
@@ -378,6 +421,7 @@ class AnnotationDecorator(PhotographerDecorator):
                 screenshot_annotated,
                 adjusted_coordinate,
                 label_text,
+                font_size=configs.get("ANNOTATION_FONT_SIZE", 25),
                 button_color=(
                     color_dict.get(
                         control.element_info.control_type, self.color_default
@@ -467,6 +511,7 @@ class PhotographerFacade:
         color: str = "red",
         width=3,
         sub_control_list: List[UIAWrapper] = None,
+        background_screenshot_path: Optional[str] = None,
         save_path: Optional[str] = None,
     ) -> Image.Image:
         """
@@ -476,11 +521,42 @@ class PhotographerFacade:
         :param color: The color of the rectangle.
         :param width: The width of the rectangle.
         :param sub_control_list: The list of the controls to draw rectangles on.
+        :param background_screenshot_path: The path of the background screenshot, optional. If provided, the rectangle will be drawn on the background screenshot instead of the control screenshot.
+        :param save_path: The path to save the screenshot.
         :return: The screenshot.
         """
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
         screenshot = RectangleDecorator(screenshot, color, width, sub_control_list)
-        return screenshot.capture(save_path)
+        return screenshot.capture(save_path, background_screenshot_path)
+
+    def capture_app_window_screenshot_with_rectangle_from_adjusted_coords(
+        self,
+        control: UIAWrapper,
+        color: str = "red",
+        width=3,
+        control_adjusted_coords: List[Dict[str, Dict[str, float]]] = [],
+        background_screenshot_path: Optional[str] = None,
+        save_path: Optional[str] = None,
+    ) -> Image.Image:
+        """
+        Capture the control screenshot with a rectangle.
+        :param control: The control item to capture.
+        :param coordinate: The coordinate of the rectangle.
+        :param color: The color of the rectangle.
+        :param width: The width of the rectangle.
+        :param sub_control_list: The list of the controls to draw rectangles on.
+        :param background_screenshot_path: The path of the background screenshot, optional. If provided, the rectangle will be drawn on the background screenshot instead of the control screenshot.
+        :param save_path: The path to save the screenshot.
+        :return: The screenshot.
+        """
+        screenshot = self.screenshot_factory.create_screenshot("app_window", control)
+        screenshot = RectangleDecorator(screenshot, color, width, [])
+
+        return screenshot.capture_from_adjusted_coords(
+            control_adjusted_coords=control_adjusted_coords,
+            save_path=save_path,
+            background_screenshot_path=background_screenshot_path,
+        )
 
     def capture_app_window_screenshot_with_annotation_dict(
         self,
@@ -579,6 +655,16 @@ class PhotographerFacade:
         :return: The concatenated image.
         """
         # Open the images
+        if not os.path.exists(image1_path):
+            utils.print_with_color(f"Waring: {image1_path} does not exist.", "yellow")
+
+            return Image.new("RGB", (0, 0))
+
+        if not os.path.exists(image2_path):
+            utils.print_with_color(f"Waring: {image2_path} does not exist.", "yellow")
+
+            return Image.new("RGB", (0, 0))
+
         image1 = Image.open(image1_path)
         image2 = Image.open(image2_path)
 

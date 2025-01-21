@@ -63,6 +63,7 @@ nav:
         - Experience Learning: advanced_usage/reinforce_appagent/experience_learning.md
         - Learning from User Demonstration: advanced_usage/reinforce_appagent/learning_from_demonstration.md
       - Follower Mode: advanced_usage/follower_mode.md
+      - Batch Mode: advanced_usage/batch_mode.md
       - Control Filtering: 
         - Overview: advanced_usage/control_filtering/overview.md
         - Text Filtering: advanced_usage/control_filtering/text_filtering.md

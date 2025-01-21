@@ -11,6 +11,14 @@ FILTER_PROMPT: "dataflow/prompts/instantiation/{mode}/filter.yaml"  # The prompt
 PREFILL_EXAMPLE_PROMPT: "dataflow/prompts/instantiation/{mode}/prefill_example.yaml"  # The prompt for the action prefill example
 API_PROMPT: "ufo/prompts/share/lite/api.yaml"  # The prompt for the API
 
+# Template Configuration
+TEMPLATE_METHOD: "LLM"  # The method for the template, support 'SemanticSimilarity', 'LLM'.
+TEMPLATE_PROMPT: "dataflow/prompts/instantiation/{mode}/template.yaml"  # The prompt for the template
+
+# Reformat Configuration
+REFORMAT_TO_BATCH: True # Whether to reformat the result of dataflow to the format of the UFO batch mode
+REFORMAT_TO_BATCH_HUB: "datasUFO"  # The reformat result path
+
 # Default Task Configuration
 TASKS_HUB: "dataflow/tasks/prefill"  # The default tasks hub for batch dataflow
 TEMPLATE_PATH: "dataflow/templates"  # The template path for the exploration

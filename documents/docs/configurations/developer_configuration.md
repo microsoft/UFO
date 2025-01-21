@@ -9,6 +9,7 @@ The following parameters are included in the system configuration of the UFO age
 | Configuration Option    | Description                                                                                             | Type     | Default Value |
 |-------------------------|---------------------------------------------------------------------------------------------------------|----------|---------------|
 | `CONTROL_BACKEND`       | The backend for control action, currently supporting `uia` and `win32`.                                 | String   | "uia"         |
+| `ACTION_SEQUENCE`       | Whether to use output multiple actions in a single step.                                                | Boolean  | False         |
 | `MAX_STEP`              | The maximum step limit for completing the user request in a session.                                    | Integer  | 100           |
 | `MAX_ROUND`             | The maximum round limit for completing the user request in a session.                                   | Integer  | 10            |
 | `SLEEP_TIME`            | The sleep time in seconds between each step to wait for the window to be ready.                         | Integer  | 5             |
@@ -17,6 +18,7 @@ The following parameters are included in the system configuration of the UFO age
 | `CONTROL_LIST`          | The list of widgets allowed to be selected.                                                             | List     | ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem"] |
 | `HISTORY_KEYS`          | The keys of the step history added to the [`Blackboard`](../agents/design/blackboard.md) for agent decision-making.                         | List     | ["Step", "Thought", "ControlText", "Subtask", "Action", "Comment", "Results", "UserConfirm"] |
 | `ANNOTATION_COLORS`     | The colors assigned to different control types for annotation.                                          | Dictionary | {"Button": "#FFF68F", "Edit": "#A5F0B5", "TabItem": "#A5E7F0", "Document": "#FFD18A", "ListItem": "#D9C3FE", "MenuItem": "#E7FEC3", "ScrollBar": "#FEC3F8", "TreeItem": "#D6D6D6", "Hyperlink": "#91FFEB", "ComboBox": "#D8B6D4"} |
+| `ANNOTATION_FONT_SIZE`  | The font size for the annotation.                                                                       | Integer  | 22            |
 | `PRINT_LOG`             | Whether to print the log in the console.                                                                | Boolean  | False         |
 | `CONCAT_SCREENSHOT`     | Whether to concatenate the screenshots into a single image for the LLM input.                          | Boolean  | False         |
 | `INCLUDE_LAST_SCREENSHOT` | Whether to include the screenshot from the last step in the observation.                             | Boolean  | True          |

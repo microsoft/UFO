@@ -103,6 +103,8 @@ class Blackboard:
             data_memory = MemoryItem()
             data_memory.add_values_from_dict({"text": data})
             memory.add_memory_item(data_memory)
+        else:
+            print(f"Warning: Unsupported data type: {type(data)} when adding data.")
 
     def add_questions(self, questions: Union[MemoryItem, Dict[str, str]]) -> None:
         """
@@ -237,6 +239,39 @@ class Blackboard:
             )
 
         return user_content
+
+    def blackboard_to_dict(self) -> Dict[str, List[Dict[str, str]]]:
+        """
+        Convert the blackboard to a dictionary.
+        :return: The blackboard in the dictionary format.
+        """
+        blackboard_dict = {
+            "questions": self.questions.to_list_of_dicts(),
+            "requests": self.requests.to_list_of_dicts(),
+            "trajectories": self.trajectories.to_list_of_dicts(),
+            "screenshots": self.screenshots.to_list_of_dicts(),
+        }
+
+        return blackboard_dict
+
+    def blackboard_to_json(self) -> str:
+        """
+        Convert the blackboard to a JSON string.
+        :return: The JSON string.
+        """
+        return json.dumps(self.blackboard_to_dict())
+
+    def blackboard_from_dict(
+        self, blackboard_dict: Dict[str, List[Dict[str, str]]]
+    ) -> None:
+        """
+        Convert the dictionary to the blackboard.
+        :param blackboard_dict: The dictionary.
+        """
+        self.questions.from_list_of_dicts(blackboard_dict.get("questions", []))
+        self.requests.from_list_of_dicts(blackboard_dict.get("requests", []))
+        self.trajectories.from_list_of_dicts(blackboard_dict.get("trajectories", []))
+        self.screenshots.from_list_of_dicts(blackboard_dict.get("screenshots", []))
 
     def blackboard_to_prompt(self) -> List[str]:
         """

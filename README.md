@@ -35,6 +35,9 @@ Both agents leverage the multi-modal capabilities of GPT-4V(o) to comprehend the
 
 
 ## 📢 News
+- 📅 2025-01-21: Version **v1.2.1** Released! We’re excited to announce the release of **v1.2.1**! 🎉 This update includes:
+    1. **Bug Fixes**: Resolved issues in `requirements.txt` for smoother setup.
+    2. **Multi-Action Mode**: Introducing a powerful new feature to execute **multiple actions** in a single inference step! Enable this mode by setting `ACTION_SEQUENCE=True` in `config_dev.yaml` and enjoy a more efficient workflow.
 - 📅 2024-12-13: We have a **New Release for v1.2.0!**! Checkout our new features and improvements:
     1. **Large Action Model (LAM) Data Collection:** We have released the code and sample data for Large Action Model (LAM) data collection with UFO! Please checkout our [new paper](https://arxiv.org/abs/2412.10047), [code](dataflow/README.md) and [documentation](https://microsoft.github.io/UFO/dataflow/overview/) for more details.    
     2. **Bash Command Support:** HostAgent also support bash command now!

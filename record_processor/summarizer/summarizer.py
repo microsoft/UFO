@@ -12,6 +12,7 @@ from record_processor.parser.demonstration_record import DemonstrationRecord
 from record_processor.utils import json_parser
 from ufo.llm.llm_call import get_completions
 from ufo.prompter.demonstration_prompter import DemonstrationPrompter
+from ufo.utils import get_hugginface_embedding
 
 
 class DemonstrationSummarizer:
@@ -186,7 +187,11 @@ class DemonstrationSummarizer:
 
         # Check if the db exists, if not, create a new one.
         if os.path.exists(db_path):
-            prev_db = FAISS.load_local(db_path, get_hugginface_embedding())
+            prev_db = FAISS.load_local(
+                db_path,
+                get_hugginface_embedding(),
+                allow_dangerous_deserialization=True,
+            )
             db.merge_from(prev_db)
 
         db.save_local(db_path)

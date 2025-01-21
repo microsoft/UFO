@@ -48,7 +48,9 @@ def create_indexer(app: str, docs: str, format: str, incremental: bool, save_pat
     if incremental:
         if app in records:
             print_with_color("Merging with previous indexer...", "yellow")
-            prev_db = FAISS.load_local(records[app], embeddings)
+            prev_db = FAISS.load_local(
+                records[app], embeddings, allow_dangerous_deserialization=True
+            )
             db.merge_from(prev_db)
 
     db_file_path = os.path.join(save_path, app)
