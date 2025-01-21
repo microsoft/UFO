@@ -181,7 +181,7 @@ class Session(BaseSession):
                 self.experience_saver()
 
         elif save_experience == "auto":
-            task_completed = self.results.get("task_completed", "no")
+            task_completed = self.results.get("complete", "no")
             if task_completed.lower() == "yes":
                 self.experience_saver()
 

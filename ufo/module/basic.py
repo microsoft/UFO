@@ -541,7 +541,11 @@ class BaseSession(ABC):
         return self._results
 
     @results.setter
-    def results(self, value):
+    def results(self, value: Dict[str, str]) -> None:
+        """
+        Set the evaluation results of the session.
+        :param value: The evaluation results of the session.
+        """
         self._results = value
 
     def experience_saver(self) -> None:
