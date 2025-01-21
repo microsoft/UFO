@@ -18,36 +18,44 @@ Templates for your app must be defined and described in `dataflow/templates/app`
 
 The `ChooseTemplateFlow` uses semantic matching, where task descriptions are compared with template descriptions using embeddings and FAISS for efficient nearest neighbor search. If semantic matching fails, a random template is chosen from the available files.
 
-#### ChooseTemplateFlow
-
-::: instantiation.workflow.choose_template_flow.ChooseTemplateFlow
-
-<br>
-
 ## 2. Prefill the Task
+
+### PrefillFlow
 
 The `PrefillFlow` class orchestrates the refinement of task plans and UI interactions by leveraging `PrefillAgent` for task planning and action generation. It automates UI control updates, captures screenshots, and manages logs for messages and responses during execution.
 
-#### PrefillFlow
+### PrefillAgent
+
+The `PrefillAgent` class facilitates task instantiation and action sequence generation by constructing tailored prompt messages using the `PrefillPrompter`. It integrates system, user, and dynamic context to generate actionable inputs for down-stream workflows.
+
+## 3. Filter Task
+
+### FilterFlow
+
+The `FilterFlow` class is designed to process and refine task plans by leveraging a `FilterAgent`. The `FilterFlow` class acts as a bridge between the instantiation of tasks and the execution of a filtering process, aiming to refine task steps and prefill task-related files based on predefined filtering criteria.
+
+### FilterAgent
+
+The `FilterAgent` class is a specialized agent used to evaluate whether an instantiated task is correct. It inherits from the BasicAgent class and includes several methods and attributes to handle its functionality.
+
+# Reference
+
+## ChooseTemplateFlow
+
+::: instantiation.workflow.choose_template_flow.ChooseTemplateFlow
+
+## PrefillFlow
 
 ::: instantiation.workflow.prefill_flow.PrefillFlow
 
-#### PrefillAgent
-
-The `PrefillAgent` class facilitates task instantiation and action sequence generation by constructing tailored prompt messages using the `PrefillPrompter`. It integrates system, user, and dynamic context to generate actionable inputs for automation workflows.
+## PrefillAgent
 
 ::: instantiation.agent.prefill_agent.PrefillAgent
 
-<br>
-
-### 3. Filter Task
-
-The `FilterFlow` class is designed to process and refine task plans by leveraging a `FilterAgent`. 
-
-#### FilterFlow
+## FilterFlow
 
 ::: instantiation.workflow.filter_flow.FilterFlow
 
-#### FilterAgent
+## FilterAgent
 
 ::: instantiation.agent.filter_agent.FilterAgent

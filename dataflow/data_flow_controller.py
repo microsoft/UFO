@@ -256,6 +256,7 @@ class DataFlowController:
                 self.task_info["time_cost"]["execute_eval"] = execute_flow.eval_time
             else:
                 self.task_info["time_cost"]["execute_eval"] = None
+            
 
     def instantiation_single_flow(
         self,
