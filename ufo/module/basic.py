@@ -540,6 +540,10 @@ class BaseSession(ABC):
         """
         return self._results
 
+    @results.setter
+    def results(self, value):
+        self._results = value
+
     def experience_saver(self) -> None:
         """
         Save the current trajectory as agent experience.
