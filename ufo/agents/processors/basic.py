@@ -7,18 +7,25 @@ import os
 import time
 import traceback
 from abc import ABC, abstractmethod
+from dataclasses import asdict, dataclass
 from functools import wraps
-from typing import Any, Dict, List
+from typing import Any, Dict, List, Optional, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.memory.memory import MemoryItem
+from ufo.automator.puppeteer import AppPuppeteer
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
+from ufo.agents.processors.actions import (
+    ActionSequence,
+    OneStepAction,
+    BaseControlLog,
+)
 
 configs = Config.get_instance().config_data
 if configs is not None:
@@ -53,22 +60,15 @@ class BaseProcessor(ABC):
         self._control_text = None
         self._response_json = {}
         self._memory_data = MemoryItem()
-        self._results = None
         self._question_list = []
         self._agent_status_manager = self.agent.status_manager
         self._is_resumed = False
-        self._action = None
         self._plan = None
-
-        self._control_log = {
-            "control_class": None,
-            "control_type": None,
-            "control_automation_id": None,
-        }
 
         self._total_time_cost = 0
         self._time_cost = {}
         self._exeception_traceback = {}
+        self._actions = ActionSequence()
 
     def process(self) -> None:
         """
@@ -535,20 +535,20 @@ class BaseProcessor(ABC):
         return self._status
 
     @property
-    def action(self) -> str:
+    def actions(self) -> ActionSequence:
         """
-        Get the action.
-        :return: The action.
+        Get the actions.
+        :return: The actions.
         """
-        return self._action
+        return self._actions
 
-    @action.setter
-    def action(self, action: str) -> None:
+    @actions.setter
+    def actions(self, actions: ActionSequence) -> None:
         """
-        Set the action.
-        :param action: The action.
+        Set the actions.
+        :param actions: The actions to be executed.
         """
-        self._action = action
+        self._actions = actions
 
     @property
     def plan(self) -> str:

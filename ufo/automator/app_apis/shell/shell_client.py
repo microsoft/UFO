@@ -28,10 +28,14 @@ class ShellReceiver(ReceiverBasic):
         :return: The result content.
         """
         bash_command = params.get("command")
-        result = subprocess.run(
-            bash_command, shell=True, capture_output=True, text=True
+        process = subprocess.Popen(
+            bash_command,  # command to run
+            stdout=subprocess.PIPE,  # capture stdout
+            stderr=subprocess.PIPE,  # capture stderr
+            shell=True,
+            text=True,
         )
-        return result.stdout
+        return ""
 
     @property
     def type_name(self):

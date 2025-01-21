@@ -111,7 +111,9 @@ class OfflineDocRetriever(Retriever):
             return None
 
         try:
-            db = FAISS.load_local(path, get_hugginface_embedding())
+            db = FAISS.load_local(
+                path, get_hugginface_embedding(), allow_dangerous_deserialization=True
+            )
             return db
         except:
             # print_with_color(
@@ -142,7 +144,11 @@ class ExperienceRetriever(Retriever):
         """
 
         try:
-            db = FAISS.load_local(db_path, get_hugginface_embedding())
+            db = FAISS.load_local(
+                db_path,
+                get_hugginface_embedding(),
+                allow_dangerous_deserialization=True,
+            )
             return db
         except:
             # print_with_color(
@@ -209,7 +215,11 @@ class DemonstrationRetriever(Retriever):
         """
 
         try:
-            db = FAISS.load_local(db_path, get_hugginface_embedding())
+            db = FAISS.load_local(
+                db_path,
+                get_hugginface_embedding(),
+                allow_dangerous_deserialization=True,
+            )
             return db
         except:
             # print_with_color(
