@@ -26,6 +26,8 @@ ANNOTATION_COLORS: {
         "Hyperlink": "#91FFEB",
         "ComboBox": "#D8B6D4"
     }
+    
+ANNOTATION_FONT_SIZE: 22  # The font size for the annotation
 
 PRINT_LOG: False  # Whether to print the log  
 CONCAT_SCREENSHOT: True  # Whether to concat the screenshot for the control item
