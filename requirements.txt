@@ -25,3 +25,7 @@ uiautomation==2.0.18
 ##For Gemini
 #google-generativeai==0.7.0
 
+
+## If use AAD to authenticate
+# azure_identity==1.15.0
+# azure-identity-broker==0.1.0
