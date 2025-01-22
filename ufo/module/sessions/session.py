@@ -441,8 +441,8 @@ class FromFileSession(BaseSession):
             ".xlsx": "Excel.Application",
             ".pptx": "PowerPoint.Application",
         }
-        self.app_name = application_mapping.get(object_name)
-        return self.app_name
+
+        return application_mapping.get(object_name)
 
     def run(self) -> None:
         """
