@@ -194,7 +194,6 @@ class PrefillFlow(AppAgentProcessor):
             "",
             given_task,
             reference_steps,
-            self._filtered_control_info,
             self._log_path_configs,
         )
 
