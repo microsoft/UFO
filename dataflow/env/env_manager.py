@@ -1,5 +1,6 @@
 import logging
 import re
+import time
 from time import sleep
 from typing import Optional, Tuple, Dict
 import psutil
@@ -50,6 +51,7 @@ class WindowsAppEnv:
             file_controller.execute_code(
                 {"APP": self.win_app, "file_path": copied_template_path}
             )
+            time.sleep(1)  # wait app open
         except Exception as e:
             logging.exception(f"Failed to start the application: {e}")
             raise

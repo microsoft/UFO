@@ -80,28 +80,30 @@ class TemplatePrompter(BasicPrompter):
         except Exception as e:
             print(e)
 
-    def user_prompt_construction(self, request: str) -> str:
+    def user_prompt_construction(self, request: str, reference_steps: List[str]) -> str:
         """
         Construct the prompt for the user.
         :param request: The user request.
+        :param reference_step: The reference step.
         :return: The prompt for the user.
         """
 
-        prompt = self.prompt_template["user"].format(given_task=request)
+        prompt = self.prompt_template["user"].format(given_task=request, reference_steps=reference_steps)
         return prompt
 
-    def user_content_construction(self, path: str, request: str) -> List[Dict]:
+    def user_content_construction(self, path: str, request: str, reference_steps: List[str]) -> List[Dict]:
         """
         Construct the prompt for LLMs.
         :param path: The path of the template.
         :param request: The user request.
+        :param reference_steps: The reference step.
         :return: The prompt for LLMs.
         """
 
         user_content = self.file_prompt_helper(path)
 
         user_content.append(
-            {"type": "text", "text": self.user_prompt_construction(request)}
+            {"type": "text", "text": self.user_prompt_construction(request, reference_steps)}
         )
 
         return user_content

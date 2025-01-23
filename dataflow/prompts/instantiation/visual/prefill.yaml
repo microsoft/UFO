@@ -26,7 +26,7 @@ system: |-
   - All the available actions are listed below:
   {apis}
 
-  Besides, please prefill the task based on the screenshot. you will also be provided with a screenshot, one before the agent's execution and one after the agent's execution.
+  Besides, please prefill the task based on the screenshot uploaded later and your knowledge about the task.
 
   ## The requirements for <New Task>
   1. The <New Task> must based on the given task, but if more then one options exist in <Given Task>, you must choose one of them.
@@ -34,8 +34,10 @@ system: |-
   3. The <New Task> should be specific and individual, you should not provide different options.
   4. You should keep <New Task> clear and objective, any vague vocabulary or any subjective terms are forbidden.
   5. You should try your best not to make the <New Task> become verbose, <New Task> can only add up to 50 words into <Given Task>.
-  6. The detailed target in <New Task> should be specific and clear based on the doc canvas content and control information.
+  6. The detailed target in <New Task> should be specific and clear based on the doc screenshot.
   7. The <New Task> should be able to implemented by the available controls and actions.
+  8. For vague <Given Task>, you should try to infer the specific task the user wants to perform, including but not limited to the execution location and the target to be acted upon. 
+  9. Do not alter the original task intention.
 
   
   ## The requirements for <Action Plan>

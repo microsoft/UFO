@@ -5,7 +5,7 @@ import time
 import warnings
 from datetime import datetime
 from pathlib import Path
-from typing import Dict
+from typing import Dict, List
 
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
@@ -41,15 +41,16 @@ class ChooseTemplateFlow:
             model_name=_configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"]
         )
 
-    def execute(self) -> str:
+    def execute(self, reference_steps: List[str] = None) -> str:
         """
         Execute the flow and return the copied template path.
+        :param reference_steps: List of steps.
         :return: The path to the copied template file.
         """
 
         start_time = time.time()
         try:
-            template_copied_path = self._choose_template_and_copy()
+            template_copied_path = self._choose_template_and_copy(reference_steps)
         except Exception as e:
             raise e
         finally:
@@ -93,9 +94,10 @@ class ChooseTemplateFlow:
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         return str(folder_path / f"{timestamp}{template_extension}")
 
-    def _get_chosen_file_path(self) -> str:
+    def _get_chosen_file_path(self, reference_steps: List[str]) -> str:
         """
         Choose the most relevant template file based on the task.
+        :param reference_steps: List of steps.
         :return: The path to the most relevant template file.
         """
 
@@ -106,7 +108,7 @@ class ChooseTemplateFlow:
         try:
             with open(templates_description_path, "r") as f:
                 return self._choose_target_template_file(
-                    self._task_file_name, json.load(f)
+                    self._task_file_name, json.load(f), reference_steps
                 )
         except FileNotFoundError:
             warnings.warn(
@@ -130,13 +132,14 @@ class ChooseTemplateFlow:
         print(f"Randomly selected template: {chosen_template_file.name}")
         return str(chosen_template_file)
 
-    def _choose_template_and_copy(self) -> str:
+    def _choose_template_and_copy(self, reference_steps: List[str]) -> str:
         """
         Choose the template and copy it to the cache folder.
+        :param reference_steps: List of steps.
         :return: The path to the copied template file.
         """
 
-        chosen_template_file_path = self._get_chosen_file_path()
+        chosen_template_file_path = self._get_chosen_file_path(reference_steps)
         chosen_template_full_path = (
             Path(_configs["TEMPLATE_PATH"]) / self._app_name / chosen_template_file_path
         )
@@ -150,12 +153,13 @@ class ChooseTemplateFlow:
         )
 
     def _choose_target_template_file(
-        self, given_task: str, doc_files_description: Dict[str, str]
+        self, given_task: str, doc_files_description: Dict[str, str], reference_steps: List[str]
     ) -> str:
         """
         Get the target file based on the semantic similarity of the given task and the template file descriptions.
         :param given_task: The task to be matched.
         :param doc_files_description: A dictionary of template file descriptions.
+        :param reference_steps: A list of steps.
         :return: The path to the chosen template file.
         """
 
@@ -170,7 +174,7 @@ class ChooseTemplateFlow:
                 main_prompt=_configs["TEMPLATE_PROMPT"],
             )
             return self._choose_target_template_file_llm(
-                given_task, doc_files_description
+                given_task, doc_files_description, reference_steps
             )
         else:
             raise ValueError("Invalid TEMPLATE_METHOD.")
@@ -198,17 +202,18 @@ class ChooseTemplateFlow:
         return file_doc_map[most_similar[0].page_content]
 
     def _choose_target_template_file_llm(
-        self, given_task: str, doc_files_description: Dict[str, str]
+        self, given_task: str, doc_files_description: Dict[str, str], reference_steps: List[str]
     ) -> str:
         """
         Get the target file based on the LLM of the given task and the template file descriptions.
         :param given_task: The task to be matched.
         :param doc_files_description: A dictionary of template file descriptions.
+        :param reference_steps: A list of steps.
         :return: The path to the chosen template file.
         """
 
         prompt_message = self.template_agent.message_constructor(
-            doc_files_description, given_task
+            doc_files_description, given_task, reference_steps
         )
         response_string, _ = self.template_agent.get_response(
             prompt_message, "prefill", use_backup_engine=True, configs=_configs

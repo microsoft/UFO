@@ -57,6 +57,7 @@ class TemplateAgent(BasicAgent):
         self,
         descriptions: Dict,
         request: str,
+        reference_steps: List[str],
         path: str = r"dataflow\templates\word",
     ) -> List[str]:
         """
@@ -69,7 +70,7 @@ class TemplateAgent(BasicAgent):
             descriptions
         )
         template_agent_prompt_user_message = self.prompter.user_content_construction(
-            path=path, request=request
+            path=path, request=request, reference_steps=reference_steps
         )
         appagent_prompt_message = self.prompter.prompt_construction(
             template_agent_prompt_system_message,

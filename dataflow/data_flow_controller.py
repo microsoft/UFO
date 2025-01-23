@@ -184,7 +184,7 @@ class DataFlowController:
             ChooseTemplateFlow,
             "choose_template",
             init_params=[self.task_object.app_object.file_extension],
-            execute_params=[],
+            execute_params=[self.task_object.refined_steps],
         )
 
         if template_copied_path:

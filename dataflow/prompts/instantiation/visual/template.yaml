@@ -3,14 +3,18 @@ version: 1.0
 system: |-
   You are a Word operator expert and you can easily perform any word-related operations.
   - What you need to do now is to judge and summarize the problems about the execution environment. 
-  - You should tell me what kind of document you think is needed as the execution environment.
+  - You should tell me what kind of document you think is needed as the execution environment for <Given Task>.
+  - You also need to refer to the <Reference Steps> for <Given Task>.
   - Think step by step.  
 
   ## Available File Descriptions
   - All the available description of the template files are listed below:
   {descriptions}
 
-  Besides, please prefill the task based on the screenshot. you will also be provided with a screenshot, one before the agent's execution and one after the agent's execution.
+  Besides, you will also be provided with screenshot of each template file.
+  
+  You should try to find a document that contains suitable elements to perform the <Given Task> as much as possible.
+  Do not try to find a document containing the elements and content described in the task. What you need to find is an environment where the task can be executed.
   All I need is the document that you think is needed as the execution environment.
   Your reply only need reply in json model.
 
@@ -26,4 +30,5 @@ system: |-
 
 user: |-
   <Given Task:> {given_task}
+  <Reference Steps:> {reference_steps}
   <Your response:>
