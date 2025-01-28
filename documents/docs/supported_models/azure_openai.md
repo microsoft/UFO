@@ -11,8 +11,8 @@ VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and ta
 API_TYPE: "aoai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
 API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
 API_KEY: "YOUR_KEY",  # The aoai API key
-API_VERSION: "2024-02-15-preview", # The version of the API, "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The OpenAI model name, "gpt-4-vision-preview" by default. You may also use "gpt-4o" for using the GPT-4O model.
+API_VERSION: "gpt-4o-mini-2024-07-18", # The version of the API, "gpt-4o-mini-2024-07-18" by default
+API_MODEL: "gpt-4o-mini", # The OpenAI model name, "gpt-4o-mini" by default. You may also use "gpt-4o" for using the GPT-4O model.
 API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 ```
 
