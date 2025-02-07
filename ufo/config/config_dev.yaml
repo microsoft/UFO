@@ -9,6 +9,8 @@ ACTION_SEQUENCE: False  # Whether to output the action sequence. If true, the ag
 # Skip rendering visual outline on screen if not necessary
 SHOW_VISUAL_OUTLINE_ON_SCREEN: False
 
+MAXIMIZE_WINDOW: False  # Whether to maximize the application window before the action
+
 SAFE_GUARD: True  # Whether to use the safe guard to prevent the model from doing sensitve operations.
 CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner"] 
 # The list of widgets that allowed to be selected, in uia backend, it will be used for filter the control_type, while in win32 backend, it will be used for filter the class_name.
