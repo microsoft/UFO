@@ -5,6 +5,7 @@ import time
 import warnings
 from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from pywinauto import keyboard
 
 import pyautogui
 import pywinauto
@@ -237,7 +238,13 @@ class ControlReceiver(ReceiverBasic):
         :param params: The arguments of the wheel mouse input method.
         :return: The result of the wheel mouse input action.
         """
-        return self.atomic_execution("wheel_mouse_input", params)
+
+        if self.control is not None:
+            return self.atomic_execution("wheel_mouse_input", params)
+        else:
+            keyboard.send_keys("{VK_CONTROL up}")
+            dist = int(params.get("wheel_dist", 0))
+            return self.application.wheel_mouse_input(wheel_dist=dist)
 
     def no_action(self):
         """
