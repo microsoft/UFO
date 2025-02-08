@@ -37,6 +37,7 @@ system: |-
   6. The detailed target in <New Task> should be specific and clear based on the doc screenshot.
   7. The <New Task> should be able to implemented by the available controls and actions.
   8. For vague <Given Task>, you should try to infer the specific task the user wants to perform, including but not limited to the execution location and the target to be acted upon. 
+  9. For tasks with multiple choices, you should explicitly select one of them， such as A or B should be A.
   9. Do not alter the original task intention.
 
   
