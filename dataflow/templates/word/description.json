@@ -1,5 +1,5 @@
 {
-    "template1.docx":"A doc with a long text",
+    "template1.docx":"A doc with a long text, contains bold, italic, underine, strikethrough",
     "template2.docx":"A doc with a rectangle shape and some text",
     "template3.docx":"A doc with a chart",
     "template4.docx":"A doc with a text box and an image, with the text box providing a description of the image.",
