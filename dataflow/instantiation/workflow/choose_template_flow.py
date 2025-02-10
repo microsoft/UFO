@@ -223,7 +223,8 @@ class ChooseTemplateFlow:
         elif "```json" in response_string:
             response_string = response_string[7:-3]
         response_json = json.loads(response_string)
-        file_name = list(response_json.keys())[0]
+        print(response_json)
+        file_name = response_json["template_name"]
         if file_name not in doc_files_description:
             print(f"Template {file_name} not found in the description.")
             raise ValueError("No similar templates found.")
