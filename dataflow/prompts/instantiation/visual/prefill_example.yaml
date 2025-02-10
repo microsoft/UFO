@@ -3,14 +3,15 @@ version: 1.0
 
 example1: 
   Request: |-
-      <Given Task:> Delete Text in document.
+      <Given Task:> Add or Delete Text in document.
   Response:
     observation: |-
-      I observe the canvas state is a Word document with a body containing a paragraph with a run element, which has a text element 'text to edit'.
+      I observe the screenshot is a Word document containing a paragraph, which has a text element 'text to edit'. The given task has two options: one is add, and the other is delete.
     thought: |-
       My task is to detail the given task and give the step-by-step actions to take. 
-      The user needs to delete text in the Word document. 
-      Based on the canvas state, there is a text element 'text to edit'.
+      The user needs to add or delete text in the Word document. 
+      According to the previous requirements, when multiple options exist, I must explicitly choose one. Therefore, I must make a choice between add and delete.
+      Based on the screenshot, there is a text element 'text to edit'. I choose to delete it.
       And based on the available apis and controls,the user can use "select_text" to select the target to delete,and "type_keys" to type in delete.
       Therefore,the user can detail the task to delete 'text to edit' in the Word document.
       In this case, the user should select the text to edit in the Word document and press the 'Delete' key on the keyboard to delete the selected text.
@@ -25,11 +26,11 @@ example2:
       <Given Task:> Highlight Text in document.
   Response:
     observation: |-
-      I observe the canvas state is a Word document with a body containing a paragraph with a run element, which has a text element 'text to edit'.
+      I observe the screenshot is a Word document with a body containing a paragraph, which has a text element 'text to edit'.
     thought: |-
       My task is to detail the given task and give the step-by-step actions to take. 
       The user needs to highlight text in the Word document. 
-      Based on the canvas state, there is a text element 'text to edit'.
+      Based on the screenshot, there is a text element 'text to edit'.
       And based on the available apis and controls,the user can use "select_text" to select the target to highlight and then to highlight the text.
       Since there is no "Highlight" button available,I should click to the 'Home' tab first and then click the 'Highlight' button.
       Therefore,the user can detail the task to highlight 'text to edit' in the Word document.

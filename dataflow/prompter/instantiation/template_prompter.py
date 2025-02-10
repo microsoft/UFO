@@ -101,7 +101,6 @@ class TemplatePrompter(BasicPrompter):
         """
 
         user_content = self.file_prompt_helper(path)
-
         user_content.append(
             {"type": "text", "text": self.user_prompt_construction(request, reference_steps)}
         )

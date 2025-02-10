@@ -36,6 +36,7 @@ CONTROL_FILTER_TOP_K_PLAN: 2  # The control filter effect on top k plans from UF
 
 # log path
 LOG_PATH: "dataflow/logs/{task}"
+TEMPLATE_LOG_PATH: "dataflow/logs/{task}/template/"
 PREFILL_LOG_PATH: "dataflow/logs/{task}/prefill/"
 FILTER_LOG_PATH: "dataflow/logs/{task}/filter/"
 EXECUTE_LOG_PATH: "dataflow/logs/{task}/execute/"

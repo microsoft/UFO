@@ -23,27 +23,23 @@ system: |-
 
   ## Response Format
   - You are required to response in a JSON format, consisting of several distinct parts with the following keys and corresponding content:
-      {
-        {
-          "steps": <The steps you think need to take to accomplish the given task. Is a list>,
-          "thought": <Why you choose this template>,
-          "template_name": <The name of template file, must exist in ## Available File Descriptions>,
-        },
-      }
+      {{
+        "steps": <The steps you think need to take to accomplish the given task. Is a list>,
+        "thought": <Why you choose this template>,
+        "template_name": <The name of template file, must exist in ## Available File Descriptions>,
+      }}
     
   For example:
   - Example 1:
-      {
-        {
-          "steps": [
-              "1. Find and select the text you want to delete",
-              "2. Right-click with your mouse"，
-              "3. Choose the “Delete” button and click on it"
-          ]
-          "thought": "The task requires deleting text from the document, and I noticed that there is a line of text in this document that can be deleted."
-          "template_name": "text.docx",
-        }
-      }
+      {{
+        "steps": [
+            "1. Find and select the text you want to delete",
+            "2. Right-click with your mouse"，
+            "3. Choose the “Delete” button and click on it"
+        ],
+        "thought": "The task requires deleting text from the document, and I noticed that there is a line of text in this document that can be deleted.",
+        "template_name": "text.docx",
+      }}
 
 user: |-
   <Given Task:> {given_task}

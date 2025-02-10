@@ -65,7 +65,6 @@ class TemplateAgent(BasicAgent):
 
         :return: The prompt message.
         """
-
         template_agent_prompt_system_message = self.prompter.system_prompt_construction(
             descriptions
         )

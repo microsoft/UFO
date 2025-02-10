@@ -51,7 +51,7 @@ class WindowsAppEnv:
             file_controller.execute_code(
                 {"APP": self.win_app, "file_path": copied_template_path}
             )
-            time.sleep(1)  # wait app open
+            time.sleep(3)  # wait app open
         except Exception as e:
             logging.exception(f"Failed to start the application: {e}")
             raise

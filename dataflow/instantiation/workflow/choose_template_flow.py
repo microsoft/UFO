@@ -5,7 +5,7 @@ import time
 import warnings
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Any
 
 from langchain.embeddings import CacheBackedEmbeddings
 from langchain.storage import LocalFileStore
@@ -14,6 +14,7 @@ from langchain_community.vectorstores import FAISS
 from dataflow.instantiation.agent.template_agent import TemplateAgent
 
 from dataflow.config.config import Config
+from ufo.module.basic import BaseSession
 
 _configs = Config.get_instance().config_data
 
@@ -37,8 +38,16 @@ class ChooseTemplateFlow:
         self._file_extension = file_extension
         self._task_file_name = task_file_name
         self.execution_time = None
+        self._log_path_configs = _configs["TEMPLATE_LOG_PATH"].format(
+            task=self._task_file_name
+        )
+        os.makedirs(self._log_path_configs, exist_ok=True)
+
         self._embedding_model = self._load_embedding_model(
             model_name=_configs["CONTROL_FILTER_MODEL_SEMANTIC_NAME"]
+        )
+        self._response_logger = BaseSession.initialize_logger(
+            self._log_path_configs, "template_responses.json", "w", _configs
         )
 
     def execute(self, reference_steps: List[str] = None) -> str:
@@ -215,15 +224,20 @@ class ChooseTemplateFlow:
         prompt_message = self.template_agent.message_constructor(
             doc_files_description, given_task, reference_steps
         )
+        start_time = time.time()
         response_string, _ = self.template_agent.get_response(
             prompt_message, "prefill", use_backup_engine=True, configs=_configs
         )
+        execution_time = round(time.time() - start_time, 3)
+
         if response_string is None:
             raise ValueError("No similar templates found.")
         elif "```json" in response_string:
             response_string = response_string[7:-3]
         response_json = json.loads(response_string)
-        print(response_json)
+
+        self._log_response(response_json, execution_time)
+
         file_name = response_json["template_name"]
         if file_name not in doc_files_description:
             print(f"Template {file_name} not found in the description.")
@@ -245,3 +259,19 @@ class ChooseTemplateFlow:
         return CacheBackedEmbeddings.from_bytes_store(
             embedding_model, store, namespace=model_name
         )
+
+    def _log_response(
+        self, response_json: Dict[str, Any], execution_time: float
+    ) -> None:
+        """
+        Log the response received from PrefillAgent along with execution time.
+        :param response_json: Response data from PrefillAgent.
+        :param execution_time: Time taken for the PrefillAgent call.
+        """
+
+        response_log_entry = {
+            "execution_time": execution_time,
+            "agent_response": response_json,
+            "error": "",
+        }
+        self._response_logger.info(json.dumps(response_log_entry, indent=4))
