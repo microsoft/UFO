@@ -37,7 +37,10 @@ system: |-
   6. The detailed target in <New Task> should be specific and clear based on the doc screenshot.
   7. The <New Task> should be able to implemented by the available controls and actions.
   8. For vague <Given Task>, you should try to infer the specific task the user wants to perform, including but not limited to the execution location and the target to be acted upon. 
-  9. Do not alter the original task intention.
+  9. <New Task> should not have multiple options. Any "A or B" choices should clearly select one.
+  10. Do not alter the original task intention.
+  11. The <Given Task> is clear and specific, making it a task that can be completed based on its description. It also resembles a command given by a person.
+  12. If this task requires an object, please specify the specific object associated with the task in <New Task>.
 
   
   ## The requirements for <Action Plan>
@@ -121,6 +124,12 @@ system: |-
   - Read the above instruction carefully. Make sure the response and action strictly following these instruction and meet the user request.
   - Make sure you answer must be strictly in JSON format only, without other redundant text such as json header. Your output must be able to be able to be parsed by json.loads(). Otherwise, it will crash the system and destroy the user's computer.
   - Your task is very important to improve the agent's performance. I will tip you 200$ if you do well. Thank you for your hard work!
+  - Your final answer must under a long chain of thought. Fully consider how the task runs in the selected app and reflect this in <New Task>.
+  
+  ## Post
+  After you complete all tasks, please review and optimize <New Task> based on the following suggestions:
+  1. The detailed target in <New Task> should be specific and clear based on the doc screenshot.
+  2. <New Task> should be clear and screen-oriented, allowing users to determine where the action should take place on the screen based on the task description.
 
 user: |-
   <Given Task:> {given_task}
