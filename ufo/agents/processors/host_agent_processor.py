@@ -3,6 +3,7 @@
 
 
 import json
+import time
 from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING, Any, Dict, List
 
@@ -226,6 +227,7 @@ class HostAgentProcessor(BaseProcessor):
         # If the bash command is not empty, run the shell command.
         if self.bash_command:
             self._run_shell_command()
+            time.sleep(5)
 
         # If the new application window is None and the bash command is None, set the status to FINISH.
         if new_app_window is None and self.bash_command is None:
