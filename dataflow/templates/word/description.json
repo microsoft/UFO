@@ -1,11 +1,11 @@
 {
-    "template1.docx":"A doc with a long description of agent.",
-    "template2.docx":"A doc with a rectangle and a description about this rectagle",
+    "template1.docx":"A doc with a long text",
+    "template2.docx":"A doc with a rectangle shape and some text",
     "template3.docx":"A doc with a chart",
     "template4.docx":"A doc with a text box and an image, with the text box providing a description of the image.",
     "template5.docx":"A doc with comments and reviewer",
     "template6.docx":"A doc with a list of items",
     "template7.docx":"A doc with a table",
     "template8.docs":"A doc with a handwrite signature",
-    "template9.docs":"A empty doc"
+    "template9.docs":"A empty doc, suitable for adding or inserting content."
 }
