@@ -116,7 +116,7 @@ class FilterPrompter(BasicPrompter):
         user_content = []
         if self.is_visual:
             screenshot = self.load_screenshots(log_path)
-            screenshot_text = """This is the screenshot of the selected template, please check it."""
+            screenshot_text = """This is the screenshot of the choosen template."""
             user_content.append({"type": "text", "text": screenshot_text})
             user_content.append({"type": "image_url", "image_url": {"url": screenshot}})
 
