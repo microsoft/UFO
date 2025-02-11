@@ -6,7 +6,7 @@ PRINT_LOG: False  # Whether to print the log
 LOG_LEVEL: "INFO"  # The log level
 MATCH_STRATEGY: "fuzzy"  # The match strategy for the control filter, support 'contains', 'fuzzy', 'regex'
 
-PREFILL_PROMPT: "dataflow/prompts/instantiation/{mode}/prefill.yaml"  # The prompt for the action prefill
+PREFILL_PROMPT: "dataflow/prompts/instantiation/{mode}/prefill_v2.yaml"  # The prompt for the action prefill
 FILTER_PROMPT: "dataflow/prompts/instantiation/{mode}/filter.yaml"  # The prompt for the filter
 PREFILL_EXAMPLE_PROMPT: "dataflow/prompts/instantiation/{mode}/prefill_example.yaml"  # The prompt for the action prefill example
 API_PROMPT: "ufo/prompts/share/lite/api.yaml"  # The prompt for the API
