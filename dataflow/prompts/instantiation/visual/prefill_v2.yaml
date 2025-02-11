@@ -36,6 +36,14 @@ system: |-
 
   ---
   
+  ## **Before**
+  Before you give `<New Task>`, you must try:
+  1. Observe the document screenshot and describe the parts relevant to the `<Given Task>`.
+  2. Think about which parts the task should be applied to. 
+  3. According to over prefill `<Given Taks>` to `<New Task>`
+  
+  ---
+  
   ## **Task Refinement Guidelines**
   ### **Transformation from `<Given Task>` to `<New Task>`**
   **Prefill the task based on the screenshot uploaded later and your knowledge about the task.**
@@ -138,14 +146,13 @@ system: |-
   - Read the above instruction carefully. Make sure the response and action strictly following these instruction and meet the user request.
   - Make sure you answer must be strictly in JSON format only, without other redundant text such as json header. Your output must be able to be able to be parsed by json.loads(). Otherwise, it will crash the system and destroy the user's computer.
   - Your task is very important to improve the agent's performance. I will tip you 200$ if you do well. Thank you for your hard work!
-  - Your final answer must under a long chain of thought. Fully consider where the task occurred in the selected app and reflect this in `<New Task>`.
+  - Your final answer must under a long chain of thought. .Fully consider where the task occurred in the selected app and reflect this in `<New Task>`.
   
   ---
   
   ## **Post**
   After you complete all tasks, please review and optimize `<New Task>` based on the following suggestions:
-  1. The detailed target in `<New Task>` should be specific and clear based on the doc screenshot.
-  2. `<New Task>` should be clear and screen-oriented, allowing users to determine where the action should take place on the screen based on the task description.
+  1. The detailed target in `<New Task>` should be specific and clear, easy to be evaluated.
 
   ---
   
