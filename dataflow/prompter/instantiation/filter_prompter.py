@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import json
+import os
 from typing import Dict, List
 
 from ufo.prompter.basic import BasicPrompter
@@ -104,20 +105,40 @@ class FilterPrompter(BasicPrompter):
         prompt = self.prompt_template["user"].format(request=request)
         return prompt
 
-    def user_content_construction(self, request: str) -> List[Dict]:
+    def user_content_construction(self, request: str, log_path: str) -> List[Dict]:
         """
         Construct the prompt for LLMs.
         :param request: The user request.
+        :param log_path: The log path.
         :return: The prompt for LLMs.
         """
 
         user_content = []
+        if self.is_visual:
+            screenshot = self.load_screenshots(log_path)
+            screenshot_text = """This is the screenshot of the selected template, please check it."""
+            user_content.append({"type": "text", "text": screenshot_text})
+            user_content.append({"type": "image_url", "image_url": {"url": screenshot}})
 
         user_content.append(
             {"type": "text", "text": self.user_prompt_construction(request)}
         )
 
         return user_content
+
+    def load_screenshots(self, log_path: str) -> str:
+        """
+        Load the first and last screenshots from the log path.
+        :param log_path: The path of the log.
+        :return: The screenshot URL.
+        """
+
+        from ufo.prompter.eva_prompter import EvaluationAgentPrompter
+
+        init_image = os.path.join(log_path, "screenshot.png")
+        init_image_url = EvaluationAgentPrompter.load_single_screenshot(init_image)
+        return init_image_url
+
 
     def examples_prompt_helper(
         self,

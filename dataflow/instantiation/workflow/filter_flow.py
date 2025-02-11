@@ -28,6 +28,7 @@ class FilterFlow:
         self.execution_time = None
         self._app_name = app_name
         self._log_path_configs = _configs["FILTER_LOG_PATH"].format(task=task_file_name)
+        self._prefill_log_path = _configs["PREFILL_LOG_PATH"].format(task=task_file_name)
         self._filter_agent = self._get_or_create_filter_agent()
         self._initialize_logs()
 
@@ -94,6 +95,7 @@ class FilterFlow:
         prompt_message = self._filter_agent.message_constructor(
             instantiated_request,
             self._app_name,
+            self._prefill_log_path
         )
         prompt_json = json.dumps(prompt_message, indent=4)
         self._filter_message_logger.info(prompt_json)

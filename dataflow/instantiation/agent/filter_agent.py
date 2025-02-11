@@ -54,11 +54,12 @@ class FilterAgent(BasicAgent):
 
         return FilterPrompter(is_visual, main_prompt, example_prompt, api_prompt)
 
-    def message_constructor(self, request: str, app: str) -> List[str]:
+    def message_constructor(self, request: str, app: str, log_path: str) -> List[str]:
         """
         Construct the prompt message for the FilterAgent.
         :param request: The request sentence.
         :param app: The name of the operated app.
+        :param log_path: The log path.
         :return: The prompt message.
         """
 
@@ -66,7 +67,7 @@ class FilterAgent(BasicAgent):
             app=app
         )
         filter_agent_prompt_user_message = self.prompter.user_content_construction(
-            request
+            request, log_path
         )
         filter_agent_prompt_message = self.prompter.prompt_construction(
             filter_agent_prompt_system_message, filter_agent_prompt_user_message

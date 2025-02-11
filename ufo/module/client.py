@@ -4,6 +4,8 @@
 
 from typing import List
 
+from tqdm import tqdm
+
 from ufo.module.basic import BaseSession
 
 
@@ -24,7 +26,7 @@ class UFOClientManager:
         Run the batch UFO client.
         """
 
-        for session in self.session_list:
+        for session in tqdm(self.session_list):
             session.run()
 
     @property

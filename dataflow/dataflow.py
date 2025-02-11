@@ -1,6 +1,9 @@
 import argparse
 import os
 import traceback
+
+from tqdm import tqdm
+
 from ufo.utils import print_with_color
 from dataflow.config.config import Config
 
@@ -92,7 +95,7 @@ def process_batch(task_dir: str, task_type: str) -> None:
         return
 
     print_with_color(f"Found {len(task_files)} tasks in {task_dir}.", "blue")
-    for task_file in task_files:
+    for task_file in tqdm(task_files):
         process_task(task_file, task_type)
 
 
