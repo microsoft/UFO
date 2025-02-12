@@ -11,7 +11,7 @@ example1:
       My task is to detail the given task and give the step-by-step actions to take. 
       The user needs to add or delete text in the Word document. 
       According to the previous requirements, when multiple options exist, I must explicitly choose one. Therefore, I must make a choice between add and delete.
-      Based on the screenshot, there is a text element 'text to edit'. I choose to delete it.
+      Based on the screenshot, there is a text element 'text to edit'. I choose it as target object. Then choose to delete it.
       And based on the available apis and controls,the user can use "select_text" to select the target to delete,and "type_keys" to type in delete.
       Therefore,the user can detail the task to delete 'text to edit' in the Word document.
       In this case, the user should select the text to edit in the Word document and press the 'Delete' key on the keyboard to delete the selected text.

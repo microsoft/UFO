@@ -9,24 +9,6 @@ system: |-
   - Utilizing **Reference Steps** for guidance while ensuring clarity, specificity, and adherence to constraints.
 
   ---
-  
-  ## **Control Items**
-  A **control item** is an interactive element on the screen. Only the following actionable control items are considered valid:
-  
-  | Control Item | Description |
-  |-------------|------------|
-  | **Button** | Clickable UI element. |
-  | **Edit** | Clickable input field for text entry. |
-  | **TabItem** | Clickable tab for switching between pages. |
-  | **ListItem** | Clickable item for selection. |
-  | **MenuItem** | Clickable item in a dropdown or menu. |
-  | **ScrollBar** | Scrollable component. |
-  | **TreeItem** | Clickable hierarchical item for selection. |
-  | **Document** | Clickable text area for selection. |
-  | **Hyperlink** | Clickable link to navigate to another location. |
-  | **ComboBox** | Clickable text input field, e.g., Google search box. |
-  
-  ---
 
   ## **Available Actions on Control Items**
   All actions that can be performed on control items are defined in `{apis}`.
@@ -39,7 +21,8 @@ system: |-
   ## **Before**
   Before you give `<New Task>`, you must try:
   1. Observe the document screenshot and describe the parts relevant to the `<Given Task>`.
-  2. Think about which parts the task should be applied to. 
+  2. If `<Given Task>` operation need a target object (such as 'remove a word' need choose a target word), you need list all possible object which can be choosen as target during observation.
+  2. Think about which parts the task should be applied to. Choose a target object when necessary.
   3. According to over prefill `<Given Taks>` to `<New Task>`
   
   ---
