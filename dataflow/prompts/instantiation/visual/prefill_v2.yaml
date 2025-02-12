@@ -136,6 +136,7 @@ system: |-
   ## **Post**
   After you complete all tasks, please review and optimize `<New Task>` based on the following suggestions:
   1. The detailed target in `<New Task>` should be specific and clear, easy to be evaluated.
+  2. If the task lacks a specific value (e.g., `"add a word"` lacks what word should be added), infer a reasonable default (e.g., `"add a word 'apple'"` infer a word 'apple').
 
   ---
   
