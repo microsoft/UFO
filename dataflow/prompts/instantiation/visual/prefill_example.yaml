@@ -41,3 +41,23 @@ example2:
       {{"step 1":"choose the target text 'text to edit'","controlLabel": "", "controlText": "", "function": "select_text", "args": {{"text": "text to edit"}}}}
       {{"step 2":"change ribbon to Home to show the highlight button","controlLabel": "11", "controlText": "Home", "function": "click_input", "args": {{"button": "left", "double": false}}}}
       {{"step 3":"click the highlight button to finish highlight","controlLabel": "", "controlText": "Highlight", "function": "click_input", "args": {{"button": "left", "double": false}}}}
+
+example3:
+  Request: |-
+      <Given Task:> Add a word in document.
+  Response:
+    observation: |-
+      I observe the screenshot is a Word document containing a paragraph, which has a text element 'text to edit'.
+    thought: |-
+      My task is to detail the given task and provide step-by-step actions to take.
+      The target location should be a logical place where text is added. Based on the document screenshot, I will add a word after the existing phrase 'text to edit'.
+      Considering the available APIs and controls, the user can use "select_text" to move the cursor to the target position and "type_keys" to input the new word.
+      Therefore, the detailed task is to add a word after 'text to edit' in the Word document.
+      However, the task lacks a specific value, do not specify what word should be added. I need to assume a concrete word, like 'example'.
+      Finally, the detailed task is to add the word 'example' after 'text to edit' in the Word document.
+    new_task: |-
+      Add the word 'example' after 'text to edit' in the Word document.
+    action_plans: |-
+      {{"step 1":"select the target text 'text to edit'","controlLabel": "", "controlText": "", "function": "select_text", "args": {{"text": "text to edit"}}}}
+      {{"step 2":"move the cursor to the end of 'text to edit'","controlLabel": "101", "controlText": "Edit", "function": "move_cursor", "args": {{"position": "end"}}}}
+      {{"step 3":"type in the word 'example'","controlLabel": "101", "controlText": "Edit", "function": "type_keys", "args": {{"text": " example"}}}}
