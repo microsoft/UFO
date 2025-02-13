@@ -50,16 +50,17 @@ class ChooseTemplateFlow:
             self._log_path_configs, "template_responses.json", "w", _configs
         )
 
-    def execute(self, reference_steps: List[str] = None) -> str:
+    def execute(self, task: str, reference_steps: List[str] = None) -> str:
         """
         Execute the flow and return the copied template path.
+        :param task: The task to execute.
         :param reference_steps: List of steps.
         :return: The path to the copied template file.
         """
 
         start_time = time.time()
         try:
-            template_copied_path = self._choose_template_and_copy(reference_steps)
+            template_copied_path = self._choose_template_and_copy(task, reference_steps)
         except Exception as e:
             raise e
         finally:
@@ -103,9 +104,10 @@ class ChooseTemplateFlow:
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         return str(folder_path / f"{timestamp}{template_extension}")
 
-    def _get_chosen_file_path(self, reference_steps: List[str]) -> str:
+    def _get_chosen_file_path(self, task: str, reference_steps: List[str]) -> str:
         """
         Choose the most relevant template file based on the task.
+        :param task: The task to execute.
         :param reference_steps: List of steps.
         :return: The path to the most relevant template file.
         """
@@ -117,7 +119,7 @@ class ChooseTemplateFlow:
         try:
             with open(templates_description_path, "r") as f:
                 return self._choose_target_template_file(
-                    self._task_file_name, json.load(f), reference_steps
+                    task, json.load(f), reference_steps
                 )
         except FileNotFoundError:
             warnings.warn(
@@ -141,14 +143,15 @@ class ChooseTemplateFlow:
         print(f"Randomly selected template: {chosen_template_file.name}")
         return str(chosen_template_file)
 
-    def _choose_template_and_copy(self, reference_steps: List[str]) -> str:
+    def _choose_template_and_copy(self, task: str, reference_steps: List[str]) -> str:
         """
         Choose the template and copy it to the cache folder.
+        :param task: The task to execute.
         :param reference_steps: List of steps.
         :return: The path to the copied template file.
         """
 
-        chosen_template_file_path = self._get_chosen_file_path(reference_steps)
+        chosen_template_file_path = self._get_chosen_file_path(task, reference_steps)
         chosen_template_full_path = (
             Path(_configs["TEMPLATE_PATH"]) / self._app_name / chosen_template_file_path
         )
