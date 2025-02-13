@@ -40,7 +40,7 @@ system: |-
   {{
     "judge": true or false depends on you think this task whether can be performed,
     "thought": "Outline the reason why you give the judgement.",
-    "type": "One of Types ahead"
+    "type": "Must choose one of Types ahead, can not be null"
   }}
   - Make sure you answer must be strictly in JSON format only, without other redundant text such as json header. Otherwise it will crash the system.
   - Try your best to think more to support your judge 
