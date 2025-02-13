@@ -111,12 +111,12 @@ DEFAULT_PNG_COMPRESS_LEVEL: 1  # The compress level for the PNG image, 0-9, 0 is
 SAVE_UI_TREE: False  # Whether to save the UI tree at each step
 
 # Save full screen
-SAVE_FULL_SCREEN: True  # Whether to save the full screen at each step
+SAVE_FULL_SCREEN: False  # Whether to save the full screen at each step
 
 
 # Record the status of the tasks
 TASK_STATUS: True  # Whether to record the status of the tasks in batch execution mode.
 
 # Experience saving
-SAVE_EXPERIENCE: "auto"  # Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not, "auto" for auto save when the evaluation is good. By default, it is "ask".
+SAVE_EXPERIENCE: "always_not"  # Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not, "auto" for auto save when the evaluation is good. By default, it is "ask".
 
