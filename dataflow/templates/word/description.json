@@ -4,7 +4,7 @@
     "template3.docx":"A doc with a column chart and some description",
     "template4.docx":"A doc with a text box and an image, with the text box providing a description of the image.",
     "template5.docx":"A doc with comments and reviewer",
-    "template6.docx":"A doc with a bulleted list",
+    "template6.docx":"A doc with a list of elements, 4 items in a bulleted list and 3 items that are not in a bulleted list",
     "template7.docx":"A doc with a table and a table annotation",
     "template8.docx":"A doc with a contract agreement containing handwrite signatures",
     "template9.docx":"A empty doc, suitable for adding or inserting content."
