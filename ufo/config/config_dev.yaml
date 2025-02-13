@@ -108,7 +108,10 @@ DEFAULT_PNG_COMPRESS_LEVEL: 1  # The compress level for the PNG image, 0-9, 0 is
 
 
 # Save UI tree
-SAVE_UI_TREE: False  # Whether to save the UI tree
+SAVE_UI_TREE: False  # Whether to save the UI tree at each step
+
+# Save full screen
+SAVE_FULL_SCREEN: False  # Whether to save the full screen at each step
 
 
 # Record the status of the tasks
