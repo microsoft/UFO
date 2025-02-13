@@ -4,16 +4,12 @@
 import json
 import os
 from dataclasses import asdict, dataclass, field
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.processors.actions import (
-    ActionSequence,
-    BaseControlLog,
-    OneStepAction,
-)
+from ufo.agents.processors.actions import ActionSequence, BaseControlLog, OneStepAction
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
@@ -74,7 +70,11 @@ class AppAgentRequestLog:
 
     step: int
     dynamic_examples: List[str]
-    dynamic_knowledge: List[str]
+    experience_examples: List[str]
+    demonstration_examples: List[str]
+    offline_docs: str
+    online_docs: str
+    dynamic_knowledge: str
     image_list: List[str]
     prev_subtask: List[str]
     plan: List[str]
@@ -279,14 +279,21 @@ class AppAgentProcessor(BaseProcessor):
         Get the prompt message for the AppAgent.
         """
 
-        retrieved_results = self.demonstration_prompt_helper()
+        experience_results, demonstration_results = (
+            self.app_agent.demonstration_prompt_helper(request=self.subtask)
+        )
+
+        retrieved_results = experience_results + demonstration_results
 
         # Get the external knowledge prompt for the AppAgent using the offline and online retrievers.
-        external_knowledge_prompt = self.app_agent.external_knowledge_prompt_helper(
+
+        offline_docs, online_docs = self.app_agent.external_knowledge_prompt_helper(
             self.request,
             configs.get("RAG_OFFLINE_DOCS_RETRIEVED_TOPK", 0),
             configs.get("RAG_ONLINE_RETRIEVED_TOPK", 0),
         )
+
+        external_knowledge_prompt = offline_docs + online_docs
 
         if not self.app_agent.blackboard.is_empty():
             blackboard_prompt = self.app_agent.blackboard.blackboard_to_prompt()
@@ -323,7 +330,11 @@ class AppAgentProcessor(BaseProcessor):
         # Log the prompt message. Only save them in debug mode.
         request_data = AppAgentRequestLog(
             step=self.session_step,
+            experience_examples=experience_results,
+            demonstration_examples=demonstration_results,
             dynamic_examples=retrieved_results,
+            offline_docs=offline_docs,
+            online_docs=online_docs,
             dynamic_knowledge=external_knowledge_prompt,
             image_list=self._image_url,
             prev_subtask=self.previous_subtasks,
@@ -598,25 +609,28 @@ class AppAgentProcessor(BaseProcessor):
         )
         self.app_agent.Puppeteer.save_to_xml(xml_save_path)
 
-    def demonstration_prompt_helper(self) -> List[Dict[str, Any]]:
-        """
-        Get the examples and tips for the AppAgent using the demonstration retriever.
-        :return: The examples and tips for the AppAgent.
-        """
+    # def demonstration_prompt_helper(self) -> Tuple[List[Dict[str, Any]]]:
+    #     """
+    #     Get the examples and tips for the AppAgent using the demonstration retriever.
+    #     :return: The examples and tips for the AppAgent.
+    #     """
 
-        retrieved_results = []
-        # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
-        if configs["RAG_EXPERIENCE"]:
-            retrieved_results += self.app_agent.rag_experience_retrieve(
-                self.subtask, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
-            )
+    #     # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
+    #     if configs["RAG_EXPERIENCE"]:
+    #         experience_results = self.app_agent.rag_experience_retrieve(
+    #             self.subtask, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
+    #         )
+    #     else:
+    #         experience_results = []
 
-        if configs["RAG_DEMONSTRATION"]:
-            retrieved_results += self.app_agent.rag_demonstration_retrieve(
-                self.subtask, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
-            )
+    #     if configs["RAG_DEMONSTRATION"]:
+    #         demonstration_results = self.app_agent.rag_demonstration_retrieve(
+    #             self.subtask, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
+    #         )
+    #     else:
+    #         demonstration_results = []
 
-        return retrieved_results
+    #     return experience_results, demonstration_results
 
     def get_filtered_annotation_dict(
         self, annotation_dict: Dict[str, UIAWrapper], configs: Dict[str, Any] = configs
