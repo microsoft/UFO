@@ -50,19 +50,19 @@ system: |-
   {{
     "judge": true,
     "thought": "The task is specific and involves accepting a change within the Word document, which can be executed locally within Word.",
-    "request_type": "NORMAL_TASK"
+    "type": "NORMAL_TASK"
   }}
   Example2:
   {{
     "judge": false,
     "thought": "This task involves merging two Word documents, which requires interaction with another Word document. Since it cannot be completed solely within the current Word instance, it should be classified as EXTERNAL_APP_INVOLVE.",
-    "request_type": "EXTERNAL_APP_INVOLVE"
+    "type": "EXTERNAL_APP_INVOLVE"
   }}
   Example3:
   {{
     "judge": false,
     "thought": "This task is to print a document double-sided. Printing requires connecting to a printer, which is a sensitive operation, and completing the task depends on the printer's cooperation. Since it cannot be completed solely within the document, it should be classified as EXTERNAL_APP_INVOLVE.",
-    "request_type": "EXTERNAL_APP_INVOLVE"
+    "type": "EXTERNAL_APP_INVOLVE"
   }}
 
 user: |-
