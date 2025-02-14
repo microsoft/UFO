@@ -48,6 +48,7 @@ system: |-
   - The selected template name must match one listed in Available File Descriptions.
   - Provide clear reasoning for your selection.
   - Think logically and systematically while identifying the appropriate execution environment.
+  - For tasks involving changing or setting page effects, you should first try considering a non-empty template, as some changes or page effects may not be observable on an empty template.
 
 user: |-
   <Given Task:> {given_task}
