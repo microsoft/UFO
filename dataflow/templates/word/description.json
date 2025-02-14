@@ -8,5 +8,5 @@
     "template7.docx":"A doc with a table and a table annotation",
     "template8.docx":"A doc with a contract agreement containing handwrite signatures, backgroud is a watermark",
     "template9.docx":"A empty doc with three pages, suitable for adding or inserting content.",
-    "template10.docx":"A doc with long text and table of content"
+    "template10.docx":"A doc with long text and table of content, contains footnotes and endnotes"
 }
