@@ -222,6 +222,7 @@ class ControlReceiver(ReceiverBasic):
         if control_focus:
             self.atomic_execution("type_keys", {"keys": keys})
         else:
+            keys = TextTransformer.transform_text(keys, "all")
             self.application.type_keys(keys=keys)
         return keys
 
@@ -657,7 +658,7 @@ class TextTransformer:
         """
 
         if transform_tag == "all":
-            transform_tag = "+\n\t^%"
+            transform_tag = "+\n\t^%{VK_CONTROL}{VK_SHIFT}{VK_MENU}"
 
         if "\n" in transform_tag:
             text = TextTransformer.transform_enter(text)
@@ -669,6 +670,12 @@ class TextTransformer:
             text = TextTransformer.transform_caret(text)
         if "%" in transform_tag:
             text = TextTransformer.transform_percent(text)
+        if "{VK_CONTROL}" in transform_tag:
+            text = TextTransformer.transform_control(text)
+        if "{VK_SHIFT}" in transform_tag:
+            text = TextTransformer.transform_shift(text)
+        if "{VK_MENU}" in transform_tag:
+            text = TextTransformer.transform_alt(text)
 
         return text
 
@@ -716,3 +723,30 @@ class TextTransformer:
         :return: The transformed text.
         """
         return text.replace("%", "{%}")
+
+    @staticmethod
+    def transform_control(text: str) -> str:
+        """
+        Transform the control key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("{VK_CONTROL}", "^")
+
+    @staticmethod
+    def transform_shift(text: str) -> str:
+        """
+        Transform the shift key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("{VK_SHIFT}", "+")
+
+    @staticmethod
+    def transform_alt(text: str) -> str:
+        """
+        Transform the alt key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("{VK_MENU}", "%")
