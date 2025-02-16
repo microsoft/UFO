@@ -3,6 +3,7 @@
 
 
 import json
+import time
 from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING, Any, Dict, List
 
@@ -226,6 +227,7 @@ class HostAgentProcessor(BaseProcessor):
         # If the bash command is not empty, run the shell command.
         if self.bash_command:
             self._run_shell_command()
+            time.sleep(5)
 
         # If the new application window is None and the bash command is None, set the status to FINISH.
         if new_app_window is None and self.bash_command is None:
@@ -319,6 +321,9 @@ class HostAgentProcessor(BaseProcessor):
         # Switch to the new application window, if it is different from the current application window.
         self._switch_to_new_app_window(application_window)
         self.application_window.set_focus()
+        if configs.get("MAXIMIZE_WINDOW", False):
+            self.application_window.maximize()
+
         if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
             self.application_window.draw_outline(colour="red", thickness=3)
 

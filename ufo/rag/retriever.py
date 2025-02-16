@@ -150,7 +150,13 @@ class ExperienceRetriever(Retriever):
                 allow_dangerous_deserialization=True,
             )
             return db
-        except:
+        except Exception as e:
+            # print_with_color(
+            #     "Warning: Failed to load experience indexer from {path}, error: {error}.".format(
+            #         path=db_path, error=e
+            #     ),
+            #     "yellow",
+            # )
             # print_with_color(
             #     "Warning: Failed to load experience indexer from {path}.".format(
             #         path=db_path

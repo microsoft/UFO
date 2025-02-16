@@ -26,10 +26,12 @@ class BaseControlLog:
     The control log data for the HostAgent.
     """
 
+    control_name: str = ""
     control_class: str = ""
     control_type: str = ""
     control_automation_id: str = ""
     control_friendly_class_name: str = ""
+    control_matched: bool = True
     control_coordinates: Dict[str, int] = field(default_factory=dict)
 
     def is_empty(self) -> bool:
@@ -314,8 +316,10 @@ class OneStepAction:
         )
 
         control_log = BaseControlLog(
+            control_name=control_selected.element_info.name,
             control_class=control_selected.element_info.class_name,
             control_type=control_selected.element_info.control_type,
+            control_matched=control_selected.element_info.name == self.control_text,
             control_automation_id=control_selected.element_info.automation_id,
             control_friendly_class_name=control_selected.friendly_class_name(),
             control_coordinates={

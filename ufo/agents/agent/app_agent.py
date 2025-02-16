@@ -5,14 +5,14 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Tuple, Union
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
-from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.app_agent_action_seq_processor import (
     AppAgentActionSequenceProcessor,
 )
+from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.automator import puppeteer
 from ufo.config.config import Config
@@ -207,9 +207,33 @@ class AppAgent(BasicAgent):
                 "yellow",
             )
 
+    def demonstration_prompt_helper(self, request) -> Tuple[List[Dict[str, Any]]]:
+        """
+        Get the examples and tips for the AppAgent using the demonstration retriever.
+        :param request: The request for the AppAgent.
+        :return: The examples and tips for the AppAgent.
+        """
+
+        # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
+        if configs["RAG_EXPERIENCE"]:
+            experience_results = self.rag_experience_retrieve(
+                request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
+            )
+        else:
+            experience_results = []
+
+        if configs["RAG_DEMONSTRATION"]:
+            demonstration_results = self.rag_demonstration_retrieve(
+                request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
+            )
+        else:
+            demonstration_results = []
+
+        return experience_results, demonstration_results
+
     def external_knowledge_prompt_helper(
         self, request: str, offline_top_k: int, online_top_k: int
-    ) -> str:
+    ) -> Tuple[str, str]:
         """
         Retrieve the external knowledge and construct the prompt.
         :param request: The request.
@@ -217,8 +241,6 @@ class AppAgent(BasicAgent):
         :param online_top_k: The number of online documents to retrieve.
         :return: The prompt message for the external_knowledge.
         """
-
-        retrieved_docs = ""
 
         # Retrieve offline documents and construct the prompt
         if self.offline_doc_retriever:
@@ -234,7 +256,8 @@ class AppAgent(BasicAgent):
                 "Document",
                 [doc.metadata["text"] for doc in offline_docs],
             )
-            retrieved_docs += offline_docs_prompt
+        else:
+            offline_docs_prompt = ""
 
         # Retrieve online documents and construct the prompt
         if self.online_doc_retriever:
@@ -246,9 +269,10 @@ class AppAgent(BasicAgent):
                 "Search Result",
                 [doc.page_content for doc in online_search_docs],
             )
-            retrieved_docs += online_docs_prompt
+        else:
+            online_docs_prompt = ""
 
-        return retrieved_docs
+        return offline_docs_prompt, online_docs_prompt
 
     def rag_experience_retrieve(
         self, request: str, experience_top_k: int

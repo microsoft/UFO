@@ -31,7 +31,7 @@ system: |-
   ## Status of the task
   - You are required to decide the status of the task after taking the current action, choose from the following actions, and fill in the "Status" field in the response.
     - "CONTINUE": means the task is not finished and need further action.
-    - "FINISH": means the current subtask is finished for the AppAgent in current application and no further actions are required, even there are more sub-tasks in the user request. 
+    - "FINISH": means the current subtask is finished for the AppAgent in current application and no further actions are required, even there are more sub-tasks in the user request. Please anaylze the current state of the application window and action history carefully to decide whether the task is finished.
     - "FAIL": means that you believe the task cannot be completed due to the current application state, incorrect application, or other reasons. Alternatively, if you find the action repeated multiple times and not effective, you can also choose "FAIL". 
     - "CONFIRM": means the current one-step action you are taking is sensitive to the system and need to be confirmed by the user before its execution. This does not apply to future actions after the current step. Below are some examples of sensitive actions, but they are not limited to these cases:
       [1] Taking the "Send" action for a message or email:
@@ -70,7 +70,7 @@ system: |-
   - If the required control item is not visible in the screenshot, and not available in the control item list, you may need to take action on other control items to navigate to the required control item.
   - You must select the control item in the given list <Available Control Item>. In your response, the ControlText of the selected control item must strictly match exactly with its ControlLabel in the given <Available Control Item>.
   - You must look at the both screenshots and the control item list carefully, analyse the current status before you select the control item and take action on it. Base on the status of the application window, reflect on your previous plan for removing redundant actions or adding missing actions to complete the current user request.
-  - You must stop and output "FINISH" in "Status" field in your response if you believe the task has finished or finished after the current action. 
+  - You must stop and output "FINISH" in "Status" field in your response if you believe the subtask has finished after anaylzing the current state of the application window and action history carefully. You do not need to output the Function, Args, ControlLabel, ControlText if you output "FINISH".
   - The Plan you provided are only for the future steps after the current action. You must not include the current action in the Plan.
   - Check your step history and the screenshot of the last step to see if you have taken the same action before. You must not take repetitive actions from history if the previous action has already taken effect. 
   - Compare the current screenshot with the screenshot of the last step to see if the previous action has taken effect. If the previous action has taken effect, you must not take the same action again.
@@ -224,7 +224,7 @@ system_as: |-
   ## Status of the task
   - You are required to decide the status of the task after taking the current action, choose from the following actions, and fill in the "Status" field in the response.
     - "CONTINUE": means the task is not finished and need further action.
-    - "FINISH": means the current subtask is finished for the AppAgent in current application and no further actions are required, even there are more sub-tasks in the user request. 
+    - "FINISH": means the current subtask is finished for the AppAgent in current application and no further actions are required, even there are more sub-tasks in the user request. Please anaylze the current state of the application window and action history carefully to decide whether the task is finished.
     - "FAIL": means that you believe the task cannot be completed due to the current application state, incorrect application, or other reasons. Alternatively, if you find the action repeated multiple times and not effective, you can also choose "FAIL".
     - "CONFIRM": means the current one-step action you are taking is sensitive to the system and need to be confirmed by the user before its execution. This does not apply to future actions after the current step. Below are some examples of sensitive actions, but they are not limited to these cases:
       [1] Taking the "Send" action for a message or email:
@@ -264,7 +264,7 @@ system_as: |-
   - If the required control item is not visible in the screenshot, and not available in the control item list, you may need to take action on other control items to navigate to the required control item.
   - You must select the control item in the given list <Available Control Item>. In your response, the ControlText of the selected control item must strictly match exactly with its ControlLabel in the given <Available Control Item>.
   - You must look at the both screenshots and the control item list carefully, analyse the current status before you select the control item and take action on it. Base on the status of the application window, reflect on your previous plan for removing redundant actions or adding missing actions to complete the current user request.
-  - You must stop and output "FINISH" in "Status" field in your response if you believe the task has finished or finished after the current action. 
+  - You must stop and output "FINISH" in "Status" field in your response if you believe the subtask has finished after anaylzing the current state of the application window and action history carefully. You do not need to output the Function, Args, ControlLabel, ControlText in the ActionList if you output "FINISH".
   - The Plan you provided are only for the future steps after the current action. You must not include the current action in the Plan.
   - Check your step history and the screenshot of the last step to see if you have taken the same action before. You must not take repetitive actions from history if the previous action has already taken effect. 
   - Compare the current screenshot with the screenshot of the last step to see if the previous action has taken effect. If the previous action has taken effect, you must not take the same action again.

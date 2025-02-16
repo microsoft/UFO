@@ -4,11 +4,12 @@
 import json
 import os
 import re
+import sys
 from typing import Any, Dict, List, Optional
 
 from PIL import Image
 
-import sys
+from ufo.utils import print_with_color
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
@@ -149,6 +150,12 @@ class Trajectory:
                     evaluation_data = json.load(file)
                 except:
                     evaluation_data = {}
+
+        else:
+            print_with_color(
+                f"Warning: Evaluation log not found at {evaluation_log_path}.", "yellow"
+            )
+            evaluation_data = {}
 
         return evaluation_data
 
