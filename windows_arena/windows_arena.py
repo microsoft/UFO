@@ -124,7 +124,6 @@ def set_config(agent_settings_json: dict = {}):
         configs["HOST_AGENT"]["API_MODEL"] = "gpt-4o"
         configs["APP_AGENT"]["API_MODEL"] = "gpt-4o"
         configs["BACKUP_AGENT"]["API_MODEL"] = "gpt-4o"
-        configs["SAVE_EXPERIENCE"] = "always_not"
         configs["MAX_ROUND"] = 1
 
 if __name__ == "__main__":
