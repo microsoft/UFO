@@ -103,11 +103,11 @@ def process_batch(task_dir: str, task_type: str) -> None:
 
     if _configs["MONITOR"]:
         # Send email notify
+        send_point = _configs["SEND_POINT"].split(",")
         total = len(task_files)
-        notify_point = [total / 2, total]
         for idx, task_file in enumerate(tqdm(task_files), start=1):
             process_task(task_file, task_type)
-            if idx in notify_point:
+            if str(idx) in send_point:
                 message = f"Task Completed {idx}/{total}"
                 send_message(message)
     else:

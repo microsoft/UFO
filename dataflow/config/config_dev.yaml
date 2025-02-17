@@ -46,7 +46,7 @@ MAX_STEPS: 30  # The max step for the execute_flow
 # SMTP
 MONITOR: True
 MACHINE_ID: DEV
-MONITOR_POINT: 2
+SEND_POINT: 1,2
 FROM_EMAIL: 1921761583@qq.com
 TO_EMAIL: v-mujian@microsoft.com
 SENDER_PASSWORD:
