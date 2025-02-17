@@ -4,6 +4,11 @@ import traceback
 
 from tqdm import tqdm
 
+import smtplib
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.header import Header
+
 from ufo.utils import print_with_color
 from dataflow.config.config import Config
 
@@ -95,9 +100,53 @@ def process_batch(task_dir: str, task_type: str) -> None:
         return
 
     print_with_color(f"Found {len(task_files)} tasks in {task_dir}.", "blue")
-    for task_file in tqdm(task_files):
-        process_task(task_file, task_type)
 
+    if _configs["MONITOR"]:
+        # Send email notify
+        total = len(task_files)
+        notify_point = [total / 2, total]
+        for idx, task_file in enumerate(tqdm(task_files), start=1):
+            process_task(task_file, task_type)
+            if idx in notify_point:
+                message = f"Task Completed {idx}/{total}"
+                send_message(message)
+    else:
+        for task_file in tqdm(task_files):
+            process_task(task_file, task_type)
+
+def send_message(message: str) -> None:
+    """
+    Send a message.
+    :param message: message to send.
+    """
+    # email info
+    sender_email = _configs["FROM_EMAIL"]
+    sender_password = _configs["SENDER_PASSWORD"]
+    receiver_email = _configs["TO_EMAIL"]
+    server_host = _configs["SMTP_SERVER"]
+    machine_id = _configs["MACHINE_ID"]
+
+    msg = MIMEMultipart()
+    msg["From"] = _configs["FROM_EMAIL"]
+    msg["TO"] = _configs["TO_EMAIL"]
+    msg["Subject"] = Header(f"Prefill Progress Reminder: {machine_id}")
+    msg.attach(MIMEText(message, "plain", 'utf-8'))
+
+    server = None
+    try:
+        # Connect SMTP Server
+        server = smtplib.SMTP(server_host, 587)
+        server.starttls()
+        server.login(sender_email, sender_password)
+
+        # 发送邮件
+        server.sendmail(sender_email, receiver_email, msg.as_string())
+        print(f"Send Email to {receiver_email} sucessfully.")
+    except Exception as e:
+        print(f"Send Email to {receiver_email} failed: {e}.")
+    finally:
+        if server:
+            server.quit()
 
 def main():
     """

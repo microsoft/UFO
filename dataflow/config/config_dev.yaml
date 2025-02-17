@@ -42,3 +42,13 @@ FILTER_LOG_PATH: "dataflow/outputs/logs/{task}/filter/"
 EXECUTE_LOG_PATH: "dataflow/outputs/logs/{task}/execute/"
 
 MAX_STEPS: 30  # The max step for the execute_flow
+
+# SMTP
+MONITOR: True
+MACHINE_ID: DEV
+MONITOR_POINT: 2
+FROM_EMAIL: 1921761583@qq.com
+TO_EMAIL: v-mujian@microsoft.com
+SENDER_PASSWORD:
+SMTP_SERVER: smtp.qq.com
+
