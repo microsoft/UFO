@@ -145,8 +145,11 @@ def send_message(message: str) -> None:
     except Exception as e:
         print(f"Send Email to {receiver_email} failed: {e}.")
     finally:
-        if server:
-            server.quit()
+        try:
+            if server:
+                server.quit()
+        except Exception:
+            return
 
 def main():
     """
