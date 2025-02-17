@@ -9,6 +9,8 @@ from typing import Any, Dict, List, Optional, Type, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
+from ufo.utils import is_json_serializable, print_with_color
+
 
 class ContextNames(Enum):
     """
@@ -310,12 +312,30 @@ class Context:
         else:
             raise TypeError(f"Keys should be a string or a list of strings.")
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, ensure_serializable: bool = False) -> Dict[str, Any]:
         """
         Convert the context to a dictionary.
+        :param ensure_serializable: Ensure the context is serializable.
         :return: The dictionary of the context.
         """
-        return self._context
+
+        import copy
+
+        context_dict = copy.deepcopy(self._context)
+
+        if ensure_serializable:
+
+            for key in ContextNames:
+                if key.name in context_dict:
+                    print_with_color(
+                        f"Warn: The value of Context.{key.name} is not serializable.",
+                        "yellow",
+                    )
+                    if not is_json_serializable(context_dict[key.name]):
+
+                        context_dict[key.name] = None
+
+        return context_dict
 
     def from_dict(self, context_dict: Dict[str, Any]) -> None:
         """

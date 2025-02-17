@@ -111,9 +111,9 @@ wheel_mouse_input:
   usage: |-
     [1] API call: wheel_mouse_input(wheel_dist: int)
     [2] Args: 
-        - wheel_dist: The distance to scroll. Positive values indicate upward scrolling, negative values indicate downward scrolling. If you want to scroll to the end, you can use a large positive value, such as 10000. 
-    [3] Example: wheel_mouse_input(wheel_dist=-20)
-    [4] All control items.
+        - wheel_dist: The number of wheel notches to scroll. Positive values indicate upward scrolling, negative values indicate downward scrolling.
+    [3] Example: wheel_mouse_input(wheel_dist=-5), wheel_mouse_input(wheel_dist=3)
+    [4] All control items or no control item.
     [5] Return: None
 
 keyboard_input:

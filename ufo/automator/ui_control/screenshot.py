@@ -421,6 +421,7 @@ class AnnotationDecorator(PhotographerDecorator):
                 screenshot_annotated,
                 adjusted_coordinate,
                 label_text,
+                font_size=configs.get("ANNOTATION_FONT_SIZE", 25),
                 button_color=(
                     color_dict.get(
                         control.element_info.control_type, self.color_default

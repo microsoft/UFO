@@ -289,6 +289,18 @@ class BaseRound(ABC):
                     )
                 )
 
+            if configs.get("SAVE_FULL_SCREEN", False):
+
+                desktop_save_path = (
+                    self.log_path
+                    + f"desktop_round_{self.id}_sub_round_{sub_round_id}_final.png"
+                )
+
+                # Capture the desktop screenshot for all screens.
+                PhotographerFacade().capture_desktop_screen_screenshot(
+                    all_screens=True, save_path=desktop_save_path
+                )
+
             # Save the final XML file
             if configs["LOG_XML"]:
                 log_abs_path = os.path.abspath(self.log_path)
@@ -540,6 +552,14 @@ class BaseSession(ABC):
         """
         return self._results
 
+    @results.setter
+    def results(self, value: Dict[str, str]) -> None:
+        """
+        Set the evaluation results of the session.
+        :param value: The evaluation results of the session.
+        """
+        self._results = value
+
     def experience_saver(self) -> None:
         """
         Save the current trajectory as agent experience.
@@ -705,6 +725,15 @@ class BaseSession(ABC):
                         ui_tree_path,
                         ui_tree_file_name,
                     )
+                )
+
+            if configs.get("SAVE_FULL_SCREEN", False):
+
+                desktop_save_path = self.log_path + f"desktop_final.png"
+
+                # Capture the desktop screenshot for all screens.
+                PhotographerFacade().capture_desktop_screen_screenshot(
+                    all_screens=True, save_path=desktop_save_path
                 )
 
             # Save the final XML file
