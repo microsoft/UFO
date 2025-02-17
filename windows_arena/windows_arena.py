@@ -73,6 +73,10 @@ def main():
         
         set_config(agent_settings_json)
     
+    task_name = agent_settings_json.get("task_name")
+    if task_name is not None and task_name != "":
+        parsed_args.task = task_name
+
     sessions = SessionFactory().create_session(
         task=parsed_args.task,
         mode=parsed_args.mode,
