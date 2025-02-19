@@ -125,6 +125,9 @@ system: |-
   - Make sure you answer must be strictly in JSON format only, without other redundant text such as json header. Your output must be able to be able to be parsed by json.loads(). Otherwise, it will crash the system and destroy the user's computer.
   - Your task is very important to improve the agent's performance. I will tip you 200$ if you do well. Thank you for your hard work!
   - Your final answer must under a long chain of thought. Fully consider how the task runs in the selected app and reflect this in <New Task>.
+  - If the task involves a specified system, you just need to remove the specified system. Such as keywords like "xxx for mac", "xxx for web".
+  - If the task explicitly states that the operation does not take place on the type of app shown in the screenshot, then you should not make any modifications to the task and return it as is. Such as task occurs on Excel, but screen shows the app is Word.
+  
   
   ## Post
   After you complete all tasks, please review and optimize <New Task> based on the following suggestions:
