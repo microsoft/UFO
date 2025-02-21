@@ -4,7 +4,7 @@
 import json
 import os
 from dataclasses import asdict, dataclass, field
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -63,6 +63,25 @@ class AppAgentControlLog(BaseControlLog):
 
 
 @dataclass
+class ControlInfoRecorder:
+    """
+    The control meta information recorder for the current application window.
+    """
+
+    recording_fields: ClassVar[List[str]] = [
+        "control_text",
+        "control_type" if BACKEND == "uia" else "control_class",
+        "control_rect",
+        "source",
+    ]
+
+    application_windows_info: Dict[str, Any] = field(default_factory=dict)
+    uia_controls_info: List[Dict[str, Any]] = field(default_factory=dict)
+    grounding_controls_info: List[Dict[str, Any]] = field(default_factory=dict)
+    merged_controls_info: List[Dict[str, Any]] = field(default_factory=dict)
+
+
+@dataclass
 class AppAgentRequestLog:
     """
     The request log data for the AppAgent.
@@ -87,6 +106,7 @@ class AppAgentRequestLog:
     last_success_actions: List[Dict[str, Any]]
     include_last_screenshot: bool
     prompt: Dict[str, Any]
+    control_info_recording: Dict[str, Any]
 
 
 class AppAgentProcessor(BaseProcessor):
@@ -112,6 +132,7 @@ class AppAgentProcessor(BaseProcessor):
         self._args = None
         self._image_url = []
         self.control_filter_factory = ControlFilterFactory()
+        self.control_recorder = ControlInfoRecorder()
         self.filtered_annotation_dict = None
         self.screenshot_save_path = None
 
@@ -155,6 +176,13 @@ class AppAgentProcessor(BaseProcessor):
             }
         )
 
+        # Record the control information for the current application window.
+        self.control_recorder.application_windows_info = (
+            self.control_inspector.get_control_info(
+                self.application_window, field_list=ControlInfoRecorder.recording_fields
+            )
+        )
+
         # Get the control elements in the application window if the control items are not provided for reannotation.
         if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
             control_list = self.control_reannotate
@@ -174,6 +202,14 @@ class AppAgentProcessor(BaseProcessor):
         self.filtered_annotation_dict = self.get_filtered_annotation_dict(
             self._annotation_dict
         )
+
+        # Record the control information for the uia controls.
+        self.control_recorder.uia_controls_info = (
+            self.control_inspector.get_control_info_list_of_dict(
+                self.filtered_annotation_dict, ControlInfoRecorder.recording_fields
+            )
+        )
+
         self.photographer.capture_app_window_screenshot(
             self.application_window, save_path=screenshot_save_path
         )
@@ -348,6 +384,7 @@ class AppAgentProcessor(BaseProcessor):
             last_success_actions=filtered_last_success_actions,
             include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
             prompt=self._prompt_message,
+            control_info_recording=asdict(self.control_recorder),
         )
 
         request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)

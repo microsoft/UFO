@@ -9,7 +9,7 @@ from pywinauto.uia_element_info import UIAElementInfo
 from pywinauto.win32structures import RECT
 
 
-class VirtualUIAElement(UIAElementInfo):
+class VirtualUIAElementInfo(UIAElementInfo):
     """
     A virtual UIA element that can be used for testing purposes.
     This class is a subclass of UIAElementInfo, which is used to represent UIA elements in pywinauto.
@@ -109,7 +109,7 @@ class BasicGrounding(ABC):
         :return: The UIAWrapper object.
         """
 
-        elementinfo = VirtualUIAElement(
+        elementinfo = VirtualUIAElementInfo(
             control_type=control_info.get("control_type", "Button"),
             name=control_info.get("name", ""),
             x0=control_info.get("x0", 0),
