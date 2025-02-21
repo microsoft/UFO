@@ -89,6 +89,7 @@ CONTROL_FILTER_MODEL_SEMANTIC_NAME: "all-MiniLM-L6-v2"  # The control filter mod
 CONTROL_FILTER_MODEL_ICON_NAME: "clip-ViT-B-32"  # The control filter model name of icon similarity
 
 LOG_XML: False  # Whether to log the xml file for the at every step.
+LOG_TO_MARKDOWN: True  # Whether to save the log to markdown file for better visualization.
 SCREENSHOT_TO_MEMORY: True  # Whether to allow the screenshot to memory for the agent's decision making.
 
 

@@ -451,6 +451,10 @@ class AppAgentProcessor(BaseProcessor):
             application_window=self.application_window,
         )
 
+        if self.is_application_closed():
+            utils.print_with_color("Warning: The application is closed.", "yellow")
+            self.status = "FINISH"
+
     def capture_control_screenshot(
         self, control_selected: Union[UIAWrapper, List[UIAWrapper]]
     ) -> None:
@@ -645,29 +649,6 @@ class AppAgentProcessor(BaseProcessor):
             log_abs_path, f"xml/action_step{self.session_step}.xml"
         )
         self.app_agent.Puppeteer.save_to_xml(xml_save_path)
-
-    # def demonstration_prompt_helper(self) -> Tuple[List[Dict[str, Any]]]:
-    #     """
-    #     Get the examples and tips for the AppAgent using the demonstration retriever.
-    #     :return: The examples and tips for the AppAgent.
-    #     """
-
-    #     # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
-    #     if configs["RAG_EXPERIENCE"]:
-    #         experience_results = self.app_agent.rag_experience_retrieve(
-    #             self.subtask, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
-    #         )
-    #     else:
-    #         experience_results = []
-
-    #     if configs["RAG_DEMONSTRATION"]:
-    #         demonstration_results = self.app_agent.rag_demonstration_retrieve(
-    #             self.subtask, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
-    #         )
-    #     else:
-    #         demonstration_results = []
-
-    #     return experience_results, demonstration_results
 
     def get_filtered_annotation_dict(
         self, annotation_dict: Dict[str, UIAWrapper], configs: Dict[str, Any] = configs

@@ -218,7 +218,9 @@ class UIABackendStrategy(BackendStrategy):
         :return: The control elements found.
         """
 
-        if window is None:
+        try:
+            window.is_enabled()
+        except:
             return []
 
         assert (
@@ -254,7 +256,7 @@ class UIABackendStrategy(BackendStrategy):
             )
             for elem in (
                 com_elem_array.GetElement(n)
-                for n in range(min(com_elem_array.Length, 300))
+                for n in range(min(com_elem_array.Length, 500))
             )
         ]
 
