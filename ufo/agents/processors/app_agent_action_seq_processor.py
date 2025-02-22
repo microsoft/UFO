@@ -4,6 +4,7 @@
 
 from typing import Any, Dict, List
 
+from ufo import utils
 from ufo.agents.processors.actions import ActionSequence, OneStepAction
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.basic import BaseProcessor
@@ -71,6 +72,10 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
         )
 
         self.actions.print_all_results()
+
+        if self.is_application_closed():
+            utils.print_with_color("Warning: The application is closed.", "yellow")
+            self.status = "FINISH"
 
     def capture_control_screenshot_from_adjusted_coords(
         self, control_adjusted_coords: List[Dict[str, Any]]

@@ -29,11 +29,12 @@ from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
 from ufo.agents.states.basic import AgentState, AgentStatus
-from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.automator.ui_control import ui_tree
+from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.module.context import Context, ContextNames
+from ufo.trajectory.parser import Trajectory
 
 configs = Config.get_instance().config_data
 
@@ -397,6 +398,12 @@ class BaseSession(ABC):
 
         if self._should_evaluate and not self.is_error():
             self.evaluation()
+
+        if configs.get("LOG_TO_MARKDOWN", True):
+
+            file_path = self.log_path
+            trajectory = Trajectory(file_path)
+            trajectory.to_markdown(file_path + "/output.md")
 
         self.print_cost()
 

@@ -743,6 +743,22 @@ class BaseProcessor(ABC):
 
         return self.status == self._agent_status_manager.CONFIRM.value
 
+    def is_application_closed(self) -> bool:
+        """
+        Check if the application is closed.
+        :return: The boolean value indicating if the application is closed.
+        """
+
+        if self.application_window is None:
+
+            return True
+
+        try:
+            self.application_window.is_enabled()
+            return False
+        except:
+            return True
+
     def log(self, response_json: Dict[str, Any]) -> None:
         """
         Set the result of the session, and log the result.
