@@ -8,6 +8,8 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.uia_element_info import UIAElementInfo
 from pywinauto.win32structures import RECT
 
+from ufo.llm.base import BaseService
+
 
 class VirtualUIAElementInfo(UIAElementInfo):
     """
@@ -67,14 +69,12 @@ class VirtualUIAElementInfo(UIAElementInfo):
 
 class BasicGrounding(ABC):
 
-    def __init__(self, service, application_window: UIAWrapper):
+    def __init__(self, service: BaseService):
         """
         Create a new BasicGrounding model.
         :param service: The grounding model service.
-        :param application_window: The application window.
         """
         self.service = service
-        self.application_window = application_window
 
     @abstractmethod
     def predict(self, image_path: str) -> str:
@@ -86,10 +86,13 @@ class BasicGrounding(ABC):
         pass
 
     @abstractmethod
-    def parse_results(self, results: str) -> List[Dict[str, Any]]:
+    def parse_results(
+        self, results: List[Dict[str, Any]], application_window: UIAWrapper = None
+    ) -> List[Dict[str, Any]]:
         """
         Parse the grounding results string into a list of control elements infomation dictionaries.
-        :param results: The grounding results string from the grounding model.
+        :param results: The list of grounding results dictionaries from the grounding model.
+        :param application_window: The application window to get the absolute coordinates.
         :return: The list of control elements information dictionaries, the dictionary should contain the following keys:
         {
             "control_type": The control type of the element,
@@ -122,7 +125,9 @@ class BasicGrounding(ABC):
 
         return virtual_control
 
-    def get_control_lists(self, image_path: str) -> List[UIAWrapper]:
+    def convert_to_virtual_uia_elements(
+        self, image_path: str, application_window: UIAWrapper = None, *args, **kwargs
+    ) -> List[UIAWrapper]:
         """
         Convert the grounding to a UIAWrapper object.
         :param image_path: The path to the image.
@@ -131,8 +136,10 @@ class BasicGrounding(ABC):
 
         control_list = []
 
-        grounding_results = self.predict(image_path)
-        control_elements_info = self.parse_results(grounding_results)
+        grounding_results = self.predict(image_path, *args, **kwargs)
+        control_elements_info = self.parse_results(
+            grounding_results, application_window
+        )
 
         for control_info in enumerate(control_elements_info):
             control_list.append(self.uia_wrapping(control_info))
