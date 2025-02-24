@@ -141,7 +141,7 @@ class BasicGrounding(ABC):
             grounding_results, application_window
         )
 
-        for control_info in enumerate(control_elements_info):
+        for control_info in control_elements_info:
             control_list.append(self.uia_wrapping(control_info))
 
         return control_list

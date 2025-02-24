@@ -57,9 +57,10 @@ set_edit_text:
   class_name: |-
     SetEditTextCommand
   usage: |-
-    [1] API call: set_edit_text(text: str="The text to input.")
+    [1] API call: set_edit_text(text: str="The text to input.", clear_current_text: bool=False)
     [2] Args:
       - text: The text input to the Edit control item. You must also use Double Backslash escape character to escape the single quote in the string argument.
+      - clear_current_text: Whether to clear the current text in the control item before setting the new text. (Default: False)
     [3] Example: set_edit_text(text="Hello World. \\n I enjoy the reading of the book 'The Lord of the Rings'. It's a great book.")
     [4] Available control item: [Edit]
     [5] Return: None

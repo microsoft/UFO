@@ -7,8 +7,8 @@ from typing import Any, Dict, List
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.win32structures import RECT
 
-
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
+from ufo.utils import print_with_color
 
 
 class OmniparserGrounding(BasicGrounding):
@@ -40,20 +40,28 @@ class OmniparserGrounding(BasicGrounding):
 
         list_of_grounding_results = []
 
-        results = self.service.chat_completion(
-            image_path, box_threshold, iou_threshold, use_paddleocr, imgsz, api_name
-        )
+        try:
+            results = self.service.chat_completion(
+                image_path, box_threshold, iou_threshold, use_paddleocr, imgsz, api_name
+            )
+            grounding_results = results[1].splitlines()
 
-        grounding_results = result_lines = results[1].splitlines()
+        except Exception as e:
+            print_with_color(
+                f"Warning: Failed to get grounding results for Omniparser. Error: {e}",
+                "yellow",
+            )
 
-        for item in result_lines:
+            return list_of_grounding_results
+
+        for item in grounding_results:
             try:
                 item = json.loads(item)
                 list_of_grounding_results.append(item)
             except json.JSONDecodeError:
                 pass
 
-        return grounding_results
+        return list_of_grounding_results
 
     def parse_results(
         self, results: List[Dict[str, Any]], application_window: UIAWrapper = None
@@ -85,7 +93,9 @@ class OmniparserGrounding(BasicGrounding):
 
         for control_info in results:
 
-            if self._filter_interactivity and control_info.get("interactivity", True):
+            if not self._filter_interactivity and control_info.get(
+                "interactivity", True
+            ):
                 continue
 
             application_left, application_top = (

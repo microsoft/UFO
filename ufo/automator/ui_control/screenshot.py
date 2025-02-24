@@ -411,7 +411,7 @@ class AnnotationDecorator(PhotographerDecorator):
         window_rect = self.photographer.control.rectangle()
         screenshot_annotated = self.photographer.capture()
 
-        color_dict = configs["ANNOTATION_COLORS"]
+        color_dict = configs.get("ANNOTATION_COLORS", {})
 
         for label_text, control in annotation_dict.items():
             control_rect = control.rectangle()
