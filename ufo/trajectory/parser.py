@@ -414,6 +414,6 @@ class Trajectory:
 
 
 if __name__ == "__main__":
-    file_path = r"C:\Users\chaoyunzhang\OneDrive - Microsoft\Desktop\research\GPTV\UFO-windows\github\UFO\logs\test_new_contro2"
+    file_path = r"ufo/trajectory/data"
     trajectory = Trajectory(file_path)
     trajectory.to_markdown(file_path + "/output.md")
