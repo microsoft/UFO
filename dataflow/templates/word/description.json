@@ -1,12 +1,22 @@
 {
-    "template1.docx":"A doc with a long text across 3 pages, contains bold; italic; underine; strikethrough; word not in dictionary(a word spelling wrong); word with hyperlink",
-    "template2.docx":"A doc with a rectangle shape, a oval, a triangle and some text, with page break and section break",
-    "template3.docx":"A doc with a column chart and some description",
+    "template1.docx":"A doc with a long text across 3 pages, contains bold; italic; underine; strikethrough; word not in dictionary(a word spelling wrong); word with hyperlink.",
+    "template2.docx":"A doc with a rectangle shape, a oval, a triangle and some text, with page break and section break.",
+    "template3.docx":"A doc with a column chart and some description.",
     "template4.docx":"A doc with a text box and an image, with the text box providing a description of the image.",
-    "template5.docx":"A doc with comments and reviewer",
-    "template6.docx":"A doc with a list of elements, 4 items in a bulleted list and 3 items that are not in a bulleted list",
+    "template5.docx":"A doc with comments and reviewer.",
+    "template6.docx":"A doc with a list of elements, 4 items in a bulleted list and 3 items that are not in a bulleted list.",
     "template7.docx":"A doc with a table and a table annotation",
     "template8.docx":"A doc with a contract agreement containing handwrite signatures, backgroud is a watermark",
     "template9.docx":"A empty doc with three pages, suitable for adding or inserting content.",
-    "template10.docx":"A doc with long text and table of content, contains footnotes and endnotes, also citation"
+    "template10.docx":"A doc with long text and table of content, contains footnotes and endnotes, also citation.",
+    "template11.docx": "A doc with an English poetry, which has a WordArt title and contains some word not in dictionary.",
+    "template12.docx": "A doc with a linear function word equation.",
+    "template13.docx": "A doc with a numbered list.",
+    "template14.docx": "A doc with a multilevel list.",
+    "template15.docx": "A doc with a 3D models and some description.",
+    "template16.docx": "A doc with a cover page.",
+    "template17.docx": "A doc with a long text, contains word spelling wrong.",
+    "template18.docx": "A doc with a long text and comments.",
+    "template19.docx": "A doc with",
+    "template20.docx": ""
 }

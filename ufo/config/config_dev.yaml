@@ -121,3 +121,7 @@ TASK_STATUS: True  # Whether to record the status of the tasks in batch executio
 # Experience saving
 SAVE_EXPERIENCE: "always_not"  # Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not, "auto" for auto save when the evaluation is good. By default, it is "ask".
 
+# Blob storage
+UPLOAD: True
+ACCOUNT_URL: "https://ufodata.blob.core.windows.net"
+CONTAINER_NAME: "ufodata"
