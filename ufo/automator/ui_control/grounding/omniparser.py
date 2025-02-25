@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import json
+import os
 from typing import Any, Dict, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -39,6 +40,12 @@ class OmniparserGrounding(BasicGrounding):
         """
 
         list_of_grounding_results = []
+
+        if not os.path.exists(image_path):
+            print_with_color(
+                f"Warning: The image path {image_path} does not exist.", "yellow"
+            )
+            return list_of_grounding_results
 
         try:
             results = self.service.chat_completion(

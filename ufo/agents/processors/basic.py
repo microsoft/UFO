@@ -22,8 +22,10 @@ from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
 configs = Config.get_instance().config_data
+
 if configs is not None:
-    BACKEND = configs["CONTROL_BACKEND"]
+    CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"])
+    BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
 
 
 class BaseProcessor(ABC):

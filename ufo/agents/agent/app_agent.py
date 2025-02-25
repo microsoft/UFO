@@ -68,6 +68,7 @@ class AppAgent(BasicAgent):
         self.Puppeteer = self.create_puppeteer_interface()
 
         control_detection_backend = configs.get("CONTROL_BACKEND", ["uia"])
+
         if "omniparser" in control_detection_backend:
             omniparser_endpoint = configs.get("OMNIPARSER", {}).get("ENDPOINT", "")
             omniparser_service = OmniParser(endpoint=omniparser_endpoint)
