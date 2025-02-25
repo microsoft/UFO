@@ -484,7 +484,7 @@ class AppAgentProcessor(BaseProcessor):
             prompt=self._prompt_message,
             control_info_recording=asdict(self.control_recorder),
         )
-        print(asdict(self.control_recorder))
+
         request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
         self.request_logger.debug(request_log_str)
 
