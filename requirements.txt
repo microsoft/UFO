@@ -18,6 +18,7 @@ pandas==1.4.3
 html2text==2024.2.26
 pyautogui==0.9.54
 uiautomation==2.0.18
+gradio-client==1.7.1
 ##For Qwen
 #dashscope==1.15.0
 ##For removing stopwords

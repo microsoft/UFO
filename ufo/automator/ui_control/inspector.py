@@ -86,6 +86,11 @@ class UIAElementInfoFix(UIAElementInfo):
     _cached_rect = None
     _time_delay_marker = False
 
+    def __init__(self, element, is_ref=False, source: Optional[str] = None):
+        super().__init__(element, is_ref)
+
+        self._source = source
+
     def sleep(self, ms: float = 0):
         import time
 
@@ -154,6 +159,10 @@ class UIAElementInfoFix(UIAElementInfo):
     def rectangle(self):
         return self._get_cached_rectangle()
 
+    @property
+    def source(self):
+        return self._source
+
 
 class UIABackendStrategy(BackendStrategy):
     """
@@ -209,7 +218,9 @@ class UIABackendStrategy(BackendStrategy):
         :return: The control elements found.
         """
 
-        if window is None:
+        try:
+            window.is_enabled()
+        except:
             return []
 
         assert (
@@ -245,14 +256,14 @@ class UIABackendStrategy(BackendStrategy):
             )
             for elem in (
                 com_elem_array.GetElement(n)
-                for n in range(min(com_elem_array.Length, 300))
+                for n in range(min(com_elem_array.Length, 500))
             )
         ]
 
         control_elements: List[UIAWrapper] = []
 
         for elem, elem_type, elem_name, elem_rect in elem_info_list:
-            element_info = UIAElementInfoFix(elem, True)
+            element_info = UIAElementInfoFix(elem, True, source="uia")
             elem_type_name = UIABackendStrategy._get_uia_control_name_map().get(
                 elem_type, ""
             )
@@ -624,10 +635,26 @@ class ControlInspectorFacade:
             assign("control_id", lambda: window.element_info.control_id)
             assign("control_class", lambda: window.element_info.class_name)
             assign("control_name", lambda: window.element_info.name)
-            assign("control_rect", lambda: window.element_info.rectangle)
+            rectangle = window.element_info.rectangle
+            assign(
+                "control_rect",
+                lambda: (
+                    rectangle.left,
+                    rectangle.top,
+                    rectangle.right,
+                    rectangle.bottom,
+                ),
+            )
             assign("control_text", lambda: window.element_info.name)
             assign("control_title", lambda: window.window_text())
             assign("selected", lambda: ControlInspectorFacade.get_check_state(window))
+
+            try:
+                source = window.element_info.source
+                assign("source", lambda: source)
+            except:
+                assign("source", lambda: "")
+
             return control_info
         except:
             return {}
