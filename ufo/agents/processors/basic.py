@@ -7,22 +7,19 @@ import os
 import time
 import traceback
 from abc import ABC, abstractmethod
-from dataclasses import asdict, dataclass
 from functools import wraps
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.memory.memory import MemoryItem
+from ufo.agents.processors.actions import ActionSequence
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
-from ufo.agents.processors.actions import (
-    ActionSequence,
-)
 
 configs = Config.get_instance().config_data
 if configs is not None:

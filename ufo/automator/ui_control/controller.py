@@ -222,11 +222,11 @@ class ControlReceiver(ReceiverBasic):
 
         control_focus = params.get("control_focus", True)
         keys = params.get("keys", "")
+        keys = TextTransformer.transform_text(keys, "all")
 
         if control_focus:
             self.atomic_execution("type_keys", {"keys": keys})
         else:
-            keys = TextTransformer.transform_text(keys, "all")
             self.application.type_keys(keys=keys)
         return keys
 

@@ -13,9 +13,10 @@ from ufo import utils
 from ufo.agents.processors.actions import (
     ActionExecutionLog,
     ActionSequence,
+    BaseControlLog,
     OneStepAction,
 )
-from ufo.agents.processors.basic import BaseControlLog, BaseProcessor
+from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 

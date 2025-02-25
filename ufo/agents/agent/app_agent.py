@@ -5,7 +5,7 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Dict, List, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
@@ -15,7 +15,10 @@ from ufo.agents.processors.app_agent_action_seq_processor import (
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.automator import puppeteer
+from ufo.automator.ui_control.grounding.basic import BasicGrounding
+from ufo.automator.ui_control.grounding.omniparser import OmniparserGrounding
 from ufo.config.config import Config
+from ufo.llm.grounding_model.omniparser_service import OmniParser
 from ufo.module import interactor
 from ufo.module.context import Context
 from ufo.prompter.agent_prompter import AppAgentPrompter
@@ -63,6 +66,16 @@ class AppAgent(BasicAgent):
         self.human_demonstration_retriever = None
 
         self.Puppeteer = self.create_puppeteer_interface()
+
+        control_detection_backend = configs.get("CONTROL_BACKEND", ["uia"])
+        if "omniparser" in control_detection_backend:
+            omniparser_endpoint = configs.get("OMNIPARSER", {}).get("ENDPOINT", "")
+            omniparser_service = OmniParser(endpoint=omniparser_endpoint)
+            self.grounding_service: Optional[BasicGrounding] = OmniparserGrounding(
+                service=omniparser_service
+            )
+        else:
+            self.grounding_service: Optional[BasicGrounding] = None
 
         self.set_state(ContinueAppAgentState())
 
@@ -356,7 +369,9 @@ class AppAgent(BasicAgent):
                 agent=self, context=context
             )
         else:
-            self.processor = AppAgentProcessor(agent=self, context=context)
+            self.processor = AppAgentProcessor(
+                agent=self, context=context, ground_service=self.grounding_service
+            )
         self.processor.process()
         self.status = self.processor.status
 

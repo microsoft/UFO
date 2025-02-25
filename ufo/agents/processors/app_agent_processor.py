@@ -13,6 +13,7 @@ from ufo.agents.processors.actions import ActionSequence, BaseControlLog, OneSte
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
+from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
@@ -20,6 +21,7 @@ if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
 
 configs = Config.get_instance().config_data
+
 if configs is not None:
     BACKEND = configs.get("CONTROL_BACKEND", "uia")
 
@@ -114,7 +116,12 @@ class AppAgentProcessor(BaseProcessor):
     The processor for the app agent at a single step.
     """
 
-    def __init__(self, agent: "AppAgent", context: Context) -> None:
+    def __init__(
+        self,
+        agent: "AppAgent",
+        context: Context,
+        ground_service=Optional[BasicGrounding],
+    ) -> None:
         """
         Initialize the app agent processor.
         :param agent: The app agent who executes the processor.
@@ -135,6 +142,7 @@ class AppAgentProcessor(BaseProcessor):
         self.control_recorder = ControlInfoRecorder()
         self.filtered_annotation_dict = None
         self.screenshot_save_path = None
+        self.grounding_service = ground_service
 
     def print_step_info(self) -> None:
         """
