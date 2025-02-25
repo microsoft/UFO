@@ -55,6 +55,6 @@ SMTP_SERVER: smtp.qq.com
 
 # Blob
 UPLOAD: True
-UPLOAD_INTERVAL: 100
-DATA_SOURCE: QAbench
+UPLOAD_INTERVAL: 1
+DATA_SOURCE: local_test
 
