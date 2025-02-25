@@ -176,8 +176,8 @@ class AppAgentProcessor(BaseProcessor):
         elif "win32" in control_detection_backend:
             api_backend = "win32"
 
-        if "onmiparser" in control_detection_backend:
-            grounding_backend = "onmiparser"
+        if "omniparser" in control_detection_backend:
+            grounding_backend = "omniparser"
 
         if api_backend is not None:
             api_control_list = (
@@ -194,10 +194,14 @@ class AppAgentProcessor(BaseProcessor):
             i + 1: control for i, control in enumerate(api_control_list)
         }
 
+        # print(control_detection_backend, grounding_backend, screenshot_path)
+
         if grounding_backend == "omniparser" and self.grounding_service is not None:
             self.grounding_service: BasicGrounding
 
             onmiparser_configs = configs.get("OMNIPARSER", {})
+
+            # print(onmiparser_configs)
 
             grounding_control_list = (
                 self.grounding_service.convert_to_virtual_uia_elements(
@@ -480,7 +484,7 @@ class AppAgentProcessor(BaseProcessor):
             prompt=self._prompt_message,
             control_info_recording=asdict(self.control_recorder),
         )
-
+        print(asdict(self.control_recorder))
         request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
         self.request_logger.debug(request_log_str)
 

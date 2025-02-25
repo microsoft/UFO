@@ -9,7 +9,7 @@ There are several configurations that need to be set up before using the UI Auto
 
 | Configuration Option    | Description                                                                                             | Type     | Default Value |
 |-------------------------|---------------------------------------------------------------------------------------------------------|----------|---------------|
-| `CONTROL_BACKEND`       | The backend for control action, currently supporting `uia` and `win32`.                                 | String   | "uia"         |
+| `CONTROL_BACKEND`       | The list of backend for control action, currently supporting `uia` and `win32` and `onmiparser`         | List     | ["uia"]       |
 | `CONTROL_LIST`          | The list of widgets allowed to be selected.                                                             | List     | ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem"] |
 | `ANNOTATION_COLORS`     | The colors assigned to different control types for annotation.                                          | Dictionary | {"Button": "#FFF68F", "Edit": "#A5F0B5", "TabItem": "#A5E7F0", "Document": "#FFD18A", "ListItem": "#D9C3FE", "MenuItem": "#E7FEC3", "ScrollBar": "#FEC3F8", "TreeItem": "#D6D6D6", "Hyperlink": "#91FFEB", "ComboBox": "#D8B6D4"} |
 | `API_PROMPT`           | The prompt for the UI automation API. | String | "ufo/prompts/share/base/api.yaml"          |
