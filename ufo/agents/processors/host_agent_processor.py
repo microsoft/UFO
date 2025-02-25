@@ -88,6 +88,7 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = None
         self._desktop_windows_dict = None
         self._desktop_windows_info = None
+        self.bash_command = None
 
     def print_step_info(self) -> None:
         """
