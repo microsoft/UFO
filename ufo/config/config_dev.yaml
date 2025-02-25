@@ -125,3 +125,4 @@ SAVE_EXPERIENCE: "always_not"  # Whether to save the experience, can be "always"
 UPLOAD: True
 ACCOUNT_URL: "https://ufodata.blob.core.windows.net"
 CONTAINER_NAME: "ufodata"
+UPLOAD_INTERVAL: 100

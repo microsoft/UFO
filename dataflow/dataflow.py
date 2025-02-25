@@ -10,6 +10,7 @@ from email.mime.multipart import MIMEMultipart
 from email.header import Header
 
 from ufo.utils import print_with_color
+from ufo.utils.azure_storage import AzureBlobStorage
 from dataflow.config.config import Config
 
 _configs = Config.get_instance().config_data
@@ -101,18 +102,24 @@ def process_batch(task_dir: str, task_type: str) -> None:
 
     print_with_color(f"Found {len(task_files)} tasks in {task_dir}.", "blue")
 
-    if _configs["MONITOR"]:
-        # Send email notify
-        send_point = _configs["SEND_POINT"].split(",")
-        total = len(task_files)
-        for idx, task_file in enumerate(tqdm(task_files), start=1):
-            process_task(task_file, task_type)
+    blob_storage = None
+    if _configs["UPLOAD"]:
+        blob_storage = AzureBlobStorage()
+    total = len(task_files)
+    for idx, task_file in enumerate(tqdm(task_files), start=1):
+        process_task(task_file, task_type)
+
+        if _configs["MONITOR"]:
+            # Send email notify
+            send_point = _configs["SEND_POINT"].split(",")
             if str(idx) in send_point:
                 message = f"Task Completed {idx}/{total}"
                 send_message(message)
-    else:
-        for task_file in tqdm(task_files):
-            process_task(task_file, task_type)
+
+        if _configs["UPLOAD"] and idx % _configs["UPLOAD_INTERVAL"] == 0:
+            blob_storage.upload_folder(_configs["LOG_ROOT"], _configs["DATA_SOURCE"])
+
+
 
 def send_message(message: str) -> None:
     """

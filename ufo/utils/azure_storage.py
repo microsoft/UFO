@@ -5,6 +5,7 @@ from typing import List
 
 from azure.identity import DefaultAzureCredential
 from azure.storage.blob import BlobServiceClient
+from tqdm import tqdm
 
 from ufo.config.config import Config
 from ufo import utils
@@ -40,15 +41,19 @@ class AzureBlobStorage:
         else:
             return self.container_client.list_blobs(prefix=prefix)
 
-    def upload_file(self, blob_name, input_file_path: str) -> None:
+    def upload_file(self, blob_name: str, input_file_path: str, overwrite: bool = True) -> None:
         """
         Upload a file to Azure Blob Storage
         :param blob_name: the expected name in azure blob
         :param input_file_path: input file path
+        :param overwrite: overwrite existing file
         """
         blob_client = self.container_client.get_blob_client(blob_name)
+        if overwrite is False:
+            if blob_client.exists():
+                return
         with open(input_file_path, "rb") as data:
-            blob_client.upload_blob(data, overwrite=True)
+            blob_client.upload_blob(data, overwrite=overwrite)
 
     def download(self, blob_name: str, output_file_path: str):
         """
@@ -80,34 +85,23 @@ class AzureBlobStorage:
             blob_client.delete_blob()
         utils.print_with_color(f"Delete {blob_name} in {self.account_url}/{self.container_name}", "green")
 
-
-    def upload_ufo_logs(self, log_path: str, data_source: str = "") -> None:
+    def upload_folder(self, log_path: str, data_source: str = "") -> None:
         """
-        Upload UFO log to Azure Blob Storage
-        :param log_path: relative path of UFO log file
+        Upload folder to Azure Blob Storage
+        :param log_path: relative path of folder
         :param data_source: data source
         """
         absolute_log_path = os.path.abspath(log_path)
         log_prefix = os.path.join(data_source, log_path).replace("\\", "/")
-        for root, dirs, files in os.walk(absolute_log_path):
-            for file in files:
-                log_file_path = os.path.join(root, file)
-                blob_name = os.path.join(log_prefix, os.path.relpath(log_file_path, absolute_log_path)).replace("\\", "/")
-                self.upload_file(blob_name, log_file_path)
+
+        total_files = sum([len(files) for _, _, files in os.walk(absolute_log_path)])
+        with tqdm(total=total_files, desc=f"upload {data_source}/{log_prefix}") as pbar:
+            for root, dirs, files in os.walk(absolute_log_path):
+                for file in files:
+                    log_file_path = os.path.join(root, file)
+                    blob_name = os.path.join(log_prefix, os.path.relpath(log_file_path, absolute_log_path)).replace(
+                        "\\", "/")
+                    self.upload_file(blob_name, log_file_path)
+                    pbar.update(1)
         utils.print_with_color(f"Upload log: {log_path} --> {log_prefix}", "green")
 
-    def upload_dataflow_outputs(self, results_hub_path: str, data_source: str = "") -> None:
-        """
-        Upload dataflow outputs to Azure Blob Storage
-        :param results_hub_path: relative path of dataflow outputs
-        :param data_source: data source
-        """
-        absolute_log_path = os.path.abspath(results_hub_path)
-        log_prefix = os.path.join(data_source, "outputs").replace("\\", "/")
-        for root, dirs, files in os.walk(absolute_log_path):
-            for file in files:
-                file_path = os.path.join(root, file)
-                blob_name = os.path.join(log_prefix, os.path.relpath(file_path, absolute_log_path)).replace("\\", "/")
-                self.upload_file(blob_name, file_path)
-                print(blob_name)
-        utils.print_with_color(f"Upload log: {results_hub_path} --> {log_prefix}", "green")
