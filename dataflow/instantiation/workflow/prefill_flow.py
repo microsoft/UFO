@@ -15,8 +15,7 @@ from ufo.config.config import Config as UFOConfig
 
 _configs = Config.get_instance().config_data
 _ufo_configs = UFOConfig.get_instance().config_data
-if _ufo_configs is not None:
-    _BACKEND = _ufo_configs["CONTROL_BACKEND"]
+_BACKEND = "uia"
 
 
 class PrefillFlow(AppAgentProcessor):
@@ -98,10 +97,10 @@ class PrefillFlow(AppAgentProcessor):
         finally:
             self.execution_time = round(time.time() - start_time, 3)
 
-        return  {
+        return {
             "instantiated_request": instantiated_request,
             "instantiated_plan": instantiated_plan,
-        }   
+        }
 
     def _instantiate_task(
         self, template_copied_path: str, original_task: str, refined_steps: List[str]
@@ -131,7 +130,7 @@ class PrefillFlow(AppAgentProcessor):
             raise e
 
         return instantiated_request, instantiated_plan
-    
+
     def _update_state(self, file_path: str) -> None:
         """
         Update the current state of the app by inspecting UI elements.
@@ -259,7 +258,7 @@ class PrefillFlow(AppAgentProcessor):
         :param doc_name: The name or description of the document to match the window.
         :param save_path: The path where the screenshot will be saved.
         """
-        
+
         try:
             # Find the window matching the document name
             matched_window = self._app_env.find_matching_window(doc_name)

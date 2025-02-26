@@ -13,6 +13,7 @@ from ufo.agents.processors.actions import ActionSequence, BaseControlLog, OneSte
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
+from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
@@ -20,8 +21,10 @@ if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
 
 configs = Config.get_instance().config_data
+
 if configs is not None:
-    BACKEND = configs.get("CONTROL_BACKEND", "uia")
+    CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"])
+    BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
 
 
 @dataclass
@@ -114,7 +117,12 @@ class AppAgentProcessor(BaseProcessor):
     The processor for the app agent at a single step.
     """
 
-    def __init__(self, agent: "AppAgent", context: Context) -> None:
+    def __init__(
+        self,
+        agent: "AppAgent",
+        context: Context,
+        ground_service=Optional[BasicGrounding],
+    ) -> None:
         """
         Initialize the app agent processor.
         :param agent: The app agent who executes the processor.
@@ -135,6 +143,7 @@ class AppAgentProcessor(BaseProcessor):
         self.control_recorder = ControlInfoRecorder()
         self.filtered_annotation_dict = None
         self.screenshot_save_path = None
+        self.grounding_service = ground_service
 
     def print_step_info(self) -> None:
         """
@@ -149,6 +158,100 @@ class AppAgentProcessor(BaseProcessor):
             ),
             "magenta",
         )
+
+    def get_control_list(self, screenshot_path: str) -> List[UIAWrapper]:
+        """
+        Get the control list from the annotation dictionary.
+        :param screenshot_path: The path to the clean screenshot.
+        :return: The list of control items.
+        """
+
+        api_backend = None
+        grounding_backend = None
+
+        control_detection_backend = configs.get("CONTROL_BACKEND", ["uia"])
+
+        if "uia" in control_detection_backend:
+            api_backend = "uia"
+        elif "win32" in control_detection_backend:
+            api_backend = "win32"
+
+        if "omniparser" in control_detection_backend:
+            grounding_backend = "omniparser"
+
+        if api_backend is not None:
+            api_control_list = (
+                self.control_inspector.find_control_elements_in_descendants(
+                    self.application_window,
+                    control_type_list=configs.get("CONTROL_LIST", []),
+                    class_name_list=configs.get("CONTROL_LIST", []),
+                )
+            )
+        else:
+            api_control_list = []
+
+        api_control_dict = {
+            i + 1: control for i, control in enumerate(api_control_list)
+        }
+
+        # print(control_detection_backend, grounding_backend, screenshot_path)
+
+        if grounding_backend == "omniparser" and self.grounding_service is not None:
+            self.grounding_service: BasicGrounding
+
+            onmiparser_configs = configs.get("OMNIPARSER", {})
+
+            # print(onmiparser_configs)
+
+            grounding_control_list = (
+                self.grounding_service.convert_to_virtual_uia_elements(
+                    image_path=screenshot_path,
+                    application_window=self.application_window,
+                    box_threshold=onmiparser_configs.get("BOX_THRESHOLD", 0.05),
+                    iou_threshold=onmiparser_configs.get("IOU_THRESHOLD", 0.1),
+                    use_paddleocr=onmiparser_configs.get("USE_PADDLEOCR", True),
+                    imgsz=onmiparser_configs.get("IMGSZ", 640),
+                )
+            )
+        else:
+            grounding_control_list = []
+
+        grounding_control_dict = {
+            i + 1: control for i, control in enumerate(grounding_control_list)
+        }
+
+        merged_control_list = self.photographer.merge_control_list(
+            api_control_list,
+            grounding_control_list,
+            iou_overlap_threshold=configs.get("IOU_THRESHOLD_FOR_MERGE", 0.1),
+        )
+
+        merged_control_dict = {
+            i + 1: control for i, control in enumerate(merged_control_list)
+        }
+
+        # Record the control information for the uia controls.
+        self.control_recorder.uia_controls_info = (
+            self.control_inspector.get_control_info_list_of_dict(
+                api_control_dict, ControlInfoRecorder.recording_fields
+            )
+        )
+
+        # Record the control information for the grounding controls.
+        self.control_recorder.grounding_controls_info = (
+            self.control_inspector.get_control_info_list_of_dict(
+                grounding_control_dict, ControlInfoRecorder.recording_fields
+            )
+        )
+
+        # Record the control information for the merged controls.
+        self.control_recorder.merged_controls_info = (
+            self.control_inspector.get_control_info_list_of_dict(
+                merged_control_dict, ControlInfoRecorder.recording_fields
+            )
+        )
+
+        return merged_control_list
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -176,6 +279,10 @@ class AppAgentProcessor(BaseProcessor):
             }
         )
 
+        self.photographer.capture_app_window_screenshot(
+            self.application_window, save_path=screenshot_save_path
+        )
+
         # Record the control information for the current application window.
         self.control_recorder.application_windows_info = (
             self.control_inspector.get_control_info(
@@ -183,15 +290,17 @@ class AppAgentProcessor(BaseProcessor):
             )
         )
 
-        # Get the control elements in the application window if the control items are not provided for reannotation.
-        if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
-            control_list = self.control_reannotate
-        else:
-            control_list = self.control_inspector.find_control_elements_in_descendants(
-                self.application_window,
-                control_type_list=configs.get("CONTROL_LIST", []),
-                class_name_list=configs.get("CONTROL_LIST", []),
-            )
+        # # Get the control elements in the application window if the control items are not provided for reannotation.
+        # if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
+        #     control_list = self.control_reannotate
+        # else:
+        #     control_list = self.control_inspector.find_control_elements_in_descendants(
+        #         self.application_window,
+        #         control_type_list=configs.get("CONTROL_LIST", []),
+        #         class_name_list=configs.get("CONTROL_LIST", []),
+        #     )
+
+        control_list = self.get_control_list(screenshot_save_path)
 
         # Get the annotation dictionary for the control items, in a format of {control_label: control_element}.
         self._annotation_dict = self.photographer.get_annotation_dict(
@@ -201,17 +310,6 @@ class AppAgentProcessor(BaseProcessor):
         # Attempt to filter out irrelevant control items based on the previous plan.
         self.filtered_annotation_dict = self.get_filtered_annotation_dict(
             self._annotation_dict
-        )
-
-        # Record the control information for the uia controls.
-        self.control_recorder.uia_controls_info = (
-            self.control_inspector.get_control_info_list_of_dict(
-                self.filtered_annotation_dict, ControlInfoRecorder.recording_fields
-            )
-        )
-
-        self.photographer.capture_app_window_screenshot(
-            self.application_window, save_path=screenshot_save_path
         )
 
         # Capture the screenshot of the selected control items with annotation and save it.

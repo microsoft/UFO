@@ -411,7 +411,7 @@ class AnnotationDecorator(PhotographerDecorator):
         window_rect = self.photographer.control.rectangle()
         screenshot_annotated = self.photographer.capture()
 
-        color_dict = configs["ANNOTATION_COLORS"]
+        color_dict = configs.get("ANNOTATION_COLORS", {})
 
         for label_text, control in annotation_dict.items():
             control_rect = control.rectangle()
@@ -733,7 +733,7 @@ class PhotographerFacade:
     def merge_control_list(
         main_control_list: List[Dict[str, UIAWrapper]],
         additional_control_list: List[Dict[str, UIAWrapper]],
-        iou_overlap_threshold: float = 0.5,
+        iou_overlap_threshold: float = 0.1,
     ) -> List[Dict[str, UIAWrapper]]:
         """
         Merge two control lists by removing the overlapping controls in the additional control list.

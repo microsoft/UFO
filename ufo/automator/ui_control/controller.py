@@ -168,6 +168,10 @@ class ControlReceiver(ReceiverBasic):
         text = params.get("text", "")
         inter_key_pause = configs.get("INPUT_TEXT_INTER_KEY_PAUSE", 0.1)
 
+        if params.get("clear_current_text", False):
+            self.control.type_keys("^a", pause=inter_key_pause)
+            self.control.type_keys("{DELETE}", pause=inter_key_pause)
+
         if configs["INPUT_TEXT_API"] == "set_text":
             method_name = "set_edit_text"
             args = {"text": text}
@@ -218,11 +222,11 @@ class ControlReceiver(ReceiverBasic):
 
         control_focus = params.get("control_focus", True)
         keys = params.get("keys", "")
+        keys = TextTransformer.transform_text(keys, "all")
 
         if control_focus:
             self.atomic_execution("type_keys", {"keys": keys})
         else:
-            keys = TextTransformer.transform_text(keys, "all")
             self.application.type_keys(keys=keys)
         return keys
 

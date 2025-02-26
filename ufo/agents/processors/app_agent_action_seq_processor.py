@@ -11,8 +11,6 @@ from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
 
 configs = Config.get_instance().config_data
-if configs is not None:
-    BACKEND = configs["CONTROL_BACKEND"]
 
 
 class AppAgentActionSequenceProcessor(AppAgentProcessor):
