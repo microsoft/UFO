@@ -17,6 +17,16 @@
     "template16.docx": "A doc with a cover page.",
     "template17.docx": "A doc with a long text, contains word spelling wrong.",
     "template18.docx": "A doc with a long text and comments.",
-    "template19.docx": "A doc with",
-    "template20.docx": ""
+    "template19.docx": "A doc with a chinese envelope.",
+    "template20.docx": "A doc with Template for Submission of Manuscripts to American Chemical Society Journals.",
+    "template21.docx": "A doc with a chart about GPA of three students.",
+    "template22.docx": "A doc with a short article, contains endnote and cross-reference.",
+    "template23.docx": "A doc with a calender of 2025.",
+    "template24.docx": "A doc with a resume.",
+    "template25.docx": "A doc with a combo box.",
+    "template26.docx": "A doc with an event timeline flowchart.",
+    "template27.docx": "A doc with a hand-drawn graph of the function |x|.",
+    "template28.docx": "A doc with a short article, contains some spelling error.",
+    "template29.docx": "A doc with a two-column layout article about image within doc.",
+    "template30.docx": "A doc with a short article that is right-aligned and line spacing is 3."
 }

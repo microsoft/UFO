@@ -31,7 +31,7 @@ class AzureBlobStorage:
         if not self.container_client.exists():
             utils.print_with_color(f"Container {self.container_name} not exist in blob {self.account_url}", "red")
 
-    def list_blobs(self, prefix: str = None) -> List[str]:
+    def list_blobs(self, prefix: str = None) -> List:
         """
         List blobs in the container
         :return:
@@ -66,33 +66,42 @@ class AzureBlobStorage:
         with open(output_file_path, "wb") as output_file:
             output_file.write(blob_client.download_blob().readall())
 
-    def delete(self, blob_name: str, is_folder: bool = False) -> None:
+    def delete(self, blob_name: str) -> None:
         """
         Delete a file from Azure Blob Storage
         :param blob_name: file name in blob
-        :param is_folder: file of folder
         :return:
         """
-        if is_folder:
-            blobs = self.container_client.list_blobs(name_starts_with=blob_name)
-            # delete all blob under folder
-            for blob in blobs:
-                blob_name = blob.name
-                blob_client = self.container_client.get_blob_client(blob_name)
-                blob_client.delete_blob()
-        else:
-            blob_client = self.container_client.get_blob_client(blob_name)
-            blob_client.delete_blob()
+        blob_client = self.container_client.get_blob_client(blob_name)
+        blob_client.delete_blob()
         utils.print_with_color(f"Delete {blob_name} in {self.account_url}/{self.container_name}", "green")
 
-    def upload_folder(self, log_path: str, data_source: str = "") -> None:
+    def delete_folder(self, folder_name: str):
+        """
+        Delete a folder from Azure Blob Storage
+        :param folder_name:
+        :return:
+        """
+        blobs = self.container_client.list_blobs(name_starts_with=folder_name)
+        # delete all blob under folder
+        for blob in blobs:
+            blob_name = blob.name
+            blob_client = self.container_client.get_blob_client(blob_name)
+            blob_client.delete_blob()
+        utils.print_with_color(f"Delete {folder_name} in {self.account_url}/{self.container_name}", "green")
+
+    def upload_folder(self, log_path: str, data_source: str = "", blob_prefix: str = "") -> None:
         """
         Upload folder to Azure Blob Storage
         :param log_path: relative path of folder
         :param data_source: data source
+        :param blob_prefix: prefix of blob
         """
         absolute_log_path = os.path.abspath(log_path)
-        log_prefix = os.path.join(data_source, log_path).replace("\\", "/")
+
+        log_prefix = blob_prefix
+        if log_prefix == "":
+            log_prefix = os.path.join(data_source, log_path).replace("\\", "/")
 
         total_files = sum([len(files) for _, _, files in os.walk(absolute_log_path)])
         with tqdm(total=total_files, desc=f"upload {data_source}/{log_prefix}") as pbar:
@@ -104,4 +113,30 @@ class AzureBlobStorage:
                     self.upload_file(blob_name, log_file_path)
                     pbar.update(1)
         utils.print_with_color(f"Upload log: {log_path} --> {log_prefix}", "green")
+
+    def download_folder(self, folder_prefix: str, output_folder: str) -> None:
+        """
+        Download folder from Azure Blob Storage
+        :param folder_prefix: folder name
+        :param output_folder: output folder path
+        """
+        # list all files in this folder
+        blob_list = list(self.container_client.list_blobs(name_starts_with=folder_prefix))
+        total_files = len(blob_list)
+
+        with tqdm(total=total_files, desc=f"download {folder_prefix}", unit="file") as total_progress_bar:
+            for blob in blob_list:
+                blob_name = blob.name
+                relative_path = os.path.relpath(blob_name, folder_prefix)
+                local_file_path = os.path.join(output_folder, relative_path)
+
+                os.makedirs(os.path.dirname(local_file_path), exist_ok=True)
+
+                # download files
+                self.download(blob_name, local_file_path)
+
+                # update tqdm
+                total_progress_bar.update(1)
+
+        utils.print_with_color(f"Download {folder_prefix} -> {output_folder}")
 
