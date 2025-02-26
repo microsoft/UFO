@@ -1,4 +1,4 @@
-CONTROL_BACKEND: ["uia", "omniparser"]  # The backend for control action, currently we support uia, win32 and onmiparser
+CONTROL_BACKEND: ["uia"]  # The backend for control action, currently we support uia, win32 and onmiparser
 
 IOU_THRESHOLD_FOR_MERGE: 0.1 # The iou threshold for merging the boxes bewteen controls detected by the UIA and Grouding model.
 
