@@ -1,4 +1,7 @@
-CONTROL_BACKEND: "uia"  # The backend for control action, currently we support uia and win32
+CONTROL_BACKEND: ["uia", "omniparser"]  # The backend for control action, currently we support uia, win32 and onmiparser
+
+IOU_THRESHOLD_FOR_MERGE: 0.1 # The iou threshold for merging the boxes bewteen controls detected by the UIA and Grouding model.
+
 MAX_STEP: 30  # The max step limit for completing the user request
 MAX_ROUND: 1  # The max round limit for completing the user request
 SLEEP_TIME: 1  # The sleep time between each step to wait for the window to be ready

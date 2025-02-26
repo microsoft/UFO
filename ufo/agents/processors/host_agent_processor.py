@@ -13,15 +13,15 @@ from ufo import utils
 from ufo.agents.processors.actions import (
     ActionExecutionLog,
     ActionSequence,
+    BaseControlLog,
     OneStepAction,
 )
-from ufo.agents.processors.basic import BaseControlLog, BaseProcessor
+from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
 configs = Config.get_instance().config_data
-if configs is not None:
-    BACKEND = configs["CONTROL_BACKEND"]
+
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
@@ -88,6 +88,7 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = None
         self._desktop_windows_dict = None
         self._desktop_windows_info = None
+        self.bash_command = None
 
     def print_step_info(self) -> None:
         """

@@ -395,13 +395,11 @@ class Trajectory:
                 file.write("\n")
 
                 annotated_screenshot_filename = os.path.basename(
-                    data.get("AnnotatedScreenshot")
+                    data.get("AnnotatedScreenshot", "")
                 )
                 selected_control_screenshot_filename = os.path.basename(
-                    data.get("SelectedControlScreenshot")
+                    data.get("SelectedControlScreenshot", "")
                 )
-
-                print(data.get("AnnotatedScreenshot"))
 
                 file.write(
                     f'<div style="display: flex; justify-content: center;">\n'
