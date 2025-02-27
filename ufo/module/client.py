@@ -45,7 +45,7 @@ class UFOClientManager:
                     message = f"Ufo Execute Completed: {idx}/{total}"
                     send_message(message)
 
-            if _configs["UPLOAD"] and idx % _configs["UPLOAD_INTERVAL"] == 0:
+            if _configs["UPLOAD"] and (idx % _configs["UPLOAD_INTERVAL"] == 0 or idx == total):
                 upload = threading.Thread(
                     target=lambda: blob_storage.upload_folder(session.log_path, _configs["DATA_SOURCE"])
                 )
