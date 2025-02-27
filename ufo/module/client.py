@@ -47,7 +47,7 @@ class UFOClientManager:
 
             if _configs["UPLOAD"] and idx % _configs["UPLOAD_INTERVAL"] == 0:
                 upload = threading.Thread(
-                    target=lambda: blob_storage.upload_folder(_configs["LOG_ROOT"], _configs["DATA_SOURCE"])
+                    target=lambda: blob_storage.upload_folder(session.log_path, _configs["DATA_SOURCE"])
                 )
                 upload.start()
 
