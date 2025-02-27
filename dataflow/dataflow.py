@@ -1,5 +1,6 @@
 import argparse
 import os
+import threading
 import traceback
 
 from tqdm import tqdm
@@ -117,7 +118,11 @@ def process_batch(task_dir: str, task_type: str) -> None:
                 send_message(message)
 
         if _configs["UPLOAD"] and idx % _configs["UPLOAD_INTERVAL"] == 0:
-            blob_storage.upload_folder(_configs["LOG_ROOT"], _configs["DATA_SOURCE"])
+            upload = threading.Thread(
+                target=lambda :blob_storage.upload_folder(_configs["LOG_ROOT"], _configs["DATA_SOURCE"])
+            )
+            upload.start()
+            # blob_storage.upload_folder(_configs["LOG_ROOT"], _configs["DATA_SOURCE"])
 
 
 

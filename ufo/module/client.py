@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 import smtplib
+import threading
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
@@ -45,7 +46,10 @@ class UFOClientManager:
                     send_message(message)
 
             if _configs["UPLOAD"] and idx % _configs["UPLOAD_INTERVAL"] == 0:
-                blob_storage.upload_folder(_configs["LOG_ROOT"], _configs["DATA_SOURCE"])
+                upload = threading.Thread(
+                    target=lambda: blob_storage.upload_folder(_configs["LOG_ROOT"], _configs["DATA_SOURCE"])
+                )
+                upload.start()
 
 
     @property
