@@ -1,9 +1,10 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 from . import utils
+from abc import ABC, abstractmethod
 
 
-class BasicDocumentLoader:
+class BasicDocumentLoader(ABC):
     """
     A class to load documents from a list of files with a given extension list.
     """
@@ -24,10 +25,11 @@ class BasicDocumentLoader:
         """
         return utils.find_files_with_extension(self.directory, self.extensions)
 
-    def construct_document_list(self):
+    @abstractmethod
+    def construct_document(self):
         """
-        Load the metadata from the given directory.
+        Load the documents from the given directory.
         :param directory: The directory to load from.
-        :return: The list of metadata for the loaded documents.
+        :return: The list of loaded documents.
         """
         pass

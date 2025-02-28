@@ -34,7 +34,7 @@ def main():
     Main function.
     """
 
-    indexer.create_indexer(
+    indexer.DocumentsIndexer().create_indexer(
         parsed_args.app,
         parsed_args.docs,
         parsed_args.format,
