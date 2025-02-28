@@ -422,7 +422,7 @@ class AppAgentProcessor(BaseProcessor):
         # Get the external knowledge prompt for the AppAgent using the offline and online retrievers.
 
         offline_docs, online_docs = self.app_agent.external_knowledge_prompt_helper(
-            self.request,
+            self.subtask,
             configs.get("RAG_OFFLINE_DOCS_RETRIEVED_TOPK", 0),
             configs.get("RAG_ONLINE_RETRIEVED_TOPK", 0),
         )

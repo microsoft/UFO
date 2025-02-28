@@ -258,17 +258,25 @@ class AppAgent(BasicAgent):
 
         # Retrieve offline documents and construct the prompt
         if self.offline_doc_retriever:
+
             offline_docs = self.offline_doc_retriever.retrieve(
-                "How to {query} for {app}".format(
-                    query=request, app=self._process_name
-                ),
+                request,
                 offline_top_k,
                 filter=None,
             )
+
+            format_string = "Question: {question}\nStep: {answer}\n"
+
             offline_docs_prompt = self.prompter.retrived_documents_prompt_helper(
-                "Help Documents",
-                "Document",
-                [doc.metadata["text"] for doc in offline_docs],
+                "[Help Documents]",
+                "",
+                [
+                    format_string.format(
+                        question=doc.metadata.get("title", ""),
+                        answer=doc.metadata.get("text", ""),
+                    )
+                    for doc in offline_docs
+                ],
             )
         else:
             offline_docs_prompt = ""
