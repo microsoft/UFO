@@ -39,7 +39,7 @@ class UFOClientManager:
 
         total = len(self.session_list)
 
-        with ThreadPoolExecutor(max_workers=10) as executor:
+        with ThreadPoolExecutor(max_workers=16) as executor:
             for idx, session in enumerate(tqdm(self.session_list), start=1):
                 session.run()
 
