@@ -91,12 +91,13 @@ class AzureBlobStorage:
             print(f"Delete blob {blob_name}")
         utils.print_with_color(f"Delete {folder_name} in {self.account_url}/{self.container_name}", "green")
 
-    def upload_folder(self, log_path: str, data_source: str = "", blob_prefix: str = "") -> None:
+    def upload_folder(self, log_path: str, data_source: str = "", blob_prefix: str = "", overwrite: bool = True) -> None:
         """
         Upload folder to Azure Blob Storage
         :param log_path: relative path of folder
         :param data_source: data source
         :param blob_prefix: prefix of blob
+        :param overwrite: overwrite existing file
         """
         absolute_log_path = os.path.abspath(log_path)
 
@@ -111,7 +112,7 @@ class AzureBlobStorage:
                     log_file_path = os.path.join(root, file)
                     blob_name = os.path.join(log_prefix, os.path.relpath(log_file_path, absolute_log_path)).replace(
                         "\\", "/")
-                    self.upload_file(blob_name, log_file_path)
+                    self.upload_file(blob_name, log_file_path, overwrite)
                     pbar.update(1)
         utils.print_with_color(f"Upload log: {log_path} --> {log_prefix}", "green")
 

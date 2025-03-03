@@ -2,6 +2,7 @@ import argparse
 import os
 import threading
 import traceback
+from concurrent.futures import ThreadPoolExecutor
 
 from tqdm import tqdm
 
@@ -107,22 +108,23 @@ def process_batch(task_dir: str, task_type: str) -> None:
     if _configs["UPLOAD"]:
         blob_storage = AzureBlobStorage()
     total = len(task_files)
-    for idx, task_file in enumerate(tqdm(task_files), start=1):
-        process_task(task_file, task_type)
 
-        if _configs["MONITOR"]:
-            # Send email notify
-            send_point = _configs["SEND_POINT"].split(",")
-            if str(idx) in send_point:
-                message = f"Task Completed {idx}/{total}"
-                send_message(message)
+    with ThreadPoolExecutor(max_workers=16) as executor:
+        for idx, task_file in enumerate(tqdm(task_files), start=1):
+            process_task(task_file, task_type)
 
-        if _configs["UPLOAD"] and idx % _configs["UPLOAD_INTERVAL"] == 0:
-            upload = threading.Thread(
-                target=lambda :blob_storage.upload_folder(_configs["LOG_ROOT"], _configs["DATA_SOURCE"])
-            )
-            upload.start()
-            # blob_storage.upload_folder(_configs["LOG_ROOT"], _configs["DATA_SOURCE"])
+            if _configs["MONITOR"]:
+                # Send email notify
+                send_point = _configs["SEND_POINT"].split(",")
+                if str(idx) in send_point:
+                    message = f"Task Completed {idx}/{total}"
+                    send_message(message)
+
+            if _configs["UPLOAD"] and (idx % _configs["UPLOAD_INTERVAL"] == 0 or idx == total):
+                executor.submit(
+                    lambda :blob_storage.upload_folder(_configs["REFORMAT_TO_BATCH_HUB"], _configs["DATA_SOURCE"], overwrite=False))
+                executor.submit(
+                    lambda: blob_storage.upload_folder(_configs["RESULT_LOG"], _configs["DATA_SOURCE"], overwrite=False))
 
 
 

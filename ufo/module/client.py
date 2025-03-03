@@ -2,9 +2,11 @@
 # Licensed under the MIT License.
 import smtplib
 import threading
+from concurrent.futures import ThreadPoolExecutor
 from email.header import Header
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from multiprocessing.pool import ThreadPool
 from typing import List
 
 from tqdm import tqdm
@@ -36,20 +38,20 @@ class UFOClientManager:
             blob_storage = AzureBlobStorage()
 
         total = len(self.session_list)
-        for idx, session in enumerate(tqdm(self.session_list), start=1):
-            session.run()
 
-            if _configs["MONITOR"]:
-                send_point = _configs["SEND_POINT"].split(",")
-                if str(idx) in send_point:
-                    message = f"Ufo Execute Completed: {idx}/{total}"
-                    send_message(message)
+        with ThreadPoolExecutor(max_workers=10) as executor:
+            for idx, session in enumerate(tqdm(self.session_list), start=1):
+                session.run()
 
-            if _configs["UPLOAD"] and (idx % _configs["UPLOAD_INTERVAL"] == 0 or idx == total):
-                upload = threading.Thread(
-                    target=lambda: blob_storage.upload_folder(session.log_path, _configs["DATA_SOURCE"])
-                )
-                upload.start()
+                if _configs["MONITOR"]:
+                    send_point = _configs["SEND_POINT"].split(",")
+                    if str(idx) in send_point:
+                        message = f"Ufo Execute Completed: {idx}/{total}"
+                        send_message(message)
+
+                if _configs["UPLOAD"]:
+                    print(f"log_path is {session.log_path}")
+                    executor.submit(lambda : blob_storage.upload_folder(session.log_path, _configs["DATA_SOURCE"]))
 
 
     @property

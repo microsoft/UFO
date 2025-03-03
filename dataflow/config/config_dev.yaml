@@ -35,7 +35,7 @@ CONTROL_EMBEDDING_CACHE_PATH: "dataflow/cache/"  # The cache path for the contro
 CONTROL_FILTER_TOP_K_PLAN: 2  # The control filter effect on top k plans from UFO, default is 2
 
 # log path
-LOG_ROOT: "dataflow/outputs"
+RESULT_LOG: "dataflow/outputs/results"
 LOG_PATH: "dataflow/outputs/logs/{task}"
 TEMPLATE_LOG_PATH: "dataflow/outputs/logs/{task}/template/"
 PREFILL_LOG_PATH: "dataflow/outputs/logs/{task}/prefill/"
@@ -55,6 +55,6 @@ SMTP_SERVER: smtp.qq.com
 
 # Blob
 UPLOAD: True
-UPLOAD_INTERVAL: 1
+UPLOAD_INTERVAL: 2
 DATA_SOURCE: local_test
 
