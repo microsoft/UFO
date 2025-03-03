@@ -107,7 +107,7 @@ class AzureBlobStorage:
             log_prefix = os.path.join(data_source, log_path).replace("\\", "/")
 
         total_files = sum([len(files) for _, _, files in os.walk(absolute_log_path)])
-        with tqdm(total=total_files, desc=f"upload {data_source}/{log_prefix}") as pbar:
+        with tqdm(total=total_files, desc=f"upload {log_prefix}") as pbar:
             for root, dirs, files in os.walk(absolute_log_path):
                 for file in files:
                     log_file_path = os.path.join(root, file)
