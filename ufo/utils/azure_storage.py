@@ -39,7 +39,7 @@ class AzureBlobStorage:
         if prefix is None:
             return self.container_client.list_blobs()
         else:
-            return self.container_client.list_blobs(prefix=prefix)
+            return self.container_client.list_blobs(name_starts_with=prefix)
 
     def upload_file(self, blob_name: str, input_file_path: str, overwrite: bool = True) -> None:
         """
@@ -83,12 +83,13 @@ class AzureBlobStorage:
         :return:
         """
         blobs = self.container_client.list_blobs(name_starts_with=folder_name)
+        total_blobs = sum(1 for _ in self.container_client.list_blobs(name_starts_with=folder_name))
+
         # delete all blob under folder
-        for blob in blobs:
+        for blob in tqdm(blobs, desc="delete", total=total_blobs):
             blob_name = blob.name
             blob_client = self.container_client.get_blob_client(blob_name)
             blob_client.delete_blob()
-            print(f"Delete blob {blob_name}")
         utils.print_with_color(f"Delete {folder_name} in {self.account_url}/{self.container_name}", "green")
 
     def upload_folder(self, log_path: str, data_source: str = "", blob_prefix: str = "", overwrite: bool = True) -> None:
