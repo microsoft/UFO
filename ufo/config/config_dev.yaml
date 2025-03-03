@@ -137,5 +137,4 @@ SMTP_SERVER: smtp.qq.com
 UPLOAD: True
 ACCOUNT_URL: "https://ufodata.blob.core.windows.net"
 CONTAINER_NAME: "ufodata"
-UPLOAD_INTERVAL: 1
 DATA_SOURCE: local_test
