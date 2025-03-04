@@ -1,16 +1,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-
+import functools
+import json
 import os
 import shutil
 import sys
-from typing import Any, Callable, Literal, Optional, List, Dict
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from typing import Any, Callable, Dict, List, Literal, Optional
 
 import openai
 from openai import AzureOpenAI, OpenAI
-import functools
-
 from ufo.llm.base import BaseService
 
 
@@ -337,3 +340,208 @@ class OpenAIService(BaseService):
         except Exception as e:
             print("failed to acquire token from AAD for OpenAI", e)
             raise e
+
+
+class OpenAIBetaClient:
+
+    Json = Dict[str, Any]
+
+    def __init__(self, endpoint: str, api_version: str):
+        """
+        The OpenAI Beta client class to interact with the OpenAI API.
+        :param endpoint: The OpenAI API endpoint.
+        :param api_key: The OpenAI API key.
+        :param api_version: The OpenAI API version.
+        """
+
+        self.endpoint = endpoint
+        self.base_url = endpoint.rstrip("/")
+
+        self.api_version = api_version
+
+    def get_responses(
+        self,
+        model: str,
+        previous_response_id: Optional[str] = None,
+        inputs: Optional[list[Json]] = None,  # pylint: disable=redefined-builtin
+        tool_output: Optional[list[Json]] = None,
+        include: Optional[list[str]] = None,
+        tools: Optional[list[Json]] = None,
+        metadata: Optional[Json] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        parallel_tool_calls: Optional[bool] = None,
+        token_provider: Optional[Callable[[], str]] = None,
+    ) -> Json:
+        self,
+
+        if self.base_url.endswith("openai.azure.com"):
+            url = f"{self.base_url}/openai/responses?api-version={self.api_version}"
+        else:
+            url = f"{self.base_url}/v1/responses"
+
+        api_key = (
+            token_provider if isinstance(token_provider, str) else token_provider()
+        )
+
+        headers = {
+            "Content-Type": "application/json",
+            "x-ms-enable-preview": "true",
+            "api-key": api_key,
+        }
+
+        return self.post_request(
+            url,
+            data={
+                "model": model,
+                "previous_response_id": previous_response_id,
+                "input": inputs,
+                "tool_output": tool_output,
+                "include": include,
+                "tools": tools,
+                "metadata": metadata,
+                "temperature": temperature,
+                "top_p": top_p,
+                "parallel_tool_calls": parallel_tool_calls,
+            },
+            headers=headers,
+        )
+
+    def post_request(self, url: str, data: Json, headers: Json) -> Json:
+        """
+        Send a POST request to the OpenAI API.
+        :param url: The URL of the API endpoint.
+        :param data: The data to send in the request.
+        :param headers: The headers to send in the request.
+        :return: The response from the API.
+        """
+
+        data = json.dumps(self.compact(data)).encode("utf-8")
+        req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+
+        try:
+            with urllib.request.urlopen(req) as response:
+                content = response.read().decode("utf-8")
+                return json.loads(content)
+        except urllib.error.HTTPError as exception:
+            self._handle_exception(exception)
+
+    @staticmethod
+    def compact(data: Json) -> Json:
+        """
+        Remove None values from a dictionary.
+        """
+        return {k: v for k, v in data.items() if v is not None}
+
+
+class OperatorServicePreview(BaseService):
+    """
+    The Operator service class to interact with the Operator for Computer Using Agent (CUA) API.
+    """
+
+    _agent_type = "operator"
+
+    def __init__(self, config: Dict[str, Any]) -> None:
+        """
+        Create an Operator service instance.
+        :param config: The configuration for the Operator service.
+        """
+        self.config_llm = config[self._agent_type]
+        self.config = config
+        self.api_type = self.config_llm["API_TYPE"].lower()
+        self.api_model = self.config_llm["API_MODEL"].lower()
+        self.max_retry = self.config["MAX_RETRY"]
+        self.prices = self.config.get("PRICES", {})
+
+        self.client = OperatorServicePreview.get_openai_client()
+
+    @classmethod
+    def get_openai_client(self):
+        """
+        Create an OpenAI client based on the API type.
+        :return: The OpenAI client.
+        """
+
+        client = OpenAIBetaClient(
+            endpoint=self.config_llm.get("API_BASE"),
+            api_key=self.config_llm["API_KEY"],
+            api_version=self.config_llm.get("API_VERSION", ""),
+        )
+
+        return client
+
+    def chat_completion(
+        self,
+        inputs: Optional[list[Dict[str, Any]]] = None,
+        previous_response_id: Optional[str] = None,
+        tools: Optional[list[Dict[str, Any]]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Generates completions for a given conversation using the OpenAI Chat API.
+        """
+
+        retry = 0
+
+        while retry < self.max_retry:
+            try:
+                response = self.client.get_responses(
+                    model=self.config_llm.get("API_MODEL"),
+                    previous_response_id=previous_response_id,
+                    inputs=inputs,
+                    tools=tools,
+                    temperature=self.config.get("TEMPERATURE", 0),
+                    top_p=self.config.get("TOP_P", 0),
+                    token_provider=OpenAIService.get_token_provider(),
+                )
+                return response
+            except Exception as e:
+                self._handle_exception(e)
+                retry += 1
+                time.sleep(10)
+
+    def get_token_provider(self):
+        """
+        Acquire token from Azure AD for OpenAI.
+        :return: The access token for OpenAI.
+        """
+
+        from azure.identity import AzureCliCredential
+        from azure.identity import get_bearer_token_provider
+
+        tenant_id = "72f988bf-86f1-41af-91ab-2d7cd011db47"
+        scope = "https://cognitiveservices.azure.com/.default"
+        identity = AzureCliCredential(tenant_id=tenant_id)
+        bearer_provider = get_bearer_token_provider(identity, scope)
+        return bearer_provider
+
+    def _handle_exception(self, exception: urllib.error.HTTPError) -> None:
+        """
+        Handle an exception from the OpenAI API.
+        :param exception: The exception from the OpenAI API.
+        """
+        body = json.loads(exception.file.read().decode("utf-8"))
+        request_id = exception.headers.get("x-request-id")
+        raise OpenAIError(
+            request_id=request_id, status_code=exception.code, message=body
+        )
+
+
+class OpenAIError(Exception):
+    request_id: str
+    status_code: int
+    message: Dict[str, Any]
+
+    def __init__(self, status_code: int, message: Dict[str, Any], request_id: str):
+        """
+        The OpenAI API error class.
+        :param status_code: The status code of the API response.
+        :param message: The error message from the API response.
+        :param request_id: The request ID of the API response.
+        """
+        self.status_code = status_code
+        self.message = message
+        self.request_id = request_id
+        super().__init__(f"OpenAI API error: {status_code} {message}")
+
+    def __str__(self):
+        return f"OpenAI API error: {self.request_id} {self.status_code} {json.dumps(self.message, indent=2)}"

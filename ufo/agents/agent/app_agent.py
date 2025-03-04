@@ -480,3 +480,11 @@ class AppAgent(BasicAgent):
             demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
             db_path = os.path.join(demonstration_path, "demonstration_db")
             self.build_human_demonstration_retriever(db_path)
+
+
+class OpenAIOperatorAgent(BasicAgent):
+    """
+    The OpenAIOperatorAgent class that manages the interaction with the OpenAI Operator.
+    """
+
+    pass

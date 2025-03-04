@@ -1,20 +1,24 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import os
-from typing import List
-import psutil
-import time
 import json
+import os
+import time
+from typing import List
+
+import psutil
 import win32com.client
 from ufo import utils
+from ufo.agents.agent.app_agent import OpenAIOperatorAgent
+from ufo.agents.agent.host_agent import AgentFactory
 from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config.config import Config
 from ufo.module import interactor
 from ufo.module.basic import BaseRound, BaseSession
-from ufo.module.sessions.plan_reader import PlanReader
 from ufo.module.context import ContextNames
+from ufo.module.sessions.plan_reader import PlanReader
+from ufo.trajectory.parser import Trajectory
 
 configs = Config.get_instance().config_data
 
@@ -52,6 +56,10 @@ class SessionFactory:
                 return [
                     FromFileSession(task, plan, configs.get("EVA_SESSION", False), id=0)
                 ]
+        elif mode == "operator":
+            return OpenAIOperatorSession(
+                task, configs.get("EVA_SESSION", False), id=0, request=request
+            )
         else:
             raise ValueError(f"The {mode} mode is not supported.")
 
@@ -530,3 +538,52 @@ class FromFileSession(BaseSession):
                 open(file_path, "w"),
                 indent=4,
             )
+
+
+class OpenAIOperatorSession(Session):
+    """
+    A session for OpenAI Operator.
+    """
+
+    def __init__(
+        self, task: str, should_evaluate: bool, id: int, request: str = ""
+    ) -> None:
+        """
+        Initialize a session.
+        :param task: The name of current task.
+        :param should_evaluate: Whether to evaluate the session.
+        :param id: The id of the session.
+        :param request: The user request of the session, optional. If not provided, UFO will ask the user to input the request.
+        """
+
+        super().__init__(task, should_evaluate, id)
+
+        self._host_agent: OpenAIOperatorAgent = AgentFactory.create_agent(
+            "operator",
+            "OpenAIOperatorAgent",
+        )
+
+    def run(self) -> None:
+        """
+        Run the session.
+        """
+
+        while not self.is_finished():
+
+            round = self.create_new_round()
+            if round is None:
+                break
+            round.run()
+
+        self.capture_last_snapshot()
+
+        if self._should_evaluate and not self.is_error():
+            self.evaluation()
+
+        if configs.get("LOG_TO_MARKDOWN", True):
+
+            file_path = self.log_path
+            trajectory = Trajectory(file_path)
+            trajectory.to_markdown(file_path + "/output.md")
+
+        self.print_cost()
