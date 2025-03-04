@@ -482,9 +482,41 @@ class AppAgent(BasicAgent):
             self.build_human_demonstration_retriever(db_path)
 
 
-class OpenAIOperatorAgent(BasicAgent):
+class OpenAIOperatorAgent(AppAgent):
     """
     The OpenAIOperatorAgent class that manages the interaction with the OpenAI Operator.
     """
 
-    pass
+    def __init__(
+        self,
+        name: str,
+        main_prompt: str,
+        process_name: Optional[str],
+        app_root_name: Optional[str],
+    ) -> None:
+        """
+        Initialize the OpenAIOperatorAgent.
+        :name: The name of the agent.
+        :param main_prompt: The main prompt file path.
+        :param process_name: The process name of the app.
+        :param app_root_name: The root name of the app.
+        """
+        super().__init__(name)
+        self.prompter = self.get_prompter(main_prompt, app_root_name)
+        self._process_name = process_name
+        self._app_root_name = app_root_name
+
+        self.Puppeteer = self.create_puppeteer_interface()
+
+    def process(self, context):
+
+        pass
+
+    def get_prompter(self, main_prompt: str, app_root_name: str) -> AppAgentPrompter:
+        """
+        Get the prompt for the agent.
+        :param main_prompt: The main prompt file path.
+        :param app_root_name: The root name of the app.
+        :return: The prompter instance.
+        """
+        pass

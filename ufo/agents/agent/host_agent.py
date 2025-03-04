@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Dict, List, Union
 
 from ufo import utils
-from ufo.agents.agent.app_agent import AppAgent
+from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.agents.memory.blackboard import Blackboard
@@ -41,6 +41,8 @@ class AgentFactory:
             return FollowerAgent(*args, **kwargs)
         elif agent_type == "batch_normal":
             return AppAgent(*args, **kwargs)
+        elif agent_type == "operator":
+            return OpenAIOperatorAgent(*args, **kwargs)
         else:
             raise ValueError("Invalid agent type: {}".format(agent_type))
 
