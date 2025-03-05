@@ -149,9 +149,7 @@ class FinishOpenAIOperatorState(OpenAIOperatorState):
         :return: The state for the next step.
         """
 
-        from ufo.agents.agent.app_agent import OpenAIOperatorAgent
-
-        if type(agent) == OpenAIOperatorAgent:
+        if type(agent.host) == HostAgent:
             return ContinueHostAgentState()
         else:
             return FinishHostAgentState()

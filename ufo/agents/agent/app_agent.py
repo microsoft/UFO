@@ -9,6 +9,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.app_agent_action_seq_processor import (
     AppAgentActionSequenceProcessor,
 )
@@ -507,6 +508,7 @@ class OpenAIOperatorAgent(AppAgent):
         self._app_root_name = app_root_name
 
         self.Puppeteer = self.create_puppeteer_interface()
+        self._blackboard = Blackboard()
 
     def process(self, context):
 
@@ -520,3 +522,14 @@ class OpenAIOperatorAgent(AppAgent):
         :return: The prompter instance.
         """
         pass
+
+    @property
+    def blackboard(self) -> Blackboard:
+        """
+        Get the blackboard.
+        """
+
+        if self.host is not None:
+            return self.host.blackboard
+        else:
+            return self._blackboard
