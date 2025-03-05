@@ -220,19 +220,29 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         Parse the response.
         """
 
-        self._response_json = self.app_agent.response_to_dict(self._response)
+        self._response_json: Dict[str, Any] = self._response
 
-        self.control_label = self._response_json.get("ControlLabel", "")
-        self.control_text = self._response_json.get("ControlText", "")
-        self._operation = self._response_json.get("Function", "")
-        self.question_list = self._response_json.get("Questions", [])
-        self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
+        action_dict = self._response_json.get("action", {})
 
-        # Convert the plan from a string to a list if the plan is a string.
-        self.plan = self.string2list(self._response_json.get("Plan", ""))
-        self._response_json["Plan"] = self.plan
+        self._operation = action_dict.get("type", "")
+        self._args = {k: v for k, v in action_dict.items() if k != "type"}
 
-        self.status = self._response_json.get("Status", "")
+        output_type = self._response_json.get("output_type", "")
+
+        if output_type != self.agent._continue_type:
+            self.status = self._agent_status_manager.FINISH.value
+
+            # Get the message from the Agent.
+            if output_type == self.agent._message_type:
+                message = ""
+                for content in self._response_json.get("content", []):
+                    if content.get("type") == "output_text":
+                        if content.get("type") == "output_text":
+                            message += content.get("text", "")
+                self.agent.message = message
+        else:
+            self.status = self._agent_status_manager.CONTINUE.value
+
         self.app_agent.print_response(
             response_dict=self._response_json, print_action=True
         )
@@ -251,10 +261,9 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             control_text=self.control_text,
             after_status=self.status,
         )
-        control_selected = self._annotation_dict.get(self._control_label, None)
 
         # Save the screenshot of the tagged selected control.
-        self.capture_control_screenshot(control_selected)
+        self.capture_control_screenshot(None)
 
         self.actions: ActionSequence = ActionSequence(actions=[action])
         self.actions.execute_all(

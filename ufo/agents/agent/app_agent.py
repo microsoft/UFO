@@ -14,6 +14,7 @@ from ufo.agents.processors.app_agent_action_seq_processor import (
     AppAgentActionSequenceProcessor,
 )
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
+from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.automator import puppeteer
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
@@ -368,7 +369,7 @@ class AppAgent(BasicAgent):
         """
         if configs.get("ACTION_SEQUENCE", False):
             self.processor = AppAgentActionSequenceProcessor(
-                agent=self, context=context
+                agent=self, context=context, ground_service=self.grounding_service
             )
         else:
             self.processor = AppAgentProcessor(
@@ -488,6 +489,9 @@ class OpenAIOperatorAgent(AppAgent):
     The OpenAIOperatorAgent class that manages the interaction with the OpenAI Operator.
     """
 
+    _continue_type = "computer_call"
+    _message_type = "message"
+
     def __init__(
         self,
         name: str,
@@ -511,9 +515,17 @@ class OpenAIOperatorAgent(AppAgent):
         self._blackboard = Blackboard()
         self._response_id = None
 
-    def process(self, context):
+        self._message = ""
 
-        pass
+    def process(self, context: Context) -> None:
+        """
+        Process the agent workflow in each step.
+        :param context: The context.
+        """
+
+        self.processor = OpenAIOperatorProcessor(agent=self, context=context)
+        self.processor.process()
+        self.status = self.processor.status
 
     def get_prompter(self, main_prompt: str, app_root_name: str) -> AppAgentPrompter:
         """
@@ -590,3 +602,18 @@ class OpenAIOperatorAgent(AppAgent):
         :param response_id: The response id.
         """
         self._response_id = response_id
+
+    @property
+    def message(self) -> str:
+        """
+        Get the message.
+        """
+        return self._message
+
+    @message.setter
+    def message(self, message: str) -> None:
+        """
+        Set the message.
+        :param message: The message.
+        """
+        self._message = message
