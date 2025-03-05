@@ -126,12 +126,17 @@ class AzureBlobStorage:
         # list all files in this folder
         blob_list = list(self.container_client.list_blobs(name_starts_with=folder_prefix))
         total_files = len(blob_list)
-
+        print(f"Download Start...")
         with tqdm(total=total_files, desc=f"download {folder_prefix}", unit="file") as total_progress_bar:
             for blob in blob_list:
                 blob_name = blob.name
                 relative_path = os.path.relpath(blob_name, folder_prefix)
                 local_file_path = os.path.join(output_folder, relative_path)
+
+                if os.path.exists(local_file_path):
+                    # update tqdm
+                    total_progress_bar.update(1)
+                    continue
 
                 os.makedirs(os.path.dirname(local_file_path), exist_ok=True)
 

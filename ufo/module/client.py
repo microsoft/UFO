@@ -50,7 +50,6 @@ class UFOClientManager:
                         send_message(message)
 
                 if _configs["UPLOAD"]:
-                    print(f"log_path is {session.log_path}")
                     executor.submit(lambda : blob_storage.upload_folder(session.log_path, _configs["DATA_SOURCE"]))
 
 
