@@ -569,6 +569,20 @@ class OpenAIOperatorSession(Session):
         Run the session.
         """
 
+        inspector = ControlInspectorFacade()
+
+        self.application_window = inspector.desktop
+
+        application_process_name = self.application_window.element_info.name
+        application_root_name = inspector.get_application_root_name(
+            self.application_window
+        )
+
+        self.context.set(ContextNames.APPLICATION_ROOT_NAME, application_root_name)
+        self.context.set(
+            ContextNames.APPLICATION_PROCESS_NAME, application_process_name
+        )
+
         while not self.is_finished():
 
             round = self.create_new_round()

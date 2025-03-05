@@ -495,9 +495,6 @@ class OpenAIOperatorAgent(AppAgent):
     def __init__(
         self,
         name: str,
-        main_prompt: str,
-        process_name: Optional[str],
-        app_root_name: Optional[str],
     ) -> None:
         """
         Initialize the OpenAIOperatorAgent.
@@ -506,11 +503,7 @@ class OpenAIOperatorAgent(AppAgent):
         :param process_name: The process name of the app.
         :param app_root_name: The root name of the app.
         """
-        super().__init__(name)
-        self.prompter = self.get_prompter(main_prompt, app_root_name)
-        self._process_name = process_name
-        self._app_root_name = app_root_name
-
+        self._name = name
         self.Puppeteer = self.create_puppeteer_interface()
         self._blackboard = Blackboard()
         self._response_id = None
