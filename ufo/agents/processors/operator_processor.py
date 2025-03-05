@@ -125,6 +125,8 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         )
         self.width, self.height = screenshot.size
 
+        self._image_url = self.photographer.encode_image_from_path(screenshot_save_path)
+
         # Capture the screenshot of the selected control items with annotation and save it.
         self.photographer.capture_app_window_screenshot_with_annotation_dict(
             self.application_window,

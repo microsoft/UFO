@@ -567,7 +567,7 @@ class OpenAIOperatorAgent(AppAgent):
                     "call_id": response_id,
                     "output": {
                         "type": "input_image",
-                        "image_url": f"data:image/png;base64,{image}",
+                        "image_url": image,
                     },
                 }
             ]

@@ -19,6 +19,7 @@ from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import ContextNames
 from ufo.module.sessions.plan_reader import PlanReader
 from ufo.trajectory.parser import Trajectory
+from ufo.automator.ui_control.inspector import ControlInspectorFacade
 
 configs = Config.get_instance().config_data
 
@@ -571,6 +572,8 @@ class OpenAIOperatorSession(Session):
         while not self.is_finished():
 
             round = self.create_new_round()
+            self.application_window = ControlInspectorFacade().desktop
+
             if round is None:
                 break
             round.run()

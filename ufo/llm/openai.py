@@ -528,6 +528,10 @@ class OperatorServicePreview(BaseService):
 
         tenant_id = "72f988bf-86f1-41af-91ab-2d7cd011db47"
         scope = "https://cognitiveservices.azure.com/.default"
+
+        tenant_id = self.config_llm.get("AAD_TENANT_ID", "")
+        scope = self.config_llm.get("AAD_API_SCOPE", "")
+
         identity = AzureCliCredential(tenant_id=tenant_id)
         bearer_provider = get_bearer_token_provider(identity, scope)
         return bearer_provider
