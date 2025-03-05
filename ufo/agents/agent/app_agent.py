@@ -509,6 +509,7 @@ class OpenAIOperatorAgent(AppAgent):
 
         self.Puppeteer = self.create_puppeteer_interface()
         self._blackboard = Blackboard()
+        self._response_id = None
 
     def process(self, context):
 
@@ -523,6 +524,47 @@ class OpenAIOperatorAgent(AppAgent):
         """
         pass
 
+    def message_constructor(
+        self,
+        subtask: str,
+        image: str,
+        tools: List[Dict[str, str]],
+        response_id: str,
+        host_message: List[str],
+        is_first_step: bool,
+    ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
+        """
+        Construct the prompt message for the AppAgent.
+        :param subtask: The subtask for the current OpenAIOperatorAgent to process.
+        :param image: The screenshot images.
+        :param tools: The list of tools.
+        :param subtask: The subtask for the current OpenAIOperatorAgent to process.
+        :param response_id: The response id of the last step.
+        :param host_message: The message from the HostAgent.
+        :param is_first_step: The flag indicating whether to include the last screenshot.
+        :return: The prompt message.
+        """
+
+        if is_first_step:
+            return {"inputs": subtask, "tools": tools}
+
+        else:
+            inputs = [
+                {
+                    "type": "computer_call_output",
+                    "call_id": response_id,
+                    "output": {
+                        "type": "input_image",
+                        "image_url": f"data:image/png;base64,{image}",
+                    },
+                }
+            ]
+            return {
+                "inputs": inputs,
+                "tools": tools,
+                "previous_response_id": response_id,
+            }
+
     @property
     def blackboard(self) -> Blackboard:
         """
@@ -533,3 +575,18 @@ class OpenAIOperatorAgent(AppAgent):
             return self.host.blackboard
         else:
             return self._blackboard
+
+    @property
+    def response_id(self) -> Optional[str]:
+        """
+        Get the response id.
+        """
+        return self._response_id
+
+    @response_id.setter
+    def response_id(self, response_id: str) -> None:
+        """
+        Set the response id.
+        :param response_id: The response id.
+        """
+        self._response_id = response_id

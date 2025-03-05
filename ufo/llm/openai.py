@@ -10,7 +10,7 @@ import time
 import urllib.error
 import urllib.parse
 import urllib.request
-from typing import Any, Callable, Dict, List, Literal, Optional
+from typing import Any, Callable, Dict, List, Literal, Optional, Tuple
 
 import openai
 from openai import AzureOpenAI, OpenAI
@@ -55,7 +55,7 @@ class OpenAIService(BaseService):
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ):
+    ) -> Tuple[Dict[str, Any], Optional[float]]:
         """
         Generates completions for a given conversation using the OpenAI Chat API.
         :param messages: The list of messages in the conversation.
@@ -439,9 +439,7 @@ class OperatorServicePreview(BaseService):
     The Operator service class to interact with the Operator for Computer Using Agent (CUA) API.
     """
 
-    _agent_type = "operator"
-
-    def __init__(self, config: Dict[str, Any]) -> None:
+    def __init__(self, config: Dict[str, Any], agent_type: str = "operator") -> None:
         """
         Create an Operator service instance.
         :param config: The configuration for the Operator service.
@@ -452,6 +450,7 @@ class OperatorServicePreview(BaseService):
         self.api_model = self.config_llm["API_MODEL"].lower()
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config.get("PRICES", {})
+        self._agent_type = agent_type
 
         self.client = OperatorServicePreview.get_openai_client()
 
@@ -472,13 +471,19 @@ class OperatorServicePreview(BaseService):
 
     def chat_completion(
         self,
-        inputs: Optional[list[Dict[str, Any]]] = None,
-        previous_response_id: Optional[str] = None,
-        tools: Optional[list[Dict[str, Any]]] = None,
-    ) -> Dict[str, Any]:
+        message: Dict[str, Any] = None,
+        n: int = 1,
+    ) -> Tuple[Dict[str, Any], Optional[float]]:
         """
         Generates completions for a given conversation using the OpenAI Chat API.
+        :param message: The message to send to the API.
+        :param n: The number of completions to generate.
+        :return: A tuple containing a list of generated completions and the estimated cost.
         """
+
+        inputs = message.get("inputs", [])
+        tools = message.get("tools", [])
+        previous_response_id = message.get("previous_response_id", None)
 
         retry = 0
 
@@ -491,9 +496,23 @@ class OperatorServicePreview(BaseService):
                     tools=tools,
                     temperature=self.config.get("TEMPERATURE", 0),
                     top_p=self.config.get("TOP_P", 0),
-                    token_provider=OpenAIService.get_token_provider(),
+                    token_provider=self.get_token_provider(),
                 )
-                return response
+                output = response.get("output", {})
+                usage = response.get("usage", {})
+                input_tokens = usage.get("input_tokens", 0)
+                output_tokens = usage.get("output_tokens", 0)
+
+                cost = self.get_cost_estimator(
+                    self.api_type,
+                    self.api_model,
+                    self.prices,
+                    input_tokens,
+                    output_tokens,
+                )
+
+                return output, cost
+
             except Exception as e:
                 self._handle_exception(e)
                 retry += 1
@@ -505,8 +524,7 @@ class OperatorServicePreview(BaseService):
         :return: The access token for OpenAI.
         """
 
-        from azure.identity import AzureCliCredential
-        from azure.identity import get_bearer_token_provider
+        from azure.identity import AzureCliCredential, get_bearer_token_provider
 
         tenant_id = "72f988bf-86f1-41af-91ab-2d7cd011db47"
         scope = "https://cognitiveservices.azure.com/.default"

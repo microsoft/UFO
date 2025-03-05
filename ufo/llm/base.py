@@ -31,6 +31,7 @@ class BaseService(abc.ABC):
             "gemini": "GeminiService",
             "claude": "ClaudeService",
             "custom": "CustomService",
+            "operator": "OperatorServicePreview",
             "placeholder": "PlaceHolderService",
         }
         custom_service_map = {
@@ -39,7 +40,7 @@ class BaseService(abc.ABC):
         }
         service_name = service_map.get(name, None)
         if service_name:
-            if name in ["aoai", "azure_ad"]:
+            if name in ["aoai", "azure_ad", "operator"]:
                 module = import_module(".openai", package="ufo.llm")
             elif service_name == "CustomService":
                 custom_model = "llava" if "llava" in model_name else model_name

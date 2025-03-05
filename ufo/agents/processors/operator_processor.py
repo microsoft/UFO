@@ -3,7 +3,7 @@
 
 import json
 import os
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from PIL import Image
@@ -11,6 +11,11 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from ufo import utils
 from ufo.agents.processors.actions import ActionSequence, OneStepAction
 from ufo.agents.processors.basic import BaseProcessor
+from ufo.agents.processors.app_agent_processor import (
+    AppAgentProcessor,
+    AppAgentAdditionalMemory,
+    AppAgentRequestLog,
+)
 from ufo.automator.ui_control import ui_tree
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
@@ -54,34 +59,16 @@ class AppAgentAdditionalMemory:
 
 
 @dataclass
-class AppAgentRequestLog:
+class OpenAIOperatorRequestLog(AppAgentRequestLog):
     """
-    The request log data for the AppAgent.
+    The request log data for the OpenAIOperatorAgent.
     """
 
-    step: int
-    dynamic_examples: List[str]
-    experience_examples: List[str]
-    demonstration_examples: List[str]
-    offline_docs: str
-    online_docs: str
-    dynamic_knowledge: str
-    image_list: List[str]
-    prev_subtask: List[str]
-    plan: List[str]
-    request: str
-    control_info: List[Dict[str, str]]
-    subtask: str
-    current_application: str
-    host_message: str
-    blackboard_prompt: List[str]
-    last_success_actions: List[Dict[str, Any]]
-    include_last_screenshot: bool
-    prompt: Dict[str, Any]
-    control_info_recording: Dict[str, Any]
+    response_id: str
+    is_first_step: bool
 
 
-class OpenAIOperatorProcessor(BaseProcessor):
+class OpenAIOperatorProcessor(AppAgentProcessor):
     """
     The processor for the app agent at a single step.
     """
@@ -95,7 +82,9 @@ class OpenAIOperatorProcessor(BaseProcessor):
 
         super().__init__(agent=agent, context=context)
 
-        self.app_agent = agent
+        self.agent: "OpenAIOperatorAgent" = agent
+        self.app_agent: "OpenAIOperatorAgent" = agent
+
         self.host_agent = agent.host
 
         self._operation = None
@@ -104,20 +93,6 @@ class OpenAIOperatorProcessor(BaseProcessor):
         self.screenshot_save_path = None
         self.width = None
         self.height = None
-
-    def print_step_info(self) -> None:
-        """
-        Print the step information.
-        """
-        utils.print_with_color(
-            "Round {round_num}, Step {step}, AppAgent: Completing the subtask [{subtask}] on application [{application}].".format(
-                round_num=self.round_num + 1,
-                step=self.round_step + 1,
-                subtask=self.subtask,
-                application=self.application_process_name,
-            ),
-            "magenta",
-        )
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -188,7 +163,6 @@ class OpenAIOperatorProcessor(BaseProcessor):
         """
         Get the control information.
         """
-
         pass
 
     @BaseProcessor.exception_capture
@@ -198,33 +172,29 @@ class OpenAIOperatorProcessor(BaseProcessor):
         Get the prompt message for the AppAgent.
         """
 
-        if self.round_step == 0:
-            self._prompt_message = self.subtask
+        # Check if the current step is the first step.
+        is_first_step = self.agent.step == 0
 
-        else:
-            self._prompt_message = [
-                {
-                    "type": "computer_call_output",
-                    "call_id": self.previous_computer_id,
-                    "output": {
-                        "type": "input_image",
-                        "image_url": f"data:image/png;base64,{self._image_url}",
-                    },
-                }
-            ]
+        tools = self.get_tools_info()
 
-        # Construct the prompt message for the AppAgent.
+        # Construct the prompt message for the OpenAIOperatorAgent.
         self._prompt_message = self.app_agent.message_constructor(
-            image_list=self._image_url,
             subtask=self.subtask,
+            tools=tools,
+            image=self._image_url,
+            host_message=self.host_message,
+            response_id=self.agent.response_id,
+            is_first_step=is_first_step,
         )
 
         # Log the prompt message. Only save them in debug mode.
-        request_data = AppAgentRequestLog(
+        request_data = OpenAIOperatorRequestLog(
             step=self.session_step,
             image_list=self._image_url,
             subtask=self.subtask,
             current_application=self.application_process_name,
+            response_id=self.agent.response_id,
+            is_first_step=is_first_step,
             host_message=self.host_message,
             prompt=self._prompt_message,
         )
@@ -240,7 +210,7 @@ class OpenAIOperatorProcessor(BaseProcessor):
         """
 
         self._response, self.cost = self.app_agent.get_response(
-            self._prompt_message, "APPAGENT", use_backup_engine=True
+            self._prompt_message, "OPERATOR", use_backup_engine=False
         )
 
     @BaseProcessor.exception_capture
@@ -426,44 +396,7 @@ class OpenAIOperatorProcessor(BaseProcessor):
 
         # Save the screenshot to the blackboard if the SaveScreenshot flag is set to True by the AppAgent.
         self._update_image_blackboard()
-        self.host_agent.blackboard.add_trajectories(memorized_action)
-
-    def get_all_success_actions(self) -> List[Dict[str, Any]]:
-        """
-        Get the previous action.
-        :return: The previous action of the agent.
-        """
-        agent_memory = self.app_agent.memory
-
-        if agent_memory.length > 0:
-            success_action_memory = agent_memory.filter_memory_from_keys(
-                ["ActionSuccess"]
-            )
-            success_actions = []
-            for success_action in success_action_memory:
-                success_actions += success_action.get("ActionSuccess", [])
-
-        else:
-            success_actions = []
-
-        return success_actions
-
-    def get_last_success_actions(self) -> List[Dict[str, Any]]:
-        """
-        Get the previous action.
-        :return: The previous action of the agent.
-        """
-        agent_memory = self.app_agent.memory
-
-        if agent_memory.length > 0:
-            last_success_actions = (
-                agent_memory.get_latest_item().to_dict().get("ActionSuccess", [])
-            )
-
-        else:
-            last_success_actions = []
-
-        return last_success_actions
+        self.app_agent.blackboard.add_trajectories(memorized_action)
 
     def _update_image_blackboard(self) -> None:
         """
