@@ -47,7 +47,7 @@ class OpenAIOperatorStateManager(AgentStateManager):
         """
         The none state of the state manager.
         """
-        return OpenAIOperatorState()
+        return NoneOpenAIOperatorState()
 
 
 class OpenAIOperatorState(AgentState):

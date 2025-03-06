@@ -59,11 +59,17 @@ class AppAgentAdditionalMemory:
 
 
 @dataclass
-class OpenAIOperatorRequestLog(AppAgentRequestLog):
+class OpenAIOperatorRequestLog:
     """
     The request log data for the OpenAIOperatorAgent.
     """
 
+    step: int
+    image_list: str
+    subtask: str
+    current_application: str
+    host_message: List[str]
+    prompt: Dict[str, Any]
     response_id: str
     is_first_step: bool
 
@@ -82,9 +88,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
 
         super().__init__(agent=agent, context=context)
 
-        self.agent: "OpenAIOperatorAgent" = agent
         self.app_agent: "OpenAIOperatorAgent" = agent
-
         self.host_agent = agent.host
 
         self._operation = None
@@ -105,18 +109,11 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
         self.screenshot_save_path = screenshot_save_path
 
-        annotated_screenshot_save_path = (
-            self.log_path + f"action_step{self.session_step}_annotated.png"
-        )
-        concat_screenshot_save_path = (
-            self.log_path + f"action_step{self.session_step}_concat.png"
-        )
-
         self._memory_data.add_values_from_dict(
             {
                 "CleanScreenshot": screenshot_save_path,
-                "AnnotatedScreenshot": annotated_screenshot_save_path,
-                "ConcatScreenshot": concat_screenshot_save_path,
+                "AnnotatedScreenshot": screenshot_save_path,
+                "ConcatScreenshot": screenshot_save_path,
             }
         )
 
@@ -126,14 +123,6 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         self.width, self.height = screenshot.size
 
         self._image_url = self.photographer.encode_image_from_path(screenshot_save_path)
-
-        # Capture the screenshot of the selected control items with annotation and save it.
-        self.photographer.capture_app_window_screenshot_with_annotation_dict(
-            self.application_window,
-            [],
-            annotation_type="number",
-            save_path=annotated_screenshot_save_path,
-        )
 
         if configs.get("SAVE_UI_TREE", False):
             if self.application_window is not None:
@@ -195,7 +184,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             image_list=self._image_url,
             subtask=self.subtask,
             current_application=self.application_process_name,
-            response_id=self.agent.response_id,
+            response_id=self.app_agent.response_id,
             is_first_step=is_first_step,
             host_message=self.host_message,
             prompt=self._prompt_message,
@@ -211,9 +200,11 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         Get the response from the LLM.
         """
 
+        print(f"Prompt message: {self._prompt_message}")
         self._response, self.cost = self.app_agent.get_response(
             self._prompt_message, "OPERATOR", use_backup_engine=False
         )
+        print(f"Response: {self._response}")
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer

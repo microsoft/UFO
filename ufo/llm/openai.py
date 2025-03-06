@@ -444,7 +444,7 @@ class OperatorServicePreview(BaseService):
         Create an Operator service instance.
         :param config: The configuration for the Operator service.
         """
-        self.config_llm = config[self._agent_type]
+        self.config_llm = config[agent_type]
         self.config = config
         self.api_type = self.config_llm["API_TYPE"].lower()
         self.api_model = self.config_llm["API_MODEL"].lower()
@@ -452,9 +452,8 @@ class OperatorServicePreview(BaseService):
         self.prices = self.config.get("PRICES", {})
         self._agent_type = agent_type
 
-        self.client = OperatorServicePreview.get_openai_client()
+        self.client = self.get_openai_client()
 
-    @classmethod
     def get_openai_client(self):
         """
         Create an OpenAI client based on the API type.
@@ -463,7 +462,6 @@ class OperatorServicePreview(BaseService):
 
         client = OpenAIBetaClient(
             endpoint=self.config_llm.get("API_BASE"),
-            api_key=self.config_llm["API_KEY"],
             api_version=self.config_llm.get("API_VERSION", ""),
         )
 

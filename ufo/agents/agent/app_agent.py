@@ -513,7 +513,8 @@ class OpenAIOperatorAgent(AppAgent):
         :param process_name: The process name of the app.
         :param app_root_name: The root name of the app.
         """
-        self._name = name
+        BasicAgent.__init__(self, name=name)
+
         self._process_name = process_name
         self._app_root_name = app_root_name
         self.Puppeteer = self.create_puppeteer_interface()

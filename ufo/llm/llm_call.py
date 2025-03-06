@@ -48,7 +48,7 @@ def get_completions(
         agent_type = "HOST_AGENT"
     elif agent.lower() in ["app", "appagent"]:
         agent_type = "APP_AGENT"
-    elif agent.lower() == ["openaioperator", "openai_operator", "operator"]:
+    elif agent.lower() in ["openaioperator", "openai_operator", "operator"]:
         agent_type = "OPERATOR"
     elif agent.lower() == "prefill":
         agent_type = "PREFILL_AGENT"
