@@ -532,7 +532,10 @@ class OpenAIOperatorAgent(AppAgent):
         :param context: The context.
         """
 
-        self.processor = OpenAIOperatorProcessor(agent=self, context=context)
+        scaler = configs.get("OPERATOR", {}).get("SCALER", None)
+        self.processor = OpenAIOperatorProcessor(
+            agent=self, context=context, scaler=scaler
+        )
         self.processor.process()
         self.status = self.processor.status
 

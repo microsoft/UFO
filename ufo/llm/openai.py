@@ -433,6 +433,7 @@ class OpenAIBetaClient:
                 return json.loads(content)
         except urllib.error.HTTPError as e:
             self._handle_exception(e)
+            print("Error:", e)
 
         return None
 
@@ -441,9 +442,13 @@ class OpenAIBetaClient:
         Handle an exception from the OpenAI API.
         :param exception: The exception from the OpenAI API.
         """
-        print(exception)
         body = json.loads(exception.file.read().decode("utf-8"))
         request_id = exception.headers.get("x-request-id")
+
+        error = OpenAIError(
+            request_id=request_id, status_code=exception.code, message=body
+        )
+        print("Error:", error)
         raise OpenAIError(
             request_id=request_id, status_code=exception.code, message=body
         )

@@ -80,11 +80,17 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
     The processor for the app agent at a single step.
     """
 
-    def __init__(self, agent: "OpenAIOperatorAgent", context: Context) -> None:
+    def __init__(
+        self,
+        agent: "OpenAIOperatorAgent",
+        context: Context,
+        scaler: Optional[List[int]],
+    ) -> None:
         """
         Initialize the app agent processor.
         :param agent: The app agent who executes the processor.
         :param context: The context of the session.
+        :param scaler: The resize scaler for the screenshot.
         """
 
         super().__init__(agent=agent, context=context)
@@ -98,6 +104,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         self.screenshot_save_path = None
         self.width = None
         self.height = None
+        self.scaler = scaler
 
         # If there is not a host agent to decompose the subtask, the subtask is set to the user request.
         if not self.host_agent:
@@ -123,7 +130,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         )
 
         screenshot: Image = self.photographer.capture_app_window_screenshot(
-            self.application_window, save_path=screenshot_save_path
+            self.application_window, save_path=screenshot_save_path, scalar=self.scaler
         )
         self.width, self.height = screenshot.size
 
@@ -227,6 +234,9 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
 
         self._operation = action_dict.get("type", "")
         self._args = {k: v for k, v in action_dict.items() if k != "type"}
+
+        if self.scaler is not None:
+            self._args["scaler"] = self.scaler
 
         self.agent.response_id = self._response.get("id", "")
 

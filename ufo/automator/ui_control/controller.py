@@ -108,6 +108,8 @@ class ControlReceiver(ReceiverBasic):
         # Get the absolute coordinates of the application window.
         tranformed_x, tranformed_y = self.transform_point(x, y)
 
+        print(f"Clicking on {tranformed_x}, {tranformed_y}")
+
         self.application.set_focus()
 
         pyautogui.click(
@@ -745,6 +747,8 @@ class ClickCommand(ControlCommand):
         y = int(self.params.get("y", 0))
 
         new_x, new_y = self.receiver.transfrom_absolute_point(x, y)
+
+        print(f"Clicking on {new_x}, {new_y}")
 
         button = self.params.get("button", "left")
         button = "middle" if button == "wheel" else button

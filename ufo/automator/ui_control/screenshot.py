@@ -33,6 +33,30 @@ class Photographer(ABC):
     def capture(self):
         pass
 
+    @staticmethod
+    def rescale_image(image: Image.Image, scaler: List[int, int]) -> Image.Image:
+        """
+        Rescale an image.
+        :param image: The image to rescale.
+        :param scale: The scale factor.
+        :return: The rescaled image.
+        """
+
+        raw_width, raw_height = image.size
+        scale_ratio = min(scaler[0] / raw_width, scaler[1] / raw_height)
+        new_width = int(raw_width * scale_ratio)
+        new_height = int(raw_height * scale_ratio)
+
+        resized_image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+
+        new_image = Image.new("RGB", scaler, (0, 0, 0))
+        new_image.paste(
+            resized_image,
+            (0, 0),
+        )
+
+        return new_image
+
 
 class ControlPhotographer(Photographer):
     """
@@ -46,13 +70,16 @@ class ControlPhotographer(Photographer):
         """
         self.control = control
 
-    def capture(self, save_path: str = None):
+    def capture(self, save_path: str = None, scalar: List[int, int] = None):
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
         :return: The screenshot."""
         # Capture single window screenshot
         screenshot = self.control.capture_as_image()
+        if scalar is not None:
+            screenshot = self.rescale_image(screenshot, scalar)
+
         if save_path is not None and screenshot is not None:
             screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
         return screenshot
@@ -70,13 +97,15 @@ class DesktopPhotographer(Photographer):
         """
         self.all_screens = all_screens
 
-    def capture(self, save_path: str = None):
+    def capture(self, save_path: str = None, scalar: List[int, int] = None):
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
         :return: The screenshot.
         """
         screenshot = ImageGrab.grab(all_screens=self.all_screens)
+        if scalar is not None:
+            screenshot = self.rescale_image(screenshot, scalar)
         if save_path is not None and screenshot is not None:
             screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
         return screenshot
@@ -485,14 +514,18 @@ class PhotographerFacade:
     def __init__(self):
         pass
 
-    def capture_app_window_screenshot(self, control: UIAWrapper, save_path=None):
+    def capture_app_window_screenshot(
+        self, control: UIAWrapper, save_path=None, scalar: List[int, int] = None
+    ):
         """
         Capture the control screenshot.
         :param control: The control item to capture.
+        :param save_path: The path to save the screenshot.
+        :pram scalar: The scale factor.
         :return: The screenshot.
         """
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
-        return screenshot.capture(save_path)
+        return screenshot.capture(save_path, scalar)
 
     def capture_desktop_screen_screenshot(self, all_screens=True, save_path=None):
         """
