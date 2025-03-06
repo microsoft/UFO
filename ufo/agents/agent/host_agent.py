@@ -80,7 +80,7 @@ class HostAgent(BasicAgent):
         self.appagent_dict = {}
         self._active_appagent = None
         self._blackboard = Blackboard()
-        self.set_state(ContinueHostAgentState())
+        self.set_state(self.default_state)
         self.Puppeteer = self.create_puppeteer_interface()
 
     def get_prompter(
@@ -364,3 +364,10 @@ class HostAgent(BasicAgent):
         Get the status manager.
         """
         return HostAgentStatus
+
+    @property
+    def default_state(self) -> ContinueHostAgentState:
+        """
+        Get the default state.
+        """
+        return ContinueHostAgentState()

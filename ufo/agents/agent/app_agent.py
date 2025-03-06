@@ -16,6 +16,7 @@ from ufo.agents.processors.app_agent_action_seq_processor import (
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
+from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
 from ufo.automator import puppeteer
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.automator.ui_control.grounding.omniparser import OmniparserGrounding
@@ -80,7 +81,7 @@ class AppAgent(BasicAgent):
         else:
             self.grounding_service: Optional[BasicGrounding] = None
 
-        self.set_state(ContinueAppAgentState())
+        self.set_state(self.default_state)
 
     def get_prompter(
         self,
@@ -483,6 +484,13 @@ class AppAgent(BasicAgent):
             db_path = os.path.join(demonstration_path, "demonstration_db")
             self.build_human_demonstration_retriever(db_path)
 
+    @property
+    def default_state(self) -> ContinueAppAgentState:
+        """
+        Get the default state.
+        """
+        return ContinueAppAgentState()
+
 
 class OpenAIOperatorAgent(AppAgent):
     """
@@ -513,6 +521,8 @@ class OpenAIOperatorAgent(AppAgent):
         self._response_id = None
 
         self._message = ""
+
+        self.set_state(self.default_state)
 
     def process(self, context: Context) -> None:
         """
@@ -573,6 +583,13 @@ class OpenAIOperatorAgent(AppAgent):
                 "tools": tools,
                 "previous_response_id": response_id,
             }
+
+    @property
+    def default_state(self) -> ContinueOpenAIOperatorState:
+        """
+        Get the default state.
+        """
+        return ContinueOpenAIOperatorState()
 
     @property
     def blackboard(self) -> Blackboard:

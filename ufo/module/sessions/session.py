@@ -220,7 +220,7 @@ class Session(BaseSession):
         if self.is_finished():
             return None
 
-        self._host_agent.set_state(ContinueHostAgentState())
+        self._host_agent.set_state(self._host_agent.default_state)
 
         round = BaseRound(
             request=request,
