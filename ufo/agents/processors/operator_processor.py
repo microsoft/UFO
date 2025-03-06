@@ -180,6 +180,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             image=self._image_url,
             host_message=self.host_message,
             response_id=self.agent.response_id,
+            previous_computer_id=self.agent.previous_computer_id,
             is_first_step=is_first_step,
         )
 
@@ -205,7 +206,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         Get the response from the LLM.
         """
 
-        print(f"Prompt message: {self._prompt_message}")
+        # print(f"Prompt message: {self._prompt_message}")
         self._response, self.cost = self.app_agent.get_response(
             self._prompt_message, "OPERATOR", use_backup_engine=False
         )
@@ -220,12 +221,20 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
 
         self.agent: "OpenAIOperatorAgent"
 
-        self._response_json: Dict[str, Any] = self._response
+        self._response_json: Dict[str, Any] = self._response.get("output", {})[0]
 
         action_dict = self._response_json.get("action", {})
 
         self._operation = action_dict.get("type", "")
         self._args = {k: v for k, v in action_dict.items() if k != "type"}
+
+        self.agent.response_id = self._response.get("id", "")
+
+        self.agent.previous_computer_id = (
+            self._response_json["call_id"]
+            if "call_id" in self._response_json
+            else self._response_json.get("id", "")
+        )
 
         output_type = self._response_json.get("type", "")
 

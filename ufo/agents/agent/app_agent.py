@@ -520,6 +520,7 @@ class OpenAIOperatorAgent(AppAgent):
         self.Puppeteer = self.create_puppeteer_interface()
         self._blackboard = Blackboard()
         self._response_id = None
+        self._previous_computer_id = None
 
         self._message = ""
 
@@ -550,6 +551,7 @@ class OpenAIOperatorAgent(AppAgent):
         image: str,
         tools: List[Dict[str, str]],
         response_id: str,
+        previous_computer_id: str,
         host_message: List[str],
         is_first_step: bool,
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
@@ -572,7 +574,7 @@ class OpenAIOperatorAgent(AppAgent):
             inputs = [
                 {
                     "type": "computer_call_output",
-                    "call_id": response_id,
+                    "call_id": previous_computer_id,
                     "output": {
                         "type": "input_image",
                         "image_url": image,
@@ -641,6 +643,21 @@ class OpenAIOperatorAgent(AppAgent):
         :param response_id: The response id.
         """
         self._response_id = response_id
+
+    @property
+    def previous_computer_id(self) -> Optional[str]:
+        """
+        Get the previous computer id.
+        """
+        return self._previous_computer_id
+
+    @previous_computer_id.setter
+    def previous_computer_id(self, computer_id: str) -> None:
+        """
+        Set the previous computer id.
+        :param computer_id: The computer id.
+        """
+        self._previous_computer_id = computer_id
 
     @property
     def message(self) -> str:

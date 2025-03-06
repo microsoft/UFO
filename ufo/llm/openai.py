@@ -425,9 +425,28 @@ class OpenAIBetaClient:
 
         req = urllib.request.Request(url, data=data, headers=headers, method="POST")
 
-        with urllib.request.urlopen(req) as response:
-            content = response.read().decode("utf-8")
-            return json.loads(content)
+        try:
+            with urllib.request.urlopen(req, timeout=20) as response:
+                print("Response:", response)
+                content = response.read().decode("utf-8")
+                print("Content:", content)
+                return json.loads(content)
+        except urllib.error.HTTPError as e:
+            self._handle_exception(e)
+
+        return None
+
+    def _handle_exception(self, exception: urllib.error.HTTPError) -> None:
+        """
+        Handle an exception from the OpenAI API.
+        :param exception: The exception from the OpenAI API.
+        """
+        print(exception)
+        body = json.loads(exception.file.read().decode("utf-8"))
+        request_id = exception.headers.get("x-request-id")
+        raise OpenAIError(
+            request_id=request_id, status_code=exception.code, message=body
+        )
 
     @staticmethod
     def compact(data: Json) -> Json:
@@ -499,7 +518,8 @@ class OperatorServicePreview(BaseService):
                     top_p=self.config.get("TOP_P", 0),
                     token_provider=self.get_token_provider(),
                 )
-                output = response.get("output", {})
+                print("Received response from Operator API.")
+
                 usage = response.get("usage", {})
                 input_tokens = usage.get("input_tokens", 0)
                 output_tokens = usage.get("output_tokens", 0)
@@ -512,12 +532,11 @@ class OperatorServicePreview(BaseService):
                     output_tokens,
                 )
 
-                return output, cost
+                return [response], cost
 
             except Exception as e:
-                self._handle_exception(e)
                 retry += 1
-                time.sleep(10)
+                time.sleep(5)
 
     def get_token_provider(self):
         """
@@ -533,17 +552,6 @@ class OperatorServicePreview(BaseService):
         identity = AzureCliCredential(tenant_id=tenant_id)
         bearer_provider = get_bearer_token_provider(identity, scope)
         return bearer_provider
-
-    def _handle_exception(self, exception: urllib.error.HTTPError) -> None:
-        """
-        Handle an exception from the OpenAI API.
-        :param exception: The exception from the OpenAI API.
-        """
-        body = json.loads(exception.file.read().decode("utf-8"))
-        request_id = exception.headers.get("x-request-id")
-        raise OpenAIError(
-            request_id=request_id, status_code=exception.code, message=body
-        )
 
 
 class OpenAIError(Exception):
