@@ -427,9 +427,7 @@ class OpenAIBetaClient:
 
         try:
             with urllib.request.urlopen(req, timeout=20) as response:
-                print("Response:", response)
                 content = response.read().decode("utf-8")
-                print("Content:", content)
                 return json.loads(content)
         except urllib.error.HTTPError as e:
             self._handle_exception(e)
@@ -523,7 +521,6 @@ class OperatorServicePreview(BaseService):
                     top_p=self.config.get("TOP_P", 0),
                     token_provider=self.get_token_provider(),
                 )
-                print("Received response from Operator API.")
 
                 usage = response.get("usage", {})
                 input_tokens = usage.get("input_tokens", 0)

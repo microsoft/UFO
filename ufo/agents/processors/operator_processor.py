@@ -37,7 +37,7 @@ class OperatorAdditionalMemory(AppAgentAdditionalMemory):
     The additional memory data for the OperatorAgent.
     """
 
-    Message: str
+    Message: str = ""
 
 
 @dataclass
