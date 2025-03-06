@@ -32,31 +32,12 @@ if configs is not None:
 
 
 @dataclass
-class AppAgentAdditionalMemory:
+class OperatorAdditionalMemory(AppAgentAdditionalMemory):
     """
-    The additional memory data for the AppAgent.
+    The additional memory data for the OperatorAgent.
     """
 
-    Step: int
-    RoundStep: int
-    AgentStep: int
-    Round: int
-    Subtask: str
-    SubtaskIndex: int
-    FunctionCall: List[str]
-    Action: List[Dict[str, Any]]
-    ActionSuccess: List[Dict[str, Any]]
-    ActionType: List[str]
-    Request: str
-    Agent: str
-    AgentName: str
-    Application: str
-    Cost: float
-    Results: str
-    error: str
-    time_cost: Dict[str, float]
-    ControlLog: Dict[str, Any]
-    UserConfirm: Optional[str] = None
+    Message: str
 
 
 @dataclass
@@ -217,7 +198,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         self._response, self.cost = self.app_agent.get_response(
             self._prompt_message, "OPERATOR", use_backup_engine=False
         )
-        print(f"Response: {self._response}")
+        # print(f"Response: {self._response}")
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -258,12 +239,11 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
                 for content in self._response_json.get("content", []):
                     if content.get("type") == "output_text":
                         message += content.get("text", "")
-                self.agent.message = message
+
         else:
             self.status = self._agent_status_manager.CONTINUE.value
 
-        print("message: ", message, "output_type: ", output_type)
-
+        self.agent.message = message
         self.app_agent.print_response(response_dict=action_dict, message=message)
 
     @BaseProcessor.exception_capture
@@ -357,7 +337,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         )
 
         # Create the additional memory data for the log.
-        additional_memory = AppAgentAdditionalMemory(
+        additional_memory = OperatorAdditionalMemory(
             Step=self.session_step,
             RoundStep=self.round_step,
             AgentStep=self.app_agent.step,
@@ -379,6 +359,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             error=self._exeception_traceback,
             time_cost=self._time_cost,
             ControlLog=self.actions.get_control_logs(),
+            Message=self.agent.message,
             UserConfirm=(
                 "Yes"
                 if self.status.upper()
