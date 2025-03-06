@@ -4,10 +4,10 @@
 import json
 import os
 from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from PIL import Image
-from pywinauto.controls.uiawrapper import UIAWrapper
+
 
 from ufo import utils
 from ufo.agents.processors.actions import ActionSequence, OneStepAction
@@ -262,7 +262,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         )
 
         # Save the screenshot of the tagged selected control.
-        self.capture_control_screenshot(None)
+        # self.capture_control_screenshot(None)
 
         self.actions: ActionSequence = ActionSequence(actions=[action])
         self.actions.execute_all(
@@ -274,34 +274,6 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         if self.is_application_closed():
             utils.print_with_color("Warning: The application is closed.", "yellow")
             self.status = "FINISH"
-
-    def capture_control_screenshot(
-        self, control_selected: Union[UIAWrapper, List[UIAWrapper]]
-    ) -> None:
-        """
-        Capture the screenshot of the selected control.
-        :param control_selected: The selected control item or a list of selected control items.
-        """
-        control_screenshot_save_path = (
-            self.log_path + f"action_step{self.session_step}_selected_controls.png"
-        )
-
-        self._memory_data.add_values_from_dict(
-            {"SelectedControlScreenshot": control_screenshot_save_path}
-        )
-
-        sub_control_list = (
-            control_selected
-            if isinstance(control_selected, list)
-            else [control_selected]
-        )
-
-        self.photographer.capture_app_window_screenshot_with_rectangle(
-            self.application_window,
-            sub_control_list=sub_control_list,
-            save_path=control_screenshot_save_path,
-            background_screenshot_path=self.screenshot_save_path,
-        )
 
     def handle_screenshot_status(self) -> None:
         """
