@@ -585,6 +585,30 @@ class OpenAIOperatorAgent(AppAgent):
                 "previous_response_id": response_id,
             }
 
+    def print_response(self, response_dict: Dict[str, Any], message: str = "") -> None:
+        """
+        Print the response.
+        :param response_dict: The response dictionary to print.
+        :param message: The message to print.
+        :param print_action: The flag indicating whether to print the action.
+        """
+
+        if message:
+            utils.print_with_color(
+                "Agent message📝: {message}".format(message=message), "yellow"
+            )
+
+        function_call = response_dict.get("type", "")
+        args = utils.revise_line_breaks(
+            {k: v for k, v in response_dict.items() if k != "type"}
+        )
+
+        # Generate the function call string
+        action = self.Puppeteer.get_command_string(function_call, args)
+        utils.print_with_color(
+            "Action applied⚒️: {action}".format(action=action), "blue"
+        )
+
     @property
     def default_state(self) -> ContinueOpenAIOperatorState:
         """

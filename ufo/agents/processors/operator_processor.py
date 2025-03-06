@@ -8,19 +8,21 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
 
 from PIL import Image
 from pywinauto.controls.uiawrapper import UIAWrapper
+
 from ufo import utils
 from ufo.agents.processors.actions import ActionSequence, OneStepAction
-from ufo.agents.processors.basic import BaseProcessor
 from ufo.agents.processors.app_agent_processor import (
-    AppAgentProcessor,
     AppAgentAdditionalMemory,
+    AppAgentProcessor,
 )
+from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control import ui_tree
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import OpenAIOperatorAgent
+
 
 configs = Config.get_instance().config_data
 
@@ -216,6 +218,8 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         Parse the response.
         """
 
+        self.agent: "OpenAIOperatorAgent"
+
         self._response_json: Dict[str, Any] = self._response
 
         action_dict = self._response_json.get("action", {})
@@ -223,25 +227,25 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         self._operation = action_dict.get("type", "")
         self._args = {k: v for k, v in action_dict.items() if k != "type"}
 
-        output_type = self._response_json.get("output_type", "")
+        output_type = self._response_json.get("type", "")
+
+        message = ""
 
         if output_type != self.agent._continue_type:
             self.status = self._agent_status_manager.FINISH.value
 
             # Get the message from the Agent.
             if output_type == self.agent._message_type:
-                message = ""
                 for content in self._response_json.get("content", []):
                     if content.get("type") == "output_text":
-                        if content.get("type") == "output_text":
-                            message += content.get("text", "")
+                        message += content.get("text", "")
                 self.agent.message = message
         else:
             self.status = self._agent_status_manager.CONTINUE.value
 
-        self.app_agent.print_response(
-            response_dict=self._response_json, print_action=True
-        )
+        print("message: ", message, "output_type: ", output_type)
+
+        self.app_agent.print_response(response_dict=action_dict, message=message)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -264,7 +268,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         self.actions: ActionSequence = ActionSequence(actions=[action])
         self.actions.execute_all(
             puppeteer=self.app_agent.Puppeteer,
-            control_dict=self._annotation_dict,
+            control_dict={},
             application_window=self.application_window,
         )
 

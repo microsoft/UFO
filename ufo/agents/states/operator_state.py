@@ -36,6 +36,7 @@ class OpenAIOperatorStatus(Enum):
     CONTINUE = "CONTINUE"
     PENDING = "PENDING"
     CONFIRM = "CONFIRM"
+    ALLFINISH = "ALLFINISH"
 
 
 class OpenAIOperatorStateManager(AgentStateManager):
@@ -119,6 +120,35 @@ class OpenAIOperatorState(AgentState):
 
 
 @OpenAIOperatorStateManager.register
+class AllFinishOpenAIOperatorState(OpenAIOperatorState):
+    """
+    The class for the all finish app agent state.
+    """
+
+    def is_round_end(self) -> bool:
+        """
+        Check if the round ends.
+        :return: True if the round ends, False otherwise.
+        """
+        return True
+
+    def is_subtask_end(self) -> bool:
+        """
+        Check if the subtask ends.
+        :return: True if the subtask ends, False otherwise.
+        """
+        return True
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The class name of the state.
+        :return: The name of the state.
+        """
+        return OpenAIOperatorStatus.ALLFINISH.value
+
+
+@OpenAIOperatorStateManager.register
 class FinishOpenAIOperatorState(OpenAIOperatorState):
     """
     The class for the finish app agent state.
@@ -140,7 +170,7 @@ class FinishOpenAIOperatorState(OpenAIOperatorState):
         :param agent: The agent for the current step.
         :return: The agent for the next step.
         """
-        return agent.host
+        return agent.host if agent.host else agent
 
     def next_state(self, agent: "OpenAIOperatorAgent") -> HostAgentState:
         """
@@ -149,10 +179,12 @@ class FinishOpenAIOperatorState(OpenAIOperatorState):
         :return: The state for the next step.
         """
 
+        from ufo.agents.agent.host_agent import HostAgent
+
         if type(agent.host) == HostAgent:
             return ContinueHostAgentState()
         else:
-            return FinishHostAgentState()
+            return AllFinishOpenAIOperatorState()
 
     def is_subtask_end(self) -> bool:
         """
