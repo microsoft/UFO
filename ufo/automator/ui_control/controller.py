@@ -399,6 +399,31 @@ class ControlReceiver(ReceiverBasic):
 
         return fraction_x, fraction_y
 
+    def transform_scaled_point_to_raw(
+        self,
+        scaled_x: int,
+        scaled_y: int,
+        scaled_width: int,
+        scaled_height: int,
+        raw_width: int,
+        raw_height: int,
+    ) -> Tuple[int, int]:
+        """
+        Transform the scaled coordinates to the raw coordinates.
+        :param scaled_x: The scaled x coordinate.
+        :param scaled_y: The scaled y coordinate.
+        :param raw_width: The raw width of the application window.
+        :param raw_height: The raw height of the application window.
+        :param scaled_width: The scaled width of the application window.
+        :param scaled_height: The scaled height of the application window.
+        """
+
+        ratio = min(scaled_width / raw_width, scaled_height / raw_height)
+        raw_x = scaled_x / ratio
+        raw_y = scaled_y / ratio
+
+        return int(raw_x), int(raw_y)
+
 
 @ReceiverManager.register
 class UIControlReceiverFactory(ReceiverFactory):
@@ -746,6 +771,16 @@ class ClickCommand(ControlCommand):
         x = int(self.params.get("x", 0))
         y = int(self.params.get("y", 0))
 
+        if self.params.get("scaler", None) and self.receiver.application:
+            scaled_width = self.params["scaler"][0]
+            scaled_height = self.params["scaler"][1]
+            raw_width = self.receiver.application.rectangle().width()
+            raw_height = self.receiver.application.rectangle().height()
+
+            x, y = self.receiver.transform_scaled_point_to_raw(
+                x, y, scaled_width, scaled_height, raw_width, raw_height
+            )
+
         new_x, new_y = self.receiver.transfrom_absolute_point(x, y)
 
         print(f"Clicking on {new_x}, {new_y}")
@@ -782,6 +817,16 @@ class DoubleClickCommand(ControlCommand):
         x = int(self.params.get("x", 0))
         y = int(self.params.get("y", 0))
 
+        if self.params.get("scaler", None) and self.receiver.application:
+            scaled_width = self.params["scaler"][0]
+            scaled_height = self.params["scaler"][1]
+            raw_width = self.receiver.application.rectangle().width()
+            raw_height = self.receiver.application.rectangle().height()
+
+            x, y = self.receiver.transform_scaled_point_to_raw(
+                x, y, scaled_width, scaled_height, raw_width, raw_height
+            )
+
         new_x, new_y = self.receiver.transfrom_absolute_point(x, y)
 
         button = self.params.get("button", "left")
@@ -817,6 +862,20 @@ class DragCommand(ControlCommand):
         for i in range(len(path)):
             start_x, start_y = path[i]
             end_x, end_y = path[i + 1] if i + 1 < len(path) else path[i]
+
+            if self.params.get("scaler", None) and self.receiver.application:
+                scaled_width = self.params["scaler"][0]
+                scaled_height = self.params["scaler"][1]
+                raw_width = self.receiver.application.rectangle().width()
+                raw_height = self.receiver.application.rectangle().height()
+
+                start_x, start_y = self.receiver.transform_scaled_point_to_raw(
+                    start_x, start_y, scaled_width, scaled_height, raw_width, raw_height
+                )
+
+                end_x, end_y = self.receiver.transform_scaled_point_to_raw(
+                    end_x, end_y, scaled_width, scaled_height, raw_width, raw_height
+                )
 
             new_start_x, new_start_y = self.receiver.transfrom_absolute_point(
                 start_x, start_y
@@ -881,6 +940,16 @@ class MouseMoveCommand(ControlCommand):
         x = int(self.params.get("x", 0))
         y = int(self.params.get("y", 0))
 
+        if self.params.get("scaler", None) and self.receiver.application:
+            scaled_width = self.params["scaler"][0]
+            scaled_height = self.params["scaler"][1]
+            raw_width = self.receiver.application.rectangle().width()
+            raw_height = self.receiver.application.rectangle().height()
+
+            x, y = self.receiver.transform_scaled_point_to_raw(
+                x, y, scaled_width, scaled_height, raw_width, raw_height
+            )
+
         new_x, new_y = self.receiver.transfrom_absolute_point(x, y)
 
         params = {"x": new_x, "y": new_y}
@@ -911,6 +980,16 @@ class ScrollCommand(ControlCommand):
         # Get the absolute coordinates of the application window.
         x = int(self.params.get("x", 0))
         y = int(self.params.get("y", 0))
+
+        if self.params.get("scaler", None) and self.receiver.application:
+            scaled_width = self.params["scaler"][0]
+            scaled_height = self.params["scaler"][1]
+            raw_width = self.receiver.application.rectangle().width()
+            raw_height = self.receiver.application.rectangle().height()
+
+            x, y = self.receiver.transform_scaled_point_to_raw(
+                x, y, scaled_width, scaled_height, raw_width, raw_height
+            )
 
         new_x, new_y = self.receiver.transfrom_absolute_point(x, y)
 

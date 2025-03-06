@@ -34,7 +34,7 @@ class Photographer(ABC):
         pass
 
     @staticmethod
-    def rescale_image(image: Image.Image, scaler: List[int, int]) -> Image.Image:
+    def rescale_image(image: Image.Image, scaler: List[int]) -> Image.Image:
         """
         Rescale an image.
         :param image: The image to rescale.
@@ -70,7 +70,7 @@ class ControlPhotographer(Photographer):
         """
         self.control = control
 
-    def capture(self, save_path: str = None, scalar: List[int, int] = None):
+    def capture(self, save_path: str = None, scalar: List[int] = None):
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
@@ -97,7 +97,7 @@ class DesktopPhotographer(Photographer):
         """
         self.all_screens = all_screens
 
-    def capture(self, save_path: str = None, scalar: List[int, int] = None):
+    def capture(self, save_path: str = None, scalar: List[int] = None):
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
@@ -515,7 +515,7 @@ class PhotographerFacade:
         pass
 
     def capture_app_window_screenshot(
-        self, control: UIAWrapper, save_path=None, scalar: List[int, int] = None
+        self, control: UIAWrapper, save_path=None, scalar: List[int] = None
     ):
         """
         Capture the control screenshot.
