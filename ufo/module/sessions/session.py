@@ -58,9 +58,11 @@ class SessionFactory:
                     FromFileSession(task, plan, configs.get("EVA_SESSION", False), id=0)
                 ]
         elif mode == "operator":
-            return OpenAIOperatorSession(
-                task, configs.get("EVA_SESSION", False), id=0, request=request
-            )
+            return [
+                OpenAIOperatorSession(
+                    task, configs.get("EVA_SESSION", False), id=0, request=request
+                )
+            ]
         else:
             raise ValueError(f"The {mode} mode is not supported.")
 
@@ -559,16 +561,6 @@ class OpenAIOperatorSession(Session):
 
         super().__init__(task, should_evaluate, id)
 
-        self._host_agent: OpenAIOperatorAgent = AgentFactory.create_agent(
-            "operator",
-            "OpenAIOperatorAgent",
-        )
-
-    def run(self) -> None:
-        """
-        Run the session.
-        """
-
         inspector = ControlInspectorFacade()
 
         self.application_window = inspector.desktop
@@ -582,6 +574,18 @@ class OpenAIOperatorSession(Session):
         self.context.set(
             ContextNames.APPLICATION_PROCESS_NAME, application_process_name
         )
+
+        self._host_agent: OpenAIOperatorAgent = AgentFactory.create_agent(
+            "operator",
+            name="OpenAIOperatorAgent",
+            process_name=application_process_name,
+            app_root_name=application_root_name,
+        )
+
+    def run(self) -> None:
+        """
+        Run the session.
+        """
 
         while not self.is_finished():
 
