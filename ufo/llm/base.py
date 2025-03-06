@@ -86,6 +86,8 @@ class BaseService(abc.ABC):
             name = str("gemini/" + model)
         elif api_type.lower() == "claude":
             name = str("claude/" + model)
+        else:
+            name = model
 
         if name in prices:
             cost = (

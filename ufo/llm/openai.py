@@ -388,6 +388,9 @@ class OpenAIBetaClient:
             "Content-Type": "application/json",
             "x-ms-enable-preview": "true",
             "api-key": api_key,
+            "x-ms-enable-preview": "true",
+            "Authorization": f"Bearer {api_key}",  # OpenAI
+            "OpenAI-Beta": "responses=v1",  # OpenAI
         }
 
         return self.post_request(
@@ -416,15 +419,15 @@ class OpenAIBetaClient:
         :return: The response from the API.
         """
 
+        headers = {**headers, "content-type": "application/json"}
+
         data = json.dumps(self.compact(data)).encode("utf-8")
+
         req = urllib.request.Request(url, data=data, headers=headers, method="POST")
 
-        try:
-            with urllib.request.urlopen(req) as response:
-                content = response.read().decode("utf-8")
-                return json.loads(content)
-        except urllib.error.HTTPError as exception:
-            self._handle_exception(exception)
+        with urllib.request.urlopen(req) as response:
+            content = response.read().decode("utf-8")
+            return json.loads(content)
 
     @staticmethod
     def compact(data: Json) -> Json:
@@ -523,9 +526,6 @@ class OperatorServicePreview(BaseService):
         """
 
         from azure.identity import AzureCliCredential, get_bearer_token_provider
-
-        tenant_id = "72f988bf-86f1-41af-91ab-2d7cd011db47"
-        scope = "https://cognitiveservices.azure.com/.default"
 
         tenant_id = self.config_llm.get("AAD_TENANT_ID", "")
         scope = self.config_llm.get("AAD_API_SCOPE", "")

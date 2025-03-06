@@ -14,7 +14,6 @@ from ufo.agents.processors.basic import BaseProcessor
 from ufo.agents.processors.app_agent_processor import (
     AppAgentProcessor,
     AppAgentAdditionalMemory,
-    AppAgentRequestLog,
 )
 from ufo.automator.ui_control import ui_tree
 from ufo.config.config import Config
@@ -97,6 +96,10 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         self.screenshot_save_path = None
         self.width = None
         self.height = None
+
+        # If there is not a host agent to decompose the subtask, the subtask is set to the user request.
+        if not self.host_agent:
+            self.subtask = self.request
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
