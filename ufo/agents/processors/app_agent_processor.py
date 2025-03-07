@@ -427,6 +427,8 @@ class AppAgentProcessor(BaseProcessor):
             configs.get("RAG_ONLINE_RETRIEVED_TOPK", 0),
         )
 
+        # print(offline_docs, online_docs)
+
         external_knowledge_prompt = offline_docs + online_docs
 
         if not self.app_agent.blackboard.is_empty():

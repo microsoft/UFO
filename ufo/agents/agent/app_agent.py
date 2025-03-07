@@ -265,7 +265,7 @@ class AppAgent(BasicAgent):
                 filter=None,
             )
 
-            format_string = "Question: {question}\nStep: {answer}\n"
+            format_string = "[Similar Requests]: {question}\nStep: {answer}\n"
 
             offline_docs_prompt = self.prompter.retrived_documents_prompt_helper(
                 "[Help Documents]",
