@@ -3,8 +3,9 @@
 import os
 from typing import List
 
+from azure.core.paging import ItemPaged
 from azure.identity import DefaultAzureCredential, AzureCliCredential
-from azure.storage.blob import BlobServiceClient
+from azure.storage.blob import BlobServiceClient, BlobProperties
 from tqdm import tqdm
 
 from ufo.config.config import Config
@@ -31,7 +32,7 @@ class AzureBlobStorage:
         if not self.container_client.exists():
             utils.print_with_color(f"Container {self.container_name} not exist in blob {self.account_url}", "red")
 
-    def list_blobs(self, prefix: str = None) -> List:
+    def list_blobs(self, prefix: str = None) -> ItemPaged[BlobProperties]:
         """
         List blobs in the container
         :return:
@@ -92,9 +93,10 @@ class AzureBlobStorage:
             blob_client.delete_blob()
         utils.print_with_color(f"Delete {folder_name} in {self.account_url}/{self.container_name}", "green")
 
-    def upload_folder(self, log_path: str, data_source: str = "", blob_prefix: str = "", overwrite: bool = True) -> None:
+    def upload_folder(self, log_path: str, data_source: str = "", blob_prefix: str = "", overwrite: bool = True, retry: int = 0) -> None:
         """
         Upload folder to Azure Blob Storage
+        :param retry: retry count
         :param log_path: relative path of folder
         :param data_source: data source
         :param blob_prefix: prefix of blob
@@ -106,16 +108,28 @@ class AzureBlobStorage:
         if log_prefix == "":
             log_prefix = os.path.join(data_source, log_path).replace("\\", "/")
 
-        total_files = sum([len(files) for _, _, files in os.walk(absolute_log_path)])
-        with tqdm(total=total_files, desc=f"upload {log_prefix}") as pbar:
-            for root, dirs, files in os.walk(absolute_log_path):
-                for file in files:
-                    log_file_path = os.path.join(root, file)
-                    blob_name = os.path.join(log_prefix, os.path.relpath(log_file_path, absolute_log_path)).replace(
-                        "\\", "/")
-                    self.upload_file(blob_name, log_file_path, overwrite)
-                    pbar.update(1)
-        utils.print_with_color(f"Upload log: {log_path} --> {log_prefix}", "green")
+        try:
+            # If log_prefix exist
+            if list(self.list_blobs(log_prefix)):
+                if overwrite is False:
+                    return
+                else:
+                    # clear old folder
+                    self.delete_folder(log_prefix)
+
+            total_files = sum([len(files) for _, _, files in os.walk(absolute_log_path)])
+            with tqdm(total=total_files, desc=f"upload {log_prefix}") as pbar:
+                for root, dirs, files in os.walk(absolute_log_path):
+                    for file in files:
+                        log_file_path = os.path.join(root, file)
+                        blob_name = os.path.join(log_prefix, os.path.relpath(log_file_path, absolute_log_path)).replace(
+                            "\\", "/")
+                        self.upload_file(blob_name, log_file_path, overwrite)
+                        pbar.update(1)
+            utils.print_with_color(f"Upload log: {log_path} --> {log_prefix}", "green")
+        except Exception as e:
+            utils.print_with_color(f"Upload log: {log_path} --> {log_prefix} failed: {e}\n Retry {retry}", "red")
+            self.upload_folder(log_path, data_source, blob_prefix, overwrite, retry + 1)
 
     def download_folder(self, folder_prefix: str, output_folder: str) -> None:
         """
