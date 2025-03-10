@@ -643,6 +643,41 @@ class PhotographerFacade:
         )
         return screenshot.capture(save_path)
 
+    def capture_app_window_screenshot_with_point_from_path(
+        self,
+        point_list: List[Tuple[int]],
+        background_screenshot_path: Optional[str] = None,
+        save_path: Optional[str] = None,
+        color: str = "red",
+        point_radius: int = 5,
+    ) -> Image.Image:
+        """
+        Capture the control screenshot with a rectangle.
+        :param point_list: The list of the points to draw on the screenshot.
+        :param background_screenshot_path: The path of the background screenshot, optional. If provided, the rectangle will be drawn on the background screenshot instead of the control screenshot.
+        :param save_path: The path to save the screenshot.
+        :return: The screenshot.
+        """
+        if not os.path.exists(background_screenshot_path):
+            return None
+
+        screenshot = Image.open(background_screenshot_path)
+        draw = ImageDraw.Draw(screenshot)
+        for point in point_list:
+            draw.ellipse(
+                (
+                    point[0] - point_radius,
+                    point[1] - point_radius,
+                    point[0] + point_radius,
+                    point[1] + point_radius,
+                ),
+                fill=color,
+            )
+
+        if save_path is not None and screenshot is not None:
+            screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
+        return screenshot
+
     def get_annotation_dict(
         self,
         control: UIAWrapper,

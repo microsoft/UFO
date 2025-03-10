@@ -573,7 +573,9 @@ class OpenAIOperatorAgent(AppAgent):
         subtask_request = f"Please complete the following subtask: {subtask}"
 
         if host_message:
-            tips_template = "Here are some tips for you to complete the task: {tips}"
+            tips_template = (
+                "Here are some tips for you to complete the task:\n - {tips}"
+            )
             tips = tips_template.format(tips="\n- ".join(host_message))
             subtask_request += "\n" + tips
 

@@ -4,10 +4,9 @@
 import json
 import os
 from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
 from PIL import Image
-
 
 from ufo import utils
 from ufo.agents.processors.actions import ActionSequence, OneStepAction
@@ -261,8 +260,10 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             after_status=self.status,
         )
 
+        point_list = action.get_operation_point_list()
+
         # Save the screenshot of the tagged selected control.
-        # self.capture_control_screenshot(None)
+        self.capture_control_screenshot(point_list)
 
         self.actions: ActionSequence = ActionSequence(actions=[action])
         self.actions.execute_all(
@@ -275,17 +276,25 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             utils.print_with_color("Warning: The application is closed.", "yellow")
             self.status = "FINISH"
 
-    def handle_screenshot_status(self) -> None:
+    def capture_control_screenshot(
+        self, point_list: Optional[List[Tuple[int]]]
+    ) -> None:
         """
-        Handle the screenshot status when the annotation is overlapped and the agent is unable to select the control items.
+        Capture the screenshot of the selected control.
+        :param control_selected: The selected control item or a list of selected control items.
         """
-
-        utils.print_with_color(
-            "Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.",
-            "magenta",
+        control_screenshot_save_path = (
+            self.log_path + f"action_step{self.session_step}_selected_controls.png"
         )
-        self.control_reannotate = self.app_agent.Puppeteer.execute_command(
-            "annotation", self._args, self._annotation_dict
+
+        self._memory_data.add_values_from_dict(
+            {"SelectedControlScreenshot": control_screenshot_save_path}
+        )
+
+        self.photographer.capture_app_window_screenshot_with_point_from_path(
+            point_list=point_list,
+            save_path=control_screenshot_save_path,
+            background_screenshot_path=self.screenshot_save_path,
         )
 
     def sync_memory(self):
