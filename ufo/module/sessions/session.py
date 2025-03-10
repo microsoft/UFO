@@ -559,7 +559,7 @@ class OpenAIOperatorSession(Session):
         :param request: The user request of the session, optional. If not provided, UFO will ask the user to input the request.
         """
 
-        super().__init__(task, should_evaluate, id)
+        super().__init__(task, should_evaluate, id, request)
 
         inspector = ControlInspectorFacade()
 
