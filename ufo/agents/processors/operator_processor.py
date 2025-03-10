@@ -37,7 +37,7 @@ class OperatorAdditionalMemory(AppAgentAdditionalMemory):
     The additional memory data for the OperatorAgent.
     """
 
-    Message: str = ""
+    Comment: str = ""
 
 
 @dataclass
@@ -331,7 +331,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             error=self._exeception_traceback,
             time_cost=self._time_cost,
             ControlLog=self.actions.get_control_logs(),
-            Message=self.agent.message,
+            Comment=self.agent.message,
             UserConfirm=(
                 "Yes"
                 if self.status.upper()

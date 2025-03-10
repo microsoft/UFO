@@ -212,7 +212,6 @@ class AssignHostAgentState(HostAgentState):
 
             return ContinueOpenAIOperatorState()
         else:
-            print("App Agent")
             from ufo.agents.states.app_agent_state import ContinueAppAgentState
 
             return ContinueAppAgentState()
