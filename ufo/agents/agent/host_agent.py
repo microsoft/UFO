@@ -240,7 +240,7 @@ class HostAgent(BasicAgent):
         else:
             example_prompt = configs["APPAGENT_EXAMPLE_PROMPT"]
 
-        if mode == "normal" or "batch_normal":
+        if mode in ["normal", "batch_normal"]:
 
             agent_name = (
                 "AppAgent/{root}/{process}".format(
