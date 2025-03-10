@@ -570,8 +570,15 @@ class OpenAIOperatorAgent(AppAgent):
         :return: The prompt message.
         """
 
+        subtask_request = f"Please complete the following subtask: {subtask}"
+
+        if host_message:
+            tips_template = "Here are some tips for you to complete the task: {tips}"
+            tips = tips_template.format(tips="\n- ".join(host_message))
+            subtask_request += "\n" + tips
+
         if is_first_step:
-            return {"inputs": subtask, "tools": tools}
+            return {"inputs": subtask_request, "tools": tools}
 
         else:
             inputs = [

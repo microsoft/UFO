@@ -106,10 +106,10 @@ class HostAgent(BasicAgent):
         agent_name: str,
         process_name: str,
         app_root_name: str,
-        is_visual: bool,
-        main_prompt: str,
-        example_prompt: str,
-        api_prompt: str,
+        # is_visual: bool,
+        # main_prompt: str,
+        # example_prompt: str,
+        # api_prompt: str,
         *args,
         **kwargs,
     ) -> BasicAgent:
@@ -130,10 +130,10 @@ class HostAgent(BasicAgent):
             agent_name,
             process_name,
             app_root_name,
-            is_visual,
-            main_prompt,
-            example_prompt,
-            api_prompt,
+            # is_visual,
+            # main_prompt,
+            # example_prompt,
+            # api_prompt,
             *args,
             **kwargs,
         )
@@ -242,7 +242,7 @@ class HostAgent(BasicAgent):
         else:
             example_prompt = configs["APPAGENT_EXAMPLE_PROMPT"]
 
-        if mode == "normal" or "batch_normal":
+        if mode in ["normal", "batch_normal"]:
 
             agent_name = (
                 "AppAgent/{root}/{process}".format(
@@ -263,6 +263,25 @@ class HostAgent(BasicAgent):
                 main_prompt=configs["APPAGENT_PROMPT"],
                 example_prompt=example_prompt,
                 api_prompt=configs["API_PROMPT"],
+            )
+
+        elif mode in ["normal_operator", "batch_normal_operator"]:
+
+            agent_name = (
+                "OpenAIOperator/{root}/{process}".format(
+                    root=application_root_name, process=application_window_name
+                )
+                if mode == "normal_operator"
+                else "BatchOpenAIOperator/{root}/{process}".format(
+                    root=application_root_name, process=application_window_name
+                )
+            )
+
+            app_agent: OpenAIOperatorAgent = self.create_subagent(
+                "operator",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
             )
 
         elif mode == "follower":

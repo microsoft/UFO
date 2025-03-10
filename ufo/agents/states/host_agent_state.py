@@ -13,7 +13,7 @@ from ufo.module.context import Context, ContextNames
 configs = Config.get_instance().config_data
 
 if TYPE_CHECKING:
-    from ufo.agents.agent.app_agent import AppAgent
+    from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
     from ufo.agents.agent.host_agent import HostAgent
     from ufo.agents.states.app_agent_state import AppAgentState
 
@@ -198,14 +198,24 @@ class AssignHostAgentState(HostAgentState):
         :param agent: The current agent.
         :return: The state for the next step.
         """
-        
+
         # Transition to the app agent state.
         # Lazy import to avoid circular dependency.
 
-        from ufo.agents.states.app_agent_state import ContinueAppAgentState
+        next_agent = self.next_agent(agent)
 
-        return ContinueAppAgentState()
+        from ufo.agents.agent.app_agent import OpenAIOperatorAgent
 
+        if type(next_agent) == OpenAIOperatorAgent:
+
+            from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
+
+            return ContinueOpenAIOperatorState()
+        else:
+            print("App Agent")
+            from ufo.agents.states.app_agent_state import ContinueAppAgentState
+
+            return ContinueAppAgentState()
 
     def next_agent(self, agent: "HostAgent") -> AppAgent:
         """

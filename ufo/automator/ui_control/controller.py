@@ -108,7 +108,7 @@ class ControlReceiver(ReceiverBasic):
         # Get the absolute coordinates of the application window.
         tranformed_x, tranformed_y = self.transform_point(x, y)
 
-        print(f"Clicking on {tranformed_x}, {tranformed_y}")
+        # print(f"Clicking on {tranformed_x}, {tranformed_y}")
 
         self.application.set_focus()
 
@@ -380,7 +380,7 @@ class ControlReceiver(ReceiverBasic):
 
         return x, y
 
-    def transfrom_absolute_point(self, x: int, y: int) -> Tuple[int, int]:
+    def transfrom_absolute_point_to_fractional(self, x: int, y: int) -> Tuple[int, int]:
         """
         Transform the absolute coordinates to the relative coordinates.
         :param x: The absolute x coordinate on the application window.
@@ -388,14 +388,14 @@ class ControlReceiver(ReceiverBasic):
         :return: The relative coordinates fraction.
         """
         application_rect: RECT = self.application.rectangle()
-        application_x = application_rect.left
-        application_y = application_rect.top
+        # application_x = application_rect.left
+        # application_y = application_rect.top
 
         application_width = application_rect.width()
         application_height = application_rect.height()
 
-        fraction_x = (x - application_x) / application_width
-        fraction_y = (y - application_y) / application_height
+        fraction_x = x / application_width
+        fraction_y = y / application_height
 
         return fraction_x, fraction_y
 
@@ -781,9 +781,9 @@ class ClickCommand(ControlCommand):
                 x, y, scaled_width, scaled_height, raw_width, raw_height
             )
 
-        new_x, new_y = self.receiver.transfrom_absolute_point(x, y)
+        new_x, new_y = self.receiver.transfrom_absolute_point_to_fractional(x, y)
 
-        print(f"Clicking on {new_x}, {new_y}")
+        # print(f"Clicking on {new_x}, {new_y}")
 
         button = self.params.get("button", "left")
         button = "middle" if button == "wheel" else button
@@ -827,7 +827,7 @@ class DoubleClickCommand(ControlCommand):
                 x, y, scaled_width, scaled_height, raw_width, raw_height
             )
 
-        new_x, new_y = self.receiver.transfrom_absolute_point(x, y)
+        new_x, new_y = self.receiver.transfrom_absolute_point_to_fractional(x, y)
 
         button = self.params.get("button", "left")
         button = "middle" if button == "wheel" else button
@@ -877,11 +877,13 @@ class DragCommand(ControlCommand):
                     end_x, end_y, scaled_width, scaled_height, raw_width, raw_height
                 )
 
-            new_start_x, new_start_y = self.receiver.transfrom_absolute_point(
-                start_x, start_y
+            new_start_x, new_start_y = (
+                self.receiver.transfrom_absolute_point_to_fractional(start_x, start_y)
             )
 
-            new_end_x, new_end_y = self.receiver.transfrom_absolute_point(end_x, end_y)
+            new_end_x, new_end_y = self.receiver.transfrom_absolute_point_to_fractional(
+                end_x, end_y
+            )
 
             params = {
                 "start_x": new_start_x,
@@ -950,7 +952,7 @@ class MouseMoveCommand(ControlCommand):
                 x, y, scaled_width, scaled_height, raw_width, raw_height
             )
 
-        new_x, new_y = self.receiver.transfrom_absolute_point(x, y)
+        new_x, new_y = self.receiver.transfrom_absolute_point_to_fractional(x, y)
 
         params = {"x": new_x, "y": new_y}
 
@@ -991,7 +993,7 @@ class ScrollCommand(ControlCommand):
                 x, y, scaled_width, scaled_height, raw_width, raw_height
             )
 
-        new_x, new_y = self.receiver.transfrom_absolute_point(x, y)
+        new_x, new_y = self.receiver.transfrom_absolute_point_to_fractional(x, y)
 
         scroll_x = int(self.params.get("scroll_x", 0))
         scroll_y = int(self.params.get("scroll_y", 0))

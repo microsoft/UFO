@@ -38,9 +38,15 @@ class SessionFactory:
         :param mode: The mode of the task.
         :return: The created session.
         """
-        if mode == "normal":
+        if mode in ["normal", "normal_operator"]:
             return [
-                Session(task, configs.get("EVA_SESSION", False), id=0, request=request)
+                Session(
+                    task,
+                    configs.get("EVA_SESSION", False),
+                    id=0,
+                    request=request,
+                    mode=mode,
+                )
             ]
         elif mode == "follower":
             # If the plan is a folder, create a follower session for each plan file in the folder.
@@ -162,7 +168,12 @@ class Session(BaseSession):
     """
 
     def __init__(
-        self, task: str, should_evaluate: bool, id: int, request: str = ""
+        self,
+        task: str,
+        should_evaluate: bool,
+        id: int,
+        request: str = "",
+        mode: str = "normal",
     ) -> None:
         """
         Initialize a session.
@@ -170,8 +181,10 @@ class Session(BaseSession):
         :param should_evaluate: Whether to evaluate the session.
         :param id: The id of the session.
         :param request: The user request of the session, optional. If not provided, UFO will ask the user to input the request.
+        :param mode: The mode of the task.
         """
 
+        self._mode = mode
         super().__init__(task, should_evaluate, id)
 
         self._init_request = request
@@ -205,7 +218,7 @@ class Session(BaseSession):
         """
         super()._init_context()
 
-        self.context.set(ContextNames.MODE, "normal")
+        self.context.set(ContextNames.MODE, self._mode)
 
     def create_new_round(self) -> None:
         """
