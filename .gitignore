@@ -43,3 +43,7 @@ tasks_status.json
 datas
 _datas
 datasUFO
+
+
+# Ignore the logs
+windows_arena/Ufo-runningLogs.txt
