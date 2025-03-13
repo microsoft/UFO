@@ -310,7 +310,7 @@ class ControlReceiver(ReceiverBasic):
         """
 
         text = params.get("text", "")
-        pyautogui.write(text)
+        pyautogui.write(text, interval=0.1)
 
     def no_action(self):
         """
