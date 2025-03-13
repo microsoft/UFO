@@ -41,6 +41,7 @@ class AppAgent(BasicAgent):
         example_prompt: str,
         api_prompt: str,
         skip_prompter: bool = False,
+        mode: str = "normal",
     ) -> None:
         """
         Initialize the AppAgent.
@@ -52,6 +53,7 @@ class AppAgent(BasicAgent):
         :param example_prompt: The example prompt file path.
         :param api_prompt: The API prompt file path.
         :param skip_prompter: The flag indicating whether to skip the prompter initialization.
+        :param mode: The mode of the agent.
         """
         super().__init__(name=name)
         if not skip_prompter:
@@ -66,6 +68,7 @@ class AppAgent(BasicAgent):
         self.human_demonstration_retriever = None
 
         self.Puppeteer = self.create_puppeteer_interface()
+        self._mode = mode
 
         control_detection_backend = configs.get("CONTROL_BACKEND", ["uia"])
 
@@ -412,6 +415,13 @@ class AppAgent(BasicAgent):
         Get the status manager.
         """
         return AppAgentStatus
+
+    @property
+    def mode(self) -> str:
+        """
+        Get the mode of the session.
+        """
+        return self._mode
 
     def build_offline_docs_retriever(self) -> None:
         """
