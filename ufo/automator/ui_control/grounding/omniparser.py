@@ -3,6 +3,7 @@
 
 import json
 import os
+import ast
 from typing import Any, Dict, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -66,7 +67,12 @@ class OmniparserGrounding(BasicGrounding):
                 item = json.loads(item)
                 list_of_grounding_results.append(item)
             except json.JSONDecodeError:
-                pass
+                try:
+                    # the item string is a string converted from python's dict
+                    item = ast.literal_eval(item[item.index("{"):item.rindex("}") + 1])
+                    list_of_grounding_results.append(item)
+                except Exception:
+                    pass
 
         return list_of_grounding_results
 
