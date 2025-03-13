@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import os
+import openai
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ufo import utils
@@ -25,6 +26,7 @@ from ufo.llm.grounding_model.omniparser_service import OmniParser
 from ufo.module import interactor
 from ufo.module.context import Context
 from ufo.prompter.agent_prompter import AppAgentPrompter
+
 
 configs = Config.get_instance().config_data
 
@@ -523,6 +525,7 @@ class OpenAIOperatorAgent(AppAgent):
         self._previous_computer_id = None
 
         self._message = ""
+        self._pending_safety_checks = []
 
         self.set_state(self.default_state)
 
@@ -556,6 +559,7 @@ class OpenAIOperatorAgent(AppAgent):
         response_id: str,
         previous_computer_id: str,
         host_message: List[str],
+        acknowledged_safety_checks: List[str],
         is_first_step: bool,
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
@@ -583,21 +587,41 @@ class OpenAIOperatorAgent(AppAgent):
             return {"inputs": subtask_request, "tools": tools}
 
         else:
-            inputs = [
-                {
-                    "type": "computer_call_output",
-                    "call_id": previous_computer_id,
-                    "output": {
-                        "type": "input_image",
-                        "image_url": image,
-                    },
-                }
-            ]
+            output_message = (
+                openai.types.responses.response_input_param.ComputerCallOutputOutput(
+                    type="input_image",  # TODO
+                    image_url=image,
+                )
+            )
+
+            messages = openai.types.responses.response_input_param.ComputerCallOutput(
+                type="computer_call_output",
+                call_id=previous_computer_id,
+                output=output_message,
+                acknowledged_safety_checks=acknowledged_safety_checks,
+            )
+
             return {
-                "inputs": inputs,
+                "inputs": [messages],
                 "tools": tools,
                 "previous_response_id": response_id,
             }
+
+            # inputs = [
+            #     {
+            #         "type": "computer_call_output",
+            #         "call_id": previous_computer_id,
+            #         "output": {
+            #             "type": "input_image",
+            #             "image_url": image,
+            #         },
+            #     }
+            # ]
+            # return {
+            #     "inputs": inputs,
+            #     "tools": tools,
+            #     "previous_response_id": response_id,
+            # }
 
     def print_response(self, response_dict: Dict[str, Any], message: str = "") -> None:
         """
@@ -685,3 +709,18 @@ class OpenAIOperatorAgent(AppAgent):
         :param message: The message.
         """
         self._message = message
+
+    @property
+    def pending_safety_checks(self) -> List[str]:
+        """
+        Get the pending safety checks.
+        """
+        return self._pending_safety_checks
+
+    @pending_safety_checks.setter
+    def pending_safety_checks(self, safety_checks: List[str]) -> None:
+        """
+        Set the pending safety checks.
+        :param safety_checks: The safety checks.
+        """
+        self._pending_safety_checks = safety_checks

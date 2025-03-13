@@ -485,14 +485,70 @@ class OperatorServicePreview(BaseService):
         :return: The OpenAI client.
         """
 
-        client = OpenAIBetaClient(
-            endpoint=self.config_llm.get("API_BASE"),
-            api_version=self.config_llm.get("API_VERSION", ""),
+        # client = OpenAIBetaClient(
+        #     endpoint=self.config_llm.get("API_BASE"),
+        #     api_version=self.config_llm.get("API_VERSION", ""),
+        # )
+
+        token_provider = self.get_token_provider()
+        api_key = token_provider()
+
+        client = openai.AzureOpenAI(
+            azure_endpoint=self.config_llm.get("API_BASE"),
+            api_key=api_key,
+            max_retries=self.max_retry,
+            timeout=self.config.get("TIMEOUT", 20),
+            api_version=self.config_llm.get("API_VERSION"),
+            default_headers={"x-ms-enable-preview": "true"},
         )
 
         return client
 
     def chat_completion(
+        self,
+        message: Dict[str, Any] = None,
+        n: int = 1,
+    ) -> Tuple[Dict[str, Any], Optional[float]]:
+        """
+        Generates completions for a given conversation using the OpenAI Chat API.
+        :param message: The message to send to the API.
+        :param n: The number of completions to generate.
+        :return: A tuple containing a list of generated completions and the estimated cost.
+        """
+
+        inputs = message.get("inputs", [])
+        tools = message.get("tools", [])
+        previous_response_id = message.get("previous_response_id", None)
+
+        response = self.client.responses.create(
+            model=self.config_llm.get("API_MODEL"),
+            input=inputs,
+            tools=tools,
+            previous_response_id=previous_response_id,
+            temperature=self.config.get("TEMPERATURE", 0),
+            top_p=self.config.get("TOP_P", 0),
+            timeout=self.config.get("TIMEOUT", 20),
+        ).model_dump()
+
+        if "usage" in response:
+            usage = response.get("usage")
+            input_tokens = usage.get("input_tokens", 0)
+            output_tokens = usage.get("output_tokens", 0)
+        else:
+            input_tokens = 0
+            output_tokens = 0
+
+        cost = self.get_cost_estimator(
+            self.api_type,
+            self.api_model,
+            self.prices,
+            input_tokens,
+            output_tokens,
+        )
+
+        return [response], cost
+
+    def chat_completion2(
         self,
         message: Dict[str, Any] = None,
         n: int = 1,

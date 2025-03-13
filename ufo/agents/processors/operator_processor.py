@@ -52,6 +52,7 @@ class OpenAIOperatorRequestLog:
     host_message: List[str]
     prompt: Dict[str, Any]
     response_id: str
+    acknowledged_safety_checks: List[str]
     is_first_step: bool
 
 
@@ -168,6 +169,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             host_message=self.host_message,
             response_id=self.agent.response_id,
             previous_computer_id=self.agent.previous_computer_id,
+            acknowledged_safety_checks=self.agent.pending_safety_checks,
             is_first_step=is_first_step,
         )
 
@@ -179,6 +181,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             current_application=self.application_process_name,
             response_id=self.app_agent.response_id,
             is_first_step=is_first_step,
+            acknowledged_safety_checks=self.agent.pending_safety_checks,
             host_message=self.host_message,
             prompt=self._prompt_message,
         )
@@ -243,6 +246,9 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             self.status = self._agent_status_manager.CONTINUE.value
 
         self.agent.message = message
+        self.agent.pending_safety_checks = self._response_json.get(
+            "pending_safety_checks", []
+        )
         self.app_agent.print_response(response_dict=action_dict, message=message)
 
     @BaseProcessor.exception_capture
