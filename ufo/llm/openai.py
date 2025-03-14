@@ -2,14 +2,15 @@
 # Licensed under the MIT License.
 
 
+import functools
 import os
 import shutil
 import sys
-from typing import Any, Callable, Literal, Optional, List, Dict
+from typing import Any, Callable, Dict, List, Literal, Optional
 
 import openai
+from azure.identity import DefaultAzureCredential, get_bearer_token_provider
 from openai import AzureOpenAI, OpenAI
-import functools
 
 from ufo.llm.base import BaseService
 
@@ -163,13 +164,16 @@ class OpenAIService(BaseService):
                     api_key=api_key,
                 )
             else:
-                assert (
-                    aad_api_scope_base and aad_tenant_id
-                ), "AAD API scope base and tenant ID must be specified"
-                token_provider = OpenAIService.get_aad_token_provider(
-                    aad_api_scope_base=aad_api_scope_base,
-                    aad_tenant_id=aad_tenant_id,
-                )
+                if aad_api_scope_base and aad_tenant_id:
+                    token_provider = OpenAIService.get_aad_token_provider(
+                        aad_api_scope_base=aad_api_scope_base,
+                        aad_tenant_id=aad_tenant_id,
+                    )
+                else:
+                    token_provider = get_bearer_token_provider(
+                        DefaultAzureCredential(),
+                        "https://cognitiveservices.azure.com/.default",
+                    )
                 client = AzureOpenAI(
                     max_retries=max_retry,
                     timeout=timeout,
