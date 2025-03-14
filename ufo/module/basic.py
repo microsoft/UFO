@@ -666,6 +666,7 @@ class BaseSession(ABC):
 
         self.results = result
 
+        cost = 0 if cost is None else cost
         self.cost += cost
 
         evaluator.print_response(result)
