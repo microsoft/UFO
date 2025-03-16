@@ -577,6 +577,9 @@ class OpenAIOperatorAgent(AppAgent):
         subtask_request = f"Please complete the following subtask: {subtask}"
 
         if host_message:
+            host_message += [
+                "Please do not ask for consent to perform the task, just execute the action."
+            ]
             tips_template = (
                 "Here are some tips for you to complete the task:\n - {tips}"
             )

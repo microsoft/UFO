@@ -5,10 +5,10 @@ import time
 import warnings
 from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
-from pywinauto import keyboard
 
 import pyautogui
 import pywinauto
+from pywinauto import keyboard
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.win32structures import RECT
 
@@ -22,6 +22,8 @@ configs = Config.get_instance().config_data
 if configs is not None and configs.get("AFTER_CLICK_WAIT", None) is not None:
     pywinauto.timings.Timings.after_clickinput_wait = configs["AFTER_CLICK_WAIT"]
     pywinauto.timings.Timings.after_click_wait = configs["AFTER_CLICK_WAIT"]
+
+pyautogui.FAILSAFE = False
 
 
 class ControlReceiver(ReceiverBasic):
