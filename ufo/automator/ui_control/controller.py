@@ -284,9 +284,8 @@ class ControlReceiver(ReceiverBasic):
         scroll_x = int(params.get("scroll_x", 0))
         scroll_y = int(params.get("scroll_y", 0))
 
-        pyautogui.moveTo(new_x, new_y, duration=0.1)
-        pyautogui.vscroll(scroll_y)
-        pyautogui.hscroll(scroll_x)
+        pyautogui.vscroll(scroll_y, x=new_x, y=new_y)
+        pyautogui.hscroll(scroll_x, x=new_x, y=new_y)
 
     def mouse_move(self, params: Dict[str, str]) -> str:
         """
