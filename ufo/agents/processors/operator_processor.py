@@ -179,7 +179,6 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             is_first_step=is_first_step,
             acknowledged_safety_checks=self.agent.pending_safety_checks,
             host_message=self.host_message,
-            user_response=user_response,
             prompt=self._prompt_message,
         )
 
