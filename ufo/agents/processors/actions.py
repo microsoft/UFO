@@ -361,7 +361,7 @@ class OneStepAction:
         """
 
         if "path" in self.args:
-            return self.args["path"]
+            return [(point["x"], point["y"]) for point in self.args["path"]]
         elif "x" in self.args and "y" in self.args:
             return [(self.args["x"], self.args["y"])]
         else:

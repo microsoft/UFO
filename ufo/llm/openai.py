@@ -525,6 +525,7 @@ class OperatorServicePreview(BaseService):
             input=inputs,
             tools=tools,
             previous_response_id=previous_response_id,
+            truncation="auto",
             temperature=self.config.get("TEMPERATURE", 0),
             top_p=self.config.get("TOP_P", 0),
             timeout=self.config.get("TIMEOUT", 20),

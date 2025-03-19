@@ -77,12 +77,8 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         super().__init__(agent=agent, context=context)
 
         self.app_agent: "OpenAIOperatorAgent" = agent
-        self.host_agent = agent.host
 
-        self._operation = None
-        self._args = None
-        self._image_url = []
-        self.screenshot_save_path = None
+        self._image_url = ""
         self.width = None
         self.height = None
         self.scaler = scaler
@@ -183,6 +179,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             is_first_step=is_first_step,
             acknowledged_safety_checks=self.agent.pending_safety_checks,
             host_message=self.host_message,
+            user_response=user_response,
             prompt=self._prompt_message,
         )
 
@@ -211,45 +208,142 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
 
         self.agent: "OpenAIOperatorAgent"
 
-        self._response_json: Dict[str, Any] = self._response.get("output", {})[0]
-
-        action_dict = self._response_json.get("action", {})
-
-        self._operation = action_dict.get("type", "")
-        self._args = {k: v for k, v in action_dict.items() if k != "type"}
-
-        if self.scaler is not None:
-            self._args["scaler"] = self.scaler
-
+        # Get the response from the model.
         self.agent.response_id = self._response.get("id", "")
 
-        self.agent.previous_computer_id = (
-            self._response_json["call_id"]
-            if "call_id" in self._response_json
-            else self._response_json.get("id", "")
-        )
+        # Get the output list from the response.
+        model_output_list = self._response.get("output", [])
+        self._response_json = {}
 
-        output_type = self._response_json.get("type", "")
-
+        thought = ""
         message = ""
 
-        if output_type != self.agent._continue_type:
-            self.status = self._agent_status_manager.FINISH.value
+        # print(f"Model output list: {model_output_list}")
 
-            # Get the message from the Agent.
-            if output_type == self.agent._message_type:
-                for content in self._response_json.get("content", []):
-                    if content.get("type") == "output_text":
-                        message += content.get("text", "")
+        for output in model_output_list:
+            output_type = output.get("type", "")
 
-        else:
-            self.status = self._agent_status_manager.CONTINUE.value
+            if output_type == "computer_call":
+                computer_call_output = self.parse_computer_call_output(output)
+                self._operation = computer_call_output["operation"]
+                self._args = computer_call_output["args"]
 
-        self.agent.message = message
-        self.agent.pending_safety_checks = self._response_json.get(
+                # Add the scaler to the args if it is not None to refine the operation.
+                if self.scaler is not None:
+                    self._args["scaler"] = self.scaler
+
+                self.agent.previous_computer_id = computer_call_output["call_id"]
+                self.agent.pending_safety_checks = computer_call_output[
+                    "pending_safety_checks"
+                ]
+                self._response_json.update(computer_call_output)
+                self.status = self._agent_status_manager.CONTINUE.value
+
+            elif output_type == "reasoning":
+                reasoning_message = self.parse_reasoning_output(output)
+                thought += reasoning_message
+                self._response_json.update({"thought": reasoning_message})
+
+            elif output_type == "message":
+                agent_message = self.parse_message_output(output)
+                message += agent_message
+                self.agent.message = message
+                self._response_json.update({"message": message})
+
+                self.status = self._agent_status_manager.FINISH.value
+
+            else:
+                self.status = self._agent_status_manager.FINISH.value
+                print(f"Unknown output type: {output_type}")
+
+        # print("Parsed response: ", self._response_json)
+
+        # action_dict = self._response_json.get("action", {})
+
+        # self._operation = action_dict.get("type", "")
+        # self._args = {k: v for k, v in action_dict.items() if k != "type"}
+
+        # if self.scaler is not None:
+        #     self._args["scaler"] = self.scaler
+
+        # self.agent.response_id = self._response.get("id", "")
+
+        # self.agent.previous_computer_id = (
+        #     self._response_json["call_id"]
+        #     if "call_id" in self._response_json
+        #     else self._response_json.get("id", "")
+        # )
+
+        # output_type = self._response_json.get("type", "")
+
+        # message = ""
+
+        # if output_type not in self.agent._continue_type:
+        #     self.status = self._agent_status_manager.FINISH.value
+
+        #     # Get the message from the Agent.
+        #     if output_type == self.agent._message_type:
+        #         for content in self._response_json.get("content", []):
+        #             if content.get("type") == "output_text":
+        #                 message += content.get("text", "")
+
+        # else:
+        #     self.status = self._agent_status_manager.CONTINUE.value
+
+        # if output_type == "reasoning":
+        #     reasoning_message = self._response_json.get("summary", [])
+        #     message += "\n".join(reasoning_message)
+
+        # self.agent.message = message
+        # self.agent.pending_safety_checks = self._response_json.get(
+        #     "pending_safety_checks", []
+        # )
+        self.app_agent.print_response(self._response_json)
+
+    def parse_computer_call_output(self, output: Dict[str, Any]) -> Tuple[str, str]:
+        """
+        Parse the output of the computer call.
+        :param output: The output dict with type of 'computer_call'.
+        :return: The parsed operation and args and other information.
+        """
+
+        computer_call_output = {}
+
+        computer_call_output["call_id"] = output.get("call_id", "")
+        action_dict = output.get("action", {})
+        computer_call_output["operation"] = action_dict.get("type", "")
+        computer_call_output["args"] = {
+            k: v for k, v in action_dict.items() if k != "type"
+        }
+
+        computer_call_output["pending_safety_checks"] = output.get(
             "pending_safety_checks", []
         )
-        self.app_agent.print_response(response_dict=action_dict, message=message)
+
+        return computer_call_output
+
+    def parse_reasoning_output(self, output: Dict[str, Any]) -> str:
+        """
+        Parse the output of the reasoning.
+        :param output: The output dict with type of 'reasoning'.
+        :return: The reasoning message.
+        """
+
+        reasoning_output = output.get("summary", [])
+        return "\n".join([item.get("text", "") for item in reasoning_output])
+
+    def parse_message_output(self, output: Dict[str, Any]) -> str:
+        """
+        Parse the output of the output text.
+        :param output: The output dict with type of 'output_text'.
+        :return: The output text message.
+        """
+
+        message_output = output.get("content", [])
+        if len(message_output) > 0:
+            return message_output[-1].get("text", "")
+        else:
+            return ""
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer

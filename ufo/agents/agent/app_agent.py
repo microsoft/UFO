@@ -571,6 +571,7 @@ class OpenAIOperatorAgent(AppAgent):
         :param response_id: The response id of the last step.
         :param host_message: The message from the HostAgent.
         :param is_first_step: The flag indicating whether to include the last screenshot.
+        :param acknowledged_safety_checks: The list of acknowledged safety checks.
         :return: The prompt message.
         """
 
@@ -592,7 +593,7 @@ class OpenAIOperatorAgent(AppAgent):
         else:
             output_message = (
                 openai.types.responses.response_input_param.ComputerCallOutputOutput(
-                    type="input_image",  # TODO
+                    type="computer_screenshot",  # TODO
                     image_url=image,
                 )
             )
@@ -626,23 +627,28 @@ class OpenAIOperatorAgent(AppAgent):
             #     "previous_response_id": response_id,
             # }
 
-    def print_response(self, response_dict: Dict[str, Any], message: str = "") -> None:
+    def print_response(self, response_dict: Dict[str, Any]) -> None:
         """
         Print the response.
         :param response_dict: The response dictionary to print.
-        :param message: The message to print.
         :param print_action: The flag indicating whether to print the action.
         """
+
+        message = response_dict.get("message", "")
+        thought = response_dict.get("thought", "")
 
         if message:
             utils.print_with_color(
                 "Agent message📝: {message}".format(message=message), "yellow"
             )
 
-        function_call = response_dict.get("type", "")
-        args = utils.revise_line_breaks(
-            {k: v for k, v in response_dict.items() if k != "type"}
-        )
+        if thought:
+            utils.print_with_color(
+                "Thoughts💡: {thought}".format(thought=thought), "green"
+            )
+
+        function_call = response_dict.get("operation", "")
+        args = response_dict.get("args", {})
 
         # Generate the function call string
         action = self.Puppeteer.get_command_string(function_call, args)
