@@ -225,7 +225,7 @@ class ChooseTemplateFlow:
         """
 
         prompt_message = self.template_agent.message_constructor(
-            doc_files_description, given_task, reference_steps
+            doc_files_description, given_task, reference_steps, path=os.path.join(_configs["TEMPLATE_PATH"], self._app_name)
         )
         start_time = time.time()
         response_string, _ = self.template_agent.get_response(

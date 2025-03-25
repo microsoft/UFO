@@ -58,7 +58,7 @@ class TemplatePrompter(BasicPrompter):
             user_content.append(
                 {
                     "type": "text",
-                    "text": "This is the screenshot of " + str(i + 1) + ".docx",
+                    "text": "This is the screenshot of " + str(i + 1),
                 },
             )
             user_content.append(
