@@ -64,11 +64,62 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         :param start_col: The start column.
         """
         sheet = self.com_object.Sheets(sheet_name)
+
+        if str(start_col).isalpha():
+            start_col = self.letters_to_number(start_col)
+
         for i, row in enumerate(table):
             for j, value in enumerate(row):
                 sheet.Cells(start_row + i, start_col + j).Value = value
 
         return table
+
+    def select_table_range(
+        self,
+        sheet_name: str,
+        start_row: int,
+        start_col: int,
+        end_row: int,
+        end_col: int,
+    ):
+        """
+        Select a range of cells in the sheet.
+        :param sheet_name: The sheet name.
+        :param start_row: The start row.
+        :param start_col: The start column.
+        :param end_row: The end row.
+        :param end_col: The end column.
+        """
+
+        sheet_list = [sheet.Name for sheet in self.com_object.Sheets]
+        if sheet_name not in sheet_list:
+            print(
+                f"Sheet {sheet_name} not found in the workbook, using the first sheet."
+            )
+            sheet_name = 1
+
+        if str(start_col).isalpha():
+            start_col = self.letters_to_number(start_col)
+
+        if str(end_col).isalpha():
+            end_col = self.letters_to_number(end_col)
+
+        sheet = self.com_object.Sheets(sheet_name)
+        sheet.Range(
+            sheet.Cells(start_row, start_col), sheet.Cells(end_row, end_col)
+        ).Select()
+
+    @staticmethod
+    def letters_to_number(letters: str) -> int:
+        """
+        Convert the column letters to the column number.
+        :param letters: The column letters.
+        :return: The column number.
+        """
+        number = 0
+        for i, letter in enumerate(letters[::-1]):
+            number += (ord(letter.upper()) - ord("A") + 1) * (26**i)
+        return number
 
     @staticmethod
     def format_value(value: Any) -> str:

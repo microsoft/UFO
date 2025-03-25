@@ -61,6 +61,30 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         else:
             return f"Text {text} is not found."
 
+    def select_paragraph(
+        self, start_index: int, end_index: int, non_empty: bool = True
+    ) -> None:
+        """
+        Select a paragraph in the document.
+        :param start_index: The start index of the paragraph.
+        :param end_index: The end index of the paragraph, if ==-1, select to the end of the document.
+        :param non_empty: Whether to select the non-empty paragraphs only.
+        """
+        paragraphs = self.com_object.Paragraphs
+
+        start_index = max(1, start_index)
+
+        if non_empty:
+            paragraphs = [p for p in paragraphs if p.Range.Text.strip()]
+
+        para_start = paragraphs[start_index - 1].Range.Start
+        if end_index == -1:
+            para_end = self.com_object.Range().End
+        else:
+            para_end = paragraphs[end_index - 1].Range.End
+
+        self.com_object.Range(para_start, para_end).Select()
+
     def select_table(self, number: int) -> None:
         """
         Select a table in the document.
@@ -145,3 +169,28 @@ class SelectTableCommand(WinCOMCommand):
         The name of the command.
         """
         return "select_table"
+
+
+@WordWinCOMReceiver.register
+class SelectParagraphCommand(WinCOMCommand):
+    """
+    The command to select a paragraph.
+    """
+
+    def execute(self):
+        """
+        Execute the command to select a paragraph in the document.
+        :return: The selected paragraph.
+        """
+        return self.receiver.select_paragraph(
+            self.params.get("start_index"),
+            self.params.get("end_index"),
+            self.params.get("non_empty"),
+        )
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "select_paragraph"
