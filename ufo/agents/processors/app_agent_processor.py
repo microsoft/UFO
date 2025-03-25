@@ -497,9 +497,19 @@ class AppAgentProcessor(BaseProcessor):
         Get the response from the LLM.
         """
 
-        self._response, self.cost = self.app_agent.get_response(
-            self._prompt_message, "APPAGENT", use_backup_engine=True
-        )
+        retry = 0
+        while retry < configs.get("JSON_PARSING_RETRY", 3):
+            # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
+            self._response, self.cost = self.app_agent.get_response(
+                self._prompt_message, "APPAGENT", use_backup_engine=True
+            )
+
+            try:
+                self.host_agent.response_to_dict(self._response)
+                break
+            except Exception as e:
+                print(f"Error in parsing response into json, retrying: {retry}")
+                retry += 1
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
