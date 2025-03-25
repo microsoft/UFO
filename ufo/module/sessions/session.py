@@ -423,6 +423,7 @@ class FromFileSession(BaseSession):
         application_mapping = {
             ".docx": "WINWORD.EXE",
             ".xlsx": "EXCEL.EXE",
+            ".csv": "EXCEL.EXE",
             ".pptx": "POWERPNT.EXE",
             # "outlook": "olk.exe",
             # "onenote": "ONENOTE.EXE",
@@ -439,6 +440,7 @@ class FromFileSession(BaseSession):
         application_mapping = {
             ".docx": "Word.Application",
             ".xlsx": "Excel.Application",
+            ".csv": "Excel.Application",
             ".pptx": "PowerPoint.Application",
         }
 

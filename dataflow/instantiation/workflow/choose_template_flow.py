@@ -79,8 +79,10 @@ class ChooseTemplateFlow:
         """
 
         os.makedirs(copy_to_folder_path, exist_ok=True)
+
+        suffix = copy_from_path.suffix
         copied_template_path = self._generate_copied_file_path(
-            copy_to_folder_path, file_name
+            suffix, copy_to_folder_path, file_name
         )
 
         with open(copy_from_path, "rb") as f:
@@ -90,7 +92,7 @@ class ChooseTemplateFlow:
 
         return copied_template_path
 
-    def _generate_copied_file_path(self, folder_path: Path, file_name: str) -> str:
+    def _generate_copied_file_path(self, suffix: str, folder_path: Path, file_name: str) -> str:
         """
         Generate the file path for the copied template.
         :param folder_path: The folder where the file will be created.
@@ -98,7 +100,7 @@ class ChooseTemplateFlow:
         :return: The path to the newly created file.
         """
 
-        template_extension = self._file_extension
+        template_extension = suffix
         if file_name:
             return str(folder_path / f"{file_name}{template_extension}")
         timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")

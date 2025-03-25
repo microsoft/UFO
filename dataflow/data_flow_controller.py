@@ -415,9 +415,17 @@ class DataFlowController:
             if file.endswith(".json"):
                 source_file = os.path.join(source_files_path, file)
                 target_file = os.path.join(target_file_path, file)
-                target_object = os.path.join(
-                    target_template_path, file.replace(".json", ".docx")
-                )
+
+                for suffix in [".docx", ".xlsx", ".csv", ".ppt"]:
+                    if os.path.exists(
+                        os.path.join(
+                            source_template_path, file.replace(".json", suffix)
+                        )
+                    ):
+                        target_object = os.path.join(
+                            target_template_path, file.replace(".json", suffix)
+                        )
+
                 is_successed = reformat_json_file(
                     target_file,
                     target_object,
