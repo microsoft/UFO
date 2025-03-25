@@ -208,6 +208,7 @@ class PrefillFlow(AppAgentProcessor):
             execution_time = round(time.time() - start_time, 3)
 
             # Parse and log the response
+            print(response_string)
             response_json = self._prefill_agent.response_to_dict(response_string)
             instantiated_request = response_json["New_task"]
             instantiated_plan = response_json["Actions_plan"]

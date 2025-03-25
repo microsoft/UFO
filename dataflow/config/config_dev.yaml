@@ -45,7 +45,7 @@ EXECUTE_LOG_PATH: "dataflow/outputs/logs/{task}/execute/"
 MAX_STEPS: 30  # The max step for the execute_flow
 
 # SMTP
-MONITOR: True
+MONITOR: False
 MACHINE_ID: DEV
 SEND_POINT: 1,2
 FROM_EMAIL: 1921761583@qq.com
@@ -54,7 +54,7 @@ SENDER_PASSWORD:
 SMTP_SERVER: smtp.qq.com
 
 # Blob
-UPLOAD: True
+UPLOAD: False
 UPLOAD_INTERVAL: 2
 DATA_SOURCE: local_test
 

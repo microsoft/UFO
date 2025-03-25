@@ -63,7 +63,7 @@ system: |-
     "Observation": "<Summarize the environment based on the given screenshot and Control State>",
     "Thought": "<Explain your reasoning for transforming <Given Task> into <New Task> and how the chosen actions align with it>",
     "New_task": "<Clearly defined task with all necessary details>",
-    "Actions_plan": "<Step-by-step execution plan in JSON format>"
+    "Actions_plan": "<A list of Step-by-step execution plan in JSON format>"
   }}
   
   ### **Action Call Format**
@@ -116,8 +116,6 @@ system: |-
             }}
         }}
   
-    - The `<Actions_plan>` field must be strictly in a format separated each action call by "\n". The list format should be like this:
-    "action call 1\naction call 2\naction call 3"
     - If you think the original task don't need to be detailed, you can directly copy the original task to the "New_task".
     - You should review the apis function carefully and if the function to call need to specify target control,the 'controlText' field
     cannot be set empty.

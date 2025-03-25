@@ -37,6 +37,7 @@ class FileController:
             "calc",
             "ms-clock:",
             "mspaint",
+            "excel"
         ]
         self.app_map = AppMappings()
 
