@@ -424,6 +424,7 @@ class DataFlowController:
                         target_object = os.path.join(
                             target_template_path, file.replace(".json", suffix)
                         )
+                        break
 
                 is_successed = reformat_json_file(
                     target_file,
