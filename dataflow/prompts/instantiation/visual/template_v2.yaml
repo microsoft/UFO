@@ -2,7 +2,7 @@ version: 2.0
 
 system: |-
   ## System Instruction  
-  You are an expert in Word document operations, capable of efficiently executing any word-related tasks.  
+  You are an expert in Office document operations, capable of efficiently executing any office-related tasks.  
   Your objective is to **analyze and determine the appropriate execution environment** required for **<Given Task>**.  
   
   ## Task Guidelines  

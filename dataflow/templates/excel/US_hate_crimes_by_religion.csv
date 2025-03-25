@@ -1,0 +1,22 @@
+Year,State,Religion,Number_of_incidents,Population,Rate_per_100,000_pop
+2016,Alabama,Jewish,4,50000,8
+2016,Alabama,Muslim,3,40000,7.5
+2016,Alabama,Hindu,0,25000,0
+2016,Alaska,Jewish,0,3000,0
+2016,Alaska,Muslim,0,2000,0
+2016,Alaska,Hindu,1,1000,100
+2016,Arizona,Jewish,10,100000,10
+2016,Arizona,Muslim,9,80000,11.25
+2016,Arizona,Hindu,1,50000,2
+2016,Arkansas,Jewish ,1 ,20000 ,5
+2016 ,Arkansas,Muslim ,2 ,30000 ,6.67
+2016 ,Arkansas,Hindu ,0 ,10000 ,0
+2017 ,Alabama,Jewish ,5 ,60000 ,8.33
+2017 ,Alabama,Muslim ,2 ,45000 ,4.44
+2017 ,Alabama,Hindu ,0 ,35000 ,0
+2017 Alaska Jewish 1 3500 28.57
+2017 Alaska Muslim 0 2500 0
+2017 Alaska Hindu 1 2000 50
+2017 Arizona Jewish 12 120000 10
+2017 Arizona Muslim 10 100000 10
+2017 Arizona Hindu 3 55000 5.45

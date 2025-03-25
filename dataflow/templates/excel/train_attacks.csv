@@ -1,0 +1,11 @@
+Incident ID,Date,State,City_or_county,Train number,Number of killed,Number of injured,Type of attack,Type of weapon
+2043,2019-06-01,Texas,Houston,7851,3,7,Shooting,Handgun
+2044,2019-06-03,Arizona,Phoenix,665,1,5,Bombing,Explosives
+2045,2019-06-05,California,Los Angeles,592,4,11,Shooting,Rifle
+2046,2019-06-07,New York,New York City,100,2,8,Stabbing,Knife
+2047,2019-06-09,Georgia,Atlanta,9532,1,4,Shooting,Handgun
+2048,2019-06-11,Florida,Miami,719,5,13,Bombing,Explosives
+2049,2019-06-13,California,San Francisco,340,2,6,Stabbing,Knife
+2050,2019-06-15,Texas,Austin,8716,3,7,Shooting,Rifle
+2051,2019-06-17,California,San Diego,405,1,3,Shooting,Handgun
+2052,2019-06-19,Illinois,Chicago,1024,4,11,Bombing,Explosives

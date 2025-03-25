@@ -1,0 +1,11 @@
+Incident ID,Date,State,City_or_county,Address,Number of victims,Type of weapon,Value of goods,Type of robbery,Race of offender
+100,2020-05-01,Texas,Austin,123 Main St,4,Gun,5000,Robbery,White
+101,2020-05-03,California,Los Angeles,456 Elm St,2,Knife,750,Robbery,Black
+102,2020-05-05,New York,New York City,789 Oak St,1,Club,1000,Burglary,Hispanic
+103,2020-05-08,Texas,Houston,654 Pine St,3,Handgun,2000,Robbery,White
+104,2020-05-10,California,San Francisco,321 Cedar St,2,Knife,300,Burglary,Asian
+105,2020-05-12,New York,Buffalo,987 Maple St,4,Gun,500,Robbery,Black
+106,2020-05-15,California,San Diego,654 Oak St,1,Handgun,100,Burglary,Hispanic
+107,2020-05-17,Texas,Dallas,456 Pine St,3,Club,1500,Robbery,White
+108,2020-05-20,New York,Albany,123 Elm St,2,Knife,2000,Burglary,Asian
+109,2020-05-22,California,Fresno,789 Main St,1,Handgun,2500,Robbery,Black

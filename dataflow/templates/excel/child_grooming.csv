@@ -1,0 +1,11 @@
+Case ID,Age,Sex,Occupation,Education level,Location,Relationship to victim,Nature of case,Legal action taken,Compensation received,Number of grooming incidents
+1,32,Male,Teacher,Graduate,Bangalore,Acquaintance,Physical abuse,Criminal charges filed,25000.0,3
+2,43,Female,Engineer,Postgraduate,Mumbai,Spouse,Domestic violence,Restraining order taken,50000.0,5
+3,21,Male,Student,Undergraduate,Delhi,Friend,Sexual abuse,None,0.0,1
+4,55,Male,Manager,Postgraduate,Chennai,Relative,Emotional abuse,Family counseling arranged,10000.0,0
+5,47,Female,Doctor,Postgraduate,Kolkata,Colleague,Sexual harassment,Lawsuit filed,75000.0,10
+6,29,Female,Entrepreneur,Graduate,Bangalore,Employee,Sexual harassment,None,0.0,2
+7,38,Male,Artist,Graduate,Mumbai,Acquaintance,Physical abuse,Community service ordered,15000.0,2
+8,24,Female,Student,Undergraduate,Chennai,Boyfriend,Sexual abuse,None,0.0,1
+9,41,Male,Engineer,Postgraduate,Delhi,Colleague,Sexual harassment,None,0.0,3
+10,37,Female,Consultant,Postgraduate,Kolkata,Supervisor,Emotional abuse,None,0.0,0
