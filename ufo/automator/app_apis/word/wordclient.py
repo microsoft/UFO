@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import os
 from typing import Dict, Type
 
 from ufo.automator.app_apis.basic import WinCOMCommand, WinCOMReceiverBasic
@@ -96,6 +97,51 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
 
         tables(number).Select()
         return f"Table {number} is selected."
+
+    def set_font(self, font_name: str = None, font_size: int = None) -> None:
+        """
+        Set the font of the selected text in the active Word document.
+
+        :param font_name: The name of the font (e.g., "Arial", "Times New Roman", "宋体").
+                        If None, the font name will not be changed.
+        :param font_size: The font size (e.g., 12).
+                        If None, the font size will not be changed.
+        """
+        selection = self.com_object.Selection
+
+        if selection.Type == 0:  # wdNoSelection
+
+            return "No text is selected to set the font."
+
+        font = selection.Range.Font
+
+        message = ""
+
+        if font_name:
+            font.Name = font_name
+            message += f"Font is set to {font_name}."
+
+        if font_size:
+            font.Size = font_size
+            message += f" Font size is set to {font_size}."
+
+        return message
+
+    def save_to_pdf(self, file_path: str = None) -> None:
+        """
+        Save the document to PDF.
+        :param file_path: The path of the PDF file. If None, save to the same path as the Word document.
+        """
+
+        if not file_path:
+            filename = self.com_object.FullName
+            file_path = os.path.splitext(filename)[0] + ".pdf"
+
+        try:
+            self.com_object.SaveAs2(file_path, FileFormat=17)
+            return f"Document is saved to {file_path}."
+        except Exception as e:
+            return f"Failed to save the document to {file_path}. Error: {e}"
 
     @property
     def type_name(self):
@@ -194,3 +240,47 @@ class SelectParagraphCommand(WinCOMCommand):
         The name of the command.
         """
         return "select_paragraph"
+
+
+@WordWinCOMReceiver.register
+class SaveToPDFCommand(WinCOMCommand):
+    """
+    The command to save the document to PDF.
+    """
+
+    def execute(self):
+        """
+        Execute the command to save the document to PDF.
+        :return: The saved PDF file path.
+        """
+        return self.receiver.save_to_pdf(self.params.get("file_path", None))
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "save_to_pdf"
+
+
+@WordWinCOMReceiver.register
+class SetFontCommand(WinCOMCommand):
+    """
+    The command to set the font of the selected text.
+    """
+
+    def execute(self):
+        """
+        Execute the command to set the font of the selected text.
+        :return: The message of the font setting.
+        """
+        return self.receiver.set_font(
+            self.params.get("font_name"), self.params.get("font_size")
+        )
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "set_font"

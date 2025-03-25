@@ -57,5 +57,32 @@ select_paragraph:
     [5] Return: None
 
 
+save_to_pdf:
+  summary: |-
+    "save_to_pdf" is to save or export the Word document as a PDF file.
+  class_name: |-
+    SaveToPDFCommand
+  usage: |-
+    [1] API call: save_to_pdf(file_path: str) 
+    [2] Args:
+      - file_path: The file path to save the PDF file. If None, the file will be saved in the same directory as the Word document.
+    [3] Example: save_to_pdf(file_path="C:/Users/User/Documents/example.pdf")
+    [4] Available control item: The Document control item in the Word app.
+    [5] Return: The saved PDF file path if successful, otherwise an error message.
 
-  
+
+set_font:
+  summary: |-
+    "set_font" is to set the font of the selected text in a Word document. The text must be selected before calling this command.
+  class_name: |-
+    SetFontCommand
+  usage: |-
+    [1] API call: set_font(font_name: str = None, font_size: int = None) 
+    [2] Args:
+      - font_name: The name of the font (e.g., "Arial", "Times New Roman", "宋体"). If None, the font name will not be changed.
+      - font_size: The font size (e.g., 12). If None, the font size will not be changed.
+    [3] Example: set_font(font_name="Times New Roman")
+    [4] Available control item: The Document control item in the Word app.
+    [5] Return: A message indicating the font and font size changes if successful, otherwise a message indicating no text selected.
+
+
