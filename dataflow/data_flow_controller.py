@@ -417,11 +417,10 @@ class DataFlowController:
                 target_file = os.path.join(target_file_path, file)
 
                 for suffix in [".docx", ".xlsx", ".csv", ".ppt"]:
-                    if os.path.exists(
-                        os.path.join(
-                            source_template_path, file.replace(".json", suffix)
-                        )
-                    ):
+                    source_template_file = os.path.join(
+                        source_template_path, file.replace(".json", suffix)
+                    )
+                    if os.path.exists(source_template_file):
                         target_object = os.path.join(
                             target_template_path, file.replace(".json", suffix)
                         )
@@ -433,9 +432,7 @@ class DataFlowController:
                 )
                 if is_successed:
                     shutil.copy(
-                        os.path.join(
-                            source_template_path, file.replace(".json", ".docx")
-                        ),
+                        source_template_file,
                         target_template_path,
                     )
 
