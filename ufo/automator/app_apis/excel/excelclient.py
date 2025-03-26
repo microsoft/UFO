@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import os
 from typing import Any, Dict, List, Type, Union
 
 import pandas as pd
@@ -87,8 +88,8 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         :param sheet_name: The sheet name.
         :param start_row: The start row.
         :param start_col: The start column.
-        :param end_row: The end row.
-        :param end_col: The end column.
+        :param end_row: The end row. If ==-1, select to the end of the document with content.
+        :param end_col: The end column. If ==-1, select to the end of the document with content.
         """
 
         sheet_list = [sheet.Name for sheet in self.com_object.Sheets]
@@ -104,10 +105,64 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         if str(end_col).isalpha():
             end_col = self.letters_to_number(end_col)
 
+        if end_row == -1:
+            end_row = sheet.Rows.Count
+        if end_col == -1:
+            end_col = sheet.Columns.Count
+
         sheet = self.com_object.Sheets(sheet_name)
-        sheet.Range(
-            sheet.Cells(start_row, start_col), sheet.Cells(end_row, end_col)
-        ).Select()
+
+        try:
+            sheet.Range(
+                sheet.Cells(start_row, start_col), sheet.Cells(end_row, end_col)
+            ).Select()
+            return f"Range {start_row}:{start_col} to {end_row}:{end_col} is selected."
+        except Exception as e:
+            return f"Failed to select the range {start_row}:{start_col} to {end_row}:{end_col}. Error: {e}"
+
+    def save_as(
+        self, file_dir: str = "", file_name: str = "", file_ext: str = ""
+    ) -> None:
+        """
+        Save the document to PDF.
+        :param file_dir: The directory to save the file.
+        :param file_name: The name of the file without extension.
+        :param file_ext: The extension of the file.
+        """
+
+        excel_ext_to_fileformat = {
+            ".xlsx": 51,  # Excel Workbook (default, no macros)
+            ".xlsm": 52,  # Excel Macro-Enabled Workbook
+            ".xlsb": 50,  # Excel Binary Workbook
+            ".xls": 56,  # Excel 97-2003 Workbook
+            ".xltx": 54,  # Excel Template
+            ".xltm": 53,  # Excel Macro-Enabled Template
+            ".csv": 6,  # CSV (comma delimited)
+            ".txt": 42,  # Text (tab delimited)
+            ".pdf": 57,  # PDF file (Excel 2007+)
+            ".xps": 58,  # XPS file
+            ".xml": 46,  # XML Spreadsheet 2003
+            ".html": 44,  # HTML file
+            ".htm": 44,  # HTML file
+            ".prn": 36,  # Formatted text (space delimited)
+        }
+
+        if not file_dir:
+            file_dir = os.path.dirname(self.com_object.FullName)
+        if not file_name:
+            file_name = os.path.splitext(os.path.basename(self.com_object.FullName))[0]
+        if not file_ext:
+            file_ext = ".csv"
+
+        file_path = os.path.join(file_dir, file_name + file_ext)
+
+        try:
+            self.com_object.SaveAs2(
+                file_path, FileFormat=excel_ext_to_fileformat.get(file_ext, 6)
+            )
+            return f"Document is saved to {file_path}."
+        except Exception as e:
+            return f"Failed to save the document to {file_path}. Error: {e}"
 
     @staticmethod
     def letters_to_number(letters: str) -> int:
@@ -142,7 +197,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
 
 
 @ExcelWinCOMReceiver.register
-class GetSheetContent(WinCOMCommand):
+class GetSheetContentCommand(WinCOMCommand):
     """
     The command to insert a table.
     """
@@ -163,7 +218,7 @@ class GetSheetContent(WinCOMCommand):
 
 
 @ExcelWinCOMReceiver.register
-class InsertExcelTable(WinCOMCommand):
+class InsertExcelTableCommand(WinCOMCommand):
     """
     The command to insert a table.
     """
@@ -186,3 +241,55 @@ class InsertExcelTable(WinCOMCommand):
         The name of the command.
         """
         return "insert_excel_table"
+
+
+@ExcelWinCOMReceiver.register
+class SelectTableRangeCommand(WinCOMCommand):
+    """
+    The command to select a table.
+    """
+
+    def execute(self):
+        """
+        Execute the command to select a table.
+        :return: The selected table.
+        """
+        return self.receiver.select_table_range(
+            sheet_name=self.params.get("sheet_name", 1),
+            start_row=self.params.get("start_row", 1),
+            start_col=self.params.get("start_col", 1),
+            end_row=self.params.get("end_row", 1),
+            end_col=self.params.get("end_col", 1),
+        )
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "select_table_range"
+
+
+@ExcelWinCOMReceiver.register
+class SaveAsCommand(WinCOMCommand):
+    """
+    The command to save the document to a specific format.
+    """
+
+    def execute(self):
+        """
+        Execute the command to save the document to a specific format.
+        :return: The result of saving the document.
+        """
+        return self.receiver.save_as(
+            file_dir=self.params.get("file_dir"),
+            file_name=self.params.get("file_name"),
+            file_ext=self.params.get("file_ext"),
+        )
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "save_as"

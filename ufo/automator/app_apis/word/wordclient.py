@@ -127,18 +127,47 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
 
         return message
 
-    def save_to_pdf(self, file_path: str = None) -> None:
+    def save_as(
+        self, file_dir: str = "", file_name: str = "", file_ext: str = ""
+    ) -> None:
         """
         Save the document to PDF.
-        :param file_path: The path of the PDF file. If None, save to the same path as the Word document.
+        :param file_dir: The directory to save the file.
+        :param file_name: The name of the file without extension.
+        :param file_ext: The extension of the file.
         """
 
-        if not file_path:
-            filename = self.com_object.FullName
-            file_path = os.path.splitext(filename)[0] + ".pdf"
+        ext_to_fileformat = {
+            ".doc": 0,  # Word 97-2003 Document
+            ".dot": 1,  # Word 97-2003 Template
+            ".txt": 2,  # Plain Text (ASCII)
+            ".rtf": 6,  # Rich Text Format (RTF)
+            ".unicode.txt": 7,  # Unicode Text (custom extension, for clarity)
+            ".htm": 8,  # Web Page (HTML)
+            ".html": 8,  # Web Page (HTML)
+            ".mht": 9,  # Single File Web Page (MHT)
+            ".xml": 11,  # Word 2003 XML Document
+            ".docx": 12,  # Word Document (default)
+            ".docm": 13,  # Word Macro-Enabled Document
+            ".dotx": 14,  # Word Template (no macros)
+            ".dotm": 15,  # Word Macro-Enabled Template
+            ".pdf": 17,  # PDF File
+            ".xps": 18,  # XPS File
+        }
+
+        if not file_dir:
+            file_dir = os.path.dirname(self.com_object.FullName)
+        if not file_name:
+            file_name = os.path.splitext(os.path.basename(self.com_object.FullName))[0]
+        if not file_ext:
+            file_ext = ".pdf"
+
+        file_path = os.path.join(file_dir, file_name + file_ext)
 
         try:
-            self.com_object.SaveAs2(file_path, FileFormat=17)
+            self.com_object.SaveAs2(
+                file_path, FileFormat=ext_to_fileformat.get(file_ext, 17)
+            )
             return f"Document is saved to {file_path}."
         except Exception as e:
             return f"Failed to save the document to {file_path}. Error: {e}"
@@ -243,7 +272,7 @@ class SelectParagraphCommand(WinCOMCommand):
 
 
 @WordWinCOMReceiver.register
-class SaveToPDFCommand(WinCOMCommand):
+class SaveAsCommand(WinCOMCommand):
     """
     The command to save the document to PDF.
     """
@@ -253,14 +282,18 @@ class SaveToPDFCommand(WinCOMCommand):
         Execute the command to save the document to PDF.
         :return: The saved PDF file path.
         """
-        return self.receiver.save_to_pdf(self.params.get("file_path", None))
+        return self.receiver.save_as(
+            self.params.get("file_dir"),
+            self.params.get("file_name"),
+            self.params.get("file_ext"),
+        )
 
     @classmethod
     def name(cls) -> str:
         """
         The name of the command.
         """
-        return "save_to_pdf"
+        return "save_as"
 
 
 @WordWinCOMReceiver.register

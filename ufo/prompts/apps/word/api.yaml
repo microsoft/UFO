@@ -57,18 +57,21 @@ select_paragraph:
     [5] Return: None
 
 
-save_to_pdf:
+
+save_as:
   summary: |-
-    "save_to_pdf" is to save or export the Word document as a PDF file.
+    "save_as" is to save the Word document to a specified file format.
   class_name: |-
-    SaveToPDFCommand
+    SaveAsCommand
   usage: |-
-    [1] API call: save_to_pdf(file_path: str) 
+    [1] API call: save_as(file_dir: str = "", file_name: str = "", file_ext: str = "") 
     [2] Args:
-      - file_path: The file path to save the PDF file. If None, the file will be saved in the same directory as the Word document.
-    [3] Example: save_to_pdf(file_path="C:/Users/User/Documents/example.pdf")
+      - file_dir: The directory to save the file. If not specified, the current directory will be used.
+      - file_name: The name of the file without extension. If not specified, the name of the current document will be used.
+      - file_ext: The extension of the file. If not specified, the default extension is ".pdf".
+    [3] Example: save_as(file_dir="", file_name="", file_ext=".pdf")
     [4] Available control item: The Document control item in the Word app.
-    [5] Return: The saved PDF file path if successful, otherwise an error message.
+    [5] Return: A message indicating the success or failure of saving the document.
 
 
 set_font:
