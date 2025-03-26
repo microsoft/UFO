@@ -93,13 +93,13 @@ class PowerPointWinCOMReceiver(WinCOMReceiverBasic):
         if not file_name:
             file_name = os.path.splitext(os.path.basename(self.com_object.FullName))[0]
         if not file_ext:
-            file_ext = ".pdf"
+            file_ext = ".pptx"
 
         file_path = os.path.join(file_dir, file_name + file_ext)
 
         try:
             self.com_object.SaveAs(
-                file_path, FileFormat=ppt_ext_to_fileformat.get(file_ext, 17)
+                file_path, FileFormat=ppt_ext_to_fileformat.get(file_ext, 24)
             )
             return f"Document is saved to {file_path}."
         except Exception as e:
@@ -126,7 +126,7 @@ class SetBackgroundColorCommand(WinCOMCommand):
         :return: The result of setting the background color.
         """
         return self.receiver.set_background_color(
-            self.params.get("color"), self.params.get("slide_index")
+            self.params.get("color", ""), self.params.get("slide_index", [])
         )
 
     @classmethod

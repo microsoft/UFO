@@ -120,68 +120,79 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         except Exception as e:
             return f"Failed to select the range {start_row}:{start_col} to {end_row}:{end_col}. Error: {e}"
 
-    def reorder_columns(self, sheet_name: str, desired_order: List[str]):
+    def reorder_columns(self, sheet_name: str, desired_order: List[str] = None) -> str:
         """
-        Reorder the columns in the sheet.
-        :param sheet_name: The sheet name.
-        :param desired_order: The list of column names in the new order.
+        Reorder only non-empty columns based on desired_order.
+        Empty columns will remain in their original positions.
+        :param file_path: Excel file path
+        :param sheet_name: Sheet to operate on
+        :param desired_order: List of column header names to reorder
+        :return: Success or error message
         """
 
-        sheet_list = [sheet.Name for sheet in self.com_object.Sheets]
-        if sheet_name not in sheet_list:
-            print(
-                f"Sheet {sheet_name} not found in the workbook, using the first sheet."
-            )
-            sheet_name = 1
+        ws = self.com_object.Sheets(sheet_name)
+        used_range = ws.UsedRange
+        start_col = used_range.Column
+        total_cols = used_range.Columns.Count
+        last_col = start_col + total_cols - 1  # ← 真正的右边界（全表右边的列号）
 
-        sheet = self.com_object.Sheets(sheet_name)
+        # 获取非空列的标题和位置
+        non_empty_columns = []
+        empty_columns = []
 
-        used_range = sheet.UsedRange
-        num_cols = used_range.Columns.Count
+        for col in range(1, last_col + 1):
+            cell_value = ws.Cells(1, col).Value
+            if cell_value and str(cell_value).strip():
+                non_empty_columns.append((str(cell_value).strip(), col))
+            else:
+                empty_columns.append(col)
 
-        # Build a map from header name to current column number
-        header_map = {}
-        for col in range(1, num_cols + 1):
-            header = str(sheet.Cells(1, col).Value).strip()
-            if header:
-                header_map[header] = col
+        print("📌 Non-empty columns:", [x[0] for x in non_empty_columns])
+        print("📌 Empty columns at:", empty_columns)
 
-        print("📌 Current columns:", list(header_map.keys()))
+        # 构造新的非空列顺序（按 desired_order 给出的顺序排列）
+        new_order = []
+        name_to_col = {name: col for name, col in non_empty_columns}
+        for name in desired_order:
+            if name in name_to_col:
+                new_order.append((name, name_to_col[name]))
+            else:
+                print(f"⚠️ Column '{name}' not found, skipping.")
 
-        # Reorder the columns
-        insert_pos = 1
-
+        # 按新顺序插入非空列（从左往右插）
+        insert_offset = 0
         try:
-            for col_name in desired_order:
-                print(f"🔀 Moving column '{col_name}' to position {insert_pos}.")
-                if col_name not in header_map:
-                    print(f"⚠️ Column '{col_name}' not found, skipping.")
-                    continue
+            for name, original_col in new_order:
+                # 插入列到新的位置（跳过空列）
 
-                current_col = header_map[col_name]
+                print(
+                    f"🔧 Moving column '{name}' from {original_col} to {insert_offset + 1}"
+                )
+                insert_pos = self.get_nth_non_empty_position(
+                    insert_offset + 1, empty_columns
+                )
+                ws.Columns(original_col).Copy()
+                ws.Columns(insert_pos).Insert()
 
-                # Copy the column and insert at target position
-                sheet.Columns(current_col).Copy()
-                sheet.Columns(insert_pos).Insert()
-
-                # Delete the original column (adjust index if needed)
-                if current_col >= insert_pos:
-                    sheet.Columns(current_col + 1).Delete()
+                # 删除原列（注意偏移）
+                if original_col >= insert_pos:
+                    ws.Columns(original_col + 1).Delete()
                 else:
-                    sheet.Columns(current_col).Delete()
+                    ws.Columns(original_col).Delete()
 
-                # Update header_map: all columns after this shift left
-                header_map = {
-                    h: (c if c < current_col else c - 1)
-                    for h, c in header_map.items()
-                    if h != col_name
-                }
+                # 更新所有列位置（因为 Excel 中列号会移动）
+                for k in name_to_col:
+                    if name_to_col[k] >= original_col:
+                        name_to_col[k] -= 1
+                    if name_to_col[k] >= insert_pos:
+                        name_to_col[k] += 1
 
-                insert_pos += 1
+                insert_offset += 1
         except Exception as e:
-            return f"Failed to reorder at column '{col_name}'. Error: {e}"
+            print(f"❌ Failed to reorder columns. Error: {e}")
+            return f"Failed to reorder columns. Error: {e}"
 
-        return f"Columns reordered to: {desired_order}."
+        return f"Columns reordered successfully into: {desired_order}"
 
     def get_range_values(
         self,
@@ -296,6 +307,23 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         for i, letter in enumerate(letters[::-1]):
             number += (ord(letter.upper()) - ord("A") + 1) * (26**i)
         return number
+
+    @staticmethod
+    def get_nth_non_empty_position(target_idx: int, empty_cols: List[int]) -> int:
+        """
+        Get the Nth available column index in the sheet, skipping empty columns.
+        :param target_idx: The target index of the non-empty column.
+        :param empty_cols: The list of empty column indexes.
+        :return: The Nth non-empty column index.
+        """
+        col = 1
+        non_empty_count = 0
+        while True:
+            if col not in empty_cols:
+                non_empty_count += 1
+            if non_empty_count == target_idx:
+                return col
+            col += 1
 
     @staticmethod
     def format_value(value: Any) -> str:
@@ -416,6 +444,30 @@ class GetRangeValuesCommand(WinCOMCommand):
         The name of the command.
         """
         return "get_range_values"
+
+
+@ExcelWinCOMReceiver.register
+class ReorderColumnsCommand(WinCOMCommand):
+    """
+    The command to reorder columns in a sheet.
+    """
+
+    def execute(self):
+        """
+        Execute the command to reorder columns in a sheet.
+        :return: The result of reordering columns.
+        """
+        return self.receiver.reorder_columns(
+            sheet_name=self.params.get("sheet_name", 1),
+            desired_order=self.params.get("desired_order"),
+        )
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "reorder_columns"
 
 
 @ExcelWinCOMReceiver.register

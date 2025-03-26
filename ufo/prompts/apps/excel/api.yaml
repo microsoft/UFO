@@ -30,7 +30,7 @@ insert_excel_table:
 
 select_table_range:
   summary: |-
-    "select_table_range" is to select a range of cells in the sheet of the Excel app.
+    "select_table_range" is a quick way to select a range of cells in the sheet of the Excel app instead of dragging the mouse.
   class_name: |-
     SelectTableRangeCommand
   usage: |-
@@ -38,16 +38,16 @@ select_table_range:
     [2] Args:
       - sheet_name: The name of the sheet.
       - start_row: The start row, starting from 1.
-      - start_col: The start column, starting from 1.
+      - start_col: The start column, starting from 1. Please map the letter to the number, e.g., A=1, B=2, etc.
       - end_row: The end row. If ==-1, select to the end of the document with content.
-      - end_col: The end column. If ==-1, select to the end of the document with content.
+      - end_col: The end column. If ==-1, select to the end of the document with content. Please map the letter to the number, e.g., A=1, B=2, etc.
     [3] Example: select_table_range(sheet_name="Sheet1", start_row=1, start_col=1, end_row=3, end_col=3)
     [4] Available control item: Any control item in the Excel app.
     [5] Return: A message indicating whether the range is selected successfully or not.
 
 save_as:
   summary: |-
-    "save_as" is to save the Excel document to a specified file format.
+    "save_as" is a shortcut and quickest way to save or export the Excel document to a specified file format with one command.
   class_name: |-
     SaveAsCommand
   usage: |-
@@ -60,4 +60,23 @@ save_as:
     [4] Available control item: Any control item in the Excel app.
     [5] Return: A message indicating whether the document is saved successfully or not.
 
-      
+
+reorder_columns:
+  summary: |-
+    "reorder_columns" is to reorder the columns in the sheet of the Excel app based on the desired order.
+  class_name: |-
+    ReorderColumnsCommand
+  usage: |-
+    [1] API call: reorder_columns(sheet_name: str, desired_order: List[str])
+    [2] Args:
+      - sheet_name: The name of the sheet.
+      - desired_order: The list of column names in the new order.
+    [3] Example: reorder_columns(sheet_name="Sheet1", desired_order=["Income", "Date", "Expense"])
+    [4] Available control item: Any control item in the Excel app.
+    [5] Return: A message indicating whether the columns are reordered successfully or not.
+
+
+
+
+
+
