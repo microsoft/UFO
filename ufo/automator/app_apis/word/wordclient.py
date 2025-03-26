@@ -79,6 +79,8 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
             paragraphs = [p for p in paragraphs if p.Range.Text.strip()]
 
         para_start = paragraphs[start_index - 1].Range.Start
+
+        # Select to the end of the document if end_index == -1
         if end_index == -1:
             para_end = self.com_object.Range().End
         else:
@@ -107,7 +109,7 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         :param font_size: The font size (e.g., 12).
                         If None, the font size will not be changed.
         """
-        selection = self.com_object.Selection
+        selection = self.client.Selection
 
         if selection.Type == 0:  # wdNoSelection
 
@@ -125,6 +127,7 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
             font.Size = font_size
             message += f" Font size is set to {font_size}."
 
+        print(message)
         return message
 
     def save_as(

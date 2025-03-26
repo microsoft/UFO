@@ -57,10 +57,9 @@ select_paragraph:
     [5] Return: None
 
 
-
 save_as:
   summary: |-
-    "save_as" is to save the Word document to a specified file format.
+    "save_as" is the fastest way to save or export the Word document to a specified file format with one command. You should use this API to save your work since it is more efficient than manually saving the document.
   class_name: |-
     SaveAsCommand
   usage: |-
