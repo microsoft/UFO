@@ -60,7 +60,7 @@ set_edit_text:
     [1] API call: set_edit_text(text: str="The text to input.", clear_current_text: bool=False)
     [2] Args:
       - text: The text input to the Edit control item. You must also use Double Backslash escape character to escape the single quote in the string argument.
-      - clear_current_text: Whether to clear the current text in the control item before setting the new text. (Default: False)
+      - clear_current_text: Whether to clear the current text in the Edit before setting the new text. If True, the current text will be completely replaced by the new text. (Default: False)
     [3] Example: set_edit_text(text="Hello World. \\n I enjoy the reading of the book 'The Lord of the Rings'. It's a great book.")
     [4] Available control item: [Edit]
     [5] Return: None
@@ -126,10 +126,8 @@ keyboard_input:
     [1] API call: keyboard_input(keys: str, control_focus: bool = True)
     [2] Args:
       - keys: The key to input. It can be any key on the keyboard, with special keys represented by their virtual key codes. For example, "{VK_CONTROL}c" represents the Ctrl+C shortcut key.
-      - control_focus: Whether to focus on your selected control item before typing the keys. (Default: True)
-    [3] Example: 
+      - control_focus: Whether to focus on your selected control item before typing the keys. If False, the hotkeys will operate on the application window. (Default: True)
       - keyboard_input(keys="{VK_CONTROL}c") --> Copy the selected text.
-      - keyboard_input(keys="{ENTER}") --> Press the Enter key.
       - keyboard_input(keys="{TAB 2}") --> Press the Tab key twice.
       - keyboard_input(keys="Hello World", control_focus=False) --> Type "Hello World" without focusing on any control item.
     [4] Available control item: All control items.

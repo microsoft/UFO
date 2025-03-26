@@ -2,8 +2,8 @@
 # Licensed under the MIT License.
 
 import argparse
-from . import indexer
 
+from learner import indexer
 
 args = argparse.ArgumentParser()
 args.add_argument(

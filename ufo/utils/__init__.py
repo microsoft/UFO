@@ -159,6 +159,6 @@ def get_hugginface_embedding(
     :param model_name: The name of the model.
     :return: The Hugging Face embeddings.
     """
-    from langchain_community.embeddings import HuggingFaceEmbeddings
+    from langchain_huggingface import HuggingFaceEmbeddings
 
     return HuggingFaceEmbeddings(model_name=model_name)
