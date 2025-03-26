@@ -165,7 +165,7 @@ class WordWinCOMReceiver(WinCOMReceiverBasic):
         file_path = os.path.join(file_dir, file_name + file_ext)
 
         try:
-            self.com_object.SaveAs2(
+            self.com_object.SaveAs(
                 file_path, FileFormat=ext_to_fileformat.get(file_ext, 17)
             )
             return f"Document is saved to {file_path}."
