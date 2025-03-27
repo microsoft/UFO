@@ -74,9 +74,3 @@ reorder_columns:
     [3] Example: reorder_columns(sheet_name="Sheet1", desired_order=["Income", "Date", "Expense"])
     [4] Available control item: Any control item in the Excel app.
     [5] Return: A message indicating whether the columns are reordered successfully or not.
-
-
-
-
-
-
