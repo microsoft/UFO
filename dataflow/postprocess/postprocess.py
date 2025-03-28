@@ -153,7 +153,9 @@ class PostProcess:
                     "control_label": "",
                     "function": "",
                     "args": {},
-                    "coordinate": []
+                    "coordinate": [],
+                    "centor_point_x": None,
+                    "centor_point_y": None,
                 },
                 "status": step["Status"]
             }
@@ -167,8 +169,10 @@ class PostProcess:
                 step_format["action"]["function"] = step_action["Function"]
                 step_format["action"]["args"] = step_action["Args"]
             control_log = step["ControlLog"] if "ControlLog" in step else {}
-            if control_log and control_log[0]["control_coordinates"]:
-                step_format["action"]["coordinate"] = control_log[0]["control_coordinates"]
+            if control_log and (control_coordinates := control_log[0]["control_coordinates"]):
+                step_format["action"]["coordinate"] = control_coordinates
+                step_format["action"]["centor_point_x"] = (control_coordinates["left"] + control_coordinates["right"]) / 2
+                step_format["action"]["centor_point_y"] = (control_coordinates["top"] + control_coordinates["bottom"]) / 2
 
             steps.append(step_format)
 
