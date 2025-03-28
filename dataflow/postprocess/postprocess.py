@@ -16,39 +16,36 @@ class PostProcess:
     def __init__(self, encode_type: str = "base64"):
         self.encode_type = encode_type
 
-    def process(self, prefill_log_folder_path: str, log_folder_path: str, output_folder_path: str):
+    def process(self, prefill_log_path: str, log_folder_path: str, output_folder_path: str):
         log_files = [
             f for f in os.listdir(log_folder_path)
             if os.path.isdir(os.path.join(log_folder_path, f))
         ]
 
         for log_file in tqdm(log_files, desc="Process Dateset..."):
-            prefill_log_path = os.path.join(prefill_log_folder_path, "results", "instantiation", "instantiation_pass", f"{log_file}.json")
-            template_log_path = os.path.join(prefill_log_folder_path, "logs", log_file, "template", "template_responses.json")
+            try:
+                # filter error case
+                if self.process_evaluation(os.path.join(log_folder_path, log_file)):
+                    result = self.process_one(
+                        prefill_log_path,
+                        os.path.join(log_folder_path, log_file),
+                        log_file
+                    )
 
-            # filter error case
-            if self.process_evaluation(os.path.join(log_folder_path, log_file)):
+                    with open(os.path.join(output_folder_path, f"{log_file}.json"), 'w', encoding='utf-8') as f:
+                        json.dump(result, f, ensure_ascii=False, indent=4)
+            except Exception as e:
+                print(f"{log_file}: {e}")
 
-                result = self.process_one(
-                    prefill_log_path,
-                    os.path.join(log_folder_path, log_file),
-                    template_log_path
-                )
-
-                with open(os.path.join(output_folder_path, f"{log_file}.json"), 'w', encoding='utf-8') as f:
-                    json.dump(result, f, ensure_ascii=False, indent=4)
-
-    def process_one(self, prefill_log_path, log_file_path: str, template_log_path) -> dict:
+    def process_one(self, prefill_log_path: str, log_file_path: str, log_name: str) -> dict:
 
         with open(prefill_log_path, 'r', encoding='utf-8') as prefill_file:
             prefill_log = json.load(prefill_file)
+        prefill_log = prefill_log[log_name]
         execution_id = prefill_log["unique_id"]
         app_domain = prefill_log["app"]
-        request = prefill_log["instantiation_result"]["choose_template"]["result"]
-
-        with open(template_log_path, 'r', encoding='utf-8') as template_log_file:
-            template_log = json.load(template_log_file)
-        template = template_log["agent_response"]["template_name"]
+        request = prefill_log["request"]
+        template = prefill_log["template"]
 
         # Load request.log
         with open(os.path.join(log_file_path, "request.log"), 'r', encoding='utf-8') as request_file:
@@ -197,6 +194,12 @@ class PostProcess:
                 base64_str = base64.b64encode(img_file.read()).decode("utf-8")
             return base64_str
         return ""
+
+    def decode_image(self, base64_str: str, output_path: str):
+        if self.encode_type == "base64":
+            image_data = base64.b64decode(base64_str)
+            with open(output_path, "wb") as img_file:
+                img_file.write(image_data)
 
 if __name__ == '__main__':
     parser = ArgumentParser()
