@@ -35,7 +35,7 @@ class PowerPointWinCOMReceiver(WinCOMReceiverBasic):
     def set_background_color(self, color: str, slide_index: List[int] = None) -> str:
         """
         Set the background color of the slide(s).
-        :param color: The hex color code to set the background color.
+        :param color: The hex color code (in RGB format) to set the background color.
         :param slide_index: The list of slide indexes to set the background color. If None, set the background color for all slides.
         :return: The result of setting the background color.
         """
@@ -43,24 +43,30 @@ class PowerPointWinCOMReceiver(WinCOMReceiverBasic):
         if not slide_index:
             slide_index = range(1, self.com_object.Slides.Count + 1)
 
+        red = int(color[0:2], 16)
+        green = int(color[2:4], 16)
+        blue = int(color[4:6], 16)
+        bgr_hex = (blue << 16) + (green << 8) + red
+
         try:
             for index in slide_index:
                 if index < 1 or index > self.com_object.Slides.Count:
                     continue
                 slide = self.com_object.Slides(index)
                 slide.FollowMasterBackground = False
-                slide.FollowMasterBackground = True
-                slide.Background.Fill.BackColor.RGB = int(color, 16)
+                slide.Background.Fill.Visible = True
+                slide.Background.Fill.Solid()
+                slide.Background.Fill.ForeColor.RGB = bgr_hex # PowerPoint uses BGR format
         except Exception as e:
             return f"Failed to set the background color. Error: {e}"
 
         return f"Successfully Set the background color to {color} for slide(s) {slide_index}."
 
     def save_as(
-        self, file_dir: str = "", file_name: str = "", file_ext: str = ""
+        self, file_dir: str = "", file_name: str = "", file_ext: str = "", current_slide_only: bool = False
     ) -> None:
         """
-        Save the document to PDF.
+        Save the document to other formats.
         :param file_dir: The directory to save the file.
         :param file_name: The name of the file without extension.
         :param file_ext: The extension of the file.
@@ -81,11 +87,21 @@ class PowerPointWinCOMReceiver(WinCOMReceiverBasic):
             ".gif": 19,  # GIF images
             ".bmp": 20,  # BMP images
             ".tif": 21,  # TIFF images
+            ".tiff": 21,  # TIFF images
             ".rtf": 6,  # Outline RTF
             ".html": 12,  # Single File Web Page
             ".mp4": 39,  # MPEG-4 video (requires PowerPoint 2013+)
             ".wmv": 38,  # Windows Media Video
             ".xml": 10,  # PowerPoint 2003 XML Presentation
+        }
+
+        ppt_ext_to_formatstr = {
+            ".jpg": "JPG",  # JPG images (slides exported as .jpg)
+            ".png": "PNG",  # PNG images
+            ".gif": "GIF",  # GIF images
+            ".bmp": "BMP",  # BMP images
+            ".tif": "TIF",  # TIFF images
+            ".tiff": "TIF",  # TIFF images
         }
 
         if not file_dir:
@@ -98,9 +114,19 @@ class PowerPointWinCOMReceiver(WinCOMReceiverBasic):
         file_path = os.path.join(file_dir, file_name + file_ext)
 
         try:
-            self.com_object.SaveAs(
-                file_path, FileFormat=ppt_ext_to_fileformat.get(file_ext, 24)
-            )
+            if self.com_object.Slides.Count == 1 and file_ext in ppt_ext_to_formatstr.keys():
+                self.com_object.Slides(1).Export(
+                    file_path, ppt_ext_to_formatstr.get(file_ext, "PNG")
+                )
+            elif current_slide_only and file_ext in ppt_ext_to_formatstr.keys():
+                current_slide_idx = self.com_object.SlideShowWindow.View.Slide.SlideIndex
+                self.com_object.Slides(current_slide_idx).Export(
+                    file_path, ppt_ext_to_formatstr.get(file_ext, "PNG")
+                )
+            else:
+                self.com_object.SaveAs(
+                    file_path, FileFormat=ppt_ext_to_fileformat.get(file_ext, 24)
+                )
             return f"Document is saved to {file_path}."
         except Exception as e:
             return f"Failed to save the document to {file_path}. Error: {e}"
