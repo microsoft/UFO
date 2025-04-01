@@ -1,6 +1,6 @@
 version: 0.1
 
-CONTROL_BACKEND: "uia"  # The backend for control action
+CONTROL_BACKEND: "uia"  # The list of backend for control action, currently we support uia and win32, 
 CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner"] 
 PRINT_LOG: False  # Whether to print the log  
 LOG_LEVEL: "INFO"  # The log level

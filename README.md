@@ -100,12 +100,28 @@ UFO requires **Python >= 3.10** running on **Windows OS >= 10**. It can be insta
 # conda create -n ufo python=3.10
 # conda activate ufo
 
-# clone the repository
+# Clone the repository
 git clone https://github.com/microsoft/UFO.git
 cd UFO
-# install the requirements
+
+# Create a Python virtual environment
+# Replace 'python3' with 'python' if your system uses that alias
+python3 -m venv .venv
+
+# Activate the virtual environment
+# On Windows (Git Bash or cmd.exe)
+# .venv/Scripts/activate
+# On macOS/Linux (bash/zsh)
+source .venv/bin/activate
+
+# Install the requirements within the activated environment
 pip install -r requirements.txt
-# If you want to use the Qwen as your LLMs, uncomment the related libs.
+
+# If you want to use Qwen as your LLM, uncomment the related libs in requirements.txt before installing.
+
+# To deactivate the virtual environment later, simply run:
+# deactivate
+
 ```
 
 ### ⚙️ Step 2: Configure the LLMs

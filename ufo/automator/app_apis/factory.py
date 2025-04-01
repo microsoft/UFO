@@ -5,9 +5,10 @@ from typing import Type
 
 from ufo.automator.app_apis.basic import WinCOMReceiverBasic
 from ufo.automator.app_apis.excel.excelclient import ExcelWinCOMReceiver
-from ufo.automator.app_apis.word.wordclient import WordWinCOMReceiver
-from ufo.automator.app_apis.web.webclient import WebReceiver
+from ufo.automator.app_apis.powerpoint.powerpointclient import PowerPointWinCOMReceiver
 from ufo.automator.app_apis.shell.shell_client import ShellReceiver
+from ufo.automator.app_apis.web.webclient import WebReceiver
+from ufo.automator.app_apis.word.wordclient import WordWinCOMReceiver
 from ufo.automator.basic import ReceiverBasic, ReceiverFactory
 from ufo.automator.puppeteer import ReceiverManager
 from ufo.utils import print_with_color
@@ -60,6 +61,7 @@ class COMReceiverFactory(APIReceiverFactory):
         win_com_client_mapping = {
             "WINWORD.EXE": WordWinCOMReceiver,
             "EXCEL.EXE": ExcelWinCOMReceiver,
+            "POWERPNT.EXE": PowerPointWinCOMReceiver,
         }
 
         com_receiver = win_com_client_mapping.get(app_root_name, None)

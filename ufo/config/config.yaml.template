@@ -70,6 +70,14 @@ BACKUP_AGENT: {
   # AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
 }
 
+### For the omniparser grounding model
+OMNIPARSER: {
+  ENDPOINT: "http://xxx.xxx.xxx.xxx:xxxx", # The omniparser endpoint, to be filled by the user
+  BOX_THRESHOLD: 0.05, # The box threshold for the omniparser
+  IOU_THRESHOLD: 0.1, # The iou threshold for the omniparser
+  USE_PADDLEOCR: True, # Whether to use the paddleocr for the omniparser
+  IMGSZ: 640 # The image size for the omniparser
+}
 
 ### For GPT parameters
 MAX_TOKENS: 2000  # The max token limit for the response completion

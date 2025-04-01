@@ -298,7 +298,17 @@ class FollowerSession(BaseSession):
             utils.print_with_color(self.plan_reader.get_initial_request(), "cyan")
             agent = self._host_agent
         else:
-            agent = self._host_agent.get_active_appagent()
+            self.context.set(ContextNames.SUBTASK, request)
+            agent = self._host_agent.create_app_agent(
+                application_window_name=self.context.get(
+                    ContextNames.APPLICATION_PROCESS_NAME
+                ),
+                application_root_name=self.context.get(
+                    ContextNames.APPLICATION_ROOT_NAME
+                ),
+                request=request,
+                mode=self.context.get(ContextNames.MODE),
+            )
 
             # Clear the memory and set the state to continue the app agent.
             agent.clear_memory()

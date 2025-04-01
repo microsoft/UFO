@@ -75,20 +75,18 @@ class PrefillPrompter(BasicPrompter):
         return self.prompt_template["system"].format(apis=apis, examples=examples)
 
     def user_prompt_construction(
-        self, given_task: str, reference_steps: List, doc_control_state: Dict
+        self, given_task: str, reference_steps: List
     ) -> str:
         """
         Construct the prompt for the user.
         :param given_task: The given task.
         :param reference_steps: The reference steps.
-        :param doc_control_state: The document control state.
         :return: The prompt for the user.
         """
 
         prompt = self.prompt_template["user"].format(
             given_task=given_task,
-            reference_steps=json.dumps(reference_steps),
-            doc_control_state=json.dumps(doc_control_state),
+            reference_steps=json.dumps(reference_steps)
         )
 
         return prompt
@@ -110,14 +108,12 @@ class PrefillPrompter(BasicPrompter):
         self,
         given_task: str,
         reference_steps: List,
-        doc_control_state: Dict,
         log_path: str,
     ) -> List[Dict]:
         """
         Construct the prompt for LLMs.
         :param given_task: The given task.
         :param reference_steps: The reference steps.
-        :param doc_control_state: The document control state.
         :param log_path: The path of the log.
         :return: The prompt for LLMs.
         """
@@ -135,7 +131,7 @@ class PrefillPrompter(BasicPrompter):
             {
                 "type": "text",
                 "text": self.user_prompt_construction(
-                    given_task, reference_steps, doc_control_state
+                    given_task, reference_steps
                 ),
             }
         )

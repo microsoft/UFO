@@ -15,8 +15,6 @@ from ufo.automator.ui_control.screenshot import PhotographerDecorator
 
 _configs = InstantiationConfig.get_instance().config_data
 _ufo_configs = UFOConfig.get_instance().config_data
-if _ufo_configs is not None:
-    BACKEND = _ufo_configs["CONTROL_BACKEND"]
 
 
 class ExecuteFlow(AppAgentProcessor):
@@ -316,9 +314,11 @@ class ExecuteFlow(AppAgentProcessor):
         if self.control_text == "":
             control_selected = self.application_window
         else:
-            self._control_label, control_selected = self._app_env.find_matching_controller(
-                self.filtered_annotation_dict, self.control_text
+            self._control_label, control_selected = (
+                self._app_env.find_matching_controller(
+                    self.filtered_annotation_dict, self.control_text
                 )
+            )
             if control_selected:
                 self._matched_control = control_selected.window_text()
 

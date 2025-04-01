@@ -28,12 +28,14 @@ class ShellReceiver(ReceiverBasic):
         :return: The result content.
         """
         bash_command = params.get("command")
+        powershell_path = 'C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe'
         process = subprocess.Popen(
             bash_command,  # command to run
             stdout=subprocess.PIPE,  # capture stdout
             stderr=subprocess.PIPE,  # capture stderr
             shell=True,
             text=True,
+            executable=powershell_path,
         )
         return ""
 

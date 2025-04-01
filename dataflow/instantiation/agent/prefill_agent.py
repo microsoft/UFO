@@ -59,7 +59,6 @@ class PrefillAgent(BasicAgent):
         dynamic_examples: str,
         given_task: str,
         reference_steps: List[str],
-        doc_control_state: Dict[str, str],
         log_path: str,
     ) -> List[str]:
         """
@@ -67,7 +66,6 @@ class PrefillAgent(BasicAgent):
         :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.
         :param given_task: The given task.
         :param reference_steps: The reference steps.
-        :param doc_control_state: The document control state.
         :param log_path: The path of the log.
         :return: The prompt message.
         """
@@ -76,7 +74,7 @@ class PrefillAgent(BasicAgent):
             dynamic_examples
         )
         prefill_agent_prompt_user_message = self.prompter.user_content_construction(
-            given_task, reference_steps, doc_control_state, log_path
+            given_task, reference_steps, log_path
         )
         appagent_prompt_message = self.prompter.prompt_construction(
             prefill_agent_prompt_system_message,

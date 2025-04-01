@@ -4,15 +4,15 @@
 import json
 import os
 import re
+import sys
 from typing import Any, Dict, List, Optional
 
 from PIL import Image
 
-import sys
-
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 from ufo.automator.ui_control.screenshot import PhotographerFacade
+from ufo.utils import print_with_color
 
 
 class Trajectory:
@@ -149,6 +149,12 @@ class Trajectory:
                     evaluation_data = json.load(file)
                 except:
                     evaluation_data = {}
+
+        else:
+            print_with_color(
+                f"Warning: Evaluation log not found at {evaluation_log_path}.", "yellow"
+            )
+            evaluation_data = {}
 
         return evaluation_data
 
@@ -351,3 +357,61 @@ class Trajectory:
         :return: The structured data of the entire trajectory.
         """
         return self._structured_data
+
+    def to_markdown(
+        self,
+        output_path: str,
+        key_shown: List[str] = [
+            "Request",
+            "Subtask",
+            "Thought",
+            "Status",
+            "Action",
+            "ControlLabel",
+            "ControlText",
+            "error",
+        ],
+    ) -> None:
+        """
+        Save the structured data to a markdown file.
+        :param output_path: The output path to save the markdown file.
+        :param key_shown: The keys to show at each step.
+        """
+        with open(output_path, "w", encoding="utf-8") as file:
+            file.write("# Trajectory Data\n\n")
+
+            file.write("## Evaluation Results\n\n")
+            for key, value in self.evaluation_log.items():
+                file.write(f"- **{key}**: {value}\n")
+
+            file.write("\n")
+
+            for data in self.app_agent_log:
+                step = data.get("Step")
+                file.write(f"### Step {step}:\n")
+                for key, value in data.items():
+                    if key in key_shown:
+                        file.write(f"- **{key}**: {value}\n")
+                file.write("\n")
+
+                annotated_screenshot_filename = os.path.basename(
+                    data.get("AnnotatedScreenshot", "")
+                )
+                selected_control_screenshot_filename = os.path.basename(
+                    data.get("SelectedControlScreenshot", "")
+                )
+
+                file.write(
+                    f'<div style="display: flex; justify-content: center;">\n'
+                    f'  <img src="{os.path.join("./", annotated_screenshot_filename)}" width="45%" />\n'
+                    f'  <img src="{os.path.join("./", selected_control_screenshot_filename)}" width="45%" />\n'
+                    f"</div>\n\n"
+                )
+
+        print_with_color(f"Markdown file saved to {output_path}.", "green")
+
+
+if __name__ == "__main__":
+    file_path = r"ufo/trajectory/data"
+    trajectory = Trajectory(file_path)
+    trajectory.to_markdown(file_path + "/output.md")

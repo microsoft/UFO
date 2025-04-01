@@ -2,8 +2,8 @@
 # Licensed under the MIT License.
 
 import argparse
-from . import indexer
 
+from learner import indexer
 
 args = argparse.ArgumentParser()
 args.add_argument(
@@ -34,7 +34,7 @@ def main():
     Main function.
     """
 
-    indexer.create_indexer(
+    indexer.DocumentsIndexer().create_indexer(
         parsed_args.app,
         parsed_args.docs,
         parsed_args.format,

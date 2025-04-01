@@ -16,7 +16,7 @@ _configs = Config.get_instance().config_data
 _ufo_configs = UFOConfig.get_instance().config_data
 
 if _ufo_configs is not None:
-    _BACKEND = _ufo_configs["CONTROL_BACKEND"]
+    _BACKEND = "uia"
 if _configs is not None:
     _MATCH_STRATEGY = _configs.get("MATCH_STRATEGY", "contains")
 
@@ -64,14 +64,16 @@ class WindowsAppEnv:
             if self.app_window and self.app_window.process_id():
                 self.app_window.close()
             sleep(1)
-            # Forcefully close the application window  
-            if self.app_window.element_info.name.lower() != '':            
+            # Forcefully close the application window
+            if self.app_window.element_info.name.lower() != "":
                 self._check_and_kill_process()
         except Exception as e:
-            logging.warning(f"Graceful close failed: {e}. Attempting to forcefully terminate the process.")
+            logging.warning(
+                f"Graceful close failed: {e}. Attempting to forcefully terminate the process."
+            )
             self._check_and_kill_process()
             raise e
-    
+
     def _check_and_kill_process(self) -> None:
         """
         Checks if the process is still running and kills it if it is.
@@ -151,9 +153,11 @@ class WindowsAppEnv:
             return 100 if re.search(pattern, control_content) else 0
         else:
             raise ValueError(f"Unknown match strategy: {_MATCH_STRATEGY}")
-    
-    def find_matching_controller(self, filtered_annotation_dict: Dict[int, UIAWrapper], control_text: str) -> Tuple[str, UIAWrapper]:
-        """"
+
+    def find_matching_controller(
+        self, filtered_annotation_dict: Dict[int, UIAWrapper], control_text: str
+    ) -> Tuple[str, UIAWrapper]:
+        """ "
         Select the best matched controller.
         :param filtered_annotation_dict: The filtered annotation dictionary.
         :param control_text: The text content of the control for additional context.

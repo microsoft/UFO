@@ -5,6 +5,7 @@ import time
 import warnings
 from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from pywinauto import keyboard
 
 import pyautogui
 import pywinauto
@@ -167,6 +168,10 @@ class ControlReceiver(ReceiverBasic):
         text = params.get("text", "")
         inter_key_pause = configs.get("INPUT_TEXT_INTER_KEY_PAUSE", 0.1)
 
+        if params.get("clear_current_text", False):
+            self.control.type_keys("^a", pause=inter_key_pause)
+            self.control.type_keys("{DELETE}", pause=inter_key_pause)
+
         if configs["INPUT_TEXT_API"] == "set_text":
             method_name = "set_edit_text"
             args = {"text": text}
@@ -217,6 +222,7 @@ class ControlReceiver(ReceiverBasic):
 
         control_focus = params.get("control_focus", True)
         keys = params.get("keys", "")
+        keys = TextTransformer.transform_text(keys, "all")
 
         if control_focus:
             self.atomic_execution("type_keys", {"keys": keys})
@@ -237,7 +243,13 @@ class ControlReceiver(ReceiverBasic):
         :param params: The arguments of the wheel mouse input method.
         :return: The result of the wheel mouse input action.
         """
-        return self.atomic_execution("wheel_mouse_input", params)
+
+        if self.control is not None:
+            return self.atomic_execution("wheel_mouse_input", params)
+        else:
+            keyboard.send_keys("{VK_CONTROL up}")
+            dist = int(params.get("wheel_dist", 0))
+            return self.application.wheel_mouse_input(wheel_dist=dist)
 
     def no_action(self):
         """
@@ -650,7 +662,7 @@ class TextTransformer:
         """
 
         if transform_tag == "all":
-            transform_tag = "+\n\t^%"
+            transform_tag = "+\n\t^%{VK_CONTROL}{VK_SHIFT}{VK_MENU}"
 
         if "\n" in transform_tag:
             text = TextTransformer.transform_enter(text)
@@ -662,6 +674,12 @@ class TextTransformer:
             text = TextTransformer.transform_caret(text)
         if "%" in transform_tag:
             text = TextTransformer.transform_percent(text)
+        if "{VK_CONTROL}" in transform_tag:
+            text = TextTransformer.transform_control(text)
+        if "{VK_SHIFT}" in transform_tag:
+            text = TextTransformer.transform_shift(text)
+        if "{VK_MENU}" in transform_tag:
+            text = TextTransformer.transform_alt(text)
 
         return text
 
@@ -709,3 +727,30 @@ class TextTransformer:
         :return: The transformed text.
         """
         return text.replace("%", "{%}")
+
+    @staticmethod
+    def transform_control(text: str) -> str:
+        """
+        Transform the control key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("{VK_CONTROL}", "^")
+
+    @staticmethod
+    def transform_shift(text: str) -> str:
+        """
+        Transform the shift key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("{VK_SHIFT}", "+")
+
+    @staticmethod
+    def transform_alt(text: str) -> str:
+        """
+        Transform the alt key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("{VK_MENU}", "%")

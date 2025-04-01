@@ -7,29 +7,25 @@ import os
 import time
 import traceback
 from abc import ABC, abstractmethod
-from dataclasses import asdict, dataclass
 from functools import wraps
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.memory.memory import MemoryItem
-from ufo.automator.puppeteer import AppPuppeteer
+from ufo.agents.processors.actions import ActionSequence
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
-from ufo.agents.processors.actions import (
-    ActionSequence,
-    OneStepAction,
-    BaseControlLog,
-)
 
 configs = Config.get_instance().config_data
+
 if configs is not None:
-    BACKEND = configs["CONTROL_BACKEND"]
+    CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"])
+    BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
 
 
 class BaseProcessor(ABC):
@@ -742,6 +738,22 @@ class BaseProcessor(ABC):
         self.agent.status = self.status
 
         return self.status == self._agent_status_manager.CONFIRM.value
+
+    def is_application_closed(self) -> bool:
+        """
+        Check if the application is closed.
+        :return: The boolean value indicating if the application is closed.
+        """
+
+        if self.application_window is None:
+
+            return True
+
+        try:
+            self.application_window.is_enabled()
+            return False
+        except:
+            return True
 
     def log(self, response_json: Dict[str, Any]) -> None:
         """

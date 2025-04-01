@@ -29,7 +29,7 @@ class Config:
             Config._instance = Config()
         return Config._instance
 
-    def load_config(self, config_path = "ufo/config/") -> dict:
+    def load_config(self, config_path="ufo/config/") -> dict:
         """
         Load the configuration from a YAML file and environment variables.
 
@@ -109,6 +109,9 @@ class Config:
         cls.update_api_base(configs, "HOST_AGENT")
         cls.update_api_base(configs, "APP_AGENT")
         cls.update_api_base(configs, "BACKUP_AGENT")
+
+        if isinstance(configs.get("CONTROL_BACKEND"), str):
+            configs["CONTROL_BACKEND"] = [configs["CONTROL_BACKEND"]]
 
         return configs
 

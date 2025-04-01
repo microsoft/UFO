@@ -5,17 +5,20 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Dict, List, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
-from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.app_agent_action_seq_processor import (
     AppAgentActionSequenceProcessor,
 )
+from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.automator import puppeteer
+from ufo.automator.ui_control.grounding.basic import BasicGrounding
+from ufo.automator.ui_control.grounding.omniparser import OmniparserGrounding
 from ufo.config.config import Config
+from ufo.llm.grounding_model.omniparser_service import OmniParser
 from ufo.module import interactor
 from ufo.module.context import Context
 from ufo.prompter.agent_prompter import AppAgentPrompter
@@ -38,6 +41,7 @@ class AppAgent(BasicAgent):
         example_prompt: str,
         api_prompt: str,
         skip_prompter: bool = False,
+        mode: str = "normal",
     ) -> None:
         """
         Initialize the AppAgent.
@@ -49,6 +53,7 @@ class AppAgent(BasicAgent):
         :param example_prompt: The example prompt file path.
         :param api_prompt: The API prompt file path.
         :param skip_prompter: The flag indicating whether to skip the prompter initialization.
+        :param mode: The mode of the agent.
         """
         super().__init__(name=name)
         if not skip_prompter:
@@ -63,6 +68,18 @@ class AppAgent(BasicAgent):
         self.human_demonstration_retriever = None
 
         self.Puppeteer = self.create_puppeteer_interface()
+        self._mode = mode
+
+        control_detection_backend = configs.get("CONTROL_BACKEND", ["uia"])
+
+        if "omniparser" in control_detection_backend:
+            omniparser_endpoint = configs.get("OMNIPARSER", {}).get("ENDPOINT", "")
+            omniparser_service = OmniParser(endpoint=omniparser_endpoint)
+            self.grounding_service: Optional[BasicGrounding] = OmniparserGrounding(
+                service=omniparser_service
+            )
+        else:
+            self.grounding_service: Optional[BasicGrounding] = None
 
         self.set_state(ContinueAppAgentState())
 
@@ -207,9 +224,33 @@ class AppAgent(BasicAgent):
                 "yellow",
             )
 
+    def demonstration_prompt_helper(self, request) -> Tuple[List[Dict[str, Any]]]:
+        """
+        Get the examples and tips for the AppAgent using the demonstration retriever.
+        :param request: The request for the AppAgent.
+        :return: The examples and tips for the AppAgent.
+        """
+
+        # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
+        if configs["RAG_EXPERIENCE"]:
+            experience_results = self.rag_experience_retrieve(
+                request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
+            )
+        else:
+            experience_results = []
+
+        if configs["RAG_DEMONSTRATION"]:
+            demonstration_results = self.rag_demonstration_retrieve(
+                request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
+            )
+        else:
+            demonstration_results = []
+
+        return experience_results, demonstration_results
+
     def external_knowledge_prompt_helper(
         self, request: str, offline_top_k: int, online_top_k: int
-    ) -> str:
+    ) -> Tuple[str, str]:
         """
         Retrieve the external knowledge and construct the prompt.
         :param request: The request.
@@ -218,23 +259,30 @@ class AppAgent(BasicAgent):
         :return: The prompt message for the external_knowledge.
         """
 
-        retrieved_docs = ""
-
         # Retrieve offline documents and construct the prompt
         if self.offline_doc_retriever:
+
             offline_docs = self.offline_doc_retriever.retrieve(
-                "How to {query} for {app}".format(
-                    query=request, app=self._process_name
-                ),
+                request,
                 offline_top_k,
                 filter=None,
             )
+
+            format_string = "[Similar Requests]: {question}\nStep: {answer}\n"
+
             offline_docs_prompt = self.prompter.retrived_documents_prompt_helper(
-                "Help Documents",
-                "Document",
-                [doc.metadata["text"] for doc in offline_docs],
+                "[Help Documents]",
+                "",
+                [
+                    format_string.format(
+                        question=doc.metadata.get("title", ""),
+                        answer=doc.metadata.get("text", ""),
+                    )
+                    for doc in offline_docs
+                ],
             )
-            retrieved_docs += offline_docs_prompt
+        else:
+            offline_docs_prompt = ""
 
         # Retrieve online documents and construct the prompt
         if self.online_doc_retriever:
@@ -246,9 +294,10 @@ class AppAgent(BasicAgent):
                 "Search Result",
                 [doc.page_content for doc in online_search_docs],
             )
-            retrieved_docs += online_docs_prompt
+        else:
+            online_docs_prompt = ""
 
-        return retrieved_docs
+        return offline_docs_prompt, online_docs_prompt
 
     def rag_experience_retrieve(
         self, request: str, experience_top_k: int
@@ -332,7 +381,9 @@ class AppAgent(BasicAgent):
                 agent=self, context=context
             )
         else:
-            self.processor = AppAgentProcessor(agent=self, context=context)
+            self.processor = AppAgentProcessor(
+                agent=self, context=context, ground_service=self.grounding_service
+            )
         self.processor.process()
         self.status = self.processor.status
 
@@ -364,6 +415,13 @@ class AppAgent(BasicAgent):
         Get the status manager.
         """
         return AppAgentStatus
+
+    @property
+    def mode(self) -> str:
+        """
+        Get the mode of the session.
+        """
+        return self._mode
 
     def build_offline_docs_retriever(self) -> None:
         """
