@@ -20,6 +20,8 @@ __pycache__/
 ufo/config/config.yaml
 ufo/config/config_llm.yaml
 
+# Ignore the environment files
+.venv/
 
 # Ignore the helper files
 ufo/rag/app_docs/*
