@@ -505,10 +505,10 @@ class AppAgentProcessor(BaseProcessor):
             )
 
             try:
-                self.host_agent.response_to_dict(self._response)
+                self.app_agent.response_to_dict(self._response)
                 break
             except Exception as e:
-                print(f"Error in parsing response into json, retrying: {retry}")
+                print("Error in parsing response: ", e)
                 retry += 1
 
     @BaseProcessor.exception_capture
