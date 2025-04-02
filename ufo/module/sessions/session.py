@@ -583,6 +583,8 @@ class OpenAIOperatorSession(Session):
             self.application_window
         )
 
+        self._init_request = self.refine_request(request)
+
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, application_root_name)
         self.context.set(
             ContextNames.APPLICATION_PROCESS_NAME, application_process_name
@@ -594,6 +596,18 @@ class OpenAIOperatorSession(Session):
             process_name=application_process_name,
             app_root_name=application_root_name,
         )
+
+    def refine_request(self, request: str) -> str:
+        """
+        Refine the request.
+        :param request: The request to refine.
+        :return: The refined request.
+        """
+
+        additional_guidance = "Please do not ask for consent to perform the task, just execute the action."
+        new_request = f"{request} \n {additional_guidance}"
+
+        return new_request
 
     def run(self) -> None:
         """
