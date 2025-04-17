@@ -105,12 +105,12 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         if str(end_col).isalpha():
             end_col = self.letters_to_number(end_col)
 
+        sheet = self.com_object.Sheets(sheet_name)
+
         if end_row == -1:
             end_row = sheet.Rows.Count
         if end_col == -1:
             end_col = sheet.Columns.Count
-
-        sheet = self.com_object.Sheets(sheet_name)
 
         try:
             sheet.Range(
@@ -123,76 +123,70 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
     def reorder_columns(self, sheet_name: str, desired_order: List[str] = None) -> str:
         """
         Reorder only non-empty columns based on desired_order.
-        Empty columns will remain in their original positions.
-        :param file_path: Excel file path
+        Empty columns remain in their original positions.
         :param sheet_name: Sheet to operate on
         :param desired_order: List of column header names to reorder
         :return: Success or error message
         """
-
-        ws = self.com_object.Sheets(sheet_name)
-        used_range = ws.UsedRange
-        start_col = used_range.Column
-        total_cols = used_range.Columns.Count
-        last_col = start_col + total_cols - 1  # ← 真正的右边界（全表右边的列号）
-
-        # 获取非空列的标题和位置
-        non_empty_columns = []
-        empty_columns = []
-
-        for col in range(1, last_col + 1):
-            cell_value = ws.Cells(1, col).Value
-            if cell_value and str(cell_value).strip():
-                non_empty_columns.append((str(cell_value).strip(), col))
-            else:
-                empty_columns.append(col)
-
-        print("📌 Non-empty columns:", [x[0] for x in non_empty_columns])
-        print("📌 Empty columns at:", empty_columns)
-
-        # 构造新的非空列顺序（按 desired_order 给出的顺序排列）
-        new_order = []
-        name_to_col = {name: col for name, col in non_empty_columns}
-        for name in desired_order:
-            if name in name_to_col:
-                new_order.append((name, name_to_col[name]))
-            else:
-                print(f"⚠️ Column '{name}' not found, skipping.")
-
-        # 按新顺序插入非空列（从左往右插）
-        insert_offset = 0
         try:
-            for name, original_col in new_order:
-                # 插入列到新的位置（跳过空列）
+            ws = self.com_object.Sheets(sheet_name)
+            used_range = ws.UsedRange
+            start_col = used_range.Column
+            total_cols = used_range.Columns.Count
+            last_col = start_col + total_cols - 1
 
-                print(
-                    f"🔧 Moving column '{name}' from {original_col} to {insert_offset + 1}"
-                )
-                insert_pos = self.get_nth_non_empty_position(
-                    insert_offset + 1, empty_columns
-                )
-                ws.Columns(original_col).Copy()
-                ws.Columns(insert_pos).Insert()
+            # 获取非空列的标题和位置
+            non_empty_columns = []
+            empty_columns = []
 
-                # 删除原列（注意偏移）
-                if original_col >= insert_pos:
-                    ws.Columns(original_col + 1).Delete()
+            for col in range(1, last_col + 1):
+                cell_value = ws.Cells(1, col).Value
+                if cell_value and str(cell_value).strip():
+                    non_empty_columns.append((str(cell_value).strip(), col))
                 else:
-                    ws.Columns(original_col).Delete()
+                    empty_columns.append(col)
 
-                # 更新所有列位置（因为 Excel 中列号会移动）
-                for k in name_to_col:
-                    if name_to_col[k] >= original_col:
-                        name_to_col[k] -= 1
-                    if name_to_col[k] >= insert_pos:
-                        name_to_col[k] += 1
+            print("📌 Non-empty columns:", [x[0] for x in non_empty_columns])
+            print("📌 Empty columns at:", empty_columns)
 
+            # 构建一个映射：列名 -> 列号
+            name_to_col = {name: col for name, col in non_empty_columns}
+
+            # 缓存要重新排序的列数据
+            column_data = []
+            for name in desired_order:
+                if name in name_to_col:
+                    col_index = name_to_col[name]
+                    data = []
+                    row = 1
+                    while True:
+                        value = ws.Cells(row, col_index).Value
+                        if value is None and row > 100:  # 提前跳出防止死循环
+                            break
+                        data.append(value)
+                        row += 1
+                    column_data.append((name, data))
+                else:
+                    print(f"⚠️ Column '{name}' not found, skipping.")
+
+            # 删除所有非空列（从右向左删，避免位置偏移）
+            for _, col_index in sorted(non_empty_columns, key=lambda x: -x[1]):
+                ws.Columns(col_index).Delete()
+
+            # 插入新的列顺序（跳过空列）
+            insert_offset = 1
+            for name, data in column_data:
+                insert_pos = self.get_nth_non_empty_position(insert_offset, empty_columns)
+                print(f"✅ Inserting '{name}' at position {insert_pos}")
+                for row_index, value in enumerate(data, start=1):
+                    ws.Cells(row_index, insert_pos).Value = value
                 insert_offset += 1
+
+            return f"Columns reordered successfully into: {desired_order}"
+
         except Exception as e:
             print(f"❌ Failed to reorder columns. Error: {e}")
             return f"Failed to reorder columns. Error: {e}"
-
-        return f"Columns reordered successfully into: {desired_order}"
 
     def get_range_values(
         self,
