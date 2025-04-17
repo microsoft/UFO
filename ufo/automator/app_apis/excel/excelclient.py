@@ -135,7 +135,6 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
             total_cols = used_range.Columns.Count
             last_col = start_col + total_cols - 1
 
-            # 获取非空列的标题和位置
             non_empty_columns = []
             empty_columns = []
 
@@ -149,10 +148,8 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
             print("📌 Non-empty columns:", [x[0] for x in non_empty_columns])
             print("📌 Empty columns at:", empty_columns)
 
-            # 构建一个映射：列名 -> 列号
             name_to_col = {name: col for name, col in non_empty_columns}
 
-            # 缓存要重新排序的列数据
             column_data = []
             for name in desired_order:
                 if name in name_to_col:
@@ -161,7 +158,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
                     row = 1
                     while True:
                         value = ws.Cells(row, col_index).Value
-                        if value is None and row > 100:  # 提前跳出防止死循环
+                        if value is None and row > 100:
                             break
                         data.append(value)
                         row += 1
@@ -169,11 +166,9 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
                 else:
                     print(f"⚠️ Column '{name}' not found, skipping.")
 
-            # 删除所有非空列（从右向左删，避免位置偏移）
             for _, col_index in sorted(non_empty_columns, key=lambda x: -x[1]):
                 ws.Columns(col_index).Delete()
 
-            # 插入新的列顺序（跳过空列）
             insert_offset = 1
             for name, data in column_data:
                 insert_pos = self.get_nth_non_empty_position(insert_offset, empty_columns)
