@@ -56,7 +56,7 @@ nav:
       - Screenshots: logs/screenshots_logs.md
       - UI Tree: logs/ui_tree_logs.md
   - Advanced Usage: 
-      - Reinforcing AppAgent: 
+      - Continuous Knowledge Substrate: 
         - Overview: advanced_usage/reinforce_appagent/overview.md
         - Learning from Help Document: advanced_usage/reinforce_appagent/learning_from_help_document.md
         - Learning from Bing Search: advanced_usage/reinforce_appagent/learning_from_bing_search.md
@@ -69,6 +69,11 @@ nav:
         - Text Filtering: advanced_usage/control_filtering/text_filtering.md
         - Semantic Filtering: advanced_usage/control_filtering/semantic_filtering.md
         - Icon Filtering: advanced_usage/control_filtering/icon_filtering.md
+      - Control Detection: 
+        - Overview: advanced_usage/control_detection/overview.md
+        - UIA Detection: advanced_usage/control_detection/uia_detection.md
+        - Visual Detection: advanced_usage/control_detection/visual_detection.md
+        - Hybrid Detection: advanced_usage/control_detection/hybrid_detection.md
       - Customization: advanced_usage/customization.md
   - Creating Your AppAgent: 
       - Overview: creating_app_agent/overview.md

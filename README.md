@@ -57,6 +57,9 @@
   <img src="assets/framework2.png"  width="80%" alt="UFO² architecture"/>
 </p>
 
+
+UFO² operates as a **Desktop AgentOS**, encompassing a multi-agent framework that includes:
+
 1. **HostAgent** – Parses the natural‑language goal, launches the necessary applications, spins up / coordinates AppAgents, and steers a global finite‑state machine (FSM).  
 2. **AppAgents** – One per application; each runs a ReAct loop with multimodal perception, hybrid control detection, retrieval‑augmented knowledge, and the **Puppeteer** executor that chooses between GUI actions and native APIs.  
 3. **Knowledge Substrate** – Blends offline documentation, online search, demonstrations, and execution traces into a vector store that is retrieved on‑the‑fly at inference.  
@@ -108,7 +111,6 @@ copy ufo\config\config.yaml.template ufo\config\config.yaml
 notepad ufo\config\config.yaml   # paste your key & endpoint
 ```
 
-
 #### OpenAI
 ```yaml
 VISUAL_MODE: True, # Whether to use the visual mode
@@ -130,7 +132,7 @@ API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
 API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 ```
 
-> Need Qwen, Gemini or non‑visual GPT‑4? See the [model guide](https://microsoft.github.io/UFO/supported_models/overview/).
+> Need Qwen, Gemini, non‑visual GPT‑4, or even **OpenAI CUA Operator**? See the [model guide](https://microsoft.github.io/UFO/supported_models/overview/).
 
 ### 📔 Step 3: Additional Setting for RAG (optional).
 If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file. 
@@ -234,10 +236,14 @@ If you build on this work, please cite our the AgentOS framework:
 ---
 
 ## 📝 Roadmap
-- [ ] Picture‑in‑Picture mode release  
-- [ ] AgentOS‑as‑a‑Service  
-- [ ] Auto‑debugging toolkit  
-- [ ] Integration with MCP and agent2agent
+
+The UFO² team is actively working on the following features and improvements:
+
+- [ ] **Picture‑in‑Picture Mode** – Completed and will be available in the next release  
+- [ ] **AgentOS‑as‑a‑Service** – Completed and will be available in the next release  
+- [ ] **Auto‑Debugging Toolkit** – Completed and will be available in the next release  
+- [ ] **Integration with MCP and Agent2Agent Communication** – Planned; under implementation  
+
 
 ---
 
