@@ -3,7 +3,7 @@
   <b>UFO²</b> <img src="assets/ufo_blue.png" alt="UFO logo" width="40"> :&nbsp;The&nbsp;Desktop&nbsp;AgentOS
 </h1>
 <p align="center">
-  <em>Turn natural‑language requests into automatic, reliable, multi‑application workflows on Windows OS, far beyond UI-Focused.</em>
+  <em>Turn natural‑language requests into automatic, reliable, multi‑application workflows on Windows, far beyond UI-Focused.</em>
 </p>
 
 
@@ -22,7 +22,7 @@
 <!-- **UFO** is a **UI-Focused** multi-agent framework to fulfill user requests on **Windows OS** by seamlessly navigating and operating within individual or spanning multiple applications. -->
 
 <h1 align="center">
-    <img src="./assets/comparison.png"/> 
+    <img src="./assets/comparison.png" width="60%"/> 
 </h1>
 
 ---
