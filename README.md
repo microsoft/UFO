@@ -3,7 +3,7 @@
   <b>UFO²</b> <img src="assets/ufo_blue.png" alt="UFO logo" width="40"> :&nbsp;The&nbsp;Desktop&nbsp;AgentOS
 </h1>
 <p align="center">
-  <em>Turn natural‑language requests into automatic, reliable, multi‑application workflows on Windows, far beyond UI-Focused.</em>
+  <em>Turn natural‑language requests into automatic, reliable, multi‑application workflows on Windows, beyond UI-Focused.</em>
 </p>
 
 
@@ -54,7 +54,7 @@
 
 ## 🏗️ Architecture overview
 <p align="center">
-  <img src="assets/framework2.png" width="800" alt="UFO² architecture"/>
+  <img src="assets/framework2.png"  width="80%" alt="UFO² architecture"/>
 </p>
 
 1. **HostAgent** – Parses the natural‑language goal, launches the necessary applications, spins up / coordinates AppAgents, and steers a global finite‑state machine (FSM).  
@@ -129,19 +129,8 @@ API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
 API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
 API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 ```
-You can also non-visial model (e.g., GPT-4) for each agent, by setting `VISUAL_MODE: False` and proper `API_MODEL` (openai) and `API_DEPLOYMENT_ID` (aoai). You can also optionally set an backup LLM engine in the field of `BACKUP_AGENT` if the above engines failed during the inference.
 
-
-####  Non-Visual Model Configuration
-You can utilize non-visual models (e.g., GPT-4) for each agent by configuring the following settings in the `config.yaml` file:
-
-- ```VISUAL_MODE: False # To enable non-visual mode.```
-- Specify the appropriate `API_MODEL` (OpenAI) and `API_DEPLOYMENT_ID` (AOAI) for each agent.
-
-Optionally, you can set a backup language model (LLM) engine in the `BACKUP_AGENT` field to handle cases where the primary engines fail during inference. Ensure you configure these settings accurately to leverage non-visual models effectively.
-
-#### NOTE 💡 
-UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](https://microsoft.github.io/UFO/supported_models/overview/) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev.yaml`.
+> Need Qwen, Gemini or non‑visual GPT‑4? See the [model guide](https://microsoft.github.io/UFO/supported_models/overview/).
 
 ### 📔 Step 3: Additional Setting for RAG (optional).
 If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file. 
@@ -209,8 +198,7 @@ UFO² is rigorously benchmarked on two publicly‑available live‑task suites:
 | **Windows Agent Arena (WAA)** | 154 real Windows tasks across 15 applications (Office, Edge, File Explorer, VS Code, …) | <https://github.com/microsoft/windows-agent-arena> |
 | **OSWorld‑W** | 49 cross‑application tasks that mix Office 365, browser and system utilities | <https://github.com/microsoft/OSWorld> |
 
-Our evaluation harness lives in [`benchmarks/`](benchmarks/) and mirrors the setup used in the paper.  
-All verification follows the original scripts that ship with each benchmark.
+The integration of these benchmarks into UFO² is in separate repositories.
 
 ---
 
