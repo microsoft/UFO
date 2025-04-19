@@ -196,7 +196,7 @@ UFO² is rigorously benchmarked on two publicly‑available live‑task suites:
 | Benchmark | Scope | Links |
 |-----------|-------|-------|
 | **Windows Agent Arena (WAA)** | 154 real Windows tasks across 15 applications (Office, Edge, File Explorer, VS Code, …) | <https://github.com/microsoft/windows-agent-arena> |
-| **OSWorld‑W** | 49 cross‑application tasks that mix Office 365, browser and system utilities | <https://github.com/microsoft/OSWorld> |
+| **OSWorld (Windows)** | 49 cross‑application tasks that mix Office 365, browser and system utilities | <https://github.com/microsoft/OSWorld> |
 
 The integration of these benchmarks into UFO² is in separate repositories.
 
