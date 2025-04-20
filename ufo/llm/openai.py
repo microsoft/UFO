@@ -33,6 +33,7 @@ class OpenAIService(BaseService):
         self.api_type = self.config_llm["API_TYPE"].lower()
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config.get("PRICES", {})
+        self.agent_type = agent_type
         assert self.api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
 
         self.client: OpenAI = OpenAIService.get_openai_client(
@@ -47,6 +48,46 @@ class OpenAIService(BaseService):
         )
 
     def chat_completion(
+        self,
+        messages: List[Dict[str, str]],
+        n: int,
+        stream: bool = False,
+        temperature: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        top_p: Optional[float] = None,
+        **kwargs: Any,
+    ) -> Tuple[Dict[str, Any], Optional[float]]:
+        """
+        Generates completions for a given conversation using the OpenAI Chat API.
+        :param messages: The list of messages in the conversation.
+        :param n: The number of completions to generate.
+        :param stream: Whether to stream the API response.
+        :param temperature: The temperature parameter for randomness in the output.
+        :param max_tokens: The maximum number of tokens in the generated completion.
+        :param top_p: The top-p parameter for nucleus sampling.
+        :param kwargs: Additional keyword arguments to pass to the OpenAI API.
+        :return: A tuple containing a list of generated completions and the estimated cost.
+        :raises: Exception if there is an error in the OpenAI API request
+        """
+
+        if self.agent_type.lower() != "operator":
+            # If the agent type is not "operator", use the OpenAI API directly
+            return self._chat_completion(
+                messages,
+                n,
+                stream,
+                temperature,
+                max_tokens,
+                top_p,
+                **kwargs,
+            )
+        else:
+            # If the agent type is "operator", use the OpenAI Beta client
+            return self._chat_completion_operator(
+                messages,
+            )
+
+    def _chat_completion(
         self,
         messages: List[Dict[str, str]],
         n: int,
@@ -139,6 +180,52 @@ class OpenAIService(BaseService):
         except openai.APIError as e:
             # Handle API error, e.g. retry or log
             raise Exception(f"OpenAI API returned an API Error: {e}")
+
+    def _chat_completion_operator(
+        self,
+        message: Dict[str, Any] = None,
+        n: int = 1,
+        **kwargs: Any,
+    ) -> Tuple[Dict[str, Any], Optional[float]]:
+        """
+        Generates completions for a given conversation using the OpenAI Chat API.
+        :param message: The message to send to the API.
+        :param n: The number of completions to generate.
+        :return: A tuple containing a list of generated completions and the estimated cost.
+        """
+
+        inputs = message.get("inputs", [])
+        tools = message.get("tools", [])
+        previous_response_id = message.get("previous_response_id", None)
+
+        response = self.client.responses.create(
+            model=self.config_llm.get("API_MODEL"),
+            input=inputs,
+            tools=tools,
+            previous_response_id=previous_response_id,
+            truncation="auto",
+            temperature=self.config.get("TEMPERATURE", 0),
+            top_p=self.config.get("TOP_P", 0),
+            timeout=self.config.get("TIMEOUT", 20),
+        ).model_dump()
+
+        if "usage" in response:
+            usage = response.get("usage")
+            input_tokens = usage.get("input_tokens", 0)
+            output_tokens = usage.get("output_tokens", 0)
+        else:
+            input_tokens = 0
+            output_tokens = 0
+
+        cost = self.get_cost_estimator(
+            self.api_type,
+            self.config_llm["API_MODEL"],
+            self.prices,
+            input_tokens,
+            output_tokens,
+        )
+
+        return [response], cost
 
     @functools.lru_cache()
     @staticmethod
@@ -483,10 +570,14 @@ class OperatorServicePreview(BaseService):
     The Operator service class to interact with the Operator for Computer Using Agent (CUA) API.
     """
 
-    def __init__(self, config: Dict[str, Any], agent_type: str = "operator") -> None:
+    def __init__(
+        self, config: Dict[str, Any], agent_type: str = "operator", client=None
+    ) -> None:
         """
         Create an Operator service instance.
         :param config: The configuration for the Operator service.
+        :param agent_type: The type of the agent.
+
         """
         self.config_llm = config[agent_type]
         self.config = config
@@ -496,7 +587,8 @@ class OperatorServicePreview(BaseService):
         self.prices = self.config.get("PRICES", {})
         self._agent_type = agent_type
 
-        self.client = self.get_openai_client()
+        if client is None:
+            self.client = self.get_openai_client()
 
     def get_openai_client(self):
         """
@@ -567,54 +659,6 @@ class OperatorServicePreview(BaseService):
         )
 
         return [response], cost
-
-    def chat_completion2(
-        self,
-        message: Dict[str, Any] = None,
-        n: int = 1,
-    ) -> Tuple[Dict[str, Any], Optional[float]]:
-        """
-        Generates completions for a given conversation using the OpenAI Chat API.
-        :param message: The message to send to the API.
-        :param n: The number of completions to generate.
-        :return: A tuple containing a list of generated completions and the estimated cost.
-        """
-
-        inputs = message.get("inputs", [])
-        tools = message.get("tools", [])
-        previous_response_id = message.get("previous_response_id", None)
-
-        retry = 0
-
-        while retry < self.max_retry:
-            try:
-                response = self.client.get_responses(
-                    model=self.config_llm.get("API_MODEL"),
-                    previous_response_id=previous_response_id,
-                    inputs=inputs,
-                    tools=tools,
-                    temperature=self.config.get("TEMPERATURE", 0),
-                    top_p=self.config.get("TOP_P", 0),
-                    token_provider=self.get_token_provider(),
-                )
-
-                usage = response.get("usage", {})
-                input_tokens = usage.get("input_tokens", 0)
-                output_tokens = usage.get("output_tokens", 0)
-
-                cost = self.get_cost_estimator(
-                    self.api_type,
-                    self.api_model,
-                    self.prices,
-                    input_tokens,
-                    output_tokens,
-                )
-
-                return [response], cost
-
-            except Exception as e:
-                retry += 1
-                time.sleep(5)
 
     def get_token_provider(self):
         """
