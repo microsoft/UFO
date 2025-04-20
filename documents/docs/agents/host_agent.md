@@ -2,14 +2,20 @@
 
 The `HostAgent` assumes three primary responsibilities:
 
-1. **User Engagement**: The `HostAgent` engages with the user to understand their request and analyze their intent. It also conversates with the user to gather additional information when necessary.
-2. **AppAgent Management**: The `HostAgent` manages the creation and registration of `AppAgents` to fulfill the user's request. It also orchestrates the interaction between the `AppAgents` and the application.
-3. **Task Management**: The `HostAgent` analyzes the user's request, to decompose it into sub-tasks and distribute them among the `AppAgents`. It also manages the scheduling, orchestration, coordination, and monitoring of the `AppAgents` to ensure the successful completion of the user's request.
-4. **Bash Command Execution**: The `HostAgent` can execute bash commands to open applications or execute system commands to support the user's request and the `AppAgents`' execution.
-5. **Communication**: The `HostAgent` communicates with the `AppAgents` to exchange information. It also manages the `Blackboard` to store and share information among the agents, as shown below:
+- **Task Decomposition.** Given a user's natural language input, `HostAgent` identifies the underlying task goal and decomposes it into a dependency-ordered subtask graph.
+
+- **Application Lifecycle Management.** For each subtask, `HostAgent` inspects system process metadata (via UIA APIs) to determine whether the target application is running. If not, it launches the program and registers it with the runtime.
+
+- **`AppAgent` Instantiation.** `HostAgent` spawns the corresponding `AppAgent` for each active application, providing it with task context, memory references, and relevant toolchains (e.g., APIs, documentation).
+
+- **Task Scheduling and Control.** The global execution plan is serialized into a finite state machine (FSM), allowing `HostAgent` to enforce execution order, detect failures, and resolve dependencies across agents.
+
+- **Shared State Communication.** `HostAgent` reads from and writes to a global blackboard, enabling inter-agent communication and system-level observability for debugging and replay.
+
+Below is a diagram illustrating the `HostAgent` architecture and its interactions with other components:
 
 <h1 align="center">
-    <img src="../../img/blackboard.png" alt="Blackboard Image" width="80%">
+    <img src="../../img/hostagent2.png" alt="Blackboard Image">
 </h1>
 
 
@@ -75,19 +81,17 @@ Below is an example of the `HostAgent` output:
 
 The `HostAgent` progresses through different states, as defined in the `ufo/agents/states/host_agent_states.py` module. The states include:
 
-| State | Description |
-| --- | --- |
-| `CONTINUE` | The `HostAgent` is ready to process the user's request and emloy the `Processor` to decompose it into sub-tasks. |
-| `ASSIGN` | The `HostAgent` is assigning the sub-tasks to the `AppAgents` for execution. |
-| `FINISH` | The overall task is completed, and the `HostAgent` is ready to return the results to the user. |
-| `ERROR` | An error occurred during the processing of the user's request, and the `HostAgent` is unable to proceed. |
-| `FAIL` | The `HostAgent` believes the task is unachievable and cannot proceed further. |
-| `PENDING` | The `HostAgent` is waiting for additional information from the user to proceed. |
-<!-- | `CONFIRM` | The `HostAgent` is confirming the user's request before proceeding. | -->
+| State       | Description                                                                 |
+|-------------|-----------------------------------------------------------------------------|
+| `CONTINUE`  | Default state for action planning and execution.                            |
+| `PENDING`   | Invoked for safety-critical actions (e.g., destructive operations); requires user confirmation. |
+| `FINISH`    | Task completed; execution ends.                                              |
+| `FAIL`      | Irrecoverable failure detected (e.g., application crash, permission error). |
+
 
 The state machine diagram for the `HostAgent` is shown below:
 <h1 align="center">
-    <img src="../../img/host_state_machine.png"/> 
+    <img src="../../img/host_state.png"/> 
 </h1>
 
 

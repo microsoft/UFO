@@ -22,7 +22,7 @@ UFO now evolves into **UFO²** (Desktop AgentOS), a new generation of agent fram
 | **Deep OS Integration**          | Combines Windows UIA, Win32 and WinCOM for first‑class control detection and native commands. |
 | **Picture‑in‑Picture Desktop** *(coming soon)* | Automation runs in a sandboxed virtual desktop so you can keep using your main screen. |
 | [**Hybrid GUI + API Actions**](./automator/overview.md)     | Chooses native APIs when available, falls back to clicks/keystrokes when not—fast *and* robust. |
-| **Speculative Multi‑Action**     | Bundles several predicted steps into one LLM call, validated live—up to **51 % fewer** queries. |
+| [**Speculative Multi‑Action**](./advanced_usage/multi_action.md)     | Bundles several predicted steps into one LLM call, validated live—up to **51 % fewer** queries. |
 | [**Continuous Knowledge Substrate**](./advanced_usage/reinforce_appagent/overview.md) | Mixes docs, Bing search, user demos and execution traces via RAG for agents that learn over time. |
 | [**UIA + Visual Control Detection**](./advanced_usage/control_detection/hybrid_detection.md) | Detects standard *and* custom controls with a hybrid UIA + vision pipeline. |
 

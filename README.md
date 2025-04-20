@@ -30,11 +30,11 @@
 ## ✨ Key Capabilities
 <div align="center">
 
-| Deep OS Integration | Picture‑in‑Picture Desktop *(coming soon)* | Hybrid GUI + API Actions |
+| [Deep OS Integration](https://microsoft.github.io/UFO)  | Picture‑in‑Picture Desktop *(coming soon)* | [Hybrid GUI + API Actions](https://microsoft.github.io/UFO/automator/overview) |
 |---------------------|-------------------------------------------|---------------------------|
 | Combines Windows UIA, Win32 and WinCOM for first‑class control detection and native commands. | Automation runs in a sandboxed virtual desktop so you can keep using your main screen. | Chooses native APIs when available, falls back to clicks/keystrokes when not—fast *and* robust. |
 
-| Speculative Multi‑Action | Continuous Knowledge Substrate | UIA + Visual Control Detection |
+| [Speculative Multi‑Action](https://microsoft.github.io/UFO/advanced_usage/multi_action) | [Continuous Knowledge Substrate](https://microsoft.github.io/UFO/reinforce_appagent/overview) | [UIA + Visual Control Detection](https://microsoft.github.io/UFO/control_detection/hybrid_detection) |
 |--------------------------|--------------------------------|--------------------------------|
 | Bundles several predicted steps into one LLM call, validated live—up to **51 % fewer** queries. | Mixes docs, Bing search, user demos and execution traces via RAG for agents that learn over time. | Detects standard *and* custom controls with a hybrid UIA + vision pipeline. |
 
@@ -195,12 +195,12 @@ You may use them to debug, replay, or analyze the agent output.
 
 UFO² is rigorously benchmarked on two publicly‑available live‑task suites:
 
-| Benchmark | Scope | Links |
+| Benchmark | Scope | Documents |
 |-----------|-------|-------|
-| **Windows Agent Arena (WAA)** | 154 real Windows tasks across 15 applications (Office, Edge, File Explorer, VS Code, …) | <https://github.com/microsoft/windows-agent-arena> |
-| **OSWorld (Windows)** | 49 cross‑application tasks that mix Office 365, browser and system utilities | <https://github.com/microsoft/OSWorld> |
+| [**Windows Agent Arena (WAA)**](https://github.com/nice-mee/WindowsAgentArena) | 154 real Windows tasks across 15 applications (Office, Edge, File Explorer, VS Code, …) | <https://microsoft.github.io/UFO/benchmark/windows_agent_arena/> |
+| [**OSWorld (Windows)**](https://github.com/nice-mee/WindowsAgentArena/tree/2020-qqtcg/osworld) | 49 cross‑application tasks that mix Office 365, browser and system utilities | <https://microsoft.github.io/UFO/benchmark/osworld> |
 
-The integration of these benchmarks into UFO² is in separate repositories.
+The integration of these benchmarks into UFO² is in separate repositories. Please follow the above documents for more details.
 
 ---
 
@@ -213,7 +213,7 @@ If you build on this work, please cite our the AgentOS framework:
 <https://arxiv.org/abs/2402.07939>
 ```bibtex
 @article{zhang2025ufo2,
-  title   = {{UFO\textsuperscript{2}: The Desktop AgentOS}},
+  title   = {{UFO2: The Desktop AgentOS}},
   author  = {Zhang, Chaoyun and Huang, He and Ni, Chiming and Mu, Jian and Qin, Si and He, Shilin and Wang, Lu and Yang, Fangkai and Zhao, Pu and Du, Chao and Li, Liqun and Kang, Yu and Jiang, Zhao and Zheng, Suzhen and Wang, Rujia and Qian, Jiaxu and Ma, Minghua and Lou, Jian-Guang and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
   journal = {arXiv preprint arXiv:2402.07939},
   year    = {2025}

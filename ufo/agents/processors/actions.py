@@ -227,7 +227,10 @@ class OneStepAction:
         """
         try:
             control.is_enabled()
-            return True
+            if control.is_enabled() and control.is_visible():
+                return True
+            else:
+                return False
         except:
             return False
 
