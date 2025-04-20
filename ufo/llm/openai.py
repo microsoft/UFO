@@ -78,16 +78,35 @@ class OpenAIService(BaseService):
         top_p = top_p if top_p is not None else self.config["TOP_P"]
 
         try:
-            response: Any = self.client.chat.completions.create(
-                model=model,
-                messages=messages,  # type: ignore
-                n=n,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                top_p=top_p,
-                stream=stream,
-                **kwargs,
-            )
+            if self.config_llm.get("REASONING_MODEL", False):
+                response: Any = self.client.chat.completions.create(
+                    model=model,
+                    messages=messages,  # type: ignore
+                    n=n,
+                    stream=stream,
+                    **kwargs,
+                )
+            else:
+                response: Any = self.client.chat.completions.create(
+                    model=model,
+                    messages=messages,  # type: ignore
+                    n=n,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    top_p=top_p,
+                    stream=stream,
+                    **kwargs,
+                )
+            # response: Any = self.client.chat.completions.create(
+            #     model=model,
+            #     messages=messages,  # type: ignore
+            #     n=n,
+            #     # temperature=temperature,
+            #     # max_tokens=max_tokens,
+            #     # top_p=top_p,
+            #     stream=stream,
+            #     **kwargs,
+            # )
 
             usage = response.usage
             prompt_tokens = usage.prompt_tokens

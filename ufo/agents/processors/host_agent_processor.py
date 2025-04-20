@@ -173,7 +173,7 @@ class HostAgentProcessor(BaseProcessor):
         )
 
         # Log the prompt message. Only save them in debug mode.
-        request_log_str = json.dumps(asdict(request_data), indent=4, ensure_ascii=False)
+        request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
         self.request_logger.debug(request_log_str)
 
     @BaseProcessor.exception_capture
@@ -183,10 +183,19 @@ class HostAgentProcessor(BaseProcessor):
         Get the response from the LLM.
         """
 
-        # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
-        self._response, self.cost = self.host_agent.get_response(
-            self._prompt_message, "HOSTAGENT", use_backup_engine=True
-        )
+        retry = 0
+        while retry < configs.get("JSON_PARSING_RETRY", 3):
+            # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
+            self._response, self.cost = self.host_agent.get_response(
+                self._prompt_message, "HOSTAGENT", use_backup_engine=True
+            )
+
+            try:
+                self.host_agent.response_to_dict(self._response)
+                break
+            except Exception as e:
+                print(f"Error in parsing response into json, retrying: {retry}")
+                retry += 1
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer

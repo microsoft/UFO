@@ -14,6 +14,7 @@ lxml==5.1.0
 psutil==5.9.8
 beautifulsoup4==4.12.3
 sentence-transformers==2.5.1
+langchain-huggingface==0.1.2
 pandas==1.4.3
 html2text==2024.2.26
 pyautogui==0.9.54

@@ -242,7 +242,8 @@ class HostAgent(BasicAgent):
         else:
             example_prompt = configs["APPAGENT_EXAMPLE_PROMPT"]
 
-        if mode in ["normal", "batch_normal"]:
+
+        if mode in ["normal", "batch_normal", "follower"]:
 
             agent_name = (
                 "AppAgent/{root}/{process}".format(
@@ -263,6 +264,7 @@ class HostAgent(BasicAgent):
                 main_prompt=configs["APPAGENT_PROMPT"],
                 example_prompt=example_prompt,
                 api_prompt=configs["API_PROMPT"],
+                mode=mode,
             )
 
         elif mode in ["normal_operator", "batch_normal_operator"]:

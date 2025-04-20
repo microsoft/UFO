@@ -14,6 +14,8 @@ SHOW_VISUAL_OUTLINE_ON_SCREEN: False
 
 MAXIMIZE_WINDOW: False  # Whether to maximize the application window before the action
 
+JSON_PARSING_RETRY: 3  # The retry times for the json parsing
+
 SAFE_GUARD: True  # Whether to use the safe guard to prevent the model from doing sensitve operations.
 CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner", "CheckBox"]
 # The list of widgets that allowed to be selected, in uia backend, it will be used for filter the control_type, while in win32 backend, it will be used for filter the class_name.
@@ -75,6 +77,7 @@ USE_APIS: True  # Whether to use the API
 APP_API_PROMPT_ADDRESS: {
     "WINWORD.EXE": "ufo/prompts/apps/word/api.yaml",
     "EXCEL.EXE": "ufo/prompts/apps/excel/api.yaml",
+    "POWERPNT.EXE": "ufo/prompts/apps/powepoint/api.yaml",
     "msedge.exe": "ufo/prompts/apps/web/api.yaml",
     "chrome.exe": "ufo/prompts/apps/web/api.yaml"
 }  # The prompt address for the app API. The key is the app program name, and the value is the prompt address.

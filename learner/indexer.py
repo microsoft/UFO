@@ -41,7 +41,7 @@ class DocumentsIndexer:
 
         print_with_color("Loading documents from {docs}...".format(docs=docs), "cyan")
 
-        if format not in DocumentsIndexer._doc_loader_mapper:
+        if format not in DocumentsIndexer._doc_loader_mapper.keys():
             raise ValueError("Invalid format: " + format)
 
         loader: basic.BasicDocumentLoader = DocumentsIndexer._doc_loader_mapper[format](
@@ -56,10 +56,7 @@ class DocumentsIndexer:
             "yellow",
         )
 
-        if format == "xml":
-            embeddings = get_hugginface_embedding()
-        else:
-            raise ValueError("Invalid format: " + format)
+        embeddings = get_hugginface_embedding()
 
         db = FAISS.from_documents(documents, embeddings)
 

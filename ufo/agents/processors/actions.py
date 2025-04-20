@@ -47,6 +47,7 @@ class ActionExecutionLog:
 
     status: str = ""
     error: str = ""
+    traceback: str = ""
     return_value: Any = None
 
 
@@ -257,6 +258,7 @@ class OneStepAction:
         ):
             self.results = ActionExecutionLog(
                 status="error",
+                traceback="Control is not available.",
                 error="Control is not available.",
             )
             self._control_log = BaseControlLog()
@@ -290,8 +292,12 @@ class OneStepAction:
                 )
 
             except Exception as e:
+
+                import traceback
+
                 self.results = ActionExecutionLog(
                     status="error",
+                    traceback=traceback.format_exc(),
                     error=str(e),
                 )
             return self.results
