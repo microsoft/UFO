@@ -5,10 +5,10 @@ import time
 import warnings
 from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Tuple, Type, Union
-from pywinauto import keyboard
 
 import pyautogui
 import pywinauto
+from pywinauto import keyboard
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.win32structures import RECT
 
@@ -22,6 +22,8 @@ configs = Config.get_instance().config_data
 if configs is not None and configs.get("AFTER_CLICK_WAIT", None) is not None:
     pywinauto.timings.Timings.after_clickinput_wait = configs["AFTER_CLICK_WAIT"]
     pywinauto.timings.Timings.after_click_wait = configs["AFTER_CLICK_WAIT"]
+
+pyautogui.FAILSAFE = False
 
 
 class ControlReceiver(ReceiverBasic):
@@ -107,6 +109,8 @@ class ControlReceiver(ReceiverBasic):
 
         # Get the absolute coordinates of the application window.
         tranformed_x, tranformed_y = self.transform_point(x, y)
+
+        # print(f"Clicking on {tranformed_x}, {tranformed_y}")
 
         self.application.set_focus()
 
@@ -230,6 +234,22 @@ class ControlReceiver(ReceiverBasic):
             self.application.type_keys(keys=keys)
         return keys
 
+    def key_press(self, params: Dict[str, str]) -> str:
+        """
+        Key press on the control element.
+        :param params: The arguments of the key press method.
+        :return: The result of the key press action.
+        """
+
+        keys = params.get("keys", [])
+
+        for key in keys:
+            key = key.lower()
+            pyautogui.keyDown(key)
+        for key in keys:
+            key = key.lower()
+            pyautogui.keyUp(key)
+
     def texts(self) -> str:
         """
         Get the text of the control element.
@@ -250,6 +270,48 @@ class ControlReceiver(ReceiverBasic):
             keyboard.send_keys("{VK_CONTROL up}")
             dist = int(params.get("wheel_dist", 0))
             return self.application.wheel_mouse_input(wheel_dist=dist)
+
+    def scroll(self, params: Dict[str, str]) -> str:
+        """
+        Scroll on the control element.
+        :param params: The arguments of the scroll method.
+        :return: The result of the scroll action.
+        """
+
+        x = int(params.get("x", 0))
+        y = int(params.get("y", 0))
+
+        new_x, new_y = self.transform_point(x, y)
+
+        scroll_x = int(params.get("scroll_x", 0))
+        scroll_y = int(params.get("scroll_y", 0))
+
+        pyautogui.vscroll(scroll_y, x=new_x, y=new_y)
+        pyautogui.hscroll(scroll_x, x=new_x, y=new_y)
+
+    def mouse_move(self, params: Dict[str, str]) -> str:
+        """
+        Mouse move on the control element.
+        :param params: The arguments of the mouse move method.
+        :return: The result of the mouse move action.
+        """
+
+        x = int(params.get("x", 0))
+        y = int(params.get("y", 0))
+
+        new_x, new_y = self.transform_point(x, y)
+
+        pyautogui.moveTo(new_x, new_y, duration=0.1)
+
+    def type(self, params: Dict[str, str]) -> str:
+        """
+        Type on the control element.
+        :param params: The arguments of the type method.
+        :return: The result of the type action.
+        """
+
+        text = params.get("text", "")
+        pyautogui.write(text, interval=0.1)
 
     def no_action(self):
         """
@@ -318,6 +380,50 @@ class ControlReceiver(ReceiverBasic):
         y = application_y + int(application_height * fraction_y)
 
         return x, y
+
+    def transfrom_absolute_point_to_fractional(self, x: int, y: int) -> Tuple[int, int]:
+        """
+        Transform the absolute coordinates to the relative coordinates.
+        :param x: The absolute x coordinate on the application window.
+        :param y: The absolute y coordinate on the application window.
+        :return: The relative coordinates fraction.
+        """
+        application_rect: RECT = self.application.rectangle()
+        # application_x = application_rect.left
+        # application_y = application_rect.top
+
+        application_width = application_rect.width()
+        application_height = application_rect.height()
+
+        fraction_x = x / application_width
+        fraction_y = y / application_height
+
+        return fraction_x, fraction_y
+
+    def transform_scaled_point_to_raw(
+        self,
+        scaled_x: int,
+        scaled_y: int,
+        scaled_width: int,
+        scaled_height: int,
+        raw_width: int,
+        raw_height: int,
+    ) -> Tuple[int, int]:
+        """
+        Transform the scaled coordinates to the raw coordinates.
+        :param scaled_x: The scaled x coordinate.
+        :param scaled_y: The scaled y coordinate.
+        :param raw_width: The raw width of the application window.
+        :param raw_height: The raw height of the application window.
+        :param scaled_width: The scaled width of the application window.
+        :param scaled_height: The scaled height of the application window.
+        """
+
+        ratio = min(scaled_width / raw_width, scaled_height / raw_height)
+        raw_x = scaled_x / ratio
+        raw_y = scaled_y / ratio
+
+        return int(raw_x), int(raw_y)
 
 
 @ReceiverManager.register
@@ -645,6 +751,315 @@ class NoActionCommand(ControlCommand):
         :return: The name of the atomic command.
         """
         return ""
+
+
+# Register the command classes for OpenAI Operator.
+
+
+@ControlReceiver.register
+class ClickCommand(ControlCommand):
+    """
+    The click command class on coordinates.
+    """
+
+    def execute(self) -> str:
+        """
+        Execute the click command.
+        :return: The result of the command.
+        """
+
+        # Get the absolute coordinates of the application window.
+        x = int(self.params.get("x", 0))
+        y = int(self.params.get("y", 0))
+
+        if self.params.get("scaler", None) and self.receiver.application:
+            scaled_width = self.params["scaler"][0]
+            scaled_height = self.params["scaler"][1]
+            raw_width = self.receiver.application.rectangle().width()
+            raw_height = self.receiver.application.rectangle().height()
+
+            x, y = self.receiver.transform_scaled_point_to_raw(
+                x, y, scaled_width, scaled_height, raw_width, raw_height
+            )
+
+        new_x, new_y = self.receiver.transfrom_absolute_point_to_fractional(x, y)
+
+        # print(f"Clicking on {new_x}, {new_y}")
+
+        button = self.params.get("button", "left")
+        button = "middle" if button == "wheel" else button
+
+        params = {"x": new_x, "y": new_y, "button": button}
+
+        return self.receiver.click_on_coordinates(params)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the command.
+        :return: The name of the command.
+        """
+        return "click"
+
+
+@ControlReceiver.register
+class DoubleClickCommand(ControlCommand):
+    """
+    The double click command class on coordinates.
+    """
+
+    def execute(self) -> str:
+        """
+        Execute the double click command.
+        :return: The result of the command.
+        """
+
+        # Get the absolute coordinates of the application window.
+        x = int(self.params.get("x", 0))
+        y = int(self.params.get("y", 0))
+
+        if self.params.get("scaler", None) and self.receiver.application:
+            scaled_width = self.params["scaler"][0]
+            scaled_height = self.params["scaler"][1]
+            raw_width = self.receiver.application.rectangle().width()
+            raw_height = self.receiver.application.rectangle().height()
+
+            x, y = self.receiver.transform_scaled_point_to_raw(
+                x, y, scaled_width, scaled_height, raw_width, raw_height
+            )
+
+        new_x, new_y = self.receiver.transfrom_absolute_point_to_fractional(x, y)
+
+        button = self.params.get("button", "left")
+        button = "middle" if button == "wheel" else button
+
+        params = {"x": new_x, "y": new_y, "button": button, "double": True}
+
+        return self.receiver.click_on_coordinates(params)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the command.
+        :return: The name of the command.
+        """
+        return "double_click"
+
+
+@ControlReceiver.register
+class DragCommand(ControlCommand):
+    """
+    The drag command class on coordinates.
+    """
+
+    def execute(self) -> str:
+        """
+        Execute the drag command.
+        :return: The result of the command.
+        """
+
+        path = self.params.get("path", [])
+
+        for i in range(len(path)):
+            start_x, start_y = path[i].get("x", 0), path[i].get("y", 0)
+            end_x, end_y = path[i + 1].get("x", 0), (
+                path[i + 1].get("y", 0) if i + 1 < len(path) else path[i]
+            )
+
+            # print(f"Dragging from {start_x}, {start_y} to {end_x}, {end_y}")
+
+            if self.params.get("scaler", None) and self.receiver.application:
+                scaled_width = self.params["scaler"][0]
+                scaled_height = self.params["scaler"][1]
+                raw_width = self.receiver.application.rectangle().width()
+                raw_height = self.receiver.application.rectangle().height()
+
+                start_x, start_y = self.receiver.transform_scaled_point_to_raw(
+                    start_x, start_y, scaled_width, scaled_height, raw_width, raw_height
+                )
+
+                end_x, end_y = self.receiver.transform_scaled_point_to_raw(
+                    end_x, end_y, scaled_width, scaled_height, raw_width, raw_height
+                )
+
+            new_start_x, new_start_y = (
+                self.receiver.transfrom_absolute_point_to_fractional(start_x, start_y)
+            )
+
+            new_end_x, new_end_y = self.receiver.transfrom_absolute_point_to_fractional(
+                end_x, end_y
+            )
+
+            params = {
+                "start_x": new_start_x,
+                "start_y": new_start_y,
+                "end_x": new_end_x,
+                "end_y": new_end_y,
+            }
+
+            self.receiver.drag_on_coordinates(params)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the command.
+        :return: The name of the command.
+        """
+        return "drag"
+
+
+@ControlReceiver.register
+class KeyPressCommand(ControlCommand):
+    """
+    The key press command class.
+    """
+
+    def execute(self) -> str:
+        """
+        Execute the key press command.
+        :return: The result of the command.
+        """
+
+        return self.receiver.key_press(self.params)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the command.
+        :return: The name of the command.
+        """
+        return "keypress"
+
+
+@ControlReceiver.register
+class MouseMoveCommand(ControlCommand):
+    """
+    The mouse move command class.
+    """
+
+    def execute(self) -> str:
+        """
+        Execute the mouse move command.
+        :return: The result of the command.
+        """
+
+        # Get the absolute coordinates of the application window.
+        x = int(self.params.get("x", 0))
+        y = int(self.params.get("y", 0))
+
+        if self.params.get("scaler", None) and self.receiver.application:
+            scaled_width = self.params["scaler"][0]
+            scaled_height = self.params["scaler"][1]
+            raw_width = self.receiver.application.rectangle().width()
+            raw_height = self.receiver.application.rectangle().height()
+
+            x, y = self.receiver.transform_scaled_point_to_raw(
+                x, y, scaled_width, scaled_height, raw_width, raw_height
+            )
+
+        new_x, new_y = self.receiver.transfrom_absolute_point_to_fractional(x, y)
+
+        params = {"x": new_x, "y": new_y}
+
+        return self.receiver.mouse_move(params)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the command.
+        :return: The name of the command.
+        """
+        return "move"
+
+
+@ControlReceiver.register
+class ScrollCommand(ControlCommand):
+    """
+    The scroll command class.
+    """
+
+    def execute(self) -> str:
+        """
+        Execute the scroll command.
+        :return: The result of the command.
+        """
+
+        # Get the absolute coordinates of the application window.
+        x = int(self.params.get("x", 0))
+        y = int(self.params.get("y", 0))
+
+        if self.params.get("scaler", None) and self.receiver.application:
+            scaled_width = self.params["scaler"][0]
+            scaled_height = self.params["scaler"][1]
+            raw_width = self.receiver.application.rectangle().width()
+            raw_height = self.receiver.application.rectangle().height()
+
+            x, y = self.receiver.transform_scaled_point_to_raw(
+                x, y, scaled_width, scaled_height, raw_width, raw_height
+            )
+
+        new_x, new_y = self.receiver.transfrom_absolute_point_to_fractional(x, y)
+
+        scroll_x = int(self.params.get("scroll_x", 0))
+        scroll_y = int(self.params.get("scroll_y", 0))
+
+        params = {"x": new_x, "y": new_y, "scroll_x": scroll_x, "scroll_y": scroll_y}
+
+        return self.receiver.scroll(params)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the command.
+        :return: The name of the command.
+        """
+        return "scroll"
+
+
+@ControlReceiver.register
+class TypeCommand(ControlCommand):
+    """
+    The type command class.
+    """
+
+    def execute(self) -> str:
+        """
+        Execute the type command.
+        :return: The result of the command.
+        """
+
+        return self.receiver.type(self.params)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the command.
+        :return: The name of the command.
+        """
+        return "type"
+
+
+@ControlReceiver.register
+class WaitCommand(ControlCommand):
+    """
+    The wait command class.
+    """
+
+    def execute(self) -> str:
+        """
+        Execute the wait command.
+        :return: The result of the command.
+        """
+
+        time.sleep(3)
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        Get the name of the command.
+        :return: The name of the command.
+        """
+        return "wait"
 
 
 class TextTransformer:

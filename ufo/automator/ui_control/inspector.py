@@ -17,6 +17,7 @@ from pywinauto import Desktop
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.uia_element_info import UIAElementInfo
 
+
 from ufo.config.config import Config
 
 configs = Config.get_instance().config_data
@@ -674,3 +675,12 @@ class ControlInspectorFacade:
             return process.name()
         except psutil.NoSuchProcess:
             return ""
+
+    @property
+    def desktop(self) -> UIAWrapper:
+        """
+        Get all the desktop windows.
+        :return: The uia wrapper of the desktop.
+        """
+        desktop_element = UIAElementInfo()
+        return UIAWrapper(desktop_element)

@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Dict, List, Union
 
 from ufo import utils
-from ufo.agents.agent.app_agent import AppAgent
+from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.agents.memory.blackboard import Blackboard
@@ -41,6 +41,8 @@ class AgentFactory:
             return FollowerAgent(*args, **kwargs)
         elif agent_type == "batch_normal":
             return AppAgent(*args, **kwargs)
+        elif agent_type == "operator":
+            return OpenAIOperatorAgent(*args, **kwargs)
         else:
             raise ValueError("Invalid agent type: {}".format(agent_type))
 
@@ -78,7 +80,7 @@ class HostAgent(BasicAgent):
         self.appagent_dict = {}
         self._active_appagent = None
         self._blackboard = Blackboard()
-        self.set_state(ContinueHostAgentState())
+        self.set_state(self.default_state)
         self.Puppeteer = self.create_puppeteer_interface()
 
     def get_prompter(
@@ -104,10 +106,10 @@ class HostAgent(BasicAgent):
         agent_name: str,
         process_name: str,
         app_root_name: str,
-        is_visual: bool,
-        main_prompt: str,
-        example_prompt: str,
-        api_prompt: str,
+        # is_visual: bool,
+        # main_prompt: str,
+        # example_prompt: str,
+        # api_prompt: str,
         *args,
         **kwargs,
     ) -> BasicAgent:
@@ -128,10 +130,10 @@ class HostAgent(BasicAgent):
             agent_name,
             process_name,
             app_root_name,
-            is_visual,
-            main_prompt,
-            example_prompt,
-            api_prompt,
+            # is_visual,
+            # main_prompt,
+            # example_prompt,
+            # api_prompt,
             *args,
             **kwargs,
         )
@@ -264,6 +266,47 @@ class HostAgent(BasicAgent):
                 mode=mode,
             )
 
+        elif mode in ["normal_operator", "batch_normal_operator"]:
+
+            agent_name = (
+                "OpenAIOperator/{root}/{process}".format(
+                    root=application_root_name, process=application_window_name
+                )
+                if mode == "normal_operator"
+                else "BatchOpenAIOperator/{root}/{process}".format(
+                    root=application_root_name, process=application_window_name
+                )
+            )
+
+            app_agent: OpenAIOperatorAgent = self.create_subagent(
+                "operator",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
+            )
+
+        elif mode == "follower":
+
+            # Load additional app info prompt.
+            app_info_prompt = configs.get("APP_INFO_PROMPT", None)
+
+            agent_name = "FollowerAgent/{root}/{process}".format(
+                root=application_root_name, process=application_window_name
+            )
+
+            # Create the app agent in the follower mode.
+            app_agent = self.create_subagent(
+                agent_type="follower",
+                agent_name=agent_name,
+                process_name=application_window_name,
+                app_root_name=application_root_name,
+                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+                main_prompt=configs["FOLLOWERAHENT_PROMPT"],
+                example_prompt=example_prompt,
+                api_prompt=configs["API_PROMPT"],
+                app_info_prompt=app_info_prompt,
+            )
+
         else:
             raise ValueError(f"The {mode} mode is not supported.")
 
@@ -341,3 +384,10 @@ class HostAgent(BasicAgent):
         Get the status manager.
         """
         return HostAgentStatus
+
+    @property
+    def default_state(self) -> ContinueHostAgentState:
+        """
+        Get the default state.
+        """
+        return ContinueHostAgentState()
