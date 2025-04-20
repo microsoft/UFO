@@ -136,8 +136,8 @@ class AppAgentProcessor(BaseProcessor):
 
         self._annotation_dict = None
         self._control_info = None
-        self._operation = None
-        self._args = None
+        self._operation = ""
+        self._args = {}
         self._image_url = []
         self.control_filter_factory = ControlFilterFactory()
         self.control_recorder = ControlInfoRecorder()

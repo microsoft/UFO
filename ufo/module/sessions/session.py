@@ -1,20 +1,25 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import os
-from typing import List
-import psutil
-import time
 import json
+import os
+import time
+from typing import List
+
+import psutil
 import win32com.client
 from ufo import utils
+from ufo.agents.agent.app_agent import OpenAIOperatorAgent
+from ufo.agents.agent.host_agent import AgentFactory
 from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config.config import Config
 from ufo.module import interactor
 from ufo.module.basic import BaseRound, BaseSession
-from ufo.module.sessions.plan_reader import PlanReader
 from ufo.module.context import ContextNames
+from ufo.module.sessions.plan_reader import PlanReader
+from ufo.trajectory.parser import Trajectory
+from ufo.automator.ui_control.inspector import ControlInspectorFacade
 
 configs = Config.get_instance().config_data
 
@@ -33,9 +38,15 @@ class SessionFactory:
         :param mode: The mode of the task.
         :return: The created session.
         """
-        if mode == "normal":
+        if mode in ["normal", "normal_operator"]:
             return [
-                Session(task, configs.get("EVA_SESSION", False), id=0, request=request)
+                Session(
+                    task,
+                    configs.get("EVA_SESSION", False),
+                    id=0,
+                    request=request,
+                    mode=mode,
+                )
             ]
         elif mode == "follower":
             # If the plan is a folder, create a follower session for each plan file in the folder.
@@ -52,6 +63,12 @@ class SessionFactory:
                 return [
                     FromFileSession(task, plan, configs.get("EVA_SESSION", False), id=0)
                 ]
+        elif mode == "operator":
+            return [
+                OpenAIOperatorSession(
+                    task, configs.get("EVA_SESSION", False), id=0, request=request
+                )
+            ]
         else:
             raise ValueError(f"The {mode} mode is not supported.")
 
@@ -151,7 +168,12 @@ class Session(BaseSession):
     """
 
     def __init__(
-        self, task: str, should_evaluate: bool, id: int, request: str = ""
+        self,
+        task: str,
+        should_evaluate: bool,
+        id: int,
+        request: str = "",
+        mode: str = "normal",
     ) -> None:
         """
         Initialize a session.
@@ -159,8 +181,10 @@ class Session(BaseSession):
         :param should_evaluate: Whether to evaluate the session.
         :param id: The id of the session.
         :param request: The user request of the session, optional. If not provided, UFO will ask the user to input the request.
+        :param mode: The mode of the task.
         """
 
+        self._mode = mode
         super().__init__(task, should_evaluate, id)
 
         self._init_request = request
@@ -194,7 +218,7 @@ class Session(BaseSession):
         """
         super()._init_context()
 
-        self.context.set(ContextNames.MODE, "normal")
+        self.context.set(ContextNames.MODE, self._mode)
 
     def create_new_round(self) -> None:
         """
@@ -209,7 +233,7 @@ class Session(BaseSession):
         if self.is_finished():
             return None
 
-        self._host_agent.set_state(ContinueHostAgentState())
+        self._host_agent.set_state(self._host_agent.default_state)
 
         round = BaseRound(
             request=request,
@@ -540,3 +564,84 @@ class FromFileSession(BaseSession):
                 open(file_path, "w"),
                 indent=4,
             )
+
+
+class OpenAIOperatorSession(Session):
+    """
+    A session for OpenAI Operator.
+    """
+
+    def __init__(
+        self, task: str, should_evaluate: bool, id: int, request: str = ""
+    ) -> None:
+        """
+        Initialize a session.
+        :param task: The name of current task.
+        :param should_evaluate: Whether to evaluate the session.
+        :param id: The id of the session.
+        :param request: The user request of the session, optional. If not provided, UFO will ask the user to input the request.
+        """
+
+        super().__init__(task, should_evaluate, id, request)
+
+        inspector = ControlInspectorFacade()
+
+        self.application_window = inspector.desktop
+
+        application_process_name = self.application_window.element_info.name
+        application_root_name = inspector.get_application_root_name(
+            self.application_window
+        )
+
+        self._init_request = self.refine_request(request)
+
+        self.context.set(ContextNames.APPLICATION_ROOT_NAME, application_root_name)
+        self.context.set(
+            ContextNames.APPLICATION_PROCESS_NAME, application_process_name
+        )
+
+        self._host_agent: OpenAIOperatorAgent = AgentFactory.create_agent(
+            "operator",
+            name="OpenAIOperatorAgent",
+            process_name=application_process_name,
+            app_root_name=application_root_name,
+        )
+
+    def refine_request(self, request: str) -> str:
+        """
+        Refine the request.
+        :param request: The request to refine.
+        :return: The refined request.
+        """
+
+        additional_guidance = "Please do not ask for consent to perform the task, just execute the action."
+        new_request = f"{request} \n {additional_guidance}"
+
+        return new_request
+
+    def run(self) -> None:
+        """
+        Run the session.
+        """
+
+        while not self.is_finished():
+
+            round = self.create_new_round()
+            self.application_window = ControlInspectorFacade().desktop
+
+            if round is None:
+                break
+            round.run()
+
+        self.capture_last_snapshot()
+
+        if self._should_evaluate and not self.is_error():
+            self.evaluation()
+
+        if configs.get("LOG_TO_MARKDOWN", True):
+
+            file_path = self.log_path
+            trajectory = Trajectory(file_path)
+            trajectory.to_markdown(file_path + "/output.md")
+
+        self.print_cost()

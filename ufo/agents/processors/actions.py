@@ -360,6 +360,19 @@ class OneStepAction:
             result_color,
         )
 
+    def get_operation_point_list(self) -> List[Tuple[int]]:
+        """
+        Get the operation points of the action.
+        :return: The operation points of the action.
+        """
+
+        if "path" in self.args:
+            return [(point["x"], point["y"]) for point in self.args["path"]]
+        elif "x" in self.args and "y" in self.args:
+            return [(self.args["x"], self.args["y"])]
+        else:
+            return []
+
 
 class ActionSequence:
     """
