@@ -17,7 +17,7 @@ Before proceeding, please ensure that the Operator has been properly configured.
 UFO² provides two modes for running the Operator:
 
 1. **Single Agent Mode** — Use UFO² as the launcher to run Operator in standalone mode.
-2. **AppAgent Mode** — Run Operator as an AppAgent, enabling it to be orchestrated by the HostAgent as part of a broader task decomposition.
+2. **AppAgent Mode** — Run Operator as an `AppAgent`, enabling it to be orchestrated by the `HostAgent` as part of a broader task decomposition.
 
 ### 🔹 Single Agent Mode
 
