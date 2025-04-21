@@ -531,7 +531,7 @@ class FromFileSession(BaseSession):
                 print(f"The app {self.app_name} is not supported.")
                 return  # The app is not supported, so we don't need to setup the environment.
             file = self.plan_reader.get_file_path()
-            code_snippet = f"import os\nos.system('start {self.app_name} \"{file}\"')"
+            code_snippet = f"import os\nos.system('start {self.app_name} /automation \"{file}\"')"
             code_snippet = code_snippet.replace("\\", "\\\\")  # escape backslashes
             try:
                 exec(code_snippet, globals())

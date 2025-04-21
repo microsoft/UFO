@@ -161,15 +161,15 @@ if __name__ == "__main__":
 
     eva_agent = EvaluationAgent(
         name="eva_agent",
-        app_root_name="WINWORD.EXE",
+        app_root_name="EXCEL.EXE",
         is_visual=True,
         main_prompt=configs["EVALUATION_PROMPT"],
         example_prompt="",
         api_prompt=configs["API_PROMPT"],
     )
 
-    request = "Can you open paint and draw a circle of radius 200px?"
-    log_path = "./logs/test_paint5"
+    request = "Add a special character or symbol in cell A2 of the Excel spreadsheet."
+    log_path = r"D:\code\UFO\logs\excel\color_conditional_formatting_a9348ae4-05e3-40d7-a893-f01f927a9523"
     results = eva_agent.evaluate(
         request=request, log_path=log_path, eva_all_screenshots=True
     )
