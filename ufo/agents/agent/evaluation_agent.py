@@ -168,8 +168,8 @@ if __name__ == "__main__":
         api_prompt=configs["API_PROMPT"],
     )
 
-    request = "Add a special character or symbol in cell A2 of the Excel spreadsheet."
-    log_path = r"D:\code\UFO\logs\excel\color_conditional_formatting_a9348ae4-05e3-40d7-a893-f01f927a9523"
+    request = "Add a special character or symbol in cell A2 of the Excel spreadsheet"
+    log_path = r"D:\code\UFO\logs\excel\add_a_special_character_or_symbol_4f364db0-912b-46b3-8282-2d8dd49c336a"
     results = eva_agent.evaluate(
         request=request, log_path=log_path, eva_all_screenshots=True
     )
