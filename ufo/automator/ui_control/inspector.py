@@ -555,7 +555,7 @@ class ControlInspectorFacade:
     ) -> List[Dict[str, str]]:
         """
         Get control info of the window.
-        :param window: The list of windows to get control info.
+        :param window_list: The list of windows to get control info.
         :param field_list: The fields to get.
         return: The list of control info of the window.
         """

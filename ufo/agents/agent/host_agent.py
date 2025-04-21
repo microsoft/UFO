@@ -106,10 +106,6 @@ class HostAgent(BasicAgent):
         agent_name: str,
         process_name: str,
         app_root_name: str,
-        # is_visual: bool,
-        # main_prompt: str,
-        # example_prompt: str,
-        # api_prompt: str,
         *args,
         **kwargs,
     ) -> BasicAgent:
@@ -119,10 +115,6 @@ class HostAgent(BasicAgent):
         :param agent_name: The name of the SubAgent.
         :param process_name: The process name of the app.
         :param app_root_name: The root name of the app.
-        :param is_visual: The flag indicating whether the agent is visual or not.
-        :param main_prompt: The main prompt file path.
-        :param example_prompt: The example prompt file path.
-        :param api_prompt: The API prompt file path.
         :return: The created SubAgent.
         """
         app_agent = self.agent_factory.create_agent(

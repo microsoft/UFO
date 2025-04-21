@@ -132,7 +132,7 @@ API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
 API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 ```
 
-> Need Qwen, Gemini, non‑visual GPT‑4, or even **OpenAI CUA Operator**? See the [model guide](https://microsoft.github.io/UFO/supported_models/overview/).
+> Need Qwen, Gemini, non‑visual GPT‑4, or even **OpenAI CUA Operator** as a AppAgent? See the [model guide](https://microsoft.github.io/UFO/supported_models/overview/).
 
 ### 📔 Step 3: Additional Setting for RAG (optional).
 If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file. 

@@ -67,6 +67,7 @@ nav:
       - Follower Mode: advanced_usage/follower_mode.md
       - Batch Mode: advanced_usage/batch_mode.md
       - Speculative Multi-Action Execution: advanced_usage/multi_action.md
+      - Operator-as-a-AppAgent: advanced_usage/operator_as_app_agent.md
       - Control Filtering: 
         - Overview: advanced_usage/control_filtering/overview.md
         - Text Filtering: advanced_usage/control_filtering/text_filtering.md

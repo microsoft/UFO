@@ -148,8 +148,6 @@ class OneStepAction:
     def command_string(self) -> str:
         """
         Generate a function call string.
-        :param command_name: The function name.
-        :param params: The arguments as a dictionary.
         :return: The function call string.
         """
         # Format the arguments
@@ -161,8 +159,7 @@ class OneStepAction:
     def is_same_action(self, action_to_compare: Dict[str, Any]) -> bool:
         """
         Check whether the two actions are the same.
-        :param action1: The first action.
-        :param action2: The second action.
+        :param action_to_compare: The action to compare with the current action.
         :return: Whether the two actions are the same.
         """
 
@@ -237,7 +234,7 @@ class OneStepAction:
     def execute(self, puppeteer: AppPuppeteer) -> Any:
         """
         Execute the action.
-        :param executor: The executor.
+        :param puppeteer: The puppeteer that controls the application.
         """
         return puppeteer.execute_command(self.function, self.args)
 
@@ -249,8 +246,9 @@ class OneStepAction:
     ) -> Tuple[ActionExecutionLog, BaseControlLog]:
         """
         Execute the action flow.
-        :param action: The action.
+        :param puppeteer: The puppeteer that controls the application.
         :param control_dict: The control dictionary.
+        :param application_window: The application window where the control is located.
         :return: The action execution log.
         """
         control_selected: UIAWrapper = control_dict.get(self.control_label, None)
