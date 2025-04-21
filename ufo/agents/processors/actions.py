@@ -47,6 +47,7 @@ class ActionExecutionLog:
 
     status: str = ""
     error: str = ""
+    traceback: str = ""
     return_value: Any = None
 
 
@@ -257,6 +258,7 @@ class OneStepAction:
         ):
             self.results = ActionExecutionLog(
                 status="error",
+                traceback="Control is not available.",
                 error="Control is not available.",
             )
             self._control_log = BaseControlLog()
@@ -290,8 +292,12 @@ class OneStepAction:
                 )
 
             except Exception as e:
+
+                import traceback
+
                 self.results = ActionExecutionLog(
                     status="error",
+                    traceback=traceback.format_exc(),
                     error=str(e),
                 )
             return self.results
@@ -353,6 +359,19 @@ class OneStepAction:
             "Execution result📜: {result}".format(result=asdict(self.results)),
             result_color,
         )
+
+    def get_operation_point_list(self) -> List[Tuple[int]]:
+        """
+        Get the operation points of the action.
+        :return: The operation points of the action.
+        """
+
+        if "path" in self.args:
+            return [(point["x"], point["y"]) for point in self.args["path"]]
+        elif "x" in self.args and "y" in self.args:
+            return [(self.args["x"], self.args["y"])]
+        else:
+            return []
 
 
 class ActionSequence:

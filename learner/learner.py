@@ -13,7 +13,7 @@ args.add_argument(
     "--docs", help="The help application of the app.", type=str, default="./"
 )
 args.add_argument(
-    "--format", help="The format of the help doc.", type=str, default="xml"
+    "--format", help="The format of the help doc.", type=str, default="json"
 )
 args.add_argument(
     "--incremental", action="store_true", help="Enable incremental update."

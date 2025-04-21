@@ -136,8 +136,8 @@ class AppAgentProcessor(BaseProcessor):
 
         self._annotation_dict = None
         self._control_info = None
-        self._operation = None
-        self._args = None
+        self._operation = ""
+        self._args = {}
         self._image_url = []
         self.control_filter_factory = ControlFilterFactory()
         self.control_recorder = ControlInfoRecorder()
@@ -505,10 +505,10 @@ class AppAgentProcessor(BaseProcessor):
             )
 
             try:
-                self.host_agent.response_to_dict(self._response)
+                self.app_agent.response_to_dict(self._response)
                 break
             except Exception as e:
-                print(f"Error in parsing response into json, retrying: {retry}")
+                print("Error in parsing response: ", e)
                 retry += 1
 
     @BaseProcessor.exception_capture

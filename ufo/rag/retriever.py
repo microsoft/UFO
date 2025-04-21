@@ -65,9 +65,14 @@ class Retriever(ABC):
         :return: The document from the given query.
         """
         if not self.indexer:
-            return None
+            return []
 
-        return self.indexer.similarity_search(query, top_k, filter=filter)
+        results = self.indexer.similarity_search(query, top_k, filter=filter)
+
+        if not results:
+            return []
+        else:
+            return results
 
 
 class OfflineDocRetriever(Retriever):
