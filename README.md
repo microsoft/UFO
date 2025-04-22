@@ -34,7 +34,7 @@
 |---------------------|-------------------------------------------|---------------------------|
 | Combines Windows UIA, Win32 and WinCOM for first‑class control detection and native commands. | Automation runs in a sandboxed virtual desktop so you can keep using your main screen. | Chooses native APIs when available, falls back to clicks/keystrokes when not—fast *and* robust. |
 
-| [Speculative Multi‑Action](https://microsoft.github.io/UFO/advanced_usage/multi_action) | [Continuous Knowledge Substrate](https://microsoft.github.io/UFO/reinforce_appagent/overview) | [UIA + Visual Control Detection](https://microsoft.github.io/UFO/control_detection/hybrid_detection) |
+| [Speculative Multi‑Action](https://microsoft.github.io/UFO/advanced_usage/multi_action) | [Continuous Knowledge Substrate](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/overview/) | [UIA + Visual Control Detection](https://microsoft.github.io/UFO/advanced_usage/control_detection/hybrid_detection) |
 |--------------------------|--------------------------------|--------------------------------|
 | Bundles several predicted steps into one LLM call, validated live—up to **51 % fewer** queries. | Mixes docs, Bing search, user demos and execution traces via RAG for agents that learn over time. | Detects standard *and* custom controls with a hybrid UIA + vision pipeline. |
 

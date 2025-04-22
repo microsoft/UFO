@@ -128,9 +128,8 @@ Then run:
 ./run-local.sh --mode dev --json-name "evaluation_examples_windows/test_full.json" --agent UFO --agent-settings '{"llm_type": "azure", "llm_endpoint": "https://cloudgpt-openai.azure-api.net/openai/deployments/gpt-4o-20240513/chat/completions?api-version=2024-04-01-preview", "llm_auth": {"type": "api-key", "token": ""}}'
 ```
 
-> 📝 **Note:**  
-> - `test_full.json`: Contains all test cases where UIA is available.  
-> - `test_all.json`: Includes all test cases, even those incompatible with UIA.  
-> - Use `test_full.json` if you're **not** using OmniParser.
-
+!!!note
+    > - `test_full.json`: Contains all test cases where UIA is available.  
+    > - `test_all.json`: Includes all test cases, even those incompatible with UIA.  
+    > - Use `test_full.json` if you're **not** using OmniParser.
 ---

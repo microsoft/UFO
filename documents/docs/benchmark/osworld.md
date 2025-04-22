@@ -19,7 +19,7 @@ git clone https://github.com/nice-mee/WindowsAgentArena.git
 
 > 💡 *To run OSWorld cases, switch to the dedicated development branch:*
 ```bash
-git checkout 2020-qqtcg/dev
+git checkout osworld
 ```
 
 Create a `config.json` file in the repo root with a placeholder key (UFO will override this):
@@ -106,6 +106,7 @@ Once the VM boots:
    - Disable **Windows Firewall**
    - Open **Google Chrome** and complete initial setup
    - Open **VLC** and complete initial setup
+   - Activate Office 365 (Word, Excel, PowerPoint, etc.) with a Microsoft account (use a temporary one if needed).
 
 After setup:
 
@@ -127,9 +128,8 @@ Then run:
 ./run-local.sh --mode dev --json-name "evaluation_examples_windows/test_full.json" --agent UFO --agent-settings '{"llm_type": "azure", "llm_endpoint": "https://cloudgpt-openai.azure-api.net/openai/deployments/gpt-4o-20240513/chat/completions?api-version=2024-04-01-preview", "llm_auth": {"type": "api-key", "token": ""}}'
 ```
 
-> 📝 **Note:**  
-> - `test_full.json`: Contains all test cases where UIA is available.  
-> - `test_all.json`: Includes all test cases, even those incompatible with UIA.  
-> - Use `test_full.json` if you're **not** using OmniParser.
-
+!!!note
+    > - `test_full.json`: Contains all test cases where UIA is available.  
+    > - `test_all.json`: Includes all test cases, even those incompatible with UIA.  
+    > - Use `test_full.json` if you're **not** using OmniParser.
 ---
