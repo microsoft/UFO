@@ -1,4 +1,7 @@
-CONTROL_BACKEND: "uia"  # The backend for control action, currently we support uia and win32
+CONTROL_BACKEND: ["uia"]  # The backend for control action, currently we support uia, win32 and onmiparser
+
+IOU_THRESHOLD_FOR_MERGE: 0.1 # The iou threshold for merging the boxes bewteen controls detected by the UIA and Grouding model.
+
 MAX_STEP: 30  # The max step limit for completing the user request
 MAX_ROUND: 1  # The max round limit for completing the user request
 SLEEP_TIME: 1  # The sleep time between each step to wait for the window to be ready
@@ -9,8 +12,12 @@ ACTION_SEQUENCE: False  # Whether to output the action sequence. If true, the ag
 # Skip rendering visual outline on screen if not necessary
 SHOW_VISUAL_OUTLINE_ON_SCREEN: False
 
+MAXIMIZE_WINDOW: False  # Whether to maximize the application window before the action
+
+JSON_PARSING_RETRY: 3  # The retry times for the json parsing
+
 SAFE_GUARD: True  # Whether to use the safe guard to prevent the model from doing sensitve operations.
-CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner"] 
+CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner", "CheckBox"]
 # The list of widgets that allowed to be selected, in uia backend, it will be used for filter the control_type, while in win32 backend, it will be used for filter the class_name.
 HISTORY_KEYS: ["Step", "Subtask", "Action", "UserConfirm"]  # The keys of the action history for the next step.
 
@@ -70,6 +77,7 @@ USE_APIS: True  # Whether to use the API
 APP_API_PROMPT_ADDRESS: {
     "WINWORD.EXE": "ufo/prompts/apps/word/api.yaml",
     "EXCEL.EXE": "ufo/prompts/apps/excel/api.yaml",
+    "POWERPNT.EXE": "ufo/prompts/apps/powepoint/api.yaml",
     "msedge.exe": "ufo/prompts/apps/web/api.yaml",
     "chrome.exe": "ufo/prompts/apps/web/api.yaml"
 }  # The prompt address for the app API. The key is the app program name, and the value is the prompt address.
@@ -87,6 +95,7 @@ CONTROL_FILTER_MODEL_SEMANTIC_NAME: "all-MiniLM-L6-v2"  # The control filter mod
 CONTROL_FILTER_MODEL_ICON_NAME: "clip-ViT-B-32"  # The control filter model name of icon similarity
 
 LOG_XML: False  # Whether to log the xml file for the at every step.
+LOG_TO_MARKDOWN: True  # Whether to save the log to markdown file for better visualization.
 SCREENSHOT_TO_MEMORY: True  # Whether to allow the screenshot to memory for the agent's decision making.
 
 
@@ -106,12 +115,15 @@ DEFAULT_PNG_COMPRESS_LEVEL: 1  # The compress level for the PNG image, 0-9, 0 is
 
 
 # Save UI tree
-SAVE_UI_TREE: False  # Whether to save the UI tree
+SAVE_UI_TREE: False  # Whether to save the UI tree at each step
+
+# Save full screen
+SAVE_FULL_SCREEN: False  # Whether to save the full screen at each step
 
 
 # Record the status of the tasks
 TASK_STATUS: True  # Whether to record the status of the tasks in batch execution mode.
 
 # Experience saving
-SAVE_EXPERIENCE: "auto"  # Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not, "auto" for auto save when the evaluation is good. By default, it is "ask".
+SAVE_EXPERIENCE: "always_not"  # Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not, "auto" for auto save when the evaluation is good. By default, it is "ask".
 

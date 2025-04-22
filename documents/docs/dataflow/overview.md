@@ -7,7 +7,7 @@ This repository contains the implementation of the **Data Collection** process f
 Dataflow uses UFO to implement `instantiation`, `execution`, and `dataflow` for a given task, with options for batch processing and single processing.
 
 1. **[Instantiation](./instantiation.md)**:  Instantiation refers to the process of setting up and preparing a task for execution. This step typically involves `choosing template`, `prefill` and `filter`.
-2. **[Execution](./Execution.md)**: Execution is the actual process of running the task. This step involves carrying out the actions or operations specified by the `Instantiation`. And after execution, an evaluate agent will evaluate the quality of the whole execution process.
+2. **[Execution](./execution.md)**: Execution is the actual process of running the task. This step involves carrying out the actions or operations specified by the `Instantiation`. And after execution, an evaluate agent will evaluate the quality of the whole execution process.
 3. **Dataflow**: Dataflow is the overarching process that combines **instantiation** and **execution** into a single pipeline. It provides an end-to-end solution for processing tasks, ensuring that all necessary steps (from initialization to execution) are seamlessly integrated.
 
 You can use `instantiation` and `execution` independently if you only need to perform one specific part of the process. When both steps are required for a task, the `dataflow` process streamlines them, allowing you to execute tasks from start to finish in a single pipeline.

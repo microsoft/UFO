@@ -8,7 +8,7 @@ The following parameters are included in the system configuration of the UFO age
 
 | Configuration Option    | Description                                                                                             | Type     | Default Value |
 |-------------------------|---------------------------------------------------------------------------------------------------------|----------|---------------|
-| `CONTROL_BACKEND`       | The backend for control action, currently supporting `uia` and `win32`.                                 | String   | "uia"         |
+| `CONTROL_BACKEND`       | The list of backend for control action, currently supporting `uia` and `win32` and `onmiparser`         | List     | ["uia"]       |
 | `ACTION_SEQUENCE`       | Whether to use output multiple actions in a single step.                                                | Boolean  | False         |
 | `MAX_STEP`              | The maximum step limit for completing the user request in a session.                                    | Integer  | 100           |
 | `MAX_ROUND`             | The maximum round limit for completing the user request in a session.                                   | Integer  | 10            |

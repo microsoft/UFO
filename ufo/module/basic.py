@@ -29,11 +29,12 @@ from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
 from ufo.agents.states.basic import AgentState, AgentStatus
-from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.automator.ui_control import ui_tree
+from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.module.context import Context, ContextNames
+from ufo.trajectory.parser import Trajectory
 
 configs = Config.get_instance().config_data
 
@@ -106,6 +107,7 @@ class BaseRound(ABC):
 
             self.state = self.agent.state.next_state(self.agent)
             self.agent = self.agent.state.next_agent(self.agent)
+
             self.agent.set_state(self.state)
 
             # If the subtask ends, capture the last snapshot of the application.
@@ -289,6 +291,18 @@ class BaseRound(ABC):
                     )
                 )
 
+            if configs.get("SAVE_FULL_SCREEN", False):
+
+                desktop_save_path = (
+                    self.log_path
+                    + f"desktop_round_{self.id}_sub_round_{sub_round_id}_final.png"
+                )
+
+                # Capture the desktop screenshot for all screens.
+                PhotographerFacade().capture_desktop_screen_screenshot(
+                    all_screens=True, save_path=desktop_save_path
+                )
+
             # Save the final XML file
             if configs["LOG_XML"]:
                 log_abs_path = os.path.abspath(self.log_path)
@@ -385,6 +399,12 @@ class BaseSession(ABC):
 
         if self._should_evaluate and not self.is_error():
             self.evaluation()
+
+        if configs.get("LOG_TO_MARKDOWN", True):
+
+            file_path = self.log_path
+            trajectory = Trajectory(file_path)
+            trajectory.to_markdown(file_path + "/output.md")
 
         self.print_cost()
 
@@ -713,6 +733,15 @@ class BaseSession(ABC):
                         ui_tree_path,
                         ui_tree_file_name,
                     )
+                )
+
+            if configs.get("SAVE_FULL_SCREEN", False):
+
+                desktop_save_path = self.log_path + f"desktop_final.png"
+
+                # Capture the desktop screenshot for all screens.
+                PhotographerFacade().capture_desktop_screen_screenshot(
+                    all_screens=True, save_path=desktop_save_path
                 )
 
             # Save the final XML file

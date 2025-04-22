@@ -33,6 +33,30 @@ class Photographer(ABC):
     def capture(self):
         pass
 
+    @staticmethod
+    def rescale_image(image: Image.Image, scaler: List[int]) -> Image.Image:
+        """
+        Rescale an image.
+        :param image: The image to rescale.
+        :param scale: The scale factor.
+        :return: The rescaled image.
+        """
+
+        raw_width, raw_height = image.size
+        scale_ratio = min(scaler[0] / raw_width, scaler[1] / raw_height)
+        new_width = int(raw_width * scale_ratio)
+        new_height = int(raw_height * scale_ratio)
+
+        resized_image = image.resize((new_width, new_height), Image.Resampling.LANCZOS)
+
+        new_image = Image.new("RGB", scaler, (0, 0, 0))
+        new_image.paste(
+            resized_image,
+            (0, 0),
+        )
+
+        return new_image
+
 
 class ControlPhotographer(Photographer):
     """
@@ -46,13 +70,16 @@ class ControlPhotographer(Photographer):
         """
         self.control = control
 
-    def capture(self, save_path: str = None):
+    def capture(self, save_path: str = None, scalar: List[int] = None):
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
         :return: The screenshot."""
         # Capture single window screenshot
         screenshot = self.control.capture_as_image()
+        if scalar is not None:
+            screenshot = self.rescale_image(screenshot, scalar)
+
         if save_path is not None and screenshot is not None:
             screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
         return screenshot
@@ -70,13 +97,15 @@ class DesktopPhotographer(Photographer):
         """
         self.all_screens = all_screens
 
-    def capture(self, save_path: str = None):
+    def capture(self, save_path: str = None, scalar: List[int] = None):
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
         :return: The screenshot.
         """
         screenshot = ImageGrab.grab(all_screens=self.all_screens)
+        if scalar is not None:
+            screenshot = self.rescale_image(screenshot, scalar)
         if save_path is not None and screenshot is not None:
             screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
         return screenshot
@@ -411,7 +440,7 @@ class AnnotationDecorator(PhotographerDecorator):
         window_rect = self.photographer.control.rectangle()
         screenshot_annotated = self.photographer.capture()
 
-        color_dict = configs["ANNOTATION_COLORS"]
+        color_dict = configs.get("ANNOTATION_COLORS", {})
 
         for label_text, control in annotation_dict.items():
             control_rect = control.rectangle()
@@ -485,14 +514,18 @@ class PhotographerFacade:
     def __init__(self):
         pass
 
-    def capture_app_window_screenshot(self, control: UIAWrapper, save_path=None):
+    def capture_app_window_screenshot(
+        self, control: UIAWrapper, save_path=None, scalar: List[int] = None
+    ):
         """
         Capture the control screenshot.
         :param control: The control item to capture.
+        :param save_path: The path to save the screenshot.
+        :pram scalar: The scale factor.
         :return: The screenshot.
         """
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
-        return screenshot.capture(save_path)
+        return screenshot.capture(save_path, scalar)
 
     def capture_desktop_screen_screenshot(self, all_screens=True, save_path=None):
         """
@@ -610,6 +643,41 @@ class PhotographerFacade:
         )
         return screenshot.capture(save_path)
 
+    def capture_app_window_screenshot_with_point_from_path(
+        self,
+        point_list: List[Tuple[int]],
+        background_screenshot_path: Optional[str] = None,
+        save_path: Optional[str] = None,
+        color: str = "red",
+        point_radius: int = 5,
+    ) -> Image.Image:
+        """
+        Capture the control screenshot with a rectangle.
+        :param point_list: The list of the points to draw on the screenshot.
+        :param background_screenshot_path: The path of the background screenshot, optional. If provided, the rectangle will be drawn on the background screenshot instead of the control screenshot.
+        :param save_path: The path to save the screenshot.
+        :return: The screenshot.
+        """
+        if not os.path.exists(background_screenshot_path):
+            return None
+
+        screenshot = Image.open(background_screenshot_path)
+        draw = ImageDraw.Draw(screenshot)
+        for point in point_list:
+            draw.ellipse(
+                (
+                    point[0] - point_radius,
+                    point[1] - point_radius,
+                    point[0] + point_radius,
+                    point[1] + point_radius,
+                ),
+                fill=color,
+            )
+
+        if save_path is not None and screenshot is not None:
+            screenshot.save(save_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
+        return screenshot
+
     def get_annotation_dict(
         self,
         control: UIAWrapper,
@@ -704,6 +772,60 @@ class PhotographerFacade:
         image.save(buffered, format="PNG", optimize=True)
 
         return base64.b64encode(buffered.getvalue()).decode("utf-8")
+
+    @staticmethod
+    def control_iou(control1: UIAWrapper, control2: UIAWrapper) -> float:
+        """
+        Calculate the IOU overlap between two controls.
+        :param control1: The first control.
+        :param control2: The second control.
+        :return: The IOU overlap.
+        """
+        rect1 = control1.rectangle()
+        rect2 = control2.rectangle()
+
+        left = max(rect1.left, rect2.left)
+        top = max(rect1.top, rect2.top)
+        right = min(rect1.right, rect2.right)
+        bottom = min(rect1.bottom, rect2.bottom)
+
+        intersection_area = max(0, right - left) * max(0, bottom - top)
+        area1 = (rect1.right - rect1.left) * (rect1.bottom - rect1.top)
+        area2 = (rect2.right - rect2.left) * (rect2.bottom - rect2.top)
+
+        iou = intersection_area / (area1 + area2 - intersection_area)
+
+        return iou
+
+    @staticmethod
+    def merge_control_list(
+        main_control_list: List[Dict[str, UIAWrapper]],
+        additional_control_list: List[Dict[str, UIAWrapper]],
+        iou_overlap_threshold: float = 0.1,
+    ) -> List[Dict[str, UIAWrapper]]:
+        """
+        Merge two control lists by removing the overlapping controls in the additional control list.
+        :param main_control_list: The main control list. All controls in this list will be kept.
+        :param additional_control_list: The additional control list. The overlapping controls in this list will be removed.
+        :param iou_overlap_threshold: The threshold of the IOU overlap to consider two controls as overlapping.
+        :return: The merged control list.
+        """
+        merged_control_list = main_control_list.copy()
+
+        for additional_control in additional_control_list:
+            is_overlapping = False
+            for main_control in main_control_list:
+                if (
+                    PhotographerFacade.control_iou(additional_control, main_control)
+                    > iou_overlap_threshold
+                ):
+                    is_overlapping = True
+                    break
+
+            if not is_overlapping:
+                merged_control_list.append(additional_control)
+
+        return merged_control_list
 
     @classmethod
     def encode_image(cls, image: Image.Image, mime_type: Optional[str] = None) -> str:
