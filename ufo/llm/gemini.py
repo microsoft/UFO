@@ -1,10 +1,12 @@
 import base64
 import re
 import time
+import random
 from io import BytesIO
 from typing import Any, Dict, List, Optional
 
-import google.generativeai as genai
+from google import genai
+from google.genai import types
 from PIL import Image
 
 from ufo.llm.base import BaseService
@@ -28,7 +30,9 @@ class GeminiService(BaseService):
         self.prices = self.config["PRICES"]
         self.max_retry = self.config["MAX_RETRY"]
         self.api_type = self.config_llm["API_TYPE"].lower()
-        genai.configure(api_key=self.config_llm["API_KEY"])
+        self.client = genai.Client(
+            api_key=self.config_llm["API_KEY"],
+        )
 
     def chat_completion(
         self,
@@ -47,7 +51,7 @@ class GeminiService(BaseService):
         :param max_tokens: The maximum number of tokens in the generated completions. If not provided, the default value from the model configuration will be used.
         :param top_p: Controls the diversity of the generated completions. Higher values (e.g., 0.8) make the completions more diverse, while lower values (e.g., 0.2) make the completions more focused. If not provided, the default value from the model configuration will be used.
         :param kwargs: Additional keyword arguments to be passed to the underlying completion method.
-        :return: A list of generated completions for each message and the cost set to be None.
+        :return: A list of generated completions for each message and the estimated cost.
         """
 
         temperature = (
@@ -55,23 +59,30 @@ class GeminiService(BaseService):
         )
         top_p = top_p if top_p is not None else self.config["TOP_P"]
         max_tokens = max_tokens if max_tokens is not None else self.config["MAX_TOKENS"]
-        genai_config = genai.GenerationConfig(
+        genai_config = types.GenerateContentConfig(
             candidate_count=n,
             max_output_tokens=max_tokens,
             temperature=temperature,
             top_p=top_p,
-            response_mime_type="application/json",
         )
-        self.client = genai.GenerativeModel(self.model, generation_config=genai_config)
 
         responses = []
         cost = 0.0
+        processed_messages = self.process_messages(messages)
+
+        # Default parameters from OpenAI
+        # Ref: _calculate_retry_timeout from https://github.com/openai/openai-python/blob/main/src/openai/_base_client.pys
+        initial_delay = 0.5
+        max_delay = 8.0
+        jitter_factor = 0.25
 
         for _ in range(n):
-            for _ in range(self.max_retry):
+            for attempt in range(self.max_retry):
                 try:
-                    response = self.client.generate_content(
-                        self.process_messages(messages),
+                    response = self.client.models.generate_content(
+                        model=self.model,
+                        contents=processed_messages,
+                        config=genai_config,
                     )
                     responses.append(response.text)
                     prompt_tokens = response.usage_metadata.prompt_token_count
@@ -83,14 +94,21 @@ class GeminiService(BaseService):
                         prompt_tokens,
                         completion_tokens,
                     )
+                    break
                 except Exception as e:
-                    print_with_color(f"Error making API request: {e}", "red")
-                    try:
-                        print_with_color(response, "red")
-                    except:
-                        _
-                    time.sleep(3)
-                    continue
+                    # Calculate backoff with jitter
+                    delay = min(initial_delay * (2 ** attempt), max_delay)
+                    jitter = random.uniform(-jitter_factor * delay, 0)
+                    sleep_time = delay + jitter
+                    print_with_color(
+                        f"Error during Gemini API request, attempt {attempt+1}/{self.max_retry}: {e}. "
+                        f"Retrying in {sleep_time:.2f}s...", 
+                        "yellow"
+                    )
+                    time.sleep(sleep_time)
+
+        if responses[0] == None:
+            print("Warn: Gemini API response is None, please check the API key and model.")
 
         return responses, cost
 
