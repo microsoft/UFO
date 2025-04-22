@@ -207,10 +207,6 @@ class AppAgentProcessor(BaseProcessor):
                 self.grounding_service.convert_to_virtual_uia_elements(
                     image_path=screenshot_path,
                     application_window=self.application_window,
-                    box_threshold=onmiparser_configs.get("BOX_THRESHOLD", 0.05),
-                    iou_threshold=onmiparser_configs.get("IOU_THRESHOLD", 0.1),
-                    use_paddleocr=onmiparser_configs.get("USE_PADDLEOCR", True),
-                    imgsz=onmiparser_configs.get("IMGSZ", 640),
                 )
             )
         else:
