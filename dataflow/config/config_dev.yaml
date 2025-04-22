@@ -35,6 +35,7 @@ CONTROL_EMBEDDING_CACHE_PATH: "dataflow/cache/"  # The cache path for the contro
 CONTROL_FILTER_TOP_K_PLAN: 2  # The control filter effect on top k plans from UFO, default is 2
 
 # log path
+OUTPUTS_PATH: "dataflow/outputs"
 RESULT_LOG: "dataflow/outputs/results"
 LOG_PATH: "dataflow/outputs/logs/{task}"
 TEMPLATE_LOG_PATH: "dataflow/outputs/logs/{task}/template/"
@@ -45,13 +46,13 @@ EXECUTE_LOG_PATH: "dataflow/outputs/logs/{task}/execute/"
 MAX_STEPS: 30  # The max step for the execute_flow
 
 # SMTP
-MONITOR: False
-MACHINE_ID: DEV
-SEND_POINT: 1,2
-FROM_EMAIL: 1921761583@qq.com
-TO_EMAIL: v-mujian@microsoft.com
-SENDER_PASSWORD:
-SMTP_SERVER: smtp.qq.com
+MONITOR: False  # SMTP or not
+MACHINE_ID: DEV  # Will be shown in Email tilte
+SEND_POINT: 1,2  # When to send notification
+FROM_EMAIL: 1921761583@qq.com  # Email send
+TO_EMAIL: v-mujian@microsoft.com  # Email receive
+SENDER_PASSWORD:  # Password or Key used to send email
+SMTP_SERVER: smtp.qq.com  # SMTP server
 
 # Blob
 UPLOAD: False
