@@ -23,6 +23,11 @@ class OmniparserGrounding(BasicGrounding):
     def predict(
         self,
         image_path: str,
+        box_threshold: float = 0.05,
+        iou_threshold: float = 0.1,
+        use_paddleocr: bool = True,
+        imgsz: int = 640,
+        api_name: str = "/process",
     ) -> List[Dict[str, Any]]:
         """
         Predict the grounding for the given image.
@@ -44,8 +49,10 @@ class OmniparserGrounding(BasicGrounding):
             return list_of_grounding_results
 
         try:
-            results = self.service.chat_completion(image_path)
-            list_of_grounding_results = results["parsed_content_list"]
+            results = self.service.chat_completion(
+                image_path, box_threshold, iou_threshold, use_paddleocr, imgsz, api_name
+            )
+            grounding_results = results[1].splitlines()
 
         except Exception as e:
             print_with_color(
@@ -54,6 +61,18 @@ class OmniparserGrounding(BasicGrounding):
             )
 
             return list_of_grounding_results
+
+        for item in grounding_results:
+            try:
+                item = json.loads(item)
+                list_of_grounding_results.append(item)
+            except json.JSONDecodeError:
+                try:
+                    # the item string is a string converted from python's dict
+                    item = ast.literal_eval(item[item.index("{"):item.rindex("}") + 1])
+                    list_of_grounding_results.append(item)
+                except Exception:
+                    pass
 
         return list_of_grounding_results
 
