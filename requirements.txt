@@ -29,5 +29,5 @@ gradio-client==1.7.1
 
 
 ## If use AAD to authenticate
-# azure_identity==1.15.0
-# azure-identity-broker==0.1.0
+azure_identity==1.15.0
+azure-identity-broker==0.1.0
