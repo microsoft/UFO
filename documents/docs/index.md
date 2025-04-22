@@ -1,6 +1,6 @@
 # Welcome to UFO²'s Document!
 
-[![arxiv](https://img.shields.io/badge/Paper-arXiv:202402.07939-b31b1b.svg)](https://arxiv.org/abs/2402.07939)&ensp;
+[![arxiv](https://img.shields.io/badge/Paper-arXiv:202504.14603-b31b1b.svg)](https://arxiv.org/abs/2504.14603)&ensp;
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
 [![github](https://img.shields.io/github/stars/microsoft/UFO)](https://github.com/microsoft/UFO)&ensp;
@@ -26,7 +26,7 @@ UFO now evolves into **UFO²** (Desktop AgentOS), a new generation of agent fram
 | [**Continuous Knowledge Substrate**](./advanced_usage/reinforce_appagent/overview.md) | Mixes docs, Bing search, user demos and execution traces via RAG for agents that learn over time. |
 | [**UIA + Visual Control Detection**](./advanced_usage/control_detection/hybrid_detection.md) | Detects standard *and* custom controls with a hybrid UIA + vision pipeline. |
 
-Please refer to the [UFO² paper](https://arxiv.org/abs/2402.07939) and the hyperlinked sections for more details on each capability.
+Please refer to the [UFO² paper](https://arxiv.org/abs/2504.14603) and the hyperlinked sections for more details on each capability.
 
 
 ---
@@ -46,7 +46,7 @@ UFO² operates as a **Desktop AgentOS**, encompassing a multi-agent framework th
 4. **Speculative Executor** – Slashes LLM latency by predicting batches of likely actions and validating them against live UIA state in a single shot.  
 5. **Picture‑in‑Picture Desktop** *(coming soon)* – Runs the agent in an isolated virtual desktop so your main workspace and input devices remain untouched.
 
-For a deep dive see our [technical report](https://arxiv.org/abs/2402.07939).
+For a deep dive see our [technical report](https://arxiv.org/abs/2504.14603).
 
 ---
 
@@ -83,12 +83,12 @@ UFO sightings have garnered attention from various media outlets, including:
 If you build on this work, please cite our the AgentOS framework:
 
 **UFO² – The Desktop AgentOS (2025)**  
-<https://arxiv.org/abs/2402.07939>
+<https://arxiv.org/abs/2504.14603>
 ```bibtex
 @article{zhang2025ufo2,
-  title   = {{UFO\textsuperscript{2}: The Desktop AgentOS}},
+  title   = {{UFO2: The Desktop AgentOS}},
   author  = {Zhang, Chaoyun and Huang, He and Ni, Chiming and Mu, Jian and Qin, Si and He, Shilin and Wang, Lu and Yang, Fangkai and Zhao, Pu and Du, Chao and Li, Liqun and Kang, Yu and Jiang, Zhao and Zheng, Suzhen and Wang, Rujia and Qian, Jiaxu and Ma, Minghua and Lou, Jian-Guang and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
-  journal = {arXiv preprint arXiv:2402.07939},
+  journal = {arXiv preprint arXiv:2504.14603},
   year    = {2025}
 }
 ```

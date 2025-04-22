@@ -9,7 +9,7 @@
 
 <div align="center">
 
-[![arxiv](https://img.shields.io/badge/Paper-arXiv:202402.07939-b31b1b.svg)](https://arxiv.org/abs/2402.07939)&ensp;
+[![arxiv](https://img.shields.io/badge/Paper-arXiv:202504.14603-b31b1b.svg)](https://arxiv.org/abs/2504.14603)&ensp;
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
 [![Documentation](https://img.shields.io/badge/Documentation-%230ABAB5?style=flat&logo=readthedocs&logoColor=black)](https://microsoft.github.io/UFO/)&ensp;
@@ -45,7 +45,7 @@
 ---
 
 ## 📢 News
-- 📅 2025-04-19: Version **v2.0.0** Released! We’re excited to announce the release the **UFO²**! UFO² is a major upgrade to the original UFO, featuring with enhanced capabilities. It introduces the **AgentOS** concept, enabling seamless integration of multiple agents for complex tasks. Please check our [new technical report](https://arxiv.org/abs/2402.07939) for more details.
+- 📅 2025-04-19: Version **v2.0.0** Released! We’re excited to announce the release the **UFO²**! UFO² is a major upgrade to the original UFO, featuring with enhanced capabilities. It introduces the **AgentOS** concept, enabling seamless integration of multiple agents for complex tasks. Please check our [new technical report](https://arxiv.org/pdf/2504.14603) for more details.
 - 📅 ...
 - 📅 2024-02-14: Our [technical report](https://arxiv.org/abs/2402.07939) for UFO is online!
 - 📅 2024-02-10: The first version of UFO is released on GitHub🎈. Happy Chinese New year🐉!
@@ -66,7 +66,7 @@ UFO² operates as a **Desktop AgentOS**, encompassing a multi-agent framework th
 4. **Speculative Executor** – Slashes LLM latency by predicting batches of likely actions and validating them against live UIA state in a single shot.  
 5. **Picture‑in‑Picture Desktop** *(coming soon)* – Runs the agent in an isolated virtual desktop so your main workspace and input devices remain untouched.
 
-For a deep dive see our [technical report](https://arxiv.org/abs/2402.07939) or the [docs site](https://microsoft.github.io/UFO).
+For a deep dive see our [technical report](https://arxiv.org/pdf/2504.14603) or the [docs site](https://microsoft.github.io/UFO).
 
 ---
 
@@ -210,12 +210,12 @@ The integration of these benchmarks into UFO² is in separate repositories. Plea
 If you build on this work, please cite our the AgentOS framework:
 
 **UFO² – The Desktop AgentOS (2025)**  
-<https://arxiv.org/abs/2402.07939>
+<https://arxiv.org/abs/2504.14603>
 ```bibtex
 @article{zhang2025ufo2,
   title   = {{UFO2: The Desktop AgentOS}},
   author  = {Zhang, Chaoyun and Huang, He and Ni, Chiming and Mu, Jian and Qin, Si and He, Shilin and Wang, Lu and Yang, Fangkai and Zhao, Pu and Du, Chao and Li, Liqun and Kang, Yu and Jiang, Zhao and Zheng, Suzhen and Wang, Rujia and Qian, Jiaxu and Ma, Minghua and Lou, Jian-Guang and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
-  journal = {arXiv preprint arXiv:2402.07939},
+  journal = {arXiv preprint arXiv:2504.14603},
   year    = {2025}
 }
 ```
