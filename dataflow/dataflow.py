@@ -104,9 +104,6 @@ def process_batch(task_dir: str, task_type: str) -> None:
 
     print_with_color(f"Found {len(task_files)} tasks in {task_dir}.", "blue")
 
-    blob_storage = None
-    if _configs["UPLOAD"]:
-        blob_storage = AzureBlobStorage()
     total = len(task_files)
 
     
@@ -120,8 +117,10 @@ def process_batch(task_dir: str, task_type: str) -> None:
                 message = f"Task Completed {idx}/{total}"
                 send_message(message)
 
-    
-    blob_storage.upload_folder(_configs["OUTPUTS_PATH"], _configs["DATA_SOURCE"], overwrite=False)
+    if _configs["UPLOAD"]:
+        # Upload outputs to azure blob
+        blob_storage = AzureBlobStorage()
+        blob_storage.upload_folder(_configs["OUTPUTS_PATH"], _configs["DATA_SOURCE"], overwrite=False)
 
 
 

@@ -56,6 +56,5 @@ SMTP_SERVER: smtp.qq.com  # SMTP server
 
 # Blob
 UPLOAD: False
-UPLOAD_INTERVAL: 2
 DATA_SOURCE: local_test
 
