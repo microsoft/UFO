@@ -118,7 +118,7 @@ API_TYPE: "openai" , # The API type, "openai" for the OpenAI API.
 API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint.
 API_KEY: "sk-",  # The OpenAI API key, begin with sk-
 API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
+API_MODEL: "gpt-4o",  # The only OpenAI model
 ```
 
 #### Azure OpenAI (AOAI)
@@ -128,7 +128,7 @@ API_TYPE: "aoai" , # The API type, "aoai" for the Azure OpenAI.
 API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
 API_KEY: "YOUR_KEY",  # The aoai API key
 API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
+API_MODEL: "gpt-4o",  # The only OpenAI model
 API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 ```
 

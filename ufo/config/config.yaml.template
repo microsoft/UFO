@@ -4,8 +4,8 @@ HOST_AGENT: {
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
   API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
   API_KEY: "sk-",  # The OpenAI API key, begin with sk-
-  API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-  API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model by now that accepts visual input
+  API_VERSION: "2025-02-01-preview", # "2024-02-15-preview" by default
+  API_MODEL: "gpt-4o",  # The only OpenAI model by now that accepts visual input
 
 
   ### Comment above and uncomment these if using "aoai".
@@ -14,7 +14,7 @@ HOST_AGENT: {
   # API_KEY: "YOUR_KEY",  # The aoai API key
   # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
   # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
-  # API_DEPLOYMENT_ID: "gpt-4-visual-preview", # The deployment id for the AOAI API
+  # API_DEPLOYMENT_ID: "gpt-4o", # The deployment id for the AOAI API
   
   ### For Azure_AD
   # AAD_TENANT_ID: "YOUR_TENANT_ID", # Set the value to your tenant id for the llm model
@@ -28,8 +28,8 @@ APP_AGENT: {
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
   API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
   API_KEY: "sk-",  # The OpenAI API key, begin with sk-
-  API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-  API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model by now that accepts visual input
+  API_VERSION: "2025-02-01-preview", # "2024-02-15-preview" by default
+  API_MODEL: "gpt-4o",  # The only OpenAI model by now that accepts visual input
 
 
   ### Comment above and uncomment these if using "aoai".
@@ -38,7 +38,7 @@ APP_AGENT: {
   # API_KEY: "YOUR_KEY",  # The aoai API key
   # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
   # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
-  # API_DEPLOYMENT_ID: "gpt-4-visual-preview", # The deployment id for the AOAI API
+  # API_DEPLOYMENT_ID: "gpt-4o", # The deployment id for the AOAI API
   
   ### For Azure_AD
   # AAD_TENANT_ID: "YOUR_TENANT_ID", # Set the value to your tenant id for the llm model
