@@ -6,9 +6,27 @@
 
 ### Step 1: Prepare Your Help Doc and Metadata
 
-UFO currently supports processing help documents in XML format, as this is the default format for official help documents of Microsoft apps. More formats will be supported in the future.
+UFO currently supports processing help documents in `json` format. More formats will be supported in the future.
 
-You can write a dedicated document for a specific task of an app in a file named, for example, `task.xml`. Note that it should be accompanied by a metadata file with the same prefix, but with the `.meta` extension, i.e., `task.xml.meta`. This metadata file should have a `title` describing the task at a high level and a `Content-Summary` field summarizing the content of the help document. These two files are used for similarity search with user requests, so please write them carefully. The [ppt-copilot.xml](./doc_example/ppt-copilot.xml) and [ppt-copilot.xml.meta](./doc_example/ppt-copilot.xml.meta) are examples of a help document and its metadata.
+An example of a help document in `json` format is as follows:
+
+```json
+{
+    "application": "chrome",
+    "request": "How to change the username in chrome profiles?",
+    "guidance": [
+        "Click the profile icon in the upper-right corner of the Chrome window.",
+        "Click the gear icon labeled 'Manage Chrome Profiles' in the profile menu.",
+        "In the list of profiles, locate the profile whose name you want to change.",
+        "Hover over the desired profile and click the three-dot menu icon on that profile card.",
+        "Select 'Edit' from the dropdown menu.",
+        "In the Edit Profile dialog, click inside the name field.",
+        "Delete the current name and type your new desired username.",
+        "Click 'Save' to confirm the changes.",
+        "Verify that the profile name is updated in the profile list and in the top-right corner of Chrome."
+    ]
+}
+```
 
 ### Step 2: Prepare Your Help Document Set
 

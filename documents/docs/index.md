@@ -1,6 +1,6 @@
-# Welcome to UFO's Document!
+# Welcome to UFO²'s Document!
 
-[![arxiv](https://img.shields.io/badge/Paper-arXiv:202402.07939-b31b1b.svg)](https://arxiv.org/abs/2402.07939)&ensp;
+[![arxiv](https://img.shields.io/badge/Paper-arXiv:202504.14603-b31b1b.svg)](https://arxiv.org/abs/2504.14603)&ensp;
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
 [![github](https://img.shields.io/github/stars/microsoft/UFO)](https://github.com/microsoft/UFO)&ensp;
@@ -8,40 +8,51 @@
 
 
 ## Introduction
-
-**UFO** is a **UI-Focused** multi-agent framework to fulfill user requests on **Windows OS** by seamlessly navigating and operating within individual or spanning multiple applications.
+UFO now evolves into **UFO²** (Desktop AgentOS), a new generation of agent framework that can run on Windows desktop OS. It is designed to **automate** and **orchestrate** tasks across multiple applications, enabling users to seamlessly interact with their operating system using natural language commands beyond just **UI automation**.
 
 <h1 align="center">
-    <img src="./img/overview_n.png"/> 
+    <img src="./img/comparison.png" width="80%"/> 
 </h1>
 
 
-## 🕌 Framework
-<b>UFO</b> <img src="./img/ufo_blue.png" alt="UFO Image" width="24"> operates as a multi-agent framework, encompassing:
+## ✨ Key Capabilities
 
-- <b>HostAgent 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
+| Feature                          | Description |
+|----------------------------------|-------------|
+| **Deep OS Integration**          | Combines Windows UIA, Win32 and WinCOM for first‑class control detection and native commands. |
+| **Picture‑in‑Picture Desktop** *(coming soon)* | Automation runs in a sandboxed virtual desktop so you can keep using your main screen. |
+| [**Hybrid GUI + API Actions**](./automator/overview.md)     | Chooses native APIs when available, falls back to clicks/keystrokes when not—fast *and* robust. |
+| [**Speculative Multi‑Action**](./advanced_usage/multi_action.md)     | Bundles several predicted steps into one LLM call, validated live—up to **51 % fewer** queries. |
+| [**Continuous Knowledge Substrate**](./advanced_usage/reinforce_appagent/overview.md) | Mixes docs, Bing search, user demos and execution traces via RAG for agents that learn over time. |
+| [**UIA + Visual Control Detection**](./advanced_usage/control_detection/hybrid_detection.md) | Detects standard *and* custom controls with a hybrid UIA + vision pipeline. |
 
-- <b>AppAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
+Please refer to the [UFO² paper](https://arxiv.org/abs/2504.14603) and the hyperlinked sections for more details on each capability.
 
-- <b>Application Automator 🎮</b>, is tasked with translating actions from HostAgent and AppAgent into interactions with the application and through UI controls, native APIs or AI tools. Check out more details [here](./automator/overview.md).
 
-Both agents leverage the multi-modal capabilities of Visual Language Model (VLM) to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](https://arxiv.org/abs/2402.07939).
-<h1 align="center">
-    <img src="./img/framework_v2.png"/> 
-</h1>
+---
+
+
+## 🏗️ Architecture overview
+<p align="center">
+  <img src="./img/framework2.png"  width="80%" alt="UFO² architecture"/>
+</p>
+
+
+UFO² operates as a **Desktop AgentOS**, encompassing a multi-agent framework that includes:
+
+1. **HostAgent** – Parses the natural‑language goal, launches the necessary applications, spins up / coordinates AppAgents, and steers a global finite‑state machine (FSM).  
+2. **AppAgents** – One per application; each runs a ReAct loop with multimodal perception, hybrid control detection, retrieval‑augmented knowledge, and the **Puppeteer** executor that chooses between GUI actions and native APIs.  
+3. **Knowledge Substrate** – Blends offline documentation, online search, demonstrations, and execution traces into a vector store that is retrieved on‑the‑fly at inference.  
+4. **Speculative Executor** – Slashes LLM latency by predicting batches of likely actions and validating them against live UIA state in a single shot.  
+5. **Picture‑in‑Picture Desktop** *(coming soon)* – Runs the agent in an isolated virtual desktop so your main workspace and input devices remain untouched.
+
+For a deep dive see our [technical report](https://arxiv.org/abs/2504.14603).
+
+---
 
 ## 🚀 Quick Start
 Please follow the [Quick Start Guide](./getting_started/quick_start.md) to get started with UFO.
 
-
-## 💥 Highlights
-
-- [x] **First Windows Agent** - UFO is the pioneering agent framework capable of translating user requests in natural language into actionable operations on Windows OS.
-- [x] **Agent as an Expert** - UFO is enhanced by Retrieval Augmented Generation (RAG) from heterogeneous sources, including offline help documents, online search engines, and human demonstrations, making the agent an application "expert".
-- [x] **Rich Skill Set** - UFO is equipped with a diverse set of skills to support comprehensive automation, such as mouse, keyboard, native API, and "Copilot".
-- [x] **Interactive Mode** - UFO facilitates multiple sub-requests from users within the same session, enabling the seamless completion of complex tasks.
-- [x] **Agent Customization** - UFO allows users to customize their own agents by providing additional information. The agent will proactively query users for details when necessary to better tailor its behavior.
-- [x] **Scalable AppAgent Creation** - UFO offers extensibility, allowing users and app developers to create their own AppAgents in an easy and scalable way.
 
 ## 🌐 Media Coverage 
 
@@ -67,27 +78,52 @@ UFO sightings have garnered attention from various media outlets, including:
 * For other communications, please contact [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com)
 ---
 
-&nbsp;
-## 📚 Citation
-Our technical report paper can be found [here](https://arxiv.org/abs/2402.07939). Note that previous HostAgent and AppAgent in the paper are renamed to HostAgent and AppAgent in the code base to better reflect their functions.
-If you use UFO in your research, please cite our paper:
-```
-@article{ufo,
-  title={{UFO: A UI-Focused Agent for Windows OS Interaction}},
-  author={Zhang, Chaoyun and Li, Liqun and He, Shilin and Zhang, Xu and Qiao, Bo and  Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and Zhang, Qi},
-  journal={arXiv preprint arXiv:2402.07939},
-  year={2024}
+## 📚 Citation
+
+If you build on this work, please cite our the AgentOS framework:
+
+**UFO² – The Desktop AgentOS (2025)**  
+<https://arxiv.org/abs/2504.14603>
+```bibtex
+@article{zhang2025ufo2,
+  title   = {{UFO2: The Desktop AgentOS}},
+  author  = {Zhang, Chaoyun and Huang, He and Ni, Chiming and Mu, Jian and Qin, Si and He, Shilin and Wang, Lu and Yang, Fangkai and Zhao, Pu and Du, Chao and Li, Liqun and Kang, Yu and Jiang, Zhao and Zheng, Suzhen and Wang, Rujia and Qian, Jiaxu and Ma, Minghua and Lou, Jian-Guang and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
+  journal = {arXiv preprint arXiv:2504.14603},
+  year    = {2025}
 }
 ```
 
-## 🎨 Related Projects
+**UFO – A UI‑Focused Agent for Windows OS Interaction (2024)**  
+<https://arxiv.org/abs/2402.07939>
+```bibtex
+@article{zhang2024ufo,
+  title   = {{UFO: A UI-Focused Agent for Windows OS Interaction}},
+  author  = {Zhang, Chaoyun and Li, Liqun and He, Shilin and Zhang, Xu and Qiao, Bo and Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and Zhang, Qi},
+  journal = {arXiv preprint arXiv:2402.07939},
+  year    = {2024}
+}
+```
 
-If you're interested in data analytics agent frameworks, check out [TaskWeaver](https://github.com/microsoft/TaskWeaver?tab=readme-ov-file), a code-first LLM agent framework designed for seamlessly planning and executing data analytics tasks.
 
-For more information on GUI agents, refer to our survey paper: [Large Language Model-Brained GUI Agents: A Survey](https://arxiv.org/abs/2411.18279). You can also explore the survey through:
-- [GitHub Repository](https://github.com/vyokky/LLM-Brained-GUI-Agents-Survey)
-- [Searchable Website](https://vyokky.github.io/LLM-Brained-GUI-Agents-Survey/)
+---
 
+
+## 📝 Roadmap
+
+The UFO² team is actively working on the following features and improvements:
+
+- [ ] **Picture‑in‑Picture Mode** – Completed and will be available in the next release  
+- [ ] **AgentOS‑as‑a‑Service** – Completed and will be available in the next release  
+- [ ] **Auto‑Debugging Toolkit** – Completed and will be available in the next release  
+- [ ] **Integration with MCP and Agent2Agent Communication** – Planned; under implementation  
+
+---
+
+## 🎨 Related Projects
+- **TaskWeaver** — a code‑first LLM agent for data analytics: <https://github.com/microsoft/TaskWeaver>  
+- **LLM‑Brained GUI Agents: A Survey**: <https://arxiv.org/abs/2411.18279> • [GitHub](https://github.com/vyokky/LLM-Brained-GUI-Agents-Survey) • [Interactive site](https://vyokky.github.io/LLM-Brained-GUI-Agents-Survey/)
+
+---
 <!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-FX17ZGJYGC"></script>
 <script>

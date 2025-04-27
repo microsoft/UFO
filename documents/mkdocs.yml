@@ -19,6 +19,7 @@ nav:
       - Overview: supported_models/overview.md
       - OpenAI: supported_models/openai.md
       - Azure OpenAI: supported_models/azure_openai.md
+      - OpenAI CUA (Operator): supported_models/operator.md
       - Gemini: supported_models/gemini.md
       - Claude: supported_models/claude.md
       - Qwen: supported_models/qwen.md
@@ -41,22 +42,23 @@ nav:
       - Basic Prompts: prompts/basic_template.md
       - Examples Prompts: prompts/examples_prompts.md
       - API Prompts: prompts/api_prompts.md
-  - Automator:
+  - Puppeteer:
       - Overview: automator/overview.md
-      - UI Automator: automator/ui_automator.md
+      - GUI Automator: automator/ui_automator.md
       - API Automator: automator/wincom_automator.md
       - Web Automator: automator/web_automator.md
       - Bash Automator: automator/bash_automator.md
       - AI Tool: automator/ai_tool_automator.md
   - Logs:
       - Overview: logs/overview.md
+      - Markdown Log Viewer: logs/markdown_log_viewer.md
       - Request Logs: logs/request_logs.md
       - Step Logs: logs/step_logs.md
       - Evaluation Logs: logs/evaluation_logs.md
       - Screenshots: logs/screenshots_logs.md
       - UI Tree: logs/ui_tree_logs.md
   - Advanced Usage: 
-      - Reinforcing AppAgent: 
+      - Continuous Knowledge Substrate: 
         - Overview: advanced_usage/reinforce_appagent/overview.md
         - Learning from Help Document: advanced_usage/reinforce_appagent/learning_from_help_document.md
         - Learning from Bing Search: advanced_usage/reinforce_appagent/learning_from_bing_search.md
@@ -64,17 +66,28 @@ nav:
         - Learning from User Demonstration: advanced_usage/reinforce_appagent/learning_from_demonstration.md
       - Follower Mode: advanced_usage/follower_mode.md
       - Batch Mode: advanced_usage/batch_mode.md
+      - Speculative Multi-Action Execution: advanced_usage/multi_action.md
+      - Operator-as-a-AppAgent: advanced_usage/operator_as_app_agent.md
       - Control Filtering: 
         - Overview: advanced_usage/control_filtering/overview.md
         - Text Filtering: advanced_usage/control_filtering/text_filtering.md
         - Semantic Filtering: advanced_usage/control_filtering/semantic_filtering.md
         - Icon Filtering: advanced_usage/control_filtering/icon_filtering.md
+      - Control Detection: 
+        - Overview: advanced_usage/control_detection/overview.md
+        - UIA Detection: advanced_usage/control_detection/uia_detection.md
+        - Visual Detection: advanced_usage/control_detection/visual_detection.md
+        - Hybrid Detection: advanced_usage/control_detection/hybrid_detection.md
       - Customization: advanced_usage/customization.md
   - Creating Your AppAgent: 
       - Overview: creating_app_agent/overview.md
       - Help Document Provision: creating_app_agent/help_document_provision.md
       - Demonstration Provision: creating_app_agent/demonstration_provision.md
       - Warpping App-Native API: creating_app_agent/warpping_app_native_api.md
+  - Benchmark:
+      - Overview: benchmark/overview.md
+      - Windows Agent Arena: benchmark/windows_agent_arena.md
+      - OSWorld (Windows): benchmark/osworld.md
   - Dataflow:
       - Overview: dataflow/overview.md
       - Instantiation: dataflow/instantiation.md

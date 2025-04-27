@@ -4,19 +4,16 @@
 import json
 import os
 from dataclasses import asdict, dataclass, field
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.processors.actions import (
-    ActionSequence,
-    BaseControlLog,
-    OneStepAction,
-)
+from ufo.agents.processors.actions import ActionSequence, BaseControlLog, OneStepAction
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
+from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
@@ -24,8 +21,10 @@ if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
 
 configs = Config.get_instance().config_data
+
 if configs is not None:
-    BACKEND = configs.get("CONTROL_BACKEND", "uia")
+    CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"])
+    BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
 
 
 @dataclass
@@ -67,6 +66,25 @@ class AppAgentControlLog(BaseControlLog):
 
 
 @dataclass
+class ControlInfoRecorder:
+    """
+    The control meta information recorder for the current application window.
+    """
+
+    recording_fields: ClassVar[List[str]] = [
+        "control_text",
+        "control_type" if BACKEND == "uia" else "control_class",
+        "control_rect",
+        "source",
+    ]
+
+    application_windows_info: Dict[str, Any] = field(default_factory=dict)
+    uia_controls_info: List[Dict[str, Any]] = field(default_factory=dict)
+    grounding_controls_info: List[Dict[str, Any]] = field(default_factory=dict)
+    merged_controls_info: List[Dict[str, Any]] = field(default_factory=dict)
+
+
+@dataclass
 class AppAgentRequestLog:
     """
     The request log data for the AppAgent.
@@ -74,7 +92,11 @@ class AppAgentRequestLog:
 
     step: int
     dynamic_examples: List[str]
-    dynamic_knowledge: List[str]
+    experience_examples: List[str]
+    demonstration_examples: List[str]
+    offline_docs: str
+    online_docs: str
+    dynamic_knowledge: str
     image_list: List[str]
     prev_subtask: List[str]
     plan: List[str]
@@ -87,6 +109,7 @@ class AppAgentRequestLog:
     last_success_actions: List[Dict[str, Any]]
     include_last_screenshot: bool
     prompt: Dict[str, Any]
+    control_info_recording: Dict[str, Any]
 
 
 class AppAgentProcessor(BaseProcessor):
@@ -94,7 +117,12 @@ class AppAgentProcessor(BaseProcessor):
     The processor for the app agent at a single step.
     """
 
-    def __init__(self, agent: "AppAgent", context: Context) -> None:
+    def __init__(
+        self,
+        agent: "AppAgent",
+        context: Context,
+        ground_service=Optional[BasicGrounding],
+    ) -> None:
         """
         Initialize the app agent processor.
         :param agent: The app agent who executes the processor.
@@ -108,12 +136,14 @@ class AppAgentProcessor(BaseProcessor):
 
         self._annotation_dict = None
         self._control_info = None
-        self._operation = None
-        self._args = None
+        self._operation = ""
+        self._args = {}
         self._image_url = []
         self.control_filter_factory = ControlFilterFactory()
+        self.control_recorder = ControlInfoRecorder()
         self.filtered_annotation_dict = None
         self.screenshot_save_path = None
+        self.grounding_service = ground_service
 
     def print_step_info(self) -> None:
         """
@@ -128,6 +158,100 @@ class AppAgentProcessor(BaseProcessor):
             ),
             "magenta",
         )
+
+    def get_control_list(self, screenshot_path: str) -> List[UIAWrapper]:
+        """
+        Get the control list from the annotation dictionary.
+        :param screenshot_path: The path to the clean screenshot.
+        :return: The list of control items.
+        """
+
+        api_backend = None
+        grounding_backend = None
+
+        control_detection_backend = configs.get("CONTROL_BACKEND", ["uia"])
+
+        if "uia" in control_detection_backend:
+            api_backend = "uia"
+        elif "win32" in control_detection_backend:
+            api_backend = "win32"
+
+        if "omniparser" in control_detection_backend:
+            grounding_backend = "omniparser"
+
+        if api_backend is not None:
+            api_control_list = (
+                self.control_inspector.find_control_elements_in_descendants(
+                    self.application_window,
+                    control_type_list=configs.get("CONTROL_LIST", []),
+                    class_name_list=configs.get("CONTROL_LIST", []),
+                )
+            )
+        else:
+            api_control_list = []
+
+        api_control_dict = {
+            i + 1: control for i, control in enumerate(api_control_list)
+        }
+
+        # print(control_detection_backend, grounding_backend, screenshot_path)
+
+        if grounding_backend == "omniparser" and self.grounding_service is not None:
+            self.grounding_service: BasicGrounding
+
+            onmiparser_configs = configs.get("OMNIPARSER", {})
+
+            # print(onmiparser_configs)
+
+            grounding_control_list = (
+                self.grounding_service.convert_to_virtual_uia_elements(
+                    image_path=screenshot_path,
+                    application_window=self.application_window,
+                    box_threshold=onmiparser_configs.get("BOX_THRESHOLD", 0.05),
+                    iou_threshold=onmiparser_configs.get("IOU_THRESHOLD", 0.1),
+                    use_paddleocr=onmiparser_configs.get("USE_PADDLEOCR", True),
+                    imgsz=onmiparser_configs.get("IMGSZ", 640),
+                )
+            )
+        else:
+            grounding_control_list = []
+
+        grounding_control_dict = {
+            i + 1: control for i, control in enumerate(grounding_control_list)
+        }
+
+        merged_control_list = self.photographer.merge_control_list(
+            api_control_list,
+            grounding_control_list,
+            iou_overlap_threshold=configs.get("IOU_THRESHOLD_FOR_MERGE", 0.1),
+        )
+
+        merged_control_dict = {
+            i + 1: control for i, control in enumerate(merged_control_list)
+        }
+
+        # Record the control information for the uia controls.
+        self.control_recorder.uia_controls_info = (
+            self.control_inspector.get_control_info_list_of_dict(
+                api_control_dict, ControlInfoRecorder.recording_fields
+            )
+        )
+
+        # Record the control information for the grounding controls.
+        self.control_recorder.grounding_controls_info = (
+            self.control_inspector.get_control_info_list_of_dict(
+                grounding_control_dict, ControlInfoRecorder.recording_fields
+            )
+        )
+
+        # Record the control information for the merged controls.
+        self.control_recorder.merged_controls_info = (
+            self.control_inspector.get_control_info_list_of_dict(
+                merged_control_dict, ControlInfoRecorder.recording_fields
+            )
+        )
+
+        return merged_control_list
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -155,15 +279,28 @@ class AppAgentProcessor(BaseProcessor):
             }
         )
 
-        # Get the control elements in the application window if the control items are not provided for reannotation.
-        if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
-            control_list = self.control_reannotate
-        else:
-            control_list = self.control_inspector.find_control_elements_in_descendants(
-                self.application_window,
-                control_type_list=configs.get("CONTROL_LIST", []),
-                class_name_list=configs.get("CONTROL_LIST", []),
+        self.photographer.capture_app_window_screenshot(
+            self.application_window, save_path=screenshot_save_path
+        )
+
+        # Record the control information for the current application window.
+        self.control_recorder.application_windows_info = (
+            self.control_inspector.get_control_info(
+                self.application_window, field_list=ControlInfoRecorder.recording_fields
             )
+        )
+
+        # # Get the control elements in the application window if the control items are not provided for reannotation.
+        # if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
+        #     control_list = self.control_reannotate
+        # else:
+        #     control_list = self.control_inspector.find_control_elements_in_descendants(
+        #         self.application_window,
+        #         control_type_list=configs.get("CONTROL_LIST", []),
+        #         class_name_list=configs.get("CONTROL_LIST", []),
+        #     )
+
+        control_list = self.get_control_list(screenshot_save_path)
 
         # Get the annotation dictionary for the control items, in a format of {control_label: control_element}.
         self._annotation_dict = self.photographer.get_annotation_dict(
@@ -173,9 +310,6 @@ class AppAgentProcessor(BaseProcessor):
         # Attempt to filter out irrelevant control items based on the previous plan.
         self.filtered_annotation_dict = self.get_filtered_annotation_dict(
             self._annotation_dict
-        )
-        self.photographer.capture_app_window_screenshot(
-            self.application_window, save_path=screenshot_save_path
         )
 
         # Capture the screenshot of the selected control items with annotation and save it.
@@ -194,6 +328,21 @@ class AppAgentProcessor(BaseProcessor):
                         self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
                     )
                 )
+
+        if configs.get("SAVE_FULL_SCREEN", False):
+
+            desktop_save_path = (
+                self.log_path + f"desktop_action_step{self.session_step}.png"
+            )
+
+            self._memory_data.add_values_from_dict(
+                {"DesktopCleanScreenshot": desktop_save_path}
+            )
+
+            # Capture the desktop screenshot for all screens.
+            self.photographer.capture_desktop_screen_screenshot(
+                all_screens=True, save_path=desktop_save_path
+            )
 
         # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
         if configs.get("INCLUDE_LAST_SCREENSHOT", True):
@@ -264,14 +413,23 @@ class AppAgentProcessor(BaseProcessor):
         Get the prompt message for the AppAgent.
         """
 
-        retrieved_results = self.demonstration_prompt_helper()
+        experience_results, demonstration_results = (
+            self.app_agent.demonstration_prompt_helper(request=self.subtask)
+        )
+
+        retrieved_results = experience_results + demonstration_results
 
         # Get the external knowledge prompt for the AppAgent using the offline and online retrievers.
-        external_knowledge_prompt = self.app_agent.external_knowledge_prompt_helper(
-            self.request,
+
+        offline_docs, online_docs = self.app_agent.external_knowledge_prompt_helper(
+            self.subtask,
             configs.get("RAG_OFFLINE_DOCS_RETRIEVED_TOPK", 0),
             configs.get("RAG_ONLINE_RETRIEVED_TOPK", 0),
         )
+
+        # print(offline_docs, online_docs)
+
+        external_knowledge_prompt = offline_docs + online_docs
 
         if not self.app_agent.blackboard.is_empty():
             blackboard_prompt = self.app_agent.blackboard.blackboard_to_prompt()
@@ -308,7 +466,11 @@ class AppAgentProcessor(BaseProcessor):
         # Log the prompt message. Only save them in debug mode.
         request_data = AppAgentRequestLog(
             step=self.session_step,
+            experience_examples=experience_results,
+            demonstration_examples=demonstration_results,
             dynamic_examples=retrieved_results,
+            offline_docs=offline_docs,
+            online_docs=online_docs,
             dynamic_knowledge=external_knowledge_prompt,
             image_list=self._image_url,
             prev_subtask=self.previous_subtasks,
@@ -322,6 +484,7 @@ class AppAgentProcessor(BaseProcessor):
             last_success_actions=filtered_last_success_actions,
             include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
             prompt=self._prompt_message,
+            control_info_recording=asdict(self.control_recorder),
         )
 
         request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
@@ -334,9 +497,19 @@ class AppAgentProcessor(BaseProcessor):
         Get the response from the LLM.
         """
 
-        self._response, self.cost = self.app_agent.get_response(
-            self._prompt_message, "APPAGENT", use_backup_engine=True
-        )
+        retry = 0
+        while retry < configs.get("JSON_PARSING_RETRY", 3):
+            # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
+            self._response, self.cost = self.app_agent.get_response(
+                self._prompt_message, "APPAGENT", use_backup_engine=True
+            )
+
+            try:
+                self.app_agent.response_to_dict(self._response)
+                break
+            except Exception as e:
+                print("Error in parsing response: ", e)
+                retry += 1
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -387,6 +560,10 @@ class AppAgentProcessor(BaseProcessor):
             control_dict=self._annotation_dict,
             application_window=self.application_window,
         )
+
+        if self.is_application_closed():
+            utils.print_with_color("Warning: The application is closed.", "yellow")
+            self.status = "FINISH"
 
     def capture_control_screenshot(
         self, control_selected: Union[UIAWrapper, List[UIAWrapper]]
@@ -582,26 +759,6 @@ class AppAgentProcessor(BaseProcessor):
             log_abs_path, f"xml/action_step{self.session_step}.xml"
         )
         self.app_agent.Puppeteer.save_to_xml(xml_save_path)
-
-    def demonstration_prompt_helper(self) -> List[Dict[str, Any]]:
-        """
-        Get the examples and tips for the AppAgent using the demonstration retriever.
-        :return: The examples and tips for the AppAgent.
-        """
-
-        retrieved_results = []
-        # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
-        if configs["RAG_EXPERIENCE"]:
-            retrieved_results += self.app_agent.rag_experience_retrieve(
-                self.subtask, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
-            )
-
-        if configs["RAG_DEMONSTRATION"]:
-            retrieved_results += self.app_agent.rag_demonstration_retrieve(
-                self.subtask, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
-            )
-
-        return retrieved_results
 
     def get_filtered_annotation_dict(
         self, annotation_dict: Dict[str, UIAWrapper], configs: Dict[str, Any] = configs
