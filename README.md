@@ -9,7 +9,7 @@
 
 <div align="center">
 
-[![arxiv](https://img.shields.io/badge/Paper-arXiv:202504.14603-b31b1b.svg)](https://arxiv.org/abs/2504.14603)&ensp;
+[![arxiv](https://img.shields.io/badge/Paper-arXiv:2504.14603-b31b1b.svg)](https://arxiv.org/abs/2504.14603)&ensp;
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
 [![Documentation](https://img.shields.io/badge/Documentation-%230ABAB5?style=flat&logo=readthedocs&logoColor=black)](https://microsoft.github.io/UFO/)&ensp;
@@ -118,7 +118,7 @@ API_TYPE: "openai" , # The API type, "openai" for the OpenAI API.
 API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint.
 API_KEY: "sk-",  # The OpenAI API key, begin with sk-
 API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
+API_MODEL: "gpt-4o",  # The only OpenAI model
 ```
 
 #### Azure OpenAI (AOAI)
@@ -128,7 +128,7 @@ API_TYPE: "aoai" , # The API type, "aoai" for the Azure OpenAI.
 API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
 API_KEY: "YOUR_KEY",  # The aoai API key
 API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
+API_MODEL: "gpt-4o",  # The only OpenAI model
 API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 ```
 
