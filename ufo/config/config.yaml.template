@@ -4,15 +4,15 @@ HOST_AGENT: {
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
   API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
   API_KEY: "sk-",  # The OpenAI API key, begin with sk-
-  API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-  API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model by now that accepts visual input
+  API_VERSION: "gpt-4o-mini-2024-07-18", # "gpt-4o-mini-2024-07-18" by default
+  API_MODEL: "gpt-4o-mini", # The OpenAI model name, "gpt-4o-mini" by default. You may also use "gpt-4o" for using the GPT-4O model.
 
 
   ### Comment above and uncomment these if using "aoai".
   # API_TYPE: "aoai" , # The API type, "openai" for the OpenAI API, "aoai" for the Azure OpenAI.  
   # API_BASE: "YOUR_ENDPOINT", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the aoai, it should be https://{your-resource-name}.openai.azure.com
   # API_KEY: "YOUR_KEY",  # The aoai API key
-  # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+  # API_VERSION: "gpt-4o-mini-2024-07-18", # "gpt-4o-mini-2024-07-18" by default
   # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
   # API_DEPLOYMENT_ID: "gpt-4-visual-preview", # The deployment id for the AOAI API
   
@@ -28,15 +28,15 @@ APP_AGENT: {
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
   API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
   API_KEY: "sk-",  # The OpenAI API key, begin with sk-
-  API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-  API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model by now that accepts visual input
+  API_VERSION: "gpt-4o-mini-2024-07-18", # "gpt-4o-mini-2024-07-18" by default
+  API_MODEL: "gpt-4o-mini", # The OpenAI model name, "gpt-4o-mini" by default. You may also use "gpt-4o" for using the GPT-4O model.
 
 
   ### Comment above and uncomment these if using "aoai".
   # API_TYPE: "aoai" , # The API type, "openai" for the OpenAI API, "aoai" for the Azure OpenAI.  
   # API_BASE: "YOUR_ENDPOINT", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the aoai, it should be https://{your-resource-name}.openai.azure.com
   # API_KEY: "YOUR_KEY",  # The aoai API key
-  # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+  # API_VERSION: "gpt-4o-mini-2024-07-18", # "gpt-4o-mini-2024-07-18" by default
   # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
   # API_DEPLOYMENT_ID: "gpt-4-visual-preview", # The deployment id for the AOAI API
   
@@ -52,15 +52,15 @@ BACKUP_AGENT: {
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
   API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
   API_KEY: "sk-",  # The OpenAI API key, begin with sk-
-  API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-  API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model by now that accepts visual input
+  API_VERSION: "gpt-4o-mini-2024-07-18", # "gpt-4o-mini-2024-07-18" by default
+  API_MODEL: "gpt-4o-mini", # The OpenAI model name, "gpt-4o-mini" by default. You may also use "gpt-4o" for using the GPT-4O model.
 
 
   ### Comment above and uncomment these if using "aoai".
   # API_TYPE: "aoai" , # The API type, "openai" for the OpenAI API, "aoai" for the Azure OpenAI.  
   # API_BASE: "YOUR_ENDPOINT", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the aoai, it should be https://{your-resource-name}.openai.azure.com
   # API_KEY: "YOUR_KEY",  # The aoai API key
-  # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+  # API_VERSION: "gpt-4o-mini-2024-07-18", # "gpt-4o-mini-2024-07-18" by default
   # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
   # API_DEPLOYMENT_ID: "gpt-4-visual-preview", # The deployment id for the AOAI API
   

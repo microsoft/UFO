@@ -117,8 +117,8 @@ VISUAL_MODE: True, # Whether to use the visual mode
 API_TYPE: "openai" , # The API type, "openai" for the OpenAI API.  
 API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint.
 API_KEY: "sk-",  # The OpenAI API key, begin with sk-
-API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
+API_VERSION: "gpt-4o-mini-2024-07-18", # "gpt-4o-mini-2024-07-18" by default
+API_MODEL: "gpt-4o-mini", # The OpenAI model name, "gpt-4o-mini" by default. You may also use "gpt-4o" for using the GPT-4O model.
 ```
 
 #### Azure OpenAI (AOAI)
@@ -127,8 +127,8 @@ VISUAL_MODE: True, # Whether to use the visual mode
 API_TYPE: "aoai" , # The API type, "aoai" for the Azure OpenAI.  
 API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
 API_KEY: "YOUR_KEY",  # The aoai API key
-API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
+API_VERSION: "gpt-4o-mini-2024-07-18", # "gpt-4o-mini-2024-07-18" by default
+API_MODEL: "gpt-4o-mini", # The OpenAI model name, "gpt-4o-mini" by default. You may also use "gpt-4o" for using the GPT-4O model.
 API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 ```
 
