@@ -1,11 +1,11 @@
 Flight ID,Date,Location,Airline,Aircraft type,Number of fatalities,Number of survivors,Cause of crash,Weather condition
-1001,2022-10-04 14:30:00,New York,Delta,Boeing 737,75,20,Turbulence,Cloudy
-1002,2022-09-22 09:45:00,Los Angeles,United Airlines,Airbus A320,0,153,No crash, Sunny
-1003,2022-08-13 13:15:00,Chicago,American Airlines,Boeing 747,310,10,Engine Failure,Stormy
-1004,2022-07-30 19:00:00,Washington D.C.,Southwest Airlines,Boeing 787,80,40,Mid-air Collision,Cloudy
-1005,2022-06-15 06:30:00,Miami,JetBlue,Airbus A321,60,80,Pilot error,Rainy
-1006,2022-05-20 22:15:00,San Francisco,Alaska Airlines,Boeing 777,200,100,Structural Failure,Sunny
-1007,2022-04-01 16:00:00,Las Vegas,Spirit Airlines,Airbus A319,20,130,Bird Strike,Cloudy
-1008,2022-03-14 11:45:00,Seattle,Hawaiian Airlines,Boeing 737,10,189,Landing gear failure,Snowy
-1009,2022-02-08 03:00:00,Dallas,Frontier Airlines,Boeing 737,180,20,Fire,Stormy
-1010,2022-01-01 00:00:00,Atlanta,Delta,Boeing 757,30,150,Human Error, Sunny
+1001,10/4/2022 14:30,New York,Delta,Boeing 737,75,20,Turbulence,Cloudy
+1002,9/22/2022 9:45,Los Angeles,United Airlines,Airbus A320,0,153,No crash, Sunny
+1003,8/13/2022 13:15,Chicago,American Airlines,Boeing 747,310,10,Engine Failure,Stormy
+1004,7/30/2022 19:00,Washington D.C.,Southwest Airlines,Boeing 787,80,40,Mid-air Collision,Cloudy
+1005,6/15/2022 6:30,Miami,JetBlue,Airbus A321,60,80,Pilot error,Rainy
+1006,5/20/2022 22:15,San Francisco,Alaska Airlines,Boeing 777,200,100,Structural Failure,Sunny
+1007,4/1/2022 16:00,Las Vegas,Spirit Airlines,Airbus A319,20,130,Bird Strike,Cloudy
+1008,3/14/2022 11:45,Seattle,Hawaiian Airlines,Boeing 737,10,189,Landing gear failure,Snowy
+1009,2/8/2022 3:00,Dallas,Frontier Airlines,Boeing 737,180,20,Fire,Stormy
+1010,1/1/2022 0:00,Atlanta,Delta,Boeing 757,30,150,Human Error, Sunny
