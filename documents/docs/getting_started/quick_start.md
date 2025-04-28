@@ -2,7 +2,7 @@
 
 ### 🛠️ Step 1: Installation
 UFO requires **Python >= 3.10** running on **Windows OS >= 10**. It can be installed by running the following command:
-```bash
+```powershell
 # [optional to create conda environment]
 # conda create -n ufo python=3.10
 # conda activate ufo
@@ -16,7 +16,12 @@ pip install -r requirements.txt
 ```
 
 ### ⚙️ Step 2: Configure the LLMs
-Before running UFO, you need to provide your LLM configurations **individually for HostAgent and AppAgent**. You can create your own config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` and editing config for **APP_AGENT** and **ACTION_AGENT** as follows: 
+Before running UFO, you need to provide your LLM configurations **individually for HostAgent and AppAgent**. You can create your own config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` and editing config for **HOST_AGENT** and **APP_AGENT** as follows: 
+
+```powershell
+copy ufo\config\config.yaml.template ufo\config\config.yaml
+notepad ufo\config\config.yaml   # paste your key & endpoint
+```
 
 #### OpenAI
 ```bash
@@ -93,6 +98,12 @@ Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction.
 Please enter your request to be completed🛸:
 ```
 
+Alternatively, you can also directly invoke UFO with a specific task and request by using the following command:
+
+```powershell
+python -m ufo --task <your_task_name> -r "<your_request>"
+```
+
 
 ###  Step 5 🎥: Execution Logs 
 
@@ -102,8 +113,6 @@ You can find the screenshots taken and request & response logs in the following 
 ```
 You may use them to debug, replay, or analyze the agent output.
 
-!!! note
-    Before UFO executing your request, please make sure the targeted applications are active on the system.
 
 !!! note
-    The GPT-V accepts screenshots of your desktop and application GUI as input. Please ensure that no sensitive or confidential information is visible or captured during the execution process. For further information, refer to [DISCLAIMER.md](https://github.com/microsoft/UFO/blob/vyokky/dev/DISCLAIMER.md).
+    The LLM accepts screenshots of your desktop and application GUI as input. Please ensure that no sensitive or confidential information is visible or captured during the execution process. For further information, refer to [DISCLAIMER.md](https://github.com/microsoft/UFO/blob/vyokky/dev/DISCLAIMER.md).

@@ -7,7 +7,7 @@ from __future__ import annotations
 from typing import Dict, List, Union
 
 from ufo import utils
-from ufo.agents.agent.app_agent import AppAgent
+from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.agents.memory.blackboard import Blackboard
@@ -41,6 +41,8 @@ class AgentFactory:
             return FollowerAgent(*args, **kwargs)
         elif agent_type == "batch_normal":
             return AppAgent(*args, **kwargs)
+        elif agent_type == "operator":
+            return OpenAIOperatorAgent(*args, **kwargs)
         else:
             raise ValueError("Invalid agent type: {}".format(agent_type))
 
@@ -78,7 +80,7 @@ class HostAgent(BasicAgent):
         self.appagent_dict = {}
         self._active_appagent = None
         self._blackboard = Blackboard()
-        self.set_state(ContinueHostAgentState())
+        self.set_state(self.default_state)
         self.Puppeteer = self.create_puppeteer_interface()
 
     def get_prompter(
@@ -104,10 +106,6 @@ class HostAgent(BasicAgent):
         agent_name: str,
         process_name: str,
         app_root_name: str,
-        is_visual: bool,
-        main_prompt: str,
-        example_prompt: str,
-        api_prompt: str,
         *args,
         **kwargs,
     ) -> BasicAgent:
@@ -117,10 +115,6 @@ class HostAgent(BasicAgent):
         :param agent_name: The name of the SubAgent.
         :param process_name: The process name of the app.
         :param app_root_name: The root name of the app.
-        :param is_visual: The flag indicating whether the agent is visual or not.
-        :param main_prompt: The main prompt file path.
-        :param example_prompt: The example prompt file path.
-        :param api_prompt: The API prompt file path.
         :return: The created SubAgent.
         """
         app_agent = self.agent_factory.create_agent(
@@ -128,10 +122,10 @@ class HostAgent(BasicAgent):
             agent_name,
             process_name,
             app_root_name,
-            is_visual,
-            main_prompt,
-            example_prompt,
-            api_prompt,
+            # is_visual,
+            # main_prompt,
+            # example_prompt,
+            # api_prompt,
             *args,
             **kwargs,
         )
@@ -240,7 +234,7 @@ class HostAgent(BasicAgent):
         else:
             example_prompt = configs["APPAGENT_EXAMPLE_PROMPT"]
 
-        if mode == "normal" or "batch_normal":
+        if mode in ["normal", "batch_normal", "follower"]:
 
             agent_name = (
                 "AppAgent/{root}/{process}".format(
@@ -261,28 +255,26 @@ class HostAgent(BasicAgent):
                 main_prompt=configs["APPAGENT_PROMPT"],
                 example_prompt=example_prompt,
                 api_prompt=configs["API_PROMPT"],
+                mode=mode,
             )
 
-        elif mode == "follower":
+        elif mode in ["normal_operator", "batch_normal_operator"]:
 
-            # Load additional app info prompt.
-            app_info_prompt = configs.get("APP_INFO_PROMPT", None)
-
-            agent_name = "FollowerAgent/{root}/{process}".format(
-                root=application_root_name, process=application_window_name
+            agent_name = (
+                "OpenAIOperator/{root}/{process}".format(
+                    root=application_root_name, process=application_window_name
+                )
+                if mode == "normal_operator"
+                else "BatchOpenAIOperator/{root}/{process}".format(
+                    root=application_root_name, process=application_window_name
+                )
             )
 
-            # Create the app agent in the follower mode.
-            app_agent = self.create_subagent(
-                agent_type="follower",
+            app_agent: OpenAIOperatorAgent = self.create_subagent(
+                "operator",
                 agent_name=agent_name,
                 process_name=application_window_name,
                 app_root_name=application_root_name,
-                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
-                main_prompt=configs["FOLLOWERAHENT_PROMPT"],
-                example_prompt=example_prompt,
-                api_prompt=configs["API_PROMPT"],
-                app_info_prompt=app_info_prompt,
             )
 
         else:
@@ -362,3 +354,10 @@ class HostAgent(BasicAgent):
         Get the status manager.
         """
         return HostAgentStatus
+
+    @property
+    def default_state(self) -> ContinueHostAgentState:
+        """
+        Get the default state.
+        """
+        return ContinueHostAgentState()

@@ -22,8 +22,7 @@ args.add_argument(
 args.add_argument(
     "--mode",
     "-m",
-    help="mode of the task. Default is normal, it can be set to 'follower' if you want to run the follower agent. Also, it can be set to 'batch_normal' if you want to run the batch normal agent.",
-    type=str,
+    help="mode of the task. Default is 'normal', it can be set to 'follower' if you want to run the follower agent. Also, it can be set to 'batch_normal' if you want to run the batch normal agent, 'operator' if you want to run the OpenAi Operator agent separately.",
     default="normal",
 )
 args.add_argument(

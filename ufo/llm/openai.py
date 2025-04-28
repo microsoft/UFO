@@ -1,16 +1,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-
+import functools
+import json
 import os
 import shutil
 import sys
-from typing import Any, Callable, Literal, Optional, List, Dict
+import time
+import urllib.error
+import urllib.parse
+import urllib.request
+from typing import Any, Callable, Dict, List, Literal, Optional, Tuple
 
 import openai
 from openai import AzureOpenAI, OpenAI
-import functools
-
 from ufo.llm.base import BaseService
 
 
@@ -30,6 +33,7 @@ class OpenAIService(BaseService):
         self.api_type = self.config_llm["API_TYPE"].lower()
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config.get("PRICES", {})
+        self.agent_type = agent_type
         assert self.api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
 
         self.client: OpenAI = OpenAIService.get_openai_client(
@@ -52,7 +56,47 @@ class OpenAIService(BaseService):
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ):
+    ) -> Tuple[Dict[str, Any], Optional[float]]:
+        """
+        Generates completions for a given conversation using the OpenAI Chat API.
+        :param messages: The list of messages in the conversation.
+        :param n: The number of completions to generate.
+        :param stream: Whether to stream the API response.
+        :param temperature: The temperature parameter for randomness in the output.
+        :param max_tokens: The maximum number of tokens in the generated completion.
+        :param top_p: The top-p parameter for nucleus sampling.
+        :param kwargs: Additional keyword arguments to pass to the OpenAI API.
+        :return: A tuple containing a list of generated completions and the estimated cost.
+        :raises: Exception if there is an error in the OpenAI API request
+        """
+
+        if self.agent_type.lower() != "operator":
+            # If the agent type is not "operator", use the OpenAI API directly
+            return self._chat_completion(
+                messages,
+                n,
+                stream,
+                temperature,
+                max_tokens,
+                top_p,
+                **kwargs,
+            )
+        else:
+            # If the agent type is "operator", use the OpenAI Beta client
+            return self._chat_completion_operator(
+                messages,
+            )
+
+    def _chat_completion(
+        self,
+        messages: List[Dict[str, str]],
+        n: int,
+        stream: bool = False,
+        temperature: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        top_p: Optional[float] = None,
+        **kwargs: Any,
+    ) -> Tuple[Dict[str, Any], Optional[float]]:
         """
         Generates completions for a given conversation using the OpenAI Chat API.
         :param messages: The list of messages in the conversation.
@@ -75,16 +119,35 @@ class OpenAIService(BaseService):
         top_p = top_p if top_p is not None else self.config["TOP_P"]
 
         try:
-            response: Any = self.client.chat.completions.create(
-                model=model,
-                messages=messages,  # type: ignore
-                n=n,
-                temperature=temperature,
-                max_tokens=max_tokens,
-                top_p=top_p,
-                stream=stream,
-                **kwargs,
-            )
+            if self.config_llm.get("REASONING_MODEL", False):
+                response: Any = self.client.chat.completions.create(
+                    model=model,
+                    messages=messages,  # type: ignore
+                    n=n,
+                    stream=stream,
+                    **kwargs,
+                )
+            else:
+                response: Any = self.client.chat.completions.create(
+                    model=model,
+                    messages=messages,  # type: ignore
+                    n=n,
+                    temperature=temperature,
+                    max_tokens=max_tokens,
+                    top_p=top_p,
+                    stream=stream,
+                    **kwargs,
+                )
+            # response: Any = self.client.chat.completions.create(
+            #     model=model,
+            #     messages=messages,  # type: ignore
+            #     n=n,
+            #     # temperature=temperature,
+            #     # max_tokens=max_tokens,
+            #     # top_p=top_p,
+            #     stream=stream,
+            #     **kwargs,
+            # )
 
             usage = response.usage
             prompt_tokens = usage.prompt_tokens
@@ -117,6 +180,52 @@ class OpenAIService(BaseService):
         except openai.APIError as e:
             # Handle API error, e.g. retry or log
             raise Exception(f"OpenAI API returned an API Error: {e}")
+
+    def _chat_completion_operator(
+        self,
+        message: Dict[str, Any] = None,
+        n: int = 1,
+        **kwargs: Any,
+    ) -> Tuple[Dict[str, Any], Optional[float]]:
+        """
+        Generates completions for a given conversation using the OpenAI Chat API.
+        :param message: The message to send to the API.
+        :param n: The number of completions to generate.
+        :return: A tuple containing a list of generated completions and the estimated cost.
+        """
+
+        inputs = message.get("inputs", [])
+        tools = message.get("tools", [])
+        previous_response_id = message.get("previous_response_id", None)
+
+        response = self.client.responses.create(
+            model=self.config_llm.get("API_MODEL"),
+            input=inputs,
+            tools=tools,
+            previous_response_id=previous_response_id,
+            truncation="auto",
+            temperature=self.config.get("TEMPERATURE", 0),
+            top_p=self.config.get("TOP_P", 0),
+            timeout=self.config.get("TIMEOUT", 20),
+        ).model_dump()
+
+        if "usage" in response:
+            usage = response.get("usage")
+            input_tokens = usage.get("input_tokens", 0)
+            output_tokens = usage.get("output_tokens", 0)
+        else:
+            input_tokens = 0
+            output_tokens = 0
+
+        cost = self.get_cost_estimator(
+            self.api_type,
+            self.config_llm["API_MODEL"],
+            self.prices,
+            input_tokens,
+            output_tokens,
+        )
+
+        return [response], cost
 
     @functools.lru_cache()
     @staticmethod
@@ -337,3 +446,252 @@ class OpenAIService(BaseService):
         except Exception as e:
             print("failed to acquire token from AAD for OpenAI", e)
             raise e
+
+
+class OpenAIBetaClient:
+
+    Json = Dict[str, Any]
+
+    def __init__(self, endpoint: str, api_version: str):
+        """
+        The OpenAI Beta client class to interact with the OpenAI API.
+        :param endpoint: The OpenAI API endpoint.
+        :param api_key: The OpenAI API key.
+        :param api_version: The OpenAI API version.
+        """
+
+        self.endpoint = endpoint
+        self.base_url = endpoint.rstrip("/")
+
+        self.api_version = api_version
+
+    def get_responses(
+        self,
+        model: str,
+        previous_response_id: Optional[str] = None,
+        inputs: Optional[list[Json]] = None,  # pylint: disable=redefined-builtin
+        tool_output: Optional[list[Json]] = None,
+        include: Optional[list[str]] = None,
+        tools: Optional[list[Json]] = None,
+        metadata: Optional[Json] = None,
+        temperature: Optional[float] = None,
+        top_p: Optional[float] = None,
+        parallel_tool_calls: Optional[bool] = None,
+        token_provider: Optional[Callable[[], str]] = None,
+    ) -> Json:
+        self,
+
+        if self.base_url.endswith("openai.azure.com"):
+            url = f"{self.base_url}/openai/responses?api-version={self.api_version}"
+        else:
+            url = f"{self.base_url}/v1/responses"
+
+        api_key = (
+            token_provider if isinstance(token_provider, str) else token_provider()
+        )
+
+        headers = {
+            "Content-Type": "application/json",
+            "x-ms-enable-preview": "true",
+            "api-key": api_key,
+            "x-ms-enable-preview": "true",
+            "Authorization": f"Bearer {api_key}",  # OpenAI
+            "OpenAI-Beta": "responses=v1",  # OpenAI
+        }
+
+        return self.post_request(
+            url,
+            data={
+                "model": model,
+                "previous_response_id": previous_response_id,
+                "input": inputs,
+                "tool_output": tool_output,
+                "include": include,
+                "tools": tools,
+                "metadata": metadata,
+                "temperature": temperature,
+                "top_p": top_p,
+                "parallel_tool_calls": parallel_tool_calls,
+            },
+            headers=headers,
+        )
+
+    def post_request(self, url: str, data: Json, headers: Json) -> Json:
+        """
+        Send a POST request to the OpenAI API.
+        :param url: The URL of the API endpoint.
+        :param data: The data to send in the request.
+        :param headers: The headers to send in the request.
+        :return: The response from the API.
+        """
+
+        headers = {**headers, "content-type": "application/json"}
+
+        data = json.dumps(self.compact(data)).encode("utf-8")
+
+        req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+
+        try:
+            with urllib.request.urlopen(req, timeout=20) as response:
+                content = response.read().decode("utf-8")
+                return json.loads(content)
+        except urllib.error.HTTPError as e:
+            self._handle_exception(e)
+            print("Error:", e)
+
+        return None
+
+    def _handle_exception(self, exception: urllib.error.HTTPError) -> None:
+        """
+        Handle an exception from the OpenAI API.
+        :param exception: The exception from the OpenAI API.
+        """
+        body = json.loads(exception.file.read().decode("utf-8"))
+        request_id = exception.headers.get("x-request-id")
+
+        error = OpenAIError(
+            request_id=request_id, status_code=exception.code, message=body
+        )
+        print("Error:", error)
+        raise OpenAIError(
+            request_id=request_id, status_code=exception.code, message=body
+        )
+
+    @staticmethod
+    def compact(data: Json) -> Json:
+        """
+        Remove None values from a dictionary.
+        """
+        return {k: v for k, v in data.items() if v is not None}
+
+
+class OperatorServicePreview(BaseService):
+    """
+    The Operator service class to interact with the Operator for Computer Using Agent (CUA) API.
+    """
+
+    def __init__(
+        self, config: Dict[str, Any], agent_type: str = "operator", client=None
+    ) -> None:
+        """
+        Create an Operator service instance.
+        :param config: The configuration for the Operator service.
+        :param agent_type: The type of the agent.
+
+        """
+        self.config_llm = config[agent_type]
+        self.config = config
+        self.api_type = self.config_llm["API_TYPE"].lower()
+        self.api_model = self.config_llm["API_MODEL"].lower()
+        self.max_retry = self.config["MAX_RETRY"]
+        self.prices = self.config.get("PRICES", {})
+        self._agent_type = agent_type
+
+        if client is None:
+            self.client = self.get_openai_client()
+
+    def get_openai_client(self):
+        """
+        Create an OpenAI client based on the API type.
+        :return: The OpenAI client.
+        """
+
+        # client = OpenAIBetaClient(
+        #     endpoint=self.config_llm.get("API_BASE"),
+        #     api_version=self.config_llm.get("API_VERSION", ""),
+        # )
+
+        token_provider = self.get_token_provider()
+        api_key = token_provider()
+
+        client = openai.AzureOpenAI(
+            azure_endpoint=self.config_llm.get("API_BASE"),
+            api_key=api_key,
+            max_retries=self.max_retry,
+            timeout=self.config.get("TIMEOUT", 20),
+            api_version=self.config_llm.get("API_VERSION"),
+            default_headers={"x-ms-enable-preview": "true"},
+        )
+
+        return client
+
+    def chat_completion(
+        self,
+        message: Dict[str, Any] = None,
+        n: int = 1,
+    ) -> Tuple[Dict[str, Any], Optional[float]]:
+        """
+        Generates completions for a given conversation using the OpenAI Chat API.
+        :param message: The message to send to the API.
+        :param n: The number of completions to generate.
+        :return: A tuple containing a list of generated completions and the estimated cost.
+        """
+
+        inputs = message.get("inputs", [])
+        tools = message.get("tools", [])
+        previous_response_id = message.get("previous_response_id", None)
+
+        response = self.client.responses.create(
+            model=self.config_llm.get("API_MODEL"),
+            input=inputs,
+            tools=tools,
+            previous_response_id=previous_response_id,
+            truncation="auto",
+            temperature=self.config.get("TEMPERATURE", 0),
+            top_p=self.config.get("TOP_P", 0),
+            timeout=self.config.get("TIMEOUT", 20),
+        ).model_dump()
+
+        if "usage" in response:
+            usage = response.get("usage")
+            input_tokens = usage.get("input_tokens", 0)
+            output_tokens = usage.get("output_tokens", 0)
+        else:
+            input_tokens = 0
+            output_tokens = 0
+
+        cost = self.get_cost_estimator(
+            self.api_type,
+            self.api_model,
+            self.prices,
+            input_tokens,
+            output_tokens,
+        )
+
+        return [response], cost
+
+    def get_token_provider(self):
+        """
+        Acquire token from Azure AD for OpenAI.
+        :return: The access token for OpenAI.
+        """
+
+        from azure.identity import AzureCliCredential, get_bearer_token_provider
+
+        tenant_id = self.config_llm.get("AAD_TENANT_ID", "")
+        scope = self.config_llm.get("AAD_API_SCOPE", "")
+
+        identity = AzureCliCredential(tenant_id=tenant_id)
+        bearer_provider = get_bearer_token_provider(identity, scope)
+        return bearer_provider
+
+
+class OpenAIError(Exception):
+    request_id: str
+    status_code: int
+    message: Dict[str, Any]
+
+    def __init__(self, status_code: int, message: Dict[str, Any], request_id: str):
+        """
+        The OpenAI API error class.
+        :param status_code: The status code of the API response.
+        :param message: The error message from the API response.
+        :param request_id: The request ID of the API response.
+        """
+        self.status_code = status_code
+        self.message = message
+        self.request_id = request_id
+        super().__init__(f"OpenAI API error: {status_code} {message}")
+
+    def __str__(self):
+        return f"OpenAI API error: {self.request_id} {self.status_code} {json.dumps(self.message, indent=2)}"

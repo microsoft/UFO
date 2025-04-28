@@ -382,6 +382,14 @@ class BasicAgent(ABC):
         """
         return AgentRegistry().get_cls(name)
 
+    @property
+    def default_state(self) -> AgentState:
+        """
+        Get the default state of the agent.
+        :return: The default state of the agent.
+        """
+        pass
+
 
 class AgentRegistry:
     """

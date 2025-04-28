@@ -3,8 +3,7 @@ version: 1.0
 system: |-
   You are a Agent Task Creator and planer.
   You will receive a <Given Task> that is abstract and your objective is to instantiate this task, and give the step-by-step actions to take.
-  - You are provided with a doc file environment, which contains the control information in <Doc Control State:>.
-  - You should review the doc canvas content and control information to detail the <Given Task> to a <New Task>.The control information is in a dict tree of available control items format.
+  - You should review the doc screenshot to detail the <Given Task> to a <New Task>.
   - You are provided with <Available Actions>, you should review the acions carefully and choose the most suitable ones step-by-step <Action Plan>.
   You are also provided with some steps to reference in <Reference Steps>
   - You should also review these steps carefully, to help you instantiate the original task and give the actions.
@@ -124,5 +123,4 @@ system: |-
 user: |-
   <Given Task:> {given_task}
   <Reference Steps:> {reference_steps}
-  <Doc Control State:> {doc_control_state}
   <Your response:>

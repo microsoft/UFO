@@ -3,6 +3,7 @@
 
 
 import json
+import time
 from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING, Any, Dict, List
 
@@ -12,15 +13,15 @@ from ufo import utils
 from ufo.agents.processors.actions import (
     ActionExecutionLog,
     ActionSequence,
+    BaseControlLog,
     OneStepAction,
 )
-from ufo.agents.processors.basic import BaseControlLog, BaseProcessor
+from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
 
 configs = Config.get_instance().config_data
-if configs is not None:
-    BACKEND = configs["CONTROL_BACKEND"]
+
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
@@ -87,6 +88,7 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = None
         self._desktop_windows_dict = None
         self._desktop_windows_info = None
+        self.bash_command = None
 
     def print_step_info(self) -> None:
         """
@@ -171,7 +173,7 @@ class HostAgentProcessor(BaseProcessor):
         )
 
         # Log the prompt message. Only save them in debug mode.
-        request_log_str = json.dumps(asdict(request_data), indent=4, ensure_ascii=False)
+        request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
         self.request_logger.debug(request_log_str)
 
     @BaseProcessor.exception_capture
@@ -181,10 +183,19 @@ class HostAgentProcessor(BaseProcessor):
         Get the response from the LLM.
         """
 
-        # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
-        self._response, self.cost = self.host_agent.get_response(
-            self._prompt_message, "HOSTAGENT", use_backup_engine=True
-        )
+        retry = 0
+        while retry < configs.get("JSON_PARSING_RETRY", 3):
+            # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
+            self._response, self.cost = self.host_agent.get_response(
+                self._prompt_message, "HOSTAGENT", use_backup_engine=True
+            )
+
+            try:
+                self.host_agent.response_to_dict(self._response)
+                break
+            except Exception as e:
+                print(f"Error in parsing response into json, retrying: {retry}")
+                retry += 1
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -226,6 +237,7 @@ class HostAgentProcessor(BaseProcessor):
         # If the bash command is not empty, run the shell command.
         if self.bash_command:
             self._run_shell_command()
+            time.sleep(5)
 
         # If the new application window is None and the bash command is None, set the status to FINISH.
         if new_app_window is None and self.bash_command is None:
@@ -319,6 +331,9 @@ class HostAgentProcessor(BaseProcessor):
         # Switch to the new application window, if it is different from the current application window.
         self._switch_to_new_app_window(application_window)
         self.application_window.set_focus()
+        if configs.get("MAXIMIZE_WINDOW", False):
+            self.application_window.maximize()
+
         if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
             self.application_window.draw_outline(colour="red", thickness=3)
 
