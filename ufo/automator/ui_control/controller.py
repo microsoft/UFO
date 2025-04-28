@@ -1077,7 +1077,7 @@ class TextTransformer:
         """
 
         if transform_tag == "all":
-            transform_tag = "+\n\t^%{VK_CONTROL}{VK_SHIFT}{VK_MENU}"
+            transform_tag = "+\n\t^%{VK_CONTROL}{VK_SHIFT}{VK_MENU}()"
 
         if "\n" in transform_tag:
             text = TextTransformer.transform_enter(text)
@@ -1095,6 +1095,8 @@ class TextTransformer:
             text = TextTransformer.transform_shift(text)
         if "{VK_MENU}" in transform_tag:
             text = TextTransformer.transform_alt(text)
+        if "(" in transform_tag or ")" in transform_tag:
+            text = TextTransformer.transform_brace(text)
 
         return text
 
@@ -1133,6 +1135,15 @@ class TextTransformer:
         :return: The transformed text.
         """
         return text.replace("^", "{^}")
+
+    @staticmethod
+    def transform_brace(text: str) -> str:
+        """
+        Transform the brace key.
+        :param text: The text to transform.
+        :return: The transformed text.
+        """
+        return text.replace("(", "{(}").replace(")", "{)}")
 
     @staticmethod
     def transform_percent(text: str) -> str:
