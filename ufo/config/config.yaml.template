@@ -1,6 +1,6 @@
 HOST_AGENT: {
   VISUAL_MODE: True, # Whether to use the visual mode
-
+  REASONING_MODEL: False, # Whether the model is reasoning model. For OpenAI o1, o3, o4-mini, this field must be set to True.
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
   API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
   API_KEY: "sk-",  # The OpenAI API key, begin with sk-
@@ -24,7 +24,7 @@ HOST_AGENT: {
 
 APP_AGENT: {
   VISUAL_MODE: True, # Whether to use the visual mode
-
+  REASONING_MODEL: False, # Whether the model is reasoning model. For OpenAI o1, o3, o4-mini, this field must be set to True.
   API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
   API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
   API_KEY: "sk-",  # The OpenAI API key, begin with sk-
