@@ -98,6 +98,8 @@ class Config:
                     if configs[agent]["API_BASE"].endswith("/")
                     else configs[agent]["API_BASE"][:-17]
                 )
+        elif configs[agent]["API_TYPE"].lower() == "azure_ad":
+            configs[agent]["API_MODEL"] = configs[agent]["API_DEPLOYMENT_ID"]
 
     @classmethod
     def optimize_configs(cls, configs: dict) -> dict:
