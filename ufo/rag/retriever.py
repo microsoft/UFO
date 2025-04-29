@@ -120,13 +120,13 @@ class OfflineDocRetriever(Retriever):
                 path, get_hugginface_embedding(), allow_dangerous_deserialization=True
             )
             return db
-        except:
-            # print_with_color(
-            #     "Warning: Failed to load offline indexer from {path}.".format(
-            #         path=path
-            #     ),
-            #     "yellow",
-            # )
+        except Exception as e:
+            print_with_color(
+                "Warning: Failed to load experience indexer from {path}, error: {error}.".format(
+                    path=path, error=e
+                ),
+                "yellow",
+            )
             return None
 
 
@@ -156,18 +156,12 @@ class ExperienceRetriever(Retriever):
             )
             return db
         except Exception as e:
-            # print_with_color(
-            #     "Warning: Failed to load experience indexer from {path}, error: {error}.".format(
-            #         path=db_path, error=e
-            #     ),
-            #     "yellow",
-            # )
-            # print_with_color(
-            #     "Warning: Failed to load experience indexer from {path}.".format(
-            #         path=db_path
-            #     ),
-            #     "yellow",
-            # )
+            print_with_color(
+                "Warning: Failed to load experience indexer from {path}, error: {error}.".format(
+                    path=db_path, error=e
+                ),
+                "yellow",
+            )
             return None
 
 
@@ -197,13 +191,23 @@ class OnlineDocRetriever(Retriever):
         documents = bing_retriever.create_documents(result_list)
         if len(documents) == 0:
             return None
-        indexer = bing_retriever.create_indexer(documents)
-        print_with_color(
-            "Online indexer created successfully for {num} searched results.".format(
-                num=len(documents)
-            ),
-            "cyan",
-        )
+        try:
+            indexer = bing_retriever.create_indexer(documents)
+            print_with_color(
+                "Online indexer created successfully for {num} searched results.".format(
+                    num=len(documents)
+                ),
+                "cyan",
+            )
+        except Exception as e:
+            print_with_color(
+                "Warning: Failed to create online indexer, error: {error}.".format(
+                    error=e
+                ),
+                "yellow",
+            )
+            return None
+
         return indexer
 
 
@@ -232,11 +236,11 @@ class DemonstrationRetriever(Retriever):
                 allow_dangerous_deserialization=True,
             )
             return db
-        except:
-            # print_with_color(
-            #     "Warning: Failed to load demonstration indexer from {path}.".format(
-            #         path=db_path
-            #     ),
-            #     "yellow",
-            # )
+        except Exception as e:
+            print_with_color(
+                "Warning: Failed to load experience indexer from {path}, error: {error}.".format(
+                    path=db_path, error=e
+                ),
+                "yellow",
+            )
             return None

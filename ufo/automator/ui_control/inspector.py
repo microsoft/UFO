@@ -529,8 +529,21 @@ class ControlInspectorFacade:
         :return: The apps on the desktop as a dict.
         """
         desktop_windows = self.get_desktop_windows(remove_empty)
+
+        desktop_windows_with_gui = []
+
+        for window in desktop_windows:
+            try:
+                window.is_normal()
+                desktop_windows_with_gui.append(window)
+            except:
+                pass
+
         desktop_windows_dict = dict(
-            zip([str(i + 1) for i in range(len(desktop_windows))], desktop_windows)
+            zip(
+                [str(i + 1) for i in range(len(desktop_windows_with_gui))],
+                desktop_windows_with_gui,
+            )
         )
         return desktop_windows_dict
 
@@ -555,7 +568,7 @@ class ControlInspectorFacade:
     ) -> List[Dict[str, str]]:
         """
         Get control info of the window.
-        :param window: The list of windows to get control info.
+        :param window_list: The list of windows to get control info.
         :param field_list: The fields to get.
         return: The list of control info of the window.
         """

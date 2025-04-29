@@ -106,10 +106,6 @@ class HostAgent(BasicAgent):
         agent_name: str,
         process_name: str,
         app_root_name: str,
-        # is_visual: bool,
-        # main_prompt: str,
-        # example_prompt: str,
-        # api_prompt: str,
         *args,
         **kwargs,
     ) -> BasicAgent:
@@ -119,10 +115,6 @@ class HostAgent(BasicAgent):
         :param agent_name: The name of the SubAgent.
         :param process_name: The process name of the app.
         :param app_root_name: The root name of the app.
-        :param is_visual: The flag indicating whether the agent is visual or not.
-        :param main_prompt: The main prompt file path.
-        :param example_prompt: The example prompt file path.
-        :param api_prompt: The API prompt file path.
         :return: The created SubAgent.
         """
         app_agent = self.agent_factory.create_agent(
@@ -242,7 +234,6 @@ class HostAgent(BasicAgent):
         else:
             example_prompt = configs["APPAGENT_EXAMPLE_PROMPT"]
 
-
         if mode in ["normal", "batch_normal", "follower"]:
 
             agent_name = (
@@ -284,28 +275,6 @@ class HostAgent(BasicAgent):
                 agent_name=agent_name,
                 process_name=application_window_name,
                 app_root_name=application_root_name,
-            )
-
-        elif mode == "follower":
-
-            # Load additional app info prompt.
-            app_info_prompt = configs.get("APP_INFO_PROMPT", None)
-
-            agent_name = "FollowerAgent/{root}/{process}".format(
-                root=application_root_name, process=application_window_name
-            )
-
-            # Create the app agent in the follower mode.
-            app_agent = self.create_subagent(
-                agent_type="follower",
-                agent_name=agent_name,
-                process_name=application_window_name,
-                app_root_name=application_root_name,
-                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
-                main_prompt=configs["FOLLOWERAHENT_PROMPT"],
-                example_prompt=example_prompt,
-                api_prompt=configs["API_PROMPT"],
-                app_info_prompt=app_info_prompt,
             )
 
         else:

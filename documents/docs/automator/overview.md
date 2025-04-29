@@ -1,9 +1,16 @@
-# Application Automator
+# Application Puppeteer
 
-The Automator application is a tool that allows UFO to automate and take actions on applications. Currently, UFO supports two types of actions: `UI Automation` and `API`.
+The `Puppeteer` is a tool that allows UFO to automate and take actions on applications. Currently, UFO supports two types of actions: `GUI` and `API`. Each application has a shared GUI action interface to operate with mouse and keyboard events, and a private API action interface to operate with the application's native API. We illustrate the `Puppeteer` architecture in the figure below:
+
+The state machine diagram for the `HostAgent` is shown below:
+<h1 align="center">
+    <img src="../../img/puppeteer.png"/> 
+</h1>
+
+
 
 !!! note
-    UFO can also call in-app AI tools, such as `Copilot`, to assist with the automation process. This is achieved by using either `UI Automation` or `API` to interact with the in-app AI tool.
+    UFO can also call in-app AI tools, such as `Copilot`, to assist with the automation process. This is achieved by using either `GUI` or `API` to interact with the in-app AI tool.
 
 - [UI Automator](./ui_automator.md) - This action type is used to interact with the application's UI controls, such as buttons, text boxes, and menus. UFO uses the **UIA** or **Win32** APIs to interact with the application's UI controls.
 - [API](./wincom_automator.md) - This action type is used to interact with the application's native API. Users and app developers can create their own API actions to interact with specific applications.

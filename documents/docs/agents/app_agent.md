@@ -13,7 +13,7 @@ An `AppAgent` is responsible for iteratively executing actions on the selected a
 We show the framework of the `AppAgent` in the following diagram:
 
 <h1 align="center">
-    <img src="../../img/appagent.png" alt="AppAgent Image" width="80%">
+    <img src="../../img/appagent2.png" alt="AppAgent Image" width="80%">
 </h1>
 
 ## AppAgent Input
@@ -90,18 +90,18 @@ Below is an example of the `AppAgent` output:
 ## AppAgent State
 The `AppAgent` state is managed by a state machine that determines the next action to be executed based on the current state, as defined in the `ufo/agents/states/app_agent_states.py` module. The states include:
 
-| State | Description |
-| --- | --- |
-| `CONTINUE` | The `AppAgent` continues executing the current action. |
-| `FINISH` | The `AppAgent` has completed the current sub-task. |
-| `ERROR` | The `AppAgent` encountered an error during execution. |
-| `FAIL` | The `AppAgent` believes the current sub-task is unachievable. |
-| `CONFIRM` | The `AppAgent` is confirming the user's input or action. |
-| `SCREENSHOT` | The `AppAgent` believes the current screenshot is not clear in annotating the control and requests a new screenshot. |
+| State       | Description                                                                 |
+|-------------|-----------------------------------------------------------------------------|
+| `CONTINUE`  | Main execution loop; evaluates which subtasks are ready to launch or resume. |
+| `ASSIGN`    | Selects an available application process and spawns the corresponding `AppAgent`. |
+| `PENDING`   | Waits for user input to resolve ambiguity or gather additional task parameters. |
+| `FINISH`    | All subtasks complete; cleans up agent instances and finalizes session state. |
+| `FAIL`      | Enters recovery or abort mode upon irrecoverable failure.                    |
+
 
 The state machine diagram for the `AppAgent` is shown below:
 <h1 align="center">
-    <img src="../../img/app_state_machine.png"/> 
+    <img src="../../img/app_state.png"/> 
 </h1>
 
 The `AppAgent` progresses through these states to execute the necessary actions within the application and fulfill the sub-task assigned by the `HostAgent`.

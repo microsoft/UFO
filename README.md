@@ -9,7 +9,7 @@
 
 <div align="center">
 
-[![arxiv](https://img.shields.io/badge/Paper-arXiv:202402.07939-b31b1b.svg)](https://arxiv.org/abs/2402.07939)&ensp;
+[![arxiv](https://img.shields.io/badge/Paper-arXiv:2504.14603-b31b1b.svg)](https://arxiv.org/abs/2504.14603)&ensp;
 ![Python Version](https://img.shields.io/badge/Python-3776AB?&logo=python&logoColor=white-blue&label=3.10%20%7C%203.11)&ensp;
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)&ensp;
 [![Documentation](https://img.shields.io/badge/Documentation-%230ABAB5?style=flat&logo=readthedocs&logoColor=black)](https://microsoft.github.io/UFO/)&ensp;
@@ -30,11 +30,11 @@
 ## ✨ Key Capabilities
 <div align="center">
 
-| Deep OS Integration | Picture‑in‑Picture Desktop *(coming soon)* | Hybrid GUI + API Actions |
+| [Deep OS Integration](https://microsoft.github.io/UFO)  | Picture‑in‑Picture Desktop *(coming soon)* | [Hybrid GUI + API Actions](https://microsoft.github.io/UFO/automator/overview) |
 |---------------------|-------------------------------------------|---------------------------|
 | Combines Windows UIA, Win32 and WinCOM for first‑class control detection and native commands. | Automation runs in a sandboxed virtual desktop so you can keep using your main screen. | Chooses native APIs when available, falls back to clicks/keystrokes when not—fast *and* robust. |
 
-| Speculative Multi‑Action | Continuous Knowledge Substrate | UIA + Visual Control Detection |
+| [Speculative Multi‑Action](https://microsoft.github.io/UFO/advanced_usage/multi_action) | [Continuous Knowledge Substrate](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/overview/) | [UIA + Visual Control Detection](https://microsoft.github.io/UFO/advanced_usage/control_detection/hybrid_detection) |
 |--------------------------|--------------------------------|--------------------------------|
 | Bundles several predicted steps into one LLM call, validated live—up to **51 % fewer** queries. | Mixes docs, Bing search, user demos and execution traces via RAG for agents that learn over time. | Detects standard *and* custom controls with a hybrid UIA + vision pipeline. |
 
@@ -45,7 +45,7 @@
 ---
 
 ## 📢 News
-- 📅 2025-04-19: Version **v2.0.0** Released! We’re excited to announce the release the **UFO²**! UFO² is a major upgrade to the original UFO, featuring with enhanced capabilities. It introduces the **AgentOS** concept, enabling seamless integration of multiple agents for complex tasks. Please check our [new technical report](https://arxiv.org/abs/2402.07939) for more details.
+- 📅 2025-04-19: Version **v2.0.0** Released! We’re excited to announce the release the **UFO²**! UFO² is a major upgrade to the original UFO, featuring with enhanced capabilities. It introduces the **AgentOS** concept, enabling seamless integration of multiple agents for complex tasks. Please check our [new technical report](https://arxiv.org/pdf/2504.14603) for more details.
 - 📅 ...
 - 📅 2024-02-14: Our [technical report](https://arxiv.org/abs/2402.07939) for UFO is online!
 - 📅 2024-02-10: The first version of UFO is released on GitHub🎈. Happy Chinese New year🐉!
@@ -57,13 +57,16 @@
   <img src="assets/framework2.png"  width="80%" alt="UFO² architecture"/>
 </p>
 
+
+UFO² operates as a **Desktop AgentOS**, encompassing a multi-agent framework that includes:
+
 1. **HostAgent** – Parses the natural‑language goal, launches the necessary applications, spins up / coordinates AppAgents, and steers a global finite‑state machine (FSM).  
 2. **AppAgents** – One per application; each runs a ReAct loop with multimodal perception, hybrid control detection, retrieval‑augmented knowledge, and the **Puppeteer** executor that chooses between GUI actions and native APIs.  
 3. **Knowledge Substrate** – Blends offline documentation, online search, demonstrations, and execution traces into a vector store that is retrieved on‑the‑fly at inference.  
 4. **Speculative Executor** – Slashes LLM latency by predicting batches of likely actions and validating them against live UIA state in a single shot.  
 5. **Picture‑in‑Picture Desktop** *(coming soon)* – Runs the agent in an isolated virtual desktop so your main workspace and input devices remain untouched.
 
-For a deep dive see our [technical report](https://arxiv.org/abs/2402.07939) or the [docs site](https://microsoft.github.io/UFO).
+For a deep dive see our [technical report](https://arxiv.org/pdf/2504.14603) or the [docs site](https://microsoft.github.io/UFO).
 
 ---
 
@@ -108,7 +111,6 @@ copy ufo\config\config.yaml.template ufo\config\config.yaml
 notepad ufo\config\config.yaml   # paste your key & endpoint
 ```
 
-
 #### OpenAI
 ```yaml
 VISUAL_MODE: True, # Whether to use the visual mode
@@ -116,7 +118,7 @@ API_TYPE: "openai" , # The API type, "openai" for the OpenAI API.
 API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint.
 API_KEY: "sk-",  # The OpenAI API key, begin with sk-
 API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
+API_MODEL: "gpt-4o",  # The only OpenAI model
 ```
 
 #### Azure OpenAI (AOAI)
@@ -126,11 +128,11 @@ API_TYPE: "aoai" , # The API type, "aoai" for the Azure OpenAI.
 API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
 API_KEY: "YOUR_KEY",  # The aoai API key
 API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model
+API_MODEL: "gpt-4o",  # The only OpenAI model
 API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 ```
 
-> Need Qwen, Gemini or non‑visual GPT‑4? See the [model guide](https://microsoft.github.io/UFO/supported_models/overview/).
+> Need Qwen, Gemini, non‑visual GPT‑4, or even **OpenAI CUA Operator** as a AppAgent? See the [model guide](https://microsoft.github.io/UFO/supported_models/overview/).
 
 ### 📔 Step 3: Additional Setting for RAG (optional).
 If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file. 
@@ -193,12 +195,12 @@ You may use them to debug, replay, or analyze the agent output.
 
 UFO² is rigorously benchmarked on two publicly‑available live‑task suites:
 
-| Benchmark | Scope | Links |
+| Benchmark | Scope | Documents |
 |-----------|-------|-------|
-| **Windows Agent Arena (WAA)** | 154 real Windows tasks across 15 applications (Office, Edge, File Explorer, VS Code, …) | <https://github.com/microsoft/windows-agent-arena> |
-| **OSWorld (Windows)** | 49 cross‑application tasks that mix Office 365, browser and system utilities | <https://github.com/microsoft/OSWorld> |
+| [**Windows Agent Arena (WAA)**](https://github.com/nice-mee/WindowsAgentArena) | 154 real Windows tasks across 15 applications (Office, Edge, File Explorer, VS Code, …) | <https://microsoft.github.io/UFO/benchmark/windows_agent_arena/> |
+| [**OSWorld (Windows)**](https://github.com/nice-mee/WindowsAgentArena/tree/2020-qqtcg/osworld) | 49 cross‑application tasks that mix Office 365, browser and system utilities | <https://microsoft.github.io/UFO/benchmark/osworld> |
 
-The integration of these benchmarks into UFO² is in separate repositories.
+The integration of these benchmarks into UFO² is in separate repositories. Please follow the above documents for more details.
 
 ---
 
@@ -208,12 +210,12 @@ The integration of these benchmarks into UFO² is in separate repositories.
 If you build on this work, please cite our the AgentOS framework:
 
 **UFO² – The Desktop AgentOS (2025)**  
-<https://arxiv.org/abs/2402.07939>
+<https://arxiv.org/abs/2504.14603>
 ```bibtex
 @article{zhang2025ufo2,
-  title   = {{UFO\textsuperscript{2}: The Desktop AgentOS}},
+  title   = {{UFO2: The Desktop AgentOS}},
   author  = {Zhang, Chaoyun and Huang, He and Ni, Chiming and Mu, Jian and Qin, Si and He, Shilin and Wang, Lu and Yang, Fangkai and Zhao, Pu and Du, Chao and Li, Liqun and Kang, Yu and Jiang, Zhao and Zheng, Suzhen and Wang, Rujia and Qian, Jiaxu and Ma, Minghua and Lou, Jian-Guang and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
-  journal = {arXiv preprint arXiv:2402.07939},
+  journal = {arXiv preprint arXiv:2504.14603},
   year    = {2025}
 }
 ```
@@ -234,10 +236,14 @@ If you build on this work, please cite our the AgentOS framework:
 ---
 
 ## 📝 Roadmap
-- [ ] Picture‑in‑Picture mode release  
-- [ ] AgentOS‑as‑a‑Service  
-- [ ] Auto‑debugging toolkit  
-- [ ] Integration with MCP and agent2agent
+
+The UFO² team is actively working on the following features and improvements:
+
+- [ ] **Picture‑in‑Picture Mode** – Completed and will be available in the next release  
+- [ ] **AgentOS‑as‑a‑Service** – Completed and will be available in the next release  
+- [ ] **Auto‑Debugging Toolkit** – Completed and will be available in the next release  
+- [ ] **Integration with MCP and Agent2Agent Communication** – Planned; under implementation  
+
 
 ---
 

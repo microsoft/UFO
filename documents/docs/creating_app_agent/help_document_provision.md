@@ -6,14 +6,29 @@ Help documents provide guidance to the `AppAgent` in executing specific tasks. T
 
 ### Step 1: Prepare Help Documents and Metadata
 
-Currently, UFO supports processing help documents in XML format, which is the default format for official help documents of Microsoft apps. More formats will be supported in the future.
+UFO currently supports processing help documents in `json` format. More formats will be supported in the future.
 
-To create a dedicated document for a specific task of an app, save it in a file named, for example, `task.xml`. This document should be accompanied by a metadata file with the same prefix but with the `.meta` extension, such as `task.xml.meta`. The metadata file should include:
+An example of a help document in `json` format is as follows:
 
-- `title`: Describes the task at a high level.
-- `Content-Summary`: Summarizes the content of the help document.
+```json
+{
+    "application": "chrome",
+    "request": "How to change the username in chrome profiles?",
+    "guidance": [
+        "Click the profile icon in the upper-right corner of the Chrome window.",
+        "Click the gear icon labeled 'Manage Chrome Profiles' in the profile menu.",
+        "In the list of profiles, locate the profile whose name you want to change.",
+        "Hover over the desired profile and click the three-dot menu icon on that profile card.",
+        "Select 'Edit' from the dropdown menu.",
+        "In the Edit Profile dialog, click inside the name field.",
+        "Delete the current name and type your new desired username.",
+        "Click 'Save' to confirm the changes.",
+        "Verify that the profile name is updated in the profile list and in the top-right corner of Chrome."
+    ]
+}
+```
 
-These two files are used for similarity search with user requests, so it is important to write them carefully. Examples of a help document and its metadata can be found [here](https://github.com/microsoft/UFO/blob/main/learner/doc_example/ppt-copilot.xml) and [here](https://github.com/microsoft/UFO/blob/main/learner/doc_example/ppt-copilot.xml.meta).
+Save each help document in a `json` file of your target folder.
 
 ### Step 2: Place Help Documents in the AppAgent Directory
 
@@ -28,7 +43,7 @@ After organizing your documents in a folder named `path_of_the_docs`, you can cr
 python -m learner --app <app_name> --docs <path_of_the_docs>
 ```
 
-- Replace `<app_name>` with the name of the application, such as PowerPoint or WeChat.
+- Replace `<app_name>` with the **Exact Process Name** of the application, such as `WINWORD.EXE` for Microsoft Word or `POWERPNT.EXE` for PowerPoint. 
 - Replace `<path_of_the_docs>` with the full path to the folder containing all your documents.
 
 This command will create an offline indexer for all documents in the `path_of_the_docs` folder using Faiss and embedding with sentence transformer (additional embeddings will be supported soon). By default, the created index will be placed [here](https://github.com/microsoft/UFO/tree/main/vectordb/docs).
@@ -39,4 +54,4 @@ This command will create an offline indexer for all documents in the `path_of_th
 
 ### How to Use Help Documents to Enhance the AppAgent?
 
-After creating the offline indexer, you can find the guidance on how to use the help documents to enhance the AppAgent in the [Learning from Help Documents](../advanced_usage/reinforce_appagent/learning_from_help_document.md) section.
+After creating the offline indexer, you can find the guidance on how to use the help documents to enhance the `AppAgent` in the [Learning from Help Documents](../advanced_usage/reinforce_appagent/learning_from_help_document.md) section.

@@ -5,6 +5,11 @@ The objective of the `EvaluationAgent` is to evaluate whether a `Session` or `Ro
     The `EvaluationAgent` is fully LLM-driven and conducts evaluations based on the action trajectories and screenshots. It may not by 100% accurate since LLM may make mistakes.
 
 
+We illustrate the evaluation process in the following figure:
+<h1 align="center">
+    <img src="../../img/evaluator.png " alt="Evaluation Agent Image" width="60%">
+</h1>
+
 ## Configuration
 To enable the `EvaluationAgent`, you can configure the following parameters in the `config_dev.yaml` file to evaluate the task completion status at different levels:
 

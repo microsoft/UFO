@@ -1,6 +1,6 @@
-# UI Automator
+# GUI Automator
 
-The UI Automator enables to mimic the operations of mouse and keyboard on the application's UI controls. UFO uses the **UIA** or **Win32** APIs to interact with the application's UI controls, such as buttons, edit boxes, and menus.
+The GUI Automator enables to mimic the operations of mouse and keyboard on the application's UI controls. UFO uses the **UIA** or **Win32** APIs to interact with the application's UI controls, such as buttons, edit boxes, and menus.
 
 
 ## Configuration
