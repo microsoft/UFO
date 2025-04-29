@@ -16,6 +16,9 @@ import openai
 from openai import AzureOpenAI, OpenAI
 from ufo.llm.base import BaseService
 
+# Canvito BEGIN
+from azure.identity import AzureCliCredential, get_bearer_token_provider
+# Canvito END
 
 class OpenAIService(BaseService):
     """
@@ -34,7 +37,9 @@ class OpenAIService(BaseService):
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config.get("PRICES", {})
         self.agent_type = agent_type
-        assert self.api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
+        # Canvito BEGIN - added aoai_arc support
+        assert self.api_type in ["openai", "aoai", "azure_ad", "aoai_arc"], "Invalid API type"
+        # Canvito END
 
         self.client: OpenAI = OpenAIService.get_openai_client(
             self.api_type,
@@ -271,6 +276,21 @@ class OpenAIService(BaseService):
                     azure_endpoint=api_base,
                     api_key=api_key,
                 )
+            # Canvito BEGIN - added aoai_arc support
+            elif api_type == "aoai_arc":
+                token_provider = OpenAIService.get_aad_token_provider(
+                    aad_api_scope_base=aad_api_scope_base,
+                    aad_tenant_id=aad_tenant_id,
+                    use_managed_identity=True,
+                )
+                client = AzureOpenAI(
+                    max_retries=max_retry,
+                    timeout=timeout,
+                    api_version=api_version,
+                    azure_endpoint=api_base,
+                    azure_ad_token_provider=token_provider,
+                ) 
+            # Canvito END
             else:
                 assert (
                     aad_api_scope_base and aad_tenant_id
@@ -278,6 +298,9 @@ class OpenAIService(BaseService):
                 token_provider = OpenAIService.get_aad_token_provider(
                     aad_api_scope_base=aad_api_scope_base,
                     aad_tenant_id=aad_tenant_id,
+                    # Canvito BEGIN - enable Azure CLI authentication
+                    use_azure_cli=True,
+                    # Canvito END          
                 )
                 client = AzureOpenAI(
                     max_retries=max_retry,
@@ -328,7 +351,12 @@ class OpenAIService(BaseService):
         )
         from azure.identity.broker import InteractiveBrowserBrokerCredential
 
-        api_scope_base = "api://" + aad_api_scope_base
+        # Canvito BEGIN - add AAD and Azure Arc support
+        if not (use_azure_cli or use_managed_identity):   
+            api_scope_base = "api://" + aad_api_scope_base
+        else:
+            api_scope_base = aad_api_scope_base
+        # Canvito END
 
         tenant_id = aad_tenant_id
         scope = api_scope_base + "/.default"

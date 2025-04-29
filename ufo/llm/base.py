@@ -33,6 +33,10 @@ class BaseService(abc.ABC):
             "custom": "CustomService",
             "operator": "OperatorServicePreview",
             "placeholder": "PlaceHolderService",
+            # Canvito BEGIN - added Azure Arc and Proxy support
+            "aoai_arc": "OpenAIService",
+            "aoai_proxy": "AOAIProxyService",
+            # Canvito END
         }
         custom_service_map = {
             "llava": "LlavaService",
@@ -40,8 +44,10 @@ class BaseService(abc.ABC):
         }
         service_name = service_map.get(name, None)
         if service_name:
-            if name in ["aoai", "azure_ad", "operator"]:
+            # Canvito BEGIN - added Azure Arc support
+            if name in ["aoai", "azure_ad", "operator", "aoai_arc"]:
                 module = import_module(".openai", package="ufo.llm")
+            # Canvito END
             elif service_name == "CustomService":
                 custom_model = "llava" if "llava" in model_name else model_name
                 custom_service_name = custom_service_map.get(
@@ -51,7 +57,11 @@ class BaseService(abc.ABC):
                     module = import_module("." + custom_model, package="ufo.llm")
                     service_name = custom_service_name
                 else:
-                    raise ValueError(f"Custom model {custom_model} not supported")
+                    raise ValueError(f"Custom model {custom_model} not supported")					
+            # Canvito BEGIN - added aoai_proxy
+            elif name == "aoai_proxy":
+                module = import_module(".aoai_proxy", package="ufo.llm")
+            # Canvito END - added aoai_proxy
             else:
                 module = import_module("." + name.lower(), package="ufo.llm")
             return getattr(module, service_name)
@@ -78,8 +88,10 @@ class BaseService(abc.ABC):
 
         if api_type.lower() == "openai":
             name = str(api_type + "/" + model)
-        elif api_type.lower() in ["aoai", "azure_ad"]:
+        # Canvito BEGIN - added aoai_proxy and aoai_arc support
+        elif api_type.lower() in ["aoai", "azure_ad", "aoai_proxy", "aoai_arc"]:
             name = str("azure/" + model)
+        # Canvito END
         elif api_type.lower() == "qwen":
             name = str("qwen/" + model)
         elif api_type.lower() == "gemini":
