@@ -128,19 +128,31 @@ class OpenAIService(BaseService):
                     **kwargs,
                 )
             else:
-                response: Any = self.client.chat.completions.create(
-                    model=model,
-                    messages=messages,  # type: ignore
-                    n=n,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    top_p=top_p,
-                    stream=stream,
-                    stream_options={
-                        "include_usage": True,
-                    } if stream else None,
-                    **kwargs,
-                )
+                if not stream:
+                    response: Any = self.client.chat.completions.create(
+                        model=model,
+                        messages=messages,  # type: ignore
+                        n=n,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        top_p=top_p,
+                        stream=stream,
+                        **kwargs,
+                    )
+                else:
+                    response: Any = self.client.chat.completions.create(
+                        model=model,
+                        messages=messages,  # type: ignore
+                        n=n,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        top_p=top_p,
+                        stream=stream,
+                        stream_options={
+                            "include_usage": True,
+                        } if stream else None,
+                        **kwargs,
+                    )
             # response: Any = self.client.chat.completions.create(
             #     model=model,
             #     messages=messages,  # type: ignore
