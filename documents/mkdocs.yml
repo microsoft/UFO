@@ -105,6 +105,7 @@ nav:
 markdown_extensions:
   - pymdownx.tasklist
   - admonition
+  - mkdocs-github-admonitions-plugin
 
 # theme:
 #   name: material
