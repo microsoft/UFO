@@ -1,14 +1,10 @@
-import copy
 from typing import Any, Dict, List, Optional, Tuple
 
-import dashscope
-from PIL import Image
-
-from ufo.llm.openai import OpenAIService
+from ufo.llm.openai import BaseOpenAIService
 from ufo.utils import print_with_color
 
 
-class QwenService(OpenAIService):
+class QwenService(BaseOpenAIService):
     """
     A service class for Qwen models.
     """
@@ -18,11 +14,7 @@ class QwenService(OpenAIService):
         :param config: The configuration.
         :param agent_type: The agent type.
         """
-        config = copy.deepcopy(config)
-        config[agent_type]["API_BASE"] = "https://dashscope.aliyuncs.com/compatible-mode/v1"
-        config[agent_type]["API_TYPE"] = "openai" # trick super().__init__ into believing it's openai
-        super().__init__(config, agent_type)
-        self.api_type = "qwen"
+        super().__init__(config, agent_type, "openai", "https://dashscope.aliyuncs.com/compatible-mode/v1")
 
     def chat_completion(
         self,
@@ -49,10 +41,10 @@ class QwenService(OpenAIService):
 
         return super()._chat_completion(
             messages,
-            n,
             True, # most Qwen series models requires stream=True
             temperature,
             max_tokens,
             top_p,
+            response_format={"type": "text"}, # Qwen models still have poor support for json response format
             **kwargs,
         )
