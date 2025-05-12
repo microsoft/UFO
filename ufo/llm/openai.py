@@ -128,16 +128,31 @@ class OpenAIService(BaseService):
                     **kwargs,
                 )
             else:
-                response: Any = self.client.chat.completions.create(
-                    model=model,
-                    messages=messages,  # type: ignore
-                    n=n,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    top_p=top_p,
-                    stream=stream,
-                    **kwargs,
-                )
+                if not stream:
+                    response: Any = self.client.chat.completions.create(
+                        model=model,
+                        messages=messages,  # type: ignore
+                        n=n,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        top_p=top_p,
+                        stream=stream,
+                        **kwargs,
+                    )
+                else:
+                    response: Any = self.client.chat.completions.create(
+                        model=model,
+                        messages=messages,  # type: ignore
+                        n=n,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        top_p=top_p,
+                        stream=stream,
+                        stream_options={
+                            "include_usage": True,
+                        } if stream else None,
+                        **kwargs,
+                    )
             # response: Any = self.client.chat.completions.create(
             #     model=model,
             #     messages=messages,  # type: ignore
@@ -148,6 +163,25 @@ class OpenAIService(BaseService):
             #     stream=stream,
             #     **kwargs,
             # )
+
+            if stream:
+                collected_content = [""]
+
+                for chunk in response:
+                    if chunk.choices:
+                        delta = chunk.choices[0].delta
+                        if delta and delta.content:
+                            collected_content[0] += delta.content
+                    else:
+                        usage = chunk.usage
+
+                prompt_tokens = usage.prompt_tokens
+                completion_tokens = usage.completion_tokens
+
+                cost = self.get_cost_estimator(
+                    self.api_type, model, self.prices, prompt_tokens, completion_tokens
+                )
+                return collected_content, cost
 
             usage = response.usage
             prompt_tokens = usage.prompt_tokens
