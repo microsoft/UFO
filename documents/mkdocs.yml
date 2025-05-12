@@ -23,6 +23,7 @@ nav:
       - Gemini: supported_models/gemini.md
       - Claude: supported_models/claude.md
       - Qwen: supported_models/qwen.md
+      - DeepSeek: supported_models/deepseek.md
       - Ollama: supported_models/ollama.md
       - Custom Model: supported_models/custom_model.md
   - Agents:
@@ -105,7 +106,6 @@ nav:
 markdown_extensions:
   - pymdownx.tasklist
   - admonition
-  - mkdocs-github-admonitions-plugin
 
 # theme:
 #   name: material

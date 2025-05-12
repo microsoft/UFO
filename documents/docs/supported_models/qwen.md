@@ -13,11 +13,11 @@ Configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the
     API_MODEL: "YOUR_MODEL"  # The Qwen model name
 ```
 
-> [!TIP]
-> If you set `VISUAL_MODE` to `True`, make sure the `API_MODEL` supports visual inputs.
+!!! tip
+    If you set `VISUAL_MODE` to `True`, make sure the `API_MODEL` supports visual inputs.
 
-> [!TIP]
-> `API_MODEL` is the model name of Qwen LLM API. You can find the model name in the [Qwen LLM model](https://help.aliyun.com/zh/dashscope/developer-reference/model-square/?spm=a2c4g.11186623.0.0.35a36ffdt97ljI) list.
+!!! tip
+    `API_MODEL` is the model name of Qwen LLM API. You can find the model name in the [Qwen LLM model](https://help.aliyun.com/zh/dashscope/developer-reference/model-square/?spm=a2c4g.11186623.0.0.35a36ffdt97ljI) list.
 
 ## Step 3
 After configuring the `HOST_AGENT` and `APP_AGENT` with the Qwen model, you can start using UFO to interact with the Qwen model for various tasks on Windows OS. Please refer to the [Quick Start Guide](../getting_started/quick_start.md) for more details on how to get started with UFO.
