@@ -1,3 +1,4 @@
+import functools
 import base64
 import re
 import time
@@ -28,7 +29,7 @@ class GeminiService(BaseService):
         self.prices = self.config["PRICES"]
         self.max_retry = self.config["MAX_RETRY"]
         self.api_type = self.config_llm["API_TYPE"].lower()
-        self.client = genai.Client(
+        self.client = GeminiService.get_gemini_client(
             api_key=self.config_llm["API_KEY"],
         )
 
@@ -58,10 +59,10 @@ class GeminiService(BaseService):
         top_p = top_p if top_p is not None else self.config["TOP_P"]
         max_tokens = max_tokens if max_tokens is not None else self.config["MAX_TOKENS"]
         genai_config = GenerateContentConfig(
-            candidate_count=n,
             max_output_tokens=max_tokens,
             temperature=temperature,
             top_p=top_p,
+            response_mime_type='application/json',
         )
 
         processed_messages = self.process_messages(messages)
@@ -207,3 +208,15 @@ class GeminiService(BaseService):
             all_texts.append(candidate_text if any_text_part_found else None)
 
         return all_texts
+
+    @functools.lru_cache()
+    @staticmethod
+    def get_gemini_client(api_key: str) -> genai.Client:
+        """
+        Create a Gemini client using the provided API key.
+        :param api_key: The API key for authentication.
+        :return: A Gemini client instance.
+        """
+        return genai.Client(
+            api_key=api_key
+        )
