@@ -109,7 +109,7 @@ class EvaluationAgent(BasicAgent):
             log_path=log_path, request=request, eva_all_screenshots=eva_all_screenshots
         )
         result, cost = self.get_response(
-            message=message, namescope="app", use_backup_engine=True
+            message=message, namescope="eva", use_backup_engine=True
         )
 
         result = json_parser(result)

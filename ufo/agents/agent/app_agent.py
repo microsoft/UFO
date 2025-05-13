@@ -370,11 +370,10 @@ class AppAgent(BasicAgent):
                         "Tips": tips,
                     }
                 )
-        else:
-            examples = []
-            tips = []
 
-        return examples, tips
+            return retrieved_docs
+        else:
+            return []
 
     def process(self, context: Context) -> None:
         """

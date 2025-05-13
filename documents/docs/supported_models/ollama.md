@@ -25,14 +25,20 @@ After obtaining the API key, you can configure the `HOST_AGENT` and `APP_AGENT` 
 
 ```yaml
 VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
-API_TYPE: "Ollama" ,
+API_TYPE: "ollama" ,
 API_BASE: "YOUR_ENDPOINT",   
+API_KEY: "ollama", # not used but required
 API_MODEL: "YOUR_MODEL"
 ```
 
-!!!tip
+
+!!! tip
     `API_BASE` is the URL started in the Ollama LLM server and `API_MODEL` is the model name of Ollama LLM, it should be same as the one you served before. In addition, due to model token limitations, you can use lite version of prompt to have a taste on UFO which can be configured in `config_dev.yaml`.
-!!!tip
+
+!!! note
+    To run UFO successfully with Ollama, you must increase the default token limit of 2048 tokens by creating a custom model with a modified Modelfile. Create a new Modelfile that specifies `PARAMETER num_ctx 32768` (or your model's maximum context length), then build your custom model with `ollama create [model]-max-ctx -f Modelfile`. UFO requires at least 20,000 tokens to function properly, so setting the `num_ctx` parameter to your model's maximum supported context length will ensure optimal performance. For more details on Modelfile configuration, refer to [Ollama's official documentation](https://github.com/ollama/ollama/blob/main/docs/modelfile.md).
+
+!!! tip
     If you set `VISUAL_MODE` to `True`, make sure the `API_MODEL` supports visual inputs.
 
 ## Step 4
