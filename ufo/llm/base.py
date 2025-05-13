@@ -27,6 +27,7 @@ class BaseService(abc.ABC):
             "aoai": "OpenAIService",
             "azure_ad": "OpenAIService",
             "qwen": "QwenService",
+            "deepseek": "DeepSeekService",
             "ollama": "OllamaService",
             "gemini": "GeminiService",
             "claude": "ClaudeService",
@@ -82,6 +83,8 @@ class BaseService(abc.ABC):
             name = str("azure/" + model)
         elif api_type.lower() == "qwen":
             name = str("qwen/" + model)
+        elif api_type.lower() == "deepseek":
+            name = str("deepseek/" + model)
         elif api_type.lower() == "gemini":
             name = str("gemini/" + model)
         elif api_type.lower() == "claude":

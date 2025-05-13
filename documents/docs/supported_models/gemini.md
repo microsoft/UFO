@@ -7,7 +7,7 @@ To use the Google Gemini API, you need to create an account on the [Google Gemin
 You may need to install additional dependencies to use the Google Gemini API. You can install the dependencies using the following command:
 
 ```bash
-pip install -U google-generativeai==0.7.0
+pip install -U google-genai==1.12.1
 ```
 
 ## Step 3

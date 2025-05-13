@@ -4,9 +4,9 @@ from ufo.llm.openai import BaseOpenAIService
 from ufo.utils import print_with_color
 
 
-class QwenService(BaseOpenAIService):
+class DeepSeekService(BaseOpenAIService):
     """
-    A service class for Qwen models.
+    A service class for DeepSeek models.
     """
 
     def __init__(self, config, agent_type: str):
@@ -14,7 +14,7 @@ class QwenService(BaseOpenAIService):
         :param config: The configuration.
         :param agent_type: The agent type.
         """
-        super().__init__(config, agent_type, "openai", "https://dashscope.aliyuncs.com/compatible-mode/v1")
+        super().__init__(config, agent_type, "openai", "https://api.deepseek.com/v1")
 
     def chat_completion(
         self,
@@ -41,10 +41,10 @@ class QwenService(BaseOpenAIService):
 
         return super()._chat_completion(
             messages,
-            True, # most Qwen series models requires stream=True
+            False,
             temperature,
             max_tokens,
             top_p,
-            response_format={"type": "text"}, # Qwen models still have poor support for json response format
+            response_format={"type": "json_object"},
             **kwargs,
         )

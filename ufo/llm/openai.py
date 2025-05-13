@@ -17,16 +17,14 @@ from openai import AzureOpenAI, OpenAI
 from ufo.llm.base import BaseService
 
 
-class OpenAIService(BaseService):
-    """
-    The OpenAI service class to interact with the OpenAI API.
-    """
-
-    def __init__(self, config: Dict[str, Any], agent_type: str) -> None:
+class BaseOpenAIService(BaseService):
+    def __init__(self, config: Dict[str, Any], agent_type: str, api_provider: str, api_base: str) -> None:
         """
         Create an OpenAI service instance.
         :param config: The configuration for the OpenAI service.
         :param agent_type: The type of the agent.
+        :param api_type: The type of the API (e.g., "openai", "aoai", "azure_ad").
+        :param api_base: The base URL of the API.
         """
         self.config_llm = config[agent_type]
         self.config = config
@@ -34,11 +32,11 @@ class OpenAIService(BaseService):
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config.get("PRICES", {})
         self.agent_type = agent_type
-        assert self.api_type in ["openai", "aoai", "azure_ad"], "Invalid API type"
+        assert api_provider in ["openai", "aoai", "azure_ad"], "Invalid API Provider"
 
         self.client: OpenAI = OpenAIService.get_openai_client(
-            self.api_type,
-            self.config_llm["API_BASE"],
+            api_provider,
+            api_base,
             self.max_retry,
             self.config["TIMEOUT"],
             self.config_llm.get("API_KEY", ""),
@@ -47,50 +45,9 @@ class OpenAIService(BaseService):
             aad_tenant_id=self.config_llm.get("AAD_TENANT_ID", ""),
         )
 
-    def chat_completion(
-        self,
-        messages: List[Dict[str, str]],
-        n: int,
-        stream: bool = False,
-        temperature: Optional[float] = None,
-        max_tokens: Optional[int] = None,
-        top_p: Optional[float] = None,
-        **kwargs: Any,
-    ) -> Tuple[Dict[str, Any], Optional[float]]:
-        """
-        Generates completions for a given conversation using the OpenAI Chat API.
-        :param messages: The list of messages in the conversation.
-        :param n: The number of completions to generate.
-        :param stream: Whether to stream the API response.
-        :param temperature: The temperature parameter for randomness in the output.
-        :param max_tokens: The maximum number of tokens in the generated completion.
-        :param top_p: The top-p parameter for nucleus sampling.
-        :param kwargs: Additional keyword arguments to pass to the OpenAI API.
-        :return: A tuple containing a list of generated completions and the estimated cost.
-        :raises: Exception if there is an error in the OpenAI API request
-        """
-
-        if self.agent_type.lower() != "operator":
-            # If the agent type is not "operator", use the OpenAI API directly
-            return self._chat_completion(
-                messages,
-                n,
-                stream,
-                temperature,
-                max_tokens,
-                top_p,
-                **kwargs,
-            )
-        else:
-            # If the agent type is "operator", use the OpenAI Beta client
-            return self._chat_completion_operator(
-                messages,
-            )
-
     def _chat_completion(
         self,
         messages: List[Dict[str, str]],
-        n: int,
         stream: bool = False,
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
@@ -123,21 +80,36 @@ class OpenAIService(BaseService):
                 response: Any = self.client.chat.completions.create(
                     model=model,
                     messages=messages,  # type: ignore
-                    n=n,
+                    n=1,
                     stream=stream,
                     **kwargs,
                 )
             else:
-                response: Any = self.client.chat.completions.create(
-                    model=model,
-                    messages=messages,  # type: ignore
-                    n=n,
-                    temperature=temperature,
-                    max_tokens=max_tokens,
-                    top_p=top_p,
-                    stream=stream,
-                    **kwargs,
-                )
+                if not stream:
+                    response: Any = self.client.chat.completions.create(
+                        model=model,
+                        messages=messages,  # type: ignore
+                        n=1,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        top_p=top_p,
+                        stream=stream,
+                        **kwargs,
+                    )
+                else:
+                    response: Any = self.client.chat.completions.create(
+                        model=model,
+                        messages=messages,  # type: ignore
+                        n=1,
+                        temperature=temperature,
+                        max_tokens=max_tokens,
+                        top_p=top_p,
+                        stream=stream,
+                        stream_options={
+                            "include_usage": True,
+                        },
+                        **kwargs,
+                    )
             # response: Any = self.client.chat.completions.create(
             #     model=model,
             #     messages=messages,  # type: ignore
@@ -149,15 +121,34 @@ class OpenAIService(BaseService):
             #     **kwargs,
             # )
 
-            usage = response.usage
-            prompt_tokens = usage.prompt_tokens
-            completion_tokens = usage.completion_tokens
+            if stream:
+                collected_content = [""]
 
-            cost = self.get_cost_estimator(
-                self.api_type, model, self.prices, prompt_tokens, completion_tokens
-            )
+                for chunk in response:
+                    if chunk.choices:
+                        delta = chunk.choices[0].delta
+                        if delta and delta.content:
+                            collected_content[0] += delta.content
+                    else:
+                        usage = chunk.usage
 
-            return [response.choices[i].message.content for i in range(n)], cost
+                prompt_tokens = usage.prompt_tokens
+                completion_tokens = usage.completion_tokens
+
+                cost = self.get_cost_estimator(
+                    self.api_type, model, self.prices, prompt_tokens, completion_tokens
+                )
+                return collected_content, cost
+            else:
+                usage = response.usage
+                prompt_tokens = usage.prompt_tokens
+                completion_tokens = usage.completion_tokens
+
+                cost = self.get_cost_estimator(
+                    self.api_type, model, self.prices, prompt_tokens, completion_tokens
+                )
+
+                return [response.choices[0].message.content], cost
 
         except openai.APITimeoutError as e:
             # Handle timeout error, e.g. retry or log
@@ -184,7 +175,6 @@ class OpenAIService(BaseService):
     def _chat_completion_operator(
         self,
         message: Dict[str, Any] = None,
-        n: int = 1,
         **kwargs: Any,
     ) -> Tuple[Dict[str, Any], Optional[float]]:
         """
@@ -241,7 +231,7 @@ class OpenAIService(BaseService):
     ) -> OpenAI:
         """
         Create an OpenAI client based on the API type.
-        :param api_type: The type of the API.
+        :param api_type: The type of the API, one of "openai", "aoai", or "azure_ad".
         :param api_base: The base URL of the API.
         :param max_retry: The maximum number of retries for the API request.
         :param timeout: The timeout for the API request.
@@ -446,6 +436,59 @@ class OpenAIService(BaseService):
         except Exception as e:
             print("failed to acquire token from AAD for OpenAI", e)
             raise e
+
+class OpenAIService(BaseOpenAIService):
+    """
+    The OpenAI service class to interact with the OpenAI API.
+    """
+
+    def __init__(self, config: Dict[str, Any], agent_type: str) -> None:
+        """
+        Create an OpenAI service instance.
+        :param config: The configuration for the OpenAI service.
+        :param agent_type: The type of the agent.
+        """
+        super().__init__(config, agent_type, config[agent_type]["API_TYPE"].lower(), config[agent_type]["API_BASE"])
+
+    def chat_completion(
+        self,
+        messages: List[Dict[str, str]],
+        n: int,
+        stream: bool = False,
+        temperature: Optional[float] = None,
+        max_tokens: Optional[int] = None,
+        top_p: Optional[float] = None,
+        **kwargs: Any,
+    ) -> Tuple[Dict[str, Any], Optional[float]]:
+        """
+        Generates completions for a given conversation using the OpenAI Chat API.
+        :param messages: The list of messages in the conversation.
+        :param n: The number of completions to generate.
+        :param stream: Whether to stream the API response.
+        :param temperature: The temperature parameter for randomness in the output.
+        :param max_tokens: The maximum number of tokens in the generated completion.
+        :param top_p: The top-p parameter for nucleus sampling.
+        :param kwargs: Additional keyword arguments to pass to the OpenAI API.
+        :return: A tuple containing a list of generated completions and the estimated cost.
+        :raises: Exception if there is an error in the OpenAI API request
+        """
+
+        if self.agent_type.lower() != "operator":
+            # If the agent type is not "operator", use the OpenAI API directly
+            return super()._chat_completion(
+                messages,
+                False,
+                temperature,
+                max_tokens,
+                top_p,
+                response_format={"type": "json_object"},
+                **kwargs,
+            )
+        else:
+            # If the agent type is "operator", use the OpenAI Operator API
+            return super()._chat_completion_operator(
+                messages,
+            )
 
 
 class OpenAIBetaClient:
