@@ -180,7 +180,7 @@ class DataFlowController:
             f"Instantiating task {self.task_object.task_file_name}...", "blue"
         )
 
-        template_copied_path = self.instantiation_single_flow(
+        choose_template_dict = self.instantiation_single_flow(
             ChooseTemplateFlow,
             "choose_template",
             init_params=[self.task_object.app_object.file_extension],
@@ -189,6 +189,9 @@ class DataFlowController:
                 self.task_object.refined_steps
             ],
         )
+
+        template_copied_path = choose_template_dict.get("template_copied_path")
+        template_image_path = choose_template_dict.get("template_image_path")
 
         if template_copied_path:
             self.app_env.start(template_copied_path)
@@ -201,6 +204,7 @@ class DataFlowController:
                     template_copied_path,
                     self.task_object.task,
                     self.task_object.refined_steps,
+                    template_image_path
                 ],
             )
             self.app_env.close()

@@ -60,6 +60,7 @@ class PrefillAgent(BasicAgent):
         given_task: str,
         reference_steps: List[str],
         log_path: str,
+        template_image_path: str
     ) -> List[str]:
         """
         Construct the prompt message for the PrefillAgent.
@@ -67,6 +68,7 @@ class PrefillAgent(BasicAgent):
         :param given_task: The given task.
         :param reference_steps: The reference steps.
         :param log_path: The path of the log.
+        :param template_image_path: The template image path.
         :return: The prompt message.
         """
 
@@ -74,7 +76,7 @@ class PrefillAgent(BasicAgent):
             dynamic_examples
         )
         prefill_agent_prompt_user_message = self.prompter.user_content_construction(
-            given_task, reference_steps, log_path
+            given_task, reference_steps, log_path, template_image_path
         )
         appagent_prompt_message = self.prompter.prompt_construction(
             prefill_agent_prompt_system_message,

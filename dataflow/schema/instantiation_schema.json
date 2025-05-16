@@ -32,7 +32,7 @@
         "choose_template": {
           "type": "object",
           "properties": {
-            "result": { "type": ["string", "null"] },
+            "result": { "type": ["object", "null"] },
             "error": { "type": ["null", "string"] }
           },
           "required": ["result", "error"]

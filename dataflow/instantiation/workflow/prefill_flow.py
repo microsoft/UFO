@@ -77,20 +77,21 @@ class PrefillFlow(AppAgentProcessor):
         )
 
     def execute(
-        self, template_copied_path: str, original_task: str, refined_steps: List[str]
+        self, template_copied_path: str, original_task: str, refined_steps: List[str], template_image_path: str
     ) -> Dict[str, Any]:
         """
         Start the execution by retrieving the instantiated result.
         :param template_copied_path: The path of the copied template to use.
         :param original_task: The original task to refine.
         :param refined_steps: The steps to guide the refinement process.
+        :param template_image_path: The path of template image
         :return: The refined task and corresponding action plans.
         """
 
         start_time = time.time()
         try:
             instantiated_request, instantiated_plan = self._instantiate_task(
-                template_copied_path, original_task, refined_steps
+                template_copied_path, original_task, refined_steps, template_image_path
             )
         except Exception as e:
             raise e
@@ -103,7 +104,7 @@ class PrefillFlow(AppAgentProcessor):
         }
 
     def _instantiate_task(
-        self, template_copied_path: str, original_task: str, refined_steps: List[str]
+        self, template_copied_path: str, original_task: str, refined_steps: List[str], template_image_path: str
     ) -> Tuple[str, List[str]]:
         """
         Retrieve and process the instantiated result for the task.
@@ -111,6 +112,7 @@ class PrefillFlow(AppAgentProcessor):
         :param template_copied_path: The path of the copied template to use.
         :param original_task: The original task to refine.
         :param refined_steps: The steps to guide the refinement process.
+        :param template_image_path: The path of template image
         :return: The refined task and corresponding action plans.
         """
 
@@ -120,6 +122,7 @@ class PrefillFlow(AppAgentProcessor):
                 original_task,
                 refined_steps,
                 template_copied_path,
+                template_image_path
             )
 
             print(f"Original Task: {original_task}")
@@ -172,13 +175,14 @@ class PrefillFlow(AppAgentProcessor):
         )
 
     def _get_prefill_actions(
-        self, given_task: str, reference_steps: List[str], file_path: str
+        self, given_task: str, reference_steps: List[str], file_path: str, template_image_path: str
     ) -> Tuple[str, List[str]]:
         """
         Generate refined tasks and action plans using the PrefillAgent.
         :param given_task: The task to refine.
         :param reference_steps: Reference steps for the task.
         :param file_path: Path to the task template.
+        :param template_image_path: The path of the template image
         :return: The refined task and corresponding action plans.
         """
 
@@ -194,6 +198,7 @@ class PrefillFlow(AppAgentProcessor):
             given_task,
             reference_steps,
             self._log_path_configs,
+            template_image_path
         )
 
         # Log the constructed message

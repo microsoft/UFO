@@ -50,7 +50,7 @@ class ChooseTemplateFlow:
             self._log_path_configs, "template_responses.json", "w", _configs
         )
 
-    def execute(self, task: str, reference_steps: List[str] = None) -> str:
+    def execute(self, task: str, reference_steps: List[str] = None) -> dict:
         """
         Execute the flow and return the copied template path.
         :param task: The task to execute.
@@ -60,12 +60,15 @@ class ChooseTemplateFlow:
 
         start_time = time.time()
         try:
-            template_copied_path = self._choose_template_and_copy(task, reference_steps)
+            template_copied_path, template_image_path = self._choose_template_and_copy(task, reference_steps)
         except Exception as e:
             raise e
         finally:
             self.execution_time = round(time.time() - start_time, 3)
-        return template_copied_path
+        return {
+            "template_copied_path": template_copied_path,
+            "template_image_path": template_image_path,
+        }
 
     def _create_copied_file(
         self, copy_from_path: Path, copy_to_folder_path: Path, file_name: str = None
@@ -145,7 +148,7 @@ class ChooseTemplateFlow:
         print(f"Randomly selected template: {chosen_template_file.name}")
         return str(chosen_template_file)
 
-    def _choose_template_and_copy(self, task: str, reference_steps: List[str]) -> str:
+    def _choose_template_and_copy(self, task: str, reference_steps: List[str]) -> tuple[str, str]:
         """
         Choose the template and copy it to the cache folder.
         :param task: The task to execute.
@@ -162,9 +165,13 @@ class ChooseTemplateFlow:
             _configs["RESULT_HUB"].format(task_type="saved_document")
         ) / (os.path.dirname(os.path.dirname(self._task_file_name)))
 
+        template_image_full_path = (
+            Path(_configs["TEMPLATE_PATH"]) / self._app_name / "images" / Path(chosen_template_file_path).with_suffix(".png")
+        )
+
         return self._create_copied_file(
             chosen_template_full_path, target_template_folder_path, self._task_file_name
-        )
+        ), str(template_image_full_path)
 
     def _choose_target_template_file(
         self, given_task: str, doc_files_description: Dict[str, str], reference_steps: List[str]

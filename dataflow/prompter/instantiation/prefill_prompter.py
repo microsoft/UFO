@@ -91,17 +91,17 @@ class PrefillPrompter(BasicPrompter):
 
         return prompt
 
-    def load_screenshots(self, log_path: str) -> str:
+    def load_screenshots(self, template_image_path: str) -> str:
         """
         Load the first and last screenshots from the log path.
-        :param log_path: The path of the log.
+        :param template_image_path: The path of the log.
         :return: The screenshot URL.
         """
 
         from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 
-        init_image = os.path.join(log_path, "screenshot.png")
-        init_image_url = EvaluationAgentPrompter.load_single_screenshot(init_image)
+        # init_image = os.path.join(log_path, "screenshot.png")
+        init_image_url = EvaluationAgentPrompter.load_single_screenshot(template_image_path)
         return init_image_url
 
     def user_content_construction(
@@ -109,18 +109,20 @@ class PrefillPrompter(BasicPrompter):
         given_task: str,
         reference_steps: List,
         log_path: str,
+        template_image_path: str
     ) -> List[Dict]:
         """
         Construct the prompt for LLMs.
         :param given_task: The given task.
         :param reference_steps: The reference steps.
         :param log_path: The path of the log.
+        :param template_image_path: The template image path.
         :return: The prompt for LLMs.
         """
 
         user_content = []
         if self.is_visual:
-            screenshot = self.load_screenshots(log_path)
+            screenshot = self.load_screenshots(template_image_path)
             screenshot_text = """You are a action prefill agent, responsible to prefill the given task.
                                 This is the screenshot of the current environment, please check it and give prefilled task accodingly."""
 
