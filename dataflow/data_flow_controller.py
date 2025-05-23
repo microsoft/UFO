@@ -420,7 +420,7 @@ class DataFlowController:
                 source_file = os.path.join(source_files_path, file)
                 target_file = os.path.join(target_file_path, file)
 
-                for suffix in [".docx", ".xlsx", ".csv", ".ppt"]:
+                for suffix in [".docx", ".xlsx", ".csv", ".pptx"]:
                     source_template_file = os.path.join(
                         source_template_path, file.replace(".json", suffix)
                     )
