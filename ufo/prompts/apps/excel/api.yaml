@@ -1,0 +1,76 @@
+table2markdown:
+  summary: |-
+    "table2markdown" is to get the table content in a sheet of the Excel app and convert it to markdown format.
+  class_name: |-
+    GetSheetContentCommand
+  usage: |-
+    [1] API call: table2markdown(sheet_name: Union[str, int])
+    [2] Args:
+      - sheet_name: The name or index of the sheet to get the table content. The index starts from 1.
+    [3] Example: table2markdown(sheet_name=1)
+    [4] Available control item: Any control item in the Excel app.
+    [5] Return: the markdown format string of the table content of the sheet.
+
+insert_excel_table:
+  summary: |-
+    "insert_excel_table" is to insert a table to the Excel sheet. The table is a list of list of strings or numbers.
+  class_name: |-
+    InsertExcelTableCommand
+  usage: |-
+    [1] API call: insert_excel_table(table: List[List[Any]], sheet_name: str, start_row: int, start_col: int)
+    [2] Args:
+      - table: The table content to insert. The table is a list of list of strings or numbers.
+      - sheet_name: The name of the sheet to insert the table.
+      - start_row: The start row to insert the table, starting from 1.
+      - start_col: The start column to insert the table, starting from 1.
+    [3] Example: insert_excel_table(table=[['Name', 'Age', 'Gender'], ['Alice', 30, 'Female'], ['Bob', 25, 'Male'], ['Charlie', 35, 'Male']], sheet_name="Sheet1", start_row=1, start_col=1)
+    [4] Available control item: Any control item in the Excel app.
+    [5] Return: The table content is inserted to the Excel sheet.
+
+
+select_table_range:
+  summary: |-
+    "select_table_range" is a quick way to select a range of cells in the sheet of the Excel app instead of dragging the mouse.
+  class_name: |-
+    SelectTableRangeCommand
+  usage: |-
+    [1] API call: select_table_range(sheet_name: str, start_row: int, start_col: int, end_row: int, end_col: int)
+    [2] Args:
+      - sheet_name: The name of the sheet.
+      - start_row: The start row, starting from 1.
+      - start_col: The start column, starting from 1. Please map the letter to the number, e.g., A=1, B=2, etc.
+      - end_row: The end row. If ==-1, select to the end of the document with content.
+      - end_col: The end column. If ==-1, select to the end of the document with content. Please map the letter to the number, e.g., A=1, B=2, etc.
+    [3] Example: select_table_range(sheet_name="Sheet1", start_row=1, start_col=1, end_row=3, end_col=3)
+    [4] Available control item: Any control item in the Excel app.
+    [5] Return: A message indicating whether the range is selected successfully or not.
+
+save_as:
+  summary: |-
+    "save_as" is a shortcut and quickest way to save or export the Excel document to a specified file format with one command.
+  class_name: |-
+    SaveAsCommand
+  usage: |-
+    [1] API call: save_as(file_dir: str = "", file_name: str = "", file_ext: str = "")
+    [2] Args:
+      - file_dir: The directory to save the file. If not specified, the current directory will be used.
+      - file_name: The name of the file without extension. If not specified, the original file name will be used.
+      - file_ext: The extension of the file. If not specified, the default extension ".csv" will be used.
+    [3] Example: save_as(file_dir="", file_name="", file_ext=".csv")
+    [4] Available control item: Any control item in the Excel app.
+    [5] Return: A message indicating whether the document is saved successfully or not.
+
+
+reorder_columns:
+  summary: |-
+    "reorder_columns" is to reorder the columns in the sheet of the Excel app based on the desired order.
+  class_name: |-
+    ReorderColumnsCommand
+  usage: |-
+    [1] API call: reorder_columns(sheet_name: str, desired_order: List[str])
+    [2] Args:
+      - sheet_name: The name of the sheet.
+      - desired_order: The list of column names in the new order.
+    [3] Example: reorder_columns(sheet_name="Sheet1", desired_order=["Income", "Date", "Expense"])
+    [4] Available control item: Any control item in the Excel app.
+    [5] Return: A message indicating whether the columns are reordered successfully or not.

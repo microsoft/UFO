@@ -1,0 +1,347 @@
+version: 1.0
+
+example1: 
+  Request: |-
+    My name is Zac. Please send a email to jack@outlook.com to thanks his contribution on the open source.
+  Response: 
+    Observation: |-
+      I observe that the outlook application is available from the control item list, with the title of 'Mail - Outlook - Zac'. I can see a list of emails in the application.
+    Thought: |-
+      The user request can be solely complete on the outlook application. I need to open the outlook application for the current sub-task. If successful, no further sub-tasks are needed.
+    CurrentSubtask: |- 
+      Compose an email to send to Jack (jack@outlook.com) to thank him for his contribution to the open source project on the outlook application, using the name Zac.
+    Message:
+      - (1) The name of the sender is Zac.
+      - (2) The email composed should be detailed and professional.
+    ControlLabel: |-
+      12
+    ControlText: |-
+      Mail - Outlook - Zac
+    Status: |-  
+      CONTINUE
+    Plan: []
+    Comment: |-
+      It is time to open the outlook application!
+    Questions: []
+    AppsToOpen: |-
+      None
+
+
+example2: 
+  Request: |-
+    Send a message to Tom on Teams to ask him if he can join the meeting at 3pm.
+  Response: 
+    Observation: |-
+      I observe an empty desktop with no application opened, the target application Teams is not available from the control item list.
+    Thought: |-
+      The user request can be solely complete on the Teams application. I need to open the Teams application to send a message.
+    CurrentSubtask: |-
+      Compose a message to send to Tom on Teams to ask him if he can join the meeting at 3pm.
+    Message:
+      - (1) You need to find Tom on Teams.
+      - (2) The message should be polite.
+    ControlLabel: |-
+      6
+    ControlText: |-
+      Mike Lee | Microsoft Teams
+    Status: |-
+      CONTINUE
+    Plan: []
+    Comment: |-
+      It is time to open the Teams application.
+    Questions: []
+    AppsToOpen: |-
+      None
+
+
+example3: 
+  Request: |-
+    Send an message to Tom on Teams by including a (1) the text extracted from framework.docx, (2) and a detailed description of the workflow of the framework in the image of framework.png.
+  Response: 
+    Observation: |-
+      I observe the next targeted application framework.png is not available from the control item list.
+    Thought: |-
+      The previous sub-task that extracts the text from the 'framework.docx' is completed. Now, I need to switch to the image of 'framework.png' to complete the next sub-task and then summarize them to send the message to Tom on Teams.
+    CurrentSubtask: |-
+      Summarize the details of the workflow of the framework in the image of framework.png.
+    Message:
+      - (1) Please summarize the workflow of the framework in the image of framework.png in detail.
+    ControlLabel: |-
+      21
+    ControlText: |- 
+      framework.png | image
+    Status: |-
+      CONTINUE
+    Plan:
+      - Send the message to Tom on Teams by including the text extracted from 'framework.docx' and a detailed description of the workflow of the framework in the image of 'framework.png' you completed previously.
+    Comment: |-
+      After I get the text of the Document control named 'framework.docx', I need to switch to the image of framework.png to complete the next task, and summarize them to sent the message to Tom on Teams.
+    Questions: []
+    AppsToOpen: |-
+      None
+
+
+example4:
+  Request: |-
+    Revise the email to be longer and send.
+  Response: 
+    Observation: |-
+      I observe that the outlook application is available from the control item list, with the title of 'Mail - Outlook - Zac'. 
+    Thought: |-
+      The current request follows the previous request, which can be solely completed on the outlook application. I need to revise the email to be longer and send it.
+    CurrentSubtask: |-
+      Revise the email that has been drafted on the outlook application to be longer, and send it out.
+    Message:
+      - (1) The email body should be more detailed and comprehensive.
+      - (2) The email should be sent out.
+    ControlLabel: |-
+      21
+    ControlText: |-
+      Mail - Outlook - Zac
+    Status: |-
+      CONTINUE
+    Plan: []
+    Comment: |-
+      The previous request is to draft the email and fill in the email address of the receiver, which as been completed. Now it is time to revise the email to be longer and send it.
+    Questions: []
+    AppsToOpen: |-
+      None
+
+
+example5:
+  Request: |-
+    Quickly remove all notes in the presentation.pptx, without looping through each slide.
+  Response: 
+    Observation: |-
+      I observe that the powerpoint application is available from the control item list, with the title of 'presentation - PowerPoint'.
+    Thought: |-
+      The user request can be solely complete on the powerpoint application. I need to open the powerpoint application to complete the user request.
+    CurrentSubtask: |-
+      Remove all notes in the presentation.pptx file quickly without looping through each slide.
+    Message:
+      - (1) You need to use shortcut functions to remove all notes in the presentation.pptx file.
+      - (2) You must not loop through each slide to remove the notes, since it is time-consuming.
+    ControlLabel: |-
+      21
+    ControlText: |-
+      presentation - PowerPoint
+    Status: |-
+      CONTINUE
+    Plan: []
+    Comment: |-
+      I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
+    Questions: []
+    AppsToOpen: |-
+      None
+ 
+
+
+example6:
+  Request: |-
+    How many stars does the Imdiffusion repo have?
+  Response: 
+    Observation: |-
+      I observe that a Edge browser is available from the control item list, with the title of 'Google - Microsoft Edge'.
+    Thought: |-
+      To get the number of stars the Imdiffusion repo has, I need to open the Edge browser and search for the Imdiffusion repo on github. This can be completed on the Edge browser.
+    CurrentSubtask: |-
+      Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
+    Message:
+      - (1) You can to find the Imdiffusion repo on github with Google search.
+      - (2) Summarize the number of stars the Imdiffusion repo page visually.
+    ControlLabel: |-  
+      7
+    ControlText: |- 
+      Google - Microsoft​ Edge
+    Status: |-
+      CONTINUE
+    Plan: []
+    Comment: |-
+      I plan to Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
+    Questions: []
+    AppsToOpen: |-
+      None
+
+
+example7: 
+  Request: |-
+      Please remind me to get party dinner (5 people) preparation done before 5PM today with steps and notes.
+  Response: 
+    Observation: |-
+      The current control item list shows the Microsoft To Do application is available, with the title of 'Microsoft To Do'.
+    Thought: |-
+      The user request can be solely complete on the Microsoft To Do application. I need to open the Microsoft To Do application to set a reminder for the user.
+    CurrentSubtask: |-
+      Add a task of 'Get party dinner (5 people) preparation done before 5PM today.' to the Microsoft To Do application, and set more details for the task, including adding steps and notes.
+    Message:
+      - (1) You need to add a task to remind the user to get party dinner (5 people) preparation done before 5PM today.
+      - (2) You need to add detailed steps and notes to the task.
+    ControlLabel: |-
+      6
+    ControlText: |-
+      Microsoft To Do
+    Status: |-
+      CONTINUE
+    Plan: []
+    Comment: |-
+      I plan to use the Microsoft To Do application to set a reminder for the user, and add details and notes to the reminder.
+    Questions: []
+    AppsToOpen: |-
+      None
+
+example8: 
+  Request: |- 
+      Please create a slide from the meeting_notes.docx in the presentation1.pptx.
+  Response: 
+    Observation: |-
+      The current control item list shows the powerpoint application is available, with the title of 'presentation1 - PowerPoint'. The meeting_notes.docx is not available in the control item list.
+    Thought: |-
+      The user request can be solely complete on the powerpoint application. I need to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx.
+    CurrentSubtask: |-
+      Create a slide from the meeting_notes.docx in the presentation1.pptx file using the Copilot Add-in in the Microsoft PowerPoint application.
+    Message:
+      - (1) You need to use the Copilot Add-in to create a slide from the meeting_notes.docx in the presentation1.pptx, since this is the fastest way to complete the task.
+    ControlLabel: |-
+      4
+    ControlText: |-
+      presentation1 - PowerPoint
+    Status: |-
+      CONTINUE
+    Plan: []
+    Comment: |-
+      I plan to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx.
+    Questions: []
+    AppsToOpen: |-
+      None
+
+example9:
+  Request: |-
+      Please @Zac to revise the presentation1.pptx.
+  Response: 
+    Observation: |-
+      The current control item list shows the powerpoint application is available, with the title of 'presentation1 - PowerPoint'.
+    Thought: |-
+      The user request can be solely complete on the powerpoint application, without the need to open any other applications.
+    CurrentSubtask: |-
+      Leave a comment in the current slide of the presentation1.pptx to remind Zac to revise the presentation1.pptx.
+    Message: []
+    ControlLabel: |-
+      4
+    ControlText: |-
+      presentation1 - PowerPoint
+    Status: |-
+      CONTINUE
+    Plan: []
+    Comment: |-
+      I plan to leave a comment in the presentation1.pptx to remind Zac to revise the presentation1.pptx.
+    Questions: []
+    AppsToOpen: |-
+      None
+
+
+example10:
+  Request: |-
+      Send my alias and address to Tom on Teams.
+  Response:
+    Observation: |-
+      The current application list shows the Teams application is available, with the title of 'Tom Jim | Microsoft Teams'.
+    Thought: |-
+      I need to open the Teams application to send the alias and address to Tom. Before executing the action, I need to get the alias and address from the user by asking the user two questions to input the alias and address in the chat window.
+    CurrentSubtask: |-
+      Send the alias and address to Tom on Teams.
+    Message:
+      - (1) Use the answer from the user of the alias and address to compose the message.
+    ControlLabel: |-
+      6
+    ControlText: |-
+      Tom Jim | Microsoft Teams
+    Status: |-
+      PENDING
+    Plan: []
+    Comment: |-
+      I plan to use the Teams application to send the alias and address to Tom.
+    Questions:
+      - Can you please provide me with your alias?
+      - Can you please provide me with your address?
+    AppsToOpen: |-
+      None
+
+
+example11:
+  Request: |-
+      Summarize and add all to do items on Microsoft To Do from the meeting notes email, and write a summary on the meeting_notes.docx.
+  Response:
+    Observation: |-
+      The current application list shows the Microsoft To Do application is available, with the title of 'Mail - Outlook - Jim'. The meeting_notes.docx is also available in the control item list.
+    Thought: |-
+      The user request can be decomposed into three sub-tasks: (1) Summarize all to do items on Microsoft To Do from the meeting_notes email, (2) Add all to do items to Microsoft To Do, and (3) Write a summary on the meeting_notes.docx. I need to open the Microsoft To Do application to complete the first two sub-tasks.
+      Each sub-task will be completed in individual applications sequentially.
+    CurrentSubtask: |-
+      Summarized all to do items from the meeting notes email in Outlook.
+    Message:
+      - (1) You need to first search for the meeting notes email in Outlook to summarize.
+      - (2) Only summarize the to do items from the meeting notes email, without any redundant information.
+    ControlLabel: |-
+      16
+    ControlText: |-
+      Mail - Outlook - Jim
+    Status: |-
+      CONTINUE
+    Plan:
+      - Add all to do items previously summarized from the meeting notes email to one-by-one Microsoft To Do.
+      - Write a summary about the meeting notes email on the meeting_notes.docx.
+    Comment: |-
+      I plan to first summarize all to do items from the meeting notes email in Outlook.
+    Questions: []
+    AppsToOpen: |-
+      None
+
+
+example_openapp1:
+  Request: 
+    open a ppt file on my desktop named test.pptx and modify the title to Apple is the best tech Company
+  Response: 
+    Observation: |-
+      I observe that the PowerPoint application is not available in the control item list, and the test.pptx file is not available in the control item list.
+    Thought: |- 
+      The user request can be solely complete on the PowerPoint application. However, the PowerPoint application is not visible in the screenshot, nor available in the list of applications. I need to first open the PowerPoint application and the test.pptx file to modify the title.
+    CurrentSubtask: |- 
+      Modify the title to 'Apple is the best tech Company' in the test.pptx file.
+    Message: []
+    ControlLabel: |-
+      2
+    ControlText: |-
+      PowerPoint
+    Status: |-
+      PENDING
+    Plan: []
+    Comment: |-
+      Since the PowerPoint application is not visible in the screenshot, I will use the function OpenAPP to open the test.pptx file directly from the desktop. Then modify the title of the ppt file after its opened.
+    Questions:
+      - Can you please provide me with the title you want to change to?
+    AppsToOpen: {'APP': 'powerpnt', 'file_path': 'Desktop\test.pptx'}
+  
+
+example_openapp2:
+  Request: |- 
+    open file explorer APP for me and find label.txt file.
+  Response: 
+    Observation: |-
+      I observe that the file explorer is not available in the control item list, and the label.txt file is also not available in the control item list.
+    Thought: |-
+      I need to open file explorer through function OpenAPP directly, as I can not observe it in the screenshot.
+    CurrentSubtask: |-
+      Find the label.txt file in the file explorer.
+    Message: []
+    ControlLabel: |-
+      3
+    ControlText: 
+      Explorer
+    Status: |-
+      CONTINUE
+    Plan: []
+    Comment: |-
+      Since the file explorer application is not visible in the screenshot, I will use the function OpenAPP to open the file explorer file directly.
+    Questions: []
+    AppsToOpen: |-
+      {'APP': 'powerpnt', 'file_path': ''}

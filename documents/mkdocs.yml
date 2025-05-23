@@ -1,0 +1,141 @@
+site_name: UFO Documentation
+
+
+nav:
+  - Home: index.md
+  - Project Directory Structure: project_directory_structure.md
+  - Getting Started: 
+    - Quick Start: getting_started/quick_start.md
+    - More Guidance: getting_started/more_guidance.md
+  - Basic Modules:
+      - Session: modules/session.md
+      - Round: modules/round.md
+      - Context: modules/context.md
+  - Configurations: 
+      - User Configuration: configurations/user_configuration.md
+      - Developer Configuration: configurations/developer_configuration.md
+      - Model Pricing: configurations/pricing_configuration.md
+  - Supported Models: 
+      - Overview: supported_models/overview.md
+      - OpenAI: supported_models/openai.md
+      - Azure OpenAI: supported_models/azure_openai.md
+      - OpenAI CUA (Operator): supported_models/operator.md
+      - Gemini: supported_models/gemini.md
+      - Claude: supported_models/claude.md
+      - Qwen: supported_models/qwen.md
+      - DeepSeek: supported_models/deepseek.md
+      - Ollama: supported_models/ollama.md
+      - Custom Model: supported_models/custom_model.md
+  - Agents:
+      - Overview: agents/overview.md
+      - Agent Design:
+          - Memory: agents/design/memory.md
+          - Blackboard: agents/design/blackboard.md
+          - State: agents/design/state.md
+          - Prompter: agents/design/prompter.md
+          - Processor: agents/design/processor.md
+      - HostAgent: agents/host_agent.md
+      - AppAgent: agents/app_agent.md
+      - FollowerAgent: agents/follower_agent.md
+      - EvaluationAgent: agents/evaluation_agent.md
+  - Prompts:
+      - Overview: prompts/overview.md
+      - Basic Prompts: prompts/basic_template.md
+      - Examples Prompts: prompts/examples_prompts.md
+      - API Prompts: prompts/api_prompts.md
+  - Puppeteer:
+      - Overview: automator/overview.md
+      - GUI Automator: automator/ui_automator.md
+      - API Automator: automator/wincom_automator.md
+      - Web Automator: automator/web_automator.md
+      - Bash Automator: automator/bash_automator.md
+      - AI Tool: automator/ai_tool_automator.md
+  - Logs:
+      - Overview: logs/overview.md
+      - Markdown Log Viewer: logs/markdown_log_viewer.md
+      - Request Logs: logs/request_logs.md
+      - Step Logs: logs/step_logs.md
+      - Evaluation Logs: logs/evaluation_logs.md
+      - Screenshots: logs/screenshots_logs.md
+      - UI Tree: logs/ui_tree_logs.md
+  - Advanced Usage: 
+      - Continuous Knowledge Substrate: 
+        - Overview: advanced_usage/reinforce_appagent/overview.md
+        - Learning from Help Document: advanced_usage/reinforce_appagent/learning_from_help_document.md
+        - Learning from Bing Search: advanced_usage/reinforce_appagent/learning_from_bing_search.md
+        - Experience Learning: advanced_usage/reinforce_appagent/experience_learning.md
+        - Learning from User Demonstration: advanced_usage/reinforce_appagent/learning_from_demonstration.md
+      - Follower Mode: advanced_usage/follower_mode.md
+      - Batch Mode: advanced_usage/batch_mode.md
+      - Speculative Multi-Action Execution: advanced_usage/multi_action.md
+      - Operator-as-a-AppAgent: advanced_usage/operator_as_app_agent.md
+      - Control Filtering: 
+        - Overview: advanced_usage/control_filtering/overview.md
+        - Text Filtering: advanced_usage/control_filtering/text_filtering.md
+        - Semantic Filtering: advanced_usage/control_filtering/semantic_filtering.md
+        - Icon Filtering: advanced_usage/control_filtering/icon_filtering.md
+      - Control Detection: 
+        - Overview: advanced_usage/control_detection/overview.md
+        - UIA Detection: advanced_usage/control_detection/uia_detection.md
+        - Visual Detection: advanced_usage/control_detection/visual_detection.md
+        - Hybrid Detection: advanced_usage/control_detection/hybrid_detection.md
+      - Customization: advanced_usage/customization.md
+  - Creating Your AppAgent: 
+      - Overview: creating_app_agent/overview.md
+      - Help Document Provision: creating_app_agent/help_document_provision.md
+      - Demonstration Provision: creating_app_agent/demonstration_provision.md
+      - Warpping App-Native API: creating_app_agent/warpping_app_native_api.md
+  - Benchmark:
+      - Overview: benchmark/overview.md
+      - Windows Agent Arena: benchmark/windows_agent_arena.md
+      - OSWorld (Windows): benchmark/osworld.md
+  - Dataflow:
+      - Overview: dataflow/overview.md
+      - Instantiation: dataflow/instantiation.md
+      - Execution: dataflow/execution.md
+      - Windows App Environment: dataflow/windows_app_env.md
+      - Result: dataflow/result.md
+  - About:
+      - Contributing: about/CONTRIBUTING.md
+      - License: about/LICENSE.md
+      - Code of Conduct: about/CODE_OF_CONDUCT.md
+      - Disclaimer: about/DISCLAIMER.md
+      - Support: about/SUPPORT.md
+  - FAQ: faq.md
+
+markdown_extensions:
+  - pymdownx.tasklist
+  - admonition
+
+# theme:
+#   name: material
+#   palette:
+#     primary: blue
+#     accent: light-blue
+#   font:
+#     text: Roboto
+#     code: Roboto Mono
+
+theme:
+  name: readthedocs
+  analytics:
+    - gtag: G-FX17ZGJYGC
+
+
+plugins:
+    - search
+    - mkdocstrings:
+        handlers:
+            python:
+                paths: ["../ufo", "../record_processor", "../dataflow"]
+                options:
+                    docstring_style: sphinx
+                    docstring_section_style: list
+                    merge_init_into_class: true
+                    show_docstring_returns: true
+
+
+
+
+  # logo: ./assets/ufo_blue.png
+favicon: ./assets/ufo_blue.png

@@ -1,0 +1,129 @@
+CONTROL_BACKEND: ["uia"]  # The backend for control action, currently we support uia, win32 and onmiparser
+
+IOU_THRESHOLD_FOR_MERGE: 0.1 # The iou threshold for merging the boxes bewteen controls detected by the UIA and Grouding model.
+
+MAX_STEP: 30  # The max step limit for completing the user request
+MAX_ROUND: 1  # The max round limit for completing the user request
+SLEEP_TIME: 1  # The sleep time between each step to wait for the window to be ready
+RECTANGLE_TIME: 1
+
+ACTION_SEQUENCE: False  # Whether to output the action sequence. If true, the agent may predict and execute multiple actions in one step.
+
+# Skip rendering visual outline on screen if not necessary
+SHOW_VISUAL_OUTLINE_ON_SCREEN: False
+
+MAXIMIZE_WINDOW: False  # Whether to maximize the application window before the action
+
+JSON_PARSING_RETRY: 3  # The retry times for the json parsing
+
+SAFE_GUARD: True  # Whether to use the safe guard to prevent the model from doing sensitve operations.
+CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner", "CheckBox"]
+# The list of widgets that allowed to be selected, in uia backend, it will be used for filter the control_type, while in win32 backend, it will be used for filter the class_name.
+HISTORY_KEYS: ["Step", "Subtask", "Action", "UserConfirm"]  # The keys of the action history for the next step.
+
+ANNOTATION_COLORS: {
+        "Button": "#FFF68F",
+        "Edit": "#A5F0B5",
+        "TabItem": "#A5E7F0",
+        "Document": "#FFD18A",
+        "ListItem": "#D9C3FE",
+        "MenuItem": "#E7FEC3",
+        "ScrollBar": "#FEC3F8",
+        "TreeItem": "#D6D6D6",
+        "Hyperlink": "#91FFEB",
+        "ComboBox": "#D8B6D4"
+    }
+    
+ANNOTATION_FONT_SIZE: 22  # The font size for the annotation
+
+PRINT_LOG: False  # Whether to print the log  
+CONCAT_SCREENSHOT: True  # Whether to concat the screenshot for the control item
+LOG_LEVEL: "DEBUG"  # The log level
+INCLUDE_LAST_SCREENSHOT: True  # Whether to include the last screenshot in the observation
+REQUEST_TIMEOUT: 250  # The call timeout for the GPT-V model
+
+HOSTAGENT_PROMPT: "ufo/prompts/share/base/host_agent.yaml"  # The prompt for the app selection
+# Due to the limitation of input size, lite version of the prompt help users have a taste. And the path is "ufo/prompts/share/lite/host_agent.yaml"
+APPAGENT_PROMPT: "ufo/prompts/share/base/app_agent.yaml"  # The prompt for the action selection
+# Lite version: "ufo/prompts/share/lite/app_agent.yaml"
+FOLLOWERAHENT_PROMPT: "ufo/prompts/share/base/app_agent.yaml"  # The prompt for the follower agent
+
+EVALUATION_PROMPT: "ufo/prompts/evaluation/evaluate.yaml"  # The prompt for the evaluation
+
+HOSTAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/host_agent_example.yaml"  # The prompt for the app selection
+# Lite version: "ufo/prompts/examples/lite/{mode}/host_agent_example.yaml"
+APPAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/app_agent_example.yaml"  # The prompt for the action selection
+APPAGENT_EXAMPLE_PROMPT_AS: "ufo/prompts/examples/{mode}/app_agent_example_as.yaml"  # The prompt for the action selection with sequence
+# Lite version: "ufo/prompts/examples/lite/{mode}/app_agent_example.yaml"
+
+## For experience learning
+EXPERIENCE_PROMPT: "ufo/prompts/experience/experience_summary.yaml"
+EXPERIENCE_SAVED_PATH: "vectordb/experience/"
+
+## For user demonstration learning
+DEMONSTRATION_PROMPT: "ufo/prompts/demonstration/demonstration_summary.yaml"
+DEMONSTRATION_SAVED_PATH: "vectordb/demonstration/"
+
+API_PROMPT: "ufo/prompts/share/base/api.yaml"  # The prompt for the API
+CLICK_API: "click_input" # The click API
+AFTER_CLICK_WAIT: 0 # The wait time after clicking in seconds, even if the value is 0, there will be a small pause. Default 0.09 in pywinauto.
+INPUT_TEXT_API: "type_keys" # The input text API. Can be "type_keys" or "set_text"
+INPUT_TEXT_ENTER: False # whether to press enter after typing the text
+INPUT_TEXT_INTER_KEY_PAUSE: 0.05 # The pause time between each key press in seconds. Even if the value is 0, there will be a small pause. Default 0.05 in pywinauto
+
+
+## APIs related
+USE_APIS: True  # Whether to use the API
+APP_API_PROMPT_ADDRESS: {
+    "WINWORD.EXE": "ufo/prompts/apps/word/api.yaml",
+    "EXCEL.EXE": "ufo/prompts/apps/excel/api.yaml",
+    "POWERPNT.EXE": "ufo/prompts/apps/powepoint/api.yaml",
+    "msedge.exe": "ufo/prompts/apps/web/api.yaml",
+    "chrome.exe": "ufo/prompts/apps/web/api.yaml"
+}  # The prompt address for the app API. The key is the app program name, and the value is the prompt address.
+
+WORD_API_PROMPT: "ufo/prompts/apps/word/api.yaml"  # The prompt for the word API
+EXCEL_API_PROMPT: "ufo/prompts/apps/excel/api.yaml"  # The prompt for the word API
+
+# For control filtering
+#'TEXT' for only rich text filter, 'SEMANTIC' for only semantic similarity match, 'ICON' for only icon match
+CONTROL_FILTER_TYPE: []  # The list of control filter type, support 'TEXT', 'SEMANTIC', 'ICON'
+CONTROL_FILTER_TOP_K_PLAN: 2  # The control filter effect on top k plans from UFO, default is 2
+CONTROL_FILTER_TOP_K_SEMANTIC: 15  # The control filter top k for semantic similarity
+CONTROL_FILTER_TOP_K_ICON: 15  # The control filter top k for icon similarity
+CONTROL_FILTER_MODEL_SEMANTIC_NAME: "all-MiniLM-L6-v2"  # The control filter model name of semantic similarity
+CONTROL_FILTER_MODEL_ICON_NAME: "clip-ViT-B-32"  # The control filter model name of icon similarity
+
+LOG_XML: False  # Whether to log the xml file for the at every step.
+LOG_TO_MARKDOWN: True  # Whether to save the log to markdown file for better visualization.
+SCREENSHOT_TO_MEMORY: True  # Whether to allow the screenshot to memory for the agent's decision making.
+
+
+# For customizations
+ASK_QUESTION: False  # Whether to allow the agent to ask questions
+USE_CUSTOMIZATION: False  # Whether to use the customization
+QA_PAIR_FILE: "customization/historical_qa.txt"  # The path for the historical QA
+QA_PAIR_NUM: 20  # The number of QA pairs for the customization
+
+# For the evaluation
+EVA_SESSION: True  # Whether to include the session in the evaluation
+EVA_ROUND: FALSE
+EVA_ALL_SCREENSHOTS: True  # Whether to include all the screenshots in the evaluation
+
+# Image saving performance
+DEFAULT_PNG_COMPRESS_LEVEL: 1  # The compress level for the PNG image, 0-9, 0 is no compress, 1 is the fastest, 9 is the best compress
+
+
+# Save UI tree
+SAVE_UI_TREE: False  # Whether to save the UI tree at each step
+
+# Save full screen
+SAVE_FULL_SCREEN: False  # Whether to save the full screen at each step
+
+
+# Record the status of the tasks
+TASK_STATUS: True  # Whether to record the status of the tasks in batch execution mode.
+
+# Experience saving
+SAVE_EXPERIENCE: "always_not"  # Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not, "auto" for auto save when the evaluation is good. By default, it is "ask".
+

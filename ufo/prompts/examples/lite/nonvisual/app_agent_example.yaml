@@ -1,0 +1,70 @@
+version: 1.0
+
+example1: 
+  Request: |-
+    My name is Zac. Please send a email to jack@outlook.com to thanks his contribution on the open source.
+  Sub-task: |-
+    Compose an email to send to Jack (jack@outlook.com) to thank him for his contribution to the open source project on the outlook application, using the name Zac.
+  Response: 
+    Observation: |-
+        The control item list indicates that I am on the Main Page of Outlook. The Main Page has a list of control items and email received. The new email editing window is not opened. The last action took effect by opening the Outlook application.
+    Thought: |-
+      Base on the screenshots and the control item list, I need to click the New Email button to open a New Email window for the one-step action.
+    ControlLabel: |-
+      1
+    ControlText: |-
+      New Email
+    Function: |-
+      click_input
+    Args: 
+      {"button": "left", "double": false}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) Input the email address of the receiver.
+      - (2) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.
+      - (3) Input the content of the email. I need to input 'Dear Jack,\\nI hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.\\nYour commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.\\nYour code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.\\nPlease know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.\\nOnce again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.\\nBest regards,\\nZac'.
+      - (4) Click the Send button to send the email.
+    Comment: |-
+      After I click the New Email button, the New Email window will be opened and available for composing the email.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
+  Tips: |-
+    - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
+    - You need to draft the content of the email and send it to the receiver. 
+
+example2: 
+  Request: |- 
+    Please remind me to get party dinner (5 people) preparation done before 5PM today with steps and notes.
+  Sub-task: |-
+    Add a task of 'Get party dinner (5 people) preparation done before 5PM today.' to the Microsoft To Do application, and set more details for the task, including adding steps and notes.
+  Response: 
+    Observation: |-
+      The current control item list indicates that I am on the Microsoft To Do application. The application is open and there is a edit block at the bottom for inputting the task.
+    Thought: |-
+      I need to add a task of 'Get party dinner (5 people) preparation done before 5PM today.' to the edit block of 'Add a task in “My Day”'. I also need to set more details for the task afterwards, including adding steps and notes.
+    ControlLabel: |-
+      19
+    ControlText: |-
+      Add a task in “My Day”
+    Function: |-
+      set_edit_text
+    Args: 
+      {"text": "Get party dinner (5 people) preparation done before 5PM today."}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) After inputting the task, press the Enter key to create the task.
+      - (2) Click the ListItem of the task that was just created to set more details.
+      - (3) Add a step 1 for the task by inputing 'Menu Planning and Ingredient Acquisition' in the Add step edit control.
+      - (4) Add a step 2 for the task by inputing 'Meal Preparation Schedule' in the Add step edit control following the step one.
+      - (5) Add a step 3 for the task by inputing 'Setting Up the Dining Area' in the Add step edit control following the step two.
+      - (6) Add a note to this task in the 'Add note' edit blocking at the bottom by inputing 'Considering preferences, dietary restrictions and food allergiesof the guests.'.
+      - (7) Close the details view by clicking the 'Dismiss detail view' botton.
+    Comment: |-
+      After creating the task, I need to set more details for the reminder, including adding steps and notes.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
+  Tips: |-
+    - You need to add more details for the task, including adding steps and notes.
+    - You need to add each step one by one and add notes to the task.

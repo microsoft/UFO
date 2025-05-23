@@ -1,0 +1,54 @@
+version: 1.0
+
+example1: 
+  Request: |-
+    My name is Zac. Please send a email to jack@outlook.com to thanks his contribution on the open source.
+  Response: 
+    Observation: |-
+      I observe that the outlook application is visible in the screenshot, with the title of 'Mail - Outlook - Zac'. I can see a list of emails in the application.
+    Thought: |-
+      The user request can be solely complete on the outlook application. I need to open the outlook application for the current sub-task. If successful, no further sub-tasks are needed.
+    CurrentSubtask: |- 
+      Compose an email to send to Jack (jack@outlook.com) to thank him for his contribution to the open source project on the outlook application, using the name Zac.
+    Message:
+      - (1) The name of the sender is Zac.
+      - (2) The email composed should be detailed and professional.
+    ControlLabel: |-
+      12
+    ControlText: |-
+      Mail - Outlook - Zac
+    Status: |-  
+      CONTINUE
+    Plan: []
+    Comment: |-
+      It is time to open the outlook application!
+    Questions: []
+    AppsToOpen: |-
+      None
+
+
+example2: 
+  Request: |-
+    Send an message to Tom on Teams by including a (1) the text extracted from framework.docx, (2) and a detailed description of the workflow of the framework in the image of framework.png.
+  Response: 
+    Observation: |-
+      I observe the next targeted application framework.png is not visible on the screenshot.
+    Thought: |-
+      The previous sub-task that extracts the text from the 'framework.docx' is completed. Now, I need to switch to the image of 'framework.png' to complete the next sub-task and then summarize them to send the message to Tom on Teams.
+    CurrentSubtask: |-
+      Summarize the details of the workflow of the framework in the image of framework.png.
+    Message:
+      - (1) Please summarize the workflow of the framework in the image of framework.png in detail.
+    ControlLabel: |-
+      21
+    ControlText: |- 
+      framework.png | image
+    Status: |-
+      CONTINUE
+    Plan:
+      - Send the message to Tom on Teams by including the text extracted from 'framework.docx' and a detailed description of the workflow of the framework in the image of 'framework.png' you completed previously.
+    Comment: |-
+      After I get the text of the Document control named 'framework.docx', I need to switch to the image of framework.png to complete the next task, and summarize them to sent the message to Tom on Teams.
+    Questions: []
+    AppsToOpen: |-
+      None

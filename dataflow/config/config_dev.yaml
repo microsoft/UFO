@@ -1,0 +1,43 @@
+version: 0.1
+
+CONTROL_BACKEND: "uia"  # The list of backend for control action, currently we support uia and win32, 
+CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "DataItem", "Spinner"] 
+PRINT_LOG: False  # Whether to print the log  
+LOG_LEVEL: "INFO"  # The log level
+MATCH_STRATEGY: "fuzzy"  # The match strategy for the control filter, support 'contains', 'fuzzy', 'regex'
+
+PREFILL_PROMPT: "dataflow/prompts/instantiation/{mode}/prefill.yaml"  # The prompt for the action prefill
+FILTER_PROMPT: "dataflow/prompts/instantiation/{mode}/filter.yaml"  # The prompt for the filter
+PREFILL_EXAMPLE_PROMPT: "dataflow/prompts/instantiation/{mode}/prefill_example.yaml"  # The prompt for the action prefill example
+API_PROMPT: "ufo/prompts/share/lite/api.yaml"  # The prompt for the API
+
+# Template Configuration
+TEMPLATE_METHOD: "LLM"  # The method for the template, support 'SemanticSimilarity', 'LLM'.
+TEMPLATE_PROMPT: "dataflow/prompts/instantiation/{mode}/template.yaml"  # The prompt for the template
+
+# Reformat Configuration
+REFORMAT_TO_BATCH: True # Whether to reformat the result of dataflow to the format of the UFO batch mode
+REFORMAT_TO_BATCH_HUB: "datasUFO"  # The reformat result path
+
+# Default Task Configuration
+TASKS_HUB: "dataflow/tasks/prefill"  # The default tasks hub for batch dataflow
+TEMPLATE_PATH: "dataflow/templates"  # The template path for the exploration
+
+# Result Configuration
+RESULT_HUB: "dataflow/results/{task_type}"  # The result hub, task_type is 'instantiation' or 'execution'
+INSTANTIATION_RESULT_SCHEMA: "dataflow/schema/instantiation_schema.json"  # The JSON Schema for the result log
+EXECUTION_RESULT_SCHEMA: "dataflow/schema/execution_schema.json"
+
+# For control filtering
+CONTROL_FILTER_TYPE: []  # The list of control filter type, support 'TEXT', 'SEMANTIC', 'ICON'
+CONTROL_FILTER_MODEL_SEMANTIC_NAME: "all-MiniLM-L6-v2"  # The control filter model name of semantic similarity
+CONTROL_EMBEDDING_CACHE_PATH: "dataflow/cache/"  # The cache path for the control filter
+CONTROL_FILTER_TOP_K_PLAN: 2  # The control filter effect on top k plans from UFO, default is 2
+
+# log path
+LOG_PATH: "dataflow/logs/{task}"
+PREFILL_LOG_PATH: "dataflow/logs/{task}/prefill/"
+FILTER_LOG_PATH: "dataflow/logs/{task}/filter/"
+EXECUTE_LOG_PATH: "dataflow/logs/{task}/execute/"
+
+MAX_STEPS: 30  # The max step for the execute_flow

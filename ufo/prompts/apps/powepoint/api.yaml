@@ -1,0 +1,30 @@
+set_background_color:
+  summary: |-
+    "set_background_color" is a fast way to set the background color of one or more slides in a PowerPoint presentation. You should use this API to save your work since it is more efficient than using UI.
+  class_name: |-
+    SetBackgroundColorCommand
+  usage: |-
+    [1] API call: set_background_color(color: str, slide_index: List[int] = None) 
+    [2] Args:
+      - color: The hex color code (in RGB format) to set the background color.
+      - slide_index: The list of slide indexes to set the background color. If None, set the background color for all slides.
+    [3] Example: set_background_color(color="FFFFFF", slide_index=[1, 2, 3])
+    [4] Available control item: Any control item in the PowerPoint app.
+    [5] Return: A message indicating the success or failure of setting the background color.
+
+
+save_as:
+  summary: |-
+    "save_as" is the fastest way to save or export the PowerPoint presentation to a specified file format with one command. You should use this API to save your work since it is more efficient than manually saving the document.
+  class_name: |-
+    SaveAsCommand
+  usage: |-
+    [1] API call: save_as(file_dir: str = "", file_name: str = "", file_ext: str = "", current_slide_only: bool = False) 
+    [2] Args:
+      - file_dir: The directory to save the file. If not specified, the current directory will be used.
+      - file_name: The name of the file without extension. If not specified, the name of the current document will be used.
+      - file_ext: The extension of the file. If not specified, the default extension is ".pptx".
+      - current_slide_only: This only applies to ".jpg", ".png", ".gif", ".bmp" and ".tiff" formats. If True, only the current slide will be saved to a PNG file. If False, all slides will be saved into a directory containing multiple PNG files.
+    [3] Example: save_as(file_dir="", file_name="", file_ext=".pdf")
+    [4] Available control item: Any control item in the PowerPoint app.
+    [5] Return: A message indicating the success or failure of saving the document.

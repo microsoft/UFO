@@ -1,0 +1,90 @@
+insert_table:
+  summary: |-
+    "insert_table" is to insert a table to a Word document.
+  class_name: |-
+    InsertTableCommand
+  usage: |-
+    [1] API call: insert_table(rows: int, columns: int) 
+    [2] Args:
+      - rows: The number of rows in the table.
+      - columns: The number of columns in the table.
+    [3] Example: insert_table(rows=3, columns=3)
+    [4] Available control item: The Document control item in the Word app.
+    [5] Return: None
+
+
+select_text:
+  summary: |-
+    "select_text" is to select the text in a Word document for further operations, such as changing the font size or color.
+  class_name: |-
+    SelectTextCommand
+  usage: |-
+    [1] API call: select_text(text: str) 
+    [2] Args:
+      - text: The exact text to be selected.
+    [3] Example: select_text(text="Hello")
+    [4] Available control item: The Document control item in the Word app.
+    [5] Return: A string of the selected text if successful, otherwise a text not found message.
+
+
+select_table:
+  summary: |-
+    "select_table" is to select a table in a Word document for further operations, such as deleting the table or changing the border color.
+  class_name: |-
+    SelectTableCommand
+  usage: |-
+    [1] API call: select_table(number: int) 
+    [2] Args:
+      - number: The index number of the table to be selected.
+    [3] Example: select_table(number=1)
+    [4] Available control item: The Document control item in the Word app.
+    [5] Return: A string of the selected table if successful, otherwise an out of range message.
+
+
+select_paragraph:
+  summary: |-
+    "select_paragraph" is to select a paragraph in a Word document for further operations, such as changing the alignment or indentation.
+  class_name: |-
+    SelectParagraphCommand
+  usage: |-
+    [1] API call: select_paragraph(start_index: int, end_index: int, non_empty: bool = True) 
+    [2] Args:
+      - start_index: The start index of the paragraph to be selected.
+      - end_index: The end index of the paragraph, if ==-1, select to the end of the document.
+      - non_empty: If True, select the non-empty paragraphs only.
+    [3] Example: select_paragraph(start_index=1, end_index=3, non_empty=True)
+    [4] Available control item: The Document control item in the Word app.
+    [5] Return: None
+
+
+save_as:
+  summary: |-
+    "save_as" is the fastest way to save or export the Word document to a specified file format with one command. You should use this API to save your work since it is more efficient than manually saving the document.
+  class_name: |-
+    SaveAsCommand
+  usage: |-
+    [1] API call: save_as(file_dir: str = "", file_name: str = "", file_ext: str = "") 
+    [2] Args:
+      - file_dir: The directory to save the file. If not specified, the current directory will be used.
+      - file_name: The name of the file without extension. If not specified, the name of the current document will be used.
+      - file_ext: The extension of the file. If not specified, the default extension is ".pdf".
+    [3] Example: save_as(file_dir="", file_name="", file_ext=".pdf")
+    [4] Available control item: The Document control item in the Word app.
+    [5] Return: A message indicating the success or failure of saving the document.
+
+
+set_font:
+  summary: |-
+    "set_font" is to set the font of the selected text in a Word document. The text must be selected before calling this command.
+  class_name: |-
+    SetFontCommand
+  usage: |-
+    [1] API call: set_font(font_name: str = None, font_size: int = None) 
+    [2] Args:
+      - font_name: The name of the font (e.g., "Arial", "Times New Roman", "宋体"). If None, the font name will not be changed.
+      - font_size: The font size (e.g., 12). If None, the font size will not be changed.
+    [3] Example: set_font(font_name="Times New Roman")
+    [4] Available control item: The Document control item in the Word app.
+    [5] Return: A message indicating the font and font size changes if successful, otherwise a message indicating no text selected.
+
+

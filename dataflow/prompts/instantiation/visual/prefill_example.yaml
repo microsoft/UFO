@@ -1,0 +1,42 @@
+
+version: 1.0
+
+example1: 
+  Request: |-
+      <Given Task:> Delete Text in document.
+  Response:
+    observation: |-
+      I observe the canvas state is a Word document with a body containing a paragraph with a run element, which has a text element 'text to edit'.
+    thought: |-
+      My task is to detail the given task and give the step-by-step actions to take. 
+      The user needs to delete text in the Word document. 
+      Based on the canvas state, there is a text element 'text to edit'.
+      And based on the available apis and controls,the user can use "select_text" to select the target to delete,and "type_keys" to type in delete.
+      Therefore,the user can detail the task to delete 'text to edit' in the Word document.
+      In this case, the user should select the text to edit in the Word document and press the 'Delete' key on the keyboard to delete the selected text.
+    new_task: |-
+      Delete the 'text to edit' in the Word document.
+    action_plans: |-
+      {{"step 1":"choose the target text 'text to edit'","controlLabel": "", "controlText": "", "function": "select_text", "args": {{"text": "text to edit"}}}}
+      {{"step 2":"type in delete keys to finish delete","controlLabel": "101", "controlText": "Edit", "function": "type_keys", "args": {{"text": "{DELETE}"}}}}
+
+example2: 
+  Request: |-
+      <Given Task:> Highlight Text in document.
+  Response:
+    observation: |-
+      I observe the canvas state is a Word document with a body containing a paragraph with a run element, which has a text element 'text to edit'.
+    thought: |-
+      My task is to detail the given task and give the step-by-step actions to take. 
+      The user needs to highlight text in the Word document. 
+      Based on the canvas state, there is a text element 'text to edit'.
+      And based on the available apis and controls,the user can use "select_text" to select the target to highlight and then to highlight the text.
+      Since there is no "Highlight" button available,I should click to the 'Home' tab first and then click the 'Highlight' button.
+      Therefore,the user can detail the task to highlight 'text to edit' in the Word document.
+      In this case, the user should select the 'text to edit' in the Word document and press the 'Home' button and 'Highlight' button respectively.
+    new_task: |-
+      Highlight 'text to edit' in the Word document.
+    action_plans: |-
+      {{"step 1":"choose the target text 'text to edit'","controlLabel": "", "controlText": "", "function": "select_text", "args": {{"text": "text to edit"}}}}
+      {{"step 2":"change ribbon to Home to show the highlight button","controlLabel": "11", "controlText": "Home", "function": "click_input", "args": {{"button": "left", "double": false}}}}
+      {{"step 3":"click the highlight button to finish highlight","controlLabel": "", "controlText": "Highlight", "function": "click_input", "args": {{"button": "left", "double": false}}}}

@@ -1,0 +1,98 @@
+click_input:
+  summary: |-
+    "click_input" is to click the control item with mouse.
+  class_name: |-
+    ClickInputCommand
+  usage: |-
+    [1] API call: click_input(button: str, double: bool)
+    [2] Args:
+      - button: 'The mouse button to click. One of ''left'', ''right'', ''middle'' or ''x'' (Default: ''left'')'
+      - double: 'Whether to perform a double click or not (Default: False)'
+    [3] Example: click_input(button="left", double=False)
+    [4] Available control item: All control items.
+    [5] Return: None
+
+
+set_edit_text:
+  summary: |-
+    "set_edit_text" is to add new text to the control item. If there is already text in the control item, the new text will append to the end of the existing text.
+  class_name: |-
+    SetEditTextCommand
+  usage: |-
+    [1] API call: set_edit_text(text: str="The text to input.")
+    [2] Args:
+      - text: The text input to the Edit control item. You must also use Double Backslash escape character to escape the single quote in the string argument.
+    [3] Example: set_edit_text(text="Hello World. \\n I enjoy the reading of the book 'The Lord of the Rings'. It's a great book.")
+    [4] Available control item: [Edit]
+    [5] Return: None
+
+annotation:
+  summary: |-
+    "annotation" is to take a screenshot of the current application window and annotate the control item on the screenshot for further analysis.
+  class_name: |-
+    AnnotationCommand
+  usage: |-
+    [1] API call: annotation(control_labels: List[str]=[])
+    [2] Args:
+      - control_labels: The list of annotated label of the control item. If the list is empty, it will annotate all the control items on the screenshot.
+    [3] Example: annotation(control_labels=["1", "2", "3", "36", "58"])
+    [4] Available control item: All control items.
+    [5] Return: None
+
+
+summary:
+  summary: |-
+    "summary" is to summarize your observation of the current application window base on the clean screenshot, or base on available control items. You must use your vision to summarize the image with required information using the argument "text". Do not add information that is not in the image.
+  class_name: |-
+    SummaryCommand
+  usage: |-
+    [1] API call: summary(text: str="Your description of the image.")
+    [2] Args: 
+      - text: The text description of the image with required information. 
+    [3] Example: summary(text="The image shows a workflow of a AI agent framework. \\n The framework has three components: the 'data collection', the 'data processing' and the 'data analysis'.")
+    [4] Available control item: All control items.
+    [5] Return: the summary of the image.
+
+texts:
+  summary: |-
+    "texts" is to get the text of the control item. It typical apply to Edit and Document control item when user request is to get the text of the control item. This only works for Edit and Document control items. If you want to get the text of other control items, you can use the "summary" API to describe the required information based on the screenshot by yourself.
+  class_name: |-
+    GetTextsCommand
+  usage: |-
+    [1] API call: texts()
+    [2] Args: None
+    [3] Example: texts()
+    [4] Available control item: Edit and Document control items.
+    [5] Return: the text content of the control item.
+
+wheel_mouse_input:
+  summary: |-
+    "wheel_mouse_input" is to scroll the control item. It typical apply to a ScrollBar type of control item when user request is to scroll the control item, or the targeted control item is not visible nor available in the control item list, but you know the control item is in the application window and you need to scroll to find it.
+  class_name: |-
+    WheelMouseInputCommand
+  usage: |-
+    [1] API call: wheel_mouse_input(wheel_dist: int)
+    [2] Args: 
+        - wheel_dist: The distance to scroll. Positive values indicate upward scrolling, negative values indicate downward scrolling.
+    [3] Example: wheel_mouse_input(wheel_dist=-20)
+    [4] All control items.
+    [5] Return: None
+
+keyboard_input:
+  summary: |-
+    "keyboard_input" is to simulate the keyboard input. You can use this API to simulate the keyboard input, such as shortcut keys, or any other keys that you want to input.
+  class_name: |-
+    keyboardInputCommand
+  usage: |-
+    [1] API call: keyboard_input(keys: str)
+    [2] Args:
+      - keys: The key to input. It can be any key on the keyboard, with special keys represented by their virtual key codes. For example, "{VK_CONTROL}c" represents the Ctrl+C shortcut key.
+    [3] Example: 
+      - keyboard_input(keys="{VK_CONTROL}c") --> Copy the selected text.
+      - keyboard_input(keys="{ENTER}") --> Press the Enter key.
+      - keyboard_input(keys="{TAB 2}") --> Press the Tab key twice.
+    [4] Available control item: All control items.
+    [5] Return: None
+
+
+  

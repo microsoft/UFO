@@ -1,0 +1,135 @@
+HOST_AGENT: {
+  VISUAL_MODE: True, # Whether to use the visual mode
+  REASONING_MODEL: False, # Whether the model is reasoning model. For OpenAI o1, o3, o4-mini, this field must be set to True.
+  API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
+  API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
+  API_KEY: "sk-",  # The OpenAI API key, begin with sk-
+  API_VERSION: "2025-02-01-preview", # "2024-02-15-preview" by default
+  API_MODEL: "gpt-4o",  # The only OpenAI model by now that accepts visual input
+
+
+  ### Comment above and uncomment these if using "aoai".
+  # API_TYPE: "aoai" , # The API type, "openai" for the OpenAI API, "aoai" for the Azure OpenAI.  
+  # API_BASE: "YOUR_ENDPOINT", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the aoai, it should be https://{your-resource-name}.openai.azure.com
+  # API_KEY: "YOUR_KEY",  # The aoai API key
+  # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+  # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
+  # API_DEPLOYMENT_ID: "gpt-4o", # The deployment id for the AOAI API
+  
+  ### For Azure_AD
+  # AAD_TENANT_ID: "YOUR_TENANT_ID", # Set the value to your tenant id for the llm model
+  # AAD_API_SCOPE: "YOUR_SCOPE", # Set the value to your scope for the llm model
+  # AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
+}
+
+APP_AGENT: {
+  VISUAL_MODE: True, # Whether to use the visual mode
+  REASONING_MODEL: False, # Whether the model is reasoning model. For OpenAI o1, o3, o4-mini, this field must be set to True.
+  API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
+  API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
+  API_KEY: "sk-",  # The OpenAI API key, begin with sk-
+  API_VERSION: "2025-02-01-preview", # "2024-02-15-preview" by default
+  API_MODEL: "gpt-4o",  # The only OpenAI model by now that accepts visual input
+
+
+  ### Comment above and uncomment these if using "aoai".
+  # API_TYPE: "aoai" , # The API type, "openai" for the OpenAI API, "aoai" for the Azure OpenAI.  
+  # API_BASE: "YOUR_ENDPOINT", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the aoai, it should be https://{your-resource-name}.openai.azure.com
+  # API_KEY: "YOUR_KEY",  # The aoai API key
+  # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+  # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
+  # API_DEPLOYMENT_ID: "gpt-4o", # The deployment id for the AOAI API
+  
+  ### For Azure_AD
+  # AAD_TENANT_ID: "YOUR_TENANT_ID", # Set the value to your tenant id for the llm model
+  # AAD_API_SCOPE: "YOUR_SCOPE", # Set the value to your scope for the llm model
+  # AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
+  }
+
+
+EVALUATION_AGENT: {
+  VISUAL_MODE: True, # Whether to use the visual mode
+  REASONING_MODEL: False, # Whether the model is reasoning model. For OpenAI o1, o3, o4-mini, this field must be set to True.
+  API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
+  API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
+  API_KEY: "sk-",  # The OpenAI API key, begin with sk-
+  API_VERSION: "2025-02-01-preview", # "2024-02-15-preview" by default
+  API_MODEL: "gpt-4o",  # The only OpenAI model by now that accepts visual input
+
+
+  ### Comment above and uncomment these if using "aoai".
+  # API_TYPE: "aoai" , # The API type, "openai" for the OpenAI API, "aoai" for the Azure OpenAI.  
+  # API_BASE: "YOUR_ENDPOINT", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the aoai, it should be https://{your-resource-name}.openai.azure.com
+  # API_KEY: "YOUR_KEY",  # The aoai API key
+  # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+  # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
+  # API_DEPLOYMENT_ID: "gpt-4o", # The deployment id for the AOAI API
+  
+  ### For Azure_AD
+  # AAD_TENANT_ID: "YOUR_TENANT_ID", # Set the value to your tenant id for the llm model
+  # AAD_API_SCOPE: "YOUR_SCOPE", # Set the value to your scope for the llm model
+  # AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
+  }
+
+BACKUP_AGENT: {
+  VISUAL_MODE: True, # Whether to use the visual mode
+
+  API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
+  API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
+  API_KEY: "sk-",  # The OpenAI API key, begin with sk-
+  API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+  API_MODEL: "gpt-4-vision-preview",  # The only OpenAI model by now that accepts visual input
+
+
+  ### Comment above and uncomment these if using "aoai".
+  # API_TYPE: "aoai" , # The API type, "openai" for the OpenAI API, "aoai" for the Azure OpenAI.  
+  # API_BASE: "YOUR_ENDPOINT", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the aoai, it should be https://{your-resource-name}.openai.azure.com
+  # API_KEY: "YOUR_KEY",  # The aoai API key
+  # API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
+  # API_MODEL: "YOUR_MODEL",  # The only OpenAI model by now that accepts visual input
+  # API_DEPLOYMENT_ID: "gpt-4-visual-preview", # The deployment id for the AOAI API
+  
+  ### For Azure_AD
+  # AAD_TENANT_ID: "YOUR_TENANT_ID", # Set the value to your tenant id for the llm model
+  # AAD_API_SCOPE: "YOUR_SCOPE", # Set the value to your scope for the llm model
+  # AAD_API_SCOPE_BASE: "YOUR_SCOPE_BASE" # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
+}
+
+### For the omniparser grounding model
+OMNIPARSER: {
+  ENDPOINT: "http://xxx.xxx.xxx.xxx:xxxx", # The omniparser endpoint, to be filled by the user
+  BOX_THRESHOLD: 0.05, # The box threshold for the omniparser
+  IOU_THRESHOLD: 0.1, # The iou threshold for the omniparser
+  USE_PADDLEOCR: True, # Whether to use the paddleocr for the omniparser
+  IMGSZ: 640 # The image size for the omniparser
+}
+
+### For GPT parameters
+MAX_TOKENS: 2000  # The max token limit for the response completion
+MAX_RETRY: 3  # The max retry limit for the response completion
+TEMPERATURE: 0.0  # The temperature of the model: the lower the value, the more consistent the output of the model
+TOP_P: 0.0  # The top_p of the model: the lower the value, the more conservative the output of the model
+TIMEOUT: 60  # The call timeout(s), default is 1 min
+
+
+### For RAG
+
+## RAG Configuration for the offline docs
+RAG_OFFLINE_DOCS: False  # Whether to use the offline RAG.
+RAG_OFFLINE_DOCS_RETRIEVED_TOPK: 1  # The topk for the offline retrieved documents
+
+## RAG Configuration for the Bing search
+BING_API_KEY: "YOUR_BING_SEARCH_API_KEY"  # The Bing search API key
+RAG_ONLINE_SEARCH: False  # Whether to use the online search for the RAG.
+RAG_ONLINE_SEARCH_TOPK: 5  # The topk for the online search
+RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
+
+## RAG Configuration for experience
+RAG_EXPERIENCE: False  # Whether to use the RAG from its self-experience.
+RAG_EXPERIENCE_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
+
+## RAG Configuration for demonstration
+RAG_DEMONSTRATION: False  # Whether to use the RAG from its user demonstration.
+RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
+RAG_DEMONSTRATION_COMPLETION_N: 3  # The number of completion choices for the demonstration result
+

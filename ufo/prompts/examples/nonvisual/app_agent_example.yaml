@@ -1,0 +1,359 @@
+version: 1.0
+
+example1: 
+  Request: |-
+    My name is Zac. Please send a email to jack@outlook.com to thanks his contribution on the open source.
+  Sub-task: |-
+    Compose an email to send to Jack (jack@outlook.com) to thank him for his contribution to the open source project on the outlook application, using the name Zac.
+  Response: 
+    Observation: |-
+        The control item list indicates that I am on the Main Page of Outlook. The Main Page has a list of control items and email received. The new email editing window is not opened. The last action took effect by opening the Outlook application.
+    Thought: |-
+      Base on the screenshots and the control item list, I need to click the New Email button to open a New Email window for the one-step action.
+    ControlLabel: |-
+      1
+    ControlText: |-
+      New Email
+    Function: |-
+      click_input
+    Args: 
+      {"button": "left", "double": false}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) Input the email address of the receiver.
+      - (2) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.
+      - (3) Input the content of the email. I need to input 'Dear Jack,\\nI hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.\\nYour commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.\\nYour code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.\\nPlease know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.\\nOnce again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.\\nBest regards,\\nZac'.
+      - (4) Click the Send button to send the email.
+    Comment: |-
+      After I click the New Email button, the New Email window will be opened and available for composing the email.
+  Tips: |-
+    - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
+    - You need to draft the content of the email and send it to the receiver. 
+
+
+example2: 
+  Request: |- 
+    My name is Zac. Please send a email to jack@outlook.com to thanks his contribution on the open source.
+  Sub-task: |-
+    Compose an email to send to Jack (jack@outlook.com) to thank him for his contribution to the open source project on the outlook application, using the name Zac.
+  Response: 
+    Observation: |-
+        The control item list indicates that I am on a calendar page of Outlook. The new email editing window is not opened and also the New Email button is not available from the control item list. The last action took effect by opening the Outlook windows.
+    Thought: |-
+      Base on the previous plan, I need to click the New Email button to open a New Email window. However, the New Email button is not visible in the screenshots, also not available in the control information. I may need to first click the Main Page TabItem to switch to the Main Page, and then find and click the New Email button to open a New Email window.
+    ControlLabel: |-
+      34
+    ControlText: |-
+      Main Page
+    Function: |-
+      click_input
+    Args:
+      {"button": "left", "double": false}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) Find the New Email button in the Main Page and click it to open a New Email window. If the New Email button is still not visible in the screenshot, I may need to look for take action on other control items to navigate to the New Email button.
+      - (2) Input the email address of the receiver.
+      - (3) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.
+      - (4) Input the content of the email. I need to input 
+      
+        'Dear Jack,
+        I hope this message finds you well. I am writing to express my sincere gratitude for your outstanding contribution to our open-source project. Your dedication and expertise have truly made a significant impact, and we are incredibly grateful to have you on board.
+        Your commitment to the open-source community has not gone unnoticed, and your recent contributions have been instrumental in enhancing the functionality and quality of our project. It's through the efforts of individuals like you that we are able to create valuable resources that benefit the community as a whole.
+        Your code reviews, bug fixes, and innovative ideas have not only improved the project but have also inspired others to contribute their best. We recognize and appreciate the time and effort you've invested in making our open-source initiative a success.
+        
+        Please know that your contributions are highly valued, and we look forward to continued collaboration with someone as talented and dedicated as yourself. If there's anything you need or if you have further ideas you'd like to discuss, please don't hesitate to reach out.
+        Once again, thank you for your exceptional contributions. We are fortunate to have you as part of our open-source community.
+        Best regards,
+        Zac'.
+      - (5) Click the Send button to send the email.
+    Comment: |-
+      I am looking for the New Email button, and will try to find it in the Main Page.
+  Tips: |-
+    - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
+    - Since the New Email button is not visible in the screenshot, I may need to take action on other control items to first navigate to the New Email button, and then open a New Email window to compose the email.
+
+
+
+example3: 
+  Request: |- 
+    Send a message to Tom on Teams to ask him if he can join the meeting at 3pm.
+  Sub-task: |-
+    Compose a message to send to Tom on Teams to ask him if he can join the meeting at 3pm.
+  Response: 
+    Observation: |-
+      The control item list indicates that I am on the chat window of Tom on Teams, the message input box is empty and ready to input.
+    Thought: |-
+      Base on the screenshots and the control item list and my action history, I have opened, and now on the chat window of Tom on Teams. I need to input the message in the Edit control named 'Type a new message' for the current one-step action, which is not sensitive and does not confirmation.
+    ControlLabel: |-
+      36
+    ControlText: |-
+      Type a new message
+    Function: |-
+      set_edit_text
+    Args:
+      {"text": "Hello Tom. It's 3 PM. Are you available to join the meeting now?"}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) Click the Send button to send the message. This is a sensitive action that need to be confirmed by the user before the execution.
+    Comment: |-
+      Inputting the message is not a sensitive action and do not need to be confirmed.
+  Tips: |-
+    - Sending a message is a sensitive action and need to be confirmed.
+
+
+
+example4:
+  Request: |-
+    Draft an email to Amy to ask her how she feels about the new project.
+  Sub-task: |-
+    Draft an email to send to Amy to ask her how she feels about the new project on the outlook application.
+  Response: 
+    Observation: |-
+      The control item list indicates that I am on the editing window of a new email, and the 'To', 'CC', 'Title' and 'Email Body' blocks are visible and ready to input. The title of the email has already been filled. The last action took effect by opening the Outlook windows and jump to the new email editing window directly.
+    Thought: |-
+      Base on the previous plan, I need to click the New Email button to open a New Email window. But the screenshot shows that the New Email window has already opened and the title of email has already been inputted. I skip some of the actions in the previous plan and move to draft the content of the email and send it to Amy.
+    ControlLabel: |-
+      36
+    ControlText: |-
+      Email Body
+    Function: |-
+      set_edit_text
+    Args:
+      text: |
+        Dear Amy,
+
+        I hope this message finds you well. I am writing to ask how you feel about the new project. Let me know if you have any concerns.
+
+        Best regards,
+        [Sender's Name]
+    Status: |-
+      FINISH
+    Plan:
+      - <FINISH>
+    Comment: |-
+      I revised the previous plan base on the screenshot since I observe that New Email window has already opened and the title of email has already been inputted. I cannot input the email address since it is not provided in the user request. Since the user did not ask me to send the email, the task is finished after I draft the content of the email.
+  Tips: |-
+    - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
+    - You need to draft the content of the email and send it to the receiver. Use polite language when drafting the email.
+
+
+example5:
+  Request: |-
+    Search for the word 'UFO' in the document.
+  Sub-task: |-
+    Search for the word 'UFO' in the document on the Word application.
+  Response: 
+    Observation: |-
+      The control item list indicates that I am on the editing window of a Word file. The search box is visible and the word 'UFO' is already inputted.
+    Thought: |-
+      Base on the screenshots, the word 'UFO' is already inputted in the Edit control named 'Find'. I need to click the Find button to search for the word 'UFO' in the document, and the task is finished.
+    ControlLabel: |-
+      59
+    ControlText: |-
+      Find
+    Function: |-
+      click_input
+    Args: 
+      {"button": "left", "double": false}
+    Status: |-
+      FINISH
+    Plan:
+      - <FINISH>
+    Comment: |-
+      I searched for the word 'UFO' in the document successfully. The user should view the search result.
+  Tips: |-
+    - If there are steps already taken (e.g., the required text is already inputted edit box), you do not need to repeat them. You can skip the steps that have already been taken and move to the next step. 
+
+
+example6:
+  Request: |-
+    Send an message to Tom on Teams by including a (1) the text extracted from framework.docx, (2) and a detailed description of the workflow of the framework in the image of framework.png.
+  Sub-task: |-
+    Extract the full text from the framework.docx.
+  Response: 
+    Observation: |-
+      The current control item list indicates that I am on the Word application with the 'framework.docx' file open. 
+    Thought: |-
+      Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'FINISH' immediately.
+    ControlLabel: |-
+      83
+    ControlText: |-
+      framework - Word
+    Function: |-
+      texts
+    Args: {}
+    Status: |-
+      FINISH
+    Plan:
+      - <FINISH>
+    Comment: |-
+      The partial tasks on 'framework.docx' is completed once I take the current action. I need to set Status immediately to 'FINISH'.
+  Tips: |-
+    - In Word application, the main canva is a Document control, and the text of the document can be extracted by using the 'texts' action.
+
+
+example7:
+  Request: |-
+    Quickly remove all notes in the presentation.pptx, without looping through each slide.
+  Sub-task: |-
+    Remove all notes in the presentation.pptx file quickly without looping through each slide.
+  Response: 
+    Observation: |-
+      The current screenshot shows the PowerPoint application with the 'presentation.pptx' file open. The 'File Tab' button is visible, which is needed to access the backstage view where the 'Check for Issues' option is located. This matches the next step in the previous plan. The application appears to be in the normal editing view, and no backstage view or other menus are open at this time.
+    Thought: |-
+      The user request to do it quickly. To make the task more efficient, I need to use some fast but niche tricks using the 'Remove All Presentation Notes' function.  To do so, I need to first click the 'File' button to open the menu.
+    ControlLabel: |-
+      59
+    ControlText: |-
+      File
+    Function: |-
+      click_input
+    Args: 
+      {"button": "left", "double": false}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) Click the 'Info' ListItem, to access the 'Info' page.
+      - (2) Click the 'Check for Issues' MenuItem, to open a menu for checking.
+      - (3) Click the 'Inspect Document', to open a document inspector.
+      - (4) Click the 'Inspect' button, to inspect the ppt for notes.
+      - (5) I should now find and click the 'Remove All Presentation Notes'. However, this button is usually at the bottom of the menu, and therefore I should apply wheel_mouse_input(wheel_dist=-20) to a ScrollBar to reach the menu bottom to make this button visible.
+      - (6) Once 'Remove All Presentation Notes' is visible, I should click it to remove all notes in the presentation.pptx file. This action is sensitive to the system and need to be confirmed by the user.
+    Comment: |-
+      I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
+  Tips: |-
+    - The 'Remove All Presentation Notes' function is the fastest way to remove all notes in the presentation.pptx file. I should use this function to complete the task quickly instead of looping through each slide.
+    - The 'Remove All Presentation Notes' is usually at the bottom of the menu, and I should apply wheel_mouse_input(wheel_dist=-20) to a ScrollBar to reach the menu bottom to make this button visible.
+
+
+example8:
+  Request: |-
+    How many stars does the Imdiffusion repo have?
+  Sub-task: |-
+    Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
+  Response: 
+    Observation: |-
+      I observe that the Edge browser is available from the control item list, and the with the Google search page opened.
+    Thought: |-
+      I need to input the text 'Imdiffusion GitHub' in the search box of Google to get to the Imdiffusion repo page from the search results. The search box is usually in a type of ComboBox.
+    ControlLabel: |-
+      36
+    ControlText: |-
+      搜索
+    Function: |-
+      set_edit_text
+    Args: 
+      {"text": "Imdiffusion GitHub"}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) After input 'Imdiffusion GitHub', click Google Search to search for the Imdiffusion repo on github.
+      - (2) Once the searched results are visible, click the Imdiffusion repo Hyperlink in the searched results to open the repo page.
+      - (3) Observing and summarize the number of stars the Imdiffusion repo page, and reply to the user request.
+    Comment: |-
+      I plan to use Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
+
+  Tips: |-
+    - The search box is usually in a type of ComboBox.
+    - The number of stars of a Github repo page can be found in the repo page visually.
+
+
+
+example9: 
+  Request: |- 
+    Please remind me to get party dinner (5 people) preparation done before 5PM today with steps and notes.
+  Sub-task: |-
+    Add a task of 'Get party dinner (5 people) preparation done before 5PM today.' to the Microsoft To Do application, and set more details for the task, including adding steps and notes.
+  Response: 
+    Observation: |-
+      The current control item list indicates that I am on the Microsoft To Do application. The application is open and there is a edit block at the bottom for inputting the task.
+    Thought: |-
+      I need to add a task of 'Get party dinner (5 people) preparation done before 5PM today.' to the edit block of 'Add a task in “My Day”'. I also need to set more details for the task afterwards, including adding steps and notes.
+    ControlLabel: |-
+      19
+    ControlText: |-
+      Add a task in “My Day”
+    Function: |-
+      set_edit_text
+    Args: 
+      {"text": "Get party dinner (5 people) preparation done before 5PM today."}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) After inputting the task, press the Enter key to create the task.
+      - (2) Click the ListItem of the task that was just created to set more details.
+      - (3) Add a step 1 for the task by inputing 'Menu Planning and Ingredient Acquisition' in the Add step edit control.
+      - (4) Add a step 2 for the task by inputing 'Meal Preparation Schedule' in the Add step edit control following the step one.
+      - (5) Add a step 3 for the task by inputing 'Setting Up the Dining Area' in the Add step edit control following the step two.
+      - (6) Add a note to this task in the 'Add note' edit blocking at the bottom by inputing 'Considering preferences, dietary restrictions and food allergiesof the guests.'.
+      - (7) Close the details view by clicking the 'Dismiss detail view' botton.
+    Comment: |-
+      After creating the task, I need to set more details for the reminder, including adding steps and notes.
+  Tips: |-
+    - You need to add more details for the task, including adding steps and notes.
+    - You need to add each step one by one and add notes to the task.
+
+
+
+example10:
+  Request: |-
+    Please create a slide from the meeting_notes.docx in the presentation1.pptx.
+  Sub-task: |-
+    Create a slide from the meeting_notes.docx in the presentation1.pptx file using the Copilot Add-in in the Microsoft PowerPoint application.
+  Response: 
+    Observation: |-
+      The current control item list indicates that I am on the Microsoft PowerPoint application. The Copilot Add-in is avaialble from the control item list.
+    Thought: |-
+      I need to click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide from the meeting_notes.docx.
+    ControlLabel: |-
+      60
+    ControlText: |-
+      Copilot
+    Function: |- 
+      click_input
+    Args: 
+      {"button": "left", "double": false}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) Click the 'Create presentation from file' button to open a file picker.
+      - (2) When the 'meeting_notes' is visible in the file picker, select and click the "meeting_notes" ListItem to create a slide.
+      - (3) Click the 'Send' buttom to send the request to Copilot. This completes the task.
+    Comment: |-
+      I need to use the Copilot Add-in to create a slide from the meeting_notes.docx.
+  Tips: |-
+    - The Copilot Add-in can directly create a slide from the meeting_notes.docx. You need to use the Copilot Add-in to complete the task, instead of manually creating a slide from the meeting_notes.docx.
+
+
+example11: 
+  Request: |-
+    create a presentation of watering plant on plant.pptx.
+  Sub-task: |-
+    Create a presentation from the plant.pptx about watering plant using the Copilot Add-in in the Microsoft PowerPoint application.
+  Response: 
+    Observation: |-
+      The Copilot Add-in is available in the control item list.
+    Thought: |-
+      I need to click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide about a specific topic, such as watering plant, from the plant.pptx.
+    ControlLabel: |-
+      60
+    ControlText: |-
+      Copilot
+    Function: |- 
+      click_input
+    Args: 
+      {"button": "left", "double": false}
+    Status: |-
+      CONTINUE
+    Plan:
+      - (1) Click the 'Create presentation about' button to input the topic 'watering plant'.
+      - (2) Input the topic 'watering plant' in the edit control after the text of 'Create presentation about'.
+      - (3) Click the 'Send' button to send the request to Copilot. This completes the task.
+    Comment: |-
+      I need to use the Copilot Add-in to create a presentation from the plant.pptx about watering plant.
+  Tips: |-
+    - The Copilot Add-in can directly create a presentation from the plant.pptx. You need to use the Copilot Add-in to complete the task.
+
