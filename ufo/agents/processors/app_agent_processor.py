@@ -4,18 +4,33 @@
 import json
 import os
 from dataclasses import asdict, dataclass, field
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional, Union
-
-from pywinauto.controls.uiawrapper import UIAWrapper
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional
 
 from ufo import utils
-from ufo.agents.processors.actions import ActionSequence, BaseControlLog, OneStepAction
+from ufo.utils import collector
+from PIL import Image
+from ufo.agents.processors.actions import BaseControlLog, OneStepAction
 from ufo.agents.processors.basic import BaseProcessor
-from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
-from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
+from ufo.cs.contracts import (
+    AppWindowControlInfo,
+    CaptureAppWindowScreenshotAction,
+    CaptureDesktopScreenshotAction,
+    ControlInfo,
+    GetAppWindowControlInfoAction, 
+    GetUITreeAction,
+    GetUITreeParams,
+    OperationCommand,
+    OperationSequenceAction
+)
+from ufo.cs.contracts import (
+    CaptureAppWindowScreenshotParams,
+    CaptureDesktopScreenshotParams,
+    GetAppWindowControlInfoParams
+)
+
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -113,6 +128,7 @@ class AppAgentRequestLog:
 
 
 class AppAgentProcessor(BaseProcessor):
+   
     """
     The processor for the app agent at a single step.
     """
@@ -120,8 +136,7 @@ class AppAgentProcessor(BaseProcessor):
     def __init__(
         self,
         agent: "AppAgent",
-        context: Context,
-        ground_service=Optional[BasicGrounding],
+        context: Context
     ) -> None:
         """
         Initialize the app agent processor.
@@ -134,16 +149,16 @@ class AppAgentProcessor(BaseProcessor):
         self.app_agent = agent
         self.host_agent = agent.host
 
-        self._annotation_dict = None
-        self._control_info = None
+        #self._annotation_dict = None
+        #self._control_info = None
         self._operation = ""
         self._args = {}
         self._image_url = []
         self.control_filter_factory = ControlFilterFactory()
         self.control_recorder = ControlInfoRecorder()
-        self.filtered_annotation_dict = None
+        #self.filtered_annotation_dict = None
         self.screenshot_save_path = None
-        self.grounding_service = ground_service
+
 
     def print_step_info(self) -> None:
         """
@@ -158,100 +173,6 @@ class AppAgentProcessor(BaseProcessor):
             ),
             "magenta",
         )
-
-    def get_control_list(self, screenshot_path: str) -> List[UIAWrapper]:
-        """
-        Get the control list from the annotation dictionary.
-        :param screenshot_path: The path to the clean screenshot.
-        :return: The list of control items.
-        """
-
-        api_backend = None
-        grounding_backend = None
-
-        control_detection_backend = configs.get("CONTROL_BACKEND", ["uia"])
-
-        if "uia" in control_detection_backend:
-            api_backend = "uia"
-        elif "win32" in control_detection_backend:
-            api_backend = "win32"
-
-        if "omniparser" in control_detection_backend:
-            grounding_backend = "omniparser"
-
-        if api_backend is not None:
-            api_control_list = (
-                self.control_inspector.find_control_elements_in_descendants(
-                    self.application_window,
-                    control_type_list=configs.get("CONTROL_LIST", []),
-                    class_name_list=configs.get("CONTROL_LIST", []),
-                )
-            )
-        else:
-            api_control_list = []
-
-        api_control_dict = {
-            i + 1: control for i, control in enumerate(api_control_list)
-        }
-
-        # print(control_detection_backend, grounding_backend, screenshot_path)
-
-        if grounding_backend == "omniparser" and self.grounding_service is not None:
-            self.grounding_service: BasicGrounding
-
-            onmiparser_configs = configs.get("OMNIPARSER", {})
-
-            # print(onmiparser_configs)
-
-            grounding_control_list = (
-                self.grounding_service.convert_to_virtual_uia_elements(
-                    image_path=screenshot_path,
-                    application_window=self.application_window,
-                    box_threshold=onmiparser_configs.get("BOX_THRESHOLD", 0.05),
-                    iou_threshold=onmiparser_configs.get("IOU_THRESHOLD", 0.1),
-                    use_paddleocr=onmiparser_configs.get("USE_PADDLEOCR", True),
-                    imgsz=onmiparser_configs.get("IMGSZ", 640),
-                )
-            )
-        else:
-            grounding_control_list = []
-
-        grounding_control_dict = {
-            i + 1: control for i, control in enumerate(grounding_control_list)
-        }
-
-        merged_control_list = self.photographer.merge_control_list(
-            api_control_list,
-            grounding_control_list,
-            iou_overlap_threshold=configs.get("IOU_THRESHOLD_FOR_MERGE", 0.1),
-        )
-
-        merged_control_dict = {
-            i + 1: control for i, control in enumerate(merged_control_list)
-        }
-
-        # Record the control information for the uia controls.
-        self.control_recorder.uia_controls_info = (
-            self.control_inspector.get_control_info_list_of_dict(
-                api_control_dict, ControlInfoRecorder.recording_fields
-            )
-        )
-
-        # Record the control information for the grounding controls.
-        self.control_recorder.grounding_controls_info = (
-            self.control_inspector.get_control_info_list_of_dict(
-                grounding_control_dict, ControlInfoRecorder.recording_fields
-            )
-        )
-
-        # Record the control information for the merged controls.
-        self.control_recorder.merged_controls_info = (
-            self.control_inspector.get_control_info_list_of_dict(
-                merged_control_dict, ControlInfoRecorder.recording_fields
-            )
-        )
-
-        return merged_control_list
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -279,58 +200,99 @@ class AppAgentProcessor(BaseProcessor):
             }
         )
 
-        self.photographer.capture_app_window_screenshot(
-            self.application_window, save_path=screenshot_save_path
+        self.session_data_manager.add_action(
+            CaptureAppWindowScreenshotAction(
+                params=CaptureAppWindowScreenshotParams(
+                    annotation_id=self.application_window_info.annotation_id
+                )
+            ),
+            setter=self._get_app_window_screenshot_action_callback
         )
+        
+        # removed control_recorder as it is not used in the code
+        # moved annotated image generation to process_collected_info
 
-        # Record the control information for the current application window.
-        self.control_recorder.application_windows_info = (
-            self.control_inspector.get_control_info(
-                self.application_window, field_list=ControlInfoRecorder.recording_fields
+    def _get_app_window_screenshot_action_callback(self, value):
+        """
+        Helper method to save control screenshot data to file.
+        
+        Args:
+            value: The result returned from the action
+            path: Path to save the screenshot
+        """
+        if value and isinstance(value, str) and value.startswith("data:image/png;base64,"):
+            try:
+                # Decode the base64 string to binary data
+                img_data = utils.decode_base64_image(value)
+                
+                # Create directory if it doesn't exist
+                os.makedirs(os.path.dirname(self.screenshot_save_path), exist_ok=True)
+                
+                # Save the image to the specified path
+                with open(self.screenshot_save_path, 'wb') as f:
+                    f.write(img_data)
+
+                print(f"Screenshot saved to {self.screenshot_save_path}")
+            except Exception as e:
+                print(f"Error saving screenshot: {e}")
+
+    
+    @BaseProcessor.exception_capture
+    @BaseProcessor.method_timer
+    def get_control_info(self) -> None:
+        """
+        Get the control information.
+        """
+        
+        self.session_data_manager.add_action(
+            GetAppWindowControlInfoAction(
+                params=GetAppWindowControlInfoParams(
+                    annotation_id=self.application_window_info.annotation_id,
+                    field_list=ControlInfoRecorder.recording_fields
+                )
+            ),
+            setter=self._get_app_window_control_info_action_callback
+        )
+        
+    def _get_app_window_control_info_action_callback(self, value):
+        model = AppWindowControlInfo(**value)
+        self.session_data_manager.session_data.state.app_window_control_info = model
+
+    @BaseProcessor.exception_capture
+    @BaseProcessor.method_timer
+    def process_collected_info(self) -> None:
+        screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
+        
+        annotated_screenshot_save_path = (
+            self.log_path + f"action_step{self.session_step}_annotated.png"
+        )
+        
+        concat_screenshot_save_path = (
+            self.log_path + f"action_step{self.session_step}_concat.png"
+        )
+        
+        self.session_data_manager.add_callback(
+            lambda value: self._generate_annotated_image(
+                value,
+                screenshot_save_path,
+                annotated_screenshot_save_path
             )
         )
 
-        # # Get the control elements in the application window if the control items are not provided for reannotation.
-        # if type(self.control_reannotate) == list and len(self.control_reannotate) > 0:
-        #     control_list = self.control_reannotate
-        # else:
-        #     control_list = self.control_inspector.find_control_elements_in_descendants(
-        #         self.application_window,
-        #         control_type_list=configs.get("CONTROL_LIST", []),
-        #         class_name_list=configs.get("CONTROL_LIST", []),
-        #     )
-
-        control_list = self.get_control_list(screenshot_save_path)
-
-        # Get the annotation dictionary for the control items, in a format of {control_label: control_element}.
-        self._annotation_dict = self.photographer.get_annotation_dict(
-            self.application_window, control_list, annotation_type="number"
-        )
-
-        # Attempt to filter out irrelevant control items based on the previous plan.
-        self.filtered_annotation_dict = self.get_filtered_annotation_dict(
-            self._annotation_dict
-        )
-
-        # Capture the screenshot of the selected control items with annotation and save it.
-        self.photographer.capture_app_window_screenshot_with_annotation_dict(
-            self.application_window,
-            self.filtered_annotation_dict,
-            annotation_type="number",
-            save_path=annotated_screenshot_save_path,
-        )
-
         if configs.get("SAVE_UI_TREE", False):
-            if self.application_window is not None:
-                step_ui_tree = ui_tree.UITree(self.application_window)
-                step_ui_tree.save_ui_tree_to_json(
-                    os.path.join(
-                        self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
-                    )
+            if self.application_window_info is not None:
+                self.session_data_manager.add_action(
+                    GetUITreeAction(params=GetUITreeParams(
+                        annotation_id=self.application_window_info.annotation_id,
+                        remove_empty=True
+                    )),
+                    setter=lambda value: self._save_ui_tree_callback(
+                        value,
+                        os.path.join(self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
+                    ))
                 )
 
         if configs.get("SAVE_FULL_SCREEN", False):
-
             desktop_save_path = (
                 self.log_path + f"desktop_action_step{self.session_step}.png"
             )
@@ -339,12 +301,133 @@ class AppAgentProcessor(BaseProcessor):
                 {"DesktopCleanScreenshot": desktop_save_path}
             )
 
-            # Capture the desktop screenshot for all screens.
-            self.photographer.capture_desktop_screen_screenshot(
-                all_screens=True, save_path=desktop_save_path
+            # Capture the desktop screenshot for all screens using action
+            desktop_screenshot_action = CaptureDesktopScreenshotAction(params=CaptureDesktopScreenshotParams(
+                all_screens=True
+            ))
+            self.session_data_manager.add_action(
+                desktop_screenshot_action,
+                setter=lambda value: self._capture_all_desktop_screenshot_action_callback(value, desktop_save_path)
             )
+            
+        # add callback for operations when data ready
+        self.session_data_manager.add_callback(
+            lambda value: self._capture_screen_callback(
+                value, {
+                "screenshot_save_path": screenshot_save_path,
+                "annotated_screenshot_save_path": annotated_screenshot_save_path,
+                "concat_screenshot_save_path": concat_screenshot_save_path
+            })
+        )
+        
+    def _generate_annotated_image(self, value, screenshot_save_path, annotated_screenshot_save_path):
+        """
+        Helper method to generate annotated image.
+        
+        Args:
+            value: The result returned from the action
+        """
+        self.session_data_manager.session_data.state._annotation_dict = {
+            control.annotation_id: control for control in self.session_data_manager.session_data.state.app_window_control_info.controls
+        }
 
-        # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
+        self.session_data_manager.session_data.state.filtered_annotation_dict = self.get_filtered_annotation_dict(
+            self.session_data_manager.session_data.state._annotation_dict
+        )
+        
+        if BACKEND == "uia":
+            self.session_data_manager.session_data.state._control_info = [
+                dict(
+                    label=item[0],
+                    control_text=item[1].name,
+                    control_type=item[1].control_type,
+                )
+                for item in self.session_data_manager.session_data.state._annotation_dict.items()
+            ]
+            
+            self.session_data_manager.session_data.state.filtered_control_info = [
+                dict(
+                    label=item[0],
+                    control_text=item[1].name,
+                    control_type=item[1].control_type,
+                )
+                for item in self.session_data_manager.session_data.state.filtered_annotation_dict.items()
+            ]
+        else:
+            self._control_info = [
+                dict(
+                    label=item[0],
+                    control_class=item[1].class_name,
+                )
+                for item in self.session_data_manager.session_data.state._annotation_dict.items()
+            ]
+
+            self.session_data_manager.session_data.state.filtered_control_info = [
+                dict(
+                    label=item[0],
+                    control_class=item[1].class_name,
+                )
+                for item in self.session_data_manager.session_data.state.filtered_annotation_dict.items()
+            ]
+        
+        image = Image.open(screenshot_save_path)
+        
+        annotated_image: Image.Image = collector.annotate_app_window_image(
+            image,
+            self.session_data_manager.session_data.state.app_window_control_info.window_info,
+            self.session_data_manager.session_data.state.app_window_control_info.controls,
+        )
+        
+        if annotated_image:
+            os.makedirs(os.path.dirname(annotated_screenshot_save_path), exist_ok=True)
+            
+            with open(annotated_screenshot_save_path, "wb") as f:
+                annotated_image.save(f, format="PNG")
+        
+    def _save_ui_tree_callback(self, value, path):
+        """
+        Helper method to save UI tree data.
+        
+        Args:
+            value: The result returned from the action
+            path: The path to the file where the UI tree data will be saved
+        """
+        if value:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w") as f:
+                json.dump(value, f, indent=4) 
+    
+    def _capture_all_desktop_screenshot_action_callback(self, value, path):
+        """
+        Helper method to save desktop screenshot data and save to file.
+        
+        Args:
+            value: The result returned from the action
+            path: Path to save the screenshot
+        """
+
+        if value and isinstance(value, str) and value.startswith("data:image/png;base64,"):
+            try:
+                img_data = utils.decode_base64_image(value)
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                with open(path, 'wb') as f:
+                    f.write(img_data)
+            except Exception as e:
+                print(f"Error saving image: {e}")
+        
+    def _capture_screen_callback(self, value, params: Dict[str, str]):
+        """
+        Helper method to save screenshot data.
+        
+        Args:
+            value: The result returned from the action
+            params: The parameters for the action
+        """
+        if params:
+            screenshot_save_path = params.get("screenshot_save_path")
+            annotated_screenshot_save_path = params.get("annotated_screenshot_save_path")
+            concat_screenshot_save_path = params.get("concat_screenshot_save_path")
+        
         if configs.get("INCLUDE_LAST_SCREENSHOT", True):
             last_screenshot_save_path = (
                 self.log_path + f"action_step{self.session_step - 1}.png"
@@ -353,29 +436,25 @@ class AppAgentProcessor(BaseProcessor):
                 self.log_path
                 + f"action_step{self.session_step - 1}_selected_controls.png"
             )
-            self._image_url += [
-                self.photographer.encode_image_from_path(
-                    last_control_screenshot_save_path
-                    if os.path.exists(last_control_screenshot_save_path)
-                    else last_screenshot_save_path
-                )
-            ]
+
+            image_path = last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path
+            self._image_url += [utils.encode_image_from_path(image_path)]
 
         # Whether to concatenate the screenshots of clean screenshot and annotated screenshot into one image.
         if configs.get("CONCAT_SCREENSHOT", False):
-            self.photographer.concat_screenshots(
+            collector.concat_screenshots(
                 screenshot_save_path,
                 annotated_screenshot_save_path,
                 concat_screenshot_save_path,
             )
             self._image_url += [
-                self.photographer.encode_image_from_path(concat_screenshot_save_path)
+                utils.encode_image_from_path(concat_screenshot_save_path)
             ]
         else:
-            screenshot_url = self.photographer.encode_image_from_path(
+            screenshot_url = utils.encode_image_from_path(
                 screenshot_save_path
             )
-            screenshot_annotated_url = self.photographer.encode_image_from_path(
+            screenshot_annotated_url = utils.encode_image_from_path(
                 annotated_screenshot_save_path
             )
             self._image_url += [screenshot_url, screenshot_annotated_url]
@@ -383,29 +462,7 @@ class AppAgentProcessor(BaseProcessor):
         # Save the XML file for the current state.
         if configs.get("LOG_XML", False):
             self._save_to_xml()
-
-    @BaseProcessor.exception_capture
-    @BaseProcessor.method_timer
-    def get_control_info(self) -> None:
-        """
-        Get the control information.
-        """
-
-        # Get the control information for the control items and the filtered control items, in a format of list of dictionaries.
-        self._control_info = self.control_inspector.get_control_info_list_of_dict(
-            self._annotation_dict,
-            ["control_text", "control_type" if BACKEND == "uia" else "control_class"],
-        )
-        self.filtered_control_info = (
-            self.control_inspector.get_control_info_list_of_dict(
-                self.filtered_annotation_dict,
-                [
-                    "control_text",
-                    "control_type" if BACKEND == "uia" else "control_class",
-                ],
-            )
-        )
-
+        
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_prompt_message(self) -> None:
@@ -451,7 +508,7 @@ class AppAgentProcessor(BaseProcessor):
             dynamic_examples=retrieved_results,
             dynamic_knowledge=external_knowledge_prompt,
             image_list=self._image_url,
-            control_info=self.filtered_control_info,
+            control_info=self.session_data_manager.session_data.state.filtered_control_info,
             prev_subtask=self.previous_subtasks,
             plan=self.prev_plan,
             request=self.request,
@@ -476,7 +533,7 @@ class AppAgentProcessor(BaseProcessor):
             prev_subtask=self.previous_subtasks,
             plan=self.prev_plan,
             request=self.request,
-            control_info=self.filtered_control_info,
+            control_info=self.session_data_manager.session_data.state.filtered_control_info,
             subtask=self.subtask,
             current_application=self.application_process_name,
             host_message=self.host_message,
@@ -549,49 +606,68 @@ class AppAgentProcessor(BaseProcessor):
             control_text=self.control_text,
             after_status=self.status,
         )
-        control_selected = self._annotation_dict.get(self._control_label, None)
+        #control_selected = self.session_data_manager.session_data.session_state._annotation_dict.get(self._control_label, None)
 
         # Save the screenshot of the tagged selected control.
-        self.capture_control_screenshot(control_selected)
+        # self.capture_control_screenshot(control_selected)
+        # TODO: make this an action if neccessary
 
-        self.actions: ActionSequence = ActionSequence(actions=[action])
-        self.actions.execute_all(
-            puppeteer=self.app_agent.Puppeteer,
-            control_dict=self._annotation_dict,
-            application_window=self.application_window,
-        )
+        commands = [
+            OperationCommand(
+                command_id=action.function,
+                **{
+                    action.function: {
+                    **action.args,
+                    "control_label": action.control_label,
+                    "control_text": action.control_text,
+                    "after_status": action.after_status,
+                    }
+                }
+            )
+        ]
 
-        if self.is_application_closed():
-            utils.print_with_color("Warning: The application is closed.", "yellow")
-            self.status = "FINISH"
+        self.session_data_manager.add_action(OperationSequenceAction(
+            params=commands,
+        ))
 
-    def capture_control_screenshot(
-        self, control_selected: Union[UIAWrapper, List[UIAWrapper]]
-    ) -> None:
-        """
-        Capture the screenshot of the selected control.
-        :param control_selected: The selected control item or a list of selected control items.
-        """
-        control_screenshot_save_path = (
-            self.log_path + f"action_step{self.session_step}_selected_controls.png"
-        )
+        # self.actions: ActionSequence = ActionSequence(actions=[action])
+        # self.actions.execute_all(
+        #     puppeteer=self.app_agent.Puppeteer,
+        #     control_dict=self._annotation_dict,
+        #     application_window=self.application_window,
+        # )
 
-        self._memory_data.add_values_from_dict(
-            {"SelectedControlScreenshot": control_screenshot_save_path}
-        )
+        # if self.is_application_closed():
+        #     utils.print_with_color("Warning: The application is closed.", "yellow")
+        #     self.status = "FINISH"
 
-        sub_control_list = (
-            control_selected
-            if isinstance(control_selected, list)
-            else [control_selected]
-        )
+    # def capture_control_screenshot(
+    #     self, control_selected: Union[ControlInfo, List[ControlInfo]]
+    # ) -> None:
+    #     """
+    #     Capture the screenshot of the selected control.
+    #     :param control_selected: The selected control item or a list of selected control items.
+    #     """
+    #     control_screenshot_save_path = (
+    #         self.log_path + f"action_step{self.session_step}_selected_controls.png"
+    #     )
 
-        self.photographer.capture_app_window_screenshot_with_rectangle(
-            self.application_window,
-            sub_control_list=sub_control_list,
-            save_path=control_screenshot_save_path,
-            background_screenshot_path=self.screenshot_save_path,
-        )
+    #     self._memory_data.add_values_from_dict(
+    #         {"SelectedControlScreenshot": control_screenshot_save_path}
+    #     )
+
+    #     sub_control_list = (
+    #         control_selected
+    #         if isinstance(control_selected, list)
+    #         else [control_selected]
+    #     )
+
+    #     self.photographer.capture_app_window_screenshot_with_rectangle(
+    #         self.application_window,
+    #         sub_control_list=sub_control_list,
+    #         save_path=control_screenshot_save_path,
+    #         background_screenshot_path=self.screenshot_save_path,
+    #     )
 
     def handle_screenshot_status(self) -> None:
         """
@@ -603,7 +679,7 @@ class AppAgentProcessor(BaseProcessor):
             "magenta",
         )
         self.control_reannotate = self.app_agent.Puppeteer.execute_command(
-            "annotation", self._args, self._annotation_dict
+            "annotation", self._args, self.session_data_manager.session_data.state._annotation_dict
         )
 
     def sync_memory(self):
@@ -611,10 +687,10 @@ class AppAgentProcessor(BaseProcessor):
         Sync the memory of the AppAgent.
         """
 
-        app_root = self.control_inspector.get_application_root_name(
-            self.application_window
-        )
-
+        app_root = self.app_root
+        # app_root is set in the selecte_app and launch_app actions
+        # and should not change as app agent is for a single app
+        #app_root = self.application_window_info.process_name
         action_type = [
             self.app_agent.Puppeteer.get_command_types(action.function)
             for action in self.actions.actions
@@ -761,8 +837,8 @@ class AppAgentProcessor(BaseProcessor):
         self.app_agent.Puppeteer.save_to_xml(xml_save_path)
 
     def get_filtered_annotation_dict(
-        self, annotation_dict: Dict[str, UIAWrapper], configs: Dict[str, Any] = configs
-    ) -> Dict[str, UIAWrapper]:
+        self, annotation_dict: Dict[str, ControlInfo], configs: Dict[str, Any] = configs
+    ) -> Dict[str, ControlInfo]:
         """
         Get the filtered annotation dictionary.
         :param annotation_dict: The annotation dictionary.
@@ -816,9 +892,7 @@ class AppAgentProcessor(BaseProcessor):
                 "icon", configs["CONTROL_FILTER_MODEL_ICON_NAME"]
             )
 
-            cropped_icons_dict = self.photographer.get_cropped_icons_dict(
-                self.application_window, annotation_dict
-            )
+            cropped_icons_dict = {}
             filtered_icon_dict = model_icon.control_filter(
                 annotation_dict,
                 cropped_icons_dict,

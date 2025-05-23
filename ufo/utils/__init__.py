@@ -1,13 +1,19 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import base64
 import importlib
 import functools
 import json
+import mimetypes
 import os
-from typing import Optional, Any, Dict
+from typing import Optional, Any, Dict, Tuple
+from PIL import Image
 
 from colorama import Fore, Style, init
+
+from pywinauto.win32structures import RECT
+
 
 # init colorama
 init()
@@ -162,3 +168,92 @@ def get_hugginface_embedding(
     from langchain_huggingface import HuggingFaceEmbeddings
 
     return HuggingFaceEmbeddings(model_name=model_name)
+
+
+def coordinate_adjusted(window_rect: RECT, control_rect: RECT) -> Tuple:
+    """
+    Adjust the coordinates of the control rectangle to the window rectangle.
+    :param window_rect: The window rectangle.
+    :param control_rect: The control rectangle.
+    :return: The adjusted control rectangle (left, top, right, bottom), relative to the window rectangle.
+    """
+    # (left, top, right, bottom)
+    adjusted_rect = (
+        control_rect.left - window_rect.left,
+        control_rect.top - window_rect.top,
+        control_rect.right - window_rect.left,
+        control_rect.bottom - window_rect.top,
+    )
+
+    return adjusted_rect
+
+
+def coordinate_adjusted_to_relative(window_rect: RECT, control_rect: RECT) -> Tuple:
+    """
+    Adjust the coordinates of the control rectangle to the window rectangle.
+    :param window_rect: The window rectangle.
+    :param control_rect: The control rectangle.
+    :return: The adjusted control rectangle (left, top, right, bottom), relative to the window rectangle.
+    """
+    # (left, top, right, bottom)
+    width = window_rect.right - window_rect.left
+    height = window_rect.bottom - window_rect.top
+
+    relative_rect = (
+        float(control_rect.left - window_rect.left) / width,
+        float(control_rect.top - window_rect.top) / height,
+        float(control_rect.right - window_rect.left) / width,
+        float(control_rect.bottom - window_rect.top) / height,
+    )
+
+    return relative_rect
+
+def decode_base64_image(base64_string: str) -> bytes:
+    """
+    Decode a base64 string to bytes.
+    :param base64_string: The base64 string to decode.
+    :return: The decoded bytes.
+    """
+    import base64
+
+    # Remove the prefix if it exists
+    if base64_string.startswith("data:image/png;base64,"):
+        base64_string = base64_string[len("data:image/png;base64,"):]
+    
+    return base64.b64decode(base64_string)
+
+_empty_image_string = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+
+def encode_image_from_path(
+        image_path: str, mime_type: Optional[str] = None
+    ) -> str:
+        """
+        Encode an image file to base64 string.
+        :param image_path: The path of the image file.
+        :param mime_type: The mime type of the image.
+        :return: The base64 string.
+        """
+
+        # If image path not exist, return an empty image string
+        if not os.path.exists(image_path):
+
+            print_with_color(f"Waring: {image_path} does not exist.", "yellow")
+            return _empty_image_string
+
+        file_name = os.path.basename(image_path)
+        mime_type = (
+            mime_type if mime_type is not None else mimetypes.guess_type(file_name)[0]
+        )
+        with open(image_path, "rb") as image_file:
+            encoded_image = base64.b64encode(image_file.read()).decode("ascii")
+
+        if mime_type is None or not mime_type.startswith("image/"):
+            print_with_color(
+                "Warning: mime_type is not specified or not an image mime type. Defaulting to png.",
+                "yellow",
+            )
+            mime_type = "image/png"
+
+        image_url = f"data:{mime_type};base64," + encoded_image
+        return image_url
+

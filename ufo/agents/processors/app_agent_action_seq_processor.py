@@ -9,6 +9,7 @@ from ufo.agents.processors.actions import ActionSequence, OneStepAction
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
+from ufo.cs.contracts import OperationCommand, OperationSequenceAction
 
 configs = Config.get_instance().config_data
 
@@ -56,24 +57,43 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
         self.actions = ActionSequence(action_list)
         self.function_calls = self.actions.get_function_calls()
 
-        self.actions.execute_all(
-            puppeteer=self.app_agent.Puppeteer,
-            control_dict=self._annotation_dict,
-            application_window=self.application_window,
-        )
+        commands = [
+            OperationCommand(
+                command_id=action.function,
+                **{
+                    action.function: {
+                    **action.args,
+                    "control_label": action.control_label,
+                    "control_text": action.control_text,
+                    "after_status": action.after_status,
+                    }
+                }
+            )
+            for action in action_list
+        ]
 
-        self.status = self.actions.status
+        self.session_data_manager.add_action(OperationSequenceAction(
+            params=commands,
+        ))
 
-        success_control_adjusted_coords = self.actions.get_success_control_coords()
-        self.capture_control_screenshot_from_adjusted_coords(
-            control_adjusted_coords=success_control_adjusted_coords
-        )
+        # self.actions.execute_all(
+        #     puppeteer=self.app_agent.Puppeteer,
+        #     control_dict=self._annotation_dict,
+        #     application_window=self.application_window,
+        # )
 
-        self.actions.print_all_results()
+        # self.status = self.actions.status
 
-        if self.is_application_closed():
-            utils.print_with_color("Warning: The application is closed.", "yellow")
-            self.status = "FINISH"
+        # success_control_adjusted_coords = self.actions.get_success_control_coords()
+        # self.capture_control_screenshot_from_adjusted_coords(
+        #     control_adjusted_coords=success_control_adjusted_coords
+        # )
+
+        # self.actions.print_all_results()
+
+        # if self.is_application_closed():
+        #     utils.print_with_color("Warning: The application is closed.", "yellow")
+        #     self.status = "FINISH"
 
     def capture_control_screenshot_from_adjusted_coords(
         self, control_adjusted_coords: List[Dict[str, Any]]

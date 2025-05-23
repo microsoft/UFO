@@ -49,6 +49,9 @@ class ContextNames(Enum):
         "CURRENT_ROUND_SUBTASK_AMOUNT"  # The amount of subtasks in the current round
     )
     STRUCTURAL_LOGS = "STRUCTURAL_LOGS"  # The structural logs of the session
+    SESSION_DATA_MANAGER = "SESSION_DATA_MANAGER"  # The session state manager
+    
+    APPLICATION_WINDOW_INFO = "APPLICATION_WINDOW_INFO"  # The information of the application window
 
     @property
     def default_value(self) -> Any:
@@ -263,6 +266,13 @@ class Context:
         return self._context.get(ContextNames.ROUND_SUBTASK_AMOUNT.name).get(
             self._context.get(ContextNames.CURRENT_ROUND_ID.name), 0
         )
+
+    @property
+    def SESSION_DATA_MANAGER(self) -> Any:
+        """
+        Get the session state manager.
+        """
+        return self._context.get(ContextNames.SESSION_DATA_MANAGER.name)
 
     @current_round_subtask_amount.setter
     def current_round_subtask_amount(self, value: int) -> None:

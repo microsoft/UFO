@@ -19,10 +19,7 @@ from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
 from ufo.automator import puppeteer
-from ufo.automator.ui_control.grounding.basic import BasicGrounding
-from ufo.automator.ui_control.grounding.omniparser import OmniparserGrounding
 from ufo.config.config import Config
-from ufo.llm.grounding_model.omniparser_service import OmniParser
 from ufo.module import interactor
 from ufo.module.context import Context
 from ufo.prompter.agent_prompter import AppAgentPrompter
@@ -74,17 +71,6 @@ class AppAgent(BasicAgent):
 
         self.Puppeteer = self.create_puppeteer_interface()
         self._mode = mode
-
-        control_detection_backend = configs.get("CONTROL_BACKEND", ["uia"])
-
-        if "omniparser" in control_detection_backend:
-            omniparser_endpoint = configs.get("OMNIPARSER", {}).get("ENDPOINT", "")
-            omniparser_service = OmniParser(endpoint=omniparser_endpoint)
-            self.grounding_service: Optional[BasicGrounding] = OmniparserGrounding(
-                service=omniparser_service
-            )
-        else:
-            self.grounding_service: Optional[BasicGrounding] = None
 
         self.set_state(self.default_state)
 
@@ -382,11 +368,11 @@ class AppAgent(BasicAgent):
         """
         if configs.get("ACTION_SEQUENCE", False):
             self.processor = AppAgentActionSequenceProcessor(
-                agent=self, context=context, ground_service=self.grounding_service
+                agent=self, context=context
             )
         else:
             self.processor = AppAgentProcessor(
-                agent=self, context=context, ground_service=self.grounding_service
+                agent=self, context=context
             )
         self.processor.process()
         self.status = self.processor.status

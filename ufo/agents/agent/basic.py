@@ -30,6 +30,8 @@ configs = Config.get_instance().config_data
 
 
 class BasicAgent(ABC):
+    first_time = True
+    
     """
     The BasicAgent class is the abstract class for the agent.
     """

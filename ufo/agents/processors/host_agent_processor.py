@@ -3,28 +3,21 @@
 
 
 import json
-import time
 from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING, Any, Dict, List
 
-from pywinauto.controls.uiawrapper import UIAWrapper
-
 from ufo import utils
-from ufo.agents.processors.actions import (
-    ActionExecutionLog,
-    ActionSequence,
-    BaseControlLog,
-    OneStepAction,
-)
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config.config import Config
 from ufo.module.context import Context, ContextNames
+from ufo.cs.contracts import CaptureDesktopScreenshotAction, CaptureDesktopScreenshotParams, GetDesktopAppInfoAction, GetDesktopAppInfoParams, LaunchApplicationAction, LaunchApplicationParams, SelectApplicationWindowAction, SelectApplicationWindowParams, WindowInfo
 
 configs = Config.get_instance().config_data
 
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
+import os
 
 
 @dataclass
@@ -86,8 +79,7 @@ class HostAgentProcessor(BaseProcessor):
         self.host_agent = agent
 
         self._desktop_screen_url = None
-        self._desktop_windows_dict = None
-        self._desktop_windows_info = None
+
         self.bash_command = None
 
     def print_step_info(self) -> None:
@@ -112,15 +104,44 @@ class HostAgentProcessor(BaseProcessor):
 
         self._memory_data.add_values_from_dict({"CleanScreenshot": desktop_save_path})
 
-        # Capture the desktop screenshot for all screens.
-        self.photographer.capture_desktop_screen_screenshot(
-            all_screens=True, save_path=desktop_save_path
+        # Capture the desktop screenshot for all screens using action
+        desktop_screenshot_action = CaptureDesktopScreenshotAction(
+            params=CaptureDesktopScreenshotParams(all_screens=True)
         )
 
-        # Encode the desktop screenshot into base64 format as required by the LLM.
-        self._desktop_screen_url = self.photographer.encode_image_from_path(
-            desktop_save_path
+        self.session_data_manager.add_action(
+            desktop_screenshot_action, 
+            setter=lambda value: self.desktop_screenshot_action_callback(value, desktop_save_path)
         )
+        
+    def desktop_screenshot_action_callback(self, value: str, path: str) -> None:
+        """
+        Helper method to save screenshot to specified path and set the URL.
+        
+        Args:
+            value (str): The screenshot data or URL
+            path (str): Path to save the screenshot
+        """
+        # Set the URL for use in the class
+        self._desktop_screen_url = value
+        self.session_data_manager.session_data.state.desktop_screen_url = value
+        
+        # If value contains a base64 encoded image string
+        if value and isinstance(value, str) and value.startswith("data:image/png;base64,"):
+            try:
+                # Decode the base64 string to binary data
+                img_data = utils.decode_base64_image(value)
+                
+                # Create directory if it doesn't exist
+                os.makedirs(os.path.dirname(path), exist_ok=True)
+                
+                # Save the image to the specified path
+                with open(path, 'wb') as f:
+                    f.write(img_data)
+                
+                print(f"Screenshot saved to {path}")
+            except Exception as e:
+                print(f"Error saving screenshot: {e}")
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -128,16 +149,43 @@ class HostAgentProcessor(BaseProcessor):
         """
         Get the control information.
         """
-
         # Get all available windows on the desktop, into a dictionary with format {index: application object}.
-        self._desktop_windows_dict = self.control_inspector.get_desktop_app_dict(
-            remove_empty=True
-        )
-
+        # self._desktop_windows_dict = self.control_inspector.get_desktop_app_dict(
+        #     remove_empty=True
+        # )
+        
         # Get the textual information of all windows.
-        self._desktop_windows_info = self.control_inspector.get_desktop_app_info(
-            self._desktop_windows_dict
+        # self._desktop_windows_info = self.control_inspector.get_desktop_app_info(
+        #     self._desktop_windows_dict
+        # )
+        
+        self.session_data_manager.add_action(
+            action=GetDesktopAppInfoAction(
+                params=GetDesktopAppInfoParams(
+                    remove_empty=True,
+                    refresh_app_windows=True
+                )
+            ),
+            setter=lambda value: self.desktop_app_info_callback(value)
         )
+        
+    def desktop_app_info_callback(self, value: str) -> None:
+        """
+        Helper method to handle the desktop app info callback.
+        
+        Args:
+            value (str): The desktop app info
+        """
+        model = [WindowInfo(**item) for item in value]
+        self.session_data_manager.session_data.state.desktop_windows_info = model
+
+    @BaseProcessor.exception_capture
+    @BaseProcessor.method_timer
+    def process_collected_info(self) -> None:
+        """
+        Process the collected information.
+        """
+        pass
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -151,10 +199,12 @@ class HostAgentProcessor(BaseProcessor):
         else:
             blackboard_prompt = []
 
+        desktop_windows_info = self.session_data_manager.get_desktop_windows_info()
+
         # Construct the prompt message for the host agent.
         self._prompt_message = self.host_agent.message_constructor(
-            image_list=[self._desktop_screen_url],
-            os_info=self._desktop_windows_info,
+            image_list=[self.session_data_manager.session_data.state.desktop_screen_url],
+            os_info=desktop_windows_info,
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
             request=self.request,
@@ -163,8 +213,8 @@ class HostAgentProcessor(BaseProcessor):
 
         request_data = HostAgentRequestLog(
             step=self.session_step,
-            image_list=[self._desktop_screen_url],
-            os_info=self._desktop_windows_info,
+            image_list=[self.session_data_manager.session_data.state.desktop_screen_url],
+            os_info=desktop_windows_info,
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
             request=self.request,
@@ -227,147 +277,70 @@ class HostAgentProcessor(BaseProcessor):
         """
         Execute the action.
         """
+        desktop_windows_info = self.session_data_manager.session_data.state.desktop_windows_info
 
-        new_app_window = self._desktop_windows_dict.get(self.control_label, None)
+        print(f"control_label: {self.control_label}")
+        new_app_windows = list(filter(lambda x: x.annotation_id == self.control_label, desktop_windows_info))
 
-        # If the new application window is available, select the application.
-        if new_app_window is not None:
-            self._select_application(new_app_window)
-
-        # If the bash command is not empty, run the shell command.
-        if self.bash_command:
-            self._run_shell_command()
-            time.sleep(5)
-
-        # If the new application window is None and the bash command is None, set the status to FINISH.
-        if new_app_window is None and self.bash_command is None:
-            self.status = self._agent_status_manager.FINISH.value
-            return
-
-    def _is_window_interface_available(self, new_app_window: UIAWrapper) -> bool:
-        """
-        Check if the window interface is available for the visual element.
-        :param new_app_window: The new application window.
-        :return: True if the window interface is available, False otherwise.
-        """
-        try:
-            new_app_window.is_normal()
-            return True
-        except Exception:
-            utils.print_with_color(
-                "Window interface {title} not available for the visual element.".format(
-                    title=self.control_text
+        if len(new_app_windows) > 0:
+            #self._select_application(new_app_window)
+            self.session_data_manager.add_action(
+                action=SelectApplicationWindowAction(
+                    params=SelectApplicationWindowParams(
+                        window_label=new_app_windows[0].annotation_id
+                    )
                 ),
-                "red",
-            )
-            return False
-
-    def _is_same_window(self, window1: UIAWrapper, window2: UIAWrapper) -> bool:
+                setter=lambda value: self.select_application_window_callback(value))
+        else:
+            self.session_data_manager.add_action(
+                LaunchApplicationAction(
+                    params=LaunchApplicationParams(
+                        bash_command=self.bash_command
+                    )
+                ),
+                setter=lambda value: self.launch_application_callback(value))
+            
+    
+    def select_application_window_callback(self, value: dict) -> None:
         """
-        Check if two windows are the same.
-        :param window1: The first window.
-        :param window2: The second window.
-        :return: True if the two windows are the same, False otherwise.
+        Helper method to handle the application window selection callback.
+        
+        Args:
+            value (str): The application window value
         """
-
-        equal = False
-
-        try:
-            equal = window1 == window2
-        except:
-            pass
-        return equal
-
-    def _switch_to_new_app_window(self, new_app_window: UIAWrapper) -> None:
-        """
-        Switch to the new application window if it is different from the current application window.
-        :param new_app_window: The new application window.
-        """
-
-        if (
-            not self._is_same_window(new_app_window, self.application_window)
-            and self.application_window is not None
-        ):
-            utils.print_with_color("Switching to a new application...", "magenta")
-
+        # Set the application window
+        self.app_root = value["process_name"]
+        #self.control_text = value["control_text"]
+        
+        desktop_windows_info = self.session_data_manager.session_data.state.desktop_windows_info
+        new_app_window = list(filter(lambda x: x.annotation_id == self.control_label, desktop_windows_info))[0]
         self.application_window = new_app_window
-
+        self.application_window_info = new_app_window
+        
         self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
-
-    def _select_application(self, application_window: UIAWrapper) -> None:
+        
+    def launch_application_callback(self, value: str) -> None:
         """
-        Create the app agent for the host agent.
-        :param application_window: The application window.
+        Helper method to handle the application launch callback.
+        
+        Args:
+            value (str): The application launch value
         """
-
-        action = OneStepAction(
-            control_label=self.control_label,
-            control_text=self.control_text,
-            after_status=self.status,
-            function="set_focus",
-        )
-
-        action.control_log = BaseControlLog(
-            control_class=application_window.element_info.class_name,
-            control_type=application_window.element_info.control_type,
-            control_automation_id=application_window.element_info.automation_id,
-        )
-
-        self.actions = ActionSequence([action])
-
-        # Get the root name of the application.
-        self.app_root = self.control_inspector.get_application_root_name(
-            application_window
-        )
-
-        # Check if the window interface is available for the visual element.
-        if not self._is_window_interface_available(application_window):
-            self.status = self._agent_status_manager.ERROR.value
-
-            return
-
-        # Switch to the new application window, if it is different from the current application window.
-        self._switch_to_new_app_window(application_window)
-        self.application_window.set_focus()
-        if configs.get("MAXIMIZE_WINDOW", False):
-            self.application_window.maximize()
-
-        if configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
-            self.application_window.draw_outline(colour="red", thickness=3)
-
-    def _run_shell_command(self) -> None:
-        """
-        Run the shell command.
-        """
-        self.agent.create_puppeteer_interface()
-        self.agent.Puppeteer.receiver_manager.create_api_receiver(
-            self.app_root, self.control_text
-        )
-
-        action = OneStepAction(
-            control_label=self.control_label,
-            control_text=self.control_text,
-            after_status=self.status,
-            function="run_shell",
-            args={"command": self.bash_command},
-        )
-
-        try:
-            return_value = self.agent.Puppeteer.execute_command(
-                "run_shell", {"command": self.bash_command}
-            )
-            error = ""
-        except Exception as e:
-            return_value = ""
-            error = str(e)
-
-        action.results = ActionExecutionLog(
-            return_value=return_value, status=self.status, error=error
-        )
-
-        self.actions: ActionSequence = ActionSequence([action])
+        # Set the application window
+        self.app_root = value["process_name"]
+        #self.control_text = value["control_text"]
+        
+        desktop_windows_info = self.session_data_manager.session_data.state.desktop_windows_info
+        new_app_window = list(filter(lambda x: x.annotation_id == self.control_label, desktop_windows_info))[0]
+        self.application_window = new_app_window
+        self.application_window_info = new_app_window
+        
+        self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
+        self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
+        self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
+    
 
     def sync_memory(self):
         """

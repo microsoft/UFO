@@ -16,7 +16,6 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.automator.puppeteer import AppPuppeteer
-from ufo.automator.ui_control.screenshot import PhotographerDecorator
 from ufo.config.config import Config
 
 
@@ -318,7 +317,7 @@ class OneStepAction:
         if not control_selected or not application_window:
             return BaseControlLog()
 
-        control_coordinates = PhotographerDecorator.coordinate_adjusted(
+        control_coordinates = utils.coordinate_adjusted(
             application_window.rectangle(), control_selected.rectangle()
         )
 

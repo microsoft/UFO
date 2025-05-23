@@ -126,6 +126,31 @@ class BaseRound(ABC):
         if self._should_evaluate:
             self.evaluation()
 
+    def step_forward(self) -> None:
+        if not self.is_finished():
+
+            self.agent.handle(self.context)
+
+            self.state = self.agent.state.next_state(self.agent)
+            self.agent = self.agent.state.next_agent(self.agent)
+            self.agent.set_state(self.state)
+
+            # If the subtask ends, capture the last snapshot of the application.
+            # if self.state.is_subtask_end():
+            #     time.sleep(configs["SLEEP_TIME"])
+            #     self.capture_last_snapshot(sub_round_id=self.subtask_amount)
+            #     self.subtask_amount += 1
+
+        self.agent.blackboard.add_requests(
+            {"request_{i}".format(i=self.id): self.request}
+        )
+
+        # if self.application_window is not None:
+        #     self.capture_last_snapshot()
+
+        # if self._should_evaluate:
+        #     self.evaluation()
+
     def is_finished(self) -> bool:
         """
         Check if the round is finished.
@@ -351,7 +376,7 @@ class BaseSession(ABC):
     A basic session in UFO. A session consists of multiple rounds of interactions and conversations.
     """
 
-    def __init__(self, task: str, should_evaluate: bool, id: int) -> None:
+    def __init__(self, task: str, should_evaluate: bool, id: str) -> None:
         """
         Initialize a session.
         :param task: The name of current task.
@@ -462,7 +487,7 @@ class BaseSession(ABC):
         self.context.set(ContextNames.SESSION_STEP, 0)
 
     @property
-    def id(self) -> int:
+    def id(self) -> str:
         """
         Get the id of the session.
         return: The id of the session.

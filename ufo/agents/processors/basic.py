@@ -16,25 +16,22 @@ from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.actions import ActionSequence
-from ufo.automator.ui_control.inspector import ControlInspectorFacade
-from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
+from ufo.cs.contracts import WindowInfo
 from ufo.module.context import Context, ContextNames
+from ufo.cs.session_data import SessionDataManager
 
 configs = Config.get_instance().config_data
 
-if configs is not None:
-    CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"])
-    BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
-
 
 class BaseProcessor(ABC):
+    session_data_manager: SessionDataManager
+    
     """
     The base processor for the session. A session consists of multiple rounds of conversation with the user, completing a task.
     At each round, the HostAgent and AppAgent interact with the user and the application with the processor.
     Each processor is responsible for processing the user request and updating the HostAgent and AppAgent at a single step in a round.
-    """
-
+    """    
     def __init__(self, agent: BasicAgent, context: Context) -> None:
         """
         Initialize the processor.
@@ -44,9 +41,9 @@ class BaseProcessor(ABC):
 
         self._context = context
         self._agent = agent
-
-        self.photographer = PhotographerFacade()
-        self.control_inspector = ControlInspectorFacade(BACKEND)
+        
+        # Get the session data manager from the context
+        self.session_data_manager = self._context.get(ContextNames.SESSION_DATA_MANAGER)
 
         self._prompt_message = None
         self._status = None
@@ -86,6 +83,46 @@ class BaseProcessor(ABC):
         start_time = time.time()
 
         try:
+            if self.session_data_manager.has_result(self.agent):
+                # Step 4: Get the prompt message.
+                self.get_prompt_message()
+
+                # Step 5: Get the response.
+                self.get_response()
+
+                # Step 6: Update the context.
+                self.update_cost()
+
+                # Step 7: Parse the response, if there is no error.
+                self.parse_response()
+
+                if self.is_pending() or self.is_paused():
+                    # If the session is pending, update the step and memory, and return.
+                    if self.is_pending():
+                        self.update_status()
+                        self.update_memory()
+
+                    return
+
+                # Step 8: Execute the action.
+                # Example usage:
+                # action = CaptureAppWindowScreenshotAction(params=CaptureAppWindowScreenshotParams(window_handle=some_value))
+                self.execute_action()
+
+                # Step 9: Update the memory.
+                self.update_memory()
+
+                # Step 10: Update the status.
+                self.update_status()
+
+                self._total_time_cost = time.time() - start_time
+
+                # Step 11: Save the log.
+                self.log_save()
+            else:
+                self.status = self._agent_status_manager.CONTINUE.value
+                self.update_status()
+            
             # Step 1: Print the step information.
             self.print_step_info()
 
@@ -94,40 +131,8 @@ class BaseProcessor(ABC):
 
             # Step 3: Get the control information.
             self.get_control_info()
-
-            # Step 4: Get the prompt message.
-            self.get_prompt_message()
-
-            # Step 5: Get the response.
-            self.get_response()
-
-            # Step 6: Update the context.
-            self.update_cost()
-
-            # Step 7: Parse the response, if there is no error.
-            self.parse_response()
-
-            if self.is_pending() or self.is_paused():
-                # If the session is pending, update the step and memory, and return.
-                if self.is_pending():
-                    self.update_status()
-                    self.update_memory()
-
-                return
-
-            # Step 8: Execute the action.
-            self.execute_action()
-
-            # Step 9: Update the memory.
-            self.update_memory()
-
-            # Step 10: Update the status.
-            self.update_status()
-
-            self._total_time_cost = time.time() - start_time
-
-            # Step 11: Save the log.
-            self.log_save()
+            
+            self.process_collected_info()
 
         except StopIteration:
             # Error was handled and logged in the exception capture decorator.
@@ -239,6 +244,13 @@ class BaseProcessor(ABC):
     def get_control_info(self) -> None:
         """
         Get the control information.
+        """
+        pass
+    
+    @abstractmethod
+    def process_collected_info(self) -> None:
+        """
+        Process the collected information.
         """
         pass
 
@@ -361,6 +373,22 @@ class BaseProcessor(ABC):
         :param window: The active window.
         """
         self.context.set(ContextNames.APPLICATION_WINDOW, window)
+        
+    @property
+    def application_window_info(self) -> WindowInfo:
+        """
+        Get the application window information.
+        :return: The application window information.
+        """
+        return self.context.get(ContextNames.APPLICATION_WINDOW_INFO)
+    
+    @application_window_info.setter
+    def application_window_info(self, window_info: WindowInfo) -> None:
+        """
+        Set the application window information.
+        :param window_info: The application window information.
+        """
+        self.context.set(ContextNames.APPLICATION_WINDOW_INFO, window_info)
 
     @property
     def round_step(self) -> int:
