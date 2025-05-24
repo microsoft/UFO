@@ -4,7 +4,10 @@
 import abc
 from importlib import import_module
 from typing import Dict
+import functools
+from ..config.config import Config
 
+configs = Config.get_instance().config_data
 
 class BaseService(abc.ABC):
     @abc.abstractmethod
@@ -16,7 +19,8 @@ class BaseService(abc.ABC):
         pass
 
     @staticmethod
-    def get_service(name: str, model_name: str = None) -> "BaseService":
+    @functools.cache
+    def get_service(name: str, agent_type: str, model_name: str = None) -> "BaseService":
         """
         Get the service class based on the name.
         :param name: The name of the service.
@@ -55,7 +59,7 @@ class BaseService(abc.ABC):
                     raise ValueError(f"Custom model {custom_model} not supported")
             else:
                 module = import_module("." + name.lower(), package="ufo.llm")
-            return getattr(module, service_name)
+            return getattr(module, service_name)(configs, agent_type=agent_type)
         else:
             raise ValueError(f"Service {name} not found.")
 

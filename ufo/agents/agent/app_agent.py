@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 import openai
 from typing import Any, Dict, List, Optional, Tuple, Union
+import json
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
@@ -190,7 +191,10 @@ class AppAgent(BasicAgent):
         status = response_dict.get("Status")
         comment = response_dict.get("Comment")
         function_call = response_dict.get("Function")
-        args = utils.revise_line_breaks(response_dict.get("Args"))
+        if configs.get("APP_AGENT").get("JSON_SCHEMA", False):
+            args = utils.revise_line_breaks(json.loads(response_dict.get("Args")))
+        else:
+            args = utils.revise_line_breaks(response_dict.get("Args"))
 
         # Generate the function call string
         action = self.Puppeteer.get_command_string(function_call, args)

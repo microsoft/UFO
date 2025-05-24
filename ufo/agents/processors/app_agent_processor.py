@@ -524,7 +524,10 @@ class AppAgentProcessor(BaseProcessor):
         self.control_text = self._response_json.get("ControlText", "")
         self._operation = self._response_json.get("Function", "")
         self.question_list = self._response_json.get("Questions", [])
-        self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
+        if configs.get("APP_AGENT").get("JSON_SCHEMA", False):
+            self._args = utils.revise_line_breaks(json.loads(self._response_json.get("Args", "")))
+        else:
+            self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
 
         # Convert the plan from a string to a list if the plan is a string.
         self.plan = self.string2list(self._response_json.get("Plan", ""))

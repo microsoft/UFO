@@ -144,7 +144,9 @@ class EvaluationAgent(BasicAgent):
         print_with_color(f"Evaluation result🧐:", "magenta")
         print_with_color(f"[Sub-scores📊:]", "green")
 
-        for score, evaluation in sub_scores.items():
+        for sub_score in sub_scores:
+            score = sub_score.get("name")
+            evaluation = sub_score.get("evaluation")
             print_with_color(
                 f"{score}: {emoji_map.get(evaluation, evaluation)}", "green"
             )

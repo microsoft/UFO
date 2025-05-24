@@ -15,7 +15,8 @@ from typing import Any, Callable, Dict, List, Literal, Optional, Tuple
 import openai
 from openai import AzureOpenAI, OpenAI
 from ufo.llm.base import BaseService
-
+from .response_schema import AppAgentResponse, EvaluationResponse, HostAgentResponse
+from ufo.utils import print_with_color
 
 class BaseOpenAIService(BaseService):
     def __init__(self, config: Dict[str, Any], agent_type: str, api_provider: str, api_base: str) -> None:
@@ -32,6 +33,7 @@ class BaseOpenAIService(BaseService):
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config.get("PRICES", {})
         self.agent_type = agent_type
+        self.json_schema_enabled = config[agent_type].get("JSON_SCHEMA", False)
         assert api_provider in ["openai", "aoai", "azure_ad"], "Invalid API Provider"
 
         self.client: OpenAI = OpenAIService.get_openai_client(
@@ -44,6 +46,24 @@ class BaseOpenAIService(BaseService):
             aad_api_scope_base=self.config_llm.get("AAD_API_SCOPE_BASE", ""),
             aad_tenant_id=self.config_llm.get("AAD_TENANT_ID", ""),
         )
+
+        self.model = self.config_llm["API_MODEL"]
+
+        # Try to automatically fix some config errors
+        while True:
+            try:
+                response = self.client.beta.chat.completions.parse(
+                    model=self.model,
+                    messages=[{"role": "user", "content": "Hello"}],
+                    n=1,
+                    response_format=HostAgentResponse
+                )
+            except openai.BadRequestError as e:
+                if "'response_format' of type 'json_schema' is not supported" in e.message:
+                    print_with_color(f"[WARN] Model {self.model} does not support Structured JSON Output feature. Switching to text mode.","yellow")
+                    self.config_llm["JSON_SCHEMA"] = False
+                    self.json_schema_enabled = False
+            break # Exit the loop if no exception is raised
 
     def _chat_completion(
         self,
@@ -66,9 +86,6 @@ class BaseOpenAIService(BaseService):
         :return: A tuple containing a list of generated completions and the estimated cost.
         :raises: Exception if there is an error in the OpenAI API request
         """
-
-        model = self.config_llm["API_MODEL"]
-
         temperature = (
             temperature if temperature is not None else self.config["TEMPERATURE"]
         )
@@ -77,49 +94,69 @@ class BaseOpenAIService(BaseService):
 
         try:
             if self.config_llm.get("REASONING_MODEL", False):
-                response: Any = self.client.chat.completions.create(
-                    model=model,
-                    messages=messages,  # type: ignore
-                    n=1,
-                    stream=stream,
-                    **kwargs,
-                )
-            else:
-                if not stream:
-                    response: Any = self.client.chat.completions.create(
-                        model=model,
+                if self.json_schema_enabled:
+                    response_format = {
+                        'HOST_AGENT': HostAgentResponse,
+                        'APP_AGENT': AppAgentResponse,
+                        'EVALUATION_AGENT': EvaluationResponse,
+                    }.get(self.agent_type, None)
+                    response: Any = self.client.beta.chat.completions.parse(
+                        model=self.model,
                         messages=messages,  # type: ignore
                         n=1,
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                        top_p=top_p,
-                        stream=stream,
+                        response_format=response_format,
                         **kwargs,
                     )
                 else:
                     response: Any = self.client.chat.completions.create(
-                        model=model,
+                        model=self.model,
+                        messages=messages,  # type: ignore
+                        n=1,
+                        stream=stream,
+                        **kwargs,
+                    )
+            else:
+                if not stream:
+                    if self.json_schema_enabled:
+                        response_format = {
+                            'HOST_AGENT': HostAgentResponse,
+                            'APP_AGENT': AppAgentResponse,
+                            'EVALUATION_AGENT': EvaluationResponse,
+                        }.get(self.agent_type, None)
+                        response: Any = self.client.beta.chat.completions.parse(
+                            model=self.model,
+                            messages=messages,  # type: ignore
+                            n=1,
+                            temperature=temperature,
+                            max_tokens=max_tokens,
+                            top_p=top_p,
+                            response_format=response_format,
+                            **kwargs,
+                        )
+                    else:
+                        response: Any = self.client.chat.completions.create(
+                            model=self.model,
+                            messages=messages,  # type: ignore
+                            n=1,
+                            temperature=temperature,
+                            max_tokens=max_tokens,
+                            top_p=top_p,
+                            **kwargs,
+                        )
+                else:
+                    response: Any = self.client.chat.completions.create(
+                        model=self.model,
                         messages=messages,  # type: ignore
                         n=1,
                         temperature=temperature,
                         max_tokens=max_tokens,
                         top_p=top_p,
-                        stream=stream,
+                        stream=True,
                         stream_options={
                             "include_usage": True,
                         },
                         **kwargs,
                     )
-            # response: Any = self.client.chat.completions.create(
-            #     model=model,
-            #     messages=messages,  # type: ignore
-            #     n=n,
-            #     # temperature=temperature,
-            #     # max_tokens=max_tokens,
-            #     # top_p=top_p,
-            #     stream=stream,
-            #     **kwargs,
-            # )
 
             if stream:
                 collected_content = [""]
@@ -136,7 +173,7 @@ class BaseOpenAIService(BaseService):
                 completion_tokens = usage.completion_tokens
 
                 cost = self.get_cost_estimator(
-                    self.api_type, model, self.prices, prompt_tokens, completion_tokens
+                    self.api_type, self.model, self.prices, prompt_tokens, completion_tokens
                 )
                 return collected_content, cost
             else:
@@ -145,7 +182,7 @@ class BaseOpenAIService(BaseService):
                 completion_tokens = usage.completion_tokens
 
                 cost = self.get_cost_estimator(
-                    self.api_type, model, self.prices, prompt_tokens, completion_tokens
+                    self.api_type, self.model, self.prices, prompt_tokens, completion_tokens
                 )
 
                 return [response.choices[0].message.content], cost
@@ -481,7 +518,6 @@ class OpenAIService(BaseOpenAIService):
                 temperature,
                 max_tokens,
                 top_p,
-                response_format={"type": "json_object"},
                 **kwargs,
             )
         else:

@@ -11,6 +11,8 @@ from google.genai.types import GenerateContentConfig, Part, GenerateContentRespo
 from ufo.llm.base import BaseService
 from ufo.utils import print_with_color
 
+from .response_schema import AppAgentResponse, EvaluationResponse, HostAgentResponse
+
 
 class GeminiService(BaseService):
     """
@@ -32,6 +34,8 @@ class GeminiService(BaseService):
         self.client = GeminiService.get_gemini_client(
             api_key=self.config_llm["API_KEY"],
         )
+        self.agent_type = agent_type
+        self.json_schema_enabled = self.config_llm.get("JSON_SCHEMA", False)
 
     def chat_completion(
         self,
@@ -75,11 +79,24 @@ class GeminiService(BaseService):
 
         for attempt in range(self.max_retry):
             try:
-                response = self.client.models.generate_content(
-                    model=self.model,
-                    contents=processed_messages,
-                    config=genai_config,
-                )
+                if self.json_schema_enabled:
+                    response_format = {
+                        'HOST_AGENT': HostAgentResponse,
+                        'APP_AGENT': AppAgentResponse,
+                        'EVALUATION_AGENT': EvaluationResponse,
+                    }.get(self.agent_type, None)
+                    genai_config.response_schema = response_format
+                    response = self.client.models.generate_content(
+                        model=self.model,
+                        contents=processed_messages,
+                        config=genai_config,
+                    )
+                else:
+                    response = self.client.models.generate_content(
+                        model=self.model,
+                        contents=processed_messages,
+                        config=genai_config,
+                    )
                 prompt_tokens = response.usage_metadata.prompt_token_count
                 completion_tokens = response.usage_metadata.candidates_token_count
                 cost = self.get_cost_estimator(
