@@ -10,11 +10,13 @@ After obtaining the API key, you can configure the `HOST_AGENT` and `APP_AGENT` 
 
 ```yaml
 VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
+REASONING_MODEL: False, # Set this to true if you are using o-series models such as o1, o3
+JSON_SCHEMA: True, # Whether to use JSON schema for response completion
 API_TYPE: "openai" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
 API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API.
 API_KEY: "sk-",  # The OpenAI API key, begin with sk-
-API_VERSION: "2024-02-15-preview", # The version of the API, "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The OpenAI model name, "gpt-4-vision-preview" by default. You may also use "gpt-4o" for using the GPT-4O model.
+API_VERSION: "2024-12-01-preview", # The version of the API, "2024-12-01-preview" by default
+API_MODEL: "gpt-4o",  # The OpenAI model name, "gpt-4o" by default.
 ```
 
 !!! tip

@@ -15,7 +15,8 @@ Configure the `HOST_AGENT` and `APP_AGENT` in the `config.yaml` file (rename the
 
 ```yaml
 VISUAL_MODE: True, # Whether to use visual mode to understand screenshots and take actions
-API_TYPE: "Gemini" ,
+JSON_SCHEMA: True, # Whether to use JSON schema for response completion
+API_TYPE: "gemini" ,
 API_KEY: "YOUR_KEY",  
 API_MODEL: "YOUR_MODEL"
 ```
