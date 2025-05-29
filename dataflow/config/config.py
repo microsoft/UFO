@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from ufo.config.config import Config
+from ufo.config import Config
 
 
 class Config(Config):

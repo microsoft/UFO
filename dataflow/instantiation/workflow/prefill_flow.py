@@ -11,7 +11,7 @@ from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.module.basic import BaseSession
-from ufo.config.config import Config as UFOConfig
+from ufo.config import Config as UFOConfig
 
 _configs = Config.get_instance().config_data
 _ufo_configs = UFOConfig.get_instance().config_data
