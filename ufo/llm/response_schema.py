@@ -84,7 +84,7 @@ class AppAgentResponse(BaseModel):
         description="Status of the task given the action."
     )
     
-    Plan: str = Field(
+    Plan: List[str] = Field(
         description="List of future actions to complete the subtask after taking the current action. Must provide detailed steps. May reference previous plan and revise if necessary. '<FINISH>' if task will be complete after current action."
     )
     

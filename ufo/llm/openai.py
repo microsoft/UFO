@@ -6,16 +6,19 @@ import json
 import os
 import shutil
 import sys
-import time
 import urllib.error
-import urllib.parse
 import urllib.request
 from typing import Any, Callable, Dict, List, Literal, Optional, Tuple
 
 import openai
 from openai import AzureOpenAI, OpenAI
+from openai.lib._parsing._completions import type_to_response_format_param
 from ufo.llm.base import BaseService
-from ufo.llm.response_schema import AppAgentResponse, EvaluationResponse, HostAgentResponse
+from ufo.llm.response_schema import (
+    AppAgentResponse,
+    EvaluationResponse,
+    HostAgentResponse,
+)
 from ufo.utils import print_with_color
 from ufo.llm import AgentType
 
@@ -83,7 +86,7 @@ class BaseOpenAIService(BaseService):
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ) -> Tuple[Dict[str, Any], Optional[float]]:
+    ) -> Tuple[List[str], Optional[float]]:
         """
         Generates completions for a given conversation using the OpenAI Chat API.
         :param messages: The list of messages in the conversation.
@@ -103,70 +106,51 @@ class BaseOpenAIService(BaseService):
         top_p = top_p if top_p is not None else self.config["TOP_P"]
 
         try:
-            if self.config_llm.get("REASONING_MODEL", False):
-                if self.json_schema_enabled:
-                    response_format = {
-                        AgentType.HOST: HostAgentResponse,
-                        AgentType.APP: AppAgentResponse,
-                        AgentType.EVALUATION: EvaluationResponse,
-                    }.get(self.agent_type, None)
-                    response: Any = self.client.beta.chat.completions.parse(
-                        model=self.model,
-                        messages=messages,  # type: ignore
-                        n=1,
-                        response_format=response_format,
-                        **kwargs,
+            # Build base parameters
+            base_params = {
+                "model": self.model,
+                "messages": messages,
+                "n": 1,
+                **kwargs,
+            }
+
+            # Add response format if JSON schema is enabled
+            if self.json_schema_enabled:
+                response_format_mapping = {
+                    AgentType.HOST: HostAgentResponse,
+                    AgentType.APP: AppAgentResponse,
+                    AgentType.EVALUATION: EvaluationResponse,
+                }
+                response_format = response_format_mapping.get(
+                    AgentType(self.agent_type)
+                )
+                if response_format:
+                    base_params["response_format"] = type_to_response_format_param(
+                        response_format
                     )
-                else:
-                    response: Any = self.client.chat.completions.create(
-                        model=self.model,
-                        messages=messages,  # type: ignore
-                        n=1,
-                        stream=stream,
-                        **kwargs,
-                    )
-            else:
-                if not stream:
-                    if self.json_schema_enabled:
-                        response_format = {
-                            AgentType.HOST: HostAgentResponse,
-                            AgentType.APP: AppAgentResponse,
-                            AgentType.EVALUATION: EvaluationResponse,
-                        }.get(self.agent_type, None)
-                        response: Any = self.client.beta.chat.completions.parse(
-                            model=self.model,
-                            messages=messages,  # type: ignore
-                            n=1,
-                            temperature=temperature,
-                            max_tokens=max_tokens,
-                            top_p=top_p,
-                            response_format=response_format,
-                            **kwargs,
-                        )
-                    else:
-                        response: Any = self.client.chat.completions.create(
-                            model=self.model,
-                            messages=messages,  # type: ignore
-                            n=1,
-                            temperature=temperature,
-                            max_tokens=max_tokens,
-                            top_p=top_p,
-                            **kwargs,
-                        )
-                else:
-                    response: Any = self.client.chat.completions.create(
-                        model=self.model,
-                        messages=messages,  # type: ignore
-                        n=1,
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                        top_p=top_p,
-                        stream=True,
-                        stream_options={
-                            "include_usage": True,
-                        },
-                        **kwargs,
-                    )
+
+            # Add generation parameters for non-reasoning models
+            if not self.config_llm.get("REASONING_MODEL", False):
+                base_params.update(
+                    {
+                        "temperature": temperature,
+                        "max_tokens": max_tokens,
+                        "top_p": top_p,
+                    }
+                )
+
+            # Add streaming parameters if needed
+            if stream:
+                base_params.update(
+                    {
+                        "stream": True,
+                        "stream_options": {"include_usage": True},
+                    }
+                )
+
+            response = self.client.chat.completions.create(
+                **base_params
+            )
 
             if stream:
                 collected_content = [""]
@@ -229,7 +213,7 @@ class BaseOpenAIService(BaseService):
 
     def _chat_completion_operator(
         self,
-        message: Dict[str, Any] = None,
+        message: Dict[str, Any] = {},
         **kwargs: Any,
     ) -> Tuple[Dict[str, Any], Optional[float]]:
         """
@@ -520,7 +504,7 @@ class OpenAIService(BaseOpenAIService):
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ) -> Tuple[Dict[str, Any], Optional[float]]:
+    ) -> Tuple[List[str] | Dict[str, Any], Optional[float]]:
         """
         Generates completions for a given conversation using the OpenAI Chat API.
         :param messages: The list of messages in the conversation.
