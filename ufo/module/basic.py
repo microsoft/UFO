@@ -31,7 +31,7 @@ from ufo.agents.agent.host_agent import AgentFactory, HostAgent
 from ufo.agents.states.basic import AgentState, AgentStatus
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.screenshot import PhotographerFacade
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.module.context import Context, ContextNames
 from ufo.trajectory.parser import Trajectory

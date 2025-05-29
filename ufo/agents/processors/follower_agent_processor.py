@@ -10,7 +10,7 @@ from ufo.agents.processors.app_agent_processor import (
     AppAgentProcessor,
     AppAgentRequestLog,
 )
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:

@@ -4,7 +4,7 @@
 import json
 from typing import Any, Dict, List, Optional
 
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.prompter.basic import BasicPrompter
 
 configs = Config.get_instance().config_data

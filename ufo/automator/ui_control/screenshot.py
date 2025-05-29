@@ -14,7 +14,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.win32structures import RECT
 
 from ufo import utils
-from ufo.config.config import Config
+from ufo.config import Config
 
 configs = Config.get_instance().config_data
 

@@ -14,8 +14,10 @@ from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.module.context import Context, ContextNames
+
+from ufo.llm import AgentType
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -501,7 +503,7 @@ class AppAgentProcessor(BaseProcessor):
         while retry < configs.get("JSON_PARSING_RETRY", 3):
             # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
             self._response, self.cost = self.app_agent.get_response(
-                self._prompt_message, "APPAGENT", use_backup_engine=True
+                self._prompt_message, AgentType.APP, use_backup_engine=True
             )
 
             try:
@@ -524,7 +526,7 @@ class AppAgentProcessor(BaseProcessor):
         self.control_text = self._response_json.get("ControlText", "")
         self._operation = self._response_json.get("Function", "")
         self.question_list = self._response_json.get("Questions", [])
-        if configs.get("APP_AGENT").get("JSON_SCHEMA", False):
+        if configs.get(AgentType.APP).get("JSON_SCHEMA", False):
             self._args = utils.revise_line_breaks(json.loads(self._response_json.get("Args", "")))
         else:
             self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))

@@ -8,7 +8,7 @@ from typing import Dict, List, Optional, Union
 
 from ufo.agents.memory.memory import Memory, MemoryItem
 from ufo.automator.ui_control.screenshot import PhotographerFacade
-from ufo.config.config import Config
+from ufo.config import Config
 
 configs = Config.get_instance().config_data
 

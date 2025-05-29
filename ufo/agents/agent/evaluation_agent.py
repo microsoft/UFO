@@ -6,7 +6,7 @@ from typing import Any, Dict, Optional, Tuple
 
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.evaluaton_agent_state import EvaluatonAgentStatus
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 from ufo.utils import json_parser, print_with_color
 
@@ -109,7 +109,7 @@ class EvaluationAgent(BasicAgent):
             log_path=log_path, request=request, eva_all_screenshots=eva_all_screenshots
         )
         result, cost = self.get_response(
-            message=message, namescope="eva", use_backup_engine=True
+            message=message, namescope="EVALUATION_AGENT", use_backup_engine=True
         )
 
         result = json_parser(result)

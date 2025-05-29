@@ -15,11 +15,15 @@ from typing import Any, Callable, Dict, List, Literal, Optional, Tuple
 import openai
 from openai import AzureOpenAI, OpenAI
 from ufo.llm.base import BaseService
-from .response_schema import AppAgentResponse, EvaluationResponse, HostAgentResponse
+from ufo.llm.response_schema import AppAgentResponse, EvaluationResponse, HostAgentResponse
 from ufo.utils import print_with_color
+from ufo.llm import AgentType
+
 
 class BaseOpenAIService(BaseService):
-    def __init__(self, config: Dict[str, Any], agent_type: str, api_provider: str, api_base: str) -> None:
+    def __init__(
+        self, config: Dict[str, Any], agent_type: str, api_provider: str, api_base: str
+    ) -> None:
         """
         Create an OpenAI service instance.
         :param config: The configuration for the OpenAI service.
@@ -56,14 +60,20 @@ class BaseOpenAIService(BaseService):
                     model=self.model,
                     messages=[{"role": "user", "content": "Hello"}],
                     n=1,
-                    response_format=HostAgentResponse
+                    response_format=HostAgentResponse,
                 )
             except openai.BadRequestError as e:
-                if "'response_format' of type 'json_schema' is not supported" in e.message:
-                    print_with_color(f"[WARN] Model {self.model} does not support Structured JSON Output feature. Switching to text mode.","yellow")
+                if (
+                    "'response_format' of type 'json_schema' is not supported"
+                    in e.message
+                ):
+                    print_with_color(
+                        f"[WARN] Model {self.model} does not support Structured JSON Output feature. Switching to text mode.",
+                        "yellow",
+                    )
                     self.config_llm["JSON_SCHEMA"] = False
                     self.json_schema_enabled = False
-            break # Exit the loop if no exception is raised
+            break  # Exit the loop if no exception is raised
 
     def _chat_completion(
         self,
@@ -96,9 +106,9 @@ class BaseOpenAIService(BaseService):
             if self.config_llm.get("REASONING_MODEL", False):
                 if self.json_schema_enabled:
                     response_format = {
-                        'HOST_AGENT': HostAgentResponse,
-                        'APP_AGENT': AppAgentResponse,
-                        'EVALUATION_AGENT': EvaluationResponse,
+                        AgentType.HOST: HostAgentResponse,
+                        AgentType.APP: AppAgentResponse,
+                        AgentType.EVALUATION: EvaluationResponse,
                     }.get(self.agent_type, None)
                     response: Any = self.client.beta.chat.completions.parse(
                         model=self.model,
@@ -119,9 +129,9 @@ class BaseOpenAIService(BaseService):
                 if not stream:
                     if self.json_schema_enabled:
                         response_format = {
-                            'HOST_AGENT': HostAgentResponse,
-                            'APP_AGENT': AppAgentResponse,
-                            'EVALUATION_AGENT': EvaluationResponse,
+                            AgentType.HOST: HostAgentResponse,
+                            AgentType.APP: AppAgentResponse,
+                            AgentType.EVALUATION: EvaluationResponse,
                         }.get(self.agent_type, None)
                         response: Any = self.client.beta.chat.completions.parse(
                             model=self.model,
@@ -173,7 +183,11 @@ class BaseOpenAIService(BaseService):
                 completion_tokens = usage.completion_tokens
 
                 cost = self.get_cost_estimator(
-                    self.api_type, self.model, self.prices, prompt_tokens, completion_tokens
+                    self.api_type,
+                    self.model,
+                    self.prices,
+                    prompt_tokens,
+                    completion_tokens,
                 )
                 return collected_content, cost
             else:
@@ -182,7 +196,11 @@ class BaseOpenAIService(BaseService):
                 completion_tokens = usage.completion_tokens
 
                 cost = self.get_cost_estimator(
-                    self.api_type, self.model, self.prices, prompt_tokens, completion_tokens
+                    self.api_type,
+                    self.model,
+                    self.prices,
+                    prompt_tokens,
+                    completion_tokens,
                 )
 
                 return [response.choices[0].message.content], cost
@@ -474,6 +492,7 @@ class BaseOpenAIService(BaseService):
             print("failed to acquire token from AAD for OpenAI", e)
             raise e
 
+
 class OpenAIService(BaseOpenAIService):
     """
     The OpenAI service class to interact with the OpenAI API.
@@ -485,7 +504,12 @@ class OpenAIService(BaseOpenAIService):
         :param config: The configuration for the OpenAI service.
         :param agent_type: The type of the agent.
         """
-        super().__init__(config, agent_type, config[agent_type]["API_TYPE"].lower(), config[agent_type]["API_BASE"])
+        super().__init__(
+            config,
+            agent_type,
+            config[agent_type]["API_TYPE"].lower(),
+            config[agent_type]["API_BASE"],
+        )
 
     def chat_completion(
         self,

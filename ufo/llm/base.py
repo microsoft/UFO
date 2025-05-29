@@ -5,7 +5,7 @@ import abc
 from importlib import import_module
 from typing import Dict
 import functools
-from ..config.config import Config
+from ufo.config import Config
 
 configs = Config.get_instance().config_data
 

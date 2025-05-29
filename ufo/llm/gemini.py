@@ -11,7 +11,8 @@ from google.genai.types import GenerateContentConfig, Part, GenerateContentRespo
 from ufo.llm.base import BaseService
 from ufo.utils import print_with_color
 
-from .response_schema import AppAgentResponse, EvaluationResponse, HostAgentResponse
+from ufo.llm.response_schema import AppAgentResponse, EvaluationResponse, HostAgentResponse
+from ufo.llm import AgentType
 
 
 class GeminiService(BaseService):
@@ -66,7 +67,7 @@ class GeminiService(BaseService):
             max_output_tokens=max_tokens,
             temperature=temperature,
             top_p=top_p,
-            response_mime_type='application/json',
+            response_mime_type="application/json",
         )
 
         processed_messages = self.process_messages(messages)
@@ -81,9 +82,9 @@ class GeminiService(BaseService):
             try:
                 if self.json_schema_enabled:
                     response_format = {
-                        'HOST_AGENT': HostAgentResponse,
-                        'APP_AGENT': AppAgentResponse,
-                        'EVALUATION_AGENT': EvaluationResponse,
+                        AgentType.HOST: HostAgentResponse,
+                        AgentType.APP: AppAgentResponse,
+                        AgentType.EVALUATION: EvaluationResponse,
                     }.get(self.agent_type, None)
                     genai_config.response_schema = response_format
                     response = self.client.models.generate_content(
@@ -109,13 +110,13 @@ class GeminiService(BaseService):
                 break
             except Exception as e:
                 # Calculate backoff with jitter
-                delay = min(initial_delay * (2 ** attempt), max_delay)
+                delay = min(initial_delay * (2**attempt), max_delay)
                 jitter = random.uniform(-jitter_factor * delay, 0)
                 sleep_time = delay + jitter
                 print_with_color(
                     f"Error during Gemini API request, attempt {attempt+1}/{self.max_retry}: {e}. "
-                    f"Retrying in {sleep_time:.2f}s...", 
-                    "yellow"
+                    f"Retrying in {sleep_time:.2f}s...",
+                    "yellow",
                 )
                 time.sleep(sleep_time)
 
@@ -143,7 +144,11 @@ class GeminiService(BaseService):
                         prompt_contents.append(prompt)
                     elif content["type"] == "image_url":
                         prompt = self.base64_to_blob(content["image_url"]["url"])
-                        prompt_contents.append(Part.from_bytes(data=prompt["data"], mime_type=prompt["mime_type"]))
+                        prompt_contents.append(
+                            Part.from_bytes(
+                                data=prompt["data"], mime_type=prompt["mime_type"]
+                            )
+                        )
         return prompt_contents
 
     def base64_to_blob(self, base64_str: str) -> Dict[str, str]:
@@ -153,21 +158,22 @@ class GeminiService(BaseService):
         :return: A dictionary containing the MIME type and binary data.
         """
 
-        match = re.match(r'data:(?P<mime_type>image/.+?);base64,(?P<base64_string>.+)', base64_str)
+        match = re.match(
+            r"data:(?P<mime_type>image/.+?);base64,(?P<base64_string>.+)", base64_str
+        )
 
         if match:
-            mime_type = match.group('mime_type')
-            base64_string = match.group('base64_string')
+            mime_type = match.group("mime_type")
+            base64_string = match.group("base64_string")
         else:
             print("Error: Could not parse the data URL.")
             raise ValueError("Invalid data URL format.")
 
-        return {
-            "mime_type": mime_type,
-            "data": base64.b64decode(base64_string)
-        }
+        return {"mime_type": mime_type, "data": base64.b64decode(base64_string)}
 
-    def get_text_from_all_candidates(self, response: GenerateContentResponse) -> List[Optional[str]]:
+    def get_text_from_all_candidates(
+        self, response: GenerateContentResponse
+    ) -> List[Optional[str]]:
         """
         Extracts the concatenated text content from each candidate in the response.
 
@@ -179,33 +185,30 @@ class GeminiService(BaseService):
             or None if a candidate has no text parts.
         """
         all_texts = []
-        if (
-            not response
-            or not response.candidates
-        ):
+        if not response or not response.candidates:
             print("Warning: Response object does not contain candidates.")
             return all_texts
 
         for i, candidate in enumerate(response.candidates):
-            candidate_text: str = ''
+            candidate_text: str = ""
             any_text_part_found: bool = False
             non_text_parts_found: List[str] = []
 
-            if (
-                not candidate
-                or not candidate.content
-                or not candidate.content.parts
-            ):
+            if not candidate or not candidate.content or not candidate.content.parts:
                 # Handle cases where a candidate might be empty (e.g., safety blocked)
-                print(f"Warning: Candidate {i} has no content or parts. Finish Reason: {getattr(candidate, 'finish_reason', 'N/A')}")
+                print(
+                    f"Warning: Candidate {i} has no content or parts. Finish Reason: {getattr(candidate, 'finish_reason', 'N/A')}"
+                )
                 all_texts.append(None)
                 continue
 
             for part in candidate.content.parts:
                 # Check for non-text parts (similar to _get_text logic)
-                for field_name, field_value in part.model_dump(exclude={'text', 'thought'}).items():
+                for field_name, field_value in part.model_dump(
+                    exclude={"text", "thought"}
+                ).items():
                     if field_value is not None:
-                        if field_name not in non_text_parts_found: # Avoid duplicates
+                        if field_name not in non_text_parts_found:  # Avoid duplicates
                             non_text_parts_found.append(field_name)
 
                 # Check if the part has text and it's not just internal 'thought'
@@ -218,8 +221,8 @@ class GeminiService(BaseService):
 
             if non_text_parts_found:
                 print(
-                    f'Warning: Candidate {i}: Contains non-text parts: {non_text_parts_found}. '
-                    'Returning concatenated text from text parts only for this candidate.'
+                    f"Warning: Candidate {i}: Contains non-text parts: {non_text_parts_found}. "
+                    "Returning concatenated text from text parts only for this candidate."
                 )
 
             all_texts.append(candidate_text if any_text_part_found else None)
@@ -234,6 +237,4 @@ class GeminiService(BaseService):
         :param api_key: The API key for authentication.
         :return: A Gemini client instance.
         """
-        return genai.Client(
-            api_key=api_key
-        )
+        return genai.Client(api_key=api_key)
