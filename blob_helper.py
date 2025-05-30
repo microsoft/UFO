@@ -4,8 +4,8 @@ from ufo.utils.azure_storage import AzureBlobStorage
 
 azure_blob = AzureBlobStorage()
 
-def upload(path: str, data_source: str):
-    azure_blob.upload_folder(path, data_source)
+def upload(path: str, data_source: str, blob_prefix: str = ""):
+    azure_blob.upload_folder(path, data_source, blob_prefix=blob_prefix, overwrite=False)
 
 def download(path: str, folder_prefix: str):
     azure_blob.download_folder(folder_prefix, path)
@@ -26,12 +26,12 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--mode', required=True, choices=['upload', 'download', 'list', 'delete'])
     parser.add_argument('--path', required=True, type=str)
-    parser.add_argument('--source', required=False, type=str)
+    parser.add_argument('--source', type=str, default='')
     parser.add_argument('--folder_prefix', required=False, type=str)
 
     args = parser.parse_args()
     if args.mode == 'upload':
-        upload(args.path, args.source)
+        upload(args.path, args.source, args.folder_prefix)
     elif args.mode == 'download':
         download(args.path, args.folder_prefix)
     elif args.mode == 'list':

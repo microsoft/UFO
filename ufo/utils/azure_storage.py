@@ -112,7 +112,7 @@ class AzureBlobStorage:
             # If log_prefix exist
             if list(self.list_blobs(log_prefix)):
                 if overwrite is False:
-                    return
+                    pass
                 else:
                     # clear old folder
                     self.delete_folder(log_prefix)
