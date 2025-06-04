@@ -133,3 +133,20 @@ RAG_DEMONSTRATION: False  # Whether to use the RAG from its user demonstration.
 RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
 RAG_DEMONSTRATION_COMPLETION_N: 3  # The number of completion choices for the demonstration result
 
+## App API Prompt Configuration
+APP_API_PROMPT_ADDRESS: {
+    "WINWORD.EXE": "ufo/prompts/apps/word/api.yaml",
+    "EXCEL.EXE": "ufo/prompts/apps/excel/api.yaml",
+    "msedge.exe": "ufo/prompts/apps/web/api.yaml",
+    "chrome.exe": "ufo/prompts/apps/web/api.yaml"
+}  # The prompt address for the app API. The key is the app program name, and the value is the prompt address.
+
+## MCP (Model Context Protocol) Integration
+USE_MCP: True  # Whether to enable MCP integration for tool execution
+MCP_SERVERS_CONFIG: "ufo/config/mcp_servers.yaml"  # Path to MCP servers configuration file
+MCP_PREFERRED_APPS: ["POWERPNT.EXE", "WINWORD.EXE", "EXCEL.EXE", "powerpoint", "word", "excel", "web", "shell"]  # Applications that should prefer MCP over UI automation when available
+MCP_FALLBACK_TO_UI: True  # Whether to fallback to UI automation if MCP execution fails
+MCP_INSTRUCTIONS_PATH: "ufo/config/mcp_instructions"  # Path to MCP instructions files
+MCP_TOOL_TIMEOUT: 30  # Timeout in seconds for MCP tool execution
+MCP_LOG_EXECUTION: True  # Whether to log MCP tool execution details
+

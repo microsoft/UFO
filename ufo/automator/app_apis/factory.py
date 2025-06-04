@@ -1,7 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-from typing import Type
+from typing import Type, Dict, Any
 
 from ufo.automator.app_apis.basic import WinCOMReceiverBasic
 from ufo.automator.app_apis.excel.excelclient import ExcelWinCOMReceiver
@@ -156,3 +156,125 @@ class ShellReceiverFactory(APIReceiverFactory):
         The name of the factory.
         """
         return "Shell"
+
+
+class MCPReceiver(ReceiverBasic):
+    """
+    MCP receiver that wraps existing receivers to expose functionality via MCP protocol.
+    """
+    
+    _command_registry: Dict[str, Type] = {}
+    
+    def __init__(self, app_namespace: str, underlying_receiver: ReceiverBasic):
+        """
+        Initialize the MCP receiver.
+        :param app_namespace: The application namespace (word, excel, powerpoint, web, shell)
+        :param underlying_receiver: The underlying receiver to wrap
+        """
+        self.app_namespace = app_namespace
+        self.underlying_receiver = underlying_receiver
+    @property
+    def type_name(self):
+        return f"MCP_{self.app_namespace.upper()}"
+    
+    def execute_tool(self, tool_name: str, tool_args: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Execute an MCP tool by delegating to the underlying receiver.
+        :param tool_name: The name of the tool to execute
+        :param tool_args: The arguments for the tool
+        :return: The result of the tool execution
+        """
+        try:
+            # Check if the underlying receiver has the method
+            if hasattr(self.underlying_receiver, tool_name):
+                method = getattr(self.underlying_receiver, tool_name)
+                
+                # Unpack tool_args dictionary as keyword arguments
+                if tool_args:
+                    result = method(**tool_args)
+                else:
+                    result = method()
+                    
+                return {
+                    "success": True,
+                    "result": result,
+                    "tool_name": tool_name,
+                    "namespace": self.app_namespace
+                }
+            else:                return {
+                    "success": False,
+                    "error": f"Tool '{tool_name}' not available in {self.app_namespace} receiver",
+                    "tool_name": tool_name,
+                    "namespace": self.app_namespace
+                }
+        except Exception as e:
+            return {
+                "success": False,
+                "error": f"Error executing tool '{tool_name}': {str(e)}",
+                "tool_name": tool_name,
+                "namespace": self.app_namespace
+            }
+
+
+@ReceiverManager.register
+class MCPReceiverFactory(APIReceiverFactory):
+    """
+    The factory class for MCP receivers that wrap existing application receivers.
+    """
+    
+    def __init__(self):
+        """
+        Initialize the MCP receiver factory.
+        """
+        super().__init__()
+    
+    def create_receiver(self, app_namespace: str, app_root_name: str = None, process_name: str = None) -> ReceiverBasic:
+        """
+        Create an MCP receiver for the specified application namespace.
+        :param app_namespace: The application namespace (word, excel, powerpoint, web, shell)
+        :param app_root_name: The app root name (for COM applications)
+        :param process_name: The process name (for COM applications)
+        :return: The MCP receiver wrapping the appropriate underlying receiver
+        """
+        underlying_receiver = None
+        
+        # Create the appropriate underlying receiver based on the namespace
+        if app_namespace.lower() in ["word", "excel", "powerpoint"]:
+            # For COM applications, use the COMReceiverFactory
+            com_factory = COMReceiverFactory()
+            if app_root_name and process_name:
+                underlying_receiver = com_factory.create_receiver(app_root_name, process_name)
+        elif app_namespace.lower() == "web":
+            # For web applications, use the WebReceiverFactory
+            web_factory = WebReceiverFactory()
+            if app_root_name:
+                underlying_receiver = web_factory.create_receiver(app_root_name)
+            else:
+                underlying_receiver = WebReceiver()
+        elif app_namespace.lower() == "shell":
+            # For shell operations, use the ShellReceiverFactory
+            shell_factory = ShellReceiverFactory()
+            underlying_receiver = shell_factory.create_receiver()
+        
+        if underlying_receiver is None:
+            return None
+            
+        # Wrap the underlying receiver in an MCP receiver
+        mcp_receiver = MCPReceiver(app_namespace, underlying_receiver)
+        print_with_color(f"MCP receiver created for {app_namespace}.", "green")
+        
+        return mcp_receiver
+    
+    @property
+    def supported_app_roots(self):
+        """
+        Get the supported app roots for MCP.
+        """
+        return ["word", "excel", "powerpoint", "web", "shell"]
+    
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the factory.
+        """
+        return "MCP"

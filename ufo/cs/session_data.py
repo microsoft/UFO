@@ -13,9 +13,11 @@ class SessionState(BaseModel):
     desktop_windows_info: Optional[List[WindowInfo]] = None
     
     _control_info: Optional[List[Dict[str, Any]]] = None
-    filtered_control_info: Optional[List[Dict[str, Any]]] = None
     _annotation_dict: Optional[Dict[str, Any]] = None
+    
+    active_app_window: Optional[WindowInfo] = None
     app_window_control_info: Optional[AppWindowControlInfo] = None
+    filtered_control_info: Optional[List[Dict[str, Any]]] = None
     annotation_dict: Optional[Dict[str, Any]] = None
     filtered_annotation_dict: Optional[Dict[str, Any]] = None
 

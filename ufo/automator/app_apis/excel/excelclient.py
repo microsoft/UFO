@@ -285,6 +285,589 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         except Exception as e:
             return f"Failed to save the document to {file_path}. Error: {e}"
 
+    def save_workbook(self, file_path: str = None, file_format: str = "xlsx") -> str:
+        """
+        Save the current workbook.
+        :param file_path: Path where to save the workbook (optional if already saved)
+        :param file_format: File format (xlsx, xls, csv, etc.)
+        :return: Success message
+        """
+        try:
+            if file_path:
+                # Save to specific path
+                format_map = {
+                    "xlsx": 51,  # Excel Workbook
+                    "xlsm": 52,  # Excel Macro-Enabled Workbook
+                    "xlsb": 50,  # Excel Binary Workbook
+                    "xls": 56,   # Excel 97-2003 Workbook
+                    "csv": 6,    # CSV format
+                    "txt": 42,   # Text format
+                    "pdf": 57,   # PDF format
+                    "html": 44   # HTML format
+                }
+                
+                file_format_code = format_map.get(file_format.lower(), 51)
+                self.com_object.SaveAs(Filename=file_path, FileFormat=file_format_code)
+                return f"Workbook saved successfully to {file_path}"
+            else:
+                # Save with current name and location
+                self.com_object.Save()
+                return f"Workbook saved successfully: {self.com_object.Name}"
+        except Exception as e:
+            return f"Failed to save workbook. Error: {e}"
+
+    def create_workbook(self, template_path: str = None) -> str:
+        """
+        Create a new Excel workbook.
+        :param template_path: Path to template file (optional)
+        :return: Success message with workbook name
+        """
+        try:
+            if template_path and os.path.exists(template_path):
+                workbook = self.client.Workbooks.Open(template_path)
+            else:
+                workbook = self.client.Workbooks.Add()
+            return f"Workbook created successfully: {workbook.Name}"
+        except Exception as e:
+            return f"Failed to create workbook. Error: {e}"
+
+    def open_workbook(self, file_path: str, read_only: bool = False, password: str = None) -> str:
+        """
+        Open an existing Excel workbook.
+        :param file_path: Path to the Excel file
+        :param read_only: Whether to open in read-only mode
+        :param password: Password for protected files
+        :return: Success message
+        """
+        try:
+            if not os.path.exists(file_path):
+                return f"File not found: {file_path}"
+            
+            if password:
+                workbook = self.client.Workbooks.Open(file_path, ReadOnly=read_only, Password=password)
+            else:
+                workbook = self.client.Workbooks.Open(file_path, ReadOnly=read_only)
+            return f"Workbook opened successfully: {workbook.Name}"
+        except Exception as e:
+            return f"Failed to open workbook. Error: {e}"
+
+    def close_workbook(self, save_changes: bool = True, workbook_name: str = None) -> str:
+        """
+        Close the active or specified workbook.
+        :param save_changes: Whether to save changes before closing
+        :param workbook_name: Name of specific workbook to close (optional)
+        :return: Success message
+        """
+        try:
+            if workbook_name:
+                workbook = self.client.Workbooks(workbook_name)
+            else:
+                workbook = self.com_object
+            
+            workbook.Close(SaveChanges=save_changes)
+            return f"Workbook closed successfully"
+        except Exception as e:
+            return f"Failed to close workbook. Error: {e}"
+
+    def add_worksheet(self, name: str = None, position: int = None) -> str:
+        """
+        Add a new worksheet to the workbook.
+        :param name: Name for the new worksheet
+        :param position: Position where to insert (optional)
+        :return: Success message with worksheet name
+        """
+        try:
+            if position:
+                worksheet = self.com_object.Worksheets.Add(After=self.com_object.Worksheets(position))
+            else:
+                worksheet = self.com_object.Worksheets.Add()
+            
+            if name:
+                worksheet.Name = name
+                
+            return f"Worksheet added successfully: {worksheet.Name}"
+        except Exception as e:
+            return f"Failed to add worksheet. Error: {e}"
+
+    def delete_worksheet(self, sheet_name: str) -> str:
+        """
+        Delete a worksheet from the workbook.
+        :param sheet_name: Name of the worksheet to delete
+        :return: Success message
+        """
+        try:
+            # Disable alerts to avoid confirmation dialog
+            self.client.DisplayAlerts = False
+            self.com_object.Worksheets(sheet_name).Delete()
+            self.client.DisplayAlerts = True
+            return f"Worksheet '{sheet_name}' deleted successfully"
+        except Exception as e:
+            self.client.DisplayAlerts = True
+            return f"Failed to delete worksheet. Error: {e}"
+
+    def select_worksheet(self, sheet_name: str) -> str:
+        """
+        Select/activate a specific worksheet.
+        :param sheet_name: Name of the worksheet to select
+        :return: Success message
+        """
+        try:
+            self.com_object.Worksheets(sheet_name).Activate()
+            return f"Worksheet '{sheet_name}' selected successfully"
+        except Exception as e:
+            return f"Failed to select worksheet. Error: {e}"
+
+    def rename_worksheet(self, old_name: str, new_name: str) -> str:
+        """
+        Rename a worksheet.
+        :param old_name: Current name of the worksheet
+        :param new_name: New name for the worksheet
+        :return: Success message
+        """
+        try:
+            self.com_object.Worksheets(old_name).Name = new_name
+            return f"Worksheet renamed from '{old_name}' to '{new_name}'"
+        except Exception as e:
+            return f"Failed to rename worksheet. Error: {e}"
+
+    def set_cell_value(self, sheet_name: str, cell_reference: str, value: any, formula: str = None) -> str:
+        """
+        Set the value of a specific cell.
+        :param sheet_name: Name of the worksheet
+        :param cell_reference: Cell reference (e.g., 'A1')
+        :param value: Value to set
+        :param formula: Formula to set (optional)
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            if formula:
+                sheet.Range(cell_reference).Formula = formula
+            else:
+                sheet.Range(cell_reference).Value = value
+            return f"Cell {cell_reference} set successfully"
+        except Exception as e:
+            return f"Failed to set cell value. Error: {e}"
+
+    def get_cell_value(self, sheet_name: str, cell_reference: str) -> any:
+        """
+        Get the value of a specific cell.
+        :param sheet_name: Name of the worksheet
+        :param cell_reference: Cell reference (e.g., 'A1')
+        :return: Cell value
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            return sheet.Range(cell_reference).Value
+        except Exception as e:
+            return f"Failed to get cell value. Error: {e}"
+
+    def set_range_values(self, sheet_name: str, start_cell: str, end_cell: str, values: list) -> str:
+        """
+        Set values for a range of cells.
+        :param sheet_name: Name of the worksheet
+        :param start_cell: Starting cell reference
+        :param end_cell: Ending cell reference
+        :param values: 2D list of values
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            range_obj = sheet.Range(f"{start_cell}:{end_cell}")
+            range_obj.Value = values
+            return f"Range {start_cell}:{end_cell} set successfully"
+        except Exception as e:
+            return f"Failed to set range values. Error: {e}"
+
+    def insert_formula(self, sheet_name: str, cell_reference: str, formula: str) -> str:
+        """
+        Insert a formula into a cell.
+        :param sheet_name: Name of the worksheet
+        :param cell_reference: Cell reference
+        :param formula: Formula to insert
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            sheet.Range(cell_reference).Formula = formula
+            return f"Formula inserted in {cell_reference}: {formula}"
+        except Exception as e:
+            return f"Failed to insert formula. Error: {e}"
+
+    def format_cells(self, sheet_name: str, cell_range: str, font_name: str = None, 
+                    font_size: int = None, bold: bool = None, italic: bool = None, 
+                    font_color: str = None, background_color: str = None, 
+                    number_format: str = None) -> str:
+        """
+        Format cells with various formatting options.
+        :param sheet_name: Name of the worksheet
+        :param cell_range: Range to format
+        :param font_name: Font name
+        :param font_size: Font size
+        :param bold: Bold formatting
+        :param italic: Italic formatting
+        :param font_color: Font color (hex)
+        :param background_color: Background color (hex)
+        :param number_format: Number format
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            range_obj = sheet.Range(cell_range)
+            
+            if font_name:
+                range_obj.Font.Name = font_name
+            if font_size:
+                range_obj.Font.Size = font_size
+            if bold is not None:
+                range_obj.Font.Bold = bold
+            if italic is not None:
+                range_obj.Font.Italic = italic
+            if font_color:
+                range_obj.Font.Color = int(font_color.replace('#', ''), 16)
+            if background_color:
+                range_obj.Interior.Color = int(background_color.replace('#', ''), 16)
+            if number_format:
+                range_obj.NumberFormat = number_format
+                
+            return f"Cells formatted successfully: {cell_range}"
+        except Exception as e:
+            return f"Failed to format cells. Error: {e}"
+
+    def insert_rows(self, sheet_name: str, row_index: int, count: int = 1) -> str:
+        """
+        Insert rows at specified position.
+        :param sheet_name: Name of the worksheet
+        :param row_index: Row index where to insert
+        :param count: Number of rows to insert
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            for _ in range(count):
+                sheet.Rows(row_index).Insert()
+            return f"Inserted {count} row(s) at position {row_index}"
+        except Exception as e:
+            return f"Failed to insert rows. Error: {e}"
+
+    def insert_columns(self, sheet_name: str, column_index: int, count: int = 1) -> str:
+        """
+        Insert columns at specified position.
+        :param sheet_name: Name of the worksheet
+        :param column_index: Column index where to insert
+        :param count: Number of columns to insert
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            for _ in range(count):
+                sheet.Columns(column_index).Insert()
+            return f"Inserted {count} column(s) at position {column_index}"
+        except Exception as e:
+            return f"Failed to insert columns. Error: {e}"
+
+    def delete_rows(self, sheet_name: str, row_index: int, count: int = 1) -> str:
+        """
+        Delete rows at specified position.
+        :param sheet_name: Name of the worksheet
+        :param row_index: Row index to start deleting
+        :param count: Number of rows to delete
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            for _ in range(count):
+                sheet.Rows(row_index).Delete()
+            return f"Deleted {count} row(s) starting at position {row_index}"
+        except Exception as e:
+            return f"Failed to delete rows. Error: {e}"
+
+    def delete_columns(self, sheet_name: str, column_index: int, count: int = 1) -> str:
+        """
+        Delete columns at specified position.
+        :param sheet_name: Name of the worksheet
+        :param column_index: Column index to start deleting
+        :param count: Number of columns to delete
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            for _ in range(count):
+                sheet.Columns(column_index).Delete()
+            return f"Deleted {count} column(s) starting at position {column_index}"
+        except Exception as e:
+            return f"Failed to delete columns. Error: {e}"
+
+    def create_chart(self, sheet_name: str, chart_type: str, data_range: str, 
+                    chart_title: str = None, position: dict = None) -> str:
+        """
+        Create a chart in the worksheet.
+        :param sheet_name: Name of the worksheet
+        :param chart_type: Type of chart (column, line, pie, etc.)
+        :param data_range: Range of data for the chart
+        :param chart_title: Title for the chart
+        :param position: Position and size of the chart
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            
+            # Chart type mapping
+            chart_types = {
+                'column': 51,  # xlColumnClustered
+                'line': 4,     # xlLine
+                'pie': 5,      # xlPie
+                'bar': 57,     # xlBarClustered
+                'area': 1,     # xlArea
+                'scatter': 74  # xlXYScatter
+            }
+            
+            chart_obj = sheet.Shapes.AddChart2(
+                Style=-1,
+                Type=chart_types.get(chart_type.lower(), 51)
+            ).Chart;
+            
+            chart_obj.SetSourceData(sheet.Range(data_range))
+            
+            if chart_title:
+                chart_obj.ChartTitle.Text = chart_title
+                
+            if position:
+                chart_shape = chart_obj.Parent
+                if 'left' in position:
+                    chart_shape.Left = position['left']
+                if 'top' in position:
+                    chart_shape.Top = position['top']
+                if 'width' in position:
+                    chart_shape.Width = position['width']
+                if 'height' in position:
+                    chart_shape.Height = position['height']
+            
+            return f"Chart created successfully: {chart_type}"
+        except Exception as e:
+            return f"Failed to create chart. Error: {e}"
+
+    def create_pivot_table(self, sheet_name: str, source_data: str, destination: str, 
+                          fields: dict) -> str:
+        """
+        Create a pivot table.
+        :param sheet_name: Name of the worksheet
+        :param source_data: Source data range
+        :param destination: Destination cell for pivot table
+        :param fields: Dictionary of field configurations
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            pivot_cache = self.com_object.Parent.PivotCaches().Create(
+                SourceType=1,  # xlDatabase
+                SourceData=source_data
+            )
+            
+            pivot_table = pivot_cache.CreatePivotTable(
+                TableDestination=f"{sheet_name}!{destination}",
+                TableName="PivotTable1"
+            )
+            
+            # Configure fields based on the fields dictionary
+            # This is a simplified implementation - full implementation would handle all field types
+            if 'row_fields' in fields:
+                for field in fields['row_fields']:
+                    pivot_table.PivotFields(field).Orientation = 1  # xlRowField
+                    
+            if 'column_fields' in fields:
+                for field in fields['column_fields']:
+                    pivot_table.PivotFields(field).Orientation = 2  # xlColumnField
+                    
+            if 'data_fields' in fields:
+                for field in fields['data_fields']:
+                    pivot_table.PivotFields(field).Orientation = 4  # xlDataField
+            
+            return "Pivot table created successfully"
+        except Exception as e:
+            return f"Failed to create pivot table. Error: {e}"
+
+    def sort_range(self, sheet_name: str, data_range: str, sort_column: str, 
+                  ascending: bool = True, has_headers: bool = True) -> str:
+        """
+        Sort a range of data.
+        :param sheet_name: Name of the worksheet
+        :param data_range: Range to sort
+        :param sort_column: Column to sort by
+        :param ascending: Sort direction
+        :param has_headers: Whether the range has headers
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            range_obj = sheet.Range(data_range)
+            
+            sort_obj = self.com_object.Parent.ActiveWorkbook.Worksheets(sheet_name).Sort
+            sort_obj.SortFields.Clear()
+            sort_obj.SortFields.Add(
+                Key=sheet.Range(sort_column),
+                SortOn=0,  # xlSortOnValues
+                Order=1 if ascending else 2,  # xlAscending or xlDescending
+                DataOption=0  # xlSortNormal
+            )
+            
+            sort_obj.SetRange(range_obj)
+            sort_obj.Header = 1 if has_headers else 2  # xlYes or xlNo
+            sort_obj.Apply()
+            
+            return f"Range sorted successfully by column {sort_column}"
+        except Exception as e:
+            return f"Failed to sort range. Error: {e}"
+
+    def filter_data(self, sheet_name: str, data_range: str, filter_column: str, 
+                   criteria: str) -> str:
+        """
+        Apply filter to data range.
+        :param sheet_name: Name of the worksheet
+        :param data_range: Range to filter
+        :param filter_column: Column to filter by
+        :param criteria: Filter criteria
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            range_obj = sheet.Range(data_range)
+            
+            # Apply AutoFilter if not already applied
+            if not range_obj.AutoFilter:
+                range_obj.AutoFilter()
+            
+            # Get column index for filtering
+            header_row = range_obj.Rows(1)
+            column_index = None
+            for i, cell in enumerate(header_row.Cells, 1):
+                if str(cell.Value).strip() == filter_column:
+                    column_index = i
+                    break
+            
+            if column_index:
+                range_obj.AutoFilter(Field=column_index, Criteria1=criteria)
+                return f"Filter applied to column {filter_column} with criteria: {criteria}"
+            else:
+                return f"Column '{filter_column}' not found in range"
+                
+        except Exception as e:
+            return f"Failed to apply filter. Error: {e}"
+
+    def freeze_panes(self, sheet_name: str, cell_reference: str) -> str:
+        """
+        Freeze panes at specified cell.
+        :param sheet_name: Name of the worksheet
+        :param cell_reference: Cell where to freeze panes
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            sheet.Activate()
+            sheet.Range(cell_reference).Select()
+            self.client.ActiveWindow.FreezePanes = True
+            return f"Panes frozen at {cell_reference}"
+        except Exception as e:
+            return f"Failed to freeze panes. Error: {e}"
+
+    def protect_worksheet(self, sheet_name: str, password: str = None, 
+                         allow_formatting_cells: bool = False) -> str:
+        """
+        Protect a worksheet.
+        :param sheet_name: Name of the worksheet
+        :param password: Password for protection
+        :param allow_formatting_cells: Whether to allow cell formatting
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            sheet.Protect(Password=password, AllowFormattingCells=allow_formatting_cells)
+            return f"Worksheet '{sheet_name}' protected successfully"
+        except Exception as e:
+            return f"Failed to protect worksheet. Error: {e}"
+
+    def unprotect_worksheet(self, sheet_name: str, password: str = None) -> str:
+        """
+        Unprotect a worksheet.
+        :param sheet_name: Name of the worksheet
+        :param password: Password for unprotection
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            sheet.Unprotect(Password=password)
+            return f"Worksheet '{sheet_name}' unprotected successfully"
+        except Exception as e:
+            return f"Failed to unprotect worksheet. Error: {e}"
+
+    def export_worksheet(self, sheet_name: str, file_path: str, file_format: str) -> str:
+        """
+        Export a specific worksheet to a file.
+        :param sheet_name: Name of the worksheet
+        :param file_path: Path for the exported file
+        :param file_format: Export format (csv, pdf, etc.)
+        :return: Success message
+        """
+        try:
+            sheet = self.com_object.Worksheets(sheet_name)
+            
+            format_map = {
+                'csv': 6,    # xlCSV
+                'pdf': 57,   # xlTypePDF
+                'xps': 58,   # xlTypeXPS
+                'html': 44,  # xlHtml
+                'txt': 42    # xlTextTab
+            }
+            
+            sheet.ExportAsFixedFormat(
+                Type=format_map.get(file_format.lower(), 57),
+                Filename=file_path
+            )
+            
+            return f"Worksheet '{sheet_name}' exported to {file_path}"
+        except Exception as e:
+            return f"Failed to export worksheet. Error: {e}"
+
+    def calculate_workbook(self) -> str:
+        """
+        Force calculation of all formulas in the workbook.
+        :return: Success message
+        """
+        try:
+            self.com_object.Calculate()
+            return "Workbook calculations completed"
+        except Exception as e:
+            return f"Failed to calculate workbook. Error: {e}"
+
+    def get_workbook_info(self) -> dict:
+        """
+        Get information about the current workbook.
+        :return: Dictionary with workbook information
+        """
+        try:
+            info = {
+                'name': self.com_object.Name,
+                'full_name': self.com_object.FullName,
+                'saved': self.com_object.Saved,
+                'worksheet_count': self.com_object.Worksheets.Count,
+                'active_sheet': self.com_object.ActiveSheet.Name,
+                'creation_date': str(self.com_object.BuiltinDocumentProperties("Creation Date").Value),
+                'last_save_time': str(self.com_object.BuiltinDocumentProperties("Last Save Time").Value)
+            }
+            return info
+        except Exception as e:
+            return f"Failed to get workbook info. Error: {e}"
+
+    def get_worksheet_names(self) -> list:
+        """
+        Get list of all worksheet names in the workbook.
+        :return: List of worksheet names
+        """
+        try:
+            return [sheet.Name for sheet in self.com_object.Worksheets]
+        except Exception as e:
+            return f"Failed to get worksheet names. Error: {e}"
+
     @staticmethod
     def letters_to_number(letters: str) -> int:
         """
@@ -482,3 +1065,440 @@ class SaveAsCommand(WinCOMCommand):
         The name of the command.
         """
         return "save_as"
+
+
+@ExcelWinCOMReceiver.register
+class SaveWorkbookCommand(WinCOMCommand):
+    """Command to save the current workbook."""
+    
+    def execute(self):
+        return self.receiver.save_workbook(
+            file_path=self.params.get("file_path"),
+            file_format=self.params.get("file_format", "xlsx")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "save_workbook"
+
+
+@ExcelWinCOMReceiver.register
+class CreateWorkbookCommand(WinCOMCommand):
+    """Command to create a new workbook."""
+    
+    def execute(self):
+        return self.receiver.create_workbook(
+            template_path=self.params.get("template_path")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "create_workbook"
+
+
+@ExcelWinCOMReceiver.register
+class OpenWorkbookCommand(WinCOMCommand):
+    """Command to open an existing workbook."""
+    
+    def execute(self):
+        return self.receiver.open_workbook(
+            file_path=self.params.get("file_path"),
+            read_only=self.params.get("read_only", False),
+            password=self.params.get("password")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "open_workbook"
+
+
+@ExcelWinCOMReceiver.register
+class CloseWorkbookCommand(WinCOMCommand):
+    """Command to close a workbook."""
+    
+    def execute(self):
+        return self.receiver.close_workbook(
+            save_changes=self.params.get("save_changes", True),
+            workbook_name=self.params.get("workbook_name")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "close_workbook"
+
+
+@ExcelWinCOMReceiver.register
+class AddWorksheetCommand(WinCOMCommand):
+    """Command to add a new worksheet."""
+    
+    def execute(self):
+        return self.receiver.add_worksheet(
+            name=self.params.get("name"),
+            position=self.params.get("position")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "add_worksheet"
+
+
+@ExcelWinCOMReceiver.register
+class DeleteWorksheetCommand(WinCOMCommand):
+    """Command to delete a worksheet."""
+    
+    def execute(self):
+        return self.receiver.delete_worksheet(
+            sheet_name=self.params.get("sheet_name")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "delete_worksheet"
+
+
+@ExcelWinCOMReceiver.register
+class SelectWorksheetCommand(WinCOMCommand):
+    """Command to select a worksheet."""
+    
+    def execute(self):
+        return self.receiver.select_worksheet(
+            sheet_name=self.params.get("sheet_name")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "select_worksheet"
+
+
+@ExcelWinCOMReceiver.register
+class RenameWorksheetCommand(WinCOMCommand):
+    """Command to rename a worksheet."""
+    
+    def execute(self):
+        return self.receiver.rename_worksheet(
+            old_name=self.params.get("old_name"),
+            new_name=self.params.get("new_name")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "rename_worksheet"
+
+
+@ExcelWinCOMReceiver.register
+class SetCellValueCommand(WinCOMCommand):
+    """Command to set cell value."""
+    
+    def execute(self):
+        return self.receiver.set_cell_value(
+            sheet_name=self.params.get("sheet_name"),
+            cell_reference=self.params.get("cell_reference"),
+            value=self.params.get("value"),
+            formula=self.params.get("formula")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "set_cell_value"
+
+
+@ExcelWinCOMReceiver.register
+class GetCellValueCommand(WinCOMCommand):
+    """Command to get cell value."""
+    
+    def execute(self):
+        return self.receiver.get_cell_value(
+            sheet_name=self.params.get("sheet_name"),
+            cell_reference=self.params.get("cell_reference")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "get_cell_value"
+
+
+@ExcelWinCOMReceiver.register
+class SetRangeValuesCommand(WinCOMCommand):
+    """Command to set range values."""
+    
+    def execute(self):
+        return self.receiver.set_range_values(
+            sheet_name=self.params.get("sheet_name"),
+            start_cell=self.params.get("start_cell"),
+            end_cell=self.params.get("end_cell"),
+            values=self.params.get("values")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "set_range_values"
+
+
+@ExcelWinCOMReceiver.register
+class InsertFormulaCommand(WinCOMCommand):
+    """Command to insert formula."""
+    
+    def execute(self):
+        return self.receiver.insert_formula(
+            sheet_name=self.params.get("sheet_name"),
+            cell_reference=self.params.get("cell_reference"),
+            formula=self.params.get("formula")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "insert_formula"
+
+
+@ExcelWinCOMReceiver.register
+class FormatCellsCommand(WinCOMCommand):
+    """Command to format cells."""
+    
+    def execute(self):
+        return self.receiver.format_cells(
+            sheet_name=self.params.get("sheet_name"),
+            cell_range=self.params.get("cell_range"),
+            font_name=self.params.get("font_name"),
+            font_size=self.params.get("font_size"),
+            bold=self.params.get("bold"),
+            italic=self.params.get("italic"),
+            font_color=self.params.get("font_color"),
+            background_color=self.params.get("background_color"),
+            number_format=self.params.get("number_format")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "format_cells"
+
+
+@ExcelWinCOMReceiver.register
+class InsertRowsCommand(WinCOMCommand):
+    """Command to insert rows."""
+    
+    def execute(self):
+        return self.receiver.insert_rows(
+            sheet_name=self.params.get("sheet_name"),
+            row_index=self.params.get("row_index"),
+            count=self.params.get("count", 1)
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "insert_rows"
+
+
+@ExcelWinCOMReceiver.register
+class InsertColumnsCommand(WinCOMCommand):
+    """Command to insert columns."""
+    
+    def execute(self):
+        return self.receiver.insert_columns(
+            sheet_name=self.params.get("sheet_name"),
+            column_index=self.params.get("column_index"),
+            count=self.params.get("count", 1)
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "insert_columns"
+
+
+@ExcelWinCOMReceiver.register
+class DeleteRowsCommand(WinCOMCommand):
+    """Command to delete rows."""
+    
+    def execute(self):
+        return self.receiver.delete_rows(
+            sheet_name=self.params.get("sheet_name"),
+            row_index=self.params.get("row_index"),
+            count=self.params.get("count", 1)
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "delete_rows"
+
+
+@ExcelWinCOMReceiver.register
+class DeleteColumnsCommand(WinCOMCommand):
+    """Command to delete columns."""
+    
+    def execute(self):
+        return self.receiver.delete_columns(
+            sheet_name=self.params.get("sheet_name"),
+            column_index=self.params.get("column_index"),
+            count=self.params.get("count", 1)
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "delete_columns"
+
+
+@ExcelWinCOMReceiver.register
+class CreateChartCommand(WinCOMCommand):
+    """Command to create a chart."""
+    
+    def execute(self):
+        return self.receiver.create_chart(
+            sheet_name=self.params.get("sheet_name"),
+            chart_type=self.params.get("chart_type"),
+            data_range=self.params.get("data_range"),
+            chart_title=self.params.get("chart_title"),
+            position=self.params.get("position")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "create_chart"
+
+
+@ExcelWinCOMReceiver.register
+class CreatePivotTableCommand(WinCOMCommand):
+    """Command to create a pivot table."""
+    
+    def execute(self):
+        return self.receiver.create_pivot_table(
+            sheet_name=self.params.get("sheet_name"),
+            source_data=self.params.get("source_data"),
+            destination=self.params.get("destination"),
+            fields=self.params.get("fields")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "create_pivot_table"
+
+
+@ExcelWinCOMReceiver.register
+class SortRangeCommand(WinCOMCommand):
+    """Command to sort a range."""
+    
+    def execute(self):
+        return self.receiver.sort_range(
+            sheet_name=self.params.get("sheet_name"),
+            data_range=self.params.get("data_range"),
+            sort_column=self.params.get("sort_column"),
+            ascending=self.params.get("ascending", True),
+            has_headers=self.params.get("has_headers", True)
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "sort_range"
+
+
+@ExcelWinCOMReceiver.register
+class FilterDataCommand(WinCOMCommand):
+    """Command to filter data."""
+    
+    def execute(self):
+        return self.receiver.filter_data(
+            sheet_name=self.params.get("sheet_name"),
+            data_range=self.params.get("data_range"),
+            filter_column=self.params.get("filter_column"),
+            criteria=self.params.get("criteria")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "filter_data"
+
+
+@ExcelWinCOMReceiver.register
+class FreezePanesCommand(WinCOMCommand):
+    """Command to freeze panes."""
+    
+    def execute(self):
+        return self.receiver.freeze_panes(
+            sheet_name=self.params.get("sheet_name"),
+            cell_reference=self.params.get("cell_reference")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "freeze_panes"
+
+
+@ExcelWinCOMReceiver.register
+class ProtectWorksheetCommand(WinCOMCommand):
+    """Command to protect worksheet."""
+    
+    def execute(self):
+        return self.receiver.protect_worksheet(
+            sheet_name=self.params.get("sheet_name"),
+            password=self.params.get("password"),
+            allow_formatting_cells=self.params.get("allow_formatting_cells", False)
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "protect_worksheet"
+
+
+@ExcelWinCOMReceiver.register
+class UnprotectWorksheetCommand(WinCOMCommand):
+    """Command to unprotect worksheet."""
+    
+    def execute(self):
+        return self.receiver.unprotect_worksheet(
+            sheet_name=self.params.get("sheet_name"),
+            password=self.params.get("password")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "unprotect_worksheet"
+
+
+@ExcelWinCOMReceiver.register
+class ExportWorksheetCommand(WinCOMCommand):
+    """Command to export worksheet."""
+    
+    def execute(self):
+        return self.receiver.export_worksheet(
+            sheet_name=self.params.get("sheet_name"),
+            file_path=self.params.get("file_path"),
+            file_format=self.params.get("file_format")
+        )
+    
+    @classmethod
+    def name(cls) -> str:
+        return "export_worksheet"
+
+
+@ExcelWinCOMReceiver.register
+class CalculateWorkbookCommand(WinCOMCommand):
+    """Command to calculate workbook."""
+    
+    def execute(self):
+        return self.receiver.calculate_workbook()
+    
+    @classmethod
+    def name(cls) -> str:
+        return "calculate_workbook"
+
+
+@ExcelWinCOMReceiver.register
+class GetWorkbookInfoCommand(WinCOMCommand):
+    """Command to get workbook info."""
+    
+    def execute(self):
+        return self.receiver.get_workbook_info()
+    
+    @classmethod
+    def name(cls) -> str:
+        return "get_workbook_info"
+
+
+@ExcelWinCOMReceiver.register
+class GetWorksheetNamesCommand(WinCOMCommand):
+    """Command to get worksheet names."""
+    
+    def execute(self):
+        return self.receiver.get_worksheet_names()
+    
+    @classmethod
+    def name(cls) -> str:
+        return "get_worksheet_names"

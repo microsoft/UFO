@@ -18,12 +18,12 @@ from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
-from ufo.automator import puppeteer
 from ufo.config.config import Config
 from ufo.module import interactor
-from ufo.module.context import Context
+from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
 
+from ufo.cs.contracts import MCPGetInstructionsAction, MCPGetInstructionsParams
 
 configs = Config.get_instance().config_data
 
@@ -69,10 +69,12 @@ class AppAgent(BasicAgent):
         self.experience_retriever = None
         self.human_demonstration_retriever = None
 
-        self.Puppeteer = self.create_puppeteer_interface()
         self._mode = mode
 
         self.set_state(self.default_state)
+        self.mcp_enabled = configs.get("USE_MCP", False)
+        self.mcp_preferred_apps = configs.get("MCP_PREFERRED_APPS", ["powerpoint", "word", "excel"])
+        self.mcp_preferred_operations = []  # Will be populated from MCP tools
 
     def get_prompter(
         self,
@@ -179,7 +181,7 @@ class AppAgent(BasicAgent):
         args = utils.revise_line_breaks(response_dict.get("Args"))
 
         # Generate the function call string
-        action = self.Puppeteer.get_command_string(function_call, args)
+        action = AppAgent.get_command_string(function_call, args)
 
         utils.print_with_color(
             "Observations👀: {observation}".format(observation=observation), "cyan"
@@ -377,13 +379,6 @@ class AppAgent(BasicAgent):
         self.processor.process()
         self.status = self.processor.status
 
-    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
-        """
-        Create the Puppeteer interface to automate the app.
-        :return: The Puppeteer interface.
-        """
-        return puppeteer.AppPuppeteer(self._process_name, self._app_root_name)
-
     def process_comfirmation(self) -> bool:
         """
         Process the user confirmation.
@@ -451,11 +446,13 @@ class AppAgent(BasicAgent):
             "demonstration", db_path
         )
 
-    def context_provision(self, request: str = "") -> None:
+    def context_provision(self, request: str = "", context: Context = None) -> None:
         """
         Provision the context for the app agent.
         :param request: The request sent to the Bing search retriever.
         """
+
+        session_data_manager = context.get(ContextNames.SESSION_DATA_MANAGER)
 
         # Load the offline document indexer for the app agent if available.
         if configs["RAG_OFFLINE_DOCS"]:
@@ -489,12 +486,136 @@ class AppAgent(BasicAgent):
             db_path = os.path.join(demonstration_path, "demonstration_db")
             self.build_human_demonstration_retriever(db_path)
 
+        # Load MCP tool information if enabled
+        if self.mcp_enabled:
+            utils.print_with_color("Loading MCP tool information...", "magenta")
+            self._load_mcp_context(session_data_manager)
+
+    def _load_mcp_context(self, session_data_manager) -> None:
+        """
+        Load MCP context information for the current application.
+        """
+        app_namespace = self._get_app_namespace()
+        if app_namespace in self.mcp_preferred_apps and hasattr(self, 'prompter'):
+            
+            
+            get_instructions_action = MCPGetInstructionsAction(
+                params=MCPGetInstructionsParams(app_namespace=app_namespace)
+            )
+            
+            # Use callback pattern to handle MCP instructions result
+            session_data_manager.add_action(
+                get_instructions_action,
+                setter=lambda result: self._handle_mcp_instructions_callback(result)
+            )
+            
+            utils.print_with_color(
+                f"Requested MCP instructions for {app_namespace}", "green"
+            )
+    
+    def _handle_mcp_instructions_callback(self, result: Any) -> None:
+        """
+        Callback to handle MCP instructions result from the client.
+        :param result: The result from the MCP get instructions action
+        """
+        try:
+            if result and isinstance(result, dict):
+                self.handle_mcp_instructions_result(result)
+            elif result:
+                utils.print_with_color(
+                    f"Received unexpected MCP instructions result type: {type(result)}", 
+                    "yellow"
+                )
+        except Exception as e:
+            utils.print_with_color(
+                f"Error handling MCP instructions callback: {str(e)}", 
+                "red"
+            )
+    
+    def _get_app_namespace(self) -> str:
+        """
+        Get the application namespace based on the current application.
+        """
+        app_name = self._process_name.lower()
+        namespace_mapping = {
+            'powerpnt': 'powerpoint',
+            'excel': 'excel',
+            'winword': 'word',
+            'chrome': 'web',
+            'firefox': 'web',
+            'edge': 'web',
+            'powerpoint': 'powerpoint',
+        }
+        return namespace_mapping.get(app_name, app_name)
+      
+    def should_use_mcp(self, function_name: str) -> bool:
+        """
+        Determine if a function should use MCP instead of UI automation.
+        """
+        if not self.mcp_enabled:
+            return False
+            
+        app_namespace = self._get_app_namespace()
+        if app_namespace not in self.mcp_preferred_apps:
+            return False
+            
+        # Use available MCP tools if loaded, otherwise fall back to default list
+        if self.mcp_preferred_operations:
+            return function_name in self.mcp_preferred_operations
+        
+        # Fallback to default high-level operations if MCP tools not loaded yet
+        default_operations = [
+            'save_as', 'create_presentation', 'add_slide', 'set_background_color',
+            'create_document', 'insert_text', 'format_text', 'create_table',
+            'create_workbook', 'add_worksheet', 'set_cell_value', 'create_chart',
+            'open_file', 'close_file', 'export_pdf', 'insert_image'
+        ]
+        
+        return function_name in default_operations
+      
+    def handle_mcp_instructions_result(self, instructions: Dict[str, Any]) -> None:
+        """
+        Handle the result of MCP instructions request from client.
+        :param instructions: The MCP instructions received from client
+        """
+        if hasattr(self, 'prompter') and instructions.get('available', False):
+            tools = instructions.get('instructions', {}).get('tools', [])
+            self.prompter.load_mcp_tools_from_data(
+                tools,
+                instructions.get('app_namespace'),
+                instructions.get('tool_instructions', None)
+            )
+            
+            # Extract tool names and save as preferred operations
+            self.mcp_preferred_operations = [tool.get('function', {}).get('name', '') for tool in tools if tool.get('function', {}).get('name')]
+            
+            utils.print_with_color(
+                f"Loaded {len(tools)} MCP tools from client response", "green"
+            )
+            utils.print_with_color(
+                f"MCP preferred operations: {self.mcp_preferred_operations}", "cyan"
+            )
+
     @property
     def default_state(self) -> ContinueAppAgentState:
         """
         Get the default state.
         """
         return ContinueAppAgentState()
+    
+    @staticmethod
+    def get_command_string(command_name: str, params: Dict[str, str]) -> str:
+        """
+        Generate a function call string.
+        :param command_name: The function name.
+        :param params: The arguments as a dictionary.
+        :return: The function call string.
+        """
+        # Format the arguments
+        args_str = ", ".join(f"{k}={v!r}" for k, v in params.items())
+
+        # Return the function call string
+        return f"{command_name}({args_str})"
 
 
 class OpenAIOperatorAgent(AppAgent):
@@ -522,7 +643,6 @@ class OpenAIOperatorAgent(AppAgent):
 
         self._process_name = process_name
         self._app_root_name = app_root_name
-        self.Puppeteer = self.create_puppeteer_interface()
         self._blackboard = Blackboard()
         self._response_id = None
         self._previous_computer_id = None
@@ -654,7 +774,7 @@ class OpenAIOperatorAgent(AppAgent):
         args = response_dict.get("args", {})
 
         # Generate the function call string
-        action = self.Puppeteer.get_command_string(function_call, args)
+        action = AppAgent.get_command_string(function_call, args)
         utils.print_with_color(
             "Action applied⚒️: {action}".format(action=action), "blue"
         )

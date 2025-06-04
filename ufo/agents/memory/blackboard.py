@@ -6,8 +6,8 @@ import os
 from dataclasses import dataclass
 from typing import Dict, List, Optional, Union
 
+from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
-from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config.config import Config
 
 configs = Config.get_instance().config_data
@@ -143,7 +143,7 @@ class Blackboard:
 
         if os.path.exists(screenshot_path):
 
-            screenshot_str = PhotographerFacade().encode_image_from_path(
+            screenshot_str = utils.encode_image_from_path(
                 screenshot_path
             )
         else:

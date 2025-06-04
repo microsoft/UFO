@@ -13,7 +13,6 @@ from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
-from ufo.automator import puppeteer
 from ufo.config.config import Config
 from ufo.module.context import Context
 from ufo.prompter.agent_prompter import HostAgentPrompter
@@ -81,7 +80,6 @@ class HostAgent(BasicAgent):
         self._active_appagent = None
         self._blackboard = Blackboard()
         self.set_state(self.default_state)
-        self.Puppeteer = self.create_puppeteer_interface()
 
     def get_prompter(
         self,
@@ -206,19 +204,13 @@ class HostAgent(BasicAgent):
         # Sync the status with the processor.
         self.status = self.processor.status
 
-    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
-        """
-        Create the Puppeteer interface to automate the app.
-        :return: The Puppeteer interface.
-        """
-        return puppeteer.AppPuppeteer("", "")
-
     def create_app_agent(
         self,
         application_window_name: str,
         application_root_name: str,
         request: str,
         mode: str,
+        context: Context = None,
     ) -> AppAgent:
         """
         Create the app agent for the host agent.
@@ -280,14 +272,8 @@ class HostAgent(BasicAgent):
         else:
             raise ValueError(f"The {mode} mode is not supported.")
 
-        # Create the COM receiver for the app agent.
-        if configs.get("USE_APIS", False):
-            app_agent.Puppeteer.receiver_manager.create_api_receiver(
-                application_root_name, application_window_name
-            )
-
         # Provision the context for the app agent, including the all retrievers.
-        app_agent.context_provision(request)
+        app_agent.context_provision(request, context=context)
 
         return app_agent
 

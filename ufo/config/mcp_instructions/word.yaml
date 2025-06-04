@@ -1,0 +1,336 @@
+# Word MCP Server Instructions
+# This file contains instructions and tool definitions for the Microsoft Word MCP server
+
+namespace: word
+description: "MCP server for Microsoft Word automation and document manipulation"
+tool_instructions: ""
+
+# Available tools for Word operations
+tools:
+  - name: create_document
+    description: "Create a new Word document"
+    parameters:
+      - name: template_path
+        type: string
+        description: "Path to template file (optional)"
+        required: false
+
+  - name: open_document
+    description: "Open an existing Word document"
+    parameters:
+      - name: file_path
+        type: string
+        description: "Path to the Word document to open"
+        required: true
+
+  - name: save_document
+    description: "Save the current document"
+    parameters:
+      - name: file_path
+        type: string
+        description: "Path where to save the document (optional if already saved)"
+        required: false
+      - name: format
+        type: string
+        description: "File format (docx, pdf, rtf, etc.)"
+        required: false
+        default: "docx"
+
+  - name: close_document
+    description: "Close the current document"
+    parameters:
+      - name: save_changes
+        type: boolean
+        description: "Whether to save changes before closing"
+        required: false
+        default: true
+
+  - name: insert_text
+    description: "Insert text at the current cursor position or specified location"
+    parameters:
+      - name: text
+        type: string
+        description: "Text to insert"
+        required: true
+      - name: position
+        type: string
+        description: "Position to insert text (start, end, current)"
+        required: false
+        default: "current"
+
+  - name: replace_text
+    description: "Find and replace text in the document"
+    parameters:
+      - name: find_text
+        type: string
+        description: "Text to find"
+        required: true
+      - name: replace_text
+        type: string
+        description: "Text to replace with"
+        required: true
+      - name: match_case
+        type: boolean
+        description: "Whether to match case"
+        required: false
+        default: false
+      - name: whole_word
+        type: boolean
+        description: "Whether to match whole words only"
+        required: false
+        default: false
+
+  - name: format_text
+    description: "Format selected text or text range"
+    parameters:
+      - name: text_range
+        type: object
+        description: "Text range to format (optional, uses selection if not provided)"
+        required: false
+      - name: font_name
+        type: string
+        description: "Font name"
+        required: false
+      - name: font_size
+        type: number
+        description: "Font size"
+        required: false
+      - name: bold
+        type: boolean
+        description: "Bold formatting"
+        required: false
+      - name: italic
+        type: boolean
+        description: "Italic formatting"
+        required: false
+      - name: underline
+        type: boolean
+        description: "Underline formatting"
+        required: false
+      - name: color
+        type: string
+        description: "Font color (hex or name)"
+        required: false
+
+  - name: insert_heading
+    description: "Insert a heading with specified level"
+    parameters:
+      - name: text
+        type: string
+        description: "Heading text"
+        required: true
+      - name: level
+        type: integer
+        description: "Heading level (1-6)"
+        required: false
+        default: 1
+
+  - name: insert_paragraph
+    description: "Insert a new paragraph"
+    parameters:
+      - name: text
+        type: string
+        description: "Paragraph text"
+        required: false
+      - name: style
+        type: string
+        description: "Paragraph style"
+        required: false
+
+  - name: insert_page_break
+    description: "Insert a page break"
+    parameters: []
+
+  - name: insert_image
+    description: "Insert an image into the document"
+    parameters:
+      - name: image_path
+        type: string
+        description: "Path to the image file"
+        required: true
+      - name: width
+        type: number
+        description: "Image width in inches"
+        required: false
+      - name: height
+        type: number
+        description: "Image height in inches"
+        required: false
+      - name: wrap_text
+        type: string
+        description: "Text wrapping style (inline, square, tight, etc.)"
+        required: false
+        default: "inline"
+
+  - name: insert_table
+    description: "Insert a table into the document"
+    parameters:
+      - name: rows
+        type: integer
+        description: "Number of rows"
+        required: true
+      - name: columns
+        type: integer
+        description: "Number of columns"
+        required: true
+      - name: data
+        type: array
+        description: "Table data (array of arrays)"
+        required: false
+
+  - name: format_table
+    description: "Format an existing table"
+    parameters:
+      - name: table_index
+        type: integer
+        description: "Index of the table (1-based)"
+        required: true
+      - name: style
+        type: string
+        description: "Table style name"
+        required: false
+      - name: border_style
+        type: string
+        description: "Border style"
+        required: false
+      - name: header_row
+        type: boolean
+        description: "Whether first row is header"
+        required: false
+
+  - name: insert_hyperlink
+    description: "Insert a hyperlink"
+    parameters:
+      - name: text
+        type: string
+        description: "Display text for the hyperlink"
+        required: true
+      - name: url
+        type: string
+        description: "URL or file path"
+        required: true
+
+  - name: set_page_margins
+    description: "Set page margins"
+    parameters:
+      - name: top
+        type: number
+        description: "Top margin in inches"
+        required: false
+      - name: bottom
+        type: number
+        description: "Bottom margin in inches"
+        required: false
+      - name: left
+        type: number
+        description: "Left margin in inches"
+        required: false
+      - name: right
+        type: number
+        description: "Right margin in inches"
+        required: false
+
+  - name: set_page_orientation
+    description: "Set page orientation"
+    parameters:
+      - name: orientation
+        type: string
+        description: "Page orientation (portrait, landscape)"
+        required: true
+
+  - name: insert_header_footer
+    description: "Insert header or footer"
+    parameters:
+      - name: type
+        type: string
+        description: "Type (header, footer)"
+        required: true
+      - name: text
+        type: string
+        description: "Header/footer text"
+        required: true
+      - name: alignment
+        type: string
+        description: "Text alignment (left, center, right)"
+        required: false
+        default: "center"
+
+  - name: track_changes
+    description: "Enable or disable track changes"
+    parameters:
+      - name: enabled
+        type: boolean
+        description: "Whether to enable track changes"
+        required: true
+
+  - name: accept_all_changes
+    description: "Accept all tracked changes"
+    parameters: []
+
+  - name: reject_all_changes
+    description: "Reject all tracked changes"
+    parameters: []
+
+  - name: export_document
+    description: "Export document to different formats"
+    parameters:
+      - name: output_path
+        type: string
+        description: "Output file path"
+        required: true
+      - name: format
+        type: string
+        description: "Export format (pdf, html, txt, etc.)"
+        required: true
+      - name: quality
+        type: string
+        description: "Export quality for PDF (high, medium, low)"
+        required: false
+        default: "high"
+
+  - name: get_document_info
+    description: "Get information about the current document"
+    parameters: []
+
+  - name: get_word_count
+    description: "Get word count statistics"
+    parameters: []
+
+  - name: spell_check
+    description: "Run spell check on the document"
+    parameters:
+      - name: auto_correct
+        type: boolean
+        description: "Whether to auto-correct obvious errors"
+        required: false
+        default: false
+
+# Common error handling
+error_handling:
+  - code: "FILE_NOT_FOUND"
+    message: "The specified file could not be found"
+  - code: "WORD_NOT_AVAILABLE"
+    message: "Word application is not available or not installed"
+  - code: "DOCUMENT_NOT_OPEN"
+    message: "No document is currently open"
+  - code: "INVALID_FORMAT"
+    message: "The specified format is not supported"
+  - code: "PERMISSION_DENIED"
+    message: "Permission denied to access the file"
+
+# Usage examples
+examples:
+  create_and_format:
+    description: "Create a document and add formatted content"
+    steps:
+      - tool: create_document
+      - tool: insert_heading
+        args:
+          text: "Document Title"
+          level: 1
+      - tool: insert_paragraph
+        args:
+          text: "This is the introduction paragraph."
+      - tool: format_text
+        args:
+          bold: true

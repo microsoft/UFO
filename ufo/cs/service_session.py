@@ -1,9 +1,5 @@
-from uuid import uuid4
 
-from ufo.agents.agent.app_agent import AppAgent
-from ufo.agents.agent.host_agent import HostAgent
-from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
-from ufo.agents.states.app_agent_state import AppAgentStatus
+from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config.config import Config
 from ufo.cs.contracts import ActionBase
 from ufo.cs.session_data import SessionDataManager
@@ -42,10 +38,10 @@ class ServiceSession(BaseSession):
 
     def step_forward(self):
         self.current_round.step_forward()
-        if isinstance(self.current_round.agent, HostAgent) and self.current_round.agent.state.name() == HostAgentStatus.ASSIGN.value:
-            self.current_round.step_forward()
-        elif isinstance(self.current_round.agent, AppAgent) and self.current_round.agent.state.name() == AppAgentStatus.FINISH.value:
-            self.current_round.step_forward()
+        # if isinstance(self.current_round.agent, HostAgent) and self.current_round.agent.state.name() == HostAgentStatus.ASSIGN.value:
+        #     self.current_round.step_forward()
+        # elif isinstance(self.current_round.agent, AppAgent) and self.current_round.agent.state.name() == AppAgentStatus.FINISH.value:
+        #     self.current_round.step_forward()
 
     def _init_context(self) -> None:
         """
@@ -84,7 +80,25 @@ class ServiceSession(BaseSession):
         return round
 
     def next_request(self) -> str:
+        self._finish = True
         return self._request
+    
+    def is_finished(self) -> bool:
+        """
+        Check if the session is ended.
+        return: True if the session is ended, otherwise False.
+        """
+        if (
+            self.current_round.is_finished()
+            or self.step >= configs["MAX_STEP"]
+            or self.total_rounds >= configs["MAX_ROUND"]
+        ):
+            return True
+
+        if self.is_error():
+            return True
+
+        return False
 
     def request_to_evaluate(self) -> bool:
         """

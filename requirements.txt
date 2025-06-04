@@ -34,3 +34,5 @@ pydantic
 mmh3
 
 flask
+fastmcp
+pytest

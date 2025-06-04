@@ -257,7 +257,7 @@ class ReceiverManager:
     ) -> Dict[str, Dict[str, Union[str, ReceiverFactory]]]:
         """
         Get the receiver factory registry.
-        :return: The receiver factory registry.
+        :return: The receiver factory registry. 
         """
         return self._receiver_factory_registry
 
@@ -274,11 +274,11 @@ class ReceiverManager:
         return None
 
     @classmethod
-    def register(cls, receiver_factory_class: Type[ReceiverFactory]) -> ReceiverFactory:
+    def register(cls, receiver_factory_class: Type[ReceiverFactory]) -> Type[ReceiverFactory]:
         """
         Decorator to register the receiver factory class to the receiver manager.
         :param receiver_factory_class: The receiver factory class to be registered.
-        :return: The receiver factory class instance.
+        :return: The receiver factory class.
         """
 
         cls._receiver_factory_registry[receiver_factory_class.name()] = {
@@ -286,4 +286,4 @@ class ReceiverManager:
             "is_api": receiver_factory_class.is_api(),
         }
 
-        return receiver_factory_class()
+        return receiver_factory_class

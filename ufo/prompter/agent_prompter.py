@@ -4,6 +4,7 @@
 import json
 from typing import Any, Dict, List, Optional
 
+from ufo import utils
 from ufo.config.config import Config
 from ufo.prompter.basic import BasicPrompter
 
@@ -206,6 +207,24 @@ class AppAgentPrompter(BasicPrompter):
         if configs.get("USE_APIS", False):
             self.app_api_prompt_template = self.app_prompter.load_api_prompt()
 
+        self.mcp_tools = []
+        self.mcp_app_namespace = None
+        self.mcp_tool_instructions = None
+
+    def load_mcp_tools_from_data(self, tools: List[Dict[str, Any]], app_namespace: str, tool_instructions: str) -> None:
+        """
+        Load MCP tools from data received from client.
+        :param tools: List of MCP tools
+        :param app_namespace: The application namespace
+        """
+        self.mcp_tools = tools
+        self.mcp_app_namespace = app_namespace
+        self.mcp_tool_instructions = tool_instructions
+        utils.print_with_color(
+            f"Loaded {len(self.mcp_tools)} MCP tools for {app_namespace}",
+            "green"
+        )
+            
     def system_prompt_construction(self, additional_examples: List[str] = []) -> str:
         """
         Construct the prompt for app selection.
@@ -410,13 +429,56 @@ class AppAgentPrompter(BasicPrompter):
         :param verbose: The verbosity level.
         return: The prompt for APIs.
         """
+        api_list = []
+        
+        # Include MCP tools FIRST with high priority
+        if self.mcp_tools:
+            api_list = api_list + [
+                "## 🚀 PREFERRED: Advanced MCP Tools (Use These When Available)",
+                f"The following {len(self.mcp_tools)} MCP tools provide RELIABLE automation for {self.mcp_app_namespace}.",
+                "**IMPORTANT: These MCP tools are MORE RELIABLE than UI automation - PREFER them over manual UI actions!**",
+                ""
+            ]
+            
+            if self.mcp_tool_instructions:
+                api_list.append(
+                    f"### Tool Instructions:\n{self.mcp_tool_instructions}\n"
+                )
+            
+            for tool in self.mcp_tools:
+                tool_name = tool.get('name', 'unknown')
+                description = tool.get('description', 'No description')
+                parameters = tool.get('parameters', [])
+                
+                tool_desc = f"\"{tool_name}\"\n{description}"
+                
+                if parameters and verbose > 0:
+                    params_list = []
+                    for param in parameters:
+                        param_name = param.get('name', 'unknown')
+                        param_type = param.get('type', 'any')
+                        required = param.get('required', False)
+                        param_desc = param.get('description', 'No description')
+                        req_indicator = " (required)" if required else " (optional)"
+                        params_list.append(f"  - {param_name}: {param_desc}{req_indicator}")
+                    
+                    # Format the parameters section
+                    param_str = ", ".join([f"{p.get('name', 'unknown')}: {p.get('type', 'any')}" for p in parameters])
+                    tool_desc += f"\n[1] API call: {tool_name}({param_str})"
+                    tool_desc += f"\n[2] Args:\n" + "\n".join(params_list)
+                
+                tool_desc += f"\n[3] Example: {tool_name}(" + ", ".join([f"{p.get('name', 'unknown')}={p.get('default', '\"\"') if p.get('type') == 'string' else p.get('default', 'None')}" for p in parameters[:2]]) + ")"
+                tool_desc += f"\n[4] Available control item: Any control item in the {self.mcp_app_namespace} app."
+                tool_desc += f"\n[5] Return: A message indicating the success or failure of the operation."
+                api_list.append(tool_desc)
+                api_list.append("")
 
         # Construct the prompt for each UI control action.
-        api_list = [
+        api_list.append(
             "- The action types for UI elements are: {actions}.".format(
                 actions=list(self.api_prompt_template.keys())
             )
-        ]
+        )
 
         for key in self.api_prompt_template.keys():
             api = self.api_prompt_template[key]
@@ -447,6 +509,8 @@ class AppAgentPrompter(BasicPrompter):
                     api_text = api["summary"]
 
                 api_list.append(api_text)
+
+
 
         api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
 
@@ -587,7 +651,6 @@ class FollowerAgentPrompter(AppAgentPrompter):
         :param prev_plan: The previous plan.
         :param user_request: The user request.
         :param subtask: The subtask.
-        :param retrieved_docs: The retrieved documents.
         :param current_application: The current application.
         :param host_message: The host message.
         :param current_state: The current state of the application (Optional).

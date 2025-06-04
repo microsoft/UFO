@@ -312,16 +312,15 @@ class HostAgentProcessor(BaseProcessor):
         self.app_root = value["process_name"]
         #self.control_text = value["control_text"]
         
-        desktop_windows_info = self.session_data_manager.session_data.state.desktop_windows_info
-        new_app_window = list(filter(lambda x: x.annotation_id == self.control_label, desktop_windows_info))[0]
-        self.application_window = new_app_window
-        self.application_window_info = new_app_window
+        new_app_window = value["window_info"]
+        #self.application_window = new_app_window
+        self.application_window_info = WindowInfo(**new_app_window)
         
         self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
         
-    def launch_application_callback(self, value: str) -> None:
+    def launch_application_callback(self, value: dict[str, any]) -> None:
         """
         Helper method to handle the application launch callback.
         
@@ -332,16 +331,14 @@ class HostAgentProcessor(BaseProcessor):
         self.app_root = value["process_name"]
         #self.control_text = value["control_text"]
         
-        desktop_windows_info = self.session_data_manager.session_data.state.desktop_windows_info
-        new_app_window = list(filter(lambda x: x.annotation_id == self.control_label, desktop_windows_info))[0]
-        self.application_window = new_app_window
-        self.application_window_info = new_app_window
-        
+        new_app_window = value["window_info"]
+        #self.application_window = new_app_window
+        self.application_window_info = WindowInfo(**new_app_window)
+
         self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
     
-
     def sync_memory(self):
         """
         Sync the memory of the HostAgent.

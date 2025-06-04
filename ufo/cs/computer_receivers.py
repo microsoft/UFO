@@ -1,4 +1,5 @@
 import os
+import os
 import subprocess
 import time
 import yaml
@@ -37,9 +38,7 @@ from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.config.config import Config
-from ufo.automator.app_apis.factory import COMReceiverFactory, WebReceiverFactory, ShellReceiverFactory
-from ufo.mcp.mcp_client import MCPClient
-from ufo.mcp.core_mcp_client import CoreMCPClient
+from ufo.automator.app_apis.factory import COMReceiverFactory, WebReceiverFactory, ShellReceiverFactory, MCPReceiverFactory
 
 configs = Config.get_instance().config_data
 
@@ -67,12 +66,12 @@ class Computer:
         self.grounding_service = None  # Initialize grounding service as None for now
         self.receiver_manager = ReceiverManager()
           # MCP configuration and state
-        self.mcp_servers = {}  # Store MCP server connections
+        self.mcp_receivers = {}  # Store MCP receivers
         self.mcp_instructions = {}  # Cache MCP instructions
         
         # Initialize receiver factories
         self._init_receivers()
-        self._init_mcp_servers()
+        self._init_mcp_receivers()
     
     @property
     def name(self) -> str:
@@ -83,90 +82,71 @@ class Computer:
         """Initialize available receiver factories."""
         # Receivers are auto-registered via @ReceiverManager.register decorators
         pass
-    
-    def _init_mcp_servers(self):
-        """Initialize MCP server connections for client applications."""
+    def _init_mcp_receivers(self):        
+        """Initialize MCP receivers for direct tool execution."""
         # Get the base directory for UFO2
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
         
-        # Load MCP servers configuration from YAML file
-        mcp_configs = {}
-        try:
-            servers_config_path = os.path.join(base_dir, "config", "mcp_servers.yaml")
-            if os.path.exists(servers_config_path):
-                with open(servers_config_path, 'r') as f:
-                    servers_config = yaml.safe_load(f)
-                
-                # Extract server configurations
-                mcp_servers_config = servers_config.get("mcp_servers", {})
-                for namespace, server_config in mcp_servers_config.items():
-                    if server_config.get("enabled", True):
-                        mcp_configs[namespace] = {
-                            "endpoint": server_config["endpoint"],
-                            "instructions_path": os.path.join(base_dir, server_config["instructions_path"])
-                        }
-            else:
-                # Fallback to hardcoded configuration if file doesn't exist
-                mcp_configs = {
-                    "powerpoint": {
-                        "endpoint": "http://localhost:8001",
-                        "instructions_path": os.path.join(base_dir, "config", "mcp_instructions", "powerpoint.yaml")
-                    },
-                    "word": {
-                        "endpoint": "http://localhost:8002", 
-                        "instructions_path": os.path.join(base_dir, "config", "mcp_instructions", "word.yaml")
-                    },
-                    "excel": {
-                        "endpoint": "http://localhost:8003",
-                        "instructions_path": os.path.join(base_dir, "config", "mcp_instructions", "excel.yaml")
-                    },
-                    "web": {
-                        "endpoint": "http://localhost:8004",
-                        "instructions_path": os.path.join(base_dir, "config", "mcp_instructions", "web.yaml")
-                    },
-                    "shell": {
-                        "endpoint": "http://localhost:8005",
-                        "instructions_path": os.path.join(base_dir, "config", "mcp_instructions", "shell.yaml")
-                    }
-                }
-        except Exception as e:
-            from ufo.utils import print_with_color
-            print_with_color(f"Failed to load MCP servers configuration: {e}", "yellow")
+        mcp_configs = {
+            "powerpoint": {
+                "instructions_path": os.path.join(base_dir, "config", "mcp_instructions", "powerpoint.yaml")
+            },
+            "word": {
+                "instructions_path": os.path.join(base_dir, "config", "mcp_instructions", "word.yaml")
+            },
+            "excel": {
+                "instructions_path": os.path.join(base_dir, "config", "mcp_instructions", "excel.yaml")
+            },
+            "web": {
+                "instructions_path": os.path.join(base_dir, "config", "mcp_instructions", "web.yaml")
+            },
+            "shell": {
+                "instructions_path": os.path.join(base_dir, "config", "mcp_instructions", "shell.yaml")
+            }
+        }
+        
+        # Initialize MCP receiver factory
+        self.mcp_receiver_factory = MCPReceiverFactory()
         
         for namespace, config in mcp_configs.items():
-            try:
-                # Load instructions for this namespace
+            try:                # Load instructions for this namespace
                 if os.path.exists(config["instructions_path"]):
                     with open(config["instructions_path"], 'r') as f:
                         self.mcp_instructions[namespace] = yaml.safe_load(f)
                 
-                self.mcp_servers[namespace] = {
-                    "endpoint": config["endpoint"],
-                    "status": "initialized"
-                }
+                # Create MCP receiver for this namespace
+                try:
+                    # Map namespaces to COM application details
+                    com_app_mapping = {
+                        "powerpoint": {"app_root_name": "POWERPNT.EXE", "process_name": "POWERPNT.EXE"},
+                        "word": {"app_root_name": "WINWORD.EXE", "process_name": "WINWORD.EXE"},
+                        "excel": {"app_root_name": "EXCEL.EXE", "process_name": "EXCEL.EXE"}
+                    }
+                    
+                    if namespace in com_app_mapping:
+                        # For COM applications, provide the required parameters
+                        app_details = com_app_mapping[namespace]
+                        mcp_receiver = self.mcp_receiver_factory.create_receiver(
+                            namespace, 
+                            app_details["app_root_name"], 
+                            app_details["process_name"]
+                        )
+                    else:
+                        # For non-COM applications (web, shell), just pass namespace
+                        mcp_receiver = self.mcp_receiver_factory.create_receiver(namespace)
+                    
+                    if mcp_receiver:
+                        self.mcp_receivers[namespace] = mcp_receiver
+                        print(f"✓ MCP receiver initialized for {namespace}")
+                    else:
+                        print(f"⚠ No MCP receiver available for {namespace}")
+                except Exception as receiver_error:
+                    print(f"⚠ Failed to create MCP receiver for {namespace}: {receiver_error}")
+                    # Continue without this receiver - we can still use fallback instructions
+                    
             except Exception as e:
-                from ufo.utils import print_with_color
-                print_with_color(f"Failed to initialize MCP server {namespace}: {e}", "red")
-                
-        # load tools from mcp servers and replace the tools in mcp_instructions if available
-        # for namespace, server_config in self.mcp_servers.items():
-        #     try:
-        #         endpoint = server_config["endpoint"]
-        #         mcp_client = MCPClient.create_client(endpoint, namespace)
-                
-        #         # Create a temporary action to get available tools
-        #         from ufo.cs.contracts import MCPGetAvailableToolsAction, MCPGetAvailableToolsParams
-        #         temp_action = MCPGetAvailableToolsAction(
-        #             params=MCPGetAvailableToolsParams(app_namespace=namespace)
-        #         )
-                
-        #         result = mcp_client._handle_mcp_get_available_tools(temp_action)
-        #         if result.get("tools"):
-        #             # Update the instructions with the fetched tools
-        #             if namespace in self.mcp_instructions:
-        #                 self.mcp_instructions[namespace]["tools"] = result["tools"]
-        #     except Exception as e:
-        #         print_with_color(f"Failed to fetch tools for {namespace}: {e}", "yellow")
+                print(f"Error initializing MCP for {namespace}: {e}")
+        print(f"✓ MCP system initialized with {len(self.mcp_receivers)} receivers and {len(self.mcp_instructions)} instruction sets")
     
     def run_action(self, action: ActionBase) -> Dict[str, Any]:
         """Run the specified action and return the result"""
@@ -523,7 +503,6 @@ class Computer:
         
         self.selected_app_window = window
         self.selected_app_window_info = WindowInfo(
-            annotation_id=window_label,
             title=window_text,
             handle=window.handle,
             class_name=window.class_name(),
@@ -535,11 +514,7 @@ class Computer:
             rectangle=self._get_control_rectangle(window),
         )
         
-        return {
-            "process_name": process_name,
-            "window_text": window_text,
-            "window_info": self.selected_app_window_info.model_dump()
-        }    
+        return {"process_name": process_name, "window_text": window_text}    
     
     def _handle_launch_application(self, action: LaunchApplicationAction) -> Dict[str, Any]:
         """Handle launch_application action"""
@@ -577,64 +552,11 @@ class Computer:
                         break
                 except:
                     pass
-        
-        self.last_app_windows = app_dict
-        self.last_app_windows_info = [
-            WindowInfo(
-                annotation_id=app_window[0],
-                name=app_window[1].element_info.name,
-                title=app_window[1].window_text(),
-                handle=app_window[1].handle,
-                class_name=app_window[1].class_name(),
-                process_id=app_window[1].process_id(),
-                is_visible=app_window[1].is_visible(),
-                is_minimized=app_window[1].is_minimized(),
-                is_maximized=app_window[1].is_maximized(),
-                is_active=app_window[1].is_active(),
-                rectangle=self._get_control_rectangle(app_window[1]),
-                text_content=app_window[1].window_text(),
-            )
-            for app_window in app_dict.items()
-        ]
-        self.selected_app_window = window
-        # Set selected window info based on the recent application launch
-        # Try to find the window that matches the process or handle from the launch
-        window_found = False
-        for win_info in self.last_app_windows_info:
-            if hasattr(window, 'process_id') and window.process_id() == win_info.process_id:
-                self.selected_app_window_info = win_info
-                window_found = True
-                break
-            elif hasattr(window, 'handle') and window.handle == win_info.handle:
-                self.selected_app_window_info = win_info
-                window_found = True
-                break
-        
-        # If no matching window was found, create basic window info
-        if not window_found:
-            self.selected_app_window_info = WindowInfo(
-                annotation_id="unknown",
-                name=getattr(window.element_info, 'name', None) if hasattr(window, 'element_info') else None,
-                title=window.window_text() if hasattr(window, 'window_text') else "Unknown",
-                handle=window.handle if hasattr(window, 'handle') else None,
-                class_name=window.class_name() if hasattr(window, 'class_name') else None,
-                process_id=window.process_id() if hasattr(window, 'process_id') else None,
-                is_visible=window.is_visible() if hasattr(window, 'is_visible') else False,
-                is_minimized=window.is_minimized() if hasattr(window, 'is_minimized') else False,
-                is_maximized=window.is_maximized() if hasattr(window, 'is_maximized') else False,
-                rectangle=self._get_control_rectangle(window),
-                text_content=window.window_text() if hasattr(window, 'window_text') else None,
-            )
-          
+          # Return window information as a string
         process_name = self.control_inspector.get_application_root_name(window)
         window_text = window.window_text() if hasattr(window, 'window_text') else "Unknown"
         
-        return {
-            "process_name": process_name,
-            "window_text": window_text,
-            "desk_top_windows_info": [w.model_dump() for w in self.last_app_windows_info],
-            "window_info": self.selected_app_window_info.model_dump()
-        }
+        return {"process_name": process_name, "window_text": window_text}
 
     def _handle_get_ui_tree(self, action: GetUITreeAction) -> Dict[str, Any]:
         """Handle get_ui_tree action"""
@@ -679,38 +601,47 @@ class Computer:
         if annotation_id and self.last_app_windows:
             return self.last_app_windows.get(annotation_id)
         return self.selected_app_window    
-    
     def _handle_execute_mcp_tool(self, action: MCPToolExecutionAction) -> Dict[str, Any]:
-        """Handle MCP tool execution by calling the appropriate MCP server."""
+        """Handle MCP tool execution using direct receiver calls."""
         params = action.params
         tool_name = params.tool_name
         tool_args = params.tool_args
         app_namespace = params.app_namespace
-        if app_namespace not in self.mcp_servers:
-            raise ValueError(f"MCP server not found for namespace: {app_namespace}")
         
-        try:
-            
-            server_config = self.mcp_servers[app_namespace]
-            endpoint = server_config["endpoint"]
-            
-            # Create general MCP client and execute tool
-            mcp_client = MCPClient.create_client(endpoint, app_namespace)
-            result = mcp_client._make_tool_call(tool_name, tool_args)
-            
-            return {
-                "success": True,
-                "result": result,
-                "tool_name": tool_name,
-                "namespace": app_namespace
-            }
-        except Exception as e:
-            return {
-                "success": False,
-                "error": f"Failed to execute MCP tool: {str(e)}",
-                "tool_name": tool_name,
-                "namespace": app_namespace
-            }
+        # Check if we have a receiver for this namespace
+        if app_namespace in self.mcp_receivers:
+            try:
+                # Use direct MCP receiver call
+                mcp_receiver = self.mcp_receivers[app_namespace]
+                result = mcp_receiver.execute_tool(tool_name, tool_args)
+                return result
+            except Exception as e:
+                return {
+                    "success": False,
+                    "error": f"MCP receiver execution failed: {str(e)}",
+                    "tool_name": tool_name,
+                    "namespace": app_namespace
+                }
+        else:
+            # Fallback: return instructions if available
+            if app_namespace in self.mcp_instructions:
+                instructions = self.mcp_instructions[app_namespace]
+                available_tools = [tool.get("name") for tool in instructions.get("tools", [])]
+                return {
+                    "success": False,
+                    "error": f"No MCP receiver available for {app_namespace}. Tool '{tool_name}' is defined in instructions but receiver not initialized.",
+                    "available_tools": available_tools,
+                    "tool_name": tool_name,
+                    "namespace": app_namespace,
+                    "fallback": True
+                }
+            else:
+                return {
+                    "success": False,
+                    "error": f"No MCP support available for namespace: {app_namespace}",
+                    "tool_name": tool_name,
+                    "namespace": app_namespace
+                }
 
     def _handle_get_mcp_instructions(self, action: MCPGetInstructionsAction) -> Dict[str, Any]:
         """Get MCP instructions for a specific application namespace."""
@@ -724,11 +655,12 @@ class Computer:
             "instructions": instructions,
             "available": app_namespace in self.mcp_instructions
         }
-        
+
     def _handle_get_mcp_available_tools(self, action: MCPGetAvailableToolsAction) -> Dict[str, Any]:
         """Get available MCP tools for a specific application namespace."""
         params = action.params
         app_namespace = params.app_namespace
+        
         if app_namespace not in self.mcp_servers:
             return {
                 "namespace": app_namespace,
@@ -737,18 +669,32 @@ class Computer:
             }
         
         try:
+            # Query MCP server for available tools
             server_config = self.mcp_servers[app_namespace]
             endpoint = server_config["endpoint"]
-            mcp_client = MCPClient.create_client(endpoint, app_namespace)
-            result = mcp_client._handle_mcp_get_available_tools(action)
             
-            return {
-                "namespace": app_namespace,
-                "tools": result.get("tools", []),
-                "available": True
-            }
+            response = requests.get(
+                f"{endpoint}/tools",
+                timeout=10
+            )
+            
+            if response.status_code == 200:
+                tools_data = response.json()
+                return {
+                    "namespace": app_namespace,
+                    "tools": tools_data.get("tools", []),
+                    "available": True
+                }
+            else:
+                return {
+                    "namespace": app_namespace,
+                    "tools": [],
+                    "available": False,
+                    "error": f"Server returned {response.status_code}"
+                }
+                
         except Exception as e:
-            # Fallback to instructions if server communication fails
+            # Fallback to instructions if server is not available
             instructions = self.mcp_instructions.get(app_namespace, {})
             tools = instructions.get("tools", [])
             
@@ -756,8 +702,7 @@ class Computer:
                 "namespace": app_namespace,
                 "tools": tools,
                 "available": len(tools) > 0,
-                "fallback": True,
-                "error": str(e)
+                "fallback": True
             }
     
 if __name__ == "__main__":

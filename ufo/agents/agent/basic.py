@@ -11,7 +11,6 @@ from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
 
 from ufo.agents.states.basic import AgentState, AgentStatus
-from ufo.automator import puppeteer
 from ufo.config.config import Config
 from ufo.llm import llm_call
 from ufo.module.context import Context
@@ -51,7 +50,6 @@ class BasicAgent(ABC):
         self._host = None
         self._processor: Optional[BaseProcessor] = None
         self._state = None
-        self.Puppeteer: puppeteer.AppPuppeteer = None
 
     @property
     def status(self) -> str:
@@ -108,12 +106,6 @@ class BasicAgent(ABC):
         :return: The blackboard.
         """
         return self.host.blackboard
-
-    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
-        """
-        Create the puppeteer interface.
-        """
-        pass
 
     @property
     def host(self) -> HostAgent:
@@ -252,12 +244,6 @@ class BasicAgent(ABC):
     def process(self, context: Context) -> None:
         """
         Process the agent.
-        """
-        pass
-
-    def create_puppeteer_interface(self) -> puppeteer.AppPuppeteer:
-        """
-        Create the puppeteer interface.
         """
         pass
 

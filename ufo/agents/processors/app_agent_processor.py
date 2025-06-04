@@ -146,6 +146,8 @@ class AppAgentProcessor(BaseProcessor):
 
         super().__init__(agent=agent, context=context)
 
+        self.mcp_enabled = configs.get("USE_MCP", False)
+
         self.app_agent = agent
         self.host_agent = agent.host
 
@@ -158,6 +160,7 @@ class AppAgentProcessor(BaseProcessor):
         self.control_recorder = ControlInfoRecorder()
         #self.filtered_annotation_dict = None
         self.screenshot_save_path = None
+        self._mcp_execution_result = None
 
 
     def print_step_info(self) -> None:
@@ -599,6 +602,44 @@ class AppAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
+        # Check if we should use MCP for this operation
+        if self.mcp_enabled and self.app_agent.should_use_mcp(self._operation):
+            self._execute_mcp_action()
+        else:
+            self._execute_ui_action()
+
+    def _execute_mcp_action(self) -> None:
+        """
+        Execute action using MCP server.
+        """
+        from ufo.cs.contracts import MCPToolExecutionAction, MCPToolExecutionParams
+        
+        app_namespace = self.app_agent._get_app_namespace()
+        
+        # Create the MCP tool execution action
+        mcp_action = MCPToolExecutionAction(
+            params=MCPToolExecutionParams(
+                app_namespace=app_namespace,
+                tool_name=self._operation,
+                tool_args=self._args
+            )
+        )
+        
+        # Add action to session with callback for result handling
+        self.session_data_manager.add_action(
+            mcp_action,
+            setter=lambda result: self._handle_mcp_execution_callback(result)
+        )
+        
+        utils.print_with_color(
+            f"Added MCP tool execution to session: {self._operation} for {app_namespace}", 
+            "blue"
+        )
+
+    def _execute_ui_action(self) -> None:
+        """
+        Execute action using traditional UI automation.
+        """
         action = OneStepAction(
             function=self._operation,
             args=self._args,
@@ -606,11 +647,6 @@ class AppAgentProcessor(BaseProcessor):
             control_text=self.control_text,
             after_status=self.status,
         )
-        #control_selected = self.session_data_manager.session_data.session_state._annotation_dict.get(self._control_label, None)
-
-        # Save the screenshot of the tagged selected control.
-        # self.capture_control_screenshot(control_selected)
-        # TODO: make this an action if neccessary
 
         commands = [
             OperationCommand(
@@ -630,16 +666,39 @@ class AppAgentProcessor(BaseProcessor):
             params=commands,
         ))
 
-        # self.actions: ActionSequence = ActionSequence(actions=[action])
-        # self.actions.execute_all(
-        #     puppeteer=self.app_agent.Puppeteer,
-        #     control_dict=self._annotation_dict,
-        #     application_window=self.application_window,
-        # )
-
-        # if self.is_application_closed():
-        #     utils.print_with_color("Warning: The application is closed.", "yellow")
-        #     self.status = "FINISH"
+    def _handle_mcp_execution_callback(self, result: Any) -> None:
+        """
+        Callback to handle MCP tool execution result.
+        :param result: The result from the MCP tool execution
+        """
+        try:
+            if result and isinstance(result, dict):
+                success = result.get("success", False)
+                if success:
+                    utils.print_with_color(
+                        f"MCP tool execution successful: {result.get('tool_name', 'unknown')}", 
+                        "green"
+                    )
+                    # Store the result for memory and logging
+                    self._mcp_execution_result = result
+                else:
+                    error_msg = result.get("error", "Unknown error")
+                    utils.print_with_color(
+                        f"MCP tool execution failed: {error_msg}", 
+                        "red"
+                    )
+                    # Could fallback to UI automation here if needed
+                    self._mcp_execution_result = result
+            else:
+                utils.print_with_color(
+                    f"Received unexpected MCP execution result type: {type(result)}", 
+                    "yellow"
+                )
+        except Exception as e:
+            utils.print_with_color(
+                f"Error handling MCP execution callback: {str(e)}", 
+                "red"
+            )
 
     # def capture_control_screenshot(
     #     self, control_selected: Union[ControlInfo, List[ControlInfo]]

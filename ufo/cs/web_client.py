@@ -7,6 +7,7 @@ import requests
 
 from ufo.cs.computer import Computer
 from ufo.cs.contracts import UFORequest, UFOResponse
+from ufo.mcp.core_mcp_client import CoreMCPClient
 
 
 # Configure logging
@@ -19,17 +20,32 @@ class UFOWebClient:
     Client for interacting with the UFO web service.
     Sends requests to the service, executes actions, and sends results back.
     """
-    def __init__(self, server_url, computer_name="client"):
+    def __init__(self, server_url, computer_name="client", use_core_mcp_server=False, core_mcp_host="localhost", core_mcp_port=8000):
         """
         Initialize the UFO web client
         
         Args:
             server_url (str): URL of the UFO web service
             computer_name (str): Name for the Computer instance
+            use_core_mcp_server (bool): Whether to use the core MCP server for action execution
+            core_mcp_host (str): Hostname of the core MCP server
+            core_mcp_port (int): Port of the core MCP server
         """
         self.server_url = server_url.rstrip('/')
         self.computer = Computer(computer_name)
         self.session_id = None
+        self.use_core_mcp_server = use_core_mcp_server
+        
+        # Initialize MCP client if enabled
+        if self.use_core_mcp_server:
+            self.mcp_client = CoreMCPClient(host=core_mcp_host, port=core_mcp_port)
+            logger.info(f"Core MCP client initialized for {core_mcp_host}:{core_mcp_port}")
+              # Test MCP connection
+            if not self.mcp_client.test_connection():
+                logger.warning("Failed to connect to Core MCP server, falling back to direct computer execution")
+                self.use_core_mcp_server = False
+        else:
+            self.mcp_client = None
         
     def run_task(self, request_text):
         """
@@ -124,14 +140,31 @@ class UFOWebClient:
         
         if actions:
             logger.info(f"Executing {len(actions)} actions...")
-            
-            # Process each action
+              # Process each action
             for action in actions:
                 logger.info(f"Running action: {action.name}")
                 
-                # Execute the action and collect the result
-                result = self.computer.run_action(action)
-                action_results[action.call_id] = result
+                # Execute the action through MCP client or direct computer execution
+                try:
+                    if self.use_core_mcp_server and self.mcp_client is not None:
+                        result = self.mcp_client.run_action(action)
+                    else:
+                        result = self.computer.run_action(action)
+                    
+                    action_results[action.call_id] = result
+                except Exception as e:
+                    logger.error(f"Failed to execute action {action.name}: {str(e)}")
+                    # If MCP fails, fall back to direct execution
+                    if self.use_core_mcp_server and self.mcp_client is not None:
+                        logger.warning("MCP execution failed, falling back to direct computer execution")
+                        try:
+                            result = self.computer.run_action(action)
+                            action_results[action.call_id] = result
+                        except Exception as fallback_error:
+                            logger.error(f"Fallback execution also failed: {str(fallback_error)}")
+                            action_results[action.call_id] = {"error": str(fallback_error)}
+                    else:
+                        action_results[action.call_id] = {"error": str(e)}
                 
                 # Add a small delay between actions to prevent overloading
                 time.sleep(0.1)
@@ -147,10 +180,23 @@ def main():
                         help='UFO Web Service URL (default: http://localhost:5000)')
     parser.add_argument('--request', dest='request_text', default='open notepad and write "Hello, World!"',
                         help='The task request text')
+    parser.add_argument('--use-core-mcp', dest='use_core_mcp_server', action='store_true', 
+                        help='Use Core MCP Server for action execution')
+    parser.add_argument('--core-mcp-host', dest='core_mcp_host', default='localhost',
+                        help='Core MCP Server hostname (default: localhost)')
+    parser.add_argument('--core-mcp-port', dest='core_mcp_port', type=int, default=8000,
+                        help='Core MCP Server port (default: 8000)')
     args = parser.parse_args()
     
+    
+    
     # Create and run the client
-    client = UFOWebClient(args.server_url)
+    client = UFOWebClient(
+        args.server_url, 
+        use_core_mcp_server=args.use_core_mcp_server,
+        core_mcp_host=args.core_mcp_host,
+        core_mcp_port=args.core_mcp_port
+    )
     success = client.run_task(args.request_text)
     
     # Exit with appropriate status code

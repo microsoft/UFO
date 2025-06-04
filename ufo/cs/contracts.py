@@ -177,6 +177,30 @@ class AnnotationParams(UIACommandParams):
 class NoActionParams(BaseModel):
     pass
 
+# MCP Action Contracts
+class MCPToolExecutionParams(BaseModel):
+    tool_name: str
+    tool_args: Dict[str, Any]
+    app_namespace: str
+
+class MCPToolExecutionAction(ActionBase):
+    name: str = "execute_mcp_tool"
+    params: Optional[MCPToolExecutionParams] = None
+
+class MCPGetInstructionsParams(BaseModel):
+    app_namespace: str
+
+class MCPGetInstructionsAction(ActionBase):
+    name: str = "get_mcp_instructions"
+    params: Optional[MCPGetInstructionsParams] = None
+
+class MCPGetAvailableToolsParams(BaseModel):
+    app_namespace: str
+
+class MCPGetAvailableToolsAction(ActionBase):
+    name: str = "get_mcp_available_tools"
+    params: Optional[MCPGetAvailableToolsParams] = None
+
 class OperationCommand(BaseModel):
     command_id: str
 
@@ -210,8 +234,11 @@ UFOAction = Union[
     FindControlElementsAction,
     GetUITreeAction,
     OperationSequenceAction,
-    CallbackAction
-]    
+    CallbackAction,
+    MCPToolExecutionAction,
+    MCPGetInstructionsAction,
+    MCPGetAvailableToolsAction
+]
 
 class UFORequest(BaseModel):
     session_id: Optional[str] = None

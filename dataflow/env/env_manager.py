@@ -10,6 +10,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from dataflow.config.config import Config
 from ufo.config.config import Config as UFOConfig
+from ufo.cs.contracts import ControlInfo
 
 # Load configuration settings
 _configs = Config.get_instance().config_data
@@ -134,14 +135,14 @@ class WindowsAppEnv:
             logging.exception(f"Unknown match strategy: {_MATCH_STRATEGY}")
             raise ValueError(f"Unknown match strategy: {_MATCH_STRATEGY}")
 
-    def _calculate_match_score(self, control, control_text) -> int:
+    def _calculate_match_score(self, control: ControlInfo, control_text: str) -> int:
         """
         Calculate the match score between a control and the given text.
         :param control: The control object to evaluate.
         :param control_text: The target text to match.
         :return: An integer score representing the match quality (higher is better).
         """
-        control_content = control.window_text() or ""
+        control_content = control.text_content or ""
 
         # Matching strategies
         if _MATCH_STRATEGY == "contains":
@@ -155,8 +156,8 @@ class WindowsAppEnv:
             raise ValueError(f"Unknown match strategy: {_MATCH_STRATEGY}")
 
     def find_matching_controller(
-        self, filtered_annotation_dict: Dict[int, UIAWrapper], control_text: str
-    ) -> Tuple[str, UIAWrapper]:
+        self, filtered_annotation_dict: Dict[int, ControlInfo], control_text: str
+    ) -> Tuple[str, ControlInfo]:
         """ "
         Select the best matched controller.
         :param filtered_annotation_dict: The filtered annotation dictionary.

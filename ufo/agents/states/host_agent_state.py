@@ -190,6 +190,7 @@ class AssignHostAgentState(HostAgentState):
             application_root_name=application_root_name,
             request=request,
             mode=mode,
+            context=context
         )
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:

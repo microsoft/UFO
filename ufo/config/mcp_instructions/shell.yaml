@@ -1,0 +1,302 @@
+# Shell MCP Server Instructions
+# This file contains instructions and tool definitions for the Shell MCP server
+
+namespace: shell
+description: "MCP server for shell command execution and system operations"
+tool_instructions: ""
+
+# Available tools for Shell operations
+tools:
+  - name: run_shell
+    description: "Execute a shell command"
+    parameters:
+      - name: command
+        type: string
+        description: "Shell command to execute"
+        required: true
+      - name: working_directory
+        type: string
+        description: "Working directory for command execution"
+        required: false
+      - name: timeout
+        type: number
+        description: "Timeout for command execution (in seconds)"
+        required: false
+        default: 30
+      - name: capture_output
+        type: boolean
+        description: "Whether to capture command output"
+        required: false
+        default: true
+
+  - name: execute_command
+    description: "Execute a command with advanced options"
+    parameters:
+      - name: command
+        type: string
+        description: "Command to execute"
+        required: true
+      - name: args
+        type: array
+        description: "Command arguments as array"
+        required: false
+      - name: shell
+        type: boolean
+        description: "Whether to use shell for execution"
+        required: false
+        default: true
+      - name: env_vars
+        type: object
+        description: "Environment variables for the command"
+        required: false
+
+  - name: change_directory
+    description: "Change the current working directory"
+    parameters:
+      - name: path
+        type: string
+        description: "Path to change to"
+        required: true
+
+  - name: get_current_directory
+    description: "Get the current working directory"
+    parameters: []
+
+  - name: list_files
+    description: "List files and directories in a path"
+    parameters:
+      - name: path
+        type: string
+        description: "Path to list (defaults to current directory)"
+        required: false
+      - name: show_hidden
+        type: boolean
+        description: "Whether to show hidden files"
+        required: false
+        default: false
+      - name: long_format
+        type: boolean
+        description: "Whether to use long format listing"
+        required: false
+        default: false
+
+  - name: create_directory
+    description: "Create a new directory"
+    parameters:
+      - name: path
+        type: string
+        description: "Path of the directory to create"
+        required: true
+      - name: parents
+        type: boolean
+        description: "Whether to create parent directories if they don't exist"
+        required: false
+        default: false
+
+  - name: remove_file
+    description: "Remove a file or directory"
+    parameters:
+      - name: path
+        type: string
+        description: "Path of the file or directory to remove"
+        required: true
+      - name: recursive
+        type: boolean
+        description: "Whether to remove directories recursively"
+        required: false
+        default: false
+      - name: force
+        type: boolean
+        description: "Whether to force removal without confirmation"
+        required: false
+        default: false
+
+  - name: copy_file
+    description: "Copy a file or directory"
+    parameters:
+      - name: source
+        type: string
+        description: "Source path"
+        required: true
+      - name: destination
+        type: string
+        description: "Destination path"
+        required: true
+      - name: recursive
+        type: boolean
+        description: "Whether to copy directories recursively"
+        required: false
+        default: false
+
+  - name: move_file
+    description: "Move or rename a file or directory"
+    parameters:
+      - name: source
+        type: string
+        description: "Source path"
+        required: true
+      - name: destination
+        type: string
+        description: "Destination path"
+        required: true
+
+  - name: read_file
+    description: "Read the contents of a text file"
+    parameters:
+      - name: file_path
+        type: string
+        description: "Path to the file to read"
+        required: true
+      - name: encoding
+        type: string
+        description: "File encoding"
+        required: false
+        default: "utf-8"
+
+  - name: write_file
+    description: "Write content to a text file"
+    parameters:
+      - name: file_path
+        type: string
+        description: "Path to the file to write"
+        required: true
+      - name: content
+        type: string
+        description: "Content to write to the file"
+        required: true
+      - name: append
+        type: boolean
+        description: "Whether to append to the file instead of overwriting"
+        required: false
+        default: false
+      - name: encoding
+        type: string
+        description: "File encoding"
+        required: false
+        default: "utf-8"
+
+  - name: check_file_exists
+    description: "Check if a file or directory exists"
+    parameters:
+      - name: path
+        type: string
+        description: "Path to check"
+        required: true
+
+  - name: get_file_info
+    description: "Get information about a file or directory"
+    parameters:
+      - name: path
+        type: string
+        description: "Path to get information about"
+        required: true
+
+  - name: find_files
+    description: "Find files matching a pattern"
+    parameters:
+      - name: pattern
+        type: string
+        description: "File pattern to search for"
+        required: true
+      - name: directory
+        type: string
+        description: "Directory to search in (defaults to current)"
+        required: false
+      - name: recursive
+        type: boolean
+        description: "Whether to search recursively"
+        required: false
+        default: true
+
+  - name: get_environment_variable
+    description: "Get the value of an environment variable"
+    parameters:
+      - name: name
+        type: string
+        description: "Name of the environment variable"
+        required: true
+
+  - name: set_environment_variable
+    description: "Set an environment variable"
+    parameters:
+      - name: name
+        type: string
+        description: "Name of the environment variable"
+        required: true
+      - name: value
+        type: string
+        description: "Value to set"
+        required: true
+
+  - name: get_system_info
+    description: "Get system information"
+    parameters:
+      - name: info_type
+        type: string
+        description: "Type of system information to get"
+        required: false
+        enum: ["os", "cpu", "memory", "disk", "network", "all"]
+        default: "all"
+
+# Shell configuration
+config:
+  default_shell:
+    windows: "cmd.exe"
+    linux: "/bin/bash"
+    macos: "/bin/bash"
+  
+  command_timeout: 30
+  max_output_size: 1048576  # 1MB
+  working_directory: "."
+
+# Common shell operation patterns
+patterns:
+  file_operations:
+    description: "Common file and directory operations"
+    tools:
+      - list_files
+      - create_directory
+      - copy_file
+      - move_file
+      - remove_file
+  
+  text_processing:
+    description: "Text file processing operations"
+    tools:
+      - read_file
+      - write_file
+      - find_files
+  
+  system_administration:
+    description: "System administration tasks"
+    tools:
+      - get_system_info
+      - get_environment_variable
+      - set_environment_variable
+
+# Security considerations
+security:
+  restricted_commands:
+    - "rm -rf /"
+    - "format"
+    - "del /q /s *"
+  
+  allowed_directories:
+    - description: "Restrict file operations to safe directories"
+    - note: "Implement directory whitelist for production use"
+
+# Error handling
+error_handling:
+  command_errors:
+    - "Command not found"
+    - "Permission denied"
+    - "Command execution timeout"
+  
+  file_errors:
+    - "File not found"
+    - "Access denied"
+    - "Disk full"
+  
+  system_errors:
+    - "Insufficient privileges"
+    - "System resource unavailable"

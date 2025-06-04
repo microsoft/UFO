@@ -1,0 +1,451 @@
+# Excel MCP Server Instructions
+# This file contains instructions and tool definitions for the Microsoft Excel MCP server
+
+namespace: excel
+description: "MCP server for Microsoft Excel automation and spreadsheet manipulation"
+tool_instructions: ""
+
+# Available tools for Excel operations
+tools:
+  - name: create_workbook
+    description: "Create a new Excel workbook"
+    parameters:
+      - name: template_path
+        type: string
+        description: "Path to template file (optional)"
+        required: false
+
+  - name: open_workbook
+    description: "Open an existing Excel workbook"
+    parameters:
+      - name: file_path
+        type: string
+        description: "Path to the Excel file to open"
+        required: true
+
+  - name: save_workbook
+    description: "Save the current workbook"
+    parameters:
+      - name: file_path
+        type: string
+        description: "Path where to save the workbook (optional if already saved)"
+        required: false
+      - name: format
+        type: string
+        description: "File format (xlsx, xls, csv, etc.)"
+        required: false
+        default: "xlsx"
+
+  - name: close_workbook
+    description: "Close the current workbook"
+    parameters:
+      - name: save_changes
+        type: boolean
+        description: "Whether to save changes before closing"
+        required: false
+        default: true
+
+  - name: add_worksheet
+    description: "Add a new worksheet to the workbook"
+    parameters:
+      - name: name
+        type: string
+        description: "Name for the new worksheet"
+        required: false
+      - name: position
+        type: integer
+        description: "Position where to insert the worksheet (optional)"
+        required: false
+
+  - name: delete_worksheet
+    description: "Delete a worksheet from the workbook"
+    parameters:
+      - name: name
+        type: string
+        description: "Name of the worksheet to delete"
+        required: true
+
+  - name: select_worksheet
+    description: "Select/activate a specific worksheet"
+    parameters:
+      - name: name
+        type: string
+        description: "Name of the worksheet to select"
+        required: true
+
+  - name: rename_worksheet
+    description: "Rename a worksheet"
+    parameters:
+      - name: old_name
+        type: string
+        description: "Current name of the worksheet"
+        required: true
+      - name: new_name
+        type: string
+        description: "New name for the worksheet"
+        required: true
+
+  - name: set_cell_value
+    description: "Set the value of a specific cell"
+    parameters:
+      - name: cell_address
+        type: string
+        description: "Cell address (e.g., A1, B2)"
+        required: true
+      - name: value
+        type: any
+        description: "Value to set in the cell"
+        required: true
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: get_cell_value
+    description: "Get the value of a specific cell"
+    parameters:
+      - name: cell_address
+        type: string
+        description: "Cell address (e.g., A1, B2)"
+        required: true
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: set_range_values
+    description: "Set values for a range of cells"
+    parameters:
+      - name: range_address
+        type: string
+        description: "Range address (e.g., A1:C3)"
+        required: true
+      - name: values
+        type: array
+        description: "2D array of values to set"
+        required: true
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: get_range_values
+    description: "Get values from a range of cells"
+    parameters:
+      - name: range_address
+        type: string
+        description: "Range address (e.g., A1:C3)"
+        required: true
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: insert_formula
+    description: "Insert a formula into a cell"
+    parameters:
+      - name: cell_address
+        type: string
+        description: "Cell address (e.g., A1, B2)"
+        required: true
+      - name: formula
+        type: string
+        description: "Formula to insert (e.g., =SUM(A1:A10))"
+        required: true
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: format_cells
+    description: "Format cells or ranges"
+    parameters:
+      - name: range_address
+        type: string
+        description: "Range address (e.g., A1:C3)"
+        required: true
+      - name: number_format
+        type: string
+        description: "Number format (e.g., General, Currency, Date)"
+        required: false
+      - name: font_name
+        type: string
+        description: "Font name"
+        required: false
+      - name: font_size
+        type: number
+        description: "Font size"
+        required: false
+      - name: bold
+        type: boolean
+        description: "Bold formatting"
+        required: false
+      - name: italic
+        type: boolean
+        description: "Italic formatting"
+        required: false
+      - name: font_color
+        type: string
+        description: "Font color (hex or name)"
+        required: false
+      - name: background_color
+        type: string
+        description: "Background color (hex or name)"
+        required: false
+      - name: border
+        type: string
+        description: "Border style"
+        required: false
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: insert_rows
+    description: "Insert rows into the worksheet"
+    parameters:
+      - name: row_index
+        type: integer
+        description: "Row index where to insert (1-based)"
+        required: true
+      - name: count
+        type: integer
+        description: "Number of rows to insert"
+        required: false
+        default: 1
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: insert_columns
+    description: "Insert columns into the worksheet"
+    parameters:
+      - name: column_index
+        type: integer
+        description: "Column index where to insert (1-based)"
+        required: true
+      - name: count
+        type: integer
+        description: "Number of columns to insert"
+        required: false
+        default: 1
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: delete_rows
+    description: "Delete rows from the worksheet"
+    parameters:
+      - name: row_index
+        type: integer
+        description: "Starting row index (1-based)"
+        required: true
+      - name: count
+        type: integer
+        description: "Number of rows to delete"
+        required: false
+        default: 1
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: delete_columns
+    description: "Delete columns from the worksheet"
+    parameters:
+      - name: column_index
+        type: integer
+        description: "Starting column index (1-based)"
+        required: true
+      - name: count
+        type: integer
+        description: "Number of columns to delete"
+        required: false
+        default: 1
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: create_chart
+    description: "Create a chart from data"
+    parameters:
+      - name: data_range
+        type: string
+        description: "Range address for chart data (e.g., A1:C10)"
+        required: true
+      - name: chart_type
+        type: string
+        description: "Type of chart (column, line, pie, bar, etc.)"
+        required: true
+      - name: title
+        type: string
+        description: "Chart title"
+        required: false
+      - name: position
+        type: object
+        description: "Chart position {left, top, width, height}"
+        required: false
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: create_pivot_table
+    description: "Create a pivot table from data"
+    parameters:
+      - name: source_range
+        type: string
+        description: "Source data range address"
+        required: true
+      - name: destination
+        type: string
+        description: "Destination cell or worksheet"
+        required: true
+      - name: fields
+        type: object
+        description: "Pivot table field configuration"
+        required: true
+
+  - name: sort_range
+    description: "Sort a range of data"
+    parameters:
+      - name: range_address
+        type: string
+        description: "Range address to sort"
+        required: true
+      - name: sort_columns
+        type: array
+        description: "Array of sort column specifications"
+        required: true
+      - name: has_header
+        type: boolean
+        description: "Whether the range has headers"
+        required: false
+        default: true
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: filter_data
+    description: "Apply filters to data range"
+    parameters:
+      - name: range_address
+        type: string
+        description: "Range address to filter"
+        required: true
+      - name: filters
+        type: object
+        description: "Filter criteria"
+        required: true
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: freeze_panes
+    description: "Freeze panes at specified position"
+    parameters:
+      - name: cell_address
+        type: string
+        description: "Cell address where to freeze panes"
+        required: true
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: protect_worksheet
+    description: "Protect a worksheet with password"
+    parameters:
+      - name: password
+        type: string
+        description: "Protection password"
+        required: false
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: unprotect_worksheet
+    description: "Unprotect a worksheet"
+    parameters:
+      - name: password
+        type: string
+        description: "Protection password"
+        required: false
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: export_worksheet
+    description: "Export worksheet to different formats"
+    parameters:
+      - name: output_path
+        type: string
+        description: "Output file path"
+        required: true
+      - name: format
+        type: string
+        description: "Export format (csv, pdf, html, etc.)"
+        required: true
+      - name: worksheet
+        type: string
+        description: "Worksheet name (optional, uses active sheet)"
+        required: false
+
+  - name: calculate_workbook
+    description: "Recalculate all formulas in the workbook"
+    parameters: []
+
+  - name: get_workbook_info
+    description: "Get information about the current workbook"
+    parameters: []
+
+  - name: get_worksheet_names
+    description: "Get list of all worksheet names"
+    parameters: []
+
+# Common error handling
+error_handling:
+  - code: "FILE_NOT_FOUND"
+    message: "The specified file could not be found"
+  - code: "EXCEL_NOT_AVAILABLE"
+    message: "Excel application is not available or not installed"
+  - code: "WORKBOOK_NOT_OPEN"
+    message: "No workbook is currently open"
+  - code: "WORKSHEET_NOT_FOUND"
+    message: "The specified worksheet does not exist"
+  - code: "INVALID_CELL_ADDRESS"
+    message: "The cell address is not valid"
+  - code: "INVALID_RANGE"
+    message: "The range address is not valid"
+  - code: "PERMISSION_DENIED"
+    message: "Permission denied to access the file"
+
+# Usage examples
+examples:
+  create_and_populate:
+    description: "Create a workbook and populate with data"
+    steps:
+      - tool: create_workbook
+      - tool: set_cell_value
+        args:
+          cell_address: "A1"
+          value: "Name"
+      - tool: set_cell_value
+        args:
+          cell_address: "B1"
+          value: "Age"
+      - tool: set_range_values
+        args:
+          range_address: "A2:B4"
+          values: [["John", 25], ["Jane", 30], ["Bob", 35]]
+      - tool: format_cells
+        args:
+          range_address: "A1:B1"
+          bold: true

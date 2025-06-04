@@ -1,0 +1,231 @@
+# PowerPoint MCP Server Instructions
+# This file contains instructions and tool definitions for the PowerPoint MCP server
+
+namespace: powerpoint
+description: "MCP server for Microsoft PowerPoint automation and control"
+tool_instructions: ""
+
+# Available tools for PowerPoint operations
+tools:
+  - name: create_presentation
+    description: "Create a new PowerPoint presentation"
+    parameters:
+      - name: title
+        type: string
+        description: "Title for the new presentation"
+        required: true
+      - name: template_path
+        type: string
+        description: "Path to template file (optional)"
+        required: false
+
+  - name: open_presentation
+    description: "Open an existing PowerPoint presentation"
+    parameters:
+      - name: file_path
+        type: string
+        description: "Path to the PowerPoint file to open"
+        required: true
+
+  - name: save_presentation
+    description: "Save the current presentation"
+    parameters:
+      - name: file_path
+        type: string
+        description: "Path where to save the presentation (optional if already saved)"
+        required: false
+      - name: format
+        type: string
+        description: "File format (pptx, pdf, etc.)"
+        required: false
+        default: "pptx"
+
+  - name: add_slide
+    description: "Add a new slide to the presentation"
+    parameters:
+      - name: layout
+        type: string
+        description: "Slide layout type (title, content, blank, etc.)"
+        required: false
+        default: "content"
+      - name: position
+        type: integer
+        description: "Position where to insert the slide (optional, defaults to end)"
+        required: false
+
+  - name: delete_slide
+    description: "Delete a slide from the presentation"
+    parameters:
+      - name: slide_index
+        type: integer
+        description: "Index of the slide to delete (1-based)"
+        required: true
+
+  - name: set_slide_title
+    description: "Set the title of a specific slide"
+    parameters:
+      - name: slide_index
+        type: integer
+        description: "Index of the slide (1-based)"
+        required: true
+      - name: title
+        type: string
+        description: "Title text to set"
+        required: true
+
+  - name: add_text_to_slide
+    description: "Add text content to a slide"
+    parameters:
+      - name: slide_index
+        type: integer
+        description: "Index of the slide (1-based)"
+        required: true
+      - name: text
+        type: string
+        description: "Text content to add"
+        required: true
+      - name: placeholder_index
+        type: integer
+        description: "Index of the text placeholder (optional)"
+        required: false
+
+  - name: add_image_to_slide
+    description: "Add an image to a slide"
+    parameters:
+      - name: slide_index
+        type: integer
+        description: "Index of the slide (1-based)"
+        required: true
+      - name: image_path
+        type: string
+        description: "Path to the image file"
+        required: true
+      - name: left
+        type: number
+        description: "Left position in inches"
+        required: false
+      - name: top
+        type: number
+        description: "Top position in inches"
+        required: false
+      - name: width
+        type: number
+        description: "Width in inches"
+        required: false
+      - name: height
+        type: number
+        description: "Height in inches"
+        required: false
+
+  - name: add_chart_to_slide
+    description: "Add a chart to a slide"
+    parameters:
+      - name: slide_index
+        type: integer
+        description: "Index of the slide (1-based)"
+        required: true
+      - name: chart_type
+        type: string
+        description: "Type of chart (column, line, pie, etc.)"
+        required: true
+      - name: data
+        type: object
+        description: "Chart data in appropriate format"
+        required: true
+
+  - name: format_text
+    description: "Format text in a text box or placeholder"
+    parameters:
+      - name: slide_index
+        type: integer
+        description: "Index of the slide (1-based)"
+        required: true
+      - name: text_range
+        type: object
+        description: "Text range to format"
+        required: true
+      - name: font_name
+        type: string
+        description: "Font name"
+        required: false
+      - name: font_size
+        type: number
+        description: "Font size"
+        required: false
+      - name: bold
+        type: boolean
+        description: "Bold formatting"
+        required: false
+      - name: italic
+        type: boolean
+        description: "Italic formatting"
+        required: false
+      - name: color
+        type: string
+        description: "Font color (hex or name)"
+        required: false
+
+  - name: start_slideshow
+    description: "Start the slideshow presentation"
+    parameters:
+      - name: from_slide
+        type: integer
+        description: "Starting slide index (optional)"
+        required: false
+
+  - name: export_presentation
+    description: "Export presentation to different formats"
+    parameters:
+      - name: output_path
+        type: string
+        description: "Output file path"
+        required: true
+      - name: format
+        type: string
+        description: "Export format (pdf, images, video, etc.)"
+        required: true
+      - name: quality
+        type: string
+        description: "Export quality (high, medium, low)"
+        required: false
+        default: "high"
+
+  - name: get_slide_count
+    description: "Get the total number of slides in the presentation"
+    parameters: []
+
+  - name: get_slide_content
+    description: "Get the content of a specific slide"
+    parameters:
+      - name: slide_index
+        type: integer
+        description: "Index of the slide (1-based)"
+        required: true
+
+# Common error handling
+error_handling:
+  - code: "FILE_NOT_FOUND"
+    message: "The specified file could not be found"
+  - code: "INVALID_SLIDE_INDEX"
+    message: "The slide index is out of range"
+  - code: "POWERPOINT_NOT_AVAILABLE"
+    message: "PowerPoint application is not available or not installed"
+  - code: "PRESENTATION_NOT_OPEN"
+    message: "No presentation is currently open"
+
+# Usage examples
+examples:
+  create_and_setup:
+    description: "Create a new presentation and add content"
+    steps:
+      - tool: create_presentation
+        args:
+          title: "My Presentation"
+      - tool: set_slide_title
+        args:
+          slide_index: 1
+          title: "Welcome to My Presentation"
+      - tool: add_text_to_slide
+        args:
+          slide_index: 1
+          text: "This is the introduction slide"

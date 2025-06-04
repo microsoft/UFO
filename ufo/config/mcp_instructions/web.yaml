@@ -1,0 +1,182 @@
+# Web MCP Server Instructions
+# This file contains instructions and tool definitions for the Web MCP server
+
+namespace: web
+description: "MCP server for web browser automation and web page interaction"
+tool_instructions: ""
+
+# Available tools for Web operations
+tools:
+  - name: web_crawler
+    description: "Crawl and extract content from a web page"
+    parameters:
+      - name: url
+        type: string
+        description: "URL of the web page to crawl"
+        required: true
+      - name: ignore_link
+        type: boolean
+        description: "Whether to ignore links in the crawling process"
+        required: false
+        default: false
+
+  - name: navigate_to_url
+    description: "Navigate browser to a specific URL"
+    parameters:
+      - name: url
+        type: string
+        description: "URL to navigate to"
+        required: true
+
+  - name: click_element
+    description: "Click on a web page element"
+    parameters:
+      - name: selector
+        type: string
+        description: "CSS selector or XPath of the element to click"
+        required: true
+      - name: wait_time
+        type: number
+        description: "Time to wait before clicking (in seconds)"
+        required: false
+        default: 1.0
+
+  - name: type_text
+    description: "Type text into a web form field"
+    parameters:
+      - name: selector
+        type: string
+        description: "CSS selector or XPath of the input field"
+        required: true
+      - name: text
+        type: string
+        description: "Text to type into the field"
+        required: true
+      - name: clear_first
+        type: boolean
+        description: "Whether to clear the field before typing"
+        required: false
+        default: true
+
+  - name: get_page_content
+    description: "Get the text content of the current web page"
+    parameters:
+      - name: selector
+        type: string
+        description: "CSS selector to get specific content (optional)"
+        required: false
+
+  - name: get_page_title
+    description: "Get the title of the current web page"
+    parameters: []
+
+  - name: scroll_page
+    description: "Scroll the web page"
+    parameters:
+      - name: direction
+        type: string
+        description: "Direction to scroll (up, down, left, right)"
+        required: true
+        enum: ["up", "down", "left", "right"]
+      - name: amount
+        type: integer
+        description: "Number of pixels to scroll"
+        required: false
+        default: 300
+
+  - name: wait_for_element
+    description: "Wait for an element to appear on the page"
+    parameters:
+      - name: selector
+        type: string
+        description: "CSS selector or XPath of the element to wait for"
+        required: true
+      - name: timeout
+        type: number
+        description: "Maximum time to wait (in seconds)"
+        required: false
+        default: 10.0
+
+  - name: take_screenshot
+    description: "Take a screenshot of the current web page"
+    parameters:
+      - name: full_page
+        type: boolean
+        description: "Whether to capture the full page or just the viewport"
+        required: false
+        default: false
+
+  - name: execute_javascript
+    description: "Execute JavaScript code on the current page"
+    parameters:
+      - name: script
+        type: string
+        description: "JavaScript code to execute"
+        required: true
+
+  - name: get_element_text
+    description: "Get the text content of a specific element"
+    parameters:
+      - name: selector
+        type: string
+        description: "CSS selector or XPath of the element"
+        required: true
+
+  - name: get_element_attribute
+    description: "Get an attribute value of a specific element"
+    parameters:
+      - name: selector
+        type: string
+        description: "CSS selector or XPath of the element"
+        required: true
+      - name: attribute
+        type: string
+        description: "Name of the attribute to get"
+        required: true
+
+# Web browser configuration
+config:
+  supported_browsers:
+    - chrome
+    - edge
+    - firefox
+  default_timeout: 30
+  page_load_timeout: 30
+  implicit_wait: 10
+
+# Common web interaction patterns
+patterns:
+  form_filling:
+    description: "Fill out web forms"
+    steps:
+      - wait_for_element
+      - click_element
+      - type_text
+  
+  navigation:
+    description: "Navigate through web pages"
+    steps:
+      - navigate_to_url
+      - wait_for_element
+      - take_screenshot
+  
+  data_extraction:
+    description: "Extract data from web pages"
+    steps:
+      - web_crawler
+      - get_page_content
+      - get_element_text
+
+# Error handling
+error_handling:
+  timeout_errors:
+    - "Element not found within timeout"
+    - "Page load timeout exceeded"
+  
+  navigation_errors:
+    - "Invalid URL format"
+    - "Network connection error"
+  
+  interaction_errors:
+    - "Element not clickable"
+    - "Element not visible"
