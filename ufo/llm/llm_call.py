@@ -48,6 +48,12 @@ def get_completions(
         agent_type = "HOST_AGENT"
     elif agent.lower() in ["app", "appagent"]:
         agent_type = "APP_AGENT"
+    elif agent.lower() in ["eva", "evaluation", "evaluationagent"]:
+        # If evaluation agent is not in configs, use APP_AGENT as default.
+        if "EVALUATION_AGENT" not in configs:
+            agent_type = "APP_AGENT"
+        else:
+            agent_type = "EVALUATION_AGENT"
     elif agent.lower() in ["openaioperator", "openai_operator", "operator"]:
         agent_type = "OPERATOR"
     elif agent.lower() == "prefill":

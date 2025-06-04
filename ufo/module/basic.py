@@ -5,7 +5,7 @@
 """
 This module contains the basic classes of Round and Session for the UFO system.
 
-A round of a session in UFO manages a single user request and consists of multiple steps. 
+A round of a session in UFO manages a single user request and consists of multiple steps.
 
 A session may consists of multiple rounds of interactions.
 
@@ -655,10 +655,13 @@ class BaseSession(ABC):
         Evaluate the session.
         """
         utils.print_with_color("Evaluating the session...", "yellow")
+
+        is_visual = configs.get("EVALUATION_AGENT", {}).get("VISUAL_MODE", True)
+
         evaluator = EvaluationAgent(
             name="eva_agent",
             app_root_name=self.context.get(ContextNames.APPLICATION_ROOT_NAME),
-            is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+            is_visual=is_visual,
             main_prompt=configs["EVALUATION_PROMPT"],
             example_prompt="",
             api_prompt=configs["API_PROMPT"],
