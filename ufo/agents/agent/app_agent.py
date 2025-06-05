@@ -585,10 +585,8 @@ class AppAgent(BasicAgent):
                 instructions.get('app_namespace'),
                 instructions.get('tool_instructions', None)
             )
-            
             # Extract tool names and save as preferred operations
-            self.mcp_preferred_operations = [tool.get('function', {}).get('name', '') for tool in tools if tool.get('function', {}).get('name')]
-            
+            self.mcp_preferred_operations = [tool.get('name', '') for tool in tools if tool.get('name')]
             utils.print_with_color(
                 f"Loaded {len(tools)} MCP tools from client response", "green"
             )

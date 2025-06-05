@@ -151,7 +151,6 @@ class MCPClient:
         app_namespace = params.app_namespace
         
         endpoint = f"http://{self.host}:{self.port}/sse"
-        
         async def get_tools_async():
             async with Client(endpoint) as client:
                 tools_result = await client.list_tools()
@@ -162,8 +161,20 @@ class MCPClient:
             if not tools:
                 return {"error": "No tools available for this app namespace"}
             
+            # Convert Tool objects to dictionaries
+            tools_dicts = []
+            for tool in tools:
+                tool_dict = {
+                    "name": tool.name,
+                    "description": tool.description,
+                }
+                # Add inputSchema if available
+                if hasattr(tool, 'inputSchema') and tool.inputSchema:
+                    tool_dict["inputSchema"] = tool.inputSchema
+                tools_dicts.append(tool_dict)
+            
             return {
-                "tools": tools,
+                "tools": tools_dicts,
                 "app_namespace": app_namespace
             }
         except Exception as e:

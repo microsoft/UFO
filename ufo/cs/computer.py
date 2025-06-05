@@ -2,7 +2,6 @@ import os
 import subprocess
 import time
 import yaml
-import requests
 from typing import Dict, List, Any, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -39,7 +38,6 @@ from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.config.config import Config
 from ufo.automator.app_apis.factory import COMReceiverFactory, WebReceiverFactory, ShellReceiverFactory
 from ufo.mcp.mcp_client import MCPClient
-from ufo.mcp.core_mcp_client import CoreMCPClient
 
 configs = Config.get_instance().config_data
 
@@ -147,26 +145,32 @@ class Computer:
             except Exception as e:
                 from ufo.utils import print_with_color
                 print_with_color(f"Failed to initialize MCP server {namespace}: {e}", "red")
+                  # load tools from mcp servers and replace the tools in mcp_instructions if available
+        for namespace, server_config in self.mcp_servers.items():
+            try:
+                endpoint = server_config["endpoint"]
+                mcp_client = MCPClient.create_client(endpoint, namespace)
                 
-        # load tools from mcp servers and replace the tools in mcp_instructions if available
-        # for namespace, server_config in self.mcp_servers.items():
-        #     try:
-        #         endpoint = server_config["endpoint"]
-        #         mcp_client = MCPClient.create_client(endpoint, namespace)
+                # Create a temporary action to get available tools
+                from ufo.cs.contracts import MCPGetAvailableToolsAction, MCPGetAvailableToolsParams
+                temp_action = MCPGetAvailableToolsAction(
+                    params=MCPGetAvailableToolsParams(app_namespace=namespace)
+                )
                 
-        #         # Create a temporary action to get available tools
-        #         from ufo.cs.contracts import MCPGetAvailableToolsAction, MCPGetAvailableToolsParams
-        #         temp_action = MCPGetAvailableToolsAction(
-        #             params=MCPGetAvailableToolsParams(app_namespace=namespace)
-        #         )
-                
-        #         result = mcp_client._handle_mcp_get_available_tools(temp_action)
-        #         if result.get("tools"):
-        #             # Update the instructions with the fetched tools
-        #             if namespace in self.mcp_instructions:
-        #                 self.mcp_instructions[namespace]["tools"] = result["tools"]
-        #     except Exception as e:
-        #         print_with_color(f"Failed to fetch tools for {namespace}: {e}", "yellow")
+                result = mcp_client._handle_mcp_get_available_tools(temp_action)
+                if result.get("tools"):
+                    # Normalize the MCP tools schema before updating instructions
+                    normalized_tools = self._normalize_tool_schema(result["tools"], source="mcp")
+                    
+                    # Update the instructions with the normalized tools
+                    if namespace in self.mcp_instructions:
+                        self.mcp_instructions[namespace]["tools"] = normalized_tools
+                    else:
+                        # Create new entry if namespace doesn't exist
+                        self.mcp_instructions[namespace] = {"tools": normalized_tools}
+            except Exception as e:
+                from ufo.utils import print_with_color
+                print_with_color(f"Failed to fetch tools for {namespace}: {e}", "yellow")
     
     def run_action(self, action: ActionBase) -> Dict[str, Any]:
         """Run the specified action and return the result"""
@@ -759,6 +763,124 @@ class Computer:
                 "fallback": True,
                 "error": str(e)
             }
+    
+    def _normalize_tool_schema(self, tools_data, source="yaml"):
+        """
+        Normalize tool schema from different sources to ensure compatibility.
+        
+        Args:
+            tools_data: List of tools from either YAML or MCP server
+            source: Source type - "yaml" or "mcp"
+            
+        Returns:
+            List of tools in normalized internal format
+        """
+        if source == "mcp":
+            # Transform MCP protocol format to internal YAML format
+            normalized_tools = []
+            for tool in tools_data:
+                # MCP tools typically have this structure:
+                # {
+                #   "name": "tool_name",
+                #   "description": "description",
+                #   "inputSchema": {
+                #     "type": "object",
+                #     "properties": {...},
+                #     "required": [...]
+                #   }
+                # }
+                normalized_tool = {
+                    "name": tool.get("name"),
+                    "description": tool.get("description", ""),
+                    # Convert parameters from MCP inputSchema to YAML parameters format
+                    "parameters": self._convert_mcp_parameters_to_yaml(tool.get("inputSchema", {})),
+                    "source": "mcp"
+                }
+                
+                # Ensure the tool has all properties needed by action2action_sequence
+                self._ensure_action_sequence_compatibility(normalized_tool)
+                
+                normalized_tools.append(normalized_tool)
+            return normalized_tools
+        elif source == "yaml":
+            # YAML format is already in internal format, but ensure compatibility
+            normalized_tools = []
+            for tool in tools_data:
+                normalized_tool = tool.copy()
+                self._ensure_action_sequence_compatibility(normalized_tool)
+                normalized_tools.append(normalized_tool)
+            return normalized_tools
+        else:
+            return tools_data
+
+    def _convert_mcp_parameters_to_yaml(self, input_schema: Dict[str, Any]) -> List[Dict[str, Any]]:
+        """
+        Convert MCP inputSchema to YAML parameters format.
+        
+        Args:
+            input_schema: MCP inputSchema object
+            
+        Returns:
+            List of parameters in YAML format
+        """
+        yaml_parameters = []
+        
+        properties = input_schema.get("properties", {})
+        required_fields = input_schema.get("required", [])
+        
+        for param_name, param_info in properties.items():
+            yaml_param = {
+                "name": param_name,
+                "type": param_info.get("type", "string"),
+                "description": param_info.get("description", ""),
+                "required": param_name in required_fields
+            }
+            
+            # Add default value if present
+            if "default" in param_info:
+                yaml_param["default"] = param_info["default"]
+                
+            yaml_parameters.append(yaml_param)
+            
+        return yaml_parameters
+
+    def _ensure_action_sequence_compatibility(self, tool: Dict[str, Any]) -> None:
+        """
+        Ensure the tool has all properties needed by action2action_sequence method.
+        
+        The action2action_sequence method in agent_prompter.py expects these properties:
+        - Function
+        - Args
+        - Status
+        - ControlLabel
+        - ControlText
+        
+        Args:
+            tool: Tool definition to modify in place
+        """
+        # Ensure the tool has a mapping for action2action_sequence properties
+        if "action_mapping" not in tool:
+            tool["action_mapping"] = {
+                "Function": tool.get("name", ""),
+                "Args": {},  # Will be populated at runtime from parameters
+                "Status": "CONTINUE",  # Default status
+                "ControlLabel": "",  # Default empty, can be set during execution
+                "ControlText": ""  # Default empty, can be set during execution
+            }
+        
+        # Add schema metadata for validation
+        if "schema_version" not in tool:
+            tool["schema_version"] = "1.0"
+            
+        # Add execution hints for the tool
+        if "execution_hints" not in tool:
+            tool["execution_hints"] = {
+                "can_be_used_in_sequence": True,
+                "requires_ui_context": False,
+                "modifies_application_state": True
+            }
+
+    # ...existing code...
     
 if __name__ == "__main__":
     computer = Computer("TestComputer")
