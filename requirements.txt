@@ -8,7 +8,7 @@ Pillow==10.3.0
 pywin32==306
 pywinauto==0.6.8
 PyYAML==6.0.1
-requests==2.32.3
+requests==2.32.4
 faiss-cpu==1.8.0
 numpy==1.26.4
 lxml==5.1.0
