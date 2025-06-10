@@ -4,10 +4,7 @@
 import abc
 from importlib import import_module
 from typing import Dict
-import functools
-from ufo.config import Config
 
-configs = Config.get_instance().config_data
 
 class BaseService(abc.ABC):
     @abc.abstractmethod
@@ -18,14 +15,24 @@ class BaseService(abc.ABC):
     def chat_completion(self, *args, **kwargs):
         pass
 
+    # Cache for storing services by agent_type only
+    _service_cache: Dict[str, "BaseService"] = {}
+
     @staticmethod
-    @functools.cache
-    def get_service(name: str, agent_type: str, model_name: str = None) -> "BaseService":
+    def get_service(
+        name: str, agent_type: str, model_name: str = None, configs: dict = {}
+    ) -> "BaseService":
         """
-        Get the service class based on the name.
+        Get the service class based on the name. Each agent_type has one unified service.
         :param name: The name of the service.
+        :param agent_type: The type of the agent.
+        :param model_name: The name of the model (ignored for caching).
         :return: The service class.
         """
+        # Return cached service if it exists for this agent_type
+        if agent_type in BaseService._service_cache:
+            return BaseService._service_cache[agent_type]
+
         service_map = {
             "openai": "OpenAIService",
             "aoai": "OpenAIService",
@@ -59,7 +66,10 @@ class BaseService(abc.ABC):
                     raise ValueError(f"Custom model {custom_model} not supported")
             else:
                 module = import_module("." + name.lower(), package="ufo.llm")
-            return getattr(module, service_name)(configs, agent_type=agent_type)
+
+            service = getattr(module, service_name)(configs, agent_type=agent_type)
+            BaseService._service_cache[agent_type] = service
+            return service
         else:
             raise ValueError(f"Service {name} not found.")
 

@@ -64,7 +64,10 @@ def get_completions(
     try:
         api_type_lower = api_type.lower()
         service = BaseService.get_service(
-            api_type_lower, agent_type, configs[agent_type]["API_MODEL"].lower()
+            api_type_lower,
+            agent_type,
+            configs[agent_type]["API_MODEL"].lower(),
+            configs,
         )
         if service:
             response, cost = service.chat_completion(messages, n)
