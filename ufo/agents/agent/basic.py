@@ -11,7 +11,7 @@ from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
 
 from ufo.agents.states.basic import AgentState, AgentStatus
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.llm import llm_call
 from ufo.module.context import Context
 from ufo.module.interactor import question_asker

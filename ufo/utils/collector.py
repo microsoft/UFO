@@ -6,7 +6,7 @@ from PIL import Image, ImageDraw, ImageFont, ImageGrab
 from ufo.cs.contracts import AppWindowControlInfo, ControlInfo, WindowInfo
 
 
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.utils import print_with_color
 
 configs = Config.get_instance().config_data

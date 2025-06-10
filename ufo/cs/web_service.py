@@ -4,7 +4,7 @@ import logging
 
 from ufo.cs.service_session import ServiceSession
 from ufo.cs.contracts import UFORequest, UFOResponse
-from ufo.config.config import Config
+from ufo.config import Config
 
 
 app = Flask(__name__)

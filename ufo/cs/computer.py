@@ -35,7 +35,7 @@ from ufo.cs.contracts import (
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.automator.app_apis.factory import COMReceiverFactory, WebReceiverFactory, ShellReceiverFactory
 from ufo.mcp.mcp_client import MCPClient
 

@@ -7,7 +7,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.module.context import Context, ContextNames
 
 configs = Config.get_instance().config_data

@@ -5,7 +5,7 @@ import json
 import os
 from typing import List, Optional
 
-from ufo.config.config import Config
+from ufo.config import Config
 
 configs = Config.get_instance().config_data
 
