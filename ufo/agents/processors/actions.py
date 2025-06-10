@@ -16,7 +16,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.automator.puppeteer import AppPuppeteer
-from ufo.config.config import Config
+from ufo.config import Config
 
 
 @dataclass

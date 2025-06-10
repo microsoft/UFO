@@ -1,6 +1,6 @@
 
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.cs.contracts import ActionBase
 from ufo.cs.session_data import SessionDataManager
 from ufo.module.basic import BaseRound, BaseSession

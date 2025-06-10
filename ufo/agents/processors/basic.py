@@ -16,7 +16,7 @@ from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.actions import ActionSequence
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.cs.contracts import WindowInfo
 from ufo.module.context import Context, ContextNames
 from ufo.cs.session_data import SessionDataManager

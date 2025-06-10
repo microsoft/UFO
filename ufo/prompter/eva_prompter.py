@@ -7,7 +7,7 @@ import os
 from typing import Dict, List, Optional
 
 from ufo.automator.ui_control.screenshot import PhotographerFacade
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.prompter.agent_prompter import APIPromptLoader
 from ufo.prompter.basic import BasicPrompter
 from ufo.trajectory import parser

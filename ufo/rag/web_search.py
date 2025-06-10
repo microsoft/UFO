@@ -6,7 +6,7 @@ from langchain.docstore.document import Document
 from langchain.text_splitter import HTMLHeaderTextSplitter
 from langchain_community.vectorstores import FAISS
 
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.utils import get_hugginface_embedding, print_with_color
 
 configs = Config.get_instance().config_data

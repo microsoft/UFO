@@ -4,7 +4,7 @@
 import os
 import argparse
 from .summarizer.summarizer import DemonstrationSummarizer
-from ufo.config.config import Config
+from ufo.config import Config
 from .parser.psr_record_parser import PSRRecordParser
 from .utils import create_folder, save_to_json, unzip_and_read_file
 from ufo.utils import print_with_color

@@ -5,7 +5,7 @@ import psutil
 from pywinauto import Desktop
 
 from ufo import utils
-from ufo.config.config import Config
+from ufo.config import Config
 
 configs = Config.get_instance().config_data
 

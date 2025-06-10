@@ -13,9 +13,10 @@ from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.module.context import Context
 from ufo.prompter.agent_prompter import HostAgentPrompter
+from ufo.llm import AgentType
 
 configs = Config.get_instance().config_data
 
@@ -243,7 +244,7 @@ class HostAgent(BasicAgent):
                 agent_name=agent_name,
                 process_name=application_window_name,
                 app_root_name=application_root_name,
-                is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
+                is_visual=configs[AgentType.APP]["VISUAL_MODE"],
                 main_prompt=configs["APPAGENT_PROMPT"],
                 example_prompt=example_prompt,
                 api_prompt=configs["API_PROMPT"],

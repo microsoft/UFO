@@ -13,7 +13,7 @@ from ufo.agents.states.host_agent_state import (
     FinishHostAgentState,
     NoneHostAgentState,
 )
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.module.context import Context, ContextNames
 
 # Avoid circular import

@@ -16,7 +16,7 @@ from ufo.agents.processors.app_agent_processor import (
 )
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control import ui_tree
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
