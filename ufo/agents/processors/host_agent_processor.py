@@ -171,15 +171,19 @@ class HostAgentProcessor(BaseProcessor):
             setter=lambda value: self.desktop_app_info_callback(value)
         )
         
-    def desktop_app_info_callback(self, value: str) -> None:
+    def desktop_app_info_callback(self, value: list[dict] | list[WindowInfo]) -> None:
         """
         Helper method to handle the desktop app info callback.
         
         Args:
             value (str): The desktop app info
         """
-        model = [WindowInfo(**item) for item in value]
-        self.session_data_manager.session_data.state.desktop_windows_info = model
+        if isinstance(value, list) and len(value) > 0 and isinstance(value[0], dict):
+            # Convert the list of dictionaries to a list of WindowInfo objects
+            self._desktop_windows_info = [WindowInfo(**item) for item in value]
+        else:
+            self._desktop_windows_info = value
+        self.session_data_manager.session_data.state.desktop_windows_info = self._desktop_windows_info
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -303,7 +307,7 @@ class HostAgentProcessor(BaseProcessor):
                 setter=lambda value: self.launch_application_callback(value))
             
     
-    def select_application_window_callback(self, value: dict) -> None:
+    def select_application_window_callback(self, value: dict | WindowInfo) -> None:
         """
         Helper method to handle the application window selection callback.
         
@@ -316,7 +320,10 @@ class HostAgentProcessor(BaseProcessor):
         
         new_app_window = value["window_info"]
         #self.application_window = new_app_window
-        self.application_window_info = WindowInfo(**new_app_window)
+        if isinstance(new_app_window, dict):
+            self.application_window_info = WindowInfo(**new_app_window)
+        elif isinstance(new_app_window, WindowInfo):
+            self.application_window_info = new_app_window
         
         self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)

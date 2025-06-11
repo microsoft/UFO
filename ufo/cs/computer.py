@@ -64,13 +64,15 @@ class Computer:
         self.control_inspector = ControlInspectorFacade(BACKEND)
         self.grounding_service = None  # Initialize grounding service as None for now
         self.receiver_manager = ReceiverManager()
-          # MCP configuration and state
-        self.mcp_servers = {}  # Store MCP server connections
-        self.mcp_instructions = {}  # Cache MCP instructions
         
-        # Initialize receiver factories
+        self.mcp_servers = {}
+        self.mcp_instructions = {}
+        
         self._init_receivers()
-        self._init_mcp_servers()
+
+        if configs and configs.get("USE_MCP", False):
+            self._init_mcp_servers()
+
     
     @property
     def name(self) -> str:
@@ -686,6 +688,15 @@ class Computer:
     
     def _handle_execute_mcp_tool(self, action: MCPToolExecutionAction) -> Dict[str, Any]:
         """Handle MCP tool execution by calling the appropriate MCP server."""
+        # Check if MCP is enabled
+        if not configs.get("USE_MCP", False):
+            return {
+                "success": False,
+                "error": "MCP is disabled in configuration. Set USE_MCP: True to enable MCP functionality.",
+                "tool_name": action.params.tool_name,
+                "namespace": action.params.app_namespace
+            }
+                    
         params = action.params
         tool_name = params.tool_name
         tool_args = params.tool_args

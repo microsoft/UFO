@@ -20,6 +20,7 @@ import os
 import time
 from abc import ABC, abstractmethod
 from typing import Dict, Optional
+from uuid import uuid4
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -32,6 +33,8 @@ from ufo.agents.states.basic import AgentState, AgentStatus
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
+from ufo.cs.contracts import ActionBase
+from ufo.cs.session_data import SessionDataManager
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.module.context import Context, ContextNames
 from ufo.trajectory.parser import Trajectory
@@ -432,6 +435,9 @@ class BaseSession(ABC):
             trajectory.to_markdown(file_path + "/output.md")
 
         self.print_cost()
+        
+    def step_forward(self):
+        self.current_round.step_forward()
 
     @abstractmethod
     def create_new_round(self) -> Optional[BaseRound]:
@@ -485,6 +491,8 @@ class BaseSession(ABC):
         # Initialize the session cost and step
         self.context.set(ContextNames.SESSION_COST, 0)
         self.context.set(ContextNames.SESSION_STEP, 0)
+        
+        self.context.set(ContextNames.SESSION_DATA_MANAGER, SessionDataManager(str(uuid4())))
 
     @property
     def id(self) -> str:
@@ -806,3 +814,12 @@ class BaseSession(ABC):
         logger.setLevel(configs["LOG_LEVEL"])
 
         return logger
+    
+    def get_actions(self) -> list[ActionBase]:
+        session_data_manager: SessionDataManager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
+        return session_data_manager.session_data.actions_to_run
+    
+    def update_session_state_from_action_results(self, action_results: dict[str, any]) -> None:
+        session_data_manager: SessionDataManager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
+        session_data_manager.update_session_state_from_action_results(action_results)
+        session_data_manager.clear_roundtrip_data()
