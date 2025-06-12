@@ -85,11 +85,7 @@ class SessionDataManager:
             )
             for window in windows_info
         ]
-        
-    def has_result(self, agent: BasicAgent) -> bool:
-        first_time = agent.first_time
-        agent.first_time = False
-        return not first_time
+
     
     
 

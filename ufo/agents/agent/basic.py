@@ -29,7 +29,7 @@ configs = Config.get_instance().config_data
 
 
 class BasicAgent(ABC):
-    first_time = True
+    
     
     """
     The BasicAgent class is the abstract class for the agent.
@@ -50,6 +50,7 @@ class BasicAgent(ABC):
         self._host = None
         self._processor: Optional[BaseProcessor] = None
         self._state = None
+        self.has_input = False
 
     @property
     def status(self) -> str:

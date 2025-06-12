@@ -17,6 +17,7 @@ from ufo.agents.processors.app_agent_processor import (
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control import ui_tree
 from ufo.config import Config
+from ufo.cs.contracts import GetUITreeAction, GetUITreeParams
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
@@ -114,12 +115,16 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         self._image_url = self.photographer.encode_image_from_path(screenshot_save_path)
 
         if configs.get("SAVE_UI_TREE", False):
-            if self.application_window is not None:
-                step_ui_tree = ui_tree.UITree(self.application_window)
-                step_ui_tree.save_ui_tree_to_json(
-                    os.path.join(
-                        self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
-                    )
+            if self.application_window_info is not None:
+                self.session_data_manager.add_action(
+                    GetUITreeAction(params=GetUITreeParams(
+                        annotation_id=self.application_window_info.annotation_id,
+                        remove_empty=True
+                    )),
+                    setter=lambda value: self._save_ui_tree_callback(
+                        value,
+                        os.path.join(self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
+                    ))
                 )
 
         if configs.get("SAVE_FULL_SCREEN", False):
@@ -136,6 +141,19 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             self.photographer.capture_desktop_screen_screenshot(
                 all_screens=True, save_path=desktop_save_path
             )
+            
+    def _save_ui_tree_callback(self, value, path):
+        """
+        Helper method to save UI tree data.
+        
+        Args:
+            value: The result returned from the action
+            path: The path to the file where the UI tree data will be saved
+        """
+        if value:
+            os.makedirs(os.path.dirname(path), exist_ok=True)
+            with open(path, "w") as f:
+                json.dump(value, f, indent=4) 
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer

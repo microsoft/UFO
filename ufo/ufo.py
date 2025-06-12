@@ -75,6 +75,11 @@ def main():
     is_finished = session.is_finished()
     while not is_finished:
         session.step_forward()
+        
+        if session.is_finished():
+            print("Session is finished successfully.")
+            break
+                
         actions = session.get_actions()
         # Process all actions in the actions list
         action_results = {}

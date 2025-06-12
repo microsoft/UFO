@@ -261,7 +261,14 @@ class AppAgentProcessor(BaseProcessor):
         )
         
     def _get_app_window_control_info_action_callback(self, value):
-        model = AppWindowControlInfo(**value)
+        if isinstance(value, AppWindowControlInfo):
+            model = value
+        elif isinstance(value, dict):
+            model = AppWindowControlInfo(**value)
+        else:
+            raise ValueError(
+                f"Expected AppWindowControlInfo or dict, got {type(value)}"
+            )
         self.session_data_manager.session_data.state.app_window_control_info = model
 
     @BaseProcessor.exception_capture

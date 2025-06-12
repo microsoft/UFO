@@ -83,7 +83,7 @@ class BaseProcessor(ABC):
         start_time = time.time()
 
         try:
-            if self.session_data_manager.has_result(self.agent):
+            if self.agent.has_input:
                 # Step 4: Get the prompt message.
                 self.get_prompt_message()
 
@@ -133,6 +133,9 @@ class BaseProcessor(ABC):
             self.get_control_info()
             
             self.process_collected_info()
+            
+            if not self.agent.has_input:
+                self.agent.has_input = True
 
         except StopIteration:
             # Error was handled and logged in the exception capture decorator.

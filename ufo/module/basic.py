@@ -137,6 +137,8 @@ class BaseRound(ABC):
             self.state = self.agent.state.next_state(self.agent)
             self.agent = self.agent.state.next_agent(self.agent)
             self.agent.set_state(self.state)
+        else:
+            pass
 
             # If the subtask ends, capture the last snapshot of the application.
             # if self.state.is_subtask_end():
@@ -663,8 +665,7 @@ class BaseSession(ABC):
         Check if the session is ended.
         return: True if the session is ended, otherwise False.
         """
-        if (
-            self._finish
+        if ((self.current_round and self.current_round.is_finished())
             or self.step >= configs["MAX_STEP"]
             or self.total_rounds >= configs["MAX_ROUND"]
         ):

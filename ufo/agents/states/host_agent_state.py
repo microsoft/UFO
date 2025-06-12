@@ -192,6 +192,8 @@ class AssignHostAgentState(HostAgentState):
             mode=mode,
             context=context
         )
+        
+        agent.has_input = False
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
