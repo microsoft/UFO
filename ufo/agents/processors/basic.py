@@ -15,7 +15,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.memory.memory import MemoryItem
-from ufo.agents.processors.actions import ActionSequence
+from ufo.agents.processors.action_contracts import ActionSequence
 from ufo.config import Config
 from ufo.cs.contracts import WindowInfo
 from ufo.module.context import Context, ContextNames

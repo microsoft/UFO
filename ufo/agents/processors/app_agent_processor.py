@@ -9,9 +9,9 @@ from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional
 from ufo import utils
 from ufo.utils import collector
 from PIL import Image
-from ufo.agents.processors.actions import BaseControlLog, OneStepAction
+from ufo.agents.processors.action_contracts import BaseControlLog, OneStepAction
 from ufo.agents.processors.basic import BaseProcessor
-from ufo.automator.ui_control.control_filter import ControlFilterFactory
+from ufo.cs.service.control_filter import ControlFilterFactory
 from ufo.config import Config
 from ufo.module.context import Context, ContextNames
 from ufo.cs.contracts import (

@@ -6,11 +6,11 @@ import json
 import os
 from typing import Dict, List, Optional
 
-from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
 from ufo.prompter.agent_prompter import APIPromptLoader
 from ufo.prompter.basic import BasicPrompter
 from ufo.trajectory import parser
+import ufo.utils
 
 configs = Config.get_instance().config_data
 
@@ -115,7 +115,7 @@ class EvaluationAgentPrompter(BasicPrompter):
         trajectory = self.load_logs(log_path)
 
         if len(trajectory.app_agent_log) >= 0:
-            first_screenshot_str = PhotographerFacade().encode_image(
+            first_screenshot_str = ufo.utils.encode_image(
                 trajectory.app_agent_log[0]
                 .get("ScreenshotImages")
                 .get("CleanScreenshot")
@@ -123,7 +123,7 @@ class EvaluationAgentPrompter(BasicPrompter):
         else:
             first_screenshot_str = ""
 
-        last_screenshot_str = PhotographerFacade().encode_image(
+        last_screenshot_str = ufo.utils.encode_image(
             trajectory.final_screenshot_image
         )
 
@@ -185,7 +185,7 @@ class EvaluationAgentPrompter(BasicPrompter):
                 screenshot_image = log.get("ScreenshotImages").get(
                     "SelectedControlScreenshot"
                 )
-                screenshot_str = PhotographerFacade.encode_image(screenshot_image)
+                screenshot_str = ufo.utils.encode_image(screenshot_image)
 
                 user_content.append(
                     {"type": "image_url", "image_url": {"url": screenshot_str}}
@@ -198,7 +198,7 @@ class EvaluationAgentPrompter(BasicPrompter):
         if self.is_visual:
 
             user_content.append({"type": "text", "text": "<Final Screenshot:>"})
-            screenshot_str = PhotographerFacade.encode_image(
+            screenshot_str = ufo.utils.encode_image(
                 trajectory.final_screenshot_image
             )
 
@@ -266,7 +266,7 @@ class EvaluationAgentPrompter(BasicPrompter):
         :return: The URL of the screenshot.
         """
 
-        return PhotographerFacade().encode_image_from_path(screenshot_path)
+        return ufo.utils.encode_image_from_path(screenshot_path)
 
     def examples_prompt_helper(
         self, header: str = "## Response Examples", separator: str = "Example"

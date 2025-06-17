@@ -223,10 +223,19 @@ class OperationCommand(BaseModel):
 class OperationSequenceAction(ActionBase):
     name: str = "operation_sequence"
     params: Optional[list[OperationCommand]] = None
+
+class GetDesktopControlInfoParams(BaseModel):
+    """Parameters for getting desktop control information"""
+    pass
+
+class GetDesktopControlInfoAction(ActionBase):
+    name: str = "get_desktop_control_info"
+    params: Optional[GetDesktopControlInfoParams] = None
     
 UFOAction = Union[
     CaptureDesktopScreenshotAction,
     GetDesktopAppInfoAction,
+    GetDesktopControlInfoAction,
     SelectApplicationWindowAction,
     LaunchApplicationAction,
     CaptureAppWindowScreenshotAction,

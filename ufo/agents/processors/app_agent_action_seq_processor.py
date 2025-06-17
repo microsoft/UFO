@@ -5,7 +5,7 @@
 from typing import Any, Dict, List
 
 from ufo import utils
-from ufo.agents.processors.actions import ActionSequence, OneStepAction
+from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config

@@ -11,7 +11,7 @@ from PIL import Image
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
-from ufo.automator.ui_control.screenshot import PhotographerFacade
+import ufo.utils
 from ufo.utils import print_with_color
 
 
@@ -95,7 +95,7 @@ class Trajectory:
         :return: The screenshot data.
         """
         if os.path.exists(screenshot_path):
-            image = PhotographerFacade.load_image(screenshot_path)
+            image = ufo.utils.load_image(screenshot_path)
         else:
             image = None
         return image

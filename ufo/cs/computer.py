@@ -5,7 +5,8 @@ import yaml
 from typing import Dict, List, Any, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
-from ufo.agents.processors.actions import ActionSequence, OneStepAction
+from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
+from ufo.automator.action_execution import ActionSequenceExecutor
 from ufo.automator.puppeteer import AppPuppeteer, ReceiverManager
 from ufo.automator.ui_control import ui_tree
 from ufo.cs.contracts import (
@@ -218,12 +219,11 @@ class Computer:
                 args=args,
                 control_label=control_label,
                 control_text=control_text,
-                after_status=after_status
-            )
+                after_status=after_status            )
             actions.append(action)
         action_sequence = ActionSequence(actions)
         puppeteer = AppPuppeteer(self.selected_app_window_info.annotation_id, "")
-        action_sequence.execute_all(puppeteer, self.selected_app_window_controls, application_window)
+        ActionSequenceExecutor.execute_all(action_sequence, puppeteer, self.selected_app_window_controls, application_window)
 
     def _handle_callback(self, action: CallbackAction) -> Dict[str, Any]:
         """Handle callback action"""
@@ -890,8 +890,6 @@ class Computer:
                 "requires_ui_context": False,
                 "modifies_application_state": True
             }
-
-    # ...existing code...
     
 if __name__ == "__main__":
     computer = Computer("TestComputer")

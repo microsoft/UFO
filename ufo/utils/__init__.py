@@ -4,6 +4,7 @@
 import base64
 import importlib
 import functools
+from io import BytesIO
 import json
 import mimetypes
 import os
@@ -257,3 +258,33 @@ def encode_image_from_path(
         image_url = f"data:{mime_type};base64," + encoded_image
         return image_url
 
+_empty_image_string = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
+
+def encode_image(cls, image: Image.Image, mime_type: Optional[str] = None) -> str:
+        """
+        Encode an image to base64 string.
+        :param image: The image to encode.
+        :param mime_type: The mime type of the image.
+        :return: The base64 string.
+        """
+
+        if image is None:
+            return _empty_image_string
+
+        buffered = BytesIO()
+        image.save(buffered, format="PNG", optimize=True)
+        encoded_image = base64.b64encode(buffered.getvalue()).decode("ascii")
+
+        if mime_type is None:
+            mime_type = "image/png"
+
+        image_url = f"data:{mime_type};base64," + encoded_image
+        return image_url
+    
+def load_image(image_path: str) -> Image.Image:
+    """
+    Load an image from the path.
+    :param image_path: The path of the image.
+    :return: The image.
+    """
+    return Image.open(image_path)
