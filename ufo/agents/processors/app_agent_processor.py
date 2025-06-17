@@ -672,19 +672,25 @@ class AppAgentProcessor(BaseProcessor):
             after_status=self.status,
         )
 
-        commands = [
-            OperationCommand(
-                command_id=action.function,
-                **{
-                    action.function: {
-                    **action.args,
-                    "control_label": action.control_label,
-                    "control_text": action.control_text,
-                    "after_status": action.after_status,
-                    }
-                }
+        if action is None or action.function is None or action.function == "":
+            utils.print_with_color(
+                "No valid action to execute. Skipping execution.", "yellow"
             )
-        ]
+            commands = []
+        else:
+            commands = [
+                OperationCommand(
+                    command_id=action.function,
+                    **{
+                        action.function: {
+                        **action.args,
+                        "control_label": action.control_label,
+                        "control_text": action.control_text,
+                        "after_status": action.after_status,
+                        }
+                    }
+                )
+            ]
 
         self.session_data_manager.add_action(OperationSequenceAction(
             params=commands,
