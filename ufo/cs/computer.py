@@ -682,8 +682,8 @@ class Computer:
 
     def _get_window_by_annotation_id(self, annotation_id: str) -> Optional[UIAWrapper]:
         """Get a window by its annotation ID"""
-        if annotation_id and self.last_app_windows:
-            return self.last_app_windows.get(annotation_id)
+        # if annotation_id and self.last_app_windows:
+        #     return self.last_app_windows.get(annotation_id)
         return self.selected_app_window    
     
     def _handle_execute_mcp_tool(self, action: MCPToolExecutionAction) -> Dict[str, Any]:
