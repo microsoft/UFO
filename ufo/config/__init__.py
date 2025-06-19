@@ -4,22 +4,23 @@
 import json
 import os
 import yaml
+from typing import Optional, Dict
 
 from ufo.utils import print_with_color
 
 
 class Config:
-    _instance = None
+    _instance: Optional["Config"] = None
 
     def __init__(self):
         # Load config here
         if os.getenv("RUN_CONFIGS", "true").lower() != "false":
-            self.config_data = self.load_config()
+            self.config_data: Optional[Dict] = self.load_config()
         else:
-            self.config_data = None
+            self.config_data: Optional[Dict] = None
 
     @staticmethod
-    def get_instance():
+    def get_instance() -> "Config":
         """
         Get the instance of the Config class.
         :return: The instance of the Config class.
@@ -28,7 +29,7 @@ class Config:
             Config._instance = Config()
         return Config._instance
 
-    def load_config(self, config_path="ufo/config/") -> dict:
+    def load_config(self, config_path: str = "ufo/config/") -> Dict:
         """
         Load the configuration from a YAML file and environment variables.
 
@@ -64,7 +65,7 @@ class Config:
         return self.optimize_configs(configs)
 
     @staticmethod
-    def update_api_base(configs: dict, agent: str) -> None:
+    def update_api_base(configs: Dict, agent: str) -> None:
         """
         Update the API base URL based on the API type.
         :param configs: The configuration dictionary.
@@ -99,7 +100,7 @@ class Config:
                 )
 
     @classmethod
-    def optimize_configs(cls, configs: dict) -> dict:
+    def optimize_configs(cls, configs: Dict) -> Dict:
         """
         Optimize the configurations.
         :param configs: The configurations.
@@ -131,7 +132,7 @@ def get_offline_learner_indexer_config():
     return records
 
 
-def get_config():
+def get_config() -> Optional[Dict]:
     """
     Get the configuration data from the Config singleton instance.
     :return: The configuration data dictionary.

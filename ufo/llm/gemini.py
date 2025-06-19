@@ -3,7 +3,7 @@ import base64
 import re
 import time
 import random
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 from google import genai
 from google.genai.types import GenerateContentConfig, Part, GenerateContentResponse
@@ -11,7 +11,11 @@ from google.genai.types import GenerateContentConfig, Part, GenerateContentRespo
 from ufo.llm.base import BaseService
 from ufo.utils import print_with_color
 
-from ufo.llm.response_schema import AppAgentResponse, EvaluationResponse, HostAgentResponse
+from ufo.llm.response_schema import (
+    AppAgentResponse,
+    EvaluationResponse,
+    HostAgentResponse,
+)
 from ufo.llm import AgentType
 
 
@@ -20,7 +24,7 @@ class GeminiService(BaseService):
     A service class for Gemini models.
     """
 
-    def __init__(self, config: Dict[str, Any], agent_type: str):
+    def __init__(self, config: Dict[str, Any], agent_type: AgentType):
         """
         Initialize the Gemini service.
         :param config: The configuration.
@@ -40,13 +44,13 @@ class GeminiService(BaseService):
 
     def chat_completion(
         self,
-        messages: List[Dict[str, str]],
+        messages: List[Dict[str, Any]],
         n: int = 1,
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ) -> Any:
+    ) -> Tuple[List[str], Optional[float]]:
         """
         Generates completions for a given list of messages.
         :param messages: The list of messages to generate completions for.
@@ -122,7 +126,7 @@ class GeminiService(BaseService):
 
         return self.get_text_from_all_candidates(response), cost
 
-    def process_messages(self, messages: List[Dict[str, str]]) -> List[str]:
+    def process_messages(self, messages: List[Dict[str, Any]]) -> List[str]:
         """
         Process the given messages and extract prompts from them.
         :param messages: The messages to process.
@@ -143,15 +147,15 @@ class GeminiService(BaseService):
                         prompt = content["text"]
                         prompt_contents.append(prompt)
                     elif content["type"] == "image_url":
-                        prompt = self.base64_to_blob(content["image_url"]["url"])
+                        (mime_type, data) = self.base64_to_blob(content["image_url"]["url"])
                         prompt_contents.append(
                             Part.from_bytes(
-                                data=prompt["data"], mime_type=prompt["mime_type"]
+                                data=data, mime_type=mime_type
                             )
                         )
         return prompt_contents
 
-    def base64_to_blob(self, base64_str: str) -> Dict[str, str]:
+    def base64_to_blob(self, base64_str: str) -> Tuple[str, bytes]:
         """
         Converts a base64 encoded image string to MIME type and binary data.
         :param base64_str: The base64 encoded image string.
@@ -169,11 +173,11 @@ class GeminiService(BaseService):
             print("Error: Could not parse the data URL.")
             raise ValueError("Invalid data URL format.")
 
-        return {"mime_type": mime_type, "data": base64.b64decode(base64_string)}
+        return (mime_type, base64.b64decode(base64_string))
 
     def get_text_from_all_candidates(
         self, response: GenerateContentResponse
-    ) -> List[Optional[str]]:
+    ) -> List[str]:
         """
         Extracts the concatenated text content from each candidate in the response.
 

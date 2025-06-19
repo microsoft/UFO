@@ -3,16 +3,18 @@
 
 import abc
 from importlib import import_module
-from typing import Dict
+from typing import Any, Dict
+
+UFO_LLM_DIR = "ufo.llm"
 
 
 class BaseService(abc.ABC):
     @abc.abstractmethod
-    def __init__(self, *args, **kwargs):
+    def __init__(self, *args: Any, **kwargs: Any) -> None:
         pass
 
     @abc.abstractmethod
-    def chat_completion(self, *args, **kwargs):
+    def chat_completion(self, *args: Any, **kwargs: Any) -> Any:
         pass
 
     # Cache for storing services by agent_type only
@@ -20,7 +22,10 @@ class BaseService(abc.ABC):
 
     @staticmethod
     def get_service(
-        name: str, agent_type: str, model_name: str = None, configs: dict = {}
+        name: str,
+        agent_type: str,
+        model_name: str = "",
+        configs: Dict[str, Any] = {},
     ) -> "BaseService":
         """
         Get the service class based on the name. Each agent_type has one unified service.
@@ -53,19 +58,19 @@ class BaseService(abc.ABC):
         service_name = service_map.get(name, None)
         if service_name:
             if name in ["aoai", "azure_ad", "operator"]:
-                module = import_module(".openai", package="ufo.llm")
+                module = import_module(".openai", package=UFO_LLM_DIR)
             elif service_name == "CustomService":
                 custom_model = "llava" if "llava" in model_name else model_name
                 custom_service_name = custom_service_map.get(
                     "llava" if "llava" in custom_model else custom_model, None
                 )
                 if custom_service_name:
-                    module = import_module("." + custom_model, package="ufo.llm")
+                    module = import_module("." + custom_model, package=UFO_LLM_DIR)
                     service_name = custom_service_name
                 else:
                     raise ValueError(f"Custom model {custom_model} not supported")
             else:
-                module = import_module("." + name.lower(), package="ufo.llm")
+                module = import_module("." + name.lower(), package=UFO_LLM_DIR)
 
             service = getattr(module, service_name)(configs, agent_type=agent_type)
             BaseService._service_cache[agent_type] = service
@@ -77,7 +82,7 @@ class BaseService(abc.ABC):
         self,
         api_type: str,
         model: str,
-        prices: Dict[str, float],
+        prices: Dict[str, Dict[str, float]],
         prompt_tokens: int,
         completion_tokens: int,
     ) -> float:
@@ -112,5 +117,5 @@ class BaseService(abc.ABC):
                 + completion_tokens * prices[name]["output"] / 1000
             )
         else:
-            return 0
+            return 0.0
         return cost

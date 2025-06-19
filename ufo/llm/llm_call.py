@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 from ufo.llm import AgentType
-from typing import Tuple
+from typing import Tuple, List, Dict, Any, Optional
 
 from ufo.utils import print_with_color
 
@@ -13,7 +13,7 @@ def get_completion(
     messages,
     agent: str = AgentType.APP,
     use_backup_engine: bool = True,
-    configs: dict = {},
+    configs: Optional[Dict[str, Any]] = None,
 ) -> Tuple[str, float]:
     """
     Get completion for the given messages.
@@ -34,8 +34,8 @@ def get_completions(
     agent: str = AgentType.APP,
     use_backup_engine: bool = True,
     n: int = 1,
-    configs: dict = {},
-) -> Tuple[list, float]:
+    configs: Optional[Dict[str, Any]] = None,
+) -> Tuple[List, float]:
     """
     Get completions for the given messages.
     :param messages: List of messages to be used for completion.
@@ -44,6 +44,9 @@ def get_completions(
     :param n: Number of completions to generate.
     :return: A tuple containing the completion responses and the cost.
     """
+    
+    if configs is None:
+        configs = {}
 
     if agent in [AgentType.HOST, AgentType.APP, AgentType.OPERATOR, AgentType.BACKUP]:
         agent_type = agent
