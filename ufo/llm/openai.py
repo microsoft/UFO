@@ -59,9 +59,9 @@ class BaseOpenAIService(BaseService):
         # Try to automatically fix some config errors
         while True:
             try:
-                response = self.client.beta.chat.completions.parse(
+                _ = self.client.beta.chat.completions.parse(
                     model=self.model,
-                    messages=[{"role": "user", "content": "Hello"}],
+                    messages=[{"role": "user", "content": "This is a test message, respond with some simple JSON placeholder text."}],
                     n=1,
                     response_format=HostAgentResponse,
                 )

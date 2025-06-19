@@ -26,9 +26,8 @@ class HostAgentResponse(BaseModel):
         description="Precise title of the application or control to be selected for the current sub-task, strictly adhering to the provided options. Empty string if no suitable application."
     )
     
-    Status: str = Field(
-        description="Status of the HostAgent: 'FINISH' (user request completed), 'CONTINUE' (further actions needed), 'PENDING' (questions for user clarification), or 'ASSIGN' (sub-tasks need to be assigned to AppAgent).",
-        enum=["FINISH", "CONTINUE", "PENDING", "ASSIGN"]
+    Status: Literal["FINISH", "CONTINUE", "PENDING", "ASSIGN"] = Field(
+        description="Status of the HostAgent: 'FINISH' (user request completed), 'CONTINUE' (further actions needed), 'PENDING' (questions for user clarification), or 'ASSIGN' (sub-tasks need to be assigned to AppAgent)."
     )
     
     Plan: List[str] = Field(
