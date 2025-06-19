@@ -632,6 +632,8 @@ class AppAgentProcessor(BaseProcessor):
         else:
             self._execute_ui_action()
 
+        self._generate_control_screenshot()
+
     def _execute_mcp_action(self) -> None:
         """
         Execute action using MCP server.
@@ -730,33 +732,36 @@ class AppAgentProcessor(BaseProcessor):
                 "red"
             )
 
-    # def capture_control_screenshot(
-    #     self, control_selected: Union[ControlInfo, List[ControlInfo]]
-    # ) -> None:
-    #     """
-    #     Capture the screenshot of the selected control.
-    #     :param control_selected: The selected control item or a list of selected control items.
-    #     """
-    #     control_screenshot_save_path = (
-    #         self.log_path + f"action_step{self.session_step}_selected_controls.png"
-    #     )
+    def _generate_control_screenshot(self) -> None:
+        """
+        Capture the screenshot of the selected control.
+        :param control_selected: The selected control item or a list of selected control items.
+        """
+        screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
+        image = Image.open(screenshot_save_path)
 
-    #     self._memory_data.add_values_from_dict(
-    #         {"SelectedControlScreenshot": control_screenshot_save_path}
-    #     )
+        selected_control_image = collector.annotate_app_window_image(
+            image,
+            self.session_data_manager.session_data.state.app_window_control_info.window_info,
+            (
+                [
+                    self.session_data_manager.session_data.state._annotation_dict[
+                        self.control_label
+                    ]
+                ]
+                if self.control_label
+                else []
+            ),
+        )
 
-    #     sub_control_list = (
-    #         control_selected
-    #         if isinstance(control_selected, list)
-    #         else [control_selected]
-    #     )
+        selected_control_png_save_path = (
+            self.log_path + f"action_step{self.session_step}_selected_controls.png"
+        )
 
-    #     self.photographer.capture_app_window_screenshot_with_rectangle(
-    #         self.application_window,
-    #         sub_control_list=sub_control_list,
-    #         save_path=control_screenshot_save_path,
-    #         background_screenshot_path=self.screenshot_save_path,
-    #     )
+        if selected_control_image:
+            os.makedirs(os.path.dirname(selected_control_png_save_path), exist_ok=True)
+            with open(selected_control_png_save_path, "wb") as f:
+                selected_control_image.save(f, format="PNG")
 
     def handle_screenshot_status(self) -> None:
         """
