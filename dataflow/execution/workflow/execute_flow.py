@@ -9,7 +9,7 @@ from dataflow.execution.agent.execute_eval_agent import ExecuteEvalAgent
 from ufo import utils
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator.app_apis.basic import WinCOMReceiverBasic
-from ufo.config.config import Config as UFOConfig
+from ufo.config import Config as UFOConfig
 from ufo.module.basic import BaseSession, Context, ContextNames
 from ufo.automator.ui_control.screenshot import PhotographerDecorator
 

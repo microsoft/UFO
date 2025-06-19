@@ -7,6 +7,7 @@ from __future__ import annotations
 import os
 import openai
 from typing import Any, Dict, List, Optional, Tuple, Union
+import json
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
@@ -21,12 +22,13 @@ from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
 from ufo.automator import puppeteer
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.automator.ui_control.grounding.omniparser import OmniparserGrounding
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.llm.grounding_model.omniparser_service import OmniParser
 from ufo.module import interactor
 from ufo.module.context import Context
 from ufo.prompter.agent_prompter import AppAgentPrompter
 
+from ufo.llm import AgentType
 
 configs = Config.get_instance().config_data
 
@@ -190,7 +192,10 @@ class AppAgent(BasicAgent):
         status = response_dict.get("Status")
         comment = response_dict.get("Comment")
         function_call = response_dict.get("Function")
-        args = utils.revise_line_breaks(response_dict.get("Args"))
+        if configs.get(AgentType.APP).get("JSON_SCHEMA", False):
+            args = utils.revise_line_breaks(json.loads(response_dict.get("Args")))
+        else:
+            args = utils.revise_line_breaks(response_dict.get("Args"))
 
         # Generate the function call string
         action = self.Puppeteer.get_command_string(function_call, args)
@@ -609,7 +614,7 @@ class OpenAIOperatorAgent(AppAgent):
 
         else:
             output_message = (
-                openai.types.responses.response_input_param.ComputerCallOutputOutput(
+                openai.types.responses.response_input_param.ComputerCallOutput(
                     type="computer_screenshot",  # TODO
                     image_url=image,
                 )

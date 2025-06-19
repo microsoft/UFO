@@ -13,7 +13,7 @@ from ufo.agents.agent.app_agent import OpenAIOperatorAgent
 from ufo.agents.agent.host_agent import AgentFactory
 from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.module import interactor
 from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import ContextNames

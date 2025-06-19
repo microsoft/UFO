@@ -9,7 +9,7 @@ from pywinauto import Desktop
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from dataflow.config.config import Config
-from ufo.config.config import Config as UFOConfig
+from ufo.config import Config as UFOConfig
 
 # Load configuration settings
 _configs = Config.get_instance().config_data

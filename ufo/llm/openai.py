@@ -6,19 +6,27 @@ import json
 import os
 import shutil
 import sys
-import time
-import urllib.error
-import urllib.parse
-import urllib.request
 from typing import Any, Callable, Dict, List, Literal, Optional, Tuple
 
 import openai
 from openai import AzureOpenAI, OpenAI
+from openai.lib._parsing._completions import type_to_response_format_param
+from openai.types.chat import ChatCompletion, ChatCompletionChunk
+from openai._streaming import Stream
 from ufo.llm.base import BaseService
+from ufo.llm.response_schema import (
+    AppAgentResponse,
+    EvaluationResponse,
+    HostAgentResponse,
+)
+from ufo.utils import print_with_color
+from ufo.llm import AgentType
 
 
 class BaseOpenAIService(BaseService):
-    def __init__(self, config: Dict[str, Any], agent_type: str, api_provider: str, api_base: str) -> None:
+    def __init__(
+        self, config: Dict[str, Any], agent_type: str, api_provider: str, api_base: str
+    ) -> None:
         """
         Create an OpenAI service instance.
         :param config: The configuration for the OpenAI service.
@@ -32,6 +40,7 @@ class BaseOpenAIService(BaseService):
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config.get("PRICES", {})
         self.agent_type = agent_type
+        self.json_schema_enabled = config[agent_type].get("JSON_SCHEMA", False)
         assert api_provider in ["openai", "aoai", "azure_ad"], "Invalid API Provider"
 
         self.client: OpenAI = OpenAIService.get_openai_client(
@@ -45,6 +54,40 @@ class BaseOpenAIService(BaseService):
             aad_tenant_id=self.config_llm.get("AAD_TENANT_ID", ""),
         )
 
+        self.model = self.config_llm["API_MODEL"]
+
+        # BACKUP agent should not use JSON schema
+        if self.agent_type == AgentType.BACKUP:
+            self.config_llm["JSON_SCHEMA"] = False
+            self.json_schema_enabled = False
+
+        # Try to automatically fix some config errors
+        while True:
+            try:
+                _ = self.client.beta.chat.completions.parse(
+                    model=self.model,
+                    messages=[
+                        {
+                            "role": "user",
+                            "content": "This is a test message, respond with some simple JSON placeholder text.",
+                        }
+                    ],
+                    n=1,
+                    response_format=HostAgentResponse,
+                )
+            except openai.BadRequestError as e:
+                if (
+                    "'response_format' of type 'json_schema' is not supported"
+                    in e.message
+                ):
+                    print_with_color(
+                        f"[WARN] Model {self.model} does not support Structured JSON Output feature. Switching to text mode.",
+                        "yellow",
+                    )
+                    self.config_llm["JSON_SCHEMA"] = False
+                    self.json_schema_enabled = False
+            break  # Exit the loop if no exception is raised
+
     def _chat_completion(
         self,
         messages: List[Dict[str, str]],
@@ -53,7 +96,7 @@ class BaseOpenAIService(BaseService):
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ) -> Tuple[Dict[str, Any], Optional[float]]:
+    ) -> Tuple[List[str], Optional[float]]:
         """
         Generates completions for a given conversation using the OpenAI Chat API.
         :param messages: The list of messages in the conversation.
@@ -66,9 +109,6 @@ class BaseOpenAIService(BaseService):
         :return: A tuple containing a list of generated completions and the estimated cost.
         :raises: Exception if there is an error in the OpenAI API request
         """
-
-        model = self.config_llm["API_MODEL"]
-
         temperature = (
             temperature if temperature is not None else self.config["TEMPERATURE"]
         )
@@ -76,55 +116,55 @@ class BaseOpenAIService(BaseService):
         top_p = top_p if top_p is not None else self.config["TOP_P"]
 
         try:
-            if self.config_llm.get("REASONING_MODEL", False):
-                response: Any = self.client.chat.completions.create(
-                    model=model,
-                    messages=messages,  # type: ignore
-                    n=1,
-                    stream=stream,
-                    **kwargs,
+            # Build base parameters
+            base_params = {
+                "model": self.model,
+                "messages": messages,
+                "n": 1,
+                **kwargs,
+            }
+
+            # Add response format if JSON schema is enabled
+            if self.json_schema_enabled:
+                response_format_mapping = {
+                    AgentType.HOST: HostAgentResponse,
+                    AgentType.APP: AppAgentResponse,
+                    AgentType.EVALUATION: EvaluationResponse,
+                }
+                response_format = response_format_mapping.get(
+                    AgentType(self.agent_type)
                 )
-            else:
-                if not stream:
-                    response: Any = self.client.chat.completions.create(
-                        model=model,
-                        messages=messages,  # type: ignore
-                        n=1,
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                        top_p=top_p,
-                        stream=stream,
-                        **kwargs,
+                if response_format:
+                    base_params["response_format"] = type_to_response_format_param(
+                        response_format
                     )
-                else:
-                    response: Any = self.client.chat.completions.create(
-                        model=model,
-                        messages=messages,  # type: ignore
-                        n=1,
-                        temperature=temperature,
-                        max_tokens=max_tokens,
-                        top_p=top_p,
-                        stream=stream,
-                        stream_options={
-                            "include_usage": True,
-                        },
-                        **kwargs,
-                    )
-            # response: Any = self.client.chat.completions.create(
-            #     model=model,
-            #     messages=messages,  # type: ignore
-            #     n=n,
-            #     # temperature=temperature,
-            #     # max_tokens=max_tokens,
-            #     # top_p=top_p,
-            #     stream=stream,
-            #     **kwargs,
-            # )
+
+            # Add generation parameters for non-reasoning models
+            if not self.config_llm.get("REASONING_MODEL", False):
+                base_params.update(
+                    {
+                        "temperature": temperature,
+                        "max_tokens": max_tokens,
+                        "top_p": top_p,
+                    }
+                )
+
+            # Add streaming parameters if needed
+            if stream:
+                base_params.update(
+                    {
+                        "stream": True,
+                        "stream_options": {"include_usage": True},
+                    }
+                )
 
             if stream:
+                streaming_response: Stream[ChatCompletionChunk] = (
+                    self.client.chat.completions.create(**base_params)
+                )
                 collected_content = [""]
 
-                for chunk in response:
+                for chunk in streaming_response:
                     if chunk.choices:
                         delta = chunk.choices[0].delta
                         if delta and delta.content:
@@ -132,23 +172,49 @@ class BaseOpenAIService(BaseService):
                     else:
                         usage = chunk.usage
 
-                prompt_tokens = usage.prompt_tokens
-                completion_tokens = usage.completion_tokens
+                if usage is None:
+                    prompt_tokens = 0
+                    completion_tokens = 0
+                else:
+                    prompt_tokens = usage.prompt_tokens
+                    completion_tokens = usage.completion_tokens
 
                 cost = self.get_cost_estimator(
-                    self.api_type, model, self.prices, prompt_tokens, completion_tokens
+                    self.api_type,
+                    self.model,
+                    self.prices,
+                    prompt_tokens,
+                    completion_tokens,
                 )
                 return collected_content, cost
             else:
+                response: ChatCompletion = self.client.chat.completions.create(
+                    **base_params
+                )
                 usage = response.usage
-                prompt_tokens = usage.prompt_tokens
-                completion_tokens = usage.completion_tokens
+
+                if usage is None:
+                    prompt_tokens = 0
+                    completion_tokens = 0
+                else:
+                    prompt_tokens = usage.prompt_tokens
+                    completion_tokens = usage.completion_tokens
 
                 cost = self.get_cost_estimator(
-                    self.api_type, model, self.prices, prompt_tokens, completion_tokens
+                    self.api_type,
+                    self.model,
+                    self.prices,
+                    prompt_tokens,
+                    completion_tokens,
                 )
 
-                return [response.choices[0].message.content], cost
+                return [
+                    (
+                        response.choices[0].message.content
+                        if response.choices[0] and response.choices[0].message.content
+                        else ""
+                    )
+                ], cost
 
         except openai.APITimeoutError as e:
             # Handle timeout error, e.g. retry or log
@@ -174,9 +240,9 @@ class BaseOpenAIService(BaseService):
 
     def _chat_completion_operator(
         self,
-        message: Dict[str, Any] = None,
+        message: Dict[str, Any],
         **kwargs: Any,
-    ) -> Tuple[Dict[str, Any], Optional[float]]:
+    ) -> Tuple[List[Dict[str, Any]], Optional[float]]:
         """
         Generates completions for a given conversation using the OpenAI Chat API.
         :param message: The message to send to the API.
@@ -201,8 +267,9 @@ class BaseOpenAIService(BaseService):
 
         if "usage" in response:
             usage = response.get("usage")
-            input_tokens = usage.get("input_tokens", 0)
-            output_tokens = usage.get("output_tokens", 0)
+            if usage:
+                input_tokens = usage.get("input_tokens", 0)
+                output_tokens = usage.get("output_tokens", 0)
         else:
             input_tokens = 0
             output_tokens = 0
@@ -437,6 +504,7 @@ class BaseOpenAIService(BaseService):
             print("failed to acquire token from AAD for OpenAI", e)
             raise e
 
+
 class OpenAIService(BaseOpenAIService):
     """
     The OpenAI service class to interact with the OpenAI API.
@@ -448,18 +516,23 @@ class OpenAIService(BaseOpenAIService):
         :param config: The configuration for the OpenAI service.
         :param agent_type: The type of the agent.
         """
-        super().__init__(config, agent_type, config[agent_type]["API_TYPE"].lower(), config[agent_type]["API_BASE"])
+        super().__init__(
+            config,
+            agent_type,
+            config[agent_type]["API_TYPE"].lower(),
+            config[agent_type]["API_BASE"],
+        )
 
     def chat_completion(
         self,
-        messages: List[Dict[str, str]],
+        messages: List[Dict[str, str]] | Dict[str, Any],
         n: int,
         stream: bool = False,
         temperature: Optional[float] = None,
         max_tokens: Optional[int] = None,
         top_p: Optional[float] = None,
         **kwargs: Any,
-    ) -> Tuple[Dict[str, Any], Optional[float]]:
+    ) -> Tuple[List[str] | List[Dict[str, Any]], Optional[float]]:
         """
         Generates completions for a given conversation using the OpenAI Chat API.
         :param messages: The list of messages in the conversation.
@@ -474,6 +547,10 @@ class OpenAIService(BaseOpenAIService):
         """
 
         if self.agent_type.lower() != "operator":
+            if isinstance(messages, dict):
+                raise TypeError(
+                    "Messages should be a list of dictionaries, not a dictionary."
+                )
             # If the agent type is not "operator", use the OpenAI API directly
             return super()._chat_completion(
                 messages,
@@ -481,260 +558,263 @@ class OpenAIService(BaseOpenAIService):
                 temperature,
                 max_tokens,
                 top_p,
-                response_format={"type": "json_object"},
                 **kwargs,
             )
         else:
+            if not isinstance(messages, dict):
+                raise TypeError(
+                    "Messages should be a dictionary for the OpenAI Operator API."
+                )
             # If the agent type is "operator", use the OpenAI Operator API
             return super()._chat_completion_operator(
                 messages,
             )
 
 
-class OpenAIBetaClient:
+# class OpenAIBetaClient:
 
-    Json = Dict[str, Any]
+#     Json = Dict[str, Any]
 
-    def __init__(self, endpoint: str, api_version: str):
-        """
-        The OpenAI Beta client class to interact with the OpenAI API.
-        :param endpoint: The OpenAI API endpoint.
-        :param api_key: The OpenAI API key.
-        :param api_version: The OpenAI API version.
-        """
+#     def __init__(self, endpoint: str, api_version: str):
+#         """
+#         The OpenAI Beta client class to interact with the OpenAI API.
+#         :param endpoint: The OpenAI API endpoint.
+#         :param api_key: The OpenAI API key.
+#         :param api_version: The OpenAI API version.
+#         """
 
-        self.endpoint = endpoint
-        self.base_url = endpoint.rstrip("/")
+#         self.endpoint = endpoint
+#         self.base_url = endpoint.rstrip("/")
 
-        self.api_version = api_version
+#         self.api_version = api_version
 
-    def get_responses(
-        self,
-        model: str,
-        previous_response_id: Optional[str] = None,
-        inputs: Optional[list[Json]] = None,  # pylint: disable=redefined-builtin
-        tool_output: Optional[list[Json]] = None,
-        include: Optional[list[str]] = None,
-        tools: Optional[list[Json]] = None,
-        metadata: Optional[Json] = None,
-        temperature: Optional[float] = None,
-        top_p: Optional[float] = None,
-        parallel_tool_calls: Optional[bool] = None,
-        token_provider: Optional[Callable[[], str]] = None,
-    ) -> Json:
-        self,
+#     def get_responses(
+#         self,
+#         model: str,
+#         previous_response_id: Optional[str] = None,
+#         inputs: Optional[list[Json]] = None,  # pylint: disable=redefined-builtin
+#         tool_output: Optional[list[Json]] = None,
+#         include: Optional[list[str]] = None,
+#         tools: Optional[list[Json]] = None,
+#         metadata: Optional[Json] = None,
+#         temperature: Optional[float] = None,
+#         top_p: Optional[float] = None,
+#         parallel_tool_calls: Optional[bool] = None,
+#         token_provider: Optional[Callable[[], str]] = None,
+#     ) -> Json:
+#         self,
 
-        if self.base_url.endswith("openai.azure.com"):
-            url = f"{self.base_url}/openai/responses?api-version={self.api_version}"
-        else:
-            url = f"{self.base_url}/v1/responses"
+#         if self.base_url.endswith("openai.azure.com"):
+#             url = f"{self.base_url}/openai/responses?api-version={self.api_version}"
+#         else:
+#             url = f"{self.base_url}/v1/responses"
 
-        api_key = (
-            token_provider if isinstance(token_provider, str) else token_provider()
-        )
+#         api_key = (
+#             token_provider if isinstance(token_provider, str) else token_provider()
+#         )
 
-        headers = {
-            "Content-Type": "application/json",
-            "x-ms-enable-preview": "true",
-            "api-key": api_key,
-            "x-ms-enable-preview": "true",
-            "Authorization": f"Bearer {api_key}",  # OpenAI
-            "OpenAI-Beta": "responses=v1",  # OpenAI
-        }
+#         headers = {
+#             "Content-Type": "application/json",
+#             "x-ms-enable-preview": "true",
+#             "api-key": api_key,
+#             "x-ms-enable-preview": "true",
+#             "Authorization": f"Bearer {api_key}",  # OpenAI
+#             "OpenAI-Beta": "responses=v1",  # OpenAI
+#         }
 
-        return self.post_request(
-            url,
-            data={
-                "model": model,
-                "previous_response_id": previous_response_id,
-                "input": inputs,
-                "tool_output": tool_output,
-                "include": include,
-                "tools": tools,
-                "metadata": metadata,
-                "temperature": temperature,
-                "top_p": top_p,
-                "parallel_tool_calls": parallel_tool_calls,
-            },
-            headers=headers,
-        )
+#         return self.post_request(
+#             url,
+#             data={
+#                 "model": model,
+#                 "previous_response_id": previous_response_id,
+#                 "input": inputs,
+#                 "tool_output": tool_output,
+#                 "include": include,
+#                 "tools": tools,
+#                 "metadata": metadata,
+#                 "temperature": temperature,
+#                 "top_p": top_p,
+#                 "parallel_tool_calls": parallel_tool_calls,
+#             },
+#             headers=headers,
+#         )
 
-    def post_request(self, url: str, data: Json, headers: Json) -> Json:
-        """
-        Send a POST request to the OpenAI API.
-        :param url: The URL of the API endpoint.
-        :param data: The data to send in the request.
-        :param headers: The headers to send in the request.
-        :return: The response from the API.
-        """
+#     def post_request(self, url: str, data: Json, headers: Json) -> Json:
+#         """
+#         Send a POST request to the OpenAI API.
+#         :param url: The URL of the API endpoint.
+#         :param data: The data to send in the request.
+#         :param headers: The headers to send in the request.
+#         :return: The response from the API.
+#         """
 
-        headers = {**headers, "content-type": "application/json"}
+#         headers = {**headers, "content-type": "application/json"}
 
-        data = json.dumps(self.compact(data)).encode("utf-8")
+#         data = json.dumps(self.compact(data)).encode("utf-8")
 
-        req = urllib.request.Request(url, data=data, headers=headers, method="POST")
+#         req = urllib.request.Request(url, data=data, headers=headers, method="POST")
 
-        try:
-            with urllib.request.urlopen(req, timeout=20) as response:
-                content = response.read().decode("utf-8")
-                return json.loads(content)
-        except urllib.error.HTTPError as e:
-            self._handle_exception(e)
-            print("Error:", e)
+#         try:
+#             with urllib.request.urlopen(req, timeout=20) as response:
+#                 content = response.read().decode("utf-8")
+#                 return json.loads(content)
+#         except urllib.error.HTTPError as e:
+#             self._handle_exception(e)
+#             print("Error:", e)
 
-        return None
+#         return None
 
-    def _handle_exception(self, exception: urllib.error.HTTPError) -> None:
-        """
-        Handle an exception from the OpenAI API.
-        :param exception: The exception from the OpenAI API.
-        """
-        body = json.loads(exception.file.read().decode("utf-8"))
-        request_id = exception.headers.get("x-request-id")
+#     def _handle_exception(self, exception: urllib.error.HTTPError) -> None:
+#         """
+#         Handle an exception from the OpenAI API.
+#         :param exception: The exception from the OpenAI API.
+#         """
+#         body = json.loads(exception.file.read().decode("utf-8"))
+#         request_id = exception.headers.get("x-request-id")
 
-        error = OpenAIError(
-            request_id=request_id, status_code=exception.code, message=body
-        )
-        print("Error:", error)
-        raise OpenAIError(
-            request_id=request_id, status_code=exception.code, message=body
-        )
+#         error = OpenAIError(
+#             request_id=request_id, status_code=exception.code, message=body
+#         )
+#         print("Error:", error)
+#         raise OpenAIError(
+#             request_id=request_id, status_code=exception.code, message=body
+#         )
 
-    @staticmethod
-    def compact(data: Json) -> Json:
-        """
-        Remove None values from a dictionary.
-        """
-        return {k: v for k, v in data.items() if v is not None}
-
-
-class OperatorServicePreview(BaseService):
-    """
-    The Operator service class to interact with the Operator for Computer Using Agent (CUA) API.
-    """
-
-    def __init__(
-        self, config: Dict[str, Any], agent_type: str = "operator", client=None
-    ) -> None:
-        """
-        Create an Operator service instance.
-        :param config: The configuration for the Operator service.
-        :param agent_type: The type of the agent.
-
-        """
-        self.config_llm = config[agent_type]
-        self.config = config
-        self.api_type = self.config_llm["API_TYPE"].lower()
-        self.api_model = self.config_llm["API_MODEL"].lower()
-        self.max_retry = self.config["MAX_RETRY"]
-        self.prices = self.config.get("PRICES", {})
-        self._agent_type = agent_type
-
-        if client is None:
-            self.client = self.get_openai_client()
-
-    def get_openai_client(self):
-        """
-        Create an OpenAI client based on the API type.
-        :return: The OpenAI client.
-        """
-
-        # client = OpenAIBetaClient(
-        #     endpoint=self.config_llm.get("API_BASE"),
-        #     api_version=self.config_llm.get("API_VERSION", ""),
-        # )
-
-        token_provider = self.get_token_provider()
-        api_key = token_provider()
-
-        client = openai.AzureOpenAI(
-            azure_endpoint=self.config_llm.get("API_BASE"),
-            api_key=api_key,
-            max_retries=self.max_retry,
-            timeout=self.config.get("TIMEOUT", 20),
-            api_version=self.config_llm.get("API_VERSION"),
-            default_headers={"x-ms-enable-preview": "true"},
-        )
-
-        return client
-
-    def chat_completion(
-        self,
-        message: Dict[str, Any] = None,
-        n: int = 1,
-    ) -> Tuple[Dict[str, Any], Optional[float]]:
-        """
-        Generates completions for a given conversation using the OpenAI Chat API.
-        :param message: The message to send to the API.
-        :param n: The number of completions to generate.
-        :return: A tuple containing a list of generated completions and the estimated cost.
-        """
-
-        inputs = message.get("inputs", [])
-        tools = message.get("tools", [])
-        previous_response_id = message.get("previous_response_id", None)
-
-        response = self.client.responses.create(
-            model=self.config_llm.get("API_MODEL"),
-            input=inputs,
-            tools=tools,
-            previous_response_id=previous_response_id,
-            truncation="auto",
-            temperature=self.config.get("TEMPERATURE", 0),
-            top_p=self.config.get("TOP_P", 0),
-            timeout=self.config.get("TIMEOUT", 20),
-        ).model_dump()
-
-        if "usage" in response:
-            usage = response.get("usage")
-            input_tokens = usage.get("input_tokens", 0)
-            output_tokens = usage.get("output_tokens", 0)
-        else:
-            input_tokens = 0
-            output_tokens = 0
-
-        cost = self.get_cost_estimator(
-            self.api_type,
-            self.api_model,
-            self.prices,
-            input_tokens,
-            output_tokens,
-        )
-
-        return [response], cost
-
-    def get_token_provider(self):
-        """
-        Acquire token from Azure AD for OpenAI.
-        :return: The access token for OpenAI.
-        """
-
-        from azure.identity import AzureCliCredential, get_bearer_token_provider
-
-        tenant_id = self.config_llm.get("AAD_TENANT_ID", "")
-        scope = self.config_llm.get("AAD_API_SCOPE", "")
-
-        identity = AzureCliCredential(tenant_id=tenant_id)
-        bearer_provider = get_bearer_token_provider(identity, scope)
-        return bearer_provider
+#     @staticmethod
+#     def compact(data: Json) -> Json:
+#         """
+#         Remove None values from a dictionary.
+#         """
+#         return {k: v for k, v in data.items() if v is not None}
 
 
-class OpenAIError(Exception):
-    request_id: str
-    status_code: int
-    message: Dict[str, Any]
+# class OperatorServicePreview(BaseService):
+#     """
+#     The Operator service class to interact with the Operator for Computer Using Agent (CUA) API.
+#     """
 
-    def __init__(self, status_code: int, message: Dict[str, Any], request_id: str):
-        """
-        The OpenAI API error class.
-        :param status_code: The status code of the API response.
-        :param message: The error message from the API response.
-        :param request_id: The request ID of the API response.
-        """
-        self.status_code = status_code
-        self.message = message
-        self.request_id = request_id
-        super().__init__(f"OpenAI API error: {status_code} {message}")
+#     def __init__(
+#         self, config: Dict[str, Any], agent_type: str = "operator", client=None
+#     ) -> None:
+#         """
+#         Create an Operator service instance.
+#         :param config: The configuration for the Operator service.
+#         :param agent_type: The type of the agent.
 
-    def __str__(self):
-        return f"OpenAI API error: {self.request_id} {self.status_code} {json.dumps(self.message, indent=2)}"
+#         """
+#         self.config_llm = config[agent_type]
+#         self.config = config
+#         self.api_type = self.config_llm["API_TYPE"].lower()
+#         self.api_model = self.config_llm["API_MODEL"].lower()
+#         self.max_retry = self.config["MAX_RETRY"]
+#         self.prices = self.config.get("PRICES", {})
+#         self._agent_type = agent_type
+
+#         if client is None:
+#             self.client = self.get_openai_client()
+
+#     def get_openai_client(self):
+#         """
+#         Create an OpenAI client based on the API type.
+#         :return: The OpenAI client.
+#         """
+
+#         # client = OpenAIBetaClient(
+#         #     endpoint=self.config_llm.get("API_BASE"),
+#         #     api_version=self.config_llm.get("API_VERSION", ""),
+#         # )
+
+#         token_provider = self.get_token_provider()
+#         api_key = token_provider()
+
+#         client = openai.AzureOpenAI(
+#             azure_endpoint=self.config_llm.get("API_BASE"),
+#             api_key=api_key,
+#             max_retries=self.max_retry,
+#             timeout=self.config.get("TIMEOUT", 20),
+#             api_version=self.config_llm.get("API_VERSION"),
+#             default_headers={"x-ms-enable-preview": "true"},
+#         )
+
+#         return client
+
+#     def chat_completion(
+#         self,
+#         message: Dict[str, Any] = None,
+#         n: int = 1,
+#     ) -> Tuple[Dict[str, Any], Optional[float]]:
+#         """
+#         Generates completions for a given conversation using the OpenAI Chat API.
+#         :param message: The message to send to the API.
+#         :param n: The number of completions to generate.
+#         :return: A tuple containing a list of generated completions and the estimated cost.
+#         """
+
+#         inputs = message.get("inputs", [])
+#         tools = message.get("tools", [])
+#         previous_response_id = message.get("previous_response_id", None)
+
+#         response = self.client.responses.create(
+#             model=self.config_llm.get("API_MODEL"),
+#             input=inputs,
+#             tools=tools,
+#             previous_response_id=previous_response_id,
+#             truncation="auto",
+#             temperature=self.config.get("TEMPERATURE", 0),
+#             top_p=self.config.get("TOP_P", 0),
+#             timeout=self.config.get("TIMEOUT", 20),
+#         ).model_dump()
+
+#         if "usage" in response:
+#             usage = response.get("usage")
+#             input_tokens = usage.get("input_tokens", 0)
+#             output_tokens = usage.get("output_tokens", 0)
+#         else:
+#             input_tokens = 0
+#             output_tokens = 0
+
+#         cost = self.get_cost_estimator(
+#             self.api_type,
+#             self.api_model,
+#             self.prices,
+#             input_tokens,
+#             output_tokens,
+#         )
+
+#         return [response], cost
+
+#     def get_token_provider(self):
+#         """
+#         Acquire token from Azure AD for OpenAI.
+#         :return: The access token for OpenAI.
+#         """
+
+#         from azure.identity import AzureCliCredential, get_bearer_token_provider
+
+#         tenant_id = self.config_llm.get("AAD_TENANT_ID", "")
+#         scope = self.config_llm.get("AAD_API_SCOPE", "")
+
+#         identity = AzureCliCredential(tenant_id=tenant_id)
+#         bearer_provider = get_bearer_token_provider(identity, scope)
+#         return bearer_provider
+
+
+# class OpenAIError(Exception):
+#     request_id: str
+#     status_code: int
+#     message: Dict[str, Any]
+
+#     def __init__(self, status_code: int, message: Dict[str, Any], request_id: str):
+#         """
+#         The OpenAI API error class.
+#         :param status_code: The status code of the API response.
+#         :param message: The error message from the API response.
+#         :param request_id: The request ID of the API response.
+#         """
+#         self.status_code = status_code
+#         self.message = message
+#         self.request_id = request_id
+#         super().__init__(f"OpenAI API error: {status_code} {message}")
+
+#     def __str__(self):
+#         return f"OpenAI API error: {self.request_id} {self.status_code} {json.dumps(self.message, indent=2)}"
