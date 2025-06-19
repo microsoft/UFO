@@ -56,6 +56,11 @@ class BaseOpenAIService(BaseService):
 
         self.model = self.config_llm["API_MODEL"]
 
+        # BACKUP agent should not use JSON schema
+        if self.agent_type == AgentType.BACKUP:
+            self.config_llm["JSON_SCHEMA"] = False
+            self.json_schema_enabled = False
+
         # Try to automatically fix some config errors
         while True:
             try:
