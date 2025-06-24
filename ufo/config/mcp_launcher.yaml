@@ -116,6 +116,22 @@ servers:
     working_directory: "."
     log_file: "logs/mcp_shell.log"
 
+  hardware:
+    name: "Hardware MCP Server"
+    port: 8006
+    module_path: "ufo.mcp.app_servers.hardware_mcp_server"
+    main_function: "main"
+    args:
+      - "--port"
+      - "8006"
+      - "--host"
+      - "localhost"
+    environment:
+      PYTHONPATH: "."
+      MCP_SERVER_NAME: "hardware"
+    working_directory: "."
+    log_file: "logs/mcp_hardware.log"
+
 # Logging configuration
 logging:
   enabled: true

@@ -12,6 +12,7 @@ from typing import Any, Dict, List, Optional, Union
 from urllib.parse import urljoin
 
 from ufo.mcp.mcp_client import MCPClient
+
 from ufo.cs.contracts import (
     UFOAction,
     CaptureDesktopScreenshotAction,

@@ -10,10 +10,6 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 from ufo.cs.contracts import MCPGetInstructionsAction, MCPGetInstructionsParams
 from ufo.llm import AgentType
 
-
-from ufo.agents.processors.app_agent_action_seq_processor import (
-    HardwareAgentActionSequenceProcessor,
-)
 from ufo.agents.processors.hardware_agent_processor import HardwareAgentProcessor
 
 
@@ -26,16 +22,37 @@ class HardwareAgent(AppAgent):
     It extends the BasicAgent to provide additional functionality specific to hardware.
     """
 
+    def __init__(
+        self,
+        name: str,
+        is_visual: bool,
+        main_prompt: str,
+        example_prompt: str,
+        api_prompt: str,
+        skip_prompter: bool = False,
+        mode: str = "normal",
+    ):
+        """
+        Initialize the HardwareAgent.
+        :param name: The name of the agent.
+        """
+        super().__init__(
+            name=name,
+            process_name="hardware",
+            app_root_name="hardware",
+            is_visual=is_visual,
+            main_prompt=main_prompt,
+            example_prompt=example_prompt,
+            api_prompt=api_prompt,
+            skip_prompter=skip_prompter,
+            mode=mode,
+        )
+
     def process(self, context: Context) -> None:
         """
         Process the agent.
         :param context: The context.
         """
-        if configs.get("ACTION_SEQUENCE", False):
-            self.processor = HardwareAgentActionSequenceProcessor(
-                agent=self, context=context
-            )
-        else:
-            self.processor = HardwareAgentProcessor(agent=self, context=context)
+        self.processor = HardwareAgentProcessor(agent=self, context=context)
         self.processor.process()
         self.status = self.processor.status
