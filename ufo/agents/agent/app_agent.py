@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional, Tuple, Union
 import json
 
 from ufo import utils
-from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.agent.basic import BasicAgent, AgentRegistry
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.app_agent_action_seq_processor import (
     AppAgentActionSequenceProcessor,
@@ -24,12 +24,13 @@ from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
 
-from ufo.cs.contracts import MCPGetInstructionsAction, MCPGetInstructionsParams
+from ufo.cs.contracts import MCPGetAvailableToolsAction, MCPGetAvailableToolsParams
 from ufo.llm import AgentType
 
 configs = Config.get_instance().config_data
 
 
+@AgentRegistry.register(agent_name="appagent")
 class AppAgent(BasicAgent):
     """
     The AppAgent class that manages the interaction with the application.
@@ -503,8 +504,8 @@ class AppAgent(BasicAgent):
         app_namespace = self._get_app_namespace()
         if app_namespace in self.mcp_preferred_apps and hasattr(self, "prompter"):
 
-            get_instructions_action = MCPGetInstructionsAction(
-                params=MCPGetInstructionsParams(app_namespace=app_namespace)
+            get_instructions_action = MCPGetAvailableToolsAction(
+                params=MCPGetAvailableToolsParams(app_namespace=app_namespace)
             )
 
             # Use callback pattern to handle MCP instructions result
@@ -594,12 +595,16 @@ class AppAgent(BasicAgent):
         Handle the result of MCP instructions request from client.
         :param instructions: The MCP instructions received from client
         """
+
+        tools_dicts = []
+
         if hasattr(self, "prompter") and instructions.get("available", False):
-            tools = instructions.get("instructions", {}).get("tools", [])
+            tools = instructions.get("tools", [])
+
             self.prompter.load_mcp_tools_from_data(
                 tools,
                 instructions.get("app_namespace"),
-                instructions.get("tool_instructions", None),
+                tools,
             )
             # Extract tool names and save as preferred operations
             self.mcp_preferred_operations = [
@@ -634,6 +639,7 @@ class AppAgent(BasicAgent):
         return f"{command_name}({args_str})"
 
 
+@AgentRegistry.register(agent_name="operator")
 class OpenAIOperatorAgent(AppAgent):
     """
     The OpenAIOperatorAgent class that manages the interaction with the OpenAI Operator.

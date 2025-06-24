@@ -8,7 +8,7 @@ from typing import Dict, List, Union
 
 from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
-from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.agent.basic import BasicAgent, AgentRegistry
 from ufo.agents.agent.follower_agent import FollowerAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
@@ -43,10 +43,13 @@ class AgentFactory:
             return AppAgent(*args, **kwargs)
         elif agent_type == "operator":
             return OpenAIOperatorAgent(*args, **kwargs)
+        elif agent_type in AgentRegistry.list_agents():
+            return AgentRegistry.get(agent_type)(*args, **kwargs)
         else:
             raise ValueError("Invalid agent type: {}".format(agent_type))
 
 
+@AgentRegistry.register(agent_name="hostagent")
 class HostAgent(BasicAgent):
     """
     The HostAgent class the manager of AppAgents.
@@ -277,6 +280,34 @@ class HostAgent(BasicAgent):
         app_agent.context_provision(request, context=context)
 
         return app_agent
+
+    def create_third_party_app_agent(
+        self,
+        agent_name: str,
+        request: str,
+        mode: str,
+        context: Context = None,
+    ) -> AppAgent:
+        """
+        Create a third-party app agent for the host agent.
+        :param application_window_name: The name of the application window.
+        :param application_root_name: The name of the application root.
+        :param request: The user request.
+        :param mode: The mode of the session.
+        :return: The app agent.
+        """
+        # For third-party applications, we use the same logic as create_app_agent.
+        return self.create_subagent(
+            agent_type=agent_name,
+            agent_name=agent_name,
+            process_name=agent_name,
+            app_root_name=agent_name,
+            is_visual=configs[agent_name]["VISUAL_MODE"],
+            main_prompt=configs[agent_name]["APPAGENT_PROMPT"],
+            example_prompt=configs[agent_name]["APPAGENT_EXAMPLE_PROMPT"],
+            api_prompt=configs[agent_name]["API_PROMPT"],
+            mode=mode,
+        ).context_provision(request, context=context)
 
     def process_comfirmation(self) -> None:
         """

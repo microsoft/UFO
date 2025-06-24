@@ -175,10 +175,11 @@ class MCPClient:
                 }
                 # Add inputSchema if available
                 if hasattr(tool, "inputSchema") and tool.inputSchema:
-                    tool_dict["inputSchema"] = tool.inputSchema
+                    tool_dict["parameters"] = tool.inputSchema
                 tools_dicts.append(tool_dict)
 
             return {"tools": tools_dicts, "app_namespace": app_namespace}
+
         except Exception as e:
             logger.error(f"Failed to get available tools for {app_namespace}: {str(e)}")
             return {

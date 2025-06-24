@@ -1,4 +1,4 @@
-from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.agent.basic import AgentRegistry
 
 from ufo.agents.agent.app_agent import AppAgent
 from ufo.config import Config
@@ -16,37 +16,12 @@ from ufo.agents.processors.hardware_agent_processor import HardwareAgentProcesso
 configs = Config.get_instance().config_data
 
 
+@AgentRegistry.register(agent_name="hardwareagent", third_party=True)
 class HardwareAgent(AppAgent):
     """
     HardwareAgent is a specialized agent that interacts with hardware components.
     It extends the BasicAgent to provide additional functionality specific to hardware.
     """
-
-    def __init__(
-        self,
-        name: str,
-        is_visual: bool,
-        main_prompt: str,
-        example_prompt: str,
-        api_prompt: str,
-        skip_prompter: bool = False,
-        mode: str = "normal",
-    ):
-        """
-        Initialize the HardwareAgent.
-        :param name: The name of the agent.
-        """
-        super().__init__(
-            name=name,
-            process_name="hardware",
-            app_root_name="hardware",
-            is_visual=is_visual,
-            main_prompt=main_prompt,
-            example_prompt=example_prompt,
-            api_prompt=api_prompt,
-            skip_prompter=skip_prompter,
-            mode=mode,
-        )
 
     def process(self, context: Context) -> None:
         """

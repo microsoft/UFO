@@ -473,6 +473,8 @@ class AppAgentPrompter(BasicPrompter):
                 api_list.append(tool_desc)
                 api_list.append("")
 
+        print(f"MCP tools prompts loaded: {api_list}")
+
         # Construct the prompt for each UI control action.
         api_list.append(
             "- The action types for UI elements are: {actions}.".format(
@@ -509,8 +511,6 @@ class AppAgentPrompter(BasicPrompter):
                     api_text = api["summary"]
 
                 api_list.append(api_text)
-
-
 
         api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
 

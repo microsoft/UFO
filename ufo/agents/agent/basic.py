@@ -5,11 +5,10 @@ from __future__ import annotations
 
 import json
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, List, Optional, Type, Union
+from typing import TYPE_CHECKING, Callable, Dict, List, Optional, Type, Union
 
 from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
-
 from ufo.agents.states.basic import AgentState, AgentStatus
 from ufo.config import Config
 from ufo.llm import llm_call
@@ -22,15 +21,13 @@ retriever = utils.LazyImport("..rag.retriever")
 # To avoid circular import
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
-    from ufo.agents.processors.basic import BaseProcessor
     from ufo.agents.memory.blackboard import Blackboard
+    from ufo.agents.processors.basic import BaseProcessor
 
 configs = Config.get_instance().config_data
 
 
 class BasicAgent(ABC):
-    
-    
     """
     The BasicAgent class is the abstract class for the agent.
     """
@@ -382,29 +379,52 @@ class BasicAgent(ABC):
 
 class AgentRegistry:
     """
-    The registry for the agent.
+    The registry for agent classes.
     """
 
     _registry: Dict[str, Type["BasicAgent"]] = {}
 
     @classmethod
-    def register(cls, name: str, agent_cls: Type["BasicAgent"]) -> None:
+    def register(
+        cls, agent_name: str, third_party: Optional[bool] = False
+    ) -> Callable[[Type["BasicAgent"]], Type["BasicAgent"]]:
         """
-        Register an agent class.
-        :param name: The name of the agent class.
-        :param agent_cls: The agent class.
+        Decorator to register an agent class.
+        :param name: The name to register the agent class under.
+        :return: The class itself (unchanged).
         """
-        if name in cls._registry:
-            raise ValueError(f"Agent class already registered under '{name}'.")
-        cls._registry[name] = agent_cls
+
+        def decorator(agent_cls: Type["BasicAgent"]) -> Type["BasicAgent"]:
+
+            if third_party:
+                enabled = configs.get("enabled_third_party_agents", [])
+                if agent_name not in enabled:
+                    print(
+                        f"[AgentRegistry] Skipping third-party agent '{agent_name}' (not in config)."
+                    )
+                    return agent_cls  # 返回但不注册
+
+            if agent_name in cls._registry:
+                raise ValueError(
+                    f"Agent class already registered under '{agent_name}'."
+                )
+            cls._registry[agent_name] = agent_cls
+            return agent_cls
+
+        return decorator
 
     @classmethod
-    def get_cls(cls, name: str) -> Type["BasicAgent"]:
+    def get(cls, agent_name: str) -> Type["BasicAgent"]:
         """
-        Get an agent class from the registry.
-        :param name: The name of the agent class.
-        :return: The agent class.
+        Retrieve an agent class by name.
         """
-        if name not in cls._registry:
-            raise ValueError(f"No agent class registered under '{name}'.")
-        return cls._registry[name]
+        if agent_name not in cls._registry:
+            raise ValueError(f"No agent class registered under '{agent_name}'.")
+        return cls._registry[agent_name]
+
+    @classmethod
+    def list_agents(cls) -> Dict[str, Type["BasicAgent"]]:
+        """
+        List all registered agent classes.
+        """
+        return dict(cls._registry)
