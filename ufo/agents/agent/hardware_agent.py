@@ -14,7 +14,8 @@ from ufo.llm import AgentType
 from ufo.agents.processors.app_agent_action_seq_processor import (
     HardwareAgentActionSequenceProcessor,
 )
-from ufo.agents.processors.app_agent_processor import AppAgentProcessor
+from ufo.agents.processors.hardware_agent_processor import HardwareAgentProcessor
+
 
 configs = Config.get_instance().config_data
 
