@@ -397,7 +397,7 @@ class AgentRegistry:
         def decorator(agent_cls: Type["BasicAgent"]) -> Type["BasicAgent"]:
 
             if third_party:
-                enabled = configs.get("ENABLE_THIRD_PARTY_AGENT", [])
+                enabled = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
                 if agent_name not in enabled:
                     print(
                         f"[AgentRegistry] Skipping third-party agent '{agent_name}' (not in config)."

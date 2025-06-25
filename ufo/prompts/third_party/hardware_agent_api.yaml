@@ -1,0 +1,482 @@
+arduino_hid_status:
+  summary: |-
+    "arduino_hid_status" retrieves the current status of the Arduino HID device.
+  class_name: |-
+    ArduinoHIDStatusCommand
+  usage: |-
+    [1] API call: arduino_hid_status()
+    [2] Args: None
+    [3] Example: arduino_hid_status()
+    [4] Return: Status information as a dictionary/object.
+
+arduino_hid_connect:
+  summary: |-
+    "arduino_hid_connect" connects to the Arduino HID device.
+  class_name: |-
+    ArduinoHIDConnectCommand
+  usage: |-
+    [1] API call: arduino_hid_connect()
+    [2] Args: None
+    [3] Example: arduino_hid_connect()
+    [4] Return: Confirmation of connection.
+
+arduino_hid_disconnect:
+  summary: |-
+    "arduino_hid_disconnect" disconnects from the Arduino HID device.
+  class_name: |-
+    ArduinoHIDDisconnectCommand
+  usage: |-
+    [1] API call: arduino_hid_disconnect()
+    [2] Args: None
+    [3] Example: arduino_hid_disconnect()
+    [4] Return: Confirmation of disconnection.
+
+type_text:
+  summary: |-
+    "type_text" types the specified text string as keyboard input.
+  class_name: |-
+    TypeTextCommand
+  usage: |-
+    [1] API call: type_text(text: str)
+    [2] Args:
+      - text: Text to type (required).
+    [3] Example: type_text(text="Hello, World!")
+    [4] Return: None
+
+press_key_sequence:
+  summary: |-
+    "press_key_sequence" presses a sequence of keys in order.
+  class_name: |-
+    PressKeySequenceCommand
+  usage: |-
+    [1] API call: press_key_sequence(keys: list[str], interval: float=None)
+    [2] Args:
+      - keys: List of key names to press in sequence (required).
+      - interval: Interval between key presses in seconds (optional).
+    [3] Example: press_key_sequence(keys=["ctrl", "c"], interval=0.05)
+    [4] Return: None
+
+press_hotkey:
+  summary: |-
+    "press_hotkey" presses multiple keys simultaneously as a hotkey combination.
+  class_name: |-
+    PressHotkeyCommand
+  usage: |-
+    [1] API call: press_hotkey(keys: list[str])
+    [2] Args:
+      - keys: List of key names to press together (required).
+    [3] Example: press_hotkey(keys=["ctrl", "alt", "del"])
+    [4] Return: None
+
+move_mouse:
+  summary: |-
+    "move_mouse" moves the mouse pointer to specified coordinates.
+  class_name: |-
+    MoveMouseCommand
+  usage: |-
+    [1] API call: move_mouse(x: int, y: int, absolute: bool=None)
+    [2] Args:
+      - x: X coordinate (required).
+      - y: Y coordinate (required).
+      - absolute: Move absolute (True) or relative (False) (optional).
+    [3] Example: move_mouse(x=100, y=200, absolute=True)
+    [4] Return: None
+
+click_mouse:
+  summary: |-
+    "click_mouse" clicks the specified mouse button one or more times.
+  class_name: |-
+    ClickMouseCommand
+  usage: |-
+    [1] API call: click_mouse(button: str=None, count: int=None, interval: float=None)
+    [2] Args:
+      - button: Mouse button (e.g., 'left', 'right', 'middle') (optional).
+      - count: Number of clicks (optional).
+      - interval: Interval between clicks in seconds (optional).
+    [3] Example: click_mouse(button="left", count=2, interval=0.3)
+    [4] Return: None
+
+press_mouse_button:
+  summary: |-
+    "press_mouse_button" presses and holds a specified mouse button.
+  class_name: |-
+    PressMouseButtonCommand
+  usage: |-
+    [1] API call: press_mouse_button(button: str=None)
+    [2] Args:
+      - button: Mouse button to press (e.g., 'left', 'right', 'middle') (optional).
+    [3] Example: press_mouse_button(button="right")
+    [4] Return: None
+
+release_mouse_button:
+  summary: |-
+    "release_mouse_button" releases a previously held mouse button.
+  class_name: |-
+    ReleaseMouseButtonCommand
+  usage: |-
+    [1] API call: release_mouse_button(button: str=None)
+    [2] Args:
+      - button: Mouse button to release (optional).
+    [3] Example: release_mouse_button(button="right")
+    [4] Return: None
+
+scroll_mouse:
+  summary: |-
+    "scroll_mouse" scrolls the mouse wheel vertically and/or horizontally.
+  class_name: |-
+    ScrollMouseCommand
+  usage: |-
+    [1] API call: scroll_mouse(vertical: int=None, horizontal: int=None)
+    [2] Args:
+      - vertical: Vertical scroll amount (optional).
+      - horizontal: Horizontal scroll amount (optional).
+    [3] Example: scroll_mouse(vertical=3, horizontal=0)
+    [4] Return: None
+
+drag_mouse:
+  summary: |-
+    "drag_mouse" drags the mouse from a start to end position.
+  class_name: |-
+    DragMouseCommand
+  usage: |-
+    [1] API call: drag_mouse(start: list[int], end: list[int], button: str=None, duration: float=None)
+    [2] Args:
+      - start: Start position [x, y] (required).
+      - end: End position [x, y] (required).
+      - button: Mouse button to use (optional).
+      - duration: Drag duration in seconds (optional).
+    [3] Example: drag_mouse(start=[10,10], end=[200,300], button="left", duration=1.0)
+    [4] Return: None
+
+double_click_mouse:
+  summary: |-
+    "double_click_mouse" performs a double-click with the specified mouse button.
+  class_name: |-
+    DoubleClickMouseCommand
+  usage: |-
+    [1] API call: double_click_mouse(button: str=None)
+    [2] Args:
+      - button: Mouse button to double-click (optional).
+    [3] Example: double_click_mouse(button="left")
+    [4] Return: None
+
+right_click_mouse:
+  summary: |-
+    "right_click_mouse" performs a right mouse button click.
+  class_name: |-
+    RightClickMouseCommand
+  usage: |-
+    [1] API call: right_click_mouse()
+    [2] Args: None
+    [3] Example: right_click_mouse()
+    [4] Return: None
+
+middle_click_mouse:
+  summary: |-
+    "middle_click_mouse" performs a middle mouse button click.
+  class_name: |-
+    MiddleClickMouseCommand
+  usage: |-
+    [1] API call: middle_click_mouse()
+    [2] Args: None
+    [3] Example: middle_click_mouse()
+    [4] Return: None
+
+bb8_status:
+  summary: |-
+    "bb8_status" retrieves the current status of the BB-8 test fixture.
+  class_name: |-
+    BB8StatusCommand
+  usage: |-
+    [1] API call: bb8_status()
+    [2] Args: None
+    [3] Example: bb8_status()
+    [4] Return: Status as a dictionary/object.
+
+bb8_connect:
+  summary: |-
+    "bb8_connect" connects to the BB-8 test fixture.
+  class_name: |-
+    BB8ConnectCommand
+  usage: |-
+    [1] API call: bb8_connect()
+    [2] Args: None
+    [3] Example: bb8_connect()
+    [4] Return: Confirmation of connection.
+
+bb8_disconnect:
+  summary: |-
+    "bb8_disconnect" disconnects from the BB-8 test fixture.
+  class_name: |-
+    BB8DisconnectCommand
+  usage: |-
+    [1] API call: bb8_disconnect()
+    [2] Args: None
+    [3] Example: bb8_disconnect()
+    [4] Return: Confirmation of disconnection.
+
+bb8_usb_port_plug:
+  summary: |-
+    "bb8_usb_port_plug" plugs in a USB device to the specified port on BB-8.
+  class_name: |-
+    BB8USBPortPlugCommand
+  usage: |-
+    [1] API call: bb8_usb_port_plug(port_name: str)
+    [2] Args:
+      - port_name: USB port name to plug in (required).
+    [3] Example: bb8_usb_port_plug(port_name="USB1")
+    [4] Return: Confirmation of plug action.
+
+bb8_usb_port_unplug:
+  summary: |-
+    "bb8_usb_port_unplug" unplugs a USB device from the specified port on BB-8.
+  class_name: |-
+    BB8USBPortUnplugCommand
+  usage: |-
+    [1] API call: bb8_usb_port_unplug(port_name: str)
+    [2] Args:
+      - port_name: USB port name to unplug (required).
+    [3] Example: bb8_usb_port_unplug(port_name="USB1")
+    [4] Return: Confirmation of unplug action.
+
+bb8_psu_charger_plug:
+  summary: |-
+    "bb8_psu_charger_plug" plugs in the PSU charger for the BB-8 test fixture.
+  class_name: |-
+    BB8PSUChargerPlugCommand
+  usage: |-
+    [1] API call: bb8_psu_charger_plug()
+    [2] Args: None
+    [3] Example: bb8_psu_charger_plug()
+    [4] Return: Confirmation of plug action.
+
+bb8_psu_charger_unplug:
+  summary: |-
+    "bb8_psu_charger_unplug" unplugs the PSU charger from the BB-8 test fixture.
+  class_name: |-
+    BB8PSUChargerUnplugCommand
+  usage: |-
+    [1] API call: bb8_psu_charger_unplug()
+    [2] Args: None
+    [3] Example: bb8_psu_charger_unplug()
+    [4] Return: Confirmation of unplug action.
+
+bb8_blade_attach:
+  summary: |-
+    "bb8_blade_attach" attaches the blade to the BB-8 test fixture.
+  class_name: |-
+    BB8BladeAttachCommand
+  usage: |-
+    [1] API call: bb8_blade_attach()
+    [2] Args: None
+    [3] Example: bb8_blade_attach()
+    [4] Return: Confirmation of attach action.
+
+bb8_blade_detach:
+  summary: |-
+    "bb8_blade_detach" detaches the blade from the BB-8 test fixture.
+  class_name: |-
+    BB8BladeDetachCommand
+  usage: |-
+    [1] API call: bb8_blade_detach()
+    [2] Args: None
+    [3] Example: bb8_blade_detach()
+    [4] Return: Confirmation of detach action.
+
+bb8_lid_open:
+  summary: |-
+    "bb8_lid_open" opens the lid of the BB-8 test fixture.
+  class_name: |-
+    BB8LidOpenCommand
+  usage: |-
+    [1] API call: bb8_lid_open()
+    [2] Args: None
+    [3] Example: bb8_lid_open()
+    [4] Return: Confirmation of open action.
+
+bb8_lid_close:
+  summary: |-
+    "bb8_lid_close" closes the lid of the BB-8 test fixture.
+  class_name: |-
+    BB8LidCloseCommand
+  usage: |-
+    [1] API call: bb8_lid_close()
+    [2] Args: None
+    [3] Example: bb8_lid_close()
+    [4] Return: Confirmation of close action.
+
+bb8_button_press:
+  summary: |-
+    "bb8_button_press" presses a physical button on the BB-8 test fixture.
+  class_name: |-
+    BB8ButtonPressCommand
+  usage: |-
+    [1] API call: bb8_button_press(button_name: str)
+    [2] Args:
+      - button_name: Button name to press (required).
+    [3] Example: bb8_button_press(button_name="start")
+    [4] Return: Confirmation of button press.
+
+bb8_button_long_press:
+  summary: |-
+    "bb8_button_long_press" performs a long press on a physical button of the BB-8 test fixture.
+  class_name: |-
+    BB8ButtonLongPressCommand
+  usage: |-
+    [1] API call: bb8_button_long_press(button_name: str)
+    [2] Args:
+      - button_name: Button name to long press (required).
+    [3] Example: bb8_button_long_press(button_name="reset")
+    [4] Return: Confirmation of long press.
+
+robot_arm_status:
+  summary: |-
+    "robot_arm_status" gets the current status of the Robot Arm.
+  class_name: |-
+    RobotArmStatusCommand
+  usage: |-
+    [1] API call: robot_arm_status()
+    [2] Args: None
+    [3] Example: robot_arm_status()
+    [4] Return: Status as a dictionary/object.
+
+robot_arm_connect:
+  summary: |-
+    "robot_arm_connect" connects to the Robot Arm.
+  class_name: |-
+    RobotArmConnectCommand
+  usage: |-
+    [1] API call: robot_arm_connect()
+    [2] Args: None
+    [3] Example: robot_arm_connect()
+    [4] Return: Confirmation of connection.
+
+robot_arm_disconnect:
+  summary: |-
+    "robot_arm_disconnect" disconnects from the Robot Arm.
+  class_name: |-
+    RobotArmDisconnectCommand
+  usage: |-
+    [1] API call: robot_arm_disconnect()
+    [2] Args: None
+    [3] Example: robot_arm_disconnect()
+    [4] Return: Confirmation of disconnection.
+
+touch_screen:
+  summary: |-
+    "touch_screen" simulates a touch at the specified location on the screen.
+  class_name: |-
+    TouchScreenCommand
+  usage: |-
+    [1] API call: touch_screen(location: list[int])
+    [2] Args:
+      - location: Location [x, y] to touch (required).
+    [3] Example: touch_screen(location=[250, 400])
+    [4] Return: None
+
+draw_on_screen:
+  summary: |-
+    "draw_on_screen" simulates drawing by following a path of coordinates on the screen.
+  class_name: |-
+    DrawOnScreenCommand
+  usage: |-
+    [1] API call: draw_on_screen(path: list[list[int]])
+    [2] Args:
+      - path: List of points [[x1, y1], [x2, y2], ...] (required).
+    [3] Example: draw_on_screen(path=[[10,10], [50,50], [100,10]])
+    [4] Return: None
+
+tap_screen:
+  summary: |-
+    "tap_screen" simulates tap(s) at a specified location on the screen.
+  class_name: |-
+    TapScreenCommand
+  usage: |-
+    [1] API call: tap_screen(location: list[int]=None, count: int=None, interval: float=None)
+    [2] Args:
+      - location: Location [x, y] to tap (optional).
+      - count: Number of taps (optional).
+      - interval: Interval between taps in seconds (optional).
+    [3] Example: tap_screen(location=[150, 200], count=2, interval=0.2)
+    [4] Return: None
+
+swipe_screen:
+  summary: |-
+    "swipe_screen" simulates a swipe gesture from start to end location on the screen.
+  class_name: |-
+    SwipeScreenCommand
+  usage: |-
+    [1] API call: swipe_screen(start_location: list[int]=None, end_location: list[int]=None, duration: float=None)
+    [2] Args:
+      - start_location: Start location [x, y] (optional).
+      - end_location: End location [x, y] (optional).
+      - duration: Duration in seconds (optional).
+    [3] Example: swipe_screen(start_location=[0,0], end_location=[200,200], duration=0.5)
+    [4] Return: None
+
+long_press_screen:
+  summary: |-
+    "long_press_screen" simulates a long press at a specified screen location.
+  class_name: |-
+    LongPressScreenCommand
+  usage: |-
+    [1] API call: long_press_screen(location: list[int]=None, duration: float=None)
+    [2] Args:
+      - location: Location [x, y] to long press (optional).
+      - duration: Press duration in seconds (optional).
+    [3] Example: long_press_screen(location=[100,100], duration=1.2)
+    [4] Return: None
+
+double_tap_screen:
+  summary: |-
+    "double_tap_screen" simulates a double tap at the specified location.
+  class_name: |-
+    DoubleTapScreenCommand
+  usage: |-
+    [1] API call: double_tap_screen(location: list[int])
+    [2] Args:
+      - location: Location [x, y] to double tap (required).
+    [3] Example: double_tap_screen(location=[120, 250])
+    [4] Return: None
+
+press_key:
+  summary: |-
+    "press_key" simulates pressing a keyboard key, with optional modifier keys and duration.
+  class_name: |-
+    PressKeyCommand
+  usage: |-
+    [1] API call: press_key(key: str=None, modifiers: list[str]=None, duration: float=None)
+    [2] Args:
+      - key: Key to press (optional).
+      - modifiers: List of modifier keys (optional).
+      - duration: Duration in seconds (optional).
+    [3] Example: press_key(key="a", modifiers=["ctrl"], duration=0.1)
+    [4] Return: None
+
+tap_trackpad:
+  summary: |-
+    "tap_trackpad" simulates tap(s) at a specified location on the trackpad.
+  class_name: |-
+    TapTrackpadCommand
+  usage: |-
+    [1] API call: tap_trackpad(location: list[int]=None, count: int=None, interval: float=None)
+    [2] Args:
+      - location: Location [x, y] to tap (optional).
+      - count: Number of taps (optional).
+      - interval: Interval between taps in seconds (optional).
+    [3] Example: tap_trackpad(location=[50, 60], count=2, interval=0.1)
+    [4] Return: None
+
+swipe_trackpad:
+  summary: |-
+    "swipe_trackpad" simulates a swipe gesture on the trackpad from start to end location.
+  class_name: |-
+    SwipeTrackpadCommand
+  usage: |-
+    [1] API call: swipe_trackpad(start_location: list[int]=None, end_location: list[int]=None, duration: float=None)
+    [2] Args:
+      - start_location: Start location [x, y] (optional).
+      - end_location: End location [x, y] (optional).
+      - duration: Duration in seconds (optional).
+    [3] Example: swipe_trackpad(start_location=[10,10], end_location=[100,200], duration=0.4)
+    [4] Return: None

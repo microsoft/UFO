@@ -297,15 +297,20 @@ class HostAgent(BasicAgent):
         :return: The app agent.
         """
         # For third-party applications, we use the same logic as create_app_agent.
+
+        third_party_agent_config = configs.get("THIRD_PARTY_AGENT_CONFIG", {}).get(
+            agent_name, {}
+        )
+
         return self.create_subagent(
             agent_type=agent_name,
             agent_name=agent_name,
             process_name=agent_name,
             app_root_name=agent_name,
-            is_visual=configs[agent_name]["VISUAL_MODE"],
-            main_prompt=configs[agent_name]["APPAGENT_PROMPT"],
-            example_prompt=configs[agent_name]["APPAGENT_EXAMPLE_PROMPT"],
-            api_prompt=configs[agent_name]["API_PROMPT"],
+            is_visual=third_party_agent_config.get("VISUAL_MODE", True),
+            main_prompt=third_party_agent_config["APPAGENT_PROMPT"],
+            example_prompt=third_party_agent_config["APPAGENT_EXAMPLE_PROMPT"],
+            api_prompt=third_party_agent_config["API_PROMPT"],
             mode=mode,
         ).context_provision(request, context=context)
 

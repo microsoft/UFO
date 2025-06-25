@@ -10,7 +10,17 @@ from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
 from ufo.module.context import Context, ContextNames
-from ufo.cs.contracts import CaptureDesktopScreenshotAction, CaptureDesktopScreenshotParams, GetDesktopAppInfoAction, GetDesktopAppInfoParams, LaunchApplicationAction, LaunchApplicationParams, SelectApplicationWindowAction, SelectApplicationWindowParams, WindowInfo
+from ufo.cs.contracts import (
+    CaptureDesktopScreenshotAction,
+    CaptureDesktopScreenshotParams,
+    GetDesktopAppInfoAction,
+    GetDesktopAppInfoParams,
+    LaunchApplicationAction,
+    LaunchApplicationParams,
+    SelectApplicationWindowAction,
+    SelectApplicationWindowParams,
+    WindowInfo,
+)
 
 from ufo.llm import AgentType
 
@@ -83,6 +93,9 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = None
 
         self.bash_command = None
+        self.third_party_agent_labels: List[str] = []
+        self.full_desktop_windows_info: List[Dict[str, str]] = []
+        self.assigned_third_party_agent: Dict[str, str] | None = None
 
     def print_step_info(self) -> None:
         """
@@ -112,14 +125,16 @@ class HostAgentProcessor(BaseProcessor):
         )
 
         self.session_data_manager.add_action(
-            desktop_screenshot_action, 
-            setter=lambda value: self.desktop_screenshot_action_callback(value, desktop_save_path)
+            desktop_screenshot_action,
+            setter=lambda value: self.desktop_screenshot_action_callback(
+                value, desktop_save_path
+            ),
         )
-        
+
     def desktop_screenshot_action_callback(self, value: str, path: str) -> None:
         """
         Helper method to save screenshot to specified path and set the URL.
-        
+
         Args:
             value (str): The screenshot data or URL
             path (str): Path to save the screenshot
@@ -127,20 +142,24 @@ class HostAgentProcessor(BaseProcessor):
         # Set the URL for use in the class
         self._desktop_screen_url = value
         self.session_data_manager.session_data.state.desktop_screen_url = value
-        
+
         # If value contains a base64 encoded image string
-        if value and isinstance(value, str) and value.startswith("data:image/png;base64,"):
+        if (
+            value
+            and isinstance(value, str)
+            and value.startswith("data:image/png;base64,")
+        ):
             try:
                 # Decode the base64 string to binary data
                 img_data = utils.decode_base64_image(value)
-                
+
                 # Create directory if it doesn't exist
                 os.makedirs(os.path.dirname(path), exist_ok=True)
-                
+
                 # Save the image to the specified path
-                with open(path, 'wb') as f:
+                with open(path, "wb") as f:
                     f.write(img_data)
-                
+
                 print(f"Screenshot saved to {path}")
             except Exception as e:
                 print(f"Error saving screenshot: {e}")
@@ -155,26 +174,25 @@ class HostAgentProcessor(BaseProcessor):
         # self._desktop_windows_dict = self.control_inspector.get_desktop_app_dict(
         #     remove_empty=True
         # )
-        
+
         # Get the textual information of all windows.
         # self._desktop_windows_info = self.control_inspector.get_desktop_app_info(
         #     self._desktop_windows_dict
         # )
-        
+
         self.session_data_manager.add_action(
             action=GetDesktopAppInfoAction(
                 params=GetDesktopAppInfoParams(
-                    remove_empty=True,
-                    refresh_app_windows=True
+                    remove_empty=True, refresh_app_windows=True
                 )
             ),
-            setter=lambda value: self.desktop_app_info_callback(value)
+            setter=lambda value: self.desktop_app_info_callback(value),
         )
-        
+
     def desktop_app_info_callback(self, value: list[dict] | list[WindowInfo]) -> None:
         """
         Helper method to handle the desktop app info callback.
-        
+
         Args:
             value (str): The desktop app info
         """
@@ -183,7 +201,10 @@ class HostAgentProcessor(BaseProcessor):
             self._desktop_windows_info = [WindowInfo(**item) for item in value]
         else:
             self._desktop_windows_info = value
-        self.session_data_manager.session_data.state.desktop_windows_info = self._desktop_windows_info
+
+        self.session_data_manager.session_data.state.desktop_windows_info = (
+            self._desktop_windows_info
+        )
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -192,6 +213,31 @@ class HostAgentProcessor(BaseProcessor):
         Process the collected information.
         """
         pass
+
+    def _create_third_party_agent_list(self, start_index: int = 0) -> List[str]:
+        """
+        Create a list of third-party agents.
+        :param start_index: The starting index of the third-party agent list.
+        :return: A list of third-party agents.
+        """
+
+        third_party_agent_names = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
+
+        third_party_agent_list = []
+        third_party_agent_labels = []
+
+        for i, agentname in enumerate(third_party_agent_names):
+            label = str(i + start_index)
+            third_party_agent_list.append(
+                {
+                    "label": label,
+                    "control_type": "ThirdPartyAgent",
+                    "control_text": agentname,
+                }
+            )
+            third_party_agent_labels.append(label)
+
+        return third_party_agent_list, third_party_agent_labels
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -207,10 +253,21 @@ class HostAgentProcessor(BaseProcessor):
 
         desktop_windows_info = self.session_data_manager.get_desktop_windows_info()
 
+        windows_num = len(desktop_windows_info)
+        third_party_agent_list, third_party_agent_labels = (
+            self._create_third_party_agent_list(start_index=windows_num + 1)
+        )
+
+        self.full_desktop_windows_info = desktop_windows_info + third_party_agent_list
+
+        self.third_party_agent_labels = third_party_agent_labels
+
         # Construct the prompt message for the host agent.
         self._prompt_message = self.host_agent.message_constructor(
-            image_list=[self.session_data_manager.session_data.state.desktop_screen_url],
-            os_info=desktop_windows_info,
+            image_list=[
+                self.session_data_manager.session_data.state.desktop_screen_url
+            ],
+            os_info=self.full_desktop_windows_info,
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
             request=self.request,
@@ -219,7 +276,9 @@ class HostAgentProcessor(BaseProcessor):
 
         request_data = HostAgentRequestLog(
             step=self.session_step,
-            image_list=[self.session_data_manager.session_data.state.desktop_screen_url],
+            image_list=[
+                self.session_data_manager.session_data.state.desktop_screen_url
+            ],
             os_info=desktop_windows_info,
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
@@ -283,71 +342,92 @@ class HostAgentProcessor(BaseProcessor):
         """
         Execute the action.
         """
-        desktop_windows_info = self.session_data_manager.session_data.state.desktop_windows_info
 
-        print(f"control_label: {self.control_label}")
-        new_app_windows = list(filter(lambda x: x.annotation_id == self.control_label, desktop_windows_info))
+        print(f"selected control_label: {self.control_label}")
 
-        if len(new_app_windows) > 0:
-            #self._select_application(new_app_window)
-            self.session_data_manager.add_action(
-                action=SelectApplicationWindowAction(
-                    params=SelectApplicationWindowParams(
-                        window_label=new_app_windows[0].annotation_id
-                    )
+        if self.control_label in self.third_party_agent_labels:
+
+            self.assigned_third_party_agent = next(
+                (
+                    info
+                    for info in self.full_desktop_windows_info
+                    if info["label"] == self.control_label
                 ),
-                setter=lambda value: self.select_application_window_callback(value))
+                None,
+            )
+
         else:
-            self.session_data_manager.add_action(
-                LaunchApplicationAction(
-                    params=LaunchApplicationParams(
-                        bash_command=self.bash_command
-                    )
-                ),
-                setter=lambda value: self.launch_application_callback(value))
-            
-    
+
+            desktop_windows_info = (
+                self.session_data_manager.session_data.state.desktop_windows_info
+            )
+
+            new_app_windows = list(
+                filter(
+                    lambda x: x.annotation_id == self.control_label,
+                    desktop_windows_info,
+                )
+            )
+
+            if len(new_app_windows) > 0:
+                # self._select_application(new_app_window)
+                self.session_data_manager.add_action(
+                    action=SelectApplicationWindowAction(
+                        params=SelectApplicationWindowParams(
+                            window_label=new_app_windows[0].annotation_id
+                        )
+                    ),
+                    setter=lambda value: self.select_application_window_callback(value),
+                )
+            else:
+                self.session_data_manager.add_action(
+                    LaunchApplicationAction(
+                        params=LaunchApplicationParams(bash_command=self.bash_command)
+                    ),
+                    setter=lambda value: self.launch_application_callback(value),
+                )
+
     def select_application_window_callback(self, value: dict | WindowInfo) -> None:
         """
         Helper method to handle the application window selection callback.
-        
+
         Args:
             value (str): The application window value
         """
         # Set the application window
         self.app_root = value["process_name"]
-        #self.control_text = value["control_text"]
-        
+        # self.control_text = value["control_text"]
+
         new_app_window = value["window_info"]
-        #self.application_window = new_app_window
+        # self.application_window = new_app_window
         if isinstance(new_app_window, dict):
             self.application_window_info = WindowInfo(**new_app_window)
         elif isinstance(new_app_window, WindowInfo):
             self.application_window_info = new_app_window
-        
+
         self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
-        
+
     def launch_application_callback(self, value: dict[str, any]) -> None:
         """
         Helper method to handle the application launch callback.
-        
+
         Args:
             value (str): The application launch value
         """
         # Set the application window
         self.app_root = value["process_name"]
-        #self.control_text = value["control_text"]
-        
+        # self.control_text = value["control_text"]
+
         new_app_window = value["window_info"]
-        #self.application_window = new_app_window
+        # self.application_window = new_app_window
         self.application_window_info = WindowInfo(**new_app_window)
 
         self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
-    
+
     def sync_memory(self):
         """
         Sync the memory of the HostAgent.

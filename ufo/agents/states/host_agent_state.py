@@ -180,19 +180,33 @@ class AssignHostAgentState(HostAgentState):
         :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
-        application_window_name = context.get(ContextNames.APPLICATION_PROCESS_NAME)
-        application_root_name = context.get(ContextNames.APPLICATION_ROOT_NAME)
         request = context.get(ContextNames.REQUEST)
         mode = context.get(ContextNames.MODE)
 
-        agent.create_app_agent(
-            application_window_name=application_window_name,
-            application_root_name=application_root_name,
-            request=request,
-            mode=mode,
-            context=context
-        )
-        
+        if agent.processor.assigned_third_party_agent is not None:
+            # If the agent is already assigned, skip the assignment.
+
+            agent.create_third_party_app_agent(
+                agent_name=agent.processor.assigned_third_party_agent,
+                request=request,
+                mode=mode,
+                context=context,
+            )
+
+        else:
+            application_window_name = context.get(ContextNames.APPLICATION_PROCESS_NAME)
+            application_root_name = context.get(ContextNames.APPLICATION_ROOT_NAME)
+            request = context.get(ContextNames.REQUEST)
+            mode = context.get(ContextNames.MODE)
+
+            agent.create_app_agent(
+                application_window_name=application_window_name,
+                application_root_name=application_root_name,
+                request=request,
+                mode=mode,
+                context=context,
+            )
+
         agent.has_input = False
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:

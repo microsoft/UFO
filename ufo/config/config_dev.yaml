@@ -140,13 +140,15 @@ MCP_LOG_EXECUTION: False  # Whether to log MCP tool execution details
 
 # Third-party Agent Integration
 
-ENABLE_THIRD_PARTY_AGENT: ["HardwareAgent"]
+ENABLED_THIRD_PARTY_AGENTS: ["HardwareAgent"]
 
 THIRD_PARTY_AGENT_CONFIG: {
     "HardwareAgent": {
-        "agent_name": "HardwareAgent",
-        "prompt_path": "ufo/prompts/third_party/hardware_agent.yaml",
-        "examples_prompt_path": "ufo/prompts/examples/third_party/hardware_agent_example.yaml",
+        "VISUAL_MODE": True,  # Whether to use visual mode for the HardwareAgent
+        "AGENT_NAME": "HardwareAgent",
+        "APPAGENT_PROMPT": "ufo/prompts/third_party/hardware_agent.yaml",
+        "APPAGENT_EXAMPLE_PROMPT": "ufo/prompts/examples/third_party/hardware_agent_example.yaml",
+        "API_PROMPT": "ufo/prompts/third_party/hardware_agent_api.yaml",
     }
 }  # Configuration for third-party agents, including agent name, prompt path, etc.
 

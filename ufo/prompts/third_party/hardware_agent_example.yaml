@@ -1,0 +1,183 @@
+example1:
+  Request: |-
+    Move the mouse to the Submit button and click it twice.
+  Sub-task: |-
+    Move the mouse pointer to the coordinates of the Submit button and perform a double-click action.
+  Response: 
+    Observation: |-
+      The screenshot shows the Submit button at coordinates (540, 420). The mouse pointer is not currently over the button.
+    Thought: |-
+      I need to move the mouse to the Submit button before I can double-click it.
+    Function: |-
+      move_mouse
+    Args: 
+      {"x": 540, "y": 420, "absolute": true}
+    Status: |-
+      CONTINUE
+    Plan: |-
+      Next, I will perform a double-click at the Submit button location to complete the subtask.
+    Comment: |-
+      The mouse has been positioned over the Submit button. Proceeding to double-click.
+    SaveScreenshot:
+      {"save": false, "reason": "Mouse move is not a result state."}
+
+example1_step2:
+  Request: |-
+    Move the mouse to the Submit button and click it twice.
+  Sub-task: |-
+    Move the mouse pointer to the coordinates of the Submit button and perform a double-click action.
+  Response: 
+    Observation: |-
+      The mouse pointer is over the Submit button.
+    Thought: |-
+      The mouse is now positioned correctly. I can double-click to activate the button.
+    Function: |-
+      double_click_mouse
+    Args: 
+      {"button": "left"}
+    Status: |-
+      FINISH
+    Plan: |-
+      I have double-clicked the Submit button. The task is now complete.
+    Comment: |-
+      Successfully double-clicked the Submit button.
+    SaveScreenshot:
+      {"save": true, "reason": "Show that the button was activated."}
+
+example2:
+  Request: |-
+    Select all text in the document.
+  Sub-task: |-
+    Simulate pressing 'Ctrl' + 'A' keys to select all the text in the Word document.
+  Response: 
+    Observation: |-
+      The document is open and the cursor is in the editing area. No text is currently selected.
+    Thought: |-
+      The standard way to select all text is by using the 'Ctrl' + 'A' hotkey.
+    Function: |-
+      press_hotkey
+    Args: 
+      {"keys": ["ctrl", "a"]}
+    Status: |-
+      FINISH
+    Plan: |-
+      All text is now selected; the subtask is finished.
+    Comment: |-
+      All text has been selected in the document.
+    SaveScreenshot:
+      {"save": true, "reason": "Show the selection result."}
+
+example3:
+  Request: |-
+    Tap on the icon at the bottom right corner of the screen twice.
+  Sub-task: |-
+    Perform two taps at the specified coordinates on the screen using the tap_screen API.
+  Response: 
+    Observation: |-
+      The icon is visible at coordinates (1220, 980) on the screen.
+    Thought: |-
+      I can use the tap_screen command with a count of 2 to simulate a double tap on this icon.
+    Function: |-
+      tap_screen
+    Args: 
+      {"location": [1220, 980], "count": 2, "interval": 0.1}
+    Status: |-
+      FINISH
+    Plan: |-
+      Double-tapped the icon as requested. The task is now finished.
+    Comment: |-
+      Double-tapped the icon at the bottom right corner successfully.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
+
+example4:
+  Request: |-
+    Connect to the BB-8 test fixture and get its current status.
+  Sub-task: |-
+    Use bb8_connect to establish a connection, then query status with bb8_status.
+  Response: 
+    Observation: |-
+      BB-8 device is currently disconnected according to the status display.
+    Thought: |-
+      I need to connect to BB-8 before checking its status.
+    Function: |-
+      bb8_connect
+    Args: 
+      {}
+    Status: |-
+      CONTINUE
+    Plan: |-
+      Now that BB-8 is connected, I will call bb8_status to retrieve its current status.
+    Comment: |-
+      Connected to BB-8. Proceeding to get its status.
+    SaveScreenshot:
+      {"save": false, "reason": "Not needed for connection step."}
+
+example4_step2:
+  Request: |-
+    Connect to the BB-8 test fixture and get its current status.
+  Sub-task: |-
+    Use bb8_connect to establish a connection, then query status with bb8_status.
+  Response: 
+    Observation: |-
+      BB-8 device is connected.
+    Thought: |-
+      Now I can retrieve the BB-8 test fixture's status.
+    Function: |-
+      bb8_status
+    Args: 
+      {}
+    Status: |-
+      FINISH
+    Plan: |-
+      The connection and status retrieval are both complete.
+    Comment: |-
+      Retrieved the current status of the BB-8 test fixture.
+    SaveScreenshot:
+      {"save": true, "reason": "Show the status screen."}
+
+example5:
+  Request: |-
+    Scroll down the page by three units.
+  Sub-task: |-
+    Use scroll_mouse to perform a vertical scroll downwards.
+  Response: 
+    Observation: |-
+      The page shows the top portion of a document. Scroll bar is at the top.
+    Thought: |-
+      To scroll down, I will use scroll_mouse with vertical set to 3.
+    Function: |-
+      scroll_mouse
+    Args: 
+      {"vertical": 3}
+    Status: |-
+      FINISH
+    Plan: |-
+      The document has been scrolled down by three units, completing the task.
+    Comment: |-
+      Scrolled down the document by three units.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
+
+example6:
+  Request: |-
+    Long-press the 'OK' button on the screen for one second.
+  Sub-task: |-
+    Use long_press_screen at the button's coordinates with a 1-second duration.
+  Response: 
+    Observation: |-
+      The 'OK' button is located at (640, 380) in the application window.
+    Thought: |-
+      Using long_press_screen at the button location with duration=1.0 is the most direct solution.
+    Function: |-
+      long_press_screen
+    Args: 
+      {"location": [640, 380], "duration": 1.0}
+    Status: |-
+      FINISH
+    Plan: |-
+      Long-pressed the 'OK' button for one second, completing the subtask.
+    Comment: |-
+      Performed a 1-second long press on the 'OK' button.
+    SaveScreenshot:
+      {"save": false, "reason": ""}

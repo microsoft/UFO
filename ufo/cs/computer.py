@@ -343,6 +343,7 @@ class Computer:
         Handle capture_app_window_screenshot_from_webcam action
         :TODO
         """
+        return None
 
     def _handle_get_desktop_app_info(
         self, action: GetDesktopAppInfoAction
