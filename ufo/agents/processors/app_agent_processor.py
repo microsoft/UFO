@@ -4,7 +4,8 @@
 import json
 import os
 from dataclasses import asdict, dataclass, field
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional, Generator
+import time
 
 from ufo import utils
 from ufo.utils import collector
@@ -164,6 +165,66 @@ class AppAgentProcessor(BaseProcessor):
         #self.filtered_annotation_dict = None
         self.screenshot_save_path = None
         self._mcp_execution_result = None
+
+    def process_coro(self) -> Generator[None, None, None]:
+        """
+        This method is a coroutine that processes the app agent at a single step.
+        """
+
+        start_time = time.time()
+
+        try:
+            # Step 1: Print the step information.
+            self.print_step_info()
+
+            # Step 2: Capture the screenshot.
+            self.capture_screenshot()
+
+            # Step 3: Get the control information.
+            self.get_control_info()
+            self.process_collected_info()
+
+            yield
+
+            # Step 4: Get the prompt message.
+            self.get_prompt_message()
+
+            # Step 5: Get the response.
+            self.get_response()
+
+            # Step 6: Update the context.
+            self.update_cost()
+
+            # Step 7: Parse the response, if there is no error.
+            self.parse_response()
+
+            if self.is_pending() or self.is_paused():
+                # If the session is pending, update the step and memory, and return.
+                if self.is_pending():
+                    self.update_status()
+                    self.update_memory()
+
+                return
+
+            # Step 8: Execute the action.
+            self.execute_action()
+
+            # Step 9: Update the memory.
+            self.update_memory()
+
+            # Step 10: Update the status.
+            self.update_status()
+
+            self._total_time_cost = time.time() - start_time
+
+            # Step 11: Save the log.
+            self.log_save()
+
+        except StopIteration:
+            # Error was handled and logged in the exception capture decorator.
+            # Simply return here to stop the process early.
+
+            return
 
 
     def print_step_info(self) -> None:

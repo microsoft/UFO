@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Optional, Type
+from typing import TYPE_CHECKING, Dict, Optional, Type, Generator
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.config import Config
@@ -130,6 +130,14 @@ class ContinueHostAgentState(HostAgentState):
         :param context: The context for the agent and session.
         """
         agent.process(context)
+
+    def handle_coro(self, agent: "HostAgent", context: Optional["Context"] = None) -> Generator[None, None, None]:
+        """
+        Handle the agent for the current step.
+        :param agent: The agent to handle.
+        :param context: The context for the agent and session.
+        """
+        yield from agent.process_coro(context)
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
