@@ -806,7 +806,7 @@ class BaseSession(ABC):
             utils.print_with_color(
                 "Cost is not available for the model {host_model} or {app_model}.".format(
                     host_model=configs["HOST_AGENT"]["API_MODEL"],
-                    app_model=config["APP_AGENT"]["API_MODEL"],
+                    app_model=configs["APP_AGENT"]["API_MODEL"],
                 ),
                 "yellow",
             )
