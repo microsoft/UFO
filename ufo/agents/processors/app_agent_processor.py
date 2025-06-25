@@ -209,6 +209,8 @@ class AppAgentProcessor(BaseProcessor):
             # Step 8: Execute the action.
             self.execute_action()
 
+            yield
+
             # Step 9: Update the memory.
             self.update_memory()
 
