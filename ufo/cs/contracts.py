@@ -54,6 +54,8 @@ class CallbackAction(BaseModel):
 
 class CaptureDesktopScreenshotParams(BaseModel):
     all_screens: bool = True
+    remove_empty: bool = (True,)
+    refresh_app_windows: bool = (False,)
 
 
 class CaptureDesktopScreenshotAction(ActionBase):
@@ -284,7 +286,9 @@ class OperationSequenceAction(ActionBase):
 class GetDesktopControlInfoParams(BaseModel):
     """Parameters for getting desktop control information"""
 
-    pass
+    all_screens: bool = True
+    remove_empty: bool = (True,)
+    refresh_app_windows: bool = (False,)
 
 
 class GetDesktopControlInfoAction(ActionBase):

@@ -324,6 +324,8 @@ class HostAgentProcessor(BaseProcessor):
 
         self.full_desktop_windows_info = desktop_windows_info + third_party_agent_list
 
+        print(f"Full desktop windows info: {self.full_desktop_windows_info}")
+
         self.third_party_agent_labels = third_party_agent_labels
 
         # Construct the prompt message for the host agent.
@@ -337,6 +339,8 @@ class HostAgentProcessor(BaseProcessor):
             request=self.request,
             blackboard_prompt=blackboard_prompt,
         )
+
+        print(f"Prompt message: {self._prompt_message}")
 
         request_data = HostAgentRequestLog(
             step=self.session_step,
