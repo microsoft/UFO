@@ -155,6 +155,7 @@ class BaseRound(ABC):
             if self.state.is_subtask_end():
                 time.sleep(configs["SLEEP_TIME"])
                 self.capture_last_snapshot(sub_round_id=self.subtask_amount)
+                yield
                 self.subtask_amount += 1
 
         self.agent.blackboard.add_requests(
@@ -163,6 +164,7 @@ class BaseRound(ABC):
 
         if self.application_window_info is not None:
             self.capture_last_snapshot()
+            yield
 
         if self._should_evaluate:
             self.evaluation()
@@ -644,8 +646,7 @@ class BaseSession(ABC):
 
         if self.application_window_info is not None:
             self.capture_last_snapshot()
-
-        yield
+            yield
 
         if self._should_evaluate and not self.is_error():
             self.evaluation()
