@@ -7,42 +7,20 @@ example1:
     Observation: |-
       The screenshot shows the Submit button at coordinates (540, 420). The mouse pointer is not currently over the button.
     Thought: |-
-      I need to move the mouse to the Submit button before I can double-click it.
+      I must first move the mouse to the Submit button, then double-click to activate it.
     Function: |-
       move_mouse
     Args: 
       {"x": 540, "y": 420, "absolute": true}
     Status: |-
       CONTINUE
-    Plan: |-
-      Next, I will perform a double-click at the Submit button location to complete the subtask.
+    Plan: 
+      - Double-click the left mouse button at the Submit button location using the double_click_mouse tool.
     Comment: |-
-      The mouse has been positioned over the Submit button. Proceeding to double-click.
+      The mouse has been positioned over the Submit button. I will proceed to double-click.
     SaveScreenshot:
       {"save": false, "reason": "Mouse move is not a result state."}
 
-example1_step2:
-  Request: |-
-    Move the mouse to the Submit button and click it twice.
-  Sub-task: |-
-    Move the mouse pointer to the coordinates of the Submit button and perform a double-click action.
-  Response: 
-    Observation: |-
-      The mouse pointer is over the Submit button.
-    Thought: |-
-      The mouse is now positioned correctly. I can double-click to activate the button.
-    Function: |-
-      double_click_mouse
-    Args: 
-      {"button": "left"}
-    Status: |-
-      FINISH
-    Plan: |-
-      I have double-clicked the Submit button. The task is now complete.
-    Comment: |-
-      Successfully double-clicked the Submit button.
-    SaveScreenshot:
-      {"save": true, "reason": "Show that the button was activated."}
 
 example2:
   Request: |-
@@ -60,8 +38,8 @@ example2:
       {"keys": ["ctrl", "a"]}
     Status: |-
       FINISH
-    Plan: |-
-      All text is now selected; the subtask is finished.
+    Plan: 
+      (No further steps. All planned actions have been completed.)
     Comment: |-
       All text has been selected in the document.
     SaveScreenshot:
@@ -83,8 +61,8 @@ example3:
       {"location": [1220, 980], "count": 2, "interval": 0.1}
     Status: |-
       FINISH
-    Plan: |-
-      Double-tapped the icon as requested. The task is now finished.
+    Plan: 
+      (No further steps. All planned actions have been completed.)
     Comment: |-
       Double-tapped the icon at the bottom right corner successfully.
     SaveScreenshot:
@@ -106,35 +84,13 @@ example4:
       {}
     Status: |-
       CONTINUE
-    Plan: |-
-      Now that BB-8 is connected, I will call bb8_status to retrieve its current status.
+    Plan: 
+      - Query the current status of the BB-8 test fixture using the bb8_status tool.
     Comment: |-
-      Connected to BB-8. Proceeding to get its status.
+      Connected to BB-8. I will now retrieve its status.
     SaveScreenshot:
       {"save": false, "reason": "Not needed for connection step."}
 
-example4_step2:
-  Request: |-
-    Connect to the BB-8 test fixture and get its current status.
-  Sub-task: |-
-    Use bb8_connect to establish a connection, then query status with bb8_status.
-  Response: 
-    Observation: |-
-      BB-8 device is connected.
-    Thought: |-
-      Now I can retrieve the BB-8 test fixture's status.
-    Function: |-
-      bb8_status
-    Args: 
-      {}
-    Status: |-
-      FINISH
-    Plan: |-
-      The connection and status retrieval are both complete.
-    Comment: |-
-      Retrieved the current status of the BB-8 test fixture.
-    SaveScreenshot:
-      {"save": true, "reason": "Show the status screen."}
 
 example5:
   Request: |-
@@ -152,8 +108,8 @@ example5:
       {"vertical": 3}
     Status: |-
       FINISH
-    Plan: |-
-      The document has been scrolled down by three units, completing the task.
+    Plan: 
+      (No further steps. All planned actions have been completed.)
     Comment: |-
       Scrolled down the document by three units.
     SaveScreenshot:
@@ -175,9 +131,63 @@ example6:
       {"location": [640, 380], "duration": 1.0}
     Status: |-
       FINISH
-    Plan: |-
-      Long-pressed the 'OK' button for one second, completing the subtask.
+    Plan: 
+      (No further steps. All planned actions have been completed.)
     Comment: |-
       Performed a 1-second long press on the 'OK' button.
     SaveScreenshot:
       {"save": false, "reason": ""}
+
+
+example7:
+  Request: |-
+    Save the current Word document as 'report.docx' and close Word.
+  Sub-task: |-
+    Save the open Word document with the file name 'report.docx' and then close the Word application.
+  Response: 
+    Observation: |-
+      The document is open and unsaved. The Save dialog is not open.
+    Thought: |-
+      I need to open the Save dialog, enter the new file name, confirm, and then close the application.
+    Function: |-
+      press_hotkey
+    Args: 
+      {"keys": ["ctrl", "s"]}
+    Status: |-
+      CONTINUE
+    Plan: 
+      - Type 'report.docx' in the file name field using the type_text tool.
+      - Press the Enter key to confirm the file name using the press_key tool.
+      - Close the Word application by pressing 'Alt' + 'F4' using the press_hotkey tool.
+    Comment: |-
+      Triggered the Save dialog. Will enter the file name and continue.
+    SaveScreenshot:
+      {"save": false, "reason": "No result state yet."}
+
+
+
+example8:
+  Request: |-
+    Search for 'UFO' in the document and highlight all results.
+  Sub-task: |-
+    Use the search function to find the word 'UFO' in the Word document, select all occurrences, and apply highlight.
+  Response: 
+    Observation: |-
+      The document is open. The search box is not open yet.
+    Thought: |-
+      I need to open the Find dialog, input 'UFO', and then for each result, select and highlight it.
+    Function: |-
+      press_hotkey
+    Args: 
+      {"keys": ["ctrl", "f"]}
+    Status: |-
+      CONTINUE
+    Plan: 
+      - Type 'UFO' into the search box using the type_text tool.
+      - Press the Enter key to start the search using the press_key tool.
+      - For each found result, select the text and apply highlight using the press_hotkey tool (e.g., 'Alt', 'H', 'I').
+    Comment: |-
+      Opened the Find dialog. Will enter the search term next.
+    SaveScreenshot:
+      {"save": false, "reason": ""}
+
