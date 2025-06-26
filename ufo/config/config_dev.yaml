@@ -147,7 +147,7 @@ THIRD_PARTY_AGENT_CONFIG: {
         "VISUAL_MODE": True,  # Whether to use visual mode for the HardwareAgent
         "AGENT_NAME": "HardwareAgent",
         "APPAGENT_PROMPT": "ufo/prompts/third_party/hardware_agent.yaml",
-        "APPAGENT_EXAMPLE_PROMPT": "ufo/prompts/examples/third_party/hardware_agent_example.yaml",
+        "APPAGENT_EXAMPLE_PROMPT": "ufo/prompts/third_party/hardware_agent_example.yaml",
         "API_PROMPT": "ufo/prompts/third_party/hardware_agent_api.yaml",
     }
 }  # Configuration for third-party agents, including agent name, prompt path, etc.

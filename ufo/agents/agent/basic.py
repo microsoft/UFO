@@ -404,10 +404,10 @@ class AgentRegistry:
                     )
                     return agent_cls  # 返回但不注册
 
-            if agent_name in cls._registry:
-                raise ValueError(
-                    f"Agent class already registered under '{agent_name}'."
-                )
+            # if agent_name in cls._registry:
+            #     raise ValueError(
+            #         f"Agent class already registered under '{agent_name}'."
+            #     )
             cls._registry[agent_name] = agent_cls
             return agent_cls
 

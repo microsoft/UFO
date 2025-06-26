@@ -56,6 +56,7 @@ def create_hardware_mcp_server() -> None:
         """
         Connect to the Arduino HID device (dummy).
         """
+
         return {"success": True, "message": "Connected to Arduino HID device (mock)"}
 
     @mcp.tool()

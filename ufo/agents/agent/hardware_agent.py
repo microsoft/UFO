@@ -16,7 +16,7 @@ from ufo.agents.processors.hardware_agent_processor import HardwareAgentProcesso
 configs = Config.get_instance().config_data
 
 
-@AgentRegistry.register(agent_name="hardwareagent", third_party=True)
+@AgentRegistry.register(agent_name="HardwareAgent", third_party=True)
 class HardwareAgent(AppAgent):
     """
     HardwareAgent is a specialized agent that interacts with hardware components.

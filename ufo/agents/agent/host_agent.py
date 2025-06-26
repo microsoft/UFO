@@ -6,10 +6,12 @@ from __future__ import annotations
 
 from typing import Dict, List, Union
 
+
 from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
 from ufo.agents.agent.basic import BasicAgent, AgentRegistry
 from ufo.agents.agent.follower_agent import FollowerAgent
+from ufo.agents.agent.hardware_agent import HardwareAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
@@ -33,6 +35,7 @@ class AgentFactory:
         :param agent_type: The type of agent to create.
         :return: The created agent.
         """
+        print(AgentRegistry.list_agents())
         if agent_type == "host":
             return HostAgent(*args, **kwargs)
         elif agent_type == "app":
@@ -384,3 +387,24 @@ class HostAgent(BasicAgent):
         Get the default state.
         """
         return ContinueHostAgentState()
+
+    # if __name__ == "__main__":
+    #     # Example usage of the HostAgent
+
+
+host_agent = HostAgent(
+    name="HostAgent",
+    is_visual=True,
+    main_prompt="./ufo/prompts/share/base/host_agent.yaml",
+    example_prompt="./ufo/prompts/examples/visual/host_agent_example.yaml",
+    api_prompt="./ufo/prompts/share/base/api.yaml",
+)
+print("HostAgent created with name:", host_agent.name)
+
+host_agent.create_third_party_app_agent(
+    agent_name="HardwareAgent",
+    request="Please interact with the hardware.",
+    mode="normal",
+    context=Context(),
+)
+print("Third-party app agent created successfully.")
