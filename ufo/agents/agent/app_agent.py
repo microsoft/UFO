@@ -6,7 +6,7 @@ from __future__ import annotations
 
 import os
 import openai
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union, Generator
 import json
 
 from ufo import utils
@@ -383,6 +383,22 @@ class AppAgent(BasicAgent):
         else:
             self.processor = AppAgentProcessor(agent=self, context=context)
         self.processor.process()
+        self.status = self.processor.status
+
+    def process_coro(self, context: Context) -> Generator[None, None, None]:
+        """
+        Process the agent.
+        :param context: The context.
+        """
+        if configs.get("ACTION_SEQUENCE", False):
+            self.processor = AppAgentActionSequenceProcessor(
+                agent=self, context=context
+            )
+        else:
+            self.processor = AppAgentProcessor(
+                agent=self, context=context
+            )
+        yield from self.processor.process_coro()
         self.status = self.processor.status
 
     def process_comfirmation(self) -> bool:

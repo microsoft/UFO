@@ -5,7 +5,7 @@ from __future__ import annotations
 
 import json
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Callable, Dict, List, Optional, Type, Union
+from typing import TYPE_CHECKING, Dict, List, Optional, Type, Union, Generator, Callable
 
 from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
@@ -239,11 +239,25 @@ class BasicAgent(ABC):
         """
         self.state.handle(self, context)
 
+    def handle_coro(self, context: Context) -> Generator[None, None, None]:
+        """
+        Handle the agent.
+        :param context: The context for the agent.
+        """
+        yield from self.state.handle_coro(self, context)
+
     def process(self, context: Context) -> None:
         """
         Process the agent.
         """
         pass
+
+    def process_coro(self, context: Context) -> Generator[None, None, None]:
+        """
+        Process the agent in a coroutine.
+        """
+        return
+        yield
 
     def process_resume(self) -> None:
         """

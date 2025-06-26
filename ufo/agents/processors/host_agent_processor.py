@@ -3,13 +3,13 @@
 
 
 import json
+import time
 from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, Generator, List
 
 from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.module.context import Context, ContextNames
 from ufo.cs.contracts import (
     CaptureDesktopScreenshotAction,
     CaptureDesktopScreenshotParams,
@@ -21,14 +21,15 @@ from ufo.cs.contracts import (
     SelectApplicationWindowParams,
     WindowInfo,
 )
-
 from ufo.llm import AgentType
+from ufo.module.context import Context, ContextNames
 
 configs = Config.get_instance().config_data
 
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
+
 import os
 
 
@@ -96,6 +97,69 @@ class HostAgentProcessor(BaseProcessor):
         self.third_party_agent_labels: List[str] = []
         self.full_desktop_windows_info: List[Dict[str, str]] = []
         self.assigned_third_party_agent: Dict[str, str] | None = None
+
+    def process_coro(self) -> Generator[None, None, None]:
+        """
+        Process the host agent in coroutine mode.
+        This method is a generator that yields control back to the caller after each step.
+        """
+
+        start_time = time.time()
+
+        try:
+            # Step 1: Print the step information.
+            self.print_step_info()
+
+            # Step 2: Capture the screenshot.
+            self.capture_screenshot()
+
+            # Step 3: Get the control information.
+            self.get_control_info()
+            self.process_collected_info()
+
+            yield
+
+            # Step 4: Get the prompt message.
+            self.get_prompt_message()
+
+            # Step 5: Get the response.
+            self.get_response()
+
+            # Step 6: Update the context.
+            self.update_cost()
+
+            # Step 7: Parse the response, if there is no error.
+            self.parse_response()
+
+            if self.is_pending() or self.is_paused():
+                # If the session is pending, update the step and memory, and return.
+                if self.is_pending():
+                    self.update_status()
+                    self.update_memory()
+
+                return
+
+            # Step 8: Execute the action.
+            self.execute_action()
+
+            yield
+
+            # Step 9: Update the memory.
+            self.update_memory()
+
+            # Step 10: Update the status.
+            self.update_status()
+
+            self._total_time_cost = time.time() - start_time
+
+            # Step 11: Save the log.
+            self.log_save()
+
+        except StopIteration:
+            # Error was handled and logged in the exception capture decorator.
+            # Simply return here to stop the process early.
+
+            return
 
     def print_step_info(self) -> None:
         """
@@ -405,7 +469,6 @@ class HostAgentProcessor(BaseProcessor):
         elif isinstance(new_app_window, WindowInfo):
             self.application_window_info = new_app_window
 
-        self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
@@ -424,7 +487,6 @@ class HostAgentProcessor(BaseProcessor):
         # self.application_window = new_app_window
         self.application_window_info = WindowInfo(**new_app_window)
 
-        self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 

@@ -4,7 +4,7 @@
 import json
 import os
 import time
-from typing import List
+from typing import Generator, List, Optional
 
 import psutil
 import win32com.client
@@ -213,6 +213,27 @@ class Session(BaseSession):
         elif save_experience == "always_not":
             pass
 
+    def _run_coro(self) -> Generator[None, None, None]:
+        """
+        Run the session in coroutine mode.
+        This method is a generator that yields control back to the event loop.
+        """
+        yield from super()._run_coro()
+
+        match configs.get("SAVE_EXPERIENCE", "always_not"):
+            case "always":
+                self.experience_saver()
+            case "ask":
+                if interactor.experience_asker():
+                    self.experience_saver()
+            case "auto":
+                task_completed = self.results.get("complete", "no")
+                if task_completed.lower() == "yes":
+                    self.experience_saver()
+            case _:
+                # No action needed for this case
+                pass
+
     def _init_context(self) -> None:
         """
         Initialize the context.
@@ -221,7 +242,7 @@ class Session(BaseSession):
 
         self.context.set(ContextNames.MODE, self._mode)
 
-    def create_new_round(self) -> None:
+    def create_new_round(self) -> Optional[BaseRound]:
         """
         Create a new round.
         """
@@ -231,7 +252,7 @@ class Session(BaseSession):
 
         # Create a new round and return None if the session is finished.
 
-        if self.is_finished():
+        if self.is_finished_legacy():
             return None
 
         self._host_agent.set_state(self._host_agent.default_state)
@@ -315,7 +336,7 @@ class FollowerSession(BaseSession):
         request = self.next_request()
 
         # Create a new round and return None if the session is finished.
-        if self.is_finished():
+        if self.is_finished_legacy():
             return None
 
         if self.total_rounds == 0:
@@ -333,6 +354,7 @@ class FollowerSession(BaseSession):
                 ),
                 request=request,
                 mode=self.context.get(ContextNames.MODE),
+                context=self.context,
             )
 
             # Clear the memory and set the state to continue the app agent.
@@ -419,7 +441,7 @@ class FromFileSession(BaseSession):
         request = self.next_request()
 
         # Create a new round and return None if the session is finished.
-        if self.is_finished():
+        if self.is_finished_legacy():
             return None
 
         self._host_agent.set_state(ContinueHostAgentState())

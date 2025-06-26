@@ -260,7 +260,7 @@ def encode_image_from_path(
 
 _empty_image_string = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
 
-def encode_image(cls, image: Image.Image, mime_type: Optional[str] = None) -> str:
+def encode_image(image: Image.Image, mime_type: Optional[str] = None) -> str:
         """
         Encode an image to base64 string.
         :param image: The image to encode.
