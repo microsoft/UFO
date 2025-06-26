@@ -1,4 +1,5 @@
 
+from typing import Generator, Optional
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config import Config
 from ufo.cs.contracts import ActionBase
@@ -13,7 +14,10 @@ class ServiceSession(BaseSession):
     """
     A session for UFO service.
     """
-    def __init__(self, task: str, should_evaluate: bool, id: str = None):
+
+    _request: str = ""
+
+    def __init__(self, task: str, should_evaluate: bool, id: str = None, request: str = ""):
         """
         Initialize the session.
         :param host_agent: The host agent.
@@ -22,6 +26,8 @@ class ServiceSession(BaseSession):
         """
         
         super().__init__(task=task, should_evaluate=should_evaluate, id=id)
+
+        self._request = request
 
     def init(self, request):
         self._host_agent.set_state(ContinueHostAgentState())
@@ -52,7 +58,7 @@ class ServiceSession(BaseSession):
         self.context.set(ContextNames.MODE, "normal")
         self.context.set(ContextNames.SESSION_DATA_MANAGER, SessionDataManager(self.id))
 
-    def create_new_round(self) -> BaseRound:
+    def create_new_round(self) -> Optional[BaseRound]:
         """
         Create a new round.
         """
@@ -62,7 +68,7 @@ class ServiceSession(BaseSession):
 
         # Create a new round and return None if the session is finished.
 
-        if self.is_finished():
+        if self.is_finished_legacy():
             return None
 
         self._host_agent.set_state(ContinueHostAgentState())
@@ -80,7 +86,8 @@ class ServiceSession(BaseSession):
         return round
 
     def next_request(self) -> str:
-        self._finish = True
+        if self.total_rounds != 0:
+            self._finish = True
         return self._request
     
     def is_finished(self) -> bool:

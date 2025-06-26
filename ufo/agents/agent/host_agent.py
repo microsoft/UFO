@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Generator
 
 from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
@@ -201,6 +201,17 @@ class HostAgent(BasicAgent):
         """
         self.processor = HostAgentProcessor(agent=self, context=context)
         self.processor.process()
+
+        # Sync the status with the processor.
+        self.status = self.processor.status
+
+    def process_coro(self, context: Context) -> Generator[None, None, None]:
+        """
+        Process the agent.
+        :param context: The context.
+        """
+        self.processor = HostAgentProcessor(agent=self, context=context)
+        yield from self.processor.process_coro()
 
         # Sync the status with the processor.
         self.status = self.processor.status

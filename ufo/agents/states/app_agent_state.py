@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Optional, Type
+from typing import TYPE_CHECKING, Dict, Optional, Type, Generator
 
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.basic import AgentState, AgentStateManager
@@ -191,6 +191,14 @@ class ContinueAppAgentState(AppAgentState):
         :param context: The context for the agent and session.
         """
         agent.process(context)
+
+    def handle_coro(self, agent: "AppAgent", context: Optional["Context"] = None) -> Generator[None, None, None]:
+        """
+        Handle the agent for the current step.
+        :param agent: The agent for the current step.
+        :param context: The context for the agent and session.
+        """
+        yield from agent.process_coro(context)
 
     def is_subtask_end(self) -> bool:
         """

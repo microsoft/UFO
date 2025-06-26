@@ -4,7 +4,8 @@
 
 import json
 from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List, Generator
+import time
 
 from ufo import utils
 from ufo.agents.processors.basic import BaseProcessor
@@ -94,6 +95,69 @@ class HostAgentProcessor(BaseProcessor):
             ),
             "magenta",
         )
+
+    def process_coro(self) -> Generator[None, None, None]:
+        """
+        Process the host agent in coroutine mode.
+        This method is a generator that yields control back to the caller after each step.
+        """
+
+        start_time = time.time()
+
+        try:
+            # Step 1: Print the step information.
+            self.print_step_info()
+
+            # Step 2: Capture the screenshot.
+            self.capture_screenshot()
+
+            # Step 3: Get the control information.
+            self.get_control_info()
+            self.process_collected_info()
+
+            yield
+
+            # Step 4: Get the prompt message.
+            self.get_prompt_message()
+
+            # Step 5: Get the response.
+            self.get_response()
+
+            # Step 6: Update the context.
+            self.update_cost()
+
+            # Step 7: Parse the response, if there is no error.
+            self.parse_response()
+
+            if self.is_pending() or self.is_paused():
+                # If the session is pending, update the step and memory, and return.
+                if self.is_pending():
+                    self.update_status()
+                    self.update_memory()
+
+                return
+
+            # Step 8: Execute the action.
+            self.execute_action()
+
+            yield
+
+            # Step 9: Update the memory.
+            self.update_memory()
+
+            # Step 10: Update the status.
+            self.update_status()
+
+            self._total_time_cost = time.time() - start_time
+
+            # Step 11: Save the log.
+            self.log_save()
+
+        except StopIteration:
+            # Error was handled and logged in the exception capture decorator.
+            # Simply return here to stop the process early.
+
+            return
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -297,7 +361,7 @@ class HostAgentProcessor(BaseProcessor):
                     )
                 ),
                 setter=lambda value: self.select_application_window_callback(value))
-        else:
+        elif self.bash_command:
             self.session_data_manager.add_action(
                 LaunchApplicationAction(
                     params=LaunchApplicationParams(
@@ -316,16 +380,13 @@ class HostAgentProcessor(BaseProcessor):
         """
         # Set the application window
         self.app_root = value["process_name"]
-        #self.control_text = value["control_text"]
         
         new_app_window = value["window_info"]
-        #self.application_window = new_app_window
         if isinstance(new_app_window, dict):
             self.application_window_info = WindowInfo(**new_app_window)
         elif isinstance(new_app_window, WindowInfo):
             self.application_window_info = new_app_window
         
-        self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
         
@@ -338,13 +399,10 @@ class HostAgentProcessor(BaseProcessor):
         """
         # Set the application window
         self.app_root = value["process_name"]
-        #self.control_text = value["control_text"]
         
         new_app_window = value["window_info"]
-        #self.application_window = new_app_window
         self.application_window_info = WindowInfo(**new_app_window)
 
-        self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
     

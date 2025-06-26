@@ -19,7 +19,7 @@ import logging
 import os
 import time
 from abc import ABC, abstractmethod
-from typing import Dict, Optional
+from typing import Dict, Optional, Generator
 from uuid import uuid4
 
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -137,6 +137,38 @@ class BaseRound(ABC):
         if self._should_evaluate:
             self.evaluation()
 
+    def run_coro(self) -> Generator[None, None, None]:
+        """
+        Run the round in a coroutine manner.
+        This allows the round to be run in a generator.
+        """
+        while not self.is_finished():
+
+            yield from self.agent.handle_coro(self.context)
+
+            self.state = self.agent.state.next_state(self.agent)
+            self.agent = self.agent.state.next_agent(self.agent)
+
+            self.agent.set_state(self.state)
+
+            # If the subtask ends, capture the last snapshot of the application.
+            if self.state.is_subtask_end():
+                time.sleep(configs["SLEEP_TIME"])
+                self.capture_last_snapshot(sub_round_id=self.subtask_amount)
+                yield
+                self.subtask_amount += 1
+
+        self.agent.blackboard.add_requests(
+            {"request_{i}".format(i=self.id): self.request}
+        )
+
+        if self.application_window_info is not None:
+            self.capture_last_snapshot()
+            yield
+
+        if self._should_evaluate:
+            self.evaluation()
+
     def step_forward(self) -> None:
         if not self.is_finished():
 
@@ -163,6 +195,21 @@ class BaseRound(ABC):
 
         # if self._should_evaluate:
         #     self.evaluation()
+
+    def step_forward_coro(self) -> Generator[None, None, None]:
+        """
+        Step forward in the round in a coroutine manner.
+        This allows the round to be stepped forward in a generator.
+        """
+        if not self.is_finished():
+
+            yield from self.agent.handle_coro(self.context)
+
+            self.state = self.agent.state.next_state(self.agent)
+            self.agent = self.agent.state.next_agent(self.agent)
+            self.agent.set_state(self.state)
+        else:
+            pass
 
     def is_finished(self) -> bool:
         """
@@ -272,7 +319,8 @@ class BaseRound(ABC):
             formatted_cost = "${:.2f}".format(total_cost)
             utils.print_with_color(
                 f"Request total cost for current round is {formatted_cost}", "yellow"
-            )    @property
+            )
+    @property
     def log_path(self) -> str:
         """
         Get the log path of the round.
@@ -367,7 +415,7 @@ class BaseRound(ABC):
                 + f"action_round_{self.id}_sub_round_{sub_round_id}_final.png"
             )
 
-        if self.application_window is not None:
+        if self.application_window is not None or self.application_window_info is not None:
 
             try:
                 # Get session data manager from context
@@ -504,6 +552,22 @@ class BaseRound(ABC):
         """
         self._context.set(ContextNames.APPLICATION_WINDOW, app_window)
 
+    @property
+    def application_window_info(self) -> Dict[str, str]:
+        """
+        Get the application window info of the session.
+        return: The application window info of the session.
+        """
+        return self._context.get(ContextNames.APPLICATION_WINDOW_INFO)
+    
+    @application_window_info.setter
+    def application_window_info(self, app_window_info: Dict[str, str]) -> None:
+        """
+        Set the application window info.
+        :param app_window_info: The application window info.
+        """
+        self._context.set(ContextNames.APPLICATION_WINDOW_INFO, app_window_info)
+
 
 class BaseSession(ABC):
     """
@@ -531,6 +595,8 @@ class BaseSession(ABC):
         self._init_context()
         self._finish = False
         self._results = {}
+
+        self._run_generator: Optional[Generator[None, None, None]] = None
 
         self._host_agent: HostAgent = AgentFactory.create_agent(
             "host",
@@ -566,9 +632,49 @@ class BaseSession(ABC):
             trajectory.to_markdown(file_path + "/output.md")
 
         self.print_cost()
-        
+
+    def _run_coro(self) -> Generator[None, None, None]:
+        """
+        Run the session in a generator.
+        This allows the session to be run in a coroutine manner.
+        """
+        while not self.is_finished_legacy():
+            _round = self.create_new_round()
+            if _round is None:
+                break
+            yield from _round.run_coro()
+
+        if self.application_window_info is not None:
+            self.capture_last_snapshot()
+            yield
+
+        if self._should_evaluate and not self.is_error():
+            self.evaluation()
+
+        if configs.get("LOG_TO_MARKDOWN", True):
+            file_path = self.log_path
+            trajectory = Trajectory(file_path)
+            trajectory.to_markdown(file_path + "/output.md")
+
+    @property
+    def run_coro(self) -> Generator[None, None, None]:
+        """
+        Get the generator for running the session.
+        This enables the session to be run in a coroutine manner.
+        """
+        if self._run_generator is None:
+            self._run_generator = self._run_coro()
+        return self._run_generator
+
     def step_forward(self):
         self.current_round.step_forward()
+
+    def step_forward_coro(self) -> Generator[None, None, None]:
+        """
+        Step forward in the session in a coroutine manner.
+        This allows the session to be stepped forward in a generator.
+        """
+        yield from self.current_round.step_forward_coro()
 
     @abstractmethod
     def create_new_round(self) -> Optional[BaseRound]:
@@ -672,6 +778,22 @@ class BaseSession(ABC):
         :param app_window: The application window.
         """
         self.context.set(ContextNames.APPLICATION_WINDOW, app_window)
+
+    @property
+    def application_window_info(self) -> Dict[str, str]:
+        """
+        Get the application window info of the session.
+        return: The application window info of the session.
+        """
+        return self.context.get(ContextNames.APPLICATION_WINDOW_INFO)
+
+    @application_window_info.setter
+    def application_window_info(self, app_window_info: Dict[str, str]) -> None:
+        """
+        Set the application window info.
+        :param app_window_info: The application window info.
+        """
+        self.context.set(ContextNames.APPLICATION_WINDOW_INFO, app_window_info)
 
     @property
     def step(self) -> int:
@@ -804,6 +926,23 @@ class BaseSession(ABC):
             return True
 
         return False
+    
+    def is_finished_legacy(self) -> bool:
+        """
+        This is legacy logic of is_finished, coroutine version requires this method to achieve multi-round behavior.
+        @todo: merge this logic with is_finished in the future.
+        """
+        if (
+            self._finish
+            or self.step >= configs["MAX_STEP"]
+            or self.total_rounds >= configs["MAX_ROUND"]
+        ):
+            return True
+        
+        if self.is_error():
+            return True
+        
+        return False
 
     @abstractmethod
     def request_to_evaluate(self) -> str:
@@ -856,7 +995,9 @@ class BaseSession(ABC):
 
         evaluator.print_response(result)
 
-        self.evaluation_logger.info(json.dumps(result))    @property
+        self.evaluation_logger.info(json.dumps(result))    
+
+    @property
     def session_type(self) -> str:
         """
         Get the class name of the session.
@@ -910,15 +1051,15 @@ class BaseSession(ABC):
         """        # Capture the final screenshot
         screenshot_save_path = self.log_path + f"action_step_final.png"
 
-        if self.application_window is not None:
+        if self.application_window is not None or self.application_window_info is not None:
 
             try:
                 # Get session data manager from context
                 session_data_manager = self._context.get(ContextNames.SESSION_DATA_MANAGER)
-                
+
                 # Get application window info for annotation_id
-                application_window_info = self._context.get(ContextNames.APPLICATION_WINDOW_INFO)
-                
+                application_window_info = self.application_window_info
+
                 if session_data_manager and application_window_info:
                     # Use action/callback pattern for app window screenshot
                     app_screenshot_action = CaptureAppWindowScreenshotAction(
@@ -946,8 +1087,8 @@ class BaseSession(ABC):
                 session_data_manager = self._context.get(ContextNames.SESSION_DATA_MANAGER)
                 
                 # Get application window info for annotation_id
-                application_window_info = self._context.get(ContextNames.APPLICATION_WINDOW_INFO)
-                
+                application_window_info = self.application_window_info
+
                 if session_data_manager and application_window_info:
                     # Use action/callback pattern for UI tree capture
                     ui_tree_path = os.path.join(self.log_path, "ui_trees")
