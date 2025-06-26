@@ -158,7 +158,6 @@ class AppAgentProcessor(BaseProcessor):
         #self._control_info = None
         self._operation = ""
         self._args = {}
-        #self._image_url = []
         #self.session_data_manager.session_data.state.app_winddow_screen_url = []
         self.control_filter_factory = ControlFilterFactory()
         self.control_recorder = ControlInfoRecorder()
@@ -514,8 +513,7 @@ class AppAgentProcessor(BaseProcessor):
             )
 
             image_path = last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path
-            #self._image_url += [utils.encode_image_from_path(image_path)]
-            self.session_data_manager.session_data.state.app_winddow_screen_url += [
+            self.session_data_manager.session_data.state.app_window_screen_url += [
                 utils.encode_image_from_path(image_path)
             ]
 
@@ -526,10 +524,7 @@ class AppAgentProcessor(BaseProcessor):
                 annotated_screenshot_save_path,
                 concat_screenshot_save_path,
             )
-            # self._image_url += [
-            #     utils.encode_image_from_path(concat_screenshot_save_path)
-            # ]
-            self.session_data_manager.session_data.state.app_winddow_screen_url += [
+            self.session_data_manager.session_data.state.app_window_screen_url += [
                 utils.encode_image_from_path(concat_screenshot_save_path)
             ]
         else:
@@ -539,8 +534,7 @@ class AppAgentProcessor(BaseProcessor):
             screenshot_annotated_url = utils.encode_image_from_path(
                 annotated_screenshot_save_path
             )
-            # self._image_url += [screenshot_url, screenshot_annotated_url]
-            self.session_data_manager.session_data.state.app_winddow_screen_url += [
+            self.session_data_manager.session_data.state.app_window_screen_url += [
                 screenshot_url, screenshot_annotated_url
             ]
 
@@ -592,7 +586,7 @@ class AppAgentProcessor(BaseProcessor):
         self._prompt_message = self.app_agent.message_constructor(
             dynamic_examples=retrieved_results,
             dynamic_knowledge=external_knowledge_prompt,
-            image_list=self.session_data_manager.session_data.state.app_winddow_screen_url,
+            image_list=self.session_data_manager.session_data.state.app_window_screen_url,
             control_info=self.session_data_manager.session_data.state.filtered_control_info,
             prev_subtask=self.previous_subtasks,
             plan=self.prev_plan,
@@ -614,7 +608,7 @@ class AppAgentProcessor(BaseProcessor):
             offline_docs=offline_docs,
             online_docs=online_docs,
             dynamic_knowledge=external_knowledge_prompt,
-            image_list=self.session_data_manager.session_data.state.app_winddow_screen_url,
+            image_list=self.session_data_manager.session_data.state.app_window_screen_url,
             prev_subtask=self.previous_subtasks,
             plan=self.prev_plan,
             request=self.request,
@@ -629,7 +623,7 @@ class AppAgentProcessor(BaseProcessor):
             control_info_recording=asdict(self.control_recorder),
         )
         
-        self.session_data_manager.session_data.state.app_winddow_screen_url = []
+        self.session_data_manager.session_data.state.app_window_screen_url = []
 
         request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
         self.request_logger.debug(request_log_str)

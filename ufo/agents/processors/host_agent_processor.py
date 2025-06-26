@@ -380,16 +380,13 @@ class HostAgentProcessor(BaseProcessor):
         """
         # Set the application window
         self.app_root = value["process_name"]
-        #self.control_text = value["control_text"]
         
         new_app_window = value["window_info"]
-        #self.application_window = new_app_window
         if isinstance(new_app_window, dict):
             self.application_window_info = WindowInfo(**new_app_window)
         elif isinstance(new_app_window, WindowInfo):
             self.application_window_info = new_app_window
         
-        self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
         
@@ -402,13 +399,10 @@ class HostAgentProcessor(BaseProcessor):
         """
         # Set the application window
         self.app_root = value["process_name"]
-        #self.control_text = value["control_text"]
         
         new_app_window = value["window_info"]
-        #self.application_window = new_app_window
         self.application_window_info = WindowInfo(**new_app_window)
 
-        self.context.set(ContextNames.APPLICATION_WINDOW, self.application_window)
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
     
