@@ -54,6 +54,9 @@ class SessionDataManager:
         call_id = SessionDataManager.time_hash_str(action.name)
         action.call_id = call_id
         self.session_data.actions_to_run.append(action)
+        print(
+            f"Adding action {action.name} with call_id {call_id} to session {self.session_id}"
+        )
         if setter is None:
             setter = lambda x: None
         self.action_id_setters[call_id] = setter

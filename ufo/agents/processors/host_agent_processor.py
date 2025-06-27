@@ -205,6 +205,7 @@ class HostAgentProcessor(BaseProcessor):
         """
         # Set the URL for use in the class
         self._desktop_screen_url = value
+        print(f"Desktop screenshot URL: {self._desktop_screen_url}")
         self.session_data_manager.session_data.state.desktop_screen_url = value
 
         # If value contains a base64 encoded image string
@@ -340,7 +341,7 @@ class HostAgentProcessor(BaseProcessor):
             blackboard_prompt=blackboard_prompt,
         )
 
-        print(f"Prompt message: {self._prompt_message}")
+        # print(f"Prompt message: {self._prompt_message}")
 
         request_data = HostAgentRequestLog(
             step=self.session_step,

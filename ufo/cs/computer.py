@@ -293,6 +293,7 @@ class Computer:
     ) -> str:
         """Handle capture_desktop_screenshot action"""
         params = action.params
+        print(f"Capture desktop screenshot with params: {params}, type: {type(params)}")
         all_screens = params.all_screens
         temp_path = "temp_desktop_screenshot.png"  # Temporary path for capturing
 
