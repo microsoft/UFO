@@ -343,7 +343,8 @@ class Computer:
         Handle capture_app_window_screenshot_from_webcam action
         :TODO
         """
-        return None
+        app_screen_url = self.photographer.encode_image_from_path("./tests/image.png")
+        return app_screen_url
 
     def _handle_get_desktop_app_info(
         self, action: GetDesktopAppInfoAction

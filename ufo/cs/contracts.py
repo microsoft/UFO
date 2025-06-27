@@ -1,5 +1,5 @@
-from typing import Any, List, Literal, Optional, Union, Dict
-from pydantic import BaseModel
+from typing import Any, List, Literal, Optional, Union, Dict, Annotated
+from pydantic import BaseModel, Field
 
 
 class Rect(BaseModel):
@@ -19,7 +19,6 @@ class ControlInfo(BaseModel):
     control_type: Optional[str] = None
 
     automation_id: Optional[str] = None
-    name: Optional[str] = None
     is_enabled: Optional[bool] = None
     is_visible: Optional[bool] = None
     source: Optional[str] = None
@@ -46,10 +45,9 @@ class ActionBase(BaseModel):
     call_id: Optional[str] = None
 
 
-class CallbackAction(BaseModel):
-    name: str = "callback"
+class CallbackAction(ActionBase):
+    name: Literal["callback"] = "callback"
     params: Optional[Dict[str, Any]] = None
-    call_id: Optional[str] = None
 
 
 class CaptureDesktopScreenshotParams(BaseModel):
@@ -59,7 +57,7 @@ class CaptureDesktopScreenshotParams(BaseModel):
 
 
 class CaptureDesktopScreenshotAction(ActionBase):
-    name: str = "capture_desktop_screenshot"
+    name: Literal["capture_desktop_screenshot"] = "capture_desktop_screenshot"
     params: Optional[CaptureDesktopScreenshotParams] = None
 
 
@@ -69,7 +67,7 @@ class GetDesktopAppInfoParams(BaseModel):
 
 
 class GetDesktopAppInfoAction(ActionBase):
-    name: str = "get_desktop_app_info"
+    name: Literal["get_desktop_app_info"] = "get_desktop_app_info"
     params: Optional[GetDesktopAppInfoParams] = None
 
 
@@ -78,7 +76,7 @@ class SelectApplicationWindowParams(BaseModel):
 
 
 class SelectApplicationWindowAction(ActionBase):
-    name: str = "select_application_window"
+    name: Literal["select_application_window"] = "select_application_window"
     params: Optional[SelectApplicationWindowParams] = None
 
 
@@ -87,7 +85,7 @@ class LaunchApplicationParams(BaseModel):
 
 
 class LaunchApplicationAction(ActionBase):
-    name: str = "launch_application"
+    name: Literal["launch_application"] = "launch_application"
     params: Optional[LaunchApplicationParams] = None
 
 
@@ -96,19 +94,21 @@ class CaptureAppWindowScreenshotParams(BaseModel):
 
 
 class CaptureAppWindowScreenshotAction(ActionBase):
-    name: str = "capture_app_window_screenshot"
+    name: Literal["capture_app_window_screenshot"] = "capture_app_window_screenshot"
     params: Optional[CaptureAppWindowScreenshotParams] = None
 
 
 class CaptureAppWindowScreenshotFromWebcamParams(BaseModel):
     annotation_id: Optional[str] = None
     webcam_index: int = 0  # Default to the first webcam
-    width: int = 640  # Default width for the screenshot
-    height: int = 480  # Default height for the screenshot
+    width: int = 640
+    height: int = 480
 
 
 class CaptureAppWindowScreenshotFromWebcamAction(ActionBase):
-    name: str = "capture_app_window_screenshot_from_webcam"
+    name: Literal["capture_app_window_screenshot_from_webcam"] = (
+        "capture_app_window_screenshot_from_webcam"
+    )
     params: Optional[CaptureAppWindowScreenshotFromWebcamParams] = None
 
 
@@ -118,7 +118,7 @@ class GetAppWindowControlInfoParams(BaseModel):
 
 
 class GetAppWindowControlInfoAction(ActionBase):
-    name: str = "get_app_window_control_info"
+    name: Literal["get_app_window_control_info"] = "get_app_window_control_info"
     params: Optional[GetAppWindowControlInfoParams] = None
 
 
@@ -129,7 +129,7 @@ class FindControlElementsParams(BaseModel):
 
 
 class FindControlElementsAction(ActionBase):
-    name: str = "find_control_elements"
+    name: Literal["find_control_elements"] = "find_control_elements"
     params: Optional[FindControlElementsParams] = None
 
 
@@ -139,7 +139,7 @@ class GetUITreeParams(BaseModel):
 
 
 class GetUITreeAction(ActionBase):
-    name: str = "get_ui_tree"
+    name: Literal["get_ui_tree"] = "get_ui_tree"
     params: Optional[GetUITreeParams] = None
 
 
@@ -215,7 +215,6 @@ class KeyboardInputParams(UIACommandParams):
 
 
 class WheelMouseInputParams(UIACommandParams):
-    # Define specific parameters for wheel_mouse_input
     x_dist: int = 0
     y_dist: int = 0
 
@@ -236,7 +235,7 @@ class MCPToolExecutionParams(BaseModel):
 
 
 class MCPToolExecutionAction(ActionBase):
-    name: str = "execute_mcp_tool"
+    name: Literal["execute_mcp_tool"] = "execute_mcp_tool"
     params: Optional[MCPToolExecutionParams] = None
 
 
@@ -245,7 +244,7 @@ class MCPGetInstructionsParams(BaseModel):
 
 
 class MCPGetInstructionsAction(ActionBase):
-    name: str = "get_mcp_instructions"
+    name: Literal["get_mcp_instructions"] = "get_mcp_instructions"
     params: Optional[MCPGetInstructionsParams] = None
 
 
@@ -254,13 +253,12 @@ class MCPGetAvailableToolsParams(BaseModel):
 
 
 class MCPGetAvailableToolsAction(ActionBase):
-    name: str = "get_mcp_available_tools"
+    name: Literal["get_mcp_available_tools"] = "get_mcp_available_tools"
     params: Optional[MCPGetAvailableToolsParams] = None
 
 
 class OperationCommand(BaseModel):
     command_id: str
-
     click_input: Optional[ClickInputParams] = None
     click_on_coordinates: Optional[ClickOnCoordinatesParams] = None
     drag_on_coordinates: Optional[DragOnCoordinatesParams] = None
@@ -279,39 +277,40 @@ class OperationCommand(BaseModel):
 
 
 class OperationSequenceAction(ActionBase):
-    name: str = "operation_sequence"
+    name: Literal["operation_sequence"] = "operation_sequence"
     params: Optional[list[OperationCommand]] = None
 
 
 class GetDesktopControlInfoParams(BaseModel):
-    """Parameters for getting desktop control information"""
-
     all_screens: bool = True
     remove_empty: bool = True
     refresh_app_windows: bool = False
 
 
 class GetDesktopControlInfoAction(ActionBase):
-    name: str = "get_desktop_control_info"
+    name: Literal["get_desktop_control_info"] = "get_desktop_control_info"
     params: Optional[GetDesktopControlInfoParams] = None
 
 
-UFOAction = Union[
-    CaptureDesktopScreenshotAction,
-    GetDesktopAppInfoAction,
-    GetDesktopControlInfoAction,
-    SelectApplicationWindowAction,
-    LaunchApplicationAction,
-    CaptureAppWindowScreenshotAction,
-    CaptureAppWindowScreenshotFromWebcamAction,
-    GetAppWindowControlInfoAction,
-    FindControlElementsAction,
-    GetUITreeAction,
-    OperationSequenceAction,
-    CallbackAction,
-    MCPToolExecutionAction,
-    MCPGetInstructionsAction,
-    MCPGetAvailableToolsAction,
+UFOAction = Annotated[
+    Union[
+        CaptureDesktopScreenshotAction,
+        GetDesktopAppInfoAction,
+        GetDesktopControlInfoAction,
+        SelectApplicationWindowAction,
+        LaunchApplicationAction,
+        CaptureAppWindowScreenshotAction,
+        CaptureAppWindowScreenshotFromWebcamAction,
+        GetAppWindowControlInfoAction,
+        FindControlElementsAction,
+        GetUITreeAction,
+        OperationSequenceAction,
+        CallbackAction,
+        MCPToolExecutionAction,
+        MCPGetInstructionsAction,
+        MCPGetAvailableToolsAction,
+    ],
+    Field(discriminator="name"),
 ]
 
 

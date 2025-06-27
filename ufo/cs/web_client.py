@@ -134,6 +134,9 @@ class UFOWebClient:
         response_data = response.json()
         ufo_response = UFOResponse(**response_data)
 
+        logger.info(f"Received response: {response_data}")
+        logger.info(f"Received response: {ufo_response.model_dump()}")
+
         # Update the session ID if needed
         if self.session_id is None and ufo_response.session_id is not None:
             self.session_id = ufo_response.session_id
@@ -158,6 +161,7 @@ class UFOWebClient:
             # Process each action
             for action in actions:
                 logger.info(f"Running action: {action.name}")
+                logger.info(f"Action details: {action}")
 
                 # Execute the action through MCP client or direct computer execution
                 try:
