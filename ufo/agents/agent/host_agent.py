@@ -35,7 +35,7 @@ class AgentFactory:
         :param agent_type: The type of agent to create.
         :return: The created agent.
         """
-        print(AgentRegistry.list_agents())
+
         if agent_type == "host":
             return HostAgent(*args, **kwargs)
         elif agent_type == "app":
@@ -137,6 +137,10 @@ class HostAgent(BasicAgent):
         self.appagent_dict[agent_name] = app_agent
         app_agent.host = self
         self._active_appagent = app_agent
+
+        print(
+            f"Created sub agent: {agent_name} with type {agent_type} and process name {process_name}, class {app_agent.__class__.__name__}"
+        )
 
         return app_agent
 

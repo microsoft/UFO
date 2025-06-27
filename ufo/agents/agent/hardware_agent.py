@@ -5,7 +5,7 @@ from ufo.config import Config
 from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import Generator
 
 from ufo.cs.contracts import MCPGetInstructionsAction, MCPGetInstructionsParams
 from ufo.llm import AgentType
@@ -30,4 +30,13 @@ class HardwareAgent(AppAgent):
         """
         self.processor = HardwareAgentProcessor(agent=self, context=context)
         self.processor.process()
+        self.status = self.processor.status
+
+    def process_coro(self, context: Context) -> Generator[None, None, None]:
+        """
+        Process the agent.
+        :param context: The context.
+        """
+        self.processor = HardwareAgentProcessor(agent=self, context=context)
+        yield from self.processor.process_coro()
         self.status = self.processor.status

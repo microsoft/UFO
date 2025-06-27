@@ -213,8 +213,6 @@ class Computer:
     def run_action(self, action: ActionBase) -> Dict[str, Any]:
         """Run the specified action and return the result"""
 
-        print(f"Running action: {action.name}\r\n")
-
         action_handlers = {
             "capture_desktop_screenshot": self._handle_capture_desktop_screenshot,
             "capture_app_window_screenshot": self._handle_capture_app_window_screenshot,
@@ -232,6 +230,7 @@ class Computer:
         }
 
         if action.name in action_handlers:
+            # print(f"Handling action: {action_handlers[action.name](action)}\r\n")
             return action_handlers[action.name](action)
         else:
             raise ValueError(f"Unknown action: {action.name}")
@@ -293,7 +292,7 @@ class Computer:
     ) -> str:
         """Handle capture_desktop_screenshot action"""
         params = action.params
-        print(f"Capture desktop screenshot with params: {params}, type: {type(params)}")
+
         all_screens = params.all_screens
         temp_path = "temp_desktop_screenshot.png"  # Temporary path for capturing
 

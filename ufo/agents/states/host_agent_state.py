@@ -131,7 +131,9 @@ class ContinueHostAgentState(HostAgentState):
         """
         agent.process(context)
 
-    def handle_coro(self, agent: "HostAgent", context: Optional["Context"] = None) -> Generator[None, None, None]:
+    def handle_coro(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> Generator[None, None, None]:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.

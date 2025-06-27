@@ -96,7 +96,7 @@ class HostAgentProcessor(BaseProcessor):
         self.bash_command = None
         self.third_party_agent_labels: List[str] = []
         self.full_desktop_windows_info: List[Dict[str, str]] = []
-        self.assigned_third_party_agent: Dict[str, str] | None = None
+        self.assigned_third_party_agent: str | None = None
 
     def process_coro(self) -> Generator[None, None, None]:
         """
@@ -205,7 +205,7 @@ class HostAgentProcessor(BaseProcessor):
         """
         # Set the URL for use in the class
         self._desktop_screen_url = value
-        print(f"Desktop screenshot URL: {self._desktop_screen_url}")
+        # print(f"Desktop screenshot URL: {self._desktop_screen_url}")
         self.session_data_manager.session_data.state.desktop_screen_url = value
 
         # If value contains a base64 encoded image string
@@ -325,7 +325,7 @@ class HostAgentProcessor(BaseProcessor):
 
         self.full_desktop_windows_info = desktop_windows_info + third_party_agent_list
 
-        print(f"Full desktop windows info: {self.full_desktop_windows_info}")
+        # print(f"Full desktop windows info: {self.full_desktop_windows_info}")
 
         self.third_party_agent_labels = third_party_agent_labels
 
@@ -412,7 +412,7 @@ class HostAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
-        print(f"selected control_label: {self.control_label}")
+        # print(f"selected control_label: {self.control_label}")
 
         if self.control_label in self.third_party_agent_labels:
 
@@ -423,7 +423,7 @@ class HostAgentProcessor(BaseProcessor):
                     if info["label"] == self.control_label
                 ),
                 None,
-            )
+            ).get("control_text", None)
 
         else:
 
