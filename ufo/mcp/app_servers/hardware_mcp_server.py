@@ -27,7 +27,7 @@ from typing import Dict, Any, List, Tuple, Optional
 from mcp.server.fastmcp import FastMCP
 
 
-def create_hardware_mcp_server() -> None:
+def create_hardware_mcp_server(host: str = "", port: int = 8006) -> None:
     """Create a mock MCP server for hardware control.
     This server provides dummy implementations for various hardware control tools.
     It simulates the functionality of controlling hardware components like Arduino HID,
@@ -39,8 +39,8 @@ def create_hardware_mcp_server() -> None:
         instructions="MCP server for controlling various hardware components (mock)",
         stateless_http=True,  # one‐shot JSON (no SSE/session)
         json_response=True,  # return pure JSON bodies
-        host="127.0.0.1",
-        port="8765",
+        host=host,
+        port=port,
     )
 
     # Register MCP tools (all return dummy values)
@@ -423,12 +423,12 @@ def main():
 
     print("=" * 50)
     print("UFO Hardware MCP Server")
-    print("Microsoft Excel automation via Model Context Protocol")
+    print("Hareware automation via Model Context Protocol")
     print(f"Running on {args.host}:{args.port}")
     print("=" * 50)
 
     # Create and run the Excel MCP server
-    create_hardware_mcp_server()
+    create_hardware_mcp_server(host=args.host, port=args.port)
 
 
 if __name__ == "__main__":

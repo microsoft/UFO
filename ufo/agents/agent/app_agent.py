@@ -77,7 +77,8 @@ class AppAgent(BasicAgent):
         self.set_state(self.default_state)
         self.mcp_enabled = configs.get("USE_MCP", False)
         self.mcp_preferred_apps = configs.get(
-            "MCP_PREFERRED_APPS", ["powerpoint", "word", "excel", "web", "hardware"]
+            "MCP_PREFERRED_APPS",
+            ["powerpoint", "word", "excel", "web", "hardware", "hardwareagent"],
         )
         self.mcp_preferred_operations = []  # Will be populated from MCP tools
 
@@ -395,9 +396,7 @@ class AppAgent(BasicAgent):
                 agent=self, context=context
             )
         else:
-            self.processor = AppAgentProcessor(
-                agent=self, context=context
-            )
+            self.processor = AppAgentProcessor(agent=self, context=context)
         yield from self.processor.process_coro()
         self.status = self.processor.status
 
@@ -518,6 +517,11 @@ class AppAgent(BasicAgent):
         Load MCP context information for the current application.
         """
         app_namespace = self._get_app_namespace()
+
+        utils.print_with_color(
+            f"Loading MCP context for application namespace: {app_namespace} in preferred apps: {self.mcp_preferred_apps}",
+            "magenta",
+        )
         if app_namespace in self.mcp_preferred_apps and hasattr(self, "prompter"):
 
             get_instructions_action = MCPGetAvailableToolsAction(
@@ -540,6 +544,9 @@ class AppAgent(BasicAgent):
         :param result: The result from the MCP get instructions action
         """
         try:
+            utils.print_with_color(
+                f"Received MCP instructions result: {result}", "magenta"
+            )
             if result and isinstance(result, dict):
                 self.handle_mcp_instructions_result(result)
             elif result:
@@ -566,6 +573,7 @@ class AppAgent(BasicAgent):
             "edge": "web",
             "powerpoint": "powerpoint",
             "hardware": "hardware",
+            "hardwareagent": "hardware",
         }
         return namespace_mapping.get(app_name, app_name)
 
@@ -619,8 +627,8 @@ class AppAgent(BasicAgent):
 
             self.prompter.load_mcp_tools_from_data(
                 tools,
-                instructions.get("app_namespace"),
-                tools,
+                instructions.get("namespace"),
+                instructions.get("namespace"),
             )
             # Extract tool names and save as preferred operations
             self.mcp_preferred_operations = [

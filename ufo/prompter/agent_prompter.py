@@ -220,6 +220,7 @@ class AppAgentPrompter(BasicPrompter):
         :param app_namespace: The application namespace
         """
         self.mcp_tools = tools
+
         self.mcp_app_namespace = app_namespace
         self.mcp_tool_instructions = tool_instructions
         utils.print_with_color(
@@ -448,32 +449,26 @@ class AppAgentPrompter(BasicPrompter):
 
             for tool in self.mcp_tools:
                 tool_name = tool.get("name", "unknown")
-                description = tool.get("description", "No description")
-                parameters = tool.get("parameters", [])
+                description = tool.get("description")
+                parameters = tool.get("parameters", {}).get("properties", [])
 
                 tool_desc = f'"{tool_name}"\n{description}'
 
-                if parameters and verbose > 0:
-                    params_list = []
-                    for param in parameters:
-                        param_name = param.get("name", "unknown")
-                        param_type = param.get("type", "any")
-                        required = param.get("required", False)
-                        param_desc = param.get("description", "No description")
-                        req_indicator = " (required)" if required else " (optional)"
-                        params_list.append(
-                            f"  - {param_name}: {param_desc}{req_indicator}"
-                        )
-
-                    # Format the parameters section
-                    param_str = ", ".join(
-                        [
-                            f"{p.get('name', 'unknown')}: {p.get('type', 'any')}"
-                            for p in parameters
-                        ]
+                params_list = []
+                for param_name, param_value in parameters.items():
+                    # print(param_name, param_value)
+                    param_type = param_value.get("type", "any")
+                    required = param_value.get("required", False)
+                    param_desc = param_value.get("description", "No description")
+                    req_indicator = " (required)" if required else " (optional)"
+                    params_list.append(
+                        f"  - {param_name}: type:{param_type}, {param_desc}{req_indicator}"
                     )
-                    tool_desc += f"\n[1] API call: {tool_name}({param_str})"
-                    tool_desc += f"\n[2] Args:\n" + "\n".join(params_list)
+
+                # Format the parameters section
+                param_str = "\n".join(params_list)
+                tool_desc += f"\n[1] API call: {tool_name}({param_str})"
+                tool_desc += f"\n[2] Args:\n" + "\n".join(params_list)
 
                 # tool_desc += f"\n[3] Example: {tool_name}(" + ", ".join([f"{p.get('name', 'unknown')}={p.get('default', '\"\"') if p.get('type') == 'string' else p.get('default', 'None')}" for p in parameters[:2]]) + ")"
                 tool_desc += f"\n[4] Available control item: Any control item in the {self.mcp_app_namespace} app."
@@ -481,7 +476,7 @@ class AppAgentPrompter(BasicPrompter):
                 api_list.append(tool_desc)
                 api_list.append("")
 
-        print(f"MCP tools prompts loaded: {api_list}")
+        # print(f"MCP tools prompts loaded: {api_list}")
 
         # Construct the prompt for each UI control action.
         api_list.append(

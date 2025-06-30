@@ -407,19 +407,19 @@ class HostAgent(BasicAgent):
     #     # Example usage of the HostAgent
 
 
-host_agent = HostAgent(
-    name="HostAgent",
-    is_visual=True,
-    main_prompt="./ufo/prompts/share/base/host_agent.yaml",
-    example_prompt="./ufo/prompts/examples/visual/host_agent_example.yaml",
-    api_prompt="./ufo/prompts/share/base/api.yaml",
-)
-print("HostAgent created with name:", host_agent.name)
+# host_agent = HostAgent(
+#     name="HostAgent",
+#     is_visual=True,
+#     main_prompt="./ufo/prompts/share/base/host_agent.yaml",
+#     example_prompt="./ufo/prompts/examples/visual/host_agent_example.yaml",
+#     api_prompt="./ufo/prompts/share/base/api.yaml",
+# )
+# print("HostAgent created with name:", host_agent.name)
 
-host_agent.create_third_party_app_agent(
-    agent_name="HardwareAgent",
-    request="Please interact with the hardware.",
-    mode="normal",
-    context=Context(),
-)
-print("Third-party app agent created successfully.")
+# host_agent.create_third_party_app_agent(
+#     agent_name="HardwareAgent",
+#     request="Please interact with the hardware.",
+#     mode="normal",
+#     context=Context(),
+# )
+# print("Third-party app agent created successfully.")

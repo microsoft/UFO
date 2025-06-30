@@ -65,7 +65,7 @@ class MCPClient:
         Raises:
             Exception: If the MCP server returns an error
         """
-        endpoint = f"http://{self.host}:{self.port}/sse"
+        endpoint = f"http://{self.host}:{self.port}/mcp"
 
         async def call_tool_async():
             async with Client(endpoint) as client:
@@ -154,7 +154,7 @@ class MCPClient:
         params = action.params
         app_namespace = params.app_namespace
 
-        endpoint = f"http://{self.host}:{self.port}/sse"
+        endpoint = f"http://{self.host}:{self.port}/mcp"
 
         async def get_tools_async():
             async with Client(endpoint) as client:
