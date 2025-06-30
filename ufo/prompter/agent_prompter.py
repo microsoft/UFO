@@ -479,22 +479,23 @@ class AppAgentPrompter(BasicPrompter):
         # print(f"MCP tools prompts loaded: {api_list}")
 
         # Construct the prompt for each UI control action.
-        api_list.append(
-            "- The action types for UI elements are: {actions}.".format(
-                actions=list(self.api_prompt_template.keys())
-            )
-        )
-
-        for key in self.api_prompt_template.keys():
-            api = self.api_prompt_template[key]
-            if verbose > 0:
-                api_text = "{summary}\n{usage}".format(
-                    summary=api["summary"], usage=api["usage"]
+        if self.api_prompt_template:
+            api_list.append(
+                "- The action types for UI elements are: {actions}.".format(
+                    actions=list(self.api_prompt_template.keys())
                 )
-            else:
-                api_text = api["summary"]
+            )
 
-            api_list.append(api_text)
+            for key in self.api_prompt_template.keys():
+                api = self.api_prompt_template[key]
+                if verbose > 0:
+                    api_text = "{summary}\n{usage}".format(
+                        summary=api["summary"], usage=api["usage"]
+                    )
+                else:
+                    api_text = api["summary"]
+
+                api_list.append(api_text)
 
         # Construct the prompt for COM APIs
         if self.app_api_prompt_template:

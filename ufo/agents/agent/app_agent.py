@@ -634,12 +634,12 @@ class AppAgent(BasicAgent):
             self.mcp_preferred_operations = [
                 tool.get("name", "") for tool in tools if tool.get("name")
             ]
-            utils.print_with_color(
-                f"Loaded {len(tools)} MCP tools from client response", "green"
-            )
-            utils.print_with_color(
-                f"MCP preferred operations: {self.mcp_preferred_operations}", "cyan"
-            )
+            # utils.print_with_color(
+            #     f"Loaded {len(tools)} MCP tools from client response", "green"
+            # )
+            # utils.print_with_color(
+            #     f"MCP preferred operations: {self.mcp_preferred_operations}", "cyan"
+            # )
 
     @property
     def default_state(self) -> ContinueAppAgentState:
