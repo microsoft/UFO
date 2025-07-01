@@ -321,6 +321,8 @@ class AppAgentProcessor(BaseProcessor):
             ),
             setter=self._get_app_window_control_info_action_callback
         )
+
+        
         
     def _get_app_window_control_info_action_callback(self, value):
         if isinstance(value, AppWindowControlInfo):

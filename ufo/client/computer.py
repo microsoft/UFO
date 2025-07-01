@@ -45,6 +45,7 @@ class ComputerBasic(ABC):
         self._action_servers = {}
         self._data_collection_clients = {}
         self._action_clients = {}
+        self._agent_name = "HostAgent/HostAgent"
 
     async def async_init(self) -> None:
         """
@@ -199,6 +200,68 @@ class ComputerBasic(ABC):
         )
         self._tools_registry[tool_key] = tool_info
 
+    async def add_server(
+        self, namespace: str, server: FastMCP, tool_type: Optional[str] = None
+    ) -> None:
+        """
+        Add a server and its tools to the computer.
+        :param namespace: The namespace of the server.
+        :param server: The MCP server to add.
+        :param tool_type: Optional type of tools (e.g., "action", "data_collection").
+        :return: None
+        """
+        if tool_type is None:
+            raise ValueError(
+                f"Tool type must be specified (i.e., {self._data_collection_namespaces} or {self._action_namespaces})."
+            )
+
+        if tool_type == self._data_collection_namespaces:
+            self._data_collection_servers[namespace] = server
+        elif tool_type == self._action_namespaces:
+            self._action_servers[namespace] = server
+        else:
+            raise ValueError(
+                f"Invalid tool type: {tool_type}. Must be one of {self._data_collection_namespaces} or {self._action_namespaces}."
+            )
+
+        await self.register_one_server(namespace, tool_type, server)
+
+    async def delete_server(
+        self, namespace: str, tool_type: Optional[str] = None
+    ) -> None:
+        """
+        Delete a server and its tools from the computer.
+        :param namesspace: The namespace of the server to delete.
+        :param tool_type: Optional type of tools to delete (e.g., "action", "data_collection").
+        :return: None
+        """
+        keys_to_remove = [
+            key
+            for key, tool in self._tools_registry.items()
+            if tool.namespace == namespace
+            and (tool_type is None or tool.tool_type == tool_type)
+        ]
+
+        for key in keys_to_remove:
+            del self._tools_registry[key]
+
+        # Remove the server from the action or data collection servers
+        if tool_type == self._data_collection_namespaces:
+            self._data_collection_servers.pop(namespace, None)
+        elif tool_type == self._action_namespaces:
+            self._action_servers.pop(namespace, None)
+
+    async def agent_update(self, agent_name: str):
+        """
+        Update the agent name for the computer.
+        :param agent_name: The new name for the agent.
+        """
+        if not agent_name:
+            raise ValueError("Agent name cannot be empty.")
+        if agent_name == self._agent_name:
+            # No change needed
+            return
+
     def list_tools(
         self, tool_type: Optional[str] = None, namespace: Optional[str] = None
     ) -> List[MCPToolCall]:
@@ -219,6 +282,22 @@ class ComputerBasic(ABC):
         """
         TODO: Implement a method to convert a response to an MCPToolCall.
         """
+
+    @property
+    def agent_name(self) -> str:
+        """
+        Get the name of the agent.
+        :return: The name of the agent.
+        """
+        return self._agent_name
+
+    @agent_name.setter
+    def agent_name(self, name: str):
+        """
+        Set the name of the agent.
+        :param name: The name to set for the agent.
+        """
+        self._agent_name = name
 
     @property
     def data_collection_servers(self) -> Dict[str, FastMCP]:
@@ -242,3 +321,45 @@ class ComputerBasic(ABC):
         Get the name of the computer
         """
         return self._name
+
+
+class Computer(ComputerBasic):
+    """
+    Class for managing computer operations and actions.
+    This class extends ComputerBasic to provide additional functionality.
+    """
+
+    def __init__(self, name: str):
+        super().__init__(name)
+        self._desktop = None
+        self._selected_app_window = None
+
+    @property
+    def desktop(self):
+        """
+        Get the desktop of the computer.
+        :return: The desktop object.
+        """
+        return self._desktop
+
+    @property
+    def selected_app_window(self):
+        """
+        Get the currently selected application window.
+        :return: The selected application window object.
+        """
+        return self._selected_app_window
+
+    @selected_app_window.setter
+    def selected_app_window(self, window):
+        """
+        Set the currently selected application window.
+        :param window: The application window to set as selected.
+        """
+        self._selected_app_window = window
+
+    def _init_action_servers(self):
+        pass
+
+    def _init_data_collection_servers(self):
+        pass
