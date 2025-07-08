@@ -27,6 +27,7 @@ sessions: Dict[str, ServiceSession] = {}
 
 online_clients = {}
 task_results = {}  # 存任务执行结果
+ws_event_loop = None
 task_id_counter = 0  # 自增任务ID
 
 
@@ -134,6 +135,8 @@ def dispatch_task_api():
     dispatch task to：POST {"client_id": "...", "request": "..."}
     """
     global task_id_counter
+    global ws_event_loop
+
     data = request.json
     client_id = data["client_id"]
     task_content = data["request"]
@@ -148,7 +151,7 @@ def dispatch_task_api():
         ws.send(
             json.dumps({"type": "task", "task_id": task_id, "request": task_content})
         ),
-        asyncio.get_event_loop(),
+        ws_event_loop,
     )
     return jsonify({"status": "dispatched", "task_id": task_id})
 
@@ -192,11 +195,13 @@ async def ws_handler(websocket, path):
 
 
 def run_ws():
-    asyncio.set_event_loop(asyncio.new_event_loop())
+    global ws_event_loop
+    ws_event_loop = asyncio.new_event_loop()
+    asyncio.set_event_loop(ws_event_loop)
     ws_server = websockets.serve(ws_handler, "0.0.0.0", 8765)
-    asyncio.get_event_loop().run_until_complete(ws_server)
+    ws_event_loop.run_until_complete(ws_server)
     print("WebSocket server started on :8765")
-    asyncio.get_event_loop().run_forever()
+    ws_event_loop.run_forever()
 
 
 def run_flask():
