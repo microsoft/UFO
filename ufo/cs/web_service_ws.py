@@ -34,12 +34,19 @@ def run_task_core(data: UFORequest):
     """
     Core logic for running a task based on the request data.
     This function is called by the run_task endpoint.
+    :param data: UFORequest object containing session_id and request text.
+    :return: UFOResponse object containing session_id, status, actions, and messages.
     """
     session_id = data.session_id
 
     if session_id is None or session_id not in sessions:
         # Create a new session if it doesn't exist
         session_id = str(uuid4())
+        if data.request:
+            logger.info(
+                f"Session {session_id} initialized with request: {data.request}"
+            )
+
         session = ServiceSession(
             task=session_id,
             should_evaluate=False,
@@ -48,9 +55,14 @@ def run_task_core(data: UFORequest):
         )
         sessions[session_id] = session
         logger.info(f"Created new session: {session_id}")
+
     else:
         # Retrieve existing session
         session = sessions[session_id]
+        # Update session state with action results
+        if data.action_results:
+            session.update_session_state_from_action_results(data.action_results)
+            logger.info(f"Updated session {session_id} with action results")
 
     # Process the request and get actions
     status = "continue"

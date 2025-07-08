@@ -1029,8 +1029,6 @@ class BaseSession(ABC):
 
         evaluator.print_response(result)
 
-        self.evaluation_logger.info(json.dumps(result)) @ property
-
         self.evaluation_logger.info(json.dumps(result))
 
     @property
