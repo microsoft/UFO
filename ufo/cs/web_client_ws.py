@@ -63,6 +63,14 @@ class UFOWebClient:
         else:
             self.mcp_client = None
 
+    async def async_init(self):
+        """
+        Asynchronous initialization of the UFO web client.
+        This method is called to ensure the Computer instance is ready.
+        """
+        await self.computer.async_init()
+        logger.info("UFO Web Client initialized successfully")
+
     def run_task(self, request_text):
         """
         Run a task by communicating with the UFO web service
@@ -224,7 +232,7 @@ async def websocket_client_main(server_addr, client_id, ufo_web_client: UFOWebCl
                 print(f"[WebSocket] Sent result for {task_id}")
 
 
-def main():
+async def main():
     """Main entry point for the UFO web client"""
     # Parse command line arguments
     parser = argparse.ArgumentParser(description="UFO Web Client")
@@ -282,12 +290,12 @@ def main():
         core_mcp_port=args.core_mcp_port,
     )
 
+    await client.async_init()
+
     if args.ws:
         # Run in WebSocket mode
         try:
-            asyncio.run(
-                websocket_client_main(args.ws_server_url, args.client_id, client)
-            )
+            await websocket_client_main(args.ws_server_url, args.client_id, client)
         except Exception as e:
             logger.error(f"WebSocket client error: {str(e)}", exc_info=True)
             sys.exit(1)
@@ -303,4 +311,4 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    asyncio.run(main())

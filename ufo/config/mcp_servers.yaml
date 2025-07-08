@@ -3,65 +3,7 @@
 
 # MCP Server Configuration
 mcp_servers:
-  powerpoint:
-    name: "PowerPoint MCP Server"
-    description: "MCP server for Microsoft PowerPoint automation and control"
-    endpoint: "http://localhost:8001"
-    instructions_path: "config/mcp_instructions/powerpoint.yaml"
-    timeout: 30
-    retry_count: 3
-    health_check_endpoint: "/health"
-    tools_endpoint: "/tools"
-    execute_endpoint: "/execute_tool"
-    enabled: true
-    
-  word:
-    name: "Word MCP Server"
-    description: "MCP server for Microsoft Word automation and document manipulation"
-    endpoint: "http://localhost:8002"
-    instructions_path: "config/mcp_instructions/word.yaml"
-    timeout: 30
-    retry_count: 3
-    health_check_endpoint: "/health"
-    tools_endpoint: "/tools"
-    execute_endpoint: "/execute_tool"
-    enabled: true
-    
-  excel:
-    name: "Excel MCP Server"
-    description: "MCP server for Microsoft Excel automation and spreadsheet manipulation"
-    endpoint: "http://localhost:8003"
-    instructions_path: "config/mcp_instructions/excel.yaml"
-    timeout: 30
-    retry_count: 3
-    health_check_endpoint: "/health"
-    tools_endpoint: "/tools"
-    execute_endpoint: "/execute_tool"
-    enabled: true
-    
-  web:
-    name: "Web MCP Server"
-    description: "MCP server for web browser automation and web page interaction"
-    endpoint: "http://localhost:8004"
-    instructions_path: "config/mcp_instructions/web.yaml"
-    timeout: 30
-    retry_count: 3
-    health_check_endpoint: "/health"
-    tools_endpoint: "/tools"
-    execute_endpoint: "/execute_tool"
-    enabled: true
-    
-  shell:
-    name: "Shell MCP Server"
-    description: "MCP server for shell command execution and system operations"
-    endpoint: "http://localhost:8005"
-    instructions_path: "config/mcp_instructions/shell.yaml"
-    timeout: 30
-    retry_count: 3
-    health_check_endpoint: "/health"
-    tools_endpoint: "/tools"
-    execute_endpoint: "/execute_tool"
-    enabled: true
+
 
   hardware:
     name: "Hardware MCP Server"

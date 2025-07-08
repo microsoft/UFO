@@ -142,10 +142,10 @@ def dispatch_task_api():
     task_content = data["request"]
     if client_id not in online_clients:
         return jsonify({"error": "client not online"}), 404
-    # 生成唯一任务id
+    # generate a unique task ID
     task_id_counter += 1
     task_id = f"task_{task_id_counter}"
-    # 通过WebSocket下发任务（关键改动）
+    # dispatch the task to the specified client
     ws = online_clients[client_id]
     asyncio.run_coroutine_threadsafe(
         ws.send(
@@ -198,7 +198,9 @@ def run_ws():
     global ws_event_loop
     ws_event_loop = asyncio.new_event_loop()
     asyncio.set_event_loop(ws_event_loop)
-    ws_server = websockets.serve(ws_handler, "0.0.0.0", 8765)
+    ws_server = websockets.serve(
+        ws_handler, "0.0.0.0", 8765, ping_interval=100, ping_timeout=100
+    )
     ws_event_loop.run_until_complete(ws_server)
     print("WebSocket server started on :8765")
     ws_event_loop.run_forever()

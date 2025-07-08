@@ -1,47 +1,48 @@
+import asyncio
 import os
 import subprocess
+import threading
 import time
-import yaml
-from typing import Dict, List, Any, Optional
+from typing import Any, Dict, List, Optional
 
+import yaml
 from pywinauto.controls.uiawrapper import UIAWrapper
 from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
 from ufo.automator.action_execution import ActionSequenceExecutor
+from ufo.automator.app_apis.factory import (
+    COMReceiverFactory,
+    ShellReceiverFactory,
+    WebReceiverFactory,
+)
 from ufo.automator.puppeteer import AppPuppeteer, ReceiverManager
 from ufo.automator.ui_control import ui_tree
+from ufo.automator.ui_control.grounding.basic import BasicGrounding
+from ufo.automator.ui_control.inspector import ControlInspectorFacade
+from ufo.automator.ui_control.screenshot import PhotographerFacade
+from ufo.config import Config
 from ufo.cs.contracts import (
     ActionBase,
     AppWindowControlInfo,
     CallbackAction,
-    CaptureDesktopScreenshotAction,
     CaptureAppWindowScreenshotAction,
     CaptureAppWindowScreenshotFromWebcamAction,
+    CaptureDesktopScreenshotAction,
     CaptureDesktopScreenshotParams,
     ControlInfo,
+    FindControlElementsAction,
+    GetAppWindowControlInfoAction,
     GetAppWindowControlInfoParams,
     GetDesktopAppInfoAction,
-    GetAppWindowControlInfoAction,
-    FindControlElementsAction,
     GetDesktopAppInfoParams,
     GetUITreeAction,
+    LaunchApplicationAction,
+    MCPGetAvailableToolsAction,
+    MCPGetInstructionsAction,
+    MCPToolExecutionAction,
+    OperationCommand,
     Rect,
     SelectApplicationWindowAction,
-    LaunchApplicationAction,
-    OperationCommand,
     WindowInfo,
-    MCPToolExecutionAction,
-    MCPGetInstructionsAction,
-    MCPGetAvailableToolsAction,
-)
-
-from ufo.automator.ui_control.inspector import ControlInspectorFacade
-from ufo.automator.ui_control.screenshot import PhotographerFacade
-from ufo.automator.ui_control.grounding.basic import BasicGrounding
-from ufo.config import Config
-from ufo.automator.app_apis.factory import (
-    COMReceiverFactory,
-    WebReceiverFactory,
-    ShellReceiverFactory,
 )
 from ufo.mcp.mcp_client import MCPClient
 
@@ -50,6 +51,23 @@ configs = Config.get_instance().config_data
 if configs is not None:
     CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"])
     BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
+
+
+_background_loop = None
+
+
+def _ensure_background_loop():
+    global _background_loop
+    if _background_loop and _background_loop.is_running():
+        return _background_loop
+
+    def loop_runner(loop):
+        asyncio.set_event_loop(loop)
+        loop.run_forever()
+
+    _background_loop = asyncio.new_event_loop()
+    threading.Thread(target=loop_runner, args=(_background_loop,), daemon=True).start()
+    return _background_loop
 
 
 class Computer:
@@ -76,8 +94,12 @@ class Computer:
 
         self._init_receivers()
 
+        # if configs and configs.get("USE_MCP", False):
+        #     self._init_mcp_servers()
+
+    async def async_init(self):
         if configs and configs.get("USE_MCP", False):
-            self._init_mcp_servers()
+            await self._init_mcp_servers()
 
     @property
     def name(self) -> str:
@@ -89,7 +111,7 @@ class Computer:
         # Receivers are auto-registered via @ReceiverManager.register decorators
         pass
 
-    def _init_mcp_servers(self):
+    async def _init_mcp_servers(self):
         """Initialize MCP server connections for client applications."""
         # Get the base directory for UFO2
         base_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -190,7 +212,7 @@ class Computer:
                     params=MCPGetAvailableToolsParams(app_namespace=namespace)
                 )
 
-                result = mcp_client._handle_mcp_get_available_tools(temp_action)
+                result = await mcp_client._handle_mcp_get_available_tools(temp_action)
                 if result.get("tools"):
                     # Normalize the MCP tools schema before updating instructions
                     normalized_tools = self._normalize_tool_schema(
@@ -204,10 +226,13 @@ class Computer:
                         # Create new entry if namespace doesn't exist
                         self.mcp_instructions[namespace] = {"tools": normalized_tools}
             except Exception as e:
+                import traceback
+
                 from ufo.utils import print_with_color
 
                 print_with_color(
-                    f"Failed to fetch tools for {namespace}: {e}", "yellow"
+                    f"Failed to fetch tools for {namespace}: {traceback.format_exc()}",
+                    "yellow",
                 )
 
     def run_action(self, action: ActionBase) -> Dict[str, Any]:
@@ -808,7 +833,20 @@ class Computer:
 
             # Create general MCP client and execute tool
             mcp_client = MCPClient.create_client(endpoint, app_namespace)
-            result = mcp_client._make_tool_call(tool_name, tool_args)
+            coro = mcp_client._make_tool_call(tool_name, tool_args)
+
+            # 在同步函数中安全调用 async 函数
+            try:
+                loop = asyncio.get_running_loop()
+            except RuntimeError:
+                # 没有事件循环，安全运行
+                result = asyncio.run(coro)
+            else:
+                result = asyncio.run_coroutine_threadsafe(
+                    coro, _ensure_background_loop()
+                ).result()
+
+            # result = mcp_client._make_tool_call(tool_name, tool_args)
 
             return {
                 "success": True,
@@ -852,7 +890,22 @@ class Computer:
             server_config = self.mcp_servers[app_namespace]
             endpoint = server_config["endpoint"]
             mcp_client = MCPClient.create_client(endpoint, app_namespace)
-            result = mcp_client._handle_mcp_get_available_tools(action)
+
+            coro = mcp_client._handle_mcp_get_available_tools(action)
+
+            # 在同步函数中安全调用 async 函数
+            try:
+                loop = asyncio.get_running_loop()
+            except RuntimeError:
+                # 没有事件循环，安全运行
+                result = asyncio.run(coro)
+                print(f"Result: {result}")
+            else:
+                result = asyncio.run_coroutine_threadsafe(
+                    coro, _ensure_background_loop()
+                ).result()
+
+            # result = mcp_client._handle_mcp_get_available_tools(action)
 
             return {
                 "namespace": app_namespace,

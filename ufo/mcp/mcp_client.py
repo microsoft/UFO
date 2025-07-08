@@ -51,7 +51,7 @@ class MCPClient:
 
         logger.info(f"Initialized MCP client for {app_namespace} at {self.base_url}")
 
-    def _make_tool_call(self, tool_name: str, arguments: Dict[str, Any]) -> Any:
+    async def _make_tool_call(self, tool_name: str, arguments: Dict[str, Any]) -> Any:
         """
         Make a tool call to the MCP server using SSE transport.
 
@@ -69,11 +69,14 @@ class MCPClient:
 
         async def call_tool_async():
             async with Client(endpoint) as client:
-                result = await client.call_tool(tool_name, arguments)
+                if not tool_name:
+                    result = "No tool name provided."
+                else:
+                    result = await client.call_tool(tool_name, arguments)
                 return result
 
         try:
-            result = asyncio.run(call_tool_async())
+            result = await call_tool_async()
 
             # Handle the result content
             if hasattr(result, "content") and result.content:
@@ -105,7 +108,11 @@ class MCPClient:
             return result
 
         except Exception as e:
-            logger.error(f"Failed to call MCP tool {tool_name}: {str(e)}")
+            import traceback
+
+            logger.error(
+                f"Failed to call MCP tool {tool_name}: {str(traceback.format_exc())}"
+            )
             raise Exception(f"MCP communication error: {str(e)}")
 
     def _handle_mcp_get_instructions(
@@ -134,7 +141,7 @@ class MCPClient:
             "app_namespace": app_namespace,
         }
 
-    def _handle_mcp_get_available_tools(
+    async def _handle_mcp_get_available_tools(
         self, action: MCPGetAvailableToolsAction
     ) -> Dict[str, Any]:
         """
@@ -162,7 +169,10 @@ class MCPClient:
                 return tools_result
 
         try:
-            tools = asyncio.run(get_tools_async())
+            tools = await get_tools_async()
+            # tools = asyncio.run(get_tools_async())
+            # loop = asyncio.get_event_loop()
+            # tools = loop.run_until_complete(get_tools_async())
             if not tools:
                 return {"error": "No tools available for this app namespace"}
 
