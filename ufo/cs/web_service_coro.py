@@ -91,7 +91,6 @@ def run_task():
         )
 
         logger.info(f"Session {session_id} status: {status}, Actions: {len(actions)}")
-        logger.info(f"Actions: {actions}")
         logger.info(f"Response: {response.model_dump()}")
 
         return jsonify(response.model_dump())
