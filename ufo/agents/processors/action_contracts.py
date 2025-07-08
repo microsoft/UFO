@@ -225,7 +225,7 @@ class ActionSequence:
     A sequence of one-step actions.
     """
 
-    def __init__(self, actions: Optional[List[OneStepAction]] = []):
+    def __init__(self, actions: Optional[List[OneStepAction]] = None):
 
         if not actions:
             actions = []

@@ -38,8 +38,8 @@ class SessionDataManager:
         
     @staticmethod
     def time_hash_str(data: str):
-        timestamp = int(time.time())  
-        hash_value = mmh3.hash64(f"{data}-{timestamp}")[0]  # Generate hash
+        # timestamp = int(time.time())  
+        # hash_value = mmh3.hash64(f"{data}-{timestamp}")[0]  # Generate hash
         return str(uuid.uuid4())  # Convert to string
 
     def add_action(self, action: ActionBase, setter: Callable[[Any], None] = None):
@@ -74,7 +74,11 @@ class SessionDataManager:
                     print(f"Error in action setter for {call_id}: {e}")
         
         self.result_available = True
-        
+
+    @property
+    def actions_to_run(self) -> List[ActionBase]:
+        return self.session_data.actions_to_run
+
     def get_desktop_windows_info(self) -> List[Dict[str, str]]:
         windows_info = self.session_data.state.desktop_windows_info
         return [
