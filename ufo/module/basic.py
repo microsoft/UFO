@@ -116,6 +116,8 @@ class BaseRound(ABC):
 
             self.agent.handle(self.context)
 
+            # Take action
+
             self.state = self.agent.state.next_state(self.agent)
             self.agent = self.agent.state.next_agent(self.agent)
 
@@ -320,6 +322,7 @@ class BaseRound(ABC):
             utils.print_with_color(
                 f"Request total cost for current round is {formatted_cost}", "yellow"
             )
+
     @property
     def log_path(self) -> str:
         """
@@ -332,16 +335,20 @@ class BaseRound(ABC):
     def _app_window_screenshot_callback(self, value, save_path: str) -> None:
         """
         Callback method to save app window screenshot data from action.
-        
+
         Args:
             value: The result returned from the action
             save_path: Path to save the screenshot
         """
-        if value and isinstance(value, str) and value.startswith("data:image/png;base64,"):
+        if (
+            value
+            and isinstance(value, str)
+            and value.startswith("data:image/png;base64,")
+        ):
             try:
                 img_data = utils.decode_base64_image(value)
                 os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                with open(save_path, 'wb') as f:
+                with open(save_path, "wb") as f:
                     f.write(img_data)
             except Exception as e:
                 utils.print_with_color(
@@ -352,16 +359,20 @@ class BaseRound(ABC):
     def _desktop_screenshot_callback(self, value, save_path: str) -> None:
         """
         Callback method to save desktop screenshot data from action.
-        
+
         Args:
             value: The result returned from the action
             save_path: Path to save the screenshot
         """
-        if value and isinstance(value, str) and value.startswith("data:image/png;base64,"):
+        if (
+            value
+            and isinstance(value, str)
+            and value.startswith("data:image/png;base64,")
+        ):
             try:
                 img_data = utils.decode_base64_image(value)
                 os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                with open(save_path, 'wb') as f:
+                with open(save_path, "wb") as f:
                     f.write(img_data)
             except Exception as e:
                 utils.print_with_color(
@@ -372,7 +383,7 @@ class BaseRound(ABC):
     def _ui_tree_callback(self, value, save_path: str) -> None:
         """
         Callback method to save UI tree data from action.
-        
+
         Args:
             value: The result returned from the action
             save_path: Path to save the UI tree JSON file
@@ -381,18 +392,19 @@ class BaseRound(ABC):
             try:
                 # Extract ui_tree from the response if it's nested
                 ui_tree_data = value.get("ui_tree", value)
-                
+
                 # If ui_tree_data is still a string representation, parse it
                 if isinstance(ui_tree_data, str):
                     import json
+
                     try:
                         ui_tree_data = json.loads(ui_tree_data)
                     except json.JSONDecodeError:
                         # If it's not valid JSON, treat it as direct dict
                         pass
-                
+
                 os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                with open(save_path, 'w') as f:
+                with open(save_path, "w") as f:
                     json.dump(ui_tree_data, f, indent=4)
             except Exception as e:
                 utils.print_with_color(
@@ -408,22 +420,29 @@ class BaseRound(ABC):
 
         # Capture the final screenshot
         if sub_round_id is None:
-            screenshot_save_path = self.log_path + f"action_round_{self.id}_final.png"        
+            screenshot_save_path = self.log_path + f"action_round_{self.id}_final.png"
         else:
             screenshot_save_path = (
                 self.log_path
                 + f"action_round_{self.id}_sub_round_{sub_round_id}_final.png"
             )
 
-        if self.application_window is not None or self.application_window_info is not None:
+        if (
+            self.application_window is not None
+            or self.application_window_info is not None
+        ):
 
             try:
                 # Get session data manager from context
-                session_data_manager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
-                
+                session_data_manager = self.context.get(
+                    ContextNames.SESSION_DATA_MANAGER
+                )
+
                 # Get application window info for annotation_id
-                application_window_info = self.context.get(ContextNames.APPLICATION_WINDOW_INFO)
-                
+                application_window_info = self.context.get(
+                    ContextNames.APPLICATION_WINDOW_INFO
+                )
+
                 if session_data_manager and application_window_info:
                     # Use action/callback pattern for app window screenshot
                     app_screenshot_action = CaptureAppWindowScreenshotAction(
@@ -433,7 +452,9 @@ class BaseRound(ABC):
                     )
                     session_data_manager.add_action(
                         app_screenshot_action,
-                        setter=lambda value: self._app_window_screenshot_callback(value, screenshot_save_path)
+                        setter=lambda value: self._app_window_screenshot_callback(
+                            value, screenshot_save_path
+                        ),
                     )
                 else:
                     # Fallback to direct call if action pattern is not available
@@ -445,14 +466,18 @@ class BaseRound(ABC):
                 utils.print_with_color(
                     f"Warning: The last snapshot capture failed, due to the error: {e}",
                     "yellow",
-                )           
+                )
             if configs.get("SAVE_UI_TREE", False):
                 # Get session data manager from context
-                session_data_manager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
-                
+                session_data_manager = self.context.get(
+                    ContextNames.SESSION_DATA_MANAGER
+                )
+
                 # Get application window info for annotation_id
-                application_window_info = self.context.get(ContextNames.APPLICATION_WINDOW_INFO)
-                
+                application_window_info = self.context.get(
+                    ContextNames.APPLICATION_WINDOW_INFO
+                )
+
                 if session_data_manager and application_window_info:
                     # Use action/callback pattern for UI tree capture
                     ui_tree_path = os.path.join(self.log_path, "ui_trees")
@@ -462,16 +487,18 @@ class BaseRound(ABC):
                         else f"ui_tree_round_{self.id}_sub_round_{sub_round_id}_final.json"
                     )
                     ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
-                    
+
                     ui_tree_action = GetUITreeAction(
                         params=GetUITreeParams(
                             annotation_id=application_window_info.annotation_id,
-                            remove_empty=True
+                            remove_empty=True,
                         )
                     )
                     session_data_manager.add_action(
                         ui_tree_action,
-                        setter=lambda value: self._ui_tree_callback(value, ui_tree_save_path)
+                        setter=lambda value: self._ui_tree_callback(
+                            value, ui_tree_save_path
+                        ),
                     )
                 else:
                     # Fallback to direct call if action pattern is not available
@@ -494,15 +521,19 @@ class BaseRound(ABC):
                 )
 
                 # Capture the desktop screenshot for all screens using action/callback pattern
-                session_data_manager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
-                
+                session_data_manager = self.context.get(
+                    ContextNames.SESSION_DATA_MANAGER
+                )
+
                 if session_data_manager:
                     desktop_screenshot_action = CaptureDesktopScreenshotAction(
                         params=CaptureDesktopScreenshotParams(all_screens=True)
                     )
                     session_data_manager.add_action(
                         desktop_screenshot_action,
-                        setter=lambda value: self._desktop_screenshot_callback(value, desktop_save_path)
+                        setter=lambda value: self._desktop_screenshot_callback(
+                            value, desktop_save_path
+                        ),
                     )
                 else:
                     # Fallback to direct call if action pattern is not available
@@ -559,7 +590,7 @@ class BaseRound(ABC):
         return: The application window info of the session.
         """
         return self._context.get(ContextNames.APPLICATION_WINDOW_INFO)
-    
+
     @application_window_info.setter
     def application_window_info(self, app_window_info: Dict[str, str]) -> None:
         """
@@ -728,8 +759,10 @@ class BaseSession(ABC):
         # Initialize the session cost and step
         self.context.set(ContextNames.SESSION_COST, 0)
         self.context.set(ContextNames.SESSION_STEP, 0)
-        
-        self.context.set(ContextNames.SESSION_DATA_MANAGER, SessionDataManager(str(uuid4())))
+
+        self.context.set(
+            ContextNames.SESSION_DATA_MANAGER, SessionDataManager(str(uuid4()))
+        )
 
     @property
     def id(self) -> str:
@@ -897,7 +930,7 @@ class BaseSession(ABC):
             utils.print_with_color(
                 "Cost is not available for the model {host_model} or {app_model}.".format(
                     host_model=configs["HOST_AGENT"]["API_MODEL"],
-                    app_model=config["APP_AGENT"]["API_MODEL"],
+                    app_model=configs["APP_AGENT"]["API_MODEL"],
                 ),
                 "yellow",
             )
@@ -916,7 +949,8 @@ class BaseSession(ABC):
         Check if the session is ended.
         return: True if the session is ended, otherwise False.
         """
-        if ((self.current_round and self.current_round.is_finished())
+        if (
+            (self.current_round and self.current_round.is_finished())
             or self.step >= configs["MAX_STEP"]
             or self.total_rounds >= configs["MAX_ROUND"]
         ):
@@ -926,7 +960,7 @@ class BaseSession(ABC):
             return True
 
         return False
-    
+
     def is_finished_legacy(self) -> bool:
         """
         This is legacy logic of is_finished, coroutine version requires this method to achieve multi-round behavior.
@@ -938,10 +972,10 @@ class BaseSession(ABC):
             or self.total_rounds >= configs["MAX_ROUND"]
         ):
             return True
-        
+
         if self.is_error():
             return True
-        
+
         return False
 
     @abstractmethod
@@ -995,7 +1029,9 @@ class BaseSession(ABC):
 
         evaluator.print_response(result)
 
-        self.evaluation_logger.info(json.dumps(result))    
+        self.evaluation_logger.info(json.dumps(result)) @ property
+
+        self.evaluation_logger.info(json.dumps(result))
 
     @property
     def session_type(self) -> str:
@@ -1008,16 +1044,20 @@ class BaseSession(ABC):
     def _app_window_screenshot_callback(self, value, save_path: str) -> None:
         """
         Callback method to save app window screenshot data from action.
-        
+
         Args:
             value: The result returned from the action
             save_path: Path to save the screenshot
         """
-        if value and isinstance(value, str) and value.startswith("data:image/png;base64,"):
+        if (
+            value
+            and isinstance(value, str)
+            and value.startswith("data:image/png;base64,")
+        ):
             try:
                 img_data = utils.decode_base64_image(value)
                 os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                with open(save_path, 'wb') as f:
+                with open(save_path, "wb") as f:
                     f.write(img_data)
             except Exception as e:
                 utils.print_with_color(
@@ -1028,16 +1068,20 @@ class BaseSession(ABC):
     def _desktop_screenshot_callback(self, value, save_path: str) -> None:
         """
         Callback method to save desktop screenshot data from action.
-        
+
         Args:
             value: The result returned from the action
             save_path: Path to save the screenshot
         """
-        if value and isinstance(value, str) and value.startswith("data:image/png;base64,"):
+        if (
+            value
+            and isinstance(value, str)
+            and value.startswith("data:image/png;base64,")
+        ):
             try:
                 img_data = utils.decode_base64_image(value)
                 os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                with open(save_path, 'wb') as f:
+                with open(save_path, "wb") as f:
                     f.write(img_data)
             except Exception as e:
                 utils.print_with_color(
@@ -1048,16 +1092,29 @@ class BaseSession(ABC):
     def capture_last_snapshot(self) -> None:
         """
         Capture the last snapshot of the application, including the screenshot and the XML file if configured.
-        """        # Capture the final screenshot
+        """  # Capture the final screenshot
         screenshot_save_path = self.log_path + f"action_step_final.png"
 
-        if self.application_window is not None or self.application_window_info is not None:
+        if (
+            self.application_window is not None
+            or self.application_window_info is not None
+        ):
 
             try:
                 # Get session data manager from context
-                session_data_manager = self._context.get(ContextNames.SESSION_DATA_MANAGER)
+                session_data_manager = self._context.get(
+                    ContextNames.SESSION_DATA_MANAGER
+                )
+
+                session_data_manager = self._context.get(
+                    ContextNames.SESSION_DATA_MANAGER
+                )
 
                 # Get application window info for annotation_id
+                application_window_info = self._context.get(
+                    ContextNames.APPLICATION_WINDOW_INFO
+                )
+
                 application_window_info = self.application_window_info
 
                 if session_data_manager and application_window_info:
@@ -1069,7 +1126,9 @@ class BaseSession(ABC):
                     )
                     session_data_manager.add_action(
                         app_screenshot_action,
-                        setter=lambda value: self._app_window_screenshot_callback(value, screenshot_save_path)
+                        setter=lambda value: self._app_window_screenshot_callback(
+                            value, screenshot_save_path
+                        ),
                     )
                 else:
                     # Fallback to direct call if action pattern is not available
@@ -1081,12 +1140,18 @@ class BaseSession(ABC):
                 utils.print_with_color(
                     f"Warning: The last snapshot capture failed, due to the error: {e}",
                     "yellow",
-                )            
+                )
             if configs.get("SAVE_UI_TREE", False):
                 # Get session data manager from context
-                session_data_manager = self._context.get(ContextNames.SESSION_DATA_MANAGER)
-                
+                session_data_manager = self._context.get(
+                    ContextNames.SESSION_DATA_MANAGER
+                )
+
                 # Get application window info for annotation_id
+                application_window_info = self._context.get(
+                    ContextNames.APPLICATION_WINDOW_INFO
+                )
+
                 application_window_info = self.application_window_info
 
                 if session_data_manager and application_window_info:
@@ -1094,16 +1159,18 @@ class BaseSession(ABC):
                     ui_tree_path = os.path.join(self.log_path, "ui_trees")
                     ui_tree_file_name = "ui_tree_final.json"
                     ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
-                    
+
                     ui_tree_action = GetUITreeAction(
                         params=GetUITreeParams(
                             annotation_id=application_window_info.annotation_id,
-                            remove_empty=True
+                            remove_empty=True,
                         )
                     )
                     session_data_manager.add_action(
                         ui_tree_action,
-                        setter=lambda value: self._ui_tree_callback(value, ui_tree_save_path)
+                        setter=lambda value: self._ui_tree_callback(
+                            value, ui_tree_save_path
+                        ),
                     )
                 else:
                     # Fallback to direct call if action pattern is not available
@@ -1119,15 +1186,19 @@ class BaseSession(ABC):
                 desktop_save_path = self.log_path + f"desktop_final.png"
 
                 # Capture the desktop screenshot for all screens using action/callback pattern
-                session_data_manager = self._context.get(ContextNames.SESSION_DATA_MANAGER)
-                
+                session_data_manager = self._context.get(
+                    ContextNames.SESSION_DATA_MANAGER
+                )
+
                 if session_data_manager:
                     desktop_screenshot_action = CaptureDesktopScreenshotAction(
                         params=CaptureDesktopScreenshotParams(all_screens=True)
                     )
                     session_data_manager.add_action(
                         desktop_screenshot_action,
-                        setter=lambda value: self._desktop_screenshot_callback(value, desktop_save_path)
+                        setter=lambda value: self._desktop_screenshot_callback(
+                            value, desktop_save_path
+                        ),
                     )
                 else:
                     # Fallback to direct call if action pattern is not available
@@ -1169,12 +1240,18 @@ class BaseSession(ABC):
         logger.setLevel(configs["LOG_LEVEL"])
 
         return logger
-    
+
     def get_actions(self) -> list[ActionBase]:
-        session_data_manager: SessionDataManager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
+        session_data_manager: SessionDataManager = self.context.get(
+            ContextNames.SESSION_DATA_MANAGER
+        )
         return session_data_manager.actions_to_run
-    
-    def update_session_state_from_action_results(self, action_results: dict[str, any]) -> None:
-        session_data_manager: SessionDataManager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
+
+    def update_session_state_from_action_results(
+        self, action_results: dict[str, any]
+    ) -> None:
+        session_data_manager: SessionDataManager = self.context.get(
+            ContextNames.SESSION_DATA_MANAGER
+        )
         session_data_manager.update_session_state_from_action_results(action_results)
         session_data_manager.clear_roundtrip_data()

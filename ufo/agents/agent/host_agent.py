@@ -6,10 +6,12 @@ from __future__ import annotations
 
 from typing import Dict, List, Union, Generator
 
+
 from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
-from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.agent.basic import BasicAgent, AgentRegistry
 from ufo.agents.agent.follower_agent import FollowerAgent
+from ufo.agents.agent.hardware_agent import HardwareAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
@@ -33,6 +35,7 @@ class AgentFactory:
         :param agent_type: The type of agent to create.
         :return: The created agent.
         """
+
         if agent_type == "host":
             return HostAgent(*args, **kwargs)
         elif agent_type == "app":
@@ -43,10 +46,13 @@ class AgentFactory:
             return AppAgent(*args, **kwargs)
         elif agent_type == "operator":
             return OpenAIOperatorAgent(*args, **kwargs)
+        elif agent_type in AgentRegistry.list_agents():
+            return AgentRegistry.get(agent_type)(*args, **kwargs)
         else:
             raise ValueError("Invalid agent type: {}".format(agent_type))
 
 
+@AgentRegistry.register(agent_name="hostagent")
 class HostAgent(BasicAgent):
     """
     The HostAgent class the manager of AppAgents.
@@ -131,6 +137,10 @@ class HostAgent(BasicAgent):
         self.appagent_dict[agent_name] = app_agent
         app_agent.host = self
         self._active_appagent = app_agent
+
+        print(
+            f"Created sub agent: {agent_name} with type {agent_type} and process name {process_name}, class {app_agent.__class__.__name__}"
+        )
 
         return app_agent
 
@@ -289,6 +299,39 @@ class HostAgent(BasicAgent):
 
         return app_agent
 
+    def create_third_party_app_agent(
+        self,
+        agent_name: str,
+        request: str,
+        mode: str,
+        context: Context = None,
+    ) -> AppAgent:
+        """
+        Create a third-party app agent for the host agent.
+        :param application_window_name: The name of the application window.
+        :param application_root_name: The name of the application root.
+        :param request: The user request.
+        :param mode: The mode of the session.
+        :return: The app agent.
+        """
+        # For third-party applications, we use the same logic as create_app_agent.
+
+        third_party_agent_config = configs.get("THIRD_PARTY_AGENT_CONFIG", {}).get(
+            agent_name, {}
+        )
+
+        return self.create_subagent(
+            agent_type=agent_name,
+            agent_name=agent_name,
+            process_name=agent_name,
+            app_root_name=agent_name,
+            is_visual=third_party_agent_config.get("VISUAL_MODE", True),
+            main_prompt=third_party_agent_config["APPAGENT_PROMPT"],
+            example_prompt=third_party_agent_config["APPAGENT_EXAMPLE_PROMPT"],
+            api_prompt=third_party_agent_config["API_PROMPT"],
+            mode=mode,
+        ).context_provision(request, context=context)
+
     def process_comfirmation(self) -> None:
         """
         TODO: Process the confirmation.
@@ -359,3 +402,24 @@ class HostAgent(BasicAgent):
         Get the default state.
         """
         return ContinueHostAgentState()
+
+    # if __name__ == "__main__":
+    #     # Example usage of the HostAgent
+
+
+# host_agent = HostAgent(
+#     name="HostAgent",
+#     is_visual=True,
+#     main_prompt="./ufo/prompts/share/base/host_agent.yaml",
+#     example_prompt="./ufo/prompts/examples/visual/host_agent_example.yaml",
+#     api_prompt="./ufo/prompts/share/base/api.yaml",
+# )
+# print("HostAgent created with name:", host_agent.name)
+
+# host_agent.create_third_party_app_agent(
+#     agent_name="HardwareAgent",
+#     request="Please interact with the hardware.",
+#     mode="normal",
+#     context=Context(),
+# )
+# print("Third-party app agent created successfully.")

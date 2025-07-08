@@ -35,14 +35,16 @@ class Config:
         :param config_path: The path to the YAML config file. Defaults to "./config.yaml".
         :return: Merged configuration from environment variables and YAML file.
         """
+
         # Copy environment variables to avoid modifying them directly
         os.environ["TF_CPP_MIN_LOG_LEVEL"] = "3"  # Suppress TensorFlow warnings
         configs = dict(os.environ)
 
-        path = config_path
+        current_path = os.getcwd()
+        path = os.path.join(current_path, config_path)
 
         try:
-            with open(path + "config.yaml", "r") as file:
+            with open(os.path.join(path, "config.yaml"), "r") as file:
                 yaml_data = yaml.safe_load(file)
             # Update configs with YAML data
             if yaml_data:
@@ -55,9 +57,10 @@ class Config:
                 with open(path + "config_prices.yaml", "r") as file:
                     yaml_prices_data = yaml.safe_load(file)
                 configs.update(yaml_prices_data)
-        except FileNotFoundError:
+        except FileNotFoundError as e:
+
             print_with_color(
-                f"Warning: Config file not found at {config_path}. Using only environment variables.",
+                f"Warning: Config file not found at {path}. Using only environment variables. Error: {e}",
                 "yellow",
             )
 

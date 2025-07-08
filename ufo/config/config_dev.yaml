@@ -128,11 +128,27 @@ TASK_STATUS: True  # Whether to record the status of the tasks in batch executio
 SAVE_EXPERIENCE: "always_not"  # Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not, "auto" for auto save when the evaluation is good. By default, it is "ask".
 
 # MCP (Model Context Protocol) Integration
-USE_MCP: False  # Whether to enable MCP integration for tool execution
+USE_MCP: True  # Whether to enable MCP integration for tool execution
 MCP_SERVERS_CONFIG: "ufo/config/mcp_servers.yaml"  # Path to MCP servers configuration file
-MCP_PREFERRED_APPS: ["POWERPNT.EXE", "WINWORD.EXE", "EXCEL.EXE", "powerpoint", "word", "excel", "web", "shell"]  # Applications that should prefer MCP over UI automation when available
+MCP_PREFERRED_APPS: ["POWERPNT.EXE", "WINWORD.EXE", "EXCEL.EXE", "powerpoint", "word", "excel", "web", "shell", "hardware", "hardwareagent"]  # Applications that should prefer MCP over UI automation when available
 MCP_FALLBACK_TO_UI: True  # Whether to fallback to UI automation if MCP execution fails
 MCP_INSTRUCTIONS_PATH: "ufo/config/mcp_instructions"  # Path to MCP instructions files
 MCP_TOOL_TIMEOUT: 30  # Timeout in seconds for MCP tool execution
 MCP_LOG_EXECUTION: False  # Whether to log MCP tool execution details
+
+
+
+# Third-party Agent Integration
+
+ENABLED_THIRD_PARTY_AGENTS: ["HardwareAgent"]
+
+THIRD_PARTY_AGENT_CONFIG: {
+    "HardwareAgent": {
+        "VISUAL_MODE": True,  # Whether to use visual mode for the HardwareAgent
+        "AGENT_NAME": "HardwareAgent",
+        "APPAGENT_PROMPT": "ufo/prompts/third_party/hardware_agent.yaml",
+        "APPAGENT_EXAMPLE_PROMPT": "ufo/prompts/third_party/hardware_agent_example.yaml",
+        "API_PROMPT": "ufo/prompts/third_party/hardware_agent_api.yaml",
+    }
+}  # Configuration for third-party agents, including agent name, prompt path, etc.
 

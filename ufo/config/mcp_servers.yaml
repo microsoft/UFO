@@ -63,6 +63,18 @@ mcp_servers:
     execute_endpoint: "/execute_tool"
     enabled: true
 
+  hardware:
+    name: "Hardware MCP Server"
+    description: "MCP server for hardware automation and control"
+    endpoint: "http://localhost:8006"
+    instructions_path: "config/mcp_instructions/hardware.yaml"
+    timeout: 30
+    retry_count: 3
+    health_check_endpoint: "/health"
+    tools_endpoint: "/tools"
+    execute_endpoint: "/execute_tool"
+    enabled: true
+
 # Global MCP Configuration
 global_config:
   # Connection settings

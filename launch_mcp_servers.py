@@ -42,7 +42,8 @@ COLORS = {
 class MCPServerLauncher:
     """
     Launcher for UFO MCP servers.
-    """    
+    """
+
     def __init__(self, config_path=None, development=False, verbose=False):
         self.config_path = config_path
         self.development = development
@@ -82,8 +83,10 @@ class MCPServerLauncher:
             print(f"{color_code}{message}", end="")
         else:
             print(f"{color_code}{message}{Style.RESET_ALL}")
-    
-    def test_server_health(self, endpoint: str, health_endpoint: str = "/health", timeout: int = 5) -> bool:
+
+    def test_server_health(
+        self, endpoint: str, health_endpoint: str = "/health", timeout: int = 5
+    ) -> bool:
         """
         Test if a server is healthy by checking its health endpoint.
         :param endpoint: Server endpoint URL
@@ -95,34 +98,38 @@ class MCPServerLauncher:
             # For FastMCP servers running with SSE transport, check the /sse endpoint
             if health_endpoint == "/health":
                 health_endpoint = "/sse"
-            
+
             health_url = f"{endpoint}{health_endpoint}"
-            
+
             if self.verbose:
                 self._print_colored(f"  Checking: {health_url}", "DEBUG")
-            
+
             # For SSE endpoints, we need to handle streaming responses differently
             if health_endpoint == "/sse":
                 # Use a short timeout and stream=True to avoid waiting for the full response
                 response = requests.get(health_url, timeout=2, stream=True)
-                
+
                 # If we get a 200 response for SSE, the server is healthy
                 # We don't need to read the content, just check the status
                 if response.status_code == 200:
                     response.close()  # Close the streaming connection
                     return True
-                    
+
                 # Some SSE implementations return 404 for GET on SSE endpoint but server is still running
                 elif response.status_code == 404:
                     # Try the root endpoint to see if server is responding
                     root_response = requests.get(endpoint, timeout=timeout)
-                    return root_response.status_code in [200, 404, 405]  # Any response means server is up
+                    return root_response.status_code in [
+                        200,
+                        404,
+                        405,
+                    ]  # Any response means server is up
             else:
                 # For regular health endpoints
                 response = requests.get(health_url, timeout=timeout)
                 if response.status_code == 200:
                     return True
-            
+
             return False
         except requests.exceptions.ConnectionError:
             # Server is not running or not reachable
@@ -134,7 +141,10 @@ class MCPServerLauncher:
                 # Try a HEAD request to see if server responds quickly
                 try:
                     head_response = requests.head(health_url, timeout=1)
-                    return head_response.status_code in [200, 405]  # 405 means HEAD not allowed but server is up
+                    return head_response.status_code in [
+                        200,
+                        405,
+                    ]  # 405 means HEAD not allowed but server is up
                 except:
                     return False
             return False
@@ -142,7 +152,7 @@ class MCPServerLauncher:
             if self.verbose:
                 self._print_colored(f"  Health check error: {e}", "DEBUG")
             return False
-        
+
     def test_all_servers_health(self) -> bool:
         """
         Test health of all running servers.
@@ -157,12 +167,14 @@ class MCPServerLauncher:
             # Build endpoint URL from configuration
             port = config.get("port", 8000)
             endpoint = f"http://localhost:{port}"
-            
+
             # Get health check endpoint from MCP config if available
             health_endpoint = "/health"
             if "mcp_config" in config:
-                health_endpoint = config["mcp_config"].get("health_check_endpoint", "/health")
-            
+                health_endpoint = config["mcp_config"].get(
+                    "health_check_endpoint", "/health"
+                )
+
             self._print_colored(
                 f"{server_name.title()} ({endpoint}): ", "INFO", no_newline=True
             )
@@ -500,7 +512,7 @@ class MCPServerLauncher:
         self._print_colored("Stopping all MCP servers...", "WARNING")
 
         # Stop by port first (like PowerShell version)
-        ports = [8001, 8002, 8003, 8004, 8005]
+        ports = [8001, 8002, 8003, 8004, 8005, 8006]
         self.stop_processes_by_port(ports)
 
         # Then stop tracked processes
@@ -508,6 +520,7 @@ class MCPServerLauncher:
             self.stop_server(server_name)
 
         self._print_colored("All MCP servers stopped", "SUCCESS")
+
     def show_status(self):
         """Show status of all MCP servers."""
         self._print_colored("\nMCP Server Status:", "INFO")
@@ -516,12 +529,14 @@ class MCPServerLauncher:
         for server_name, config in self.servers.items():
             port = config.get("port", 8000)
             endpoint = f"http://localhost:{port}"
-            
+
             # Get health check endpoint from MCP config if available
             health_endpoint = "/health"
             if "mcp_config" in config:
-                health_endpoint = config["mcp_config"].get("health_check_endpoint", "/health")
-            
+                health_endpoint = config["mcp_config"].get(
+                    "health_check_endpoint", "/health"
+                )
+
             # Check if server is actually running (regardless of how it was started)
             if self.test_server_health(endpoint, health_endpoint):
                 # Server is running - check if we know the PID
@@ -697,49 +712,81 @@ class MCPServerLauncher:
                 "args": ["--port", "8005", "--host", "localhost"],
                 "environment": {},
             },
+            "hardware": {
+                "script": "ufo.mcp.app_servers.hardware_mcp_server",
+                "port": 8006,
+                "description": "Hardware MCP Server for automation",
+                "log_file": "logs/mcp_hardware.log",
+                "args": ["--port", "8006", "--host", "localhost"],
+                "environment": {},
+            },
         }
-        
-        default_startup_order = ["shell", "web", "excel", "word", "powerpoint"]
-        
+
+        default_startup_order = [
+            "shell",
+            "web",
+            "excel",
+            "word",
+            "powerpoint",
+            "hardware",
+        ]
+
         # Try to load from launcher configuration file
         launcher_config_path = self.config_path or "ufo/config/mcp_launcher.yaml"
-        
+
         try:
             if os.path.exists(launcher_config_path):
-                self._print_colored(f"Loading launcher configuration from: {launcher_config_path}", "INFO")
-                with open(launcher_config_path, 'r', encoding='utf-8') as f:
+                self._print_colored(
+                    f"Loading launcher configuration from: {launcher_config_path}",
+                    "INFO",
+                )
+                with open(launcher_config_path, "r", encoding="utf-8") as f:
                     self.launcher_config = yaml.safe_load(f)
-                
+
                 # Load startup order
                 startup_config = self.launcher_config.get("startup_config", {})
-                self.startup_order = startup_config.get("startup_order", default_startup_order)
-                
+                self.startup_order = startup_config.get(
+                    "startup_order", default_startup_order
+                )
+
                 # Load server configurations
                 servers_config = self.launcher_config.get("servers", {})
                 for server_name, server_config in servers_config.items():
                     self.servers[server_name] = {
-                        "script": server_config.get("module_path", default_servers.get(server_name, {}).get("script", "")),
+                        "script": server_config.get(
+                            "module_path",
+                            default_servers.get(server_name, {}).get("script", ""),
+                        ),
                         "port": server_config.get("port", 8000),
-                        "description": server_config.get("name", f"{server_name.title()} MCP Server"),
-                        "log_file": server_config.get("log_file", f"logs/mcp_{server_name}.log"),
-                        "args": server_config.get("args", []),                        "environment": server_config.get("environment", {}),
+                        "description": server_config.get(
+                            "name", f"{server_name.title()} MCP Server"
+                        ),
+                        "log_file": server_config.get(
+                            "log_file", f"logs/mcp_{server_name}.log"
+                        ),
+                        "args": server_config.get("args", []),
+                        "environment": server_config.get("environment", {}),
                     }
-                
+
                 # Fill in any missing servers with defaults
                 for server_name, server_config in default_servers.items():
                     if server_name not in self.servers:
                         self.servers[server_name] = server_config
-                        
-                self._print_colored(f"✓ Loaded configuration for {len(self.servers)} servers", "SUCCESS")
+
+                self._print_colored(
+                    f"✓ Loaded configuration for {len(self.servers)} servers", "SUCCESS"
+                )
                 if self.verbose:
                     self._print_colored(f"Startup order: {self.startup_order}", "DEBUG")
-                    
+
             else:
-                self._print_colored(f"Configuration file not found: {launcher_config_path}", "WARNING")
+                self._print_colored(
+                    f"Configuration file not found: {launcher_config_path}", "WARNING"
+                )
                 self._print_colored("Using default configuration", "INFO")
                 self.servers = default_servers
                 self.startup_order = default_startup_order
-                
+
         except Exception as e:
             self._print_colored(f"Error loading configuration: {e}", "ERROR")
             self._print_colored("Using default configuration", "WARNING")
@@ -750,31 +797,41 @@ class MCPServerLauncher:
         servers_config_path = "ufo/config/mcp_servers.yaml"
         try:
             if os.path.exists(servers_config_path):
-                self._print_colored(f"Loading MCP servers configuration from: {servers_config_path}", "INFO")
-                with open(servers_config_path, 'r', encoding='utf-8') as f:
+                self._print_colored(
+                    f"Loading MCP servers configuration from: {servers_config_path}",
+                    "INFO",
+                )
+                with open(servers_config_path, "r", encoding="utf-8") as f:
                     mcp_servers_config = yaml.safe_load(f)
-                
+
                 # Update server configurations with MCP server settings
                 mcp_servers = mcp_servers_config.get("mcp_servers", {})
                 for server_name, mcp_config in mcp_servers.items():
                     if server_name in self.servers and mcp_config.get("enabled", True):
                         # Update description from MCP config
-                        self.servers[server_name]["description"] = mcp_config.get("description", 
-                                                                                  self.servers[server_name]["description"])
+                        self.servers[server_name]["description"] = mcp_config.get(
+                            "description", self.servers[server_name]["description"]
+                        )
                         # Store additional MCP settings
                         self.servers[server_name]["mcp_config"] = {
                             "endpoint": mcp_config.get("endpoint"),
                             "timeout": mcp_config.get("timeout", 30),
                             "retry_count": mcp_config.get("retry_count", 3),
-                            "health_check_endpoint": mcp_config.get("health_check_endpoint", "/health"),
+                            "health_check_endpoint": mcp_config.get(
+                                "health_check_endpoint", "/health"
+                            ),
                         }
-                        
+
                 if self.verbose:
-                    self._print_colored(f"✓ Enhanced configuration with MCP server settings", "SUCCESS")
-                    
+                    self._print_colored(
+                        f"✓ Enhanced configuration with MCP server settings", "SUCCESS"
+                    )
+
         except Exception as e:
             if self.verbose:
-                self._print_colored(f"Could not load MCP servers configuration: {e}", "WARNING")
+                self._print_colored(
+                    f"Could not load MCP servers configuration: {e}", "WARNING"
+                )
 
 
 def main():

@@ -100,6 +100,9 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = None
 
         self.bash_command = None
+        self.third_party_agent_labels: List[str] = []
+        self.full_desktop_windows_info: List[Dict[str, str]] = []
+        self.assigned_third_party_agent: str | None = None
 
         self.actions: List[OneStepAction] = []
 
@@ -177,6 +180,17 @@ class HostAgentProcessor(BaseProcessor):
 
             return
 
+    def print_step_info(self) -> None:
+        """
+        Print the step information.
+        """
+        utils.print_with_color(
+            "Round {round_num}, Step {step}, HostAgent: Analyzing the user intent and decomposing the request...".format(
+                round_num=self.round_num + 1, step=self.round_step + 1
+            ),
+            "magenta",
+        )
+
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def capture_screenshot(self) -> None:
@@ -194,24 +208,31 @@ class HostAgentProcessor(BaseProcessor):
         )
 
         self.session_data_manager.add_action(
-            desktop_screenshot_action, 
-            setter=lambda value: self.desktop_screenshot_action_callback(value, desktop_save_path)
+            desktop_screenshot_action,
+            setter=lambda value: self.desktop_screenshot_action_callback(
+                value, desktop_save_path
+            ),
         )
 
     def desktop_screenshot_action_callback(self, value: str, path: str) -> None:
         """
         Helper method to save screenshot to specified path and set the URL.
-        
+
         Args:
             value (str): The screenshot data or URL
             path (str): Path to save the screenshot
         """
         # Set the URL for use in the class
         self._desktop_screen_url = value
+        # print(f"Desktop screenshot URL: {self._desktop_screen_url}")
         self.session_data_manager.session_data.state.desktop_screen_url = value
 
         # If value contains a base64 encoded image string
-        if value and isinstance(value, str) and value.startswith("data:image/png;base64,"):
+        if (
+            value
+            and isinstance(value, str)
+            and value.startswith("data:image/png;base64,")
+        ):
             try:
                 # Decode the base64 string to binary data
                 img_data = utils.decode_base64_image(value)
@@ -220,7 +241,7 @@ class HostAgentProcessor(BaseProcessor):
                 os.makedirs(os.path.dirname(path), exist_ok=True)
 
                 # Save the image to the specified path
-                with open(path, 'wb') as f:
+                with open(path, "wb") as f:
                     f.write(img_data)
 
                 print(f"Screenshot saved to {path}")
@@ -236,17 +257,16 @@ class HostAgentProcessor(BaseProcessor):
         self.session_data_manager.add_action(
             action=GetDesktopAppInfoAction(
                 params=GetDesktopAppInfoParams(
-                    remove_empty=True,
-                    refresh_app_windows=True
+                    remove_empty=True, refresh_app_windows=True
                 )
             ),
-            setter=lambda value: self.desktop_app_info_callback(value)
+            setter=lambda value: self.desktop_app_info_callback(value),
         )
 
     def desktop_app_info_callback(self, value: list[dict] | list[WindowInfo]) -> None:
         """
         Helper method to handle the desktop app info callback.
-        
+
         Args:
             value (str): The desktop app info
         """
@@ -255,7 +275,10 @@ class HostAgentProcessor(BaseProcessor):
             self._desktop_windows_info = [WindowInfo(**item) for item in value]
         else:
             self._desktop_windows_info = value
-        self.session_data_manager.session_data.state.desktop_windows_info = self._desktop_windows_info
+
+        self.session_data_manager.session_data.state.desktop_windows_info = (
+            self._desktop_windows_info
+        )
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -264,6 +287,31 @@ class HostAgentProcessor(BaseProcessor):
         Process the collected information.
         """
         pass
+
+    def _create_third_party_agent_list(self, start_index: int = 0) -> List[str]:
+        """
+        Create a list of third-party agents.
+        :param start_index: The starting index of the third-party agent list.
+        :return: A list of third-party agents.
+        """
+
+        third_party_agent_names = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
+
+        third_party_agent_list = []
+        third_party_agent_labels = []
+
+        for i, agentname in enumerate(third_party_agent_names):
+            label = str(i + start_index)
+            third_party_agent_list.append(
+                {
+                    "label": label,
+                    "control_type": "ThirdPartyAgent",
+                    "control_text": agentname,
+                }
+            )
+            third_party_agent_labels.append(label)
+
+        return third_party_agent_list, third_party_agent_labels
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -279,19 +327,36 @@ class HostAgentProcessor(BaseProcessor):
 
         desktop_windows_info = self.session_data_manager.get_desktop_windows_info()
 
+        windows_num = len(desktop_windows_info)
+        third_party_agent_list, third_party_agent_labels = (
+            self._create_third_party_agent_list(start_index=windows_num + 1)
+        )
+
+        self.full_desktop_windows_info = desktop_windows_info + third_party_agent_list
+
+        # print(f"Full desktop windows info: {self.full_desktop_windows_info}")
+
+        self.third_party_agent_labels = third_party_agent_labels
+
         # Construct the prompt message for the host agent.
         self._prompt_message = self.host_agent.message_constructor(
-            image_list=[self.session_data_manager.session_data.state.desktop_screen_url],
-            os_info=desktop_windows_info,
+            image_list=[
+                self.session_data_manager.session_data.state.desktop_screen_url
+            ],
+            os_info=self.full_desktop_windows_info,
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
             request=self.request,
             blackboard_prompt=blackboard_prompt,
         )
 
+        # print(f"Prompt message: {self._prompt_message}")
+
         request_data = HostAgentRequestLog(
             step=self.session_step,
-            image_list=[self.session_data_manager.session_data.state.desktop_screen_url],
+            image_list=[
+                self.session_data_manager.session_data.state.desktop_screen_url
+            ],
             os_info=desktop_windows_info,
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
@@ -355,16 +420,32 @@ class HostAgentProcessor(BaseProcessor):
         """
         Execute the action.
         """
-        desktop_windows_info = (
-            self.session_data_manager.session_data.state.desktop_windows_info
-        )
 
-        print(f"control_label: {self.control_label}")
-        new_app_windows = list(
-            filter(
-                lambda x: x.annotation_id == self.control_label, desktop_windows_info
+        # print(f"selected control_label: {self.control_label}")
+
+        if self.control_label in self.third_party_agent_labels:
+
+            self.assigned_third_party_agent = next(
+                (
+                    info
+                    for info in self.full_desktop_windows_info
+                    if info["label"] == self.control_label
+                ),
+                None,
+            ).get("control_text", None)
+
+        else:
+
+            desktop_windows_info = (
+                self.session_data_manager.session_data.state.desktop_windows_info
             )
-        )
+
+            new_app_windows = list(
+                filter(
+                    lambda x: x.annotation_id == self.control_label,
+                    desktop_windows_info,
+                )
+            )
 
         if len(new_app_windows) > 0:
             # self._select_application(new_app_window)
@@ -387,7 +468,7 @@ class HostAgentProcessor(BaseProcessor):
     def select_application_window_callback(self, value: dict | WindowInfo) -> None:
         """
         Helper method to handle the application window selection callback.
-        
+
         Args:
             value (str): The application window value
         """
@@ -395,6 +476,7 @@ class HostAgentProcessor(BaseProcessor):
         self.app_root = value["process_name"]
 
         new_app_window = value["window_info"]
+        # self.application_window = new_app_window
         if isinstance(new_app_window, dict):
             self.application_window_info = WindowInfo(**new_app_window)
         elif isinstance(new_app_window, WindowInfo):
@@ -417,10 +499,11 @@ class HostAgentProcessor(BaseProcessor):
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
+
     def launch_application_callback(self, value: dict[str, any]) -> None:
         """
         Helper method to handle the application launch callback.
-        
+
         Args:
             value (str): The application launch value
         """
@@ -428,6 +511,7 @@ class HostAgentProcessor(BaseProcessor):
         self.app_root = value["process_name"]
 
         new_app_window = value["window_info"]
+        # self.application_window = new_app_window
         self.application_window_info = WindowInfo(**new_app_window)
 
         self.actions = [
@@ -447,6 +531,7 @@ class HostAgentProcessor(BaseProcessor):
 
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
+
 
     def sync_memory(self):
         """

@@ -1,0 +1,342 @@
+# Word MCP Server Instructions
+# This file contains instructions and tool definitions for the Microsoft Word MCP server
+
+namespace: hardware
+description: "MCP server for hardware automation and control"
+tool_instructions: ""
+
+# Available tools for Word operations
+tools:
+  - name: arduino_hid_status
+    description: "Get the current status of the Arduino HID device."
+    parameters: []
+
+  - name: arduino_hid_connect
+    description: "Connect to the Arduino HID device."
+    parameters: []
+
+  - name: arduino_hid_disconnect
+    description: "Disconnect from the Arduino HID device."
+    parameters: []
+
+  - name: type_text
+    description: "Type a string of text."
+    parameters:
+      - name: text
+        type: string
+        description: "Text to type."
+        required: true
+
+  - name: press_key_sequence
+    description: "Press a sequence of keys."
+    parameters:
+      - name: keys
+        type: list[string]
+        description: "List of key names to press in sequence."
+        required: true
+      - name: interval
+        type: float
+        description: "Interval between key presses (seconds)."
+        required: false
+
+  - name: press_hotkey
+    description: "Press multiple keys simultaneously as a hotkey."
+    parameters:
+      - name: keys
+        type: list[string]
+        description: "List of key names to press together."
+        required: true
+
+  - name: move_mouse
+    description: "Move the mouse pointer."
+    parameters:
+      - name: x
+        type: int
+        description: "X coordinate."
+        required: true
+      - name: y
+        type: int
+        description: "Y coordinate."
+        required: true
+      - name: absolute
+        type: bool
+        description: "Move absolute (True) or relative (False)."
+        required: false
+
+  - name: click_mouse
+    description: "Click the specified mouse button."
+    parameters:
+      - name: button
+        type: string
+        description: "Mouse button to click (e.g., left, right, middle)."
+        required: false
+      - name: count
+        type: int
+        description: "Number of clicks."
+        required: false
+      - name: interval
+        type: float
+        description: "Interval between clicks (seconds)."
+        required: false
+
+  - name: press_mouse_button
+    description: "Press and hold the specified mouse button."
+    parameters:
+      - name: button
+        type: string
+        description: "Mouse button to press (e.g., left, right, middle)."
+        required: false
+
+  - name: release_mouse_button
+    description: "Release the specified mouse button."
+    parameters:
+      - name: button
+        type: string
+        description: "Mouse button to release."
+        required: false
+
+  - name: scroll_mouse
+    description: "Scroll the mouse wheel."
+    parameters:
+      - name: vertical
+        type: int
+        description: "Vertical scroll amount."
+        required: false
+      - name: horizontal
+        type: int
+        description: "Horizontal scroll amount."
+        required: false
+
+  - name: drag_mouse
+    description: "Drag the mouse from start to end position."
+    parameters:
+      - name: start
+        type: list[int]
+        description: "Start position [x, y]."
+        required: true
+      - name: end
+        type: list[int]
+        description: "End position [x, y]."
+        required: true
+      - name: button
+        type: string
+        description: "Mouse button to use."
+        required: false
+      - name: duration
+        type: float
+        description: "Drag duration (seconds)."
+        required: false
+
+  - name: double_click_mouse
+    description: "Perform a double-click."
+    parameters:
+      - name: button
+        type: string
+        description: "Mouse button to double-click."
+        required: false
+
+  - name: right_click_mouse
+    description: "Shortcut for right mouse button click."
+    parameters: []
+
+  - name: middle_click_mouse
+    description: "Shortcut for middle mouse button click."
+    parameters: []
+
+  # BB-8 mock tools
+  - name: bb8_status
+    description: "Get the current status of the BB-8 test fixture."
+    parameters: []
+
+  - name: bb8_connect
+    description: "Connect to the BB-8 test fixture."
+    parameters: []
+
+  - name: bb8_disconnect
+    description: "Disconnect from the BB-8 test fixture."
+    parameters: []
+
+  - name: bb8_usb_port_plug
+    description: "Plug in a USB device to the specified port."
+    parameters:
+      - name: port_name
+        type: string
+        description: "USB port name to plug in."
+        required: true
+
+  - name: bb8_usb_port_unplug
+    description: "Unplug a USB device from the specified port."
+    parameters:
+      - name: port_name
+        type: string
+        description: "USB port name to unplug."
+        required: true
+
+  - name: bb8_psu_charger_plug
+    description: "Plug in the PSU charger."
+    parameters: []
+
+  - name: bb8_psu_charger_unplug
+    description: "Unplug the PSU charger."
+    parameters: []
+
+  - name: bb8_blade_attach
+    description: "Attach the blade."
+    parameters: []
+
+  - name: bb8_blade_detach
+    description: "Detach the blade."
+    parameters: []
+
+  - name: bb8_lid_open
+    description: "Open the lid."
+    parameters: []
+
+  - name: bb8_lid_close
+    description: "Close the lid."
+    parameters: []
+
+  - name: bb8_button_press
+    description: "Press a physical button."
+    parameters:
+      - name: button_name
+        type: string
+        description: "Button name to press."
+        required: true
+
+  - name: bb8_button_long_press
+    description: "Long press a physical button."
+    parameters:
+      - name: button_name
+        type: string
+        description: "Button name to long press."
+        required: true
+
+  # Robot Arm tools
+  - name: robot_arm_status
+    description: "Get the current status of the Robot Arm."
+    parameters: []
+
+  - name: robot_arm_connect
+    description: "Connect to the Robot Arm."
+    parameters: []
+
+  - name: robot_arm_disconnect
+    description: "Disconnect from the Robot Arm."
+    parameters: []
+
+  - name: touch_screen
+    description: "Simulate a touch at the specified location on the screen."
+    parameters:
+      - name: location
+        type: list[int]
+        description: "Location [x, y] to touch."
+        required: true
+
+  - name: draw_on_screen
+    description: "Simulate drawing on the screen by following a path of coordinates."
+    parameters:
+      - name: path
+        type: list[list[int]]
+        description: "List of points [[x1, y1], [x2, y2], ...] to draw."
+        required: true
+
+  - name: tap_screen
+    description: "Simulate tap(s) at the specified location on the screen."
+    parameters:
+      - name: location
+        type: list[int]
+        description: "Location [x, y] to tap."
+        required: false
+      - name: count
+        type: int
+        description: "Number of taps."
+        required: false
+      - name: interval
+        type: float
+        description: "Interval between taps (seconds)."
+        required: false
+
+  - name: swipe_screen
+    description: "Simulate a swipe gesture from start to end location."
+    parameters:
+      - name: start_location
+        type: list[int]
+        description: "Start location [x, y]."
+        required: false
+      - name: end_location
+        type: list[int]
+        description: "End location [x, y]."
+        required: false
+      - name: duration
+        type: float
+        description: "Swipe duration (seconds)."
+        required: false
+
+  - name: long_press_screen
+    description: "Simulate a long press at the specified location."
+    parameters:
+      - name: location
+        type: list[int]
+        description: "Location [x, y] to long press."
+        required: false
+      - name: duration
+        type: float
+        description: "Press duration (seconds)."
+        required: false
+
+  - name: double_tap_screen
+    description: "Simulate a double tap at the specified location."
+    parameters:
+      - name: location
+        type: list[int]
+        description: "Location [x, y] to double tap."
+        required: true
+
+  - name: press_key
+    description: "Simulate pressing a keyboard key, optionally with modifier keys."
+    parameters:
+      - name: key
+        type: string
+        description: "Key to press."
+        required: false
+      - name: modifiers
+        type: list[string]
+        description: "List of modifier keys."
+        required: false
+      - name: duration
+        type: float
+        description: "Key press duration (seconds)."
+        required: false
+
+  - name: tap_trackpad
+    description: "Simulate tap(s) at the specified location on the trackpad."
+    parameters:
+      - name: location
+        type: list[int]
+        description: "Location [x, y] to tap."
+        required: false
+      - name: count
+        type: int
+        description: "Number of taps."
+        required: false
+      - name: interval
+        type: float
+        description: "Interval between taps (seconds)."
+        required: false
+
+  - name: swipe_trackpad
+    description: "Simulate a swipe gesture on the trackpad from start to end location."
+    parameters:
+      - name: start_location
+        type: list[int]
+        description: "Start location [x, y]."
+        required: false
+      - name: end_location
+        type: list[int]
+        description: "End location [x, y]."
+        required: false
+      - name: duration
+        type: float
+        description: "Swipe duration (seconds)."
+        required: false
