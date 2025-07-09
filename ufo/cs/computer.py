@@ -825,9 +825,7 @@ class Computer:
         app_namespace = params.app_namespace
         if app_namespace not in self.mcp_servers:
             raise ValueError(f"MCP server not found for namespace: {app_namespace}")
-
         try:
-
             server_config = self.mcp_servers[app_namespace]
             endpoint = server_config["endpoint"]
 
