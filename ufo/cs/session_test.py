@@ -25,7 +25,7 @@ def test_run_session_with_receivers():
             action_results[action.call_id] = result
         
         # Update session state with collected results
-        session.update_session_state_from_action_results(action_results)
+        session.process_action_results(action_results)
         is_finished = session.is_finished()
 
 
@@ -58,7 +58,7 @@ def test_office_app_session():
             action_results[action.call_id] = result
         
         # Update session state with collected results
-        session.update_session_state_from_action_results(action_results)
+        session.process_action_results(action_results)
 
         is_finished = session.is_finished()
 
@@ -79,7 +79,7 @@ def test_run_session():
             action_results[action.call_id] = result
         
         # Update session state with collected results
-        session.update_session_state_from_action_results(action_results)
+        session.process_action_results(action_results)
 
         is_finished = session.is_finished()
 

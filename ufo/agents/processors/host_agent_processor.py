@@ -5,7 +5,7 @@
 import json
 import time
 from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict, Generator, List
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Tuple
 
 from ufo import utils
 from ufo.agents.processors.action_contracts import (
@@ -180,17 +180,6 @@ class HostAgentProcessor(BaseProcessor):
 
             return
 
-    def print_step_info(self) -> None:
-        """
-        Print the step information.
-        """
-        utils.print_with_color(
-            "Round {round_num}, Step {step}, HostAgent: Analyzing the user intent and decomposing the request...".format(
-                round_num=self.round_num + 1, step=self.round_step + 1
-            ),
-            "magenta",
-        )
-
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def capture_screenshot(self) -> None:
@@ -288,11 +277,11 @@ class HostAgentProcessor(BaseProcessor):
         """
         pass
 
-    def _create_third_party_agent_list(self, start_index: int = 0) -> List[str]:
+    def _create_third_party_agent_list(self, start_index: int = 0) -> Tuple[List[Dict], List[str]]:
         """
         Create a list of third-party agents.
         :param start_index: The starting index of the third-party agent list.
-        :return: A list of third-party agents.
+        :return: A tuple containing the list of third-party agents and their labels.
         """
 
         third_party_agent_names = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
@@ -476,7 +465,6 @@ class HostAgentProcessor(BaseProcessor):
         self.app_root = value["process_name"]
 
         new_app_window = value["window_info"]
-        # self.application_window = new_app_window
         if isinstance(new_app_window, dict):
             self.application_window_info = WindowInfo(**new_app_window)
         elif isinstance(new_app_window, WindowInfo):
@@ -511,7 +499,6 @@ class HostAgentProcessor(BaseProcessor):
         self.app_root = value["process_name"]
 
         new_app_window = value["window_info"]
-        # self.application_window = new_app_window
         self.application_window_info = WindowInfo(**new_app_window)
 
         self.actions = [

@@ -8,11 +8,13 @@ from typing import Generator, List, Optional
 
 import psutil
 import win32com.client
+
 from ufo import utils
 from ufo.agents.agent.app_agent import OpenAIOperatorAgent
 from ufo.agents.agent.host_agent import AgentFactory
 from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
+from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.config import Config
 from ufo.cs.contracts import GetDesktopControlInfoAction, GetDesktopControlInfoParams
 from ufo.module import interactor
@@ -20,7 +22,6 @@ from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import ContextNames
 from ufo.module.sessions.plan_reader import PlanReader
 from ufo.trajectory.parser import Trajectory
-from ufo.automator.ui_control.inspector import ControlInspectorFacade
 
 configs = Config.get_instance().config_data
 
@@ -32,7 +33,7 @@ class SessionFactory:
 
     def create_session(
         self, task: str, mode: str, plan: str, request: str = ""
-    ) -> BaseSession:
+    ) -> List[BaseSession]:
         """
         Create a session.
         :param task: The name of current task.

@@ -198,21 +198,6 @@ class BaseRound(ABC):
         # if self._should_evaluate:
         #     self.evaluation()
 
-    def step_forward_coro(self) -> Generator[None, None, None]:
-        """
-        Step forward in the round in a coroutine manner.
-        This allows the round to be stepped forward in a generator.
-        """
-        if not self.is_finished():
-
-            yield from self.agent.handle_coro(self.context)
-
-            self.state = self.agent.state.next_state(self.agent)
-            self.agent = self.agent.state.next_agent(self.agent)
-            self.agent.set_state(self.state)
-        else:
-            pass
-
     def is_finished(self) -> bool:
         """
         Check if the round is finished.
@@ -700,13 +685,6 @@ class BaseSession(ABC):
     def step_forward(self):
         self.current_round.step_forward()
 
-    def step_forward_coro(self) -> Generator[None, None, None]:
-        """
-        Step forward in the session in a coroutine manner.
-        This allows the session to be stepped forward in a generator.
-        """
-        yield from self.current_round.step_forward_coro()
-
     @abstractmethod
     def create_new_round(self) -> Optional[BaseRound]:
         """
@@ -1029,8 +1007,6 @@ class BaseSession(ABC):
 
         evaluator.print_response(result)
 
-        self.evaluation_logger.info(json.dumps(result)) @ property
-
         self.evaluation_logger.info(json.dumps(result))
 
     @property
@@ -1093,7 +1069,7 @@ class BaseSession(ABC):
         """
         Capture the last snapshot of the application, including the screenshot and the XML file if configured.
         """  # Capture the final screenshot
-        screenshot_save_path = self.log_path + f"action_step_final.png"
+        screenshot_save_path = self.log_path + "action_step_final.png"
 
         if (
             self.application_window is not None
@@ -1183,7 +1159,7 @@ class BaseSession(ABC):
 
             if configs.get("SAVE_FULL_SCREEN", False):
 
-                desktop_save_path = self.log_path + f"desktop_final.png"
+                desktop_save_path = self.log_path + "desktop_final.png"
 
                 # Capture the desktop screenshot for all screens using action/callback pattern
                 session_data_manager = self._context.get(
@@ -1209,7 +1185,7 @@ class BaseSession(ABC):
             # Save the final XML file
             if configs["LOG_XML"]:
                 log_abs_path = os.path.abspath(self.log_path)
-                xml_save_path = os.path.join(log_abs_path, f"xml/action_step_final.xml")
+                xml_save_path = os.path.join(log_abs_path, "xml/action_step_final.xml")
 
                 app_agent = self._host_agent.get_active_appagent()
                 if app_agent is not None:
@@ -1242,16 +1218,24 @@ class BaseSession(ABC):
         return logger
 
     def get_actions(self) -> list[ActionBase]:
+        """
+        Get the actions to be executed in the session.
+        :return: List of actions to run in the session.
+        """
         session_data_manager: SessionDataManager = self.context.get(
             ContextNames.SESSION_DATA_MANAGER
         )
         return session_data_manager.actions_to_run
 
-    def update_session_state_from_action_results(
+    def process_action_results(
         self, action_results: dict[str, any]
     ) -> None:
+        """
+        Process the results of executed actions and update session state.
+        :param action_results: Dictionary containing results of executed actions.
+        """
         session_data_manager: SessionDataManager = self.context.get(
             ContextNames.SESSION_DATA_MANAGER
         )
-        session_data_manager.update_session_state_from_action_results(action_results)
+        session_data_manager.process_action_results(action_results)
         session_data_manager.clear_roundtrip_data()

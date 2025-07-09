@@ -389,7 +389,7 @@ class AppAgentProcessor(BaseProcessor):
             })
         )
 
-    def _generate_annotated_image(self, value, screenshot_save_path, annotated_screenshot_save_path):
+    def _generate_annotated_image(self, _, screenshot_save_path, annotated_screenshot_save_path):
         """
         Helper method to generate annotated image.
         
@@ -406,36 +406,36 @@ class AppAgentProcessor(BaseProcessor):
 
         if BACKEND == "uia":
             self.session_data_manager.session_data.state._control_info = [
-                dict(
-                    label=item[0],
-                    control_text=item[1].name,
-                    control_type=item[1].control_type,
-                )
+                {
+                    "label": item[0],
+                    "control_text": item[1].name,
+                    "control_type": item[1].control_type,
+                }
                 for item in self.session_data_manager.session_data.state._annotation_dict.items()
             ]
 
             self.session_data_manager.session_data.state.filtered_control_info = [
-                dict(
-                    label=item[0],
-                    control_text=item[1].name,
-                    control_type=item[1].control_type,
-                )
+                {
+                    "label": item[0],
+                    "control_text": item[1].name,
+                    "control_type": item[1].control_type,
+                }
                 for item in self.session_data_manager.session_data.state.filtered_annotation_dict.items()
             ]
         else:
             self._control_info = [
-                dict(
-                    label=item[0],
-                    control_class=item[1].class_name,
-                )
+                {
+                    "label": item[0],
+                    "control_class": item[1].class_name,
+                }
                 for item in self.session_data_manager.session_data.state._annotation_dict.items()
             ]
 
             self.session_data_manager.session_data.state.filtered_control_info = [
-                dict(
-                    label=item[0],
-                    control_class=item[1].class_name,
-                )
+                {
+                    "label": item[0],
+                    "control_class": item[1].class_name,
+                }
                 for item in self.session_data_manager.session_data.state.filtered_annotation_dict.items()
             ]
 
@@ -484,7 +484,7 @@ class AppAgentProcessor(BaseProcessor):
             except Exception as e:
                 print(f"Error saving image: {e}")
 
-    def _capture_screen_callback(self, value, params: Dict[str, str]):
+    def _capture_screen_callback(self, _, params: Dict[str, str]):
         """
         Helper method to save screenshot data.
         

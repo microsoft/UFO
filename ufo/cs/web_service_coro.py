@@ -69,7 +69,7 @@ def run_task():
 
             # Update session state with action results
             if ufo_request.action_results:
-                session.update_session_state_from_action_results(
+                session.process_action_results(
                     ufo_request.action_results
                 )
                 logger.info(f"Updated session {session_id} with action results")

@@ -119,9 +119,9 @@ class ServiceSession(BaseSession):
         session_data_manager: SessionDataManager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
         return session_data_manager.session_data.actions_to_run
     
-    def update_session_state_from_action_results(self, action_results: dict[str, any]) -> None:
+    def process_action_results(self, action_results: dict[str, any]) -> None:
         session_data_manager: SessionDataManager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
-        session_data_manager.update_session_state_from_action_results(action_results)
+        session_data_manager.process_action_results(action_results)
         session_data_manager.clear_roundtrip_data()
 
     
