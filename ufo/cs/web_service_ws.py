@@ -26,9 +26,9 @@ configs = Config.get_instance().config_data
 sessions: Dict[str, ServiceSession] = {}
 
 online_clients = {}
-task_results = {}  # 存任务执行结果
+task_results = {}  # Dictionary to store task results
 ws_event_loop = None
-task_id_counter = 0  # 自增任务ID
+task_id_counter = 0  # Counter for task IDs
 
 
 def run_task_core(data: UFORequest):
@@ -90,12 +90,9 @@ def run_task_core(data: UFORequest):
 @app.route("/api/ufo/task", methods=["POST"])
 def run_task():
     """
-    Handles task requests from clients.
-
-    If session_id is None, creates a new session.
+    Handles task requests from clients. If session_id is None, creates a new session.
     Otherwise, updates the existing session with action results.
-
-    Returns actions for the client to execute.
+    :return: JSON response with session_id, status, actions, and messages.
     """
 
     try:
@@ -113,12 +110,6 @@ def run_task():
         return jsonify({"status": "failure", "error": f"Server error: {str(e)}"}), 500
 
 
-# @app.route("/api/health", methods=["GET"])
-# def health_check():
-#     """Simple health check endpoint"""
-#     return jsonify({"status": "healthy", "active_sessions": len(sessions)}), 200
-
-
 @app.route("/api/health")
 def health_check():
     return jsonify({"status": "healthy", "online_clients": list(online_clients.keys())})
@@ -126,6 +117,10 @@ def health_check():
 
 @app.route("/api/clients")
 def list_clients():
+    """
+    List all online clients.
+    :return: JSON response with a list of online client IDs.
+    """
     return jsonify({"online_clients": list(online_clients.keys())})
 
 
@@ -133,6 +128,8 @@ def list_clients():
 def dispatch_task_api():
     """
     dispatch task to：POST {"client_id": "...", "request": "..."}
+    :param request: The request containing client_id and task content.
+    :return: JSON response indicating the status of the task dispatch.
     """
     global task_id_counter
     global ws_event_loop
@@ -157,13 +154,23 @@ def dispatch_task_api():
 
 
 @app.route("/api/task_result/<task_id>")
-def get_task_result(task_id):
+def get_task_result(task_id: str):
+    """Retrieve the result of a task by its ID.
+    This endpoint checks if the task has been completed and returns the result if available.
+    :param task_id: The ID of the task to retrieve the result for.
+    :return: JSON response with task status and result if available.
+    """
     if task_id not in task_results:
         return jsonify({"status": "pending"})
     return jsonify({"status": "done", "result": task_results[task_id]})
 
 
-async def ws_handler(websocket, path):
+async def ws_handler(websocket: websockets.WebSocketServerProtocol, path: str):
+    """
+    WebSocket handler for managing client connections and task requests.
+    :param websocket: The WebSocket connection object.
+    :param path: The path of the WebSocket connection.
+    """
     # Receive registration message at the first connection
     reg_msg = await websocket.recv()
     reg_info = json.loads(reg_msg)
@@ -174,9 +181,9 @@ async def ws_handler(websocket, path):
     try:
         async for msg in websocket:
             data = json.loads(msg)
-            # 假设data里有 type/请求体
+            # If the message is a task request, process it
             if data.get("type") == "task_request":
-                # 用UFORequest模型反序列化
+                # Extract the request data
                 req = UFORequest(**data["body"])
                 try:
                     resp = run_task_core(req)
@@ -187,7 +194,7 @@ async def ws_handler(websocket, path):
                     await websocket.send(
                         json.dumps({"type": "task_response", "error": str(e)})
                     )
-            # 你可以扩展其它消息类型，如action结果回传等
+            # Handle other message types as needed
     except Exception as e:
         logger.error(f"WS client {client_id} error: {e}")
     finally:
@@ -207,6 +214,10 @@ async def ws_handler(websocket, path):
 
 
 def run_ws():
+    """
+    Run the WebSocket server in a separate event loop.
+    This function initializes a new event loop and starts the WebSocket server.
+    """
     global ws_event_loop
     ws_event_loop = asyncio.new_event_loop()
     asyncio.set_event_loop(ws_event_loop)
@@ -230,19 +241,8 @@ def run_flask():
     app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
 
 
-def start_server(host="0.0.0.0", port=5000, debug=False):
-    """Start the Flask server"""
-    app.run(host=host, port=port, debug=debug)
-
-
 if __name__ == "__main__":
     # start the Flask server and WebSocket server in separate threads
     t1 = threading.Thread(target=run_flask, daemon=True)
     t1.start()
     run_ws()
-    # asyncio.run(run_ws())
-
-# Old code for running Flask server
-# if __name__ == "__main__":
-#     # Default to running on localhost:5000
-#     start_server(debug=True)

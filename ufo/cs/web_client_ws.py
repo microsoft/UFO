@@ -5,11 +5,12 @@ import logging
 import sys
 import time
 import traceback
+from typing import Any, Dict, List, Optional
 
 import requests
 import websockets
 from ufo.cs.computer import Computer
-from ufo.cs.contracts import UFORequest, UFOResponse
+from ufo.cs.contracts import UFOAction, UFORequest, UFOResponse
 from ufo.mcp.core_mcp_client import CoreMCPClient
 
 # Configure logging
@@ -34,14 +35,12 @@ class UFOWebClient:
         core_mcp_port=8000,
     ):
         """
-        Initialize the UFO web client
-
-        Args:
-            server_url (str): URL of the UFO web service
-            computer_name (str): Name for the Computer instance
-            use_core_mcp_server (bool): Whether to use the core MCP server for action execution
-            core_mcp_host (str): Hostname of the core MCP server
-            core_mcp_port (int): Port of the core MCP server
+        Initialize the UFO web client.
+        :param server_url: URL of the UFO web service
+        :param computer_name: Name for the Computer instance
+        :param use_core_mcp_server: Whether to use the core MCP server for action execution
+        :param core_mcp_host: Hostname of the core MCP server
+        :param core_mcp_port: Port of the core MCP server
         """
         self.server_url = server_url.rstrip("/")
         self.computer = Computer(computer_name)
@@ -71,15 +70,11 @@ class UFOWebClient:
         await self.computer.async_init()
         logger.info("UFO Web Client initialized successfully")
 
-    def run_task(self, request_text):
+    def run_task(self, request_text: str):
         """
         Run a task by communicating with the UFO web service
-
-        Args:
-            request_text (str): The user's request text
-
-        Returns:
-            bool: True if task completed successfully, False otherwise
+        :param request_text: The request text to send to the server
+        :returns: True if the task was completed successfully, False otherwise
         """
         try:
             # Initial request to start the session
@@ -105,16 +100,16 @@ class UFOWebClient:
             logger.error(f"Error running task: {str(e)}", exc_info=True)
             return False
 
-    def _send_request(self, request_text=None, action_results=None):
+    def _send_request(
+        self,
+        request_text: Optional[str] = None,
+        action_results=Optional[Dict[str, Any]],
+    ):
         """
         Send a request to the UFO web service
-
-        Args:
-            request_text (str, optional): User's request text
-            action_results (dict, optional): Results from executed actions
-
-        Returns:
-            UFOResponse: Response from the server
+        :param request_text: The request text to send to the server
+        :param action_results: Results of previously executed actions
+        :returns: UFOResponse object containing the server's response
         """
         # Prepare the request data
         request_data = {"session_id": self.session_id}
@@ -153,15 +148,11 @@ class UFOWebClient:
 
         return ufo_response
 
-    def _execute_actions(self, actions):
+    def _execute_actions(self, actions: List[UFOAction]) -> Dict:
         """
         Execute the actions provided by the server
-
-        Args:
-            actions (list): List of actions to execute
-
-        Returns:
-            dict: Results from executing the actions
+        :param actions: List of actions to execute
+        :returns: Results of the executed actions
         """
         action_results = {}
 
@@ -209,7 +200,15 @@ class UFOWebClient:
         return action_results
 
 
-async def websocket_client_main(server_addr, client_id, ufo_web_client: UFOWebClient):
+async def websocket_client_main(
+    server_addr: str, client_id: str, ufo_web_client: UFOWebClient
+):
+    """
+    Main entry point for the WebSocket client
+    :param server_addr: WebSocket server address
+    :param client_id: Unique identifier for the client
+    :param ufo_web_client: Instance of UFOWebClient to handle tasks
+    """
     async with websockets.connect(server_addr) as ws:
         # register the client
         await ws.send(json.dumps({"client_id": client_id}))
