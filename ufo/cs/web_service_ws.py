@@ -194,16 +194,36 @@ async def ws_handler(websocket, path):
         online_clients.pop(client_id, None)
 
 
+# def run_ws():
+#     global ws_event_loop
+#     ws_event_loop = asyncio.new_event_loop()
+#     asyncio.set_event_loop(ws_event_loop)
+#     ws_server = websockets.serve(
+#         ws_handler, "0.0.0.0", 8765, ping_interval=100, ping_timeout=100
+#     )
+#     ws_event_loop.run_until_complete(ws_server)
+#     print("WebSocket server started on :8765")
+#     ws_event_loop.run_forever()
+
+
 def run_ws():
     global ws_event_loop
     ws_event_loop = asyncio.new_event_loop()
     asyncio.set_event_loop(ws_event_loop)
-    ws_server = websockets.serve(
-        ws_handler, "0.0.0.0", 8765, ping_interval=100, ping_timeout=100
-    )
-    ws_event_loop.run_until_complete(ws_server)
-    print("WebSocket server started on :8765")
-    ws_event_loop.run_forever()
+
+    async def start_ws_server():
+        await websockets.serve(
+            ws_handler, "0.0.0.0", 8765, ping_interval=100, ping_timeout=100
+        )
+        print("WebSocket server started on Localhost:8765")
+        await asyncio.Future()  # keep running
+
+    try:
+        ws_event_loop.run_until_complete(start_ws_server())
+    except Exception as e:
+        logger.error(f"Error starting WebSocket server: {e}")
+    finally:
+        ws_event_loop.close()
 
 
 def run_flask():
@@ -220,6 +240,7 @@ if __name__ == "__main__":
     t1 = threading.Thread(target=run_flask, daemon=True)
     t1.start()
     run_ws()
+    asyncio.run(run_ws())
 
 # Old code for running Flask server
 # if __name__ == "__main__":
