@@ -215,7 +215,7 @@ async def ws_handler(websocket: websockets.WebSocketServerProtocol, path: str):
 
 def run_ws():
     """
-    Run the WebSocket server in a separate event loop.
+    Run the WebSocket server in a separate event loop. The port is fixed at 8765.
     This function initializes a new event loop and starts the WebSocket server.
     """
     global ws_event_loop
@@ -238,6 +238,10 @@ def run_ws():
 
 
 def run_flask():
+    """
+    Run the Flask web service.
+    This function starts the Flask application on port 5000.
+    """
     app.run(host="0.0.0.0", port=5000, debug=True, use_reloader=False)
 
 
