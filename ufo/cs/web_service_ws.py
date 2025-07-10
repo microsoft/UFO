@@ -240,7 +240,7 @@ if __name__ == "__main__":
     t1 = threading.Thread(target=run_flask, daemon=True)
     t1.start()
     run_ws()
-    asyncio.run(run_ws())
+    # asyncio.run(run_ws())
 
 # Old code for running Flask server
 # if __name__ == "__main__":
