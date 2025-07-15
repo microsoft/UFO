@@ -404,7 +404,7 @@ def create_hardware_mcp_server(host: str = "", port: int = 8006) -> None:
             "message": f"Swiped trackpad from {start_location} to {end_location} (mock)",
         }
 
-    mcp.run(transport="streamable-http")
+    mcp.run()
 
 
 def main():

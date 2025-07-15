@@ -24,7 +24,7 @@ class DefaultMCPServerManager:
         cls._servers_mapping[server_name] = server
         print(f"Registered MCP server '{server_name}'")
 
-    def start_server(cls, namespace: str, params: Dict[str, Any]) -> str:
+    def start_server(cls, namespace: str, host: str, port: int) -> str:
         """
         Start a server with the given namespace and parameters.
 

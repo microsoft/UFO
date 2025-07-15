@@ -1,14 +1,12 @@
-from pydantic import BaseModel
-from abc import ABC, abstractmethod
-from ufo.cs.contracts import ServerResponse, Command
-from typing import Any, Dict, List, Optional
 import asyncio
+from abc import ABC, abstractmethod
+from typing import Any, Dict, List, Optional, Union
+
+from fastmcp import Client, FastMCP
+from pydantic import BaseModel
 from ufo.client.mcp import DefaultMCPServerManager
-
 from ufo.config import Config
-
-from fastmcp import Client
-from fastmcp import FastMCP
+from ufo.cs.contracts import Command
 
 configs = Config.get_instance().config_data
 
@@ -28,7 +26,9 @@ class MCPToolCall(BaseModel):
     tool_type: str  # Type of the tool (e.g., "action", "data_collection")
     description: str  # Description of the tool
     parameters: Dict[str, Any]  # Parameters for the tool, if any
-    endpoint: str  # The MCP server endpoint where the tool is registered
+    mcp_server: Union[
+        str, FastMCP
+    ]  # The url string (for HTTP servers) or FastMCP instance (for local in-memory servers)
 
 
 class Computer(ABC):
@@ -108,14 +108,6 @@ class Computer(ABC):
         # Get the base directory for UFO2
         pass
 
-    def build_client(self, server_endpoint: str) -> Client:
-        """
-        Build a client for the given MCP server.
-        :param server_endpoint: The MCP server endpoint (e.g., "http://0.0.0.0:5000").
-        :return: The built MCP client.
-        """
-        return Client(server_endpoint)
-
     async def _run_action(self, tool_call: MCPToolCall) -> Any:
         """
         Run a one-step action on the computer.
@@ -137,7 +129,7 @@ class Computer(ABC):
 
         server = tool_info.server
         params = tool_info.parameters or {}
-        async with self.build_client(server) as client:
+        async with Client(server) as client:
             result = await client.call_tool(name=tool_call, arguments=params)
             return result
 
@@ -160,7 +152,7 @@ class Computer(ABC):
     ) -> None:
         """
         Register a tool with the computer.
-        :param server_dict: A dictionary mapping namespaces to MCP servers endpoints.
+        :param server_dict: A dictionary mapping namespaces to MCP servers.
         :param tool_type: The type of the tool (e.g., "action", "data_collection").
         :return: None
         """
@@ -173,7 +165,7 @@ class Computer(ABC):
         await asyncio.gather(*tasks)
 
     async def register_one_mcp_server(
-        self, namespace: str, tool_type: str, server_endpoint: str
+        self, namespace: str, tool_type: str, mcp_server: Union[str, FastMCP]
     ) -> None:
         """
         Register tools from a single MCP server.
@@ -182,8 +174,8 @@ class Computer(ABC):
         :param server: The MCP server to register tools from.
         :return: None
         """
-        client = self.build_client(server_endpoint)
-        async with client:
+
+        async with Client(mcp_server) as client:
             tools = await client.list_tools()
             for tool in tools:
                 tool_key = f"{tool_type}.{tool.name}"
@@ -199,7 +191,7 @@ class Computer(ABC):
                             if hasattr(tool, "inputSchema") and tool.inputSchema
                             else {}
                         ),
-                        endpoint=server_endpoint,
+                        mcp_server=mcp_server,
                     )
                 else:
                     print(f"Tool {tool_key} is already registered.")
@@ -212,7 +204,7 @@ class Computer(ABC):
         tool_type: str,
         description: str,
         parameters: Dict[str, Any],
-        server_endpoint: str,
+        mcp_server: Union[str, FastMCP],
     ) -> None:
         """
         Register a tool with the computer.
@@ -221,7 +213,7 @@ class Computer(ABC):
         :param tool_type: The type of the tool (e.g., "action", "
         :param description: The description of the tool.
         :param parameters: The parameters for the tool.
-        :param server: The MCP server where the tool is registered.
+        :param mcp_server: The MCP server where the tool is registered.
         """
         if tool_name in self._tools_registry:
             raise ValueError(f"Tool {tool_key} is already registered.")
@@ -233,12 +225,15 @@ class Computer(ABC):
             namespace=namespace,
             tool_type=tool_type,
             parameters=parameters,
-            endpoint=server_endpoint,
+            mcp_server=mcp_server,
         )
         self._tools_registry[tool_key] = tool_info
 
     async def add_server(
-        self, namespace: str, server_endpoint: str, tool_type: Optional[str] = None
+        self,
+        namespace: str,
+        mcp_server: Union[str, FastMCP],
+        tool_type: Optional[str] = None,
     ) -> None:
         """
         Add a server and its tools to the computer.
@@ -253,15 +248,15 @@ class Computer(ABC):
             )
 
         if tool_type == self._data_collection_namespaces:
-            self._data_collection_servers[namespace] = server_endpoint
+            self._data_collection_servers[namespace] = mcp_server
         elif tool_type == self._action_namespaces:
-            self._action_servers[namespace] = server_endpoint
+            self._action_servers[namespace] = mcp_server
         else:
             raise ValueError(
                 f"Invalid tool type: {tool_type}. Must be one of {self._data_collection_namespaces} or {self._action_namespaces}."
             )
 
-        await self.register_one_mcp_server(namespace, tool_type, server_endpoint)
+        await self.register_one_mcp_server(namespace, tool_type, mcp_server)
 
     async def delete_server(
         self, namespace: str, tool_type: Optional[str] = None
