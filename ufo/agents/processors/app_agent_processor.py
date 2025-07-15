@@ -3,37 +3,39 @@
 
 import json
 import os
-from dataclasses import asdict, dataclass, field
-from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional, Generator
 import time
+from dataclasses import asdict, dataclass, field
+from typing import TYPE_CHECKING, Any, ClassVar, Dict, Generator, List, Optional
+
+from PIL import Image
 
 from ufo import utils
-from ufo.utils import collector
-from PIL import Image
-from ufo.agents.processors.action_contracts import BaseControlLog, OneStepAction
+from ufo.agents.processors.action_contracts import (
+    ActionExecutionLog,
+    ActionSequence,
+    BaseControlLog,
+    OneStepAction,
+)
 from ufo.agents.processors.basic import BaseProcessor
-from ufo.cs.service.control_filter import ControlFilterFactory
 from ufo.config import Config
-from ufo.module.context import Context, ContextNames
 from ufo.cs.contracts import (
     AppWindowControlInfo,
     CaptureAppWindowScreenshotAction,
+    CaptureAppWindowScreenshotParams,
     CaptureDesktopScreenshotAction,
+    CaptureDesktopScreenshotParams,
     ControlInfo,
-    GetAppWindowControlInfoAction, 
+    GetAppWindowControlInfoAction,
+    GetAppWindowControlInfoParams,
     GetUITreeAction,
     GetUITreeParams,
     OperationCommand,
-    OperationSequenceAction
+    OperationSequenceAction,
 )
-from ufo.cs.contracts import (
-    CaptureAppWindowScreenshotParams,
-    CaptureDesktopScreenshotParams,
-    GetAppWindowControlInfoParams
-)
-
-
+from ufo.cs.service.control_filter import ControlFilterFactory
 from ufo.llm import AgentType
+from ufo.module.context import Context, ContextNames
+from ufo.utils import collector
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -131,16 +133,11 @@ class AppAgentRequestLog:
 
 
 class AppAgentProcessor(BaseProcessor):
-   
     """
     The processor for the app agent at a single step.
     """
 
-    def __init__(
-        self,
-        agent: "AppAgent",
-        context: Context
-    ) -> None:
+    def __init__(self, agent: "AppAgent", context: Context) -> None:
         """
         Initialize the app agent processor.
         :param agent: The app agent who executes the processor.
@@ -154,14 +151,11 @@ class AppAgentProcessor(BaseProcessor):
         self.app_agent = agent
         self.host_agent = agent.host
 
-        #self._annotation_dict = None
-        #self._control_info = None
+        self.actions: List[OneStepAction] = []
         self._operation = ""
         self._args = {}
-        #self.session_data_manager.session_data.state.app_winddow_screen_url = []
         self.control_filter_factory = ControlFilterFactory()
         self.control_recorder = ControlInfoRecorder()
-        #self.filtered_annotation_dict = None
         self.screenshot_save_path = None
         self._mcp_execution_result = None
 
@@ -227,7 +221,6 @@ class AppAgentProcessor(BaseProcessor):
 
             return
 
-
     def print_step_info(self) -> None:
         """
         Print the step information.
@@ -274,56 +267,54 @@ class AppAgentProcessor(BaseProcessor):
                     annotation_id=self.application_window_info.annotation_id
                 )
             ),
-            setter=self._get_app_window_screenshot_action_callback
+            setter=self._get_app_window_screenshot_action_callback,
         )
-        
-        # removed control_recorder as it is not used in the code
-        # moved annotated image generation to process_collected_info
 
     def _get_app_window_screenshot_action_callback(self, value):
         """
         Helper method to save control screenshot data to file.
-        
+
         Args:
             value: The result returned from the action
             path: Path to save the screenshot
         """
-        if value and isinstance(value, str) and value.startswith("data:image/png;base64,"):
+        if (
+            value
+            and isinstance(value, str)
+            and value.startswith("data:image/png;base64,")
+        ):
             try:
                 # Decode the base64 string to binary data
                 img_data = utils.decode_base64_image(value)
-                
+
                 # Create directory if it doesn't exist
                 os.makedirs(os.path.dirname(self.screenshot_save_path), exist_ok=True)
-                
+
                 # Save the image to the specified path
-                with open(self.screenshot_save_path, 'wb') as f:
+                with open(self.screenshot_save_path, "wb") as f:
                     f.write(img_data)
 
                 print(f"Screenshot saved to {self.screenshot_save_path}")
             except Exception as e:
                 print(f"Error saving screenshot: {e}")
 
-    
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_control_info(self) -> None:
         """
         Get the control information.
         """
-        
+
         self.session_data_manager.add_action(
             GetAppWindowControlInfoAction(
                 params=GetAppWindowControlInfoParams(
                     annotation_id=self.application_window_info.annotation_id,
-                    field_list=ControlInfoRecorder.recording_fields
+                    field_list=ControlInfoRecorder.recording_fields,
                 )
             ),
-            setter=self._get_app_window_control_info_action_callback
+            setter=self._get_app_window_control_info_action_callback,
         )
 
-        
-        
     def _get_app_window_control_info_action_callback(self, value):
         if isinstance(value, AppWindowControlInfo):
             model = value
@@ -339,34 +330,36 @@ class AppAgentProcessor(BaseProcessor):
     @BaseProcessor.method_timer
     def process_collected_info(self) -> None:
         screenshot_save_path = self.log_path + f"action_step{self.session_step}.png"
-        
+
         annotated_screenshot_save_path = (
             self.log_path + f"action_step{self.session_step}_annotated.png"
         )
-        
+
         concat_screenshot_save_path = (
             self.log_path + f"action_step{self.session_step}_concat.png"
         )
-        
+
         self.session_data_manager.add_callback(
             lambda value: self._generate_annotated_image(
-                value,
-                screenshot_save_path,
-                annotated_screenshot_save_path
+                value, screenshot_save_path, annotated_screenshot_save_path
             )
         )
 
         if configs.get("SAVE_UI_TREE", False):
             if self.application_window_info is not None:
                 self.session_data_manager.add_action(
-                    GetUITreeAction(params=GetUITreeParams(
-                        annotation_id=self.application_window_info.annotation_id,
-                        remove_empty=True
-                    )),
+                    GetUITreeAction(
+                        params=GetUITreeParams(
+                            annotation_id=self.application_window_info.annotation_id,
+                            remove_empty=True,
+                        )
+                    ),
                     setter=lambda value: self._save_ui_tree_callback(
                         value,
-                        os.path.join(self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
-                    ))
+                        os.path.join(
+                            self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
+                        ),
+                    ),
                 )
 
         if configs.get("SAVE_FULL_SCREEN", False):
@@ -379,92 +372,101 @@ class AppAgentProcessor(BaseProcessor):
             )
 
             # Capture the desktop screenshot for all screens using action
-            desktop_screenshot_action = CaptureDesktopScreenshotAction(params=CaptureDesktopScreenshotParams(
-                all_screens=True
-            ))
+            desktop_screenshot_action = CaptureDesktopScreenshotAction(
+                params=CaptureDesktopScreenshotParams(all_screens=True)
+            )
             self.session_data_manager.add_action(
                 desktop_screenshot_action,
-                setter=lambda value: self._capture_all_desktop_screenshot_action_callback(value, desktop_save_path)
+                setter=lambda value: self._capture_all_desktop_screenshot_action_callback(
+                    value, desktop_save_path
+                ),
             )
-            
+
         # add callback for operations when data ready
         self.session_data_manager.add_callback(
             lambda value: self._capture_screen_callback(
-                value, {
-                "screenshot_save_path": screenshot_save_path,
-                "annotated_screenshot_save_path": annotated_screenshot_save_path,
-                "concat_screenshot_save_path": concat_screenshot_save_path
-            })
+                value,
+                {
+                    "screenshot_save_path": screenshot_save_path,
+                    "annotated_screenshot_save_path": annotated_screenshot_save_path,
+                    "concat_screenshot_save_path": concat_screenshot_save_path,
+                },
+            )
         )
-        
-    def _generate_annotated_image(self, value, screenshot_save_path, annotated_screenshot_save_path):
+
+    def _generate_annotated_image(
+        self, _, screenshot_save_path, annotated_screenshot_save_path
+    ):
         """
         Helper method to generate annotated image.
-        
+
         Args:
             value: The result returned from the action
         """
         self.session_data_manager.session_data.state._annotation_dict = {
-            control.annotation_id: control for control in self.session_data_manager.session_data.state.app_window_control_info.controls
+            control.annotation_id: control
+            for control in self.session_data_manager.session_data.state.app_window_control_info.controls
         }
 
-        self.session_data_manager.session_data.state.filtered_annotation_dict = self.get_filtered_annotation_dict(
-            self.session_data_manager.session_data.state._annotation_dict
+        self.session_data_manager.session_data.state.filtered_annotation_dict = (
+            self.get_filtered_annotation_dict(
+                self.session_data_manager.session_data.state._annotation_dict
+            )
         )
-        
+
         if BACKEND == "uia":
             self.session_data_manager.session_data.state._control_info = [
-                dict(
-                    label=item[0],
-                    control_text=item[1].name,
-                    control_type=item[1].control_type,
-                )
+                {
+                    "label": item[0],
+                    "control_text": item[1].name,
+                    "control_type": item[1].control_type,
+                }
                 for item in self.session_data_manager.session_data.state._annotation_dict.items()
             ]
-            
+
             self.session_data_manager.session_data.state.filtered_control_info = [
-                dict(
-                    label=item[0],
-                    control_text=item[1].name,
-                    control_type=item[1].control_type,
-                )
+                {
+                    "label": item[0],
+                    "control_text": item[1].name,
+                    "control_type": item[1].control_type,
+                }
                 for item in self.session_data_manager.session_data.state.filtered_annotation_dict.items()
             ]
         else:
             self._control_info = [
-                dict(
-                    label=item[0],
-                    control_class=item[1].class_name,
-                )
+                {
+                    "label": item[0],
+                    "control_class": item[1].class_name,
+                }
                 for item in self.session_data_manager.session_data.state._annotation_dict.items()
             ]
 
             self.session_data_manager.session_data.state.filtered_control_info = [
-                dict(
-                    label=item[0],
-                    control_class=item[1].class_name,
-                )
+                {
+                    "label": item[0],
+                    "control_class": item[1].class_name,
+                }
                 for item in self.session_data_manager.session_data.state.filtered_annotation_dict.items()
             ]
-        
+
         image = Image.open(screenshot_save_path)
-        
+
         annotated_image: Image.Image = collector.annotate_app_window_image(
             image,
             self.session_data_manager.session_data.state.app_window_control_info.window_info,
             self.session_data_manager.session_data.state.app_window_control_info.controls,
         )
-        
+
         if annotated_image:
             os.makedirs(os.path.dirname(annotated_screenshot_save_path), exist_ok=True)
-            
+
             with open(annotated_screenshot_save_path, "wb") as f:
                 annotated_image.save(f, format="PNG")
-        
+
     def _save_ui_tree_callback(self, value, path):
         """
         Helper method to save UI tree data.
-        
+
         Args:
             value: The result returned from the action
             path: The path to the file where the UI tree data will be saved
@@ -472,39 +474,45 @@ class AppAgentProcessor(BaseProcessor):
         if value:
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w") as f:
-                json.dump(value, f, indent=4) 
-    
+                json.dump(value, f, indent=4)
+
     def _capture_all_desktop_screenshot_action_callback(self, value, path):
         """
         Helper method to save desktop screenshot data and save to file.
-        
+
         Args:
             value: The result returned from the action
             path: Path to save the screenshot
         """
 
-        if value and isinstance(value, str) and value.startswith("data:image/png;base64,"):
+        if (
+            value
+            and isinstance(value, str)
+            and value.startswith("data:image/png;base64,")
+        ):
             try:
                 img_data = utils.decode_base64_image(value)
                 os.makedirs(os.path.dirname(path), exist_ok=True)
-                with open(path, 'wb') as f:
+                with open(path, "wb") as f:
                     f.write(img_data)
             except Exception as e:
                 print(f"Error saving image: {e}")
-        
-    def _capture_screen_callback(self, value, params: Dict[str, str]):
+
+    def _capture_screen_callback(self, _, params: Dict[str, str]):
         """
         Helper method to save screenshot data.
-        
+
         Args:
             value: The result returned from the action
             params: The parameters for the action
         """
         if params:
             screenshot_save_path = params.get("screenshot_save_path")
-            annotated_screenshot_save_path = params.get("annotated_screenshot_save_path")
+            annotated_screenshot_save_path = params.get(
+                "annotated_screenshot_save_path"
+            )
             concat_screenshot_save_path = params.get("concat_screenshot_save_path")
-        
+
         if configs.get("INCLUDE_LAST_SCREENSHOT", True):
             last_screenshot_save_path = (
                 self.log_path + f"action_step{self.session_step - 1}.png"
@@ -514,7 +522,11 @@ class AppAgentProcessor(BaseProcessor):
                 + f"action_step{self.session_step - 1}_selected_controls.png"
             )
 
-            image_path = last_control_screenshot_save_path if os.path.exists(last_control_screenshot_save_path) else last_screenshot_save_path
+            image_path = (
+                last_control_screenshot_save_path
+                if os.path.exists(last_control_screenshot_save_path)
+                else last_screenshot_save_path
+            )
             self.session_data_manager.session_data.state.app_window_screen_url += [
                 utils.encode_image_from_path(image_path)
             ]
@@ -530,20 +542,19 @@ class AppAgentProcessor(BaseProcessor):
                 utils.encode_image_from_path(concat_screenshot_save_path)
             ]
         else:
-            screenshot_url = utils.encode_image_from_path(
-                screenshot_save_path
-            )
+            screenshot_url = utils.encode_image_from_path(screenshot_save_path)
             screenshot_annotated_url = utils.encode_image_from_path(
                 annotated_screenshot_save_path
             )
             self.session_data_manager.session_data.state.app_window_screen_url += [
-                screenshot_url, screenshot_annotated_url
+                screenshot_url,
+                screenshot_annotated_url,
             ]
 
         # Save the XML file for the current state.
         if configs.get("LOG_XML", False):
             self._save_to_xml()
-        
+
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def get_prompt_message(self) -> None:
@@ -624,7 +635,7 @@ class AppAgentProcessor(BaseProcessor):
             prompt=self._prompt_message,
             control_info_recording=asdict(self.control_recorder),
         )
-        
+
         self.session_data_manager.session_data.state.app_window_screen_url = []
 
         request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
@@ -665,7 +676,9 @@ class AppAgentProcessor(BaseProcessor):
         self._operation = self._response_json.get("Function", "")
         self.question_list = self._response_json.get("Questions", [])
         if configs.get(AgentType.APP).get("JSON_SCHEMA", False):
-            self._args = utils.revise_line_breaks(json.loads(self._response_json.get("Args", "")))
+            self._args = utils.revise_line_breaks(
+                json.loads(self._response_json.get("Args", ""))
+            )
         else:
             self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
 
@@ -698,27 +711,27 @@ class AppAgentProcessor(BaseProcessor):
         Execute action using MCP server.
         """
         from ufo.cs.contracts import MCPToolExecutionAction, MCPToolExecutionParams
-        
+
         app_namespace = self.app_agent._get_app_namespace()
-        
+
         # Create the MCP tool execution action
         mcp_action = MCPToolExecutionAction(
             params=MCPToolExecutionParams(
                 app_namespace=app_namespace,
                 tool_name=self._operation,
-                tool_args=self._args
+                tool_args=self._args,
             )
         )
-        
+
         # Add action to session with callback for result handling
         self.session_data_manager.add_action(
             mcp_action,
-            setter=lambda result: self._handle_mcp_execution_callback(result)
+            setter=lambda result: self._handle_mcp_execution_callback(result),
         )
-        
+
         utils.print_with_color(
-            f"Added MCP tool execution to session: {self._operation} for {app_namespace}", 
-            "blue"
+            f"Added MCP tool execution to session: {self._operation} for {app_namespace}",
+            "blue",
         )
 
     def _execute_ui_action(self) -> None:
@@ -733,7 +746,9 @@ class AppAgentProcessor(BaseProcessor):
             after_status=self.status,
         )
 
-        if action is None or action.function is None or action.function == "":
+        self.actions = [action]
+
+        if action.function is None or action.function == "":
             utils.print_with_color(
                 "No valid action to execute. Skipping execution.", "yellow"
             )
@@ -744,51 +759,84 @@ class AppAgentProcessor(BaseProcessor):
                     command_id=action.function,
                     **{
                         action.function: {
-                        **action.args,
-                        "control_label": action.control_label,
-                        "control_text": action.control_text,
-                        "after_status": action.after_status,
+                            **action.args,
+                            "control_label": action.control_label,
+                            "control_text": action.control_text,
+                            "after_status": action.after_status,
                         }
-                    }
+                    },
                 )
             ]
 
-        self.session_data_manager.add_action(OperationSequenceAction(
-            params=commands,
-        ))
+        self.session_data_manager.add_action(
+            OperationSequenceAction(
+                params=commands,
+            ),
+            setter=lambda result: self._handle_ui_execution_callback(result),
+        )
+
+    def _handle_ui_execution_callback(self, results: List[Dict[str, Any]]) -> None:
+        """
+        Callback to handle UI tool execution result.
+        :param results: The result from the UI tool execution
+        """
+        action = OneStepAction(
+            function=self._operation,
+            args=self._args,
+            control_label=self._control_label,
+            control_text=self.control_text,
+            after_status=self.status,
+        )
+        self.actions = [action]
+
+        if isinstance(results, List):
+            utils.print_with_color(f"UI tool execution result: {results}", "green")
+            for action, result in zip(self.actions, results):
+                action.results = ActionExecutionLog(**result)
+        else:
+            utils.print_with_color(
+                f"Unexpected result type from UI execution: {type(results)}", "yellow"
+            )
 
     def _handle_mcp_execution_callback(self, result: Any) -> None:
         """
         Callback to handle MCP tool execution result.
         :param result: The result from the MCP tool execution
         """
+        action = OneStepAction(
+            function=self._operation,
+            args=self._args,
+            control_label=self._control_label,
+            control_text=self.control_text,
+            after_status=self.status,
+        )
+        self.actions = [action]
+
         try:
             if result and isinstance(result, dict):
                 success = result.get("success", False)
                 if success:
                     utils.print_with_color(
-                        f"MCP tool execution successful: {result.get('tool_name', 'unknown')}", 
-                        "green"
+                        f"MCP tool execution successful: {result.get('tool_name', 'unknown')}",
+                        "green",
                     )
                     # Store the result for memory and logging
                     self._mcp_execution_result = result
                 else:
                     error_msg = result.get("error", "Unknown error")
                     utils.print_with_color(
-                        f"MCP tool execution failed: {error_msg}", 
-                        "red"
+                        f"MCP tool execution failed: {error_msg}", "red"
                     )
                     # Could fallback to UI automation here if needed
                     self._mcp_execution_result = result
             else:
                 utils.print_with_color(
-                    f"Received unexpected MCP execution result type: {type(result)}", 
-                    "yellow"
+                    f"Received unexpected MCP execution result type: {type(result)}",
+                    "yellow",
                 )
         except Exception as e:
             utils.print_with_color(
-                f"Error handling MCP execution callback: {str(e)}", 
-                "red"
+                f"Error handling MCP execution callback: {str(e)}", "red"
             )
 
     def _generate_control_screenshot(self) -> None:
@@ -832,7 +880,9 @@ class AppAgentProcessor(BaseProcessor):
             "magenta",
         )
         self.control_reannotate = self.app_agent.Puppeteer.execute_command(
-            "annotation", self._args, self.session_data_manager.session_data.state._annotation_dict
+            "annotation",
+            self._args,
+            self.session_data_manager.session_data.state._annotation_dict,
         )
 
     def sync_memory(self):
@@ -840,18 +890,17 @@ class AppAgentProcessor(BaseProcessor):
         Sync the memory of the AppAgent.
         """
 
+        action_seq = ActionSequence(self.actions)
+
         app_root = self.app_root
         # app_root is set in the selecte_app and launch_app actions
         # and should not change as app agent is for a single app
-        #app_root = self.application_window_info.process_name
-        action_type = [
-            self.app_agent.Puppeteer.get_command_types(action.function)
-            for action in self.actions.actions
-        ]
+        # app_root = self.application_window_info.process_name
+        action_type = ["UIControl" for _ in action_seq.actions]  # TODO: fix this
 
         all_previous_success_actions = self.get_all_success_actions()
 
-        action_success = self.actions.to_list_of_dicts(
+        action_success = action_seq.to_list_of_dicts(
             success_only=True, previous_actions=all_previous_success_actions
         )
 
@@ -863,8 +912,8 @@ class AppAgentProcessor(BaseProcessor):
             Round=self.round_num,
             Subtask=self.subtask,
             SubtaskIndex=self.round_subtask_amount,
-            FunctionCall=self.actions.get_function_calls(),
-            Action=self.actions.to_list_of_dicts(
+            FunctionCall=action_seq.get_function_calls(),
+            Action=action_seq.to_list_of_dicts(
                 previous_actions=all_previous_success_actions
             ),
             ActionSuccess=action_success,
@@ -874,10 +923,10 @@ class AppAgentProcessor(BaseProcessor):
             AgentName=self.app_agent.name,
             Application=app_root,
             Cost=self._cost,
-            Results=self.actions.get_results(),
+            Results=action_seq.get_results(),
             error=self._exeception_traceback,
             time_cost=self._time_cost,
-            ControlLog=self.actions.get_control_logs(),
+            ControlLog=action_seq.get_control_logs(),
             UserConfirm=(
                 "Yes"
                 if self.status.upper()

@@ -7,7 +7,6 @@ from uuid import uuid4
 
 from ufo.config import Config
 from ufo.cs.computer import Computer
-from ufo.module.client import UFOClientManager
 from ufo.module.sessions.session import SessionFactory
 
 configs = Config.get_instance().config_data
@@ -41,12 +40,6 @@ args.add_argument(
     type=str,
     default="",
 )
-args.add_argument(
-    "--coro",
-    help="Run the session in coroutine mode. If not provided, the session will run in normal mode.",
-    action="store_true",
-    default=False,
-)
 
 
 parsed_args = args.parse_args()
@@ -72,39 +65,16 @@ def main():
         request=parsed_args.request,
     )
 
-    # session_id = str(uuid4())
-    # session = ServiceSession(task=session_id, should_evaluate=False, id=session_id)
-    #session.init(request="open notepad and write 'hellow world'")
     session = sessions[0]  # Assuming the first session is the one we want to run
     computer = Computer("localhost")
-    if not parsed_args.coro:
-        session.create_new_round()
-        while True:
-            if session.is_finished():
-                print("Session is finished.")
-                break
-
-            session.step_forward()
-
-            actions = session.get_actions()
-            # Process all actions in the actions list
-            action_results = {}
-            for action in actions:
-                # Run each action and collect the results
-                result = computer.run_action(action)
-                action_results[action.call_id] = result
-
-            # Update session state with collected results
-            session.update_session_state_from_action_results(action_results)
-    else:
-        for _ in session.run_coro:
-            actions = session.get_actions()
-            action_results = {}
-            for action in actions:
-                # Run each action and collect the results
-                result = computer.run_action(action)
-                action_results[action.call_id] = result
-            session.update_session_state_from_action_results(action_results)
+    for _ in session.run_coro:
+        actions = session.get_actions()
+        action_results = {}
+        for action in actions:
+            # Run each action and collect the results
+            result = computer.run_action(action)
+            action_results[action.call_id] = result
+        session.process_action_results(action_results)
 
 
 if __name__ == "__main__":

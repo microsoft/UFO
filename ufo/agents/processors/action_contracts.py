@@ -46,13 +46,15 @@ class OneStepAction:
     def __init__(
         self,
         function: str = "",
-        args: Dict[str, Any] = {},
+        args: Dict[str, Any] = None,
         control_label: str = "",
         control_text: str = "",
         after_status: str = "",
         results: Optional[ActionExecutionLog] = None,
         configs=Config.get_instance().config_data,
     ):
+        if args is None:
+            args = {}
         self._function = function
         self._args = args
         self._control_label = control_label
@@ -225,7 +227,7 @@ class ActionSequence:
     A sequence of one-step actions.
     """
 
-    def __init__(self, actions: Optional[List[OneStepAction]] = []):
+    def __init__(self, actions: Optional[List[OneStepAction]] = None):
 
         if not actions:
             actions = []

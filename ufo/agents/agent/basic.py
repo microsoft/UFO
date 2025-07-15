@@ -5,7 +5,17 @@ from __future__ import annotations
 
 import json
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, List, Optional, Type, Union, Generator, Callable
+from typing import (
+    TYPE_CHECKING,
+    Callable,
+    Dict,
+    Generator,
+    List,
+    Optional,
+    Tuple,
+    Type,
+    Union,
+)
 
 from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
@@ -144,7 +154,7 @@ class BasicAgent(ABC):
         namescope: str,
         use_backup_engine: bool,
         configs=configs,
-    ) -> str:
+    ) -> Tuple[str, float]:
         """
         Get the response for the prompt.
         :param message: The message for LLMs.
@@ -241,7 +251,7 @@ class BasicAgent(ABC):
 
     def handle_coro(self, context: Context) -> Generator[None, None, None]:
         """
-        Handle the agent.
+        Handle the agent. This is a generator method.
         :param context: The context for the agent.
         """
         yield from self.state.handle_coro(self, context)
