@@ -47,7 +47,7 @@ class Computer(ABC):
         self._action_servers = {}
 
         self._agent_name = "HostAgent/HostAgent"
-        self._default_mcp_server_manager = DefaultMCPServerManager()
+        self.local_mcp_server_manager = DefaultMCPServerManager()
 
     async def async_init(self) -> None:
         """
@@ -66,7 +66,29 @@ class Computer(ABC):
             ),
         )
 
-    @abstractmethod
+    def create_mcp_server(
+        self, mcp_config: Dict[str, Any], *args, **kwargs
+    ) -> Union[str, FastMCP]:
+        """
+        Create an MCP server based on the type and parameters.
+        :param mcp_config: Configuration dictionary for the MCP server.
+        :return: A string URL for HTTP servers or a FastMCP instance for local servers.
+        """
+
+        namespace = mcp_config.get("namespace", "default_mcp_server")
+        server_type = mcp_config.get("type", "http")
+        host = mcp_config.get("host", "localhost")
+        port = mcp_config.get("port", 8000)
+
+        if server_type == "http":
+            return f"http://{host}:{port}/mcp"
+        elif server_type == "local":
+            return self.local_mcp_server_manager.start_server(
+                namespace=namespace, *args, **kwargs
+            )
+        else:
+            raise ValueError(f"Unsupported server type: {server_type}")
+
     def _init_data_collection_servers(self) -> Dict[str, str]:
         """
         Initialize data collection servers for the computer of the
@@ -74,39 +96,24 @@ class Computer(ABC):
         # Get the base directory for UFO2
         for data_collection_server in configs.get("data_collection_servers", []):
             # If the server is set to auto-start, create a FastMCP server
-            namespace = data_collection_server.get(
-                "namespace", "default_data_collection"
-            )
-            host = data_collection_server.get("host", "localhost")
-            port = data_collection_server.get("port", 5000)
+            namespace = data_collection_server.get("namespace")
+            if not namespace:
+                namespace = "default_data_collection"
+            mcp_server = self.create_mcp_server(data_collection_server)
+            self._data_collection_servers[namespace] = mcp_server
 
-            if data_collection_server.get("auto_start", True):
-
-                # Create a FastMCP server instance
-                server = FastMCP(
-                    name=namespace,
-                    instructions=data_collection_server.get("instructions", ""),
-                    stateless_http=True,  # one‐shot JSON (no SSE/session)
-                    json_response=True,  # return pure JSON bodies
-                    host=host,
-                    port=port,
-                )
-
-                server.run()  # Start the server
-
-            endpoint = data_collection_server.get(
-                "endpoint", f"http://{host}:{port}/mcp"
-            )
-
-            self._data_collection_servers[namespace] = endpoint
-
-    @abstractmethod
     def _init_action_servers(self) -> Dict[str, str]:
         """
         Initialize action servers for the computer.
         """
         # Get the base directory for UFO2
-        pass
+        for action_server in configs.get("action_servers", []):
+            # If the server is set to auto-start, create a FastMCP server
+            namespace = action_server.get("namespace")
+            if not namespace:
+                namespace = "default_action"
+            mcp_server = self.create_mcp_server(action_server)
+            self._data_collection_servers[namespace] = mcp_server
 
     async def _run_action(self, tool_call: MCPToolCall) -> Any:
         """
