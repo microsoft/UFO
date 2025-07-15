@@ -5,9 +5,15 @@
 import json
 import time
 from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict, Generator, List
+from typing import TYPE_CHECKING, Any, Dict, Generator, List, Tuple
 
 from ufo import utils
+from ufo.agents.processors.action_contracts import (
+    ActionExecutionLog,
+    ActionSequence,
+    BaseControlLog,
+    OneStepAction,
+)
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
 from ufo.cs.contracts import (
@@ -98,6 +104,19 @@ class HostAgentProcessor(BaseProcessor):
         self.full_desktop_windows_info: List[Dict[str, str]] = []
         self.assigned_third_party_agent: str | None = None
 
+        self.actions: List[OneStepAction] = []
+
+    def print_step_info(self) -> None:
+        """
+        Print the step information.
+        """
+        utils.print_with_color(
+            "Round {round_num}, Step {step}, HostAgent: Analyzing the user intent and decomposing the request...".format(
+                round_num=self.round_num + 1, step=self.round_step + 1
+            ),
+            "magenta",
+        )
+
     def process_coro(self) -> Generator[None, None, None]:
         """
         Process the host agent in coroutine mode.
@@ -161,17 +180,6 @@ class HostAgentProcessor(BaseProcessor):
 
             return
 
-    def print_step_info(self) -> None:
-        """
-        Print the step information.
-        """
-        utils.print_with_color(
-            "Round {round_num}, Step {step}, HostAgent: Analyzing the user intent and decomposing the request...".format(
-                round_num=self.round_num + 1, step=self.round_step + 1
-            ),
-            "magenta",
-        )
-
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def capture_screenshot(self) -> None:
@@ -234,17 +242,7 @@ class HostAgentProcessor(BaseProcessor):
     def get_control_info(self) -> None:
         """
         Get the control information.
-        """
-        # Get all available windows on the desktop, into a dictionary with format {index: application object}.
-        # self._desktop_windows_dict = self.control_inspector.get_desktop_app_dict(
-        #     remove_empty=True
-        # )
-
-        # Get the textual information of all windows.
-        # self._desktop_windows_info = self.control_inspector.get_desktop_app_info(
-        #     self._desktop_windows_dict
-        # )
-
+        """ 
         self.session_data_manager.add_action(
             action=GetDesktopAppInfoAction(
                 params=GetDesktopAppInfoParams(
@@ -279,11 +277,11 @@ class HostAgentProcessor(BaseProcessor):
         """
         pass
 
-    def _create_third_party_agent_list(self, start_index: int = 0) -> List[str]:
+    def _create_third_party_agent_list(self, start_index: int = 0) -> Tuple[List[Dict], List[str]]:
         """
         Create a list of third-party agents.
         :param start_index: The starting index of the third-party agent list.
-        :return: A list of third-party agents.
+        :return: A tuple containing the list of third-party agents and their labels.
         """
 
         third_party_agent_names = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
@@ -377,7 +375,7 @@ class HostAgentProcessor(BaseProcessor):
             try:
                 self.host_agent.response_to_dict(self._response)
                 break
-            except Exception as e:
+            except Exception:
                 print(f"Error in parsing response into json, retrying: {retry}")
                 retry += 1
 
@@ -438,23 +436,23 @@ class HostAgentProcessor(BaseProcessor):
                 )
             )
 
-            if len(new_app_windows) > 0:
-                # self._select_application(new_app_window)
-                self.session_data_manager.add_action(
-                    action=SelectApplicationWindowAction(
-                        params=SelectApplicationWindowParams(
-                            window_label=new_app_windows[0].annotation_id
-                        )
-                    ),
-                    setter=lambda value: self.select_application_window_callback(value),
-                )
-            else:
-                self.session_data_manager.add_action(
-                    LaunchApplicationAction(
-                        params=LaunchApplicationParams(bash_command=self.bash_command)
-                    ),
-                    setter=lambda value: self.launch_application_callback(value),
-                )
+        if len(new_app_windows) > 0:
+            # self._select_application(new_app_window)
+            self.session_data_manager.add_action(
+                action=SelectApplicationWindowAction(
+                    params=SelectApplicationWindowParams(
+                        window_label=new_app_windows[0].annotation_id
+                    )
+                ),
+                setter=lambda value: self.select_application_window_callback(value),
+            )
+        elif self.bash_command:
+            self.session_data_manager.add_action(
+                LaunchApplicationAction(
+                    params=LaunchApplicationParams(bash_command=self.bash_command)
+                ),
+                setter=lambda value: self.launch_application_callback(value),
+            )
 
     def select_application_window_callback(self, value: dict | WindowInfo) -> None:
         """
@@ -465,17 +463,30 @@ class HostAgentProcessor(BaseProcessor):
         """
         # Set the application window
         self.app_root = value["process_name"]
-        # self.control_text = value["control_text"]
 
         new_app_window = value["window_info"]
-        # self.application_window = new_app_window
         if isinstance(new_app_window, dict):
             self.application_window_info = WindowInfo(**new_app_window)
         elif isinstance(new_app_window, WindowInfo):
             self.application_window_info = new_app_window
 
+        self.actions = [
+            OneStepAction(
+                function="set_focus",
+                control_label=self.control_label,
+                control_text=self.control_text,
+                after_status=self.status,
+            )
+        ]
+        self.actions[0].control_log = BaseControlLog(
+            control_class=self.application_window_info.class_name,
+            control_type=self.application_window_info.control_type,
+            control_automation_id=self.application_window_info.automation_id,
+        )
+
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
+
 
     def launch_application_callback(self, value: dict[str, any]) -> None:
         """
@@ -486,19 +497,34 @@ class HostAgentProcessor(BaseProcessor):
         """
         # Set the application window
         self.app_root = value["process_name"]
-        # self.control_text = value["control_text"]
 
         new_app_window = value["window_info"]
-        # self.application_window = new_app_window
         self.application_window_info = WindowInfo(**new_app_window)
+
+        self.actions = [
+            OneStepAction(
+                function="run_shell",
+                args={"command": self.bash_command},
+                after_status=self.status,
+                control_label=self.control_label,
+                control_text=self.control_text,
+            )
+        ]
+        self.actions[0].results = ActionExecutionLog(
+            status=self.status,
+            error="", # TODO: complete this info
+            return_value = "",
+        )
 
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
+
 
     def sync_memory(self):
         """
         Sync the memory of the HostAgent.
         """
+        action_seq = ActionSequence(self.actions)
 
         additional_memory = HostAgentAdditionalMemory(
             Step=self.session_step,
@@ -507,18 +533,18 @@ class HostAgentProcessor(BaseProcessor):
             Round=self.round_num,
             ControlLabel=self.control_label,
             SubtaskIndex=-1,
-            FunctionCall=self.actions.get_function_calls(),
-            Action=self.actions.to_list_of_dicts(),
+            FunctionCall=action_seq.get_function_calls(),
+            Action=action_seq.to_list_of_dicts(),
             ActionType="Bash" if self.bash_command else "UIControl",
             Request=self.request,
             Agent="HostAgent",
             AgentName=self.host_agent.name,
             Application=self.app_root,
             Cost=self._cost,
-            Results=self.actions.get_results(),
+            Results=action_seq.get_results(),
             error=self._exeception_traceback,
             time_cost=self._time_cost,
-            ControlLog=self.actions.get_control_logs(),
+            ControlLog=action_seq.get_control_logs(),
         )
 
         self.add_to_memory(self._response_json)

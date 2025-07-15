@@ -1,17 +1,14 @@
-import time
-from typing import Callable, Dict, List, Optional, Any, Union
 import uuid
+from typing import Any, Callable, Dict, List, Optional, Union
+
 from pydantic import BaseModel, Field
 
-from ufo.agents.agent.basic import BasicAgent
 from ufo.cs.contracts import (
     ActionBase,
     AppWindowControlInfo,
     CallbackAction,
     WindowInfo,
 )
-import mmh3
-import os
 
 
 class SessionState(BaseModel):
@@ -46,11 +43,20 @@ class SessionDataManager:
 
     @staticmethod
     def time_hash_str(data: str):
-        timestamp = int(time.time())
-        hash_value = mmh3.hash64(f"{data}-{timestamp}")[0]  # Generate hash
+        """
+        Generate a unique identifier.
+        """
+        # timestamp = int(time.time())
+        # hash_value = mmh3.hash64(f"{data}-{timestamp}")[0]  # Generate hash
         return str(uuid.uuid4())  # Convert to string
 
     def add_action(self, action: ActionBase, setter: Callable[[Any], None] = None):
+        """
+        Add an action to the session data manager.
+        :param action: The action to be added.
+        :param setter: Optional callback function to set the action result.
+        If not provided, a default no-op function will be used.
+        """
         call_id = SessionDataManager.time_hash_str(action.name)
         action.call_id = call_id
         self.session_data.actions_to_run.append(action)
@@ -62,6 +68,10 @@ class SessionDataManager:
         self.action_id_setters[call_id] = setter
 
     def add_callback(self, callback: Callable[[Any], None] = None):
+        """
+        Add a callback action to the session data manager.
+        :param callback: Optional callback function to set the action result.
+        """
         callback_action = CallbackAction()
         call_id = SessionDataManager.time_hash_str("callback")
         callback_action.call_id = call_id
@@ -71,11 +81,20 @@ class SessionDataManager:
         self.action_id_setters[call_id] = callback
 
     def clear_roundtrip_data(self):
+        """
+        Clear any roundtrip data stored in the session data manager.
+        """
         self.action_id_setters = {}
         self.session_data.actions_to_run = []
         self.session_data.messages = []
 
-    def update_session_state_from_action_results(self, action_results: Dict[str, Any]):
+    def process_action_results(self, action_results: Dict[str, Any]):
+        """
+        Process the results of executed actions and update session state.
+        This method iterates through the action results and calls the corresponding
+        callbacks for each action based on its call_id.
+        :param action_results: Dictionary containing results of executed actions.
+        """
         for call_id, result in action_results.items():
             if call_id in self.action_id_setters:
                 try:
@@ -85,6 +104,10 @@ class SessionDataManager:
                     print(f"Error in action setter for {call_id}: {e}")
 
         self.result_available = True
+
+    @property
+    def actions_to_run(self) -> List[ActionBase]:
+        return self.session_data.actions_to_run
 
     def get_desktop_windows_info(self) -> List[Dict[str, str]]:
         windows_info = self.session_data.state.desktop_windows_info

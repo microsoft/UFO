@@ -715,7 +715,7 @@ class BaseProcessor(ABC):
         :return: The question list.
         """
 
-        if type(self._question_list) == str:
+        if isinstance(self._question_list, str):
             self._question_list = [self._question_list]
 
         return self._question_list
@@ -783,7 +783,7 @@ class BaseProcessor(ABC):
         try:
             self.application_window.is_enabled()
             return False
-        except:
+        except Exception:
             return True
 
     def log(self, response_json: Dict[str, Any]) -> None:

@@ -235,7 +235,7 @@ class Computer:
         else:
             raise ValueError(f"Unknown action: {action.name}")
 
-    def _handle_operation_sequence(self, action: ActionBase) -> Dict[str, Any]:
+    def _handle_operation_sequence(self, action: ActionBase) -> List[Dict[str, Any]]:
         action_commands: list[OperationCommand] = action.params
         actions = []
         application_window = self._get_window_by_annotation_id(
@@ -271,6 +271,7 @@ class Computer:
             self.selected_app_window_controls,
             application_window,
         )
+        return action_sequence.get_results()
 
     def _handle_callback(self, action: CallbackAction) -> Dict[str, Any]:
         """Handle callback action"""
@@ -373,6 +374,7 @@ class Computer:
                 is_active=app_window[1].is_active(),
                 rectangle=self._get_control_rectangle(app_window[1]),
                 text_content=app_window[1].window_text(),
+                control_type= app_window[1].element_info.control_type
             )
             for app_window in self.last_app_windows.items()
         ]
@@ -391,6 +393,7 @@ class Computer:
                 is_active=app_window["is_active"],
                 rectangle=app_window["rectangle"],
                 text_content=app_window["text_content"],
+                control_type=app_window["control_type"],
             )
             for app_window in window_dict
         ]
@@ -606,6 +609,7 @@ class Computer:
             is_maximized=window.is_maximized(),
             # is_active=window.is_active(),
             rectangle=self._get_control_rectangle(window),
+            control_type=window.element_info.control_type
         )
 
         return {
@@ -667,6 +671,7 @@ class Computer:
                 is_active=app_window[1].is_active(),
                 rectangle=self._get_control_rectangle(app_window[1]),
                 text_content=app_window[1].window_text(),
+                control_type=app_window[1].element_info.control_type
             )
             for app_window in app_dict.items()
         ]
