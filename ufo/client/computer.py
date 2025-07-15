@@ -1,5 +1,6 @@
 from pydantic import BaseModel
 from abc import ABC, abstractmethod
+from ufo.cs.contracts import ServerResponse, Command
 from typing import Any, Dict, List, Optional
 import asyncio
 
@@ -278,7 +279,7 @@ class ComputerBasic(ABC):
             and (namespace is None or tool.namespace == namespace)
         ]
 
-    def response_to_mcp_tool_call(self, response, tool_type) -> MCPToolCall:
+    def response_to_mcp_tool_call(self, command: Command) -> MCPToolCall:
         """
         TODO: Implement a method to convert a response to an MCPToolCall.
         """

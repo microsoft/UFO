@@ -314,6 +314,29 @@ UFOAction = Annotated[
 ]
 
 
+class Command(BaseModel):
+    tool_name: str
+    parameters: Optional[Dict[str, Any]] = None
+    tool_type: Literal["data_collection", "action"]
+    call_id: Optional[str] = None
+
+
+class ServerResponse(BaseModel):
+    status: Literal["continue", "completed", "failure"]
+    actions: Optional[List[Command]] = None
+    messages: Optional[List[str]] = None
+    error: Optional[str] = None
+    session_id: Optional[str] = None
+    timestamp: Optional[str] = None
+
+
+class ClientRequest(BaseModel):
+    session_id: Optional[str] = None
+    request: Optional[str] = None
+    action_results: Optional[Dict[str, Any]] = None
+    timestamp: Optional[str] = None
+
+
 class UFORequest(BaseModel):
     session_id: Optional[str] = None
     request: Optional[str] = None
