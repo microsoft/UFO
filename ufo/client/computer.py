@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 from ufo.cs.contracts import ServerResponse, Command
 from typing import Any, Dict, List, Optional
 import asyncio
+from ufo.client.mcp import DefaultMCPServerManager
 
 from ufo.config import Config
 
@@ -27,10 +28,10 @@ class MCPToolCall(BaseModel):
     tool_type: str  # Type of the tool (e.g., "action", "data_collection")
     description: str  # Description of the tool
     parameters: Dict[str, Any]  # Parameters for the tool, if any
-    server: FastMCP  # The MCP server where the tool is registered
+    endpoint: str  # The MCP server endpoint where the tool is registered
 
 
-class ComputerBasic(ABC):
+class Computer(ABC):
     """
     Basic class for managing computer operations and actions.
     """
@@ -44,9 +45,9 @@ class ComputerBasic(ABC):
 
         self._data_collection_servers = {}
         self._action_servers = {}
-        self._data_collection_clients = {}
-        self._action_clients = {}
+
         self._agent_name = "HostAgent/HostAgent"
+        self._default_mcp_server_manager = DefaultMCPServerManager()
 
     async def async_init(self) -> None:
         """
@@ -56,36 +57,64 @@ class ComputerBasic(ABC):
         self._action_servers = await self._init_action_servers()
 
         await asyncio.gather(
-            self.register_mcp(
+            self.register_mcp_servers(
                 self._data_collection_servers,
                 tool_type=self._data_collection_namespaces,
             ),
-            self.register_mcp(self._action_servers, tool_type=self._action_namespaces),
+            self.register_mcp_servers(
+                self._action_servers, tool_type=self._action_namespaces
+            ),
         )
 
     @abstractmethod
-    def _init_data_collection_servers(self) -> Dict[str, FastMCP]:
+    def _init_data_collection_servers(self) -> Dict[str, str]:
         """
         Initialize data collection servers for the computer of the
         """
         # Get the base directory for UFO2
-        pass
+        for data_collection_server in configs.get("data_collection_servers", []):
+            # If the server is set to auto-start, create a FastMCP server
+            namespace = data_collection_server.get(
+                "namespace", "default_data_collection"
+            )
+            host = data_collection_server.get("host", "localhost")
+            port = data_collection_server.get("port", 5000)
+
+            if data_collection_server.get("auto_start", True):
+
+                # Create a FastMCP server instance
+                server = FastMCP(
+                    name=namespace,
+                    instructions=data_collection_server.get("instructions", ""),
+                    stateless_http=True,  # one‐shot JSON (no SSE/session)
+                    json_response=True,  # return pure JSON bodies
+                    host=host,
+                    port=port,
+                )
+
+                server.run()  # Start the server
+
+            endpoint = data_collection_server.get(
+                "endpoint", f"http://{host}:{port}/mcp"
+            )
+
+            self._data_collection_servers[namespace] = endpoint
 
     @abstractmethod
-    def _init_action_servers(self) -> Dict[str, FastMCP]:
+    def _init_action_servers(self) -> Dict[str, str]:
         """
         Initialize action servers for the computer.
         """
         # Get the base directory for UFO2
         pass
 
-    def build_client(self, mcp_server: FastMCP) -> Client:
+    def build_client(self, server_endpoint: str) -> Client:
         """
         Build a client for the given MCP server.
-        :param MCPServer: The MCP server to build the client for.
+        :param server_endpoint: The MCP server endpoint (e.g., "http://0.0.0.0:5000").
         :return: The built MCP client.
         """
-        return Client(mcp_server)
+        return Client(server_endpoint)
 
     async def _run_action(self, tool_call: MCPToolCall) -> Any:
         """
@@ -99,9 +128,16 @@ class ComputerBasic(ABC):
         if not tool_info:
             raise ValueError(f"Tool {tool_key} is not registered.")
 
+        # Check if the tool is a meta tool for listing tools
+        if tool_info.tool_type == "meta" and tool_info.tool_name == "list_tools":
+            # Special case for listing tools, which does not require a server call
+            return self.list_tools(
+                tool_type=tool_info.tool_type, namespace=tool_info.namespace
+            )
+
         server = tool_info.server
-        params = params or {}
-        async with Client(server) as client:
+        params = tool_info.parameters or {}
+        async with self.build_client(server) as client:
             result = await client.call_tool(name=tool_call, arguments=params)
             return result
 
@@ -119,25 +155,25 @@ class ComputerBasic(ABC):
 
         return results
 
-    async def register_mcp(
-        self, server_dict: Dict[str, FastMCP], tool_type: str
+    async def register_mcp_servers(
+        self, server_dict: Dict[str, str], tool_type: str
     ) -> None:
         """
         Register a tool with the computer.
-        :param server_dict: A dictionary mapping namespaces to MCP servers.
+        :param server_dict: A dictionary mapping namespaces to MCP servers endpoints.
         :param tool_type: The type of the tool (e.g., "action", "data_collection").
         :return: None
         """
         tasks = [
-            self.register_one_server(namespace, tool_type, server)
+            self.register_one_mcp_server(namespace, tool_type, server)
             for namespace, server in server_dict.items()
         ]
 
         # Run all registration tasks concurrently
         await asyncio.gather(*tasks)
 
-    async def register_one_server(
-        self, namespace: str, tool_type: str, server: FastMCP
+    async def register_one_mcp_server(
+        self, namespace: str, tool_type: str, server_endpoint: str
     ) -> None:
         """
         Register tools from a single MCP server.
@@ -146,11 +182,11 @@ class ComputerBasic(ABC):
         :param server: The MCP server to register tools from.
         :return: None
         """
-        client = self.build_client(server)
+        client = self.build_client(server_endpoint)
         async with client:
             tools = await client.list_tools()
             for tool in tools:
-                tool_key = f"{namespace}.{tool.name}"
+                tool_key = f"{tool_type}.{tool.name}"
                 if tool_key not in self._tools_registry:
                     self._register_tool(
                         tool_key=tool_key,
@@ -163,7 +199,7 @@ class ComputerBasic(ABC):
                             if hasattr(tool, "inputSchema") and tool.inputSchema
                             else {}
                         ),
-                        server=server,
+                        endpoint=server_endpoint,
                     )
                 else:
                     print(f"Tool {tool_key} is already registered.")
@@ -176,7 +212,7 @@ class ComputerBasic(ABC):
         tool_type: str,
         description: str,
         parameters: Dict[str, Any],
-        server: FastMCP,
+        server_endpoint: str,
     ) -> None:
         """
         Register a tool with the computer.
@@ -197,12 +233,12 @@ class ComputerBasic(ABC):
             namespace=namespace,
             tool_type=tool_type,
             parameters=parameters,
-            server=server,
+            endpoint=server_endpoint,
         )
         self._tools_registry[tool_key] = tool_info
 
     async def add_server(
-        self, namespace: str, server: FastMCP, tool_type: Optional[str] = None
+        self, namespace: str, server_endpoint: str, tool_type: Optional[str] = None
     ) -> None:
         """
         Add a server and its tools to the computer.
@@ -217,15 +253,15 @@ class ComputerBasic(ABC):
             )
 
         if tool_type == self._data_collection_namespaces:
-            self._data_collection_servers[namespace] = server
+            self._data_collection_servers[namespace] = server_endpoint
         elif tool_type == self._action_namespaces:
-            self._action_servers[namespace] = server
+            self._action_servers[namespace] = server_endpoint
         else:
             raise ValueError(
                 f"Invalid tool type: {tool_type}. Must be one of {self._data_collection_namespaces} or {self._action_namespaces}."
             )
 
-        await self.register_one_server(namespace, tool_type, server)
+        await self.register_one_mcp_server(namespace, tool_type, server_endpoint)
 
     async def delete_server(
         self, namespace: str, tool_type: Optional[str] = None
@@ -279,10 +315,19 @@ class ComputerBasic(ABC):
             and (namespace is None or tool.namespace == namespace)
         ]
 
-    def response_to_mcp_tool_call(self, command: Command) -> MCPToolCall:
+    def command2tool(self, command: Command) -> MCPToolCall:
         """
-        TODO: Implement a method to convert a response to an MCPToolCall.
+        Convert a Command object to an MCPToolCall object.
+        :param command: The Command object to convert.
+        :return: An MCPToolCall object representing the tool call.
         """
+        tool_name = command.tool_name
+        tool_key = f"{command.tool_type}.{tool_name}"
+        tool_info = self._tools_registry.get(tool_key, None)
+
+        if not tool_info:
+            raise ValueError(f"Tool {tool_key} is not registered.")
+        return tool_info
 
     @property
     def agent_name(self) -> str:
@@ -322,45 +367,3 @@ class ComputerBasic(ABC):
         Get the name of the computer
         """
         return self._name
-
-
-class Computer(ComputerBasic):
-    """
-    Class for managing computer operations and actions.
-    This class extends ComputerBasic to provide additional functionality.
-    """
-
-    def __init__(self, name: str):
-        super().__init__(name)
-        self._desktop = None
-        self._selected_app_window = None
-
-    @property
-    def desktop(self):
-        """
-        Get the desktop of the computer.
-        :return: The desktop object.
-        """
-        return self._desktop
-
-    @property
-    def selected_app_window(self):
-        """
-        Get the currently selected application window.
-        :return: The selected application window object.
-        """
-        return self._selected_app_window
-
-    @selected_app_window.setter
-    def selected_app_window(self, window):
-        """
-        Set the currently selected application window.
-        :param window: The application window to set as selected.
-        """
-        self._selected_app_window = window
-
-    def _init_action_servers(self):
-        pass
-
-    def _init_data_collection_servers(self):
-        pass
