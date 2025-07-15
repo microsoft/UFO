@@ -62,7 +62,7 @@ def run_task_core(data: UFORequest):
         session = sessions[session_id]
         # Update session state with action results
         if data.action_results:
-            session.update_session_state_from_action_results(data.action_results)
+            session.process_action_results(data.action_results)
             logger.info(f"Updated session {session_id} with action results")
 
     # Process the request and get actions

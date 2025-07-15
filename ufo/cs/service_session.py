@@ -1,5 +1,5 @@
+from typing import Dict, List, Optional
 
-from typing import Generator, Optional
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config import Config
 from ufo.cs.contracts import ActionBase
@@ -7,8 +7,8 @@ from ufo.cs.session_data import SessionDataManager
 from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import ContextNames
 
-
 configs = Config.get_instance().config_data
+
 
 class ServiceSession(BaseSession):
     """
@@ -17,14 +17,16 @@ class ServiceSession(BaseSession):
 
     _request: str = ""
 
-    def __init__(self, task: str, should_evaluate: bool, id: str = None, request: str = ""):
+    def __init__(
+        self, task: str, should_evaluate: bool, id: str = None, request: str = ""
+    ):
         """
         Initialize the session.
         :param host_agent: The host agent.
         :param app_agent: The app agent.
         :param request: The request for the session.
         """
-        
+
         super().__init__(task=task, should_evaluate=should_evaluate, id=id)
 
         self._request = request
@@ -86,10 +88,15 @@ class ServiceSession(BaseSession):
         return round
 
     def next_request(self) -> str:
+        """
+        Get the next request for the session.
+        :return: The next request for the session.
+        """
+
         if self.total_rounds != 0:
             self._finish = True
         return self._request
-    
+
     def is_finished(self) -> bool:
         """
         Check if the session is ended.
@@ -114,14 +121,24 @@ class ServiceSession(BaseSession):
         """
         request_memory = self._host_agent.blackboard.requests
         return request_memory.to_json()
-    
-    def get_actions(self) -> list[ActionBase]:
-        session_data_manager: SessionDataManager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
+
+    def get_actions(self) -> List[ActionBase]:
+        """
+        Get the actions to run in the current session.
+        :return: List of actions to run.
+        """
+        session_data_manager: SessionDataManager = self.context.get(
+            ContextNames.SESSION_DATA_MANAGER
+        )
         return session_data_manager.session_data.actions_to_run
-    
-    def process_action_results(self, action_results: dict[str, any]) -> None:
-        session_data_manager: SessionDataManager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
+
+    def process_action_results(self, action_results: Dict[str, any]) -> None:
+        """
+        Process the action results and update the session state.
+        :param action_results: The action results to process.
+        """
+        session_data_manager: SessionDataManager = self.context.get(
+            ContextNames.SESSION_DATA_MANAGER
+        )
         session_data_manager.process_action_results(action_results)
         session_data_manager.clear_roundtrip_data()
-
-    

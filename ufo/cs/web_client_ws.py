@@ -103,7 +103,7 @@ class UFOWebClient:
     def _send_request(
         self,
         request_text: Optional[str] = None,
-        action_results=Optional[Dict[str, Any]],
+        action_results: Optional[Dict[str, Any]] = None,
     ):
         """
         Send a request to the UFO web service
@@ -120,6 +120,7 @@ class UFOWebClient:
         if action_results is not None:
             request_data["action_results"] = action_results
 
+        # print(f"Sending request: {request_data}")
         # Send the request to the server
         ufo_request = UFORequest(**request_data)
         response = requests.post(

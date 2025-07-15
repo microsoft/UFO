@@ -242,7 +242,7 @@ class HostAgentProcessor(BaseProcessor):
     def get_control_info(self) -> None:
         """
         Get the control information.
-        """ 
+        """
         self.session_data_manager.add_action(
             action=GetDesktopAppInfoAction(
                 params=GetDesktopAppInfoParams(
@@ -277,7 +277,9 @@ class HostAgentProcessor(BaseProcessor):
         """
         pass
 
-    def _create_third_party_agent_list(self, start_index: int = 0) -> Tuple[List[Dict], List[str]]:
+    def _create_third_party_agent_list(
+        self, start_index: int = 0
+    ) -> Tuple[List[Dict], List[str]]:
         """
         Create a list of third-party agents.
         :param start_index: The starting index of the third-party agent list.
@@ -436,23 +438,23 @@ class HostAgentProcessor(BaseProcessor):
                 )
             )
 
-        if len(new_app_windows) > 0:
-            # self._select_application(new_app_window)
-            self.session_data_manager.add_action(
-                action=SelectApplicationWindowAction(
-                    params=SelectApplicationWindowParams(
-                        window_label=new_app_windows[0].annotation_id
-                    )
-                ),
-                setter=lambda value: self.select_application_window_callback(value),
-            )
-        elif self.bash_command:
-            self.session_data_manager.add_action(
-                LaunchApplicationAction(
-                    params=LaunchApplicationParams(bash_command=self.bash_command)
-                ),
-                setter=lambda value: self.launch_application_callback(value),
-            )
+            if len(new_app_windows) > 0:
+                # self._select_application(new_app_window)
+                self.session_data_manager.add_action(
+                    action=SelectApplicationWindowAction(
+                        params=SelectApplicationWindowParams(
+                            window_label=new_app_windows[0].annotation_id
+                        )
+                    ),
+                    setter=lambda value: self.select_application_window_callback(value),
+                )
+            elif self.bash_command:
+                self.session_data_manager.add_action(
+                    LaunchApplicationAction(
+                        params=LaunchApplicationParams(bash_command=self.bash_command)
+                    ),
+                    setter=lambda value: self.launch_application_callback(value),
+                )
 
     def select_application_window_callback(self, value: dict | WindowInfo) -> None:
         """
@@ -487,7 +489,6 @@ class HostAgentProcessor(BaseProcessor):
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
-
     def launch_application_callback(self, value: dict[str, any]) -> None:
         """
         Helper method to handle the application launch callback.
@@ -512,13 +513,12 @@ class HostAgentProcessor(BaseProcessor):
         ]
         self.actions[0].results = ActionExecutionLog(
             status=self.status,
-            error="", # TODO: complete this info
-            return_value = "",
+            error="",  # TODO: complete this info
+            return_value="",
         )
 
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
-
 
     def sync_memory(self):
         """
