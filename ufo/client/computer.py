@@ -1,5 +1,4 @@
 import asyncio
-from abc import ABC, abstractmethod
 from typing import Any, Dict, List, Optional, Union
 
 from fastmcp import Client, FastMCP
@@ -31,7 +30,7 @@ class MCPToolCall(BaseModel):
     ]  # The url string (for HTTP servers) or FastMCP instance (for local in-memory servers)
 
 
-class Computer(ABC):
+class Computer:
     """
     Basic class for managing computer operations and actions.
     """
@@ -40,8 +39,25 @@ class Computer(ABC):
     _data_collection_namespaces: str = "data_collection"
     _action_namespaces: str = "action"
 
-    def __init__(self, name: str):
+    def __init__(
+        self,
+        name: str,
+        agent_name: str = "HostAgent/HostAgent",
+        process_name: Optional[str] = None,
+        root_name: Optional[str] = None,
+    ):
+        """
+        Initialize the computer with a name and optional agent name.
+        :param name: The name of the computer.
+        :param agent_name: The name of the agent.
+        :param process_name: Optional name of the application process to control.
+        :param root_name: Optional name of the root name of the computer, e.g., "EXCEL.EXE".
+        """
+
         self._name = name
+        self._process_name = process_name
+        self._root_name = root_name
+        self._agent_name = agent_name
 
         self._data_collection_servers = {}
         self._action_servers = {}
@@ -346,6 +362,38 @@ class Computer(ABC):
         :param name: The name to set for the agent.
         """
         self._agent_name = name
+
+    @property
+    def process_name(self) -> Optional[str]:
+        """
+        Get the name of the process to control.
+        :return: The name of the process, or None if not set.
+        """
+        return self._process_name
+
+    @process_name.setter
+    def process_name(self, name: Optional[str]):
+        """
+        Set the name of the process to control.
+        :param name: The name of the process to set, or None to unset.
+        """
+        self._process_name = name
+
+    @property
+    def root_name(self) -> Optional[str]:
+        """
+        Get the root name of the computer.
+        :return: The root name of the computer, or None if not set.
+        """
+        return self._root_name
+
+    @root_name.setter
+    def root_name(self, name: Optional[str]):
+        """
+        Set the root name of the computer.
+        :param name: The root name to set, or None to unset.
+        """
+        self._root_name = name
 
     @property
     def data_collection_servers(self) -> Dict[str, FastMCP]:
