@@ -230,13 +230,14 @@ class Computer:
         mcp_server: Union[str, FastMCP],
     ) -> None:
         """
-        Register a tool with the computer.
+        Register a tool with the computer in its tools registry.
+        :param tool_key: Unique key for the tool, e.g., "tool_type.tool_name".
         :param tool_name: The name of the tool.
         :param namespace: The namespace of the tool.
         :param tool_type: The type of the tool (e.g., "action", "
         :param description: The description of the tool.
         :param parameters: The parameters for the tool.
-        :param mcp_server: The MCP server where the tool is registered.
+        :param mcp_server: The MCP server where the tool is registered. Could be a URL string or a FastMCP instance.
         """
         if tool_name in self._tools_registry:
             raise ValueError(f"Tool {tool_key} is already registered.")
