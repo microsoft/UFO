@@ -35,22 +35,20 @@ class Computer:
     def __init__(
         self,
         name: str,
-        agent_name: str = "HostAgent/HostAgent",
-        process_name: Optional[str] = None,
-        root_name: Optional[str] = None,
+        data_collection_servers_config: Optional[List[Dict[str, Any]]] = None,
+        action_servers_config: Optional[List[Dict[str, Any]]] = None,
     ):
         """
         Initialize the computer with a name and optional agent name.
         :param name: The name of the computer.
-        :param agent_name: The name of the agent.
-        :param process_name: Optional name of the application process to control.
-        :param root_name: Optional name of the root name of the computer, e.g., "EXCEL.EXE".
+        :param data_collection_servers_config: Configuration for data collection servers.
+        :param action_servers_config: Configuration for action servers.
         """
 
         self._name = name
-        self._process_name = process_name
-        self._root_name = root_name
-        self._agent_name = agent_name
+
+        self.data_collection_servers_config = data_collection_servers_config
+        self.action_servers_config = action_servers_config
 
         self._data_collection_servers = {}
         self._action_servers = {}
@@ -104,7 +102,9 @@ class Computer:
         Initialize data collection servers for the computer of the
         """
         # Get the base directory for UFO2
-        for data_collection_server in configs.get("data_collection_servers", []):
+        for data_collection_server in self.data_collection_servers_config.get(
+            "data_collection_servers", []
+        ):
             # If the server is set to auto-start, create a FastMCP server
             namespace = data_collection_server.get("namespace")
             if not namespace:
@@ -119,7 +119,7 @@ class Computer:
         Initialize action servers for the computer.
         """
         # Get the base directory for UFO2
-        for action_server in configs.get("action_servers", []):
+        for action_server in self.action_servers_config.get("action_servers", []):
             # If the server is set to auto-start, create a FastMCP server
             namespace = action_server.get("namespace")
             if not namespace:
@@ -420,24 +420,45 @@ class ComputerManager:
         self.configs = configs
         self.computers = {}
 
-    async def get_or_create(self, config: Dict[str, Any]) -> Computer:
+    async def get_or_create(
+        self,
+        agent_name: str,
+        process_name: Optional[str] = None,
+        root_name: Optional[str] = None,
+    ) -> Computer:
         """
         Get or create a Computer instance based on the provided configuration.
         :param config: Configuration dictionary containing agent_name, process_name, and root_name.
         :return: An instance of Computer.
         """
-        agent_name = config.get("agent_name", "HostAgent/HostAgent")
-        process_name = config.get("process_name")
-        root_name = config.get("root_name")
 
         key = f"{agent_name}::{process_name}::{root_name}"
 
         if key not in self.computers:
+
+            agent_config = self.configs.get("agent", {})
+            if not agent_config:
+                raise ValueError(f"Agent configuration for {agent_name} not found.")
+
+            if root_name not in agent_config:
+                root_name = "default"
+
+            agent_instance_config = agent_config.get(root_name, {})
+
+            if not agent_instance_config:
+                raise ValueError(
+                    f"Agent configuration for {root_name} not found for {agent_name}."
+                )
+
+            data_collection_servers_config = agent_instance_config.get(
+                "data_collection_servers", []
+            )
+            action_servers_config = agent_instance_config.get("action_servers", [])
+
             computer = Computer(
                 name=key,
-                agent_name=agent_name,
-                process_name=process_name,
-                root_name=root_name,
+                data_collection_servers_config=data_collection_servers_config,
+                action_servers_config=action_servers_config,
             )
             await computer.async_init()
             self.computers[key] = computer
@@ -457,14 +478,26 @@ class CommandRouter:
         """
         self.manager = manager
 
-    async def execute(self, config: dict, command: Command) -> Any:
+    async def execute(
+        self, config: Dict[str, Any], commands: List[Command]
+    ) -> List[Any]:
         """
         Execute a command on the appropriate Computer instance based on the provided configuration.
         :param config: Configuration dictionary containing agent_name, process_name, and root_name.
-        :param command: The Command object to execute.
-        :return: The result of the executed command.
+        :param commands: The list of Command objects to execute.
+        :return: The list of results from executing the commands.
         """
         computer = await self.manager.get_or_create(config)
-        tool_call = computer.command2tool(command)
-        result = await computer.run_actions([tool_call])
-        return result
+
+        results = []
+
+        for command in commands:
+            tool_call = computer.command2tool(command)
+            if not tool_call:
+                raise ValueError(
+                    f"Tool {command.tool_name} not found in computer {computer.name}"
+                )
+            result = await computer._run_action(tool_call)
+            results.append(result)
+
+        return results
