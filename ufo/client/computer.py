@@ -4,14 +4,10 @@ from typing import Any, Dict, List, Optional, Union
 from fastmcp import Client, FastMCP
 from pydantic import BaseModel
 from ufo.client.mcp import DefaultMCPServerManager
-from ufo.config import Config
 from ufo.cs.contracts import Command
 
-configs = Config.get_instance().config_data
-
-if configs is not None:
-    CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"])
-    BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
+# MCPServerType can be either a URL string for HTTP servers or a FastMCP instance for local in-memory servers.
+MCPServerType = Union[str, FastMCP]
 
 
 class MCPToolCall(BaseModel):
@@ -25,9 +21,7 @@ class MCPToolCall(BaseModel):
     tool_type: str  # Type of the tool (e.g., "action", "data_collection")
     description: str  # Description of the tool
     parameters: Dict[str, Any]  # Parameters for the tool, if any
-    mcp_server: Union[
-        str, FastMCP
-    ]  # The url string (for HTTP servers) or FastMCP instance (for local in-memory servers)
+    mcp_server: MCPServerType  # The url string (for HTTP servers) or FastMCP instance (for local in-memory servers)
 
 
 class Computer:
@@ -35,7 +29,6 @@ class Computer:
     Basic class for managing computer operations and actions.
     """
 
-    _tools_registry: Dict[str, MCPToolCall] = {}
     _data_collection_namespaces: str = "data_collection"
     _action_namespaces: str = "action"
 
@@ -62,7 +55,8 @@ class Computer:
         self._data_collection_servers = {}
         self._action_servers = {}
 
-        self._agent_name = "HostAgent/HostAgent"
+        self._tools_registry: Dict[str, MCPToolCall] = {}
+
         self.local_mcp_server_manager = DefaultMCPServerManager()
 
     async def async_init(self) -> None:
@@ -84,7 +78,7 @@ class Computer:
 
     def create_mcp_server(
         self, mcp_config: Dict[str, Any], *args, **kwargs
-    ) -> Union[str, FastMCP]:
+    ) -> MCPServerType:
         """
         Create an MCP server based on the type and parameters.
         :param mcp_config: Configuration dictionary for the MCP server.
@@ -105,7 +99,7 @@ class Computer:
         else:
             raise ValueError(f"Unsupported server type: {server_type}")
 
-    def _init_data_collection_servers(self) -> Dict[str, str]:
+    def _init_data_collection_servers(self) -> Dict[str, MCPServerType]:
         """
         Initialize data collection servers for the computer of the
         """
@@ -118,7 +112,9 @@ class Computer:
             mcp_server = self.create_mcp_server(data_collection_server)
             self._data_collection_servers[namespace] = mcp_server
 
-    def _init_action_servers(self) -> Dict[str, str]:
+        return self._data_collection_servers
+
+    def _init_action_servers(self) -> Dict[str, MCPServerType]:
         """
         Initialize action servers for the computer.
         """
@@ -129,7 +125,9 @@ class Computer:
             if not namespace:
                 namespace = "default_action"
             mcp_server = self.create_mcp_server(action_server)
-            self._data_collection_servers[namespace] = mcp_server
+            self._action_servers[namespace] = mcp_server
+
+        return self._action_servers
 
     async def _run_action(self, tool_call: MCPToolCall) -> Any:
         """
@@ -150,7 +148,7 @@ class Computer:
                 tool_type=tool_info.tool_type, namespace=tool_info.namespace
             )
 
-        server = tool_info.server
+        server = tool_info.mcp_server
         params = tool_info.parameters or {}
         async with Client(server) as client:
             result = await client.call_tool(name=tool_call, arguments=params)
@@ -188,7 +186,7 @@ class Computer:
         await asyncio.gather(*tasks)
 
     async def register_one_mcp_server(
-        self, namespace: str, tool_type: str, mcp_server: Union[str, FastMCP]
+        self, namespace: str, tool_type: str, mcp_server: MCPServerType
     ) -> None:
         """
         Register tools from a single MCP server.
@@ -227,7 +225,7 @@ class Computer:
         tool_type: str,
         description: str,
         parameters: Dict[str, Any],
-        mcp_server: Union[str, FastMCP],
+        mcp_server: MCPServerType,
     ) -> None:
         """
         Register a tool with the computer in its tools registry.
@@ -256,7 +254,7 @@ class Computer:
     async def add_server(
         self,
         namespace: str,
-        mcp_server: Union[str, FastMCP],
+        mcp_server: MCPServerType,
         tool_type: Optional[str] = None,
     ) -> None:
         """
@@ -306,17 +304,6 @@ class Computer:
             self._data_collection_servers.pop(namespace, None)
         elif tool_type == self._action_namespaces:
             self._action_servers.pop(namespace, None)
-
-    async def agent_update(self, agent_name: str):
-        """
-        Update the agent name for the computer.
-        :param agent_name: The new name for the agent.
-        """
-        if not agent_name:
-            raise ValueError("Agent name cannot be empty.")
-        if agent_name == self._agent_name:
-            # No change needed
-            return
 
     def list_tools(
         self, tool_type: Optional[str] = None, namespace: Optional[str] = None
@@ -418,3 +405,66 @@ class Computer:
         Get the name of the computer
         """
         return self._name
+
+
+class ComputerManager:
+    """Manager for managing multiple Computer instances.
+    This class provides methods to get or create Computer instances based on configurations.
+    """
+
+    def __init__(self, configs: Dict[str, Any]):
+        """
+        Initialize the ComputerManager with configurations.
+        :param configs: Configuration dictionary containing agent_name, process_name, and root_name.
+        """
+        self.configs = configs
+        self.computers = {}
+
+    async def get_or_create(self, config: Dict[str, Any]) -> Computer:
+        """
+        Get or create a Computer instance based on the provided configuration.
+        :param config: Configuration dictionary containing agent_name, process_name, and root_name.
+        :return: An instance of Computer.
+        """
+        agent_name = config.get("agent_name", "HostAgent/HostAgent")
+        process_name = config.get("process_name")
+        root_name = config.get("root_name")
+
+        key = f"{agent_name}::{process_name}::{root_name}"
+
+        if key not in self.computers:
+            computer = Computer(
+                name=key,
+                agent_name=agent_name,
+                process_name=process_name,
+                root_name=root_name,
+            )
+            await computer.async_init()
+            self.computers[key] = computer
+
+        return self.computers[key]
+
+
+class CommandRouter:
+    """Router for executing commands on a Computer instance.
+    This class takes a ComputerManager and executes commands on the appropriate Computer instance.
+    """
+
+    def __init__(self, manager: ComputerManager):
+        """
+        Initialize the CommandRouter with a ComputerManager.
+        :param manager: An instance of ComputerManager to manage Computer instances.
+        """
+        self.manager = manager
+
+    async def execute(self, config: dict, command: Command) -> Any:
+        """
+        Execute a command on the appropriate Computer instance based on the provided configuration.
+        :param config: Configuration dictionary containing agent_name, process_name, and root_name.
+        :param command: The Command object to execute.
+        :return: The result of the executed command.
+        """
+        computer = await self.manager.get_or_create(config)
+        tool_call = computer.command2tool(command)
+        result = await computer.run_actions([tool_call])
+        return result
