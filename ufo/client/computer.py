@@ -496,7 +496,9 @@ class CommandRouter:
         """
         computer = await self.manager.get_or_create(config)
 
-        results = []
+        mcp_calls_list = []
+
+        mcp_calls_list = [computer.command2tool(command) for command in commands]
 
         for command in commands:
             tool_call = computer.command2tool(command)
@@ -504,7 +506,8 @@ class CommandRouter:
                 raise ValueError(
                     f"Tool {command.tool_name} not found in computer {computer.name}"
                 )
-            result = await computer._run_action(tool_call)
-            results.append(result)
+            mcp_calls_list.append(tool_call)
+
+        results = await computer.run_actions(mcp_calls_list)
 
         return results
