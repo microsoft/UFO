@@ -323,6 +323,9 @@ class Command(BaseModel):
 
 class ServerResponse(BaseModel):
     status: Literal["continue", "completed", "failure"]
+    agent_name: Optional[str] = None
+    process_name: Optional[str] = None
+    root_name: Optional[str] = None
     actions: Optional[List[Command]] = None
     messages: Optional[List[str]] = None
     error: Optional[str] = None
