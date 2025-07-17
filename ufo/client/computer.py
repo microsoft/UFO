@@ -22,7 +22,7 @@ class MCPToolCall(BaseModel):
     tool_type: str  # Type of the tool (e.g., "action", "data_collection")
     description: str  # Description of the tool
     parameters: Dict[str, Any]  # Parameters for the tool, if any
-    mcp_server: MCPServerType  # The url string (for HTTP servers) or FastMCP instance (for local in-memory servers)
+    mcp_server: MCPServerType  # The url string (for HTTP servers) or FastMCP instance (for local in-memory servers), or a StdioTransport instance.
 
 
 class Computer:
@@ -79,7 +79,7 @@ class Computer:
         """
         Create an MCP server based on the type and parameters.
         :param mcp_config: Configuration dictionary for the MCP server.
-        :return: A string URL for HTTP servers or a FastMCP instance for local servers.
+        :return: A string URL for HTTP servers or a FastMCP instance for local in-memory servers, or a StdioTransport instance.
         """
 
         server_type = mcp_config.get("type", "http")
@@ -87,9 +87,11 @@ class Computer:
         port = mcp_config.get("port", 8000)
         start_args = mcp_config.get("args", [])
 
+        # If the server type is HTTP, return a URL string
         if server_type == "http":
             return f"http://{host}:{port}/mcp"
 
+        # If the server type is local, return a StdioTransport instance
         elif server_type == "local":
             return StdioTransport(
                 command="python",
