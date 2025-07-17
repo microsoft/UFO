@@ -24,7 +24,7 @@ class DefaultMCPServerManager:
         cls._servers_mapping[server_name] = server
         print(f"Registered MCP server '{server_name}'")
 
-    def start_server(cls, namespace: str, host: str, port: int) -> str:
+    def start_local_server(cls, namespace: str, host: str, port: int) -> str:
         """
         Start a server with the given namespace and parameters.
 
@@ -55,7 +55,7 @@ class MCPServerController:
             "list_tools": self.list_tools,
         }
 
-    async def start_server(self, name: str, host: str, port: int):
+    async def start_local_server(self, name: str, host: str, port: int):
         if name in self.servers:
             raise ValueError(f"Server {name} is already running.")
         server = FastMCP(host=host, port=port)

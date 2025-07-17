@@ -75,28 +75,32 @@ class Computer:
             ),
         )
 
-    def create_mcp_server(
-        self, mcp_config: Dict[str, Any], *args, **kwargs
-    ) -> MCPServerType:
+    def create_mcp_server(self, mcp_config: Dict[str, Any]) -> MCPServerType:
         """
         Create an MCP server based on the type and parameters.
         :param mcp_config: Configuration dictionary for the MCP server.
         :return: A string URL for HTTP servers or a FastMCP instance for local servers.
         """
 
-        namespace = mcp_config.get("namespace", "default_mcp_server")
         server_type = mcp_config.get("type", "http")
         host = mcp_config.get("host", "localhost")
         port = mcp_config.get("port", 8000)
+        start_args = mcp_config.get("args", [])
 
         if server_type == "http":
             return f"http://{host}:{port}/mcp"
+
         elif server_type == "local":
-            return self.local_mcp_server_manager.start_server(
-                namespace=namespace, *args, **kwargs
+            return StdioTransport(
+                command="python",
+                args=start_args,
+                env={"LOG_LEVEL": "INFO"},
+                cwd="/path/to/server",
             )
         else:
-            raise ValueError(f"Unsupported server type: {server_type}")
+            raise ValueError(
+                f"Unsupported server type: {server_type}. Supported types are 'http' and 'local'."
+            )
 
     def _init_data_collection_servers(self) -> Dict[str, MCPServerType]:
         """
