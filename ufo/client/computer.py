@@ -3,7 +3,7 @@ from typing import Any, Dict, List, Optional, Union
 
 from fastmcp import Client, FastMCP
 from fastmcp.client.transports import StdioTransport
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from ufo.client.mcp import DefaultMCPServerManager
 from ufo.cs.contracts import Command
 
@@ -23,6 +23,8 @@ class MCPToolCall(BaseModel):
     description: str  # Description of the tool
     parameters: Dict[str, Any]  # Parameters for the tool, if any
     mcp_server: MCPServerType  # The url string (for HTTP servers) or FastMCP instance (for local in-memory servers), or a StdioTransport instance.
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
 
 
 class Computer:
@@ -62,8 +64,8 @@ class Computer:
         """
         Asynchronous initialization of the computer.
         """
-        self._data_collection_servers = await self._init_data_collection_servers()
-        self._action_servers = await self._init_action_servers()
+        self._data_collection_servers = self._init_data_collection_servers()
+        self._action_servers = self._init_action_servers()
 
         await asyncio.gather(
             self.register_mcp_servers(
@@ -126,7 +128,7 @@ class Computer:
         Initialize action servers for the computer.
         """
         # Get the base directory for UFO2
-        for action_server in self.action_servers_config.get("action_servers", []):
+        for action_server in self.action_servers_config:
             # If the server is set to auto-start, create a FastMCP server
             namespace = action_server.get("namespace")
             if not namespace:
@@ -156,9 +158,10 @@ class Computer:
             )
 
         server = tool_info.mcp_server
+        tool_name = tool_info.tool_name
         params = tool_info.parameters or {}
         async with Client(server) as client:
-            result = await client.call_tool(name=tool_call, arguments=params)
+            result = await client.call_tool(name=tool_name, arguments=params)
             return result
 
     async def run_actions(self, tool_calls: List[MCPToolCall]) -> Any:
@@ -176,7 +179,7 @@ class Computer:
         return results
 
     async def register_mcp_servers(
-        self, server_dict: Dict[str, str], tool_type: str
+        self, server_dict: Dict[str, MCPServerType], tool_type: str
     ) -> None:
         """
         Register a tool with the computer.
@@ -202,6 +205,10 @@ class Computer:
         :param server: The MCP server to register tools from.
         :return: None
         """
+
+        print(
+            f"Registering tools from [{namespace}] server for ({tool_type}): {mcp_server}"
+        )
 
         async with Client(mcp_server) as client:
             tools = await client.list_tools()
@@ -419,6 +426,8 @@ class ComputerManager:
     This class provides methods to get or create Computer instances based on configurations.
     """
 
+    _configs_key = "mcp"
+
     def __init__(self, configs: Dict[str, Any]):
         """
         Initialize the ComputerManager with configurations.
@@ -443,7 +452,9 @@ class ComputerManager:
 
         if key not in self.computers:
 
-            agent_config = self.configs.get(agent_name, {})
+            mcp_config = self.configs.get(self._configs_key, {})
+
+            agent_config = mcp_config.get(agent_name, {})
             if not agent_config:
                 raise ValueError(f"Agent configuration for {agent_name} not found.")
 
@@ -458,9 +469,11 @@ class ComputerManager:
                 )
 
             data_collection_servers_config = agent_instance_config.get(
-                "data_collection_servers", []
+                Computer._data_collection_namespaces, []
             )
-            action_servers_config = agent_instance_config.get("action_servers", [])
+            action_servers_config = agent_instance_config.get(
+                Computer._action_namespaces, []
+            )
 
             computer = Computer(
                 name=key,
@@ -486,15 +499,23 @@ class CommandRouter:
         self.manager = manager
 
     async def execute(
-        self, config: Dict[str, Any], commands: List[Command]
+        self,
+        agent_name: str,
+        process_name: Optional[str],
+        root_name: Optional[str],
+        commands: List[Command],
     ) -> List[Any]:
         """
         Execute a command on the appropriate Computer instance based on the provided configuration.
-        :param config: Configuration dictionary containing agent_name, process_name, and root_name.
+        :param agent_name: The name of the agent to execute the command for.
+        :param process_name: The name of the process to control, or None if not specified
+        :param root_name: The root name of the computer, or None if not specified.
         :param commands: The list of Command objects to execute.
         :return: The list of results from executing the commands.
         """
-        computer = await self.manager.get_or_create(config)
+        computer = await self.manager.get_or_create(
+            agent_name=agent_name, process_name=process_name, root_name=root_name
+        )
 
         mcp_calls_list = []
 
@@ -511,3 +532,42 @@ class CommandRouter:
         results = await computer.run_actions(mcp_calls_list)
 
         return results
+
+
+def test_command_router():
+    """
+    Test function for the CommandRouter.
+    This function creates a ComputerManager and a CommandRouter, then executes a sample command.
+    """
+    from ufo.config import Config
+
+    configs = Config.get_instance().config_data
+    computer_manager = ComputerManager(configs)
+    command_router = CommandRouter(computer_manager)
+
+    print("Starting CommandRouter test...")
+
+    # Example command execution
+    commands = [
+        Command(
+            tool_name="double_click_mouse",
+            tool_type="action",
+            parameters={"button": "left"},
+        )
+    ]
+    results = asyncio.run(
+        command_router.execute(
+            agent_name="HardwareAgent",
+            process_name="HardwareAgent",
+            root_name="default",
+            commands=commands,
+        )
+    )
+
+    print("Command results:", results)
+
+
+if __name__ == "__main__":
+    # Example usage for testing the ComputerManager and CommandRouter
+
+    test_command_router()

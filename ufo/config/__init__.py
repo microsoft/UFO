@@ -57,6 +57,10 @@ class Config:
                 with open(path + "config_prices.yaml", "r") as file:
                     yaml_prices_data = yaml.safe_load(file)
                 configs.update(yaml_prices_data)
+            if os.path.exists(path + "agent_mcp.yaml"):
+                with open(path + "agent_mcp.yaml", "r") as file:
+                    yaml_agent_mcp_data = yaml.safe_load(file)
+                configs["mcp"] = yaml_agent_mcp_data
         except FileNotFoundError as e:
 
             print_with_color(
