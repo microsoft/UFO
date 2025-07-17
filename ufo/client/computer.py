@@ -547,7 +547,7 @@ def test_command_router():
 
     print("Starting CommandRouter test...")
 
-    # Example command execution
+    # Example command execution, all from the server
     commands = [
         Command(
             tool_name="double_click_mouse",
@@ -555,11 +555,12 @@ def test_command_router():
             parameters={"button": "left"},
         )
     ]
+
     results = asyncio.run(
         command_router.execute(
-            agent_name="HardwareAgent",
-            process_name="HardwareAgent",
-            root_name="default",
+            agent_name="HardwareAgent",  # From server
+            process_name="HardwareAgent",  # From server
+            root_name="default",  # From server
             commands=commands,
         )
     )

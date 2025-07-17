@@ -1,3 +1,18 @@
+# This config file defines the agents and their configurations for the MCP servers. E
+# The key structure is:
+# AgentName: # The name of the agent, e.g., "AppAgent", "HostAgent", "HardwareAgent"
+#   sub_type: # The sub type of the agent, can be "default" or the app root name. 
+  #   data_collection: # The data collection server list configuration for the agent. Fixed name.
+  #   - namespace: # The namespace of the server.
+  #   - type: # The type of the server, can be "local" or "http".
+  #   - start_args: # The start arguments for the server. Only used for local servers.
+  #   - host: # The host of the server, only used for http servers.
+  #   - port: # The port of the server, only used for http servers.
+  #   - path: # The path of the server, only used for http servers.
+  #  action: # The action configuration server list for the agent. Fixed name.
+  #   ...(same structure as data_collection)
+
+
 HostAgent:
   default:
     data_collection:
