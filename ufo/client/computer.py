@@ -2,12 +2,13 @@ import asyncio
 from typing import Any, Dict, List, Optional, Union
 
 from fastmcp import Client, FastMCP
+from fastmcp.client.transports import StdioTransport
 from pydantic import BaseModel
 from ufo.client.mcp import DefaultMCPServerManager
 from ufo.cs.contracts import Command
 
-# MCPServerType can be either a URL string for HTTP servers or a FastMCP instance for local in-memory servers.
-MCPServerType = Union[str, FastMCP]
+# MCPServerType can be either a URL string for HTTP servers or a FastMCP instance for local in-memory servers, or a StdioTransport instance.
+MCPServerType = Union[str, FastMCP, StdioTransport]
 
 
 class MCPToolCall(BaseModel):
