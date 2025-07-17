@@ -85,11 +85,12 @@ class Computer:
         server_type = mcp_config.get("type", "http")
         host = mcp_config.get("host", "localhost")
         port = mcp_config.get("port", 8000)
+        path = mcp_config.get("path", "/mcp")
         start_args = mcp_config.get("args", [])
 
         # If the server type is HTTP, return a URL string
         if server_type == "http":
-            return f"http://{host}:{port}/mcp"
+            return f"http://{host}:{port}{path}"
 
         # If the server type is local, return a StdioTransport instance
         elif server_type == "local":
@@ -109,9 +110,8 @@ class Computer:
         Initialize data collection servers for the computer of the
         """
         # Get the base directory for UFO2
-        for data_collection_server in self.data_collection_servers_config.get(
-            "data_collection_servers", []
-        ):
+        for data_collection_server in self.data_collection_servers_config:
+
             # If the server is set to auto-start, create a FastMCP server
             namespace = data_collection_server.get("namespace")
             if not namespace:
@@ -443,7 +443,7 @@ class ComputerManager:
 
         if key not in self.computers:
 
-            agent_config = self.configs.get("agent", {})
+            agent_config = self.configs.get(agent_name, {})
             if not agent_config:
                 raise ValueError(f"Agent configuration for {agent_name} not found.")
 

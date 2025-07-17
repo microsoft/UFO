@@ -1,0 +1,103 @@
+HostAgent:
+  default:
+    data_collection_servers:
+      - namespace: DesktopUICollector
+        type: local
+        start_args: []
+    action_servers:
+      - namespace: DesktopUIExecutor
+        type: local
+        start_args: []
+      - namespace: CommandLineExecutor
+        type: local
+        start_args: []
+
+
+AppAgent:
+  default:
+    data_collection_servers:
+      - namespace: AppUICollector
+        type: local
+        start_args: []
+    action_servers:
+      - namespace: AppUIExecutor
+        type: local
+        start_args: []
+  WINWORD.EXE:
+    data_collection_servers:
+      - namespace: AppUICollector
+        type: local
+        start_args: []
+    action_servers:
+      - namespace: AppUICollector
+        type: local
+        start_args: []
+      - namespace: WordCOMExecutor
+        type: local
+        start_args: []
+    EXCEL.EXE:
+      data_collection_servers:
+        - namespace: AppUICollector
+          type: local
+          start_args: []
+      action_servers:
+        - namespace: AppUICollector
+          type: local
+          start_args: []
+        - namespace: ExcelCOMExecutor
+          type: local
+          start_args: []
+    POWERPNT.EXE:
+      data_collection_servers:
+        - namespace: AppUICollector
+          type: local
+          start_args: []
+      action_servers:
+        - namespace: AppUICollector 
+          type: local
+          start_args: []
+        - namespace: PowerPointCOMExecutor
+          type: local
+          start_args: []
+    msedge.exe:
+      data_collection_servers:
+        - namespace: AppUICollector
+          type: local
+          start_args: []
+      action_servers:
+        - namespace: AppUICollector
+          type: local
+          start_args: []
+        - namespace: WebExecutor
+          type: local
+          start_args: []
+    chrome.exe:
+      data_collection_servers:
+        - namespace: AppUICollector
+          type: local
+          start_args: []
+      action_servers:
+        - namespace: AppUICollector
+          type: local
+          start_args: []
+        - namespace: WebExecutor
+          type: local
+          start_args: []
+
+
+HardwareAgent:
+  default:
+    data_collection_servers:
+      - namespace: HardwareCollector
+        type: http
+        host: "0.0.0.0"
+        port: 8006
+        path: "/mcp"
+    action_servers:
+      - namespace: HardwareCollector
+        type: http
+        host: "0.0.0.0"
+        port: 8007
+        path: "/mcp"
+
+    
