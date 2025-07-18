@@ -23,7 +23,7 @@ class MCPToolCall(BaseModel):
     namespace: str  # Namespace of the tool, same as the MCP server namespace
     tool_type: str  # Type of the tool (e.g., "action", "data_collection")
     description: str  # Description of the tool
-    input_schema: Optional[Dict[str, Any]] = None  # Schema for the tool, if any
+    tool_schema: Optional[Dict[str, Any]] = None  # Schema for the tool, if any
     parameters: Optional[Dict[str, Any]] = None  # Parameters for the tool, if any
     mcp_server: MCPServerType  # The url string (for HTTP servers) or FastMCP instance (for local in-memory servers), or a StdioTransport instance.
 
@@ -72,8 +72,6 @@ class Computer:
             if callable(method) and hasattr(method, "_meta_tool_name"):
                 name = getattr(method, "_meta_tool_name")
                 self._meta_tools[name] = method
-
-        print(self._meta_tools)
 
     async def async_init(self) -> None:
         """
@@ -265,7 +263,7 @@ class Computer:
                         namespace=namespace,
                         tool_type=tool_type,
                         description=tool.description,
-                        input_schema=(
+                        tool_schema=(
                             tool.inputSchema
                             if hasattr(tool, "inputSchema") and tool.inputSchema
                             else {}
@@ -284,7 +282,7 @@ class Computer:
                     namespace=namespace,
                     tool_type=tool_type,
                     description=meta_tool_func.__doc__ or "Meta tool",
-                    input_schema=meta_tool_func.__annotations__,
+                    tool_schema=meta_tool_func.__annotations__,
                     mcp_server=mcp_server,
                 )
 
@@ -295,7 +293,7 @@ class Computer:
         namespace: str,
         tool_type: str,
         description: str,
-        input_schema: Dict[str, Any],
+        tool_schema: Dict[str, Any],
         mcp_server: MCPServerType,
     ) -> None:
         """
@@ -305,7 +303,7 @@ class Computer:
         :param namespace: The namespace of the tool.
         :param tool_type: The type of the tool (e.g., "action", "
         :param description: The description of the tool.
-        :param input_schema: The input_schema for the tool.
+        :param tool_schema: The tool_schema for the tool.
         :param mcp_server: The MCP server where the tool is registered. Could be a URL string or a FastMCP instance.
         """
         if tool_key in self._tools_registry:
@@ -317,7 +315,7 @@ class Computer:
             description=description,
             namespace=namespace,
             tool_type=tool_type,
-            input_schema=input_schema,
+            tool_schema=tool_schema,
             mcp_server=mcp_server,
         )
         self._tools_registry[tool_key] = tool_info
