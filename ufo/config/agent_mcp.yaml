@@ -4,8 +4,8 @@
 #   sub_type: # The sub type of the agent, can be "default" or the app root name. 
   #   data_collection: # The data collection server list configuration for the agent. Fixed name.
   #   - namespace: # The namespace of the server.
-  #   - type: # The type of the server, can be "local" or "http".
-  #   - start_args: # The start arguments for the server. Only used for local servers.
+  #   - type: # The type of the server, can be "stdio" or "http".
+  #   - start_args: # The start arguments for the server. Only used for stdio servers.
   #   - host: # The host of the server, only used for http servers.
   #   - port: # The port of the server, only used for http servers.
   #   - path: # The path of the server, only used for http servers.
@@ -17,14 +17,14 @@ HostAgent:
   default:
     data_collection:
       - namespace: DesktopUICollector
-        type: local
+        type: stdio
         start_args: []
     action:
       - namespace: DesktopUIExecutor
-        type: local
+        type: stdio
         start_args: []
       - namespace: CommandLineExecutor
-        type: local
+        type: stdio
         start_args: []
 
 
@@ -32,71 +32,71 @@ AppAgent:
   default:
     data_collection:
       - namespace: AppUICollector
-        type: local
+        type: stdio
         start_args: []
     action:
       - namespace: AppUIExecutor
-        type: local
+        type: stdio
         start_args: []
   WINWORD.EXE:
     data_collection:
       - namespace: AppUICollector
-        type: local
+        type: stdio
         start_args: []
     action:
       - namespace: AppUICollector
-        type: local
+        type: stdio
         start_args: []
       - namespace: WordCOMExecutor
-        type: local
+        type: stdio
         start_args: []
     EXCEL.EXE:
       data_collection:
         - namespace: AppUICollector
-          type: local
+          type: stdio
           start_args: []
       action:
         - namespace: AppUICollector
-          type: local
+          type: stdio
           start_args: []
         - namespace: ExcelCOMExecutor
-          type: local
+          type: stdio
           start_args: []
     POWERPNT.EXE:
       data_collection:
         - namespace: AppUICollector
-          type: local
+          type: stdio
           start_args: []
       action:
         - namespace: AppUICollector 
-          type: local
+          type: stdio
           start_args: []
         - namespace: PowerPointCOMExecutor
-          type: local
+          type: stdio
           start_args: []
     msedge.exe:
       data_collection:
         - namespace: AppUICollector
-          type: local
+          type: stdio
           start_args: []
       action:
         - namespace: AppUICollector
-          type: local
+          type: stdio
           start_args: []
         - namespace: WebExecutor
-          type: local
+          type: stdio
           start_args: []
     chrome.exe:
       data_collection:
         - namespace: AppUICollector
-          type: local
+          type: stdio
           start_args: []
       action:
         - namespace: AppUICollector
-          type: local
+          type: stdio
           start_args: []
         - namespace: WebExecutor
-          type: local
+          type: stdio
           start_args: []
 
 
@@ -105,13 +105,13 @@ HardwareAgent:
     data_collection:
       - namespace: HardwareCollector
         type: http
-        host: "localhost"
+        host: "stdiohost"
         port: 8006
         path: "/mcp"
     action:
       - namespace: HardwareExecutor
         type: http
-        host: "localhost"
+        host: "stdiohost"
         port: 8006
         path: "/mcp"
 

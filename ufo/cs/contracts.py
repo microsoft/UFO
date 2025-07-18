@@ -317,7 +317,7 @@ UFOAction = Annotated[
 class Command(BaseModel):
     tool_name: str
     parameters: Optional[Dict[str, Any]] = None
-    tool_type: Literal["data_collection", "action"]
+    tool_type: Literal["data_collection", "action", "meta"]
     call_id: Optional[str] = None
 
 

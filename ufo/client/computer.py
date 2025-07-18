@@ -35,6 +35,9 @@ class Computer:
     _data_collection_namespaces: str = "data_collection"
     _action_namespaces: str = "action"
 
+    # Meta tools for handling the MCP server.
+    _meta_tool_list = ["list_tools"]
+
     def __init__(
         self,
         name: str,
@@ -96,6 +99,8 @@ class Computer:
 
         # If the server type is local, return a StdioTransport instance
         elif server_type == "local":
+            server_name_space = mcp_config.get("namespace", "default")
+        elif server_type == "stdio":
             return StdioTransport(
                 command="python",
                 args=start_args,
@@ -104,7 +109,7 @@ class Computer:
             )
         else:
             raise ValueError(
-                f"Unsupported server type: {server_type}. Supported types are 'http' and 'local'."
+                f"Unsupported server type: {server_type}. Supported types are 'http', 'local', and 'stdio'."
             )
 
     def _init_data_collection_servers(self) -> Dict[str, MCPServerType]:
@@ -147,6 +152,7 @@ class Computer:
 
         tool_key = tool_call.tool_key
         tool_info = self._tools_registry.get(tool_key, None)
+
         if not tool_info:
             raise ValueError(f"Tool {tool_key} is not registered.")
 
@@ -213,7 +219,7 @@ class Computer:
         async with Client(mcp_server) as client:
             tools = await client.list_tools()
             for tool in tools:
-                tool_key = f"{tool_type}.{tool.name}"
+                tool_key = f"{tool_type}::{tool.name}"
                 if tool_key not in self._tools_registry:
                     self._register_tool(
                         tool_key=tool_key,
@@ -230,6 +236,17 @@ class Computer:
                     )
                 else:
                     print(f"Tool {tool_key} is already registered.")
+
+            self._register_meta_tool(
+                tool_name="list_tools",
+                namespace=namespace,
+                description="List available tools in the MCP server",
+                parameters={
+                    "tool_type": tool_type,
+                    "namespace": namespace,
+                },
+                mcp_server=mcp_server,
+            )
 
     def _register_tool(
         self,
@@ -264,6 +281,36 @@ class Computer:
             mcp_server=mcp_server,
         )
         self._tools_registry[tool_key] = tool_info
+
+    def _register_meta_tool(
+        self,
+        tool_type: str,
+        tool_name: str,
+        description: str,
+        parameters: Dict[str, Any],
+        mcp_server: MCPServerType,
+    ) -> None:
+        """
+        Register a meta tool with the computer in its tools registry.
+        :param tool_name: The name of the meta tool.
+        :param namespace: The namespace of the meta tool.
+        :param description: The description of the meta tool.
+        :param parameters: The parameters for the meta tool.
+        :param mcp_server: The MCP server where the meta tool is registered. Could be a URL string or a FastMCP instance.
+        """
+        tool_key = f"{tool_type}::{tool_name}"
+        if tool_key in self._tools_registry:
+            raise ValueError(f"Meta tool {tool_key} is already registered.")
+
+        self._register_tool(
+            tool_key=tool_key,
+            tool_name=tool_name,
+            namespace="",
+            tool_type=tool_type,
+            description=description,
+            parameters=parameters,
+            mcp_server=mcp_server,
+        )
 
     async def add_server(
         self,
@@ -320,20 +367,32 @@ class Computer:
             self._action_servers.pop(namespace, None)
 
     def list_tools(
-        self, tool_type: Optional[str] = None, namespace: Optional[str] = None
+        self,
+        tool_type: Optional[str] = None,
+        namespace: Optional[str] = None,
+        remove_meta: bool = True,
     ) -> List[MCPToolCall]:
         """
         Get the available tools of a specific type (action or data_collection).
         :param tool_type: The type of tools to retrieve (e.g., "action", "data_collection").
         :param namespace: Optional namespace to filter tools.
+        :param remove_meta: Whether to remove meta tools from the list for listing.
         :return: A list of MCPToolCall objects representing the available tools.
         """
-        return [
-            tool
-            for tool in self._tools_registry.values()
-            if (tool_type is None or tool.tool_type == tool_type)
-            and (namespace is None or tool.namespace == namespace)
-        ]
+
+        tools = []
+        for tool_info in self._tools_registry.values():
+            if (
+                # Check if the tool matches the specified type and namespace
+                (tool_type is None or tool_info.tool_type == tool_type)
+                # Check if the tool matches the specified namespace
+                and (namespace is None or tool_info.namespace == namespace)
+                # Check if the tool is not a meta tool or if meta tools should be included
+                and (not remove_meta or tool_info.tool_name not in self._meta_tool_list)
+            ):
+                tools.append(tool_info)
+
+        return tools
 
     def command2tool(self, command: Command) -> MCPToolCall:
         """
@@ -342,7 +401,30 @@ class Computer:
         :return: An MCPToolCall object representing the tool call.
         """
         tool_name = command.tool_name
-        tool_key = f"{command.tool_type}.{tool_name}"
+        tool_type = command.tool_type
+
+        if not tool_type:
+            if (
+                f"{self._data_collection_namespaces}.{tool_name}"
+                in self._tools_registry
+            ):
+                tool_type = self._data_collection_namespaces
+                Warning(
+                    f"Tool {tool_name} is registered as a data collection tool, but no tool type was specified in the command. Using {tool_type} as default."
+                )
+
+            elif f"{self._action_namespaces}.{tool_name}" in self._tools_registry:
+                tool_type = self._action_namespaces
+
+                Warning(
+                    f"Tool {tool_name} is registered as an action tool, but no tool type was specified in the command. Using {tool_type} as default."
+                )
+            else:
+                raise ValueError(
+                    f"Tool {tool_name} is not registered in the computer's tools registry with {self._data_collection_namespaces} or {self._action_namespaces} as tool type."
+                )
+
+        tool_key = f"{tool_type}::{tool_name}"
         tool_info = self._tools_registry.get(tool_key, None)
 
         if not tool_info:
@@ -553,7 +635,12 @@ def test_command_router():
             tool_name="double_click_mouse",
             tool_type="action",
             parameters={"button": "left"},
-        )
+        ),
+        Command(
+            tool_name="list_tools",
+            tool_type="action",
+            parameters={"namespace": "HardwareExecutor"},
+        ),
     ]
 
     results = asyncio.run(
@@ -565,7 +652,8 @@ def test_command_router():
         )
     )
 
-    print("Command results:", results)
+    for result in results:
+        print(f"Command result: {result}")
 
 
 if __name__ == "__main__":
