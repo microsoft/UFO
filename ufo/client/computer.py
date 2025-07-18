@@ -1,5 +1,7 @@
 import asyncio
-from typing import Any, Dict, List, Optional, Union
+import copy
+import inspect
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from fastmcp import Client, FastMCP
 from fastmcp.client.transports import StdioTransport
@@ -21,7 +23,8 @@ class MCPToolCall(BaseModel):
     namespace: str  # Namespace of the tool, same as the MCP server namespace
     tool_type: str  # Type of the tool (e.g., "action", "data_collection")
     description: str  # Description of the tool
-    parameters: Dict[str, Any]  # Parameters for the tool, if any
+    input_schema: Optional[Dict[str, Any]] = None  # Schema for the tool, if any
+    parameters: Optional[Dict[str, Any]] = None  # Parameters for the tool, if any
     mcp_server: MCPServerType  # The url string (for HTTP servers) or FastMCP instance (for local in-memory servers), or a StdioTransport instance.
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -34,9 +37,6 @@ class Computer:
 
     _data_collection_namespaces: str = "data_collection"
     _action_namespaces: str = "action"
-
-    # Meta tools for handling the MCP server.
-    _meta_tool_list = ["list_tools"]
 
     def __init__(
         self,
@@ -63,6 +63,18 @@ class Computer:
 
         self.local_mcp_server_manager = DefaultMCPServerManager()
 
+        # Automatically register meta tools for the computer.
+
+        self._meta_tools: Dict[str, Callable] = {}
+
+        for attr in dir(self):
+            method = getattr(self, attr)
+            if callable(method) and hasattr(method, "_meta_tool_name"):
+                name = getattr(method, "_meta_tool_name")
+                self._meta_tools[name] = method
+
+        print(self._meta_tools)
+
     async def async_init(self) -> None:
         """
         Asynchronous initialization of the computer.
@@ -79,6 +91,20 @@ class Computer:
                 self._action_servers, tool_type=self._action_namespaces
             ),
         )
+
+    @staticmethod
+    def meta_tool(name: str):
+        """
+        Decorator to register a function as a meta tool.
+        :param name: The name of the meta tool.
+        :return: A decorator that registers the function as a meta tool.
+        """
+
+        def decorator(func):
+            func._meta_tool_name = name  # Store the meta tool name
+            return func
+
+        return decorator
 
     def create_mcp_server(self, mcp_config: Dict[str, Any]) -> MCPServerType:
         """
@@ -153,15 +179,27 @@ class Computer:
         tool_key = tool_call.tool_key
         tool_info = self._tools_registry.get(tool_key, None)
 
+        print(f"Running tool call: {tool_key}")
+
         if not tool_info:
             raise ValueError(f"Tool {tool_key} is not registered.")
 
         # Check if the tool is a meta tool for listing tools
-        if tool_info.tool_type == "meta" and tool_info.tool_name == "list_tools":
+        if tool_info.tool_name in self._meta_tools:
             # Special case for listing tools, which does not require a server call
-            return self.list_tools(
-                tool_type=tool_info.tool_type, namespace=tool_info.namespace
+
+            parameters = tool_info.parameters or {}
+            print(
+                f"Running meta tool: {tool_info.tool_name} with parameters: {parameters}"
             )
+
+            result = self._meta_tools[tool_info.tool_name](**parameters)
+
+            # If the result is an awaitable, await it
+            if inspect.isawaitable(result):
+                return await result
+            else:
+                return result
 
         server = tool_info.mcp_server
         tool_name = tool_info.tool_name
@@ -219,7 +257,7 @@ class Computer:
         async with Client(mcp_server) as client:
             tools = await client.list_tools()
             for tool in tools:
-                tool_key = f"{tool_type}::{tool.name}"
+                tool_key = self.make_tool_key(tool_type, tool.name)
                 if tool_key not in self._tools_registry:
                     self._register_tool(
                         tool_key=tool_key,
@@ -227,7 +265,7 @@ class Computer:
                         namespace=namespace,
                         tool_type=tool_type,
                         description=tool.description,
-                        parameters=(
+                        input_schema=(
                             tool.inputSchema
                             if hasattr(tool, "inputSchema") and tool.inputSchema
                             else {}
@@ -237,16 +275,18 @@ class Computer:
                 else:
                     print(f"Tool {tool_key} is already registered.")
 
-            self._register_meta_tool(
-                tool_name="list_tools",
-                namespace=namespace,
-                description="List available tools in the MCP server",
-                parameters={
-                    "tool_type": tool_type,
-                    "namespace": namespace,
-                },
-                mcp_server=mcp_server,
-            )
+            for meta_tool_name, meta_tool_func in self._meta_tools.items():
+                tool_key = self.make_tool_key(tool_type, meta_tool_name)
+
+                self._register_tool(
+                    tool_key=tool_key,
+                    tool_name=meta_tool_name,
+                    namespace=namespace,
+                    tool_type=tool_type,
+                    description=meta_tool_func.__doc__ or "Meta tool",
+                    input_schema=meta_tool_func.__annotations__,
+                    mcp_server=mcp_server,
+                )
 
     def _register_tool(
         self,
@@ -255,7 +295,7 @@ class Computer:
         namespace: str,
         tool_type: str,
         description: str,
-        parameters: Dict[str, Any],
+        input_schema: Dict[str, Any],
         mcp_server: MCPServerType,
     ) -> None:
         """
@@ -265,10 +305,10 @@ class Computer:
         :param namespace: The namespace of the tool.
         :param tool_type: The type of the tool (e.g., "action", "
         :param description: The description of the tool.
-        :param parameters: The parameters for the tool.
+        :param input_schema: The input_schema for the tool.
         :param mcp_server: The MCP server where the tool is registered. Could be a URL string or a FastMCP instance.
         """
-        if tool_name in self._tools_registry:
+        if tool_key in self._tools_registry:
             raise ValueError(f"Tool {tool_key} is already registered.")
 
         tool_info = MCPToolCall(
@@ -277,40 +317,10 @@ class Computer:
             description=description,
             namespace=namespace,
             tool_type=tool_type,
-            parameters=parameters,
+            input_schema=input_schema,
             mcp_server=mcp_server,
         )
         self._tools_registry[tool_key] = tool_info
-
-    def _register_meta_tool(
-        self,
-        tool_type: str,
-        tool_name: str,
-        description: str,
-        parameters: Dict[str, Any],
-        mcp_server: MCPServerType,
-    ) -> None:
-        """
-        Register a meta tool with the computer in its tools registry.
-        :param tool_name: The name of the meta tool.
-        :param namespace: The namespace of the meta tool.
-        :param description: The description of the meta tool.
-        :param parameters: The parameters for the meta tool.
-        :param mcp_server: The MCP server where the meta tool is registered. Could be a URL string or a FastMCP instance.
-        """
-        tool_key = f"{tool_type}::{tool_name}"
-        if tool_key in self._tools_registry:
-            raise ValueError(f"Meta tool {tool_key} is already registered.")
-
-        self._register_tool(
-            tool_key=tool_key,
-            tool_name=tool_name,
-            namespace="",
-            tool_type=tool_type,
-            description=description,
-            parameters=parameters,
-            mcp_server=mcp_server,
-        )
 
     async def add_server(
         self,
@@ -366,7 +376,8 @@ class Computer:
         elif tool_type == self._action_namespaces:
             self._action_servers.pop(namespace, None)
 
-    def list_tools(
+    @meta_tool("list_tools")
+    async def list_tools(
         self,
         tool_type: Optional[str] = None,
         namespace: Optional[str] = None,
@@ -388,7 +399,7 @@ class Computer:
                 # Check if the tool matches the specified namespace
                 and (namespace is None or tool_info.namespace == namespace)
                 # Check if the tool is not a meta tool or if meta tools should be included
-                and (not remove_meta or tool_info.tool_name not in self._meta_tool_list)
+                and (not remove_meta or tool_info.tool_name not in self._meta_tools)
             ):
                 tools.append(tool_info)
 
@@ -405,7 +416,7 @@ class Computer:
 
         if not tool_type:
             if (
-                f"{self._data_collection_namespaces}.{tool_name}"
+                self.make_tool_key(self._data_collection_namespaces, tool_name)
                 in self._tools_registry
             ):
                 tool_type = self._data_collection_namespaces
@@ -413,7 +424,10 @@ class Computer:
                     f"Tool {tool_name} is registered as a data collection tool, but no tool type was specified in the command. Using {tool_type} as default."
                 )
 
-            elif f"{self._action_namespaces}.{tool_name}" in self._tools_registry:
+            elif (
+                self.make_tool_key(self._action_namespaces, tool_name)
+                in self._tools_registry
+            ):
                 tool_type = self._action_namespaces
 
                 Warning(
@@ -424,60 +438,26 @@ class Computer:
                     f"Tool {tool_name} is not registered in the computer's tools registry with {self._data_collection_namespaces} or {self._action_namespaces} as tool type."
                 )
 
-        tool_key = f"{tool_type}::{tool_name}"
+        tool_key = self.make_tool_key(tool_type, tool_name)
         tool_info = self._tools_registry.get(tool_key, None)
+
+        parameters = copy.deepcopy(command.parameters) if command.parameters else {}
+
+        tool_info.parameters = parameters
 
         if not tool_info:
             raise ValueError(f"Tool {tool_key} is not registered.")
         return tool_info
 
-    @property
-    def agent_name(self) -> str:
+    @staticmethod
+    def make_tool_key(tool_type: str, tool_name: str) -> str:
         """
-        Get the name of the agent.
-        :return: The name of the agent.
+        Create a unique key for a tool based on its type and name.
+        :param tool_type: The type of the tool (e.g., "action", "data_collection").
+        :param tool_name: The name of the tool.
+        :return: A unique key for the tool in the format "tool_type::tool_name".
         """
-        return self._agent_name
-
-    @agent_name.setter
-    def agent_name(self, name: str):
-        """
-        Set the name of the agent.
-        :param name: The name to set for the agent.
-        """
-        self._agent_name = name
-
-    @property
-    def process_name(self) -> Optional[str]:
-        """
-        Get the name of the process to control.
-        :return: The name of the process, or None if not set.
-        """
-        return self._process_name
-
-    @process_name.setter
-    def process_name(self, name: Optional[str]):
-        """
-        Set the name of the process to control.
-        :param name: The name of the process to set, or None to unset.
-        """
-        self._process_name = name
-
-    @property
-    def root_name(self) -> Optional[str]:
-        """
-        Get the root name of the computer.
-        :return: The root name of the computer, or None if not set.
-        """
-        return self._root_name
-
-    @root_name.setter
-    def root_name(self, name: Optional[str]):
-        """
-        Set the root name of the computer.
-        :param name: The root name to set, or None to unset.
-        """
-        self._root_name = name
+        return f"{tool_type}::{tool_name}"
 
     @property
     def data_collection_servers(self) -> Dict[str, FastMCP]:
@@ -530,24 +510,17 @@ class ComputerManager:
         :return: An instance of Computer.
         """
 
-        key = f"{agent_name}::{process_name}::{root_name}"
-
+        key = f"{agent_name}::{process_name}::{root_name or 'default'}"
         if key not in self.computers:
-
             mcp_config = self.configs.get(self._configs_key, {})
-
             agent_config = mcp_config.get(agent_name, {})
             if not agent_config:
                 raise ValueError(f"Agent configuration for {agent_name} not found.")
-
-            if root_name not in agent_config:
-                root_name = "default"
-
-            agent_instance_config = agent_config.get(root_name, {})
-
-            if not agent_instance_config:
+            root = root_name or "default"
+            agent_instance_config = agent_config.get(root, None)
+            if agent_instance_config is None:
                 raise ValueError(
-                    f"Agent configuration for {root_name} not found for {agent_name}."
+                    f"Agent configuration for root_name={root} not found for agent_name={agent_name}."
                 )
 
             data_collection_servers_config = agent_instance_config.get(
@@ -599,20 +572,15 @@ class CommandRouter:
             agent_name=agent_name, process_name=process_name, root_name=root_name
         )
 
-        mcp_calls_list = []
-
-        mcp_calls_list = [computer.command2tool(command) for command in commands]
+        results = []
 
         for command in commands:
-            tool_call = computer.command2tool(command)
-            if not tool_call:
-                raise ValueError(
-                    f"Tool {command.tool_name} not found in computer {computer.name}"
-                )
-            mcp_calls_list.append(tool_call)
-
-        results = await computer.run_actions(mcp_calls_list)
-
+            try:
+                tool_call = computer.command2tool(command)
+                result = await computer.run_actions([tool_call])
+                results.append(result)
+            except Exception as e:
+                results.append(result)
         return results
 
 

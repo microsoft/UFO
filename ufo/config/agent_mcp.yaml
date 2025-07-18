@@ -105,13 +105,13 @@ HardwareAgent:
     data_collection:
       - namespace: HardwareCollector
         type: http
-        host: "stdiohost"
+        host: "localhost"
         port: 8006
         path: "/mcp"
     action:
       - namespace: HardwareExecutor
         type: http
-        host: "stdiohost"
+        host: "localhost"
         port: 8006
         path: "/mcp"
 
