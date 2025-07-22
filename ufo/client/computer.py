@@ -9,6 +9,9 @@ from pydantic import BaseModel, ConfigDict
 from ufo.client.mcp import DefaultMCPServerManager
 from ufo.cs.contracts import Command
 
+# Import UI MCP servers to ensure they're registered in the registry
+import ufo.mcp.ui_mcp_server
+
 # MCPServerType can be either a URL string for HTTP servers or a FastMCP instance for local in-memory servers, or a StdioTransport instance.
 MCPServerType = Union[str, FastMCP, StdioTransport]
 
@@ -129,9 +132,21 @@ class Computer:
         if server_type == "http":
             return f"http://{host}:{port}{path}"
 
-        # If the server type is local, return a StdioTransport instance
+        # If the server type is local, look up in registry
         elif server_type == "local":
-            pass
+            server_namespace = mcp_config.get("namespace", "default")
+
+            # Import registry here to avoid circular imports
+            from ufo.mcp.mcp_registry import MCPRegistry
+
+            try:
+                # Try to get the server from the registry
+                return MCPRegistry.get(server_namespace)
+            except KeyError:
+                raise ValueError(
+                    f"No MCP server found for registry name '{server_namespace}' in local registry or DefaultMCPServerManager"
+                )
+
         elif server_type == "stdio":
             return StdioTransport(
                 command="python",
