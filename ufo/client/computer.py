@@ -1,19 +1,16 @@
 import asyncio
 import copy
 import inspect
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 
 from fastmcp import Client, FastMCP
 from fastmcp.client.transports import StdioTransport
 from pydantic import BaseModel, ConfigDict
-from ufo.client.mcp import DefaultMCPServerManager
+from ufo.client.mcp import MCPServerType, MCPServerManager
 from ufo.cs.contracts import Command
 
 # Import UI MCP servers to ensure they're registered in the registry
 import ufo.mcp.ui_mcp_server
-
-# MCPServerType can be either a URL string for HTTP servers or a FastMCP instance for local in-memory servers, or a StdioTransport instance.
-MCPServerType = Union[str, FastMCP, StdioTransport]
 
 
 class MCPToolCall(BaseModel):
@@ -44,6 +41,7 @@ class Computer:
     def __init__(
         self,
         name: str,
+        mcp_server_manager: MCPServerManager,
         data_collection_servers_config: Optional[List[Dict[str, Any]]] = None,
         action_servers_config: Optional[List[Dict[str, Any]]] = None,
     ):
@@ -64,7 +62,7 @@ class Computer:
 
         self._tools_registry: Dict[str, MCPToolCall] = {}
 
-        self.local_mcp_server_manager = DefaultMCPServerManager()
+        self.mcp_server_manager = mcp_server_manager
 
         # Automatically register meta tools for the computer.
 
@@ -107,58 +105,6 @@ class Computer:
 
         return decorator
 
-    def create_mcp_server(self, mcp_config: Dict[str, Any]) -> MCPServerType:
-        """
-        Create an MCP server based on the type and parameters.
-        :param mcp_config: Configuration dictionary for the MCP server.
-        :return: A string URL for HTTP servers or a FastMCP instance for local in-memory servers, or a StdioTransport instance.
-        """
-
-        server_type = mcp_config.get("type", "http")
-
-        assert server_type in [
-            "http",
-            "local",
-            "stdio",
-        ], f"Unsupported server type: {server_type}. Supported types are 'http', 'local', and 'stdio'."
-
-        host = mcp_config.get("host", "localhost")
-        port = mcp_config.get("port", 8000)
-        path = mcp_config.get("path", "/mcp")
-        start_args = mcp_config.get("args", [])
-        namespace = mcp_config.get("namespace", "default")
-
-        # If the server type is HTTP, return a URL string
-        if server_type == "http":
-            return f"http://{host}:{port}{path}"
-
-        # If the server type is local, look up in registry
-        elif server_type == "local":
-            server_namespace = mcp_config.get("namespace", "default")
-
-            # Import registry here to avoid circular imports
-            from ufo.mcp.mcp_registry import MCPRegistry
-
-            try:
-                # Try to get the server from the registry
-                return MCPRegistry.get(server_namespace)
-            except KeyError:
-                raise ValueError(
-                    f"No MCP server found for registry name '{server_namespace}' in local registry or DefaultMCPServerManager"
-                )
-
-        elif server_type == "stdio":
-            return StdioTransport(
-                command="python",
-                args=start_args,
-                env={"LOG_LEVEL": "INFO"},
-                cwd="/path/to/server",
-            )
-        else:
-            raise ValueError(
-                f"Unsupported server type: {server_type}. Supported types are 'http', 'local', and 'stdio'."
-            )
-
     def _init_data_collection_servers(self) -> Dict[str, MCPServerType]:
         """
         Initialize data collection servers for the computer of the
@@ -168,9 +114,15 @@ class Computer:
 
             # If the server is set to auto-start, create a FastMCP server
             namespace = data_collection_server.get("namespace")
+            reset = data_collection_server.get("reset", False)
+
             if not namespace:
                 namespace = "default_data_collection"
-            mcp_server = self.create_mcp_server(data_collection_server)
+
+            mcp_server = self.mcp_server_manager.create_or_get_server(
+                mcp_config=data_collection_server, reset=reset
+            )
+
             self._data_collection_servers[namespace] = mcp_server
 
         return self._data_collection_servers
@@ -183,9 +135,15 @@ class Computer:
         for action_server in self.action_servers_config:
             # If the server is set to auto-start, create a FastMCP server
             namespace = action_server.get("namespace")
+            reset = action_server.get("reset", False)
+
             if not namespace:
                 namespace = "default_action"
-            mcp_server = self.create_mcp_server(action_server)
+
+            mcp_server = self.mcp_server_manager.create_or_get_server(
+                mcp_config=action_server, reset=reset
+            )
+
             self._action_servers[namespace] = mcp_server
 
         return self._action_servers
