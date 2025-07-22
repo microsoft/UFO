@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, Optional, Union
 
 from fastmcp import FastMCP
 from fastmcp.client.transports import StdioTransport
@@ -103,6 +103,8 @@ class LocalMCPServer(BaseMCPServer):
     Implementation of a local in-memory MCP server.
     """
 
+    _mcp_registry = MCPRegistry
+
     def start(self) -> None:
         """
         Start the local MCP server and return the FastMCP instance.
@@ -112,7 +114,7 @@ class LocalMCPServer(BaseMCPServer):
 
         try:
             # Try to get the server from the registry
-            self._server = MCPRegistry.get(server_namespace)
+            self._server = self._mcp_registry.get(server_namespace)
         except KeyError:
             raise ValueError(
                 f"No MCP server found for name '{server_namespace}' in local server registry."
