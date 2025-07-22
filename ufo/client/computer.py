@@ -112,10 +112,18 @@ class Computer:
         """
 
         server_type = mcp_config.get("type", "http")
+
+        assert server_type in [
+            "http",
+            "local",
+            "stdio",
+        ], f"Unsupported server type: {server_type}. Supported types are 'http', 'local', and 'stdio'."
+
         host = mcp_config.get("host", "localhost")
         port = mcp_config.get("port", 8000)
         path = mcp_config.get("path", "/mcp")
         start_args = mcp_config.get("args", [])
+        namespace = mcp_config.get("namespace", "default")
 
         # If the server type is HTTP, return a URL string
         if server_type == "http":
@@ -123,7 +131,7 @@ class Computer:
 
         # If the server type is local, return a StdioTransport instance
         elif server_type == "local":
-            server_name_space = mcp_config.get("namespace", "default")
+            pass
         elif server_type == "stdio":
             return StdioTransport(
                 command="python",
