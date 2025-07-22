@@ -469,12 +469,13 @@ class ComputerManager:
 
     _configs_key = "mcp"
 
-    def __init__(self, configs: Dict[str, Any]):
+    def __init__(self, configs: Dict[str, Any], mcp_server_manager: MCPServerManager):
         """
         Initialize the ComputerManager with configurations.
         :param configs: Configuration dictionary containing agent_name, process_name, and root_name.
         """
         self.configs = configs
+        self.mcp_server_manager = mcp_server_manager
         self.computers = {}
 
     async def get_or_create(
@@ -513,6 +514,7 @@ class ComputerManager:
                 name=key,
                 data_collection_servers_config=data_collection_servers_config,
                 action_servers_config=action_servers_config,
+                mcp_server_manager=self.mcp_server_manager,
             )
             await computer.async_init()
             self.computers[key] = computer
@@ -571,7 +573,9 @@ def test_command_router():
     from ufo.config import Config
 
     configs = Config.get_instance().config_data
-    computer_manager = ComputerManager(configs)
+
+    mcp_server_manager = MCPServerManager()
+    computer_manager = ComputerManager(configs, mcp_server_manager)
     command_router = CommandRouter(computer_manager)
 
     print("Starting CommandRouter test...")
