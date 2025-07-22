@@ -95,7 +95,7 @@ class HTTPMCPServer(BaseMCPServer):
         """
         Reset the HTTP MCP server. This is a placeholder as HTTP servers are typically stateless.
         """
-        pass
+        print("HTTP MCP server reset is not supported.")
 
 
 class LocalMCPServer(BaseMCPServer):
@@ -157,9 +157,9 @@ class StdioMCPServer(BaseMCPServer):
 
     def reset(self) -> None:
         """
-        Reset the Stdio MCP server. This is a placeholder as stdio servers are typically stateless.
+        Reset the Stdio MCP server by restarting it.
         """
-        pass
+        self.start()
 
 
 class MCPServerManager:
