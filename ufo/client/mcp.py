@@ -157,9 +157,9 @@ class StdioMCPServer(BaseMCPServer):
 
     def reset(self) -> None:
         """
-        Reset the Stdio MCP server by restarting it.
+        Reset the Stdio MCP server. This is a placeholder as stdio servers are typically stateless.
         """
-        self.start()
+        pass
 
 
 class MCPServerManager:
