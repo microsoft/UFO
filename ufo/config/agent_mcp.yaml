@@ -19,13 +19,16 @@ HostAgent:
       - namespace: DesktopUICollector
         type: stdio
         start_args: []
+        reset: false # Whether to reset the MCP server when switching to a new computer.
     action:
       - namespace: DesktopUIExecutor
         type: stdio
         start_args: []
+        reset: false
       - namespace: CommandLineExecutor
         type: stdio
         start_args: []
+        reset: false
 
 
 AppAgent:
@@ -34,70 +37,87 @@ AppAgent:
       - namespace: AppUICollector
         type: stdio
         start_args: []
+        reset: false
     action:
       - namespace: AppUIExecutor
         type: stdio
         start_args: []
+        reset: false
   WINWORD.EXE:
     data_collection:
       - namespace: AppUICollector
         type: stdio
         start_args: []
+        reset: false
     action:
       - namespace: AppUICollector
         type: stdio
         start_args: []
+        reset: false
       - namespace: WordCOMExecutor
         type: stdio
         start_args: []
+        reset: true
     EXCEL.EXE:
       data_collection:
         - namespace: AppUICollector
           type: stdio
           start_args: []
+          reset: false
       action:
         - namespace: AppUICollector
           type: stdio
           start_args: []
+          reset: false
         - namespace: ExcelCOMExecutor
           type: stdio
           start_args: []
+          reset: true
     POWERPNT.EXE:
       data_collection:
         - namespace: AppUICollector
           type: stdio
           start_args: []
+          reset: false
       action:
         - namespace: AppUICollector 
           type: stdio
           start_args: []
+          reset: false
         - namespace: PowerPointCOMExecutor
           type: stdio
           start_args: []
+          reset: true
     msedge.exe:
       data_collection:
         - namespace: AppUICollector
           type: stdio
           start_args: []
+          reset: false
       action:
         - namespace: AppUICollector
           type: stdio
           start_args: []
+          reset: false
         - namespace: WebExecutor
           type: stdio
           start_args: []
+          reset: true
     chrome.exe:
       data_collection:
         - namespace: AppUICollector
           type: stdio
           start_args: []
+          reset: false
       action:
         - namespace: AppUICollector
           type: stdio
           start_args: []
+          reset: false
         - namespace: WebExecutor
           type: stdio
           start_args: []
+          reset: true
 
 
 HardwareAgent:
@@ -108,11 +128,13 @@ HardwareAgent:
         host: "localhost"
         port: 8006
         path: "/mcp"
+        reset: false
     action:
       - namespace: HardwareExecutor
         type: http
         host: "localhost"
         port: 8006
         path: "/mcp"
+        reset: false
 
     
