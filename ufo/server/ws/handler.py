@@ -1,14 +1,13 @@
+import datetime
 import json
 import logging
+from typing import Any, Dict
 
 import websockets
-from ufo.cs.contracts import ClientRequest
-from ufo.server.services.ws_manager import WSManager
+from ufo.cs.contracts import ServerResponse, UFORequest
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.task_manager import TaskManager
-from ufo.cs.contracts import ServerResponse, ClientRequest
-from typing import Dict, Any
-import datetime
+from ufo.server.services.ws_manager import WSManager
 
 logger = logging.getLogger(__name__)
 
@@ -70,7 +69,6 @@ class UFOWebSocketHandler:
         :param data: The parsed message data.
         :param websocket: The WebSocket connection object.
         """
-        from ufo.cs.contracts import UFORequest
 
         req = UFORequest(**data["body"])
         session_id = req.session_id
