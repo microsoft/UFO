@@ -8,7 +8,7 @@ from services.api import create_api_blueprint
 from services.session_manager import SessionManager
 from services.task_manager import TaskManager
 from services.ws_manager import WSManager
-from ws.handler import ws_handler
+from ws.handler import UFOWebSocketHandler
 
 
 def parse_args():
@@ -39,6 +39,8 @@ ws_event_loop = None  # WebSocket event loop will be initialized later
 api_bp = create_api_blueprint(session_manager, task_manager, ws_manager, ws_event_loop)
 app.register_blueprint(api_bp)
 
+ws_handler = UFOWebSocketHandler(ws_manager, session_manager, task_manager)
+
 
 def run_flask(port: int = 5000) -> None:
     """
@@ -49,7 +51,7 @@ def run_flask(port: int = 5000) -> None:
     app.run(host="0.0.0.0", port=port, debug=True, use_reloader=False)
 
 
-def run_ws(port: int = 8765) -> None:
+def run_ws(port: int = 8765, ws_handler: UFOWebSocketHandler = ws_handler) -> None:
     """Run the WebSocket server on the specified port.
     This function initializes a new event loop and starts the WebSocket server.
     :param port: Port number for the WebSocket server.
@@ -60,9 +62,7 @@ def run_ws(port: int = 8765) -> None:
     import websockets
 
     ws_server = websockets.serve(
-        lambda ws, path: ws_handler(
-            ws, path, ws_manager, session_manager, task_manager
-        ),
+        ws_handler,
         "0.0.0.0",
         port,
         ping_interval=100,
@@ -74,7 +74,14 @@ def run_ws(port: int = 8765) -> None:
 
 
 if __name__ == "__main__":
-    args = parse_args()
-    t1 = threading.Thread(target=run_flask, args=(args.flask_port,), daemon=True)
-    t1.start()
-    run_ws(args.ws_port)
+
+    cli_args = parse_args()
+    flask_thread = threading.Thread(
+        target=run_flask, args=(cli_args.flask_port,), daemon=True
+    )
+
+    # Start the Flask server in a separate thread
+    flask_thread.start()
+
+    # Start the WebSocket server
+    run_ws(cli_args.ws_port, ws_handler)

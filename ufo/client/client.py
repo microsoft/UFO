@@ -121,7 +121,7 @@ class UFOClient:
             session_id=self.session_id,
             request=request_text,
             action_results=action_results,
-            timestamp=datetime.datetime.utcnow().isoformat(),
+            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         )
 
         async with aiohttp.ClientSession() as session:

@@ -1,50 +1,97 @@
 import json
 import logging
-from ufo.cs.contracts import UFORequest
+
+import websockets
+from ufo.cs.contracts import ClientRequest
+from ufo.server.services.ws_manager import WSManager
+from ufo.server.services.session_manager import SessionManager
+from ufo.server.services.task_manager import TaskManager
+from ufo.cs.contracts import ServerResponse, ClientRequest
+from typing import Dict, Any
+import datetime
 
 logger = logging.getLogger(__name__)
 
 
-async def ws_handler(websocket, path, ws_manager, session_manager, task_manager):
-    reg_msg = await websocket.recv()
-    reg_info = json.loads(reg_msg)
-    client_id = reg_info.get("client_id", None)
-    ws_manager.add_client(client_id, websocket)
-    logger.info(f"[WS] {client_id} connected")
+class UFOWebSocketHandler:
+    def __init__(
+        self,
+        ws_manager: WSManager,
+        session_manager: SessionManager,
+        task_manager: TaskManager,
+    ):
+        self.ws_manager = ws_manager
+        self.session_manager = session_manager
+        self.task_manager = task_manager
+        self.logger = logging.getLogger(self.__class__.__name__)
 
-    try:
-        async for msg in websocket:
+    async def __call__(self, websocket: websockets.WebSocketServerProtocol, path: str):
+        """
+        Entry point for the WebSocket server.
+        :param websocket: The WebSocket connection object.
+        :param path: The path of the WebSocket connection.
+        """
+        reg_msg = await websocket.recv()
+        reg_info = json.loads(reg_msg)
+        client_id = reg_info.get("client_id", None)
+        self.ws_manager.add_client(client_id, websocket)
+        self.logger.info(f"[WS] {client_id} connected")
+
+        try:
+            async for msg in websocket:
+                await self.handle_message(msg, websocket, client_id)
+        except Exception as e:
+            self.logger.error(f"WS client {client_id} error: {e}")
+        finally:
+            self.ws_manager.remove_client(client_id)
+
+    async def handle_message(
+        self, msg: str, websocket: websockets.WebSocketServerProtocol, client_id: str
+    ):
+        """
+        Parse and dispatch incoming WS messages.
+        :param msg: The message received from the WebSocket server.
+        :param websocket: The WebSocket connection object.
+        :param client_id: The ID of the client sending the message.
+        """
+        try:
             data = json.loads(msg)
             if data.get("type") == "task_request":
-                req = UFORequest(**data["body"])
-                try:
-                    session_id = req.session_id
-                    session = session_manager.get_or_create_session(
-                        session_id, req.request
-                    )
-                    status = "continue"
-                    try:
-                        session.run_coro.send(None)
-                    except StopIteration:
-                        status = "completed"
-                    actions = session.get_actions()
+                await self.handle_task_request(data, websocket)
+            # Future: add more handlers (heartbeat, result, notify, ...)
+        except Exception as e:
+            await websocket.send(json.dumps({"type": "error", "error": str(e)}))
 
-                    resp = {
-                        "type": "task_response",
-                        "body": {
-                            "session_id": session_id,
-                            "status": status,
-                            "actions": actions,
-                            "messages": [],
-                        },
-                    }
-                    await websocket.send(json.dumps(resp))
-                except Exception as e:
-                    await websocket.send(
-                        json.dumps({"type": "task_response", "error": str(e)})
-                    )
-            # Handle other message types as needed
-    except Exception as e:
-        logger.error(f"WS client {client_id} error: {e}")
-    finally:
-        ws_manager.remove_client(client_id)
+    async def handle_task_request(
+        self, data: Dict[str, Any], websocket: websockets.WebSocketServerProtocol
+    ):
+        """
+        Handle a task request message from the client.
+        :param data: The parsed message data.
+        :param websocket: The WebSocket connection object.
+        """
+        from ufo.cs.contracts import UFORequest
+
+        req = UFORequest(**data["body"])
+        session_id = req.session_id
+        session = self.session_manager.get_or_create_session(session_id, req.request)
+        status = "continue"
+        try:
+            session.run_coro.send(None)
+        except StopIteration:
+            status = "completed"
+        actions = session.get_actions()
+
+        response = ServerResponse(
+            session_id=session_id,
+            status=status,
+            actions=actions,
+            agent_name="Placeholder Agent",  # Replace with actual agent name if available
+            process_name="Placeholder Process",  # Replace with actual process name if available
+            root_name="Placeholder Root",  # Replace with actual root name if available
+            messages=[],
+            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        )
+
+        resp = {"type": "task_response", "body": response.model_dump()}
+        await websocket.send(json.dumps(resp))
