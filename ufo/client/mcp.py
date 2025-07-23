@@ -187,7 +187,7 @@ class MCPServerManager:
         print(f"Registered MCP server '{namespace}'")
 
     @classmethod
-    def create_mcp_server(self, mcp_config: Dict[str, Any]) -> MCPServerType:
+    def create_mcp_server(self, mcp_config: Dict[str, Any]) -> BaseMCPServer:
         """
         Create an MCP server based on the type and parameters.
         :param mcp_config: Configuration dictionary for the MCP server.
@@ -207,7 +207,7 @@ class MCPServerManager:
 
         self.register_server(server_instance.namespace, server_instance)
 
-        return server_instance.server
+        return server_instance
 
     @classmethod
     def get_server(cls, namespace: str) -> Optional[MCPServerType]:
@@ -221,7 +221,7 @@ class MCPServerManager:
     @classmethod
     def create_or_get_server(
         cls, mcp_config: Dict[str, Any], reset: bool = False
-    ) -> MCPServerType:
+    ) -> BaseMCPServer:
         """
         Create a new MCP server or return an existing one based on the configuration.
         :param mcp_config: Configuration dictionary for the MCP server.

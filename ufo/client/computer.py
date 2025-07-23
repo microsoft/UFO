@@ -6,7 +6,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 from fastmcp import Client, FastMCP
 from pydantic import BaseModel, ConfigDict
-from ufo.client.mcp import MCPServerType, MCPServerManager
+from ufo.client.mcp import BaseMCPServer, MCPServerManager
 from ufo.cs.contracts import Command, Result
 
 # Import UI MCP servers to ensure they're registered in the registry
@@ -25,7 +25,7 @@ class MCPToolCall(BaseModel):
     description: str  # Description of the tool
     tool_schema: Optional[Dict[str, Any]] = None  # Schema for the tool, if any
     parameters: Optional[Dict[str, Any]] = None  # Parameters for the tool, if any
-    mcp_server: MCPServerType  # The url string (for HTTP servers) or FastMCP instance (for local in-memory servers), or a StdioTransport instance.
+    mcp_server: BaseMCPServer  # The BaseMCPServer instance where the tool is registered
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
@@ -105,7 +105,7 @@ class Computer:
 
         return decorator
 
-    def _init_data_collection_servers(self) -> Dict[str, MCPServerType]:
+    def _init_data_collection_servers(self) -> Dict[str, BaseMCPServer]:
         """
         Initialize data collection servers for the computer of the
         """
@@ -127,7 +127,7 @@ class Computer:
 
         return self._data_collection_servers
 
-    def _init_action_servers(self) -> Dict[str, MCPServerType]:
+    def _init_action_servers(self) -> Dict[str, BaseMCPServer]:
         """
         Initialize action servers for the computer.
         """
@@ -180,9 +180,11 @@ class Computer:
             else:
                 return result
 
-        server = tool_info.mcp_server
+        server = tool_info.mcp_server.server
+
         tool_name = tool_info.tool_name
         params = tool_info.parameters or {}
+
         async with Client(server) as client:
             result = await client.call_tool(name=tool_name, arguments=params)
             return result
@@ -202,7 +204,7 @@ class Computer:
         return results
 
     async def register_mcp_servers(
-        self, server_dict: Dict[str, MCPServerType], tool_type: str
+        self, server_dict: Dict[str, BaseMCPServer], tool_type: str
     ) -> None:
         """
         Register a tool with the computer.
@@ -219,7 +221,7 @@ class Computer:
         await asyncio.gather(*tasks)
 
     async def register_one_mcp_server(
-        self, namespace: str, tool_type: str, mcp_server: MCPServerType
+        self, namespace: str, tool_type: str, mcp_server: BaseMCPServer
     ) -> None:
         """
         Register tools from a single MCP server.
@@ -229,11 +231,9 @@ class Computer:
         :return: None
         """
 
-        print(
-            f"Registering tools from [{namespace}] server for ({tool_type}): {mcp_server}"
-        )
+        print(f"Registering tools from [{namespace}] server for ({tool_type}).")
 
-        async with Client(mcp_server) as client:
+        async with Client(mcp_server.server) as client:
             tools = await client.list_tools()
             for tool in tools:
                 tool_key = self.make_tool_key(tool_type, tool.name)
@@ -275,7 +275,7 @@ class Computer:
         tool_type: str,
         description: str,
         tool_schema: Dict[str, Any],
-        mcp_server: MCPServerType,
+        mcp_server: BaseMCPServer,
     ) -> None:
         """
         Register a tool with the computer in its tools registry.
@@ -285,7 +285,7 @@ class Computer:
         :param tool_type: The type of the tool (e.g., "action", "
         :param description: The description of the tool.
         :param tool_schema: The tool_schema for the tool.
-        :param mcp_server: The MCP server where the tool is registered. Could be a URL string or a FastMCP instance.
+        :param mcp_server: The MCP server where the tool is registered.
         """
         if tool_key in self._tools_registry:
             raise ValueError(f"Tool {tool_key} is already registered.")
@@ -304,7 +304,7 @@ class Computer:
     async def add_server(
         self,
         namespace: str,
-        mcp_server: MCPServerType,
+        mcp_server: BaseMCPServer,
         tool_type: Optional[str] = None,
     ) -> None:
         """
