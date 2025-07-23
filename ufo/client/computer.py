@@ -562,7 +562,7 @@ class CommandRouter:
             agent_name=agent_name, process_name=process_name, root_name=root_name
         )
 
-        results = {}
+        results: Dict[str, Result] = {}
 
         for command in commands:
             call_id = command.call_id
@@ -582,7 +582,7 @@ class CommandRouter:
                     result=None,
                 )
 
-            if early_exit and results[call_id]["status"] == "failure":
+            if early_exit and results[call_id].status == "failure":
                 print(f"Early exit due to failure in command {call_id}")
                 break
 
