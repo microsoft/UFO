@@ -84,7 +84,6 @@ class HTTPMCPServer(BaseMCPServer):
         port = self._config.get("port", 8000)
         path = self._config.get("path", "/mcp")
         self._server = f"http://{host}:{port}{path}"
-        return self._server
 
     def stop(self) -> None:
         """
@@ -145,7 +144,7 @@ class StdioMCPServer(BaseMCPServer):
         :return: StdioTransport instance for standard input/output server.
         """
         command = self._config.get("command", "python")
-        args = self._config.get("args", [])
+        args = self._config.get("start_args", [])
         env = self._config.get("env", {})
         cwd = self._config.get("cwd", ".")
         self._server = StdioTransport(command=command, args=args, env=env, cwd=cwd)
