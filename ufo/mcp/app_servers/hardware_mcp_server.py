@@ -16,12 +16,11 @@ ufo_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 if ufo_root not in sys.path:
     sys.path.insert(0, ufo_root)
 
-from ufo.mcp.base_mcp_server import create_mcp_server
-
 
 #!/usr/bin/env python3
 """
-Mock MCP server (returns dummy values)
+Mock MCP server for testing hardware control tools.
+This server provides dummy implementations for various hardware control tools.
 """
 from typing import Dict, Any, List, Tuple, Optional
 from mcp.server.fastmcp import FastMCP
