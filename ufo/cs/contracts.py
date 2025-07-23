@@ -324,7 +324,7 @@ class Command(BaseModel):
 class Result(BaseModel):
     status: Literal["success", "failure"]
     error: Optional[str] = None
-    result: Optional[Dict[str, Any]] = None
+    result: Any = None
 
 
 class ServerResponse(BaseModel):
