@@ -1,16 +1,16 @@
 import asyncio
 import copy
-import time
 import inspect
+import logging
+import time
 from typing import Any, Callable, Dict, List, Optional
 
+# Import UI MCP servers to ensure they're registered in the registry
+import ufo.mcp.ui_mcp_server
 from fastmcp import Client, FastMCP
 from pydantic import BaseModel, ConfigDict
 from ufo.client.mcp import BaseMCPServer, MCPServerManager
 from ufo.cs.contracts import Command, Result
-
-# Import UI MCP servers to ensure they're registered in the registry
-import ufo.mcp.ui_mcp_server
 
 
 class MCPToolCall(BaseModel):
@@ -67,6 +67,8 @@ class Computer:
         # Automatically register meta tools for the computer.
 
         self._meta_tools: Dict[str, Callable] = {}
+
+        self.logger = logging.getLogger(self.__class__.__name__)
 
         for attr in dir(self):
             method = getattr(self, attr)
@@ -158,7 +160,9 @@ class Computer:
         tool_key = tool_call.tool_key
         tool_info = self._tools_registry.get(tool_key, None)
 
-        print(f"Running tool call: {tool_key}")
+        self.logger.info(
+            f"Running tool: {tool_info.tool_name} with parameters: {tool_info.parameters}"
+        )
 
         if not tool_info:
             raise ValueError(f"Tool {tool_key} is not registered.")
@@ -168,7 +172,7 @@ class Computer:
             # Special case for listing tools, which does not require a server call
 
             parameters = tool_info.parameters or {}
-            print(
+            self.logger.info(
                 f"Running meta tool: {tool_info.tool_name} with parameters: {parameters}"
             )
 
@@ -231,7 +235,9 @@ class Computer:
         :return: None
         """
 
-        print(f"Registering tools from [{namespace}] server for ({tool_type}).")
+        self.logger.info(
+            f"Registering tools from [{namespace}] server for ({tool_type})."
+        )
 
         async with Client(mcp_server.server) as client:
             tools = await client.list_tools()
@@ -252,7 +258,9 @@ class Computer:
                         mcp_server=mcp_server,
                     )
                 else:
-                    print(f"Tool {tool_key} is already registered.")
+                    self.logger.warning(
+                        f"Tool {tool_key} is already registered. Skipping registration."
+                    )
 
             for meta_tool_name, meta_tool_func in self._meta_tools.items():
                 tool_key = self.make_tool_key(tool_type, meta_tool_name)
@@ -540,6 +548,7 @@ class CommandRouter:
         :param manager: An instance of ComputerManager to manage Computer instances.
         """
         self.computer_manager = computer_manager
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     async def execute(
         self,
@@ -584,7 +593,9 @@ class CommandRouter:
                 )
 
             if early_exit and results[call_id].status == "failure":
-                print(f"Early exit due to failure in command {call_id}")
+                self.logger.warning(
+                    f"Early exit due to failure in command {call_id}: {results[call_id].error}"
+                )
                 break
 
             # Sleep to avoid overwhelming the server with requests
@@ -599,6 +610,11 @@ def test_command_router():
     This function creates a ComputerManager and a CommandRouter, then executes a sample command.
     """
     from ufo.config import Config
+
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
 
     configs = Config.get_instance().config_data
 

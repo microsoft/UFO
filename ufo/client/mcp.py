@@ -1,3 +1,4 @@
+import logging
 from abc import ABC, abstractmethod
 from typing import Any, Callable, Dict, Optional, Union
 
@@ -167,6 +168,8 @@ class MCPServerManager:
     This class manages the default MCP servers which are implemented and registered, which can be automatically started.
     """
 
+    _logger = logging.getLogger(__name__)
+
     _server_type_mapping: Dict[str, Callable[[Dict[str, Any]], BaseMCPServer]] = {
         "http": HTTPMCPServer,
         "local": LocalMCPServer,
@@ -184,7 +187,9 @@ class MCPServerManager:
         """
 
         cls._servers_mapping[namespace] = server
-        print(f"Registered MCP server '{namespace}'")
+        cls._logger.info(
+            f"Registered MCP server '{namespace}' of type {type(server).__name__}"
+        )
 
     @classmethod
     def create_mcp_server(self, mcp_config: Dict[str, Any]) -> BaseMCPServer:
