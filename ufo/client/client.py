@@ -12,6 +12,7 @@ from ufo.client.computer import CommandRouter, ComputerManager
 from ufo.client.mcp import MCPServerManager
 from ufo.config import Config
 from ufo.cs.contracts import ClientRequest, Command, Result, ServerResponse
+from ufo.client.websocket import UFOWebSocketClient
 
 CONFIGS = Config.get_instance().config_data
 
@@ -49,7 +50,10 @@ class UFOClient:
             computer_manager=self.computer_manager,
         )
 
-        self.client_id = client_id or "ufo_client"
+        # Initialize task lock for thread safety
+        self.task_lock = asyncio.Lock()
+
+        self.client_id = client_id or "client_001"
 
         # Initialize session variables
         self._agent_name: Optional[str] = None
@@ -281,19 +285,21 @@ async def websocket_client_main(
                                 f"[WebSocket] Got task {task_id}: {request_text}"
                             )
 
-                            ufo_client.reset()
-                            success = await ufo_client.run(request_text)
-                            result = {"success": success}
-                            await ws.send(
-                                json.dumps(
-                                    {
-                                        "type": "result",
-                                        "task_id": task_id,
-                                        "result": result,
-                                    }
+                            async with ufo_client.task_lock:
+
+                                ufo_client.reset()
+                                success = await ufo_client.run(request_text)
+                                result = {"success": success}
+                                await ws.send(
+                                    json.dumps(
+                                        {
+                                            "type": "result",
+                                            "task_id": task_id,
+                                            "result": result,
+                                        }
+                                    )
                                 )
-                            )
-                            logger.info(f"[WebSocket] Sent result for {task_id}")
+                                logger.info(f"[WebSocket] Sent result for {task_id}")
                     except Exception as task_exc:
                         logger.error(
                             f"Error handling task message: {task_exc}", exc_info=True
@@ -371,7 +377,8 @@ async def main():
     if args.ws:
         # Run in WebSocket mode
         try:
-            await websocket_client_main(args.ws_server_url, client, args.max_retries)
+            ws_client = UFOWebSocketClient(args.ws_server_url, client, max_retries=3)
+            await ws_client.connect_and_listen()
         except Exception as e:
             logger.error(f"WebSocket client error: {str(e)}", exc_info=True)
             sys.exit(1)
