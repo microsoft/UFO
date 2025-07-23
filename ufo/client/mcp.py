@@ -63,8 +63,8 @@ class BaseMCPServer(ABC):
     @property
     def server(self) -> Optional[MCPServerType]:
         """
-        Get the FastMCP server instance.
-        :return: FastMCP instance or None if not started.
+        Get the MCPServerType server instance.
+        :return: MCPServerType instance or None if not started.
         """
         return self._server
 
@@ -176,7 +176,7 @@ class MCPServerManager:
     _servers_mapping: Dict[str, BaseMCPServer] = {}
 
     @classmethod
-    def register_server(cls, namespace: str, server: MCPServerType) -> None:
+    def register_server(cls, namespace: str, server: BaseMCPServer) -> None:
         """
         Register a server with the given name.
         :param namespace: The namespace of the server.
@@ -210,7 +210,7 @@ class MCPServerManager:
         return server_instance
 
     @classmethod
-    def get_server(cls, namespace: str) -> Optional[MCPServerType]:
+    def get_server(cls, namespace: str) -> Optional[BaseMCPServer]:
         """
         Get the MCP server by its namespace.
         :param namespace: The namespace of the server.
