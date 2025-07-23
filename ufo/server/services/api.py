@@ -42,6 +42,7 @@ def create_api_blueprint(
             data = request.json
             ufo_request = ClientRequest(**data)
             session_id = ufo_request.session_id
+
             if not session_id or session_id not in session_manager.sessions:
                 session_id = ufo_request.session_id or str(uuid4())
                 session = session_manager.get_or_create_session(
