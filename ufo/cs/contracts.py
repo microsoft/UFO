@@ -321,6 +321,12 @@ class Command(BaseModel):
     call_id: Optional[str] = None
 
 
+class Result(BaseModel):
+    status: Literal["success", "failure"]
+    error: Optional[str] = None
+    result: Optional[Dict[str, Any]] = None
+
+
 class ServerResponse(BaseModel):
     status: Literal["continue", "completed", "failure"]
     agent_name: Optional[str] = None
@@ -336,7 +342,7 @@ class ServerResponse(BaseModel):
 class ClientRequest(BaseModel):
     session_id: Optional[str] = None
     request: Optional[str] = None
-    action_results: Optional[Dict[str, Any]] = None
+    action_results: Optional[Result] = None
     timestamp: Optional[str] = None
 
 

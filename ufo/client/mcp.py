@@ -238,7 +238,7 @@ class MCPServerManager:
 
         return cls._servers_mapping[namespace]
 
-    def clear_servers(self) -> None:
+    def reset(self) -> None:
         """
         Clear all registered MCP servers.
         This is useful for resetting the server state during testing or reinitialization.

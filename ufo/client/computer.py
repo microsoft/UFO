@@ -1,13 +1,13 @@
 import asyncio
 import copy
+import time
 import inspect
 from typing import Any, Callable, Dict, List, Optional
 
 from fastmcp import Client, FastMCP
-from fastmcp.client.transports import StdioTransport
 from pydantic import BaseModel, ConfigDict
 from ufo.client.mcp import MCPServerType, MCPServerManager
-from ufo.cs.contracts import Command
+from ufo.cs.contracts import Command, Result
 
 # Import UI MCP servers to ensure they're registered in the registry
 import ufo.mcp.ui_mcp_server
@@ -521,18 +521,25 @@ class ComputerManager:
 
         return self.computers[key]
 
+    def reset(self) -> None:
+        """
+        Reset the ComputerManager by clearing all Computer instances.
+        This is useful for reinitializing the manager without restarting the application.
+        """
+        self.computers.clear()
+
 
 class CommandRouter:
     """Router for executing commands on a Computer instance.
     This class takes a ComputerManager and executes commands on the appropriate Computer instance.
     """
 
-    def __init__(self, manager: ComputerManager):
+    def __init__(self, computer_manager: ComputerManager):
         """
         Initialize the CommandRouter with a ComputerManager.
         :param manager: An instance of ComputerManager to manage Computer instances.
         """
-        self.manager = manager
+        self.computer_manager = computer_manager
 
     async def execute(
         self,
@@ -540,28 +547,48 @@ class CommandRouter:
         process_name: Optional[str],
         root_name: Optional[str],
         commands: List[Command],
-    ) -> List[Any]:
+        early_exit: bool = True,
+    ) -> Dict[str, Result]:
         """
         Execute a command on the appropriate Computer instance based on the provided configuration.
         :param agent_name: The name of the agent to execute the command for.
         :param process_name: The name of the process to control, or None if not specified
         :param root_name: The root name of the computer, or None if not specified.
         :param commands: The list of Command objects to execute.
+        :param early_exit: If True, stop executing commands after the first failure.
         :return: The list of results from executing the commands.
         """
-        computer = await self.manager.get_or_create(
+        computer = await self.computer_manager.get_or_create(
             agent_name=agent_name, process_name=process_name, root_name=root_name
         )
 
-        results = []
+        results = {}
 
         for command in commands:
+            call_id = command.call_id
+
             try:
                 tool_call = computer.command2tool(command)
                 result = await computer.run_actions([tool_call])
-                results.append(result)
+                results[call_id] = Result(
+                    status="success",
+                    result=result,
+                    error=None,
+                )
             except Exception as e:
-                results.append(result)
+                results[call_id] = Result(
+                    status="failure",
+                    error=str(e),
+                    result=None,
+                )
+
+            if early_exit and results[call_id]["status"] == "failure":
+                print(f"Early exit due to failure in command {call_id}")
+                break
+
+            # Sleep to avoid overwhelming the server with requests
+            time.sleep(0.1)
+
         return results
 
 
