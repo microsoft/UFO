@@ -7,7 +7,6 @@ import datetime
 from typing import Dict, List, Optional
 
 import aiohttp
-import requests
 import websockets
 from ufo.client.computer import CommandRouter, ComputerManager
 from ufo.client.mcp import MCPServerManager
@@ -307,6 +306,7 @@ async def websocket_client_main(
                     f"Retrying WebSocket connection ({retry_count}/{max_retries}) after {2 ** retry_count}s..."
                 )
                 await asyncio.sleep(2**retry_count)
+
         except Exception as e:
             logger.error(f"Unexpected WebSocket client error: {e}", exc_info=True)
             retry_count += 1

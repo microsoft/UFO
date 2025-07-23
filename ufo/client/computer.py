@@ -572,7 +572,7 @@ class CommandRouter:
                 result = await computer.run_actions([tool_call])
                 results[call_id] = Result(
                     status="success",
-                    result=result,
+                    result=result[0],
                     error=None,
                 )
             except Exception as e:
@@ -630,8 +630,12 @@ def test_command_router():
         )
     )
 
-    for result in results:
-        print(f"Command result: {result}")
+    for call_id, result in results.items():
+        print(f"Command {call_id} executed with status: {result.status}")
+        if result.status == "failure":
+            print(f"Error: {result.error}")
+        else:
+            print(f"Result: {result.result}")
 
 
 if __name__ == "__main__":
