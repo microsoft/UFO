@@ -558,6 +558,7 @@ class CommandRouter:
         :param early_exit: If True, stop executing commands after the first failure.
         :return: The list of results from executing the commands.
         """
+
         computer = await self.computer_manager.get_or_create(
             agent_name=agent_name, process_name=process_name, root_name=root_name
         )
