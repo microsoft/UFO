@@ -3,16 +3,16 @@ import asyncio
 import json
 import logging
 import sys
-import time
-import traceback
+import datetime
 from typing import Dict, List, Optional
 
+import aiohttp
 import requests
 import websockets
 from ufo.client.computer import CommandRouter, ComputerManager
 from ufo.client.mcp import MCPServerManager
 from ufo.config import Config
-from ufo.cs.contracts import ClientRequest, ServerResponse, Command, Result
+from ufo.cs.contracts import ClientRequest, Command, Result, ServerResponse
 
 CONFIGS = Config.get_instance().config_data
 
@@ -59,7 +59,7 @@ class UFOClient:
 
         self._session_id: Optional[str] = None
 
-    async def run(self, request_text: str):
+    async def run(self, request_text: str) -> bool:
         """
         Run a task by communicating with the UFO web service
         :param request_text: The request text to send to the server
@@ -92,11 +92,17 @@ class UFOClient:
                 logger.info("Task completed successfully")
                 return True
 
+        except aiohttp.ClientError as e:
+            logger.error(f"Network error: {e}")
+            return False
+        except ValueError as e:
+            logger.error(f"Data error: {e}")
+            return False
         except Exception as e:
-            logger.error(f"Error running task: {str(e)}", exc_info=True)
+            logger.error(f"Unexpected error: {e}", exc_info=True)
             return False
 
-    def send_request(
+    async def send_request(
         self,
         request_text: Optional[str] = None,
         action_results: Optional[Dict[str, Result]] = None,
@@ -112,29 +118,25 @@ class UFOClient:
             session_id=self.session_id,
             request=request_text,
             action_results=action_results,
-            timestamp=time.strftime("%Y-%m-%dT%H:%M:%S", time.localtime()),
+            timestamp=datetime.datetime.utcnow().isoformat(),
         )
 
-        response = requests.post(
-            f"{self.server_url}/api/ufo/task",
-            json=request_data.model_dump(),
-            headers={"Content-Type": "application/json"},
-        )
+        async with aiohttp.ClientSession() as session:
 
-        # Check if the request was successful
-        if response.status_code != 200:
-            raise Exception(
-                f"Server returned error: {response.status_code}, {response.text}"
-            )
+            async with session.post(
+                f"{self.server_url}/api/ufo/task",
+                json=request_data.model_dump(),
+                headers={"Content-Type": "application/json"},
+            ) as response:
 
-        # Parse the response
-        response_data = response.json()
-        ufo_response = ServerResponse(**response_data)
+                if response.status != 200:
+                    text = await response.text()
+                    raise Exception(f"Server returned error: {response.status}, {text}")
 
-        logger.info(f"Received response: {response_data}")
-        logger.info(f"Received response: {ufo_response.model_dump()}")
-
-        return ufo_response
+                response_data = await response.json()
+                ufo_response = ServerResponse(**response_data)
+                logger.info(f"Received response: {response_data}")
+                return ufo_response
 
     async def execute_actions(
         self, commands: Optional[List[Command]]
@@ -237,8 +239,7 @@ class UFOClient:
 
     def reset(self):
         """
-        Reset the client state.
-        Clears the session ID, agent name, process name, and root name.
+        Reset session state and dependent managers.
         """
         self._session_id = None
         self._agent_name = None
@@ -251,34 +252,70 @@ class UFOClient:
         logger.info("Client state has been reset.")
 
 
-async def websocket_client_main(server_addr: str, ufo_client: UFOClient):
+async def websocket_client_main(
+    server_addr: str, ufo_client: "UFOClient", max_retries: int = 3
+):
     """
     Main entry point for the WebSocket client
-    :param server_addr: WebSocket server address
-    :param ufo_client: Instance of UFOClient to handle tasks
     """
-    async with websockets.connect(server_addr) as ws:
-        # register the client
-        client_id = ufo_client.client_id
-
-        await ws.send(json.dumps({"client_id": client_id}))
-        print(f"[WebSocket] Registered as {client_id}, waiting for task...")
-        async for msg in ws:
-            task = json.loads(msg)
-            if task.get("type") == "task":
-                task_id = task["task_id"]
-                request_text = task["request"]
-                print(f"[WebSocket] Got task {task_id}: {request_text}")
-                # construct UFORequest
-                ufo_client.reset()  # Reset client state before running a new task
-                # reuse the request_text
-                success = ufo_client.run(request_text)
-
-                result = {"success": success}
-                await ws.send(
-                    json.dumps({"type": "result", "task_id": task_id, "result": result})
+    retry_count = 0
+    while retry_count < max_retries:
+        try:
+            logger.info(
+                f"Connecting to {server_addr} (attempt {retry_count + 1}/{max_retries})"
+            )
+            async with websockets.connect(server_addr) as ws:
+                client_id = ufo_client.client_id
+                await ws.send(json.dumps({"client_id": client_id}))
+                logger.info(
+                    f"[WebSocket] Registered as {client_id}, waiting for task..."
                 )
-                print(f"[WebSocket] Sent result for {task_id}")
+                retry_count = 0  # Reset retry count on successful connection
+
+                async for msg in ws:
+                    try:
+                        task = json.loads(msg)
+                        if task.get("type") == "task":
+                            task_id = task["task_id"]
+                            request_text = task["request"]
+                            logger.info(
+                                f"[WebSocket] Got task {task_id}: {request_text}"
+                            )
+
+                            ufo_client.reset()
+                            success = await ufo_client.run(request_text)
+                            result = {"success": success}
+                            await ws.send(
+                                json.dumps(
+                                    {
+                                        "type": "result",
+                                        "task_id": task_id,
+                                        "result": result,
+                                    }
+                                )
+                            )
+                            logger.info(f"[WebSocket] Sent result for {task_id}")
+                    except Exception as task_exc:
+                        logger.error(
+                            f"Error handling task message: {task_exc}", exc_info=True
+                        )
+        except (websockets.ConnectionClosedError, websockets.ConnectionClosedOK) as e:
+            logger.error(f"WebSocket connection closed: {e}")
+            retry_count += 1
+            if retry_count < max_retries:
+                logger.info(
+                    f"Retrying WebSocket connection ({retry_count}/{max_retries}) after {2 ** retry_count}s..."
+                )
+                await asyncio.sleep(2**retry_count)
+        except Exception as e:
+            logger.error(f"Unexpected WebSocket client error: {e}", exc_info=True)
+            retry_count += 1
+            if retry_count < max_retries:
+                logger.info(
+                    f"Retrying WebSocket connection ({retry_count}/{max_retries}) after {2 ** retry_count}s..."
+                )
+                await asyncio.sleep(2**retry_count)
+    logger.error("Max retries reached. Exiting websocket client.")
 
 
 async def main():
@@ -305,6 +342,13 @@ async def main():
     )
     parser.add_argument("--ws", action="store_true", help="Run in WebSocket mode")
     parser.add_argument(
+        "--max-retries",
+        type=int,
+        default=3,
+        dest="max_retries",
+        help="Maximum retries for failed requests (default: 3)",
+    )
+    parser.add_argument(
         "--request",
         dest="request_text",
         default='open notepad and write "Hello, World!"',
@@ -327,7 +371,7 @@ async def main():
     if args.ws:
         # Run in WebSocket mode
         try:
-            await websocket_client_main(args.ws_server_url, client)
+            await websocket_client_main(args.ws_server_url, client, args.max_retries)
         except Exception as e:
             logger.error(f"WebSocket client error: {str(e)}", exc_info=True)
             sys.exit(1)
