@@ -543,7 +543,10 @@ class ComputerManager:
         """
 
         key = f"{agent_name}::{process_name}::{root_name or 'default'}"
+
         if key not in self.computers:
+
+            # Get the configuration for the agent
             mcp_config = self.configs.get(self._configs_key, {})
             agent_config = mcp_config.get(agent_name, {})
             if not agent_config:
@@ -569,6 +572,7 @@ class ComputerManager:
                 mcp_server_manager=self.mcp_server_manager,
             )
             await computer.async_init()
+
             self.computers[key] = computer
 
         return self.computers[key]
@@ -619,6 +623,8 @@ class CommandRouter:
 
         results: Dict[str, Result] = {}
 
+        status = "success"
+
         for command in commands:
             call_id = command.call_id
 
@@ -630,6 +636,17 @@ class CommandRouter:
             text_content = (
                 call_tool_result.content[0].text if call_tool_result.content else None
             )
+
+            if early_exit and status == "failure":
+                self.logger.warning(
+                    f"Skipping further commands due to previous failure."
+                )
+
+                results[call_id] = Result(
+                    status="skipped",
+                    result=None,
+                    error="Early exit due to previous failure.",
+                )
 
             if not call_tool_result.is_error:
                 results[call_id] = Result(
@@ -644,11 +661,7 @@ class CommandRouter:
                     result=None,
                 )
 
-            if early_exit and results[call_id].status == "failure":
-                self.logger.warning(
-                    f"Early exit due to failure in command {call_id}: {results[call_id].error}"
-                )
-                break
+                status = "failure"
 
             # Sleep to avoid overwhelming the server with requests
             time.sleep(0.1)
@@ -683,11 +696,11 @@ def test_command_router():
             tool_type="action",
             parameters={"button": "left"},
         ),
-        # Command(
-        #     tool_name="list_tools",
-        #     tool_type="action",
-        #     parameters={"namespace": "HardwareExecutor"},
-        # ),
+        Command(
+            tool_name="list_tools",
+            tool_type="action",
+            parameters={"namespace": "HardwareExecutor"},
+        ),
     ]
 
     results = asyncio.run(

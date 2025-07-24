@@ -322,7 +322,7 @@ class Command(BaseModel):
 
 
 class Result(BaseModel):
-    status: Literal["success", "failure"]
+    status: Literal["success", "failure", "skipped"]
     error: Optional[str] = None
     result: Any = None
 
