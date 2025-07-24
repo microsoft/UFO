@@ -1,6 +1,7 @@
 import asyncio
 import copy
 import inspect
+import json
 import logging
 import time
 from typing import Any, Callable, Dict, List, Optional
@@ -8,6 +9,8 @@ from typing import Any, Callable, Dict, List, Optional
 # Import UI MCP servers to ensure they're registered in the registry
 import ufo.mcp.ui_mcp_server
 from fastmcp import Client, FastMCP
+from fastmcp.client.client import CallToolResult
+from mcp.types import TextContent
 from pydantic import BaseModel, ConfigDict
 from ufo.client.mcp import BaseMCPServer, MCPServerManager
 from ufo.cs.contracts import Command, Result
@@ -20,6 +23,7 @@ class MCPToolCall(BaseModel):
 
     tool_key: str  # Unique key for the tool, e.g., "namespace.tool_name"
     tool_name: str  # Name of the tool
+    title: Optional[str] = None  # Title of the tool, if any
     namespace: str  # Namespace of the tool, same as the MCP server namespace
     tool_type: str  # Type of the tool (e.g., "action", "data_collection")
     description: str  # Description of the tool
@@ -28,6 +32,23 @@ class MCPToolCall(BaseModel):
     mcp_server: BaseMCPServer  # The BaseMCPServer instance where the tool is registered
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    @property
+    def tool_info(self) -> Dict[str, Any]:
+        """
+        Get a dictionary representation of the tool call.
+        :return: Dictionary with tool information.
+        """
+        return {
+            "tool_key": self.tool_key,
+            "tool_name": self.tool_name,
+            "title": self.title,
+            "namespace": self.namespace,
+            "tool_type": self.tool_type,
+            "description": self.description,
+            "tool_schema": self.tool_schema,
+            "parameters": self.parameters or {},
+        }
 
 
 class Computer:
@@ -150,7 +171,7 @@ class Computer:
 
         return self._action_servers
 
-    async def _run_action(self, tool_call: MCPToolCall) -> Any:
+    async def _run_action(self, tool_call: MCPToolCall) -> CallToolResult:
         """
         Run a one-step action on the computer.
         :param tool_call: The tool call to run.
@@ -190,10 +211,12 @@ class Computer:
         params = tool_info.parameters or {}
 
         async with Client(server) as client:
-            result = await client.call_tool(name=tool_name, arguments=params)
+            result: CallToolResult = await client.call_tool(
+                name=tool_name, arguments=params
+            )
             return result
 
-    async def run_actions(self, tool_calls: List[MCPToolCall]) -> Any:
+    async def run_actions(self, tool_calls: List[MCPToolCall]) -> List[CallToolResult]:
         """
         Run an action on the computer.
         :param tool_calls: The list of tool calls to run.
@@ -247,6 +270,7 @@ class Computer:
                     self._register_tool(
                         tool_key=tool_key,
                         tool_name=tool.name,
+                        title=tool.title,
                         namespace=namespace,
                         tool_type=tool_type,
                         description=tool.description,
@@ -268,6 +292,7 @@ class Computer:
                 self._register_tool(
                     tool_key=tool_key,
                     tool_name=meta_tool_name,
+                    title=meta_tool_func.__name__,
                     namespace=namespace,
                     tool_type=tool_type,
                     description=meta_tool_func.__doc__ or "Meta tool",
@@ -279,6 +304,7 @@ class Computer:
         self,
         tool_key: str,
         tool_name: str,
+        title: str,
         namespace: str,
         tool_type: str,
         description: str,
@@ -289,6 +315,7 @@ class Computer:
         Register a tool with the computer in its tools registry.
         :param tool_key: Unique key for the tool, e.g., "tool_type.tool_name".
         :param tool_name: The name of the tool.
+        :param title: The title of the tool, used for display.
         :param namespace: The namespace of the tool.
         :param tool_type: The type of the tool (e.g., "action", "
         :param description: The description of the tool.
@@ -301,6 +328,7 @@ class Computer:
         tool_info = MCPToolCall(
             tool_key=tool_key,
             tool_name=tool_name,
+            title=title,
             description=description,
             namespace=namespace,
             tool_type=tool_type,
@@ -369,7 +397,7 @@ class Computer:
         tool_type: Optional[str] = None,
         namespace: Optional[str] = None,
         remove_meta: bool = True,
-    ) -> List[MCPToolCall]:
+    ) -> CallToolResult:
         """
         Get the available tools of a specific type (action or data_collection).
         :param tool_type: The type of tools to retrieve (e.g., "action", "data_collection").
@@ -379,18 +407,34 @@ class Computer:
         """
 
         tools = []
-        for tool_info in self._tools_registry.values():
+
+        for tool in self._tools_registry.values():
             if (
                 # Check if the tool matches the specified type and namespace
-                (tool_type is None or tool_info.tool_type == tool_type)
+                (tool_type is None or tool.tool_type == tool_type)
                 # Check if the tool matches the specified namespace
-                and (namespace is None or tool_info.namespace == namespace)
+                and (namespace is None or tool.namespace == namespace)
                 # Check if the tool is not a meta tool or if meta tools should be included
-                and (not remove_meta or tool_info.tool_name not in self._meta_tools)
+                and (not remove_meta or tool.tool_name not in self._meta_tools)
             ):
-                tools.append(tool_info)
+                tools.append(tool.tool_info)
 
-        return tools
+        content = [
+            TextContent(
+                type="text",
+                text=json.dumps(tools),
+                annotations=None,
+                meta=None,
+            )
+        ]
+
+        tool_result = CallToolResult(
+            data=tools,
+            content=content,
+            structured_content=None,
+        )
+
+        return tool_result
 
     def command2tool(self, command: Command) -> MCPToolCall:
         """
@@ -538,7 +582,8 @@ class ComputerManager:
 
 
 class CommandRouter:
-    """Router for executing commands on a Computer instance.
+    """
+    Router for executing commands on a Computer instance.
     This class takes a ComputerManager and executes commands on the appropriate Computer instance.
     """
 
@@ -577,18 +622,21 @@ class CommandRouter:
         for command in commands:
             call_id = command.call_id
 
-            try:
-                tool_call = computer.command2tool(command)
-                result = await computer.run_actions([tool_call])
+            tool_call = computer.command2tool(command)
+            result = await computer.run_actions([tool_call])
+
+            call_tool_result: CallToolResult = result[0]
+
+            if not call_tool_result.is_error:
                 results[call_id] = Result(
                     status="success",
-                    result=result[0],
+                    result=call_tool_result.data,
                     error=None,
                 )
-            except Exception as e:
+            else:
                 results[call_id] = Result(
                     status="failure",
-                    error=str(e),
+                    error=call_tool_result.content[0].text,
                     result=None,
                 )
 
