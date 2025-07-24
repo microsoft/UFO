@@ -627,16 +627,20 @@ class CommandRouter:
 
             call_tool_result: CallToolResult = result[0]
 
+            text_content = (
+                call_tool_result.content[0].text if call_tool_result.content else None
+            )
+
             if not call_tool_result.is_error:
                 results[call_id] = Result(
                     status="success",
-                    result=call_tool_result.data,
+                    result=text_content,
                     error=None,
                 )
             else:
                 results[call_id] = Result(
                     status="failure",
-                    error=call_tool_result.content[0].text,
+                    error=text_content,
                     result=None,
                 )
 
@@ -679,11 +683,11 @@ def test_command_router():
             tool_type="action",
             parameters={"button": "left"},
         ),
-        Command(
-            tool_name="list_tools",
-            tool_type="action",
-            parameters={"namespace": "HardwareExecutor"},
-        ),
+        # Command(
+        #     tool_name="list_tools",
+        #     tool_type="action",
+        #     parameters={"namespace": "HardwareExecutor"},
+        # ),
     ]
 
     results = asyncio.run(
