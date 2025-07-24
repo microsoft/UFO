@@ -55,6 +55,7 @@ def run_ws(port: int = 8765, ws_handler: UFOWebSocketHandler = ws_handler) -> No
     """Run the WebSocket server on the specified port.
     This function initializes a new event loop and starts the WebSocket server.
     :param port: Port number for the WebSocket server.
+    :param ws_handler: The WebSocket handler instance to handle incoming connections.
     """
     global ws_event_loop
     ws_event_loop = asyncio.new_event_loop()
