@@ -9,6 +9,7 @@ from .services.session_manager import SessionManager
 from .services.task_manager import TaskManager
 from .services.ws_manager import WSManager
 from .ws.handler import UFOWebSocketHandler
+from .share import SharedEventLoop
 
 
 def parse_args():
@@ -33,10 +34,13 @@ app = Flask(__name__)
 session_manager = SessionManager()
 task_manager = TaskManager()
 ws_manager = WSManager()
-ws_event_loop = None  # WebSocket event loop will be initialized later
+shared_event_loop = SharedEventLoop()
+
 
 # Create API blueprint
-api_bp = create_api_blueprint(session_manager, task_manager, ws_manager, ws_event_loop)
+api_bp = create_api_blueprint(
+    session_manager, task_manager, ws_manager, shared_event_loop
+)
 app.register_blueprint(api_bp)
 
 ws_handler = UFOWebSocketHandler(ws_manager, session_manager, task_manager)
@@ -59,6 +63,7 @@ def run_ws(port: int = 8765, ws_handler: UFOWebSocketHandler = ws_handler) -> No
     """
     global ws_event_loop
     ws_event_loop = asyncio.new_event_loop()
+    shared_event_loop.loop = ws_event_loop
     asyncio.set_event_loop(ws_event_loop)
     import websockets
 
