@@ -55,6 +55,8 @@ class UFOWebSocketHandler:
         """
         try:
             data = json.loads(msg)
+            self.logger.info(f"[WS] Received message from {client_id}: {data}")
+
             if data.get("type") == "task_request":
                 await self.handle_task_request(data, websocket)
             # Future: add more handlers (heartbeat, result, notify, ...)

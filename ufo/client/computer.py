@@ -212,7 +212,7 @@ class Computer:
 
         async with Client(server) as client:
             result: CallToolResult = await client.call_tool(
-                name=tool_name, arguments=params
+                name=tool_name, arguments=params, raise_on_error=False
             )
             return result
 
@@ -289,16 +289,21 @@ class Computer:
             for meta_tool_name, meta_tool_func in self._meta_tools.items():
                 tool_key = self.make_tool_key(tool_type, meta_tool_name)
 
-                self._register_tool(
-                    tool_key=tool_key,
-                    tool_name=meta_tool_name,
-                    title=meta_tool_func.__name__,
-                    namespace=namespace,
-                    tool_type=tool_type,
-                    description=meta_tool_func.__doc__ or "Meta tool",
-                    tool_schema=meta_tool_func.__annotations__,
-                    mcp_server=mcp_server,
-                )
+                if tool_key not in self._tools_registry:
+                    # Register the meta tool with the computer
+                    self.logger.info(
+                        f"Registering meta tool: {meta_tool_name} with key: {tool_key} for computer {self._name}."
+                    )
+                    self._register_tool(
+                        tool_key=tool_key,
+                        tool_name=meta_tool_name,
+                        title=meta_tool_func.__name__,
+                        namespace=namespace,
+                        tool_type=tool_type,
+                        description=meta_tool_func.__doc__ or "Meta tool",
+                        tool_schema=meta_tool_func.__annotations__,
+                        mcp_server=mcp_server,
+                    )
 
     def _register_tool(
         self,

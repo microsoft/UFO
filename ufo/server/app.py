@@ -4,11 +4,11 @@ import logging
 import threading
 
 from flask import Flask
-from services.api import create_api_blueprint
-from services.session_manager import SessionManager
-from services.task_manager import TaskManager
-from services.ws_manager import WSManager
-from ws.handler import UFOWebSocketHandler
+from .services.api import create_api_blueprint
+from .services.session_manager import SessionManager
+from .services.task_manager import TaskManager
+from .services.ws_manager import WSManager
+from .ws.handler import UFOWebSocketHandler
 
 
 def parse_args():
@@ -55,6 +55,7 @@ def run_ws(port: int = 8765, ws_handler: UFOWebSocketHandler = ws_handler) -> No
     """Run the WebSocket server on the specified port.
     This function initializes a new event loop and starts the WebSocket server.
     :param port: Port number for the WebSocket server.
+    :param ws_handler: The WebSocket handler instance to handle incoming connections.
     """
     global ws_event_loop
     ws_event_loop = asyncio.new_event_loop()

@@ -1,5 +1,6 @@
 import asyncio
 import datetime
+import logging
 from uuid import uuid4
 
 from flask import Blueprint, jsonify, request
@@ -9,12 +10,15 @@ from .session_manager import SessionManager
 from .task_manager import TaskManager
 from .ws_manager import WSManager
 
+logger = logging.getLogger(__name__)
+
 
 def create_api_blueprint(
     session_manager: SessionManager,
     task_manager: TaskManager,
     ws_manager: WSManager,
     ws_event_loop: asyncio.AbstractEventLoop,
+    logger: logging.Logger = logger,
 ):
     """
     Create and configure a Flask API blueprint for UFO server REST endpoints.
@@ -27,6 +31,7 @@ def create_api_blueprint(
     :param task_manager: The manager responsible for task ID generation and results.
     :param ws_manager: The manager responsible for managing online WebSocket clients.
     :param ws_event_loop: The asyncio event loop used for scheduling async WebSocket operations.
+    :param logger: Optional logger for logging API operations (default is the module logger).
     :return: A Flask Blueprint object with all registered API endpoints.
     """
     api = Blueprint("api", __name__)
@@ -40,6 +45,8 @@ def create_api_blueprint(
         """
         try:
             data = request.json
+            logger.info(f"Received API request: {data}")
+
             ufo_request = ClientRequest(**data)
             session_id = ufo_request.session_id
 

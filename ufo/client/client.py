@@ -13,6 +13,9 @@ from ufo.client.mcp import MCPServerManager
 from ufo.config import Config
 from ufo.cs.contracts import ClientRequest, Command, Result, ServerResponse
 from ufo.client.websocket import UFOWebSocketClient
+import tracemalloc
+
+tracemalloc.start()
 
 CONFIGS = Config.get_instance().config_data
 
@@ -70,7 +73,7 @@ class UFOClient:
         """
         try:
             # Initial request to start the session
-            response = self.send_request(request_text)
+            response = await self.send_request(request_text)
 
             # Sync with the server response
             self.agent_name = response.agent_name
@@ -85,7 +88,7 @@ class UFOClient:
                 action_results = await self.execute_actions(response.actions)
 
                 # Send the results back to the server and get next response
-                response = self.send_request(None, action_results)
+                response = await self.send_request(None, action_results)
 
             if response.status == "failure":
                 logger.error(f"Task failed: {response.error}")
@@ -387,7 +390,7 @@ async def main():
             logger.error("No request text provided. Use --request to specify a task.")
             sys.exit(1)
 
-        success = client.run(args.request_text)
+        success = await client.run(args.request_text)
 
         # Exit with appropriate status code
         sys.exit(0 if success else 1)
