@@ -82,6 +82,9 @@ class UFOWebSocketClient:
         try:
             task = json.loads(msg)
             if task.get("type") == "task":
+                self.logger.info(
+                    f"Received task: {task} for client {self.ufo_client.client_id}"
+                )
                 await self.handle_task(task, ws)
             else:
                 self.logger.info(f"Received non-task message: {task}")
