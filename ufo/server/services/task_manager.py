@@ -50,11 +50,3 @@ class TaskManager:
         """
         with self.lock:
             self.task_results.pop(task_id, None)
-
-    def handle_result(self, task_id: str, result: Any) -> None:
-        """
-        Handle the result of a completed task.
-        :param task_id: The ID of the completed task.
-        :param result: The result of the completed task.
-        """
-        self.set_result(task_id, result)

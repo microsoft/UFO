@@ -77,13 +77,30 @@ class UFOWebSocketHandler:
                 # Handle result messages from the client
                 task_id = data.get("task_id")
                 result = data.get("result")
-                self.task_manager.handle_result(task_id, result)
+                self.task_manager.set_result(task_id, result)
                 self.logger.info(
                     f"[WS] Result for task {task_id} from {client_id}: {result}"
                 )
                 await websocket.send(
                     json.dumps({"type": "result_ack", "task_id": task_id})
                 )
+
+            elif data.get("type") == "get_result":
+                # Handle requests for results
+                task_id = data.get("task_id")
+                result = self.task_manager.get_result(task_id)
+
+                if result:
+                    await websocket.send(
+                        json.dumps(
+                            {"type": "result", "task_id": task_id, "result": result}
+                        )
+                    )
+                else:
+                    await websocket.send(
+                        json.dumps({"type": "error", "error": "Result not found"})
+                    )
+
             elif data.get("type") == "notify":
                 # Handle notification messages from the client
                 notification = data.get("notification")
