@@ -4,11 +4,11 @@ import logging
 import threading
 
 from flask import Flask
-from services.api import create_api_blueprint
-from services.session_manager import SessionManager
-from services.task_manager import TaskManager
-from services.ws_manager import WSManager
-from ws.handler import UFOWebSocketHandler
+from .services.api import create_api_blueprint
+from .services.session_manager import SessionManager
+from .services.task_manager import TaskManager
+from .services.ws_manager import WSManager
+from .ws.handler import UFOWebSocketHandler
 
 
 def parse_args():
