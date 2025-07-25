@@ -5,7 +5,7 @@ import sys
 import tracemalloc
 
 from ufo.client.computer import ComputerManager
-from ufo.client.mcp import MCPServerManager
+from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.client.ufo_client import UFOClient
 from ufo.client.websocket import UFOWebSocketClient
 from ufo.config import Config

@@ -12,8 +12,8 @@ from fastmcp import Client, FastMCP
 from fastmcp.client.client import CallToolResult
 from mcp.types import TextContent
 from pydantic import BaseModel, ConfigDict
-from ufo.client.mcp import BaseMCPServer, MCPServerManager
-from ufo.cs.contracts import Command, Result
+from ufo.client.mcp.mcp_server_manager import BaseMCPServer, MCPServerManager
+from ufo.contracts.contracts import Command, Result
 
 
 class MCPToolCall(BaseModel):

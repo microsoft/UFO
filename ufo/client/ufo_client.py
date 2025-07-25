@@ -6,7 +6,7 @@ from typing import Dict, List, Optional
 
 import aiohttp
 from ufo.client.computer import CommandRouter, ComputerManager
-from ufo.client.mcp import MCPServerManager
+from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.contracts.contracts import ClientRequest, Command, Result, ServerResponse
 
 tracemalloc.start()
