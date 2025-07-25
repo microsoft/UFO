@@ -1,10 +1,9 @@
-import asyncio
 import datetime
 import logging
 from uuid import uuid4
 
 from flask import Blueprint, jsonify, request
-from ufo.cs.contracts import ClientRequest, ServerResponse
+from ufo.contracts.contracts import ClientRequest, ServerResponse
 
 from .session_manager import SessionManager
 from .task_manager import TaskManager
