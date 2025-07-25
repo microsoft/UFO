@@ -212,7 +212,7 @@ class Computer:
 
         async with Client(server) as client:
             result: CallToolResult = await client.call_tool(
-                name=tool_name, arguments=params
+                name=tool_name, arguments=params, raise_on_error=False
             )
             return result
 
