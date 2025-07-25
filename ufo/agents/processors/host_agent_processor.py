@@ -17,14 +17,9 @@ from ufo.agents.processors.action_contracts import (
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
 from ufo.cs.contracts import (
-    CaptureDesktopScreenshotAction,
-    CaptureDesktopScreenshotParams,
-    GetDesktopAppInfoAction,
-    GetDesktopAppInfoParams,
+    Command,
     LaunchApplicationAction,
     LaunchApplicationParams,
-    SelectApplicationWindowAction,
-    SelectApplicationWindowParams,
     WindowInfo,
 )
 from ufo.llm import AgentType
@@ -191,13 +186,12 @@ class HostAgentProcessor(BaseProcessor):
 
         self._memory_data.add_values_from_dict({"CleanScreenshot": desktop_save_path})
 
-        # Capture the desktop screenshot for all screens using action
-        desktop_screenshot_action = CaptureDesktopScreenshotAction(
-            params=CaptureDesktopScreenshotParams(all_screens=True)
-        )
-
         self.session_data_manager.add_action(
-            desktop_screenshot_action,
+            command=Command(
+                tool_name="capture_desktop_screenshot",
+                parameters={"all_screens": True},
+                tool_type="data_collection",
+            ),
             setter=lambda value: self.desktop_screenshot_action_callback(
                 value, desktop_save_path
             ),
@@ -212,6 +206,7 @@ class HostAgentProcessor(BaseProcessor):
             path (str): Path to save the screenshot
         """
         # Set the URL for use in the class
+        value = value.result
         self._desktop_screen_url = value
         # print(f"Desktop screenshot URL: {self._desktop_screen_url}")
         self.session_data_manager.session_data.state.desktop_screen_url = value
@@ -236,6 +231,10 @@ class HostAgentProcessor(BaseProcessor):
                 print(f"Screenshot saved to {path}")
             except Exception as e:
                 print(f"Error saving screenshot: {e}")
+        else:
+            raise ValueError(
+                "Screenshot URL is not a valid base64 encoded image string."
+            )
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -244,10 +243,10 @@ class HostAgentProcessor(BaseProcessor):
         Get the control information.
         """
         self.session_data_manager.add_action(
-            action=GetDesktopAppInfoAction(
-                params=GetDesktopAppInfoParams(
-                    remove_empty=True, refresh_app_windows=True
-                )
+            command=Command(
+                tool_name="get_desktop_app_info",
+                parameters={"remove_empty": True, "refresh_app_windows": True},
+                tool_type="data_collection",
             ),
             setter=lambda value: self.desktop_app_info_callback(value),
         )
@@ -259,6 +258,7 @@ class HostAgentProcessor(BaseProcessor):
         Args:
             value (str): The desktop app info
         """
+        value = value.result
         if isinstance(value, list) and len(value) > 0 and isinstance(value[0], dict):
             # Convert the list of dictionaries to a list of WindowInfo objects
             self._desktop_windows_info = [WindowInfo(**item) for item in value]
@@ -441,10 +441,10 @@ class HostAgentProcessor(BaseProcessor):
             if len(new_app_windows) > 0:
                 # self._select_application(new_app_window)
                 self.session_data_manager.add_action(
-                    action=SelectApplicationWindowAction(
-                        params=SelectApplicationWindowParams(
-                            window_label=new_app_windows[0].annotation_id
-                        )
+                    command=Command(
+                        tool_name="select_application_window",
+                        parameters={"window_label": new_app_windows[0].annotation_id},
+                        tool_type="action",
                     ),
                     setter=lambda value: self.select_application_window_callback(value),
                 )
@@ -463,6 +463,7 @@ class HostAgentProcessor(BaseProcessor):
         Args:
             value (str): The application window value
         """
+        value = value.result
         # Set the application window
         self.app_root = value["process_name"]
 

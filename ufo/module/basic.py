@@ -19,7 +19,7 @@ import logging
 import os
 import time
 from abc import ABC, abstractmethod
-from typing import Dict, Optional, Generator
+from typing import Any, Dict, Generator, Optional
 from uuid import uuid4
 
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -34,13 +34,10 @@ from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
 from ufo.cs.contracts import (
-    ActionBase,
-    CaptureAppWindowScreenshotAction,
-    CaptureAppWindowScreenshotParams,
-    CaptureDesktopScreenshotAction,
-    CaptureDesktopScreenshotParams,
+    Command,
     GetUITreeAction,
     GetUITreeParams,
+    Result,
 )
 from ufo.cs.session_data import SessionDataManager
 from ufo.experience.summarizer import ExperienceSummarizer
@@ -317,7 +314,7 @@ class BaseRound(ABC):
         """
         return self._context.get(ContextNames.LOG_PATH)
 
-    def _app_window_screenshot_callback(self, value, save_path: str) -> None:
+    def _app_window_screenshot_callback(self, value: Result, save_path: str) -> None:
         """
         Callback method to save app window screenshot data from action.
 
@@ -325,6 +322,7 @@ class BaseRound(ABC):
             value: The result returned from the action
             save_path: Path to save the screenshot
         """
+        value = value.result
         if (
             value
             and isinstance(value, str)
@@ -340,6 +338,10 @@ class BaseRound(ABC):
                     f"Warning: Failed to save app window screenshot: {e}",
                     "yellow",
                 )
+        else:
+            raise ValueError(
+                "Invalid screenshot data received. Expected base64 encoded PNG string."
+            )
 
     def _desktop_screenshot_callback(self, value, save_path: str) -> None:
         """
@@ -428,24 +430,17 @@ class BaseRound(ABC):
                     ContextNames.APPLICATION_WINDOW_INFO
                 )
 
-                if session_data_manager and application_window_info:
-                    # Use action/callback pattern for app window screenshot
-                    app_screenshot_action = CaptureAppWindowScreenshotAction(
-                        params=CaptureAppWindowScreenshotParams(
-                            annotation_id=application_window_info.annotation_id
-                        )
-                    )
-                    session_data_manager.add_action(
-                        app_screenshot_action,
-                        setter=lambda value: self._app_window_screenshot_callback(
-                            value, screenshot_save_path
-                        ),
-                    )
-                else:
-                    # Fallback to direct call if action pattern is not available
-                    PhotographerFacade().capture_app_window_screenshot(
-                        self.application_window, save_path=screenshot_save_path
-                    )
+                # Use action/callback pattern for app window screenshot
+                session_data_manager.add_action(
+                    command=Command(
+                        tool_name="capture_window_screenshot",
+                        parameters={},
+                        tool_type="data_collection",
+                    ),
+                    setter=lambda value: self._app_window_screenshot_callback(
+                        value, screenshot_save_path
+                    ),
+                )
 
             except Exception as e:
                 utils.print_with_color(
@@ -510,21 +505,18 @@ class BaseRound(ABC):
                     ContextNames.SESSION_DATA_MANAGER
                 )
 
-                if session_data_manager:
-                    desktop_screenshot_action = CaptureDesktopScreenshotAction(
-                        params=CaptureDesktopScreenshotParams(all_screens=True)
-                    )
-                    session_data_manager.add_action(
-                        desktop_screenshot_action,
-                        setter=lambda value: self._desktop_screenshot_callback(
-                            value, desktop_save_path
-                        ),
-                    )
-                else:
-                    # Fallback to direct call if action pattern is not available
-                    PhotographerFacade().capture_desktop_screen_screenshot(
-                        all_screens=True, save_path=desktop_save_path
-                    )
+                session_data_manager.add_action(
+                    command=Command(
+                        tool_name="capture_desktop_screenshot",
+                        parameters={
+                            "all_screens": True,
+                        },
+                        tool_type="data_collection",
+                    ),
+                    setter=lambda value: self._desktop_screenshot_callback(
+                        value, desktop_save_path
+                    ),
+                )
 
             # Save the final XML file
             if configs["LOG_XML"]:
@@ -654,7 +646,7 @@ class BaseSession(ABC):
         Run the session in a generator.
         This allows the session to be run in a coroutine manner.
         """
-        while not self.is_finished_legacy():
+        while not self.is_finished():
             _round = self.create_new_round()
             if _round is None:
                 break
@@ -928,23 +920,6 @@ class BaseSession(ABC):
         return: True if the session is ended, otherwise False.
         """
         if (
-            (self.current_round and self.current_round.is_finished())
-            or self.step >= configs["MAX_STEP"]
-            or self.total_rounds >= configs["MAX_ROUND"]
-        ):
-            return True
-
-        if self.is_error():
-            return True
-
-        return False
-
-    def is_finished_legacy(self) -> bool:
-        """
-        This is legacy logic of is_finished, coroutine version requires this method to achieve multi-round behavior.
-        @todo: merge this logic with is_finished in the future.
-        """
-        if (
             self._finish
             or self.step >= configs["MAX_STEP"]
             or self.total_rounds >= configs["MAX_ROUND"]
@@ -1017,7 +992,7 @@ class BaseSession(ABC):
         """
         return self.__class__.__name__
 
-    def _app_window_screenshot_callback(self, value, save_path: str) -> None:
+    def _app_window_screenshot_callback(self, value: Result, save_path: str) -> None:
         """
         Callback method to save app window screenshot data from action.
 
@@ -1025,6 +1000,7 @@ class BaseSession(ABC):
             value: The result returned from the action
             save_path: Path to save the screenshot
         """
+        value = value.result
         if (
             value
             and isinstance(value, str)
@@ -1040,6 +1016,10 @@ class BaseSession(ABC):
                     f"Warning: Failed to save app window screenshot: {e}",
                     "yellow",
                 )
+        else:
+            raise ValueError(
+                "Invalid screenshot data received. Expected base64 encoded PNG string."
+            )
 
     def _desktop_screenshot_callback(self, value, save_path: str) -> None:
         """
@@ -1093,24 +1073,16 @@ class BaseSession(ABC):
 
                 application_window_info = self.application_window_info
 
-                if session_data_manager and application_window_info:
-                    # Use action/callback pattern for app window screenshot
-                    app_screenshot_action = CaptureAppWindowScreenshotAction(
-                        params=CaptureAppWindowScreenshotParams(
-                            annotation_id=application_window_info.annotation_id
-                        )
-                    )
-                    session_data_manager.add_action(
-                        app_screenshot_action,
-                        setter=lambda value: self._app_window_screenshot_callback(
-                            value, screenshot_save_path
-                        ),
-                    )
-                else:
-                    # Fallback to direct call if action pattern is not available
-                    PhotographerFacade().capture_app_window_screenshot(
-                        self.application_window, save_path=screenshot_save_path
-                    )
+                session_data_manager.add_action(
+                    command=Command(
+                        tool_name="capture_window_screenshot",
+                        parameters={},
+                        tool_type="data_collection",
+                    ),
+                    setter=lambda value: self._app_window_screenshot_callback(
+                        value, screenshot_save_path
+                    ),
+                )
 
             except Exception as e:
                 utils.print_with_color(
@@ -1166,21 +1138,18 @@ class BaseSession(ABC):
                     ContextNames.SESSION_DATA_MANAGER
                 )
 
-                if session_data_manager:
-                    desktop_screenshot_action = CaptureDesktopScreenshotAction(
-                        params=CaptureDesktopScreenshotParams(all_screens=True)
-                    )
-                    session_data_manager.add_action(
-                        desktop_screenshot_action,
-                        setter=lambda value: self._desktop_screenshot_callback(
-                            value, desktop_save_path
-                        ),
-                    )
-                else:
-                    # Fallback to direct call if action pattern is not available
-                    PhotographerFacade().capture_desktop_screen_screenshot(
-                        all_screens=True, save_path=desktop_save_path
-                    )
+                session_data_manager.add_action(
+                    command=Command(
+                        tool_name="capture_desktop_screenshot",
+                        parameters={
+                            "all_screens": True,
+                        },
+                        tool_type="data_collection",
+                    ),
+                    setter=lambda value: self._desktop_screenshot_callback(
+                        value, desktop_save_path
+                    ),
+                )
 
             # Save the final XML file
             if configs["LOG_XML"]:
@@ -1217,7 +1186,7 @@ class BaseSession(ABC):
 
         return logger
 
-    def get_actions(self) -> list[ActionBase]:
+    def get_commands(self) -> list[Command]:
         """
         Get the actions to be executed in the session.
         :return: List of actions to run in the session.
@@ -1227,9 +1196,7 @@ class BaseSession(ABC):
         )
         return session_data_manager.actions_to_run
 
-    def process_action_results(
-        self, action_results: dict[str, any]
-    ) -> None:
+    def process_action_results(self, action_results: dict[str, Any]) -> None:
         """
         Process the results of executed actions and update session state.
         :param action_results: Dictionary containing results of executed actions.

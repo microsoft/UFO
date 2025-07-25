@@ -81,7 +81,7 @@ def run_task():
             status = "completed"
 
         # Get actions to execute
-        actions = session.get_actions()
+        actions = session.get_commands()
 
         response = UFOResponse(
             session_id=session_id,

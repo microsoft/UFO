@@ -3,12 +3,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
-from ufo.cs.contracts import (
-    ActionBase,
-    AppWindowControlInfo,
-    CallbackAction,
-    WindowInfo,
-)
+from ufo.cs.contracts import AppWindowControlInfo, Command, WindowInfo
 
 
 class SessionState(BaseModel):
@@ -30,7 +25,7 @@ class SessionData(BaseModel):
     session_id: str
     state: SessionState = Field(default=SessionState())
     messages: List[str] = Field(default=[])
-    actions_to_run: List[ActionBase] = Field(default=[])
+    actions_to_run: List[Command] = Field(default=[])
 
 
 class SessionDataManager:
@@ -50,18 +45,18 @@ class SessionDataManager:
         # hash_value = mmh3.hash64(f"{data}-{timestamp}")[0]  # Generate hash
         return str(uuid.uuid4())  # Convert to string
 
-    def add_action(self, action: ActionBase, setter: Callable[[Any], None] = None):
+    def add_action(self, command: Command, setter: Callable[[Any], None] = None):
         """
         Add an action to the session data manager.
         :param action: The action to be added.
         :param setter: Optional callback function to set the action result.
         If not provided, a default no-op function will be used.
         """
-        call_id = SessionDataManager.time_hash_str(action.name)
-        action.call_id = call_id
-        self.session_data.actions_to_run.append(action)
+        call_id = SessionDataManager.time_hash_str(command.tool_name)
+        command.call_id = call_id
+        self.session_data.actions_to_run.append(command)
         print(
-            f"Adding action {action.name} with call_id {call_id} to session {self.session_id}"
+            f"Adding command {command.tool_name} with call_id {call_id} to session {self.session_id}"
         )
         if setter is None:
             setter = lambda x: None
@@ -72,10 +67,14 @@ class SessionDataManager:
         Add a callback action to the session data manager.
         :param callback: Optional callback function to set the action result.
         """
-        callback_action = CallbackAction()
-        call_id = SessionDataManager.time_hash_str("callback")
-        callback_action.call_id = call_id
-        self.session_data.actions_to_run.append(callback_action)
+        nop_command = Command(
+            tool_name="nop",
+            parameters={},
+            tool_type="action",
+        )
+        call_id = SessionDataManager.time_hash_str("nop")
+        nop_command.call_id = call_id
+        self.session_data.actions_to_run.append(nop_command)
         if callback is None:
             callback = lambda x: None
         self.action_id_setters[call_id] = callback
@@ -106,7 +105,7 @@ class SessionDataManager:
         self.result_available = True
 
     @property
-    def actions_to_run(self) -> List[ActionBase]:
+    def actions_to_run(self) -> List[Command]:
         return self.session_data.actions_to_run
 
     def get_desktop_windows_info(self) -> List[Dict[str, str]]:

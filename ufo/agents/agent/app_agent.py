@@ -522,21 +522,22 @@ class AppAgent(BasicAgent):
             f"Loading MCP context for application namespace: {app_namespace} in preferred apps: {self.mcp_preferred_apps}",
             "magenta",
         )
-        if app_namespace in self.mcp_preferred_apps and hasattr(self, "prompter"):
+        # TODO: to be fixed later
+        # if app_namespace in self.mcp_preferred_apps and hasattr(self, "prompter"):
 
-            get_instructions_action = MCPGetAvailableToolsAction(
-                params=MCPGetAvailableToolsParams(app_namespace=app_namespace)
-            )
+        #     get_instructions_action = MCPGetAvailableToolsAction(
+        #         params=MCPGetAvailableToolsParams(app_namespace=app_namespace)
+        #     )
 
-            # Use callback pattern to handle MCP instructions result
-            session_data_manager.add_action(
-                get_instructions_action,
-                setter=lambda result: self._handle_mcp_instructions_callback(result),
-            )
+        #     # Use callback pattern to handle MCP instructions result
+        #     session_data_manager.add_action(
+        #         get_instructions_action,
+        #         setter=lambda result: self._handle_mcp_instructions_callback(result),
+        #     )
 
-            utils.print_with_color(
-                f"Requested MCP instructions for {app_namespace}", "green"
-            )
+        #     utils.print_with_color(
+        #         f"Requested MCP instructions for {app_namespace}", "green"
+        #     )
 
     def _handle_mcp_instructions_callback(self, result: Any) -> None:
         """

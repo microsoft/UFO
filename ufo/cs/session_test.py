@@ -15,7 +15,7 @@ def test_run_session_with_receivers():
     is_finished = session.is_finished()
     while not is_finished:
         session.step_forward()
-        actions = session.get_actions()
+        actions = session.get_commands()
         
         # Process all actions in the actions list
         action_results = {}
@@ -39,7 +39,7 @@ def test_office_app_session():
     is_finished = session.is_finished()
     while not is_finished:
         session.step_forward()
-        actions = session.get_actions()
+        actions = session.get_commands()
         # Process all actions in the actions list
         action_results = {}
         for action in actions:
@@ -70,7 +70,7 @@ def test_run_session():
     is_finished = session.is_finished()
     while not is_finished:
         session.step_forward()
-        actions = session.get_actions()
+        actions = session.get_commands()
         # Process all actions in the actions list
         action_results = {}
         for action in actions:

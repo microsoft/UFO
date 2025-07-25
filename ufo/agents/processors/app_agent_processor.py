@@ -20,17 +20,11 @@ from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
 from ufo.cs.contracts import (
     AppWindowControlInfo,
-    CaptureAppWindowScreenshotAction,
-    CaptureAppWindowScreenshotParams,
-    CaptureDesktopScreenshotAction,
-    CaptureDesktopScreenshotParams,
+    Command,
     ControlInfo,
-    GetAppWindowControlInfoAction,
-    GetAppWindowControlInfoParams,
     GetUITreeAction,
     GetUITreeParams,
-    OperationCommand,
-    OperationSequenceAction,
+    Result,
 )
 from ufo.cs.service.control_filter import ControlFilterFactory
 from ufo.llm import AgentType
@@ -262,15 +256,15 @@ class AppAgentProcessor(BaseProcessor):
         )
 
         self.session_data_manager.add_action(
-            CaptureAppWindowScreenshotAction(
-                params=CaptureAppWindowScreenshotParams(
-                    annotation_id=self.application_window_info.annotation_id
-                )
+            command=Command(
+                tool_name="capture_window_screenshot",
+                parameters={},
+                tool_type="data_collection",
             ),
             setter=self._get_app_window_screenshot_action_callback,
         )
 
-    def _get_app_window_screenshot_action_callback(self, value):
+    def _get_app_window_screenshot_action_callback(self, value: Result):
         """
         Helper method to save control screenshot data to file.
 
@@ -278,6 +272,7 @@ class AppAgentProcessor(BaseProcessor):
             value: The result returned from the action
             path: Path to save the screenshot
         """
+        value = value.result
         if (
             value
             and isinstance(value, str)
@@ -297,6 +292,10 @@ class AppAgentProcessor(BaseProcessor):
                 print(f"Screenshot saved to {self.screenshot_save_path}")
             except Exception as e:
                 print(f"Error saving screenshot: {e}")
+        else:
+            raise ValueError(
+                "Screenshot URL is not a valid base64 encoded image string."
+            )
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -306,24 +305,23 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         self.session_data_manager.add_action(
-            GetAppWindowControlInfoAction(
-                params=GetAppWindowControlInfoParams(
-                    annotation_id=self.application_window_info.annotation_id,
-                    field_list=ControlInfoRecorder.recording_fields,
-                )
+            command=Command(
+                tool_name="get_window_controls",
+                parameters={
+                    # "annotation_id": self.application_window_info.annotation_id,
+                    # "field_list": ControlInfoRecorder.recording_fields,
+                },
+                tool_type="data_collection",
             ),
             setter=self._get_app_window_control_info_action_callback,
         )
 
-    def _get_app_window_control_info_action_callback(self, value):
-        if isinstance(value, AppWindowControlInfo):
-            model = value
-        elif isinstance(value, dict):
+    def _get_app_window_control_info_action_callback(self, value: Result):
+        value = value.result
+        if isinstance(value, dict):
             model = AppWindowControlInfo(**value)
         else:
-            raise ValueError(
-                f"Expected AppWindowControlInfo or dict, got {type(value)}"
-            )
+            raise ValueError(f"Expected dict, got {type(value)}")
         self.session_data_manager.session_data.state.app_window_control_info = model
 
     @BaseProcessor.exception_capture
@@ -371,12 +369,15 @@ class AppAgentProcessor(BaseProcessor):
                 {"DesktopCleanScreenshot": desktop_save_path}
             )
 
-            # Capture the desktop screenshot for all screens using action
-            desktop_screenshot_action = CaptureDesktopScreenshotAction(
-                params=CaptureDesktopScreenshotParams(all_screens=True)
-            )
+            # Capture the desktop screenshot for all screens
             self.session_data_manager.add_action(
-                desktop_screenshot_action,
+                command=Command(
+                    tool_name="capture_desktop_screenshot",
+                    parameters={
+                        "all_screens": True,
+                    },
+                    tool_type="data_collection",
+                ),
                 setter=lambda value: self._capture_all_desktop_screenshot_action_callback(
                     value, desktop_save_path
                 ),
@@ -476,7 +477,7 @@ class AppAgentProcessor(BaseProcessor):
             with open(path, "w") as f:
                 json.dump(value, f, indent=4)
 
-    def _capture_all_desktop_screenshot_action_callback(self, value, path):
+    def _capture_all_desktop_screenshot_action_callback(self, value: Result, path: str):
         """
         Helper method to save desktop screenshot data and save to file.
 
@@ -484,6 +485,7 @@ class AppAgentProcessor(BaseProcessor):
             value: The result returned from the action
             path: Path to save the screenshot
         """
+        value = value.result
 
         if (
             value
@@ -752,34 +754,27 @@ class AppAgentProcessor(BaseProcessor):
             utils.print_with_color(
                 "No valid action to execute. Skipping execution.", "yellow"
             )
-            commands = []
-        else:
-            commands = [
-                OperationCommand(
-                    command_id=action.function,
-                    **{
-                        action.function: {
-                            **action.args,
-                            "control_label": action.control_label,
-                            "control_text": action.control_text,
-                            "after_status": action.after_status,
-                        }
-                    },
-                )
-            ]
+            return
 
         self.session_data_manager.add_action(
-            OperationSequenceAction(
-                params=commands,
+            command=Command(
+                tool_name=action.function,
+                parameters={
+                    "control_label": action.control_label,
+                    "control_text": action.control_text,
+                    **action.args,
+                },
+                tool_type="action",
             ),
             setter=lambda result: self._handle_ui_execution_callback(result),
         )
 
-    def _handle_ui_execution_callback(self, results: List[Dict[str, Any]]) -> None:
+    def _handle_ui_execution_callback(self, results: Result) -> None:
         """
         Callback to handle UI tool execution result.
         :param results: The result from the UI tool execution
         """
+        results = results.result
         action = OneStepAction(
             function=self._operation,
             args=self._args,

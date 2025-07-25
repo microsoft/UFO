@@ -44,13 +44,6 @@ class ServiceSession(BaseSession):
 
         self.add_round(round.id, round)
 
-    def step_forward(self):
-        self.current_round.step_forward()
-        # if isinstance(self.current_round.agent, HostAgent) and self.current_round.agent.state.name() == HostAgentStatus.ASSIGN.value:
-        #     self.current_round.step_forward()
-        # elif isinstance(self.current_round.agent, AppAgent) and self.current_round.agent.state.name() == AppAgentStatus.FINISH.value:
-        #     self.current_round.step_forward()
-
     def _init_context(self) -> None:
         """
         Initialize the context.
@@ -70,7 +63,7 @@ class ServiceSession(BaseSession):
 
         # Create a new round and return None if the session is finished.
 
-        if self.is_finished_legacy():
+        if self.is_finished():
             return None
 
         self._host_agent.set_state(ContinueHostAgentState())
@@ -97,23 +90,6 @@ class ServiceSession(BaseSession):
             self._finish = True
         return self._request
 
-    def is_finished(self) -> bool:
-        """
-        Check if the session is ended.
-        return: True if the session is ended, otherwise False.
-        """
-        if (
-            self.current_round.is_finished()
-            or self.step >= configs["MAX_STEP"]
-            or self.total_rounds >= configs["MAX_ROUND"]
-        ):
-            return True
-
-        if self.is_error():
-            return True
-
-        return False
-
     def request_to_evaluate(self) -> bool:
         """
         Check if the session should be evaluated.
@@ -122,7 +98,7 @@ class ServiceSession(BaseSession):
         request_memory = self._host_agent.blackboard.requests
         return request_memory.to_json()
 
-    def get_actions(self) -> List[ActionBase]:
+    def get_commands(self) -> List[ActionBase]:
         """
         Get the actions to run in the current session.
         :return: List of actions to run.
