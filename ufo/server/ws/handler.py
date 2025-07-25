@@ -19,6 +19,12 @@ class UFOWebSocketHandler:
         session_manager: SessionManager,
         task_manager: TaskManager,
     ):
+        """
+        Initialize the WebSocket handler with the necessary managers.
+        :param ws_manager: The WebSocket manager to handle client connections.
+        :param session_manager: The session manager to handle user sessions.
+        :param task_manager: The task manager to handle tasks and their execution.
+        """
         self.ws_manager = ws_manager
         self.session_manager = session_manager
         self.task_manager = task_manager
