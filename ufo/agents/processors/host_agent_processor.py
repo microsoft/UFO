@@ -466,7 +466,7 @@ class HostAgentProcessor(BaseProcessor):
         """
         value = value.result
         # Set the application window
-        self.app_root = value["process_name"]
+        self.app_root = value["root_name"]
 
         new_app_window = value["window_info"]
         if isinstance(new_app_window, dict):
@@ -488,7 +488,6 @@ class HostAgentProcessor(BaseProcessor):
             control_automation_id=self.application_window_info.automation_id,
         )
 
-        self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
     def launch_application_callback(self, value: Result) -> None:

@@ -306,7 +306,7 @@ class AppAgentProcessor(BaseProcessor):
 
         self.session_data_manager.add_action(
             command=Command(
-                tool_name="get_window_controls",
+                tool_name="get_app_window_controls",
                 parameters={
                     # "annotation_id": self.application_window_info.annotation_id,
                     # "field_list": ControlInfoRecorder.recording_fields,

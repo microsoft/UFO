@@ -67,5 +67,5 @@ class ServerResponse(BaseModel):
 class ClientRequest(BaseModel):
     session_id: Optional[str] = None
     request: Optional[str] = None
-    action_results: Optional[Result] = None
+    action_results: Optional[Dict[str, Result]] = None
     timestamp: Optional[str] = None

@@ -5,8 +5,8 @@
 """
 UI MCP Servers
 Provides two MCP servers:
-1. UI Data MCP Server - for data retrieval operations (get_window_controls, capture_window_screenshot)
-2. UI Action MCP Server - for UI automation actions (click, type, etc.)
+1. UI Data MCP Server - for data retrieval operations
+2. UI Action MCP Server - for UI automation actions
 Both servers share the same UI state for coordinated operations.
 """
 
@@ -32,78 +32,6 @@ CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"]) if configs else ["uia"
 BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
 
 
-# Singleton UI server state
-class UIServerState:
-    _instance = None
-    _initialized = False
-
-    def __new__(cls):
-        if cls._instance is None:
-            cls._instance = super(UIServerState, cls).__new__(cls)
-        return cls._instance
-
-    def __init__(self):
-        if not self._initialized:
-            self.photographer = PhotographerFacade()
-            self.control_inspector = ControlInspectorFacade(BACKEND)
-            self.selected_app_window: Optional[UIAWrapper] = None
-            self.selected_app_window_info: Optional[WindowInfo] = None
-            self.selected_app_window_controls: Optional[Dict[str, UIAWrapper]] = None
-            self.puppeteer: Optional[AppPuppeteer] = None
-            self.last_app_windows: Optional[Dict[str, UIAWrapper]] = None
-            self.grounding_service = (
-                None  # Initialize grounding service as None for now
-            )
-            UIServerState._initialized = True
-
-    def initialize_for_window(self, window: UIAWrapper, window_label: str) -> None:
-        """
-        Initialize the puppeteer and controls for a specific window.
-        :param window: The UIAWrapper window object to initialize for.
-        :param window_label: The label or ID for the window.
-        :return: None
-        """
-        if not window:
-            raise ValueError("Window is required for initialization")
-
-        self.selected_app_window = window
-
-        # Create WindowInfo object like computer.py does
-        window_text = (
-            window.window_text() if hasattr(window, "window_text") else "Unknown"
-        )
-        self.selected_app_window_info = WindowInfo(
-            annotation_id=window_label,
-            name=window.element_info.name if hasattr(window, "element_info") else None,
-            title=window_text,
-            handle=window.handle,
-            class_name=window.class_name(),
-            process_id=window.process_id(),
-            is_visible=window.is_visible(),
-            is_minimized=window.is_minimized(),
-            is_maximized=window.is_maximized(),
-            is_active=window.is_active(),
-            rectangle=_get_control_rectangle(window),
-            text_content=window_text,
-            control_type=(
-                window.element_info.control_type
-                if hasattr(window, "element_info")
-                else None
-            ),
-        )
-
-        # Initialize AppPuppeteer with annotation_id like computer.py
-        self.puppeteer = AppPuppeteer(self.selected_app_window_info.annotation_id, "")
-
-        # Create receivers for this application
-        app_root_name = window.class_name() or "Unknown"
-        process_name = str(window.process_id())
-        self.puppeteer.receiver_manager.create_api_receiver(app_root_name, process_name)
-
-        # Controls will be populated by get_window_controls when needed
-        self.selected_app_window_controls = {}
-
-
 def _get_control_rectangle(control: UIAWrapper) -> Optional[Rect]:
     """
     Helper method to extract rectangle coordinates from a control.
@@ -121,6 +49,101 @@ def _get_control_rectangle(control: UIAWrapper) -> Optional[Rect]:
     return None
 
 
+def _window2window_info(
+    window: UIAWrapper, annotation_id: Optional[str] = None
+) -> WindowInfo:
+    """
+    Convert a UIAWrapper window to a WindowInfo object.
+    :param window: The UIAWrapper window to convert.
+    :return: WindowInfo object with relevant properties.
+    """
+    return WindowInfo(
+        annotation_id=annotation_id,
+        name=window.element_info.name if hasattr(window, "element_info") else None,
+        title=window.window_text(),
+        handle=window.handle,
+        class_name=window.class_name(),
+        process_id=window.process_id(),
+        is_visible=window.is_visible(),
+        is_minimized=window.is_minimized(),
+        is_maximized=window.is_maximized(),
+        is_active=window.is_active(),
+        rectangle=_get_control_rectangle(window),
+        text_content=window.window_text(),
+        control_type=(
+            window.element_info.control_type
+            if hasattr(window, "element_info")
+            else None
+        ),
+    )
+
+
+def _control2control_info(
+    control: UIAWrapper, annotation_id: Optional[str] = None
+) -> ControlInfo:
+    """
+    Convert a UIAWrapper control to a ControlInfo object.
+    :param control: The UIAWrapper control to convert.
+    :return: ControlInfo object with relevant properties.
+    """
+    return ControlInfo(
+        annotation_id=annotation_id,
+        name=control.element_info.name if hasattr(control, "element_info") else None,
+        automation_id=(
+            control.element_info.automation_id
+            if hasattr(control, "element_info")
+            else None
+        ),
+        class_name=control.class_name(),
+        rectangle=_get_control_rectangle(control),
+        is_enabled=control.is_enabled(),
+        is_visible=control.is_visible(),
+        control_type=(
+            control.element_info.control_type
+            if hasattr(control, "element_info")
+            else None
+        ),
+    )
+
+
+# Singleton UI server state
+class UIServerState:
+    _instance = None
+    _initialized = False
+
+    def __new__(cls):
+        if cls._instance is None:
+            cls._instance = super(UIServerState, cls).__new__(cls)
+        return cls._instance
+
+    def __init__(self):
+        if not self._initialized:
+            self.photographer = PhotographerFacade()
+            self.control_inspector = ControlInspectorFacade(BACKEND)
+            self.selected_app_window: Optional[UIAWrapper] = None
+            self.selected_app_window_controls: Optional[Dict[str, UIAWrapper]] = None
+            self.puppeteer: Optional[AppPuppeteer] = None
+            self.last_app_windows: Optional[Dict[str, UIAWrapper]] = None
+            self.grounding_service = (
+                None  # Initialize grounding service as None for now
+            )
+            UIServerState._initialized = True
+
+    def initialize_for_window(self, window: UIAWrapper) -> None:
+        """
+        Initialize the puppeteer and controls for a specific window.
+        :param window: The UIAWrapper window object to initialize for.
+        :return: None
+        """
+        self.selected_app_window = window
+
+        # Initialize AppPuppeteer with annotation_id like computer.py
+        self.puppeteer = AppPuppeteer(
+            self.control_inspector.get_application_root_name(window),
+            window.window_text(),
+        )
+
+
 def create_action_mcp_server():
     """
     Create and return the Action MCP server instance.
@@ -135,22 +158,14 @@ def create_action_mcp_server():
         :param actions: List of OneStepAction objects to execute.
         :return: List of execution results.
         """
-        if (
-            not ui_state.puppeteer
-            or not ui_state.selected_app_window
-            or not ui_state.selected_app_window_info
-        ):
+        if not ui_state.puppeteer or not ui_state.selected_app_window:
             raise ValueError(
                 "UI state not initialized. Please select an application window first."
             )
 
-        # Create action sequence
         action_sequence = ActionSequence(actions)
 
-        # Get application window using annotation_id like computer.py
-        application_window = (
-            ui_state.selected_app_window
-        )  # In ui_mcp_server, this is the same
+        application_window = ui_state.selected_app_window
 
         # Execute the sequence like computer.py does
         ActionSequenceExecutor.execute_all(
@@ -207,18 +222,11 @@ def create_action_mcp_server():
             raise ToolError(f"Failed to set focus on window: {str(e)}")
 
         # Initialize UI state for this window
-        ui_state.initialize_for_window(window, window_label)
-
-        # Return window information like computer.py does
-        process_name = ui_state.control_inspector.get_application_root_name(window)
-        window_text = (
-            window.window_text() if hasattr(window, "window_text") else "Unknown"
-        )
+        ui_state.initialize_for_window(window)
 
         return {
-            "process_name": process_name,
-            "window_text": window_text,
-            "window_info": ui_state.selected_app_window_info.model_dump(),
+            "root_name": ui_state.control_inspector.get_application_root_name(window),
+            "window_info": _window2window_info(window).model_dump(),
         }
 
     @action_mcp.tool()
@@ -505,29 +513,7 @@ def create_data_mcp_server():
             windows_info = []
             for annotation_id, window in app_windows.items():
                 try:
-                    window_info = WindowInfo(
-                        annotation_id=annotation_id,
-                        name=(
-                            window.element_info.name
-                            if hasattr(window, "element_info")
-                            else None
-                        ),
-                        title=window.window_text(),
-                        handle=window.handle,
-                        class_name=window.class_name(),
-                        process_id=window.process_id(),
-                        is_visible=window.is_visible(),
-                        is_minimized=window.is_minimized(),
-                        is_maximized=window.is_maximized(),
-                        is_active=window.is_active(),
-                        rectangle=_get_control_rectangle(window),
-                        text_content=window.window_text(),
-                        control_type=(
-                            window.element_info.control_type
-                            if hasattr(window, "element_info")
-                            else None
-                        ),
-                    )
+                    window_info = _window2window_info(window, annotation_id)
                     windows_info.append(window_info.model_dump())
                 except Exception as e:
                     # If there's an error with a specific window, add minimal info
@@ -545,7 +531,7 @@ def create_data_mcp_server():
             return []
 
     @data_mcp.tool()
-    def get_window_controls() -> Dict[str, Any]:
+    def get_app_window_controls() -> Dict[str, Any]:
         """
         Get information about controls in the currently selected window.
         Uses the same comprehensive control detection logic as computer.py.
@@ -565,18 +551,7 @@ def create_data_mcp_server():
                 selected_window, save_path=temp_path
             )
 
-            # Create WindowInfo object (same as computer.py does)
-            window_info = WindowInfo(
-                title=selected_window.window_text(),
-                handle=selected_window.handle,
-                class_name=selected_window.class_name(),
-                process_id=selected_window.process_id(),
-                is_visible=selected_window.is_visible(),
-                is_minimized=selected_window.is_minimized(),
-                is_maximized=selected_window.is_maximized(),
-                is_active=selected_window.is_active(),
-                rectangle=_get_control_rectangle(selected_window),
-            )
+            window_info = _window2window_info(selected_window)
 
             api_backend = None
             grounding_backend = None
@@ -647,38 +622,21 @@ def create_data_mcp_server():
                 f"{item[0]}": item[1] for item in merged_control_dict.items()
             }
 
-            # Convert control elements to ControlInfo objects (same as computer.py lines 535-546)
+            # Convert control elements to ControlInfo objects
             control_elements = []
             for i, control in enumerate(merged_control_list):
                 try:
-                    control_element = ControlInfo(
-                        annotation_id=str(i + 1),
-                        control_type=getattr(
-                            control.element_info, "control_type", None
-                        ),
-                        name=getattr(control.element_info, "name", None),
-                        automation_id=getattr(
-                            control.element_info, "automation_id", None
-                        ),
-                        class_name=getattr(control.element_info, "class_name", None),
-                        rectangle=_get_control_rectangle(control),
-                        is_enabled=getattr(control.element_info, "is_enabled", True),
-                        is_visible=getattr(control.element_info, "is_visible", True),
-                        source=getattr(control, "source", "merged"),
-                    )
+                    control_element = _control2control_info(control, str(i + 1))
                     control_elements.append(control_element)
                 except Exception as e:
-                    # Add minimal control info on error - still create a ControlInfo object
                     control_elements.append(
                         ControlInfo(annotation_id=str(i + 1), name=f"Error: {str(e)}")
                     )
 
-            # Create AppWindowControlInfo object like computer.py does
             app_window_control_info = AppWindowControlInfo(
                 window_info=window_info, controls=control_elements
             )
 
-            # Return as dictionary using model_dump()
             return app_window_control_info.model_dump()
 
         except Exception as e:
