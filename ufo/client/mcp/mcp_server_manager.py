@@ -249,4 +249,4 @@ class MCPServerManager:
         """
         self._servers_mapping.clear()
 
-        print("Cleared all registered MCP servers.")
+        self._logger.info("Cleared all registered MCP servers for current session.")

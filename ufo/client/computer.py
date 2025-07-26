@@ -12,8 +12,8 @@ from fastmcp import Client, FastMCP
 from fastmcp.client.client import CallToolResult
 from mcp.types import TextContent
 from pydantic import BaseModel, ConfigDict
-from ufo.client.mcp import BaseMCPServer, MCPServerManager
-from ufo.cs.contracts import Command, Result
+from ufo.client.mcp.mcp_server_manager import BaseMCPServer, MCPServerManager
+from ufo.contracts.contracts import Command, Result
 
 
 class MCPToolCall(BaseModel):
@@ -534,6 +534,7 @@ class ComputerManager:
         self.configs = configs
         self.mcp_server_manager = mcp_server_manager
         self.computers = {}
+        self.logger = logging.getLogger(self.__class__.__name__)
 
     async def get_or_create(
         self,
@@ -556,8 +557,15 @@ class ComputerManager:
             agent_config = mcp_config.get(agent_name, {})
             if not agent_config:
                 raise ValueError(f"Agent configuration for {agent_name} not found.")
-            root = root_name or "default"
+
+            if root_name not in agent_config:
+                self.logger.info(
+                    f"Root name '{root_name}' not found in agent configuration for {agent_name}. Using default configuration."
+                )
+                root = "default"
+
             agent_instance_config = agent_config.get(root, None)
+
             if agent_instance_config is None:
                 raise ValueError(
                     f"Agent configuration for root_name={root} not found for agent_name={agent_name}."

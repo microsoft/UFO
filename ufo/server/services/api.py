@@ -1,14 +1,14 @@
-import asyncio
 import datetime
 import logging
 from uuid import uuid4
 
 from flask import Blueprint, jsonify, request
-from ufo.cs.contracts import ClientRequest, ServerResponse
+from ufo.contracts.contracts import ClientRequest, ServerResponse
 
-from .session_manager import SessionManager
-from .task_manager import TaskManager
-from .ws_manager import WSManager
+from ufo.server.services.session_manager import SessionManager
+from ufo.server.services.task_manager import TaskManager
+from ufo.server.services.ws_manager import WSManager
+from ufo.server.shared import SharedEventLoop
 
 logger = logging.getLogger(__name__)
 
@@ -17,7 +17,7 @@ def create_api_blueprint(
     session_manager: SessionManager,
     task_manager: TaskManager,
     ws_manager: WSManager,
-    ws_event_loop: asyncio.AbstractEventLoop,
+    shared_event_loop: SharedEventLoop,
     logger: logging.Logger = logger,
 ):
     """
@@ -30,7 +30,6 @@ def create_api_blueprint(
     :param session_manager: The manager responsible for handling session state.
     :param task_manager: The manager responsible for task ID generation and results.
     :param ws_manager: The manager responsible for managing online WebSocket clients.
-    :param ws_event_loop: The asyncio event loop used for scheduling async WebSocket operations.
     :param logger: Optional logger for logging API operations (default is the module logger).
     :return: A Flask Blueprint object with all registered API endpoints.
     """
@@ -101,14 +100,22 @@ def create_api_blueprint(
         Dispatch a task to a specific client identified by client_id.
         :return: JSON response indicating the task has been dispatched or an error if the client is not online.
         """
+
+        ws_event_loop = shared_event_loop.loop
+
         data = request.json
         client_id = data["client_id"]
         task_content = data["request"]
         ws = ws_manager.get_client(client_id)
+
+        logger.info(f"Dispatching task to client {client_id}: {task_content}")
+
         if not ws:
+            logger.error(f"Client {client_id} not online.")
             return jsonify({"error": "client not online"}), 404
 
         task_id = task_manager.new_task_id()
+        logger.info(f"Generated task ID: {task_id}")
         import asyncio
         import json
 
