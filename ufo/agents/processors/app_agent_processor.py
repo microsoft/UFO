@@ -18,12 +18,12 @@ from ufo.agents.processors.action_contracts import (
 )
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.cs.contracts import (
+from ufo.contracts.contracts import (
     AppWindowControlInfo,
     Command,
     ControlInfo,
-    GetUITreeAction,
-    GetUITreeParams,
+    # GetUITreeAction,
+    # GetUITreeParams,
     Result,
 )
 from ufo.cs.service.control_filter import ControlFilterFactory

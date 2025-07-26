@@ -3,7 +3,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
 
-from ufo.cs.contracts import AppWindowControlInfo, Command, WindowInfo
+from ufo.contracts.contracts import AppWindowControlInfo, Command, Result, WindowInfo
 
 
 class SessionState(BaseModel):
@@ -87,7 +87,7 @@ class SessionDataManager:
         self.session_data.actions_to_run = []
         self.session_data.messages = []
 
-    def process_action_results(self, action_results: Dict[str, Any]):
+    def process_action_results(self, action_results: Dict[str, Result]) -> None:
         """
         Process the results of executed actions and update session state.
         This method iterates through the action results and calls the corresponding

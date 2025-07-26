@@ -1,4 +1,5 @@
 import asyncio
+from datetime import datetime
 import json
 import logging
 import threading
@@ -7,9 +8,11 @@ from uuid import uuid4
 
 import websockets
 from flask import Flask, jsonify, request
+
 from ufo.config import Config
-from ufo.cs.contracts import ClientRequest, ServerResponse
+from ufo.contracts.contracts import ClientRequest, ServerResponse
 from ufo.cs.service_session import ServiceSession
+from ufo.module.context import ContextNames
 
 app = Flask(__name__)
 
@@ -43,7 +46,10 @@ def run_task_core(data: ClientRequest):
     if session_id is None or session_id not in sessions:
         # Create a new session if it doesn't exist
         session_id = str(uuid4())
-        if data.request:
+        if not data.request:
+            logger.error("Session request cannot be empty for new sessions.")
+            raise ValueError("Session request cannot be empty for new sessions.")
+        else:
             logger.info(
                 f"Session {session_id} initialized with request: {data.request}"
             )
@@ -72,16 +78,19 @@ def run_task_core(data: ClientRequest):
     except StopIteration:
         status = "completed"
 
-    actions = session.get_actions()
+    commands = session.get_commands()
 
     response = ServerResponse(
-        session_id=session_id,
         status=status,
-        actions=actions,
-        messages=[],  # Can add custom messages if needed
+        agent_name=session.current_round.agent.__class__.__name__,
+        root_name=session.context.get(ContextNames.APPLICATION_ROOT_NAME),
+        process_name=session.context.get(ContextNames.APPLICATION_PROCESS_NAME),
+        actions=commands,
+        session_id=session_id,
+        timestamp=datetime.now().isoformat(),
     )
 
-    logger.info(f"Session {session_id} status: {status}, Actions: {len(actions)}")
+    logger.info(f"Session {session_id} status: {status}, Commands: {len(commands)}")
     logger.info(f"Response: {response.model_dump()}")
 
     return response
@@ -98,7 +107,7 @@ def run_task():
     try:
         # Parse the request data
         data = request.json
-        ufo_request = UFORequest(**data)
+        ufo_request = ClientRequest(**data)
 
         # Run the core task logic
         response = run_task_core(ufo_request)
@@ -127,7 +136,7 @@ def list_clients():
 @app.route("/api/dispatch", methods=["POST"])
 def dispatch_task_api():
     """
-    dispatch task to：POST {"client_id": "...", "request": "..."}
+    dispatch task to: POST {"client_id": "...", "request": "..."}
     :param request: The request containing client_id and task content.
     :return: JSON response indicating the status of the task dispatch.
     """

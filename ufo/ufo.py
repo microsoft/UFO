@@ -4,13 +4,13 @@
 import argparse
 from datetime import datetime
 
-from ufo.config import Config
+from ufo.config import get_config
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.client.computer import ComputerManager, CommandRouter
 from ufo.module.sessions.session import SessionFactory
 from ufo.module.context import ContextNames
 
-configs = Config.get_instance().config_data
+configs = get_config()
 
 
 args = argparse.ArgumentParser()

@@ -2,7 +2,7 @@ from typing import Dict, List, Optional
 
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config import Config
-from ufo.cs.contracts import ActionBase
+from ufo.contracts.contracts import Command, Result
 from ufo.cs.session_data import SessionDataManager
 from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import ContextNames
@@ -98,7 +98,7 @@ class ServiceSession(BaseSession):
         request_memory = self._host_agent.blackboard.requests
         return request_memory.to_json()
 
-    def get_commands(self) -> List[ActionBase]:
+    def get_commands(self) -> List[Command]:
         """
         Get the actions to run in the current session.
         :return: List of actions to run.
@@ -108,7 +108,7 @@ class ServiceSession(BaseSession):
         )
         return session_data_manager.session_data.actions_to_run
 
-    def process_action_results(self, action_results: Dict[str, any]) -> None:
+    def process_action_results(self, action_results: Dict[str, Result]) -> None:
         """
         Process the action results and update the session state.
         :param action_results: The action results to process.
