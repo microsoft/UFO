@@ -23,11 +23,11 @@ from ufo.automator.puppeteer import AppPuppeteer
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
-from ufo.config import Config
+from ufo.config import get_config
 from ufo.cs.contracts import AppWindowControlInfo, ControlInfo, Rect, WindowInfo
 
 # Get config
-configs = Config.get_instance().config_data
+configs = get_config()
 CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"]) if configs else ["uia"]
 BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
 
@@ -198,7 +198,6 @@ def create_action_mcp_server():
             window.set_focus()
 
             # Get configurations for window behavior
-            configs = Config.get_instance().config_data
             if configs and configs.get("MAXIMIZE_WINDOW", False):
                 window.maximize()
 

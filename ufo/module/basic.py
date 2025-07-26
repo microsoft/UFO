@@ -33,10 +33,8 @@ from ufo.agents.states.basic import AgentState, AgentStatus
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
-from ufo.cs.contracts import (
+from ufo.contracts.contracts import (
     Command,
-    GetUITreeAction,
-    GetUITreeParams,
     Result,
 )
 from ufo.cs.session_data import SessionDataManager
@@ -468,18 +466,18 @@ class BaseRound(ABC):
                     )
                     ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
 
-                    ui_tree_action = GetUITreeAction(
-                        params=GetUITreeParams(
-                            annotation_id=application_window_info.annotation_id,
-                            remove_empty=True,
-                        )
-                    )
-                    session_data_manager.add_action(
-                        ui_tree_action,
-                        setter=lambda value: self._ui_tree_callback(
-                            value, ui_tree_save_path
-                        ),
-                    )
+                    # ui_tree_action = GetUITreeAction(
+                    #     params=GetUITreeParams(
+                    #         annotation_id=application_window_info.annotation_id,
+                    #         remove_empty=True,
+                    #     )
+                    # )
+                    # session_data_manager.add_action(
+                    #     ui_tree_action,
+                    #     setter=lambda value: self._ui_tree_callback(
+                    #         value, ui_tree_save_path
+                    #     ),
+                    # )
                 else:
                     # Fallback to direct call if action pattern is not available
                     step_ui_tree = ui_tree.UITree(self.application_window)
@@ -1108,18 +1106,18 @@ class BaseSession(ABC):
                     ui_tree_file_name = "ui_tree_final.json"
                     ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
 
-                    ui_tree_action = GetUITreeAction(
-                        params=GetUITreeParams(
-                            annotation_id=application_window_info.annotation_id,
-                            remove_empty=True,
-                        )
-                    )
-                    session_data_manager.add_action(
-                        ui_tree_action,
-                        setter=lambda value: self._ui_tree_callback(
-                            value, ui_tree_save_path
-                        ),
-                    )
+                    # ui_tree_action = GetUITreeAction(
+                    #     params=GetUITreeParams(
+                    #         annotation_id=application_window_info.annotation_id,
+                    #         remove_empty=True,
+                    #     )
+                    # )
+                    # session_data_manager.add_action(
+                    #     ui_tree_action,
+                    #     setter=lambda value: self._ui_tree_callback(
+                    #         value, ui_tree_save_path
+                    #     ),
+                    # )
                 else:
                     # Fallback to direct call if action pattern is not available
                     step_ui_tree = ui_tree.UITree(self.application_window)

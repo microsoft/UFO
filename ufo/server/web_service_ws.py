@@ -8,7 +8,7 @@ from uuid import uuid4
 import websockets
 from flask import Flask, jsonify, request
 from ufo.config import Config
-from ufo.cs.contracts import UFORequest, UFOResponse
+from ufo.cs.contracts import ClientRequest, ServerResponse
 from ufo.cs.service_session import ServiceSession
 
 app = Flask(__name__)
@@ -31,7 +31,7 @@ ws_event_loop = None
 task_id_counter = 0  # Counter for task IDs
 
 
-def run_task_core(data: UFORequest):
+def run_task_core(data: ClientRequest):
     """
     Core logic for running a task based on the request data.
     This function is called by the run_task endpoint.
@@ -74,7 +74,7 @@ def run_task_core(data: UFORequest):
 
     actions = session.get_actions()
 
-    response = UFOResponse(
+    response = ServerResponse(
         session_id=session_id,
         status=status,
         actions=actions,
@@ -184,7 +184,7 @@ async def ws_handler(websocket: websockets.WebSocketServerProtocol, path: str):
             # If the message is a task request, process it
             if data.get("type") == "task_request":
                 # Extract the request data
-                req = UFORequest(**data["body"])
+                req = ClientRequest(**data["body"])
                 try:
                     resp = run_task_core(req)
                     await websocket.send(

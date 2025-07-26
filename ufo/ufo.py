@@ -3,12 +3,12 @@
 
 import argparse
 from datetime import datetime
-from uuid import uuid4
 
 from ufo.config import Config
-from ufo.client.mcp import MCPServerManager
+from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.client.computer import ComputerManager, CommandRouter
 from ufo.module.sessions.session import SessionFactory
+from ufo.module.context import ContextNames
 
 configs = Config.get_instance().config_data
 
@@ -73,9 +73,9 @@ async def main():
     for _ in session.run_coro:
         commands = session.get_commands()
         command_results = await command_router.execute(
-            agent_name="HostAgent",
-            process_name="HostAgent",
-            root_name="default",
+            agent_name=session.current_round.agent.__class__.__name__,
+            root_name=session.context.get(ContextNames.APPLICATION_ROOT_NAME),
+            process_name=session.context.get(ContextNames.APPLICATION_PROCESS_NAME),
             commands=commands,
         )
         session.process_action_results(command_results)

@@ -16,10 +16,9 @@ from ufo.agents.processors.action_contracts import (
 )
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.cs.contracts import (
+from ufo.contracts.contracts import (
     Command,
-    LaunchApplicationAction,
-    LaunchApplicationParams,
+    Result,
     WindowInfo,
 )
 from ufo.llm import AgentType
@@ -450,13 +449,15 @@ class HostAgentProcessor(BaseProcessor):
                 )
             elif self.bash_command:
                 self.session_data_manager.add_action(
-                    LaunchApplicationAction(
-                        params=LaunchApplicationParams(bash_command=self.bash_command)
+                    command=Command(
+                        tool_name="launch_application",
+                        parameters={"bash_command": self.bash_command},
+                        tool_type="action",
                     ),
                     setter=lambda value: self.launch_application_callback(value),
                 )
 
-    def select_application_window_callback(self, value: dict | WindowInfo) -> None:
+    def select_application_window_callback(self, value: Result) -> None:
         """
         Helper method to handle the application window selection callback.
 
@@ -490,13 +491,14 @@ class HostAgentProcessor(BaseProcessor):
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
-    def launch_application_callback(self, value: dict[str, any]) -> None:
+    def launch_application_callback(self, value: Result) -> None:
         """
         Helper method to handle the application launch callback.
 
         Args:
             value (str): The application launch value
         """
+        value = value.result
         # Set the application window
         self.app_root = value["process_name"]
 
@@ -517,9 +519,6 @@ class HostAgentProcessor(BaseProcessor):
             error="",  # TODO: complete this info
             return_value="",
         )
-
-        self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
-        self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
     def sync_memory(self):
         """
