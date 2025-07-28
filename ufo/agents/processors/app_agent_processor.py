@@ -699,47 +699,6 @@ class AppAgentProcessor(BaseProcessor):
         """
         Execute the action.
         """
-
-        # Check if we should use MCP for this operation
-        if self.mcp_enabled and self.app_agent.should_use_mcp(self._operation):
-            self._execute_mcp_action()
-        else:
-            self._execute_ui_action()
-
-        self._generate_control_screenshot()
-
-    def _execute_mcp_action(self) -> None:
-        """
-        Execute action using MCP server.
-        """
-        from ufo.cs.contracts import MCPToolExecutionAction, MCPToolExecutionParams
-
-        app_namespace = self.app_agent._get_app_namespace()
-
-        # Create the MCP tool execution action
-        mcp_action = MCPToolExecutionAction(
-            params=MCPToolExecutionParams(
-                app_namespace=app_namespace,
-                tool_name=self._operation,
-                tool_args=self._args,
-            )
-        )
-
-        # Add action to session with callback for result handling
-        self.session_data_manager.add_action(
-            mcp_action,
-            setter=lambda result: self._handle_mcp_execution_callback(result),
-        )
-
-        utils.print_with_color(
-            f"Added MCP tool execution to session: {self._operation} for {app_namespace}",
-            "blue",
-        )
-
-    def _execute_ui_action(self) -> None:
-        """
-        Execute action using traditional UI automation.
-        """
         action = OneStepAction(
             function=self._operation,
             args=self._args,
@@ -769,6 +728,8 @@ class AppAgentProcessor(BaseProcessor):
             setter=lambda result: self._handle_ui_execution_callback(result),
         )
 
+        self._generate_control_screenshot()
+
     def _handle_ui_execution_callback(self, results: Result) -> None:
         """
         Callback to handle UI tool execution result.
@@ -791,47 +752,6 @@ class AppAgentProcessor(BaseProcessor):
         else:
             utils.print_with_color(
                 f"Unexpected result type from UI execution: {type(results)}", "yellow"
-            )
-
-    def _handle_mcp_execution_callback(self, result: Any) -> None:
-        """
-        Callback to handle MCP tool execution result.
-        :param result: The result from the MCP tool execution
-        """
-        action = OneStepAction(
-            function=self._operation,
-            args=self._args,
-            control_label=self._control_label,
-            control_text=self.control_text,
-            after_status=self.status,
-        )
-        self.actions = [action]
-
-        try:
-            if result and isinstance(result, dict):
-                success = result.get("success", False)
-                if success:
-                    utils.print_with_color(
-                        f"MCP tool execution successful: {result.get('tool_name', 'unknown')}",
-                        "green",
-                    )
-                    # Store the result for memory and logging
-                    self._mcp_execution_result = result
-                else:
-                    error_msg = result.get("error", "Unknown error")
-                    utils.print_with_color(
-                        f"MCP tool execution failed: {error_msg}", "red"
-                    )
-                    # Could fallback to UI automation here if needed
-                    self._mcp_execution_result = result
-            else:
-                utils.print_with_color(
-                    f"Received unexpected MCP execution result type: {type(result)}",
-                    "yellow",
-                )
-        except Exception as e:
-            utils.print_with_color(
-                f"Error handling MCP execution callback: {str(e)}", "red"
             )
 
     def _generate_control_screenshot(self) -> None:

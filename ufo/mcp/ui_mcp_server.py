@@ -10,8 +10,9 @@ Provides two MCP servers:
 Both servers share the same UI state for coordinated operations.
 """
 
+from pydantic import Field
 import os
-from typing import Any, Dict, List, Optional
+from typing import Annotated, Any, Dict, List, Literal, Optional
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
@@ -25,6 +26,7 @@ from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import get_config
 from ufo.cs.contracts import AppWindowControlInfo, ControlInfo, Rect, WindowInfo
+from ufo.mcp.mcp_registry import MCPRegistry
 
 # Get config
 configs = get_config()
@@ -144,48 +146,21 @@ class UIServerState:
         )
 
 
-def create_action_mcp_server():
+@MCPRegistry.register_factory_decorator("HostUIExecutor")
+def create_host_action_mcp_server() -> FastMCP:
     """
-    Create and return the Action MCP server instance.
-    :return: FastMCP instance for action operations.
+    Create and return the HostAgent Action MCP server instance.
+    :return: FastMCP instance for HostAgent action operations.
     """
-    # Get singleton UI state instance
     ui_state = UIServerState()
+    action_mcp = FastMCP("UFO UI HostAgent Action MCP Server")
 
-    def _execute_action_sequence(actions: List[OneStepAction]) -> List:
-        """
-        Execute a sequence of UI actions using direct AppPuppeteer interaction.
-        :param actions: List of OneStepAction objects to execute.
-        :return: List of execution results.
-        """
-        if not ui_state.puppeteer or not ui_state.selected_app_window:
-            raise ValueError(
-                "UI state not initialized. Please select an application window first."
-            )
-
-        action_sequence = ActionSequence(actions)
-
-        application_window = ui_state.selected_app_window
-
-        # Execute the sequence like computer.py does
-        ActionSequenceExecutor.execute_all(
-            action_sequence,
-            ui_state.puppeteer,
-            ui_state.selected_app_window_controls or {},
-            application_window,
-        )
-
-        return action_sequence.get_results()
-
-    action_mcp = FastMCP("UFO UI Action MCP Server")
-
-    @action_mcp.tool()
+    @action_mcp.tool(tags={"HostAgent"})
     def select_application_window(
-        window_label: str = "",
+        window_label: Annotated[str, "Label or ID of the window to select"],
     ) -> Dict[str, Any]:
         """
         Select an application window for UI automation.
-        :param window_label: The label or ID of the window to select.
         :return: Information about the selected window.
         """
         if not window_label:
@@ -229,20 +204,64 @@ def create_action_mcp_server():
             "window_info": _window2window_info(window).model_dump(),
         }
 
-    @action_mcp.tool()
+    return action_mcp
+
+
+@MCPRegistry.register_factory_decorator("AppUIExecutor")
+def create_app_action_mcp_server() -> FastMCP:
+    """
+    Create and return the AppAgent Action MCP server instance.
+    :return: FastMCP instance for AppAgent action operations.
+    """
+    # Get singleton UI state instance
+    ui_state = UIServerState()
+
+    def _execute_action_sequence(actions: List[OneStepAction]) -> List:
+        """
+        Execute a sequence of UI actions using direct AppPuppeteer interaction.
+        :param actions: List of OneStepAction objects to execute.
+        :return: List of execution results.
+        """
+        if not ui_state.puppeteer or not ui_state.selected_app_window:
+            raise ValueError(
+                "UI state not initialized. Please select an application window first."
+            )
+
+        action_sequence = ActionSequence(actions)
+
+        application_window = ui_state.selected_app_window
+
+        # Execute the sequence like computer.py does
+        ActionSequenceExecutor.execute_all(
+            action_sequence,
+            ui_state.puppeteer,
+            ui_state.selected_app_window_controls or {},
+            application_window,
+        )
+
+        return action_sequence.get_results()
+
+    action_mcp = FastMCP("UFO UI AppAgent Action MCP Server")
+
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def click_input(
-        control_label: str,
-        control_text: str = "",
-        button: str = "left",
-        double: bool = False,
+        button: Annotated[
+            str, Field(description="Mouse button to use ('left', 'right', 'middle')")
+        ] = "left",
+        double: Annotated[
+            bool, Field(description="Whether to perform a double click")
+        ] = False,
+        control_label: Annotated[
+            str, Field(description="Label or ID of the control")
+        ] = "",
+        control_text: Annotated[
+            str, Field(description="Text content of the control")
+        ] = "",
     ) -> List:
         """
         Click on a UI control element using the input method.
-        :param control_label: The label/ID of the control to click.
-        :param control_text: The text content of the control (optional).
-        :param button: Mouse button to use ("left", "right", "middle").
-        :param double: Whether to perform a double click.
-        :return: List of execution results.
+        :example: click_input(button="left", double=False), click_input(button="right", double=True, pressed="CONTROL")
+        :return: None
         """
         action = OneStepAction(
             function="click_input",
@@ -254,23 +273,26 @@ def create_action_mcp_server():
 
         return _execute_action_sequence([action])
 
-    @action_mcp.tool()
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def click_on_coordinates(
-        x: float,
-        y: float,
-        control_label: str = "",
-        control_text: str = "",
-        button: str = "left",
-        double: bool = False,
+        x: Annotated[float, Field(description="X coordinate (0.0 to 1.0)")],
+        y: Annotated[float, Field(description="Y coordinate (0.0 to 1.0)")],
+        button: Annotated[
+            str,
+            Field(description="Mouse button to use ('left', 'right', 'middle')"),
+        ] = "left",
+        double: Annotated[
+            bool, Field(description="Whether to perform a double click")
+        ] = False,
+        control_label: Annotated[
+            str, Field(description="Label or ID of the control")
+        ] = "",
+        control_text: Annotated[
+            str, Field(description="Text content of the control")
+        ] = "",
     ) -> List:
         """
         Click on specific coordinates within the application window.
-        :param x: X coordinate (relative to application window, 0.0 to 1.0).
-        :param y: Y coordinate (relative to application window, 0.0 to 1.0).
-        :param control_label: The label/ID of the target control (optional).
-        :param control_text: The text content of the control (optional).
-        :param button: Mouse button to use ("left", "right", "middle").
-        :param double: Whether to perform a double click.
         :return: List of execution results.
         """
         action = OneStepAction(
@@ -283,29 +305,53 @@ def create_action_mcp_server():
 
         return _execute_action_sequence([action])
 
-    @action_mcp.tool()
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def drag_on_coordinates(
-        start_x: float,
-        start_y: float,
-        end_x: float,
-        end_y: float,
-        control_label: str = "",
-        control_text: str = "",
-        button: str = "left",
-        duration: float = 1.0,
-        key_hold: Optional[str] = None,
+        start_x: Annotated[
+            float,
+            Field(
+                description="Starting X coordinate (relative to application window, 0.0 to 1.0)"
+            ),
+        ],
+        start_y: Annotated[
+            float,
+            Field(
+                description="Starting Y coordinate (relative to application window, 0.0 to 1.0)"
+            ),
+        ],
+        end_x: Annotated[
+            float,
+            Field(
+                description="Ending X coordinate (relative to application window, 0.0 to 1.0)"
+            ),
+        ],
+        end_y: Annotated[
+            float,
+            Field(
+                description="Ending Y coordinate (relative to application window, 0.0 to 1.0)"
+            ),
+        ],
+        button: Annotated[
+            str, Field(description="Mouse button to use ('left', 'right', 'middle')")
+        ] = "left",
+        duration: Annotated[
+            float, Field(description="Duration of the drag operation in seconds")
+        ] = 1.0,
+        key_hold: Annotated[
+            Optional[str],
+            Field(
+                description="Key to hold during drag operation (e.g., 'ctrl', 'shift')"
+            ),
+        ] = None,
+        control_label: Annotated[
+            str, Field(description="Label or ID of the control")
+        ] = "",
+        control_text: Annotated[
+            str, Field(description="Text content of the control")
+        ] = "",
     ) -> List:
         """
         Drag from one coordinate to another within the application window.
-        :param start_x: Starting X coordinate (relative to application window, 0.0 to 1.0).
-        :param start_y: Starting Y coordinate (relative to application window, 0.0 to 1.0).
-        :param end_x: Ending X coordinate (relative to application window, 0.0 to 1.0).
-        :param end_y: Ending Y coordinate (relative to application window, 0.0 to 1.0).
-        :param control_label: The label/ID of the target control (optional).
-        :param control_text: The text content of the control (optional).
-        :param button: Mouse button to use for dragging ("left", "right", "middle").
-        :param duration: Duration of the drag operation in seconds.
-        :param key_hold: Key to hold during drag operation (e.g., "ctrl", "shift").
         :return: List of execution results.
         """
         action = OneStepAction(
@@ -326,21 +372,22 @@ def create_action_mcp_server():
 
         return _execute_action_sequence([action])
 
-    @action_mcp.tool()
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def set_edit_text(
-        text: str,
-        control_label: str,
-        control_text: str = "",
-        clear_current_text: bool = False,
-        after_status: str = "CONTINUE",
+        text: Annotated[str, Field(description="Text to set in the control")],
+        clear_current_text: Annotated[
+            bool,
+            Field(description="Whether to clear existing text before setting new text"),
+        ] = False,
+        control_label: Annotated[
+            str, Field(description="Label or ID of the control")
+        ] = "",
+        control_text: Annotated[
+            str, Field(description="Text content of the control")
+        ] = "",
     ) -> List:
         """
         Set text in an edit control (text box, input field, etc.).
-        :param text: The text to set in the control.
-        :param control_label: The label/ID of the edit control.
-        :param control_text: The current text content of the control (optional).
-        :param clear_current_text: Whether to clear existing text before setting new text.
-        :param after_status: Status after execution ("CONTINUE", "FINISH", etc.).
         :return: List of execution results.
         """
         action = OneStepAction(
@@ -348,24 +395,29 @@ def create_action_mcp_server():
             args={"text": text, "clear_current_text": clear_current_text},
             control_label=control_label,
             control_text=control_text,
-            after_status=after_status,
+            after_status="CONTINUE",
         )
 
         return _execute_action_sequence([action])
 
-    @action_mcp.tool()
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def keyboard_input(
-        keys: str,
-        control_label: str = "",
-        control_text: str = "",
-        control_focus: bool = True,
+        keys: Annotated[
+            str,
+            Field(description="Key sequence to send (e.g., 'ctrl+c', 'enter', 'tab')"),
+        ],
+        control_focus: Annotated[
+            bool, Field(description="Whether to focus the control before sending keys")
+        ] = True,
+        control_label: Annotated[
+            str, Field(description="Label or ID of the control")
+        ] = "",
+        control_text: Annotated[
+            str, Field(description="Text content of the control")
+        ] = "",
     ) -> List:
         """
         Send keyboard input to a control or the focused application.
-        :param keys: Key sequence to send (e.g., "ctrl+c", "enter", "tab").
-        :param control_label: The label/ID of the target control (optional).
-        :param control_text: The text content of the control (optional).
-        :param control_focus: Whether to focus the control before sending keys.
         :return: List of execution results.
         """
         action = OneStepAction(
@@ -378,19 +430,21 @@ def create_action_mcp_server():
 
         return _execute_action_sequence([action])
 
-    @action_mcp.tool()
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def wheel_mouse_input(
-        direction: str = "up",
-        clicks: int = 3,
-        control_label: str = "",
-        control_text: str = "",
+        direction: Annotated[
+            str, Field(description="Scroll direction ('up' or 'down')")
+        ] = "up",
+        clicks: Annotated[int, Field(description="Number of wheel clicks")] = 3,
+        control_label: Annotated[
+            str, Field(description="Label or ID of the control")
+        ] = "",
+        control_text: Annotated[
+            str, Field(description="Text content of the control")
+        ] = "",
     ) -> List:
         """
         Send mouse wheel input to scroll a control.
-        :param direction: Scroll direction ("up" or "down").
-        :param clicks: Number of wheel clicks.
-        :param control_label: The label/ID of the target control (optional).
-        :param control_text: The text content of the control (optional).
         :return: List of execution results.
         """
         action = OneStepAction(
@@ -403,61 +457,59 @@ def create_action_mcp_server():
 
         return _execute_action_sequence([action])
 
-    @action_mcp.tool()
-    def summary(
-        text: str,
-        control_label: str = "",
-        control_text: str = "",
-    ) -> List:
-        """
-        Provide a visual summary or description of a control element.
-        :param text: The summary text to provide.
-        :param control_label: The label/ID of the target control (optional).
-        :param control_text: The text content of the control (optional).
-        :return: List of execution results.
-        """
-        action = OneStepAction(
-            function="summary",
-            args={"text": text},
-            control_label=control_label,
-            control_text=control_text,
-            after_status="CONTINUE",
-        )
+    # @action_mcp.tool()
+    # def summary(
+    #     text: str,
+    #     control_label: str = "",
+    #     control_text: str = "",
+    # ) -> List:
+    #     """
+    #     Provide a visual summary or description of a control element.
+    #     :param text: The summary text to provide.
+    #     :param control_label: The label/ID of the target control (optional).
+    #     :param control_text: The text content of the control (optional).
+    #     :return: List of execution results.
+    #     """
+    #     action = OneStepAction(
+    #         function="summary",
+    #         args={"text": text},
+    #         control_label=control_label,
+    #         control_text=control_text,
+    #         after_status="CONTINUE",
+    #     )
 
-        return _execute_action_sequence([action])
+    #     return _execute_action_sequence([action])
 
-    @action_mcp.tool()
-    def annotation(
-        control_labels: List[str],
-        control_label: str = "",
-        control_text: str = "",
-    ) -> List:
-        """
-        Annotate or highlight specific controls on the screen.
-        :param control_labels: List of control labels to annotate.
-        :param control_label: The label/ID of the primary control (optional).
-        :param control_text: The text content of the control (optional).
-        :return: List of execution results.
-        """
-        action = OneStepAction(
-            function="annotation",
-            args={"control_labels": control_labels},
-            control_label=control_label,
-            control_text=control_text,
-            after_status="CONTINUE",
-        )
+    # @action_mcp.tool()
+    # def annotation(
+    #     control_labels: List[str],
+    #     control_label: str = "",
+    #     control_text: str = "",
+    # ) -> List:
+    #     """
+    #     Annotate or highlight specific controls on the screen.
+    #     :param control_labels: List of control labels to annotate.
+    #     :param control_label: The label/ID of the primary control (optional).
+    #     :param control_text: The text content of the control (optional).
+    #     :return: List of execution results.
+    #     """
+    #     action = OneStepAction(
+    #         function="annotation",
+    #         args={"control_labels": control_labels},
+    #         control_label=control_label,
+    #         control_text=control_text,
+    #         after_status="CONTINUE",
+    #     )
 
-        return _execute_action_sequence([action])
+    #     return _execute_action_sequence([action])
 
-    @action_mcp.tool()
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def no_action(
         control_label: str = "",
         control_text: str = "",
     ) -> List[Dict]:
         """
         Perform no action (useful for testing or as a placeholder).
-        :param control_label: The label/ID of the target control (optional).
-        :param control_text: The text content of the control (optional).
         :return: List of execution results.
         """
         action = OneStepAction(
@@ -473,7 +525,8 @@ def create_action_mcp_server():
     return action_mcp
 
 
-def create_data_mcp_server():
+@MCPRegistry.register_factory_decorator("UICollector")
+def create_data_mcp_server() -> FastMCP:
     """
     Create and return the Data MCP server instance.
     :return: FastMCP instance for data retrieval operations.
@@ -703,27 +756,3 @@ def create_data_mcp_server():
             raise ToolError(f"Failed to capture screenshot: {str(e)}")
 
     return data_mcp
-
-
-# Registry decorators for automatic registration
-try:
-    from ufo.mcp.mcp_registry import MCPRegistry
-
-    @MCPRegistry.register_factory_decorator("UICollector")
-    def create_ui_data_mcp_server_factory() -> FastMCP:
-        """
-        Factory function to create the UI Data MCP server.
-        :return: FastMCP instance for UI data operations.
-        """
-        return create_data_mcp_server()
-
-    @MCPRegistry.register_factory_decorator("UIExecutor")
-    def create_ui_action_mcp_server_factory() -> FastMCP:
-        """
-        Factory function to create the UI Action MCP server.
-        :return: FastMCP instance for UI action operations.
-        """
-        return create_action_mcp_server()
-
-except ImportError:
-    print("Warning: MCPRegistry not found. UI MCP servers will not be registered.")

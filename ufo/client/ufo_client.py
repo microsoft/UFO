@@ -60,15 +60,15 @@ class UFOClient:
             # Initial request to start the session
             response = await self.send_request(request_text)
 
-            # Sync with the server response
-            self.agent_name = response.agent_name
-            self.process_name = response.process_name
-            self.root_name = response.root_name
-
             self.session_id = response.session_id
 
             # Process the session until it's completed or fails
             while response.status == "continue":
+                # Sync with the server response
+                self.agent_name = response.agent_name
+                self.process_name = response.process_name
+                self.root_name = response.root_name
+
                 # Execute the actions and collect results
                 action_results = await self.execute_actions(response.actions)
 

@@ -294,9 +294,6 @@ class HostAgent(BasicAgent):
         else:
             raise ValueError(f"The {mode} mode is not supported.")
 
-        # Provision the context for the app agent, including the all retrievers.
-        app_agent.context_provision(request, context=context)
-
         return app_agent
 
     def create_third_party_app_agent(

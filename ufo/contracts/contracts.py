@@ -39,6 +39,18 @@ class AppWindowControlInfo(BaseModel):
     controls: Optional[List[ControlInfo]] = None
 
 
+class MCPToolInfo(BaseModel):
+    tool_key: str
+    tool_name: str
+    title: Optional[str] = None
+    namespace: str
+    tool_type: str
+    description: Optional[str] = None
+    tool_schema: Optional[Dict[str, Any]] = None
+    meta: Optional[Dict[str, Any]] = None
+    annotations: Optional[Dict[str, Any]] = None
+
+
 class Command(BaseModel):
     tool_name: str
     parameters: Optional[Dict[str, Any]] = None
