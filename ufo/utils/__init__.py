@@ -237,8 +237,7 @@ def encode_image_from_path(
 
         # If image path not exist, return an empty image string
         if not os.path.exists(image_path):
-
-            print_with_color(f"Waring: {image_path} does not exist.", "yellow")
+            print_with_color(f"Warning: {image_path} does not exist.", "yellow")
             return _empty_image_string
 
         file_name = os.path.basename(image_path)

@@ -3,13 +3,14 @@
 
 import argparse
 from datetime import datetime
-from uuid import uuid4
 
-from ufo.config import Config
-from ufo.cs.computer import Computer
+from ufo.config import get_config
+from ufo.client.mcp.mcp_server_manager import MCPServerManager
+from ufo.client.computer import ComputerManager, CommandRouter
 from ufo.module.sessions.session import SessionFactory
+from ufo.module.context import ContextNames
 
-configs = Config.get_instance().config_data
+configs = get_config()
 
 
 args = argparse.ArgumentParser()
@@ -45,7 +46,7 @@ args.add_argument(
 parsed_args = args.parse_args()
 
 
-def main():
+async def main():
     """
     Main function to run the UFO system.
 
@@ -66,16 +67,21 @@ def main():
     )
 
     session = sessions[0]  # Assuming the first session is the one we want to run
-    computer = Computer("localhost")
+    mcp_server_manager = MCPServerManager()
+    computer_manager = ComputerManager(configs, mcp_server_manager)
+    command_router = CommandRouter(computer_manager)
     for _ in session.run_coro:
-        actions = session.get_actions()
-        action_results = {}
-        for action in actions:
-            # Run each action and collect the results
-            result = computer.run_action(action)
-            action_results[action.call_id] = result
-        session.process_action_results(action_results)
+        commands = session.get_commands()
+        command_results = await command_router.execute(
+            agent_name=session.current_round.agent.__class__.__name__,
+            root_name=session.context.get(ContextNames.APPLICATION_ROOT_NAME),
+            process_name=session.context.get(ContextNames.APPLICATION_PROCESS_NAME),
+            commands=commands,
+        )
+        session.process_action_results(command_results)
 
 
 if __name__ == "__main__":
-    main()
+    import asyncio
+
+    asyncio.run(main())

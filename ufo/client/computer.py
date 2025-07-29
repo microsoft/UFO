@@ -6,14 +6,15 @@ import logging
 import time
 from typing import Any, Callable, Dict, List, Optional
 
-# Import UI MCP servers to ensure they're registered in the registry
-import ufo.mcp.ui_mcp_server
 from fastmcp import Client, FastMCP
 from fastmcp.client.client import CallToolResult
 from mcp.types import TextContent
 from pydantic import BaseModel, ConfigDict
+
+import ufo.mcp.cli_mcp_server
+import ufo.mcp.ui_mcp_server
 from ufo.client.mcp.mcp_server_manager import BaseMCPServer, MCPServerManager
-from ufo.contracts.contracts import Command, Result
+from ufo.contracts.contracts import Command, MCPToolInfo, Result
 
 
 class MCPToolCall(BaseModel):
@@ -30,25 +31,28 @@ class MCPToolCall(BaseModel):
     tool_schema: Optional[Dict[str, Any]] = None  # Schema for the tool, if any
     parameters: Optional[Dict[str, Any]] = None  # Parameters for the tool, if any
     mcp_server: BaseMCPServer  # The BaseMCPServer instance where the tool is registered
+    meta: Optional[Dict[str, Any]] = None  # Metadata about the tool, if any
+    annotations: Optional[Dict[str, Any]] = None  # Annotations for the tool, if any
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
 
     @property
-    def tool_info(self) -> Dict[str, Any]:
+    def tool_info(self) -> MCPToolInfo:
         """
         Get a dictionary representation of the tool call.
         :return: Dictionary with tool information.
         """
-        return {
-            "tool_key": self.tool_key,
-            "tool_name": self.tool_name,
-            "title": self.title,
-            "namespace": self.namespace,
-            "tool_type": self.tool_type,
-            "description": self.description,
-            "tool_schema": self.tool_schema,
-            "parameters": self.parameters or {},
-        }
+        return MCPToolInfo(
+            tool_key=self.tool_key,
+            tool_name=self.tool_name,
+            title=self.title,
+            namespace=self.namespace,
+            tool_type=self.tool_type,
+            description=self.description,
+            tool_schema=self.tool_schema,
+            meta=self.meta,
+            annotations=self.annotations,
+        )
 
 
 class Computer:
@@ -280,6 +284,10 @@ class Computer:
                             else {}
                         ),
                         mcp_server=mcp_server,
+                        meta=(
+                            tool.meta
+                        ),
+                        annotations=tool.annotations.model_dump() if tool.annotations else None,
                     )
                 else:
                     self.logger.warning(
@@ -315,6 +323,8 @@ class Computer:
         description: str,
         tool_schema: Dict[str, Any],
         mcp_server: BaseMCPServer,
+        meta: Optional[Dict[str, Any]] = None,
+        annotations: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
         Register a tool with the computer in its tools registry.
@@ -339,6 +349,8 @@ class Computer:
             tool_type=tool_type,
             tool_schema=tool_schema,
             mcp_server=mcp_server,
+            meta=meta,
+            annotations=annotations,
         )
         self._tools_registry[tool_key] = tool_info
 
@@ -422,7 +434,7 @@ class Computer:
                 # Check if the tool is not a meta tool or if meta tools should be included
                 and (not remove_meta or tool.tool_name not in self._meta_tools)
             ):
-                tools.append(tool.tool_info)
+                tools.append(tool.tool_info.model_dump())
 
         content = [
             TextContent(
@@ -440,6 +452,24 @@ class Computer:
         )
 
         return tool_result
+
+    @meta_tool("nop")
+    def nop(self) -> CallToolResult:
+        """
+        A no-operation meta tool that does nothing.
+        :return: A CallToolResult indicating success.
+        """
+        content = [
+            TextContent(
+                type="text",
+                text="No operation performed.",
+            )
+        ]
+        return CallToolResult(
+            data=None,
+            content=content,
+            structured_content=None,
+        )
 
     def command2tool(self, command: Command) -> MCPToolCall:
         """
@@ -563,6 +593,8 @@ class ComputerManager:
                     f"Root name '{root_name}' not found in agent configuration for {agent_name}. Using default configuration."
                 )
                 root = "default"
+            else:
+                root = root_name
 
             agent_instance_config = agent_config.get(root, None)
 
@@ -646,9 +678,7 @@ class CommandRouter:
 
             call_tool_result: CallToolResult = result[0]
 
-            text_content = (
-                call_tool_result.content[0].text if call_tool_result.content else None
-            )
+            text_content = call_tool_result.data if call_tool_result.data else None
 
             if early_exit and status == "failure":
                 self.logger.warning(

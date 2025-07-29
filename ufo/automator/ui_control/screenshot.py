@@ -799,10 +799,10 @@ class PhotographerFacade:
 
     @staticmethod
     def merge_control_list(
-        main_control_list: List[Dict[str, UIAWrapper]],
-        additional_control_list: List[Dict[str, UIAWrapper]],
+        main_control_list: List[UIAWrapper],
+        additional_control_list: List[UIAWrapper],
         iou_overlap_threshold: float = 0.1,
-    ) -> List[Dict[str, UIAWrapper]]:
+    ) -> List[UIAWrapper]:
         """
         Merge two control lists by removing the overlapping controls in the additional control list.
         :param main_control_list: The main control list. All controls in this list will be kept.

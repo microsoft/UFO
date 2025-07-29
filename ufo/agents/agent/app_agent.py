@@ -4,13 +4,14 @@
 
 from __future__ import annotations
 
-import os
-import openai
-from typing import Any, Dict, List, Optional, Tuple, Union, Generator
 import json
+import os
+from typing import Any, Dict, Generator, List, Optional, Tuple, Union
+
+import openai
 
 from ufo import utils
-from ufo.agents.agent.basic import BasicAgent, AgentRegistry
+from ufo.agents.agent.basic import AgentRegistry, BasicAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.app_agent_action_seq_processor import (
     AppAgentActionSequenceProcessor,
@@ -20,12 +21,12 @@ from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
 from ufo.config import Config
+from ufo.contracts.contracts import Command, MCPToolInfo, Result
+from ufo.cs.session_data import SessionDataManager
+from ufo.llm import AgentType
 from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
-
-from ufo.cs.contracts import MCPGetAvailableToolsAction, MCPGetAvailableToolsParams
-from ufo.llm import AgentType
 
 configs = Config.get_instance().config_data
 
@@ -76,11 +77,9 @@ class AppAgent(BasicAgent):
 
         self.set_state(self.default_state)
         self.mcp_enabled = configs.get("USE_MCP", False)
-        self.mcp_preferred_apps = configs.get(
-            "MCP_PREFERRED_APPS",
-            ["powerpoint", "word", "excel", "web", "hardware", "hardwareagent"],
-        )
         self.mcp_preferred_operations = []  # Will be populated from MCP tools
+
+        self._context_provision_executed = False
 
     def get_prompter(
         self,
@@ -372,25 +371,14 @@ class AppAgent(BasicAgent):
         else:
             return []
 
-    def process(self, context: Context) -> None:
-        """
-        Process the agent.
-        :param context: The context.
-        """
-        if configs.get("ACTION_SEQUENCE", False):
-            self.processor = AppAgentActionSequenceProcessor(
-                agent=self, context=context
-            )
-        else:
-            self.processor = AppAgentProcessor(agent=self, context=context)
-        self.processor.process()
-        self.status = self.processor.status
-
     def process_coro(self, context: Context) -> Generator[None, None, None]:
         """
         Process the agent.
         :param context: The context.
         """
+        if not self._context_provision_executed:
+            yield from self.context_provision(context=context)
+            self._context_provision_executed = True
         if configs.get("ACTION_SEQUENCE", False):
             self.processor = AppAgentActionSequenceProcessor(
                 agent=self, context=context
@@ -467,13 +455,11 @@ class AppAgent(BasicAgent):
             "demonstration", db_path
         )
 
-    def context_provision(self, request: str = "", context: Context = None) -> None:
+    def context_provision(self, request: str = "", context: Context = None) -> Generator[None, None, None]:
         """
         Provision the context for the app agent.
         :param request: The request sent to the Bing search retriever.
         """
-
-        session_data_manager = context.get(ContextNames.SESSION_DATA_MANAGER)
 
         # Load the offline document indexer for the app agent if available.
         if configs["RAG_OFFLINE_DOCS"]:
@@ -507,139 +493,48 @@ class AppAgent(BasicAgent):
             db_path = os.path.join(demonstration_path, "demonstration_db")
             self.build_human_demonstration_retriever(db_path)
 
+        session_data_manager = context.get(ContextNames.SESSION_DATA_MANAGER)
         # Load MCP tool information if enabled
         if self.mcp_enabled:
             utils.print_with_color("Loading MCP tool information...", "magenta")
-            self._load_mcp_context(session_data_manager)
+            yield from self._load_mcp_context(session_data_manager)
 
-    def _load_mcp_context(self, session_data_manager) -> None:
+    def _load_mcp_context(self, session_data_manager: SessionDataManager) -> Generator[None, None, None]:
         """
         Load MCP context information for the current application.
         """
         app_namespace = self._get_app_namespace()
 
         utils.print_with_color(
-            f"Loading MCP context for application namespace: {app_namespace} in preferred apps: {self.mcp_preferred_apps}",
+            f"Loading MCP context for application namespace: {app_namespace}",
             "magenta",
         )
-        if app_namespace in self.mcp_preferred_apps and hasattr(self, "prompter"):
+        session_data_manager.add_action(
+            command=Command(
+                tool_name="list_tools",
+                parameters={},
+                tool_type="action",
+            ),
+            setter=lambda result: self._handle_list_tools_callback(result),
+        )
 
-            get_instructions_action = MCPGetAvailableToolsAction(
-                params=MCPGetAvailableToolsParams(app_namespace=app_namespace)
-            )
+        yield
 
-            # Use callback pattern to handle MCP instructions result
-            session_data_manager.add_action(
-                get_instructions_action,
-                setter=lambda result: self._handle_mcp_instructions_callback(result),
-            )
-
-            utils.print_with_color(
-                f"Requested MCP instructions for {app_namespace}", "green"
-            )
-
-    def _handle_mcp_instructions_callback(self, result: Any) -> None:
+    def _handle_list_tools_callback(self, result: Result) -> None:
         """
-        Callback to handle MCP instructions result from the client.
-        :param result: The result from the MCP get instructions action
+        Callback to handle MCP Tool List result from the client.
+        :param result: The result from the UFO client containing tool information.
         """
-        try:
-            utils.print_with_color(
-                f"Received MCP instructions result: {result}", "magenta"
-            )
-            if result and isinstance(result, dict):
-                self.handle_mcp_instructions_result(result)
-            elif result:
-                utils.print_with_color(
-                    f"Received unexpected MCP instructions result type: {type(result)}",
-                    "yellow",
-                )
-        except Exception as e:
-            utils.print_with_color(
-                f"Error handling MCP instructions callback: {str(e)}", "red"
-            )
-
-    def _get_app_namespace(self) -> str:
-        """
-        Get the application namespace based on the current application.
-        """
-        app_name = self._process_name.lower()
-        namespace_mapping = {
-            "powerpnt": "powerpoint",
-            "excel": "excel",
-            "winword": "word",
-            "chrome": "web",
-            "firefox": "web",
-            "edge": "web",
-            "powerpoint": "powerpoint",
-            "hardware": "hardware",
-            "hardwareagent": "hardware",
-        }
-        return namespace_mapping.get(app_name, app_name)
-
-    def should_use_mcp(self, function_name: str) -> bool:
-        """
-        Determine if a function should use MCP instead of UI automation.
-        """
-        if not self.mcp_enabled:
-            return False
-
-        app_namespace = self._get_app_namespace()
-        if app_namespace not in self.mcp_preferred_apps:
-            return False
-
-        # Use available MCP tools if loaded, otherwise fall back to default list
-        if self.mcp_preferred_operations:
-            return function_name in self.mcp_preferred_operations
-
-        # Fallback to default high-level operations if MCP tools not loaded yet
-        default_operations = [
-            "save_as",
-            "create_presentation",
-            "add_slide",
-            "set_background_color",
-            "create_document",
-            "insert_text",
-            "format_text",
-            "create_table",
-            "create_workbook",
-            "add_worksheet",
-            "set_cell_value",
-            "create_chart",
-            "open_file",
-            "close_file",
-            "export_pdf",
-            "insert_image",
-        ]
-
-        return function_name in default_operations
-
-    def handle_mcp_instructions_result(self, instructions: Dict[str, Any]) -> None:
-        """
-        Handle the result of MCP instructions request from client.
-        :param instructions: The MCP instructions received from client
-        """
-
-        tools_dicts = []
-
-        if hasattr(self, "prompter") and instructions.get("available", False):
-            tools = instructions.get("tools", [])
-
-            self.prompter.load_mcp_tools_from_data(
-                tools,
-                instructions.get("namespace"),
-                instructions.get("namespace"),
-            )
-            # Extract tool names and save as preferred operations
-            self.mcp_preferred_operations = [
-                tool.get("name", "") for tool in tools if tool.get("name")
-            ]
-            # utils.print_with_color(
-            #     f"Loaded {len(tools)} MCP tools from client response", "green"
-            # )
-            # utils.print_with_color(
-            #     f"MCP preferred operations: {self.mcp_preferred_operations}", "cyan"
-            # )
+        if not isinstance(result, Result) or not isinstance(result.result, List):
+            raise ValueError("Invalid result format received from UFO client.")
+        for tool in result.result:
+            tool = MCPToolInfo(**tool)
+            # if tool.tool_type == "action":
+            #     print(f"Tool Name: {tool.tool_name}")
+            #     print(f"Tool Description: {tool.description}")
+            #     print(f"Tool Schema: {tool.tool_schema}")
+            #     print(f"Tool Metadata: {tool.meta}")
+            #     print(f"Tool Annotations: {tool.annotations}")
 
     @property
     def default_state(self) -> ContinueAppAgentState:

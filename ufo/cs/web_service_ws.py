@@ -72,7 +72,7 @@ def run_task_core(data: UFORequest):
     except StopIteration:
         status = "completed"
 
-    actions = session.get_actions()
+    actions = session.get_commands()
 
     response = UFOResponse(
         session_id=session_id,

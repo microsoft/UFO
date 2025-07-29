@@ -18,19 +18,13 @@ from ufo.agents.processors.action_contracts import (
 )
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.cs.contracts import (
+from ufo.contracts.contracts import (
     AppWindowControlInfo,
-    CaptureAppWindowScreenshotAction,
-    CaptureAppWindowScreenshotParams,
-    CaptureDesktopScreenshotAction,
-    CaptureDesktopScreenshotParams,
+    Command,
     ControlInfo,
-    GetAppWindowControlInfoAction,
-    GetAppWindowControlInfoParams,
-    GetUITreeAction,
-    GetUITreeParams,
-    OperationCommand,
-    OperationSequenceAction,
+    # GetUITreeAction,
+    # GetUITreeParams,
+    Result,
 )
 from ufo.cs.service.control_filter import ControlFilterFactory
 from ufo.llm import AgentType
@@ -262,15 +256,15 @@ class AppAgentProcessor(BaseProcessor):
         )
 
         self.session_data_manager.add_action(
-            CaptureAppWindowScreenshotAction(
-                params=CaptureAppWindowScreenshotParams(
-                    annotation_id=self.application_window_info.annotation_id
-                )
+            command=Command(
+                tool_name="capture_window_screenshot",
+                parameters={},
+                tool_type="data_collection",
             ),
             setter=self._get_app_window_screenshot_action_callback,
         )
 
-    def _get_app_window_screenshot_action_callback(self, value):
+    def _get_app_window_screenshot_action_callback(self, value: Result):
         """
         Helper method to save control screenshot data to file.
 
@@ -278,6 +272,7 @@ class AppAgentProcessor(BaseProcessor):
             value: The result returned from the action
             path: Path to save the screenshot
         """
+        value = value.result
         if (
             value
             and isinstance(value, str)
@@ -297,6 +292,10 @@ class AppAgentProcessor(BaseProcessor):
                 print(f"Screenshot saved to {self.screenshot_save_path}")
             except Exception as e:
                 print(f"Error saving screenshot: {e}")
+        else:
+            raise ValueError(
+                "Screenshot URL is not a valid base64 encoded image string."
+            )
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -306,24 +305,23 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         self.session_data_manager.add_action(
-            GetAppWindowControlInfoAction(
-                params=GetAppWindowControlInfoParams(
-                    annotation_id=self.application_window_info.annotation_id,
-                    field_list=ControlInfoRecorder.recording_fields,
-                )
+            command=Command(
+                tool_name="get_app_window_controls",
+                parameters={
+                    # "annotation_id": self.application_window_info.annotation_id,
+                    # "field_list": ControlInfoRecorder.recording_fields,
+                },
+                tool_type="data_collection",
             ),
             setter=self._get_app_window_control_info_action_callback,
         )
 
-    def _get_app_window_control_info_action_callback(self, value):
-        if isinstance(value, AppWindowControlInfo):
-            model = value
-        elif isinstance(value, dict):
+    def _get_app_window_control_info_action_callback(self, value: Result):
+        value = value.result
+        if isinstance(value, dict):
             model = AppWindowControlInfo(**value)
         else:
-            raise ValueError(
-                f"Expected AppWindowControlInfo or dict, got {type(value)}"
-            )
+            raise ValueError(f"Expected dict, got {type(value)}")
         self.session_data_manager.session_data.state.app_window_control_info = model
 
     @BaseProcessor.exception_capture
@@ -371,12 +369,15 @@ class AppAgentProcessor(BaseProcessor):
                 {"DesktopCleanScreenshot": desktop_save_path}
             )
 
-            # Capture the desktop screenshot for all screens using action
-            desktop_screenshot_action = CaptureDesktopScreenshotAction(
-                params=CaptureDesktopScreenshotParams(all_screens=True)
-            )
+            # Capture the desktop screenshot for all screens
             self.session_data_manager.add_action(
-                desktop_screenshot_action,
+                command=Command(
+                    tool_name="capture_desktop_screenshot",
+                    parameters={
+                        "all_screens": True,
+                    },
+                    tool_type="data_collection",
+                ),
                 setter=lambda value: self._capture_all_desktop_screenshot_action_callback(
                     value, desktop_save_path
                 ),
@@ -476,7 +477,7 @@ class AppAgentProcessor(BaseProcessor):
             with open(path, "w") as f:
                 json.dump(value, f, indent=4)
 
-    def _capture_all_desktop_screenshot_action_callback(self, value, path):
+    def _capture_all_desktop_screenshot_action_callback(self, value: Result, path: str):
         """
         Helper method to save desktop screenshot data and save to file.
 
@@ -484,6 +485,7 @@ class AppAgentProcessor(BaseProcessor):
             value: The result returned from the action
             path: Path to save the screenshot
         """
+        value = value.result
 
         if (
             value
@@ -697,47 +699,6 @@ class AppAgentProcessor(BaseProcessor):
         """
         Execute the action.
         """
-
-        # Check if we should use MCP for this operation
-        if self.mcp_enabled and self.app_agent.should_use_mcp(self._operation):
-            self._execute_mcp_action()
-        else:
-            self._execute_ui_action()
-
-        self._generate_control_screenshot()
-
-    def _execute_mcp_action(self) -> None:
-        """
-        Execute action using MCP server.
-        """
-        from ufo.cs.contracts import MCPToolExecutionAction, MCPToolExecutionParams
-
-        app_namespace = self.app_agent._get_app_namespace()
-
-        # Create the MCP tool execution action
-        mcp_action = MCPToolExecutionAction(
-            params=MCPToolExecutionParams(
-                app_namespace=app_namespace,
-                tool_name=self._operation,
-                tool_args=self._args,
-            )
-        )
-
-        # Add action to session with callback for result handling
-        self.session_data_manager.add_action(
-            mcp_action,
-            setter=lambda result: self._handle_mcp_execution_callback(result),
-        )
-
-        utils.print_with_color(
-            f"Added MCP tool execution to session: {self._operation} for {app_namespace}",
-            "blue",
-        )
-
-    def _execute_ui_action(self) -> None:
-        """
-        Execute action using traditional UI automation.
-        """
         action = OneStepAction(
             function=self._operation,
             args=self._args,
@@ -752,34 +713,29 @@ class AppAgentProcessor(BaseProcessor):
             utils.print_with_color(
                 "No valid action to execute. Skipping execution.", "yellow"
             )
-            commands = []
-        else:
-            commands = [
-                OperationCommand(
-                    command_id=action.function,
-                    **{
-                        action.function: {
-                            **action.args,
-                            "control_label": action.control_label,
-                            "control_text": action.control_text,
-                            "after_status": action.after_status,
-                        }
-                    },
-                )
-            ]
+            return
 
         self.session_data_manager.add_action(
-            OperationSequenceAction(
-                params=commands,
+            command=Command(
+                tool_name=action.function,
+                parameters={
+                    "control_label": action.control_label,
+                    "control_text": action.control_text,
+                    **action.args,
+                },
+                tool_type="action",
             ),
             setter=lambda result: self._handle_ui_execution_callback(result),
         )
 
-    def _handle_ui_execution_callback(self, results: List[Dict[str, Any]]) -> None:
+        self._generate_control_screenshot()
+
+    def _handle_ui_execution_callback(self, results: Result) -> None:
         """
         Callback to handle UI tool execution result.
         :param results: The result from the UI tool execution
         """
+        results = results.result
         action = OneStepAction(
             function=self._operation,
             args=self._args,
@@ -796,47 +752,6 @@ class AppAgentProcessor(BaseProcessor):
         else:
             utils.print_with_color(
                 f"Unexpected result type from UI execution: {type(results)}", "yellow"
-            )
-
-    def _handle_mcp_execution_callback(self, result: Any) -> None:
-        """
-        Callback to handle MCP tool execution result.
-        :param result: The result from the MCP tool execution
-        """
-        action = OneStepAction(
-            function=self._operation,
-            args=self._args,
-            control_label=self._control_label,
-            control_text=self.control_text,
-            after_status=self.status,
-        )
-        self.actions = [action]
-
-        try:
-            if result and isinstance(result, dict):
-                success = result.get("success", False)
-                if success:
-                    utils.print_with_color(
-                        f"MCP tool execution successful: {result.get('tool_name', 'unknown')}",
-                        "green",
-                    )
-                    # Store the result for memory and logging
-                    self._mcp_execution_result = result
-                else:
-                    error_msg = result.get("error", "Unknown error")
-                    utils.print_with_color(
-                        f"MCP tool execution failed: {error_msg}", "red"
-                    )
-                    # Could fallback to UI automation here if needed
-                    self._mcp_execution_result = result
-            else:
-                utils.print_with_color(
-                    f"Received unexpected MCP execution result type: {type(result)}",
-                    "yellow",
-                )
-        except Exception as e:
-            utils.print_with_color(
-                f"Error handling MCP execution callback: {str(e)}", "red"
             )
 
     def _generate_control_screenshot(self) -> None:
