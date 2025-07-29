@@ -9,50 +9,11 @@ from typing import Any, Callable, Dict, List, Optional
 from fastmcp import Client, FastMCP
 from fastmcp.client.client import CallToolResult
 from mcp.types import TextContent
-from pydantic import BaseModel, ConfigDict
 
 import ufo.mcp.cli_mcp_server
 import ufo.mcp.ui_mcp_server
 from ufo.client.mcp.mcp_server_manager import BaseMCPServer, MCPServerManager
-from ufo.contracts.contracts import Command, MCPToolInfo, Result
-
-
-class MCPToolCall(BaseModel):
-    """
-    Information about a tool registered with the computer.
-    """
-
-    tool_key: str  # Unique key for the tool, e.g., "namespace.tool_name"
-    tool_name: str  # Name of the tool
-    title: Optional[str] = None  # Title of the tool, if any
-    namespace: str  # Namespace of the tool, same as the MCP server namespace
-    tool_type: str  # Type of the tool (e.g., "action", "data_collection")
-    description: str  # Description of the tool
-    tool_schema: Optional[Dict[str, Any]] = None  # Schema for the tool, if any
-    parameters: Optional[Dict[str, Any]] = None  # Parameters for the tool, if any
-    mcp_server: BaseMCPServer  # The BaseMCPServer instance where the tool is registered
-    meta: Optional[Dict[str, Any]] = None  # Metadata about the tool, if any
-    annotations: Optional[Dict[str, Any]] = None  # Annotations for the tool, if any
-
-    model_config = ConfigDict(arbitrary_types_allowed=True)
-
-    @property
-    def tool_info(self) -> MCPToolInfo:
-        """
-        Get a dictionary representation of the tool call.
-        :return: Dictionary with tool information.
-        """
-        return MCPToolInfo(
-            tool_key=self.tool_key,
-            tool_name=self.tool_name,
-            title=self.title,
-            namespace=self.namespace,
-            tool_type=self.tool_type,
-            description=self.description,
-            tool_schema=self.tool_schema,
-            meta=self.meta,
-            annotations=self.annotations,
-        )
+from ufo.contracts.contracts import Command, Result, MCPToolCall
 
 
 class Computer:
@@ -284,10 +245,10 @@ class Computer:
                             else {}
                         ),
                         mcp_server=mcp_server,
-                        meta=(
-                            tool.meta
+                        meta=(tool.meta),
+                        annotations=(
+                            tool.annotations.model_dump() if tool.annotations else None
                         ),
-                        annotations=tool.annotations.model_dump() if tool.annotations else None,
                     )
                 else:
                     self.logger.warning(

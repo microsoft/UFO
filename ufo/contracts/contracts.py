@@ -1,8 +1,15 @@
-from typing import Any, List, Literal, Optional, Dict
-from pydantic import BaseModel
+from typing import Any, Dict, List, Literal, Optional
+
+from pydantic import BaseModel, ConfigDict
+from ufo.client.mcp.mcp_server_manager import BaseMCPServer
 
 
 class Rect(BaseModel):
+    """
+    Rectangle coordinates for UI elements.
+    Represents a rectangle with x, y coordinates and width and height.
+    """
+
     x: int
     y: int
     width: int
@@ -10,6 +17,10 @@ class Rect(BaseModel):
 
 
 class ControlInfo(BaseModel):
+    """
+    Information about a UI control.
+    """
+
     annotation_id: Optional[str] = None
     name: Optional[str] = None
     title: Optional[str] = None
@@ -26,6 +37,10 @@ class ControlInfo(BaseModel):
 
 
 class WindowInfo(ControlInfo):
+    """
+    Information about a window in the UI.
+    """
+
     process_id: Optional[int] = None
     process_name: Optional[str] = None
     is_visible: Optional[bool] = None
@@ -35,11 +50,19 @@ class WindowInfo(ControlInfo):
 
 
 class AppWindowControlInfo(BaseModel):
+    """
+    Information about a window and its controls.
+    """
+
     window_info: WindowInfo
     controls: Optional[List[ControlInfo]] = None
 
 
 class MCPToolInfo(BaseModel):
+    """
+    Information about a tool registered with the computer.
+    """
+
     tool_key: str
     tool_name: str
     title: Optional[str] = None
@@ -51,7 +74,49 @@ class MCPToolInfo(BaseModel):
     annotations: Optional[Dict[str, Any]] = None
 
 
+class MCPToolCall(BaseModel):
+    """
+    Information about a tool registered with the computer and its associated MCP server.
+    """
+
+    tool_key: str  # Unique key for the tool, e.g., "namespace.tool_name"
+    tool_name: str  # Name of the tool
+    title: Optional[str] = None  # Title of the tool, if any
+    namespace: str  # Namespace of the tool, same as the MCP server namespace
+    tool_type: str  # Type of the tool (e.g., "action", "data_collection")
+    description: str  # Description of the tool
+    tool_schema: Optional[Dict[str, Any]] = None  # Schema for the tool, if any
+    parameters: Optional[Dict[str, Any]] = None  # Parameters for the tool, if any
+    mcp_server: BaseMCPServer  # The BaseMCPServer instance where the tool is registered
+    meta: Optional[Dict[str, Any]] = None  # Metadata about the tool, if any
+    annotations: Optional[Dict[str, Any]] = None  # Annotations for the tool, if any
+
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
+    @property
+    def tool_info(self) -> MCPToolInfo:
+        """
+        Get a dictionary representation of the tool call.
+        :return: Dictionary with tool information.
+        """
+        return MCPToolInfo(
+            tool_key=self.tool_key,
+            tool_name=self.tool_name,
+            title=self.title,
+            namespace=self.namespace,
+            tool_type=self.tool_type,
+            description=self.description,
+            tool_schema=self.tool_schema,
+            meta=self.meta,
+            annotations=self.annotations,
+        )
+
+
 class Command(BaseModel):
+    """
+    Represents a command to be executed by the computer.
+    """
+
     tool_name: str
     parameters: Optional[Dict[str, Any]] = None
     tool_type: Literal["data_collection", "action"]
@@ -59,12 +124,20 @@ class Command(BaseModel):
 
 
 class Result(BaseModel):
+    """
+    Represents the result of a command execution.
+    """
+
     status: Literal["success", "failure", "skipped"]
     error: Optional[str] = None
     result: Any = None
 
 
 class ServerResponse(BaseModel):
+    """
+    Represents a response from the server to the client.
+    """
+
     status: Literal["continue", "completed", "failure"]
     agent_name: Optional[str] = None
     process_name: Optional[str] = None
@@ -77,6 +150,10 @@ class ServerResponse(BaseModel):
 
 
 class ClientRequest(BaseModel):
+    """
+    Represents a request from the client to the server.
+    """
+
     session_id: Optional[str] = None
     request: Optional[str] = None
     action_results: Optional[Dict[str, Result]] = None

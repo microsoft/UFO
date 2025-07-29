@@ -455,7 +455,9 @@ class AppAgent(BasicAgent):
             "demonstration", db_path
         )
 
-    def context_provision(self, request: str = "", context: Context = None) -> Generator[None, None, None]:
+    def context_provision(
+        self, request: str = "", context: Context = None
+    ) -> Generator[None, None, None]:
         """
         Provision the context for the app agent.
         :param request: The request sent to the Bing search retriever.
@@ -499,7 +501,9 @@ class AppAgent(BasicAgent):
             utils.print_with_color("Loading MCP tool information...", "magenta")
             yield from self._load_mcp_context(session_data_manager)
 
-    def _load_mcp_context(self, session_data_manager: SessionDataManager) -> Generator[None, None, None]:
+    def _load_mcp_context(
+        self, session_data_manager: SessionDataManager
+    ) -> Generator[None, None, None]:
         """
         Load MCP context information for the current application.
         """
@@ -529,12 +533,6 @@ class AppAgent(BasicAgent):
             raise ValueError("Invalid result format received from UFO client.")
         for tool in result.result:
             tool = MCPToolInfo(**tool)
-            # if tool.tool_type == "action":
-            #     print(f"Tool Name: {tool.tool_name}")
-            #     print(f"Tool Description: {tool.description}")
-            #     print(f"Tool Schema: {tool.tool_schema}")
-            #     print(f"Tool Metadata: {tool.meta}")
-            #     print(f"Tool Annotations: {tool.annotations}")
 
     @property
     def default_state(self) -> ContinueAppAgentState:
