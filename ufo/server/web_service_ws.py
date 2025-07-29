@@ -1,5 +1,5 @@
 import asyncio
-from datetime import datetime
+import datetime
 import json
 import logging
 import threading
@@ -87,7 +87,7 @@ def run_task_core(data: ClientRequest):
         process_name=session.context.get(ContextNames.APPLICATION_PROCESS_NAME),
         actions=commands,
         session_id=session_id,
-        timestamp=datetime.now().isoformat(),
+        timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
     )
 
     logger.info(f"Session {session_id} status: {status}, Commands: {len(commands)}")
