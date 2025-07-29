@@ -77,7 +77,7 @@ def create_api_blueprint(
                 process_name=session.context.get(ContextNames.APPLICATION_PROCESS_NAME),
                 actions=commands,
                 session_id=session_id,
-                timestamp=datetime.now().isoformat(),
+                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
             )
             return jsonify(response.model_dump())
         except Exception as e:

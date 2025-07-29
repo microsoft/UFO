@@ -1,4 +1,5 @@
 import uuid
+import logging
 from typing import Any, Callable, Dict, List, Optional, Union
 
 from pydantic import BaseModel, Field
@@ -35,6 +36,7 @@ class SessionDataManager:
         self.session_id = session_id
         self.session_data = SessionData(session_id=session_id)
         self.action_id_setters = {}
+        self.logger = logging.getLogger(__name__)
 
     @staticmethod
     def time_hash_str(data: str):
@@ -55,8 +57,8 @@ class SessionDataManager:
         call_id = SessionDataManager.time_hash_str(command.tool_name)
         command.call_id = call_id
         self.session_data.actions_to_run.append(command)
-        print(
-            f"Adding command {command.tool_name} with call_id {call_id} to session {self.session_id}"
+        self.logger.info(
+            f"Adding action {command.tool_name} with call_id {call_id} to session {self.session_id}"
         )
         if setter is None:
             setter = lambda x: None
@@ -100,7 +102,9 @@ class SessionDataManager:
                     setter = self.action_id_setters[call_id]
                     setter(result)
                 except Exception as e:
-                    print(f"Error in action setter for {call_id}: {e}")
+                    self.logger.error(
+                        f"Error processing action result for call_id {call_id}: {e}"
+                    )
 
         self.result_available = True
 
