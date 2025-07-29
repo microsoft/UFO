@@ -62,4 +62,4 @@ try:
         return create_cli_mcp_server()
 
 except ImportError:
-    print("Warning: MCPRegistry not found. UI MCP servers will not be registered.")
+    print("Warning: MCPRegistry not found. CLI MCP servers will not be registered.")
