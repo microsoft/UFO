@@ -3,7 +3,7 @@ from typing import Dict, List, Optional
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config import Config
 from ufo.contracts.contracts import Command, Result
-from ufo.cs.session_data import SessionDataManager
+from ufo.module.sessions.session_data import SessionDataManager
 from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import ContextNames
 

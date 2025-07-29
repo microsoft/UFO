@@ -12,7 +12,7 @@ from PIL import Image
 from ufo.agents.processors.action_contracts import BaseControlLog, OneStepAction
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
-from ufo.cs.service.control_filter import ControlFilterFactory
+from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config import Config
 from ufo.module.context import Context, ContextNames
 from ufo.cs.contracts import (

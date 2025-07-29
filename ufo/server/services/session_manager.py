@@ -1,5 +1,5 @@
 import threading
-from ufo.cs.service_session import ServiceSession
+from ufo.module.sessions.service_session import ServiceSession
 from typing import Optional, Dict
 import logging
 

@@ -22,7 +22,7 @@ from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentSt
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
 from ufo.config import Config
 from ufo.contracts.contracts import Command, MCPToolInfo, Result
-from ufo.cs.session_data import SessionDataManager
+from ufo.module.sessions.session_data import SessionDataManager
 from ufo.llm import AgentType
 from ufo.module import interactor
 from ufo.module.context import Context, ContextNames

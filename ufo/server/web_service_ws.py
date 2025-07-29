@@ -11,7 +11,7 @@ from flask import Flask, jsonify, request
 
 from ufo.config import Config
 from ufo.contracts.contracts import ClientRequest, ServerResponse
-from ufo.cs.service_session import ServiceSession
+from ufo.module.sessions.service_session import ServiceSession
 from ufo.module.context import ContextNames
 
 app = Flask(__name__)

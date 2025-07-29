@@ -2,7 +2,7 @@ from flask import Flask, request, jsonify
 from uuid import uuid4
 import logging
 
-from ufo.cs.service_session import ServiceSession
+from ufo.module.sessions.service_session import ServiceSession
 from ufo.cs.contracts import UFORequest, UFOResponse
 from ufo.config import Config
 from typing import Dict
@@ -69,9 +69,7 @@ def run_task():
 
             # Update session state with action results
             if ufo_request.action_results:
-                session.process_action_results(
-                    ufo_request.action_results
-                )
+                session.process_action_results(ufo_request.action_results)
                 logger.info(f"Updated session {session_id} with action results")
 
         status = "continue"

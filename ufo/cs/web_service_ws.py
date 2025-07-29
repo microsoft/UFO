@@ -9,7 +9,7 @@ import websockets
 from flask import Flask, jsonify, request
 from ufo.config import Config
 from ufo.cs.contracts import UFORequest, UFOResponse
-from ufo.cs.service_session import ServiceSession
+from ufo.module.sessions.service_session import ServiceSession
 
 app = Flask(__name__)
 

@@ -19,19 +19,20 @@ from ufo.agents.processors.action_contracts import ActionSequence
 from ufo.config import Config
 from ufo.cs.contracts import WindowInfo
 from ufo.module.context import Context, ContextNames
-from ufo.cs.session_data import SessionDataManager
+from ufo.module.sessions.session_data import SessionDataManager
 
 configs = Config.get_instance().config_data
 
 
 class BaseProcessor(ABC):
     session_data_manager: SessionDataManager
-    
+
     """
     The base processor for the session. A session consists of multiple rounds of conversation with the user, completing a task.
     At each round, the HostAgent and AppAgent interact with the user and the application with the processor.
     Each processor is responsible for processing the user request and updating the HostAgent and AppAgent at a single step in a round.
-    """    
+    """
+
     def __init__(self, agent: BasicAgent, context: Context) -> None:
         """
         Initialize the processor.
@@ -41,7 +42,7 @@ class BaseProcessor(ABC):
 
         self._context = context
         self._agent = agent
-        
+
         # Get the session data manager from the context
         self.session_data_manager = self._context.get(ContextNames.SESSION_DATA_MANAGER)
 
@@ -122,7 +123,7 @@ class BaseProcessor(ABC):
             else:
                 self.status = self._agent_status_manager.CONTINUE.value
                 self.update_status()
-            
+
             # Step 1: Print the step information.
             self.print_step_info()
 
@@ -131,9 +132,9 @@ class BaseProcessor(ABC):
 
             # Step 3: Get the control information.
             self.get_control_info()
-            
+
             self.process_collected_info()
-            
+
             if not self.agent.has_input:
                 self.agent.has_input = True
 
@@ -249,7 +250,7 @@ class BaseProcessor(ABC):
         Get the control information.
         """
         pass
-    
+
     @abstractmethod
     def process_collected_info(self) -> None:
         """
@@ -376,7 +377,7 @@ class BaseProcessor(ABC):
         :param window: The active window.
         """
         self.context.set(ContextNames.APPLICATION_WINDOW, window)
-        
+
     @property
     def application_window_info(self) -> WindowInfo:
         """
@@ -384,7 +385,7 @@ class BaseProcessor(ABC):
         :return: The application window information.
         """
         return self.context.get(ContextNames.APPLICATION_WINDOW_INFO)
-    
+
     @application_window_info.setter
     def application_window_info(self, window_info: WindowInfo) -> None:
         """

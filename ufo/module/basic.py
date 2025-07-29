@@ -36,7 +36,7 @@ from ufo.contracts.contracts import (
     Command,
     Result,
 )
-from ufo.cs.session_data import SessionDataManager
+from ufo.module.sessions.session_data import SessionDataManager
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.module.context import Context, ContextNames
 from ufo.trajectory.parser import Trajectory

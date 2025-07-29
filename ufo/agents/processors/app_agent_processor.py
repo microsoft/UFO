@@ -26,7 +26,7 @@ from ufo.contracts.contracts import (
     # GetUITreeParams,
     Result,
 )
-from ufo.cs.service.control_filter import ControlFilterFactory
+from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.llm import AgentType
 from ufo.module.context import Context, ContextNames
 from ufo.utils import collector
