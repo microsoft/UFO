@@ -4,7 +4,7 @@ from typing import Any, Callable, Dict, Optional, Union
 
 from fastmcp import FastMCP
 from fastmcp.client.transports import StdioTransport
-from ufo.mcp.mcp_registry import MCPRegistry
+from ufo.client.mcp.mcp_registry import MCPRegistry
 
 # MCPServerType can be either a URL string for HTTP servers or a FastMCP instance for local in-memory servers, or a StdioTransport instance.
 MCPServerType = Union[str, FastMCP, StdioTransport]

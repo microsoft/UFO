@@ -10,8 +10,6 @@ from fastmcp import Client, FastMCP
 from fastmcp.client.client import CallToolResult
 from mcp.types import TextContent
 
-import ufo.mcp.cli_mcp_server
-import ufo.mcp.ui_mcp_server
 from ufo.client.mcp.mcp_server_manager import BaseMCPServer, MCPServerManager
 from ufo.contracts.contracts import Command, Result, MCPToolCall
 

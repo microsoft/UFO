@@ -25,8 +25,8 @@ from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import get_config
-from ufo.cs.contracts import AppWindowControlInfo, ControlInfo, Rect, WindowInfo
-from ufo.mcp.mcp_registry import MCPRegistry
+from ufo.contracts.contracts import AppWindowControlInfo, ControlInfo, Rect, WindowInfo
+from ufo.client.mcp.mcp_registry import MCPRegistry
 
 # Get config
 configs = get_config()
@@ -638,7 +638,6 @@ def create_data_mcp_server() -> FastMCP:
                 grounding_backend == "omniparser"
                 and ui_state.grounding_service is not None
             ):
-                ui_state.grounding_service: BasicGrounding
 
                 onmiparser_configs = configs.get("OMNIPARSER", {}) if configs else {}
 

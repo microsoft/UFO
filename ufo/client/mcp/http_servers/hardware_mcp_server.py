@@ -23,7 +23,7 @@ Mock MCP server for testing hardware control tools.
 This server provides dummy implementations for various hardware control tools.
 """
 from typing import Dict, Any, List, Tuple, Optional
-from mcp.server.fastmcp import FastMCP
+from fastmcp import FastMCP
 
 
 def create_hardware_mcp_server(host: str = "", port: int = 8006) -> None:

@@ -6,13 +6,15 @@ Provides a centralized registry for MCP server instances and factories.
 from typing import Callable, Dict
 from fastmcp import FastMCP
 
+import ufo.client.mcp.local_severs
+
 
 class MCPRegistry:
     """
     Registry for MCP server instances and factories.
     Supports both direct registration and factory-based lazy initialization.
     """
-    
+
     _instances: Dict[str, FastMCP] = {}
     _factories: Dict[str, Callable[[], FastMCP]] = {}
 
@@ -90,18 +92,20 @@ class MCPRegistry:
     def register_factory_decorator(cls, name: str):
         """
         Decorator version of register_factory.
-        
+
         Usage:
             @MCPRegistry.register_factory_decorator("server_name")
             def create_server():
                 return FastMCP("Server Name")
-                
+
         :param name: Unique name for the MCP server.
         :return: Decorator function.
         """
+
         def decorator(factory_func: Callable[[], FastMCP]):
             cls.register_factory(name, factory_func)
             return factory_func
+
         return decorator
 
     @classmethod
@@ -125,6 +129,6 @@ class MCPRegistry:
             info[name] = {
                 "has_instance": name in cls._instances,
                 "has_factory": name in cls._factories,
-                "is_instantiated": name in cls._instances
+                "is_instantiated": name in cls._instances,
             }
         return info

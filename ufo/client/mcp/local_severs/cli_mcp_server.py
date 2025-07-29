@@ -19,6 +19,7 @@ from ufo.config import get_config
 # Get config
 configs = get_config()
 
+
 def create_cli_mcp_server():
     """
     Create and return the CLI MCP server instance.
@@ -49,9 +50,10 @@ def create_cli_mcp_server():
 
     return cli_mcp
 
+
 # Registry decorators for automatic registration
 try:
-    from ufo.mcp.mcp_registry import MCPRegistry
+    from ufo.client.mcp.mcp_registry import MCPRegistry
 
     @MCPRegistry.register_factory_decorator("CommandLineExecutor")
     def create_command_line_executor_factory() -> FastMCP:
