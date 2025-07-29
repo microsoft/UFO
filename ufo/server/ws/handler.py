@@ -4,7 +4,9 @@ import logging
 from typing import Any, Dict
 
 import websockets
-from ufo.contracts.contracts import ServerResponse, ClientRequest
+
+from ufo.contracts.contracts import ClientRequest, ServerResponse
+from ufo.module.context import ContextNames
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.task_manager import TaskManager
 from ufo.server.services.ws_manager import WSManager
@@ -138,17 +140,17 @@ class UFOWebSocketHandler:
             session.run_coro.send(None)
         except StopIteration:
             status = "completed"
-        actions = session.get_actions()
+
+        commands = session.get_commands()
 
         response = ServerResponse(
-            session_id=session_id,
             status=status,
-            actions=actions,
-            agent_name="Placeholder Agent",  # Replace with actual agent name if available
-            process_name="Placeholder Process",  # Replace with actual process name if available
-            root_name="Placeholder Root",  # Replace with actual root name if available
-            messages=[],
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            agent_name=session.current_round.agent.__class__.__name__,
+            root_name=session.context.get(ContextNames.APPLICATION_ROOT_NAME),
+            process_name=session.context.get(ContextNames.APPLICATION_PROCESS_NAME),
+            actions=commands,
+            session_id=session_id,
+            timestamp=datetime.now().isoformat(),
         )
 
         resp = {"type": "task_response", "body": response.model_dump()}
