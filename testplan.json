@@ -1,9 +1,0 @@
-{
-    "task": "Draw text art",
-    "steps": [
-        "1. Open Notepad", 
-        "2. Type in 'Test For Fun'",
-        "3. Save the file as 'test.txt'"
-    ],
-    "object": "notepad"
-}

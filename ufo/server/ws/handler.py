@@ -11,8 +11,6 @@ from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.task_manager import TaskManager
 from ufo.server.services.ws_manager import WSManager
 
-logger = logging.getLogger(__name__)
-
 
 class UFOWebSocketHandler:
     def __init__(
