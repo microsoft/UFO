@@ -16,7 +16,7 @@ from ufo.agents.processors.app_agent_processor import (
 )
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.cs.contracts import GetUITreeAction, GetUITreeParams
+from ufo.contracts.contracts import GetUITreeAction, GetUITreeParams
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
@@ -116,14 +116,18 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         if configs.get("SAVE_UI_TREE", False):
             if self.application_window_info is not None:
                 self.session_data_manager.add_action(
-                    GetUITreeAction(params=GetUITreeParams(
-                        annotation_id=self.application_window_info.annotation_id,
-                        remove_empty=True
-                    )),
+                    GetUITreeAction(
+                        params=GetUITreeParams(
+                            annotation_id=self.application_window_info.annotation_id,
+                            remove_empty=True,
+                        )
+                    ),
                     setter=lambda value: self._save_ui_tree_callback(
                         value,
-                        os.path.join(self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
-                    ))
+                        os.path.join(
+                            self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
+                        ),
+                    ),
                 )
 
         if configs.get("SAVE_FULL_SCREEN", False):
@@ -140,11 +144,11 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             self.photographer.capture_desktop_screen_screenshot(
                 all_screens=True, save_path=desktop_save_path
             )
-            
+
     def _save_ui_tree_callback(self, value, path):
         """
         Helper method to save UI tree data.
-        
+
         Args:
             value: The result returned from the action
             path: The path to the file where the UI tree data will be saved
@@ -152,7 +156,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         if value:
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w") as f:
-                json.dump(value, f, indent=4) 
+                json.dump(value, f, indent=4)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer

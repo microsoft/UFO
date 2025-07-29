@@ -122,7 +122,7 @@ Use the `CoreMCPClient` directly for more control:
 
 ```python
 from ufo.mcp.core_mcp_client import CoreMCPClient
-from ufo.cs.contracts import CaptureDesktopScreenshotAction
+from ufo.contracts.contracts import CaptureDesktopScreenshotAction
 
 # Initialize MCP client
 mcp_client = CoreMCPClient(host="localhost", port=8000)

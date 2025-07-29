@@ -24,7 +24,7 @@ if ufo_root not in sys.path:
     sys.path.insert(0, ufo_root)
 
 from ufo.cs.computer import Computer
-from ufo.cs.contracts import (
+from ufo.contracts.contracts import (
     MCPToolExecutionAction, MCPToolExecutionParams
 )
 

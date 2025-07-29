@@ -15,7 +15,7 @@ from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config import Config
 from ufo.module.context import Context, ContextNames
-from ufo.cs.contracts import (
+from ufo.contracts.contracts import (
     AppWindowControlInfo,
     CaptureAppWindowScreenshotFromWebcamAction,
     CaptureAppWindowScreenshotFromWebcamParams,
@@ -409,7 +409,10 @@ class HardwareAgentProcessor(AppAgentProcessor):
         """
         Execute action using MCP server.
         """
-        from ufo.cs.contracts import MCPToolExecutionAction, MCPToolExecutionParams
+        from ufo.contracts.contracts import (
+            MCPToolExecutionAction,
+            MCPToolExecutionParams,
+        )
 
         app_namespace = self.app_agent._get_app_namespace()
 

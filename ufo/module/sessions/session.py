@@ -16,7 +16,10 @@ from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.config import Config
-from ufo.cs.contracts import GetDesktopControlInfoAction, GetDesktopControlInfoParams
+from ufo.contracts.contracts import (
+    GetDesktopControlInfoAction,
+    GetDesktopControlInfoParams,
+)
 from ufo.module import interactor
 from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import ContextNames
@@ -605,15 +608,15 @@ class OpenAIOperatorSession(Session):
         :param id: The id of the session.
         :param request: The user request of the session, optional. If not provided, UFO will ask the user to input the request.
         """
-        
+
         super().__init__(task, should_evaluate, id, request)
 
         # Initialize application_window as None, will be set via action callback
         self.application_window = None
-        
+
         # Try to get session data manager and use action pattern
         session_data_manager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
-        
+
         if session_data_manager:
             # Use action/callback pattern for desktop control info
             desktop_control_action = GetDesktopControlInfoAction(
@@ -621,7 +624,7 @@ class OpenAIOperatorSession(Session):
             )
             session_data_manager.add_action(
                 desktop_control_action,
-                setter=lambda value: self._desktop_control_info_callback(value)
+                setter=lambda value: self._desktop_control_info_callback(value),
             )
         else:
             # Fallback to direct call if action pattern is not available
@@ -671,10 +674,10 @@ class OpenAIOperatorSession(Session):
         while not self.is_finished():
 
             round = self.create_new_round()
-            
+
             # Get session data manager from context
             session_data_manager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
-            
+
             if session_data_manager:
                 # Use action/callback pattern for desktop control info
                 desktop_control_action = GetDesktopControlInfoAction(
@@ -682,7 +685,7 @@ class OpenAIOperatorSession(Session):
                 )
                 session_data_manager.add_action(
                     desktop_control_action,
-                    setter=lambda value: self._desktop_control_info_callback(value)
+                    setter=lambda value: self._desktop_control_info_callback(value),
                 )
             else:
                 # Fallback to direct call if action pattern is not available
@@ -712,7 +715,7 @@ class OpenAIOperatorSession(Session):
         Args:
             value: The result returned from the action
         """
-        if value and hasattr(value, 'element_info'):
+        if value and hasattr(value, "element_info"):
             self.application_window = value
         elif value:
             # If we get a different type of response, try to extract the desktop info

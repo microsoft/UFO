@@ -3,7 +3,7 @@ from typing import Dict, List, Optional, Tuple
 import functools
 from PIL import Image, ImageDraw, ImageFont, ImageGrab
 
-from ufo.cs.contracts import AppWindowControlInfo, ControlInfo, WindowInfo
+from ufo.contracts.contracts import AppWindowControlInfo, ControlInfo, WindowInfo
 
 
 from ufo.config import Config
@@ -15,7 +15,6 @@ if configs is not None:
     DEFAULT_PNG_COMPRESS_LEVEL = int(configs.get("DEFAULT_PNG_COMPRESS_LEVEL", 0))
 else:
     DEFAULT_PNG_COMPRESS_LEVEL = 6
-
 
 
 def annotate_app_window_image(
@@ -33,21 +32,21 @@ def annotate_app_window_image(
     """
     if not image or not controls:
         return image
-    
+
     # Create a copy of the image to avoid modifying the original
     annotated_image = image.copy()
-    
+
     # Draw rectangles and labels for each control
     for i, control in enumerate(controls):
         if not control.rectangle:
             continue
-        
+
         # Get control rectangle coordinates
         rect = control.rectangle
-        
+
         # Calculate the coordinates for the rectangle on the image
         rect_coords = (rect.x, rect.y, rect.x + rect.width, rect.y + rect.height)
-        
+
         # Adjust coordinates to make them relative to the image
         rect_coords = (
             rect_coords[0] - app_window_info.rectangle.x,
@@ -55,18 +54,18 @@ def annotate_app_window_image(
             rect_coords[2] - app_window_info.rectangle.x,
             rect_coords[3] - app_window_info.rectangle.y,
         )
-        
+
         # Get the color for this control (cycle through colors if needed)
         color_idx = i % len(colors) if colors else 0
         color = colors[color_idx] if colors else (255, 0, 0)
-        
+
         # Draw rectangle around the control
         draw = ImageDraw.Draw(annotated_image)
         draw.rectangle(rect_coords, outline=color, width=3)
-        
+
         # Create a label for the control
         label_text = str(i + 1)
-        
+
         # Create and paste a button with the label
         button_img = get_button_img(
             label_text,
@@ -77,10 +76,10 @@ def annotate_app_window_image(
             border_color="#FF0000",
             button_color="#FFF68F",
         )
-        
+
         # Paste the button onto the image at the top-left corner of the control
         annotated_image.paste(button_img, (rect_coords[0], rect_coords[1]), button_img)
-    
+
     return annotated_image
 
 
@@ -142,42 +141,43 @@ def get_font(name: str, size: int):
     except:
         # Fallback to default font if the specified font is not available
         return ImageFont.load_default()
-    
+
+
 def concat_screenshots(
-        image1_path: str, image2_path: str, output_path: str
-    ) -> Image.Image:
-        """
-        Concatenate two images horizontally.
-        :param image1_path: The path of the first image.
-        :param image2_path: The path of the second image.
-        :param output_path: The path to save the concatenated image.
-        :return: The concatenated image.
-        """
-        # Open the images
-        if not os.path.exists(image1_path):
-            print_with_color(f"Waring: {image1_path} does not exist.", "yellow")
+    image1_path: str, image2_path: str, output_path: str
+) -> Image.Image:
+    """
+    Concatenate two images horizontally.
+    :param image1_path: The path of the first image.
+    :param image2_path: The path of the second image.
+    :param output_path: The path to save the concatenated image.
+    :return: The concatenated image.
+    """
+    # Open the images
+    if not os.path.exists(image1_path):
+        print_with_color(f"Waring: {image1_path} does not exist.", "yellow")
 
-            return Image.new("RGB", (0, 0))
+        return Image.new("RGB", (0, 0))
 
-        if not os.path.exists(image2_path):
-            print_with_color(f"Waring: {image2_path} does not exist.", "yellow")
+    if not os.path.exists(image2_path):
+        print_with_color(f"Waring: {image2_path} does not exist.", "yellow")
 
-            return Image.new("RGB", (0, 0))
+        return Image.new("RGB", (0, 0))
 
-        image1 = Image.open(image1_path)
-        image2 = Image.open(image2_path)
+    image1 = Image.open(image1_path)
+    image2 = Image.open(image2_path)
 
-        # Ensure both images have the same height
-        min_height = min(image1.height, image2.height)
-        image1 = image1.crop((0, 0, image1.width, min_height))
-        image2 = image2.crop((0, 0, image2.width, min_height))
+    # Ensure both images have the same height
+    min_height = min(image1.height, image2.height)
+    image1 = image1.crop((0, 0, image1.width, min_height))
+    image2 = image2.crop((0, 0, image2.width, min_height))
 
-        # Concatenate images horizontally
-        result = Image.new("RGB", (image1.width + image2.width, min_height))
-        result.paste(image1, (0, 0))
-        result.paste(image2, (image1.width, 0))
+    # Concatenate images horizontally
+    result = Image.new("RGB", (image1.width + image2.width, min_height))
+    result.paste(image1, (0, 0))
+    result.paste(image2, (image1.width, 0))
 
-        # Save the result
-        result.save(output_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
+    # Save the result
+    result.save(output_path, compress_level=DEFAULT_PNG_COMPRESS_LEVEL)
 
-        return result
+    return result

@@ -9,7 +9,7 @@ from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.cs.contracts import OperationCommand, OperationSequenceAction
+from ufo.contracts.contracts import OperationCommand, OperationSequenceAction
 
 configs = Config.get_instance().config_data
 
@@ -34,8 +34,8 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
         self.plan = self.string2list(self._response_json.get("Plan", ""))
         self._response_json["Plan"] = self.plan
 
-        self.app_agent.print_response(self._response_json, print_action=False) 
-        
+        self.app_agent.print_response(self._response_json, print_action=False)
+
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     def execute_action(self) -> None:
@@ -70,43 +70,52 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
         :return: True if MCP should be used
         """
         # Use MCP if any action in the sequence prefers MCP
-        return any(self.app_agent.should_use_mcp(action.function) for action in action_list)
+        return any(
+            self.app_agent.should_use_mcp(action.function) for action in action_list
+        )
 
     def _execute_mcp_action_sequence(self, action_list: List[OneStepAction]) -> None:
         """
         Execute an action sequence using MCP.
         :param action_list: List of actions to execute
         """
-        from ufo.cs.contracts import MCPToolExecutionAction, MCPToolExecutionParams
-        
+        from ufo.contracts.contracts import (
+            MCPToolExecutionAction,
+            MCPToolExecutionParams,
+        )
+
         utils.print_with_color("Executing action sequence via MCP", "green")
-        
+
         # For action sequences, we need to execute actions sequentially
         # and handle MCP/UI automation mixing
         for i, action in enumerate(action_list):
             if self.app_agent.should_use_mcp(action.function):
                 # Execute this action via MCP
                 app_namespace = self.app_agent._get_app_namespace()
-                
+
                 mcp_action = MCPToolExecutionAction(
                     params=MCPToolExecutionParams(
                         tool_name=action.function,
-                        tool_args={**action.args, 
-                                 "control_label": action.control_label,
-                                 "control_text": action.control_text},
-                        app_namespace=app_namespace
+                        tool_args={
+                            **action.args,
+                            "control_label": action.control_label,
+                            "control_text": action.control_text,
+                        },
+                        app_namespace=app_namespace,
                     )
                 )
-                
+
                 # Add action with callback to handle result
                 self.session_data_manager.add_action(
                     mcp_action,
-                    setter=lambda result, idx=i: self._handle_mcp_sequence_action_callback(result, idx)
+                    setter=lambda result, idx=i: self._handle_mcp_sequence_action_callback(
+                        result, idx
+                    ),
                 )
-                
+
                 utils.print_with_color(
-                    f"Action {i+1}/{len(action_list)}: {action.function} sent to MCP server", 
-                    "cyan"
+                    f"Action {i+1}/{len(action_list)}: {action.function} sent to MCP server",
+                    "cyan",
                 )
             else:
                 # Execute this action via UI automation
@@ -114,22 +123,24 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
                     command_id=action.function,
                     **{
                         action.function: {
-                        **action.args,
-                        "control_label": action.control_label,
-                        "control_text": action.control_text,
-                        "after_status": action.after_status,
+                            **action.args,
+                            "control_label": action.control_label,
+                            "control_text": action.control_text,
+                            "after_status": action.after_status,
                         }
-                    }
+                    },
                 )
-                
+
                 # For UI actions in sequence, we still use the session manager
-                self.session_data_manager.add_action(OperationSequenceAction(
-                    params=[command],
-                ))
-                
+                self.session_data_manager.add_action(
+                    OperationSequenceAction(
+                        params=[command],
+                    )
+                )
+
                 utils.print_with_color(
-                    f"Action {i+1}/{len(action_list)}: {action.function} sent to UI automation", 
-                    "cyan"
+                    f"Action {i+1}/{len(action_list)}: {action.function} sent to UI automation",
+                    "cyan",
                 )
 
     def _execute_ui_action_sequence(self, action_list: List[OneStepAction]) -> None:
@@ -138,27 +149,31 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
         :param action_list: List of actions to execute
         """
         utils.print_with_color("Executing action sequence via UI automation", "blue")
-        
+
         commands = [
             OperationCommand(
                 command_id=action.function,
                 **{
                     action.function: {
-                    **action.args,
-                    "control_label": action.control_label,
-                    "control_text": action.control_text,
-                    "after_status": action.after_status,
+                        **action.args,
+                        "control_label": action.control_label,
+                        "control_text": action.control_text,
+                        "after_status": action.after_status,
                     }
-                }
+                },
             )
             for action in action_list
         ]
 
-        self.session_data_manager.add_action(OperationSequenceAction(
-            params=commands,
-        ))
+        self.session_data_manager.add_action(
+            OperationSequenceAction(
+                params=commands,
+            )
+        )
 
-    def _handle_mcp_sequence_action_callback(self, result: Any, action_index: int) -> None:
+    def _handle_mcp_sequence_action_callback(
+        self, result: Any, action_index: int
+    ) -> None:
         """
         Callback to handle MCP tool execution result for sequence actions.
         :param result: The result from the MCP tool execution
@@ -169,25 +184,25 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
                 success = result.get("success", False)
                 if success:
                     utils.print_with_color(
-                        f"MCP sequence action {action_index+1} completed successfully: {result.get('tool_name', 'unknown')}", 
-                        "green"
+                        f"MCP sequence action {action_index+1} completed successfully: {result.get('tool_name', 'unknown')}",
+                        "green",
                     )
                 else:
                     error_msg = result.get("error", "Unknown error")
                     utils.print_with_color(
-                        f"MCP sequence action {action_index+1} failed: {error_msg}", 
-                        "red"
+                        f"MCP sequence action {action_index+1} failed: {error_msg}",
+                        "red",
                     )
                     # Could implement fallback to UI automation here if needed
             else:
                 utils.print_with_color(
-                    f"Received unexpected MCP sequence action {action_index+1} result type: {type(result)}", 
-                    "yellow"
+                    f"Received unexpected MCP sequence action {action_index+1} result type: {type(result)}",
+                    "yellow",
                 )
         except Exception as e:
             utils.print_with_color(
-                f"Error handling MCP sequence action {action_index+1} callback: {str(e)}", 
-                "red"
+                f"Error handling MCP sequence action {action_index+1} callback: {str(e)}",
+                "red",
             )
 
         # self.actions.execute_all(
