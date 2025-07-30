@@ -346,29 +346,14 @@ class BaseRound(ABC):
             save_path: Path to save the UI tree JSON file
         """
         value = value.result
-        if value and isinstance(value, dict):
-            try:
-                # Extract ui_tree from the response if it's nested
-                ui_tree_data = value.get("ui_tree", value)
-
-                # If ui_tree_data is still a string representation, parse it
-                if isinstance(ui_tree_data, str):
-                    import json
-
-                    try:
-                        ui_tree_data = json.loads(ui_tree_data)
-                    except json.JSONDecodeError:
-                        # If it's not valid JSON, treat it as direct dict
-                        pass
-
-                os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                with open(save_path, "w") as f:
-                    json.dump(ui_tree_data, f, indent=4)
-            except Exception as e:
-                utils.print_with_color(
-                    f"Warning: Failed to save UI tree: {e}",
-                    "yellow",
-                )
+        if not value or not isinstance(value, dict):
+            raise ValueError(
+                f"Expected dict, got {type(value)}. Cannot save UI tree to {save_path}"
+            )
+        
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        with open(save_path, "w") as f:
+            json.dump(value, f, indent=4)
 
     def capture_last_snapshot(self, sub_round_id: Optional[int] = None) -> None:
         """
@@ -1123,6 +1108,24 @@ class BaseSession(ABC):
                 app_agent = self._host_agent.get_active_appagent()
                 if app_agent is not None:
                     app_agent.Puppeteer.save_to_xml(xml_save_path)
+
+    def _ui_tree_callback(self, value: Result, save_path: str) -> None:
+        """
+        Callback method to save UI tree data from action.
+
+        Args:
+            value: The result returned from the action
+            save_path: Path to save the UI tree JSON file
+        """
+        value = value.result
+        if not value or not isinstance(value, dict):
+            raise ValueError(
+                f"Expected dict, got {type(value)}. Cannot save UI tree to {save_path}"
+            )
+        
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        with open(save_path, "w") as f:
+            json.dump(value, f, indent=4)
 
     @staticmethod
     def initialize_logger(

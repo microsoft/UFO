@@ -469,10 +469,14 @@ class AppAgentProcessor(BaseProcessor):
             path: The path to the file where the UI tree data will be saved
         """
         value = value.result
-        if value:
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, "w") as f:
-                json.dump(value, f, indent=4)
+        if not value or not isinstance(value, dict):
+            raise ValueError(
+                f"Expected dict, got {type(value)}. Cannot save UI tree to {path}"
+            )
+        
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as f:
+            json.dump(value, f, indent=4)
 
     def _capture_all_desktop_screenshot_action_callback(self, value: Result, path: str):
         """

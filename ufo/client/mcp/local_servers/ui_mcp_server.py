@@ -21,6 +21,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
 from ufo.automator.action_execution import ActionSequenceExecutor
 from ufo.automator.puppeteer import AppPuppeteer
+from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
@@ -753,5 +754,19 @@ def create_data_mcp_server() -> FastMCP:
 
         except Exception as e:
             raise ToolError(f"Failed to capture screenshot: {str(e)}")
+
+    @data_mcp.tool()
+    def get_ui_tree() -> Dict[str, Any]:
+        """
+        Get the UI tree for currently selected application window.
+        """
+        if not ui_state.selected_app_window:
+            return {"error": "No window selected"}
+
+        try:
+            window = ui_state.selected_app_window
+            return ui_tree.UITree(window).ui_tree
+        except Exception as e:
+            return {"error": f"Error getting UI tree: {str(e)}"}
 
     return data_mcp
