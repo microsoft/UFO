@@ -2,13 +2,19 @@
 # Licensed under the MIT License.
 
 import argparse
+import logging
 from datetime import datetime
 
-from ufo.config import get_config
+from ufo.client.computer import CommandRouter, ComputerManager
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
-from ufo.client.computer import ComputerManager, CommandRouter
-from ufo.module.sessions.session import SessionFactory
+from ufo.config import get_config
 from ufo.module.context import ContextNames
+from ufo.module.sessions.session import SessionFactory
+
+logging.basicConfig(
+    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+)
+logger = logging.getLogger(__name__)
 
 configs = get_config()
 

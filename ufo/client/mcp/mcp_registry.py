@@ -6,8 +6,6 @@ Provides a centralized registry for MCP server instances and factories.
 from typing import Callable, Dict
 from fastmcp import FastMCP
 
-import ufo.client.mcp.local_severs
-
 
 class MCPRegistry:
     """

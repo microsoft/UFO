@@ -307,10 +307,7 @@ class AppAgentProcessor(BaseProcessor):
         self.session_data_manager.add_action(
             command=Command(
                 tool_name="get_app_window_controls",
-                parameters={
-                    # "annotation_id": self.application_window_info.annotation_id,
-                    # "field_list": ControlInfoRecorder.recording_fields,
-                },
+                parameters={},
                 tool_type="data_collection",
             ),
             setter=self._get_app_window_control_info_action_callback,
@@ -346,11 +343,10 @@ class AppAgentProcessor(BaseProcessor):
         if configs.get("SAVE_UI_TREE", False):
             if self.application_window_info is not None:
                 self.session_data_manager.add_action(
-                    GetUITreeAction(
-                        params=GetUITreeParams(
-                            annotation_id=self.application_window_info.annotation_id,
-                            remove_empty=True,
-                        )
+                    command=Command(
+                        tool_name="get_ui_tree",
+                        parameters={},
+                        tool_type="data_collection",
                     ),
                     setter=lambda value: self._save_ui_tree_callback(
                         value,
@@ -464,7 +460,7 @@ class AppAgentProcessor(BaseProcessor):
             with open(annotated_screenshot_save_path, "wb") as f:
                 annotated_image.save(f, format="PNG")
 
-    def _save_ui_tree_callback(self, value, path):
+    def _save_ui_tree_callback(self, value: Result, path: str):
         """
         Helper method to save UI tree data.
 
@@ -472,6 +468,7 @@ class AppAgentProcessor(BaseProcessor):
             value: The result returned from the action
             path: The path to the file where the UI tree data will be saved
         """
+        value = value.result
         if value:
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w") as f:

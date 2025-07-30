@@ -337,7 +337,7 @@ class BaseRound(ABC):
                     "yellow",
                 )
 
-    def _ui_tree_callback(self, value, save_path: str) -> None:
+    def _ui_tree_callback(self, value: Result, save_path: str) -> None:
         """
         Callback method to save UI tree data from action.
 
@@ -345,6 +345,7 @@ class BaseRound(ABC):
             value: The result returned from the action
             save_path: Path to save the UI tree JSON file
         """
+        value = value.result
         if value and isinstance(value, dict):
             try:
                 # Extract ui_tree from the response if it's nested
@@ -438,18 +439,16 @@ class BaseRound(ABC):
                     )
                     ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
 
-                    # ui_tree_action = GetUITreeAction(
-                    #     params=GetUITreeParams(
-                    #         annotation_id=application_window_info.annotation_id,
-                    #         remove_empty=True,
-                    #     )
-                    # )
-                    # session_data_manager.add_action(
-                    #     ui_tree_action,
-                    #     setter=lambda value: self._ui_tree_callback(
-                    #         value, ui_tree_save_path
-                    #     ),
-                    # )
+                    session_data_manager.add_action(
+                        command=Command(
+                            tool_name="get_ui_tree",
+                            parameters={},
+                            tool_type="data_collection",
+                        ),
+                        setter=lambda value: self._ui_tree_callback(
+                            value, ui_tree_save_path
+                        ),
+                    )
                 else:
                     # Fallback to direct call if action pattern is not available
                     step_ui_tree = ui_tree.UITree(self.application_window)
@@ -1075,18 +1074,16 @@ class BaseSession(ABC):
                     ui_tree_file_name = "ui_tree_final.json"
                     ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
 
-                    # ui_tree_action = GetUITreeAction(
-                    #     params=GetUITreeParams(
-                    #         annotation_id=application_window_info.annotation_id,
-                    #         remove_empty=True,
-                    #     )
-                    # )
-                    # session_data_manager.add_action(
-                    #     ui_tree_action,
-                    #     setter=lambda value: self._ui_tree_callback(
-                    #         value, ui_tree_save_path
-                    #     ),
-                    # )
+                    session_data_manager.add_action(
+                        command=Command(
+                            tool_name="get_ui_tree",
+                            parameters={},
+                            tool_type="data_collection",
+                        ),
+                        setter=lambda value: self._ui_tree_callback(
+                            value, ui_tree_save_path
+                        ),
+                    )
                 else:
                     # Fallback to direct call if action pattern is not available
                     step_ui_tree = ui_tree.UITree(self.application_window)

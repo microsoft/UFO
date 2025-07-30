@@ -507,12 +507,6 @@ class AppAgent(BasicAgent):
         """
         Load MCP context information for the current application.
         """
-        app_namespace = self._get_app_namespace()
-
-        utils.print_with_color(
-            f"Loading MCP context for application namespace: {app_namespace}",
-            "magenta",
-        )
         session_data_manager.add_action(
             command=Command(
                 tool_name="list_tools",

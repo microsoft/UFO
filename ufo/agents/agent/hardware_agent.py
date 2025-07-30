@@ -7,7 +7,6 @@ from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
 from typing import Generator
 
-from ufo.contracts.contracts import MCPGetInstructionsAction, MCPGetInstructionsParams
 from ufo.llm import AgentType
 
 from ufo.agents.processors.hardware_agent_processor import HardwareAgentProcessor

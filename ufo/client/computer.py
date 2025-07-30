@@ -12,6 +12,7 @@ from mcp.types import TextContent
 
 from ufo.client.mcp.mcp_server_manager import BaseMCPServer, MCPServerManager
 from ufo.contracts.contracts import Command, Result, MCPToolCall
+import ufo.client.mcp.local_servers
 
 
 class Computer:
