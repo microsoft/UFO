@@ -2,14 +2,11 @@
 # Licensed under the MIT License.
 
 import json
-import os
 from dataclasses import asdict, dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional
 
 from ufo import utils
-from ufo.utils import collector
-from PIL import Image
-from ufo.agents.processors.action_contracts import BaseControlLog, OneStepAction
+from ufo.agents.processors.action_contracts import BaseControlLog
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
@@ -188,12 +185,12 @@ class HardwareAgentProcessor(AppAgentProcessor):
             }
         )
 
-        self.session_data_manager.add_action(
-            CaptureAppWindowScreenshotFromWebcamAction(
-                params=CaptureAppWindowScreenshotFromWebcamParams(annotation_id=None)
-            ),
-            setter=self._get_app_window_screenshot_action_callback,
-        )
+        # self.session_data_manager.add_action(
+        #     CaptureAppWindowScreenshotFromWebcamAction(
+        #         params=CaptureAppWindowScreenshotFromWebcamParams(annotation_id=None)
+        #     ),
+        #     setter=self._get_app_window_screenshot_action_callback,
+        # )
 
         # removed control_recorder as it is not used in the code
         # moved annotated image generation to process_collected_info
