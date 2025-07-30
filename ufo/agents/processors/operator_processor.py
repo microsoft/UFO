@@ -16,7 +16,7 @@ from ufo.agents.processors.app_agent_processor import (
 )
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.contracts.contracts import GetUITreeAction, GetUITreeParams
+from ufo.contracts.contracts import Command, Result
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
@@ -116,11 +116,10 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         if configs.get("SAVE_UI_TREE", False):
             if self.application_window_info is not None:
                 self.session_data_manager.add_action(
-                    GetUITreeAction(
-                        params=GetUITreeParams(
-                            annotation_id=self.application_window_info.annotation_id,
-                            remove_empty=True,
-                        )
+                    command=Command(
+                        tool_name="get_ui_tree",
+                        parameters={},
+                        tool_type="data_collection",
                     ),
                     setter=lambda value: self._save_ui_tree_callback(
                         value,
@@ -145,7 +144,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
                 all_screens=True, save_path=desktop_save_path
             )
 
-    def _save_ui_tree_callback(self, value, path):
+    def _save_ui_tree_callback(self, value: Result, path: str):
         """
         Helper method to save UI tree data.
 
@@ -153,6 +152,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             value: The result returned from the action
             path: The path to the file where the UI tree data will be saved
         """
+        value = value.result
         if value:
             os.makedirs(os.path.dirname(path), exist_ok=True)
             with open(path, "w") as f:

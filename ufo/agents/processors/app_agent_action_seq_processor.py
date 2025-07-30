@@ -9,7 +9,6 @@ from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.contracts.contracts import OperationCommand, OperationSequenceAction
 
 configs = Config.get_instance().config_data
 
