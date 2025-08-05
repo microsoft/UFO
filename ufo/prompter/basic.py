@@ -113,8 +113,6 @@ class BasicPrompter(ABC):
         :return: A formatted string representing the tool information.
         """
         name = tool_info["tool_name"]
-        ns = tool_info.get("namespace", "")
-        ttype = tool_info.get("tool_type", "")
         desc = tool_info.get("description", "").strip()
         in_props = tool_info["input_schema"]["properties"]
         params = "\n".join(
@@ -130,9 +128,6 @@ class BasicPrompter(ABC):
         )
         return f"""\
     Tool name: {name}
-    Namespace: {ns}
-    Type: {ttype}
-
     Description: {desc}
 
     Parameters:
