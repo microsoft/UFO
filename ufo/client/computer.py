@@ -275,7 +275,7 @@ class Computer:
                         tool_type=tool_type,
                         description=meta_tool_func.__doc__ or "Meta tool",
                         input_schema=meta_tool_func.__annotations__,
-                        output_schema=None,
+                        output_schema=meta_tool_func.__annotations__,
                         mcp_server=mcp_server,
                     )
 
