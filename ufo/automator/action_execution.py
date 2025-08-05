@@ -53,8 +53,8 @@ class OneStepActionExecutor:
     @staticmethod
     def _get_control_log(
         action: OneStepAction,
-        control_selected: Optional[UIAWrapper],
-        application_window: UIAWrapper,
+        control_selected: Optional[UIAWrapper] = None,
+        application_window: Optional[UIAWrapper] = None,
     ) -> BaseControlLog:
         """
         Get the control log data for the selected control.
@@ -93,7 +93,7 @@ class OneStepActionExecutor:
         action: OneStepAction,
         puppeteer: AppPuppeteer,
         control_dict: Dict[str, UIAWrapper],
-        application_window: UIAWrapper,
+        application_window: Optional[UIAWrapper] = None,
     ) -> ActionExecutionLog:
         """
         Execute the action flow.
@@ -103,7 +103,7 @@ class OneStepActionExecutor:
         :param application_window: The application window where the control is located.
         :return: The action execution log.
         """
-        control_selected: UIAWrapper = control_dict.get(action.control_label, None)
+        control_selected = control_dict.get(action.control_label, None)
 
         # If the control is selected, but not available, return an error.
         if control_selected is not None and not OneStepActionExecutor._control_validation(
@@ -119,9 +119,10 @@ class OneStepActionExecutor:
             return action.results
 
         # Create the control receiver.
-        puppeteer.receiver_manager.create_ui_control_receiver(
-            control_selected, application_window
-        )
+        if application_window and control_selected:
+            puppeteer.receiver_manager.create_ui_control_receiver(
+                control_selected, application_window
+            )
 
         if action.function:
 
@@ -190,7 +191,7 @@ class ActionSequenceExecutor:
         action_sequence: ActionSequence,
         puppeteer: AppPuppeteer,
         control_dict: Dict[str, UIAWrapper],
-        application_window: UIAWrapper,
+        application_window: Optional[UIAWrapper] = None,
     ) -> None:
         """
         Execute all the actions.

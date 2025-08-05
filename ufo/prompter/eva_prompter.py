@@ -298,7 +298,7 @@ class EvaluationAgentPrompter(BasicPrompter):
                 )
                 example_list.append(example)
 
-        return self.retrived_documents_prompt_helper(header, separator, example_list)
+        return self.retrieved_documents_prompt_helper(header, separator, example_list)
 
     def api_prompt_helper(self, verbose: int = 1) -> str:
         """
@@ -345,7 +345,7 @@ class EvaluationAgentPrompter(BasicPrompter):
 
                 api_list.append(api_text)
 
-        api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
+        api_prompt = self.retrieved_documents_prompt_helper("", "", api_list)
 
         return api_prompt
 

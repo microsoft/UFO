@@ -217,7 +217,7 @@ def create_app_action_mcp_server() -> FastMCP:
     # Get singleton UI state instance
     ui_state = UIServerState()
 
-    def _execute_action_sequence(actions: List[OneStepAction]) -> List:
+    def _execute_action_sequence(actions: List[OneStepAction]) -> List[Dict[str, Any]]:
         """
         Execute a sequence of UI actions using direct AppPuppeteer interaction.
         :param actions: List of OneStepAction objects to execute.
@@ -241,6 +241,14 @@ def create_app_action_mcp_server() -> FastMCP:
         )
 
         return action_sequence.get_results()
+    
+    def _execute_action(action: OneStepAction) -> Dict[str, Any]:
+        """
+        Execute a single UI action.
+        :param action: OneStepAction object to execute.
+        :return: Execution result as a dictionary.
+        """
+        return _execute_action_sequence([action])[0]
 
     action_mcp = FastMCP("UFO UI AppAgent Action MCP Server")
 
@@ -258,11 +266,9 @@ def create_app_action_mcp_server() -> FastMCP:
         control_text: Annotated[
             str, Field(description="Text content of the control")
         ] = "",
-    ) -> List:
+    ) -> Annotated[Dict, Field(description="None")]:
         """
         Click on a UI control element using the input method.
-        :example: click_input(button="left", double=False), click_input(button="right", double=True, pressed="CONTROL")
-        :return: None
         """
         action = OneStepAction(
             function="click_input",
@@ -272,7 +278,7 @@ def create_app_action_mcp_server() -> FastMCP:
             after_status="CONTINUE",
         )
 
-        return _execute_action_sequence([action])
+        return _execute_action(action)
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def click_on_coordinates(
@@ -291,10 +297,9 @@ def create_app_action_mcp_server() -> FastMCP:
         control_text: Annotated[
             str, Field(description="Text content of the control")
         ] = "",
-    ) -> List:
+    ) -> Annotated[Dict, Field(description="None")]:
         """
         Click on specific coordinates within the application window.
-        :return: List of execution results.
         """
         action = OneStepAction(
             function="click_on_coordinates",
@@ -304,7 +309,7 @@ def create_app_action_mcp_server() -> FastMCP:
             after_status="CONTINUE",
         )
 
-        return _execute_action_sequence([action])
+        return _execute_action(action)
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def drag_on_coordinates(
@@ -350,10 +355,9 @@ def create_app_action_mcp_server() -> FastMCP:
         control_text: Annotated[
             str, Field(description="Text content of the control")
         ] = "",
-    ) -> List:
+    ) -> Annotated[Dict, Field(description="None")]:
         """
         Drag from one coordinate to another within the application window.
-        :return: List of execution results.
         """
         action = OneStepAction(
             function="drag_on_coordinates",
@@ -371,7 +375,7 @@ def create_app_action_mcp_server() -> FastMCP:
             after_status="CONTINUE",
         )
 
-        return _execute_action_sequence([action])
+        return _execute_action(action)
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def set_edit_text(
@@ -386,10 +390,9 @@ def create_app_action_mcp_server() -> FastMCP:
         control_text: Annotated[
             str, Field(description="Text content of the control")
         ] = "",
-    ) -> List:
+    ) -> Annotated[Dict, Field(description="None")]:
         """
         Set text in an edit control (text box, input field, etc.).
-        :return: List of execution results.
         """
         action = OneStepAction(
             function="set_edit_text",
@@ -399,7 +402,7 @@ def create_app_action_mcp_server() -> FastMCP:
             after_status="CONTINUE",
         )
 
-        return _execute_action_sequence([action])
+        return _execute_action(action)
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def keyboard_input(
@@ -416,10 +419,9 @@ def create_app_action_mcp_server() -> FastMCP:
         control_text: Annotated[
             str, Field(description="Text content of the control")
         ] = "",
-    ) -> List:
+    ) -> Annotated[Dict, Field(description="None")]:
         """
         Send keyboard input to a control or the focused application.
-        :return: List of execution results.
         """
         action = OneStepAction(
             function="keyboard_input",
@@ -429,7 +431,7 @@ def create_app_action_mcp_server() -> FastMCP:
             after_status="CONTINUE",
         )
 
-        return _execute_action_sequence([action])
+        return _execute_action(action)
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
     def wheel_mouse_input(
@@ -443,10 +445,9 @@ def create_app_action_mcp_server() -> FastMCP:
         control_text: Annotated[
             str, Field(description="Text content of the control")
         ] = "",
-    ) -> List:
+    ) -> Annotated[Dict, Field(description="None")]:
         """
         Send mouse wheel input to scroll a control.
-        :return: List of execution results.
         """
         action = OneStepAction(
             function="wheel_mouse_input",
@@ -456,14 +457,14 @@ def create_app_action_mcp_server() -> FastMCP:
             after_status="CONTINUE",
         )
 
-        return _execute_action_sequence([action])
+        return _execute_action(action)
 
     # @action_mcp.tool()
     # def summary(
     #     text: str,
     #     control_label: str = "",
     #     control_text: str = "",
-    # ) -> List:
+    # ) -> Dict:
     #     """
     #     Provide a visual summary or description of a control element.
     #     :param text: The summary text to provide.
@@ -486,7 +487,7 @@ def create_app_action_mcp_server() -> FastMCP:
     #     control_labels: List[str],
     #     control_label: str = "",
     #     control_text: str = "",
-    # ) -> List:
+    # ) -> Dict:
     #     """
     #     Annotate or highlight specific controls on the screen.
     #     :param control_labels: List of control labels to annotate.
@@ -503,25 +504,6 @@ def create_app_action_mcp_server() -> FastMCP:
     #     )
 
     #     return _execute_action_sequence([action])
-
-    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
-    def no_action(
-        control_label: str = "",
-        control_text: str = "",
-    ) -> List[Dict]:
-        """
-        Perform no action (useful for testing or as a placeholder).
-        :return: List of execution results.
-        """
-        action = OneStepAction(
-            function="no_action",
-            args={},
-            control_label=control_label,
-            control_text=control_text,
-            after_status="CONTINUE",
-        )
-
-        return _execute_action_sequence([action])
 
     return action_mcp
 
@@ -588,8 +570,6 @@ def create_data_mcp_server() -> FastMCP:
     def get_app_window_controls() -> Dict[str, Any]:
         """
         Get information about controls in the currently selected window.
-        Uses the same comprehensive control detection logic as computer.py.
-        Returns data in the same format as _handle_get_app_window_control_info but using plain dictionaries.
         :return: Dictionary containing window info and control information in AppWindowControlInfo format.
         """
         if not ui_state.selected_app_window:

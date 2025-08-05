@@ -60,7 +60,7 @@ class FilterPrompter(BasicPrompter):
 
                 api_list.append(api_text)
 
-            api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
+            api_prompt = self.retrieved_documents_prompt_helper("", "", api_list)
         else:
             api_list = [
                 "- The action type are limited to {actions}.".format(
@@ -76,7 +76,7 @@ class FilterPrompter(BasicPrompter):
                 )
                 api_list.append(api_text)
 
-            api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
+            api_prompt = self.retrieved_documents_prompt_helper("", "", api_list)
 
         return api_prompt
 
@@ -157,4 +157,4 @@ class FilterPrompter(BasicPrompter):
 
         example_list += [json.dumps(example) for example in additional_examples]
 
-        return self.retrived_documents_prompt_helper(header, separator, example_list)
+        return self.retrieved_documents_prompt_helper(header, separator, example_list)

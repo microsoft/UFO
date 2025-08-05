@@ -98,9 +98,7 @@ class AppAgent(BasicAgent):
         :param app_root_name: The root name of the app.
         :return: The prompter instance.
         """
-        return AppAgentPrompter(
-            is_visual, main_prompt, example_prompt, api_prompt, app_root_name
-        )
+        return AppAgentPrompter(is_visual, main_prompt, example_prompt)
 
     def message_constructor(
         self,
@@ -271,7 +269,7 @@ class AppAgent(BasicAgent):
 
             format_string = "[Similar Requests]: {question}\nStep: {answer}\n"
 
-            offline_docs_prompt = self.prompter.retrived_documents_prompt_helper(
+            offline_docs_prompt = self.prompter.retrieved_documents_prompt_helper(
                 "[Help Documents]",
                 "",
                 [
@@ -290,7 +288,7 @@ class AppAgent(BasicAgent):
             online_search_docs = self.online_doc_retriever.retrieve(
                 request, online_top_k, filter=None
             )
-            online_docs_prompt = self.prompter.retrived_documents_prompt_helper(
+            online_docs_prompt = self.prompter.retrieved_documents_prompt_helper(
                 "Online Search Results",
                 "Search Result",
                 [doc.page_content for doc in online_search_docs],
@@ -525,8 +523,10 @@ class AppAgent(BasicAgent):
         """
         if not isinstance(result, Result) or not isinstance(result.result, List):
             raise ValueError("Invalid result format received from UFO client.")
-        for tool in result.result:
-            tool = MCPToolInfo(**tool)
+
+        self.prompter.create_api_prompt_template(
+            tools=[MCPToolInfo(**tool) for tool in result.result]
+        )
 
     @property
     def default_state(self) -> ContinueAppAgentState:
