@@ -238,9 +238,14 @@ class Computer:
                         namespace=namespace,
                         tool_type=tool_type,
                         description=tool.description,
-                        tool_schema=(
+                        input_schema=(
                             tool.inputSchema
                             if hasattr(tool, "inputSchema") and tool.inputSchema
+                            else {}
+                        ),
+                        output_schema=(
+                            tool.outputSchema
+                            if hasattr(tool, "outputSchema") and tool.outputSchema
                             else {}
                         ),
                         mcp_server=mcp_server,
@@ -269,7 +274,8 @@ class Computer:
                         namespace=namespace,
                         tool_type=tool_type,
                         description=meta_tool_func.__doc__ or "Meta tool",
-                        tool_schema=meta_tool_func.__annotations__,
+                        input_schema=meta_tool_func.__annotations__,
+                        output_schema=meta_tool_func.__annotations__,
                         mcp_server=mcp_server,
                     )
 
@@ -281,7 +287,8 @@ class Computer:
         namespace: str,
         tool_type: str,
         description: str,
-        tool_schema: Dict[str, Any],
+        input_schema: Optional[Dict[str, Any]],
+        output_schema: Optional[Dict[str, Any]],
         mcp_server: BaseMCPServer,
         meta: Optional[Dict[str, Any]] = None,
         annotations: Optional[Dict[str, Any]] = None,
@@ -294,7 +301,8 @@ class Computer:
         :param namespace: The namespace of the tool.
         :param tool_type: The type of the tool (e.g., "action", "
         :param description: The description of the tool.
-        :param tool_schema: The tool_schema for the tool.
+        :param input_schema: Optional input schema for the tool.
+        :param output_schema: Optional output schema for the tool.
         :param mcp_server: The MCP server where the tool is registered.
         """
         if tool_key in self._tools_registry:
@@ -307,7 +315,8 @@ class Computer:
             description=description,
             namespace=namespace,
             tool_type=tool_type,
-            tool_schema=tool_schema,
+            input_schema=input_schema,
+            output_schema=output_schema,
             mcp_server=mcp_server,
             meta=meta,
             annotations=annotations,

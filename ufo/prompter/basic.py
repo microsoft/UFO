@@ -3,7 +3,7 @@
 
 import os
 from abc import ABC, abstractmethod
-from typing import Dict, List
+from typing import Any, Dict, List
 
 import yaml
 
@@ -104,6 +104,51 @@ class BasicPrompter(ABC):
             prompt += document
             prompt += "\n\n"
         return prompt
+
+    @staticmethod
+    def tool_to_llm_prompt(tool_info: Dict[str, Any]) -> str:
+        """
+        Convert tool information to a formatted string for LLM.
+        :param tool_info: The tool information dictionary.
+        :return: A formatted string representing the tool information.
+        """
+        name = tool_info["tool_name"]
+        desc = tool_info.get("description", "").strip()
+        in_props = tool_info["input_schema"]["properties"]
+        params = "\n".join(
+            f"- {k} ({v.get('type', 'unknown')}, "
+            f"{'optional' if 'default' in v else 'required'}): "
+            f"{v.get('description', '')} "
+            f"Default: {v.get('default', 'N/A')}"
+            for k, v in in_props.items()
+        )
+        output_desc = tool_info["output_schema"].get("description", "")
+        example_args = ", ".join(
+            f"{k}={repr(v.get('default', ''))}" for k, v in in_props.items()
+        )
+        return f"""\
+    Tool name: {name}
+    Description: {desc}
+
+    Parameters:
+    {params}
+
+    Returns: {output_desc}
+
+    Example usage:
+    {name}({example_args})
+    """
+
+    @staticmethod
+    def tools_to_llm_prompt(tools: List[Dict[str, Any]]) -> str:
+        """
+        Convert a list of tool information to a formatted string for LLM.
+        :param tools: A list of tool information dictionaries.
+        :return: A formatted string representing all tools.
+        """
+        return "\n\n---\n\n".join(
+            BasicPrompter.tool_to_llm_prompt(tool) for tool in tools
+        )
 
     @abstractmethod
     def system_prompt_construction(self) -> str:

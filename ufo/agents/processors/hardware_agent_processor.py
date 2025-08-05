@@ -11,7 +11,7 @@ from ufo.agents.processors.basic import BaseProcessor
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.config import Config
-from ufo.module.context import Context, ContextNames
+from ufo.module.context import Context
 from ufo.contracts.contracts import (
     AppWindowControlInfo,
 )

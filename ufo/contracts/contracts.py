@@ -69,7 +69,8 @@ class MCPToolInfo(BaseModel):
     namespace: str
     tool_type: str
     description: Optional[str] = None
-    tool_schema: Optional[Dict[str, Any]] = None
+    input_schema: Optional[Dict[str, Any]] = None
+    output_schema: Optional[Dict[str, Any]] = None
     meta: Optional[Dict[str, Any]] = None
     annotations: Optional[Dict[str, Any]] = None
 
@@ -85,7 +86,8 @@ class MCPToolCall(BaseModel):
     namespace: str  # Namespace of the tool, same as the MCP server namespace
     tool_type: str  # Type of the tool (e.g., "action", "data_collection")
     description: str  # Description of the tool
-    tool_schema: Optional[Dict[str, Any]] = None  # Schema for the tool, if any
+    input_schema: Optional[Dict[str, Any]] = None  # Input schema for the tool, if any
+    output_schema: Optional[Dict[str, Any]] = None  # Output schema for the tool, if any
     parameters: Optional[Dict[str, Any]] = None  # Parameters for the tool, if any
     mcp_server: BaseMCPServer  # The BaseMCPServer instance where the tool is registered
     meta: Optional[Dict[str, Any]] = None  # Metadata about the tool, if any
@@ -106,7 +108,8 @@ class MCPToolCall(BaseModel):
             namespace=self.namespace,
             tool_type=self.tool_type,
             description=self.description,
-            tool_schema=self.tool_schema,
+            input_schema=self.input_schema,
+            output_schema=self.output_schema,
             meta=self.meta,
             annotations=self.annotations,
         )

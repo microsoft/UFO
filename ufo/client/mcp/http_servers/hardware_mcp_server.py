@@ -22,7 +22,8 @@ if ufo_root not in sys.path:
 Mock MCP server for testing hardware control tools.
 This server provides dummy implementations for various hardware control tools.
 """
-from typing import Dict, Any, List, Tuple, Optional
+from typing import Dict, Any, List, Tuple, Optional, Annotated
+from pydantic import Field
 from fastmcp import FastMCP
 
 
@@ -289,8 +290,12 @@ def create_hardware_mcp_server(host: str = "", port: int = 8006) -> None:
         }
 
     @mcp.tool()
-    async def robot_arm_connect(ctx: Optional[Any] = None) -> Dict[str, Any]:
-        """Connect to the Robot Arm (mock)."""
+    async def robot_arm_connect(
+        ctx: Annotated[str, Field(description="Text content of the control")] = None,
+    ) -> Annotated[Dict[str, Any], Field(description="Response from the control")]:
+        """Connect to the Robot Arm (mock).
+        :param ctx: Optional context for the control.
+        """
         return {"success": True, "message": "Connected to Robot Arm (mock)"}
 
     @mcp.tool()
