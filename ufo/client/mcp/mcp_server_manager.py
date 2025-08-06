@@ -128,7 +128,7 @@ class LocalMCPServer(BaseMCPServer):
 
     def reset(self) -> None:
         """
-        Reset the local MCP server. This is a placeholder as local servers are typically stateless.
+        Reset the local MCP server.
         """
         pass
 
