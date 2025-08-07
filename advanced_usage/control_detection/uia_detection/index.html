@@ -1,0 +1,1534 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../../img/favicon.ico" />
+    <title>UIA Detection - UFO Documentation</title>
+    <link rel="stylesheet" href="../../../css/theme.css" />
+    <link rel="stylesheet" href="../../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "UIA Detection";
+        var mkdocs_page_input_path = "advanced_usage/control_detection/uia_detection.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../../.." class="icon icon-home"> UFO Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Basic Modules</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../modules/session/">Session</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../modules/round/">Round</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../modules/context/">Context</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configurations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../configurations/user_configuration/">User Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../configurations/developer_configuration/">Developer Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../configurations/pricing_configuration/">Model Pricing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Supported Models</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../supported_models/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../supported_models/openai/">OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../supported_models/azure_openai/">Azure OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../supported_models/operator/">OpenAI CUA (Operator)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../supported_models/gemini/">Gemini</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../supported_models/claude/">Claude</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../supported_models/qwen/">Qwen</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../supported_models/deepseek/">DeepSeek</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../supported_models/ollama/">Ollama</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../supported_models/custom_model/">Custom Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agents</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../agents/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Design</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../../agents/design/memory/">Memory</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../agents/design/state/">State</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../agents/design/prompter/">Prompter</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../../agents/design/processor/">Processor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../agents/host_agent/">HostAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../agents/app_agent/">AppAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../agents/follower_agent/">FollowerAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../agents/evaluation_agent/">EvaluationAgent</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompts</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../prompts/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../prompts/basic_template/">Basic Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../prompts/examples_prompts/">Examples Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../prompts/api_prompts/">API Prompts</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Puppeteer</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../automator/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../automator/ui_automator/">GUI Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../automator/wincom_automator/">API Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../automator/web_automator/">Web Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../automator/bash_automator/">Bash Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../automator/ai_tool_automator/">AI Tool</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Logs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../logs/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../logs/request_logs/">Request Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../logs/step_logs/">Step Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../logs/evaluation_logs/">Evaluation Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../logs/screenshots_logs/">Screenshots</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../logs/ui_tree_logs/">UI Tree</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Advanced Usage</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" >Continuous Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../reinforce_appagent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../reinforce_appagent/learning_from_help_document/">Learning from Help Document</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../reinforce_appagent/learning_from_bing_search/">Learning from Bing Search</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../reinforce_appagent/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../reinforce_appagent/learning_from_demonstration/">Learning from User Demonstration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../follower_mode/">Follower Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../batch_mode/">Batch Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../multi_action/">Speculative Multi-Action Execution</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../operator_as_app_agent/">Operator-as-a-AppAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Control Filtering</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../control_filtering/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../control_filtering/text_filtering/">Text Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../control_filtering/semantic_filtering/">Semantic Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../control_filtering/icon_filtering/">Icon Filtering</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" >Control Detection</a>
+    <ul class="current">
+                <li class="toctree-l2"><a class="reference internal" href="../overview/">Overview</a>
+                </li>
+                <li class="toctree-l2 current"><a class="reference internal current" href="#">UIA Detection</a>
+    <ul class="current">
+    <li class="toctree-l3"><a class="reference internal" href="#configuration">Configuration</a>
+    </li>
+    </ul>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../customization/">Customization</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Creating Your AppAgent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../creating_app_agent/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../creating_app_agent/help_document_provision/">Help Document Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../creating_app_agent/warpping_app_native_api/">Warpping App-Native API</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Benchmark</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../benchmark/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../benchmark/osworld/">OSWorld (Windows)</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Dataflow</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../dataflow/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../dataflow/instantiation/">Instantiation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../dataflow/execution/">Execution</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../dataflow/windows_app_env/">Windows App Environment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../dataflow/result/">Result</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../..">UFO Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Advanced Usage</li>
+          <li class="breadcrumb-item">Control Detection</li>
+      <li class="breadcrumb-item active">UIA Detection</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="uia-control-detection">UIA Control Detection</h1>
+<p>UIA control detection is a method to detect standard controls in the application using the UI Automation (UIA) framework. It provides a set of APIs to access and manipulate the UI elements in Windows applications. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The UIA control detection may fail to detect non-standard controls or custom controls in the application.</p>
+</div>
+<h2 id="configuration">Configuration</h2>
+<p>To activate the icon control filtering, you need to set <code>CONTROL_BACKEND</code> to <code>["uia"]</code> in the <code>config_dev.yaml</code> file.</p>
+<pre><code class="language-yaml">CONTROL_BACKEND: [&quot;uia&quot;]
+</code></pre>
+<h1 id="reference">Reference</h1>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="automator.ui_control.inspector.ControlInspectorFacade"></a>
+    <div class="doc doc-contents first">
+
+
+        <p>The singleton facade class for control inspector.</p>
+
+        <p>Initialize the control inspector.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>backend</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;uia&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The backend to use.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+                  <details class="quote">
+                    <summary>Source code in <code>automator/ui_control/inspector.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;uia&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize the control inspector.</span>
+<span class="sd">    :param backend: The backend to use.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="automator.ui_control.inspector.ControlInspectorFacade.desktop" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">desktop</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get all the desktop windows.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="pywinauto.controls.uiawrapper.UIAWrapper">UIAWrapper</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The uia wrapper of the desktop.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="automator.ui_control.inspector.ControlInspectorFacade.__new__" class="doc doc-heading">
+            <code class="highlight language-python"><span class="fm">__new__</span><span class="p">(</span><span class="n">backend</span><span class="o">=</span><span class="s1">&#39;uia&#39;</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Singleton pattern.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>automator/ui_control/inspector.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">467</span>
+<span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">backend</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;uia&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ControlInspectorFacade&quot;</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Singleton pattern.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">backend</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">:</span>
+        <span class="n">instance</span> <span class="o">=</span> <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__new__</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">backend</span> <span class="o">=</span> <span class="n">backend</span>
+        <span class="n">instance</span><span class="o">.</span><span class="n">backend_strategy</span> <span class="o">=</span> <span class="n">BackendFactory</span><span class="o">.</span><span class="n">create_backend</span><span class="p">(</span><span class="n">backend</span><span class="p">)</span>
+        <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="n">backend</span><span class="p">]</span> <span class="o">=</span> <span class="n">instance</span>
+    <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_instances</span><span class="p">[</span><span class="n">backend</span><span class="p">]</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="automator.ui_control.inspector.ControlInspectorFacade.find_control_elements_in_descendants" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">find_control_elements_in_descendants</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">control_type_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">class_name_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">title_list</span><span class="o">=</span><span class="p">[],</span> <span class="n">is_visible</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">is_enabled</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Find control elements in descendants of the window.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>window</code></b>
+                  (<code><span title="pywinauto.controls.uiawrapper.UIAWrapper">UIAWrapper</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The window to find control elements.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>control_type_list</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>, default:
+                      <code>[]</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The control types to find.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>class_name_list</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>, default:
+                      <code>[]</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The class names to find.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>title_list</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>, default:
+                      <code>[]</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The titles to find.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>is_visible</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Whether the control elements are visible.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>is_enabled</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Whether the control elements are enabled.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>depth</code></b>
+                  (<code><span title="int">int</span></code>, default:
+                      <code>0</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The depth of the descendants to find.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.List">List</span>[<span title="pywinauto.controls.uiawrapper.UIAWrapper">UIAWrapper</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The control elements found.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>automator/ui_control/inspector.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">493</span>
+<span class="normal">494</span>
+<span class="normal">495</span>
+<span class="normal">496</span>
+<span class="normal">497</span>
+<span class="normal">498</span>
+<span class="normal">499</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span>
+<span class="normal">505</span>
+<span class="normal">506</span>
+<span class="normal">507</span>
+<span class="normal">508</span>
+<span class="normal">509</span>
+<span class="normal">510</span>
+<span class="normal">511</span>
+<span class="normal">512</span>
+<span class="normal">513</span>
+<span class="normal">514</span>
+<span class="normal">515</span>
+<span class="normal">516</span>
+<span class="normal">517</span>
+<span class="normal">518</span>
+<span class="normal">519</span>
+<span class="normal">520</span>
+<span class="normal">521</span>
+<span class="normal">522</span>
+<span class="normal">523</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">find_control_elements_in_descendants</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">window</span><span class="p">:</span> <span class="n">UIAWrapper</span><span class="p">,</span>
+    <span class="n">control_type_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">class_name_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">title_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[],</span>
+    <span class="n">is_visible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">is_enabled</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+    <span class="n">depth</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">UIAWrapper</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find control elements in descendants of the window.</span>
+<span class="sd">    :param window: The window to find control elements.</span>
+<span class="sd">    :param control_type_list: The control types to find.</span>
+<span class="sd">    :param class_name_list: The class names to find.</span>
+<span class="sd">    :param title_list: The titles to find.</span>
+<span class="sd">    :param is_visible: Whether the control elements are visible.</span>
+<span class="sd">    :param is_enabled: Whether the control elements are enabled.</span>
+<span class="sd">    :param depth: The depth of the descendants to find.</span>
+<span class="sd">    :return: The control elements found.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;uia&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend_strategy</span><span class="o">.</span><span class="n">find_control_elements_in_descendants</span><span class="p">(</span>
+            <span class="n">window</span><span class="p">,</span> <span class="n">control_type_list</span><span class="p">,</span> <span class="p">[],</span> <span class="n">title_list</span><span class="p">,</span> <span class="n">is_visible</span><span class="p">,</span> <span class="n">is_enabled</span><span class="p">,</span> <span class="n">depth</span>
+        <span class="p">)</span>
+    <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend</span> <span class="o">==</span> <span class="s2">&quot;win32&quot;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend_strategy</span><span class="o">.</span><span class="n">find_control_elements_in_descendants</span><span class="p">(</span>
+            <span class="n">window</span><span class="p">,</span> <span class="p">[],</span> <span class="n">class_name_list</span><span class="p">,</span> <span class="n">title_list</span><span class="p">,</span> <span class="n">is_visible</span><span class="p">,</span> <span class="n">is_enabled</span><span class="p">,</span> <span class="n">depth</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="automator.ui_control.inspector.ControlInspectorFacade.get_application_root_name" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_application_root_name</span><span class="p">(</span><span class="n">window</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the application name of the window.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>window</code></b>
+                  (<code><span title="pywinauto.controls.uiawrapper.UIAWrapper">UIAWrapper</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The window to get the application name.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="str">str</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The root application name of the window. Empty string ("") if failed to get the name.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>automator/ui_control/inspector.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">676</span>
+<span class="normal">677</span>
+<span class="normal">678</span>
+<span class="normal">679</span>
+<span class="normal">680</span>
+<span class="normal">681</span>
+<span class="normal">682</span>
+<span class="normal">683</span>
+<span class="normal">684</span>
+<span class="normal">685</span>
+<span class="normal">686</span>
+<span class="normal">687</span>
+<span class="normal">688</span>
+<span class="normal">689</span>
+<span class="normal">690</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_application_root_name</span><span class="p">(</span><span class="n">window</span><span class="p">:</span> <span class="n">UIAWrapper</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the application name of the window.</span>
+<span class="sd">    :param window: The window to get the application name.</span>
+<span class="sd">    :return: The root application name of the window. Empty string (&quot;&quot;) if failed to get the name.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">window</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+    <span class="n">process_id</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">process_id</span><span class="p">()</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">process</span> <span class="o">=</span> <span class="n">psutil</span><span class="o">.</span><span class="n">Process</span><span class="p">(</span><span class="n">process_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">process</span><span class="o">.</span><span class="n">name</span><span class="p">()</span>
+    <span class="k">except</span> <span class="n">psutil</span><span class="o">.</span><span class="n">NoSuchProcess</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;&quot;</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="automator.ui_control.inspector.ControlInspectorFacade.get_check_state" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_check_state</span><span class="p">(</span><span class="n">control_item</span><span class="p">)</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>get the check state of the control item
+param control_item: the control item to get the check state
+return: the check state of the control item</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>automator/ui_control/inspector.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">597</span>
+<span class="normal">598</span>
+<span class="normal">599</span>
+<span class="normal">600</span>
+<span class="normal">601</span>
+<span class="normal">602</span>
+<span class="normal">603</span>
+<span class="normal">604</span>
+<span class="normal">605</span>
+<span class="normal">606</span>
+<span class="normal">607</span>
+<span class="normal">608</span>
+<span class="normal">609</span>
+<span class="normal">610</span>
+<span class="normal">611</span>
+<span class="normal">612</span>
+<span class="normal">613</span>
+<span class="normal">614</span>
+<span class="normal">615</span>
+<span class="normal">616</span>
+<span class="normal">617</span>
+<span class="normal">618</span>
+<span class="normal">619</span>
+<span class="normal">620</span>
+<span class="normal">621</span>
+<span class="normal">622</span>
+<span class="normal">623</span>
+<span class="normal">624</span>
+<span class="normal">625</span>
+<span class="normal">626</span>
+<span class="normal">627</span>
+<span class="normal">628</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_check_state</span><span class="p">(</span><span class="n">control_item</span><span class="p">:</span> <span class="n">auto</span><span class="o">.</span><span class="n">Control</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    get the check state of the control item</span>
+<span class="sd">    param control_item: the control item to get the check state</span>
+<span class="sd">    return: the check state of the control item</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">is_checked</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">is_selected</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="nb">isinstance</span><span class="p">(</span>
+            <span class="n">control_item</span><span class="p">,</span> <span class="n">auto</span><span class="o">.</span><span class="n">Control</span>
+        <span class="p">),</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">control_item</span><span class="w"> </span><span class="si">=}</span><span class="s2"> is not a Control&quot;</span>
+        <span class="n">is_checked</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">control_item</span><span class="o">.</span><span class="n">GetLegacyIAccessiblePattern</span><span class="p">()</span><span class="o">.</span><span class="n">State</span>
+            <span class="o">&amp;</span> <span class="n">auto</span><span class="o">.</span><span class="n">AccessibleState</span><span class="o">.</span><span class="n">Checked</span>
+            <span class="o">==</span> <span class="n">auto</span><span class="o">.</span><span class="n">AccessibleState</span><span class="o">.</span><span class="n">Checked</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_checked</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">is_checked</span>
+        <span class="n">is_selected</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">control_item</span><span class="o">.</span><span class="n">GetLegacyIAccessiblePattern</span><span class="p">()</span><span class="o">.</span><span class="n">State</span>
+            <span class="o">&amp;</span> <span class="n">auto</span><span class="o">.</span><span class="n">AccessibleState</span><span class="o">.</span><span class="n">Selected</span>
+            <span class="o">==</span> <span class="n">auto</span><span class="o">.</span><span class="n">AccessibleState</span><span class="o">.</span><span class="n">Selected</span>
+        <span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_selected</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">is_selected</span>
+        <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="c1"># print(f&#39;item {control_item} not available for check state.&#39;)</span>
+        <span class="c1"># print(e)</span>
+        <span class="k">return</span> <span class="kc">None</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="automator.ui_control.inspector.ControlInspectorFacade.get_control_info" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_control_info</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">field_list</span><span class="o">=</span><span class="p">[])</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-staticmethod"><code>staticmethod</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get control info of the window.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>window</code></b>
+                  (<code><span title="pywinauto.controls.uiawrapper.UIAWrapper">UIAWrapper</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The window to get control info.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>field_list</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>, default:
+                      <code>[]</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The fields to get. return: The control info of the window.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>automator/ui_control/inspector.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">630</span>
+<span class="normal">631</span>
+<span class="normal">632</span>
+<span class="normal">633</span>
+<span class="normal">634</span>
+<span class="normal">635</span>
+<span class="normal">636</span>
+<span class="normal">637</span>
+<span class="normal">638</span>
+<span class="normal">639</span>
+<span class="normal">640</span>
+<span class="normal">641</span>
+<span class="normal">642</span>
+<span class="normal">643</span>
+<span class="normal">644</span>
+<span class="normal">645</span>
+<span class="normal">646</span>
+<span class="normal">647</span>
+<span class="normal">648</span>
+<span class="normal">649</span>
+<span class="normal">650</span>
+<span class="normal">651</span>
+<span class="normal">652</span>
+<span class="normal">653</span>
+<span class="normal">654</span>
+<span class="normal">655</span>
+<span class="normal">656</span>
+<span class="normal">657</span>
+<span class="normal">658</span>
+<span class="normal">659</span>
+<span class="normal">660</span>
+<span class="normal">661</span>
+<span class="normal">662</span>
+<span class="normal">663</span>
+<span class="normal">664</span>
+<span class="normal">665</span>
+<span class="normal">666</span>
+<span class="normal">667</span>
+<span class="normal">668</span>
+<span class="normal">669</span>
+<span class="normal">670</span>
+<span class="normal">671</span>
+<span class="normal">672</span>
+<span class="normal">673</span>
+<span class="normal">674</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="nd">@staticmethod</span>
+<span class="k">def</span><span class="w"> </span><span class="nf">get_control_info</span><span class="p">(</span>
+    <span class="n">window</span><span class="p">:</span> <span class="n">UIAWrapper</span><span class="p">,</span> <span class="n">field_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get control info of the window.</span>
+<span class="sd">    :param window: The window to get control info.</span>
+<span class="sd">    :param field_list: The fields to get.</span>
+<span class="sd">    return: The control info of the window.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">control_info</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">{}</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">assign</span><span class="p">(</span><span class="n">prop_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prop_value_func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">[[],</span> <span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">field_list</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span> <span class="ow">and</span> <span class="n">prop_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">field_list</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="n">control_info</span><span class="p">[</span><span class="n">prop_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">prop_value_func</span><span class="p">()</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">assign</span><span class="p">(</span><span class="s2">&quot;control_type&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">window</span><span class="o">.</span><span class="n">element_info</span><span class="o">.</span><span class="n">control_type</span><span class="p">)</span>
+        <span class="n">assign</span><span class="p">(</span><span class="s2">&quot;control_id&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">window</span><span class="o">.</span><span class="n">element_info</span><span class="o">.</span><span class="n">control_id</span><span class="p">)</span>
+        <span class="n">assign</span><span class="p">(</span><span class="s2">&quot;control_class&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">window</span><span class="o">.</span><span class="n">element_info</span><span class="o">.</span><span class="n">class_name</span><span class="p">)</span>
+        <span class="n">assign</span><span class="p">(</span><span class="s2">&quot;control_name&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">window</span><span class="o">.</span><span class="n">element_info</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">rectangle</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">element_info</span><span class="o">.</span><span class="n">rectangle</span>
+        <span class="n">assign</span><span class="p">(</span>
+            <span class="s2">&quot;control_rect&quot;</span><span class="p">,</span>
+            <span class="k">lambda</span><span class="p">:</span> <span class="p">(</span>
+                <span class="n">rectangle</span><span class="o">.</span><span class="n">left</span><span class="p">,</span>
+                <span class="n">rectangle</span><span class="o">.</span><span class="n">top</span><span class="p">,</span>
+                <span class="n">rectangle</span><span class="o">.</span><span class="n">right</span><span class="p">,</span>
+                <span class="n">rectangle</span><span class="o">.</span><span class="n">bottom</span><span class="p">,</span>
+            <span class="p">),</span>
+        <span class="p">)</span>
+        <span class="n">assign</span><span class="p">(</span><span class="s2">&quot;control_text&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">window</span><span class="o">.</span><span class="n">element_info</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">assign</span><span class="p">(</span><span class="s2">&quot;control_title&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">window</span><span class="o">.</span><span class="n">window_text</span><span class="p">())</span>
+        <span class="n">assign</span><span class="p">(</span><span class="s2">&quot;selected&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">ControlInspectorFacade</span><span class="o">.</span><span class="n">get_check_state</span><span class="p">(</span><span class="n">window</span><span class="p">))</span>
+
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">source</span> <span class="o">=</span> <span class="n">window</span><span class="o">.</span><span class="n">element_info</span><span class="o">.</span><span class="n">source</span>
+            <span class="n">assign</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="n">source</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="n">assign</span><span class="p">(</span><span class="s2">&quot;source&quot;</span><span class="p">,</span> <span class="k">lambda</span><span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">control_info</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">{}</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="automator.ui_control.inspector.ControlInspectorFacade.get_control_info_batch" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_control_info_batch</span><span class="p">(</span><span class="n">window_list</span><span class="p">,</span> <span class="n">field_list</span><span class="o">=</span><span class="p">[])</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get control info of the window.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>window_list</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="pywinauto.controls.uiawrapper.UIAWrapper">UIAWrapper</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The list of windows to get control info.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>field_list</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>, default:
+                      <code>[]</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The fields to get. return: The list of control info of the window.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>automator/ui_control/inspector.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">566</span>
+<span class="normal">567</span>
+<span class="normal">568</span>
+<span class="normal">569</span>
+<span class="normal">570</span>
+<span class="normal">571</span>
+<span class="normal">572</span>
+<span class="normal">573</span>
+<span class="normal">574</span>
+<span class="normal">575</span>
+<span class="normal">576</span>
+<span class="normal">577</span>
+<span class="normal">578</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_control_info_batch</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">window_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">UIAWrapper</span><span class="p">],</span> <span class="n">field_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get control info of the window.</span>
+<span class="sd">    :param window_list: The list of windows to get control info.</span>
+<span class="sd">    :param field_list: The fields to get.</span>
+<span class="sd">    return: The list of control info of the window.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">control_info_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="n">window_list</span><span class="p">:</span>
+        <span class="n">control_info_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_control_info</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">field_list</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">control_info_list</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="automator.ui_control.inspector.ControlInspectorFacade.get_control_info_list_of_dict" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_control_info_list_of_dict</span><span class="p">(</span><span class="n">window_dict</span><span class="p">,</span> <span class="n">field_list</span><span class="o">=</span><span class="p">[])</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get control info of the window.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>window_dict</code></b>
+                  (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="pywinauto.controls.uiawrapper.UIAWrapper">UIAWrapper</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The dict of windows to get control info.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>field_list</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>, default:
+                      <code>[]</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The fields to get. return: The list of control info of the window.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>automator/ui_control/inspector.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">580</span>
+<span class="normal">581</span>
+<span class="normal">582</span>
+<span class="normal">583</span>
+<span class="normal">584</span>
+<span class="normal">585</span>
+<span class="normal">586</span>
+<span class="normal">587</span>
+<span class="normal">588</span>
+<span class="normal">589</span>
+<span class="normal">590</span>
+<span class="normal">591</span>
+<span class="normal">592</span>
+<span class="normal">593</span>
+<span class="normal">594</span>
+<span class="normal">595</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_control_info_list_of_dict</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">window_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">UIAWrapper</span><span class="p">],</span> <span class="n">field_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get control info of the window.</span>
+<span class="sd">    :param window_dict: The dict of windows to get control info.</span>
+<span class="sd">    :param field_list: The fields to get.</span>
+<span class="sd">    return: The list of control info of the window.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">control_info_list</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">key</span> <span class="ow">in</span> <span class="n">window_dict</span><span class="o">.</span><span class="n">keys</span><span class="p">():</span>
+        <span class="n">window</span> <span class="o">=</span> <span class="n">window_dict</span><span class="p">[</span><span class="n">key</span><span class="p">]</span>
+        <span class="n">control_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_control_info</span><span class="p">(</span><span class="n">window</span><span class="p">,</span> <span class="n">field_list</span><span class="p">)</span>
+        <span class="n">control_info</span><span class="p">[</span><span class="s2">&quot;label&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">key</span>
+        <span class="n">control_info_list</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">control_info</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">control_info_list</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="automator.ui_control.inspector.ControlInspectorFacade.get_desktop_app_dict" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_desktop_app_dict</span><span class="p">(</span><span class="n">remove_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get all the apps on the desktop and return as a dict.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>remove_empty</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Whether to remove empty titles.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="pywinauto.controls.uiawrapper.UIAWrapper">UIAWrapper</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The apps on the desktop as a dict.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>automator/ui_control/inspector.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">525</span>
+<span class="normal">526</span>
+<span class="normal">527</span>
+<span class="normal">528</span>
+<span class="normal">529</span>
+<span class="normal">530</span>
+<span class="normal">531</span>
+<span class="normal">532</span>
+<span class="normal">533</span>
+<span class="normal">534</span>
+<span class="normal">535</span>
+<span class="normal">536</span>
+<span class="normal">537</span>
+<span class="normal">538</span>
+<span class="normal">539</span>
+<span class="normal">540</span>
+<span class="normal">541</span>
+<span class="normal">542</span>
+<span class="normal">543</span>
+<span class="normal">544</span>
+<span class="normal">545</span>
+<span class="normal">546</span>
+<span class="normal">547</span>
+<span class="normal">548</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_desktop_app_dict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remove_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">UIAWrapper</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get all the apps on the desktop and return as a dict.</span>
+<span class="sd">    :param remove_empty: Whether to remove empty titles.</span>
+<span class="sd">    :return: The apps on the desktop as a dict.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">desktop_windows</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_desktop_windows</span><span class="p">(</span><span class="n">remove_empty</span><span class="p">)</span>
+
+    <span class="n">desktop_windows_with_gui</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">for</span> <span class="n">window</span> <span class="ow">in</span> <span class="n">desktop_windows</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">window</span><span class="o">.</span><span class="n">is_normal</span><span class="p">()</span>
+            <span class="n">desktop_windows_with_gui</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">window</span><span class="p">)</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">pass</span>
+
+    <span class="n">desktop_windows_dict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+        <span class="nb">zip</span><span class="p">(</span>
+            <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">desktop_windows_with_gui</span><span class="p">))],</span>
+            <span class="n">desktop_windows_with_gui</span><span class="p">,</span>
+        <span class="p">)</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">desktop_windows_dict</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="automator.ui_control.inspector.ControlInspectorFacade.get_desktop_app_info" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_desktop_app_info</span><span class="p">(</span><span class="n">desktop_windows_dict</span><span class="p">,</span> <span class="n">field_list</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;control_text&#39;</span><span class="p">,</span> <span class="s1">&#39;control_type&#39;</span><span class="p">])</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get control info of all the apps on the desktop.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>desktop_windows_dict</code></b>
+                  (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="pywinauto.controls.uiawrapper.UIAWrapper">UIAWrapper</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The dict of apps on the desktop.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>field_list</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>, default:
+                      <code>[&#39;control_text&#39;, &#39;control_type&#39;]</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The fields of app info to get.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>]]</code>
+              –
+              <div class="doc-md-description">
+                <p>The control info of all the apps on the desktop.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>automator/ui_control/inspector.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">550</span>
+<span class="normal">551</span>
+<span class="normal">552</span>
+<span class="normal">553</span>
+<span class="normal">554</span>
+<span class="normal">555</span>
+<span class="normal">556</span>
+<span class="normal">557</span>
+<span class="normal">558</span>
+<span class="normal">559</span>
+<span class="normal">560</span>
+<span class="normal">561</span>
+<span class="normal">562</span>
+<span class="normal">563</span>
+<span class="normal">564</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_desktop_app_info</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">desktop_windows_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">UIAWrapper</span><span class="p">],</span>
+    <span class="n">field_list</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;control_text&quot;</span><span class="p">,</span> <span class="s2">&quot;control_type&quot;</span><span class="p">],</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get control info of all the apps on the desktop.</span>
+<span class="sd">    :param desktop_windows_dict: The dict of apps on the desktop.</span>
+<span class="sd">    :param field_list: The fields of app info to get.</span>
+<span class="sd">    :return: The control info of all the apps on the desktop.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">desktop_windows_info</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_control_info_list_of_dict</span><span class="p">(</span>
+        <span class="n">desktop_windows_dict</span><span class="p">,</span> <span class="n">field_list</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">desktop_windows_info</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="automator.ui_control.inspector.ControlInspectorFacade.get_desktop_windows" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_desktop_windows</span><span class="p">(</span><span class="n">remove_empty</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get all the apps on the desktop.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>remove_empty</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>Whether to remove empty titles.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.List">List</span>[<span title="pywinauto.controls.uiawrapper.UIAWrapper">UIAWrapper</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The apps on the desktop.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>automator/ui_control/inspector.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_desktop_windows</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">remove_empty</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">UIAWrapper</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get all the apps on the desktop.</span>
+<span class="sd">    :param remove_empty: Whether to remove empty titles.</span>
+<span class="sd">    :return: The apps on the desktop.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">backend_strategy</span><span class="o">.</span><span class="n">get_desktop_windows</span><span class="p">(</span><span class="n">remove_empty</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../overview/" class="btn btn-neutral float-left" title="Overview"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../visual_detection/" class="btn btn-neutral float-right" title="Visual Detection">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../overview/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../visual_detection/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../../..";</script>
+    <script src="../../../js/theme_extra.js"></script>
+    <script src="../../../js/theme.js"></script>
+      <script src="../../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

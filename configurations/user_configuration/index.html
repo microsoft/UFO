@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>User Configuration - UFO Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "User Configuration";
+        var mkdocs_page_input_path = "configurations/user_configuration.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Basic Modules</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/session/">Session</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/round/">Round</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/context/">Context</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configurations</span></p>
+              <ul class="current">
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">User Configuration</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#llm-configuration">LLM Configuration</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#for-azure-openai-aoai-api">For Azure OpenAI (AOAI) API</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#llm-parameters">LLM Parameters</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#for-rag-configuration-to-enhance-the-ufo-agent">For RAG Configuration to Enhance the UFO Agent</a>
+        <ul>
+    <li class="toctree-l4"><a class="reference internal" href="#rag-configuration-for-the-offline-docs">RAG Configuration for the Offline Docs</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#rag-configuration-for-the-bing-search">RAG Configuration for the Bing search</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#rag-configuration-for-experience">RAG Configuration for experience</a>
+    </li>
+    <li class="toctree-l4"><a class="reference internal" href="#rag-configuration-for-demonstration">RAG Configuration for demonstration</a>
+    </li>
+        </ul>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../developer_configuration/">Developer Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../pricing_configuration/">Model Pricing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Supported Models</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/openai/">OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/azure_openai/">Azure OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/operator/">OpenAI CUA (Operator)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/gemini/">Gemini</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/claude/">Claude</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/qwen/">Qwen</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/deepseek/">DeepSeek</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/ollama/">Ollama</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/custom_model/">Custom Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agents</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Design</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/memory/">Memory</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/state/">State</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/prompter/">Prompter</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../agents/design/processor/">Processor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/host_agent/">HostAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/app_agent/">AppAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/follower_agent/">FollowerAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../agents/evaluation_agent/">EvaluationAgent</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompts</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/basic_template/">Basic Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/examples_prompts/">Examples Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/api_prompts/">API Prompts</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Puppeteer</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/ui_automator/">GUI Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/wincom_automator/">API Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/web_automator/">Web Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/bash_automator/">Bash Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/ai_tool_automator/">AI Tool</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Logs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/request_logs/">Request Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/step_logs/">Step Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/evaluation_logs/">Evaluation Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/screenshots_logs/">Screenshots</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/ui_tree_logs/">UI Tree</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Advanced Usage</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Continuous Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_help_document/">Learning from Help Document</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_bing_search/">Learning from Bing Search</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_demonstration/">Learning from User Demonstration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/follower_mode/">Follower Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/batch_mode/">Batch Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/multi_action/">Speculative Multi-Action Execution</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/operator_as_app_agent/">Operator-as-a-AppAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Control Filtering</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/text_filtering/">Text Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/semantic_filtering/">Semantic Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/icon_filtering/">Icon Filtering</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/customization/">Customization</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Creating Your AppAgent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/help_document_provision/">Help Document Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/warpping_app_native_api/">Warpping App-Native API</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Benchmark</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../benchmark/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../benchmark/osworld/">OSWorld (Windows)</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Dataflow</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../dataflow/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../dataflow/instantiation/">Instantiation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../dataflow/execution/">Execution</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../dataflow/windows_app_env/">Windows App Environment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../dataflow/result/">Result</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Configurations</li>
+      <li class="breadcrumb-item active">User Configuration</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="user-configuration">User Configuration</h1>
+<p>An overview of the user configuration options available in UFO. You need to rename the <code>config.yaml.template</code> in the folder <code>ufo/config</code> to <code>config.yaml</code> to configure the LLMs and other custom settings.</p>
+<h2 id="llm-configuration">LLM Configuration</h2>
+<p>You can configure the LLMs for the <code>HOST_AGENT</code> and <code>APP_AGENT</code> separately in the <code>config.yaml</code> file. The <code>FollowerAgent</code> and <code>EvaluationAgent</code> share the same LLM configuration as the <code>APP_AGENT</code>. Additionally, you can configure a backup LLM engine in the <code>BACKUP_AGENT</code> field to handle cases where the primary engines fail during inference.</p>
+<p>Below are the configuration options for the LLMs, using OpenAI and Azure OpenAI (AOAI) as examples. You can find the settings for other LLM API configurations and usage in the <code>Supported Models</code> section of the documentation.</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>VISUAL_MODE</code></td>
+<td>Whether to use visual mode to understand screenshots and take actions</td>
+<td>Boolean</td>
+<td>True</td>
+</tr>
+<tr>
+<td><code>API_TYPE</code></td>
+<td>The API type: "openai" for the OpenAI API, "aoai" for the AOAI API.</td>
+<td>String</td>
+<td>"openai"</td>
+</tr>
+<tr>
+<td><code>API_BASE</code></td>
+<td>The API endpoint for the LLM</td>
+<td>String</td>
+<td>"https://api.openai.com/v1/chat/completions"</td>
+</tr>
+<tr>
+<td><code>API_KEY</code></td>
+<td>The API key for the LLM</td>
+<td>String</td>
+<td>"sk-"</td>
+</tr>
+<tr>
+<td><code>API_VERSION</code></td>
+<td>The version of the API</td>
+<td>String</td>
+<td>"2024-02-15-preview"</td>
+</tr>
+<tr>
+<td><code>API_MODEL</code></td>
+<td>The LLM model name</td>
+<td>String</td>
+<td>"gpt-4-vision-preview"</td>
+</tr>
+</tbody>
+</table>
+<h3 id="for-azure-openai-aoai-api">For Azure OpenAI (AOAI) API</h3>
+<p>The following additional configuration option is available for the AOAI API:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>API_DEPLOYMENT_ID</code></td>
+<td>The deployment ID, only available for the AOAI API</td>
+<td>String</td>
+<td>""</td>
+</tr>
+</tbody>
+</table>
+<p>Ensure to fill in the necessary API details for both the <code>HOST_AGENT</code> and <code>APP_AGENT</code> to enable UFO to interact with the LLMs effectively.</p>
+<h3 id="llm-parameters">LLM Parameters</h3>
+<p>You can also configure additional parameters for the LLMs in the <code>config.yaml</code> file:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MAX_TOKENS</code></td>
+<td>The maximum token limit for the response completion</td>
+<td>Integer</td>
+<td>2000</td>
+</tr>
+<tr>
+<td><code>MAX_RETRY</code></td>
+<td>The maximum retry limit for the response completion</td>
+<td>Integer</td>
+<td>3</td>
+</tr>
+<tr>
+<td><code>TEMPERATURE</code></td>
+<td>The temperature of the model: the lower the value, the more consistent the output of the model</td>
+<td>Float</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td><code>TOP_P</code></td>
+<td>The top_p of the model: the lower the value, the more conservative the output of the model</td>
+<td>Float</td>
+<td>0.0</td>
+</tr>
+<tr>
+<td><code>TIMEOUT</code></td>
+<td>The call timeout in seconds</td>
+<td>Integer</td>
+<td>60</td>
+</tr>
+</tbody>
+</table>
+<h3 id="for-rag-configuration-to-enhance-the-ufo-agent">For RAG Configuration to Enhance the UFO Agent</h3>
+<p>You can configure the RAG parameters in the <code>config.yaml</code> file to enhance the UFO agent with additional knowledge sources:</p>
+<h4 id="rag-configuration-for-the-offline-docs">RAG Configuration for the Offline Docs</h4>
+<p>Configure the following parameters to allow UFO to use offline documents for the decision-making process:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RAG_OFFLINE_DOCS</code></td>
+<td>Whether to use the offline RAG</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>RAG_OFFLINE_DOCS_RETRIEVED_TOPK</code></td>
+<td>The topk for the offline retrieved documents</td>
+<td>Integer</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<h4 id="rag-configuration-for-the-bing-search">RAG Configuration for the Bing search</h4>
+<p>Configure the following parameters to allow UFO to use online Bing search for the decision-making process:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RAG_ONLINE_SEARCH</code></td>
+<td>Whether to use the Bing search</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>BING_API_KEY</code></td>
+<td>The Bing search API key</td>
+<td>String</td>
+<td>""</td>
+</tr>
+<tr>
+<td><code>RAG_ONLINE_SEARCH_TOPK</code></td>
+<td>The topk for the online search</td>
+<td>Integer</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>RAG_ONLINE_RETRIEVED_TOPK</code></td>
+<td>The topk for the online retrieved searched results</td>
+<td>Integer</td>
+<td>1</td>
+</tr>
+</tbody>
+</table>
+<h4 id="rag-configuration-for-experience">RAG Configuration for experience</h4>
+<p>Configure the following parameters to allow UFO to use the RAG from its self-experience:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RAG_EXPERIENCE</code></td>
+<td>Whether to use the RAG from its self-experience</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>RAG_EXPERIENCE_RETRIEVED_TOPK</code></td>
+<td>The topk for the offline retrieved documents</td>
+<td>Integer</td>
+<td>5</td>
+</tr>
+</tbody>
+</table>
+<h4 id="rag-configuration-for-demonstration">RAG Configuration for demonstration</h4>
+<p>Configure the following parameters to allow UFO to use the RAG from user demonstration:</p>
+<table>
+<thead>
+<tr>
+<th>Configuration Option</th>
+<th>Description</th>
+<th>Type</th>
+<th>Default Value</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RAG_DEMONSTRATION</code></td>
+<td>Whether to use the RAG from its user demonstration</td>
+<td>Boolean</td>
+<td>False</td>
+</tr>
+<tr>
+<td><code>RAG_DEMONSTRATION_RETRIEVED_TOPK</code></td>
+<td>The topk for the offline retrieved documents</td>
+<td>Integer</td>
+<td>5</td>
+</tr>
+<tr>
+<td><code>RAG_DEMONSTRATION_COMPLETION_N</code></td>
+<td>The number of completion choices for the demonstration result</td>
+<td>Integer</td>
+<td>3</td>
+</tr>
+</tbody>
+</table>
+<p>Explore the various RAG configurations to enhance the UFO agent with additional knowledge sources and improve its decision-making capabilities.</p>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../../modules/context/" class="btn btn-neutral float-left" title="Context"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../developer_configuration/" class="btn btn-neutral float-right" title="Developer Configuration">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../../modules/context/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../developer_configuration/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

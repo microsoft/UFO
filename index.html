@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="description" content="None" />
+      <link rel="shortcut icon" href="img/favicon.ico" />
+    <title>UFO Documentation</title>
+    <link rel="stylesheet" href="css/theme.css" />
+    <link rel="stylesheet" href="css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Home";
+        var mkdocs_page_input_path = "index.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="." class="icon icon-home"> UFO Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="./search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Home</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#introduction">Introduction</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#key-capabilities">✨ Key Capabilities</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#architecture-overview">🏗️ Architecture overview</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#quick-start">🚀 Quick Start</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#media-coverage">🌐 Media Coverage</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#get-help">❓Get help</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#citation">📚 Citation</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#roadmap">📝 Roadmap</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#related-projects">🎨 Related Projects</a>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="getting_started/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Basic Modules</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="modules/session/">Session</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="modules/round/">Round</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="modules/context/">Context</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configurations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="configurations/user_configuration/">User Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="configurations/developer_configuration/">Developer Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="configurations/pricing_configuration/">Model Pricing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Supported Models</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="supported_models/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="supported_models/openai/">OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="supported_models/azure_openai/">Azure OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="supported_models/operator/">OpenAI CUA (Operator)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="supported_models/gemini/">Gemini</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="supported_models/claude/">Claude</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="supported_models/qwen/">Qwen</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="supported_models/deepseek/">DeepSeek</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="supported_models/ollama/">Ollama</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="supported_models/custom_model/">Custom Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agents</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="agents/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Design</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="agents/design/memory/">Memory</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="agents/design/state/">State</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="agents/design/prompter/">Prompter</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="agents/design/processor/">Processor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="agents/host_agent/">HostAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="agents/app_agent/">AppAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="agents/follower_agent/">FollowerAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="agents/evaluation_agent/">EvaluationAgent</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompts</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="prompts/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="prompts/basic_template/">Basic Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="prompts/examples_prompts/">Examples Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="prompts/api_prompts/">API Prompts</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Puppeteer</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="automator/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="automator/ui_automator/">GUI Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="automator/wincom_automator/">API Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="automator/web_automator/">Web Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="automator/bash_automator/">Bash Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="automator/ai_tool_automator/">AI Tool</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Logs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="logs/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="logs/request_logs/">Request Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="logs/step_logs/">Step Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="logs/evaluation_logs/">Evaluation Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="logs/screenshots_logs/">Screenshots</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="logs/ui_tree_logs/">UI Tree</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Advanced Usage</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Continuous Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/reinforce_appagent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/reinforce_appagent/learning_from_help_document/">Learning from Help Document</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/reinforce_appagent/learning_from_bing_search/">Learning from Bing Search</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/reinforce_appagent/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/reinforce_appagent/learning_from_demonstration/">Learning from User Demonstration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="advanced_usage/follower_mode/">Follower Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="advanced_usage/batch_mode/">Batch Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="advanced_usage/multi_action/">Speculative Multi-Action Execution</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="advanced_usage/operator_as_app_agent/">Operator-as-a-AppAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Control Filtering</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/control_filtering/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/control_filtering/text_filtering/">Text Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/control_filtering/semantic_filtering/">Semantic Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/control_filtering/icon_filtering/">Icon Filtering</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="advanced_usage/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="advanced_usage/customization/">Customization</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Creating Your AppAgent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="creating_app_agent/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="creating_app_agent/help_document_provision/">Help Document Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="creating_app_agent/warpping_app_native_api/">Warpping App-Native API</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Benchmark</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="benchmark/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="benchmark/osworld/">OSWorld (Windows)</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Dataflow</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="dataflow/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="dataflow/instantiation/">Instantiation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="dataflow/execution/">Execution</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="dataflow/windows_app_env/">Windows App Environment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="dataflow/result/">Result</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href=".">UFO Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Home</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="welcome-to-ufo2s-document">Welcome to UFO²'s Document!</h1>
+<p><a href="https://arxiv.org/abs/2504.14603"><img alt="arxiv" src="https://img.shields.io/badge/Paper-arXiv:2504.14603-b31b1b.svg" /></a>&ensp;
+<img alt="Python Version" src="https://img.shields.io/badge/Python-3776AB?&amp;logo=python&amp;logoColor=white-blue&amp;label=3.10%20%7C%203.11" />&ensp;
+<a href="https://opensource.org/licenses/MIT"><img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" /></a>&ensp;
+<a href="https://github.com/microsoft/UFO"><img alt="github" src="https://img.shields.io/github/stars/microsoft/UFO" /></a>&ensp;
+<a href="https://www.youtube.com/watch?v=QT_OhygMVXU"><img alt="YouTube" src="https://img.shields.io/badge/YouTube-white?logo=youtube&amp;logoColor=%23FF0000" /></a>&ensp;</p>
+<h2 id="introduction">Introduction</h2>
+<p>UFO now evolves into <strong>UFO²</strong> (Desktop AgentOS), a new generation of agent framework that can run on Windows desktop OS. It is designed to <strong>automate</strong> and <strong>orchestrate</strong> tasks across multiple applications, enabling users to seamlessly interact with their operating system using natural language commands beyond just <strong>UI automation</strong>.</p>
+<h1 align="center">
+    <img src="./img/comparison.png" width="80%"/> 
+</h1>
+
+<h2 id="key-capabilities">✨ Key Capabilities</h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Deep OS Integration</strong></td>
+<td>Combines Windows UIA, Win32 and WinCOM for first‑class control detection and native commands.</td>
+</tr>
+<tr>
+<td><strong>Picture‑in‑Picture Desktop</strong> <em>(coming soon)</em></td>
+<td>Automation runs in a sandboxed virtual desktop so you can keep using your main screen.</td>
+</tr>
+<tr>
+<td><a href="automator/overview/"><strong>Hybrid GUI + API Actions</strong></a></td>
+<td>Chooses native APIs when available, falls back to clicks/keystrokes when not—fast <em>and</em> robust.</td>
+</tr>
+<tr>
+<td><a href="advanced_usage/multi_action/"><strong>Speculative Multi‑Action</strong></a></td>
+<td>Bundles several predicted steps into one LLM call, validated live—up to <strong>51 % fewer</strong> queries.</td>
+</tr>
+<tr>
+<td><a href="advanced_usage/reinforce_appagent/overview/"><strong>Continuous Knowledge Substrate</strong></a></td>
+<td>Mixes docs, Bing search, user demos and execution traces via RAG for agents that learn over time.</td>
+</tr>
+<tr>
+<td><a href="advanced_usage/control_detection/hybrid_detection/"><strong>UIA + Visual Control Detection</strong></a></td>
+<td>Detects standard <em>and</em> custom controls with a hybrid UIA + vision pipeline.</td>
+</tr>
+</tbody>
+</table>
+<p>Please refer to the <a href="https://arxiv.org/abs/2504.14603">UFO² paper</a> and the hyperlinked sections for more details on each capability.</p>
+<hr />
+<h2 id="architecture-overview">🏗️ Architecture overview</h2>
+<p align="center">
+  <img src="./img/framework2.png"  width="80%" alt="UFO² architecture"/>
+</p>
+
+<p>UFO² operates as a <strong>Desktop AgentOS</strong>, encompassing a multi-agent framework that includes:</p>
+<ol>
+<li><strong>HostAgent</strong> – Parses the natural‑language goal, launches the necessary applications, spins up / coordinates AppAgents, and steers a global finite‑state machine (FSM).  </li>
+<li><strong>AppAgents</strong> – One per application; each runs a ReAct loop with multimodal perception, hybrid control detection, retrieval‑augmented knowledge, and the <strong>Puppeteer</strong> executor that chooses between GUI actions and native APIs.  </li>
+<li><strong>Knowledge Substrate</strong> – Blends offline documentation, online search, demonstrations, and execution traces into a vector store that is retrieved on‑the‑fly at inference.  </li>
+<li><strong>Speculative Executor</strong> – Slashes LLM latency by predicting batches of likely actions and validating them against live UIA state in a single shot.  </li>
+<li><strong>Picture‑in‑Picture Desktop</strong> <em>(coming soon)</em> – Runs the agent in an isolated virtual desktop so your main workspace and input devices remain untouched.</li>
+</ol>
+<p>For a deep dive see our <a href="https://arxiv.org/abs/2504.14603">technical report</a>.</p>
+<hr />
+<h2 id="quick-start">🚀 Quick Start</h2>
+<p>Please follow the <a href="getting_started/quick_start/">Quick Start Guide</a> to get started with UFO.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>This repository is intended solely for research purposes. The code provided herein is not designed, tested, or validated for third-party production use. Users are expected to exercise their own judgment and due diligence when utilizing any part of this codebase. Microsoft is committed to building Responsible and Trustworthy AI. To learn more about our principles and practices, please refer to our <a href="https://www.microsoft.com/en-us/ai/principles-and-approach">principles and approach</a>.</p>
+</div>
+<h2 id="media-coverage">🌐 Media Coverage</h2>
+<p>Check out our official deep dive of UFO on <a href="https://www.youtube.com/watch?v=QT_OhygMVXU">this Youtube Video</a>.</p>
+<p>UFO sightings have garnered attention from various media outlets, including:</p>
+<ul>
+<li>
+<p><a href="https://www.jiqizhixin.com/articles/2025-05-06-13">微软正式开源UFO²，Windows桌面迈入「AgentOS 时代」</a></p>
+</li>
+<li>
+<p><a href="https://the-decoder.com/microsofts-ufo-abducts-traditional-user-interfaces-for-a-smarter-windows-experience/">Microsoft's UFO abducts traditional user interfaces for a smarter Windows experience</a></p>
+</li>
+<li>
+<p><a href="https://www.linkedin.com/posts/gutierrezfrancois_ai-ufo-microsoft-activity-7176819900399652865-pLoo?utm_source=share&amp;utm_medium=member_desktop">🚀 UFO &amp; GPT-4-V: Sit back and relax, mientras GPT lo hace todo🌌</a></p>
+</li>
+<li>
+<p><a href="https://www.youtube.com/watch?v=1k4LcffCq3E">The AI PC - The Future of Computers? - Microsoft UFO</a></p>
+</li>
+<li>
+<p><a href="https://baijiahao.baidu.com/s?id=1790938358152188625&amp;wfr=spider&amp;for=pc">下一代Windows系统曝光：基于GPT-4V，Agent跨应用调度，代号UFO</a></p>
+</li>
+<li>
+<p><a href="https://blog.csdn.net/csdnnews/article/details/136161570">下一代智能版 Windows 要来了？微软推出首个 Windows Agent，命名为 UFO！</a></p>
+</li>
+<li>
+<p><a href="https://internet.watch.impress.co.jp/docs/column/shimizu/1570581.html">Microsoft発のオープンソース版「UFO」登場！　Windowsを自動操縦するAIエージェントを試す</a></p>
+</li>
+</ul>
+<h2 id="get-help">❓Get help</h2>
+<ul>
+<li>❔GitHub Issues (prefered)</li>
+<li>For other communications, please contact <a href="mailto:ufo-agent@microsoft.com">ufo-agent@microsoft.com</a></li>
+</ul>
+<hr />
+<h2 id="citation">📚 Citation</h2>
+<p>If you build on this work, please cite our the AgentOS framework:</p>
+<p><strong>UFO² – The Desktop AgentOS (2025)</strong><br />
+<a href="https://arxiv.org/abs/2504.14603">https://arxiv.org/abs/2504.14603</a></p>
+<pre><code class="language-bibtex">@article{zhang2025ufo2,
+  title   = {{UFO2: The Desktop AgentOS}},
+  author  = {Zhang, Chaoyun and Huang, He and Ni, Chiming and Mu, Jian and Qin, Si and He, Shilin and Wang, Lu and Yang, Fangkai and Zhao, Pu and Du, Chao and Li, Liqun and Kang, Yu and Jiang, Zhao and Zheng, Suzhen and Wang, Rujia and Qian, Jiaxu and Ma, Minghua and Lou, Jian-Guang and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
+  journal = {arXiv preprint arXiv:2504.14603},
+  year    = {2025}
+}
+</code></pre>
+<p><strong>UFO – A UI‑Focused Agent for Windows OS Interaction (2024)</strong><br />
+<a href="https://arxiv.org/abs/2402.07939">https://arxiv.org/abs/2402.07939</a></p>
+<pre><code class="language-bibtex">@article{zhang2024ufo,
+  title   = {{UFO: A UI-Focused Agent for Windows OS Interaction}},
+  author  = {Zhang, Chaoyun and Li, Liqun and He, Shilin and Zhang, Xu and Qiao, Bo and Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and Zhang, Qi},
+  journal = {arXiv preprint arXiv:2402.07939},
+  year    = {2024}
+}
+</code></pre>
+<hr />
+<h2 id="roadmap">📝 Roadmap</h2>
+<p>The UFO² team is actively working on the following features and improvements:</p>
+<ul class="task-list">
+<li class="task-list-item"><input type="checkbox" disabled/> <strong>Picture‑in‑Picture Mode</strong> – Completed and will be available in the next release  </li>
+<li class="task-list-item"><input type="checkbox" disabled/> <strong>AgentOS‑as‑a‑Service</strong> – Completed and will be available in the next release  </li>
+<li class="task-list-item"><input type="checkbox" disabled/> <strong>Auto‑Debugging Toolkit</strong> – Completed and will be available in the next release  </li>
+<li class="task-list-item"><input type="checkbox" disabled/> <strong>Integration with MCP and Agent2Agent Communication</strong> – Planned; under implementation  </li>
+</ul>
+<hr />
+<h2 id="related-projects">🎨 Related Projects</h2>
+<ul>
+<li><strong>TaskWeaver</strong> — a code‑first LLM agent for data analytics: <a href="https://github.com/microsoft/TaskWeaver">https://github.com/microsoft/TaskWeaver</a>  </li>
+<li><strong>LLM‑Brained GUI Agents: A Survey</strong>: <a href="https://arxiv.org/abs/2411.18279">https://arxiv.org/abs/2411.18279</a> • <a href="https://github.com/vyokky/LLM-Brained-GUI-Agents-Survey">GitHub</a> • <a href="https://vyokky.github.io/LLM-Brained-GUI-Agents-Survey/">Interactive site</a></li>
+</ul>
+<hr />
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-FX17ZGJYGC"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-FX17ZGJYGC');
+</script>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="project_directory_structure/" class="btn btn-neutral float-right" title="Project Directory Structure">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+    
+      <span><a href="project_directory_structure/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = ".";</script>
+    <script src="js/theme_extra.js"></script>
+    <script src="js/theme.js"></script>
+      <script src="search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
+
+<!--
+MkDocs version : 1.6.1
+Build Date UTC : 2025-08-07 02:04:19.641584+00:00
+-->

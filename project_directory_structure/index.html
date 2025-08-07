@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../img/favicon.ico" />
+    <title>Project Directory Structure - UFO Documentation</title>
+    <link rel="stylesheet" href="../css/theme.css" />
+    <link rel="stylesheet" href="../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "Project Directory Structure";
+        var mkdocs_page_input_path = "project_directory_structure.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href=".." class="icon icon-home"> UFO Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="..">Home</a>
+                </li>
+              </ul>
+              <ul class="current">
+                <li class="toctree-l1 current"><a class="reference internal current" href="#">Project Directory Structure</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#documents">documents</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#learner">learner</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#model_worker">model_worker</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#dataflow">dataflow</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#record_processor">record_processor</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#vetordb">vetordb</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#logs">logs</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#ufo">ufo</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#module">module</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#agents">agents</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#automator">automator</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#experience">experience</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#llm">llm</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#prompter">prompter</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#prompts">prompts</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#rag">rag</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#trajectory">trajectory</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#utils">utils</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#config">config</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#ufopy">ufo.py</a>
+    </li>
+        </ul>
+    </li>
+    </ul>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../getting_started/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Basic Modules</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../modules/session/">Session</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../modules/round/">Round</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../modules/context/">Context</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configurations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../configurations/user_configuration/">User Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configurations/developer_configuration/">Developer Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../configurations/pricing_configuration/">Model Pricing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Supported Models</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../supported_models/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../supported_models/openai/">OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../supported_models/azure_openai/">Azure OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../supported_models/operator/">OpenAI CUA (Operator)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../supported_models/gemini/">Gemini</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../supported_models/claude/">Claude</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../supported_models/qwen/">Qwen</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../supported_models/deepseek/">DeepSeek</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../supported_models/ollama/">Ollama</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../supported_models/custom_model/">Custom Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agents</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../agents/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Design</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../agents/design/memory/">Memory</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agents/design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agents/design/state/">State</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agents/design/prompter/">Prompter</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../agents/design/processor/">Processor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../agents/host_agent/">HostAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../agents/app_agent/">AppAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../agents/follower_agent/">FollowerAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../agents/evaluation_agent/">EvaluationAgent</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompts</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../prompts/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../prompts/basic_template/">Basic Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../prompts/examples_prompts/">Examples Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../prompts/api_prompts/">API Prompts</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Puppeteer</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../automator/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../automator/ui_automator/">GUI Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../automator/wincom_automator/">API Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../automator/web_automator/">Web Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../automator/bash_automator/">Bash Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../automator/ai_tool_automator/">AI Tool</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Logs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../logs/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logs/request_logs/">Request Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logs/step_logs/">Step Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logs/evaluation_logs/">Evaluation Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logs/screenshots_logs/">Screenshots</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../logs/ui_tree_logs/">UI Tree</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Advanced Usage</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Continuous Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/reinforce_appagent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/reinforce_appagent/learning_from_help_document/">Learning from Help Document</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/reinforce_appagent/learning_from_bing_search/">Learning from Bing Search</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/reinforce_appagent/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/reinforce_appagent/learning_from_demonstration/">Learning from User Demonstration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../advanced_usage/follower_mode/">Follower Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../advanced_usage/batch_mode/">Batch Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../advanced_usage/multi_action/">Speculative Multi-Action Execution</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../advanced_usage/operator_as_app_agent/">Operator-as-a-AppAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Control Filtering</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/control_filtering/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/control_filtering/text_filtering/">Text Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/control_filtering/semantic_filtering/">Semantic Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/control_filtering/icon_filtering/">Icon Filtering</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../advanced_usage/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../advanced_usage/customization/">Customization</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Creating Your AppAgent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../creating_app_agent/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../creating_app_agent/help_document_provision/">Help Document Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../creating_app_agent/warpping_app_native_api/">Warpping App-Native API</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Benchmark</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../benchmark/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../benchmark/osworld/">OSWorld (Windows)</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Dataflow</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../dataflow/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dataflow/instantiation/">Instantiation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dataflow/execution/">Execution</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dataflow/windows_app_env/">Windows App Environment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../dataflow/result/">Result</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="..">UFO Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href=".." class="icon icon-home" aria-label="Docs"></a></li>
+      <li class="breadcrumb-item active">Project Directory Structure</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <p>The UFO project is organized into a well-defined directory structure to facilitate development, deployment, and documentation. Below is an overview of each directory and file, along with their purpose:</p>
+<pre><code class="language-bash">📦project
+ ┣ 📂documents               # Folder to store project documentation
+ ┣ 📂learner                 # Folder to build the vector database for help documents
+ ┣ 📂model_worker            # Folder to store tools for deploying your own model
+ ┣ 📂record_processor        # Folder to parse human demonstrations from Windows Step Recorder and build the vector database
+ ┣ 📂dataflow                # Folder for the code of data collection pipeline for Large Action Model (LAM)
+ ┣ 📂vetordb                 # Folder to store all data in the vector database for RAG (Retrieval-Augmented Generation)
+ ┣ 📂logs                    # Folder to store logs, generated after the program starts
+ ┗ 📂ufo                     # Directory containing main project code
+    ┣ 📂module               # Directory for the basic module of UFO, e.g., session and round
+    ┣ 📂agents               # Code implementation of agents in UFO
+    ┣ 📂automator            # Implementation of the skill set of agents to automate applications
+    ┣ 📂experience           # Parse and save the agent's self-experience
+    ┣ 📂llm                  # Folder to store the LLM (Large Language Model) implementation
+    ┣ 📂prompter             # Prompt constructor for the agent
+    ┣ 📂prompts              # Prompt templates and files to construct the full prompt
+    ┣ 📂rag                  # Implementation of RAG from different sources to enhance agents' abilities
+    ┣ 📂trajectory           # Implementation of loading and parsing trajectories of task completion
+    ┣ 📂utils                # Utility functions
+    ┣ 📂config               # Configuration files
+        ┣ 📜config.yaml      # User configuration file for LLM and other settings
+        ┣ 📜config_dev.yaml  # Configuration file for developers
+        ┗ ...
+    ┗ 📄ufo.py               # Main entry point for the UFO client
+</code></pre>
+<h2 id="directory-and-file-descriptions">Directory and File Descriptions</h2>
+<h3 id="documents"><a href="">documents</a></h3>
+<ul>
+<li><strong>Purpose:</strong> Stores all the project documentation.</li>
+<li><strong>Details:</strong> This may include design documents, user manuals, API documentation, and any other relevant project documentation.</li>
+</ul>
+<h3 id="learner"><a href="https://github.com/microsoft/UFO/tree/main/learner">learner</a></h3>
+<ul>
+<li><strong>Purpose:</strong> Used to build the vector database for help documents.</li>
+<li><strong>Details:</strong> This directory contains scripts and tools to process help documents and create a searchable vector database, enhancing the agents' ability for task completion.</li>
+</ul>
+<h3 id="model_worker"><a href="https://github.com/microsoft/UFO/tree/main/model_worker">model_worker</a></h3>
+<ul>
+<li><strong>Purpose:</strong> Contains tools and scripts necessary for deploying custom models.</li>
+<li><strong>Details:</strong> This includes model deployment configurations, and management tools for integrating custom models into the project.</li>
+</ul>
+<h3 id="dataflow"><a href="https://github.com/microsoft/UFO/tree/main/dataflow">dataflow</a></h3>
+<ul>
+<li><strong>Purpose:</strong> Contains the code for the data collection pipeline for the Large Action Model (LAM).</li>
+<li><strong>Details:</strong> This directory includes scripts and tools for collecting and processing data to train the Large Action Model, improving the agents' performance and capabilities.</li>
+</ul>
+<h3 id="record_processor"><a href="https://github.com/microsoft/UFO/tree/main/record_processor">record_processor</a></h3>
+<ul>
+<li><strong>Purpose:</strong> Parses human demonstrations recorded using the Windows Step Recorder and builds the vector database.</li>
+<li><strong>Details:</strong> This directory includes parsers, data processing scripts, and tools to convert human demonstrations into a format suitable for agent's retrieval.</li>
+</ul>
+<h3 id="vetordb"><a href="https://github.com/microsoft/UFO/tree/main/vectordb">vetordb</a></h3>
+<ul>
+<li><strong>Purpose:</strong> Stores all data within the vector database for Retrieval-Augmented Generation (RAG).</li>
+<li><strong>Details:</strong> This directory is essential for maintaining the data that enhances the agents' ability to retrieve relevant information and generate more accurate responses.</li>
+</ul>
+<h3 id="logs"><a href="">logs</a></h3>
+<ul>
+<li><strong>Purpose:</strong> Stores log files generated by the application.</li>
+<li><strong>Details:</strong> This directory helps in monitoring, debugging, and analyzing the application's performance and behavior. Logs are generated dynamically as the application runs.</li>
+</ul>
+<h3 id="ufo"><a href="https://github.com/microsoft/UFO/tree/main/ufo">ufo</a></h3>
+<ul>
+<li><strong>Purpose:</strong> The core directory containing the main project code.</li>
+<li>
+<p><strong>Details:</strong> This directory is further subdivided into multiple subdirectories, each serving a specific purpose within the project.</p>
+<h4 id="module"><a href="https://github.com/microsoft/UFO/tree/main/ufo/module">module</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Contains the basic modules of the UFO project, such as session management and rounds.</li>
+<li><strong>Details:</strong> This includes foundational classes and functions that are used throughout the project.</li>
+</ul>
+<h4 id="agents"><a href="https://github.com/microsoft/UFO/tree/main/ufo/agents">agents</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Houses the code implementations of various agents in the UFO project.</li>
+<li><strong>Details:</strong> Agents are components that perform specific tasks within the system, and this directory contains their logic, components, and behavior.</li>
+</ul>
+<h4 id="automator"><a href="https://github.com/microsoft/UFO/tree/main/ufo/automator">automator</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Implements the skill set of agents to automate applications.</li>
+<li><strong>Details:</strong> This includes scripts and tools that enable agents to interact with and automate tasks in various applications, such as mouse and keyboard actions and API calls.</li>
+</ul>
+<h4 id="experience"><a href="https://github.com/microsoft/UFO/tree/main/ufo/experience">experience</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Parses and saves the agent's self-experience.</li>
+<li><strong>Details:</strong> This directory contains mechanisms for agents to learn from their actions and outcomes, improving their performance over time.</li>
+</ul>
+<h4 id="llm"><a href="https://github.com/microsoft/UFO/tree/main/ufo/llm">llm</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Stores the implementation of the Large Language Model (LLM).</li>
+<li><strong>Details:</strong> This includes the implementation of APIs for different language models, such as GPT, Genimi, QWEN, etc., that are used by the agents.</li>
+</ul>
+<h4 id="prompter"><a href="https://github.com/microsoft/UFO/tree/main/ufo/prompter">prompter</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Constructs prompts for the agents.</li>
+<li><strong>Details:</strong> This directory includes prompt construction logic and tools that help agents generate meaningful prompts for user interactions.</li>
+</ul>
+<h4 id="prompts"><a href="https://github.com/microsoft/UFO/tree/main/ufo/prompts">prompts</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Contains prompt templates and files used to construct the full prompt.</li>
+<li><strong>Details:</strong> This includes predefined prompt structures and content that are used to create meaningful interactions with the agents.</li>
+</ul>
+<h4 id="rag"><a href="https://github.com/microsoft/UFO/tree/main/ufo/rag">rag</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Implements Retrieval-Augmented Generation (RAG) from different sources to enhance the agents' abilities.</li>
+<li><strong>etails:</strong> This directory includes scripts and tools for integrating various data sources into the RAG framework, improving the accuracy and relevance of the agents' outputs.</li>
+</ul>
+<h4 id="trajectory"><a href="https://github.com/microsoft/UFO/tree/main/ufo/trajectory">trajectory</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Implements loading and parsing of task completion trajectories.</li>
+<li><strong>Details:</strong> This directory includes tools and scripts to load and parse task completion trajectories, enabling agents to learn from past experiences or for evaluation purposes.</li>
+</ul>
+<h4 id="utils"><a href="https://github.com/microsoft/UFO/tree/main/ufo/utils">utils</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Contains utility functions.</li>
+<li><strong>Details:</strong> This directory includes helper functions, common utilities, and other reusable code snippets that support the project's operations.</li>
+</ul>
+<h4 id="config"><a href="https://github.com/microsoft/UFO/tree/main/ufo/config">config</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Stores configuration files.</li>
+<li><strong>Details:</strong> This directory includes different configuration files for various environments and purposes.</li>
+<li><strong><a href="https://github.com/microsoft/UFO/blob/main/ufo/config/config.yaml.template">config.yaml:</a></strong> User configuration file for LLM and other settings. You need to rename <code>config.yaml.template</code> to <code>config.yaml</code> and edit the configuration settings as needed.</li>
+<li><strong><a href="https://github.com/microsoft/UFO/blob/main/ufo/config/config_dev.yaml">config_dev.yaml</a>:</strong> Developer-specific configuration file with settings tailored for development purposes.</li>
+</ul>
+<h4 id="ufopy"><a href="https://github.com/microsoft/UFO/blob/main/ufo/ufo.py">ufo.py</a></h4>
+<ul>
+<li><strong>Purpose:</strong> Main entry point for the UFO client.</li>
+<li><strong>Details:</strong> This script initializes and starts the UFO application.</li>
+</ul>
+</li>
+</ul>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href=".." class="btn btn-neutral float-left" title="Home"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../getting_started/quick_start/" class="btn btn-neutral float-right" title="Quick Start">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href=".." style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../getting_started/quick_start/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "..";</script>
+    <script src="../js/theme_extra.js"></script>
+    <script src="../js/theme.js"></script>
+      <script src="../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,2721 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      <link rel="shortcut icon" href="../../img/favicon.ico" />
+    <title>AppAgent - UFO Documentation</title>
+    <link rel="stylesheet" href="../../css/theme.css" />
+    <link rel="stylesheet" href="../../css/theme_extra.css" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/styles/github.min.css" />
+        <link href="../../assets/_mkdocstrings.css" rel="stylesheet" />
+    
+      <script>
+        // Current page data
+        var mkdocs_page_name = "AppAgent";
+        var mkdocs_page_input_path = "agents/app_agent.md";
+        var mkdocs_page_url = null;
+      </script>
+    
+    <!--[if lt IE 9]>
+      <script src="../../js/html5shiv.min.js"></script>
+    <![endif]-->
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.8.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script> 
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side stickynav">
+    <div class="wy-side-scroll">
+      <div class="wy-side-nav-search">
+          <a href="../.." class="icon icon-home"> UFO Documentation
+        </a><div role="search">
+  <form id ="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+      <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" title="Type search term here" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../..">Home</a>
+                </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../project_directory_structure/">Project Directory Structure</a>
+                </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Getting Started</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/quick_start/">Quick Start</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../getting_started/more_guidance/">More Guidance</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Basic Modules</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/session/">Session</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/round/">Round</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../modules/context/">Context</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Configurations</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configurations/user_configuration/">User Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configurations/developer_configuration/">Developer Configuration</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../configurations/pricing_configuration/">Model Pricing</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Supported Models</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/openai/">OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/azure_openai/">Azure OpenAI</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/operator/">OpenAI CUA (Operator)</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/gemini/">Gemini</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/claude/">Claude</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/qwen/">Qwen</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/deepseek/">DeepSeek</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/ollama/">Ollama</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../supported_models/custom_model/">Custom Model</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Agents</span></p>
+              <ul class="current">
+                  <li class="toctree-l1"><a class="reference internal" href="../overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Agent Design</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../design/memory/">Memory</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../design/blackboard/">Blackboard</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../design/state/">State</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../design/prompter/">Prompter</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../design/processor/">Processor</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../host_agent/">HostAgent</a>
+                  </li>
+                  <li class="toctree-l1 current"><a class="reference internal current" href="#">AppAgent</a>
+    <ul class="current">
+    <li class="toctree-l2"><a class="reference internal" href="#appagent-input">AppAgent Input</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#appagent-output">AppAgent Output</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#appagent-state">AppAgent State</a>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#knowledge-enhancement">Knowledge Enhancement</a>
+        <ul>
+    <li class="toctree-l3"><a class="reference internal" href="#learning-from-help-documents">Learning from Help Documents</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#learning-from-bing-search">Learning from Bing Search</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#learning-from-self-demonstrations">Learning from Self-Demonstrations</a>
+    </li>
+    <li class="toctree-l3"><a class="reference internal" href="#learning-from-human-demonstrations">Learning from Human Demonstrations</a>
+    </li>
+        </ul>
+    </li>
+    <li class="toctree-l2"><a class="reference internal" href="#skill-set-for-automation">Skill Set for Automation</a>
+    </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../follower_agent/">FollowerAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../evaluation_agent/">EvaluationAgent</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Prompts</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/basic_template/">Basic Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/examples_prompts/">Examples Prompts</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../prompts/api_prompts/">API Prompts</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Puppeteer</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/ui_automator/">GUI Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/wincom_automator/">API Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/web_automator/">Web Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/bash_automator/">Bash Automator</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../automator/ai_tool_automator/">AI Tool</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Logs</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/markdown_log_viewer/">Markdown Log Viewer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/request_logs/">Request Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/step_logs/">Step Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/evaluation_logs/">Evaluation Logs</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/screenshots_logs/">Screenshots</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../logs/ui_tree_logs/">UI Tree</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Advanced Usage</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" >Continuous Knowledge Substrate</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_help_document/">Learning from Help Document</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_bing_search/">Learning from Bing Search</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/experience_learning/">Experience Learning</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/reinforce_appagent/learning_from_demonstration/">Learning from User Demonstration</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/follower_mode/">Follower Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/batch_mode/">Batch Mode</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/multi_action/">Speculative Multi-Action Execution</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/operator_as_app_agent/">Operator-as-a-AppAgent</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Control Filtering</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/text_filtering/">Text Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/semantic_filtering/">Semantic Filtering</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_filtering/icon_filtering/">Icon Filtering</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" >Control Detection</a>
+    <ul>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_detection/overview/">Overview</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_detection/uia_detection/">UIA Detection</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_detection/visual_detection/">Visual Detection</a>
+                </li>
+                <li class="toctree-l2"><a class="reference internal" href="../../advanced_usage/control_detection/hybrid_detection/">Hybrid Detection</a>
+                </li>
+    </ul>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../advanced_usage/customization/">Customization</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Creating Your AppAgent</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/help_document_provision/">Help Document Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/demonstration_provision/">Demonstration Provision</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../creating_app_agent/warpping_app_native_api/">Warpping App-Native API</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Benchmark</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../benchmark/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../benchmark/windows_agent_arena/">Windows Agent Arena</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../benchmark/osworld/">OSWorld (Windows)</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">Dataflow</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../dataflow/overview/">Overview</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../dataflow/instantiation/">Instantiation</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../dataflow/execution/">Execution</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../dataflow/windows_app_env/">Windows App Environment</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../dataflow/result/">Result</a>
+                  </li>
+              </ul>
+              <p class="caption"><span class="caption-text">About</span></p>
+              <ul>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CONTRIBUTING/">Contributing</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/LICENSE/">License</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/CODE_OF_CONDUCT/">Code of Conduct</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/DISCLAIMER/">Disclaimer</a>
+                  </li>
+                  <li class="toctree-l1"><a class="reference internal" href="../../about/SUPPORT/">Support</a>
+                  </li>
+              </ul>
+              <ul>
+                <li class="toctree-l1"><a class="reference internal" href="../../faq/">FAQ</a>
+                </li>
+              </ul>
+      </div>
+    </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+      <nav class="wy-nav-top" role="navigation" aria-label="Mobile navigation menu">
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../..">UFO Documentation</a>
+        
+      </nav>
+      <div class="wy-nav-content">
+        <div class="rst-content"><div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="../.." class="icon icon-home" aria-label="Docs"></a></li>
+          <li class="breadcrumb-item">Agents</li>
+      <li class="breadcrumb-item active">AppAgent</li>
+    <li class="wy-breadcrumbs-aside">
+    </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+            <div class="section" itemprop="articleBody">
+              
+                <h1 id="appagent">AppAgent 👾</h1>
+<p>An <code>AppAgent</code> is responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. The <code>AppAgent</code> is created by the <code>HostAgent</code> to fulfill a sub-task within a <code>Round</code>. The <code>AppAgent</code> is responsible for executing the necessary actions within the application to fulfill the user's request. The <code>AppAgent</code> has the following features:</p>
+<ol>
+<li><strong><a href="https://arxiv.org/abs/2210.03629">ReAct</a> with the Application</strong> - The <code>AppAgent</code> recursively interacts with the application in a workflow of observation-&gt;thought-&gt;action, leveraging the multi-modal capabilities of Visual Language Models (VLMs) to comprehend the application UI and fulfill the user's request.</li>
+<li><strong>Comprehension Enhancement</strong> - The <code>AppAgent</code> is enhanced by Retrieval Augmented Generation (RAG) from heterogeneous sources, including external knowledge bases, and demonstration libraries, making the agent an application "expert".</li>
+<li><strong>Versatile Skill Set</strong> - The <code>AppAgent</code> is equipped with a diverse set of skills to support comprehensive automation, such as mouse, keyboard, native APIs, and "Copilot".</li>
+</ol>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can find the how to enhance the <code>AppAgent</code> with external knowledge bases and demonstration libraries in the <a href="../../advanced_usage/reinforce_appagent/overview/">Reinforcing AppAgent</a> documentation.</p>
+</div>
+<p>We show the framework of the <code>AppAgent</code> in the following diagram:</p>
+<h1 align="center">
+    <img src="../../img/appagent2.png" alt="AppAgent Image" width="80%">
+</h1>
+
+<h2 id="appagent-input">AppAgent Input</h2>
+<p>To interact with the application, the <code>AppAgent</code> receives the following inputs:</p>
+<table>
+<thead>
+<tr>
+<th>Input</th>
+<th>Description</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>User Request</td>
+<td>The user's request in natural language.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Sub-Task</td>
+<td>The sub-task description to be executed by the <code>AppAgent</code>, assigned by the <code>HostAgent</code>.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Current Application</td>
+<td>The name of the application to be interacted with.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Control Information</td>
+<td>Index, name and control type of available controls in the application.</td>
+<td>List of Dictionaries</td>
+</tr>
+<tr>
+<td>Application Screenshots</td>
+<td>Screenshots of the application, including a clean screenshot, an annotated screenshot with labeled controls, and a screenshot with a rectangle around the selected control at the previous step (optional).</td>
+<td>List of Strings</td>
+</tr>
+<tr>
+<td>Previous Sub-Tasks</td>
+<td>The previous sub-tasks and their completion status.</td>
+<td>List of Strings</td>
+</tr>
+<tr>
+<td>Previous Plan</td>
+<td>The previous plan for the following steps.</td>
+<td>List of Strings</td>
+</tr>
+<tr>
+<td>HostAgent Message</td>
+<td>The message from the <code>HostAgent</code> for the completion of the sub-task.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Retrived Information</td>
+<td>The retrieved information from external knowledge bases or demonstration libraries.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Blackboard</td>
+<td>The shared memory space for storing and sharing information among the agents.</td>
+<td>Dictionary</td>
+</tr>
+</tbody>
+</table>
+<p>Below is an example of the annotated application screenshot with labeled controls. This follow the <a href="https://arxiv.org/pdf/2310.11441">Set-of-Mark</a> paradigm.</p>
+<h1 align="center">
+    <img src="../../img/screenshots.png" alt="AppAgent Image" width="90%">
+</h1>
+
+<p>By processing these inputs, the <code>AppAgent</code> determines the necessary actions to fulfill the user's request within the application.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Whether to concatenate the clean screenshot and annotated screenshot can be configured in the <code>CONCAT_SCREENSHOT</code> field in the <code>config_dev.yaml</code> file.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Whether to include the screenshot with a rectangle around the selected control at the previous step can be configured in the <code>INCLUDE_LAST_SCREENSHOT</code> field in the <code>config_dev.yaml</code> file.</p>
+</div>
+<h2 id="appagent-output">AppAgent Output</h2>
+<p>With the inputs provided, the <code>AppAgent</code> generates the following outputs:</p>
+<table>
+<thead>
+<tr>
+<th>Output</th>
+<th>Description</th>
+<th>Type</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Observation</td>
+<td>The observation of the current application screenshots.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Thought</td>
+<td>The logical reasoning process of the <code>AppAgent</code>.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>ControlLabel</td>
+<td>The index of the selected control to interact with.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>ControlText</td>
+<td>The name of the selected control to interact with.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Function</td>
+<td>The function to be executed on the selected control.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Args</td>
+<td>The arguments required for the function execution.</td>
+<td>List of Strings</td>
+</tr>
+<tr>
+<td>Status</td>
+<td>The status of the agent, mapped to the <code>AgentState</code>.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>Plan</td>
+<td>The plan for the following steps after the current action.</td>
+<td>List of Strings</td>
+</tr>
+<tr>
+<td>Comment</td>
+<td>Additional comments or information provided to the user.</td>
+<td>String</td>
+</tr>
+<tr>
+<td>SaveScreenshot</td>
+<td>The flag to save the screenshot of the application to the <code>blackboard</code> for future reference.</td>
+<td>Boolean</td>
+</tr>
+</tbody>
+</table>
+<p>Below is an example of the <code>AppAgent</code> output:</p>
+<pre><code class="language-json">{
+    &quot;Observation&quot;: &quot;Application screenshot&quot;,
+    &quot;Thought&quot;: &quot;Logical reasoning process&quot;,
+    &quot;ControlLabel&quot;: &quot;Control index&quot;,
+    &quot;ControlText&quot;: &quot;Control name&quot;,
+    &quot;Function&quot;: &quot;Function name&quot;,
+    &quot;Args&quot;: [&quot;arg1&quot;, &quot;arg2&quot;],
+    &quot;Status&quot;: &quot;AgentState&quot;,
+    &quot;Plan&quot;: [&quot;Step 1&quot;, &quot;Step 2&quot;],
+    &quot;Comment&quot;: &quot;Additional comments&quot;,
+    &quot;SaveScreenshot&quot;: true
+}
+</code></pre>
+<div class="admonition info">
+<p class="admonition-title">Info</p>
+<p>The <code>AppAgent</code> output is formatted as a JSON object by LLMs and can be parsed by the <code>json.loads</code> method in Python.</p>
+</div>
+<h2 id="appagent-state">AppAgent State</h2>
+<p>The <code>AppAgent</code> state is managed by a state machine that determines the next action to be executed based on the current state, as defined in the <code>ufo/agents/states/app_agent_states.py</code> module. The states include:</p>
+<table>
+<thead>
+<tr>
+<th>State</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONTINUE</code></td>
+<td>Main execution loop; evaluates which subtasks are ready to launch or resume.</td>
+</tr>
+<tr>
+<td><code>ASSIGN</code></td>
+<td>Selects an available application process and spawns the corresponding <code>AppAgent</code>.</td>
+</tr>
+<tr>
+<td><code>PENDING</code></td>
+<td>Waits for user input to resolve ambiguity or gather additional task parameters.</td>
+</tr>
+<tr>
+<td><code>FINISH</code></td>
+<td>All subtasks complete; cleans up agent instances and finalizes session state.</td>
+</tr>
+<tr>
+<td><code>FAIL</code></td>
+<td>Enters recovery or abort mode upon irrecoverable failure.</td>
+</tr>
+</tbody>
+</table>
+<p>The state machine diagram for the <code>AppAgent</code> is shown below:</p>
+<h1 align="center">
+    <img src="../../img/app_state.png"/> 
+</h1>
+
+<p>The <code>AppAgent</code> progresses through these states to execute the necessary actions within the application and fulfill the sub-task assigned by the <code>HostAgent</code>.</p>
+<h2 id="knowledge-enhancement">Knowledge Enhancement</h2>
+<p>The <code>AppAgent</code> is enhanced by Retrieval Augmented Generation (RAG) from heterogeneous sources, including external knowledge bases and demonstration libraries. The <code>AppAgent</code> leverages this knowledge to enhance its comprehension of the application and learn from demonstrations to improve its performance.</p>
+<h3 id="learning-from-help-documents">Learning from Help Documents</h3>
+<p>User can provide help documents to the <code>AppAgent</code> to enhance its comprehension of the application and improve its performance in the <code>config.yaml</code> file. </p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Please find details configuration in the <a href="../../configurations/user_configuration/">documentation</a>. </p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You may also refer to the <a href="">here</a> for how to provide help documents to the <code>AppAgent</code>.</p>
+</div>
+<p>In the <code>AppAgent</code>, it calls the <code>build_offline_docs_retriever</code> to build a help document retriever, and uses the <code>retrived_documents_prompt_helper</code> to contruct the prompt for the <code>AppAgent</code>.</p>
+<h3 id="learning-from-bing-search">Learning from Bing Search</h3>
+<p>Since help documents may not cover all the information or the information may be outdated, the <code>AppAgent</code> can also leverage Bing search to retrieve the latest information. You can activate Bing search and configure the search engine in the <code>config.yaml</code> file.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Please find details configuration in the <a href="../../configurations/user_configuration/">documentation</a>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You may also refer to the <a href="">here</a> for the implementation of Bing search in the <code>AppAgent</code>.</p>
+</div>
+<p>In the <code>AppAgent</code>, it calls the <code>build_online_search_retriever</code> to build a Bing search retriever, and uses the <code>retrived_documents_prompt_helper</code> to contruct the prompt for the <code>AppAgent</code>.</p>
+<h3 id="learning-from-self-demonstrations">Learning from Self-Demonstrations</h3>
+<p>You may save successful action trajectories in the <code>AppAgent</code> to learn from self-demonstrations and improve its performance. After the completion of a <code>session</code>, the <code>AppAgent</code> will ask the user whether to save the action trajectories for future reference. You may configure the use of self-demonstrations in the <code>config.yaml</code> file.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can find details of the configuration in the <a href="../../configurations/user_configuration/">documentation</a>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You may also refer to the <a href="">here</a> for the implementation of self-demonstrations in the <code>AppAgent</code>.</p>
+</div>
+<p>In the <code>AppAgent</code>, it calls the <code>build_experience_retriever</code> to build a self-demonstration retriever, and uses the <code>rag_experience_retrieve</code> to retrieve the demonstration for the <code>AppAgent</code>.</p>
+<h3 id="learning-from-human-demonstrations">Learning from Human Demonstrations</h3>
+<p>In addition to self-demonstrations, you can also provide human demonstrations to the <code>AppAgent</code> to enhance its performance by using the <a href="https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47">Step Recorder</a> tool built in the Windows OS. The <code>AppAgent</code> will learn from the human demonstrations to improve its performance and achieve better personalization. The use of human demonstrations can be configured in the <code>config.yaml</code> file.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You can find details of the configuration in the <a href="../../configurations/user_configuration/">documentation</a>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>You may also refer to the <a href="">here</a> for the implementation of human demonstrations in the <code>AppAgent</code>.</p>
+</div>
+<p>In the <code>AppAgent</code>, it calls the <code>build_human_demonstration_retriever</code> to build a human demonstration retriever, and uses the <code>rag_experience_retrieve</code> to retrieve the demonstration for the <code>AppAgent</code>.</p>
+<h2 id="skill-set-for-automation">Skill Set for Automation</h2>
+<p>The <code>AppAgent</code> is equipped with a versatile skill set to support comprehensive automation within the application by calling the <code>create_puppeteer_interface</code> method. The skills include:</p>
+<table>
+<thead>
+<tr>
+<th>Skill</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>UI Automation</td>
+<td>Mimicking user interactions with the application UI controls using the <code>UI Automation</code> and <code>Win32</code> API.</td>
+</tr>
+<tr>
+<td>Native API</td>
+<td>Accessing the application's native API to execute specific functions and actions.</td>
+</tr>
+<tr>
+<td>In-App Agent</td>
+<td>Leveraging the in-app agent to interact with the application's internal functions and features.</td>
+</tr>
+</tbody>
+</table>
+<p>By utilizing these skills, the <code>AppAgent</code> can efficiently interact with the application and fulfill the user's request. You can find more details in the <a href="../../automator/overview/">Automator</a> documentation and the code in the <code>ufo/automator</code> module.</p>
+<h1 id="reference">Reference</h1>
+
+
+<div class="doc doc-object doc-class">
+
+
+
+<a id="agents.agent.app_agent.AppAgent"></a>
+    <div class="doc doc-contents first">
+            <p class="doc doc-class-bases">
+              Bases: <code><span title="ufo.agents.agent.basic.BasicAgent">BasicAgent</span></code></p>
+
+
+        <p>The AppAgent class that manages the interaction with the application.</p>
+
+        <p>Initialize the AppAgent.
+:name: The name of the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>process_name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The process name of the app.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>app_root_name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The root name of the app.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>is_visual</code></b>
+                  (<code><span title="bool">bool</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The flag indicating whether the agent is visual or not.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>main_prompt</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The main prompt file path.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>example_prompt</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The example prompt file path.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>api_prompt</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The API prompt file path.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>skip_prompter</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>False</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The flag indicating whether to skip the prompter initialization.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>mode</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;normal&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The mode of the agent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+
+
+
+
+
+                  <details class="quote">
+                    <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+                    <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">39</span>
+<span class="normal">40</span>
+<span class="normal">41</span>
+<span class="normal">42</span>
+<span class="normal">43</span>
+<span class="normal">44</span>
+<span class="normal">45</span>
+<span class="normal">46</span>
+<span class="normal">47</span>
+<span class="normal">48</span>
+<span class="normal">49</span>
+<span class="normal">50</span>
+<span class="normal">51</span>
+<span class="normal">52</span>
+<span class="normal">53</span>
+<span class="normal">54</span>
+<span class="normal">55</span>
+<span class="normal">56</span>
+<span class="normal">57</span>
+<span class="normal">58</span>
+<span class="normal">59</span>
+<span class="normal">60</span>
+<span class="normal">61</span>
+<span class="normal">62</span>
+<span class="normal">63</span>
+<span class="normal">64</span>
+<span class="normal">65</span>
+<span class="normal">66</span>
+<span class="normal">67</span>
+<span class="normal">68</span>
+<span class="normal">69</span>
+<span class="normal">70</span>
+<span class="normal">71</span>
+<span class="normal">72</span>
+<span class="normal">73</span>
+<span class="normal">74</span>
+<span class="normal">75</span>
+<span class="normal">76</span>
+<span class="normal">77</span>
+<span class="normal">78</span>
+<span class="normal">79</span>
+<span class="normal">80</span>
+<span class="normal">81</span>
+<span class="normal">82</span>
+<span class="normal">83</span>
+<span class="normal">84</span>
+<span class="normal">85</span>
+<span class="normal">86</span>
+<span class="normal">87</span>
+<span class="normal">88</span>
+<span class="normal">89</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">process_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">app_root_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">is_visual</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">main_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">example_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">api_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">skip_prompter</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span>
+    <span class="n">mode</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;normal&quot;</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Initialize the AppAgent.</span>
+<span class="sd">    :name: The name of the agent.</span>
+<span class="sd">    :param process_name: The process name of the app.</span>
+<span class="sd">    :param app_root_name: The root name of the app.</span>
+<span class="sd">    :param is_visual: The flag indicating whether the agent is visual or not.</span>
+<span class="sd">    :param main_prompt: The main prompt file path.</span>
+<span class="sd">    :param example_prompt: The example prompt file path.</span>
+<span class="sd">    :param api_prompt: The API prompt file path.</span>
+<span class="sd">    :param skip_prompter: The flag indicating whether to skip the prompter initialization.</span>
+<span class="sd">    :param mode: The mode of the agent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">skip_prompter</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prompter</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_prompter</span><span class="p">(</span>
+            <span class="n">is_visual</span><span class="p">,</span> <span class="n">main_prompt</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">,</span> <span class="n">api_prompt</span><span class="p">,</span> <span class="n">app_root_name</span>
+        <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_process_name</span> <span class="o">=</span> <span class="n">process_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_app_root_name</span> <span class="o">=</span> <span class="n">app_root_name</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">offline_doc_retriever</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">online_doc_retriever</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">experience_retriever</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">human_demonstration_retriever</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">Puppeteer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_puppeteer_interface</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">_mode</span> <span class="o">=</span> <span class="n">mode</span>
+
+    <span class="n">control_detection_backend</span> <span class="o">=</span> <span class="n">configs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;CONTROL_BACKEND&quot;</span><span class="p">,</span> <span class="p">[</span><span class="s2">&quot;uia&quot;</span><span class="p">])</span>
+
+    <span class="k">if</span> <span class="s2">&quot;omniparser&quot;</span> <span class="ow">in</span> <span class="n">control_detection_backend</span><span class="p">:</span>
+        <span class="n">omniparser_endpoint</span> <span class="o">=</span> <span class="n">configs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;OMNIPARSER&quot;</span><span class="p">,</span> <span class="p">{})</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ENDPOINT&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="n">omniparser_service</span> <span class="o">=</span> <span class="n">OmniParser</span><span class="p">(</span><span class="n">endpoint</span><span class="o">=</span><span class="n">omniparser_endpoint</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grounding_service</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BasicGrounding</span><span class="p">]</span> <span class="o">=</span> <span class="n">OmniparserGrounding</span><span class="p">(</span>
+            <span class="n">service</span><span class="o">=</span><span class="n">omniparser_service</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">grounding_service</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="n">BasicGrounding</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">set_state</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">default_state</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+                  </details>
+
+
+
+  <div class="doc doc-children">
+
+
+
+
+
+
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.app_agent.AppAgent.default_state" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">default_state</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the default state.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.app_agent.AppAgent.mode" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">mode</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the mode of the session.</p>
+
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h2 id="agents.agent.app_agent.AppAgent.status_manager" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">status_manager</span></code>
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-property"><code>property</code></small>
+  </span>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the status manager.</p>
+
+    </div>
+
+</div>
+
+
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.build_experience_retriever" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">build_experience_retriever</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build the experience retriever.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>db_path</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The path to the experience database.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>None</code>
+              –
+              <div class="doc-md-description">
+                <p>The experience retriever.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">448</span>
+<span class="normal">449</span>
+<span class="normal">450</span>
+<span class="normal">451</span>
+<span class="normal">452</span>
+<span class="normal">453</span>
+<span class="normal">454</span>
+<span class="normal">455</span>
+<span class="normal">456</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_experience_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the experience retriever.</span>
+<span class="sd">    :param db_path: The path to the experience database.</span>
+<span class="sd">    :return: The experience retriever.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">experience_retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retriever_factory</span><span class="o">.</span><span class="n">create_retriever</span><span class="p">(</span>
+        <span class="s2">&quot;experience&quot;</span><span class="p">,</span> <span class="n">db_path</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.build_human_demonstration_retriever" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">build_human_demonstration_retriever</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build the human demonstration retriever.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>db_path</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The path to the human demonstration database.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code>None</code>
+              –
+              <div class="doc-md-description">
+                <p>The human demonstration retriever.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">458</span>
+<span class="normal">459</span>
+<span class="normal">460</span>
+<span class="normal">461</span>
+<span class="normal">462</span>
+<span class="normal">463</span>
+<span class="normal">464</span>
+<span class="normal">465</span>
+<span class="normal">466</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_human_demonstration_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">db_path</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the human demonstration retriever.</span>
+<span class="sd">    :param db_path: The path to the human demonstration database.</span>
+<span class="sd">    :return: The human demonstration retriever.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">human_demonstration_retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retriever_factory</span><span class="o">.</span><span class="n">create_retriever</span><span class="p">(</span>
+        <span class="s2">&quot;demonstration&quot;</span><span class="p">,</span> <span class="n">db_path</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.build_offline_docs_retriever" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">build_offline_docs_retriever</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build the offline docs retriever.</p>
+
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">430</span>
+<span class="normal">431</span>
+<span class="normal">432</span>
+<span class="normal">433</span>
+<span class="normal">434</span>
+<span class="normal">435</span>
+<span class="normal">436</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_offline_docs_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the offline docs retriever.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">offline_doc_retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retriever_factory</span><span class="o">.</span><span class="n">create_retriever</span><span class="p">(</span>
+        <span class="s2">&quot;offline&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_app_root_name</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.build_online_search_retriever" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">build_online_search_retriever</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">top_k</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Build the online search retriever.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>request</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The request for online Bing search.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>top_k</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The number of documents to retrieve.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">438</span>
+<span class="normal">439</span>
+<span class="normal">440</span>
+<span class="normal">441</span>
+<span class="normal">442</span>
+<span class="normal">443</span>
+<span class="normal">444</span>
+<span class="normal">445</span>
+<span class="normal">446</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">build_online_search_retriever</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">top_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Build the online search retriever.</span>
+<span class="sd">    :param request: The request for online Bing search.</span>
+<span class="sd">    :param top_k: The number of documents to retrieve.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">online_doc_retriever</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">retriever_factory</span><span class="o">.</span><span class="n">create_retriever</span><span class="p">(</span>
+        <span class="s2">&quot;online&quot;</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">top_k</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.context_provision" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">context_provision</span><span class="p">(</span><span class="n">request</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Provision the context for the app agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>request</code></b>
+                  (<code><span title="str">str</span></code>, default:
+                      <code>&#39;&#39;</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The request sent to the Bing search retriever.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">468</span>
+<span class="normal">469</span>
+<span class="normal">470</span>
+<span class="normal">471</span>
+<span class="normal">472</span>
+<span class="normal">473</span>
+<span class="normal">474</span>
+<span class="normal">475</span>
+<span class="normal">476</span>
+<span class="normal">477</span>
+<span class="normal">478</span>
+<span class="normal">479</span>
+<span class="normal">480</span>
+<span class="normal">481</span>
+<span class="normal">482</span>
+<span class="normal">483</span>
+<span class="normal">484</span>
+<span class="normal">485</span>
+<span class="normal">486</span>
+<span class="normal">487</span>
+<span class="normal">488</span>
+<span class="normal">489</span>
+<span class="normal">490</span>
+<span class="normal">491</span>
+<span class="normal">492</span>
+<span class="normal">493</span>
+<span class="normal">494</span>
+<span class="normal">495</span>
+<span class="normal">496</span>
+<span class="normal">497</span>
+<span class="normal">498</span>
+<span class="normal">499</span>
+<span class="normal">500</span>
+<span class="normal">501</span>
+<span class="normal">502</span>
+<span class="normal">503</span>
+<span class="normal">504</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">context_provision</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Provision the context for the app agent.</span>
+<span class="sd">    :param request: The request sent to the Bing search retriever.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Load the offline document indexer for the app agent if available.</span>
+    <span class="k">if</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;RAG_OFFLINE_DOCS&quot;</span><span class="p">]:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span>
+            <span class="s2">&quot;Loading offline help document indexer for </span><span class="si">{app}</span><span class="s2">...&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">app</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_name</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;magenta&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_offline_docs_retriever</span><span class="p">()</span>
+
+    <span class="c1"># Load the online search indexer for the app agent if available.</span>
+
+    <span class="k">if</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;RAG_ONLINE_SEARCH&quot;</span><span class="p">]</span> <span class="ow">and</span> <span class="n">request</span><span class="p">:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span><span class="s2">&quot;Creating a Bing search indexer...&quot;</span><span class="p">,</span> <span class="s2">&quot;magenta&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_online_search_retriever</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;RAG_ONLINE_SEARCH_TOPK&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+    <span class="c1"># Load the experience indexer for the app agent if available.</span>
+    <span class="k">if</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;RAG_EXPERIENCE&quot;</span><span class="p">]:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span><span class="s2">&quot;Creating an experience indexer...&quot;</span><span class="p">,</span> <span class="s2">&quot;magenta&quot;</span><span class="p">)</span>
+        <span class="n">experience_path</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;EXPERIENCE_SAVED_PATH&quot;</span><span class="p">]</span>
+        <span class="n">db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">experience_path</span><span class="p">,</span> <span class="s2">&quot;experience_db&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_experience_retriever</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+
+    <span class="c1"># Load the demonstration indexer for the app agent if available.</span>
+    <span class="k">if</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;RAG_DEMONSTRATION&quot;</span><span class="p">]:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span><span class="s2">&quot;Creating an demonstration indexer...&quot;</span><span class="p">,</span> <span class="s2">&quot;magenta&quot;</span><span class="p">)</span>
+        <span class="n">demonstration_path</span> <span class="o">=</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;DEMONSTRATION_SAVED_PATH&quot;</span><span class="p">]</span>
+        <span class="n">db_path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">demonstration_path</span><span class="p">,</span> <span class="s2">&quot;demonstration_db&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">build_human_demonstration_retriever</span><span class="p">(</span><span class="n">db_path</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.create_puppeteer_interface" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">create_puppeteer_interface</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Create the Puppeteer interface to automate the app.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ufo.automator.puppeteer.AppPuppeteer">AppPuppeteer</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The Puppeteer interface.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">394</span>
+<span class="normal">395</span>
+<span class="normal">396</span>
+<span class="normal">397</span>
+<span class="normal">398</span>
+<span class="normal">399</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">create_puppeteer_interface</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">puppeteer</span><span class="o">.</span><span class="n">AppPuppeteer</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Create the Puppeteer interface to automate the app.</span>
+<span class="sd">    :return: The Puppeteer interface.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">puppeteer</span><span class="o">.</span><span class="n">AppPuppeteer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_process_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_app_root_name</span><span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.demonstration_prompt_helper" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">demonstration_prompt_helper</span><span class="p">(</span><span class="n">request</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the examples and tips for the AppAgent using the demonstration retriever.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>request</code></b>
+              –
+              <div class="doc-md-description">
+                <p>The request for the AppAgent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Tuple">Tuple</span>[<span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]]</code>
+              –
+              <div class="doc-md-description">
+                <p>The examples and tips for the AppAgent.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">232</span>
+<span class="normal">233</span>
+<span class="normal">234</span>
+<span class="normal">235</span>
+<span class="normal">236</span>
+<span class="normal">237</span>
+<span class="normal">238</span>
+<span class="normal">239</span>
+<span class="normal">240</span>
+<span class="normal">241</span>
+<span class="normal">242</span>
+<span class="normal">243</span>
+<span class="normal">244</span>
+<span class="normal">245</span>
+<span class="normal">246</span>
+<span class="normal">247</span>
+<span class="normal">248</span>
+<span class="normal">249</span>
+<span class="normal">250</span>
+<span class="normal">251</span>
+<span class="normal">252</span>
+<span class="normal">253</span>
+<span class="normal">254</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">demonstration_prompt_helper</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the examples and tips for the AppAgent using the demonstration retriever.</span>
+<span class="sd">    :param request: The request for the AppAgent.</span>
+<span class="sd">    :return: The examples and tips for the AppAgent.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Get the examples and tips for the AppAgent using the experience and demonstration retrievers.</span>
+    <span class="k">if</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;RAG_EXPERIENCE&quot;</span><span class="p">]:</span>
+        <span class="n">experience_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rag_experience_retrieve</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;RAG_EXPERIENCE_RETRIEVED_TOPK&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">experience_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">if</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;RAG_DEMONSTRATION&quot;</span><span class="p">]:</span>
+        <span class="n">demonstration_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rag_demonstration_retrieve</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span> <span class="n">configs</span><span class="p">[</span><span class="s2">&quot;RAG_DEMONSTRATION_RETRIEVED_TOPK&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">demonstration_results</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="k">return</span> <span class="n">experience_results</span><span class="p">,</span> <span class="n">demonstration_results</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.external_knowledge_prompt_helper" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">external_knowledge_prompt_helper</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">offline_top_k</span><span class="p">,</span> <span class="n">online_top_k</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Retrieve the external knowledge and construct the prompt.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>request</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The request.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>offline_top_k</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The number of offline documents to retrieve.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>online_top_k</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The number of online documents to retrieve.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.Tuple">Tuple</span>[<span title="str">str</span>, <span title="str">str</span>]</code>
+              –
+              <div class="doc-md-description">
+                <p>The prompt message for the external_knowledge.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">256</span>
+<span class="normal">257</span>
+<span class="normal">258</span>
+<span class="normal">259</span>
+<span class="normal">260</span>
+<span class="normal">261</span>
+<span class="normal">262</span>
+<span class="normal">263</span>
+<span class="normal">264</span>
+<span class="normal">265</span>
+<span class="normal">266</span>
+<span class="normal">267</span>
+<span class="normal">268</span>
+<span class="normal">269</span>
+<span class="normal">270</span>
+<span class="normal">271</span>
+<span class="normal">272</span>
+<span class="normal">273</span>
+<span class="normal">274</span>
+<span class="normal">275</span>
+<span class="normal">276</span>
+<span class="normal">277</span>
+<span class="normal">278</span>
+<span class="normal">279</span>
+<span class="normal">280</span>
+<span class="normal">281</span>
+<span class="normal">282</span>
+<span class="normal">283</span>
+<span class="normal">284</span>
+<span class="normal">285</span>
+<span class="normal">286</span>
+<span class="normal">287</span>
+<span class="normal">288</span>
+<span class="normal">289</span>
+<span class="normal">290</span>
+<span class="normal">291</span>
+<span class="normal">292</span>
+<span class="normal">293</span>
+<span class="normal">294</span>
+<span class="normal">295</span>
+<span class="normal">296</span>
+<span class="normal">297</span>
+<span class="normal">298</span>
+<span class="normal">299</span>
+<span class="normal">300</span>
+<span class="normal">301</span>
+<span class="normal">302</span>
+<span class="normal">303</span>
+<span class="normal">304</span>
+<span class="normal">305</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">external_knowledge_prompt_helper</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">offline_top_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">,</span> <span class="n">online_top_k</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieve the external knowledge and construct the prompt.</span>
+<span class="sd">    :param request: The request.</span>
+<span class="sd">    :param offline_top_k: The number of offline documents to retrieve.</span>
+<span class="sd">    :param online_top_k: The number of online documents to retrieve.</span>
+<span class="sd">    :return: The prompt message for the external_knowledge.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="c1"># Retrieve offline documents and construct the prompt</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">offline_doc_retriever</span><span class="p">:</span>
+
+        <span class="n">offline_docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">offline_doc_retriever</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span>
+            <span class="n">offline_top_k</span><span class="p">,</span>
+            <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+        <span class="p">)</span>
+
+        <span class="n">format_string</span> <span class="o">=</span> <span class="s2">&quot;[Similar Requests]: </span><span class="si">{question}</span><span class="se">\n</span><span class="s2">Step: </span><span class="si">{answer}</span><span class="se">\n</span><span class="s2">&quot;</span>
+
+        <span class="n">offline_docs_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompter</span><span class="o">.</span><span class="n">retrived_documents_prompt_helper</span><span class="p">(</span>
+            <span class="s2">&quot;[Help Documents]&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span><span class="p">,</span>
+            <span class="p">[</span>
+                <span class="n">format_string</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="n">question</span><span class="o">=</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;title&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                    <span class="n">answer</span><span class="o">=</span><span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;text&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">),</span>
+                <span class="p">)</span>
+                <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">offline_docs</span>
+            <span class="p">],</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">offline_docs_prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="c1"># Retrieve online documents and construct the prompt</span>
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_doc_retriever</span><span class="p">:</span>
+        <span class="n">online_search_docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">online_doc_retriever</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span>
+            <span class="n">request</span><span class="p">,</span> <span class="n">online_top_k</span><span class="p">,</span> <span class="nb">filter</span><span class="o">=</span><span class="kc">None</span>
+        <span class="p">)</span>
+        <span class="n">online_docs_prompt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompter</span><span class="o">.</span><span class="n">retrived_documents_prompt_helper</span><span class="p">(</span>
+            <span class="s2">&quot;Online Search Results&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Search Result&quot;</span><span class="p">,</span>
+            <span class="p">[</span><span class="n">doc</span><span class="o">.</span><span class="n">page_content</span> <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">online_search_docs</span><span class="p">],</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">online_docs_prompt</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span>
+
+    <span class="k">return</span> <span class="n">offline_docs_prompt</span><span class="p">,</span> <span class="n">online_docs_prompt</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.get_prompter" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">get_prompter</span><span class="p">(</span><span class="n">is_visual</span><span class="p">,</span> <span class="n">main_prompt</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">,</span> <span class="n">api_prompt</span><span class="p">,</span> <span class="n">app_root_name</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Get the prompt for the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>is_visual</code></b>
+                  (<code><span title="bool">bool</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The flag indicating whether the agent is visual or not.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>main_prompt</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The main prompt file path.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>example_prompt</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The example prompt file path.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>api_prompt</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The API prompt file path.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>app_root_name</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The root name of the app.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="ufo.prompter.agent_prompter.AppAgentPrompter">AppAgentPrompter</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The prompter instance.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"> 91</span>
+<span class="normal"> 92</span>
+<span class="normal"> 93</span>
+<span class="normal"> 94</span>
+<span class="normal"> 95</span>
+<span class="normal"> 96</span>
+<span class="normal"> 97</span>
+<span class="normal"> 98</span>
+<span class="normal"> 99</span>
+<span class="normal">100</span>
+<span class="normal">101</span>
+<span class="normal">102</span>
+<span class="normal">103</span>
+<span class="normal">104</span>
+<span class="normal">105</span>
+<span class="normal">106</span>
+<span class="normal">107</span>
+<span class="normal">108</span>
+<span class="normal">109</span>
+<span class="normal">110</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">get_prompter</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">is_visual</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+    <span class="n">main_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">example_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">api_prompt</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">app_root_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">AppAgentPrompter</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get the prompt for the agent.</span>
+<span class="sd">    :param is_visual: The flag indicating whether the agent is visual or not.</span>
+<span class="sd">    :param main_prompt: The main prompt file path.</span>
+<span class="sd">    :param example_prompt: The example prompt file path.</span>
+<span class="sd">    :param api_prompt: The API prompt file path.</span>
+<span class="sd">    :param app_root_name: The root name of the app.</span>
+<span class="sd">    :return: The prompter instance.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">AppAgentPrompter</span><span class="p">(</span>
+        <span class="n">is_visual</span><span class="p">,</span> <span class="n">main_prompt</span><span class="p">,</span> <span class="n">example_prompt</span><span class="p">,</span> <span class="n">api_prompt</span><span class="p">,</span> <span class="n">app_root_name</span>
+    <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.message_constructor" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">message_constructor</span><span class="p">(</span><span class="n">dynamic_examples</span><span class="p">,</span> <span class="n">dynamic_knowledge</span><span class="p">,</span> <span class="n">image_list</span><span class="p">,</span> <span class="n">control_info</span><span class="p">,</span> <span class="n">prev_subtask</span><span class="p">,</span> <span class="n">plan</span><span class="p">,</span> <span class="n">request</span><span class="p">,</span> <span class="n">subtask</span><span class="p">,</span> <span class="n">current_application</span><span class="p">,</span> <span class="n">host_message</span><span class="p">,</span> <span class="n">blackboard_prompt</span><span class="p">,</span> <span class="n">last_success_actions</span><span class="p">,</span> <span class="n">include_last_screenshot</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Construct the prompt message for the AppAgent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>dynamic_examples</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The dynamic examples retrieved from the self-demonstration and human demonstration.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>dynamic_knowledge</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The dynamic knowledge retrieved from the external knowledge base.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>image_list</code></b>
+                  (<code><span title="typing.List">List</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The list of screenshot images.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>control_info</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The control information.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>plan</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The plan list.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>request</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The overall user request.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>subtask</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The subtask for the current AppAgent to process.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>current_application</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The current application name.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>host_message</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="str">str</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The message from the HostAgent.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>blackboard_prompt</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>]]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The prompt message from the blackboard.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>last_success_actions</code></b>
+                  (<code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The list of successful actions in the last step.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>include_last_screenshot</code></b>
+                  (<code><span title="bool">bool</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The flag indicating whether to include the last screenshot.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Union">Union</span>[<span title="str">str</span>, <span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="str">str</span>]]]]]</code>
+              –
+              <div class="doc-md-description">
+                <p>The prompt message.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">112</span>
+<span class="normal">113</span>
+<span class="normal">114</span>
+<span class="normal">115</span>
+<span class="normal">116</span>
+<span class="normal">117</span>
+<span class="normal">118</span>
+<span class="normal">119</span>
+<span class="normal">120</span>
+<span class="normal">121</span>
+<span class="normal">122</span>
+<span class="normal">123</span>
+<span class="normal">124</span>
+<span class="normal">125</span>
+<span class="normal">126</span>
+<span class="normal">127</span>
+<span class="normal">128</span>
+<span class="normal">129</span>
+<span class="normal">130</span>
+<span class="normal">131</span>
+<span class="normal">132</span>
+<span class="normal">133</span>
+<span class="normal">134</span>
+<span class="normal">135</span>
+<span class="normal">136</span>
+<span class="normal">137</span>
+<span class="normal">138</span>
+<span class="normal">139</span>
+<span class="normal">140</span>
+<span class="normal">141</span>
+<span class="normal">142</span>
+<span class="normal">143</span>
+<span class="normal">144</span>
+<span class="normal">145</span>
+<span class="normal">146</span>
+<span class="normal">147</span>
+<span class="normal">148</span>
+<span class="normal">149</span>
+<span class="normal">150</span>
+<span class="normal">151</span>
+<span class="normal">152</span>
+<span class="normal">153</span>
+<span class="normal">154</span>
+<span class="normal">155</span>
+<span class="normal">156</span>
+<span class="normal">157</span>
+<span class="normal">158</span>
+<span class="normal">159</span>
+<span class="normal">160</span>
+<span class="normal">161</span>
+<span class="normal">162</span>
+<span class="normal">163</span>
+<span class="normal">164</span>
+<span class="normal">165</span>
+<span class="normal">166</span>
+<span class="normal">167</span>
+<span class="normal">168</span>
+<span class="normal">169</span>
+<span class="normal">170</span>
+<span class="normal">171</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">message_constructor</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span>
+    <span class="n">dynamic_examples</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">dynamic_knowledge</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">image_list</span><span class="p">:</span> <span class="n">List</span><span class="p">,</span>
+    <span class="n">control_info</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">prev_subtask</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="n">plan</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">subtask</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">current_application</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">host_message</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+    <span class="n">blackboard_prompt</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]],</span>
+    <span class="n">last_success_actions</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]],</span>
+    <span class="n">include_last_screenshot</span><span class="p">:</span> <span class="nb">bool</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Union</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]]]]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Construct the prompt message for the AppAgent.</span>
+<span class="sd">    :param dynamic_examples: The dynamic examples retrieved from the self-demonstration and human demonstration.</span>
+<span class="sd">    :param dynamic_knowledge: The dynamic knowledge retrieved from the external knowledge base.</span>
+<span class="sd">    :param image_list: The list of screenshot images.</span>
+<span class="sd">    :param control_info: The control information.</span>
+<span class="sd">    :param plan: The plan list.</span>
+<span class="sd">    :param request: The overall user request.</span>
+<span class="sd">    :param subtask: The subtask for the current AppAgent to process.</span>
+<span class="sd">    :param current_application: The current application name.</span>
+<span class="sd">    :param host_message: The message from the HostAgent.</span>
+<span class="sd">    :param blackboard_prompt: The prompt message from the blackboard.</span>
+<span class="sd">    :param last_success_actions: The list of successful actions in the last step.</span>
+<span class="sd">    :param include_last_screenshot: The flag indicating whether to include the last screenshot.</span>
+<span class="sd">    :return: The prompt message.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">appagent_prompt_system_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompter</span><span class="o">.</span><span class="n">system_prompt_construction</span><span class="p">(</span>
+        <span class="n">dynamic_examples</span>
+    <span class="p">)</span>
+
+    <span class="n">appagent_prompt_user_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompter</span><span class="o">.</span><span class="n">user_content_construction</span><span class="p">(</span>
+        <span class="n">image_list</span><span class="o">=</span><span class="n">image_list</span><span class="p">,</span>
+        <span class="n">control_item</span><span class="o">=</span><span class="n">control_info</span><span class="p">,</span>
+        <span class="n">prev_subtask</span><span class="o">=</span><span class="n">prev_subtask</span><span class="p">,</span>
+        <span class="n">prev_plan</span><span class="o">=</span><span class="n">plan</span><span class="p">,</span>
+        <span class="n">user_request</span><span class="o">=</span><span class="n">request</span><span class="p">,</span>
+        <span class="n">subtask</span><span class="o">=</span><span class="n">subtask</span><span class="p">,</span>
+        <span class="n">current_application</span><span class="o">=</span><span class="n">current_application</span><span class="p">,</span>
+        <span class="n">host_message</span><span class="o">=</span><span class="n">host_message</span><span class="p">,</span>
+        <span class="n">retrieved_docs</span><span class="o">=</span><span class="n">dynamic_knowledge</span><span class="p">,</span>
+        <span class="n">last_success_actions</span><span class="o">=</span><span class="n">last_success_actions</span><span class="p">,</span>
+        <span class="n">include_last_screenshot</span><span class="o">=</span><span class="n">include_last_screenshot</span><span class="p">,</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">blackboard_prompt</span><span class="p">:</span>
+        <span class="n">appagent_prompt_user_message</span> <span class="o">=</span> <span class="p">(</span>
+            <span class="n">blackboard_prompt</span> <span class="o">+</span> <span class="n">appagent_prompt_user_message</span>
+        <span class="p">)</span>
+
+    <span class="n">appagent_prompt_message</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prompter</span><span class="o">.</span><span class="n">prompt_construction</span><span class="p">(</span>
+        <span class="n">appagent_prompt_system_message</span><span class="p">,</span> <span class="n">appagent_prompt_user_message</span>
+    <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">appagent_prompt_message</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.print_response" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">print_response</span><span class="p">(</span><span class="n">response_dict</span><span class="p">,</span> <span class="n">print_action</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Print the response.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>response_dict</code></b>
+                  (<code><span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]</code>)
+              –
+              <div class="doc-md-description">
+                <p>The response dictionary to print.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>print_action</code></b>
+                  (<code><span title="bool">bool</span></code>, default:
+                      <code>True</code>
+)
+              –
+              <div class="doc-md-description">
+                <p>The flag indicating whether to print the action.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">173</span>
+<span class="normal">174</span>
+<span class="normal">175</span>
+<span class="normal">176</span>
+<span class="normal">177</span>
+<span class="normal">178</span>
+<span class="normal">179</span>
+<span class="normal">180</span>
+<span class="normal">181</span>
+<span class="normal">182</span>
+<span class="normal">183</span>
+<span class="normal">184</span>
+<span class="normal">185</span>
+<span class="normal">186</span>
+<span class="normal">187</span>
+<span class="normal">188</span>
+<span class="normal">189</span>
+<span class="normal">190</span>
+<span class="normal">191</span>
+<span class="normal">192</span>
+<span class="normal">193</span>
+<span class="normal">194</span>
+<span class="normal">195</span>
+<span class="normal">196</span>
+<span class="normal">197</span>
+<span class="normal">198</span>
+<span class="normal">199</span>
+<span class="normal">200</span>
+<span class="normal">201</span>
+<span class="normal">202</span>
+<span class="normal">203</span>
+<span class="normal">204</span>
+<span class="normal">205</span>
+<span class="normal">206</span>
+<span class="normal">207</span>
+<span class="normal">208</span>
+<span class="normal">209</span>
+<span class="normal">210</span>
+<span class="normal">211</span>
+<span class="normal">212</span>
+<span class="normal">213</span>
+<span class="normal">214</span>
+<span class="normal">215</span>
+<span class="normal">216</span>
+<span class="normal">217</span>
+<span class="normal">218</span>
+<span class="normal">219</span>
+<span class="normal">220</span>
+<span class="normal">221</span>
+<span class="normal">222</span>
+<span class="normal">223</span>
+<span class="normal">224</span>
+<span class="normal">225</span>
+<span class="normal">226</span>
+<span class="normal">227</span>
+<span class="normal">228</span>
+<span class="normal">229</span>
+<span class="normal">230</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">print_response</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">response_dict</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">],</span> <span class="n">print_action</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Print the response.</span>
+<span class="sd">    :param response_dict: The response dictionary to print.</span>
+<span class="sd">    :param print_action: The flag indicating whether to print the action.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">control_text</span> <span class="o">=</span> <span class="n">response_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ControlText&quot;</span><span class="p">)</span>
+    <span class="n">control_label</span> <span class="o">=</span> <span class="n">response_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ControlLabel&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">control_text</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">control_label</span><span class="p">:</span>
+        <span class="n">control_text</span> <span class="o">=</span> <span class="s2">&quot;[No control selected.]&quot;</span>
+        <span class="n">control_label</span> <span class="o">=</span> <span class="s2">&quot;[No control label selected.]&quot;</span>
+    <span class="n">observation</span> <span class="o">=</span> <span class="n">response_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Observation&quot;</span><span class="p">)</span>
+    <span class="n">thought</span> <span class="o">=</span> <span class="n">response_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Thought&quot;</span><span class="p">)</span>
+    <span class="n">plan</span> <span class="o">=</span> <span class="n">response_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Plan&quot;</span><span class="p">)</span>
+    <span class="n">status</span> <span class="o">=</span> <span class="n">response_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Status&quot;</span><span class="p">)</span>
+    <span class="n">comment</span> <span class="o">=</span> <span class="n">response_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Comment&quot;</span><span class="p">)</span>
+    <span class="n">function_call</span> <span class="o">=</span> <span class="n">response_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Function&quot;</span><span class="p">)</span>
+    <span class="n">args</span> <span class="o">=</span> <span class="n">utils</span><span class="o">.</span><span class="n">revise_line_breaks</span><span class="p">(</span><span class="n">response_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Args&quot;</span><span class="p">))</span>
+
+    <span class="c1"># Generate the function call string</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Puppeteer</span><span class="o">.</span><span class="n">get_command_string</span><span class="p">(</span><span class="n">function_call</span><span class="p">,</span> <span class="n">args</span><span class="p">)</span>
+
+    <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span>
+        <span class="s2">&quot;Observations👀: </span><span class="si">{observation}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">observation</span><span class="o">=</span><span class="n">observation</span><span class="p">),</span> <span class="s2">&quot;cyan&quot;</span>
+    <span class="p">)</span>
+    <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span><span class="s2">&quot;Thoughts💡: </span><span class="si">{thought}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">thought</span><span class="o">=</span><span class="n">thought</span><span class="p">),</span> <span class="s2">&quot;green&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">print_action</span><span class="p">:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span>
+            <span class="s2">&quot;Selected item🕹️: </span><span class="si">{control_text}</span><span class="s2">, Label: </span><span class="si">{label}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">control_text</span><span class="o">=</span><span class="n">control_text</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="n">control_label</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span>
+            <span class="s2">&quot;Action applied⚒️: </span><span class="si">{action}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">action</span><span class="o">=</span><span class="n">action</span><span class="p">),</span> <span class="s2">&quot;blue&quot;</span>
+        <span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span><span class="s2">&quot;Status📊: </span><span class="si">{status}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">status</span><span class="o">=</span><span class="n">status</span><span class="p">),</span> <span class="s2">&quot;blue&quot;</span><span class="p">)</span>
+    <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span>
+        <span class="s2">&quot;Next Plan📚: </span><span class="si">{plan}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">plan</span><span class="o">=</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">plan</span><span class="p">)),</span> <span class="s2">&quot;cyan&quot;</span>
+    <span class="p">)</span>
+    <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span><span class="s2">&quot;Comment💬: </span><span class="si">{comment}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">comment</span><span class="o">=</span><span class="n">comment</span><span class="p">),</span> <span class="s2">&quot;green&quot;</span><span class="p">)</span>
+
+    <span class="n">screenshot_saving</span> <span class="o">=</span> <span class="n">response_dict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;SaveScreenshot&quot;</span><span class="p">,</span> <span class="p">{})</span>
+
+    <span class="k">if</span> <span class="n">screenshot_saving</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;save&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span>
+            <span class="s2">&quot;Notice: The current screenshot📸 is saved to the blackboard.&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span>
+            <span class="s2">&quot;Saving reason: </span><span class="si">{reason}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                <span class="n">reason</span><span class="o">=</span><span class="n">screenshot_saving</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;reason&quot;</span><span class="p">)</span>
+            <span class="p">),</span>
+            <span class="s2">&quot;yellow&quot;</span><span class="p">,</span>
+        <span class="p">)</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.process" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">process</span><span class="p">(</span><span class="n">context</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Process the agent.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>context</code></b>
+                  (<code><span title="ufo.module.context.Context">Context</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The context.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">378</span>
+<span class="normal">379</span>
+<span class="normal">380</span>
+<span class="normal">381</span>
+<span class="normal">382</span>
+<span class="normal">383</span>
+<span class="normal">384</span>
+<span class="normal">385</span>
+<span class="normal">386</span>
+<span class="normal">387</span>
+<span class="normal">388</span>
+<span class="normal">389</span>
+<span class="normal">390</span>
+<span class="normal">391</span>
+<span class="normal">392</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="p">:</span> <span class="n">Context</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process the agent.</span>
+<span class="sd">    :param context: The context.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">configs</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;ACTION_SEQUENCE&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processor</span> <span class="o">=</span> <span class="n">AppAgentActionSequenceProcessor</span><span class="p">(</span>
+            <span class="n">agent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span> <span class="n">ground_service</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grounding_service</span>
+        <span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">processor</span> <span class="o">=</span> <span class="n">AppAgentProcessor</span><span class="p">(</span>
+            <span class="n">agent</span><span class="o">=</span><span class="bp">self</span><span class="p">,</span> <span class="n">context</span><span class="o">=</span><span class="n">context</span><span class="p">,</span> <span class="n">ground_service</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">grounding_service</span>
+        <span class="p">)</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">process</span><span class="p">()</span>
+    <span class="bp">self</span><span class="o">.</span><span class="n">status</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">status</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.process_comfirmation" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">process_comfirmation</span><span class="p">()</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Process the user confirmation.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="bool">bool</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The decision.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">401</span>
+<span class="normal">402</span>
+<span class="normal">403</span>
+<span class="normal">404</span>
+<span class="normal">405</span>
+<span class="normal">406</span>
+<span class="normal">407</span>
+<span class="normal">408</span>
+<span class="normal">409</span>
+<span class="normal">410</span>
+<span class="normal">411</span>
+<span class="normal">412</span>
+<span class="normal">413</span>
+<span class="normal">414</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">process_comfirmation</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Process the user confirmation.</span>
+<span class="sd">    :return: The decision.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">actions</span>
+    <span class="n">control_text</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">processor</span><span class="o">.</span><span class="n">control_text</span>
+
+    <span class="n">decision</span> <span class="o">=</span> <span class="n">interactor</span><span class="o">.</span><span class="n">sensitive_step_asker</span><span class="p">(</span><span class="n">action</span><span class="p">,</span> <span class="n">control_text</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">decision</span><span class="p">:</span>
+        <span class="n">utils</span><span class="o">.</span><span class="n">print_with_color</span><span class="p">(</span><span class="s2">&quot;The user has canceled the action.&quot;</span><span class="p">,</span> <span class="s2">&quot;red&quot;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">decision</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.rag_demonstration_retrieve" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">rag_demonstration_retrieve</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">demonstration_top_k</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Retrieving demonstration examples for the user request.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>request</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The user request.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>demonstration_top_k</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The number of documents to retrieve.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="str">str</span></code>
+              –
+              <div class="doc-md-description">
+                <p>The retrieved examples and tips string.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">344</span>
+<span class="normal">345</span>
+<span class="normal">346</span>
+<span class="normal">347</span>
+<span class="normal">348</span>
+<span class="normal">349</span>
+<span class="normal">350</span>
+<span class="normal">351</span>
+<span class="normal">352</span>
+<span class="normal">353</span>
+<span class="normal">354</span>
+<span class="normal">355</span>
+<span class="normal">356</span>
+<span class="normal">357</span>
+<span class="normal">358</span>
+<span class="normal">359</span>
+<span class="normal">360</span>
+<span class="normal">361</span>
+<span class="normal">362</span>
+<span class="normal">363</span>
+<span class="normal">364</span>
+<span class="normal">365</span>
+<span class="normal">366</span>
+<span class="normal">367</span>
+<span class="normal">368</span>
+<span class="normal">369</span>
+<span class="normal">370</span>
+<span class="normal">371</span>
+<span class="normal">372</span>
+<span class="normal">373</span>
+<span class="normal">374</span>
+<span class="normal">375</span>
+<span class="normal">376</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rag_demonstration_retrieve</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">demonstration_top_k</span><span class="p">:</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieving demonstration examples for the user request.</span>
+<span class="sd">    :param request: The user request.</span>
+<span class="sd">    :param demonstration_top_k: The number of documents to retrieve.</span>
+<span class="sd">    :return: The retrieved examples and tips string.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">retrieved_docs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Retrieve demonstration examples.</span>
+    <span class="n">demonstration_docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">human_demonstration_retriever</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span> <span class="n">demonstration_top_k</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">demonstration_docs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">demonstration_docs</span><span class="p">:</span>
+            <span class="n">example_request</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">subtask</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Sub-task&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">tips</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Tips&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">retrieved_docs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;Request&quot;</span><span class="p">:</span> <span class="n">example_request</span><span class="p">,</span>
+                    <span class="s2">&quot;Response&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
+                    <span class="s2">&quot;Sub-task&quot;</span><span class="p">:</span> <span class="n">subtask</span><span class="p">,</span>
+                    <span class="s2">&quot;Tips&quot;</span><span class="p">:</span> <span class="n">tips</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">retrieved_docs</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="p">[]</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-function">
+
+
+<h2 id="agents.agent.app_agent.AppAgent.rag_experience_retrieve" class="doc doc-heading">
+            <code class="highlight language-python"><span class="n">rag_experience_retrieve</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">experience_top_k</span><span class="p">)</span></code>
+
+</h2>
+
+
+    <div class="doc doc-contents ">
+
+        <p>Retrieving experience examples for the user request.</p>
+
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Parameters:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+              <b><code>request</code></b>
+                  (<code><span title="str">str</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The user request.</p>
+              </div>
+            </li>
+            <li>
+              <b><code>experience_top_k</code></b>
+                  (<code><span title="int">int</span></code>)
+              –
+              <div class="doc-md-description">
+                <p>The number of documents to retrieve.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<table class="field-list">
+  <colgroup>
+    <col class="field-name" />
+    <col class="field-body" />
+  </colgroup>
+  <tbody valign="top">
+    <tr class="field">
+      <th class="field-name">Returns:</th>
+      <td class="field-body">
+        <ul class="first simple">
+            <li>
+                  <code><span title="typing.List">List</span>[<span title="typing.Dict">Dict</span>[<span title="str">str</span>, <span title="typing.Any">Any</span>]]</code>
+              –
+              <div class="doc-md-description">
+                <p>The retrieved examples and tips dictionary.</p>
+              </div>
+            </li>
+        </ul>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+            <details class="quote">
+              <summary>Source code in <code>agents/agent/app_agent.py</code></summary>
+              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal">307</span>
+<span class="normal">308</span>
+<span class="normal">309</span>
+<span class="normal">310</span>
+<span class="normal">311</span>
+<span class="normal">312</span>
+<span class="normal">313</span>
+<span class="normal">314</span>
+<span class="normal">315</span>
+<span class="normal">316</span>
+<span class="normal">317</span>
+<span class="normal">318</span>
+<span class="normal">319</span>
+<span class="normal">320</span>
+<span class="normal">321</span>
+<span class="normal">322</span>
+<span class="normal">323</span>
+<span class="normal">324</span>
+<span class="normal">325</span>
+<span class="normal">326</span>
+<span class="normal">327</span>
+<span class="normal">328</span>
+<span class="normal">329</span>
+<span class="normal">330</span>
+<span class="normal">331</span>
+<span class="normal">332</span>
+<span class="normal">333</span>
+<span class="normal">334</span>
+<span class="normal">335</span>
+<span class="normal">336</span>
+<span class="normal">337</span>
+<span class="normal">338</span>
+<span class="normal">339</span>
+<span class="normal">340</span>
+<span class="normal">341</span>
+<span class="normal">342</span></pre></div></td><td class="code"><div><pre><span></span><code><span class="k">def</span><span class="w"> </span><span class="nf">rag_experience_retrieve</span><span class="p">(</span>
+    <span class="bp">self</span><span class="p">,</span> <span class="n">request</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">experience_top_k</span><span class="p">:</span> <span class="nb">int</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">List</span><span class="p">[</span><span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">Any</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Retrieving experience examples for the user request.</span>
+<span class="sd">    :param request: The user request.</span>
+<span class="sd">    :param experience_top_k: The number of documents to retrieve.</span>
+<span class="sd">    :return: The retrieved examples and tips dictionary.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">retrieved_docs</span> <span class="o">=</span> <span class="p">[]</span>
+
+    <span class="c1"># Retrieve experience examples. Only retrieve the examples that are related to the current application.</span>
+    <span class="n">experience_docs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">experience_retriever</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span>
+        <span class="n">request</span><span class="p">,</span>
+        <span class="n">experience_top_k</span><span class="p">,</span>
+        <span class="nb">filter</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">_app_root_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="ow">in</span> <span class="p">[</span><span class="n">app</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="k">for</span> <span class="n">app</span> <span class="ow">in</span> <span class="n">x</span><span class="p">[</span><span class="s2">&quot;app_list&quot;</span><span class="p">]],</span>
+    <span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">experience_docs</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">doc</span> <span class="ow">in</span> <span class="n">experience_docs</span><span class="p">:</span>
+            <span class="n">example_request</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;request&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">response</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;example&quot;</span><span class="p">,</span> <span class="p">{})</span>
+            <span class="n">tips</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Tips&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">subtask</span> <span class="o">=</span> <span class="n">doc</span><span class="o">.</span><span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;Sub-task&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+            <span class="n">retrieved_docs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span>
+                <span class="p">{</span>
+                    <span class="s2">&quot;Request&quot;</span><span class="p">:</span> <span class="n">example_request</span><span class="p">,</span>
+                    <span class="s2">&quot;Response&quot;</span><span class="p">:</span> <span class="n">response</span><span class="p">,</span>
+                    <span class="s2">&quot;Sub-task&quot;</span><span class="p">:</span> <span class="n">subtask</span><span class="p">,</span>
+                    <span class="s2">&quot;Tips&quot;</span><span class="p">:</span> <span class="n">tips</span><span class="p">,</span>
+                <span class="p">}</span>
+            <span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">retrieved_docs</span>
+</code></pre></div></td></tr></table></div>
+            </details>
+    </div>
+
+</div>
+
+
+
+  </div>
+
+    </div>
+
+</div>
+              
+            </div>
+          </div><footer>
+    <div class="rst-footer-buttons" role="navigation" aria-label="Footer Navigation">
+        <a href="../host_agent/" class="btn btn-neutral float-left" title="HostAgent"><span class="icon icon-circle-arrow-left"></span> Previous</a>
+        <a href="../follower_agent/" class="btn btn-neutral float-right" title="FollowerAgent">Next <span class="icon icon-circle-arrow-right"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <!-- Copyright etc -->
+  </div>
+
+  Built with <a href="https://www.mkdocs.org/">MkDocs</a> using a <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+</footer>
+          
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+
+  <div class="rst-versions" role="note" aria-label="Versions">
+  <span class="rst-current-version" data-toggle="rst-current-version">
+    
+    
+      <span><a href="../host_agent/" style="color: #fcfcfc">&laquo; Previous</a></span>
+    
+    
+      <span><a href="../follower_agent/" style="color: #fcfcfc">Next &raquo;</a></span>
+    
+  </span>
+</div>
+    <script src="../../js/jquery-3.6.0.min.js"></script>
+    <script>var base_url = "../..";</script>
+    <script src="../../js/theme_extra.js"></script>
+    <script src="../../js/theme.js"></script>
+      <script src="../../search/main.js"></script>
+    <script>
+        jQuery(function () {
+            SphinxRtdTheme.Navigation.enable(true);
+        });
+    </script>
+
+</body>
+</html>
