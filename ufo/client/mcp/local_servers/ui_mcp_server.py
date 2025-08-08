@@ -148,7 +148,7 @@ class UIServerState:
 
 
 @MCPRegistry.register_factory_decorator("HostUIExecutor")
-def create_host_action_mcp_server() -> FastMCP:
+def create_host_action_mcp_server(*args, **kwargs) -> FastMCP:
     """
     Create and return the HostAgent Action MCP server instance.
     :return: FastMCP instance for HostAgent action operations.
@@ -209,7 +209,7 @@ def create_host_action_mcp_server() -> FastMCP:
 
 
 @MCPRegistry.register_factory_decorator("AppUIExecutor")
-def create_app_action_mcp_server() -> FastMCP:
+def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
     """
     Create and return the AppAgent Action MCP server instance.
     :return: FastMCP instance for AppAgent action operations.
@@ -241,7 +241,7 @@ def create_app_action_mcp_server() -> FastMCP:
         )
 
         return action_sequence.get_results()
-    
+
     def _execute_action(action: OneStepAction) -> Dict[str, Any]:
         """
         Execute a single UI action.
@@ -252,20 +252,16 @@ def create_app_action_mcp_server() -> FastMCP:
 
     action_mcp = FastMCP("UFO UI AppAgent Action MCP Server")
 
-    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def click_input(
+        control_label: Annotated[str, Field(description="Same as `ControlLabel`")],
+        control_text: Annotated[str, Field(description="Same as `ControlText`")],
         button: Annotated[
             str, Field(description="Mouse button to use ('left', 'right', 'middle')")
         ] = "left",
         double: Annotated[
             bool, Field(description="Whether to perform a double click")
         ] = False,
-        control_label: Annotated[
-            str, Field(description="Label or ID of the control")
-        ] = "",
-        control_text: Annotated[
-            str, Field(description="Text content of the control")
-        ] = "",
     ) -> Annotated[Dict, Field(description="None")]:
         """
         Click on a UI control element using the input method.
@@ -280,7 +276,7 @@ def create_app_action_mcp_server() -> FastMCP:
 
         return _execute_action(action)
 
-    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def click_on_coordinates(
         x: Annotated[float, Field(description="X coordinate (0.0 to 1.0)")],
         y: Annotated[float, Field(description="Y coordinate (0.0 to 1.0)")],
@@ -291,12 +287,6 @@ def create_app_action_mcp_server() -> FastMCP:
         double: Annotated[
             bool, Field(description="Whether to perform a double click")
         ] = False,
-        control_label: Annotated[
-            str, Field(description="Label or ID of the control")
-        ] = "",
-        control_text: Annotated[
-            str, Field(description="Text content of the control")
-        ] = "",
     ) -> Annotated[Dict, Field(description="None")]:
         """
         Click on specific coordinates within the application window.
@@ -304,14 +294,14 @@ def create_app_action_mcp_server() -> FastMCP:
         action = OneStepAction(
             function="click_on_coordinates",
             args={"x": x, "y": y, "button": button, "double": double},
-            control_label=control_label,
-            control_text=control_text,
+            control_label="",
+            control_text="",
             after_status="CONTINUE",
         )
 
         return _execute_action(action)
 
-    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def drag_on_coordinates(
         start_x: Annotated[
             float,
@@ -349,12 +339,6 @@ def create_app_action_mcp_server() -> FastMCP:
                 description="Key to hold during drag operation (e.g., 'ctrl', 'shift')"
             ),
         ] = None,
-        control_label: Annotated[
-            str, Field(description="Label or ID of the control")
-        ] = "",
-        control_text: Annotated[
-            str, Field(description="Text content of the control")
-        ] = "",
     ) -> Annotated[Dict, Field(description="None")]:
         """
         Drag from one coordinate to another within the application window.
@@ -370,26 +354,22 @@ def create_app_action_mcp_server() -> FastMCP:
                 "duration": duration,
                 "key_hold": key_hold,
             },
-            control_label=control_label,
-            control_text=control_text,
+            control_label="",
+            control_text="",
             after_status="CONTINUE",
         )
 
         return _execute_action(action)
 
-    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def set_edit_text(
+        control_label: Annotated[str, Field(description="Same as `ControlLabel`")],
+        control_text: Annotated[str, Field(description="Same as `ControlText`")],
         text: Annotated[str, Field(description="Text to set in the control")],
         clear_current_text: Annotated[
             bool,
             Field(description="Whether to clear existing text before setting new text"),
         ] = False,
-        control_label: Annotated[
-            str, Field(description="Label or ID of the control")
-        ] = "",
-        control_text: Annotated[
-            str, Field(description="Text content of the control")
-        ] = "",
     ) -> Annotated[Dict, Field(description="None")]:
         """
         Set text in an edit control (text box, input field, etc.).
@@ -404,8 +384,10 @@ def create_app_action_mcp_server() -> FastMCP:
 
         return _execute_action(action)
 
-    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def keyboard_input(
+        control_label: Annotated[str, Field(description="Same as `ControlLabel`")],
+        control_text: Annotated[str, Field(description="Same as `ControlText`")],
         keys: Annotated[
             str,
             Field(description="Key sequence to send (e.g., 'ctrl+c', 'enter', 'tab')"),
@@ -413,12 +395,6 @@ def create_app_action_mcp_server() -> FastMCP:
         control_focus: Annotated[
             bool, Field(description="Whether to focus the control before sending keys")
         ] = True,
-        control_label: Annotated[
-            str, Field(description="Label or ID of the control")
-        ] = "",
-        control_text: Annotated[
-            str, Field(description="Text content of the control")
-        ] = "",
     ) -> Annotated[Dict, Field(description="None")]:
         """
         Send keyboard input to a control or the focused application.
@@ -433,18 +409,14 @@ def create_app_action_mcp_server() -> FastMCP:
 
         return _execute_action(action)
 
-    @action_mcp.tool(tags={"AppAgent"}, exclude_args=["control_label", "control_text"])
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def wheel_mouse_input(
+        control_label: Annotated[str, Field(description="Same as `ControlLabel`")],
+        control_text: Annotated[str, Field(description="Same as `ControlText`")],
         direction: Annotated[
             str, Field(description="Scroll direction ('up' or 'down')")
         ] = "up",
         clicks: Annotated[int, Field(description="Number of wheel clicks")] = 3,
-        control_label: Annotated[
-            str, Field(description="Label or ID of the control")
-        ] = "",
-        control_text: Annotated[
-            str, Field(description="Text content of the control")
-        ] = "",
     ) -> Annotated[Dict, Field(description="None")]:
         """
         Send mouse wheel input to scroll a control.
@@ -452,6 +424,24 @@ def create_app_action_mcp_server() -> FastMCP:
         action = OneStepAction(
             function="wheel_mouse_input",
             args={"direction": direction, "clicks": clicks},
+            control_label=control_label,
+            control_text=control_text,
+            after_status="CONTINUE",
+        )
+
+        return _execute_action(action)
+
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
+    def texts(
+        control_label: Annotated[str, Field(description="Same as `ControlLabel`")],
+        control_text: Annotated[str, Field(description="Same as `ControlText`")],
+    ) -> Annotated[Dict, Field(description="the text content of the control item")]:
+        """
+        Retrieve all text content from a control element.
+        """
+        action = OneStepAction(
+            function="texts",
+            args={},
             control_label=control_label,
             control_text=control_text,
             after_status="CONTINUE",
@@ -509,7 +499,7 @@ def create_app_action_mcp_server() -> FastMCP:
 
 
 @MCPRegistry.register_factory_decorator("UICollector")
-def create_data_mcp_server() -> FastMCP:
+def create_data_mcp_server(*args, **kwargs) -> FastMCP:
     """
     Create and return the Data MCP server instance.
     :return: FastMCP instance for data retrieval operations.
@@ -529,42 +519,38 @@ def create_data_mcp_server() -> FastMCP:
         :param refresh_app_windows: Whether to refresh the list of application windows.
         :return: Dictionary containing list of window information and metadata.
         """
-        try:
-            if refresh_app_windows:
+        if refresh_app_windows:
+            app_windows = ui_state.control_inspector.get_desktop_app_dict(
+                remove_empty=remove_empty
+            )
+        else:
+            # Use existing windows if available
+            app_windows = getattr(ui_state, "last_app_windows", {})
+            if not app_windows:
                 app_windows = ui_state.control_inspector.get_desktop_app_dict(
                     remove_empty=remove_empty
                 )
-            else:
-                # Use existing windows if available
-                app_windows = getattr(ui_state, "last_app_windows", {})
-                if not app_windows:
-                    app_windows = ui_state.control_inspector.get_desktop_app_dict(
-                        remove_empty=remove_empty
-                    )
 
-            # Store for future use
-            ui_state.last_app_windows = app_windows
+        # Store for future use
+        ui_state.last_app_windows = app_windows
 
-            # Convert to WindowInfo objects
-            windows_info = []
-            for annotation_id, window in app_windows.items():
-                try:
-                    window_info = _window2window_info(window, annotation_id)
-                    windows_info.append(window_info.model_dump())
-                except Exception as e:
-                    # If there's an error with a specific window, add minimal info
-                    windows_info.append(
-                        {
-                            "annotation_id": annotation_id,
-                            "title": "Error retrieving window info",
-                            "error": str(e),
-                        }
-                    )
+        # Convert to WindowInfo objects
+        windows_info = []
+        for annotation_id, window in app_windows.items():
+            try:
+                window_info = _window2window_info(window, annotation_id)
+                windows_info.append(window_info.model_dump())
+            except Exception as e:
+                # If there's an error with a specific window, add minimal info
+                windows_info.append(
+                    {
+                        "annotation_id": annotation_id,
+                        "title": "Error retrieving window info",
+                        "error": str(e),
+                    }
+                )
 
-            return windows_info
-
-        except Exception as e:
-            return []
+        return windows_info
 
     @data_mcp.tool()
     def get_app_window_controls() -> Dict[str, Any]:

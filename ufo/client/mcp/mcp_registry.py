@@ -14,10 +14,10 @@ class MCPRegistry:
     """
 
     _instances: Dict[str, FastMCP] = {}
-    _factories: Dict[str, Callable[[], FastMCP]] = {}
+    _factories: Dict[str, Callable[[], FastMCP] | Callable[[str], FastMCP]] = {}
 
     @classmethod
-    def register_factory(cls, name: str, factory: Callable[[], FastMCP]) -> None:
+    def register_factory(cls, name: str, factory: Callable[[], FastMCP] | Callable[[str], FastMCP]) -> None:
         """
         Register a factory function for creating MCP server instances.
         :param name: Unique name for the MCP server.
@@ -37,7 +37,7 @@ class MCPRegistry:
         cls._instances[name] = instance
 
     @classmethod
-    def get(cls, name: str) -> FastMCP:
+    def get(cls, name: str, *args, **kwargs) -> FastMCP:
         """
         Get an MCP server instance by name.
         Creates the instance using the factory if not already created.
@@ -48,8 +48,7 @@ class MCPRegistry:
         if name in cls._instances:
             return cls._instances[name]
         if name in cls._factories:
-            instance = cls._factories[name]()
-            cls._instances[name] = instance
+            instance = cls._factories[name](*args, **kwargs)
             return instance
         raise KeyError(f"No MCP server registered under name '{name}'")
 
@@ -100,7 +99,7 @@ class MCPRegistry:
         :return: Decorator function.
         """
 
-        def decorator(factory_func: Callable[[], FastMCP]):
+        def decorator(factory_func: Callable[[], FastMCP] | Callable[[str], FastMCP]):
             cls.register_factory(name, factory_func)
             return factory_func
 

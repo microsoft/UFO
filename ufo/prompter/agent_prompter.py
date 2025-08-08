@@ -406,32 +406,9 @@ class AppAgentPrompter(BasicPrompter):
         :param verbose: The verbosity level.
         return: The prompt for APIs.
         """
-        api_list = []
-
-        # Construct the prompt for each UI control action.
-        # if self.api_prompt_template:
-        #     api_list.append(
-        #         "- The action types for UI elements are: {actions}.".format(
-        #             actions=list(self.api_prompt_template.keys())
-        #         )
-        #     )
-
-        #     for key in self.api_prompt_template.keys():
-        #         api = self.api_prompt_template[key]
-        #         if verbose > 0:
-        #             api_text = "{summary}\n{usage}".format(
-        #                 summary=api["summary"], usage=api["usage"]
-        #             )
-        #         else:
-        #             api_text = api["summary"]
-
-        #         api_list.append(api_text)
-
-        api_list.append(self.api_prompt_template)
-
-        api_prompt = self.retrieved_documents_prompt_helper("", "", api_list)
-
-        return api_prompt
+        if self.api_prompt_template is None:
+            raise ValueError("API prompt template is not set. Call create_api_prompt_template first.")
+        return self.api_prompt_template
 
 
 class FollowerAgentPrompter(AppAgentPrompter):

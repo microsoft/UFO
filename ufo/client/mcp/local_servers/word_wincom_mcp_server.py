@@ -20,6 +20,7 @@ from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
 from ufo.automator.action_execution import ActionSequenceExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.config import get_config
+from ufo.client.mcp.mcp_registry import MCPRegistry
 
 # Get config
 configs = get_config()
@@ -41,8 +42,8 @@ class UIServerState:
             UIServerState._initialized = True
 
 
-# @MCPRegistry.register_factory_decorator("AppUIExecutor")
-def create_word_mcp_server(process_name: str) -> FastMCP:
+@MCPRegistry.register_factory_decorator("WordCOMExecutor")
+def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
     """
     Create and return the AppAgent Action MCP server instance.
     :return: FastMCP instance for AppAgent action operations.

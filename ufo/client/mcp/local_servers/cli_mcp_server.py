@@ -14,13 +14,15 @@ import time
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
 
+from ufo.client.mcp.mcp_registry import MCPRegistry
 from ufo.config import get_config
 
 # Get config
 configs = get_config()
 
 
-def create_cli_mcp_server():
+@MCPRegistry.register_factory_decorator("CommandLineExecutor")
+def create_cli_mcp_server(*args, **kwargs) -> FastMCP:
     """
     Create and return the CLI MCP server instance.
     :return: FastMCP instance for CLI operations.
@@ -49,19 +51,3 @@ def create_cli_mcp_server():
             raise ToolError(f"Failed to launch application: {str(e)}")
 
     return cli_mcp
-
-
-# Registry decorators for automatic registration
-try:
-    from ufo.client.mcp.mcp_registry import MCPRegistry
-
-    @MCPRegistry.register_factory_decorator("CommandLineExecutor")
-    def create_command_line_executor_factory() -> FastMCP:
-        """
-        Factory function to create the Command Line Executor MCP server.
-        :return: FastMCP instance for command line executor operations.
-        """
-        return create_cli_mcp_server()
-
-except ImportError:
-    print("Warning: MCPRegistry not found. CLI MCP servers will not be registered.")

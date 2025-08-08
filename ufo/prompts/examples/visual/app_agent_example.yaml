@@ -17,7 +17,7 @@ example1:
     Function: |-
       click_input
     Args: 
-      {"button": "left", "double": false}
+      {"control_label": "1", "control_text": "New Email", "button": "left", "double": false}
     Status: |-
       CONTINUE
     Plan:
@@ -50,6 +50,8 @@ example2:
     Function: |-
       set_edit_text
     Args:
+      control_label: "36"
+      control_text: "Email Body"
       text: |
         Dear Amy,
 
@@ -87,7 +89,7 @@ example3:
     Function: |-
       click_input
     Args: 
-      {"button": "left", "double": false}
+      {"control_label": "59", "control_text": "Find", "button": "left", "double": false}
     Status: |-
       FINISH
     Plan:
@@ -116,7 +118,7 @@ example4:
       framework - Word
     Function: |-
       texts
-    Args: {}
+    Args: {"control_label": "83", "control_text": "framework - Word"}
     Status: |-
       FINISH
     Plan:
@@ -146,7 +148,7 @@ example5:
     Function: |-
       click_input
     Args: 
-      {"button": "left", "double": false}
+      {"control_label": "59", "control_text": "File", "button": "left", "double": false}
     Status: |-
       CONTINUE
     Plan:
@@ -182,7 +184,7 @@ example6:
     Function: |-
       set_edit_text
     Args: 
-      {"text": "Imdiffusion GitHub"}
+      {"control_label": "36", "control_text": "搜索", "text": "Imdiffusion GitHub"}
     Status: |-
       CONTINUE
     Plan:
@@ -216,7 +218,7 @@ example7:
     Function: |-
       set_edit_text
     Args: 
-      {"text": "Get party dinner (5 people) preparation done before 5PM today."}
+      {"control_label": "19", "control_text": "Add a task in “My Day”", "text": "Get party dinner (5 people) preparation done before 5PM today."}
     Status: |-
       CONTINUE
     Plan:
@@ -254,7 +256,7 @@ example8:
     Function: |- 
       click_input
     Args: 
-      {"button": "left", "double": false}
+      {"control_label": "60", "control_text": "Copilot", "button": "left", "double": false}
     Status: |-
       CONTINUE
     Plan:
@@ -316,7 +318,7 @@ example10:
     Function: |-
       click_input
     Args:
-      {"button": "left", "double": false}
+      {"control_label": "70", "control_text": "Event Type", "button": "left", "double": false}
     Status: |-
       CONTINUE
     Plan:
