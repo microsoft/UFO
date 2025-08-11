@@ -53,6 +53,10 @@ For a deep dive see our [technical report](https://arxiv.org/abs/2504.14603).
 ## 🚀 Quick Start
 Please follow the [Quick Start Guide](./getting_started/quick_start.md) to get started with UFO.
 
+!!! note    
+  This repository is intended solely for research purposes. The code provided herein is not designed, tested, or validated for third-party production use. Users are expected to exercise their own judgment and due diligence when utilizing any part of this codebase. Microsoft is committed to building Responsible and Trustworthy AI. To learn more about our principles and practices, please refer to our [principles and approach](https://www.microsoft.com/en-us/ai/principles-and-approach).
+
+
 
 ## 🌐 Media Coverage 
 

@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 import os
-from typing import Any, Dict, List, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union
 
 import pandas as pd
 
@@ -171,7 +171,9 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
 
             insert_offset = 1
             for name, data in column_data:
-                insert_pos = self.get_nth_non_empty_position(insert_offset, empty_columns)
+                insert_pos = self.get_nth_non_empty_position(
+                    insert_offset, empty_columns
+                )
                 print(f"✅ Inserting '{name}' at position {insert_pos}")
                 for row_index, value in enumerate(data, start=1):
                     ws.Cells(row_index, insert_pos).Value = value
@@ -240,6 +242,88 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
             return [list(values)]
 
         return [list(row) for row in values]
+
+    def set_cell_value(
+        self,
+        sheet_name: str,
+        row: int,
+        col: Union[int, str],
+        value: Optional[Any] = None,
+        is_formula: bool = False,
+    ) -> str:
+        """
+        Set the value of a cell in the specified sheet.
+        :param sheet_name: The name of the sheet.
+        :param row: The row number (1-based).
+        :param col: The column number (1-based) or letter (e.g., 'A').
+        :param value: The value to set in the cell. If None, just select the cell.
+        :param is_formula: If True, treat the value as a formula.
+        :return: Success message or error message.
+        """
+        sheet_list = [sheet.Name for sheet in self.com_object.Sheets]
+        if sheet_name not in sheet_list:
+            print(
+                f"Sheet {sheet_name} not found in the workbook, using the first sheet."
+            )
+            sheet_name = 1
+
+        sheet = self.com_object.Sheets(sheet_name)
+
+        if isinstance(col, str):
+            col = self.letters_to_number(col)
+
+        if value is None:
+            sheet.Cells(row, col).Select()
+            return f"Cell {row}:{col} is selected. No value set."
+
+        try:
+            if is_formula:
+                sheet.Cells(row, col).Formula = value
+            else:
+                sheet.Cells(row, col).Value = value
+            return f"Cell {row}:{col} set to '{value}'."
+        except Exception as e:
+            return f"Failed to set cell {row}:{col}. Error: {e}"
+
+    def auto_fill(
+        self,
+        sheet_name: str,
+        start_row: int,
+        start_col: Union[int, str],
+        end_row: int,
+        end_col: Union[int, str],
+    ) -> str:
+        """
+        Auto-fill a range of cells in the specified sheet.
+        :param sheet_name: The name of the sheet.
+        :param start_row: The starting row number (1-based).
+        :param start_col: The starting column number (1-based) or letter (e.g., 'A').
+        :param end_row: The ending row number (1-based).
+        :param end_col: The ending column number (1-based) or letter (e.g., 'A').
+        :return: Success message or error message.
+        """
+        sheet_list = [sheet.Name for sheet in self.com_object.Sheets]
+        if sheet_name not in sheet_list:
+            print(
+                f"Sheet {sheet_name} not found in the workbook, using the first sheet."
+            )
+            sheet_name = 1
+
+        sheet = self.com_object.Sheets(sheet_name)
+
+        if isinstance(start_col, str):
+            start_col = self.letters_to_number(start_col)
+        if isinstance(end_col, str):
+            end_col = self.letters_to_number(end_col)
+
+        try:
+            start_cell = sheet.Cells(start_row, start_col)
+            end_cell = sheet.Cells(end_row, end_col)
+            fill_range = sheet.Range(start_cell, end_cell)
+            fill_range.FillDown()
+            return f"Auto-filled range from {start_row}:{start_col} to {end_row}:{end_col}."
+        except Exception as e:
+            return f"Failed to auto-fill range {start_row}:{start_col} to {end_row}:{end_col}. Error: {e}"
 
     def save_as(
         self, file_dir: str = "", file_name: str = "", file_ext: str = ""
@@ -457,6 +541,60 @@ class ReorderColumnsCommand(WinCOMCommand):
         The name of the command.
         """
         return "reorder_columns"
+
+
+@ExcelWinCOMReceiver.register
+class SetCellValueCommand(WinCOMCommand):
+    """
+    The command to set the value of a cell.
+    """
+
+    def execute(self):
+        """
+        Execute the command to set the value of a cell.
+        :return: The result of setting the cell value.
+        """
+        return self.receiver.set_cell_value(
+            sheet_name=self.params.get("sheet_name", 1),
+            row=self.params.get("row", 1),
+            col=self.params.get("col", 1),
+            value=self.params.get("value", None),
+            is_formula=self.params.get("is_formula", False),
+        )
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "set_cell_value"
+
+
+@ExcelWinCOMReceiver.register
+class AutoFillCommand(WinCOMCommand):
+    """
+    The command to auto-fill a range of cells.
+    """
+
+    def execute(self):
+        """
+        Execute the command to auto-fill a range of cells.
+        :return: The result of auto-filling the range.
+        """
+        return self.receiver.auto_fill(
+            sheet_name=self.params.get("sheet_name", 1),
+            start_row=self.params.get("start_row", 1),
+            start_col=self.params.get("start_col", 1),
+            end_row=self.params.get("end_row", 1),
+            end_col=self.params.get("end_col", 1),
+        )
+
+    @classmethod
+    def name(cls) -> str:
+        """
+        The name of the command.
+        """
+        return "auto_fill"
 
 
 @ExcelWinCOMReceiver.register

@@ -45,6 +45,43 @@ select_table_range:
     [4] Available control item: Any control item in the Excel app.
     [5] Return: A message indicating whether the range is selected successfully or not.
 
+
+set_cell_value:
+  summary: |-
+    "set_cell_value" is to set the value of a cell in the sheet of the Excel app.
+  class_name: |-
+    SetCellValueCommand
+  usage: |-
+    [1] API call: set_cell_value(sheet_name: str, row: int, col: Union[int, str], value: Optional[Any] = None, is_formula: bool = False)
+    [2] Args:
+      - sheet_name: The name of the sheet.
+      - row: The row number (1-based).
+      - col: The column number (1-based) or letter (e.g., 'A').
+      - value: The value to set in the cell. If None, just select the cell.
+      - is_formula: If True, treat the value as a formula, otherwise treat it as a normal value.
+    [3] Example: set_cell_value(sheet_name="Sheet1", row=1, col=1, value="Hello", is_formula=False), set_cell_value(sheet_name="Sheet1", row=2, col="B", value="=SUM(A1:A10)", is_formula=True)
+    [4] Available control item: Any control item in the Excel app.
+    [5] Return: A message indicating whether the cell value is set successfully or not.
+
+auto_fill:
+  summary: |-
+    "auto_fill" is to auto-fill a range of cells in the sheet of the Excel app. This can apply to a range of cells that have a pattern, such as dates, numbers, formulas, etc.
+  class_name: |-
+    AutoFillCommand
+  usage: |-
+    [1] API call: auto_fill(sheet_name: str, start_row: int, start_col: Union[int, str], end_row: int, end_col: Union[int, str])
+    [2] Args:
+      - sheet_name: The name of the sheet.
+      - start_row: The starting row number (1-based).
+      - start_col: The starting column number (1-based) or letter (e.g., 'A').
+      - end_row: The ending row number (1-based).
+      - end_col: The ending column number (1-based) or letter (e.g., 'A').
+    [3] Example: auto_fill(sheet_name="Sheet1", start_row=1, start_col=1, end_row=10, end_col=3)
+    [4] Available control item: Any control item in the Excel app.
+    [5] Return: A message indicating whether the range is auto-filled successfully or not.
+
+
+
 save_as:
   summary: |-
     "save_as" is a shortcut and quickest way to save or export the Excel document to a specified file format with one command.

@@ -2,6 +2,9 @@
 
 By choosing to run the provided code, you acknowledge and agree to the following terms and conditions regarding the functionality and data handling practices:
 
+## Purpose
+This repository is intended solely for research purposes. The code provided herein is not designed, tested, or validated for third-party production use. Users are expected to exercise their own judgment and due diligence when utilizing any part of this codebase. Microsoft is committed to building Responsible and Trustworthy AI. To learn more about our principles and practices, please refer to our [principles and approach](https://www.microsoft.com/en-us/ai/principles-and-approach).
+
 ## 1. Code Functionality:
 The code you are about to execute has the capability to capture screenshots of your working desktop environment and active applications. These screenshots will be processed and sent to the GPT model for inference.
 
