@@ -498,11 +498,6 @@ class HostAgentProcessor(BaseProcessor):
             value (str): The application launch value
         """
         value = value.result
-        # Set the application window
-        self.app_root = value["process_name"]
-
-        new_app_window = value["window_info"]
-        self.application_window_info = WindowInfo(**new_app_window)
 
         self.actions = [
             OneStepAction(

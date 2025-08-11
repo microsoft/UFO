@@ -98,9 +98,7 @@ class AppAgent(BasicAgent):
         :param app_root_name: The root name of the app.
         :return: The prompter instance.
         """
-        return AppAgentPrompter(
-            is_visual, main_prompt, example_prompt, api_prompt, app_root_name
-        )
+        return AppAgentPrompter(is_visual, main_prompt, example_prompt)
 
     def message_constructor(
         self,
@@ -271,7 +269,7 @@ class AppAgent(BasicAgent):
 
             format_string = "[Similar Requests]: {question}\nStep: {answer}\n"
 
-            offline_docs_prompt = self.prompter.retrived_documents_prompt_helper(
+            offline_docs_prompt = self.prompter.retrieved_documents_prompt_helper(
                 "[Help Documents]",
                 "",
                 [
@@ -290,7 +288,7 @@ class AppAgent(BasicAgent):
             online_search_docs = self.online_doc_retriever.retrieve(
                 request, online_top_k, filter=None
             )
-            online_docs_prompt = self.prompter.retrived_documents_prompt_helper(
+            online_docs_prompt = self.prompter.retrieved_documents_prompt_helper(
                 "Online Search Results",
                 "Search Result",
                 [doc.page_content for doc in online_search_docs],
@@ -510,7 +508,9 @@ class AppAgent(BasicAgent):
         session_data_manager.add_action(
             command=Command(
                 tool_name="list_tools",
-                parameters={},
+                parameters={
+                    "tool_type": "action",
+                },
                 tool_type="action",
             ),
             setter=lambda result: self._handle_list_tools_callback(result),
@@ -525,8 +525,12 @@ class AppAgent(BasicAgent):
         """
         if not isinstance(result, Result) or not isinstance(result.result, List):
             raise ValueError("Invalid result format received from UFO client.")
-        for tool in result.result:
-            tool = MCPToolInfo(**tool)
+
+        self.tools_info = [MCPToolInfo(**tool) for tool in result.result]
+
+        self.prompter.create_api_prompt_template(
+            tools=self.tools_info
+        )
 
     @property
     def default_state(self) -> ContinueAppAgentState:
@@ -534,6 +538,24 @@ class AppAgent(BasicAgent):
         Get the default state.
         """
         return ContinueAppAgentState()
+
+    @property
+    def tools_info(self) -> List[MCPToolInfo]:
+        """
+        Get the tools information.
+        :return: The list of MCPToolInfo objects.
+        """
+        if not hasattr(self, "_tools_info"):
+            self._tools_info = []
+        return self._tools_info
+
+    @tools_info.setter
+    def tools_info(self, tools: List[MCPToolInfo]) -> None:
+        """
+        Set the tools information.
+        :param tools: The list of MCPToolInfo objects.
+        """
+        self._tools_info = tools
 
     @staticmethod
     def get_command_string(command_name: str, params: Dict[str, str]) -> str:

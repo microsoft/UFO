@@ -161,7 +161,7 @@ class ExperiencePrompter(BasicPrompter):
 
             api_list.append(api_text)
 
-        api_prompt = self.retrived_documents_prompt_helper("", "", api_list)
+        api_prompt = self.retrieved_documents_prompt_helper("", "", api_list)
 
         return api_prompt
 
@@ -200,4 +200,4 @@ class ExperiencePrompter(BasicPrompter):
                 )
                 example_list.append(example)
 
-        return self.retrived_documents_prompt_helper(header, separator, example_list)
+        return self.retrieved_documents_prompt_helper(header, separator, example_list)
