@@ -469,10 +469,14 @@ class AppAgentProcessor(BaseProcessor):
             path: The path to the file where the UI tree data will be saved
         """
         value = value.result
-        if value:
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, "w") as f:
-                json.dump(value, f, indent=4)
+        if not value or not isinstance(value, dict):
+            raise ValueError(
+                f"Expected dict, got {type(value)}. Cannot save UI tree to {path}"
+            )
+        
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+        with open(path, "w") as f:
+            json.dump(value, f, indent=4)
 
     def _capture_all_desktop_screenshot_action_callback(self, value: Result, path: str):
         """
@@ -715,11 +719,7 @@ class AppAgentProcessor(BaseProcessor):
         self.session_data_manager.add_action(
             command=Command(
                 tool_name=action.function,
-                parameters={
-                    "control_label": action.control_label,
-                    "control_text": action.control_text,
-                    **action.args,
-                },
+                parameters=action.args,
                 tool_type="action",
             ),
             setter=lambda result: self._handle_ui_execution_callback(result),
@@ -727,12 +727,12 @@ class AppAgentProcessor(BaseProcessor):
 
         self._generate_control_screenshot()
 
-    def _handle_ui_execution_callback(self, results: Result) -> None:
+    def _handle_ui_execution_callback(self, result: Result) -> None:
         """
         Callback to handle UI tool execution result.
         :param results: The result from the UI tool execution
         """
-        results = results.result
+        result = result.result
         action = OneStepAction(
             function=self._operation,
             args=self._args,
@@ -742,13 +742,12 @@ class AppAgentProcessor(BaseProcessor):
         )
         self.actions = [action]
 
-        if isinstance(results, List):
-            utils.print_with_color(f"UI tool execution result: {results}", "green")
-            for action, result in zip(self.actions, results):
-                action.results = ActionExecutionLog(**result)
+        if isinstance(result, Dict):
+            utils.print_with_color(f"UI tool execution result: {result}", "green")
+            action.results = ActionExecutionLog(**result)
         else:
             utils.print_with_color(
-                f"Unexpected result type from UI execution: {type(results)}", "yellow"
+                f"Unexpected result type from UI execution: {type(result)}", "yellow"
             )
 
     def _generate_control_screenshot(self) -> None:

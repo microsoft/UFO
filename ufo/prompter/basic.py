@@ -7,6 +7,7 @@ from typing import Any, Dict, List
 
 import yaml
 
+from ufo.contracts.contracts import MCPToolInfo
 from ufo.utils import print_with_color
 
 
@@ -82,7 +83,7 @@ class BasicPrompter(ABC):
         return prompt_message
 
     @staticmethod
-    def retrived_documents_prompt_helper(
+    def retrieved_documents_prompt_helper(
         header: str, separator: str, documents: List[str]
     ) -> str:
         """
@@ -106,15 +107,15 @@ class BasicPrompter(ABC):
         return prompt
 
     @staticmethod
-    def tool_to_llm_prompt(tool_info: Dict[str, Any]) -> str:
+    def tool_to_llm_prompt(tool_info: MCPToolInfo) -> str:
         """
         Convert tool information to a formatted string for LLM.
         :param tool_info: The tool information dictionary.
         :return: A formatted string representing the tool information.
         """
-        name = tool_info["tool_name"]
-        desc = tool_info.get("description", "").strip()
-        in_props = tool_info["input_schema"]["properties"]
+        name = tool_info.tool_name
+        desc = (tool_info.description or "").strip()
+        in_props = (tool_info.input_schema or {}).get("properties", {})
         params = "\n".join(
             f"- {k} ({v.get('type', 'unknown')}, "
             f"{'optional' if 'default' in v else 'required'}): "
@@ -122,7 +123,7 @@ class BasicPrompter(ABC):
             f"Default: {v.get('default', 'N/A')}"
             for k, v in in_props.items()
         )
-        output_desc = tool_info["output_schema"].get("description", "")
+        output_desc = (tool_info.output_schema or {}).get("description", "")
         example_args = ", ".join(
             f"{k}={repr(v.get('default', ''))}" for k, v in in_props.items()
         )
@@ -140,7 +141,7 @@ class BasicPrompter(ABC):
     """
 
     @staticmethod
-    def tools_to_llm_prompt(tools: List[Dict[str, Any]]) -> str:
+    def tools_to_llm_prompt(tools: List[MCPToolInfo]) -> str:
         """
         Convert a list of tool information to a formatted string for LLM.
         :param tools: A list of tool information dictionaries.

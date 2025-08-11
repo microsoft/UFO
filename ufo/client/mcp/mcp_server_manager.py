@@ -25,7 +25,7 @@ class BaseMCPServer(ABC):
         self._namespace = config.get("namespace", "default")
 
     @abstractmethod
-    def start(self) -> None:
+    def start(self, *args, **kwargs) -> None:
         """
         Start the MCP server. This method should be implemented by subclasses.
         """
@@ -103,9 +103,7 @@ class LocalMCPServer(BaseMCPServer):
     Implementation of a local in-memory MCP server.
     """
 
-    _mcp_registry = MCPRegistry
-
-    def start(self) -> None:
+    def start(self, *args, **kwargs) -> None:
         """
         Start the local MCP server and return the FastMCP instance.
         :return: FastMCP instance for local in-memory server.
@@ -114,7 +112,7 @@ class LocalMCPServer(BaseMCPServer):
 
         try:
             # Try to get the server from the registry
-            self._server = self._mcp_registry.get(server_namespace)
+            self._server = MCPRegistry.get(server_namespace, *args, **kwargs)
         except KeyError:
             raise ValueError(
                 f"No MCP server found for name '{server_namespace}' in local server registry."
@@ -191,7 +189,7 @@ class MCPServerManager:
         )
 
     @classmethod
-    def create_mcp_server(self, mcp_config: Dict[str, Any]) -> BaseMCPServer:
+    def create_mcp_server(cls, mcp_config: Dict[str, Any], *args, **kwargs) -> BaseMCPServer:
         """
         Create an MCP server based on the type and parameters.
         :param mcp_config: Configuration dictionary for the MCP server.
@@ -201,15 +199,15 @@ class MCPServerManager:
         server_type = mcp_config.get("type")
 
         assert (
-            server_type in self._server_type_mapping
+            server_type in cls._server_type_mapping
         ), f"Unsupported server type: {server_type}"
 
-        server_class = self._server_type_mapping[server_type]
+        server_class = cls._server_type_mapping[server_type]
 
         server_instance = server_class(mcp_config)
-        server_instance.start()
+        server_instance.start(*args, **kwargs)
 
-        self.register_server(server_instance.namespace, server_instance)
+        cls.register_server(server_instance.namespace, server_instance)
 
         return server_instance
 
@@ -224,7 +222,7 @@ class MCPServerManager:
 
     @classmethod
     def create_or_get_server(
-        cls, mcp_config: Dict[str, Any], reset: bool = False
+        cls, mcp_config: Dict[str, Any], reset: bool = False, *args, **kwargs
     ) -> BaseMCPServer:
         """
         Create a new MCP server or return an existing one based on the configuration.
@@ -238,7 +236,7 @@ class MCPServerManager:
             cls._servers_mapping[namespace].reset()
 
         if namespace not in cls._servers_mapping:
-            return cls.create_mcp_server(mcp_config)
+            return cls.create_mcp_server(mcp_config, *args, **kwargs)
 
         return cls._servers_mapping[namespace]
 

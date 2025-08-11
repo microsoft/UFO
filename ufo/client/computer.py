@@ -26,6 +26,7 @@ class Computer:
     def __init__(
         self,
         name: str,
+        process_name: str,
         mcp_server_manager: MCPServerManager,
         data_collection_servers_config: Optional[List[Dict[str, Any]]] = None,
         action_servers_config: Optional[List[Dict[str, Any]]] = None,
@@ -38,6 +39,7 @@ class Computer:
         """
 
         self._name = name
+        self._process_name = process_name
 
         self.data_collection_servers_config = data_collection_servers_config
         self.action_servers_config = action_servers_config
@@ -107,7 +109,9 @@ class Computer:
                 namespace = "default_data_collection"
 
             mcp_server = self.mcp_server_manager.create_or_get_server(
-                mcp_config=data_collection_server, reset=reset
+                mcp_config=data_collection_server,
+                reset=reset,
+                process_name=self._process_name,
             )
 
             self._data_collection_servers[namespace] = mcp_server
@@ -128,7 +132,7 @@ class Computer:
                 namespace = "default_action"
 
             mcp_server = self.mcp_server_manager.create_or_get_server(
-                mcp_config=action_server, reset=reset
+                mcp_config=action_server, reset=reset, process_name=self._process_name
             )
 
             self._action_servers[namespace] = mcp_server
@@ -581,6 +585,7 @@ class ComputerManager:
 
             computer = Computer(
                 name=key,
+                process_name=process_name,
                 data_collection_servers_config=data_collection_servers_config,
                 action_servers_config=action_servers_config,
                 mcp_server_manager=self.mcp_server_manager,
