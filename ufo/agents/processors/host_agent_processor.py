@@ -17,8 +17,10 @@ from ufo.agents.processors.actions import (
     OneStepAction,
 )
 from ufo.agents.processors.basic import BaseProcessor
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.module.context import Context, ContextNames
+
+from ufo.llm import AgentType
 
 configs = Config.get_instance().config_data
 
@@ -187,7 +189,7 @@ class HostAgentProcessor(BaseProcessor):
         while retry < configs.get("JSON_PARSING_RETRY", 3):
             # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
             self._response, self.cost = self.host_agent.get_response(
-                self._prompt_message, "HOSTAGENT", use_backup_engine=True
+                self._prompt_message, AgentType.HOST, use_backup_engine=True
             )
 
             try:

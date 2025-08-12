@@ -8,7 +8,7 @@ from ufo import utils
 from ufo.agents.processors.actions import ActionSequence, OneStepAction
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.basic import BaseProcessor
-from ufo.config.config import Config
+from ufo.config import Config
 
 configs = Config.get_instance().config_data
 

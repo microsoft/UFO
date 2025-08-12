@@ -2,11 +2,9 @@
 # Licensed under the MIT License.
 import heapq
 import re
-import warnings
 from abc import abstractmethod
 from typing import Dict, List
 
-warnings.filterwarnings("ignore")
 
 
 class ControlFilterFactory:

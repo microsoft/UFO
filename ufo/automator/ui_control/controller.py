@@ -14,7 +14,7 @@ from pywinauto.win32structures import RECT
 
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
 from ufo.automator.puppeteer import ReceiverManager
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.utils import print_with_color
 
 configs = Config.get_instance().config_data

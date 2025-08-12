@@ -4,7 +4,7 @@
 import argparse
 from datetime import datetime
 
-from ufo.config.config import Config
+from ufo.config import Config
 from ufo.module.client import UFOClientManager
 from ufo.module.sessions.session import SessionFactory
 
