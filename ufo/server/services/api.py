@@ -37,15 +37,15 @@ def create_api_router(
 
             if not session_id or session_id not in session_manager.sessions:
                 session_id = ufo_request.session_id or str(uuid4())
-                session = session_manager.get_or_create_session(
-                    session_id, ufo_request.request
+
+            session = session_manager.get_or_create_session(
+                session_id, ufo_request.request
+            )
+
+            if ufo_request.action_results:
+                session_manager.process_action_results(
+                    session_id, ufo_request.action_results
                 )
-            else:
-                session = session_manager.sessions[session_id]
-                if ufo_request.action_results:
-                    session_manager.process_action_results(
-                        session_id, ufo_request.action_results
-                    )
 
             status = "continue"
             try:
