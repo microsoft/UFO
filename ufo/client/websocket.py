@@ -1,24 +1,23 @@
 import asyncio
 import json
 import logging
+from typing import TYPE_CHECKING, Dict, Any
+
 import websockets
 from websockets import WebSocketClientProtocol
 
-from typing import TYPE_CHECKING, Dict, Any
-
 if TYPE_CHECKING:
-    from ufo.client.client import UFOClient
+    from ufo.client.ufo_client import UFOClient
 
 
 class UFOWebSocketClient:
-    def __init__(self, server_addr: str, ufo_client: "UFOClient", max_retries: int = 3):
-        """
-        Initialize the WebSocket client.
-        :param server_addr: The WebSocket server address.
-        :param ufo_client: The UFOClient instance to use for running tasks.
-        :param max_retries: Maximum number of retries for connection attempts.
-        """
-        self.server_addr = server_addr
+    """
+    WebSocket client compatible with FastAPI UFO server.
+    Handles task_request, heartbeat, result_ack, notify_ack.
+    """
+
+    def __init__(self, ws_url: str, ufo_client: "UFOClient", max_retries: int = 3):
+        self.ws_url = ws_url
         self.ufo_client = ufo_client
         self.max_retries = max_retries
         self.retry_count = 0
@@ -26,15 +25,15 @@ class UFOWebSocketClient:
 
     async def connect_and_listen(self):
         """
-        Connect to the WebSocket server and listen for incoming messages.
-        This method will retry the connection if it fails, up to the maximum number of retries.
+        Connect to the FastAPI WebSocket server and listen for incoming messages.
+        Automatically retries on failure.
         """
         while self.retry_count < self.max_retries:
             try:
                 self.logger.info(
-                    f"Connecting to {self.server_addr} (attempt {self.retry_count + 1}/{self.max_retries})"
+                    f"[WS] Connecting to {self.ws_url} (attempt {self.retry_count + 1}/{self.max_retries})"
                 )
-                async with websockets.connect(self.server_addr) as ws:
+                async with websockets.connect(self.ws_url) as ws:
                     await self.register_client(ws)
                     self.retry_count = 0
                     await self.handle_messages(ws)
@@ -42,88 +41,84 @@ class UFOWebSocketClient:
                 websockets.ConnectionClosedError,
                 websockets.ConnectionClosedOK,
             ) as e:
-                self.logger.error(f"WebSocket connection closed: {e}")
+                self.logger.error(f"[WS] Connection closed: {e}")
                 self.retry_count += 1
                 await self._maybe_retry()
             except Exception as e:
-                self.logger.error(
-                    f"Unexpected WebSocket client error: {e}", exc_info=True
-                )
+                self.logger.error(f"[WS] Unexpected error: {e}", exc_info=True)
                 self.retry_count += 1
                 await self._maybe_retry()
-        self.logger.error("Max retries reached. Exiting websocket client.")
+        self.logger.error("[WS] Max retries reached. Exiting.")
 
     async def register_client(self, ws: WebSocketClientProtocol):
         """
-        Register the client with the WebSocket server.
-        This method sends the client ID to the server upon connection.
-        :param ws: The WebSocket connection object.
+        Send client_id to server upon connection.
         """
-        client_id = self.ufo_client.client_id
-        await ws.send(json.dumps({"client_id": client_id}))
-        self.logger.info(f"[WebSocket] Registered as {client_id}, waiting for task...")
+        await ws.send(json.dumps({"client_id": self.ufo_client.client_id}))
+        self.logger.info(f"[WS] Registered as {self.ufo_client.client_id}")
 
     async def handle_messages(self, ws: WebSocketClientProtocol):
         """
-        Handle incoming messages from the WebSocket server.
-        This method listens for messages and processes them accordingly.
-        :param ws: The WebSocket connection object.
+        Listen for messages from server and dispatch them.
         """
         async for msg in ws:
             await self.handle_message(msg, ws)
 
     async def handle_message(self, msg: str, ws: WebSocketClientProtocol):
         """
-        Handle a single message received from the WebSocket server.
-        This method processes the message and executes tasks if applicable.
-        :param msg: The message received from the WebSocket server.
-        :param ws: The WebSocket connection object.
+        Dispatch messages based on their type.
         """
         try:
-            task = json.loads(msg)
-            if task.get("type") == "task":
-                self.logger.info(
-                    f"Received task: {task} for client {self.ufo_client.client_id}"
-                )
-                await self.handle_task(task, ws)
+            data = json.loads(msg)
+            msg_type = data.get("type")
+            self.logger.info(f"[WS] Received message: {data}")
+
+            if msg_type == "task":
+                await self.handle_task_request(data, ws)
+            elif msg_type == "heartbeat":
+                await ws.send(json.dumps({"type": "heartbeat", "status": "ok"}))
+            elif msg_type == "result_ack":
+                self.logger.info(f"[WS] Result acknowledged: {data.get('task_id')}")
+            elif msg_type == "notify_ack":
+                self.logger.info(f"[WS] Notification acknowledged")
+            elif msg_type == "error":
+                self.logger.error(f"[WS] Server error: {data.get('error')}")
             else:
-                self.logger.info(f"Received non-task message: {task}")
-        except Exception as task_exc:
-            self.logger.error(f"Error handling task message: {task_exc}", exc_info=True)
+                self.logger.warning(f"[WS] Unknown message type: {msg_type}")
 
-    async def handle_task(self, task: Dict[str, Any], ws: WebSocketClientProtocol):
-        """
-        Handle a task received from the WebSocket server.
-        This method processes the task and sends the result back to the server.
-        :param task: The task dictionary containing task details.
-        :param ws: The WebSocket connection object.
-        """
-        task_id = task["task_id"]
-        request_text = task["request"]
-        self.logger.info(f"[WebSocket] Got task {task_id}: {request_text}")
+        except Exception as e:
+            self.logger.error(f"[WS] Error handling message: {e}", exc_info=True)
 
-        async with self.ufo_client.task_lock:
-            self.ufo_client.reset()
-            success = await self.ufo_client.run(request_text)
+    async def handle_task_request(
+        self, data: Dict[str, Any], ws: WebSocketClientProtocol
+    ):
+        """
+        Execute task_request received from server and send result.
+        """
+        try:
+            request_text = data.get("request", "No request provided")
+            task_id = data.get("task_id", "unknown")
+
+            self.logger.info(f"[WS] Executing task {task_id}: {request_text}")
+            async with self.ufo_client.task_lock:
+                self.ufo_client.reset()
+                success = await self.ufo_client.run(request_text)
+
+            # Send result back to server
             result = {"success": success}
             await ws.send(
-                json.dumps(
-                    {
-                        "type": "result",
-                        "task_id": task_id,
-                        "result": result,
-                    }
-                )
+                json.dumps({"type": "result", "task_id": task_id, "result": result})
             )
-            self.logger.info(f"[WebSocket] Sent result for {task_id}")
+            self.logger.info(f"[WS] Sent result for {task_id}")
+
+        except Exception as e:
+            self.logger.error(f"[WS] Failed to handle task_request: {e}", exc_info=True)
 
     async def _maybe_retry(self):
         """
-        If the retry count is less than the maximum, wait for an exponential backoff
-        before retrying the connection.
+        Exponential backoff before retrying connection.
         """
         if self.retry_count < self.max_retries:
-            self.logger.info(
-                f"Retrying WebSocket connection ({self.retry_count}/{self.max_retries}) after {2 ** self.retry_count}s..."
-            )
-            await asyncio.sleep(2**self.retry_count)
+            wait_time = 2**self.retry_count
+            self.logger.info(f"[WS] Retrying in {wait_time}s...")
+            await asyncio.sleep(wait_time)

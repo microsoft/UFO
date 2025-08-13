@@ -3,7 +3,7 @@ import json
 import logging
 from typing import Any, Dict
 
-import websockets
+from fastapi import WebSocket, WebSocketDisconnect
 
 from ufo.contracts.contracts import ClientRequest, ServerResponse
 from ufo.module.context import ContextNames
@@ -19,115 +19,114 @@ class UFOWebSocketHandler:
         session_manager: SessionManager,
         task_manager: TaskManager,
     ):
-        """
-        Initialize the WebSocket handler with the necessary managers.
-        :param ws_manager: The WebSocket manager to handle client connections.
-        :param session_manager: The session manager to handle user sessions.
-        :param task_manager: The task manager to handle tasks and their execution.
-        """
         self.ws_manager = ws_manager
         self.session_manager = session_manager
         self.task_manager = task_manager
         self.logger = logging.getLogger(self.__class__.__name__)
 
-    async def __call__(self, websocket: websockets.WebSocketServerProtocol, path: str):
+    async def connect(self, websocket: WebSocket):
         """
-        Entry point for the WebSocket server.
-        :param websocket: The WebSocket connection object.
-        :param path: The path of the WebSocket connection.
+        Connects a client and registers it in the WS manager.
+        Expects the first message to contain {"client_id": ...}.
         """
-        reg_msg = await websocket.recv()
+        await websocket.accept()
+        reg_msg = await websocket.receive_text()
         reg_info = json.loads(reg_msg)
-
         client_id = reg_info.get("client_id", None)
         self.ws_manager.add_client(client_id, websocket)
         self.logger.info(f"[WS] {client_id} connected")
+        return client_id
 
-        try:
-            async for msg in websocket:
-                await self.handle_message(msg, websocket, client_id)
-        except Exception as e:
-            self.logger.error(f"WS client {client_id} error: {e}")
-        finally:
-            self.ws_manager.remove_client(client_id)
+    async def disconnect(self, client_id: str):
+        self.ws_manager.remove_client(client_id)
+        self.logger.info(f"[WS] {client_id} disconnected")
 
-    async def handle_message(
-        self, msg: str, websocket: websockets.WebSocketServerProtocol, client_id: str
-    ):
+    async def handler(self, websocket: WebSocket):
         """
-        Parse and dispatch incoming WS messages.
-        :param msg: The message received from the WebSocket server.
-        :param websocket: The WebSocket connection object.
-        :param client_id: The ID of the client sending the message.
+        FastAPI WebSocket entry point.
+        """
+        client_id = await self.connect(websocket)
+        try:
+            while True:
+                msg = await websocket.receive_text()
+                await self.handle_message(msg, websocket, client_id)
+        except WebSocketDisconnect:
+            await self.disconnect(client_id)
+        except Exception as e:
+            self.logger.error(f"[WS] Error with client {client_id}: {e}")
+            await self.disconnect(client_id)
+
+    async def handle_message(self, msg: str, websocket: WebSocket, client_id: str):
+        """
+        Dispatch incoming WS messages to specific handlers.
         """
         try:
             data = json.loads(msg)
             self.logger.info(f"[WS] Received message from {client_id}: {data}")
+            msg_type = data.get("type")
 
-            if data.get("type") == "task_request":
-                self.logger.info(f"[WS] Task request from {client_id}: {data}")
+            if msg_type == "task_request":
                 await self.handle_task_request(data, websocket)
-
-            elif data.get("type") == "heartbeat":
-                # Handle heartbeat messages to keep the connection alive
-                self.logger.info(f"[WS] Heartbeat from {client_id}")
-                await websocket.send(json.dumps({"type": "heartbeat", "status": "ok"}))
-
-            elif data.get("type") == "result":
-                # Handle result messages from the client
-                task_id = data.get("task_id")
-                result = data.get("result")
-                self.task_manager.set_result(task_id, result)
-                self.logger.info(
-                    f"[WS] Result for task {task_id} from {client_id}: {result}"
-                )
-                await websocket.send(
-                    json.dumps({"type": "result_ack", "task_id": task_id})
-                )
-
-            elif data.get("type") == "get_result":
-                # Handle requests for results
-                task_id = data.get("task_id")
-                result = self.task_manager.get_result(task_id)
-
-                if result:
-                    await websocket.send(
-                        json.dumps(
-                            {"type": "result", "task_id": task_id, "result": result}
-                        )
-                    )
-                else:
-                    await websocket.send(
-                        json.dumps({"type": "error", "error": "Result not found"})
-                    )
-
-            elif data.get("type") == "notify":
-                # Handle notification messages from the client
-                notification = data.get("notification")
-                self.logger.info(f"[WS] Notification from {client_id}: {notification}")
-                await websocket.send(
-                    json.dumps({"type": "notify_ack", "status": "received"})
-                )
-
+            elif msg_type == "heartbeat":
+                await self.handle_heartbeat(websocket, client_id)
+            elif msg_type == "result":
+                await self.handle_result(data, websocket, client_id)
+            elif msg_type == "get_result":
+                await self.handle_get_result(data, websocket)
+            elif msg_type == "notify":
+                await self.handle_notify(data, websocket, client_id)
             else:
-                self.logger.warning(f"[WS] Unknown message type: {data.get('type')}")
-                await websocket.send(
-                    json.dumps({"type": "error", "error": "Unknown message type"})
-                )
-            # Future: add more handlers (heartbeat, result, notify, ...)
+                await self.handle_unknown(data, websocket)
         except Exception as e:
             self.logger.error(f"[WS] Error handling message from {client_id}: {e}")
-            await websocket.send(json.dumps({"type": "error", "error": str(e)}))
+            await websocket.send_text(json.dumps({"type": "error", "error": str(e)}))
 
-    async def handle_task_request(
-        self, data: Dict[str, Any], websocket: websockets.WebSocketServerProtocol
+    async def handle_heartbeat(self, websocket: WebSocket, client_id: str):
+        self.logger.info(f"[WS] Heartbeat from {client_id}")
+        await websocket.send_text(json.dumps({"type": "heartbeat", "status": "ok"}))
+
+    async def handle_result(
+        self, data: Dict[str, Any], websocket: WebSocket, client_id: str
     ):
+        task_id = data.get("task_id")
+        result = data.get("result")
+        self.task_manager.set_result(task_id, result)
+        self.logger.info(f"[WS] Result for task {task_id} from {client_id}: {result}")
+        await websocket.send_text(
+            json.dumps({"type": "result_ack", "task_id": task_id})
+        )
+
+    async def handle_get_result(self, data: Dict[str, Any], websocket: WebSocket):
+        task_id = data.get("task_id")
+        result = self.task_manager.get_result(task_id)
+        if result:
+            await websocket.send_text(
+                json.dumps({"type": "result", "task_id": task_id, "result": result})
+            )
+        else:
+            await websocket.send_text(
+                json.dumps({"type": "error", "error": "Result not found"})
+            )
+
+    async def handle_notify(
+        self, data: Dict[str, Any], websocket: WebSocket, client_id: str
+    ):
+        notification = data.get("notification")
+        self.logger.info(f"[WS] Notification from {client_id}: {notification}")
+        await websocket.send_text(
+            json.dumps({"type": "notify_ack", "status": "received"})
+        )
+
+    async def handle_unknown(self, data: Dict[str, Any], websocket: WebSocket):
+        self.logger.warning(f"[WS] Unknown message type: {data.get('type')}")
+        await websocket.send_text(
+            json.dumps({"type": "error", "error": "Unknown message type"})
+        )
+
+    async def handle_task_request(self, data: Dict[str, Any], websocket: WebSocket):
         """
         Handle a task request message from the client.
-        :param data: The parsed message data.
-        :param websocket: The WebSocket connection object.
         """
-
         req = ClientRequest(**data["body"])
         self.logger.info(f"[WS] Handling task request: {req}")
 
@@ -152,4 +151,4 @@ class UFOWebSocketHandler:
         )
 
         resp = {"type": "task_response", "body": response.model_dump()}
-        await websocket.send(json.dumps(resp))
+        await websocket.send_text(json.dumps(resp))

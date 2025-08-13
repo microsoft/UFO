@@ -1,53 +1,38 @@
+# 改动点：Flask Blueprint -> FastAPI APIRouter，request.json -> Pydantic model
 import datetime
 import logging
-from uuid import uuid4
+from typing import Optional
 
-from flask import Blueprint, jsonify, request
+from fastapi import APIRouter, HTTPException
+from pydantic import BaseModel
 
 from ufo.contracts.contracts import ClientRequest, ServerResponse
 from ufo.module.context import ContextNames
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.task_manager import TaskManager
 from ufo.server.services.ws_manager import WSManager
-from ufo.server.shared import SharedEventLoop
+from uuid import uuid4
+
 
 logger = logging.getLogger(__name__)
 
 
-def create_api_blueprint(
-    session_manager: SessionManager,
-    task_manager: TaskManager,
-    ws_manager: WSManager,
-    shared_event_loop: SharedEventLoop,
-    logger: logging.Logger = logger,
+# Pydantic Model 替代 request.json
+class RunTaskRequest(BaseModel):
+    session_id: Optional[str]
+    request: Optional[str]
+    action_results: Optional[dict]
+
+
+def create_api_router(
+    session_manager: SessionManager, task_manager: TaskManager, ws_manager: WSManager
 ):
-    """
-    Create and configure a Flask API blueprint for UFO server REST endpoints.
+    router = APIRouter()
 
-    This function registers all required HTTP routes for session management, client listing,
-    task dispatching, and health checks. It uses the provided session manager, task manager,
-    and WebSocket manager to handle business logic, and the specified event loop for async operations.
-
-    :param session_manager: The manager responsible for handling session state.
-    :param task_manager: The manager responsible for task ID generation and results.
-    :param ws_manager: The manager responsible for managing online WebSocket clients.
-    :param logger: Optional logger for logging API operations (default is the module logger).
-    :return: A Flask Blueprint object with all registered API endpoints.
-    """
-    api = Blueprint("api", __name__)
-
-    @api.route("/api/ufo/task", methods=["POST"])
-    def run_task():
-        """
-        Handle a client task request. If no session exists, creates a new one.
-        Otherwise, updates the existing session with action results.
-        :return: JSON response with session_id, status, actions, and messages.
-        """
+    @router.post("/api/ufo/task")
+    async def run_task(req: RunTaskRequest):
         try:
-            data = request.json
-            logger.info(f"Received API request: {data}")
-
-            ufo_request = ClientRequest(**data)
+            ufo_request = ClientRequest(**req.model_dump())
             session_id = ufo_request.session_id
 
             if not session_id or session_id not in session_manager.sessions:
@@ -69,7 +54,6 @@ def create_api_blueprint(
                 status = "completed"
 
             commands = session.get_commands()
-
             response = ServerResponse(
                 status=status,
                 agent_name=session.current_round.agent.__class__.__name__,
@@ -79,76 +63,46 @@ def create_api_blueprint(
                 session_id=session_id,
                 timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
             )
-            return jsonify(response.model_dump())
+            return response.model_dump()
         except Exception as e:
-            return (
-                jsonify({"status": "failure", "error": f"Server error: {str(e)}"}),
-                500,
-            )
+            raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
 
-    @api.route("/api/clients")
-    def list_clients():
-        """
-        List all online clients.
-        :return: JSON response with a list of online client IDs.
-        """
-        return jsonify({"online_clients": ws_manager.list_clients()})
+    @router.get("/api/clients")
+    async def list_clients():
+        return {"online_clients": ws_manager.list_clients()}
 
-    @api.route("/api/dispatch", methods=["POST"])
-    def dispatch_task_api():
-        """
-        Dispatch a task to a specific client identified by client_id.
-        :return: JSON response indicating the task has been dispatched or an error if the client is not online.
-        """
+    @router.post("/api/dispatch")
+    async def dispatch_task_api(data: dict):
+        import asyncio, json
 
-        ws_event_loop = shared_event_loop.loop
-
-        data = request.json
         client_id = data["client_id"]
         task_content = data["request"]
         ws = ws_manager.get_client(client_id)
-
-        logger.info(f"Dispatching task to client {client_id}: {task_content}")
-
         if not ws:
             logger.error(f"Client {client_id} not online.")
-            return jsonify({"error": "client not online"}), 404
+            raise HTTPException(status_code=404, detail="Client not online")
 
         task_id = task_manager.new_task_id()
-        logger.info(f"Generated task ID: {task_id}")
-        import asyncio
-        import json
-
+        ws_event_loop = asyncio.get_event_loop()
         asyncio.run_coroutine_threadsafe(
-            ws.send(
+            ws.send_text(
                 json.dumps(
                     {"type": "task", "task_id": task_id, "request": task_content}
                 )
             ),
             ws_event_loop,
         )
-        return jsonify({"status": "dispatched", "task_id": task_id})
+        return {"status": "dispatched", "task_id": task_id}
 
-    @api.route("/api/task_result/<task_id>")
-    def get_task_result(task_id: str):
-        """
-        Get the result of a task by its ID.
-        :param task_id: The ID of the task to retrieve the result for.
-        :return: JSON response with the task result or a status indicating the task is still pending.
-        """
+    @router.get("/api/task_result/{task_id}")
+    async def get_task_result(task_id: str):
         result = task_manager.get_result(task_id)
         if not result:
-            return jsonify({"status": "pending"})
-        return jsonify({"status": "done", "result": result})
+            return {"status": "pending"}
+        return {"status": "done", "result": result}
 
-    @api.route("/api/health")
-    def health_check():
-        """
-        Health check endpoint to verify the server is running and list online clients.
-        :return: JSON response with server status and list of online clients.
-        """
-        return jsonify(
-            {"status": "healthy", "online_clients": ws_manager.list_clients()}
-        )
+    @router.get("/api/health")
+    async def health_check():
+        return {"status": "healthy", "online_clients": ws_manager.list_clients()}
 
-    return api
+    return router
