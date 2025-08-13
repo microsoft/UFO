@@ -1,5 +1,7 @@
 from typing import Dict, List, Optional
 
+from fastapi import WebSocket
+
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config import Config
 from ufo.contracts.contracts import Command, Result

@@ -150,6 +150,7 @@ class ServerResponse(BaseModel):
     error: Optional[str] = None
     session_id: Optional[str] = None
     timestamp: Optional[str] = None
+    response_id: Optional[str] = None
 
 
 class ClientRequest(BaseModel):
@@ -161,3 +162,4 @@ class ClientRequest(BaseModel):
     request: Optional[str] = None
     action_results: Optional[Dict[str, Result]] = None
     timestamp: Optional[str] = None
+    request_id: Optional[str] = None

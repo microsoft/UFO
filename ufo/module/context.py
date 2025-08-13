@@ -7,8 +7,10 @@ from enum import Enum
 from logging import Logger
 from typing import Any, Dict, List, Optional, Type, Union
 
+from fastapi import WebSocket
 from pywinauto.controls.uiawrapper import UIAWrapper
 
+from ufo.module.message import MessageBus
 from ufo.utils import is_json_serializable, print_with_color
 
 
@@ -50,8 +52,10 @@ class ContextNames(Enum):
     )
     STRUCTURAL_LOGS = "STRUCTURAL_LOGS"  # The structural logs of the session
     SESSION_DATA_MANAGER = "SESSION_DATA_MANAGER"  # The session state manager
-    
-    APPLICATION_WINDOW_INFO = "APPLICATION_WINDOW_INFO"  # The information of the application window
+
+    APPLICATION_WINDOW_INFO = (
+        "APPLICATION_WINDOW_INFO"  # The information of the application window
+    )
 
     @property
     def default_value(self) -> Any:
@@ -166,6 +170,7 @@ class Context:
     _context: Dict[str, Any] = field(
         default_factory=lambda: {name.name: name.default_value for name in ContextNames}
     )
+    message_bus: Optional[MessageBus] = None
 
     def get(self, key: ContextNames) -> Any:
         """
@@ -358,3 +363,10 @@ class Context:
 
         # Sync the current round step and cost
         self._sync_round_values()
+
+    def attach_message_bus(self, ws: WebSocket) -> None:
+        """
+        Attach a WebSocket to the message bus.
+        :param ws: The WebSocket connection to attach.
+        """
+        self.message_bus = MessageBus(ws)

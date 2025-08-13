@@ -1,5 +1,5 @@
 import threading
-from websockets import WebSocketServerProtocol
+from fastapi import WebSocket
 from typing import List
 
 
@@ -15,7 +15,7 @@ class WSManager:
         self.online_clients = {}
         self.lock = threading.Lock()
 
-    def add_client(self, client_id: str, ws: WebSocketServerProtocol):
+    def add_client(self, client_id: str, ws: WebSocket):
         """
         Add a new client to the online clients list.
         :param client_id: The ID of the client to add.
@@ -32,7 +32,7 @@ class WSManager:
         with self.lock:
             self.online_clients.pop(client_id, None)
 
-    def get_client(self, client_id: str) -> WebSocketServerProtocol:
+    def get_client(self, client_id: str) -> WebSocket:
         """
         Get a client WebSocket connection by its ID.
         :param client_id: The ID of the client to retrieve.
