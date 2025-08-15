@@ -1,7 +1,7 @@
 import asyncio
 import json
 import logging
-from typing import TYPE_CHECKING, Dict, Any
+from typing import TYPE_CHECKING, Any, Dict
 
 import websockets
 from websockets import WebSocketClientProtocol
@@ -35,6 +35,7 @@ class UFOWebSocketClient:
                 )
                 async with websockets.connect(self.ws_url) as ws:
                     await self.register_client(ws)
+                    self.ufo_client.ws = ws
                     self.retry_count = 0
                     await self.handle_messages(ws)
             except (
@@ -83,6 +84,8 @@ class UFOWebSocketClient:
                 self.logger.info(f"[WS] Notification acknowledged")
             elif msg_type == "error":
                 self.logger.error(f"[WS] Server error: {data.get('error')}")
+            elif msg_type == "commands":
+                await self.handle_commands(data, ws)
             else:
                 self.logger.warning(f"[WS] Unknown message type: {msg_type}")
 

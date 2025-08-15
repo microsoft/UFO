@@ -17,8 +17,6 @@ class ServiceSession(BaseSession):
     A session for UFO service.
     """
 
-    _request: str = ""
-
     def __init__(
         self, task: str, should_evaluate: bool, id: str = None, request: str = ""
     ):
@@ -31,20 +29,7 @@ class ServiceSession(BaseSession):
 
         super().__init__(task=task, should_evaluate=should_evaluate, id=id)
 
-        self._request = request
-
-    def init(self, request):
-        self._host_agent.set_state(ContinueHostAgentState())
-
-        round = BaseRound(
-            request=request,
-            agent=self._host_agent,
-            context=self.context,
-            should_evaluate=configs.get("EVA_ROUND", False),
-            id=self.total_rounds,
-        )
-
-        self.add_round(round.id, round)
+        self._init_request = request
 
     def _init_context(self) -> None:
         """
@@ -90,7 +75,8 @@ class ServiceSession(BaseSession):
 
         if self.total_rounds != 0:
             self._finish = True
-        return self._request
+
+        return self._init_request
 
     def request_to_evaluate(self) -> bool:
         """

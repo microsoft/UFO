@@ -6,7 +6,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from ufo.contracts.contracts import ClientRequest, ServerResponse
+from ufo.contracts.contracts import ClientMessage, ServerMessage
 from ufo.module.context import ContextNames
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.task_manager import TaskManager
@@ -32,7 +32,7 @@ def create_api_router(
     @router.post("/api/ufo/task")
     async def run_task(req: RunTaskRequest):
         try:
-            ufo_request = ClientRequest(**req.model_dump())
+            ufo_request = ClientMessage(**req.model_dump())
             session_id = ufo_request.session_id
 
             if not session_id or session_id not in session_manager.sessions:
@@ -54,7 +54,7 @@ def create_api_router(
                 status = "completed"
 
             commands = session.get_commands()
-            response = ServerResponse(
+            response = ServerMessage(
                 status=status,
                 agent_name=session.current_round.agent.__class__.__name__,
                 root_name=session.context.get(ContextNames.APPLICATION_ROOT_NAME),
