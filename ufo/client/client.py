@@ -38,7 +38,7 @@ async def main():
     parser.add_argument(
         "--ws-server",
         dest="ws_server_url",
-        default="ws://localhost:8765",
+        default="ws://localhost:5000/ws",
         help="WebSocket server address (default: ws://localhost:8765)",
     )
     parser.add_argument("--ws", action="store_true", help="Run in WebSocket mode")
@@ -69,24 +69,21 @@ async def main():
         client_id=args.client_id,
     )
 
-    if args.ws:
-        # Use the new UFOWebSocketClient, compatible with FastAPI
-        ws_client = UFOWebSocketClient(
-            args.ws_server_url, client, max_retries=args.max_retries
-        )
-        try:
-            await ws_client.connect_and_listen()
-        except Exception as e:
-            logger.error(f"[WS] WebSocket client error: {str(e)}", exc_info=True)
-            sys.exit(1)
-    else:
-        # Normal request mode
-        if not args.request_text:
-            logger.error("No request text provided. Use --request to specify a task.")
-            sys.exit(1)
+    ws_client = UFOWebSocketClient(
+        args.ws_server_url, client, max_retries=args.max_retries
+    )
+    try:
+        asyncio.create_task(ws_client.connect_and_listen())
+    except Exception as e:
+        logger.error(f"[WS] WebSocket client error: {str(e)}", exc_info=True)
+        sys.exit(1)
 
-        success = await client.run(args.request_text)
-        sys.exit(0 if success else 1)
+    if args.request_text:
+        # Wait for the WebSocket connection to be established
+        await ws_client.connected_event.wait()
+        await ws_client.start_task(args.request_text)
+
+    await asyncio.Future()  # Run forever
 
 
 if __name__ == "__main__":

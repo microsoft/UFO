@@ -33,6 +33,7 @@ class SessionDataManager:
     result_available = False
 
     def __init__(self, session_id: str):
+
         self.session_id = session_id
         self.session_data = SessionData(session_id=session_id)
         self.action_id_setters = {}

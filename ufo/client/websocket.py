@@ -1,10 +1,13 @@
 import asyncio
-import json
+import datetime
 import logging
-from typing import TYPE_CHECKING, Any, Dict
+from typing import TYPE_CHECKING, Optional
+from uuid import uuid4
 
 import websockets
 from websockets import WebSocketClientProtocol
+
+from ufo.contracts.contracts import ClientMessage, ServerMessage
 
 if TYPE_CHECKING:
     from ufo.client.ufo_client import UFOClient
@@ -16,12 +19,31 @@ class UFOWebSocketClient:
     Handles task_request, heartbeat, result_ack, notify_ack.
     """
 
-    def __init__(self, ws_url: str, ufo_client: "UFOClient", max_retries: int = 3):
+    def __init__(
+        self,
+        ws_url: str,
+        ufo_client: "UFOClient",
+        max_retries: int = 3,
+        timeout: float = 120,
+    ):
+        """
+        Initialize the WebSocket client.
+        :param ws_url: WebSocket server URL
+        :param ufo_client: Instance of UFOClient
+        :param max_retries: Maximum number of connection retries
+        :param timeout: Connection timeout in seconds
+        """
         self.ws_url = ws_url
         self.ufo_client = ufo_client
         self.max_retries = max_retries
         self.retry_count = 0
+        self.timeout = timeout
         self.logger = logging.getLogger(self.__class__.__name__)
+        self.current_task: Optional[asyncio.Task] = None
+        self.session_id: Optional[str] = None
+        self._ws: Optional[WebSocketClientProtocol] = None
+
+        self.connected_event = asyncio.Event()
 
     async def connect_and_listen(self):
         """
@@ -34,10 +56,10 @@ class UFOWebSocketClient:
                     f"[WS] Connecting to {self.ws_url} (attempt {self.retry_count + 1}/{self.max_retries})"
                 )
                 async with websockets.connect(self.ws_url) as ws:
-                    await self.register_client(ws)
-                    self.ufo_client.ws = ws
+                    self._ws = ws
+                    await self.register_client()
                     self.retry_count = 0
-                    await self.handle_messages(ws)
+                    await self.handle_messages()
             except (
                 websockets.ConnectionClosedError,
                 websockets.ConnectionClosedOK,
@@ -51,71 +73,195 @@ class UFOWebSocketClient:
                 await self._maybe_retry()
         self.logger.error("[WS] Max retries reached. Exiting.")
 
-    async def register_client(self, ws: WebSocketClientProtocol):
+    async def register_client(self):
         """
         Send client_id to server upon connection.
         """
-        await ws.send(json.dumps({"client_id": self.ufo_client.client_id}))
+
+        client_message = ClientMessage(
+            type="register",
+            client_id=self.ufo_client.client_id,
+            status="ok",
+            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        )
+
+        await self._ws.send(client_message.model_dump_json())
+
+        self.connected_event.set()
+
         self.logger.info(f"[WS] Registered as {self.ufo_client.client_id}")
 
-    async def handle_messages(self, ws: WebSocketClientProtocol):
+    async def handle_messages(self):
         """
         Listen for messages from server and dispatch them.
         """
-        async for msg in ws:
-            await self.handle_message(msg, ws)
+        while True:
+            try:
+                msg = await asyncio.wait_for(self._ws.recv(), timeout=self.timeout)
+            except asyncio.TimeoutError:
+                self.logger.warning(
+                    f"[WS] Message receive timed out after {self.timeout} seconds, sending heartbeat"
+                )
+                client_message = ClientMessage(
+                    type="heartbeat",
+                    client_id=self.ufo_client.client_id,
+                    status="ok",
+                    timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                )
+                await self._ws.send(client_message.model_dump_json())
+                continue
 
-    async def handle_message(self, msg: str, ws: WebSocketClientProtocol):
+            await self.handle_message(msg)
+
+    async def handle_message(self, msg: str):
         """
         Dispatch messages based on their type.
         """
         try:
-            data = json.loads(msg)
-            msg_type = data.get("type")
+            data = ServerMessage.model_validate_json(msg)
+            msg_type = data.type
+
             self.logger.info(f"[WS] Received message: {data}")
 
             if msg_type == "task":
-                await self.handle_task_request(data, ws)
+                await self.start_task(data.user_request)
             elif msg_type == "heartbeat":
-                await ws.send(json.dumps({"type": "heartbeat", "status": "ok"}))
-            elif msg_type == "result_ack":
-                self.logger.info(f"[WS] Result acknowledged: {data.get('task_id')}")
-            elif msg_type == "notify_ack":
-                self.logger.info(f"[WS] Notification acknowledged")
+                self.logger.info("[WS] Heartbeat received")
+                client_message = ClientMessage(
+                    type="heartbeat",
+                    status="ok",
+                    client_id=self.ufo_client.client_id,
+                    timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                )
+                await self._ws.send(client_message.model_dump_json())
+            elif msg_type == "task_end":
+                await self.handle_task_end(data)
             elif msg_type == "error":
-                self.logger.error(f"[WS] Server error: {data.get('error')}")
+                self.logger.error(f"[WS] Server error: {data.error}")
             elif msg_type == "commands":
-                await self.handle_commands(data, ws)
+                await self.handle_commands(data)
             else:
                 self.logger.warning(f"[WS] Unknown message type: {msg_type}")
 
         except Exception as e:
             self.logger.error(f"[WS] Error handling message: {e}", exc_info=True)
 
-    async def handle_task_request(
-        self, data: Dict[str, Any], ws: WebSocketClientProtocol
-    ):
+    async def start_task(self, request_text: str):
         """
-        Execute task_request received from server and send result.
+        Start a new task based on the received data.
+        :param data: The data received from the server.
+        :param ws: The WebSocket connection.
         """
-        try:
-            request_text = data.get("request", "No request provided")
-            task_id = data.get("task_id", "unknown")
-
-            self.logger.info(f"[WS] Executing task {task_id}: {request_text}")
-            async with self.ufo_client.task_lock:
-                self.ufo_client.reset()
-                success = await self.ufo_client.run(request_text)
-
-            # Send result back to server
-            result = {"success": success}
-            await ws.send(
-                json.dumps({"type": "result", "task_id": task_id, "result": result})
+        if self.current_task is not None and not self.current_task.done():
+            self.logger.warning(
+                f"[WS] Task {self.session_id} is still running, ignoring new task"
             )
-            self.logger.info(f"[WS] Sent result for {task_id}")
+            return
 
-        except Exception as e:
-            self.logger.error(f"[WS] Failed to handle task_request: {e}", exc_info=True)
+        self.logger.info(f"[WS] Starting task: {request_text}")
+
+        async def task_loop():
+
+            try:
+                async with self.ufo_client.task_lock:
+                    self.ufo_client.reset()
+
+                    client_message = ClientMessage(
+                        type="task",
+                        request=request_text,
+                        session_id=self.ufo_client.session_id,
+                        client_id=self.ufo_client.client_id,
+                        request_id=str(uuid4()),
+                        timestamp=datetime.datetime.now(
+                            datetime.timezone.utc
+                        ).isoformat(),
+                        status="continue",
+                    )
+
+                    await self._ws.send(client_message.model_dump_json())
+            except Exception as e:
+                self.logger.error(
+                    f"[WS] Error sending task request: {e}", exc_info=True
+                )
+                client_message = ClientMessage(
+                    type="error",
+                    error=str(e),
+                    client_id=self.ufo_client.client_id,
+                    timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                )
+                await self._ws.send(client_message.model_dump_json())
+
+        self.current_task = asyncio.create_task(task_loop())
+
+    async def handle_commands(self, server_response: ServerMessage):
+        """
+        Handle commands received from the server.
+        """
+
+        if not self.current_task:
+            self.logger.error("[WS] Received command without an active task")
+            return
+
+        response_id = server_response.response_id
+        task_status = server_response.status
+        self.session_id = server_response.session_id
+
+        if task_status == "continue":
+            action_results = await self.ufo_client.step(server_response)
+
+            client_message = ClientMessage(
+                type="command_results",
+                session_id=self.session_id,
+                request_id=str(uuid4()),
+                action_results=action_results,
+                client_id=self.ufo_client.client_id,
+                prev_response_id=response_id,
+                status=task_status,
+                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            )
+
+        elif task_status in ["completed", "failed"]:
+            self.logger.info(
+                f"[WS] Task {self.session_id} is ended with status: {task_status}"
+            )
+            self.current_task = None
+
+            client_message = ClientMessage(
+                type="task_end",
+                client_id=self.ufo_client.client_id,
+                session_id=self.session_id,
+                prev_response_id=response_id,
+                status=task_status,
+                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            )
+
+        else:
+            self.logger.warning(
+                f"[WS] Unknown task status for {self.session_id}: {task_status}"
+            )
+
+        # self.logger.info(f"[WS] Sending client message: {client_message}")
+        self.logger.info(
+            f"Sending client message for prev_response_id: {client_message.prev_response_id}"
+        )
+        await self._ws.send(client_message.model_dump_json())
+
+    async def handle_task_end(self, server_response: ServerMessage):
+        """
+        Handle task end messages from the server.
+        :param server_response: The server response message.
+        """
+
+        if server_response.status == "completed":
+            self.logger.info(f"[WS] Task {self.session_id} completed")
+        elif server_response.status == "failed":
+            self.logger.info(
+                f"[WS] Task {self.session_id} failed, with error: {server_response.error}"
+            )
+        else:
+            self.logger.warning(
+                f"[WS] Unknown task status for {self.session_id}: {server_response.status}"
+            )
 
     async def _maybe_retry(self):
         """
@@ -125,3 +271,27 @@ class UFOWebSocketClient:
             wait_time = 2**self.retry_count
             self.logger.info(f"[WS] Retrying in {wait_time}s...")
             await asyncio.sleep(wait_time)
+
+    def is_connected(self) -> bool:
+        """
+        Check if the WebSocket connection is active.
+        """
+        return (
+            self.connected_event.is_set()
+            and self._ws is not None
+            and not self._ws.closed
+        )
+
+    @property
+    def ws(self) -> Optional[WebSocketClientProtocol]:
+        """
+        Get the current WebSocket connection.
+        """
+        return self._ws
+
+    @ws.setter
+    def ws(self, value: Optional[WebSocketClientProtocol]):
+        """
+        Set the current WebSocket connection.
+        """
+        self._ws = value

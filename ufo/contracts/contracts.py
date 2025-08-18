@@ -142,7 +142,7 @@ class ServerMessage(BaseModel):
     """
 
     type: str
-    status: Literal["continue", "completed", "failed", "ok", "error"]
+    status: Literal["continue", "completed", "failed", "ok", "error", "commands"]
     user_request: Optional[str] = None
     agent_name: Optional[str] = None
     process_name: Optional[str] = None
@@ -153,7 +153,6 @@ class ServerMessage(BaseModel):
     session_id: Optional[str] = None
     timestamp: Optional[str] = None
     response_id: Optional[str] = None
-    task_id: Optional[str] = None
 
 
 class ClientMessage(BaseModel):
@@ -178,4 +177,3 @@ class ClientMessage(BaseModel):
     request_id: Optional[str] = None
     prev_response_id: Optional[str] = None
     error: Optional[str] = None
-    task_id: Optional[str] = None

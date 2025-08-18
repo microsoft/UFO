@@ -350,7 +350,7 @@ class BaseRound(ABC):
             raise ValueError(
                 f"Expected dict, got {type(value)}. Cannot save UI tree to {save_path}"
             )
-        
+
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         with open(save_path, "w") as f:
             json.dump(value, f, indent=4)
@@ -681,9 +681,7 @@ class BaseSession(ABC):
         self.context.set(ContextNames.SESSION_COST, 0)
         self.context.set(ContextNames.SESSION_STEP, 0)
 
-        self.context.set(
-            ContextNames.SESSION_DATA_MANAGER, SessionDataManager(str(uuid4()))
-        )
+        self.context.set(ContextNames.SESSION_DATA_MANAGER, SessionDataManager(self.id))
 
     @property
     def id(self) -> str:
@@ -1122,7 +1120,7 @@ class BaseSession(ABC):
             raise ValueError(
                 f"Expected dict, got {type(value)}. Cannot save UI tree to {save_path}"
             )
-        
+
         os.makedirs(os.path.dirname(save_path), exist_ok=True)
         with open(save_path, "w") as f:
             json.dump(value, f, indent=4)

@@ -364,9 +364,9 @@ class Context:
         # Sync the current round step and cost
         self._sync_round_values()
 
-    def attach_message_bus(self, ws: WebSocket) -> None:
+    def attach_message_bus(self, session, ws: WebSocket) -> None:
         """
         Attach a WebSocket to the message bus.
         :param ws: The WebSocket connection to attach.
         """
-        self.message_bus = MessageBus(ws)
+        self.message_bus = MessageBus(session, ws)

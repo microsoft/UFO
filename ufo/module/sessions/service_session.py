@@ -18,7 +18,12 @@ class ServiceSession(BaseSession):
     """
 
     def __init__(
-        self, task: str, should_evaluate: bool, id: str = None, request: str = ""
+        self,
+        task: str,
+        should_evaluate: bool,
+        id: str = None,
+        request: str = "",
+        websocket: Optional[WebSocket] = None,
     ):
         """
         Initialize the session.
@@ -30,6 +35,7 @@ class ServiceSession(BaseSession):
         super().__init__(task=task, should_evaluate=should_evaluate, id=id)
 
         self._init_request = request
+        self.context.attach_message_bus(self, websocket)
 
     def _init_context(self) -> None:
         """

@@ -1,14 +1,14 @@
 import asyncio
-import datetime
 import logging
 import tracemalloc
 from typing import Dict, List, Optional
 
 import aiohttp
+from websockets import WebSocketClientProtocol
 
 from ufo.client.computer import CommandRouter, ComputerManager
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
-from ufo.contracts.contracts import ClientMessage, Command, Result, ServerMessage
+from ufo.contracts.contracts import Command, Result, ServerMessage
 
 tracemalloc.start()
 
@@ -50,6 +50,8 @@ class UFOClient:
         self._root_name: Optional[str] = None
 
         self._session_id: Optional[str] = None
+
+        self._ws: Optional[WebSocketClientProtocol] = None
 
     async def run(self, request_text: str) -> bool:
         """
@@ -94,41 +96,20 @@ class UFOClient:
             self.logger.error(f"Unexpected error: {e}", exc_info=True)
             return False
 
-    async def send_request(
-        self,
-        request_text: Optional[str] = None,
-        action_results: Optional[Dict[str, Result]] = None,
-    ):
+    async def step(self, response: ServerMessage) -> Dict[str, Result]:
         """
-        Send a request to the UFO web service
-        :param request_text: The request text to send to the server
-        :param action_results: Results of previously executed actions
-        :returns: UFOResponse object containing the server's response
+        Perform a single step in the WebSocket communication.
+        :param response: The ServerMessage instance to process.
         """
 
-        request_data = ClientMessage(
-            session_id=self.session_id,
-            request=request_text,
-            action_results=action_results,
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-        )
+        self.agent_name = response.agent_name
+        self.process_name = response.process_name
+        self.root_name = response.root_name
 
-        async with aiohttp.ClientSession() as session:
+        # Execute the actions and collect results
+        action_results = await self.execute_actions(response.actions)
 
-            async with session.post(
-                f"{self.server_url}/api/ufo/task",
-                json=request_data.model_dump(),
-                headers={"Content-Type": "application/json"},
-            ) as response:
-
-                if response.status != 200:
-                    text = await response.text()
-                    raise Exception(f"Server returned error: {response.status}, {text}")
-
-                response_data = await response.json()
-                ufo_response = ServerMessage(**response_data)
-                self.logger.info(f"Received response: {response_data}")
-                return ufo_response
+        return action_results
 
     async def execute_actions(
         self, commands: Optional[List[Command]]
