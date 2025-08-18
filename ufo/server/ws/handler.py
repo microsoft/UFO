@@ -4,7 +4,7 @@ import uuid
 
 from fastapi import WebSocket, WebSocketDisconnect
 
-from ufo.contracts.contracts import ClientMessage, ServerMessage
+from ufo.contracts.contracts import ClientMessage, ServerMessage, Command
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.task_manager import TaskManager
 from ufo.server.services.ws_manager import WSManager
@@ -165,6 +165,18 @@ class UFOWebSocketHandler:
         session = self.session_manager.get_or_create_session(
             session_id, data.request, websocket
         )
+
+        # res = await session.context.message_bus.send_commands(
+        #     [
+        #         Command(
+        #             tool_name="get_desktop_app_info",
+        #             parameters={"remove_empty": True, "refresh_app_windows": True},
+        #             tool_type="data_collection",
+        #         )
+        #     ]
+        # )
+
+        # print(res)
 
         error = None
 
