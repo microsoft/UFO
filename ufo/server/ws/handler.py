@@ -193,7 +193,7 @@ class UFOWebSocketHandler:
 
     async def handle_command_result(self, data: ClientMessage):
         """
-        Handle the result of commands.
+        Handle the result of commands. Run in background.
         :param data: The data from the client.
         """
 

@@ -39,7 +39,7 @@ class MessageBus:
         for command in commands:
             command.call_id = str(uuid.uuid4())
 
-        agent_name = "HostAgent"
+        agent_name = self.session.current_round.agent.__class__.__name__
         process_name = self.session.context.get(ContextNames.APPLICATION_ROOT_NAME)
         root_name = self.session.context.get(ContextNames.APPLICATION_PROCESS_NAME)
         actions = commands
