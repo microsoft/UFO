@@ -55,6 +55,12 @@ async def main():
         default='open notepad and write "Hello, World!"',
         help="The task request text",
     )
+    parser.add_argument(
+        "--task_name",
+        dest="task_name",
+        default=None,
+        help="The name of the task",
+    )
     args = parser.parse_args()
 
     # Initialize the MCP server manager and computer manager
@@ -81,7 +87,7 @@ async def main():
     if args.request_text:
         # Wait for the WebSocket connection to be established
         await ws_client.connected_event.wait()
-        await ws_client.start_task(args.request_text)
+        await ws_client.start_task(args.request_text, args.task_name)
 
     await asyncio.Future()  # Run forever
 

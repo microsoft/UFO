@@ -132,7 +132,7 @@ class UFOWebSocketClient:
             self.logger.info(f"[WS] Received message: {data}")
 
             if msg_type == "task":
-                await self.start_task(data.user_request)
+                await self.start_task(data.user_request, data.task_name)
             elif msg_type == "heartbeat":
                 self.logger.info("[WS] Heartbeat received")
             elif msg_type == "task_end":
@@ -147,7 +147,7 @@ class UFOWebSocketClient:
         except Exception as e:
             self.logger.error(f"[WS] Error handling message: {e}", exc_info=True)
 
-    async def start_task(self, request_text: str):
+    async def start_task(self, request_text: str, task_name: str | None):
         """
         Start a new task based on the received data.
         :param data: The data received from the server.
@@ -170,6 +170,7 @@ class UFOWebSocketClient:
                     client_message = ClientMessage(
                         type="task",
                         request=request_text,
+                        task_name=task_name if task_name else str(uuid4()),
                         session_id=self.ufo_client.session_id,
                         client_id=self.ufo_client.client_id,
                         request_id=str(uuid4()),

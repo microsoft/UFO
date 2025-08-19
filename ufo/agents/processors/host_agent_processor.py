@@ -3,9 +3,8 @@
 
 
 import json
-import time
 from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict, Generator, List, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Tuple
 
 from ufo import utils
 from ufo.agents.processors.action_contracts import (

@@ -164,8 +164,10 @@ class UFOWebSocketHandler:
         )
 
         session_id = str(uuid.uuid4()) if not data.session_id else data.session_id
+        task_name = data.task_name if data.task_name else str(uuid.uuid4())
+
         session = self.session_manager.get_or_create_session(
-            session_id, data.request, websocket
+            session_id, task_name, data.request, websocket
         )
 
         error = None

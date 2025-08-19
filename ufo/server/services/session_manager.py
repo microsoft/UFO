@@ -18,6 +18,7 @@ class SessionManager:
     def get_or_create_session(
         self,
         session_id: str,
+        task_name: str,
         request: Optional[str] = None,
         websocket: Optional[WebSocket] = None,
     ) -> ServiceSession:
@@ -31,7 +32,7 @@ class SessionManager:
         with self.lock:
             if session_id not in self.sessions:
                 session = ServiceSession(
-                    task=session_id,
+                    task=task_name,
                     should_evaluate=False,
                     id=session_id,
                     request=request,

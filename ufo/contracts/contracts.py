@@ -153,6 +153,7 @@ class ServerMessage(BaseModel):
     messages: Optional[List[str]] = None
     error: Optional[str] = None
     session_id: Optional[str] = None
+    task_name: Optional[str] = None
     timestamp: Optional[str] = None
     response_id: Optional[str] = None
 
@@ -172,6 +173,7 @@ class ClientMessage(BaseModel):
     ]
     status: Literal["ok", "error", "continue", "completed", "failed"]
     session_id: Optional[str] = None
+    task_name: Optional[str] = None
     client_id: Optional[str] = None
     request: Optional[str] = None
     action_results: Optional[List[Result]] = None
