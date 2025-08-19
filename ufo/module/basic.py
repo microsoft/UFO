@@ -546,6 +546,7 @@ class BaseSession(ABC):
 
         self._should_evaluate = should_evaluate
         self._id = id
+        self.task = task
 
         # Logging-related properties
         self.log_path = f"logs/{task}/"
@@ -940,6 +941,14 @@ class BaseSession(ABC):
         return: The class name of the session.
         """
         return self.__class__.__name__
+
+    @property
+    def current_agent_class(self) -> str:
+        """
+        Get the class name of the current agent.
+        return: The class name of the current agent.
+        """
+        return self.current_round.agent.__class__.__name__
 
     def _app_window_screenshot_callback(self, value: Result, save_path: str) -> None:
         """

@@ -53,7 +53,7 @@ class MessageBus:
         for command in commands:
             command.call_id = str(uuid.uuid4())
 
-        agent_name = self.session.current_round.agent.__class__.__name__
+        agent_name = self.session.current_agent_class
         process_name = self.session.context.get(ContextNames.APPLICATION_ROOT_NAME)
         root_name = self.session.context.get(ContextNames.APPLICATION_PROCESS_NAME)
         session_id = self.session.id
@@ -68,6 +68,7 @@ class MessageBus:
             root_name=root_name,
             actions=commands,
             session_id=session_id,
+            task_name=self.session.task,
             timestamp=timestamp,
             response_id=response_id,
         )
