@@ -96,7 +96,7 @@ class UFOClient:
             self.logger.error(f"Unexpected error: {e}", exc_info=True)
             return False
 
-    async def step(self, response: ServerMessage) -> Dict[str, Result]:
+    async def step(self, response: ServerMessage) -> List[Result]:
         """
         Perform a single step in the WebSocket communication.
         :param response: The ServerMessage instance to process.
@@ -111,9 +111,7 @@ class UFOClient:
 
         return action_results
 
-    async def execute_actions(
-        self, commands: Optional[List[Command]]
-    ) -> Dict[str, Result]:
+    async def execute_actions(self, commands: Optional[List[Command]]) -> List[Result]:
         """
         Execute the actions provided by the server
         :param commands: List of actions to execute

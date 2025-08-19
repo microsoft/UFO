@@ -57,7 +57,6 @@ class BasicAgent(ABC):
         self._host = None
         self._processor: Optional[BaseProcessor] = None
         self._state = None
-        self.has_input = False
 
     @property
     def status(self) -> str:
@@ -242,12 +241,12 @@ class BasicAgent(ABC):
 
         self._state = state
 
-    def handle(self, context: Context) -> None:
+    async def handle(self, context: Context) -> None:
         """
         Handle the agent.
         :param context: The context for the agent.
         """
-        self.state.handle(self, context)
+        await self.state.handle(self, context)
 
     def handle_coro(self, context: Context) -> Generator[None, None, None]:
         """
@@ -256,7 +255,7 @@ class BasicAgent(ABC):
         """
         yield from self.state.handle_coro(self, context)
 
-    def process(self, context: Context) -> None:
+    async def process(self, context: Context) -> None:
         """
         Process the agent.
         """

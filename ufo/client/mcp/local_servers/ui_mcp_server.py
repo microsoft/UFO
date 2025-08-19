@@ -535,22 +535,11 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         ui_state.last_app_windows = app_windows
 
         # Convert to WindowInfo objects
-        windows_info = []
-        for annotation_id, window in app_windows.items():
-            try:
-                window_info = _window2window_info(window, annotation_id)
-                windows_info.append(window_info.model_dump())
-            except Exception as e:
-                # If there's an error with a specific window, add minimal info
-                windows_info.append(
-                    {
-                        "annotation_id": annotation_id,
-                        "title": "Error retrieving window info",
-                        "error": str(e),
-                    }
-                )
+        desktop_windows_info = ui_state.control_inspector.get_control_info_list_of_dict(
+            app_windows, ["control_text", "control_type"]
+        )
 
-        return windows_info
+        return desktop_windows_info
 
     @data_mcp.tool()
     def get_app_window_controls() -> Dict[str, Any]:

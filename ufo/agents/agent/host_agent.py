@@ -204,13 +204,13 @@ class HostAgent(BasicAgent):
 
         return hostagent_prompt_message
 
-    def process(self, context: Context) -> None:
+    async def process(self, context: Context) -> None:
         """
         Process the agent.
         :param context: The context.
         """
         self.processor = HostAgentProcessor(agent=self, context=context)
-        self.processor.process()
+        await self.processor.process()
 
         # Sync the status with the processor.
         self.status = self.processor.status

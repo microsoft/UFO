@@ -101,14 +101,14 @@ class BaseRound(ABC):
 
         self.context.set(ContextNames.CURRENT_ROUND_ID, self.id)
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """
         Run the round.
         """
 
         while not self.is_finished():
 
-            self.agent.handle(self.context)
+            await self.agent.handle(self.context)
 
             # Take action
 
@@ -569,7 +569,7 @@ class BaseSession(ABC):
             configs["API_PROMPT"],
         )
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """
         Run the session.
         """
@@ -579,7 +579,7 @@ class BaseSession(ABC):
             round = self.create_new_round()
             if round is None:
                 break
-            round.run()
+            await round.run()
 
         if self.application_window is not None:
             self.capture_last_snapshot()

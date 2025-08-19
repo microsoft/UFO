@@ -78,7 +78,9 @@ class UFOWebSocketHandler:
 
             client_id = data.client_id
 
-            self.logger.info(f"[WS] Received message from {client_id}: {data}")
+            self.logger.info(
+                f"[WS] Received message from {client_id}, type: {data.type}"
+            )
             msg_type = data.type
 
             if msg_type == "task":
@@ -166,18 +168,6 @@ class UFOWebSocketHandler:
             session_id, data.request, websocket
         )
 
-        # res = await session.context.message_bus.send_commands(
-        #     [
-        #         Command(
-        #             tool_name="get_desktop_app_info",
-        #             parameters={"remove_empty": True, "refresh_app_windows": True},
-        #             tool_type="data_collection",
-        #         )
-        #     ]
-        # )
-
-        # print(res)
-
         error = None
 
         try:
@@ -189,6 +179,9 @@ class UFOWebSocketHandler:
             self.logger.info(f"[WS] Task {session_id} is ending with status: {status}")
 
         except Exception as e:
+            import traceback
+
+            traceback.print_exc()
             self.logger.error(f"[WS] Error running session {session_id}: {e}")
             status = "failed"
             error = str(e)
@@ -209,7 +202,7 @@ class UFOWebSocketHandler:
         :param data: The data from the client.
         """
 
-        self.logger.info(f"[WS] Handling command result: {data.action_results}")
+        self.logger.debug(f"[WS] Handling command result: {data.action_results}")
 
         response_id = data.prev_response_id
         session_id = data.session_id

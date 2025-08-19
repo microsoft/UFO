@@ -625,7 +625,7 @@ class CommandRouter:
         root_name: Optional[str],
         commands: List[Command],
         early_exit: bool = True,
-    ) -> Dict[str, Result]:
+    ) -> List[Result]:
         """
         Execute a command on the appropriate Computer instance based on the provided configuration.
         :param agent_name: The name of the agent to execute the command for.
@@ -640,7 +640,7 @@ class CommandRouter:
             agent_name=agent_name, process_name=process_name, root_name=root_name
         )
 
-        results: Dict[str, Result] = {}
+        results: List[Result] = []
 
         status = "success"
 
@@ -659,23 +659,32 @@ class CommandRouter:
                     f"Skipping further commands due to previous failure."
                 )
 
-                results[call_id] = Result(
-                    status="skipped",
-                    result=None,
-                    error="Early exit due to previous failure.",
+                results.append(
+                    Result(
+                        status="skipped",
+                        result=None,
+                        error="Early exit due to previous failure.",
+                        call_id=call_id,
+                    )
                 )
 
             if not call_tool_result.is_error:
-                results[call_id] = Result(
-                    status="success",
-                    result=text_content,
-                    error=None,
+                results.append(
+                    Result(
+                        status="success",
+                        result=text_content,
+                        error=None,
+                        call_id=call_id,
+                    )
                 )
             else:
-                results[call_id] = Result(
-                    status="failure",
-                    error=text_content,
-                    result=None,
+                results.append(
+                    Result(
+                        status="failure",
+                        error=text_content,
+                        result=None,
+                        call_id=call_id,
+                    )
                 )
 
                 status = "failure"

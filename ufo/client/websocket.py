@@ -95,23 +95,31 @@ class UFOWebSocketClient:
         """
         Listen for messages from server and dispatch them.
         """
-        while True:
-            try:
-                msg = await asyncio.wait_for(self._ws.recv(), timeout=self.timeout)
-            except asyncio.TimeoutError:
-                self.logger.warning(
-                    f"[WS] Message receive timed out after {self.timeout} seconds, sending heartbeat"
-                )
-                client_message = ClientMessage(
-                    type="heartbeat",
-                    client_id=self.ufo_client.client_id,
-                    status="ok",
-                    timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                )
-                await self._ws.send(client_message.model_dump_json())
-                continue
+        await asyncio.gather(self.recv_loop(), self.heartbeat_loop(self.timeout))
 
+    async def recv_loop(self):
+        """
+        Listen for incoming messages from the WebSocket.
+        """
+        while True:
+            msg = await self._ws.recv()
             await self.handle_message(msg)
+
+    async def heartbeat_loop(self, interval: float = 30) -> None:
+        """
+        Send periodic heartbeat messages to the server.
+        :param interval: The interval between heartbeat messages in seconds.
+        """
+        while True:
+            await asyncio.sleep(interval)
+            client_message = ClientMessage(
+                type="heartbeat",
+                client_id=self.ufo_client.client_id,
+                status="ok",
+                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            )
+            await self._ws.send(client_message.model_dump_json())
+            self.logger.debug("[WS] Heartbeat sent")
 
     async def handle_message(self, msg: str):
         """
@@ -127,13 +135,6 @@ class UFOWebSocketClient:
                 await self.start_task(data.user_request)
             elif msg_type == "heartbeat":
                 self.logger.info("[WS] Heartbeat received")
-                client_message = ClientMessage(
-                    type="heartbeat",
-                    status="ok",
-                    client_id=self.ufo_client.client_id,
-                    timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                )
-                await self._ws.send(client_message.model_dump_json())
             elif msg_type == "task_end":
                 await self.handle_task_end(data)
             elif msg_type == "error":

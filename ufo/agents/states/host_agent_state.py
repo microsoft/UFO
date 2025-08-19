@@ -52,7 +52,9 @@ class HostAgentState(AgentState):
     The abstract class for the host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.
@@ -123,13 +125,15 @@ class ContinueHostAgentState(HostAgentState):
     The class for the continue host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
-        agent.process(context)
+        await agent.process(context)
 
     def handle_coro(
         self, agent: "HostAgent", context: Optional["Context"] = None
@@ -184,7 +188,9 @@ class AssignHostAgentState(HostAgentState):
     The class for the assign host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.
@@ -216,8 +222,6 @@ class AssignHostAgentState(HostAgentState):
                 mode=mode,
                 context=context,
             )
-
-        agent.has_input = False
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
@@ -274,7 +278,9 @@ class PendingHostAgentState(HostAgentState):
     The class for the pending host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.

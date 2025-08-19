@@ -16,11 +16,7 @@ from ufo.agents.processors.action_contracts import (
 )
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.contracts.contracts import (
-    Command,
-    Result,
-    WindowInfo,
-)
+from ufo.contracts.contracts import Command
 from ufo.llm import AgentType
 from ufo.module.context import Context, ContextNames
 
@@ -29,8 +25,6 @@ configs = Config.get_instance().config_data
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
-
-import os
 
 
 @dataclass
@@ -111,72 +105,9 @@ class HostAgentProcessor(BaseProcessor):
             "magenta",
         )
 
-    def process_coro(self) -> Generator[None, None, None]:
-        """
-        Process the host agent in coroutine mode.
-        This method is a generator that yields control back to the caller after each step.
-        """
-
-        start_time = time.time()
-
-        try:
-            # Step 1: Print the step information.
-            self.print_step_info()
-
-            # Step 2: Capture the screenshot.
-            self.capture_screenshot()
-
-            # Step 3: Get the control information.
-            self.get_control_info()
-            self.process_collected_info()
-
-            yield
-
-            # Step 4: Get the prompt message.
-            self.get_prompt_message()
-
-            # Step 5: Get the response.
-            self.get_response()
-
-            # Step 6: Update the context.
-            self.update_cost()
-
-            # Step 7: Parse the response, if there is no error.
-            self.parse_response()
-
-            if self.is_pending() or self.is_paused():
-                # If the session is pending, update the step and memory, and return.
-                if self.is_pending():
-                    self.update_status()
-                    self.update_memory()
-
-                return
-
-            # Step 8: Execute the action.
-            self.execute_action()
-
-            yield
-
-            # Step 9: Update the memory.
-            self.update_memory()
-
-            # Step 10: Update the status.
-            self.update_status()
-
-            self._total_time_cost = time.time() - start_time
-
-            # Step 11: Save the log.
-            self.log_save()
-
-        except StopIteration:
-            # Error was handled and logged in the exception capture decorator.
-            # Simply return here to stop the process early.
-
-            return
-
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def capture_screenshot(self) -> None:
+    async def capture_screenshot(self) -> None:
         """
         Capture the screenshot.
         """
@@ -185,96 +116,44 @@ class HostAgentProcessor(BaseProcessor):
 
         self._memory_data.add_values_from_dict({"CleanScreenshot": desktop_save_path})
 
-        self.session_data_manager.add_action(
-            command=Command(
-                tool_name="capture_desktop_screenshot",
-                parameters={"all_screens": True},
-                tool_type="data_collection",
-            ),
-            setter=lambda value: self.desktop_screenshot_action_callback(
-                value, desktop_save_path
-            ),
+        result = await self.context.message_bus.publish_commands(
+            [
+                Command(
+                    tool_name="capture_desktop_screenshot",
+                    parameters={"all_screens": True},
+                    tool_type="data_collection",
+                )
+            ]
         )
 
-    def desktop_screenshot_action_callback(self, value: str, path: str) -> None:
-        """
-        Helper method to save screenshot to specified path and set the URL.
+        self._desktop_screen_url = result[0].result
 
-        Args:
-            value (str): The screenshot data or URL
-            path (str): Path to save the screenshot
-        """
-        # Set the URL for use in the class
-        value = value.result
-        self._desktop_screen_url = value
-        # print(f"Desktop screenshot URL: {self._desktop_screen_url}")
-        self.session_data_manager.session_data.state.desktop_screen_url = value
+        utils.save_image_string(self._desktop_screen_url, desktop_save_path)
 
-        # If value contains a base64 encoded image string
-        if (
-            value
-            and isinstance(value, str)
-            and value.startswith("data:image/png;base64,")
-        ):
-            try:
-                # Decode the base64 string to binary data
-                img_data = utils.decode_base64_image(value)
-
-                # Create directory if it doesn't exist
-                os.makedirs(os.path.dirname(path), exist_ok=True)
-
-                # Save the image to the specified path
-                with open(path, "wb") as f:
-                    f.write(img_data)
-
-                print(f"Screenshot saved to {path}")
-            except Exception as e:
-                print(f"Error saving screenshot: {e}")
-        else:
-            raise ValueError(
-                "Screenshot URL is not a valid base64 encoded image string."
-            )
+        self.logger.info(f"Desktop screenshot saved at: {desktop_save_path}")
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def get_control_info(self) -> None:
+    async def get_control_info(self) -> None:
         """
         Get the control information.
         """
-        self.session_data_manager.add_action(
-            command=Command(
-                tool_name="get_desktop_app_info",
-                parameters={"remove_empty": True, "refresh_app_windows": True},
-                tool_type="data_collection",
-            ),
-            setter=lambda value: self.desktop_app_info_callback(value),
+
+        result = await self.context.message_bus.publish_commands(
+            [
+                Command(
+                    tool_name="get_desktop_app_info",
+                    parameters={"remove_empty": True, "refresh_app_windows": True},
+                    tool_type="data_collection",
+                )
+            ]
         )
 
-    def desktop_app_info_callback(self, value: list[dict] | list[WindowInfo]) -> None:
-        """
-        Helper method to handle the desktop app info callback.
+        self._desktop_windows_info = result[0].result
 
-        Args:
-            value (str): The desktop app info
-        """
-        value = value.result
-        if isinstance(value, list) and len(value) > 0 and isinstance(value[0], dict):
-            # Convert the list of dictionaries to a list of WindowInfo objects
-            self._desktop_windows_info = [WindowInfo(**item) for item in value]
-        else:
-            self._desktop_windows_info = value
-
-        self.session_data_manager.session_data.state.desktop_windows_info = (
-            self._desktop_windows_info
+        self.logger.info(
+            f"Got {len(self._desktop_windows_info)} desktop windows in total."
         )
-
-    @BaseProcessor.exception_capture
-    @BaseProcessor.method_timer
-    def process_collected_info(self) -> None:
-        """
-        Process the collected information.
-        """
-        pass
 
     def _create_third_party_agent_list(
         self, start_index: int = 0
@@ -286,6 +165,8 @@ class HostAgentProcessor(BaseProcessor):
         """
 
         third_party_agent_names = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
+
+        self.logger.info(f"Enabled third-party agents: {third_party_agent_names}")
 
         third_party_agent_list = []
         third_party_agent_labels = []
@@ -305,7 +186,7 @@ class HostAgentProcessor(BaseProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def get_prompt_message(self) -> None:
+    async def get_prompt_message(self) -> None:
         """
         Get the prompt message.
         """
@@ -315,14 +196,14 @@ class HostAgentProcessor(BaseProcessor):
         else:
             blackboard_prompt = []
 
-        desktop_windows_info = self.session_data_manager.get_desktop_windows_info()
-
-        windows_num = len(desktop_windows_info)
+        windows_num = len(self._desktop_windows_info)
         third_party_agent_list, third_party_agent_labels = (
             self._create_third_party_agent_list(start_index=windows_num + 1)
         )
 
-        self.full_desktop_windows_info = desktop_windows_info + third_party_agent_list
+        self.full_desktop_windows_info = (
+            self._desktop_windows_info + third_party_agent_list
+        )
 
         # print(f"Full desktop windows info: {self.full_desktop_windows_info}")
 
@@ -330,9 +211,7 @@ class HostAgentProcessor(BaseProcessor):
 
         # Construct the prompt message for the host agent.
         self._prompt_message = self.host_agent.message_constructor(
-            image_list=[
-                self.session_data_manager.session_data.state.desktop_screen_url
-            ],
+            image_list=[self._desktop_screen_url],
             os_info=self.full_desktop_windows_info,
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
@@ -347,7 +226,7 @@ class HostAgentProcessor(BaseProcessor):
             image_list=[
                 self.session_data_manager.session_data.state.desktop_screen_url
             ],
-            os_info=desktop_windows_info,
+            os_info=self.full_desktop_windows_info,
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
             request=self.request,
@@ -361,7 +240,7 @@ class HostAgentProcessor(BaseProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def get_response(self) -> None:
+    async def get_response(self) -> None:
         """
         Get the response from the LLM.
         """
@@ -406,98 +285,83 @@ class HostAgentProcessor(BaseProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def execute_action(self) -> None:
+    async def execute_action(self) -> None:
         """
         Execute the action.
         """
 
-        # print(f"selected control_label: {self.control_label}")
+        if self.control_label:
+            if self.control_label in self.third_party_agent_labels:
 
-        if self.control_label in self.third_party_agent_labels:
-
-            self.assigned_third_party_agent = next(
-                (
-                    info
-                    for info in self.full_desktop_windows_info
-                    if info["label"] == self.control_label
-                ),
-                None,
-            ).get("control_text", None)
-
-        else:
-
-            desktop_windows_info = (
-                self.session_data_manager.session_data.state.desktop_windows_info
-            )
-
-            new_app_windows = list(
-                filter(
-                    lambda x: x.annotation_id == self.control_label,
-                    desktop_windows_info,
-                )
-            )
-
-            if len(new_app_windows) > 0:
-                # self._select_application(new_app_window)
-                self.session_data_manager.add_action(
-                    command=Command(
-                        tool_name="select_application_window",
-                        parameters={"window_label": new_app_windows[0].annotation_id},
-                        tool_type="action",
+                self.assigned_third_party_agent = next(
+                    (
+                        info
+                        for info in self.full_desktop_windows_info
+                        if info["label"] == self.control_label
                     ),
-                    setter=lambda value: self.select_application_window_callback(value),
+                    None,
+                ).get("control_text", None)
+
+            else:
+                await self._select_application(self.control_label)
+
+        if self.bash_command:
+            await self._run_shell_command(self.bash_command)
+
+        if not self.control_label and not self.bash_command:
+            self.status = self._agent_status_manager.FINISH.value
+            return
+
+    async def _select_application(self, window_label: str) -> None:
+
+        result = await self.context.message_bus.publish_commands(
+            [
+                Command(
+                    tool_name="select_application_window",
+                    parameters={"window_label": window_label},
+                    tool_type="action",
                 )
-            elif self.bash_command:
-                self.session_data_manager.add_action(
-                    command=Command(
-                        tool_name="launch_application",
-                        parameters={"bash_command": self.bash_command},
-                        tool_type="action",
-                    ),
-                    setter=lambda value: self.launch_application_callback(value),
-                )
-
-    def select_application_window_callback(self, value: Result) -> None:
-        """
-        Helper method to handle the application window selection callback.
-
-        Args:
-            value (str): The application window value
-        """
-        value = value.result
-        # Set the application window
-        self.app_root = value["root_name"]
-
-        new_app_window = value["window_info"]
-        if isinstance(new_app_window, dict):
-            self.application_window_info = WindowInfo(**new_app_window)
-        elif isinstance(new_app_window, WindowInfo):
-            self.application_window_info = new_app_window
-
-        self.actions = [
-            OneStepAction(
-                function="set_focus",
-                control_label=self.control_label,
-                control_text=self.control_text,
-                after_status=self.status,
-            )
-        ]
-        self.actions[0].control_log = BaseControlLog(
-            control_class=self.application_window_info.class_name,
-            control_type=self.application_window_info.control_type,
-            control_automation_id=self.application_window_info.automation_id,
+            ]
         )
 
+        self.app_root = result[0].result.get("root_name", "")
+        control_info = result[0].result.get("window_info", {})
+
+        self.logger.info(
+            f"Selected application process name: {self.control_label}, root name: {self.app_root}"
+        )
+
+        action = OneStepAction(
+            control_label=self.control_label,
+            control_text=self.control_text,
+            after_status=self.status,
+            function="set_focus",
+        )
+
+        action.control_log = BaseControlLog(
+            control_class=control_info.get("class_name"),
+            control_type=control_info.get("control_type"),
+            control_automation_id=control_info.get("automation_id"),
+        )
+
+        self.actions = [action]
+
+        self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
 
-    def launch_application_callback(self, value: Result) -> None:
-        """
-        Helper method to handle the application launch callback.
+    async def _run_shell_command(self, command: str) -> None:
 
-        Args:
-            value (str): The application launch value
-        """
-        value = value.result
+        result = await self.context.message_bus.publish_commands(
+            [
+                Command(
+                    tool_name="run_shell",
+                    parameters={"bash_command": command},
+                    tool_type="action",
+                )
+            ]
+        )
+
+        self.logger.info(f"Executed shell command: {command}")
 
         self.actions = [
             OneStepAction(
@@ -508,10 +372,11 @@ class HostAgentProcessor(BaseProcessor):
                 control_text=self.control_text,
             )
         ]
+
         self.actions[0].results = ActionExecutionLog(
             status=self.status,
-            error="",  # TODO: complete this info
-            return_value="",
+            error=result[0].error,
+            return_value=result[0].result,
         )
 
     def sync_memory(self):
