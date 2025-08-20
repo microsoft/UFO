@@ -6,12 +6,10 @@ import os
 from dataclasses import asdict, dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional
 
-from PIL import Image
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
 from ufo.agents.processors.action_contracts import (
-    ActionExecutionLog,
     ActionSequence,
     BaseControlLog,
     OneStepAction,
@@ -21,10 +19,9 @@ from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.config import Config
-from ufo.contracts.contracts import Command, ControlInfo, Result
+from ufo.contracts.contracts import Command
 from ufo.llm import AgentType
 from ufo.module.context import Context, ContextNames
-from ufo.utils import collector
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -650,26 +647,13 @@ class AppAgentProcessor(BaseProcessor):
             {"SelectedControlScreenshot": control_screenshot_save_path}
         )
 
+        control_selected = self._annotation_dict.get(self._control_label, None)
+
         self.photographer.capture_app_window_screenshot_with_rectangle(
             self.application_window,
-            sub_control_list=sub_control_list,
+            sub_control_list=[control_selected],
             save_path=control_screenshot_save_path,
             background_screenshot_path=self.screenshot_save_path,
-        )
-
-    def handle_screenshot_status(self) -> None:
-        """
-        Handle the screenshot status when the annotation is overlapped and the agent is unable to select the control items.
-        """
-
-        utils.print_with_color(
-            "Annotation is overlapped and the agent is unable to select the control items. New annotated screenshot is taken.",
-            "magenta",
-        )
-        self.control_reannotate = self.app_agent.Puppeteer.execute_command(
-            "annotation",
-            self._args,
-            self.session_data_manager.session_data.state._annotation_dict,
         )
 
     def sync_memory(self):
@@ -816,8 +800,8 @@ class AppAgentProcessor(BaseProcessor):
             self.app_agent.blackboard.add_image(screenshot_save_path, metadata)
 
     def get_filtered_annotation_dict(
-        self, annotation_dict: Dict[str, ControlInfo], configs: Dict[str, Any] = configs
-    ) -> Dict[str, ControlInfo]:
+        self, annotation_dict: Dict[str, UIAWrapper], configs: Dict[str, Any] = configs
+    ) -> Dict[str, UIAWrapper]:
         """
         Get the filtered annotation dictionary.
         :param annotation_dict: The annotation dictionary.
@@ -871,7 +855,9 @@ class AppAgentProcessor(BaseProcessor):
                 "icon", configs["CONTROL_FILTER_MODEL_ICON_NAME"]
             )
 
-            cropped_icons_dict = {}
+            cropped_icons_dict = self.photographer.get_cropped_icons_dict(
+                self.application_window, annotation_dict
+            )
             filtered_icon_dict = model_icon.control_filter(
                 annotation_dict,
                 cropped_icons_dict,
