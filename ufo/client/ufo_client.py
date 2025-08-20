@@ -1,7 +1,7 @@
 import asyncio
 import logging
 import tracemalloc
-from typing import Dict, List, Optional
+from typing import List, Optional
 
 import aiohttp
 from websockets import WebSocketClientProtocol

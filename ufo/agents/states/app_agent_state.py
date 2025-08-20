@@ -57,7 +57,9 @@ class AppAgentState(AgentState):
     The abstract class for the app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
@@ -96,7 +98,7 @@ class AppAgentState(AgentState):
         state = AppAgentStateManager().get_state(status)
         return state
 
-    def archive_subtask(self, context: "Context") -> None:
+    async def archive_subtask(self, context: "Context") -> None:
         """
         Update the subtask of the agent.
         :param context: The context for the agent and session.
@@ -124,7 +126,9 @@ class FinishAppAgentState(AppAgentState):
     The class for the finish app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
@@ -174,15 +178,19 @@ class ContinueAppAgentState(AppAgentState):
     The class for the continue app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
-        agent.process(context)
+        await agent.process(context)
 
-    def handle_coro(self, agent: "AppAgent", context: Optional["Context"] = None) -> Generator[None, None, None]:
+    def handle_coro(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> Generator[None, None, None]:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
@@ -251,7 +259,9 @@ class PendingAppAgentState(AppAgentState):
     The class for the pending app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
@@ -298,7 +308,9 @@ class ConfirmAppAgentState(AppAgentState):
         """
         self._confirm = None
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
@@ -361,14 +373,16 @@ class ErrorAppAgentState(AppAgentState):
     The class for the error app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
 
-        self.archive_subtask(context)
+        await self.archive_subtask(context)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
@@ -415,14 +429,16 @@ class FailAppAgentState(AppAgentState):
     The class for the fail app agent state.
     """
 
-    def handle(self, agent: "AppAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "AppAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
 
-        self.archive_subtask(context)
+        await self.archive_subtask(context)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """

@@ -272,13 +272,6 @@ class BaseProcessor(ABC):
         pass
 
     @abstractmethod
-    def process_collected_info(self) -> None:
-        """
-        Process the collected information.
-        """
-        pass
-
-    @abstractmethod
     def get_prompt_message(self) -> None:
         """
         Get the prompt message.

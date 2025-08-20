@@ -5,6 +5,7 @@
 from __future__ import annotations
 
 import json
+import logging
 import os
 from typing import Any, Dict, Generator, List, Optional, Tuple, Union
 
@@ -22,10 +23,10 @@ from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentSt
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
 from ufo.config import Config
 from ufo.contracts.contracts import Command, MCPToolInfo, Result
-from ufo.module.sessions.session_data import SessionDataManager
 from ufo.llm import AgentType
 from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
+from ufo.module.sessions.session_data import SessionDataManager
 from ufo.prompter.agent_prompter import AppAgentPrompter
 
 configs = Config.get_instance().config_data
@@ -76,10 +77,9 @@ class AppAgent(BasicAgent):
         self._mode = mode
 
         self.set_state(self.default_state)
-        self.mcp_enabled = configs.get("USE_MCP", False)
-        self.mcp_preferred_operations = []  # Will be populated from MCP tools
 
         self._context_provision_executed = False
+        self.logger = logging.getLogger(__name__)
 
     def get_prompter(
         self,
@@ -369,21 +369,23 @@ class AppAgent(BasicAgent):
         else:
             return []
 
-    def process_coro(self, context: Context) -> Generator[None, None, None]:
+    async def process(self, context: Context) -> None:
         """
         Process the agent.
         :param context: The context.
         """
         if not self._context_provision_executed:
-            yield from self.context_provision(context=context)
+            await self.context_provision(context=context)
             self._context_provision_executed = True
+
         if configs.get("ACTION_SEQUENCE", False):
             self.processor = AppAgentActionSequenceProcessor(
                 agent=self, context=context
             )
         else:
             self.processor = AppAgentProcessor(agent=self, context=context)
-        yield from self.processor.process_coro()
+        await self.processor.process()
+
         self.status = self.processor.status
 
     def process_comfirmation(self) -> bool:
@@ -453,9 +455,9 @@ class AppAgent(BasicAgent):
             "demonstration", db_path
         )
 
-    def context_provision(
+    async def context_provision(
         self, request: str = "", context: Context = None
-    ) -> Generator[None, None, None]:
+    ) -> None:
         """
         Provision the context for the app agent.
         :param request: The request sent to the Bing search retriever.
@@ -493,44 +495,33 @@ class AppAgent(BasicAgent):
             db_path = os.path.join(demonstration_path, "demonstration_db")
             self.build_human_demonstration_retriever(db_path)
 
-        session_data_manager = context.get(ContextNames.SESSION_DATA_MANAGER)
-        # Load MCP tool information if enabled
-        if self.mcp_enabled:
-            utils.print_with_color("Loading MCP tool information...", "magenta")
-            yield from self._load_mcp_context(session_data_manager)
+        await self._load_mcp_context(context)
 
-    def _load_mcp_context(
-        self, session_data_manager: SessionDataManager
-    ) -> Generator[None, None, None]:
+    async def _load_mcp_context(self, context: Context) -> None:
         """
         Load MCP context information for the current application.
         """
-        session_data_manager.add_action(
-            command=Command(
-                tool_name="list_tools",
-                parameters={
-                    "tool_type": "action",
-                },
-                tool_type="action",
-            ),
-            setter=lambda result: self._handle_list_tools_callback(result),
+
+        self.logger.info("Loading MCP tool information...")
+        result = await context.message_bus.publish_commands(
+            [
+                Command(
+                    tool_name="list_tools",
+                    parameters={
+                        "tool_type": "action",
+                    },
+                    tool_type="action",
+                )
+            ]
         )
 
-        yield
+        tool_list = result[0].result if result else None
 
-    def _handle_list_tools_callback(self, result: Result) -> None:
-        """
-        Callback to handle MCP Tool List result from the client.
-        :param result: The result from the UFO client containing tool information.
-        """
-        if not isinstance(result, Result) or not isinstance(result.result, List):
-            raise ValueError("Invalid result format received from UFO client.")
+        self.logger.info(f"Loaded tool list: {tool_list}")
 
-        self.tools_info = [MCPToolInfo(**tool) for tool in result.result]
+        tools_info = [MCPToolInfo(**tool) for tool in tool_list]
 
-        self.prompter.create_api_prompt_template(
-            tools=self.tools_info
-        )
+        self.prompter.create_api_prompt_template(tools=tools_info)
 
     @property
     def default_state(self) -> ContinueAppAgentState:
