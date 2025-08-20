@@ -195,6 +195,9 @@ class Computer:
         for tool_call in tool_calls:
             result = await self._run_action(tool_call)
             results.append(result)
+            self.logger.debug(
+                f"Action {tool_call.tool_name} executed with result: {result}"
+            )
 
         return results
 

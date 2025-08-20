@@ -542,13 +542,55 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         return desktop_windows_info
 
     @data_mcp.tool()
+    def get_app_window_info(field_list: List[str]) -> Dict[str, Any]:
+        """
+        Get information about the currently selected application window.
+        :param field_list: List of fields to retrieve from the window info.
+        :return: Dictionary containing the requested window information.
+        """
+        if not ui_state.selected_app_window:
+            raise ToolError("No window is selected， please select a window first.")
+
+        window_info = ui_state.control_inspector.get_control_info(
+            ui_state.selected_app_window, field_list=field_list
+        )
+
+        return window_info
+
+    @data_mcp.tool()
+    def get_app_window_controls_info(field_list: List[str]) -> List:
+        """
+        Get information about controls in the currently selected application window.
+        :param field_list: List of fields to retrieve from the control info.
+        :return: Dictionary containing the requested control information.
+        """
+        if not ui_state.selected_app_window:
+            raise ToolError("No window is selected， please select a window first.")
+
+        controls_list = ui_state.control_inspector.find_control_elements_in_descendants(
+            ui_state.selected_app_window,
+            control_type_list=configs.get("CONTROL_LIST", []),
+            class_name_list=configs.get("CONTROL_LIST", []),
+        )
+
+        control_dict = {str(i + 1): control for i, control in enumerate(controls_list)}
+
+        result = ui_state.control_inspector.get_control_info_list_of_dict(
+            control_dict, field_list=field_list
+        )
+
+        print(f"Control info result: {result}")
+
+        return result
+
+    @data_mcp.tool()
     def get_app_window_controls() -> Dict[str, Any]:
         """
         Get information about controls in the currently selected window.
         :return: Dictionary containing window info and control information in AppWindowControlInfo format.
         """
         if not ui_state.selected_app_window:
-            return {"error": "No window selected"}
+            raise ToolError("No window is selected， please select a window first.")
 
         temp_path = "temp_app_screenshot.png"  # Temporary path for capturing
 

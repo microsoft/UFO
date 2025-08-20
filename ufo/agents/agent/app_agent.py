@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 import logging
 import os
-from typing import Any, Dict, Generator, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import openai
 
@@ -22,11 +22,10 @@ from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
 from ufo.config import Config
-from ufo.contracts.contracts import Command, MCPToolInfo, Result
+from ufo.contracts.contracts import Command, MCPToolInfo
 from ufo.llm import AgentType
 from ufo.module import interactor
-from ufo.module.context import Context, ContextNames
-from ufo.module.sessions.session_data import SessionDataManager
+from ufo.module.context import Context
 from ufo.prompter.agent_prompter import AppAgentPrompter
 
 configs = Config.get_instance().config_data
@@ -517,7 +516,13 @@ class AppAgent(BasicAgent):
 
         tool_list = result[0].result if result else None
 
-        self.logger.info(f"Loaded tool list: {tool_list}")
+        tool_name_list = (
+            [tool.get("tool_name") for tool in tool_list] if tool_list else []
+        )
+
+        self.logger.info(
+            f"Loaded tool list: {tool_name_list} for the application {self._process_name}."
+        )
 
         tools_info = [MCPToolInfo(**tool) for tool in tool_list]
 
@@ -679,22 +684,6 @@ class OpenAIOperatorAgent(AppAgent):
                 "tools": tools,
                 "previous_response_id": response_id,
             }
-
-            # inputs = [
-            #     {
-            #         "type": "computer_call_output",
-            #         "call_id": previous_computer_id,
-            #         "output": {
-            #             "type": "input_image",
-            #             "image_url": image,
-            #         },
-            #     }
-            # ]
-            # return {
-            #     "inputs": inputs,
-            #     "tools": tools,
-            #     "previous_response_id": response_id,
-            # }
 
     def print_response(self, response_dict: Dict[str, Any]) -> None:
         """

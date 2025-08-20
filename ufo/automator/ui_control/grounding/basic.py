@@ -105,7 +105,8 @@ class BasicGrounding(ABC):
         """
         pass
 
-    def uia_wrapping(self, control_info: Dict[str, Any]) -> UIAWrapper:
+    @staticmethod
+    def uia_wrapping(control_info: Dict[str, Any]) -> UIAWrapper:
         """
         Create a UIAWrapper object from the given control info.
         :param control_info: The control info dictionary.
@@ -134,7 +135,7 @@ class BasicGrounding(ABC):
         :return: The control elements dictionary.
         """
 
-        control_list = []
+        control_list: List[UIAWrapper] = []
 
         grounding_results = self.predict(image_path, *args, **kwargs)
         control_elements_info = self.parse_results(
