@@ -579,8 +579,6 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
             control_dict, field_list=field_list
         )
 
-        print(f"Control info result: {result}")
-
         return result
 
     @data_mcp.tool()

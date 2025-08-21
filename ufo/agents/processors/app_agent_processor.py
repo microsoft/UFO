@@ -365,7 +365,6 @@ class AppAgentProcessor(BaseProcessor):
             )
         )
 
-        self.logger.info(f"Get {len(self._control_info)} control items")
         self.logger.info(
             f"Get {len(self.filtered_control_info)} filtered control items"
         )
@@ -550,7 +549,7 @@ class AppAgentProcessor(BaseProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def get_response(self) -> None:
+    async def get_response(self) -> None:
         """
         Get the response from the LLM.
         """
@@ -620,21 +619,14 @@ class AppAgentProcessor(BaseProcessor):
             )
             return
 
-        self.session_data_manager.add_action(
-            command=Command(
-                tool_name=action.function,
-                parameters=action.args,
-                tool_type="action",
-            ),
-            setter=lambda result: self._handle_ui_execution_callback(result),
-        )
-
         result = await self.context.message_bus.publish_commands(
-            Command(
-                tool_name=action.function,
-                parameters=action.args,
-                tool_type="action",
-            )
+            [
+                Command(
+                    tool_name=action.function,
+                    parameters=action.args,
+                    tool_type="action",
+                )
+            ]
         )
 
         self.logger.info(f"Result for execution of {action.function}: {result}")
