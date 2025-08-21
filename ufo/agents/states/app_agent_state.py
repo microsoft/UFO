@@ -134,7 +134,7 @@ class FinishAppAgentState(AppAgentState):
         :param context: The context for the agent and session.
         """
 
-        self.archive_subtask(context)
+        await self.archive_subtask(context)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
