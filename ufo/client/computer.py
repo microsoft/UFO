@@ -150,7 +150,7 @@ class Computer:
         tool_info = self._tools_registry.get(tool_key, None)
 
         self.logger.info(
-            f"Running tool: {tool_info.tool_name} with parameters: {tool_info.parameters}"
+            f"Running [{tool_info.namespace}] tool: {tool_info.tool_name} with parameters: {tool_info.parameters}"
         )
 
         if not tool_info:
@@ -689,6 +689,9 @@ class CommandRouter:
                         call_id=call_id,
                     )
                 )
+                self.logger.warning(
+                    f"Command {call_id} failed with error: {text_content}"
+                )
 
                 status = "failure"
 
@@ -721,28 +724,55 @@ def test_command_router():
     # Example command execution, all from the server
     commands = [
         Command(
-            tool_name="double_click_mouse",
-            tool_type="action",
-            parameters={"button": "left"},
+            tool_name="get_desktop_app_info",
+            tool_type="data_collection",
+            parameters={"remove_empty": True, "refresh_app_windows": True},
         ),
         Command(
-            tool_name="list_tools",
+            tool_name="select_application_window",
             tool_type="action",
-            parameters={"namespace": "HardwareExecutor"},
+            parameters={"window_label": "2"},
         ),
     ]
 
-    results = asyncio.run(
+    results1 = asyncio.run(
         command_router.execute(
-            agent_name="HardwareAgent",  # From server
-            process_name="HardwareAgent",  # From server
-            root_name="default",  # From server
+            agent_name="HostAgent",  # From server
+            process_name="",  # From server
+            root_name="",  # From server
             commands=commands,
         )
     )
 
-    for call_id, result in results.items():
-        print(f"Command {call_id} executed with status: {result.status}")
+    commands = [
+        Command(
+            tool_name="get_app_window_controls_info",
+            parameters={"field_list": ["control_text", "control_type"]},
+            tool_type="data_collection",
+        ),
+        Command(
+            tool_name="keyboard_input",
+            tool_type="action",
+            parameters={
+                "control_label": "5",
+                "control_text": "Untitled. Unmodified.",
+                "keys": "hi",
+                "control_focus": True,
+            },
+        ),
+    ]
+
+    results2 = asyncio.run(
+        command_router.execute(
+            agent_name="AppAgent",  # From server
+            process_name="",  # From server
+            root_name="",  # From server
+            commands=commands,
+        )
+    )
+
+    for result in results1 + results2:
+        print(f"Command executed with status: {result.status}")
         if result.status == "failure":
             print(f"Error: {result.error}")
         else:

@@ -102,6 +102,17 @@ class AppPuppeteer:
         command = self.create_command(command_name, params, *args, **kwargs)
         self.command_queue.append(command)
 
+    def list_commands(self):
+        """
+        List all available commands.
+        """
+        receiver_list = self.receiver_manager.receiver_list
+
+        command_list = []
+        for receiver in receiver_list:
+            command_list.extend(receiver.list_commands())
+        return command_list
+
     def get_command_queue_length(self) -> int:
         """
         Get the length of the command queue.
@@ -257,7 +268,7 @@ class ReceiverManager:
     ) -> Dict[str, Dict[str, Union[str, ReceiverFactory]]]:
         """
         Get the receiver factory registry.
-        :return: The receiver factory registry. 
+        :return: The receiver factory registry.
         """
         return self._receiver_factory_registry
 
@@ -274,7 +285,9 @@ class ReceiverManager:
         return None
 
     @classmethod
-    def register(cls, receiver_factory_class: Type[ReceiverFactory]) -> Type[ReceiverFactory]:
+    def register(
+        cls, receiver_factory_class: Type[ReceiverFactory]
+    ) -> Type[ReceiverFactory]:
         """
         Decorator to register the receiver factory class to the receiver manager.
         :param receiver_factory_class: The receiver factory class to be registered.

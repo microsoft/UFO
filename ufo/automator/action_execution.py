@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import sys
+
 sys.path.append("./")
 
 import time
@@ -14,10 +15,20 @@ from ufo import utils
 from ufo.automator.puppeteer import AppPuppeteer
 
 if TYPE_CHECKING:
-    from ..agents.processors.action_contracts import OneStepAction, ActionSequence, BaseControlLog, ActionExecutionLog
+    from ..agents.processors.action_contracts import (
+        OneStepAction,
+        ActionSequence,
+        BaseControlLog,
+        ActionExecutionLog,
+    )
 else:
     # Import at runtime to avoid circular imports
-    from ..agents.processors.action_contracts import OneStepAction, ActionSequence, BaseControlLog, ActionExecutionLog
+    from ..agents.processors.action_contracts import (
+        OneStepAction,
+        ActionSequence,
+        BaseControlLog,
+        ActionExecutionLog,
+    )
 
 
 class OneStepActionExecutor:
@@ -106,8 +117,9 @@ class OneStepActionExecutor:
         control_selected = control_dict.get(action.control_label, None)
 
         # If the control is selected, but not available, return an error.
-        if control_selected is not None and not OneStepActionExecutor._control_validation(
-            control_selected
+        if (
+            control_selected is not None
+            and not OneStepActionExecutor._control_validation(control_selected)
         ):
             action.results = ActionExecutionLog(
                 status="error",
@@ -118,11 +130,22 @@ class OneStepActionExecutor:
 
             return action.results
 
+        import logging
+
+        logger = logging.getLogger(__name__)
+        logger.info(
+            f"Application window: {application_window}, Control selected: {control_selected}"
+        )
+
         # Create the control receiver.
-        if application_window and control_selected:
+        if application_window:
             puppeteer.receiver_manager.create_ui_control_receiver(
                 control_selected, application_window
             )
+            logger.info(
+                f"Create AppPuppeteer for window: {application_window.window_text()}"
+            )
+            logger.info(f"Available commands: {puppeteer.list_commands()}")
 
         if action.function:
 
@@ -132,11 +155,15 @@ class OneStepActionExecutor:
                     time.sleep(action._configs.get("RECTANGLE_TIME", 0))
 
             action.control_log = OneStepActionExecutor._get_control_log(
-                action=action, control_selected=control_selected, application_window=application_window
+                action=action,
+                control_selected=control_selected,
+                application_window=application_window,
             )
 
             try:
-                return_value = OneStepActionExecutor.execute(action=action, puppeteer=puppeteer)
+                return_value = OneStepActionExecutor.execute(
+                    action=action, puppeteer=puppeteer
+                )
                 if not utils.is_json_serializable(return_value):
                     return_value = ""
 
@@ -212,7 +239,9 @@ class ActionSequenceExecutor:
             else:
                 action_sequence._status = action.after_status
 
-                OneStepActionExecutor.action_flow(action, puppeteer, control_dict, application_window)
+                OneStepActionExecutor.action_flow(
+                    action, puppeteer, control_dict, application_window
+                )
 
                 # Sleep for a while to avoid the UI being too busy.
                 time.sleep(0.5)
@@ -221,7 +250,9 @@ class ActionSequenceExecutor:
                 early_stop = True
 
     @staticmethod
-    def print_all_results(action_sequence: ActionSequence, success_only: bool = False) -> None:
+    def print_all_results(
+        action_sequence: ActionSequence, success_only: bool = False
+    ) -> None:
         """
         Print the action execution result.
         :param action_sequence: The action sequence to print results for.
@@ -241,17 +272,29 @@ class ActionSequenceExecutor:
 # Monkey patch the execution methods back to the contract classes for backward compatibility
 def _patch_execution_methods():
     """Add execution methods to the contract classes for backward compatibility."""
-    
+
     # Add execution methods to OneStepAction
     OneStepAction._control_validation = OneStepActionExecutor._control_validation
-    OneStepAction.execute = lambda self, puppeteer: OneStepActionExecutor.execute(self, puppeteer)
-    OneStepAction.action_flow = lambda self, puppeteer, control_dict, application_window: OneStepActionExecutor.action_flow(self, puppeteer, control_dict, application_window)
-    OneStepAction._get_control_log = lambda self, control_selected, application_window: OneStepActionExecutor._get_control_log(self, control_selected, application_window)
+    OneStepAction.execute = lambda self, puppeteer: OneStepActionExecutor.execute(
+        self, puppeteer
+    )
+    OneStepAction.action_flow = lambda self, puppeteer, control_dict, application_window: OneStepActionExecutor.action_flow(
+        self, puppeteer, control_dict, application_window
+    )
+    OneStepAction._get_control_log = lambda self, control_selected, application_window: OneStepActionExecutor._get_control_log(
+        self, control_selected, application_window
+    )
     OneStepAction.print_result = lambda self: OneStepActionExecutor.print_result(self)
-    
+
     # Add execution methods to ActionSequence
-    ActionSequence.execute_all = lambda self, puppeteer, control_dict, application_window: ActionSequenceExecutor.execute_all(self, puppeteer, control_dict, application_window)
-    ActionSequence.print_all_results = lambda self, success_only=False: ActionSequenceExecutor.print_all_results(self, success_only)
+    ActionSequence.execute_all = lambda self, puppeteer, control_dict, application_window: ActionSequenceExecutor.execute_all(
+        self, puppeteer, control_dict, application_window
+    )
+    ActionSequence.print_all_results = (
+        lambda self, success_only=False: ActionSequenceExecutor.print_all_results(
+            self, success_only
+        )
+    )
 
 
 # Apply the patches when this module is imported

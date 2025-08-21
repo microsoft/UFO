@@ -10,12 +10,13 @@ Provides two MCP servers:
 Both servers share the same UI state for coordinated operations.
 """
 
-from pydantic import Field
+import logging
 import os
 from typing import Annotated, Any, Dict, List, Literal, Optional
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
+from pydantic import Field
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
@@ -25,9 +26,9 @@ from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
+from ufo.client.mcp.mcp_registry import MCPRegistry
 from ufo.config import get_config
 from ufo.contracts.contracts import AppWindowControlInfo, ControlInfo, Rect, WindowInfo
-from ufo.client.mcp.mcp_registry import MCPRegistry
 
 # Get config
 configs = get_config()
@@ -130,7 +131,9 @@ class UIServerState:
             self.grounding_service = (
                 None  # Initialize grounding service as None for now
             )
+            self.control_dict: Optional[Dict[str, UIAWrapper]] = None
             UIServerState._initialized = True
+            self.logger = logging.getLogger(__name__)
 
     def initialize_for_window(self, window: UIAWrapper) -> None:
         """
@@ -142,9 +145,11 @@ class UIServerState:
 
         # Initialize AppPuppeteer with annotation_id like computer.py
         self.puppeteer = AppPuppeteer(
-            self.control_inspector.get_application_root_name(window),
             window.window_text(),
+            self.control_inspector.get_application_root_name(window),
         )
+        self.logger.info(f"Initialized AppPuppeteer for window: {window.window_text()}")
+        self.logger.info(f"Available commands: {self.puppeteer.list_commands()}")
 
 
 @MCPRegistry.register_factory_decorator("HostUIExecutor")
@@ -232,11 +237,13 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
         application_window = ui_state.selected_app_window
 
+        print(f"Executing with controls: {ui_state.control_dict}")
+
         # Execute the sequence like computer.py does
         ActionSequenceExecutor.execute_all(
             action_sequence,
             ui_state.puppeteer,
-            ui_state.selected_app_window_controls or {},
+            ui_state.control_dict or {},
             application_window,
         )
 
@@ -578,6 +585,8 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         result = ui_state.control_inspector.get_control_info_list_of_dict(
             control_dict, field_list=field_list
         )
+
+        ui_state.control_dict = control_dict
 
         return result
 
