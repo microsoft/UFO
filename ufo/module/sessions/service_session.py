@@ -1,11 +1,9 @@
-from typing import Dict, List, Optional
+from typing import Optional
 
 from fastapi import WebSocket
 
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config import Config
-from ufo.contracts.contracts import Command, Result
-from ufo.module.sessions.session_data import SessionDataManager
 from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import ContextNames
 
@@ -44,7 +42,6 @@ class ServiceSession(BaseSession):
         super()._init_context()
 
         self.context.set(ContextNames.MODE, "normal")
-        self.context.set(ContextNames.SESSION_DATA_MANAGER, SessionDataManager(self.id))
 
     def create_new_round(self) -> Optional[BaseRound]:
         """
@@ -91,24 +88,3 @@ class ServiceSession(BaseSession):
         """
         request_memory = self._host_agent.blackboard.requests
         return request_memory.to_json()
-
-    def get_commands(self) -> List[Command]:
-        """
-        Get the actions to run in the current session.
-        :return: List of actions to run.
-        """
-        session_data_manager: SessionDataManager = self.context.get(
-            ContextNames.SESSION_DATA_MANAGER
-        )
-        return session_data_manager.session_data.actions_to_run
-
-    def process_action_results(self, action_results: Dict[str, Result]) -> None:
-        """
-        Process the action results and update the session state.
-        :param action_results: The action results to process.
-        """
-        session_data_manager: SessionDataManager = self.context.get(
-            ContextNames.SESSION_DATA_MANAGER
-        )
-        session_data_manager.process_action_results(action_results)
-        session_data_manager.clear_roundtrip_data()

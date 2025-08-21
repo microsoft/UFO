@@ -130,18 +130,6 @@ class AgentState(ABC):
         """
         pass
 
-    def handle_coro(
-        self, agent: BasicAgent, context: Optional["Context"] = None
-    ) -> Generator[None, None, None]:
-        """
-        Handle the agent for the current step. This is a generator method.
-        :param agent: The agent to handle.
-        :param context: The context for the agent and session.
-        """
-        self.handle(agent, context)
-        return
-        yield
-
     @abstractmethod
     def next_agent(self, agent: BasicAgent) -> BasicAgent:
         """

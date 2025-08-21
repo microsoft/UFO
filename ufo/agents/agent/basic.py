@@ -248,25 +248,11 @@ class BasicAgent(ABC):
         """
         await self.state.handle(self, context)
 
-    def handle_coro(self, context: Context) -> Generator[None, None, None]:
-        """
-        Handle the agent. This is a generator method.
-        :param context: The context for the agent.
-        """
-        yield from self.state.handle_coro(self, context)
-
     async def process(self, context: Context) -> None:
         """
         Process the agent.
         """
         pass
-
-    def process_coro(self, context: Context) -> Generator[None, None, None]:
-        """
-        Process the agent in a coroutine.
-        """
-        return
-        yield
 
     def process_resume(self) -> None:
         """

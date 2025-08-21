@@ -2,12 +2,7 @@ from ufo.agents.agent.basic import AgentRegistry
 
 from ufo.agents.agent.app_agent import AppAgent
 from ufo.config import Config
-from ufo.module import interactor
-from ufo.module.context import Context, ContextNames
-from ufo.prompter.agent_prompter import AppAgentPrompter
-from typing import Generator
-
-from ufo.llm import AgentType
+from ufo.module.context import Context
 
 from ufo.agents.processors.hardware_agent_processor import HardwareAgentProcessor
 
@@ -29,13 +24,4 @@ class HardwareAgent(AppAgent):
         """
         self.processor = HardwareAgentProcessor(agent=self, context=context)
         self.processor.process()
-        self.status = self.processor.status
-
-    def process_coro(self, context: Context) -> Generator[None, None, None]:
-        """
-        Process the agent.
-        :param context: The context.
-        """
-        self.processor = HardwareAgentProcessor(agent=self, context=context)
-        yield from self.processor.process_coro()
         self.status = self.processor.status

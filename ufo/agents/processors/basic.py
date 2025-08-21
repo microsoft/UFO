@@ -22,14 +22,11 @@ from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
 from ufo.contracts.contracts import WindowInfo
 from ufo.module.context import Context, ContextNames
-from ufo.module.sessions.session_data import SessionDataManager
 
 configs = Config.get_instance().config_data
 
 
 class BaseProcessor(ABC):
-    session_data_manager: SessionDataManager
-
     """
     The base processor for the session. A session consists of multiple rounds of conversation with the user, completing a task.
     At each round, the HostAgent and AppAgent interact with the user and the application with the processor.
@@ -47,7 +44,6 @@ class BaseProcessor(ABC):
         self._agent = agent
 
         # Get the session data manager from the context
-        self.session_data_manager = self._context.get(ContextNames.SESSION_DATA_MANAGER)
 
         self.photographer = PhotographerFacade()
 

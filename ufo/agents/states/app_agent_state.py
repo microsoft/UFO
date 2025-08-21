@@ -188,16 +188,6 @@ class ContinueAppAgentState(AppAgentState):
         """
         await agent.process(context)
 
-    def handle_coro(
-        self, agent: "AppAgent", context: Optional["Context"] = None
-    ) -> Generator[None, None, None]:
-        """
-        Handle the agent for the current step.
-        :param agent: The agent for the current step.
-        :param context: The context for the agent and session.
-        """
-        yield from agent.process_coro(context)
-
     def is_subtask_end(self) -> bool:
         """
         Check if the subtask ends.

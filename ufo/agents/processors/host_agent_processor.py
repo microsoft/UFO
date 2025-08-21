@@ -222,9 +222,7 @@ class HostAgentProcessor(BaseProcessor):
 
         request_data = HostAgentRequestLog(
             step=self.session_step,
-            image_list=[
-                self.session_data_manager.session_data.state.desktop_screen_url
-            ],
+            image_list=[self._desktop_screen_url],
             os_info=self.full_desktop_windows_info,
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,

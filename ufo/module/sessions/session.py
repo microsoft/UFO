@@ -213,27 +213,6 @@ class Session(BaseSession):
         elif save_experience == "always_not":
             pass
 
-    def _run_coro(self) -> Generator[None, None, None]:
-        """
-        Run the session in coroutine mode.
-        This method is a generator that yields control back to the event loop.
-        """
-        yield from super()._run_coro()
-
-        match configs.get("SAVE_EXPERIENCE", "always_not"):
-            case "always":
-                self.experience_saver()
-            case "ask":
-                if interactor.experience_asker():
-                    self.experience_saver()
-            case "auto":
-                task_completed = self.results.get("complete", "no")
-                if task_completed.lower() == "yes":
-                    self.experience_saver()
-            case _:
-                # No action needed for this case
-                pass
-
     def _init_context(self) -> None:
         """
         Initialize the context.
@@ -610,46 +589,43 @@ class OpenAIOperatorSession(Session):
         # Initialize application_window as None, will be set via action callback
         self.application_window = None
 
-        # Try to get session data manager and use action pattern
-        session_data_manager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
+        # if session_data_manager:
+        #     # Use action/callback pattern for desktop control info
+        #     desktop_control_action = GetDesktopControlInfoAction(
+        #         params=GetDesktopControlInfoParams()
+        #     )
+        #     session_data_manager.add_action(
+        #         desktop_control_action,
+        #         setter=lambda value: self._desktop_control_info_callback(value),
+        #     )
+        # else:
+        #     # Fallback to direct call if action pattern is not available
+        #     inspector = ControlInspectorFacade()
+        #     self.application_window = inspector.desktop
 
-        if session_data_manager:
-            # Use action/callback pattern for desktop control info
-            desktop_control_action = GetDesktopControlInfoAction(
-                params=GetDesktopControlInfoParams()
-            )
-            session_data_manager.add_action(
-                desktop_control_action,
-                setter=lambda value: self._desktop_control_info_callback(value),
-            )
-        else:
-            # Fallback to direct call if action pattern is not available
-            inspector = ControlInspectorFacade()
-            self.application_window = inspector.desktop
+        # if self.application_window:
+        #     application_process_name = self.application_window.element_info.name
+        #     application_root_name = inspector.get_application_root_name(
+        #         self.application_window
+        #     )
+        # else:
+        #     # Set default values if desktop info not yet available
+        #     application_process_name = "Desktop"
+        #     application_root_name = "Desktop"
 
-        if self.application_window:
-            application_process_name = self.application_window.element_info.name
-            application_root_name = inspector.get_application_root_name(
-                self.application_window
-            )
-        else:
-            # Set default values if desktop info not yet available
-            application_process_name = "Desktop"
-            application_root_name = "Desktop"
+        # self._init_request = self.refine_request(request)
 
-        self._init_request = self.refine_request(request)
+        # self.context.set(ContextNames.APPLICATION_ROOT_NAME, application_root_name)
+        # self.context.set(
+        #     ContextNames.APPLICATION_PROCESS_NAME, application_process_name
+        # )
 
-        self.context.set(ContextNames.APPLICATION_ROOT_NAME, application_root_name)
-        self.context.set(
-            ContextNames.APPLICATION_PROCESS_NAME, application_process_name
-        )
-
-        self._host_agent: OpenAIOperatorAgent = AgentFactory.create_agent(
-            "operator",
-            name="OpenAIOperatorAgent",
-            process_name=application_process_name,
-            app_root_name=application_root_name,
-        )
+        # self._host_agent: OpenAIOperatorAgent = AgentFactory.create_agent(
+        #     "operator",
+        #     name="OpenAIOperatorAgent",
+        #     process_name=application_process_name,
+        #     app_root_name=application_root_name,
+        # )
 
     def refine_request(self, request: str) -> str:
         """
@@ -663,57 +639,43 @@ class OpenAIOperatorSession(Session):
 
         return new_request
 
-    def run(self) -> None:
-        """
-        Run the session.
-        """
-        while not self.is_finished():
+    # def run(self) -> None:
+    #     """
+    #     Run the session.
+    #     """
+    #     while not self.is_finished():
 
-            round = self.create_new_round()
+    #         round = self.create_new_round()
 
-            # Get session data manager from context
-            session_data_manager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
+    #         # Get session data manager from context
+    #         session_data_manager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
 
-            if session_data_manager:
-                # Use action/callback pattern for desktop control info
-                desktop_control_action = GetDesktopControlInfoAction(
-                    params=GetDesktopControlInfoParams()
-                )
-                session_data_manager.add_action(
-                    desktop_control_action,
-                    setter=lambda value: self._desktop_control_info_callback(value),
-                )
-            else:
-                # Fallback to direct call if action pattern is not available
-                self.application_window = ControlInspectorFacade().desktop
+    #         if session_data_manager:
+    #             # Use action/callback pattern for desktop control info
+    #             desktop_control_action = GetDesktopControlInfoAction(
+    #                 params=GetDesktopControlInfoParams()
+    #             )
+    #             session_data_manager.add_action(
+    #                 desktop_control_action,
+    #                 setter=lambda value: self._desktop_control_info_callback(value),
+    #             )
+    #         else:
+    #             # Fallback to direct call if action pattern is not available
+    #             self.application_window = ControlInspectorFacade().desktop
 
-            if round is None:
-                break
-            round.run()
+    #         if round is None:
+    #             break
+    #         round.run()
 
-        self.capture_last_snapshot()
+    #     self.capture_last_snapshot()
 
-        if self._should_evaluate and not self.is_error():
-            self.evaluation()
+    #     if self._should_evaluate and not self.is_error():
+    #         self.evaluation()
 
-        if configs.get("LOG_TO_MARKDOWN", True):
+    #     if configs.get("LOG_TO_MARKDOWN", True):
 
-            file_path = self.log_path
-            trajectory = Trajectory(file_path)
-            trajectory.to_markdown(file_path + "/output.md")
+    #         file_path = self.log_path
+    #         trajectory = Trajectory(file_path)
+    #         trajectory.to_markdown(file_path + "/output.md")
 
-        self.print_cost()
-
-    def _desktop_control_info_callback(self, value) -> None:
-        """
-        Callback method to handle desktop control info from action.
-
-        Args:
-            value: The result returned from the action
-        """
-        if value and hasattr(value, "element_info"):
-            self.application_window = value
-        elif value:
-            # If we get a different type of response, try to extract the desktop info
-            # This would depend on the actual implementation of the action handler
-            pass
+    #     self.print_cost()
