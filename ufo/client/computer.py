@@ -754,10 +754,18 @@ def test_command_router():
             tool_name="keyboard_input",
             tool_type="action",
             parameters={
-                "control_label": "5",
+                "control_label": "1",
                 "control_text": "Untitled. Unmodified.",
                 "keys": "hi",
                 "control_focus": True,
+            },
+        ),
+        Command(
+            tool_name="click_input",
+            tool_type="action",
+            parameters={
+                "control_label": "2",
+                "control_text": "Untitled. Unmodified.",
             },
         ),
     ]
@@ -772,7 +780,7 @@ def test_command_router():
     )
 
     for result in results1 + results2:
-        print(f"Command executed with status: {result.status}")
+        # print(f"Command executed with status: {result.status}")
         if result.status == "failure":
             print(f"Error: {result.error}")
         else:

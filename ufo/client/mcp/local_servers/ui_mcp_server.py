@@ -237,8 +237,6 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
         application_window = ui_state.selected_app_window
 
-        print(f"Executing with controls: {ui_state.control_dict}")
-
         # Execute the sequence like computer.py does
         ActionSequenceExecutor.execute_all(
             action_sequence,
