@@ -110,6 +110,10 @@ class BaseRound(ABC):
             self.state = self.agent.state.next_state(self.agent)
             self.agent = self.agent.state.next_agent(self.agent)
 
+            self.logger.info(
+                f"Agent {self.agent.name} transitioned to state {self.state.name()}"
+            )
+
             self.agent.set_state(self.state)
 
             # If the subtask ends, capture the last snapshot of the application.
@@ -416,6 +420,7 @@ class BaseSession(ABC):
         self._init_context()
         self._finish = False
         self._results = {}
+        self.logger = logging.getLogger(__name__)
 
         self._run_generator: Optional[Generator[None, None, None]] = None
 
@@ -451,6 +456,7 @@ class BaseSession(ABC):
             file_path = self.log_path
             trajectory = Trajectory(file_path)
             trajectory.to_markdown(file_path + "/output.md")
+            self.logger.info(f"Trajectory saved to {file_path + '/output.md'}")
 
         self.print_cost()
 
