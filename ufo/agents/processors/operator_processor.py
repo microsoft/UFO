@@ -16,7 +16,7 @@ from ufo.agents.processors.app_agent_processor import (
 )
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.contracts.contracts import Command, Result
+from ufo.contracts.contracts import Result
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
@@ -113,21 +113,21 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
 
         self._image_url = self.photographer.encode_image_from_path(screenshot_save_path)
 
-        if configs.get("SAVE_UI_TREE", False):
-            if self.application_window_info is not None:
-                self.session_data_manager.add_action(
-                    command=Command(
-                        tool_name="get_ui_tree",
-                        parameters={},
-                        tool_type="data_collection",
-                    ),
-                    setter=lambda value: self._save_ui_tree_callback(
-                        value,
-                        os.path.join(
-                            self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
-                        ),
-                    ),
-                )
+        # if configs.get("SAVE_UI_TREE", False):
+        #     if self.application_window_info is not None:
+        #         self.session_data_manager.add_action(
+        #             command=Command(
+        #                 tool_name="get_ui_tree",
+        #                 parameters={},
+        #                 tool_type="data_collection",
+        #             ),
+        #             setter=lambda value: self._save_ui_tree_callback(
+        #                 value,
+        #                 os.path.join(
+        #                     self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
+        #                 ),
+        #             ),
+        #         )
 
         if configs.get("SAVE_FULL_SCREEN", False):
 

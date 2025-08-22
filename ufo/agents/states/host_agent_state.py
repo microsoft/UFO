@@ -4,7 +4,7 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Optional, Type, Generator
+from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.config import Config
@@ -52,7 +52,9 @@ class HostAgentState(AgentState):
     The abstract class for the host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.
@@ -123,23 +125,15 @@ class ContinueHostAgentState(HostAgentState):
     The class for the continue host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
-        """
-        Handle the agent for the current step.
-        :param agent: The agent to handle.
-        :param context: The context for the agent and session.
-        """
-        agent.process(context)
-
-    def handle_coro(
+    async def handle(
         self, agent: "HostAgent", context: Optional["Context"] = None
-    ) -> Generator[None, None, None]:
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
-        yield from agent.process_coro(context)
+        await agent.process(context)
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
@@ -184,7 +178,9 @@ class AssignHostAgentState(HostAgentState):
     The class for the assign host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.
@@ -216,8 +212,6 @@ class AssignHostAgentState(HostAgentState):
                 mode=mode,
                 context=context,
             )
-
-        agent.has_input = False
 
     def next_state(self, agent: "HostAgent") -> AppAgentState:
         """
@@ -274,7 +268,9 @@ class PendingHostAgentState(HostAgentState):
     The class for the pending host agent state.
     """
 
-    def handle(self, agent: "HostAgent", context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: "HostAgent", context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.

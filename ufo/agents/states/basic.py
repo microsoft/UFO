@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from abc import ABC, ABCMeta, abstractmethod
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Optional, Type, Generator
+from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.module.context import Context
 
@@ -120,23 +120,15 @@ class AgentState(ABC):
     """
 
     @abstractmethod
-    def handle(self, agent: BasicAgent, context: Optional["Context"] = None) -> None:
+    async def handle(
+        self, agent: BasicAgent, context: Optional["Context"] = None
+    ) -> None:
         """
         Handle the agent for the current step.
         :param agent: The agent to handle.
         :param context: The context for the agent and session.
         """
         pass
-
-    def handle_coro(self, agent: BasicAgent, context: Optional["Context"] = None) -> Generator[None, None, None]:
-        """
-        Handle the agent for the current step. This is a generator method.
-        :param agent: The agent to handle.
-        :param context: The context for the agent and session.
-        """
-        self.handle(agent, context)
-        return
-        yield
 
     @abstractmethod
     def next_agent(self, agent: BasicAgent) -> BasicAgent:

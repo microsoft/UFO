@@ -19,13 +19,13 @@ class UFOClientManager:
 
         self._session_list = session_list
 
-    def run_all(self) -> None:
+    async def run_all(self) -> None:
         """
         Run the batch UFO client.
         """
 
         for session in self.session_list:
-            session.run()
+            await session.run()
 
     @property
     def session_list(self) -> List[BaseSession]:

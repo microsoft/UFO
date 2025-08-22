@@ -19,8 +19,7 @@ import logging
 import os
 import time
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Generator, Optional
-from uuid import uuid4
+from typing import Dict, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -30,13 +29,8 @@ from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
 from ufo.agents.states.basic import AgentState, AgentStatus
-from ufo.automator.ui_control import ui_tree
 from ufo.config import Config
-from ufo.contracts.contracts import (
-    Command,
-    Result,
-)
-from ufo.module.sessions.session_data import SessionDataManager
+from ufo.contracts.contracts import Command
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.module.context import Context, ContextNames
 from ufo.trajectory.parser import Trajectory
@@ -74,6 +68,7 @@ class BaseRound(ABC):
         self._state = agent.state
         self._id = id
         self._should_evaluate = should_evaluate
+        self.logger = logging.getLogger(__name__)
 
         self._init_context()
 
@@ -101,26 +96,30 @@ class BaseRound(ABC):
 
         self.context.set(ContextNames.CURRENT_ROUND_ID, self.id)
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """
         Run the round.
         """
 
         while not self.is_finished():
 
-            self.agent.handle(self.context)
+            await self.agent.handle(self.context)
 
             # Take action
 
             self.state = self.agent.state.next_state(self.agent)
             self.agent = self.agent.state.next_agent(self.agent)
 
+            self.logger.info(
+                f"Agent {self.agent.name} transitioned to state {self.state.name()}"
+            )
+
             self.agent.set_state(self.state)
 
             # If the subtask ends, capture the last snapshot of the application.
             if self.state.is_subtask_end():
                 time.sleep(configs["SLEEP_TIME"])
-                self.capture_last_snapshot(sub_round_id=self.subtask_amount)
+                await self.capture_last_snapshot(sub_round_id=self.subtask_amount)
                 self.subtask_amount += 1
 
         self.agent.blackboard.add_requests(
@@ -128,39 +127,7 @@ class BaseRound(ABC):
         )
 
         if self.application_window is not None:
-            self.capture_last_snapshot()
-
-        if self._should_evaluate:
-            self.evaluation()
-
-    def run_coro(self) -> Generator[None, None, None]:
-        """
-        Run the round in a coroutine manner.
-        This allows the round to be run in a generator.
-        """
-        while not self.is_finished():
-
-            yield from self.agent.handle_coro(self.context)
-
-            self.state = self.agent.state.next_state(self.agent)
-            self.agent = self.agent.state.next_agent(self.agent)
-
-            self.agent.set_state(self.state)
-
-            # If the subtask ends, capture the last snapshot of the application.
-            if self.state.is_subtask_end():
-                time.sleep(configs["SLEEP_TIME"])
-                self.capture_last_snapshot(sub_round_id=self.subtask_amount)
-                yield
-                self.subtask_amount += 1
-
-        self.agent.blackboard.add_requests(
-            {"request_{i}".format(i=self.id): self.request}
-        )
-
-        if self.application_window_info is not None:
-            self.capture_last_snapshot()
-            yield
+            await self.capture_last_snapshot()
 
         if self._should_evaluate:
             self.evaluation()
@@ -284,78 +251,7 @@ class BaseRound(ABC):
         """
         return self._context.get(ContextNames.LOG_PATH)
 
-    def _app_window_screenshot_callback(self, value: Result, save_path: str) -> None:
-        """
-        Callback method to save app window screenshot data from action.
-
-        Args:
-            value: The result returned from the action
-            save_path: Path to save the screenshot
-        """
-        value = value.result
-        if (
-            value
-            and isinstance(value, str)
-            and value.startswith("data:image/png;base64,")
-        ):
-            try:
-                img_data = utils.decode_base64_image(value)
-                os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                with open(save_path, "wb") as f:
-                    f.write(img_data)
-            except Exception as e:
-                utils.print_with_color(
-                    f"Warning: Failed to save app window screenshot: {e}",
-                    "yellow",
-                )
-        else:
-            raise ValueError(
-                "Invalid screenshot data received. Expected base64 encoded PNG string."
-            )
-
-    def _desktop_screenshot_callback(self, value, save_path: str) -> None:
-        """
-        Callback method to save desktop screenshot data from action.
-
-        Args:
-            value: The result returned from the action
-            save_path: Path to save the screenshot
-        """
-        if (
-            value
-            and isinstance(value, str)
-            and value.startswith("data:image/png;base64,")
-        ):
-            try:
-                img_data = utils.decode_base64_image(value)
-                os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                with open(save_path, "wb") as f:
-                    f.write(img_data)
-            except Exception as e:
-                utils.print_with_color(
-                    f"Warning: Failed to save desktop screenshot: {e}",
-                    "yellow",
-                )
-
-    def _ui_tree_callback(self, value: Result, save_path: str) -> None:
-        """
-        Callback method to save UI tree data from action.
-
-        Args:
-            value: The result returned from the action
-            save_path: Path to save the UI tree JSON file
-        """
-        value = value.result
-        if not value or not isinstance(value, dict):
-            raise ValueError(
-                f"Expected dict, got {type(value)}. Cannot save UI tree to {save_path}"
-            )
-        
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        with open(save_path, "w") as f:
-            json.dump(value, f, indent=4)
-
-    def capture_last_snapshot(self, sub_round_id: Optional[int] = None) -> None:
+    async def capture_last_snapshot(self, sub_round_id: Optional[int] = None) -> None:
         """
         Capture the last snapshot of the application, including the screenshot and the XML file if configured.
         :param sub_round_id: The id of the sub-round, default is None.
@@ -376,26 +272,21 @@ class BaseRound(ABC):
         ):
 
             try:
-                # Get session data manager from context
-                session_data_manager = self.context.get(
-                    ContextNames.SESSION_DATA_MANAGER
+
+                result = await self.context.command_dispatcher.publish_commands(
+                    [
+                        Command(
+                            tool_name="capture_window_screenshot",
+                            parameters={},
+                            tool_type="data_collection",
+                        )
+                    ]
                 )
 
-                # Get application window info for annotation_id
-                application_window_info = self.context.get(
-                    ContextNames.APPLICATION_WINDOW_INFO
-                )
-
-                # Use action/callback pattern for app window screenshot
-                session_data_manager.add_action(
-                    command=Command(
-                        tool_name="capture_window_screenshot",
-                        parameters={},
-                        tool_type="data_collection",
-                    ),
-                    setter=lambda value: self._app_window_screenshot_callback(
-                        value, screenshot_save_path
-                    ),
+                image = result[0].result
+                utils.save_image_string(image, screenshot_save_path)
+                self.logger.info(
+                    f"Captured application window screenshot at final: {screenshot_save_path}"
                 )
 
             except Exception as e:
@@ -405,47 +296,16 @@ class BaseRound(ABC):
                 )
             if configs.get("SAVE_UI_TREE", False):
                 # Get session data manager from context
-                session_data_manager = self.context.get(
-                    ContextNames.SESSION_DATA_MANAGER
+
+                ui_tree_path = os.path.join(self.log_path, "ui_trees")
+                ui_tree_file_name = (
+                    f"ui_tree_round_{self.id}_final.json"
+                    if sub_round_id is None
+                    else f"ui_tree_round_{self.id}_sub_round_{sub_round_id}_final.json"
                 )
+                ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
 
-                # Get application window info for annotation_id
-                application_window_info = self.context.get(
-                    ContextNames.APPLICATION_WINDOW_INFO
-                )
-
-                if session_data_manager and application_window_info:
-                    # Use action/callback pattern for UI tree capture
-                    ui_tree_path = os.path.join(self.log_path, "ui_trees")
-                    ui_tree_file_name = (
-                        f"ui_tree_round_{self.id}_final.json"
-                        if sub_round_id is None
-                        else f"ui_tree_round_{self.id}_sub_round_{sub_round_id}_final.json"
-                    )
-                    ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
-
-                    session_data_manager.add_action(
-                        command=Command(
-                            tool_name="get_ui_tree",
-                            parameters={},
-                            tool_type="data_collection",
-                        ),
-                        setter=lambda value: self._ui_tree_callback(
-                            value, ui_tree_save_path
-                        ),
-                    )
-                else:
-                    # Fallback to direct call if action pattern is not available
-                    step_ui_tree = ui_tree.UITree(self.application_window)
-                    ui_tree_path = os.path.join(self.log_path, "ui_trees")
-                    ui_tree_file_name = (
-                        f"ui_tree_round_{self.id}_final.json"
-                        if sub_round_id is None
-                        else f"ui_tree_round_{self.id}_sub_round_{sub_round_id}_final.json"
-                    )
-                    step_ui_tree.save_ui_tree_to_json(
-                        os.path.join(ui_tree_path, ui_tree_file_name)
-                    )
+                await self.save_ui_tree(ui_tree_save_path)
 
             if configs.get("SAVE_FULL_SCREEN", False):
 
@@ -454,43 +314,45 @@ class BaseRound(ABC):
                     + f"desktop_round_{self.id}_sub_round_{sub_round_id}_final.png"
                 )
 
-                # Capture the desktop screenshot for all screens using action/callback pattern
-                session_data_manager = self.context.get(
-                    ContextNames.SESSION_DATA_MANAGER
+                result = await self.context.command_dispatcher.publish_commands(
+                    [
+                        Command(
+                            tool_name="capture_desktop_screenshot",
+                            parameters={"all_screens": True},
+                            tool_type="data_collection",
+                        )
+                    ]
                 )
 
-                session_data_manager.add_action(
-                    command=Command(
-                        tool_name="capture_desktop_screenshot",
-                        parameters={
-                            "all_screens": True,
-                        },
+                desktop_screenshot_url = result[0].result
+                utils.save_image_string(desktop_screenshot_url, desktop_save_path)
+                self.logger.info(f"Desktop screenshot saved to {desktop_save_path}")
+
+    async def save_ui_tree(self, save_path: str):
+        """
+        Save the UI tree of the current application window.
+        """
+        if self.application_window is not None:
+            result = await self.context.command_dispatcher.publish_commands(
+                [
+                    Command(
+                        tool_name="get_ui_tree",
+                        parameters={},
                         tool_type="data_collection",
-                    ),
-                    setter=lambda value: self._desktop_screenshot_callback(
-                        value, desktop_save_path
-                    ),
-                )
+                    )
+                ]
+            )
+            step_ui_tree = result[0].result
 
-            # Save the final XML file
-            if configs["LOG_XML"]:
-                log_abs_path = os.path.abspath(self.log_path)
-                xml_save_path = os.path.join(
-                    log_abs_path,
-                    (
-                        f"xml/action_round_{self.id}_final.xml"
-                        if sub_round_id is None
-                        else f"xml/action_round_{self.id}_sub_round_{sub_round_id}_final.xml"
-                    ),
-                )
+            if step_ui_tree:
 
-                if issubclass(type(self.agent), HostAgent):
+                save_dir = os.path.dirname(save_path)
+                if not os.path.exists(save_dir):
+                    os.makedirs(save_dir)
 
-                    app_agent: AppAgent = self.agent.get_active_appagent()
-                    app_agent.Puppeteer.save_to_xml(xml_save_path)
-                elif issubclass(type(self.agent), AppAgent):
-                    app_agent: AppAgent = self.agent
-                    app_agent.Puppeteer.save_to_xml(xml_save_path)
+                with open(save_path, "w") as file:
+                    json.dump(step_ui_tree, file, indent=4)
+                    self.logger.info(f"UI tree saved to {save_path}")
 
     def evaluation(self) -> None:
         """
@@ -546,6 +408,7 @@ class BaseSession(ABC):
 
         self._should_evaluate = should_evaluate
         self._id = id
+        self.task = task
 
         # Logging-related properties
         self.log_path = f"logs/{task}/"
@@ -557,8 +420,7 @@ class BaseSession(ABC):
         self._init_context()
         self._finish = False
         self._results = {}
-
-        self._run_generator: Optional[Generator[None, None, None]] = None
+        self.logger = logging.getLogger(__name__)
 
         self._host_agent: HostAgent = AgentFactory.create_agent(
             "host",
@@ -569,7 +431,7 @@ class BaseSession(ABC):
             configs["API_PROMPT"],
         )
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """
         Run the session.
         """
@@ -579,10 +441,10 @@ class BaseSession(ABC):
             round = self.create_new_round()
             if round is None:
                 break
-            round.run()
+            await round.run()
 
         if self.application_window is not None:
-            self.capture_last_snapshot()
+            await self.capture_last_snapshot()
 
         if self._should_evaluate and not self.is_error():
             self.evaluation()
@@ -592,41 +454,9 @@ class BaseSession(ABC):
             file_path = self.log_path
             trajectory = Trajectory(file_path)
             trajectory.to_markdown(file_path + "/output.md")
+            self.logger.info(f"Trajectory saved to {file_path + '/output.md'}")
 
         self.print_cost()
-
-    def _run_coro(self) -> Generator[None, None, None]:
-        """
-        Run the session in a generator.
-        This allows the session to be run in a coroutine manner.
-        """
-        while not self.is_finished():
-            _round = self.create_new_round()
-            if _round is None:
-                break
-            yield from _round.run_coro()
-
-        if self.application_window_info is not None:
-            self.capture_last_snapshot()
-            yield
-
-        if self._should_evaluate and not self.is_error():
-            self.evaluation()
-
-        if configs.get("LOG_TO_MARKDOWN", True):
-            file_path = self.log_path
-            trajectory = Trajectory(file_path)
-            trajectory.to_markdown(file_path + "/output.md")
-
-    @property
-    def run_coro(self) -> Generator[None, None, None]:
-        """
-        Get the generator for running the session.
-        This enables the session to be run in a coroutine manner.
-        """
-        if self._run_generator is None:
-            self._run_generator = self._run_coro()
-        return self._run_generator
 
     @abstractmethod
     def create_new_round(self) -> Optional[BaseRound]:
@@ -680,10 +510,6 @@ class BaseSession(ABC):
         # Initialize the session cost and step
         self.context.set(ContextNames.SESSION_COST, 0)
         self.context.set(ContextNames.SESSION_STEP, 0)
-
-        self.context.set(
-            ContextNames.SESSION_DATA_MANAGER, SessionDataManager(str(uuid4()))
-        )
 
     @property
     def id(self) -> str:
@@ -943,60 +769,15 @@ class BaseSession(ABC):
         """
         return self.__class__.__name__
 
-    def _app_window_screenshot_callback(self, value: Result, save_path: str) -> None:
+    @property
+    def current_agent_class(self) -> str:
         """
-        Callback method to save app window screenshot data from action.
-
-        Args:
-            value: The result returned from the action
-            save_path: Path to save the screenshot
+        Get the class name of the current agent.
+        return: The class name of the current agent.
         """
-        value = value.result
-        if (
-            value
-            and isinstance(value, str)
-            and value.startswith("data:image/png;base64,")
-        ):
-            try:
-                img_data = utils.decode_base64_image(value)
-                os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                with open(save_path, "wb") as f:
-                    f.write(img_data)
-            except Exception as e:
-                utils.print_with_color(
-                    f"Warning: Failed to save app window screenshot: {e}",
-                    "yellow",
-                )
-        else:
-            raise ValueError(
-                "Invalid screenshot data received. Expected base64 encoded PNG string."
-            )
+        return self.current_round.agent.__class__.__name__
 
-    def _desktop_screenshot_callback(self, value, save_path: str) -> None:
-        """
-        Callback method to save desktop screenshot data from action.
-
-        Args:
-            value: The result returned from the action
-            save_path: Path to save the screenshot
-        """
-        if (
-            value
-            and isinstance(value, str)
-            and value.startswith("data:image/png;base64,")
-        ):
-            try:
-                img_data = utils.decode_base64_image(value)
-                os.makedirs(os.path.dirname(save_path), exist_ok=True)
-                with open(save_path, "wb") as f:
-                    f.write(img_data)
-            except Exception as e:
-                utils.print_with_color(
-                    f"Warning: Failed to save desktop screenshot: {e}",
-                    "yellow",
-                )
-
-    def capture_last_snapshot(self) -> None:
+    async def capture_last_snapshot(self) -> None:
         """
         Capture the last snapshot of the application, including the screenshot and the XML file if configured.
         """  # Capture the final screenshot
@@ -1008,32 +789,18 @@ class BaseSession(ABC):
         ):
 
             try:
-                # Get session data manager from context
-                session_data_manager = self._context.get(
-                    ContextNames.SESSION_DATA_MANAGER
+                result = await self.context.command_dispatcher.publish_commands(
+                    [
+                        Command(
+                            tool_name="capture_window_screenshot",
+                            parameters={},
+                            tool_type="data_collection",
+                        )
+                    ]
                 )
-
-                session_data_manager = self._context.get(
-                    ContextNames.SESSION_DATA_MANAGER
-                )
-
-                # Get application window info for annotation_id
-                application_window_info = self._context.get(
-                    ContextNames.APPLICATION_WINDOW_INFO
-                )
-
-                application_window_info = self.application_window_info
-
-                session_data_manager.add_action(
-                    command=Command(
-                        tool_name="capture_window_screenshot",
-                        parameters={},
-                        tool_type="data_collection",
-                    ),
-                    setter=lambda value: self._app_window_screenshot_callback(
-                        value, screenshot_save_path
-                    ),
-                )
+                image = result[0].result
+                if image:
+                    utils.save_image_string(image, screenshot_save_path)
 
             except Exception as e:
                 utils.print_with_color(
@@ -1041,91 +808,40 @@ class BaseSession(ABC):
                     "yellow",
                 )
             if configs.get("SAVE_UI_TREE", False):
-                # Get session data manager from context
-                session_data_manager = self._context.get(
-                    ContextNames.SESSION_DATA_MANAGER
-                )
 
-                # Get application window info for annotation_id
-                application_window_info = self._context.get(
-                    ContextNames.APPLICATION_WINDOW_INFO
-                )
-
-                application_window_info = self.application_window_info
-
-                if session_data_manager and application_window_info:
-                    # Use action/callback pattern for UI tree capture
-                    ui_tree_path = os.path.join(self.log_path, "ui_trees")
-                    ui_tree_file_name = "ui_tree_final.json"
-                    ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
-
-                    session_data_manager.add_action(
-                        command=Command(
+                result = await self.context.command_dispatcher.publish_commands(
+                    [
+                        Command(
                             tool_name="get_ui_tree",
                             parameters={},
                             tool_type="data_collection",
-                        ),
-                        setter=lambda value: self._ui_tree_callback(
-                            value, ui_tree_save_path
-                        ),
-                    )
-                else:
-                    # Fallback to direct call if action pattern is not available
-                    step_ui_tree = ui_tree.UITree(self.application_window)
-                    ui_tree_path = os.path.join(self.log_path, "ui_trees")
-                    ui_tree_file_name = "ui_tree_final.json"
-                    step_ui_tree.save_ui_tree_to_json(
-                        os.path.join(ui_tree_path, ui_tree_file_name)
-                    )
+                        )
+                    ]
+                )
+
+                ui_tree_path = os.path.join(self.log_path, "ui_trees")
+                ui_tree_file_name = "ui_tree_final.json"
+                ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
+
+                await self.current_round.save_ui_tree(ui_tree_save_path)
 
             if configs.get("SAVE_FULL_SCREEN", False):
 
                 desktop_save_path = self.log_path + "desktop_final.png"
 
-                # Capture the desktop screenshot for all screens using action/callback pattern
-                session_data_manager = self._context.get(
-                    ContextNames.SESSION_DATA_MANAGER
+                result = await self.context.command_dispatcher.publish_commands(
+                    [
+                        Command(
+                            tool_name="capture_desktop_screenshot",
+                            parameters={"all_screens": True},
+                            tool_type="data_collection",
+                        )
+                    ]
                 )
 
-                session_data_manager.add_action(
-                    command=Command(
-                        tool_name="capture_desktop_screenshot",
-                        parameters={
-                            "all_screens": True,
-                        },
-                        tool_type="data_collection",
-                    ),
-                    setter=lambda value: self._desktop_screenshot_callback(
-                        value, desktop_save_path
-                    ),
-                )
-
-            # Save the final XML file
-            if configs["LOG_XML"]:
-                log_abs_path = os.path.abspath(self.log_path)
-                xml_save_path = os.path.join(log_abs_path, "xml/action_step_final.xml")
-
-                app_agent = self._host_agent.get_active_appagent()
-                if app_agent is not None:
-                    app_agent.Puppeteer.save_to_xml(xml_save_path)
-
-    def _ui_tree_callback(self, value: Result, save_path: str) -> None:
-        """
-        Callback method to save UI tree data from action.
-
-        Args:
-            value: The result returned from the action
-            save_path: Path to save the UI tree JSON file
-        """
-        value = value.result
-        if not value or not isinstance(value, dict):
-            raise ValueError(
-                f"Expected dict, got {type(value)}. Cannot save UI tree to {save_path}"
-            )
-        
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        with open(save_path, "w") as f:
-            json.dump(value, f, indent=4)
+                desktop_image = result[0].result
+                if desktop_image:
+                    utils.save_image_string(desktop_image, desktop_save_path)
 
     @staticmethod
     def initialize_logger(
@@ -1152,24 +868,3 @@ class BaseSession(ABC):
         logger.setLevel(configs["LOG_LEVEL"])
 
         return logger
-
-    def get_commands(self) -> list[Command]:
-        """
-        Get the actions to be executed in the session.
-        :return: List of actions to run in the session.
-        """
-        session_data_manager: SessionDataManager = self.context.get(
-            ContextNames.SESSION_DATA_MANAGER
-        )
-        return session_data_manager.actions_to_run
-
-    def process_action_results(self, action_results: dict[str, Any]) -> None:
-        """
-        Process the results of executed actions and update session state.
-        :param action_results: Dictionary containing results of executed actions.
-        """
-        session_data_manager: SessionDataManager = self.context.get(
-            ContextNames.SESSION_DATA_MANAGER
-        )
-        session_data_manager.process_action_results(action_results)
-        session_data_manager.clear_roundtrip_data()

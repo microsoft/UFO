@@ -1,6 +1,7 @@
 from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict
+
 from ufo.client.mcp.mcp_server_manager import BaseMCPServer
 
 
@@ -134,14 +135,17 @@ class Result(BaseModel):
     status: Literal["success", "failure", "skipped"]
     error: Optional[str] = None
     result: Any = None
+    call_id: Optional[str] = None
 
 
-class ServerResponse(BaseModel):
+class ServerMessage(BaseModel):
     """
     Represents a response from the server to the client.
     """
 
-    status: Literal["continue", "completed", "failure"]
+    type: str
+    status: Literal["continue", "completed", "failed", "ok", "error", "commands"]
+    user_request: Optional[str] = None
     agent_name: Optional[str] = None
     process_name: Optional[str] = None
     root_name: Optional[str] = None
@@ -149,17 +153,31 @@ class ServerResponse(BaseModel):
     messages: Optional[List[str]] = None
     error: Optional[str] = None
     session_id: Optional[str] = None
+    task_name: Optional[str] = None
     timestamp: Optional[str] = None
     response_id: Optional[str] = None
 
 
-class ClientRequest(BaseModel):
+class ClientMessage(BaseModel):
     """
     Represents a request from the client to the server.
     """
 
+    type: Literal[
+        "task",
+        "heartbeat",
+        "get_result",
+        "error",
+        "command_results",
+        "register",
+    ]
+    status: Literal["ok", "error", "continue", "completed", "failed"]
     session_id: Optional[str] = None
+    task_name: Optional[str] = None
+    client_id: Optional[str] = None
     request: Optional[str] = None
-    action_results: Optional[Dict[str, Result]] = None
+    action_results: Optional[List[Result]] = None
     timestamp: Optional[str] = None
     request_id: Optional[str] = None
+    prev_response_id: Optional[str] = None
+    error: Optional[str] = None

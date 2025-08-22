@@ -294,11 +294,11 @@ class UIABackendStrategy(BackendStrategy):
 
             uia_interface = UIAWrapper(element_info)
 
-            def __hash__(self):
-                return hash(self.element_info._element)
+            # def __hash__(self):
+            #     return hash(self.element_info._element)
 
-            # current __hash__ is not referring to a COM property (RuntimeId), which is costly to fetch
-            uia_interface.__hash__ = __hash__
+            # # current __hash__ is not referring to a COM property (RuntimeId), which is costly to fetch
+            # uia_interface.__hash__ = __hash__
 
             control_elements.append(uia_interface)
 

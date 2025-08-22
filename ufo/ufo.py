@@ -5,18 +5,8 @@ import argparse
 import logging
 from datetime import datetime
 
-from ufo.client.computer import CommandRouter, ComputerManager
-from ufo.client.mcp.mcp_server_manager import MCPServerManager
-from ufo.config import get_config
-from ufo.module.context import ContextNames
+from ufo.module.client import UFOClientManager
 from ufo.module.sessions.session import SessionFactory
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
-
-configs = get_config()
 
 
 args = argparse.ArgumentParser()
@@ -47,9 +37,23 @@ args.add_argument(
     type=str,
     default="",
 )
+args.add_argument(
+    "--log-level",
+    help="Set logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL). Use OFF to disable logs.",
+    type=str,
+    default="INFO",
+)
 
 
 parsed_args = args.parse_args()
+
+if parsed_args.log_level.upper() == "OFF":
+    logging.disable(logging.CRITICAL)  # Disable all logs
+else:
+    logging.basicConfig(
+        level=getattr(logging, parsed_args.log_level.upper(), logging.INFO),
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
 
 
 async def main():
@@ -72,19 +76,8 @@ async def main():
         request=parsed_args.request,
     )
 
-    session = sessions[0]  # Assuming the first session is the one we want to run
-    mcp_server_manager = MCPServerManager()
-    computer_manager = ComputerManager(configs, mcp_server_manager)
-    command_router = CommandRouter(computer_manager)
-    for _ in session.run_coro:
-        commands = session.get_commands()
-        command_results = await command_router.execute(
-            agent_name=session.current_round.agent.__class__.__name__,
-            root_name=session.context.get(ContextNames.APPLICATION_ROOT_NAME),
-            process_name=session.context.get(ContextNames.APPLICATION_PROCESS_NAME),
-            commands=commands,
-        )
-        session.process_action_results(command_results)
+    clients = UFOClientManager(sessions)
+    await clients.run_all()
 
 
 if __name__ == "__main__":

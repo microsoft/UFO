@@ -1,50 +1,41 @@
-from typing import Dict, List, Optional
+from typing import Optional
 
 from fastapi import WebSocket
 
-from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config import Config
-from ufo.contracts.contracts import Command, Result
-from ufo.module.sessions.session_data import SessionDataManager
-from ufo.module.basic import BaseRound, BaseSession
+from ufo.module.sessions.session import Session
 from ufo.module.context import ContextNames
+from ufo.module.dispatcher import WebSocketCommandDispatcher
+
 
 configs = Config.get_instance().config_data
 
 
-class ServiceSession(BaseSession):
+class ServiceSession(Session):
     """
     A session for UFO service.
     """
 
-    _request: str = ""
-
     def __init__(
-        self, task: str, should_evaluate: bool, id: str = None, request: str = ""
+        self,
+        task: str,
+        should_evaluate: bool,
+        id: str = None,
+        request: str = "",
+        websocket: Optional[WebSocket] = None,
     ):
         """
         Initialize the session.
-        :param host_agent: The host agent.
-        :param app_agent: The app agent.
-        :param request: The request for the session.
+        :param task: The task name for the session.
+        :param should_evaluate: Whether to evaluate the session.
+        :param id: The ID of the session.
+        :param request: The user request for the session.
         """
 
+        self.websocket = websocket
         super().__init__(task=task, should_evaluate=should_evaluate, id=id)
 
-        self._request = request
-
-    def init(self, request):
-        self._host_agent.set_state(ContinueHostAgentState())
-
-        round = BaseRound(
-            request=request,
-            agent=self._host_agent,
-            context=self.context,
-            should_evaluate=configs.get("EVA_ROUND", False),
-            id=self.total_rounds,
-        )
-
-        self.add_round(round.id, round)
+        self._init_request = request
 
     def _init_context(self) -> None:
         """
@@ -53,34 +44,8 @@ class ServiceSession(BaseSession):
         super()._init_context()
 
         self.context.set(ContextNames.MODE, "normal")
-        self.context.set(ContextNames.SESSION_DATA_MANAGER, SessionDataManager(self.id))
-
-    def create_new_round(self) -> Optional[BaseRound]:
-        """
-        Create a new round.
-        """
-
-        # Get a request for the new round.
-        request = self.next_request()
-
-        # Create a new round and return None if the session is finished.
-
-        if self.is_finished():
-            return None
-
-        self._host_agent.set_state(ContinueHostAgentState())
-
-        round = BaseRound(
-            request=request,
-            agent=self._host_agent,
-            context=self.context,
-            should_evaluate=configs.get("EVA_ROUND", False),
-            id=self.total_rounds,
-        )
-
-        self.add_round(round.id, round)
-
-        return round
+        command_dispatcher = WebSocketCommandDispatcher(self, self.websocket)
+        self.context.attach_command_dispatcher(command_dispatcher)
 
     def next_request(self) -> str:
         """
@@ -90,33 +55,5 @@ class ServiceSession(BaseSession):
 
         if self.total_rounds != 0:
             self._finish = True
-        return self._request
 
-    def request_to_evaluate(self) -> bool:
-        """
-        Check if the session should be evaluated.
-        :return: True if the session should be evaluated, False otherwise.
-        """
-        request_memory = self._host_agent.blackboard.requests
-        return request_memory.to_json()
-
-    def get_commands(self) -> List[Command]:
-        """
-        Get the actions to run in the current session.
-        :return: List of actions to run.
-        """
-        session_data_manager: SessionDataManager = self.context.get(
-            ContextNames.SESSION_DATA_MANAGER
-        )
-        return session_data_manager.session_data.actions_to_run
-
-    def process_action_results(self, action_results: Dict[str, Result]) -> None:
-        """
-        Process the action results and update the session state.
-        :param action_results: The action results to process.
-        """
-        session_data_manager: SessionDataManager = self.context.get(
-            ContextNames.SESSION_DATA_MANAGER
-        )
-        session_data_manager.process_action_results(action_results)
-        session_data_manager.clear_roundtrip_data()
+        return self._init_request

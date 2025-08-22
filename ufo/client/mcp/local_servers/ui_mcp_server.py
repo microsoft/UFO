@@ -10,24 +10,24 @@ Provides two MCP servers:
 Both servers share the same UI state for coordinated operations.
 """
 
-from pydantic import Field
+import logging
 import os
-from typing import Annotated, Any, Dict, List, Literal, Optional
+from typing import Annotated, Any, Dict, List, Optional
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
+from pydantic import Field
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
 from ufo.automator.action_execution import ActionSequenceExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.automator.ui_control import ui_tree
-from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
+from ufo.client.mcp.mcp_registry import MCPRegistry
 from ufo.config import get_config
 from ufo.contracts.contracts import AppWindowControlInfo, ControlInfo, Rect, WindowInfo
-from ufo.client.mcp.mcp_registry import MCPRegistry
 
 # Get config
 configs = get_config()
@@ -130,7 +130,9 @@ class UIServerState:
             self.grounding_service = (
                 None  # Initialize grounding service as None for now
             )
+            self.control_dict: Optional[Dict[str, UIAWrapper]] = None
             UIServerState._initialized = True
+            self.logger = logging.getLogger(__name__)
 
     def initialize_for_window(self, window: UIAWrapper) -> None:
         """
@@ -142,9 +144,11 @@ class UIServerState:
 
         # Initialize AppPuppeteer with annotation_id like computer.py
         self.puppeteer = AppPuppeteer(
-            self.control_inspector.get_application_root_name(window),
             window.window_text(),
+            self.control_inspector.get_application_root_name(window),
         )
+        self.logger.info(f"Initialized AppPuppeteer for window: {window.window_text()}")
+        self.logger.info(f"Available commands: {self.puppeteer.list_commands()}")
 
 
 @MCPRegistry.register_factory_decorator("HostUIExecutor")
@@ -236,7 +240,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         ActionSequenceExecutor.execute_all(
             action_sequence,
             ui_state.puppeteer,
-            ui_state.selected_app_window_controls or {},
+            ui_state.control_dict or {},
             application_window,
         )
 
@@ -254,17 +258,30 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def click_input(
-        control_label: Annotated[str, Field(description="Same as `ControlLabel`")],
-        control_text: Annotated[str, Field(description="Same as `ControlText`")],
+        control_label: Annotated[
+            str,
+            Field(
+                description="The control index to click, same as the selected `ControlLabel`"
+            ),
+        ],
+        control_text: Annotated[
+            str,
+            Field(
+                description="The text of the control to click, same as the selected `ControlText`"
+            ),
+        ],
         button: Annotated[
-            str, Field(description="Mouse button to use ('left', 'right', 'middle')")
+            str,
+            Field(
+                description="The mouse button to click. One of ''left'', ''right'', ''middle'' or ''x'"
+            ),
         ] = "left",
         double: Annotated[
             bool, Field(description="Whether to perform a double click")
         ] = False,
     ) -> Annotated[Dict, Field(description="None")]:
         """
-        Click on a UI control element using the input method.
+        Click on a UI control element using the mouse. All type of controls elements are supported.
         """
         action = OneStepAction(
             function="click_input",
@@ -278,8 +295,18 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def click_on_coordinates(
-        x: Annotated[float, Field(description="X coordinate (0.0 to 1.0)")],
-        y: Annotated[float, Field(description="Y coordinate (0.0 to 1.0)")],
+        x: Annotated[
+            float,
+            Field(
+                description="The relative fractional x-coordinate of the point to click on, ranging from 0.0 to 1.0. The origin is the top-left corner of the application window."
+            ),
+        ],
+        y: Annotated[
+            float,
+            Field(
+                description="The relative fractional y-coordinate of the point to click on, ranging from 0.0 to 1.0. The origin is the top-left corner of the application window."
+            ),
+        ],
         button: Annotated[
             str,
             Field(description="Mouse button to use ('left', 'right', 'middle')"),
@@ -289,7 +316,9 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         ] = False,
     ) -> Annotated[Dict, Field(description="None")]:
         """
-        Click on specific coordinates within the application window.
+        Click on specific coordinates within the application window, instead of clicking on a specific control item.
+        This API is useful when the control item is not available in the control item list and screenshot, but you want to click on a specific point in the application window.
+        When you use this API, you must estimate the relative fractional x and y coordinates of the point to click on, ranging from 0.0 to 1.0.
         """
         action = OneStepAction(
             function="click_on_coordinates",
@@ -306,25 +335,25 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         start_x: Annotated[
             float,
             Field(
-                description="Starting X coordinate (relative to application window, 0.0 to 1.0)"
+                description="The relative fractional x-coordinate of the starting point to drag from, ranging from 0.0 to 1.0. The origin is the top-left corner of the application window."
             ),
         ],
         start_y: Annotated[
             float,
             Field(
-                description="Starting Y coordinate (relative to application window, 0.0 to 1.0)"
+                description="The relative fractional y-coordinate of the starting point to drag from, ranging from 0.0 to 1.0. The origin is the top-left corner of the application window."
             ),
         ],
         end_x: Annotated[
             float,
             Field(
-                description="Ending X coordinate (relative to application window, 0.0 to 1.0)"
+                description="The relative fractional x-coordinate of the ending point to drag to, ranging from 0.0 to 1.0. The origin is the top-left corner of the application window."
             ),
         ],
         end_y: Annotated[
             float,
             Field(
-                description="Ending Y coordinate (relative to application window, 0.0 to 1.0)"
+                description="The relative fractional y-coordinate of the ending point to drag to, ranging from 0.0 to 1.0. The origin is the top-left corner of the application window."
             ),
         ],
         button: Annotated[
@@ -341,7 +370,10 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         ] = None,
     ) -> Annotated[Dict, Field(description="None")]:
         """
-        Drag from one coordinate to another within the application window.
+        Drag from one point to another point in the application window, instead of dragging a specific control item.
+        This API is useful when the control item is not available in the control item list and screenshot, but you want to drag from one point to another point in the application window.
+        When you use this API, you must estimate the relative fractional x and y coordinates of the starting point and ending point to drag from and to, ranging from 0.0 to 1.0.
+        The origin is the top-left corner of the application window.
         """
         action = OneStepAction(
             function="drag_on_coordinates",
@@ -363,16 +395,33 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def set_edit_text(
-        control_label: Annotated[str, Field(description="Same as `ControlLabel`")],
-        control_text: Annotated[str, Field(description="Same as `ControlText`")],
-        text: Annotated[str, Field(description="Text to set in the control")],
+        control_label: Annotated[
+            str,
+            Field(
+                description="The control index to set text, same as the selected `ControlLabel`"
+            ),
+        ],
+        control_text: Annotated[
+            str,
+            Field(
+                description="The control text to set text, same as the selected `ControlText`"
+            ),
+        ],
+        text: Annotated[
+            str,
+            Field(
+                description="The text input to the Edit control item. You must also use Double Backslash escape character to escape the single quote in the string argument."
+            ),
+        ],
         clear_current_text: Annotated[
             bool,
-            Field(description="Whether to clear existing text before setting new text"),
+            Field(
+                description="Whether to clear the current text in the Edit before setting the new text. If True, the current text will be completely replaced by the new text."
+            ),
         ] = False,
     ) -> Annotated[Dict, Field(description="None")]:
         """
-        Set text in an edit control (text box, input field, etc.).
+        Set text in a control element. Only works with Edit control items.
         """
         action = OneStepAction(
             function="set_edit_text",
@@ -386,18 +435,36 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def keyboard_input(
-        control_label: Annotated[str, Field(description="Same as `ControlLabel`")],
-        control_text: Annotated[str, Field(description="Same as `ControlText`")],
+        control_label: Annotated[
+            str,
+            Field(
+                description="The control index to send keyboard input to, same as the selected `ControlLabel`"
+            ),
+        ],
+        control_text: Annotated[
+            str,
+            Field(
+                description="The control text to send keyboard input to, same as the selected `ControlText`"
+            ),
+        ],
         keys: Annotated[
             str,
-            Field(description="Key sequence to send (e.g., 'ctrl+c', 'enter', 'tab')"),
+            Field(
+                description="Key sequence to send. It can be any key on the keyboard, with special keys represented by their virtual key codes, for example, '{VK_CONTROL}c' for Ctrl+C."
+            ),
         ],
         control_focus: Annotated[
-            bool, Field(description="Whether to focus the control before sending keys")
+            bool,
+            Field(
+                description="Whether to focus the selected control before sending keys. If False, the hotkeys will operate on the application window."
+            ),
         ] = True,
     ) -> Annotated[Dict, Field(description="None")]:
         """
-        Send keyboard input to a control or the focused application.
+        Simulate keyboard input to a control or the focused application, such as sending key presses or shortcuts.
+        For example,
+        - keyboard_input(keys="{VK_CONTROL}c") --> Copy the selected text
+        - keyboard_input(keys="{TAB 2}") --> Press the Tab key twice.
         """
         action = OneStepAction(
             function="keyboard_input",
@@ -411,19 +478,31 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def wheel_mouse_input(
-        control_label: Annotated[str, Field(description="Same as `ControlLabel`")],
-        control_text: Annotated[str, Field(description="Same as `ControlText`")],
-        direction: Annotated[
-            str, Field(description="Scroll direction ('up' or 'down')")
-        ] = "up",
-        clicks: Annotated[int, Field(description="Number of wheel clicks")] = 3,
+        control_label: Annotated[
+            str,
+            Field(
+                description="The control index to send mouse wheel input to, same as the selected `ControlLabel`"
+            ),
+        ],
+        control_text: Annotated[
+            str,
+            Field(
+                description="The control text to send mouse wheel input to, same as the selected `ControlText`"
+            ),
+        ],
+        wheel_dist: Annotated[
+            int,
+            Field(
+                description="The number of wheel notches to scroll. Positive values indicate upward scrolling, negative values indicate downward scrolling."
+            ),
+        ] = 0,
     ) -> Annotated[Dict, Field(description="None")]:
         """
         Send mouse wheel input to scroll a control.
         """
         action = OneStepAction(
             function="wheel_mouse_input",
-            args={"direction": direction, "clicks": clicks},
+            args={"wheel_dist": wheel_dist},
             control_label=control_label,
             control_text=control_text,
             after_status="CONTINUE",
@@ -433,8 +512,18 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def texts(
-        control_label: Annotated[str, Field(description="Same as `ControlLabel`")],
-        control_text: Annotated[str, Field(description="Same as `ControlText`")],
+        control_label: Annotated[
+            str,
+            Field(
+                description="The control index to retrieve text from, same as the selected `ControlLabel`"
+            ),
+        ],
+        control_text: Annotated[
+            str,
+            Field(
+                description="The control text to retrieve text from, same as the selected `ControlText`"
+            ),
+        ],
     ) -> Annotated[Dict, Field(description="the text content of the control item")]:
         """
         Retrieve all text content from a control element.
@@ -449,51 +538,21 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
         return _execute_action(action)
 
-    # @action_mcp.tool()
-    # def summary(
-    #     text: str,
-    #     control_label: str = "",
-    #     control_text: str = "",
-    # ) -> Dict:
-    #     """
-    #     Provide a visual summary or description of a control element.
-    #     :param text: The summary text to provide.
-    #     :param control_label: The label/ID of the target control (optional).
-    #     :param control_text: The text content of the control (optional).
-    #     :return: List of execution results.
-    #     """
-    #     action = OneStepAction(
-    #         function="summary",
-    #         args={"text": text},
-    #         control_label=control_label,
-    #         control_text=control_text,
-    #         after_status="CONTINUE",
-    #     )
-
-    #     return _execute_action_sequence([action])
-
-    # @action_mcp.tool()
-    # def annotation(
-    #     control_labels: List[str],
-    #     control_label: str = "",
-    #     control_text: str = "",
-    # ) -> Dict:
-    #     """
-    #     Annotate or highlight specific controls on the screen.
-    #     :param control_labels: List of control labels to annotate.
-    #     :param control_label: The label/ID of the primary control (optional).
-    #     :param control_text: The text content of the control (optional).
-    #     :return: List of execution results.
-    #     """
-    #     action = OneStepAction(
-    #         function="annotation",
-    #         args={"control_labels": control_labels},
-    #         control_label=control_label,
-    #         control_text=control_text,
-    #         after_status="CONTINUE",
-    #     )
-
-    #     return _execute_action_sequence([action])
+    @action_mcp.tool()
+    def summary(
+        text: Annotated[str, Field(description="The summary text to provide.")],
+    ) -> Annotated[
+        str,
+        Field(
+            description="A visual summary of the current application window based on the task to complete."
+        ),
+    ]:
+        """
+        Summarize your observation of the current application window base on the task to complete.
+        You must use your vision to summarize the image with required information and put it into the `text` argument.
+        This summary will be passed to future steps for information.
+        """
+        return text
 
     return action_mcp
 
@@ -535,22 +594,53 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         ui_state.last_app_windows = app_windows
 
         # Convert to WindowInfo objects
-        windows_info = []
-        for annotation_id, window in app_windows.items():
-            try:
-                window_info = _window2window_info(window, annotation_id)
-                windows_info.append(window_info.model_dump())
-            except Exception as e:
-                # If there's an error with a specific window, add minimal info
-                windows_info.append(
-                    {
-                        "annotation_id": annotation_id,
-                        "title": "Error retrieving window info",
-                        "error": str(e),
-                    }
-                )
+        desktop_windows_info = ui_state.control_inspector.get_control_info_list_of_dict(
+            app_windows, ["control_text", "control_type"]
+        )
 
-        return windows_info
+        return desktop_windows_info
+
+    @data_mcp.tool()
+    def get_app_window_info(field_list: List[str]) -> Dict[str, Any]:
+        """
+        Get information about the currently selected application window.
+        :param field_list: List of fields to retrieve from the window info.
+        :return: Dictionary containing the requested window information.
+        """
+        if not ui_state.selected_app_window:
+            raise ToolError("No window is selected， please select a window first.")
+
+        window_info = ui_state.control_inspector.get_control_info(
+            ui_state.selected_app_window, field_list=field_list
+        )
+
+        return window_info
+
+    @data_mcp.tool()
+    def get_app_window_controls_info(field_list: List[str]) -> List:
+        """
+        Get information about controls in the currently selected application window.
+        :param field_list: List of fields to retrieve from the control info.
+        :return: Dictionary containing the requested control information.
+        """
+        if not ui_state.selected_app_window:
+            raise ToolError("No window is selected， please select a window first.")
+
+        controls_list = ui_state.control_inspector.find_control_elements_in_descendants(
+            ui_state.selected_app_window,
+            control_type_list=configs.get("CONTROL_LIST", []),
+            class_name_list=configs.get("CONTROL_LIST", []),
+        )
+
+        control_dict = {str(i + 1): control for i, control in enumerate(controls_list)}
+
+        result = ui_state.control_inspector.get_control_info_list_of_dict(
+            control_dict, field_list=field_list
+        )
+
+        ui_state.control_dict = control_dict
+
+        return result
 
     @data_mcp.tool()
     def get_app_window_controls() -> Dict[str, Any]:
@@ -559,7 +649,7 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         :return: Dictionary containing window info and control information in AppWindowControlInfo format.
         """
         if not ui_state.selected_app_window:
-            return {"error": "No window selected"}
+            raise ToolError("No window is selected， please select a window first.")
 
         temp_path = "temp_app_screenshot.png"  # Temporary path for capturing
 

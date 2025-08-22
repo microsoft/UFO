@@ -2,18 +2,23 @@ import argparse
 import asyncio
 import logging
 
+import uvicorn
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+
+from ufo.contracts.contracts import ClientMessage
 from ufo.server.services.api import create_api_router
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.task_manager import TaskManager
 from ufo.server.services.ws_manager import WSManager
 from ufo.server.ws.handler import UFOWebSocketHandler
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
-import uvicorn, json
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="UFO Server")
     parser.add_argument("--port", type=int, default=5000, help="Flask API service port")
+    parser.add_argument(
+        "--host", type=str, default="0.0.0.0", help="Flask API service host"
+    )
     return parser.parse_args()
 
 
@@ -22,7 +27,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# app = Flask(__name__)
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -46,14 +50,20 @@ async def websocket_endpoint(websocket: WebSocket):
     client_id = None
     try:
         reg_msg = await websocket.receive_text()
-        reg_info = json.loads(reg_msg)
-        client_id = reg_info.get("client_id")
+        reg_info = ClientMessage.model_validate_json(reg_msg)
+        if not reg_info.client_id:
+            raise ValueError("Client ID is required for WebSocket registration")
+
+        if reg_info.type != "register":
+            raise ValueError("First message must be a registration message")
+
+        client_id = reg_info.client_id
         ws_handler.ws_manager.add_client(client_id, websocket)
         logger.info(f"[WS] {client_id} connected")
 
         while True:
             msg = await websocket.receive_text()
-            await ws_handler.handle_message(msg, websocket, client_id)
+            asyncio.create_task(ws_handler.handle_message(msg, websocket))
 
     except WebSocketDisconnect:
         logger.info(f"[WS] {client_id} disconnected normally")
@@ -67,4 +77,4 @@ async def websocket_endpoint(websocket: WebSocket):
 if __name__ == "__main__":
 
     cli_args = parse_args()
-    uvicorn.run(app, host="0.0.0.0", port=cli_args.port, reload=True)
+    uvicorn.run(app, host=cli_args.host, port=cli_args.port, reload=True)

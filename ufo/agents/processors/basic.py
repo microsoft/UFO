@@ -2,7 +2,9 @@
 # Licensed under the MIT License.
 
 
+import inspect
 import json
+import logging
 import os
 import time
 import traceback
@@ -16,17 +18,15 @@ from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.action_contracts import ActionSequence
+from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
 from ufo.contracts.contracts import WindowInfo
 from ufo.module.context import Context, ContextNames
-from ufo.module.sessions.session_data import SessionDataManager
 
 configs = Config.get_instance().config_data
 
 
 class BaseProcessor(ABC):
-    session_data_manager: SessionDataManager
-
     """
     The base processor for the session. A session consists of multiple rounds of conversation with the user, completing a task.
     At each round, the HostAgent and AppAgent interact with the user and the application with the processor.
@@ -44,7 +44,8 @@ class BaseProcessor(ABC):
         self._agent = agent
 
         # Get the session data manager from the context
-        self.session_data_manager = self._context.get(ContextNames.SESSION_DATA_MANAGER)
+
+        self.photographer = PhotographerFacade()
 
         self._prompt_message = None
         self._status = None
@@ -64,7 +65,9 @@ class BaseProcessor(ABC):
         self._exeception_traceback = {}
         self._actions = ActionSequence()
 
-    def process(self) -> None:
+        self.logger = logging.getLogger(__name__)
+
+    async def process(self) -> None:
         """
         Process a single step in a round.
         The process includes the following steps:
@@ -84,59 +87,48 @@ class BaseProcessor(ABC):
         start_time = time.time()
 
         try:
-            if self.agent.has_input:
-                # Step 4: Get the prompt message.
-                self.get_prompt_message()
-
-                # Step 5: Get the response.
-                self.get_response()
-
-                # Step 6: Update the context.
-                self.update_cost()
-
-                # Step 7: Parse the response, if there is no error.
-                self.parse_response()
-
-                if self.is_pending() or self.is_paused():
-                    # If the session is pending, update the step and memory, and return.
-                    if self.is_pending():
-                        self.update_status()
-                        self.update_memory()
-
-                    return
-
-                # Step 8: Execute the action.
-                # Example usage:
-                # action = CaptureAppWindowScreenshotAction(params=CaptureAppWindowScreenshotParams(window_handle=some_value))
-                self.execute_action()
-
-                # Step 9: Update the memory.
-                self.update_memory()
-
-                # Step 10: Update the status.
-                self.update_status()
-
-                self._total_time_cost = time.time() - start_time
-
-                # Step 11: Save the log.
-                self.log_save()
-            else:
-                self.status = self._agent_status_manager.CONTINUE.value
-                self.update_status()
-
             # Step 1: Print the step information.
             self.print_step_info()
 
             # Step 2: Capture the screenshot.
-            self.capture_screenshot()
+            await self.capture_screenshot()
 
             # Step 3: Get the control information.
-            self.get_control_info()
+            await self.get_control_info()
 
-            self.process_collected_info()
+            # Step 4: Get the prompt message.
+            await self.get_prompt_message()
 
-            if not self.agent.has_input:
-                self.agent.has_input = True
+            # Step 5: Get the response.
+            await self.get_response()
+
+            # Step 6: Update the context.
+            self.update_cost()
+
+            # Step 7: Parse the response, if there is no error.
+            self.parse_response()
+
+            if self.is_pending() or self.is_paused():
+                # If the session is pending, update the step and memory, and return.
+                if self.is_pending():
+                    self.update_status()
+                    self.update_memory()
+
+                return
+
+            # Step 8: Execute the action.
+            await self.execute_action()
+
+            # Step 9: Update the memory.
+            self.update_memory()
+
+            # Step 10: Update the status.
+            self.update_status()
+
+            self._total_time_cost = time.time() - start_time
+
+            # Step 11: Save the log.
+            self.log_save()
 
         except StopIteration:
             # Error was handled and logged in the exception capture decorator.
@@ -172,56 +164,80 @@ class BaseProcessor(ABC):
     @classmethod
     def method_timer(cls, func):
         """
-        Decorator to calculate the time cost of the method.
-        :param func: The method to be decorated.
-        :return: The decorated method.
+        Decorator to calculate the time cost of a method (sync or async).
         """
 
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            start_time = time.time()
-            result = func(self, *args, **kwargs)
-            end_time = time.time()
-            self._time_cost[func.__name__] = end_time - start_time
-            return result
+        if inspect.iscoroutinefunction(func):
+            # async function
+            @wraps(func)
+            async def async_wrapper(self, *args, **kwargs):
+                start_time = time.time()
+                result = await func(self, *args, **kwargs)
+                end_time = time.time()
+                self._time_cost[func.__name__] = end_time - start_time
+                return result
 
-        return wrapper
+            return async_wrapper
+        else:
+            # sync function
+            @wraps(func)
+            def sync_wrapper(self, *args, **kwargs):
+                start_time = time.time()
+                result = func(self, *args, **kwargs)
+                end_time = time.time()
+                self._time_cost[func.__name__] = end_time - start_time
+                return result
+
+            return sync_wrapper
 
     @classmethod
     def exception_capture(cls, func):
         """
-        Decorator to capture the exception of the method.
-        :param func: The method to be decorated.
-        :return: The decorated method.
+        Decorator to capture exceptions for both sync and async functions.
         """
+        if inspect.iscoroutinefunction(func):
+            # async version
+            @wraps(func)
+            async def async_wrapper(self, *args, **kwargs):
+                try:
+                    return await func(self, *args, **kwargs)
+                except Exception as e:
+                    cls._handle_exception(self, func.__name__, e)
+                    raise StopIteration("Error occurred during step.")
 
-        @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            try:
-                func(self, *args, **kwargs)
-            except Exception as e:
-                self._exeception_traceback[func.__name__] = {
-                    "type": str(type(e).__name__),
-                    "message": str(e),
-                    "traceback": traceback.format_exc(),
-                }
+            return async_wrapper
+        else:
+            # sync version
+            @wraps(func)
+            def sync_wrapper(self, *args, **kwargs):
+                try:
+                    return func(self, *args, **kwargs)
+                except Exception as e:
+                    cls._handle_exception(self, func.__name__, e)
+                    raise StopIteration("Error occurred during step.")
 
-                utils.print_with_color(f"Error Occurs at {func.__name__}", "red")
-                utils.print_with_color(
-                    self._exeception_traceback[func.__name__]["traceback"], "red"
-                )
-                if self._response is not None:
-                    utils.print_with_color("Response: ", "red")
-                    utils.print_with_color(self._response, "red")
-                self._status = self._agent_status_manager.ERROR.value
-                self.sync_memory()
-                self.add_to_memory({"error": self._exeception_traceback})
-                self.add_to_memory({"Status": self._status})
-                self.log_save()
+            return sync_wrapper
 
-                raise StopIteration("Error occurred during step.")
-
-        return wrapper
+    @classmethod
+    def _handle_exception(cls, self, func_name, e):
+        self._exeception_traceback[func_name] = {
+            "type": type(e).__name__,
+            "message": str(e),
+            "traceback": traceback.format_exc(),
+        }
+        # 你自己的处理逻辑 ↓
+        utils.print_with_color(f"Error Occurs at {func_name}", "red")
+        utils.print_with_color(
+            self._exeception_traceback[func_name]["traceback"], "red"
+        )
+        if self._response is not None:
+            utils.print_with_color("Response: ", "red")
+            utils.print_with_color(self._response, "red")
+        self._status = self._agent_status_manager.ERROR.value
+        self.sync_memory()
+        self.add_to_memory({"error": self._exeception_traceback})
+        self.add_to_memory({"Status": self._status})
+        self.log_save()
 
     @abstractmethod
     def sync_memory(self) -> None:
@@ -248,13 +264,6 @@ class BaseProcessor(ABC):
     def get_control_info(self) -> None:
         """
         Get the control information.
-        """
-        pass
-
-    @abstractmethod
-    def process_collected_info(self) -> None:
-        """
-        Process the collected information.
         """
         pass
 
@@ -627,10 +636,10 @@ class BaseProcessor(ABC):
         return self.context.get(ContextNames.REQUEST_LOGGER)
 
     @property
-    def logger(self) -> str:
+    def response_logger(self) -> str:
         """
-        Get the logger.
-        :return: The logger.
+        Get the response logger.
+        :return: The response logger.
         """
         return self.context.get(ContextNames.LOGGER)
 
@@ -795,7 +804,7 @@ class BaseProcessor(ABC):
         return: The response json.
         """
 
-        self.logger.info(json.dumps(response_json))
+        self.response_logger.info(json.dumps(response_json))
 
     @property
     def name(self) -> str:

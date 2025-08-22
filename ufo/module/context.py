@@ -7,10 +7,10 @@ from enum import Enum
 from logging import Logger
 from typing import Any, Dict, List, Optional, Type, Union
 
-from fastapi import WebSocket
+
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ufo.module.message import MessageBus
+from ufo.module.dispatcher import BasicCommandDispatcher
 from ufo.utils import is_json_serializable, print_with_color
 
 
@@ -51,7 +51,6 @@ class ContextNames(Enum):
         "CURRENT_ROUND_SUBTASK_AMOUNT"  # The amount of subtasks in the current round
     )
     STRUCTURAL_LOGS = "STRUCTURAL_LOGS"  # The structural logs of the session
-    SESSION_DATA_MANAGER = "SESSION_DATA_MANAGER"  # The session state manager
 
     APPLICATION_WINDOW_INFO = (
         "APPLICATION_WINDOW_INFO"  # The information of the application window
@@ -170,7 +169,7 @@ class Context:
     _context: Dict[str, Any] = field(
         default_factory=lambda: {name.name: name.default_value for name in ContextNames}
     )
-    message_bus: Optional[MessageBus] = None
+    command_dispatcher: Optional[BasicCommandDispatcher] = None
 
     def get(self, key: ContextNames) -> Any:
         """
@@ -272,13 +271,6 @@ class Context:
             self._context.get(ContextNames.CURRENT_ROUND_ID.name), 0
         )
 
-    @property
-    def SESSION_DATA_MANAGER(self) -> Any:
-        """
-        Get the session state manager.
-        """
-        return self._context.get(ContextNames.SESSION_DATA_MANAGER.name)
-
     @current_round_subtask_amount.setter
     def current_round_subtask_amount(self, value: int) -> None:
         """
@@ -364,9 +356,11 @@ class Context:
         # Sync the current round step and cost
         self._sync_round_values()
 
-    def attach_message_bus(self, ws: WebSocket) -> None:
+    def attach_command_dispatcher(
+        self, command_dispatcher: BasicCommandDispatcher
+    ) -> None:
         """
-        Attach a WebSocket to the message bus.
+        Attach a WebSocket to the command dispatcher.
         :param ws: The WebSocket connection to attach.
         """
-        self.message_bus = MessageBus(ws)
+        self.command_dispatcher = command_dispatcher

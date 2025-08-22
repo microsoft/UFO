@@ -150,7 +150,7 @@ class Computer:
         tool_info = self._tools_registry.get(tool_key, None)
 
         self.logger.info(
-            f"Running tool: {tool_info.tool_name} with parameters: {tool_info.parameters}"
+            f"Running [{tool_info.namespace}] tool: {tool_info.tool_name} with parameters: {tool_info.parameters}"
         )
 
         if not tool_info:
@@ -195,6 +195,9 @@ class Computer:
         for tool_call in tool_calls:
             result = await self._run_action(tool_call)
             results.append(result)
+            self.logger.debug(
+                f"Action {tool_call.tool_name} executed with result: {result}"
+            )
 
         return results
 
@@ -625,7 +628,7 @@ class CommandRouter:
         root_name: Optional[str],
         commands: List[Command],
         early_exit: bool = True,
-    ) -> Dict[str, Result]:
+    ) -> List[Result]:
         """
         Execute a command on the appropriate Computer instance based on the provided configuration.
         :param agent_name: The name of the agent to execute the command for.
@@ -640,7 +643,7 @@ class CommandRouter:
             agent_name=agent_name, process_name=process_name, root_name=root_name
         )
 
-        results: Dict[str, Result] = {}
+        results: List[Result] = []
 
         status = "success"
 
@@ -659,23 +662,35 @@ class CommandRouter:
                     f"Skipping further commands due to previous failure."
                 )
 
-                results[call_id] = Result(
-                    status="skipped",
-                    result=None,
-                    error="Early exit due to previous failure.",
+                results.append(
+                    Result(
+                        status="skipped",
+                        result=None,
+                        error="Early exit due to previous failure.",
+                        call_id=call_id,
+                    )
                 )
 
             if not call_tool_result.is_error:
-                results[call_id] = Result(
-                    status="success",
-                    result=text_content,
-                    error=None,
+                results.append(
+                    Result(
+                        status="success",
+                        result=text_content,
+                        error=None,
+                        call_id=call_id,
+                    )
                 )
             else:
-                results[call_id] = Result(
-                    status="failure",
-                    error=text_content,
-                    result=None,
+                results.append(
+                    Result(
+                        status="failure",
+                        error=text_content,
+                        result=None,
+                        call_id=call_id,
+                    )
+                )
+                self.logger.warning(
+                    f"Command {call_id} failed with error: {text_content}"
                 )
 
                 status = "failure"
@@ -709,28 +724,63 @@ def test_command_router():
     # Example command execution, all from the server
     commands = [
         Command(
-            tool_name="double_click_mouse",
-            tool_type="action",
-            parameters={"button": "left"},
+            tool_name="get_desktop_app_info",
+            tool_type="data_collection",
+            parameters={"remove_empty": True, "refresh_app_windows": True},
         ),
         Command(
-            tool_name="list_tools",
+            tool_name="select_application_window",
             tool_type="action",
-            parameters={"namespace": "HardwareExecutor"},
+            parameters={"window_label": "2"},
         ),
     ]
 
-    results = asyncio.run(
+    results1 = asyncio.run(
         command_router.execute(
-            agent_name="HardwareAgent",  # From server
-            process_name="HardwareAgent",  # From server
-            root_name="default",  # From server
+            agent_name="HostAgent",  # From server
+            process_name="",  # From server
+            root_name="",  # From server
             commands=commands,
         )
     )
 
-    for call_id, result in results.items():
-        print(f"Command {call_id} executed with status: {result.status}")
+    commands = [
+        Command(
+            tool_name="get_app_window_controls_info",
+            parameters={"field_list": ["control_text", "control_type"]},
+            tool_type="data_collection",
+        ),
+        Command(
+            tool_name="keyboard_input",
+            tool_type="action",
+            parameters={
+                "control_label": "1",
+                "control_text": "Untitled. Unmodified.",
+                "keys": "hi",
+                "control_focus": True,
+            },
+        ),
+        Command(
+            tool_name="click_input",
+            tool_type="action",
+            parameters={
+                "control_label": "2",
+                "control_text": "Untitled. Unmodified.",
+            },
+        ),
+    ]
+
+    results2 = asyncio.run(
+        command_router.execute(
+            agent_name="AppAgent",  # From server
+            process_name="",  # From server
+            root_name="",  # From server
+            commands=commands,
+        )
+    )
+
+    for result in results1 + results2:
+        # print(f"Command executed with status: {result.status}")
         if result.status == "failure":
             print(f"Error: {result.error}")
         else:

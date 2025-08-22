@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Union, Generator
+from typing import Dict, List, Union
 
 
 from ufo import utils
@@ -138,7 +138,7 @@ class HostAgent(BasicAgent):
         app_agent.host = self
         self._active_appagent = app_agent
 
-        print(
+        self.logger.info(
             f"Created sub agent: {agent_name} with type {agent_type} and process name {process_name}, class {app_agent.__class__.__name__}"
         )
 
@@ -204,24 +204,13 @@ class HostAgent(BasicAgent):
 
         return hostagent_prompt_message
 
-    def process(self, context: Context) -> None:
+    async def process(self, context: Context) -> None:
         """
         Process the agent.
         :param context: The context.
         """
         self.processor = HostAgentProcessor(agent=self, context=context)
-        self.processor.process()
-
-        # Sync the status with the processor.
-        self.status = self.processor.status
-
-    def process_coro(self, context: Context) -> Generator[None, None, None]:
-        """
-        Process the agent.
-        :param context: The context.
-        """
-        self.processor = HostAgentProcessor(agent=self, context=context)
-        yield from self.processor.process_coro()
+        await self.processor.process()
 
         # Sync the status with the processor.
         self.status = self.processor.status

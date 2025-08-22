@@ -31,7 +31,7 @@ def create_cli_mcp_server(*args, **kwargs) -> FastMCP:
     cli_mcp = FastMCP("UFO CLI MCP Server")
 
     @cli_mcp.tool()
-    def launch_application(
+    def run_shell(
         bash_command: str,
     ) -> None:
         """

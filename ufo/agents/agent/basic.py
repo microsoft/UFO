@@ -4,18 +4,9 @@
 from __future__ import annotations
 
 import json
+import logging
 from abc import ABC, abstractmethod
-from typing import (
-    TYPE_CHECKING,
-    Callable,
-    Dict,
-    Generator,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import TYPE_CHECKING, Callable, Dict, List, Optional, Tuple, Type, Union
 
 from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
@@ -57,7 +48,7 @@ class BasicAgent(ABC):
         self._host = None
         self._processor: Optional[BaseProcessor] = None
         self._state = None
-        self.has_input = False
+        self.logger = logging.getLogger(__name__)
 
     @property
     def status(self) -> str:
@@ -242,32 +233,18 @@ class BasicAgent(ABC):
 
         self._state = state
 
-    def handle(self, context: Context) -> None:
+    async def handle(self, context: Context) -> None:
         """
         Handle the agent.
         :param context: The context for the agent.
         """
-        self.state.handle(self, context)
+        await self.state.handle(self, context)
 
-    def handle_coro(self, context: Context) -> Generator[None, None, None]:
-        """
-        Handle the agent. This is a generator method.
-        :param context: The context for the agent.
-        """
-        yield from self.state.handle_coro(self, context)
-
-    def process(self, context: Context) -> None:
+    async def process(self, context: Context) -> None:
         """
         Process the agent.
         """
         pass
-
-    def process_coro(self, context: Context) -> Generator[None, None, None]:
-        """
-        Process the agent in a coroutine.
-        """
-        return
-        yield
 
     def process_resume(self) -> None:
         """

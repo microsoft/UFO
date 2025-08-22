@@ -434,11 +434,27 @@ class AnnotationDecorator(PhotographerDecorator):
         return cropped_icons_dict
 
     def capture_with_annotation_dict(
-        self, annotation_dict: Dict[str, UIAWrapper], save_path: Optional[str] = None
+        self,
+        annotation_dict: Dict[str, UIAWrapper],
+        save_path: Optional[str] = None,
+        path: Optional[str] = None,
     ):
+        """
+        Capture a screenshot with the given annotation dictionary.
+        :param annotation_dict: The dictionary of the controls with annotation labels as keys.
+        :param save_path: The path to save the screenshot.
+        :param path: The path to the image.
+        :return: The screenshot with annotations.
+        """
 
         window_rect = self.photographer.control.rectangle()
-        screenshot_annotated = self.photographer.capture()
+        if path:
+            if os.path.exists(path):
+                screenshot_annotated = Image.open(path)
+            else:
+                screenshot_annotated = self.photographer.capture()
+        else:
+            screenshot_annotated = self.photographer.capture()
 
         color_dict = configs.get("ANNOTATION_COLORS", {})
 
@@ -599,6 +615,7 @@ class PhotographerFacade:
         color_diff: bool = True,
         color_default: str = "#FFF68F",
         save_path: Optional[str] = None,
+        path: Optional[str] = None,
     ) -> Image.Image:
         """
         Capture the control screenshot with annotations.
@@ -615,7 +632,7 @@ class PhotographerFacade:
             screenshot, sub_control_list, annotation_type, color_diff, color_default
         )
         return screenshot.capture_with_annotation_dict(
-            annotation_control_dict, save_path
+            annotation_control_dict, save_path, path
         )
 
     def capture_app_window_screenshot_with_annotation(

@@ -2,6 +2,10 @@ import threading
 from ufo.module.sessions.service_session import ServiceSession
 from typing import Optional, Dict
 import logging
+from fastapi import WebSocket
+from ufo.config import Config
+
+configs = Config.get_instance().config_data
 
 
 class SessionManager:
@@ -15,21 +19,27 @@ class SessionManager:
         self.logger = logging.getLogger(__name__)
 
     def get_or_create_session(
-        self, session_id: str, request: Optional[str] = None
+        self,
+        session_id: str,
+        task_name: str,
+        request: Optional[str] = None,
+        websocket: Optional[WebSocket] = None,
     ) -> ServiceSession:
         """
         Get an existing session or create a new one if it doesn't exist.
         :param session_id: The ID of the session to retrieve or create.
         :param request: Optional request text to initialize the session.
+        :param websocket: Optional WebSocket connection to attach to the session.
         :return: The ServiceSession object for the session.
         """
         with self.lock:
             if session_id not in self.sessions:
                 session = ServiceSession(
-                    task=session_id,
-                    should_evaluate=False,
+                    task=task_name,
+                    should_evaluate=configs.get("EVA_SESSION", False),
                     id=session_id,
                     request=request,
+                    websocket=websocket,
                 )
                 self.sessions[session_id] = session
                 self.logger.info(f"Created new session: {session_id}")

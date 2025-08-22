@@ -31,5 +31,8 @@ for finder, name, ispkg in pkgutil.iter_modules([current_dir]):
                 print(f"Could not find spec for module {full_module_name}")
 
         except Exception as e:
+            import traceback
+
+            traceback.print_exc()
             # Handle potential errors during module loading (e.g., syntax errors)
             print(f"Error loading module '{full_module_name}': {e}")
