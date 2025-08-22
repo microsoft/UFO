@@ -32,10 +32,10 @@ class ServiceSession(Session):
         :param request: The user request for the session.
         """
 
+        self.websocket = websocket
         super().__init__(task=task, should_evaluate=should_evaluate, id=id)
 
         self._init_request = request
-        self.websocket = websocket
 
     def _init_context(self) -> None:
         """
@@ -45,7 +45,7 @@ class ServiceSession(Session):
 
         self.context.set(ContextNames.MODE, "normal")
         command_dispatcher = WebSocketCommandDispatcher(self, self.websocket)
-        self.context.attach_command_dispatcher(self, command_dispatcher)
+        self.context.attach_command_dispatcher(command_dispatcher)
 
     def next_request(self) -> str:
         """

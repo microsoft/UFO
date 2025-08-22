@@ -14,13 +14,28 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from ufo import utils
 from ufo.automator.puppeteer import AppPuppeteer
 
-if TYPE_CHECKING:
-    from ..agents.processors.action_contracts import (
-        OneStepAction,
-        ActionSequence,
-        BaseControlLog,
-        ActionExecutionLog,
-    )
+from ufo.agents.processors.action_contracts import (
+    OneStepAction,
+    ActionSequence,
+    BaseControlLog,
+    ActionExecutionLog,
+)
+
+# if TYPE_CHECKING:
+#     from ufo.agents.processors.action_contracts import (
+#         OneStepAction,
+#         ActionSequence,
+#         BaseControlLog,
+#         ActionExecutionLog,
+#     )
+# else:
+#     # Import at runtime to avoid circular imports
+#     from ..agents.processors.action_contracts import (
+#         OneStepAction,
+#         ActionSequence,
+#         BaseControlLog,
+#         ActionExecutionLog,
+#     )
 
 
 class OneStepActionExecutor:
