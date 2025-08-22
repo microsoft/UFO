@@ -2,11 +2,14 @@
 # Licensed under the MIT License.
 
 import json
-from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict, List
+from dataclasses import asdict
+from typing import TYPE_CHECKING
 
 from ufo import utils
-from ufo.agents.processors.app_agent_processor import AppAgentProcessor
+from ufo.agents.processors.app_agent_processor import (
+    AppAgentProcessor,
+    AppAgentRequestLog,
+)
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
 from ufo.contracts.contracts import Command
@@ -21,34 +24,6 @@ configs = Config.get_instance().config_data
 if configs is not None:
     CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"])
     BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
-
-
-@dataclass
-class AppAgentRequestLog:
-    """
-    The request log data for the AppAgent.
-    """
-
-    step: int
-    dynamic_examples: List[str]
-    experience_examples: List[str]
-    demonstration_examples: List[str]
-    offline_docs: str
-    online_docs: str
-    dynamic_knowledge: str
-    image_list: List[str]
-    prev_subtask: List[str]
-    plan: List[str]
-    request: str
-    control_info: List[Dict[str, str]]
-    subtask: str
-    current_application: str
-    host_message: str
-    blackboard_prompt: List[str]
-    last_success_actions: List[Dict[str, Any]]
-    include_last_screenshot: bool
-    prompt: Dict[str, Any]
-    control_info_recording: Dict[str, Any]
 
 
 class HardwareAgentProcessor(AppAgentProcessor):

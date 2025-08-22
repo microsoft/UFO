@@ -7,7 +7,7 @@ sys.path.append("./")
 
 import time
 from dataclasses import asdict
-from typing import Any, Dict, Optional, Tuple, TYPE_CHECKING
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -15,14 +15,6 @@ from ufo import utils
 from ufo.automator.puppeteer import AppPuppeteer
 
 if TYPE_CHECKING:
-    from ..agents.processors.action_contracts import (
-        OneStepAction,
-        ActionSequence,
-        BaseControlLog,
-        ActionExecutionLog,
-    )
-else:
-    # Import at runtime to avoid circular imports
     from ..agents.processors.action_contracts import (
         OneStepAction,
         ActionSequence,
