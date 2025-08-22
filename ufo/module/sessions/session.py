@@ -21,6 +21,8 @@ from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import ContextNames
 from ufo.module.sessions.plan_reader import PlanReader
 from ufo.trajectory.parser import Trajectory
+from module.message import LocalMessageBus
+from ufo.client.mcp.mcp_server_manager import MCPServerManager
 
 configs = Config.get_instance().config_data
 
@@ -220,6 +222,9 @@ class Session(BaseSession):
         super()._init_context()
 
         self.context.set(ContextNames.MODE, self._mode)
+        mcp_server_manager = MCPServerManager()
+        message_bus = LocalMessageBus(self, mcp_server_manager)
+        self.context.attach_message_bus(self, message_bus)
 
     def create_new_round(self) -> Optional[BaseRound]:
         """

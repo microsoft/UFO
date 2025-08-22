@@ -2,17 +2,82 @@ import asyncio
 import datetime
 import logging
 import uuid
+from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Dict, List, Optional
 
 from fastapi import WebSocket
 
 from ufo.contracts.contracts import ClientMessage, Command, Result, ServerMessage
+from ufo.client.computer import CommandRouter, ComputerManager
+from ufo.client.mcp.mcp_server_manager import MCPServerManager
+from ufo.config import get_config
+from ufo.module.context import ContextNames
+
 
 if TYPE_CHECKING:
     from ufo.module.basic import BaseSession
 
 
-class MessageBus:
+class BasicMessageBus(ABC):
+    """
+    Abstract base class for message bus handling.
+    Provides methods to send commands and receive results.
+    """
+
+    @abstractmethod
+    async def publish_commands(
+        self, commands: List[Command], timeout: float = 10.0
+    ) -> Optional[List[Result]]:
+        """
+        Publish commands to the message bus and wait for the result.
+        :param commands: The list of commands to publish.
+        :param timeout: The timeout for waiting for the result.
+        :return: The list of results from the commands, or None if timed out.
+        """
+        pass
+
+
+class LocalMessageBus(BasicMessageBus):
+    """
+    Message bus for local communication between components.
+    """
+
+    def __init__(self, session: "BaseSession", mcp_server_manager: MCPServerManager):
+        """
+        Initializes the LocalMessageBus.
+        :param session: The session associated with the message bus.
+        """
+        self.session = session
+        self.pending: Dict[str, asyncio.Future] = {}
+        self.logger = logging.getLogger(__name__)
+
+        configs = get_config()
+
+        self.mcp_server_manager = mcp_server_manager
+        self.computer_manager = ComputerManager(configs, mcp_server_manager)
+        self.command_router = CommandRouter(self.computer_manager)
+
+    async def publish_commands(self, commands, timeout=10) -> Optional[List[Result]]:
+        """
+        Publish commands to the message bus and wait for the result.
+        """
+
+        results = await asyncio.wait_for(
+            self.command_router.execute(
+                agent_name=self.session.current_agent_class,
+                root_name=self.session.context.get(ContextNames.APPLICATION_ROOT_NAME),
+                process_name=self.session.context.get(
+                    ContextNames.APPLICATION_PROCESS_NAME
+                ),
+                commands=commands,
+            ),
+            timeout=timeout,
+        )
+
+        return results
+
+
+class WebSocketMessageBus(BasicMessageBus):
     """
     Message bus for communication between components.
     Handles sending commands and receiving results via WebSocket using observers.
@@ -47,8 +112,6 @@ class MessageBus:
         :param commands: The list of commands to include in the response.
         :return: A ServerMessage containing the response.
         """
-
-        from ufo.module.context import ContextNames
 
         for command in commands:
             command.call_id = str(uuid.uuid4())

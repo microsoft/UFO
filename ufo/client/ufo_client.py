@@ -53,49 +53,6 @@ class UFOClient:
 
         self._ws: Optional[WebSocketClientProtocol] = None
 
-    async def run(self, request_text: str) -> bool:
-        """
-        Run a task by communicating with the UFO web service
-        :param request_text: The request text to send to the server
-        :returns: True if the task was completed successfully, False otherwise
-        """
-        try:
-            # Initial request to start the session
-            response = await self.send_request(request_text)
-
-            self.session_id = response.session_id
-
-            # Process the session until it's completed or fails
-            while response.status == "continue":
-                # Sync with the server response
-                self.agent_name = response.agent_name
-                self.process_name = response.process_name
-                self.root_name = response.root_name
-
-                # Execute the actions and collect results
-                action_results = await self.execute_actions(response.actions)
-
-                # Send the results back to the server and get next response
-                response = await self.send_request(None, action_results)
-
-            if response.status == "failure":
-                self.logger.error(f"Task failed: {response.error}")
-                return False
-
-            elif response.status == "completed":
-                self.logger.info("Task completed successfully")
-                return True
-
-        except aiohttp.ClientError as e:
-            self.logger.error(f"Network error: {e}")
-            return False
-        except ValueError as e:
-            self.logger.error(f"Data error: {e}")
-            return False
-        except Exception as e:
-            self.logger.error(f"Unexpected error: {e}", exc_info=True)
-            return False
-
     async def step(self, response: ServerMessage) -> List[Result]:
         """
         Perform a single step in the WebSocket communication.
