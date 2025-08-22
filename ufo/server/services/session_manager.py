@@ -3,6 +3,9 @@ from ufo.module.sessions.service_session import ServiceSession
 from typing import Optional, Dict
 import logging
 from fastapi import WebSocket
+from ufo.config import Config
+
+configs = Config.get_instance().config_data
 
 
 class SessionManager:
@@ -33,7 +36,7 @@ class SessionManager:
             if session_id not in self.sessions:
                 session = ServiceSession(
                     task=task_name,
-                    should_evaluate=False,
+                    should_evaluate=configs.get("EVA_SESSION", False),
                     id=session_id,
                     request=request,
                     websocket=websocket,

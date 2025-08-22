@@ -42,7 +42,7 @@ class VirtualUIAElementInfo(UIAElementInfo):
     @property
     def control_type(self):
         """Override the control_type property to return a UIA control type."""
-        return "Button"
+        return self._control_type
 
     @property
     def name(self):

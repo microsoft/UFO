@@ -613,9 +613,9 @@ class AppAgentProcessor(BaseProcessor):
 
         self.actions = [action]
 
-        if action.function is None or action.function == "":
+        if not action.function:
             utils.print_with_color(
-                "No valid action to execute. Skipping execution.", "yellow"
+                "No action to execute. Skipping execution.", "yellow"
             )
             return
 
@@ -890,6 +890,8 @@ class AppAgentProcessor(BaseProcessor):
                 "y1": bottom,
             }
 
-            control_list.append(BasicGrounding.uia_wrapping(new_control_info))
+            virtual_uia = BasicGrounding.uia_wrapping(new_control_info)
+
+            control_list.append(virtual_uia)
 
         return control_list
