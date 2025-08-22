@@ -11,7 +11,6 @@ from ufo.contracts.contracts import ClientMessage, Command, Result, ServerMessag
 from ufo.client.computer import CommandRouter, ComputerManager
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.config import get_config
-from ufo.module.context import ContextNames
 
 
 if TYPE_CHECKING:
@@ -61,8 +60,9 @@ class LocalMessageBus(BasicMessageBus):
         """
         Publish commands to the message bus and wait for the result.
         """
+        from ufo.module.context import ContextNames
 
-        results = await asyncio.wait_for(
+        action_results = await asyncio.wait_for(
             self.command_router.execute(
                 agent_name=self.session.current_agent_class,
                 root_name=self.session.context.get(ContextNames.APPLICATION_ROOT_NAME),
@@ -74,7 +74,7 @@ class LocalMessageBus(BasicMessageBus):
             timeout=timeout,
         )
 
-        return results
+        return action_results
 
 
 class WebSocketMessageBus(BasicMessageBus):
@@ -115,6 +115,8 @@ class WebSocketMessageBus(BasicMessageBus):
 
         for command in commands:
             command.call_id = str(uuid.uuid4())
+
+        from ufo.module.context import ContextNames
 
         agent_name = self.session.current_agent_class
         process_name = self.session.context.get(ContextNames.APPLICATION_ROOT_NAME)

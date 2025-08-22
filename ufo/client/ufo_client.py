@@ -3,7 +3,6 @@ import logging
 import tracemalloc
 from typing import List, Optional
 
-import aiohttp
 from websockets import WebSocketClientProtocol
 
 from ufo.client.computer import CommandRouter, ComputerManager

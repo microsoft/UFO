@@ -138,7 +138,7 @@ class HostAgent(BasicAgent):
         app_agent.host = self
         self._active_appagent = app_agent
 
-        print(
+        self.logger.info(
             f"Created sub agent: {agent_name} with type {agent_type} and process name {process_name}, class {app_agent.__class__.__name__}"
         )
 

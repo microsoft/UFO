@@ -4,7 +4,7 @@
 import json
 import os
 import time
-from typing import Generator, List, Optional
+from typing import List, Optional
 
 import psutil
 import win32com.client
@@ -15,14 +15,14 @@ from ufo.agents.agent.host_agent import AgentFactory
 from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
+from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.config import Config
 from ufo.module import interactor
 from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import ContextNames
+from ufo.module.message import LocalMessageBus
 from ufo.module.sessions.plan_reader import PlanReader
 from ufo.trajectory.parser import Trajectory
-from module.message import LocalMessageBus
-from ufo.client.mcp.mcp_server_manager import MCPServerManager
 
 configs = Config.get_instance().config_data
 
@@ -192,11 +192,11 @@ class Session(BaseSession):
 
         self._init_request = request
 
-    def run(self) -> None:
+    async def run(self) -> None:
         """
         Run the session.
         """
-        super().run()
+        await super().run()
         # Save the experience if the user asks so.
 
         save_experience = configs.get("SAVE_EXPERIENCE", "always_not")
@@ -224,7 +224,7 @@ class Session(BaseSession):
         self.context.set(ContextNames.MODE, self._mode)
         mcp_server_manager = MCPServerManager()
         message_bus = LocalMessageBus(self, mcp_server_manager)
-        self.context.attach_message_bus(self, message_bus)
+        self.context.attach_message_bus(message_bus)
 
     def create_new_round(self) -> Optional[BaseRound]:
         """

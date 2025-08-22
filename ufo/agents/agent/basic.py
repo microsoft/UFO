@@ -4,18 +4,9 @@
 from __future__ import annotations
 
 import json
+import logging
 from abc import ABC, abstractmethod
-from typing import (
-    TYPE_CHECKING,
-    Callable,
-    Dict,
-    Generator,
-    List,
-    Optional,
-    Tuple,
-    Type,
-    Union,
-)
+from typing import TYPE_CHECKING, Callable, Dict, List, Optional, Tuple, Type, Union
 
 from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
@@ -57,6 +48,7 @@ class BasicAgent(ABC):
         self._host = None
         self._processor: Optional[BaseProcessor] = None
         self._state = None
+        self.logger = logging.getLogger(__name__)
 
     @property
     def status(self) -> str:

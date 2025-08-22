@@ -5,14 +5,8 @@ import argparse
 import logging
 from datetime import datetime
 
-
-from ufo.module.sessions.session import SessionFactory
 from ufo.module.client import UFOClientManager
-
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
-logger = logging.getLogger(__name__)
+from ufo.module.sessions.session import SessionFactory
 
 
 args = argparse.ArgumentParser()
@@ -43,9 +37,25 @@ args.add_argument(
     type=str,
     default="",
 )
+args.add_argument(
+    "--log-level",
+    help="Set logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL). Use OFF to disable logs.",
+    type=str,
+    default="INFO",
+)
 
 
 parsed_args = args.parse_args()
+
+if parsed_args.log_level.upper() == "OFF":
+    logging.disable(logging.CRITICAL)  # Disable all logs
+else:
+    logging.basicConfig(
+        level=getattr(logging, parsed_args.log_level.upper(), logging.INFO),
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
+
+logger = logging.getLogger(__name__)
 
 
 async def main():
@@ -69,21 +79,7 @@ async def main():
     )
 
     clients = UFOClientManager(sessions)
-    asyncio.run(clients.run_all())
-
-    # session = sessions[0]  # Assuming the first session is the one we want to run
-    # mcp_server_manager = MCPServerManager()
-    # computer_manager = ComputerManager(configs, mcp_server_manager)
-    # command_router = CommandRouter(computer_manager)
-    # for _ in session.run_coro:
-    #     commands = session.get_commands()
-    #     command_results = await command_router.execute(
-    #         agent_name=session.current_agent_class,
-    #         root_name=session.context.get(ContextNames.APPLICATION_ROOT_NAME),
-    #         process_name=session.context.get(ContextNames.APPLICATION_PROCESS_NAME),
-    #         commands=commands,
-    #     )
-    #     session.process_action_results(command_results)
+    await clients.run_all()
 
 
 if __name__ == "__main__":
