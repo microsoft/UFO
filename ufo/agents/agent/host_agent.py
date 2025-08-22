@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Union, Generator
+from typing import Dict, List, Union
 
 
 from ufo import utils

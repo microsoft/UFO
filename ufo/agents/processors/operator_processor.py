@@ -16,7 +16,7 @@ from ufo.agents.processors.app_agent_processor import (
 )
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.contracts.contracts import Command, Result
+from ufo.contracts.contracts import Result
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:

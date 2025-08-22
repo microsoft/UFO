@@ -30,6 +30,7 @@ class UFOClient:
         :param server_url: URL of the UFO web service
         :param mcp_server_manager: Instance of MCPServerManager to manage MCP servers
         :param computer_manager: Instance of ComputerManager to manage Computer instances
+        :param client_id: Optional client ID for the UFO client
         """
         self.server_url = server_url.rstrip("/")
         self.mcp_server_manager = mcp_server_manager
@@ -56,6 +57,7 @@ class UFOClient:
         """
         Perform a single step in the WebSocket communication.
         :param response: The ServerMessage instance to process.
+        :return: A list of Result instances.
         """
 
         self.agent_name = response.agent_name
@@ -73,7 +75,7 @@ class UFOClient:
         :param commands: List of actions to execute
         :returns: Results of the executed actions
         """
-        action_results = {}
+        action_results = []
 
         if commands:
             self.logger.info(f"Executing {len(commands)} actions in total")

@@ -19,7 +19,7 @@ import logging
 import os
 import time
 from abc import ABC, abstractmethod
-from typing import Dict, Generator, Optional
+from typing import Dict, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -421,8 +421,6 @@ class BaseSession(ABC):
         self._finish = False
         self._results = {}
         self.logger = logging.getLogger(__name__)
-
-        self._run_generator: Optional[Generator[None, None, None]] = None
 
         self._host_agent: HostAgent = AgentFactory.create_agent(
             "host",

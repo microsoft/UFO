@@ -5,7 +5,7 @@ from __future__ import annotations
 
 from abc import ABC, ABCMeta, abstractmethod
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Optional, Type, Generator
+from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.module.context import Context
 

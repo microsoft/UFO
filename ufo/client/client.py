@@ -75,6 +75,7 @@ async def main():
         client_id=args.client_id,
     )
 
+    # Create WebSocket client and build the connection
     ws_client = UFOWebSocketClient(
         args.ws_server_url, client, max_retries=args.max_retries
     )
