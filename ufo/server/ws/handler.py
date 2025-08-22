@@ -8,6 +8,7 @@ from ufo.contracts.contracts import ClientMessage, ServerMessage
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.task_manager import TaskManager
 from ufo.server.services.ws_manager import WSManager
+from ufo.module.dispatcher import WebSocketCommandDispatcher
 
 
 class UFOWebSocketHandler:
@@ -26,10 +27,12 @@ class UFOWebSocketHandler:
         self.task_manager = task_manager
         self.logger = logging.getLogger(self.__class__.__name__)
 
-    async def connect(self, websocket: WebSocket):
+    async def connect(self, websocket: WebSocket) -> str:
         """
         Connects a client and registers it in the WS manager.
         Expects the first message to contain {"client_id": ...}.
+        :param websocket: The WebSocket connection.
+        :return: The client ID.
         """
         await websocket.accept()
         reg_msg = await websocket.receive_text()
@@ -40,7 +43,7 @@ class UFOWebSocketHandler:
         self.logger.info(f"[WS] {client_id} connected")
         return client_id
 
-    async def disconnect(self, client_id: str):
+    async def disconnect(self, client_id: str) -> None:
         """
         Disconnects a client and removes it from the WS manager.
         :param client_id: The ID of the client.
@@ -49,7 +52,7 @@ class UFOWebSocketHandler:
         self.ws_manager.remove_client(client_id)
         self.logger.info(f"[WS] {client_id} disconnected")
 
-    async def handler(self, websocket: WebSocket):
+    async def handler(self, websocket: WebSocket) -> None:
         """
         FastAPI WebSocket entry point.
         :param websocket: The WebSocket connection.
@@ -65,7 +68,7 @@ class UFOWebSocketHandler:
             self.logger.error(f"[WS] Error with client {client_id}: {e}")
             await self.disconnect(client_id)
 
-    async def handle_message(self, msg: str, websocket: WebSocket):
+    async def handle_message(self, msg: str, websocket: WebSocket) -> None:
         """
         Dispatch incoming WS messages to specific handlers.
         :param msg: The message received from the client.
@@ -106,7 +109,7 @@ class UFOWebSocketHandler:
             )
             await websocket.send_text(server_message.model_dump_json())
 
-    async def handle_heartbeat(self, data: ClientMessage, websocket: WebSocket):
+    async def handle_heartbeat(self, data: ClientMessage, websocket: WebSocket) -> None:
         """
         Handle heartbeat messages from the client.
         :param data: The data from the client.
@@ -121,7 +124,7 @@ class UFOWebSocketHandler:
         )
         await websocket.send_text(server_message.model_dump_json())
 
-    async def handle_error(self, data: ClientMessage, websocket: WebSocket):
+    async def handle_error(self, data: ClientMessage, websocket: WebSocket) -> None:
         """
         Handle error messages from the client.
         :param data: The data from the client.
@@ -136,7 +139,7 @@ class UFOWebSocketHandler:
         )
         await websocket.send_text(server_message.model_dump_json())
 
-    async def handle_unknown(self, data: ClientMessage, websocket: WebSocket):
+    async def handle_unknown(self, data: ClientMessage, websocket: WebSocket) -> None:
         """
         Handle unknown message types.
         :param data: The data from the client.
@@ -153,7 +156,9 @@ class UFOWebSocketHandler:
 
         await websocket.send_text(server_message.model_dump_json())
 
-    async def handle_task_request(self, data: ClientMessage, websocket: WebSocket):
+    async def handle_task_request(
+        self, data: ClientMessage, websocket: WebSocket
+    ) -> None:
         """
         Handle a task request message from the client.
         :param data: The data from the client.
@@ -198,7 +203,7 @@ class UFOWebSocketHandler:
             )
             await websocket.send_text(server_message.model_dump_json())
 
-    async def handle_command_result(self, data: ClientMessage):
+    async def handle_command_result(self, data: ClientMessage) -> None:
         """
         Handle the result of commands. Run in background.
         :param data: The data from the client.
@@ -210,6 +215,8 @@ class UFOWebSocketHandler:
         session_id = data.session_id
         session = self.session_manager.get_or_create_session(session_id, data.request)
 
-        message_bus = session.context.message_bus
+        command_dispatcher: WebSocketCommandDispatcher = (
+            session.context.command_dispatcher
+        )
 
-        await message_bus.set_result(response_id, data)
+        await command_dispatcher.set_result(response_id, data)

@@ -17,9 +17,9 @@ if TYPE_CHECKING:
     from ufo.module.basic import BaseSession
 
 
-class BasicMessageBus(ABC):
+class BasicCommandDispatcher(ABC):
     """
-    Abstract base class for message bus handling.
+    Abstract base class for command dispatcher handling.
     Provides methods to send commands and receive results.
     """
 
@@ -28,7 +28,7 @@ class BasicMessageBus(ABC):
         self, commands: List[Command], timeout: float = 10.0
     ) -> Optional[List[Result]]:
         """
-        Publish commands to the message bus and wait for the result.
+        Publish commands to the command dispatcher and wait for the result.
         :param commands: The list of commands to publish.
         :param timeout: The timeout for waiting for the result.
         :return: The list of results from the commands, or None if timed out.
@@ -36,15 +36,18 @@ class BasicMessageBus(ABC):
         pass
 
 
-class LocalMessageBus(BasicMessageBus):
+class LocalCommandDispatcher(BasicCommandDispatcher):
     """
-    Message bus for local communication between components.
+    command dispatcher for local communication between components.
     """
 
-    def __init__(self, session: "BaseSession", mcp_server_manager: MCPServerManager):
+    def __init__(
+        self, session: "BaseSession", mcp_server_manager: MCPServerManager
+    ) -> None:
         """
-        Initializes the LocalMessageBus.
-        :param session: The session associated with the message bus.
+        Initializes the LocalCommandDispatcher.
+        :param session: The session associated with the command dispatcher.
+        :param mcp_server_manager: The MCP server manager.
         """
         self.session = session
         self.pending: Dict[str, asyncio.Future] = {}
@@ -56,9 +59,14 @@ class LocalMessageBus(BasicMessageBus):
         self.computer_manager = ComputerManager(configs, mcp_server_manager)
         self.command_router = CommandRouter(self.computer_manager)
 
-    async def publish_commands(self, commands, timeout=10) -> Optional[List[Result]]:
+    async def publish_commands(
+        self, commands: List[Command], timeout=10
+    ) -> Optional[List[Result]]:
         """
-        Publish commands to the message bus and wait for the result.
+        Publish commands to the command dispatcher and wait for the result.
+        :param commands: The list of commands to publish.
+        :param timeout: The timeout for waiting for the result.
+        :return: The list of results from the commands, or None if timed out.
         """
         from ufo.module.context import ContextNames
 
@@ -77,22 +85,22 @@ class LocalMessageBus(BasicMessageBus):
         return action_results
 
 
-class WebSocketMessageBus(BasicMessageBus):
+class WebSocketCommandDispatcher(BasicCommandDispatcher):
     """
-    Message bus for communication between components.
+    command dispatcher for communication between components.
     Handles sending commands and receiving results via WebSocket using observers.
     """
 
     def __init__(self, session: "BaseSession", ws: Optional[WebSocket] = None) -> None:
         """
-        Initializes the MessageBus.
-        :param session: The session associated with the message bus.
+        Initializes the CommandDispatcher.
+        :param session: The session associated with the command dispatcher.
         :param ws: The WebSocket connection (optional).
         """
         self.ws = ws
         self.session = session
         self.pending: Dict[str, asyncio.Future] = {}
-        self.send_queue: asyncio.Queue = asyncio.Queue()
+        self.send_queue: asyncio.Queue = asyncio.Queue(maxsize=100)
         self.observers: List[asyncio.Task] = []
         self.logger = logging.getLogger(__name__)
 
@@ -149,7 +157,7 @@ class WebSocketMessageBus(BasicMessageBus):
         self, commands: List[Command], timeout: float = 10.0
     ) -> Optional[List[Result]]:
         """
-        Publish commands to the message bus and wait for the result.
+        Publish commands to the command dispatcher and wait for the result.
         :param commands: The list of commands to publish.
         :param timeout: The timeout for waiting for the result.
         :return: The list of results from the commands, or None if timed out.

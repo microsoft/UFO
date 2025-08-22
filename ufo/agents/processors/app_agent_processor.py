@@ -198,7 +198,7 @@ class AppAgentProcessor(BaseProcessor):
             }
         )
 
-        result = await self.context.message_bus.publish_commands(
+        result = await self.context.command_dispatcher.publish_commands(
             [
                 Command(
                     tool_name="capture_window_screenshot",
@@ -212,7 +212,7 @@ class AppAgentProcessor(BaseProcessor):
         utils.save_image_string(clean_screenshot_url, screenshot_save_path)
         self.logger.info(f"Clean screenshot saved to {screenshot_save_path}")
 
-        result = await self.context.message_bus.publish_commands(
+        result = await self.context.command_dispatcher.publish_commands(
             [
                 Command(
                     tool_name="get_app_window_info",
@@ -268,7 +268,7 @@ class AppAgentProcessor(BaseProcessor):
 
             # Capture the desktop screenshot for all screens.
 
-            result = await self.context.message_bus.publish_commands(
+            result = await self.context.command_dispatcher.publish_commands(
                 [
                     Command(
                         tool_name="capture_desktop_screenshot",
@@ -323,7 +323,7 @@ class AppAgentProcessor(BaseProcessor):
         Save the UI tree of the current application window.
         """
         if self.application_window is not None:
-            result = await self.context.message_bus.publish_commands(
+            result = await self.context.command_dispatcher.publish_commands(
                 [
                     Command(
                         tool_name="get_ui_tree",
@@ -385,7 +385,7 @@ class AppAgentProcessor(BaseProcessor):
 
         if "uia" in control_detection_backend:
 
-            result = await self.context.message_bus.publish_commands(
+            result = await self.context.command_dispatcher.publish_commands(
                 [
                     Command(
                         tool_name="get_app_window_controls_info",
@@ -619,7 +619,7 @@ class AppAgentProcessor(BaseProcessor):
             )
             return
 
-        result = await self.context.message_bus.publish_commands(
+        result = await self.context.command_dispatcher.publish_commands(
             [
                 Command(
                     tool_name=action.function,

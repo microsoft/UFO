@@ -16,6 +16,9 @@ from ufo.server.ws.handler import UFOWebSocketHandler
 def parse_args():
     parser = argparse.ArgumentParser(description="UFO Server")
     parser.add_argument("--port", type=int, default=5000, help="Flask API service port")
+    parser.add_argument(
+        "--host", type=str, default="0.0.0.0", help="Flask API service host"
+    )
     return parser.parse_args()
 
 
@@ -24,7 +27,6 @@ logging.basicConfig(
 )
 logger = logging.getLogger(__name__)
 
-# app = Flask(__name__)
 
 # Initialize FastAPI app
 app = FastAPI()
@@ -75,4 +77,4 @@ async def websocket_endpoint(websocket: WebSocket):
 if __name__ == "__main__":
 
     cli_args = parse_args()
-    uvicorn.run(app, host="0.0.0.0", port=cli_args.port, reload=True)
+    uvicorn.run(app, host=cli_args.host, port=cli_args.port, reload=True)

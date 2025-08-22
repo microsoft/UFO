@@ -10,7 +10,7 @@ from typing import Any, Dict, List, Optional, Type, Union
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ufo.module.message import BasicMessageBus
+from ufo.module.dispatcher import BasicCommandDispatcher
 from ufo.utils import is_json_serializable, print_with_color
 
 
@@ -169,7 +169,7 @@ class Context:
     _context: Dict[str, Any] = field(
         default_factory=lambda: {name.name: name.default_value for name in ContextNames}
     )
-    message_bus: Optional[BasicMessageBus] = None
+    command_dispatcher: Optional[BasicCommandDispatcher] = None
 
     def get(self, key: ContextNames) -> Any:
         """
@@ -356,9 +356,11 @@ class Context:
         # Sync the current round step and cost
         self._sync_round_values()
 
-    def attach_message_bus(self, message_bus: BasicMessageBus) -> None:
+    def attach_command_dispatcher(
+        self, command_dispatcher: BasicCommandDispatcher
+    ) -> None:
         """
-        Attach a WebSocket to the message bus.
+        Attach a WebSocket to the command dispatcher.
         :param ws: The WebSocket connection to attach.
         """
-        self.message_bus = message_bus
+        self.command_dispatcher = command_dispatcher

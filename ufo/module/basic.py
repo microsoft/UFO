@@ -273,7 +273,7 @@ class BaseRound(ABC):
 
             try:
 
-                result = await self.context.message_bus.publish_commands(
+                result = await self.context.command_dispatcher.publish_commands(
                     [
                         Command(
                             tool_name="capture_window_screenshot",
@@ -314,7 +314,7 @@ class BaseRound(ABC):
                     + f"desktop_round_{self.id}_sub_round_{sub_round_id}_final.png"
                 )
 
-                result = await self.context.message_bus.publish_commands(
+                result = await self.context.command_dispatcher.publish_commands(
                     [
                         Command(
                             tool_name="capture_desktop_screenshot",
@@ -333,7 +333,7 @@ class BaseRound(ABC):
         Save the UI tree of the current application window.
         """
         if self.application_window is not None:
-            result = await self.context.message_bus.publish_commands(
+            result = await self.context.command_dispatcher.publish_commands(
                 [
                     Command(
                         tool_name="get_ui_tree",
@@ -789,7 +789,7 @@ class BaseSession(ABC):
         ):
 
             try:
-                result = await self.context.message_bus.publish_commands(
+                result = await self.context.command_dispatcher.publish_commands(
                     [
                         Command(
                             tool_name="capture_window_screenshot",
@@ -809,7 +809,7 @@ class BaseSession(ABC):
                 )
             if configs.get("SAVE_UI_TREE", False):
 
-                result = await self.context.message_bus.publish_commands(
+                result = await self.context.command_dispatcher.publish_commands(
                     [
                         Command(
                             tool_name="get_ui_tree",
@@ -829,7 +829,7 @@ class BaseSession(ABC):
 
                 desktop_save_path = self.log_path + "desktop_final.png"
 
-                result = await self.context.message_bus.publish_commands(
+                result = await self.context.command_dispatcher.publish_commands(
                     [
                         Command(
                             tool_name="capture_desktop_screenshot",

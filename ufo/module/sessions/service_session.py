@@ -5,7 +5,7 @@ from fastapi import WebSocket
 from ufo.config import Config
 from ufo.module.sessions.session import Session
 from ufo.module.context import ContextNames
-from ufo.module.message import WebSocketMessageBus
+from ufo.module.dispatcher import WebSocketCommandDispatcher
 
 
 configs = Config.get_instance().config_data
@@ -44,8 +44,8 @@ class ServiceSession(Session):
         super()._init_context()
 
         self.context.set(ContextNames.MODE, "normal")
-        message_bus = WebSocketMessageBus(self, self.websocket)
-        self.context.attach_message_bus(self, message_bus)
+        command_dispatcher = WebSocketCommandDispatcher(self, self.websocket)
+        self.context.attach_command_dispatcher(self, command_dispatcher)
 
     def next_request(self) -> str:
         """

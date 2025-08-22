@@ -63,7 +63,7 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
             for action in self.function_calls
         ]
 
-        results = await self.context.message_bus.publish_commands(commands)
+        results = await self.context.command_dispatcher.publish_commands(commands)
 
         for i, action in enumerate(self.function_calls):
             self.logger.info(f"Result for execution {action}: {results[i].result}")
