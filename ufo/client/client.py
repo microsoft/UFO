@@ -52,7 +52,7 @@ async def main():
     parser.add_argument(
         "--request",
         dest="request_text",
-        default='open notepad and write "Hello, World!"',
+        default=None,
         help="The task request text",
     )
     parser.add_argument(

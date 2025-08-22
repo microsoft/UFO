@@ -6,8 +6,7 @@ from typing import Optional
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
-from ufo.contracts.contracts import ClientMessage, ServerMessage
-from ufo.module.context import ContextNames
+from ufo.contracts.contracts import ServerMessage
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.task_manager import TaskManager
 from ufo.server.services.ws_manager import WSManager
@@ -38,10 +37,10 @@ def create_api_router(
         import asyncio, json
 
         client_id = data.get("client_id")
-        task_content = data.get("task_content", "")
+        user_request = data.get("request", "")
         task_name = data.get("task_name", str(uuid4()))
 
-        if not task_content:
+        if not user_request:
             logger.error(f"Got empty task content for client {client_id}.")
             raise HTTPException(status_code=400, detail="Empty task content")
 
@@ -54,25 +53,23 @@ def create_api_router(
         else:
             logger.info(f"Task name: {task_name}.")
 
-        logger.info(f"Dispatching task '{task_content}' to client '{client_id}'")
+        logger.info(f"Dispatching task '{user_request}' to client '{client_id}'")
 
         ws = ws_manager.get_client(client_id)
         if not ws:
             logger.error(f"Client {client_id} not online.")
             raise HTTPException(status_code=404, detail="Client not online")
 
-        ws_event_loop = asyncio.get_event_loop()
-
-        message = ServerMessage(
-            user_request=task_content,
+        server_message = ServerMessage(
+            type="task",
+            status="continue",
+            user_request=user_request,
             task_name=task_name,
             timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         )
 
-        asyncio.run_coroutine_threadsafe(
-            ws.send_text(message.model_dump()),
-            ws_event_loop,
-        )
+        await ws.send_text(server_message.model_dump_json())
+
         return {"status": "dispatched", "task_name": task_name, "client_id": client_id}
 
     @router.get("/api/task_result/{task_name}")

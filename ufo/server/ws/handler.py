@@ -4,7 +4,7 @@ import uuid
 
 from fastapi import WebSocket, WebSocketDisconnect
 
-from ufo.contracts.contracts import ClientMessage, ServerMessage, Command
+from ufo.contracts.contracts import ClientMessage, ServerMessage
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.task_manager import TaskManager
 from ufo.server.services.ws_manager import WSManager
