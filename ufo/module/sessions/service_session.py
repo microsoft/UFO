@@ -2,9 +2,7 @@ from typing import Optional
 
 from fastapi import WebSocket
 
-from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.config import Config
-from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.sessions.session import Session
 from ufo.module.context import ContextNames
 from ufo.module.message import WebSocketMessageBus
