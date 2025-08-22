@@ -29,44 +29,6 @@ def create_api_router(
 ):
     router = APIRouter()
 
-    @router.post("/api/ufo/task")
-    async def run_task(req: RunTaskRequest):
-        try:
-            ufo_request = ClientMessage(**req.model_dump())
-            session_id = ufo_request.session_id
-
-            if not session_id or session_id not in session_manager.sessions:
-                session_id = ufo_request.session_id or str(uuid4())
-
-            session = session_manager.get_or_create_session(
-                session_id, ufo_request.request
-            )
-
-            if ufo_request.action_results:
-                session_manager.process_action_results(
-                    session_id, ufo_request.action_results
-                )
-
-            status = "continue"
-            try:
-                session.run_coro.send(None)
-            except StopIteration:
-                status = "completed"
-
-            commands = session.get_commands()
-            response = ServerMessage(
-                status=status,
-                agent_name=session.current_round.agent.__class__.__name__,
-                root_name=session.context.get(ContextNames.APPLICATION_ROOT_NAME),
-                process_name=session.context.get(ContextNames.APPLICATION_PROCESS_NAME),
-                actions=commands,
-                session_id=session_id,
-                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            )
-            return response.model_dump()
-        except Exception as e:
-            raise HTTPException(status_code=500, detail=f"Server error: {str(e)}")
-
     @router.get("/api/clients")
     async def list_clients():
         return {"online_clients": ws_manager.list_clients()}
@@ -75,28 +37,47 @@ def create_api_router(
     async def dispatch_task_api(data: dict):
         import asyncio, json
 
-        client_id = data["client_id"]
-        task_content = data["request"]
+        client_id = data.get("client_id")
+        task_content = data.get("task_content", "")
+        task_name = data.get("task_name", str(uuid4()))
+
+        if not task_content:
+            logger.error(f"Got empty task content for client {client_id}.")
+            raise HTTPException(status_code=400, detail="Empty task content")
+
+        if not client_id:
+            logger.error("Client ID must be provided.")
+            raise HTTPException(status_code=400, detail="Empty client ID")
+
+        if not task_name:
+            logger.warning(f"Task name not provided, using {task_name}.")
+        else:
+            logger.info(f"Task name: {task_name}.")
+
+        logger.info(f"Dispatching task '{task_content}' to client '{client_id}'")
+
         ws = ws_manager.get_client(client_id)
         if not ws:
             logger.error(f"Client {client_id} not online.")
             raise HTTPException(status_code=404, detail="Client not online")
 
-        task_id = task_manager.new_task_id()
         ws_event_loop = asyncio.get_event_loop()
+
+        message = ServerMessage(
+            user_request=task_content,
+            task_name=task_name,
+            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        )
+
         asyncio.run_coroutine_threadsafe(
-            ws.send_text(
-                json.dumps(
-                    {"type": "task", "task_id": task_id, "request": task_content}
-                )
-            ),
+            ws.send_text(message.model_dump()),
             ws_event_loop,
         )
-        return {"status": "dispatched", "task_id": task_id}
+        return {"status": "dispatched", "task_name": task_name, "client_id": client_id}
 
-    @router.get("/api/task_result/{task_id}")
-    async def get_task_result(task_id: str):
-        result = task_manager.get_result(task_id)
+    @router.get("/api/task_result/{task_name}")
+    async def get_task_result(task_name: str):
+        result = task_manager.get_result(task_name)
         if not result:
             return {"status": "pending"}
         return {"status": "done", "result": result}

@@ -79,7 +79,7 @@ async def main():
     for _ in session.run_coro:
         commands = session.get_commands()
         command_results = await command_router.execute(
-            agent_name=session.current_round.agent.__class__.__name__,
+            agent_name=session.current_agent_class,
             root_name=session.context.get(ContextNames.APPLICATION_ROOT_NAME),
             process_name=session.context.get(ContextNames.APPLICATION_PROCESS_NAME),
             commands=commands,
