@@ -24,7 +24,7 @@ class BasicCommandDispatcher(ABC):
     """
 
     @abstractmethod
-    async def publish_commands(
+    async def execute_commands(
         self, commands: List[Command], timeout: float = 10.0
     ) -> Optional[List[Result]]:
         """
@@ -59,7 +59,7 @@ class LocalCommandDispatcher(BasicCommandDispatcher):
         self.computer_manager = ComputerManager(configs, mcp_server_manager)
         self.command_router = CommandRouter(self.computer_manager)
 
-    async def publish_commands(
+    async def execute_commands(
         self, commands: List[Command], timeout=10
     ) -> Optional[List[Result]]:
         """
@@ -153,7 +153,7 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         """
         await self.send_queue.put(message)
 
-    async def publish_commands(
+    async def execute_commands(
         self, commands: List[Command], timeout: float = 10.0
     ) -> Optional[List[Result]]:
         """

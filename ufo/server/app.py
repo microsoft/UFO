@@ -8,7 +8,6 @@ from fastapi import FastAPI, WebSocket, WebSocketDisconnect
 from ufo.contracts.contracts import ClientMessage
 from ufo.server.services.api import create_api_router
 from ufo.server.services.session_manager import SessionManager
-from ufo.server.services.task_manager import TaskManager
 from ufo.server.services.ws_manager import WSManager
 from ufo.server.ws.handler import UFOWebSocketHandler
 
@@ -33,15 +32,14 @@ app = FastAPI()
 
 # Initialize managers
 session_manager = SessionManager()
-task_manager = TaskManager()
 ws_manager = WSManager()
 
 
 # Create API router
-api_router = create_api_router(session_manager, task_manager, ws_manager)
+api_router = create_api_router(session_manager, ws_manager)
 app.include_router(api_router)
 
-ws_handler = UFOWebSocketHandler(ws_manager, session_manager, task_manager)
+ws_handler = UFOWebSocketHandler(ws_manager, session_manager)
 
 
 @app.websocket("/ws")

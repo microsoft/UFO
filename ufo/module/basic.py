@@ -19,7 +19,7 @@ import logging
 import os
 import time
 from abc import ABC, abstractmethod
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -273,7 +273,7 @@ class BaseRound(ABC):
 
             try:
 
-                result = await self.context.command_dispatcher.publish_commands(
+                result = await self.context.command_dispatcher.execute_commands(
                     [
                         Command(
                             tool_name="capture_window_screenshot",
@@ -314,7 +314,7 @@ class BaseRound(ABC):
                     + f"desktop_round_{self.id}_sub_round_{sub_round_id}_final.png"
                 )
 
-                result = await self.context.command_dispatcher.publish_commands(
+                result = await self.context.command_dispatcher.execute_commands(
                     [
                         Command(
                             tool_name="capture_desktop_screenshot",
@@ -333,7 +333,7 @@ class BaseRound(ABC):
         Save the UI tree of the current application window.
         """
         if self.application_window is not None:
-            result = await self.context.command_dispatcher.publish_commands(
+            result = await self.context.command_dispatcher.execute_commands(
                 [
                     Command(
                         tool_name="get_ui_tree",
@@ -421,6 +421,7 @@ class BaseSession(ABC):
         self._finish = False
         self._results = {}
         self.logger = logging.getLogger(__name__)
+        self._results = None
 
         self._host_agent: HostAgent = AgentFactory.create_agent(
             "host",
@@ -753,13 +754,33 @@ class BaseSession(ABC):
         additional_info = {"level": "session", "request": requests, "id": 0}
         result.update(additional_info)
 
-        self.results = result
+        self._results = result
 
         self.cost += cost
 
         evaluator.print_response(result)
 
         self.evaluation_logger.info(json.dumps(result))
+
+        self.logger.info(
+            f"Evaluation result saved to {os.path.join(self.log_path, 'evaluation.log')}"
+        )
+
+    @property
+    def results(self) -> Any:
+        """
+        Get the evaluation results of the session.
+        return: The evaluation results of the session.
+        """
+        return self._results
+
+    @results.setter
+    def results(self, value: Any):
+        """
+        Set the evaluation results of the session.
+        :param value: The evaluation results to set.
+        """
+        self._results = value
 
     @property
     def session_type(self) -> str:
@@ -789,7 +810,7 @@ class BaseSession(ABC):
         ):
 
             try:
-                result = await self.context.command_dispatcher.publish_commands(
+                result = await self.context.command_dispatcher.execute_commands(
                     [
                         Command(
                             tool_name="capture_window_screenshot",
@@ -809,7 +830,7 @@ class BaseSession(ABC):
                 )
             if configs.get("SAVE_UI_TREE", False):
 
-                result = await self.context.command_dispatcher.publish_commands(
+                result = await self.context.command_dispatcher.execute_commands(
                     [
                         Command(
                             tool_name="get_ui_tree",
@@ -829,7 +850,7 @@ class BaseSession(ABC):
 
                 desktop_save_path = self.log_path + "desktop_final.png"
 
-                result = await self.context.command_dispatcher.publish_commands(
+                result = await self.context.command_dispatcher.execute_commands(
                     [
                         Command(
                             tool_name="capture_desktop_screenshot",

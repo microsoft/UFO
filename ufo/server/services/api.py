@@ -8,7 +8,6 @@ from pydantic import BaseModel
 
 from ufo.contracts.contracts import ServerMessage
 from ufo.server.services.session_manager import SessionManager
-from ufo.server.services.task_manager import TaskManager
 from ufo.server.services.ws_manager import WSManager
 from uuid import uuid4
 
@@ -16,16 +15,7 @@ from uuid import uuid4
 logger = logging.getLogger(__name__)
 
 
-# Pydantic Model 替代 request.json
-class RunTaskRequest(BaseModel):
-    session_id: Optional[str]
-    request: Optional[str]
-    action_results: Optional[dict]
-
-
-def create_api_router(
-    session_manager: SessionManager, task_manager: TaskManager, ws_manager: WSManager
-):
+def create_api_router(session_manager: SessionManager, ws_manager: WSManager):
     router = APIRouter()
 
     @router.get("/api/clients")
@@ -74,7 +64,7 @@ def create_api_router(
 
     @router.get("/api/task_result/{task_name}")
     async def get_task_result(task_name: str):
-        result = task_manager.get_result(task_name)
+        result = session_manager.get_result_by_task(task_name)
         if not result:
             return {"status": "pending"}
         return {"status": "done", "result": result}

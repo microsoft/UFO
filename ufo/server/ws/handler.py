@@ -6,7 +6,6 @@ from fastapi import WebSocket, WebSocketDisconnect
 
 from ufo.contracts.contracts import ClientMessage, ServerMessage
 from ufo.server.services.session_manager import SessionManager
-from ufo.server.services.task_manager import TaskManager
 from ufo.server.services.ws_manager import WSManager
 from ufo.module.dispatcher import WebSocketCommandDispatcher
 
@@ -20,11 +19,9 @@ class UFOWebSocketHandler:
         self,
         ws_manager: WSManager,
         session_manager: SessionManager,
-        task_manager: TaskManager,
     ):
         self.ws_manager = ws_manager
         self.session_manager = session_manager
-        self.task_manager = task_manager
         self.logger = logging.getLogger(self.__class__.__name__)
 
     async def connect(self, websocket: WebSocket) -> str:
@@ -179,10 +176,12 @@ class UFOWebSocketHandler:
 
         try:
             await session.run()
-            if session.is_finished():
+            if session.is_error():
+                status = "failed"
+                session.results = {"failure": "session ended with an error"}
+            elif session.is_finished():
                 status = "completed"
-            elif session.is_error():
-                status = "failure"
+
             self.logger.info(f"[WS] Task {session_id} is ending with status: {status}")
 
         except Exception as e:

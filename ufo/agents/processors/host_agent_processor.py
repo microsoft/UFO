@@ -115,7 +115,7 @@ class HostAgentProcessor(BaseProcessor):
 
         self._memory_data.add_values_from_dict({"CleanScreenshot": desktop_save_path})
 
-        result = await self.context.command_dispatcher.publish_commands(
+        result = await self.context.command_dispatcher.execute_commands(
             [
                 Command(
                     tool_name="capture_desktop_screenshot",
@@ -138,7 +138,7 @@ class HostAgentProcessor(BaseProcessor):
         Get the control information.
         """
 
-        result = await self.context.command_dispatcher.publish_commands(
+        result = await self.context.command_dispatcher.execute_commands(
             [
                 Command(
                     tool_name="get_desktop_app_info",
@@ -311,7 +311,7 @@ class HostAgentProcessor(BaseProcessor):
 
     async def _select_application(self, window_label: str) -> None:
 
-        result = await self.context.command_dispatcher.publish_commands(
+        result = await self.context.command_dispatcher.execute_commands(
             [
                 Command(
                     tool_name="select_application_window",
@@ -348,7 +348,7 @@ class HostAgentProcessor(BaseProcessor):
 
     async def _run_shell_command(self, command: str) -> None:
 
-        result = await self.context.command_dispatcher.publish_commands(
+        result = await self.context.command_dispatcher.execute_commands(
             [
                 Command(
                     tool_name="run_shell",

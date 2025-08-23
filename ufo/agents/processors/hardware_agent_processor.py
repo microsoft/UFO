@@ -80,7 +80,7 @@ class HardwareAgentProcessor(AppAgentProcessor):
             }
         )
 
-        result = await self.context.command_dispatcher.publish_commands(
+        result = await self.context.command_dispatcher.execute_commands(
             [
                 Command(
                     tool_name="capture_window_screenshot",

@@ -502,7 +502,7 @@ class AppAgent(BasicAgent):
         """
 
         self.logger.info("Loading MCP tool information...")
-        result = await context.command_dispatcher.publish_commands(
+        result = await context.command_dispatcher.execute_commands(
             [
                 Command(
                     tool_name="list_tools",
