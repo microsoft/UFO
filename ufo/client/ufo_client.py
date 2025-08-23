@@ -20,19 +20,16 @@ class UFOClient:
 
     def __init__(
         self,
-        server_url,
         mcp_server_manager: MCPServerManager,
         computer_manager: ComputerManager,
         client_id: Optional[str] = None,
     ):
         """
         Initialize the UFO web client.
-        :param server_url: URL of the UFO web service
         :param mcp_server_manager: Instance of MCPServerManager to manage MCP servers
         :param computer_manager: Instance of ComputerManager to manage Computer instances
         :param client_id: Optional client ID for the UFO client
         """
-        self.server_url = server_url.rstrip("/")
         self.mcp_server_manager = mcp_server_manager
         self.computer_manager = computer_manager
         self.command_router = CommandRouter(

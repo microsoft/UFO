@@ -1,10 +1,8 @@
-# 改动点：Flask Blueprint -> FastAPI APIRouter，request.json -> Pydantic model
 import datetime
 import logging
-from typing import Optional
+from typing import Any, Dict
 
 from fastapi import APIRouter, HTTPException
-from pydantic import BaseModel
 
 from ufo.contracts.contracts import ServerMessage
 from ufo.server.services.session_manager import SessionManager
@@ -15,7 +13,15 @@ from uuid import uuid4
 logger = logging.getLogger(__name__)
 
 
-def create_api_router(session_manager: SessionManager, ws_manager: WSManager):
+def create_api_router(
+    session_manager: SessionManager, ws_manager: WSManager
+) -> APIRouter:
+    """
+    Create the API router for the UFO server.
+    :param session_manager: The session manager instance.
+    :param ws_manager: The WebSocket manager instance.
+    :return: The FastAPI APIRouter instance.
+    """
     router = APIRouter()
 
     @router.get("/api/clients")
@@ -23,7 +29,7 @@ def create_api_router(session_manager: SessionManager, ws_manager: WSManager):
         return {"online_clients": ws_manager.list_clients()}
 
     @router.post("/api/dispatch")
-    async def dispatch_task_api(data: dict):
+    async def dispatch_task_api(data: Dict[str, Any]):
         import asyncio, json
 
         client_id = data.get("client_id")

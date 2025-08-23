@@ -4,6 +4,7 @@ from typing import Any, Callable, Dict, Optional, Union
 
 from fastmcp import FastMCP
 from fastmcp.client.transports import StdioTransport
+
 from ufo.client.mcp.mcp_registry import MCPRegistry
 
 # MCPServerType can be either a URL string for HTTP servers or a FastMCP instance for local in-memory servers, or a StdioTransport instance.
@@ -189,7 +190,9 @@ class MCPServerManager:
         )
 
     @classmethod
-    def create_mcp_server(cls, mcp_config: Dict[str, Any], *args, **kwargs) -> BaseMCPServer:
+    def create_mcp_server(
+        cls, mcp_config: Dict[str, Any], *args, **kwargs
+    ) -> BaseMCPServer:
         """
         Create an MCP server based on the type and parameters.
         :param mcp_config: Configuration dictionary for the MCP server.

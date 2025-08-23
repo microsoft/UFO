@@ -24,12 +24,6 @@ async def main():
     # Parse command line arguments
     parser = argparse.ArgumentParser(description="UFO Web Client")
     parser.add_argument(
-        "--server",
-        dest="server_url",
-        default="http://localhost:5000",
-        help="UFO Web Service URL (default: http://localhost:5000)",
-    )
-    parser.add_argument(
         "--client-id",
         dest="client_id",
         default="client_001",
@@ -69,7 +63,6 @@ async def main():
 
     # Create UFO client
     client = UFOClient(
-        args.server_url,
         mcp_server_manager=mcp_server_manager,
         computer_manager=computer_manager,
         client_id=args.client_id,

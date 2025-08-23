@@ -22,9 +22,10 @@ if ufo_root not in sys.path:
 Mock MCP server for testing hardware control tools.
 This server provides dummy implementations for various hardware control tools.
 """
-from typing import Dict, Any, List, Tuple, Optional, Annotated
-from pydantic import Field
+from typing import Annotated, Any, Dict, List, Optional, Tuple
+
 from fastmcp import FastMCP
+from pydantic import Field
 
 
 def create_hardware_mcp_server(host: str = "", port: int = 8006) -> None:
