@@ -1,6 +1,6 @@
 import logging
 import threading
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 from fastapi import WebSocket
 
@@ -11,6 +11,10 @@ configs = Config.get_instance().config_data
 
 
 class SessionManager:
+    """
+    This class manages active sessions for the UFO service.
+    """
+
     def __init__(self):
         """
         Initialize the SessionManager.
@@ -22,11 +26,12 @@ class SessionManager:
         self.session_id_dict: Dict[str, str] = {}
         self.lock = threading.Lock()
         self.logger = logging.getLogger(__name__)
+        self.results: Dict[str, Dict[str, Any]] = {}
 
     def get_or_create_session(
         self,
         session_id: str,
-        task_name: str,
+        task_name: Optional[str] = "test_task",
         request: Optional[str] = None,
         websocket: Optional[WebSocket] = None,
     ) -> ServiceSession:
@@ -46,7 +51,7 @@ class SessionManager:
                     request=request,
                     websocket=websocket,
                 )
-                task_name = session.task
+
                 self.session_id_dict[task_name] = session_id
                 self.sessions[session_id] = session
                 self.logger.info(f"Created new session: {session_id}")
@@ -63,7 +68,7 @@ class SessionManager:
         """
         with self.lock:
             if session_id in self.sessions:
-                return self.sessions[session_id].get_result()
+                return self.sessions[session_id].results
             return None
 
     def get_result_by_task(self, task_name: str) -> Optional[Dict[str, any]]:
@@ -75,8 +80,16 @@ class SessionManager:
         with self.lock:
             session_id = self.session_id_dict.get(task_name)
             if session_id:
-                return self.sessions[session_id].results
-            return None
+                return self.get_result(session_id)
+
+    def set_results(self, session_id: str):
+        """
+        Set the result for a completed session.
+        :param session_id: The ID of the session to set the result for.
+        """
+        with self.lock:
+            if session_id in self.sessions:
+                self.results[session_id] = self.sessions[session_id].results
 
     def remove_session(self, session_id: str):
         """

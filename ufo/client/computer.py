@@ -57,6 +57,7 @@ class Computer:
 
         self.logger = logging.getLogger(self.__class__.__name__)
 
+        # Register meta tools
         for attr in dir(self):
             method = getattr(self, attr)
             if callable(method) and hasattr(method, "_meta_tool_name"):
@@ -70,6 +71,7 @@ class Computer:
         self._data_collection_servers = self._init_data_collection_servers()
         self._action_servers = self._init_action_servers()
 
+        # Register MCP servers in parallel
         await asyncio.gather(
             self.register_mcp_servers(
                 self._data_collection_servers,

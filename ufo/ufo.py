@@ -5,9 +5,7 @@ import argparse
 import logging
 from datetime import datetime
 
-from ufo.module.client import UFOClientManager
-from ufo.module.sessions.session import SessionFactory
-
+from ufo.module.session_pool import SessionFactory, SessionPool
 
 args = argparse.ArgumentParser()
 args.add_argument(
@@ -76,7 +74,7 @@ async def main():
         request=parsed_args.request,
     )
 
-    clients = UFOClientManager(sessions)
+    clients = SessionPool(sessions)
     await clients.run_all()
 
 

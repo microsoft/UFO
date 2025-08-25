@@ -202,6 +202,9 @@ class UFOWebSocketHandler:
             )
             await websocket.send_text(server_message.model_dump_json())
 
+            # Save results to session manager
+            self.session_manager.set_results(session_id)
+
     async def handle_command_result(self, data: ClientMessage) -> None:
         """
         Handle the result of commands. Run in background.
@@ -212,7 +215,7 @@ class UFOWebSocketHandler:
 
         response_id = data.prev_response_id
         session_id = data.session_id
-        session = self.session_manager.get_or_create_session(session_id, data.request)
+        session = self.session_manager.get_or_create_session(session_id)
 
         command_dispatcher: WebSocketCommandDispatcher = (
             session.context.command_dispatcher
