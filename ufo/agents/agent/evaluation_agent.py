@@ -8,7 +8,7 @@ from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.evaluaton_agent_state import EvaluatonAgentStatus
 from ufo.config import Config
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
-from ufo.module.context import Context, ContextNames
+from ufo.module.context import Context
 from ufo.utils import json_parser, print_with_color
 
 
