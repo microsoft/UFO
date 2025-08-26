@@ -1,5 +1,4 @@
 import argparse
-import asyncio
 import logging
 
 import uvicorn
@@ -34,7 +33,7 @@ session_manager = SessionManager()
 ws_manager = WSManager()
 
 
-# Create API router
+# Create API router for http requests
 api_router = create_api_router(session_manager, ws_manager)
 app.include_router(api_router)
 

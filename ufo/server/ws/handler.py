@@ -27,6 +27,11 @@ class UFOWebSocketHandler:
         ws_manager: WSManager,
         session_manager: SessionManager,
     ):
+        """
+        Initializes the WebSocket handler.
+        :param ws_manager: The WebSocket manager.
+        :param session_manager: The session manager.
+        """
         self.ws_manager = ws_manager
         self.session_manager = session_manager
         self.logger = logging.getLogger(self.__class__.__name__)
