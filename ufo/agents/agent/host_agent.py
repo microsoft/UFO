@@ -13,7 +13,7 @@ from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
 from ufo.agents.agent.basic import BasicAgent, AgentRegistry
 from ufo.agents.agent.follower_agent import FollowerAgent
-from ufo.agents.agent.hardware_agent import HardwareAgent
+from ufo.agents.agent.customized_agent import HardwareAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
