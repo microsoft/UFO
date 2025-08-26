@@ -8,7 +8,6 @@ from typing import Dict, List, Optional
 
 from ufo.config import Config
 from ufo.module.context import Context, ContextNames
-from ufo.prompter.agent_prompter import APIPromptLoader
 from ufo.prompter.basic import BasicPrompter
 from ufo.trajectory import parser
 import ufo.utils
