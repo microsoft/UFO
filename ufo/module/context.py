@@ -56,6 +56,8 @@ class ContextNames(Enum):
         "APPLICATION_WINDOW_INFO"  # The information of the application window
     )
 
+    TOOL_INFO = "TOOL_INFO"  # The information of the tools
+
     @property
     def default_value(self) -> Any:
         """
@@ -87,6 +89,7 @@ class ContextNames(Enum):
             self == ContextNames.ROUND_STEP
             or self == ContextNames.ROUND_COST
             or self == ContextNames.ROUND_SUBTASK_AMOUNT
+            or self == ContextNames.TOOL_INFO
         ):
             return {}
         elif (
@@ -140,6 +143,7 @@ class ContextNames(Enum):
             or self == ContextNames.ROUND_COST
             or self == ContextNames.CURRENT_ROUND_SUBTASK_AMOUNT
             or self == ContextNames.STRUCTURAL_LOGS
+            or self == ContextNames.TOOL_INFO
         ):
             return dict
         elif (

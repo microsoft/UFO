@@ -8,6 +8,7 @@ from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.evaluaton_agent_state import EvaluatonAgentStatus
 from ufo.config import Config
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
+from ufo.module.context import Context, ContextNames
 from ufo.utils import json_parser, print_with_color
 
 
@@ -22,11 +23,9 @@ class EvaluationAgent(BasicAgent):
     def __init__(
         self,
         name: str,
-        app_root_name: str,
         is_visual: bool,
         main_prompt: str,
         example_prompt: str,
-        api_prompt: str,
     ):
         """
         Initialize the FollowAgent.
@@ -36,13 +35,10 @@ class EvaluationAgent(BasicAgent):
 
         super().__init__(name=name)
 
-        self._app_root_name = app_root_name
         self.prompter = self.get_prompter(
             is_visual,
             main_prompt,
             example_prompt,
-            api_prompt,
-            app_root_name,
         )
 
     def get_prompter(
@@ -50,8 +46,6 @@ class EvaluationAgent(BasicAgent):
         is_visual,
         prompt_template: str,
         example_prompt_template: str,
-        api_prompt_template: str,
-        root_name: Optional[str] = None,
     ) -> EvaluationAgentPrompter:
         """
         Get the prompter for the agent.
@@ -61,22 +55,27 @@ class EvaluationAgent(BasicAgent):
             is_visual=is_visual,
             prompt_template=prompt_template,
             example_prompt_template=example_prompt_template,
-            api_prompt_template=api_prompt_template,
-            root_name=root_name,
         )
 
     def message_constructor(
-        self, log_path: str, request: str, eva_all_screenshots: bool = True
+        self,
+        log_path: str,
+        request: str,
+        eva_all_screenshots: bool = True,
+        context: Optional[Context] = None,
     ) -> Dict[str, Any]:
         """
         Construct the message.
         :param log_path: The path to the log file.
         :param request: The request.
         :param eva_all_screenshots: The flag indicating whether to evaluate all screenshots.
+        :param context: The context.
         :return: The message.
         """
 
-        evaagent_prompt_system_message = self.prompter.system_prompt_construction()
+        evaagent_prompt_system_message = self.prompter.system_prompt_construction(
+            context
+        )
 
         evaagent_prompt_user_message = self.prompter.user_content_construction(
             log_path=log_path, request=request, eva_all_screenshots=eva_all_screenshots
@@ -97,7 +96,11 @@ class EvaluationAgent(BasicAgent):
         return EvaluatonAgentStatus
 
     def evaluate(
-        self, request: str, log_path: str, eva_all_screenshots: bool = True
+        self,
+        request: str,
+        log_path: str,
+        eva_all_screenshots: bool = True,
+        context: Optional[Context] = None,
     ) -> Tuple[Dict[str, str], float]:
         """
         Evaluate the task completion.
@@ -106,7 +109,10 @@ class EvaluationAgent(BasicAgent):
         """
 
         message = self.message_constructor(
-            log_path=log_path, request=request, eva_all_screenshots=eva_all_screenshots
+            log_path=log_path,
+            request=request,
+            eva_all_screenshots=eva_all_screenshots,
+            context=context,
         )
         result, cost = self.get_response(
             message=message, namescope="EVALUATION_AGENT", use_backup_engine=True
@@ -163,11 +169,9 @@ if __name__ == "__main__":
 
     eva_agent = EvaluationAgent(
         name="eva_agent",
-        app_root_name="WINWORD.EXE",
         is_visual=True,
         main_prompt=configs["EVALUATION_PROMPT"],
         example_prompt="",
-        api_prompt=configs["API_PROMPT"],
     )
 
     request = "Can you open paint and draw a circle of radius 200px?"

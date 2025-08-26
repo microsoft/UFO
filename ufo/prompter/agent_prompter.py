@@ -4,7 +4,6 @@
 import json
 from typing import Any, Dict, List, Optional
 
-from ufo import utils
 from ufo.config import Config
 from ufo.contracts.contracts import MCPToolInfo
 from ufo.prompter.basic import BasicPrompter
@@ -224,6 +223,10 @@ class AppAgentPrompter(BasicPrompter):
         self.api_prompt_template = None
 
     def create_api_prompt_template(self, tools: List[MCPToolInfo]):
+        """
+        Create the API prompt template.
+        :param tools: The list of tools.
+        """
         self.api_prompt_template = BasicPrompter.tools_to_llm_prompt(tools)
 
     def system_prompt_construction(self, additional_examples: List[str] = []) -> str:

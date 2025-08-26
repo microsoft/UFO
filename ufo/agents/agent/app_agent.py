@@ -25,7 +25,7 @@ from ufo.config import Config
 from ufo.contracts.contracts import Command, MCPToolInfo
 from ufo.llm import AgentType
 from ufo.module import interactor
-from ufo.module.context import Context
+from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
 
 configs = Config.get_instance().config_data
@@ -526,6 +526,9 @@ class AppAgent(BasicAgent):
         )
 
         tools_info = [MCPToolInfo(**tool) for tool in tool_list]
+
+        # Update the tool information in the context for future use
+        context.update_dict(ContextNames.TOOL_INFO, {self._name: tools_info})
 
         self.prompter.create_api_prompt_template(tools=tools_info)
 

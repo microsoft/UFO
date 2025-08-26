@@ -728,11 +728,9 @@ class BaseSession(ABC):
 
         evaluator = EvaluationAgent(
             name="eva_agent",
-            app_root_name=self.context.get(ContextNames.APPLICATION_ROOT_NAME),
             is_visual=is_visual,
             main_prompt=configs["EVALUATION_PROMPT"],
             example_prompt="",
-            api_prompt=configs["API_PROMPT"],
         )
 
         requests = self.request_to_evaluate()
@@ -743,12 +741,14 @@ class BaseSession(ABC):
                 request=requests,
                 log_path=self.log_path,
                 eva_all_screenshots=configs.get("EVA_ALL_SCREENSHOTS", True),
+                context=self.context,
             )
         except Exception as e:
             result, cost = evaluator.evaluate(
                 request=requests,
                 log_path=self.log_path,
                 eva_all_screenshots=False,
+                context=self.context,
             )
 
         # Add additional information to the evaluation result.
