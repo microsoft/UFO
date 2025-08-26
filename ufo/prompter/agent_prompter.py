@@ -42,9 +42,15 @@ class HostAgentPrompter(BasicPrompter):
         apis = self.api_prompt_helper(verbose=0)
         examples = self.examples_prompt_helper()
 
+        third_party_instructions = self.third_party_agent_instruction()
+
         system_key = "system" if self.is_visual else "system_nonvisual"
 
-        return self.prompt_template[system_key].format(apis=apis, examples=examples)
+        return self.prompt_template[system_key].format(
+            apis=apis,
+            examples=examples,
+            third_party_instructions=third_party_instructions,
+        )
 
     def user_prompt_construction(
         self,
@@ -72,6 +78,24 @@ class HostAgentPrompter(BasicPrompter):
         )
 
         return prompt
+
+    def third_party_agent_instruction(
+        self,
+    ) -> str:
+        """
+        Construct the prompt for third party agent instruction.
+        :return: The prompt for third party agent instruction.
+        """
+        enabled_third_party_agents = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
+        third_party_agents_configs = configs.get("THIRD_PARTY_AGENT_CONFIG", {})
+
+        instructions = []
+        for agent_name in enabled_third_party_agents:
+            agent_config = third_party_agents_configs.get(agent_name, {})
+            instruction = agent_config.get("INTRODUCTION", "")
+            instructions.append(f"{agent_name}: {instruction}")
+
+        return "\n".join(instructions)
 
     def user_content_construction(
         self,
@@ -407,7 +431,9 @@ class AppAgentPrompter(BasicPrompter):
         return: The prompt for APIs.
         """
         if self.api_prompt_template is None:
-            raise ValueError("API prompt template is not set. Call create_api_prompt_template first.")
+            raise ValueError(
+                "API prompt template is not set. Call create_api_prompt_template first."
+            )
         return self.api_prompt_template
 
 
