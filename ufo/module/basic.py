@@ -662,7 +662,7 @@ class BaseSession(ABC):
         )
 
         self.cost += cost
-        utils.print_with_color("The experience has been saved.", "magenta")
+        self.logger.info(f"The experience has been saved to {experience_path}")
 
     def print_cost(self) -> None:
         """
@@ -682,6 +682,7 @@ class BaseSession(ABC):
                 ),
                 "yellow",
             )
+            self.logger.warning("Cost information is not available.")
 
     def is_error(self):
         """

@@ -5,7 +5,7 @@ import json
 import logging
 import os
 import time
-from typing import List, Optional
+from typing import Optional
 
 import psutil
 import win32com.client
@@ -15,7 +15,6 @@ from ufo.agents.agent.app_agent import OpenAIOperatorAgent
 from ufo.agents.agent.host_agent import AgentFactory
 from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
-from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.config import Config
 from ufo.module import interactor
@@ -24,6 +23,7 @@ from ufo.module.context import ContextNames
 from ufo.module.dispatcher import LocalCommandDispatcher
 from ufo.module.sessions.plan_reader import PlanReader
 from ufo.trajectory.parser import Trajectory
+from ufo.contracts.contracts import Command
 
 configs = Config.get_instance().config_data
 
@@ -54,6 +54,7 @@ class Session(BaseSession):
         super().__init__(task, should_evaluate, id)
 
         self._init_request = request
+        self.logger = logging.getLogger(__name__)
 
     async def run(self) -> None:
         """
@@ -63,6 +64,8 @@ class Session(BaseSession):
         # Save the experience if the user asks so.
 
         save_experience = configs.get("SAVE_EXPERIENCE", "always_not")
+
+        self.logger.info(f"Save experience setting: {save_experience}")
 
         if save_experience == "always":
             self.experience_saver()
@@ -457,43 +460,22 @@ class OpenAIOperatorSession(Session):
         # Initialize application_window as None, will be set via action callback
         self.application_window = None
 
-        # if session_data_manager:
-        #     # Use action/callback pattern for desktop control info
-        #     desktop_control_action = GetDesktopControlInfoAction(
-        #         params=GetDesktopControlInfoParams()
-        #     )
-        #     session_data_manager.add_action(
-        #         desktop_control_action,
-        #         setter=lambda value: self._desktop_control_info_callback(value),
-        #     )
-        # else:
-        #     # Fallback to direct call if action pattern is not available
-        #     inspector = ControlInspectorFacade()
-        #     self.application_window = inspector.desktop
+        application_process_name = "Desktop"
+        application_root_name = "Desktop"
 
-        # if self.application_window:
-        #     application_process_name = self.application_window.element_info.name
-        #     application_root_name = inspector.get_application_root_name(
-        #         self.application_window
-        #     )
-        # else:
-        #     # Set default values if desktop info not yet available
-        #     application_process_name = "Desktop"
-        #     application_root_name = "Desktop"
+        self._init_request = self.refine_request(request)
 
-        # self._init_request = self.refine_request(request)
+        self.context.set(ContextNames.APPLICATION_ROOT_NAME, application_root_name)
+        self.context.set(
+            ContextNames.APPLICATION_PROCESS_NAME, application_process_name
+        )
 
-        # self.context.set(ContextNames.APPLICATION_ROOT_NAME, application_root_name)
-        # self.context.set(
-        #     ContextNames.APPLICATION_PROCESS_NAME, application_process_name
-        # )
-
-        # self._host_agent: OpenAIOperatorAgent = AgentFactory.create_agent(
-        #     "operator",
-        #     name="OpenAIOperatorAgent",
-        #     process_name=application_process_name,
-        #     app_root_name=application_root_name,
-        # )
+        self._host_agent: OpenAIOperatorAgent = AgentFactory.create_agent(
+            "operator",
+            name="OpenAIOperatorAgent",
+            process_name=application_process_name,
+            app_root_name=application_root_name,
+        )
 
     def refine_request(self, request: str) -> str:
         """
@@ -507,43 +489,93 @@ class OpenAIOperatorSession(Session):
 
         return new_request
 
-    # def run(self) -> None:
-    #     """
-    #     Run the session.
-    #     """
-    #     while not self.is_finished():
+    async def run(self) -> None:
+        """
+        Run the session.
+        """
+        while not self.is_finished():
 
-    #         round = self.create_new_round()
+            round = self.create_new_round()
 
-    #         # Get session data manager from context
-    #         session_data_manager = self.context.get(ContextNames.SESSION_DATA_MANAGER)
+            if round is None:
+                break
+            round.run()
 
-    #         if session_data_manager:
-    #             # Use action/callback pattern for desktop control info
-    #             desktop_control_action = GetDesktopControlInfoAction(
-    #                 params=GetDesktopControlInfoParams()
-    #             )
-    #             session_data_manager.add_action(
-    #                 desktop_control_action,
-    #                 setter=lambda value: self._desktop_control_info_callback(value),
-    #             )
-    #         else:
-    #             # Fallback to direct call if action pattern is not available
-    #             self.application_window = ControlInspectorFacade().desktop
+        await self.capture_last_snapshot()
 
-    #         if round is None:
-    #             break
-    #         round.run()
+        if self._should_evaluate and not self.is_error():
+            self.evaluation()
 
-    #     self.capture_last_snapshot()
+        if configs.get("LOG_TO_MARKDOWN", True):
 
-    #     if self._should_evaluate and not self.is_error():
-    #         self.evaluation()
+            file_path = self.log_path
+            trajectory = Trajectory(file_path)
+            trajectory.to_markdown(file_path + "/output.md")
 
-    #     if configs.get("LOG_TO_MARKDOWN", True):
+        self.print_cost()
 
-    #         file_path = self.log_path
-    #         trajectory = Trajectory(file_path)
-    #         trajectory.to_markdown(file_path + "/output.md")
+    async def capture_last_snapshot(self) -> None:
+        """
+        Capture the last snapshot of the application, including the screenshot and the XML file if configured.
+        """  # Capture the final screenshot
+        screenshot_save_path = self.log_path + "action_step_final.png"
 
-    #     self.print_cost()
+        if (
+            self.application_window is not None
+            or self.application_window_info is not None
+        ):
+
+            try:
+                result = await self.context.command_dispatcher.execute_commands(
+                    [
+                        Command(
+                            tool_name="capture_desktop_screenshot",
+                            parameters={"all_screens": False},
+                            tool_type="data_collection",
+                        )
+                    ]
+                )
+                image = result[0].result
+                if image:
+                    utils.save_image_string(image, screenshot_save_path)
+
+            except Exception as e:
+                utils.print_with_color(
+                    f"Warning: The last snapshot capture failed, due to the error: {e}",
+                    "yellow",
+                )
+            if configs.get("SAVE_UI_TREE", False):
+
+                result = await self.context.command_dispatcher.execute_commands(
+                    [
+                        Command(
+                            tool_name="get_ui_tree",
+                            parameters={},
+                            tool_type="data_collection",
+                        )
+                    ]
+                )
+
+                ui_tree_path = os.path.join(self.log_path, "ui_trees")
+                ui_tree_file_name = "ui_tree_final.json"
+                ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
+
+                await self.current_round.save_ui_tree(ui_tree_save_path)
+
+            if configs.get("SAVE_FULL_SCREEN", False):
+
+                desktop_save_path = self.log_path + "desktop_final.png"
+
+                result = await self.context.command_dispatcher.execute_commands(
+                    [
+                        Command(
+                            tool_name="capture_desktop_screenshot",
+                            parameters={"all_screens": True},
+                            tool_type="data_collection",
+                        )
+                    ]
+                )
+
+                desktop_image = result[0].result
+                if desktop_image:
+                    utils.save_image_string(desktop_image, desktop_save_path)

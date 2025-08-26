@@ -16,7 +16,7 @@ from ufo.agents.processors.app_agent_processor import (
 )
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
-from ufo.contracts.contracts import Result
+from ufo.contracts.contracts import Result, Command
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
@@ -89,7 +89,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def capture_screenshot(self) -> None:
+    async def capture_screenshot(self) -> None:
         """
         Capture the screenshot.
         """
@@ -106,28 +106,28 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             }
         )
 
-        screenshot: Image = self.photographer.capture_app_window_screenshot(
-            self.application_window, save_path=screenshot_save_path, scalar=self.scaler
-        )
+        if self.context.get(ContextNames.MODE) == "normal_operator":
+            command = Command(
+                tool_name="capture_window_screenshot",
+                parameters={},
+                tool_type="data_collection",
+            )
+        elif self.context.get(ContextNames.MODE) == "operator":
+            command = Command(
+                tool_name="capture_desktop_screenshot",
+                parameters={"all_screens": False},
+                tool_type="data_collection",
+            )
+        result = await self.context.command_dispatcher.execute_commands([command])
+
+        clean_screenshot_url = result[0].result
+
+        screenshot = utils.save_image_string(clean_screenshot_url, screenshot_save_path)
+        self.logger.info(f"Clean screenshot saved to {screenshot_save_path}")
+
         self.width, self.height = screenshot.size
 
-        self._image_url = self.photographer.encode_image_from_path(screenshot_save_path)
-
-        # if configs.get("SAVE_UI_TREE", False):
-        #     if self.application_window_info is not None:
-        #         self.session_data_manager.add_action(
-        #             command=Command(
-        #                 tool_name="get_ui_tree",
-        #                 parameters={},
-        #                 tool_type="data_collection",
-        #             ),
-        #             setter=lambda value: self._save_ui_tree_callback(
-        #                 value,
-        #                 os.path.join(
-        #                     self.ui_tree_path, f"ui_tree_step{self.session_step}.json"
-        #                 ),
-        #             ),
-        #         )
+        self._image_url = clean_screenshot_url
 
         if configs.get("SAVE_FULL_SCREEN", False):
 
@@ -140,23 +140,20 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
             )
 
             # Capture the desktop screenshot for all screens.
-            self.photographer.capture_desktop_screen_screenshot(
-                all_screens=True, save_path=desktop_save_path
+
+            result = await self.context.command_dispatcher.execute_commands(
+                [
+                    Command(
+                        tool_name="capture_desktop_screenshot",
+                        parameters={"all_screens": True},
+                        tool_type="data_collection",
+                    )
+                ]
             )
 
-    def _save_ui_tree_callback(self, value: Result, path: str):
-        """
-        Helper method to save UI tree data.
-
-        Args:
-            value: The result returned from the action
-            path: The path to the file where the UI tree data will be saved
-        """
-        value = value.result
-        if value:
-            os.makedirs(os.path.dirname(path), exist_ok=True)
-            with open(path, "w") as f:
-                json.dump(value, f, indent=4)
+            desktop_screenshot_url = result[0].result
+            utils.save_image_string(desktop_screenshot_url, desktop_save_path)
+            self.logger.info(f"Desktop screenshot saved to {desktop_save_path}")
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -168,7 +165,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def get_prompt_message(self) -> None:
+    async def get_prompt_message(self) -> None:
         """
         Get the prompt message for the AppAgent.
         """
@@ -208,7 +205,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def get_response(self) -> None:
+    async def get_response(self) -> None:
         """
         Get the response from the LLM.
         """
@@ -276,48 +273,6 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
                 self.status = self._agent_status_manager.FINISH.value
                 print(f"Unknown output type: {output_type}")
 
-        # print("Parsed response: ", self._response_json)
-
-        # action_dict = self._response_json.get("action", {})
-
-        # self._operation = action_dict.get("type", "")
-        # self._args = {k: v for k, v in action_dict.items() if k != "type"}
-
-        # if self.scaler is not None:
-        #     self._args["scaler"] = self.scaler
-
-        # self.agent.response_id = self._response.get("id", "")
-
-        # self.agent.previous_computer_id = (
-        #     self._response_json["call_id"]
-        #     if "call_id" in self._response_json
-        #     else self._response_json.get("id", "")
-        # )
-
-        # output_type = self._response_json.get("type", "")
-
-        # message = ""
-
-        # if output_type not in self.agent._continue_type:
-        #     self.status = self._agent_status_manager.FINISH.value
-
-        #     # Get the message from the Agent.
-        #     if output_type == self.agent._message_type:
-        #         for content in self._response_json.get("content", []):
-        #             if content.get("type") == "output_text":
-        #                 message += content.get("text", "")
-
-        # else:
-        #     self.status = self._agent_status_manager.CONTINUE.value
-
-        # if output_type == "reasoning":
-        #     reasoning_message = self._response_json.get("summary", [])
-        #     message += "\n".join(reasoning_message)
-
-        # self.agent.message = message
-        # self.agent.pending_safety_checks = self._response_json.get(
-        #     "pending_safety_checks", []
-        # )
         self.app_agent.print_response(self._response_json)
 
     def parse_computer_call_output(self, output: Dict[str, Any]) -> Tuple[str, str]:
@@ -367,7 +322,7 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def execute_action(self) -> None:
+    async def execute_action(self) -> None:
         """
         Execute the action.
         """
@@ -385,16 +340,21 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         # Save the screenshot of the tagged selected control.
         self.capture_control_screenshot(point_list)
 
-        self.actions: ActionSequence = ActionSequence(actions=[action])
-        self.actions.execute_all(
-            puppeteer=self.app_agent.Puppeteer,
-            control_dict={},
-            application_window=self.application_window,
+        result = await self.context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name=action.function,
+                    parameters=action.args,
+                    tool_type="action",
+                )
+            ]
         )
 
-        if self.is_application_closed():
-            utils.print_with_color("Warning: The application is closed.", "yellow")
-            self.status = "FINISH"
+        self.logger.info(f"Result for execution of {action.function}: {result}")
+
+        # if self.is_application_closed():
+        #     utils.print_with_color("Warning: The application is closed.", "yellow")
+        #     self.status = "FINISH"
 
     def capture_control_screenshot(
         self, point_list: Optional[List[Tuple[int]]]

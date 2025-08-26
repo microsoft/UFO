@@ -293,11 +293,12 @@ def load_image(image_path: str) -> Image.Image:
     return Image.open(image_path)
 
 
-def save_image_string(image_string: str, save_path: str) -> None:
+def save_image_string(image_string: str, save_path: str) -> Image.Image:
     """
     Save a base64 image string to a file.
     :param image_string: The base64 image string.
     :param save_path: The path to save the image file.
+    :return: The saved image.
     """
     # Decode the base64 string
     image_data = decode_base64_image(image_string)
@@ -305,3 +306,5 @@ def save_image_string(image_string: str, save_path: str) -> None:
     # Save the image data to a file
     with open(save_path, "wb") as f:
         f.write(image_data)
+
+    return load_image(save_path)
