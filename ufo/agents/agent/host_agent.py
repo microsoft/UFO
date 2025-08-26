@@ -256,7 +256,7 @@ class HostAgent(BasicAgent):
         # Sync the status with the processor.
         self.status = self.processor.status
 
-    async def create_subagent(self, context: Optional["Context"] = None) -> None:
+    def create_subagent(self, context: Optional["Context"] = None) -> None:
         """
         Orchestrate creation of the appropriate sub-agent.
         Decides between third-party agent and built-in app/operator agent.

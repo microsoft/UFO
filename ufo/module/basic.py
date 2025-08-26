@@ -810,60 +810,76 @@ class BaseSession(ABC):
             or self.application_window_info is not None
         ):
 
-            try:
-                result = await self.context.command_dispatcher.execute_commands(
-                    [
-                        Command(
-                            tool_name="capture_window_screenshot",
-                            parameters={},
-                            tool_type="data_collection",
-                        )
-                    ]
-                )
-                image = result[0].result
-                if image:
-                    utils.save_image_string(image, screenshot_save_path)
+            await self.capture_last_screenshot(screenshot_save_path)
 
-            except Exception as e:
-                utils.print_with_color(
-                    f"Warning: The last snapshot capture failed, due to the error: {e}",
-                    "yellow",
-                )
             if configs.get("SAVE_UI_TREE", False):
-
-                result = await self.context.command_dispatcher.execute_commands(
-                    [
-                        Command(
-                            tool_name="get_ui_tree",
-                            parameters={},
-                            tool_type="data_collection",
-                        )
-                    ]
-                )
-
                 ui_tree_path = os.path.join(self.log_path, "ui_trees")
                 ui_tree_file_name = "ui_tree_final.json"
                 ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
-
-                await self.current_round.save_ui_tree(ui_tree_save_path)
+                await self.capture_last_ui_tree(ui_tree_save_path)
 
             if configs.get("SAVE_FULL_SCREEN", False):
 
                 desktop_save_path = self.log_path + "desktop_final.png"
 
-                result = await self.context.command_dispatcher.execute_commands(
-                    [
-                        Command(
-                            tool_name="capture_desktop_screenshot",
-                            parameters={"all_screens": True},
-                            tool_type="data_collection",
-                        )
-                    ]
+                await self.capture_last_screenshot(desktop_save_path, full_screen=True)
+
+    async def capture_last_screenshot(
+        self, save_path: str, full_screen: bool = False
+    ) -> None:
+        """
+        Capture the last window screenshot.
+        :param save_path: The path to save the window screenshot.
+        :param full_screen: Whether to capture the full screen or just the active window.
+        """
+
+        try:
+            if full_screen:
+                command = Command(
+                    tool_name="capture_desktop_screenshot",
+                    parameters={"all_screens": True},
+                    tool_type="data_collection",
+                )
+            else:
+
+                command = Command(
+                    tool_name="capture_window_screenshot",
+                    parameters={},
+                    tool_type="data_collection",
                 )
 
-                desktop_image = result[0].result
-                if desktop_image:
-                    utils.save_image_string(desktop_image, desktop_save_path)
+            result = await self.context.command_dispatcher.execute_commands([command])
+            image = result[0].result
+
+            self.logger.info(f"Captured screenshot at final: {save_path}")
+            if image:
+                utils.save_image_string(image, save_path)
+
+        except Exception as e:
+            utils.print_with_color(
+                f"Warning: The last snapshot capture failed, due to the error: {e}",
+                "yellow",
+            )
+
+    async def capture_last_ui_tree(self, save_path: str) -> None:
+        """
+        Capture the last UI tree snapshot.
+        :param save_path: The path to save the UI tree snapshot.
+        """
+
+        result = await self.context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name="get_ui_tree",
+                    parameters={},
+                    tool_type="data_collection",
+                )
+            ]
+        )
+
+        if result and result[0].result:
+            with open(save_path, "w") as file:
+                json.dump(result[0].result, file, indent=4)
 
     @staticmethod
     def initialize_logger(

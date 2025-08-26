@@ -181,6 +181,7 @@ class FollowerSession(BaseSession):
         """
         Create a new round.
         """
+        from ufo.agents.agent.host_agent import HostAgent
 
         # Get a request for the new round.
         request = self.next_request()
@@ -192,20 +193,11 @@ class FollowerSession(BaseSession):
         if self.total_rounds == 0:
             utils.print_with_color("Complete the following request:", "yellow")
             utils.print_with_color(self.plan_reader.get_initial_request(), "cyan")
-            agent = self._host_agent
+            agent: HostAgent = self._host_agent
         else:
+            host_agent: HostAgent = self._host_agent
             self.context.set(ContextNames.SUBTASK, request)
-            agent = self._host_agent.create_app_agent(
-                application_window_name=self.context.get(
-                    ContextNames.APPLICATION_PROCESS_NAME
-                ),
-                application_root_name=self.context.get(
-                    ContextNames.APPLICATION_ROOT_NAME
-                ),
-                request=request,
-                mode=self.context.get(ContextNames.MODE),
-                context=self.context,
-            )
+            agent = host_agent.create_subagent(context=self.context)
 
             # Clear the memory and set the state to continue the app agent.
             agent.clear_memory()
@@ -514,68 +506,39 @@ class OpenAIOperatorSession(Session):
 
         self.print_cost()
 
-    async def capture_last_snapshot(self) -> None:
+    async def capture_last_screenshot(
+        self, save_path: str, full_screen: bool = False
+    ) -> None:
         """
-        Capture the last snapshot of the application, including the screenshot and the XML file if configured.
-        """  # Capture the final screenshot
-        screenshot_save_path = self.log_path + "action_step_final.png"
+        Capture the last window screenshot.
+        :param save_path: The path to save the window screenshot.
+        :param full_screen: Whether to capture the full screen or just the active window.
+        """
 
-        if (
-            self.application_window is not None
-            or self.application_window_info is not None
-        ):
-
-            try:
-                result = await self.context.command_dispatcher.execute_commands(
-                    [
-                        Command(
-                            tool_name="capture_desktop_screenshot",
-                            parameters={"all_screens": False},
-                            tool_type="data_collection",
-                        )
-                    ]
+        try:
+            if full_screen:
+                command = Command(
+                    tool_name="capture_desktop_screenshot",
+                    parameters={"all_screens": True},
+                    tool_type="data_collection",
                 )
-                image = result[0].result
-                if image:
-                    utils.save_image_string(image, screenshot_save_path)
+            else:
 
-            except Exception as e:
-                utils.print_with_color(
-                    f"Warning: The last snapshot capture failed, due to the error: {e}",
-                    "yellow",
-                )
-            if configs.get("SAVE_UI_TREE", False):
-
-                result = await self.context.command_dispatcher.execute_commands(
-                    [
-                        Command(
-                            tool_name="get_ui_tree",
-                            parameters={},
-                            tool_type="data_collection",
-                        )
-                    ]
+                command = Command(
+                    tool_name="capture_desktop_screenshot",
+                    parameters={"all_screens": False},
+                    tool_type="data_collection",
                 )
 
-                ui_tree_path = os.path.join(self.log_path, "ui_trees")
-                ui_tree_file_name = "ui_tree_final.json"
-                ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
+            result = await self.context.command_dispatcher.execute_commands([command])
+            image = result[0].result
 
-                await self.current_round.save_ui_tree(ui_tree_save_path)
+            self.logger.info(f"Captured screenshot at final: {save_path}")
+            if image:
+                utils.save_image_string(image, save_path)
 
-            if configs.get("SAVE_FULL_SCREEN", False):
-
-                desktop_save_path = self.log_path + "desktop_final.png"
-
-                result = await self.context.command_dispatcher.execute_commands(
-                    [
-                        Command(
-                            tool_name="capture_desktop_screenshot",
-                            parameters={"all_screens": True},
-                            tool_type="data_collection",
-                        )
-                    ]
-                )
-
-                desktop_image = result[0].result
-                if desktop_image:
-                    utils.save_image_string(desktop_image, desktop_save_path)
+        except Exception as e:
+            utils.print_with_color(
+                f"Warning: The last snapshot capture failed, due to the error: {e}",
+                "yellow",
+            )
