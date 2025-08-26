@@ -401,10 +401,14 @@ class AgentRegistry:
 
         def decorator(agent_cls: Type["BasicAgent"]) -> Type["BasicAgent"]:
 
+            cls.logger.info(
+                f"[AgentRegistry] Registering agent class '{agent_name}': {agent_cls.__name__}"
+            )
+
             if third_party:
                 enabled = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
                 if agent_name not in enabled:
-                    print(
+                    cls.logger.warning(
                         f"[AgentRegistry] Skipping third-party agent '{agent_name}' (not in config)."
                     )
                     return agent_cls  # 返回但不注册

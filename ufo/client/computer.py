@@ -431,24 +431,6 @@ class Computer:
 
         return tool_result
 
-    @meta_tool("nop")
-    def nop(self) -> CallToolResult:
-        """
-        A no-operation meta tool that does nothing.
-        :return: A CallToolResult indicating success.
-        """
-        content = [
-            TextContent(
-                type="text",
-                text="No operation performed.",
-            )
-        ]
-        return CallToolResult(
-            data=None,
-            content=content,
-            structured_content=None,
-        )
-
     def command2tool(self, command: Command) -> MCPToolCall:
         """
         Convert a Command object to an MCPToolCall object.
