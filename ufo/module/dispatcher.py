@@ -7,11 +7,17 @@ from typing import TYPE_CHECKING, Dict, List, Optional
 
 from fastapi import WebSocket
 
-from ufo.contracts.contracts import ClientMessage, Command, Result, ServerMessage
 from ufo.client.computer import CommandRouter, ComputerManager
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.config import get_config
-
+from ufo.contracts.contracts import (
+    ClientMessage,
+    Command,
+    Result,
+    ServerMessage,
+    ServerMessageType,
+    TaskStatus,
+)
 
 if TYPE_CHECKING:
     from ufo.module.basic import BaseSession
@@ -134,8 +140,8 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()
 
         return ServerMessage(
-            type="commands",
-            status="continue",
+            type=ServerMessageType.COMMAND,
+            status=TaskStatus.CONTINUE,
             agent_name=agent_name,
             process_name=process_name,
             root_name=root_name,

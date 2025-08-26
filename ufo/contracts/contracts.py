@@ -1,3 +1,4 @@
+from enum import Enum
 from typing import Any, Dict, List, Literal, Optional
 
 from pydantic import BaseModel, ConfigDict
@@ -138,12 +139,43 @@ class Result(BaseModel):
     call_id: Optional[str] = None
 
 
+class TaskStatus(str, Enum):
+    CONTINUE = "continue"
+    COMPLETED = "completed"
+    FAILED = "failed"
+    OK = "ok"
+    ERROR = "error"
+
+
+class ClientMessageType(str, Enum):
+    TASK = "task"
+    HEARTBEAT = "heartbeat"
+    COMMAND_RESULTS = "command_results"
+    ERROR = "error"
+    REGISTER = "register"
+    TASK_END = "task_end"
+
+
+class ServerMessageType(str, Enum):
+    TASK = "task"
+    HEARTBEAT = "heartbeat"
+    TASK_END = "task_end"
+    COMMAND = "command"
+    ERROR = "error"
+
+
 class ServerMessage(BaseModel):
     """
     Represents a response from the server to the client.
     """
 
-    type: str
+    type: Literal[
+        ServerMessageType.TASK,
+        ServerMessageType.HEARTBEAT,
+        ServerMessageType.TASK_END,
+        ServerMessageType.COMMAND,
+        ServerMessageType.ERROR,
+    ]
     status: Literal["continue", "completed", "failed", "ok", "error", "commands"]
     user_request: Optional[str] = None
     agent_name: Optional[str] = None
@@ -164,14 +196,19 @@ class ClientMessage(BaseModel):
     """
 
     type: Literal[
-        "task",
-        "heartbeat",
-        "get_result",
-        "error",
-        "command_results",
-        "register",
+        ClientMessageType.TASK,
+        ClientMessageType.HEARTBEAT,
+        ClientMessageType.COMMAND_RESULTS,
+        ClientMessageType.ERROR,
+        ClientMessageType.REGISTER,
     ]
-    status: Literal["ok", "error", "continue", "completed", "failed"]
+    status: Literal[
+        TaskStatus.OK,
+        TaskStatus.ERROR,
+        TaskStatus.CONTINUE,
+        TaskStatus.COMPLETED,
+        TaskStatus.FAILED,
+    ]
     session_id: Optional[str] = None
     task_name: Optional[str] = None
     client_id: Optional[str] = None

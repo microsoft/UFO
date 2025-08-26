@@ -7,7 +7,13 @@ from uuid import uuid4
 import websockets
 from websockets import WebSocketClientProtocol
 
-from ufo.contracts.contracts import ClientMessage, ServerMessage
+from ufo.contracts.contracts import (
+    ClientMessage,
+    ClientMessageType,
+    ServerMessage,
+    ServerMessageType,
+    TaskStatus,
+)
 
 if TYPE_CHECKING:
     from ufo.client.ufo_client import UFOClient
@@ -79,9 +85,9 @@ class UFOWebSocketClient:
         """
 
         client_message = ClientMessage(
-            type="register",
+            type=ClientMessageType.REGISTER,
             client_id=self.ufo_client.client_id,
-            status="ok",
+            status=TaskStatus.OK,
             timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
         )
 
@@ -113,9 +119,9 @@ class UFOWebSocketClient:
         while True:
             await asyncio.sleep(interval)
             client_message = ClientMessage(
-                type="heartbeat",
+                type=ClientMessageType.HEARTBEAT,
                 client_id=self.ufo_client.client_id,
-                status="ok",
+                status=TaskStatus.OK,
                 timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
             )
             await self._ws.send(client_message.model_dump_json())
@@ -131,15 +137,15 @@ class UFOWebSocketClient:
 
             self.logger.info(f"[WS] Received message: {data}")
 
-            if msg_type == "task":
+            if msg_type == ServerMessageType.TASK:
                 await self.start_task(data.user_request, data.task_name)
-            elif msg_type == "heartbeat":
+            elif msg_type == ServerMessageType.HEARTBEAT:
                 self.logger.info("[WS] Heartbeat received")
-            elif msg_type == "task_end":
+            elif msg_type == ServerMessageType.TASK_END:
                 await self.handle_task_end(data)
-            elif msg_type == "error":
+            elif msg_type == ServerMessageType.ERROR:
                 self.logger.error(f"[WS] Server error: {data.error}")
-            elif msg_type == "commands":
+            elif msg_type == ServerMessageType.COMMAND:
                 await self.handle_commands(data)
             else:
                 self.logger.warning(f"[WS] Unknown message type: {msg_type}")
@@ -168,7 +174,7 @@ class UFOWebSocketClient:
                     self.ufo_client.reset()
 
                     client_message = ClientMessage(
-                        type="task",
+                        type=ClientMessageType.TASK,
                         request=request_text,
                         task_name=task_name if task_name else str(uuid4()),
                         session_id=self.ufo_client.session_id,
@@ -177,7 +183,7 @@ class UFOWebSocketClient:
                         timestamp=datetime.datetime.now(
                             datetime.timezone.utc
                         ).isoformat(),
-                        status="continue",
+                        status=TaskStatus.CONTINUE,
                     )
 
                     await self._ws.send(client_message.model_dump_json())
@@ -186,7 +192,7 @@ class UFOWebSocketClient:
                     f"[WS] Error sending task request: {e}", exc_info=True
                 )
                 client_message = ClientMessage(
-                    type="error",
+                    type=ClientMessageType.ERROR,
                     error=str(e),
                     client_id=self.ufo_client.client_id,
                     timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
@@ -208,39 +214,18 @@ class UFOWebSocketClient:
         task_status = server_response.status
         self.session_id = server_response.session_id
 
-        if task_status == "continue":
-            action_results = await self.ufo_client.step(server_response)
+        action_results = await self.ufo_client.execute_step(server_response)
 
-            client_message = ClientMessage(
-                type="command_results",
-                session_id=self.session_id,
-                request_id=str(uuid4()),
-                action_results=action_results,
-                client_id=self.ufo_client.client_id,
-                prev_response_id=response_id,
-                status=task_status,
-                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            )
-
-        elif task_status in ["completed", "failed"]:
-            self.logger.info(
-                f"[WS] Task {self.session_id} is ended with status: {task_status}"
-            )
-            self.current_task = None
-
-            client_message = ClientMessage(
-                type="task_end",
-                client_id=self.ufo_client.client_id,
-                session_id=self.session_id,
-                prev_response_id=response_id,
-                status=task_status,
-                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            )
-
-        else:
-            self.logger.warning(
-                f"[WS] Unknown task status for {self.session_id}: {task_status}"
-            )
+        client_message = ClientMessage(
+            type=ClientMessageType.COMMAND_RESULTS,
+            session_id=self.session_id,
+            request_id=str(uuid4()),
+            action_results=action_results,
+            client_id=self.ufo_client.client_id,
+            prev_response_id=response_id,
+            status=task_status,
+            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        )
 
         # self.logger.info(f"[WS] Sending client message: {client_message}")
         self.logger.info(
@@ -248,15 +233,18 @@ class UFOWebSocketClient:
         )
         await self._ws.send(client_message.model_dump_json())
 
+        if task_status in [TaskStatus.COMPLETED, TaskStatus.FAILED]:
+            await self.handle_task_end(server_response)
+
     async def handle_task_end(self, server_response: ServerMessage):
         """
         Handle task end messages from the server.
         :param server_response: The server response message.
         """
 
-        if server_response.status == "completed":
+        if server_response.status == TaskStatus.COMPLETED:
             self.logger.info(f"[WS] Task {self.session_id} completed")
-        elif server_response.status == "failed":
+        elif server_response.status == TaskStatus.FAILED:
             self.logger.info(
                 f"[WS] Task {self.session_id} failed, with error: {server_response.error}"
             )

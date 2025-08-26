@@ -4,10 +4,16 @@ import uuid
 
 from fastapi import WebSocket, WebSocketDisconnect
 
-from ufo.contracts.contracts import ClientMessage, ServerMessage
+from ufo.contracts.contracts import (
+    ClientMessage,
+    ClientMessageType,
+    ServerMessage,
+    ServerMessageType,
+    TaskStatus,
+)
+from ufo.module.dispatcher import WebSocketCommandDispatcher
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.ws_manager import WSManager
-from ufo.module.dispatcher import WebSocketCommandDispatcher
 
 
 class UFOWebSocketHandler:
@@ -83,13 +89,13 @@ class UFOWebSocketHandler:
             )
             msg_type = data.type
 
-            if msg_type == "task":
+            if msg_type == ClientMessageType.TASK:
                 await self.handle_task_request(data, websocket)
-            elif msg_type == "command_results":
+            elif msg_type == ClientMessageType.COMMAND_RESULTS:
                 await self.handle_command_result(data)
-            elif msg_type == "heartbeat":
+            elif msg_type == ClientMessageType.HEARTBEAT:
                 await self.handle_heartbeat(data, websocket)
-            elif msg_type == "error":
+            elif msg_type == ClientMessageType.ERROR:
                 await self.handle_error(data, websocket)
             else:
                 await self.handle_unknown(data, websocket)
@@ -98,8 +104,8 @@ class UFOWebSocketHandler:
             self.logger.error(f"[WS] Error handling message from {client_id}: {e}")
 
             server_message = ServerMessage(
-                status="error",
-                type="error",
+                status=TaskStatus.ERROR,
+                type=ServerMessageType.ERROR,
                 error=str(e),
                 timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 response_id=str(uuid.uuid4()),
@@ -114,8 +120,8 @@ class UFOWebSocketHandler:
         """
         self.logger.info(f"[WS] Heartbeat from {data.client_id}")
         server_message = ServerMessage(
-            type="heartbeat",
-            status="ok",
+            type=ServerMessageType.HEARTBEAT,
+            status=TaskStatus.OK,
             timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
             response_id=str(uuid.uuid4()),
         )
@@ -129,7 +135,7 @@ class UFOWebSocketHandler:
         """
         self.logger.error(f"[WS] Error from {data.client_id}: {data.error}")
         server_message = ServerMessage(
-            type="error",
+            type=ServerMessageType.ERROR,
             error=data.error,
             timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
             response_id=str(uuid.uuid4()),
@@ -145,7 +151,7 @@ class UFOWebSocketHandler:
         self.logger.warning(f"[WS] Unknown message type: {data.type}")
 
         server_message = ServerMessage(
-            type="error",
+            type=ServerMessageType.ERROR,
             error=f"Unknown message type: {data.type}",
             timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
             response_id=str(uuid.uuid4()),
@@ -177,10 +183,10 @@ class UFOWebSocketHandler:
         try:
             await session.run()
             if session.is_error():
-                status = "failed"
+                status = TaskStatus.FAILED
                 session.results = {"failure": "session ended with an error"}
             elif session.is_finished():
-                status = "completed"
+                status = TaskStatus.COMPLETED
 
             self.logger.info(f"[WS] Task {session_id} is ending with status: {status}")
 
@@ -189,11 +195,11 @@ class UFOWebSocketHandler:
 
             traceback.print_exc()
             self.logger.error(f"[WS] Error running session {session_id}: {e}")
-            status = "failed"
+            status = TaskStatus.FAILED
             error = str(e)
         finally:
             server_message = ServerMessage(
-                type="task_end",
+                type=ServerMessageType.TASK_END,
                 status=status,
                 timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 session_id=session_id,

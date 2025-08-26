@@ -3,7 +3,6 @@ import logging
 import tracemalloc
 from typing import List, Optional
 
-from websockets import WebSocketClientProtocol
 
 from ufo.client.computer import CommandRouter, ComputerManager
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
@@ -48,11 +47,9 @@ class UFOClient:
 
         self._session_id: Optional[str] = None
 
-        self._ws: Optional[WebSocketClientProtocol] = None
-
-    async def step(self, response: ServerMessage) -> List[Result]:
+    async def execute_step(self, response: ServerMessage) -> List[Result]:
         """
-        Perform a single step in the WebSocket communication.
+        Perform a single step execution.
         :param response: The ServerMessage instance to process.
         :return: A list of Result instances.
         """
