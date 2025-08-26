@@ -485,6 +485,11 @@ class Computer:
         tool_key = self.make_tool_key(tool_type, tool_name)
         tool_info = self._tools_registry.get(tool_key, None)
 
+        if not tool_info:
+            raise ValueError(
+                f"Tool {tool_key} is not registered in current computer: {self._name}"
+            )
+
         parameters = copy.deepcopy(command.parameters) if command.parameters else {}
 
         tool_info.parameters = parameters

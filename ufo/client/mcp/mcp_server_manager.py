@@ -76,7 +76,7 @@ class HTTPMCPServer(BaseMCPServer):
     Implementation of an HTTP MCP server.
     """
 
-    def start(self) -> None:
+    def start(self, *args, **kwargs) -> None:
         """
         Start the HTTP MCP server and return its URL.
         :return: URL of the started HTTP server.
@@ -137,16 +137,18 @@ class StdioMCPServer(BaseMCPServer):
     Implementation of a standard input/output MCP server.
     """
 
-    def start(self) -> None:
+    def start(self, *args, **kwargs) -> None:
         """
         Start the Stdio MCP server and return the StdioTransport instance.
         :return: StdioTransport instance for standard input/output server.
         """
         command = self._config.get("command", "python")
-        args = self._config.get("start_args", [])
+        start_args = self._config.get("start_args", [])
         env = self._config.get("env", {})
         cwd = self._config.get("cwd", ".")
-        self._server = StdioTransport(command=command, args=args, env=env, cwd=cwd)
+        self._server = StdioTransport(
+            command=command, args=start_args, env=env, cwd=cwd
+        )
 
     def stop(self) -> None:
         """

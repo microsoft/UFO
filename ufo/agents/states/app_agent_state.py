@@ -186,6 +186,7 @@ class ContinueAppAgentState(AppAgentState):
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
+
         await agent.process(context)
 
     def is_subtask_end(self) -> bool:

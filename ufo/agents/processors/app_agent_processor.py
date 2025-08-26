@@ -115,7 +115,7 @@ class AppAgentRequestLog:
     last_success_actions: List[Dict[str, Any]]
     include_last_screenshot: bool
     prompt: Dict[str, Any]
-    control_info_recording: Dict[str, Any]
+    control_info_recording: Optional[Dict[str, Any]] = None
 
 
 class AppAgentProcessor(BaseProcessor):

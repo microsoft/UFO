@@ -19,16 +19,6 @@ if TYPE_CHECKING:
 configs = Config.get_instance().config_data
 
 
-@dataclass
-class FollowerAgentRequestLog(AppAgentRequestLog):
-    """
-    The request log data for the AppAgent.
-    """
-
-    current_state: Dict[str, Any]
-    state_diff: Dict[str, Any]
-
-
 class FollowerAppAgentProcessor(AppAgentProcessor):
     """
     The processor for the AppAgent in the follower mode.
@@ -82,7 +72,7 @@ class FollowerAppAgentProcessor(AppAgentProcessor):
             include_last_screenshot=configs["INCLUDE_LAST_SCREENSHOT"],
         )
 
-        request_data = FollowerAgentRequestLog(
+        request_data = AppAgentRequestLog(
             step=self.session_step,
             dynamic_examples=examples,
             dynamic_knowledge=external_knowledge_prompt,

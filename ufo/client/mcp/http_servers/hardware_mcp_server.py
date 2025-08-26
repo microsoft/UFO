@@ -10,6 +10,7 @@ Provides MCP interface for Microsoft Excel automation via UFO framework.
 import argparse
 import os
 import sys
+from ufo.automator.ui_control.screenshot import PhotographerFacade
 
 # Add UFO2 to the path
 ufo_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
@@ -408,6 +409,14 @@ def create_hardware_mcp_server(host: str = "", port: int = 8006) -> None:
             "success": True,
             "message": f"Swiped trackpad from {start_location} to {end_location} (mock)",
         }
+
+    @mcp.tool()
+    async def take_screenshot() -> str:
+        """Simulate taking a screenshot (mock)."""
+
+        image_path = "./tests/image.png"
+        image_data = PhotographerFacade().encode_image_from_path(image_path)
+        return image_data
 
     mcp.run(transport="streamable-http")
 

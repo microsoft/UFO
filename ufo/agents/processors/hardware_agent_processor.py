@@ -6,6 +6,7 @@ from dataclasses import asdict
 from typing import TYPE_CHECKING
 
 from ufo import utils
+from ufo.agents.processors.action_contracts import OneStepAction
 from ufo.agents.processors.app_agent_processor import (
     AppAgentProcessor,
     AppAgentRequestLog,
@@ -83,7 +84,7 @@ class HardwareAgentProcessor(AppAgentProcessor):
         result = await self.context.command_dispatcher.execute_commands(
             [
                 Command(
-                    tool_name="capture_window_screenshot",
+                    tool_name="take_screenshot",
                     parameters={},
                     tool_type="data_collection",
                 )
@@ -98,7 +99,7 @@ class HardwareAgentProcessor(AppAgentProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def get_control_info(self) -> None:
+    async def get_control_info(self) -> None:
         """
         Get the control information.
         """
@@ -106,7 +107,7 @@ class HardwareAgentProcessor(AppAgentProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def get_prompt_message(self) -> None:
+    async def get_prompt_message(self) -> None:
         """
         Get the prompt message for the AppAgent.
         """
@@ -160,7 +161,7 @@ class HardwareAgentProcessor(AppAgentProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def get_response(self) -> None:
+    async def get_response(self) -> None:
         """
         Get the response from the LLM.
         """
@@ -206,3 +207,37 @@ class HardwareAgentProcessor(AppAgentProcessor):
         self.app_agent.print_response(
             response_dict=self._response_json, print_action=True
         )
+
+    @BaseProcessor.exception_capture
+    @BaseProcessor.method_timer
+    async def execute_action(self) -> None:
+        """
+        Execute the action.
+        """
+        action = OneStepAction(
+            function=self._operation,
+            args=self._args,
+            control_label=self._control_label,
+            control_text=self.control_text,
+            after_status=self.status,
+        )
+
+        self.actions = [action]
+
+        if not action.function:
+            utils.print_with_color(
+                "No action to execute. Skipping execution.", "yellow"
+            )
+            return
+
+        result = await self.context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name=action.function,
+                    parameters=action.args,
+                    tool_type="action",
+                )
+            ]
+        )
+
+        self.logger.info(f"Result for execution of {action.function}: {result}")

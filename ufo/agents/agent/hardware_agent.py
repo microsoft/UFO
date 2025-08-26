@@ -17,11 +17,15 @@ class HardwareAgent(AppAgent):
     It extends the BasicAgent to provide additional functionality specific to hardware.
     """
 
-    def process(self, context: Context) -> None:
+    async def process(self, context: Context) -> None:
         """
         Process the agent.
         :param context: The context.
         """
+        if not self._context_provision_executed:
+            await self.context_provision(context=context)
+            self._context_provision_executed = True
+
         self.processor = HardwareAgentProcessor(agent=self, context=context)
-        self.processor.process()
+        await self.processor.process()
         self.status = self.processor.status
