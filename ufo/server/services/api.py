@@ -1,14 +1,13 @@
 import datetime
 import logging
 from typing import Any, Dict
+from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
 
-from ufo.contracts.contracts import ServerMessage
+from ufo.contracts.contracts import ServerMessage, ServerMessageType, TaskStatus
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.ws_manager import WSManager
-from uuid import uuid4
-
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +29,8 @@ def create_api_router(
 
     @router.post("/api/dispatch")
     async def dispatch_task_api(data: Dict[str, Any]):
-        import asyncio, json
+        import asyncio
+        import json
 
         client_id = data.get("client_id")
         user_request = data.get("request", "")
@@ -57,8 +57,8 @@ def create_api_router(
             raise HTTPException(status_code=404, detail="Client not online")
 
         server_message = ServerMessage(
-            type="task",
-            status="continue",
+            type=ServerMessageType.TASK,
+            status=TaskStatus.CONTINUE,
             user_request=user_request,
             task_name=task_name,
             timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),

@@ -37,6 +37,12 @@ class AppAgent(BasicAgent):
     The AppAgent class that manages the interaction with the application.
     """
 
+    _processor_cls = (
+        AppAgentActionSequenceProcessor
+        if configs.get("ACTION_SEQUENCE", False)
+        else AppAgentProcessor
+    )
+
     def __init__(
         self,
         name: str,
@@ -76,6 +82,8 @@ class AppAgent(BasicAgent):
 
         self._context_provision_executed = False
         self.logger = logging.getLogger(__name__)
+
+        self._processor: Optional[AppAgentProcessor] = None
 
     def get_prompter(
         self,
@@ -372,12 +380,10 @@ class AppAgent(BasicAgent):
             await self.context_provision(context=context)
             self._context_provision_executed = True
 
-        if configs.get("ACTION_SEQUENCE", False):
-            self.processor = AppAgentActionSequenceProcessor(
-                agent=self, context=context
-            )
-        else:
-            self.processor = AppAgentProcessor(agent=self, context=context)
+        if not self._processor_cls:
+            raise ValueError(f"{self.__class__.__name__} has no processor assigned.")
+
+        self.processor = self._processor_cls(agent=self, context=context)
         await self.processor.process()
 
         self.status = self.processor.status

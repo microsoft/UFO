@@ -21,22 +21,6 @@ from ufo.agents.processors.action_contracts import (
     ActionExecutionLog,
 )
 
-# if TYPE_CHECKING:
-#     from ufo.agents.processors.action_contracts import (
-#         OneStepAction,
-#         ActionSequence,
-#         BaseControlLog,
-#         ActionExecutionLog,
-#     )
-# else:
-#     # Import at runtime to avoid circular imports
-#     from ..agents.processors.action_contracts import (
-#         OneStepAction,
-#         ActionSequence,
-#         BaseControlLog,
-#         ActionExecutionLog,
-#     )
-
 
 class OneStepActionExecutor:
     """

@@ -33,15 +33,15 @@ async def main():
         "--ws-server",
         dest="ws_server_url",
         default="ws://localhost:5000/ws",
-        help="WebSocket server address (default: ws://localhost:8765)",
+        help="WebSocket server address (default: ws://localhost:5000/ws)",
     )
     parser.add_argument("--ws", action="store_true", help="Run in WebSocket mode")
     parser.add_argument(
         "--max-retries",
         type=int,
-        default=3,
+        default=5,
         dest="max_retries",
-        help="Maximum retries for failed requests (default: 3)",
+        help="Maximum retries for failed requests (default: 5)",
     )
     parser.add_argument(
         "--request",

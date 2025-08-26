@@ -384,10 +384,14 @@ class AgentRegistry:
     """
 
     _registry: Dict[str, Type["BasicAgent"]] = {}
+    logger = logging.getLogger(__name__)
 
     @classmethod
     def register(
-        cls, agent_name: str, third_party: Optional[bool] = False
+        cls,
+        agent_name: str,
+        third_party: Optional[bool] = False,
+        processor_cls: Optional[Type["BaseProcessor"]] = None,
     ) -> Callable[[Type["BasicAgent"]], Type["BasicAgent"]]:
         """
         Decorator to register an agent class.
@@ -409,6 +413,12 @@ class AgentRegistry:
             #     raise ValueError(
             #         f"Agent class already registered under '{agent_name}'."
             #     )
+            if processor_cls:
+                setattr(agent_cls, "_processor_cls", processor_cls)
+
+                cls.logger.info(
+                    f"[AgentRegistry] Registered processor for agent '{agent_name}': {processor_cls.__name__}"
+                )
             cls._registry[agent_name] = agent_cls
             return agent_cls
 
