@@ -4,7 +4,9 @@
 
 from __future__ import annotations
 
-from typing import Dict, List, Union
+from typing import Any, Dict, List, Optional, Union
+
+from enum import Enum
 
 
 from ufo import utils
@@ -16,11 +18,89 @@ from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
 from ufo.config import Config
-from ufo.module.context import Context
+from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import HostAgentPrompter
 from ufo.llm import AgentType
 
 configs = Config.get_instance().config_data
+
+
+class RunningMode(str, Enum):
+    NORMAL = "normal"
+    BATCH_NORMAL = "batch_normal"
+    FOLLOWER = "follower"
+    NORMAL_OPERATOR = "normal_operator"
+    BATCH_OPERATOR = "batch_normal_operator"
+
+
+class AgentConfigResolver:
+    """Resolve configuration for creating agents."""
+
+    @staticmethod
+    def resolve_app_agent_config(
+        root: str, process: str, mode: RunningMode
+    ) -> Dict[str, Any]:
+        """Return configuration dict for standard app agents."""
+
+        example_prompt = (
+            configs["APPAGENT_EXAMPLE_PROMPT_AS"]
+            if configs.get("ACTION_SEQUENCE")
+            else configs["APPAGENT_EXAMPLE_PROMPT"]
+        )
+
+        if mode == RunningMode.NORMAL:
+            agent_name = f"AppAgent/{root}/{process}"
+        elif mode in {RunningMode.BATCH_NORMAL, RunningMode.FOLLOWER}:
+            agent_name = f"BatchAgent/{root}/{process}"
+        else:
+            raise ValueError(f"Unsupported mode for AppAgent: {mode}")
+
+        return dict(
+            agent_type="app",
+            name=agent_name,
+            process_name=process,
+            app_root_name=root,
+            is_visual=configs[AgentType.APP]["VISUAL_MODE"],
+            main_prompt=configs["APPAGENT_PROMPT"],
+            example_prompt=example_prompt,
+            mode=mode.value,
+        )
+
+    @staticmethod
+    def resolve_operator_agent_config(
+        root: str, process: str, mode: RunningMode
+    ) -> Dict[str, Any]:
+        """Return configuration dict for operator agents."""
+        if mode == RunningMode.NORMAL_OPERATOR:
+            agent_name = f"OpenAIOperator/{root}/{process}"
+        elif mode == RunningMode.BATCH_OPERATOR:
+            agent_name = f"BatchOpenAIOperator/{root}/{process}"
+        else:
+            raise ValueError(f"Unsupported mode for OperatorAgent: {mode}")
+
+        return dict(
+            agent_type="operator",
+            name=agent_name,
+            process_name=process,
+            app_root_name=root,
+        )
+
+    @staticmethod
+    def resolve_third_party_config(
+        agent_name: str, mode: RunningMode
+    ) -> Dict[str, Any]:
+        """Return configuration dict for third-party agents."""
+        cfg = configs.get("THIRD_PARTY_AGENT_CONFIG", {}).get(agent_name, {})
+        return dict(
+            agent_type=agent_name,
+            name=agent_name,
+            process_name=agent_name,
+            app_root_name=agent_name,
+            is_visual=cfg.get("VISUAL_MODE", True),
+            main_prompt=cfg["APPAGENT_PROMPT"],
+            example_prompt=cfg["APPAGENT_EXAMPLE_PROMPT"],
+            mode=mode.value,
+        )
 
 
 class AgentFactory:
@@ -105,45 +185,6 @@ class HostAgent(BasicAgent):
         """
         return HostAgentPrompter(is_visual, main_prompt, example_prompt, api_prompt)
 
-    def create_subagent(
-        self,
-        agent_type: str,
-        agent_name: str,
-        process_name: str,
-        app_root_name: str,
-        *args,
-        **kwargs,
-    ) -> BasicAgent:
-        """
-        Create an SubAgent hosted by the HostAgent.
-        :param agent_type: The type of the agent to create.
-        :param agent_name: The name of the SubAgent.
-        :param process_name: The process name of the app.
-        :param app_root_name: The root name of the app.
-        :return: The created SubAgent.
-        """
-        app_agent = self.agent_factory.create_agent(
-            agent_type,
-            agent_name,
-            process_name,
-            app_root_name,
-            # is_visual,
-            # main_prompt,
-            # example_prompt,
-            # api_prompt,
-            *args,
-            **kwargs,
-        )
-        self.appagent_dict[agent_name] = app_agent
-        app_agent.host = self
-        self._active_appagent = app_agent
-
-        self.logger.info(
-            f"Created sub agent: {agent_name} with type {agent_type} and process name {process_name}, class {app_agent.__class__.__name__}"
-        )
-
-        return app_agent
-
     @property
     def sub_agent_amount(self) -> int:
         """
@@ -215,110 +256,55 @@ class HostAgent(BasicAgent):
         # Sync the status with the processor.
         self.status = self.processor.status
 
-    def create_app_agent(
-        self,
-        application_window_name: str,
-        application_root_name: str,
-        request: str,
-        mode: str,
-        context: Context = None,
-    ) -> AppAgent:
+    async def create_subagent(self, context: Optional["Context"] = None) -> None:
         """
-        Create the app agent for the host agent.
-        :param application_window_name: The name of the application window.
-        :param application_root_name: The name of the application root.
-        :param request: The user request.
-        :param mode: The mode of the session.
-        :return: The app agent.
+        Orchestrate creation of the appropriate sub-agent.
+        Decides between third-party agent and built-in app/operator agent.
+        :param context: The context for the agent and session.
         """
+        mode = RunningMode(context.get(ContextNames.MODE))
 
-        if configs.get("ACTION_SEQUENCE", False):
-            example_prompt = configs["APPAGENT_EXAMPLE_PROMPT_AS"]
+        if self.processor.assigned_third_party_agent:
+            config = AgentConfigResolver.resolve_third_party_config(
+                self.processor.assigned_third_party_agent, mode
+            )
         else:
-            example_prompt = configs["APPAGENT_EXAMPLE_PROMPT"]
+            window_name = context.get(ContextNames.APPLICATION_PROCESS_NAME)
+            root_name = context.get(ContextNames.APPLICATION_ROOT_NAME)
 
-        if mode in ["normal", "batch_normal", "follower"]:
-
-            agent_name = (
-                "AppAgent/{root}/{process}".format(
-                    root=application_root_name, process=application_window_name
+            if mode in {
+                RunningMode.NORMAL,
+                RunningMode.BATCH_NORMAL,
+                RunningMode.FOLLOWER,
+            }:
+                config = AgentConfigResolver.resolve_app_agent_config(
+                    root_name, window_name, mode
                 )
-                if mode == "normal"
-                else "BatchAgent/{root}/{process}".format(
-                    root=application_root_name, process=application_window_name
+            elif mode in {RunningMode.NORMAL_OPERATOR, RunningMode.BATCH_OPERATOR}:
+                config = AgentConfigResolver.resolve_operator_agent_config(
+                    root_name, window_name, mode
                 )
-            )
+            else:
+                raise ValueError(f"Unsupported mode: {mode}")
 
-            app_agent: AppAgent = self.create_subagent(
-                agent_type="app",
-                agent_name=agent_name,
-                process_name=application_window_name,
-                app_root_name=application_root_name,
-                is_visual=configs[AgentType.APP]["VISUAL_MODE"],
-                main_prompt=configs["APPAGENT_PROMPT"],
-                example_prompt=example_prompt,
-                api_prompt=configs["API_PROMPT"],
-                mode=mode,
-            )
+        agent_name = config.get("name")
+        agent_type = config.get("agent_type")
+        process_name = config.get("process_name")
 
-        elif mode in ["normal_operator", "batch_normal_operator"]:
+        self.logger.info(f"Creating sub agent with config: {config}")
 
-            agent_name = (
-                "OpenAIOperator/{root}/{process}".format(
-                    root=application_root_name, process=application_window_name
-                )
-                if mode == "normal_operator"
-                else "BatchOpenAIOperator/{root}/{process}".format(
-                    root=application_root_name, process=application_window_name
-                )
-            )
+        app_agent = self.agent_factory.create_agent(**config)
+        self.appagent_dict[agent_name] = app_agent
+        app_agent.host = self
+        self._active_appagent = app_agent
 
-            app_agent: OpenAIOperatorAgent = self.create_subagent(
-                "operator",
-                agent_name=agent_name,
-                process_name=application_window_name,
-                app_root_name=application_root_name,
-            )
-
-        else:
-            raise ValueError(f"The {mode} mode is not supported.")
+        self.logger.info(
+            f"Created sub agent: {agent_name} with type {agent_type} and process name {process_name}, class {app_agent.__class__.__name__}"
+        )
 
         return app_agent
 
-    def create_third_party_app_agent(
-        self,
-        agent_name: str,
-        request: str,
-        mode: str,
-        context: Context = None,
-    ) -> AppAgent:
-        """
-        Create a third-party app agent for the host agent.
-        :param application_window_name: The name of the application window.
-        :param application_root_name: The name of the application root.
-        :param request: The user request.
-        :param mode: The mode of the session.
-        :return: The app agent.
-        """
-        # For third-party applications, we use the same logic as create_app_agent.
-
-        third_party_agent_config = configs.get("THIRD_PARTY_AGENT_CONFIG", {}).get(
-            agent_name, {}
-        )
-
-        return self.create_subagent(
-            agent_type=agent_name,
-            agent_name=agent_name,
-            process_name=agent_name,
-            app_root_name=agent_name,
-            is_visual=third_party_agent_config.get("VISUAL_MODE", True),
-            main_prompt=third_party_agent_config["APPAGENT_PROMPT"],
-            example_prompt=third_party_agent_config["APPAGENT_EXAMPLE_PROMPT"],
-            api_prompt=third_party_agent_config["API_PROMPT"],
-            mode=mode,
-        ).context_provision(request, context=context)
-
-    def process_comfirmation(self) -> None:
+    def process_confirmation(self) -> None:
         """
         TODO: Process the confirmation.
         """

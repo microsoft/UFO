@@ -305,7 +305,7 @@ class ConfirmOpenAIOperatorState(OpenAIOperatorState):
 
             return
 
-        self._confirm = agent.process_comfirmation()
+        self._confirm = agent.process_confirmation()
         # If the user confirms the action, the agent should resume the task.
         if self._confirm:
             agent.process_resume()

@@ -116,7 +116,7 @@ class EvaluationAgent(BasicAgent):
 
         return result, cost
 
-    def process_comfirmation(self) -> None:
+    def process_confirmation(self) -> None:
         """
         Comfirmation, currently do nothing.
         """

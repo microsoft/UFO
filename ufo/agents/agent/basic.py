@@ -291,7 +291,7 @@ class BasicAgent(ABC):
                 self.blackboard.add_questions(qa_pair)
 
     @abstractmethod
-    def process_comfirmation(self) -> None:
+    def process_confirmation(self) -> None:
         """
         Confirm the process.
         """

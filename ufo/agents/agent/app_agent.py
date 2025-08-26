@@ -45,7 +45,6 @@ class AppAgent(BasicAgent):
         is_visual: bool,
         main_prompt: str,
         example_prompt: str,
-        api_prompt: str,
         skip_prompter: bool = False,
         mode: str = "normal",
     ) -> None:
@@ -63,9 +62,7 @@ class AppAgent(BasicAgent):
         """
         super().__init__(name=name)
         if not skip_prompter:
-            self.prompter = self.get_prompter(
-                is_visual, main_prompt, example_prompt, api_prompt, app_root_name
-            )
+            self.prompter = self.get_prompter(is_visual, main_prompt, example_prompt)
         self._process_name = process_name
         self._app_root_name = app_root_name
         self.offline_doc_retriever = None
@@ -85,8 +82,6 @@ class AppAgent(BasicAgent):
         is_visual: bool,
         main_prompt: str,
         example_prompt: str,
-        api_prompt: str,
-        app_root_name: str,
     ) -> AppAgentPrompter:
         """
         Get the prompt for the agent.
@@ -387,7 +382,7 @@ class AppAgent(BasicAgent):
 
         self.status = self.processor.status
 
-    def process_comfirmation(self) -> bool:
+    def process_confirmation(self) -> bool:
         """
         Process the user confirmation.
         :return: The decision.
