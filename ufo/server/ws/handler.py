@@ -1,3 +1,4 @@
+import asyncio
 import datetime
 import logging
 import uuid
@@ -40,8 +41,13 @@ class UFOWebSocketHandler:
         await websocket.accept()
         reg_msg = await websocket.receive_text()
         reg_info = ClientMessage.model_validate_json(reg_msg)
-        client_id = reg_info.client_id
 
+        if not reg_info.client_id:
+            raise ValueError("Client ID is required for WebSocket registration")
+        if reg_info.type != ClientMessageType.REGISTER:
+            raise ValueError("First message must be a registration message")
+
+        client_id = reg_info.client_id
         self.ws_manager.add_client(client_id, websocket)
         self.logger.info(f"[WS] {client_id} connected")
         return client_id
@@ -60,16 +66,20 @@ class UFOWebSocketHandler:
         FastAPI WebSocket entry point.
         :param websocket: The WebSocket connection.
         """
-        client_id = await self.connect(websocket)
+        client_id = None
         try:
+            client_id = await self.connect(websocket)
             while True:
                 msg = await websocket.receive_text()
-                await self.handle_message(msg, websocket)
+                asyncio.create_task(self.handle_message(msg, websocket))
         except WebSocketDisconnect:
-            await self.disconnect(client_id)
+            self.logger.info(f"[WS] {client_id} disconnected normally")
+            if client_id:
+                await self.disconnect(client_id)
         except Exception as e:
             self.logger.error(f"[WS] Error with client {client_id}: {e}")
-            await self.disconnect(client_id)
+            if client_id:
+                await self.disconnect(client_id)
 
     async def handle_message(self, msg: str, websocket: WebSocket) -> None:
         """
