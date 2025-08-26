@@ -4,24 +4,20 @@
 
 from __future__ import annotations
 
-from typing import Any, Dict, List, Optional, Union
-
 from enum import Enum
-
+from typing import Any, Dict, List, Optional, Union
 
 from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
-from ufo.agents.agent.basic import BasicAgent, AgentRegistry
+from ufo.agents.agent.basic import AgentRegistry, BasicAgent
 from ufo.agents.agent.follower_agent import FollowerAgent
-
-# from ufo.agents.agent.customized_agent import HardwareAgent
 from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
 from ufo.config import Config
+from ufo.llm import AgentType
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import HostAgentPrompter
-from ufo.llm import AgentType
 
 configs = Config.get_instance().config_data
 
