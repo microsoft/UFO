@@ -146,8 +146,8 @@ THIRD_PARTY_AGENT_CONFIG: {
     "HardwareAgent": {
         "VISUAL_MODE": True,  # Whether to use visual mode for the HardwareAgent
         "AGENT_NAME": "HardwareAgent",
-        "APPAGENT_PROMPT": "ufo/prompts/third_party/hardware_agent.yaml",
-        "APPAGENT_EXAMPLE_PROMPT": "ufo/prompts/third_party/hardware_agent_example.yaml",
+        "APPAGENT_PROMPT": "ufo/prompts/share/base/app_agent.yaml",
+        "APPAGENT_EXAMPLE_PROMPT": "ufo/prompts/examples/visual/app_agent_example.yaml",
         "API_PROMPT": "ufo/prompts/third_party/hardware_agent_api.yaml",
         "INTRODUCTION": "The HardwareAgent is used to manipulate hardware components of the computer without using GUI, such as robotic arms for keyboard input and mouse control, plug and unplug devices such as USB drives, and other hardware-related tasks."
     }

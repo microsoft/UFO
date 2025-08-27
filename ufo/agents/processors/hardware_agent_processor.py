@@ -6,7 +6,7 @@ from dataclasses import asdict
 from typing import TYPE_CHECKING
 
 from ufo import utils
-from ufo.agents.processors.action_contracts import OneStepAction
+from ufo.agents.processors.action_contracts import ActionExecutionLog, OneStepAction
 from ufo.agents.processors.app_agent_processor import (
     AppAgentProcessor,
     AppAgentRequestLog,
@@ -182,49 +182,12 @@ class HardwareAgentProcessor(AppAgentProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    def parse_response(self) -> None:
-        """
-        Parse the response.
-        """
-
-        self._response_json = self.app_agent.response_to_dict(self._response)
-
-        self.control_label = self._response_json.get("ControlLabel", "")
-        self.control_text = self._response_json.get("ControlText", "")
-        self._operation = self._response_json.get("Function", "")
-        if configs.get(AgentType.APP).get("JSON_SCHEMA", False):
-            self._args = utils.revise_line_breaks(
-                json.loads(self._response_json.get("Args", ""))
-            )
-        else:
-            self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
-
-        # Convert the plan from a string to a list if the plan is a string.
-        self.plan = self.string2list(self._response_json.get("Plan", ""))
-        self._response_json["Plan"] = self.plan
-
-        self.status = self._response_json.get("Status", "")
-        self.app_agent.print_response(
-            response_dict=self._response_json, print_action=True
-        )
-
-    @BaseProcessor.exception_capture
-    @BaseProcessor.method_timer
     async def execute_action(self) -> None:
         """
         Execute the action.
         """
-        action = OneStepAction(
-            function=self._operation,
-            args=self._args,
-            control_label=self._control_label,
-            control_text=self.control_text,
-            after_status=self.status,
-        )
 
-        self.actions = [action]
-
-        if not action.function:
+        if not self.response.function:
             utils.print_with_color(
                 "No action to execute. Skipping execution.", "yellow"
             )
@@ -233,11 +196,30 @@ class HardwareAgentProcessor(AppAgentProcessor):
         result = await self.context.command_dispatcher.execute_commands(
             [
                 Command(
-                    tool_name=action.function,
-                    parameters=action.args,
+                    tool_name=self.response.function,
+                    parameters=self.response.arguments,
                     tool_type="action",
                 )
             ]
         )
 
-        self.logger.info(f"Result for execution of {action.function}: {result}")
+        self.logger.info(f"Result for execution of {self.response.function}: {result}")
+
+        return_value = result[0].result
+        error = result[0].error
+
+        action = OneStepAction(
+            function=self.response.function,
+            args=self.response.arguments,
+            control_label=self.control_label,
+            control_text=self.control_text,
+            after_status=self.response.status,
+        )
+
+        action.results = ActionExecutionLog(
+            status=self.response.status,
+            error=error,
+            return_value=return_value,
+        )
+
+        self.actions = [action]

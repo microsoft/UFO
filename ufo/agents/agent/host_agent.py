@@ -5,8 +5,8 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
-
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from ufo.contracts.contracts import Command, MCPToolInfo
 from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
 from ufo.agents.agent.basic import AgentRegistry, BasicAgent
@@ -18,6 +18,9 @@ from ufo.config import Config
 from ufo.llm import AgentType
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import HostAgentPrompter
+
+if TYPE_CHECKING:
+    from ufo.agents.processors.host_agent_processor import HostAgentResponse
 
 configs = Config.get_instance().config_data
 
@@ -165,6 +168,8 @@ class HostAgent(BasicAgent):
         self._blackboard = Blackboard()
         self.set_state(self.default_state)
 
+        self._context_provision_executed = False
+
     def get_prompter(
         self,
         is_visual: bool,
@@ -247,11 +252,51 @@ class HostAgent(BasicAgent):
         Process the agent.
         :param context: The context.
         """
+        if not self._context_provision_executed:
+            await self.context_provision(context=context)
+            self._context_provision_executed = True
         self.processor = HostAgentProcessor(agent=self, context=context)
         await self.processor.process()
 
         # Sync the status with the processor.
         self.status = self.processor.status
+
+    async def context_provision(self, context: Context) -> None:
+        """
+        Provide the context for the agent.
+        :param context: The context for the agent.
+        """
+        await self._load_mcp_context(context)
+
+    async def _load_mcp_context(self, context: Context) -> None:
+        """
+        Load MCP context information for the current application.
+        """
+
+        self.logger.info("Loading MCP tool information...")
+        result = await context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name="list_tools",
+                    parameters={
+                        "tool_type": "action",
+                    },
+                    tool_type="action",
+                )
+            ]
+        )
+
+        tool_list = result[0].result if result else None
+
+        tool_name_list = (
+            [tool.get("tool_name") for tool in tool_list] if tool_list else []
+        )
+
+        self.logger.info(f"Loaded tool list: {tool_name_list} for the HostAgent.")
+
+        tools_info = [MCPToolInfo(**tool) for tool in tool_list]
+
+        self.prompter.create_api_prompt_template(tools=tools_info)
 
     def create_subagent(self, context: Optional["Context"] = None) -> None:
         """
@@ -307,50 +352,54 @@ class HostAgent(BasicAgent):
         """
         pass
 
-    def print_response(self, response_dict: Dict) -> None:
+    def print_response(self, response: HostAgentResponse) -> None:
         """
         Print the response.
-        :param response_dict: The response dictionary to print.
+        :param response: The response object to print.
         """
 
-        application = response_dict.get("ControlText")
-        if not application:
-            application = "[The required application needs to be opened.]"
-        observation = response_dict.get("Observation")
-        thought = response_dict.get("Thought")
-        bash_command = response_dict.get("Bash", None)
-        subtask = response_dict.get("CurrentSubtask")
+        function = response.function
+        arguments = response.arguments
 
-        # Convert the message from a list to a string.
-        message = list(response_dict.get("Message", ""))
+        observation = response.observation
+        thought = response.thought
+        subtask = response.current_subtask
+        message = list(response.message)
         message = "\n".join(message)
 
-        # Concatenate the subtask with the plan and convert the plan from a list to a string.
-        plan = list(response_dict.get("Plan"))
+        plan = list(response.plan)
         plan = [subtask] + plan
         plan = "\n".join([f"({i+1}) " + str(item) for i, item in enumerate(plan)])
 
-        status = response_dict.get("Status")
-        comment = response_dict.get("Comment")
+        status = response.status
+        comment = response.comment
+
+        if function == "select_application_window":
+            application = arguments.get("name")
+        else:
+            application = None
 
         utils.print_with_color(
             "Observations👀: {observation}".format(observation=observation), "cyan"
         )
         utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
-        if bash_command:
+        if function:
+            # Generate the function call string
+            action = self.get_command_string(function, arguments)
             utils.print_with_color(
-                "Running Bash Command🔧: {bash}".format(bash=bash_command), "yellow"
+                "Action applied⚒️: {action}".format(action=action), "blue"
             )
         utils.print_with_color(
             "Plans📚: {plan}".format(plan=plan),
             "cyan",
         )
-        utils.print_with_color(
-            "Next Selected application📲: {application}".format(
-                application=application
-            ),
-            "yellow",
-        )
+        if application:
+            utils.print_with_color(
+                "Next Selected application📲: {application}".format(
+                    application=application
+                ),
+                "yellow",
+            )
         utils.print_with_color(
             "Messages to AppAgent📩: {message}".format(message=message), "cyan"
         )

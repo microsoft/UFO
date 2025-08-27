@@ -162,13 +162,20 @@ def create_host_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"HostAgent"})
     def select_application_window(
-        window_label: Annotated[str, "Label or ID of the window to select"],
+        id: Annotated[
+            str,
+            "Specify the precise label of the application or third-party agents to be selected for the current sub-task, adhering strictly to the provided options in the field of id in the application information.",
+        ],
+        name: Annotated[
+            str,
+            "Specify the precise name of the application or third-party agents to be selected for the current sub-task, adhering strictly to the provided options and matching the selected id.",
+        ],
     ) -> Dict[str, Any]:
         """
         Select an application window for UI automation.
         :return: Information about the selected window.
         """
-        if not window_label:
+        if not id:
             raise ToolError("Window label is required for select_application_window")
 
         # Use the last app windows retrieved from get_desktop_app_info
@@ -180,12 +187,12 @@ def create_host_action_mcp_server(*args, **kwargs) -> FastMCP:
             )
 
         # Find the window with the matching label
-        window = app_window_dict.get(window_label)
+        window = app_window_dict.get(id)
 
         if not window:
             available_windows = list(app_window_dict.keys())
             raise ToolError(
-                f"Window with label '{window_label}' not found. Available windows: {available_windows}"
+                f"Window with label '{id}' not found. Available windows: {available_windows}"
             )
 
         # Set focus on the window
@@ -258,16 +265,16 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def click_input(
-        control_label: Annotated[
+        id: Annotated[
             str,
             Field(
-                description="The control index to click, same as the selected `ControlLabel`"
+                description="The precise annotated ID of the selected control item to be clicked, adhering strictly to the provided options in the field of 'id' in the control information."
             ),
         ],
-        control_text: Annotated[
+        name: Annotated[
             str,
             Field(
-                description="The text of the control to click, same as the selected `ControlText`"
+                description="The precise name of the selected control item to be clicked, adhering strictly to the provided options in the field of 'name' in the control information, and must match the name of its selected id."
             ),
         ],
         button: Annotated[
@@ -286,8 +293,8 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         action = OneStepAction(
             function="click_input",
             args={"button": button, "double": double},
-            control_label=control_label,
-            control_text=control_text,
+            control_label=id,
+            control_text=name,
             after_status="CONTINUE",
         )
 
@@ -395,16 +402,16 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def set_edit_text(
-        control_label: Annotated[
+        id: Annotated[
             str,
             Field(
-                description="The control index to set text, same as the selected `ControlLabel`"
+                description="The precise annotated ID of the selected control item to be set text, adhering strictly to the provided options in the field of 'id' in the control information."
             ),
         ],
-        control_text: Annotated[
+        name: Annotated[
             str,
             Field(
-                description="The control text to set text, same as the selected `ControlText`"
+                description="The precise name of the selected control item to be set text, adhering strictly to the provided options in the field of 'name' in the control information, and must match the name of its selected id."
             ),
         ],
         text: Annotated[
@@ -426,8 +433,8 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         action = OneStepAction(
             function="set_edit_text",
             args={"text": text, "clear_current_text": clear_current_text},
-            control_label=control_label,
-            control_text=control_text,
+            control_label=id,
+            control_text=name,
             after_status="CONTINUE",
         )
 
@@ -435,16 +442,16 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def keyboard_input(
-        control_label: Annotated[
+        id: Annotated[
             str,
             Field(
-                description="The control index to send keyboard input to, same as the selected `ControlLabel`"
+                description="The precise annotated ID of the selected control item to send keyboard input to, adhering strictly to the provided options in the field of 'id' in the control information."
             ),
         ],
-        control_text: Annotated[
+        name: Annotated[
             str,
             Field(
-                description="The control text to send keyboard input to, same as the selected `ControlText`"
+                description="The precise name of the selected control item to send keyboard input to, adhering strictly to the provided options in the field of 'name' in the control information."
             ),
         ],
         keys: Annotated[
@@ -469,8 +476,8 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         action = OneStepAction(
             function="keyboard_input",
             args={"keys": keys, "control_focus": control_focus},
-            control_label=control_label,
-            control_text=control_text,
+            control_label=id,
+            control_text=name,
             after_status="CONTINUE",
         )
 
@@ -478,16 +485,16 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def wheel_mouse_input(
-        control_label: Annotated[
+        id: Annotated[
             str,
             Field(
-                description="The control index to send mouse wheel input to, same as the selected `ControlLabel`"
+                description="The precise annotated ID of the selected control item to send mouse wheel input to, adhering strictly to the provided options in the field of 'id' in the control information."
             ),
         ],
-        control_text: Annotated[
+        name: Annotated[
             str,
             Field(
-                description="The control text to send mouse wheel input to, same as the selected `ControlText`"
+                description="The precise name of the selected control item to send mouse wheel input to, adhering strictly to the provided options in the field of 'name' in the control information."
             ),
         ],
         wheel_dist: Annotated[
@@ -503,8 +510,8 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         action = OneStepAction(
             function="wheel_mouse_input",
             args={"wheel_dist": wheel_dist},
-            control_label=control_label,
-            control_text=control_text,
+            control_label=id,
+            control_text=name,
             after_status="CONTINUE",
         )
 
@@ -512,16 +519,16 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def texts(
-        control_label: Annotated[
+        id: Annotated[
             str,
             Field(
-                description="The control index to retrieve text from, same as the selected `ControlLabel`"
+                description="The precise annotated ID of the selected control item to retrieve text from, adhering strictly to the provided options in the field of 'id' in the control information."
             ),
         ],
-        control_text: Annotated[
+        name: Annotated[
             str,
             Field(
-                description="The control text to retrieve text from, same as the selected `ControlText`"
+                description="The precise name of the selected control item to retrieve text from, adhering strictly to the provided options in the field of 'name' in the control information."
             ),
         ],
     ) -> Annotated[Dict, Field(description="the text content of the control item")]:
@@ -531,8 +538,8 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         action = OneStepAction(
             function="texts",
             args={},
-            control_label=control_label,
-            control_text=control_text,
+            control_label=id,
+            control_text=name,
             after_status="CONTINUE",
         )
 
@@ -548,7 +555,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         ),
     ]:
         """
-        Summarize your observation of the current application window base on the task to complete.
+        Summarize your observation of the current application window base on the subtask to complete.
         You must use your vision to summarize the image with required information and put it into the `text` argument.
         This summary will be passed to future steps for information.
         """
@@ -597,8 +604,19 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         desktop_windows_info = ui_state.control_inspector.get_control_info_list_of_dict(
             app_windows, ["control_text", "control_type"]
         )
+        from ufo.agents.processors.target import TargetKind
 
-        return desktop_windows_info
+        revised_desktop_windows_info = [
+            {
+                "id": window_info["label"],
+                "name": window_info["control_text"],
+                "type": window_info["control_type"],
+                "kind": TargetKind.WINDOW.value,
+            }
+            for window_info in desktop_windows_info
+        ]
+
+        return revised_desktop_windows_info
 
     @data_mcp.tool()
     def get_app_window_info(field_list: List[str]) -> Dict[str, Any]:

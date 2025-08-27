@@ -33,6 +33,13 @@ class HostAgentPrompter(BasicPrompter):
         super().__init__(is_visual, prompt_template, example_prompt_template)
         self.api_prompt_template = self.load_prompt_template(api_prompt_template)
 
+    def create_api_prompt_template(self, tools: List[MCPToolInfo]):
+        """
+        Create the API prompt template.
+        :param tools: The list of tools.
+        """
+        self.api_prompt_template = BasicPrompter.tools_to_llm_prompt(tools)
+
     def system_prompt_construction(self) -> str:
         """
         Construct the prompt for app selection.
@@ -175,29 +182,11 @@ class HostAgentPrompter(BasicPrompter):
         :param verbose: The verbosity level.
         return: The prompt for APIs.
         """
-
-        # Construct the prompt for APIs
-        api_list = [
-            "- The action type are limited to {actions}.".format(
-                actions=list(self.api_prompt_template.keys())
+        if self.api_prompt_template is None:
+            raise ValueError(
+                "API prompt template is not set. Call create_api_prompt_template first."
             )
-        ]
-
-        # Construct the prompt for each API
-        for key in self.api_prompt_template.keys():
-            api = self.api_prompt_template[key]
-            if verbose > 0:
-                api_text = "{summary}\n{usage}".format(
-                    summary=api["summary"], usage=api["usage"]
-                )
-            else:
-                api_text = api["summary"]
-
-            api_list.append(api_text)
-
-        api_prompt = self.retrieved_documents_prompt_helper("", "", api_list)
-
-        return api_prompt
+        return self.api_prompt_template
 
 
 class AppAgentPrompter(BasicPrompter):

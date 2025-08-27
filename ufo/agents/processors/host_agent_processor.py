@@ -4,16 +4,16 @@
 
 import json
 from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Tuple
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from ufo import utils
 from ufo.agents.processors.action_contracts import (
     ActionExecutionLog,
     ActionSequence,
-    BaseControlLog,
     OneStepAction,
 )
 from ufo.agents.processors.basic import BaseProcessor
+from ufo.agents.processors.target import TargetKind, TargetRegistry
 from ufo.config import Config
 from ufo.contracts.contracts import Command
 from ufo.llm import AgentType
@@ -68,10 +68,30 @@ class HostAgentRequestLog:
     prompt: Dict[str, Any]
 
 
+@dataclass
+class HostAgentResponse:
+    """
+    The response data for the HostAgent.
+    """
+
+    observation: str
+    thought: str
+    status: str
+    message: Optional[List[str]] = None
+    questions: Optional[List[str]] = None
+    current_subtask: Optional[str] = None
+    plan: Optional[List[str]] = None
+    comment: Optional[str] = None
+    function: Optional[str] = None
+    arguments: Optional[Dict[str, Any]] = None
+
+
 class HostAgentProcessor(BaseProcessor):
     """
     The processor for the host agent at a single step.
     """
+
+    _select_application_command = "select_application_window"
 
     def __init__(self, agent: "HostAgent", context: Context) -> None:
         """
@@ -87,9 +107,12 @@ class HostAgentProcessor(BaseProcessor):
         self._desktop_screen_url = None
 
         self.bash_command = None
-        self.third_party_agent_labels: List[str] = []
-        self.full_desktop_windows_info: List[Dict[str, str]] = []
+
+        self.target_registry = TargetRegistry()
+
         self.assigned_third_party_agent: str | None = None
+
+        self.target_info: List[Dict[str, str]] = []
 
         self.actions: List[OneStepAction] = []
 
@@ -148,19 +171,17 @@ class HostAgentProcessor(BaseProcessor):
             ]
         )
 
-        self._desktop_windows_info = result[0].result
+        desktop_windows_info = result[0].result
 
-        self.logger.info(
-            f"Got {len(self._desktop_windows_info)} desktop windows in total."
-        )
+        self.logger.info(f"Got {len(desktop_windows_info)} desktop windows in total.")
 
-    def _create_third_party_agent_list(
-        self, start_index: int = 0
-    ) -> Tuple[List[Dict], List[str]]:
+        self.target_registry.register_from_dicts(desktop_windows_info)
+        self.register_third_party_agents(start_index=len(desktop_windows_info) + 1)
+
+    def register_third_party_agents(self, start_index: int = 0) -> None:
         """
         Create a list of third-party agents.
         :param start_index: The starting index of the third-party agent list.
-        :return: A tuple containing the list of third-party agents and their labels.
         """
 
         third_party_agent_names = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
@@ -168,20 +189,18 @@ class HostAgentProcessor(BaseProcessor):
         self.logger.info(f"Enabled third-party agents: {third_party_agent_names}")
 
         third_party_agent_list = []
-        third_party_agent_labels = []
 
         for i, agentname in enumerate(third_party_agent_names):
             label = str(i + start_index)
             third_party_agent_list.append(
                 {
-                    "label": label,
-                    "control_type": "ThirdPartyAgent",
-                    "control_text": agentname,
+                    "kind": TargetKind.THIRD_PARTY_AGENT.value,
+                    "id": label,
+                    "type": "ThirdPartyAgent",
+                    "name": agentname,
                 }
             )
-            third_party_agent_labels.append(label)
-
-        return third_party_agent_list, third_party_agent_labels
+        self.target_registry.register_from_dicts(third_party_agent_list)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -195,23 +214,14 @@ class HostAgentProcessor(BaseProcessor):
         else:
             blackboard_prompt = []
 
-        windows_num = len(self._desktop_windows_info)
-        third_party_agent_list, third_party_agent_labels = (
-            self._create_third_party_agent_list(start_index=windows_num + 1)
+        self.target_info = self.target_registry.to_list(
+            keep_keys=["id", "name", "kind"]
         )
-
-        self.full_desktop_windows_info = (
-            self._desktop_windows_info + third_party_agent_list
-        )
-
-        # print(f"Full desktop windows info: {self.full_desktop_windows_info}")
-
-        self.third_party_agent_labels = third_party_agent_labels
 
         # Construct the prompt message for the host agent.
         self._prompt_message = self.host_agent.message_constructor(
             image_list=[self._desktop_screen_url],
-            os_info=self.full_desktop_windows_info,
+            os_info=self.target_info,
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
             request=self.request,
@@ -223,7 +233,7 @@ class HostAgentProcessor(BaseProcessor):
         request_data = HostAgentRequestLog(
             step=self.session_step,
             image_list=[self._desktop_screen_url],
-            os_info=self.full_desktop_windows_info,
+            os_info=self.target_info,
             plan=self.prev_plan,
             prev_subtask=self.previous_subtasks,
             request=self.request,
@@ -263,22 +273,20 @@ class HostAgentProcessor(BaseProcessor):
         Parse the response.
         """
 
-        self._response_json = self.host_agent.response_to_dict(self._response)
+        response_dict = self.host_agent.response_to_dict(self._response)
 
-        self.control_label = self._response_json.get("ControlLabel", "")
-        self.control_text = self._response_json.get("ControlText", "")
-        self.subtask = self._response_json.get("CurrentSubtask", "")
-        self.host_message = self._response_json.get("Message", [])
+        self.response = HostAgentResponse(**response_dict)
+
+        self.subtask = self.response.current_subtask
+        self.host_message = self.response.message
 
         # Convert the plan from a string to a list if the plan is a string.
-        self.plan = self.string2list(self._response_json.get("Plan", ""))
-        self._response_json["Plan"] = self.plan
+        self.plan = self.string2list(self.response.plan)
 
-        self.status = self._response_json.get("Status", "")
-        self.question_list = self._response_json.get("Questions", [])
-        self.bash_command = self._response_json.get("Bash", None)
+        self.status = self.response.status
+        self.question_list = self.response.questions
 
-        self.host_agent.print_response(self._response_json)
+        self.host_agent.print_response(self.response)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -287,94 +295,85 @@ class HostAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
-        if self.control_label:
-            if self.control_label in self.third_party_agent_labels:
+        function, arguments = self.response.function, self.response.arguments
 
-                self.assigned_third_party_agent = next(
-                    (
-                        info
-                        for info in self.full_desktop_windows_info
-                        if info["label"] == self.control_label
-                    ),
-                    None,
-                ).get("control_text", None)
+        return_value, error = None, None
 
-            else:
-                await self._select_application(self.control_label)
+        if function == self._select_application_command:
+            target_id = arguments.get("id")
 
-        if self.bash_command:
-            await self._run_shell_command(self.bash_command)
+            return_value = await self._select_application(target_id)
 
-        if not self.control_label and not self.bash_command:
-            self.status = self._agent_status_manager.FINISH.value
-            return
+        elif function:
+            result = await self.context.command_dispatcher.execute_commands(
+                [
+                    Command(
+                        tool_name=function,
+                        parameters=arguments,
+                        tool_type="action",
+                    )
+                ]
+            )
 
-    async def _select_application(self, window_label: str) -> None:
+            self.logger.info(
+                f"Executed command: {function}, with arguments: {arguments}"
+            )
 
-        result = await self.context.command_dispatcher.execute_commands(
-            [
-                Command(
-                    tool_name="select_application_window",
-                    parameters={"window_label": window_label},
-                    tool_type="action",
-                )
-            ]
-        )
-
-        self.app_root = result[0].result.get("root_name", "")
-        control_info = result[0].result.get("window_info", {})
-
-        self.logger.info(
-            f"Selected application process name: {self.control_label}, root name: {self.app_root}"
-        )
+            return_value = result[0].result
+            error = result[0].error
 
         action = OneStepAction(
             control_label=self.control_label,
             control_text=self.control_text,
             after_status=self.status,
-            function="set_focus",
-        )
-
-        action.control_log = BaseControlLog(
-            control_class=control_info.get("class_name"),
-            control_type=control_info.get("control_type"),
-            control_automation_id=control_info.get("automation_id"),
+            function=function,
+            args=arguments,
         )
 
         self.actions = [action]
 
-        self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
-        self.context.set(ContextNames.APPLICATION_PROCESS_NAME, self.control_text)
-
-    async def _run_shell_command(self, command: str) -> None:
-
-        result = await self.context.command_dispatcher.execute_commands(
-            [
-                Command(
-                    tool_name="run_shell",
-                    parameters={"bash_command": command},
-                    tool_type="action",
-                )
-            ]
-        )
-
-        self.logger.info(f"Executed shell command: {command}")
-
-        self.actions = [
-            OneStepAction(
-                function="run_shell",
-                args={"command": self.bash_command},
-                after_status=self.status,
-                control_label=self.control_label,
-                control_text=self.control_text,
-            )
-        ]
-
         self.actions[0].results = ActionExecutionLog(
             status=self.status,
-            error=result[0].error,
-            return_value=result[0].result,
+            error=error,
+            return_value=return_value,
         )
+
+    async def _select_application(self, target_id: str) -> Dict[str, Any]:
+        """
+        Select an application.
+        :param target_id: The ID of the target application.
+        :return: The selected application information.
+        """
+
+        target = self.target_registry.get(target_id)
+
+        if target and target.kind == TargetKind.THIRD_PARTY_AGENT:
+
+            self.assigned_third_party_agent = target.name
+
+        else:
+
+            result = await self.context.command_dispatcher.execute_commands(
+                [
+                    Command(
+                        tool_name=self._select_application_command,
+                        parameters={"id": str(target_id), "name": target.name},
+                        tool_type="action",
+                    )
+                ]
+            )
+
+            self.app_root = result[0].result.get("root_name", "")
+            self.logger.info(
+                f"Selected application process name: {target.name}, root name: {self.app_root}"
+            )
+
+        self.control_label = target_id
+        self.control_text = target.name
+        self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
+        self.context.set(ContextNames.APPLICATION_PROCESS_NAME, target.name)
+
+        return asdict(self.target_registry.get(target_id))
 
     def sync_memory(self):
         """
@@ -391,7 +390,7 @@ class HostAgentProcessor(BaseProcessor):
             SubtaskIndex=-1,
             FunctionCall=action_seq.get_function_calls(),
             Action=action_seq.to_list_of_dicts(),
-            ActionType="Bash" if self.bash_command else "UIControl",
+            ActionType="MCP",
             Request=self.request,
             Agent="HostAgent",
             AgentName=self.host_agent.name,
@@ -403,7 +402,7 @@ class HostAgentProcessor(BaseProcessor):
             ControlLog=action_seq.get_control_logs(),
         )
 
-        self.add_to_memory(self._response_json)
+        self.add_to_memory(asdict(self.response))
         self.add_to_memory(asdict(additional_memory))
 
     def update_memory(self) -> None:

@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 import logging
 import os
-from typing import Any, Dict, List, Optional, Tuple, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
 
 import openai
 
@@ -23,10 +23,12 @@ from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentSt
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
 from ufo.config import Config
 from ufo.contracts.contracts import Command, MCPToolInfo
-from ufo.llm import AgentType
 from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
+
+if TYPE_CHECKING:
+    from ufo.agents.processors.app_agent_processor import AppAgentResponse
 
 configs = Config.get_instance().config_data
 
@@ -164,7 +166,7 @@ class AppAgent(BasicAgent):
         return appagent_prompt_message
 
     def print_response(
-        self, response_dict: Dict[str, Any], print_action: bool = True
+        self, response: AppAgentResponse, print_action: bool = True
     ) -> None:
         """
         Print the response.
@@ -172,21 +174,27 @@ class AppAgent(BasicAgent):
         :param print_action: The flag indicating whether to print the action.
         """
 
-        control_text = response_dict.get("ControlText")
-        control_label = response_dict.get("ControlLabel")
-        if not control_text and not control_label:
-            control_text = "[No control selected.]"
-            control_label = "[No control label selected.]"
-        observation = response_dict.get("Observation")
-        thought = response_dict.get("Thought")
-        plan = response_dict.get("Plan")
-        status = response_dict.get("Status")
-        comment = response_dict.get("Comment")
-        function_call = response_dict.get("Function")
-        if configs.get(AgentType.APP).get("JSON_SCHEMA", False):
-            args = utils.revise_line_breaks(json.loads(response_dict.get("Args")))
+        control_label, control_text = None, None
+        if type(response.arguments) == dict:
+            if "id" in response.arguments:
+                control_label = response.arguments.get("id", "")
+            if "name" in response.arguments:
+                control_text = response.arguments.get("name", "")
+
+        observation = response.observation
+        thought = response.thought
+        plan = response.plan
+        status = response.status
+        comment = response.comment
+        function_call = response.function
+
+        arguments = response.arguments
+
+        if type(arguments) == dict:
+            args = utils.revise_line_breaks(arguments)
         else:
-            args = utils.revise_line_breaks(response_dict.get("Args"))
+            args = json.loads(arguments)
+            args = utils.revise_line_breaks(args)
 
         # Generate the function call string
         action = AppAgent.get_command_string(function_call, args)
@@ -196,12 +204,13 @@ class AppAgent(BasicAgent):
         )
         utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
         if print_action:
-            utils.print_with_color(
-                "Selected item🕹️: {control_text}, Label: {label}".format(
-                    control_text=control_text, label=control_label
-                ),
-                "yellow",
-            )
+            if control_label or control_text:
+                utils.print_with_color(
+                    "Selected item🕹️: {control_text}, Label: {label}".format(
+                        control_text=control_text, label=control_label
+                    ),
+                    "yellow",
+                )
             utils.print_with_color(
                 "Action applied⚒️: {action}".format(action=action), "blue"
             )
@@ -211,7 +220,7 @@ class AppAgent(BasicAgent):
         )
         utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
 
-        screenshot_saving = response_dict.get("SaveScreenshot", {})
+        screenshot_saving = response.save_screenshot
 
         if screenshot_saving.get("save", False):
             utils.print_with_color(
@@ -556,20 +565,6 @@ class AppAgent(BasicAgent):
         :param tools: The list of MCPToolInfo objects.
         """
         self._tools_info = tools
-
-    @staticmethod
-    def get_command_string(command_name: str, params: Dict[str, str]) -> str:
-        """
-        Generate a function call string.
-        :param command_name: The function name.
-        :param params: The arguments as a dictionary.
-        :return: The function call string.
-        """
-        # Format the arguments
-        args_str = ", ".join(f"{k}={v!r}" for k, v in params.items())
-
-        # Return the function call string
-        return f"{command_name}({args_str})"
 
 
 @AgentRegistry.register(agent_name="operator")

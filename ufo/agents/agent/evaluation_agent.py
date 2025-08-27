@@ -2,15 +2,15 @@
 # Licensed under the MIT License.
 
 
-from typing import Any, Dict, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.evaluaton_agent_state import EvaluatonAgentStatus
 from ufo.config import Config
+from ufo.contracts.contracts import MCPToolInfo
+from ufo.module.context import Context, ContextNames
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
-from ufo.module.context import Context
 from ufo.utils import json_parser, print_with_color
-
 
 configs = Config.get_instance().config_data
 
@@ -58,11 +58,7 @@ class EvaluationAgent(BasicAgent):
         )
 
     def message_constructor(
-        self,
-        log_path: str,
-        request: str,
-        eva_all_screenshots: bool = True,
-        context: Optional[Context] = None,
+        self, log_path: str, request: str, eva_all_screenshots: bool = True
     ) -> Dict[str, Any]:
         """
         Construct the message.
@@ -73,9 +69,7 @@ class EvaluationAgent(BasicAgent):
         :return: The message.
         """
 
-        evaagent_prompt_system_message = self.prompter.system_prompt_construction(
-            context
-        )
+        evaagent_prompt_system_message = self.prompter.system_prompt_construction()
 
         evaagent_prompt_user_message = self.prompter.user_content_construction(
             log_path=log_path, request=request, eva_all_screenshots=eva_all_screenshots
@@ -95,6 +89,23 @@ class EvaluationAgent(BasicAgent):
 
         return EvaluatonAgentStatus
 
+    def context_provision(self, context: Context) -> None:
+
+        self.logger.info("Loading MCP tool information...")
+
+        tool_info_dict = context.get(ContextNames.TOOL_INFO)
+
+        for agent_name in tool_info_dict:
+            tool_list: List[MCPToolInfo] = tool_info_dict[agent_name]
+
+            tool_name_list = [tool.tool_name for tool in tool_list] if tool_list else []
+
+            self.logger.info(
+                f"Loaded tool list: {tool_name_list} for the agent {agent_name}."
+            )
+
+        self.prompter.create_api_prompt_template(tool_info_dict)
+
     def evaluate(
         self,
         request: str,
@@ -108,11 +119,10 @@ class EvaluationAgent(BasicAgent):
         :return: The evaluation result and the cost of LLM.
         """
 
+        self.context_provision(context)
+
         message = self.message_constructor(
-            log_path=log_path,
-            request=request,
-            eva_all_screenshots=eva_all_screenshots,
-            context=context,
+            log_path=log_path, request=request, eva_all_screenshots=eva_all_screenshots
         )
         result, cost = self.get_response(
             message=message, namescope="EVALUATION_AGENT", use_backup_engine=True

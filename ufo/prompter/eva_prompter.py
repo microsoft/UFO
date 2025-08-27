@@ -4,10 +4,9 @@
 
 import json
 import os
-from typing import Dict, List, Optional
+from typing import Any, Dict, List
 
 from ufo.config import Config
-from ufo.module.context import Context, ContextNames
 from ufo.prompter.basic import BasicPrompter
 from ufo.trajectory import parser
 import ufo.utils
@@ -34,14 +33,16 @@ class EvaluationAgentPrompter(BasicPrompter):
         """
         super().__init__(is_visual, prompt_template, example_prompt_template)
 
-    def system_prompt_construction(self, context: Optional[Context] = None) -> str:
+        self.api_prompt_template = None
+
+    def system_prompt_construction(self) -> str:
         """
         Construct the prompt for app selection.
         return: The prompt for app selection.
         """
 
         examples = self.examples_prompt_helper()
-        apis = self.api_prompt_helper(context=context, verbose=1)
+        apis = self.api_prompt_helper()
 
         system_key = "system"
         screenshot_key = (
@@ -285,20 +286,13 @@ class EvaluationAgentPrompter(BasicPrompter):
 
         return self.retrieved_documents_prompt_helper(header, separator, example_list)
 
-    def api_prompt_helper(
-        self, context: Optional[Context] = None, verbose: int = 1
-    ) -> str:
+    def create_api_prompt_template(self, tool_info_dict: Dict[str, Any]) -> None:
         """
-        Construct the prompt for APIs.
-        :param context: The context.
-        :param verbose: The verbosity level.
-        return: The prompt for APIs.
+        Create the API prompt template.
+        :param tool_info_dict: The tool information dictionary.
         """
-
-        # Construct the prompt for each UI control action.
 
         api_list = []
-        tool_info_dict = context.get(ContextNames.TOOL_INFO)
 
         for agent_name in tool_info_dict:
             tool_info = tool_info_dict[agent_name]
@@ -306,7 +300,18 @@ class EvaluationAgentPrompter(BasicPrompter):
             api_list.append(f"Tool Info for Agent {agent_name}: {tool_info_prompt}")
 
         api_prompt = self.retrieved_documents_prompt_helper("", "", api_list)
-        return api_prompt
+
+        self.api_prompt_template = api_prompt
+
+    def api_prompt_helper(self) -> str:
+        """
+        Construct the API prompt.
+        """
+        if self.api_prompt_template is None:
+            raise ValueError(
+                "API prompt template is not set. Call create_api_prompt_template first."
+            )
+        return self.api_prompt_template
 
 
 if __name__ == "__main__":

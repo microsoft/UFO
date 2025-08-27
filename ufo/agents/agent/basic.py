@@ -138,6 +138,13 @@ class BasicAgent(ABC):
         """
         pass
 
+    @abstractmethod
+    async def context_provision(self) -> None:
+        """
+        Provide the context for the agent.
+        """
+        pass
+
     @classmethod
     def get_response(
         cls,
@@ -376,6 +383,20 @@ class BasicAgent(ABC):
         :return: The default state of the agent.
         """
         pass
+
+    @staticmethod
+    def get_command_string(command_name: str, params: Dict[str, str]) -> str:
+        """
+        Generate a function call string.
+        :param command_name: The function name.
+        :param params: The arguments as a dictionary.
+        :return: The function call string.
+        """
+        # Format the arguments
+        args_str = ", ".join(f"{k}={v!r}" for k, v in params.items())
+
+        # Return the function call string
+        return f"{command_name}({args_str})"
 
 
 class AgentRegistry:

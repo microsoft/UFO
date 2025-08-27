@@ -365,7 +365,7 @@ class BaseProcessor(ABC):
         agent_memory = self.agent.memory
 
         if agent_memory.length > 0:
-            prev_plan = agent_memory.get_latest_item().to_dict().get("Plan", [])
+            prev_plan = agent_memory.get_latest_item().to_dict().get("plan", [])
         else:
             prev_plan = []
 

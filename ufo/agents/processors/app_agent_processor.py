@@ -7,9 +7,10 @@ from dataclasses import asdict, dataclass, field
 from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
-
+from ufo.agents.processors.target import TargetKind, TargetRegistry
 from ufo import utils
 from ufo.agents.processors.action_contracts import (
+    ActionExecutionLog,
     ActionSequence,
     BaseControlLog,
     OneStepAction,
@@ -118,6 +119,22 @@ class AppAgentRequestLog:
     control_info_recording: Optional[Dict[str, Any]] = None
 
 
+@dataclass
+class AppAgentResponse:
+    """
+    The response data for the AppAgent.
+    """
+
+    observation: str
+    thought: str
+    status: str
+    plan: Optional[List[str]] = None
+    comment: Optional[str] = None
+    function: Optional[str] = None
+    arguments: Optional[Dict[str, Any]] = None
+    save_screenshot: Optional[Dict[str, Any]] = None
+
+
 class AppAgentProcessor(BaseProcessor):
     """
     The processor for the app agent at a single step.
@@ -149,6 +166,8 @@ class AppAgentProcessor(BaseProcessor):
         self.screenshot_save_path = None
         self.control_inspector = ControlInspectorFacade()
         self.grounding_service = ground_service
+
+        self.target_registry = TargetRegistry()
 
     def print_step_info(self) -> None:
         """
@@ -198,42 +217,10 @@ class AppAgentProcessor(BaseProcessor):
             }
         )
 
-        result = await self.context.command_dispatcher.execute_commands(
-            [
-                Command(
-                    tool_name="capture_window_screenshot",
-                    parameters={},
-                    tool_type="data_collection",
-                )
-            ]
-        )
+        # Save the screenshot and get the current application window information and set the windows state.
+        await self.save_application_window_screenshot(screenshot_save_path)
 
-        clean_screenshot_url = result[0].result
-        utils.save_image_string(clean_screenshot_url, screenshot_save_path)
-        self.logger.info(f"Clean screenshot saved to {screenshot_save_path}")
-
-        result = await self.context.command_dispatcher.execute_commands(
-            [
-                Command(
-                    tool_name="get_app_window_info",
-                    parameters={"field_list": ControlInfoRecorder.recording_fields},
-                    tool_type="data_collection",
-                )
-            ]
-        )
-
-        self.control_recorder.application_windows_info = result[0].result
-
-        self.logger.info(
-            f"Application window information: {self.control_recorder.application_windows_info}"
-        )
-
-        # Convert the application window information to a virtual UIA representation.
-        self.application_window = self.convert_controls_info_to_uia(
-            [self.control_recorder.application_windows_info]
-        )[0]
-
-        control_list = await self.get_control_list(screenshot_save_path)
+        control_list = await self.collect_window_control_info(screenshot_save_path)
 
         self._annotation_dict = self.photographer.get_annotation_dict(
             self.application_window, control_list, annotation_type="number"
@@ -258,29 +245,7 @@ class AppAgentProcessor(BaseProcessor):
 
         if configs.get("SAVE_FULL_SCREEN", False):
 
-            desktop_save_path = (
-                self.log_path + f"desktop_action_step{self.session_step}.png"
-            )
-
-            self._memory_data.add_values_from_dict(
-                {"DesktopCleanScreenshot": desktop_save_path}
-            )
-
-            # Capture the desktop screenshot for all screens.
-
-            result = await self.context.command_dispatcher.execute_commands(
-                [
-                    Command(
-                        tool_name="capture_desktop_screenshot",
-                        parameters={"all_screens": True},
-                        tool_type="data_collection",
-                    )
-                ]
-            )
-
-            desktop_screenshot_url = result[0].result
-            utils.save_image_string(desktop_screenshot_url, desktop_save_path)
-            self.logger.info(f"Desktop screenshot saved to {desktop_save_path}")
+            await self.save_full_screenshot()
 
         # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
         if configs.get("INCLUDE_LAST_SCREENSHOT", True):
@@ -318,6 +283,49 @@ class AppAgentProcessor(BaseProcessor):
             )
             self._image_url += [screenshot_url, screenshot_annotated_url]
 
+    async def save_application_window_screenshot(
+        self, screenshot_save_path: str
+    ) -> None:
+        """
+        Get the current application window information and set the windows state.
+        :param screenshot_save_path: The file path to save the screenshot.
+        """
+
+        result = await self.context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name="capture_window_screenshot",
+                    parameters={},
+                    tool_type="data_collection",
+                )
+            ]
+        )
+
+        clean_screenshot_url = result[0].result
+        utils.save_image_string(clean_screenshot_url, screenshot_save_path)
+        self.logger.info(f"Clean screenshot saved to {screenshot_save_path}")
+
+        result = await self.context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name="get_app_window_info",
+                    parameters={"field_list": ControlInfoRecorder.recording_fields},
+                    tool_type="data_collection",
+                )
+            ]
+        )
+
+        self.control_recorder.application_windows_info = result[0].result
+
+        self.logger.info(
+            f"Application window information: {self.control_recorder.application_windows_info}"
+        )
+
+        # Convert the application window information to a virtual UIA representation.
+        self.application_window = self.convert_controls_info_to_uia(
+            [self.control_recorder.application_windows_info]
+        )[0]
+
     async def save_ui_tree(self):
         """
         Save the UI tree of the current application window.
@@ -343,6 +351,35 @@ class AppAgentProcessor(BaseProcessor):
             with open(ui_tree_path, "w") as file:
                 json.dump(step_ui_tree, file, indent=4)
 
+    async def save_desktop_screenshot(self):
+        """
+        Save the full screenshot of the desktop.
+        """
+
+        desktop_save_path = (
+            self.log_path + f"desktop_action_step{self.session_step}.png"
+        )
+
+        self._memory_data.add_values_from_dict(
+            {"DesktopCleanScreenshot": desktop_save_path}
+        )
+
+        # Capture the desktop screenshot for all screens.
+
+        result = await self.context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name="capture_desktop_screenshot",
+                    parameters={"all_screens": True},
+                    tool_type="data_collection",
+                )
+            ]
+        )
+
+        desktop_screenshot_url = result[0].result
+        utils.save_image_string(desktop_screenshot_url, desktop_save_path)
+        self.logger.info(f"Desktop screenshot saved to {desktop_save_path}")
+
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
     async def get_control_info(self) -> None:
@@ -351,25 +388,87 @@ class AppAgentProcessor(BaseProcessor):
         """
 
         # Get the control information for the control items and the filtered control items, in a format of list of dictionaries.
-        self._control_info = self.control_inspector.get_control_info_list_of_dict(
-            self._annotation_dict,
-            ["control_text", "control_type" if BACKEND == "uia" else "control_class"],
+        filtered_control_info = self.control_inspector.get_control_info_list_of_dict(
+            self.filtered_annotation_dict,
+            [
+                "control_text",
+                "control_type",
+            ],
         )
-        self.filtered_control_info = (
+
+        revised_filtered_control_info = [
+            {
+                "kind": TargetKind.CONTROL,
+                "id": control["label"],
+                "name": control["control_text"],
+                "type": control["control_type"],
+            }
+            for control in filtered_control_info
+        ]
+
+        self.target_registry.register_from_dicts(revised_filtered_control_info)
+
+        self.logger.info(
+            f"Get {len(revised_filtered_control_info)} filtered control items"
+        )
+
+    async def collect_uia_controls_info(self) -> List[UIAWrapper]:
+        """
+        Collect UIA control information.
+        """
+        result = await self.context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name="get_app_window_controls_info",
+                    parameters={"field_list": ControlInfoRecorder.recording_fields},
+                    tool_type="data_collection",
+                )
+            ]
+        )
+        api_controls_info = result[0].result
+        self.logger.info(
+            f"Get {len(api_controls_info)} API controls from current application window"
+        )
+        self.control_recorder.uia_controls_info = api_controls_info
+        api_control_list = self.convert_controls_info_to_uia(api_controls_info)
+
+        return api_control_list
+
+    async def collect_grounding_control_info(self, screenshot_path) -> List[UIAWrapper]:
+        """
+        Collect grounding control information.
+        """
+        self.grounding_service: BasicGrounding
+
+        omniparser_configs = configs.get("OMNIPARSER", {})
+
+        # print(omniparser_configs)
+
+        grounding_control_list = self.grounding_service.convert_to_virtual_uia_elements(
+            image_path=screenshot_path,
+            application_window=self.application_window,
+            box_threshold=omniparser_configs.get("BOX_THRESHOLD", 0.05),
+            iou_threshold=omniparser_configs.get("IOU_THRESHOLD", 0.1),
+            use_paddleocr=omniparser_configs.get("USE_PADDLEOCR", True),
+            imgsz=omniparser_configs.get("IMGSZ", 640),
+        )
+        self.logger.info(f"Get {len(grounding_control_list)} grounding controls")
+
+        grounding_control_dict = {
+            i + 1: control for i, control in enumerate(grounding_control_list)
+        }
+
+        self.control_recorder.grounding_controls_info = (
             self.control_inspector.get_control_info_list_of_dict(
-                self.filtered_annotation_dict,
-                [
-                    "control_text",
-                    "control_type" if BACKEND == "uia" else "control_class",
-                ],
+                grounding_control_dict, ControlInfoRecorder.recording_fields
             )
         )
 
-        self.logger.info(
-            f"Get {len(self.filtered_control_info)} filtered control items"
-        )
+        return grounding_control_list
 
-    async def get_control_list(self, screenshot_path: str) -> List[UIAWrapper]:
+    async def collect_window_control_info(
+        self, screenshot_path: str
+    ) -> List[UIAWrapper]:
         """
         Get the control list from the annotation dictionary.
         :param screenshot_path: The path to the clean screenshot.
@@ -385,51 +484,18 @@ class AppAgentProcessor(BaseProcessor):
 
         if "uia" in control_detection_backend:
 
-            result = await self.context.command_dispatcher.execute_commands(
-                [
-                    Command(
-                        tool_name="get_app_window_controls_info",
-                        parameters={"field_list": ControlInfoRecorder.recording_fields},
-                        tool_type="data_collection",
-                    )
-                ]
-            )
-            api_controls_info = result[0].result
-            self.logger.info(
-                f"Get {len(api_controls_info)} API controls from current application window"
-            )
-
-            api_control_list = self.convert_controls_info_to_uia(api_controls_info)
+            api_control_list = await self.collect_uia_controls_info()
 
         else:
-            api_controls_info = []
             api_control_list = []
         # print(control_detection_backend, grounding_backend, screenshot_path)
 
         if grounding_backend == "omniparser" and self.grounding_service is not None:
-            self.grounding_service: BasicGrounding
-
-            omniparser_configs = configs.get("OMNIPARSER", {})
-
-            # print(omniparser_configs)
-
-            grounding_control_list = (
-                self.grounding_service.convert_to_virtual_uia_elements(
-                    image_path=screenshot_path,
-                    application_window=self.application_window,
-                    box_threshold=omniparser_configs.get("BOX_THRESHOLD", 0.05),
-                    iou_threshold=omniparser_configs.get("IOU_THRESHOLD", 0.1),
-                    use_paddleocr=omniparser_configs.get("USE_PADDLEOCR", True),
-                    imgsz=omniparser_configs.get("IMGSZ", 640),
-                )
+            grounding_control_list = await self.collect_grounding_control_info(
+                screenshot_path
             )
-            self.logger.info(f"Get {len(grounding_control_list)} grounding controls")
         else:
             grounding_control_list = []
-
-        grounding_control_dict = {
-            i + 1: control for i, control in enumerate(grounding_control_list)
-        }
 
         merged_control_list = self.photographer.merge_control_list(
             api_control_list,
@@ -443,16 +509,6 @@ class AppAgentProcessor(BaseProcessor):
         merged_control_dict = {
             i + 1: control for i, control in enumerate(merged_control_list)
         }
-
-        # Record the control information for the uia controls.
-        self.control_recorder.uia_controls_info = api_controls_info
-
-        # Record the control information for the grounding controls.
-        self.control_recorder.grounding_controls_info = (
-            self.control_inspector.get_control_info_list_of_dict(
-                grounding_control_dict, ControlInfoRecorder.recording_fields
-            )
-        )
 
         # Record the control information for the merged controls.
         self.control_recorder.merged_controls_info = (
@@ -496,7 +552,7 @@ class AppAgentProcessor(BaseProcessor):
         # Get the last successful actions of the AppAgent.
         last_success_actions = self.get_last_success_actions()
 
-        action_keys = ["Function", "Args", "ControlText", "Results", "RepeatTimes"]
+        action_keys = ["function", "arguments", "Results", "RepeatTimes"]
 
         filtered_last_success_actions = [
             {key: action.get(key, "") for key in action_keys}
@@ -508,7 +564,7 @@ class AppAgentProcessor(BaseProcessor):
             dynamic_examples=retrieved_results,
             dynamic_knowledge=external_knowledge_prompt,
             image_list=self._image_url,
-            control_info=self.filtered_control_info,
+            control_info=self.target_registry.to_list(keep_keys=["id", "name", "type"]),
             prev_subtask=self.previous_subtasks,
             plan=self.prev_plan,
             request=self.request,
@@ -533,7 +589,7 @@ class AppAgentProcessor(BaseProcessor):
             prev_subtask=self.previous_subtasks,
             plan=self.prev_plan,
             request=self.request,
-            control_info=self.filtered_control_info,
+            control_info=self.target_registry.to_list(keep_keys=["id", "name", "type"]),
             subtask=self.subtask,
             current_application=self.application_process_name,
             host_message=self.host_message,
@@ -575,27 +631,30 @@ class AppAgentProcessor(BaseProcessor):
         Parse the response.
         """
 
-        self._response_json = self.app_agent.response_to_dict(self._response)
+        response_dict = self.app_agent.response_to_dict(self._response)
 
-        self.control_label = self._response_json.get("ControlLabel", "")
-        self.control_text = self._response_json.get("ControlText", "")
-        self._operation = self._response_json.get("Function", "")
-        self.question_list = self._response_json.get("Questions", [])
-        if configs.get(AgentType.APP).get("JSON_SCHEMA", False):
-            self._args = utils.revise_line_breaks(
-                json.loads(self._response_json.get("Args", ""))
-            )
+        self.response = AppAgentResponse(**response_dict)
+
+        if type(self.response.arguments) == dict:
+            if "id" in self.response.arguments:
+                self.control_label = self.response.arguments.get("id", "")
+            if "name" in self.response.arguments:
+                self.control_text = self.response.arguments.get("name", "")
+
+        arguments = self.response.arguments
+
+        if type(arguments) == dict:
+            self.response.arguments = utils.revise_line_breaks(arguments)
         else:
-            self._args = utils.revise_line_breaks(self._response_json.get("Args", ""))
+            args = json.loads(arguments)
+            self.response.arguments = utils.revise_line_breaks(args)
 
         # Convert the plan from a string to a list if the plan is a string.
-        self.plan = self.string2list(self._response_json.get("Plan", ""))
-        self._response_json["Plan"] = self.plan
+        self.plan = self.string2list(self.response.plan)
+        self.status = self.response.status
 
-        self.status = self._response_json.get("Status", "")
-        self.app_agent.print_response(
-            response_dict=self._response_json, print_action=True
-        )
+        # self.status = self._response_json.get("Status", "")
+        self.app_agent.print_response(response=self.response, print_action=True)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
@@ -603,17 +662,8 @@ class AppAgentProcessor(BaseProcessor):
         """
         Execute the action.
         """
-        action = OneStepAction(
-            function=self._operation,
-            args=self._args,
-            control_label=self._control_label,
-            control_text=self.control_text,
-            after_status=self.status,
-        )
 
-        self.actions = [action]
-
-        if not action.function:
+        if not self.response.function:
             utils.print_with_color(
                 "No action to execute. Skipping execution.", "yellow"
             )
@@ -622,14 +672,14 @@ class AppAgentProcessor(BaseProcessor):
         result = await self.context.command_dispatcher.execute_commands(
             [
                 Command(
-                    tool_name=action.function,
-                    parameters=action.args,
+                    tool_name=self.response.function,
+                    parameters=self.response.arguments,
                     tool_type="action",
                 )
             ]
         )
 
-        self.logger.info(f"Result for execution of {action.function}: {result}")
+        self.logger.info(f"Result for execution of {self.response.function}: {result}")
 
         control_screenshot_save_path = (
             self.log_path + f"action_step{self.session_step}_selected_controls.png"
@@ -648,6 +698,25 @@ class AppAgentProcessor(BaseProcessor):
             background_screenshot_path=self.screenshot_save_path,
         )
 
+        return_value = result[0].result
+        error = result[0].error
+
+        action = OneStepAction(
+            function=self.response.function,
+            args=self.response.arguments,
+            control_label=self.control_label,
+            control_text=self.control_text,
+            after_status=self.response.status,
+        )
+
+        action.results = ActionExecutionLog(
+            status=self.response.status,
+            error=error,
+            return_value=return_value,
+        )
+
+        self.actions = [action]
+
     def sync_memory(self):
         """
         Sync the memory of the AppAgent.
@@ -656,9 +725,7 @@ class AppAgentProcessor(BaseProcessor):
         action_seq = ActionSequence(self.actions)
 
         app_root = self.app_root
-        # app_root is set in the selecte_app and launch_app actions
-        # and should not change as app agent is for a single app
-        # app_root = self.application_window_info.process_name
+
         action_type = ["UIControl" for _ in action_seq.actions]  # TODO: fix this
 
         all_previous_success_actions = self.get_all_success_actions()
@@ -682,7 +749,7 @@ class AppAgentProcessor(BaseProcessor):
             ActionSuccess=action_success,
             ActionType=action_type,
             Request=self.request,
-            Agent="AppAgent",
+            Agent=self.agent.__class__.__name__,
             AgentName=self.app_agent.name,
             Application=app_root,
             Cost=self._cost,
@@ -692,7 +759,7 @@ class AppAgentProcessor(BaseProcessor):
             ControlLog=action_seq.get_control_logs(),
             UserConfirm=(
                 "Yes"
-                if self.status.upper()
+                if self.response.status.upper()
                 == self._agent_status_manager.CONFIRM.value.upper()
                 else None
             ),
