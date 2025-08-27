@@ -364,11 +364,9 @@ class Trajectory:
         key_shown: List[str] = [
             "Request",
             "Subtask",
-            "Thought",
-            "Status",
-            "Action",
-            "ControlLabel",
-            "ControlText",
+            "thought",
+            "status",
+            "action",
             "error",
         ],
     ) -> None:

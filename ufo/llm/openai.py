@@ -148,9 +148,7 @@ class BaseOpenAIService(BaseService):
                     }
                 )
 
-            response = self.client.chat.completions.create(
-                **base_params
-            )
+            response = self.client.chat.completions.create(**base_params)
 
             if stream:
                 collected_content = [""]

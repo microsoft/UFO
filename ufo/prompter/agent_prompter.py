@@ -397,11 +397,9 @@ class AppAgentPrompter(BasicPrompter):
         """
         action_list = [
             {
-                "Function": response.get("Function", ""),
-                "Args": response.get("Args", {}),
-                "Status": response.get("Status", "CONTINUE"),
-                "ControlLabel": response.get("ControlLabel", ""),
-                "ControlText": response.get("ControlText", ""),
+                "function": response.get("function", ""),
+                "arguments": response.get("arguments", {}),
+                "status": response.get("status", "CONTINUE"),
             }
         ]
 
@@ -409,7 +407,7 @@ class AppAgentPrompter(BasicPrompter):
         from copy import deepcopy
 
         response_copy = deepcopy(response)
-        for key in ["Function", "Args", "Status", "ControlLabel", "ControlText"]:
+        for key in ["function", "arguments", "status"]:
             response_copy.pop(key, None)
         response_copy["ActionList"] = action_list
 
