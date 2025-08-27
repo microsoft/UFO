@@ -454,6 +454,8 @@ class AppAgentProcessor(BaseProcessor):
         )
         self.logger.info(f"Get {len(grounding_control_list)} grounding controls")
 
+        # TODO: Server should send command to register grounding controls, to be implemented.
+
         grounding_control_dict = {
             i + 1: control for i, control in enumerate(grounding_control_list)
         }

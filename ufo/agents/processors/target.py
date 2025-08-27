@@ -7,6 +7,10 @@ from typing import List, Optional, Dict, Union, Any
 
 
 class TargetKind(str, Enum):
+    """
+    Enumeration for different types of targets.
+    """
+
     WINDOW = "window"
     CONTROL = "control"
     THIRD_PARTY_AGENT = "third_party_agent"
@@ -139,6 +143,7 @@ class TargetRegistry:
     def to_list(self, keep_keys: Optional[List[str]] = None) -> List[Dict[str, Any]]:
         """
         Convert the registered targets to a list of dictionaries.
+        :param keep_keys: Optional list of keys to keep in the output dictionaries.
         :return: A list of dictionaries representing the registered targets.
         """
         if keep_keys:
