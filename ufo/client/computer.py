@@ -743,8 +743,8 @@ def test_command_router():
             tool_name="keyboard_input",
             tool_type="action",
             parameters={
-                "control_label": "1",
-                "control_text": "Untitled. Unmodified.",
+                "id": "1",
+                "name": "Untitled. Unmodified.",
                 "keys": "hi",
                 "control_focus": True,
             },
@@ -753,8 +753,8 @@ def test_command_router():
             tool_name="click_input",
             tool_type="action",
             parameters={
-                "control_label": "2",
-                "control_text": "Untitled. Unmodified.",
+                "id": "2",
+                "name": "Untitled. Unmodified.",
             },
         ),
     ]

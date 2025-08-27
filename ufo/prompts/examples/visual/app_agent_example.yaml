@@ -13,7 +13,7 @@ example1:
     function: |-
       click_input
     arguments: 
-      {"control_label": "1", "control_text": "New Email", "button": "left", "double": false}
+      {"id": "1", "name": "New Email", "button": "left", "double": false}
     status: |-
       CONTINUE
     plan:
@@ -42,8 +42,8 @@ example2:
     function: |-
       set_edit_text
     arguments:
-      control_label: "36"
-      control_text: "Email Body"
+      id: "36"
+      name: "Email Body"
       text: |
         Dear Amy,
 
@@ -77,7 +77,7 @@ example3:
     function: |-
       click_input
     arguments: 
-      {"control_label": "59", "control_text": "Find", "button": "left", "double": false}
+      {"id": "59", "name": "Find", "button": "left", "double": false}
     status: |-
       FINISH
     plan:
@@ -102,7 +102,7 @@ example4:
       Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'FINISH' immediately.
     function: |-
       texts
-    arguments: {"control_label": "83", "control_text": "framework - Word"}
+    arguments: {"id": "83", "name": "framework - Word"}
     status: |-
       FINISH
     plan:
@@ -128,7 +128,7 @@ example5:
     function: |-
       click_input
     arguments: 
-      {"control_label": "59", "control_text": "File", "button": "left", "double": false}
+      {"id": "59", "name": "File", "button": "left", "double": false}
     status: |-
       CONTINUE
     plan:
@@ -160,7 +160,7 @@ example6:
     function: |-
       set_edit_text
     arguments: 
-      {"control_label": "36", "control_text": "搜索", "text": "Imdiffusion GitHub"}
+      {"id": "36", "name": "搜索", "text": "Imdiffusion GitHub"}
     status: |-
       CONTINUE
     plan:
@@ -190,7 +190,7 @@ example7:
     function: |-
       set_edit_text
     arguments: 
-      {"control_label": "19", "control_text": "Add a task in “My Day”", "text": "Get party dinner (5 people) preparation done before 5PM today."}
+      {"id": "19", "name": "Add a task in “My Day”", "text": "Get party dinner (5 people) preparation done before 5PM today."}
     status: |-
       CONTINUE
     plan:
@@ -224,7 +224,7 @@ example8:
     function: |- 
       click_input
     arguments: 
-      {"control_label": "60", "control_text": "Copilot", "button": "left", "double": false}
+      {"id": "60", "name": "Copilot", "button": "left", "double": false}
     status: |-
       CONTINUE
     plan:
@@ -278,7 +278,7 @@ example10:
     function: |-
       click_input
     arguments:
-      {"control_label": "70", "control_text": "Event Type", "button": "left", "double": false}
+      {"id": "70", "name": "Event Type", "button": "left", "double": false}
     status: |-
       CONTINUE
     plan:
