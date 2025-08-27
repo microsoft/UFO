@@ -7,7 +7,7 @@ from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from ufo import utils
-from ufo.agents.processors.action_contracts import (
+from ufo.agents.processors.actions import (
     ActionExecutionLog,
     ActionSequence,
     OneStepAction,

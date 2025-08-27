@@ -14,7 +14,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from ufo import utils
 from ufo.automator.puppeteer import AppPuppeteer
 
-from ufo.agents.processors.action_contracts import (
+from ufo.agents.processors.actions import (
     OneStepAction,
     ActionSequence,
     BaseControlLog,

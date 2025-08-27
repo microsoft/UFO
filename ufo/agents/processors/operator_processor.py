@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 from PIL import Image
 
 from ufo import utils
-from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
+from ufo.agents.processors.actions import ActionSequence, OneStepAction
 from ufo.agents.processors.app_agent_processor import (
     AppAgentAdditionalMemory,
     AppAgentProcessor,

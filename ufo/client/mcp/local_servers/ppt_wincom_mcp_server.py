@@ -13,7 +13,7 @@ from fastmcp import FastMCP
 from fastmcp.client import Client
 from pydantic import Field
 
-from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
+from ufo.agents.processors.actions import ActionSequence, OneStepAction
 from ufo.automator.action_execution import ActionSequenceExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.config import get_config
@@ -91,18 +91,24 @@ def create_powerpoint_mcp_server(process_name: str) -> FastMCP:
     def set_background_color(
         color: Annotated[
             str,
-            Field(description="The hex color code (in RGB format) to set the background color.")
+            Field(
+                description="The hex color code (in RGB format) to set the background color."
+            ),
         ],
         slide_index: Annotated[
             Optional[List[int]],
-            Field(description="The list of slide indexes to set the background color. If None, set the background color for all slides.")
-        ] = None
+            Field(
+                description="The list of slide indexes to set the background color. If None, set the background color for all slides."
+            ),
+        ] = None,
     ) -> Annotated[
         Dict,
-        Field(description="A message indicating the success or failure of setting the background color.")
+        Field(
+            description="A message indicating the success or failure of setting the background color."
+        ),
     ]:
         """
-        A fast way to set the background color of one or more slides in a PowerPoint presentation. 
+        A fast way to set the background color of one or more slides in a PowerPoint presentation.
         You should use this API to save your work since it is more efficient than using UI.
         """
         action = OneStepAction(
@@ -148,7 +154,7 @@ def create_powerpoint_mcp_server(process_name: str) -> FastMCP:
         ),
     ]:
         """
-        The fastest way to save or export the PowerPoint presentation to a specified file format with one command. 
+        The fastest way to save or export the PowerPoint presentation to a specified file format with one command.
         You should use this API to save your work since it is more efficient than manually saving the document.
         """
         action = OneStepAction(
@@ -157,7 +163,7 @@ def create_powerpoint_mcp_server(process_name: str) -> FastMCP:
                 "file_dir": file_dir,
                 "file_name": file_name,
                 "file_ext": file_ext,
-                "current_slide_only": current_slide_only
+                "current_slide_only": current_slide_only,
             },
             control_label="",
             control_text="",
@@ -185,11 +191,7 @@ async def main():
 
         # Example usage: set background color for first slide
         result = await client.call_tool(
-            "set_background_color",
-            arguments={
-                "color": "FFFFFF",
-                "slide_index": [1]
-            }
+            "set_background_color", arguments={"color": "FFFFFF", "slide_index": [1]}
         )
 
         print(f"Set background color result: {result.data}")

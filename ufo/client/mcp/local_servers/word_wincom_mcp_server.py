@@ -16,7 +16,7 @@ from fastmcp import FastMCP
 from fastmcp.client import Client
 from pydantic import Field
 
-from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
+from ufo.agents.processors.actions import ActionSequence, OneStepAction
 from ufo.automator.action_execution import ActionSequenceExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.config import get_config

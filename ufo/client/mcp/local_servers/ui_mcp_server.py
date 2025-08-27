@@ -19,7 +19,7 @@ from fastmcp.exceptions import ToolError
 from pydantic import Field
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ufo.agents.processors.action_contracts import ActionSequence, OneStepAction
+from ufo.agents.processors.actions import ActionSequence, OneStepAction
 from ufo.automator.action_execution import ActionSequenceExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.automator.ui_control import ui_tree

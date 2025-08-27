@@ -9,7 +9,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional
 from pywinauto.controls.uiawrapper import UIAWrapper
 from ufo.agents.processors.target import TargetKind, TargetRegistry
 from ufo import utils
-from ufo.agents.processors.action_contracts import (
+from ufo.agents.processors.actions import (
     ActionExecutionLog,
     ActionSequence,
     BaseControlLog,
