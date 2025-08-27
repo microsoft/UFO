@@ -322,6 +322,7 @@ class HostAgentProcessor(BaseProcessor):
             return_value = result[0].result
             error = result[0].error
 
+        # TODO: May not need the OneStepAction wrapper for logging
         action = OneStepAction(
             control_label=self.control_label,
             control_text=self.control_text,

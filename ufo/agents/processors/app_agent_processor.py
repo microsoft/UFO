@@ -768,7 +768,7 @@ class AppAgentProcessor(BaseProcessor):
         )
 
         # Log the original response from the LLM.
-        self.add_to_memory(self._response_json)
+        self.add_to_memory(asdict(self.response))
 
         # Log the additional memory data for the AppAgent.
         self.add_to_memory(asdict(additional_memory))
