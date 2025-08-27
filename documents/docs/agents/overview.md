@@ -1,15 +1,14 @@
 # Agents
 
-In UFO, there are four types of agents: `HostAgent`, `AppAgent`, `FollowerAgent`, and `EvaluationAgent`. Each agent has a specific role in the UFO system and is responsible for different aspects of the user interaction process:
+In UFO, there are four types of agents: `HostAgent`, `AppAgent`, and `EvaluationAgent`. Each agent has a specific role in the UFO system and is responsible for different aspects of the user interaction process:
 
 | Agent                                              | Description                                                                                                |
 | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | [`HostAgent`](../agents/host_agent.md)             | Decomposes the user request into sub-tasks and selects the appropriate application to fulfill the request. |
 | [`AppAgent`](../agents/app_agent.md)               | Executes actions on the selected application.                                                              |
-| [`FollowerAgent`](../agents/follower_agent.md)     | Follows the user's instructions to complete the task.                                                      |
 | [`EvaluationAgent`](../agents/evaluation_agent.md) | Evaluates the completeness of a session or a round.                                                        |
 
-In the normal workflow, only the `HostAgent` and `AppAgent` are involved in the user interaction process. The `FollowerAgent` and `EvaluationAgent` are used for specific tasks.
+In the normal workflow, only the `HostAgent` and `AppAgent` are involved in the user interaction process. The  `EvaluationAgent` are used for specific tasks.
 
 Please see below the orchestration of the agents in UFO:
 

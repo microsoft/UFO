@@ -4,7 +4,7 @@ An overview of the user configuration options available in UFO. You need to rena
 
 ## LLM Configuration
 
-You can configure the LLMs for the `HOST_AGENT` and `APP_AGENT` separately in the `config.yaml` file. The `FollowerAgent` and `EvaluationAgent` share the same LLM configuration as the `APP_AGENT`. Additionally, you can configure a backup LLM engine in the `BACKUP_AGENT` field to handle cases where the primary engines fail during inference.
+You can configure the LLMs for the `HOST_AGENT` and `APP_AGENT` separately in the `config.yaml` file. The `EvaluationAgent` share the same LLM configuration as the `APP_AGENT`. Additionally, you can configure a backup LLM engine in the `BACKUP_AGENT` field to handle cases where the primary engines fail during inference.
 
 Below are the configuration options for the LLMs, using OpenAI and Azure OpenAI (AOAI) as examples. You can find the settings for other LLM API configurations and usage in the `Supported Models` section of the documentation.
 

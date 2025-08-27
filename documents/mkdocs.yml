@@ -36,7 +36,6 @@ nav:
           - Processor: agents/design/processor.md
       - HostAgent: agents/host_agent.md
       - AppAgent: agents/app_agent.md
-      - FollowerAgent: agents/follower_agent.md
       - EvaluationAgent: agents/evaluation_agent.md
   - Prompts:
       - Overview: prompts/overview.md

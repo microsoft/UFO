@@ -1,6 +1,6 @@
 # Follower Mode
 
-The Follower mode is a feature of UFO that the agent follows a list of pre-defined steps in natural language to take actions on applications. Different from the normal mode, this mode creates an `FollowerAgent` that follows the plan list provided by the user to interact with the application, instead of generating the plan itself. This mode is useful for debugging and software testing or verification.
+The Follower mode is a feature of UFO that the agent follows a list of pre-defined steps in natural language to take actions on applications. Different from the normal mode, this mode creates an `AppAgent` that follows the plan list provided by the user to interact with the application, instead of generating the plan itself. This mode is useful for debugging and software testing or verification.
 
 ## Quick Start
 

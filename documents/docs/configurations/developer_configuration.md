@@ -42,7 +42,6 @@ The main prompt templates include the prompts in the UFO agent for both `system`
 |-------------------------|---------------------------------------------------------------------|--------|----------------------------------------------------|
 | `HOSTAGENT_PROMPT`      | The main prompt template for the `HostAgent`.                       | String | "ufo/prompts/share/base/host_agent.yaml"           |
 | `APPAGENT_PROMPT`       | The main prompt template for the `AppAgent`.                        | String | "ufo/prompts/share/base/app_agent.yaml"            |
-| `FOLLOWERAGENT_PROMPT`  | The main prompt template for the `FollowerAgent`.                   | String | "ufo/prompts/share/base/app_agent.yaml"            |
 | `EVALUATION_PROMPT`     | The prompt template for the evaluation.                             | String | "ufo/prompts/evaluation/evaluate.yaml"             |
 
 Lite versions of the main prompt templates can be found in the `ufo/prompts/share/lite` directory to reduce the input size for specific token limits.

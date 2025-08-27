@@ -97,6 +97,3 @@ The `AppAgent` logs contain the following fields:
         with open('logs/{task_name}/request.log', 'r') as f:
             for line in f:
                 log = json.loads(line)
-
-!!! info
-    The `FollowerAgent` logs share the same fields as the `AppAgent` logs.
