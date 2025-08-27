@@ -8,12 +8,12 @@ from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.config import Config
-from ufo.module.context import Context, ContextNames
+from ufo.module.context import Context
 
 configs = Config.get_instance().config_data
 
 if TYPE_CHECKING:
-    from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
+    from ufo.agents.agent.app_agent import AppAgent
     from ufo.agents.agent.host_agent import HostAgent
     from ufo.agents.states.app_agent_state import AppAgentState
 
