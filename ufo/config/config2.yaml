@@ -1,0 +1,101 @@
+HOST_AGENT: {
+  VISUAL_MODE: True, # Whether to use the visual mode
+
+  REASONING_MODEL: False, # Whether to use the reasoning mode
+  API_TYPE: "azure_ad" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
+  API_BASE: "https://cloudgpt-openai.azure-api.net/", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the AAD, it should be your endpoints.
+  API_VERSION: "2025-02-01-preview", # "2024-02-15-preview" by default
+  API_MODEL: "gpt-4.1-20250414",  #"gpt-4o-mini-20240718", #"gpt-4o-20240513",  # The only OpenAI model by now that accepts visual input
+  AAD_TENANT_ID: "72f988bf-86f1-41af-91ab-2d7cd011db47", # Set the value to your tenant id for the llm model
+  AAD_API_SCOPE: "openai", # Set the value to your scope for the llm model
+  AAD_API_SCOPE_BASE: "feb7b661-cac7-44a8-8dc1-163b63c23df2"  # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
+}
+
+APP_AGENT: {
+  VISUAL_MODE: True, # Whether to use the visual mode
+  REASONING_MODEL: False, # Whether to use the reasoning mode
+
+  API_TYPE: "azure_ad" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
+  API_BASE: "https://cloudgpt-openai.azure-api.net/", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the AAD, it should be your endpoints.
+  API_VERSION: "2025-02-01-preview", # "2024-02-15-preview" by default
+  API_MODEL: "gpt-4.1-20250414", # "o1-20241217",  #"gpt-4o-mini-20240718", # "gpt-4o-20240513",  # The only OpenAI model by now that accepts visual input
+  AAD_TENANT_ID: "72f988bf-86f1-41af-91ab-2d7cd011db47", # Set the value to your tenant id for the llm model
+  AAD_API_SCOPE: "openai", # Set the value to your scope for the llm model
+  AAD_API_SCOPE_BASE: "feb7b661-cac7-44a8-8dc1-163b63c23df2"  # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
+
+}
+
+
+EVALUATION_AGENT: {
+  VISUAL_MODE: True, # Whether to use the visual mode
+  REASONING_MODEL: False, # Whether to use the reasoning mode
+
+  API_TYPE: "azure_ad" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
+  API_BASE: "https://cloudgpt-openai.azure-api.net/", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the AAD, it should be your endpoints.
+  API_VERSION: "2025-02-01-preview", # "2024-02-15-preview" by default
+  API_MODEL: "gpt-4o-20240513", # "o1-20241217",  #"gpt-4o-mini-20240718", # "gpt-4o-20240513",  # The only OpenAI model by now that accepts visual input
+  ### For Azure_AD
+  AAD_TENANT_ID: "72f988bf-86f1-41af-91ab-2d7cd011db47", # Set the value to your tenant id for the llm model
+  AAD_API_SCOPE: "openai", # Set the value to your scope for the llm model
+  AAD_API_SCOPE_BASE: "feb7b661-cac7-44a8-8dc1-163b63c23df2"  # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
+
+}
+
+
+
+OPERATOR: {
+  SCALER: [1024, 768], # The scaler for the visual input in a list format, [width, height]
+  API_TYPE: "azure_ad" , # The API type, "openai" for the OpenAI API, "aoai" for the AOAI API, 'azure_ad' for the ad authority of the AOAI API.  
+  API_MODEL: "computer-use-preview-20250311",  #"gpt-4o-mini-20240718", #"gpt-4o-20240513",  # The only OpenAI model by now that accepts visual input
+  API_VERSION: "2025-03-01-preview", # "2024-02-15-preview" by default
+  API_BASE: "https://cloudgpt-openai.azure-api.net/", # The the OpenAI API endpoint, "https://api.openai.com/v1/chat/completions" for the OpenAI API. As for the AAD, it should be your endpoints.
+  AAD_TENANT_ID: "72f988bf-86f1-41af-91ab-2d7cd011db47", # Set the value to your tenant id for the llm model
+  AAD_API_SCOPE: "openai", # Set the value to your scope for the llm model
+  AAD_API_SCOPE_BASE: "feb7b661-cac7-44a8-8dc1-163b63c23df2"  # Set the value to your scope base for the llm model, whose format is API://YOUR_SCOPE_BASE, and the only need is the YOUR_SCOPE_BASE
+}
+
+OMNIPARSER: {
+  ENDPOINT: "https://aeb8ef731536d2d6c2.gradio.live", # The endpoint for the omniparser
+  BOX_THRESHOLD: 0.05, # The box threshold for the omniparser
+  IOU_THRESHOLD: 0.1, # The iou threshold for the omniparser
+  USE_PADDLEOCR: True, # Whether to use the paddleocr for the omniparser
+  IMGSZ: 640 # The image size for the omniparser
+}
+
+
+
+### For parameters
+MAX_TOKENS: 2000  # The max token limit for the response completion
+MAX_RETRY: 20  # The max retry limit for the response completion
+TEMPERATURE: 0.0  # The temperature of the model: the lower the value, the more consistent the output of the model
+TOP_P: 0.0  # The top_p of the model: the lower the value, the more conservative the output of the model
+TIMEOUT: 60  # The call timeout(s), default is 1 mins
+
+
+
+### For RAG
+
+## RAG Configuration for the offline docs
+RAG_OFFLINE_DOCS: False  # Whether to use the offline RAG.
+RAG_OFFLINE_DOCS_RETRIEVED_TOPK: 1  # The topk for the offline retrieved documents
+
+## RAG Configuration for the Bing search
+BING_API_KEY: ""  # The Bing search API key
+RAG_ONLINE_SEARCH: False  # Whether to use the online search for the RAG.
+RAG_ONLINE_SEARCH_TOPK: 5  # The topk for the online search
+RAG_ONLINE_RETRIEVED_TOPK: 1 # The topk for the online retrieved documents
+
+## RAG Configuration for experience
+RAG_EXPERIENCE: False  # Whether to use the offline RAG.
+RAG_EXPERIENCE_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
+
+
+## RAG Configuration for demonstration
+RAG_DEMONSTRATION: False  # Whether to use the RAG from its user demonstration.
+RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the offline retrieved documents
+RAG_DEMONSTRATION_COMPLETION_N: 3  # The number of completion choices for the demonstration result
+
+
+
+
+

@@ -185,7 +185,7 @@ class Computer:
             result: CallToolResult = await client.call_tool(
                 name=tool_name, arguments=params, raise_on_error=False
             )
-            return result, namespace
+            return result
 
     async def run_actions(self, tool_calls: List[MCPToolCall]) -> List[CallToolResult]:
         """
