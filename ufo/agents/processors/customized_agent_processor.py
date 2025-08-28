@@ -14,7 +14,6 @@ from ufo.agents.processors.app_agent_processor import (
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
 from ufo.contracts.contracts import Command
-from ufo.llm import AgentType
 from ufo.module.context import Context
 
 if TYPE_CHECKING:
@@ -27,7 +26,7 @@ if configs is not None:
     BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
 
 
-class HardwareAgentProcessor(AppAgentProcessor):
+class CustomizedAgentProcessor(AppAgentProcessor):
     """
     The processor for the app agent at a single step.
     """
@@ -44,8 +43,6 @@ class HardwareAgentProcessor(AppAgentProcessor):
         self.app_agent = agent
         self.host_agent = agent.host
 
-        self._operation = ""
-        self._args = {}
         self._image_url = []
         self.screenshot_save_path = None
 
@@ -161,27 +158,6 @@ class HardwareAgentProcessor(AppAgentProcessor):
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer
-    async def get_response(self) -> None:
-        """
-        Get the response from the LLM.
-        """
-
-        retry = 0
-        while retry < configs.get("JSON_PARSING_RETRY", 3):
-            # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
-            self._response, self.cost = self.app_agent.get_response(
-                self._prompt_message, AgentType.APP, use_backup_engine=True
-            )
-
-            try:
-                self.app_agent.response_to_dict(self._response)
-                break
-            except Exception as e:
-                print("Error in parsing response: ", e)
-                retry += 1
-
-    @BaseProcessor.exception_capture
-    @BaseProcessor.method_timer
     async def execute_action(self) -> None:
         """
         Execute the action.
@@ -214,3 +190,11 @@ class HardwareAgentProcessor(AppAgentProcessor):
         )
 
         self.actions.add_action(action)
+
+
+class HardwareAgentProcessor(CustomizedAgentProcessor):
+    """
+    The processor for the app agent at a single step.
+    """
+
+    pass

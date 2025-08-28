@@ -1,6 +1,22 @@
 from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import AgentRegistry
-from ufo.agents.processors.hardware_agent_processor import HardwareAgentProcessor
+from ufo.agents.processors.customized_agent_processor import (
+    HardwareAgentProcessor,
+    CustomizedAgentProcessor,
+)
+
+
+@AgentRegistry.register(
+    agent_name="CustomizedAgent",
+    third_party=True,
+    processor_cls=CustomizedAgentProcessor,
+)
+class CustomizedAgent(AppAgent):
+    """
+    An example of a customized agent that extends the AppAgent class.
+    """
+
+    pass
 
 
 @AgentRegistry.register(
