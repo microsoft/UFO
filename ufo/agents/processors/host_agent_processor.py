@@ -7,11 +7,7 @@ from dataclasses import asdict, dataclass
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from ufo import utils
-from ufo.agents.processors.actions import (
-    ActionExecutionLog,
-    ActionSequence,
-    OneStepAction,
-)
+from ufo.agents.processors.actions import ActionCommandInfo
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.agents.processors.target import TargetKind, TargetRegistry
 from ufo.config import Config
@@ -113,8 +109,6 @@ class HostAgentProcessor(BaseProcessor):
         self.assigned_third_party_agent: str | None = None
 
         self.target_info: List[Dict[str, str]] = []
-
-        self.actions: List[OneStepAction] = []
 
     def print_step_info(self) -> None:
         """
@@ -297,12 +291,11 @@ class HostAgentProcessor(BaseProcessor):
 
         function, arguments = self.response.function, self.response.arguments
 
-        return_value, error = None, None
+        target_id = arguments.get("id")
 
         if function == self._select_application_command:
-            target_id = arguments.get("id")
 
-            return_value = await self._select_application(target_id)
+            await self._select_application(target_id)
 
         elif function:
             result = await self.context.command_dispatcher.execute_commands(
@@ -319,25 +312,17 @@ class HostAgentProcessor(BaseProcessor):
                 f"Executed command: {function}, with arguments: {arguments}"
             )
 
-            return_value = result[0].result
-            error = result[0].error
-
         # TODO: May not need the OneStepAction wrapper for logging
-        action = OneStepAction(
-            control_label=self.control_label,
-            control_text=self.control_text,
-            after_status=self.status,
-            function=function,
-            args=arguments,
+
+        action = ActionCommandInfo(
+            function=self.response.function,
+            arguments=self.response.arguments,
+            target=self.target_registry.get(self.control_label),
+            status=self.response.status,
+            result=result[0],
         )
 
-        self.actions = [action]
-
-        self.actions[0].results = ActionExecutionLog(
-            status=self.status,
-            error=error,
-            return_value=return_value,
-        )
+        self.actions.add_action(action)
 
     async def _select_application(self, target_id: str) -> Dict[str, Any]:
         """
@@ -374,13 +359,12 @@ class HostAgentProcessor(BaseProcessor):
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, target.name)
 
-        return asdict(self.target_registry.get(target_id))
+        return self.target_registry.get(target_id).model_dump()
 
     def sync_memory(self):
         """
         Sync the memory of the HostAgent.
         """
-        action_seq = ActionSequence(self.actions)
 
         additional_memory = HostAgentAdditionalMemory(
             Step=self.session_step,
@@ -389,18 +373,18 @@ class HostAgentProcessor(BaseProcessor):
             Round=self.round_num,
             ControlLabel=self.control_label,
             SubtaskIndex=-1,
-            FunctionCall=action_seq.get_function_calls(),
-            Action=action_seq.to_list_of_dicts(),
+            FunctionCall=self.actions.get_function_calls(),
+            Action=self.actions.to_list_of_dicts(),
             ActionType="MCP",
             Request=self.request,
             Agent="HostAgent",
             AgentName=self.host_agent.name,
             Application=self.app_root,
             Cost=self._cost,
-            Results=action_seq.get_results(),
+            Results=self.actions.get_results(),
             error=self._exeception_traceback,
             time_cost=self._time_cost,
-            ControlLog=action_seq.get_control_logs(),
+            ControlLog=self.actions.get_target_info(),
         )
 
         self.add_to_memory(asdict(self.response))

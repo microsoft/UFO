@@ -6,7 +6,11 @@ from dataclasses import asdict
 from typing import TYPE_CHECKING
 
 from ufo import utils
-from ufo.agents.processors.actions import ActionExecutionLog, OneStepAction
+from ufo.agents.processors.actions import (
+    ActionExecutionLog,
+    OneStepAction,
+    ActionCommandInfo,
+)
 from ufo.agents.processors.app_agent_processor import (
     AppAgentProcessor,
     AppAgentRequestLog,
@@ -205,21 +209,12 @@ class HardwareAgentProcessor(AppAgentProcessor):
 
         self.logger.info(f"Result for execution of {self.response.function}: {result}")
 
-        return_value = result[0].result
-        error = result[0].error
-
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function=self.response.function,
-            args=self.response.arguments,
-            control_label=self.control_label,
-            control_text=self.control_text,
-            after_status=self.response.status,
-        )
-
-        action.results = ActionExecutionLog(
+            arguments=self.response.arguments,
+            target=self.target_registry.get(self.control_label),
             status=self.response.status,
-            error=error,
-            return_value=return_value,
+            result=result[0],
         )
 
-        self.actions = [action]
+        self.actions.add_action(action)

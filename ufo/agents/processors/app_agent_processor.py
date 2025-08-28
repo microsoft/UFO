@@ -9,12 +9,7 @@ from typing import TYPE_CHECKING, Any, ClassVar, Dict, List, Optional
 from pywinauto.controls.uiawrapper import UIAWrapper
 from ufo.agents.processors.target import TargetKind, TargetRegistry
 from ufo import utils
-from ufo.agents.processors.actions import (
-    ActionExecutionLog,
-    ActionSequence,
-    BaseControlLog,
-    OneStepAction,
-)
+from ufo.agents.processors.actions import BaseControlLog, ActionCommandInfo
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.automator.ui_control.control_filter import ControlFilterFactory
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
@@ -157,9 +152,6 @@ class AppAgentProcessor(BaseProcessor):
         self.app_agent = agent
         self.host_agent = agent.host
 
-        self.actions: List[OneStepAction] = []
-        self._operation = ""
-        self._args = {}
         self._image_url = []
         self.control_filter_factory = ControlFilterFactory()
         self.control_recorder = ControlInfoRecorder()
@@ -390,10 +382,7 @@ class AppAgentProcessor(BaseProcessor):
         # Get the control information for the control items and the filtered control items, in a format of list of dictionaries.
         filtered_control_info = self.control_inspector.get_control_info_list_of_dict(
             self.filtered_annotation_dict,
-            [
-                "control_text",
-                "control_type",
-            ],
+            ["control_text", "control_type", "control_rect"],
         )
 
         revised_filtered_control_info = [
@@ -402,6 +391,7 @@ class AppAgentProcessor(BaseProcessor):
                 "id": control["label"],
                 "name": control["control_text"],
                 "type": control["control_type"],
+                "rect": control["control_rect"],
             }
             for control in filtered_control_info
         ]
@@ -554,6 +544,8 @@ class AppAgentProcessor(BaseProcessor):
         # Get the last successful actions of the AppAgent.
         last_success_actions = self.get_last_success_actions()
 
+        self.logger.debug(f"Last success actions: {last_success_actions}")
+
         action_keys = ["function", "arguments", "Results", "RepeatTimes"]
 
         filtered_last_success_actions = [
@@ -574,7 +566,7 @@ class AppAgentProcessor(BaseProcessor):
             current_application=self.application_process_name,
             host_message=self.host_message,
             blackboard_prompt=blackboard_prompt,
-            last_success_actions=filtered_last_success_actions,
+            last_success_actions=last_success_actions,
             include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
         )
 
@@ -700,40 +692,37 @@ class AppAgentProcessor(BaseProcessor):
             background_screenshot_path=self.screenshot_save_path,
         )
 
-        return_value = result[0].result
-        error = result[0].error
-
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function=self.response.function,
-            args=self.response.arguments,
-            control_label=self.control_label,
-            control_text=self.control_text,
-            after_status=self.response.status,
-        )
-
-        action.results = ActionExecutionLog(
+            arguments=self.response.arguments,
+            target=self.target_registry.get(self.control_label),
             status=self.response.status,
-            error=error,
-            return_value=return_value,
+            result=result[0],
         )
 
-        self.actions = [action]
+        self.actions.add_action(action)
 
     def sync_memory(self):
         """
         Sync the memory of the AppAgent.
         """
 
-        action_seq = ActionSequence(self.actions)
-
         app_root = self.app_root
 
-        action_type = ["UIControl" for _ in action_seq.actions]  # TODO: fix this
+        action_type = ["UIControl" for _ in self.actions.actions]  # TODO: fix this
 
         all_previous_success_actions = self.get_all_success_actions()
 
-        action_success = action_seq.to_list_of_dicts(
-            success_only=True, previous_actions=all_previous_success_actions
+        action_success = self.actions.to_list_of_dicts(
+            success_only=True,
+            previous_actions=all_previous_success_actions,
+            keep_keys=["action_string", "result", "repeat_time"],
+        )
+
+        self.logger.debug(f"Current action success: {action_success}")
+
+        self.logger.debug(
+            f"All previous success actions: {all_previous_success_actions}"
         )
 
         # Create the additional memory data for the log.
@@ -744,8 +733,8 @@ class AppAgentProcessor(BaseProcessor):
             Round=self.round_num,
             Subtask=self.subtask,
             SubtaskIndex=self.round_subtask_amount,
-            FunctionCall=action_seq.get_function_calls(),
-            Action=action_seq.to_list_of_dicts(
+            FunctionCall=self.actions.get_function_calls(),
+            Action=self.actions.to_list_of_dicts(
                 previous_actions=all_previous_success_actions
             ),
             ActionSuccess=action_success,
@@ -755,10 +744,10 @@ class AppAgentProcessor(BaseProcessor):
             AgentName=self.app_agent.name,
             Application=app_root,
             Cost=self._cost,
-            Results=action_seq.get_results(),
+            Results=self.actions.get_results(),
             error=self._exeception_traceback,
             time_cost=self._time_cost,
-            ControlLog=action_seq.get_control_logs(),
+            ControlLog=self.actions.get_target_info(),
             UserConfirm=(
                 "Yes"
                 if self.response.status.upper()
@@ -866,6 +855,7 @@ class AppAgentProcessor(BaseProcessor):
         """
         Get the filtered annotation dictionary.
         :param annotation_dict: The annotation dictionary.
+        :param configs: The configuration dictionary.
         :return: The filtered annotation dictionary.
         """
 

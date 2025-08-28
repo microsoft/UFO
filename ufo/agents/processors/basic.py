@@ -17,7 +17,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.memory.memory import MemoryItem
-from ufo.agents.processors.actions import ActionSequence
+from ufo.agents.processors.actions import ListActionCommandInfo
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
 from ufo.contracts.contracts import WindowInfo
@@ -49,7 +49,7 @@ class BaseProcessor(ABC):
 
         self._prompt_message = None
         self._status = None
-        self._response = None
+        self.response = None
         self._cost = 0
         self._control_label = None
         self._control_text = None
@@ -63,7 +63,7 @@ class BaseProcessor(ABC):
         self._total_time_cost = 0
         self._time_cost = {}
         self._exeception_traceback = {}
-        self._actions = ActionSequence()
+        self._actions = ListActionCommandInfo()
 
         self.logger = logging.getLogger(__name__)
 
@@ -130,9 +130,11 @@ class BaseProcessor(ABC):
             # Step 11: Save the log.
             self.log_save()
 
-        except StopIteration:
-            # Error was handled and logged in the exception capture decorator.
-            # Simply return here to stop the process early.
+        except Exception as e:
+
+            tb = traceback.format_exc()
+            self.logger.error(f"Processor error: {e}\n{tb}")
+            self.status = "ERROR"
 
             return
 
@@ -230,9 +232,9 @@ class BaseProcessor(ABC):
         utils.print_with_color(
             self._exeception_traceback[func_name]["traceback"], "red"
         )
-        if self._response is not None:
+        if self.response is not None:
             utils.print_with_color("Response: ", "red")
-            utils.print_with_color(self._response, "red")
+            utils.print_with_color(self.response, "red")
         self._status = self._agent_status_manager.ERROR.value
         self.sync_memory()
         self.add_to_memory({"error": self._exeception_traceback})
@@ -572,7 +574,7 @@ class BaseProcessor(ABC):
         return self._status
 
     @property
-    def actions(self) -> ActionSequence:
+    def actions(self) -> ListActionCommandInfo:
         """
         Get the actions.
         :return: The actions.
@@ -580,7 +582,7 @@ class BaseProcessor(ABC):
         return self._actions
 
     @actions.setter
-    def actions(self, actions: ActionSequence) -> None:
+    def actions(self, actions: ListActionCommandInfo) -> None:
         """
         Set the actions.
         :param actions: The actions to be executed.

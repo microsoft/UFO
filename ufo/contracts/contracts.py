@@ -133,7 +133,7 @@ class Result(BaseModel):
     Represents the result of a command execution.
     """
 
-    status: Literal["success", "failure", "skipped"]
+    status: Literal["success", "failure", "skipped", "none"]
     error: Optional[str] = None
     result: Any = None
     call_id: Optional[str] = None

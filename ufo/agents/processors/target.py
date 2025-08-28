@@ -1,9 +1,8 @@
 import logging
-from dataclasses import asdict, dataclass
 from enum import Enum
-from typing import List, Optional
+from typing import Any, Dict, List, Optional, Union
 
-from typing import List, Optional, Dict, Union, Any
+from pydantic import BaseModel
 
 
 class TargetKind(str, Enum):
@@ -16,16 +15,18 @@ class TargetKind(str, Enum):
     THIRD_PARTY_AGENT = "third_party_agent"
 
 
-@dataclass
-class TargetInfo:
+class TargetInfo(BaseModel):
     """
     The class for the target information.
     """
 
-    kind: TargetKind  # The kind of the target (window or third-party agent)
+    kind: TargetKind  # The kind of the target (window, control, or third-party agent)
     name: str  # The name of the target
-    id: Optional[str]  # The ID of the target (only valid at current step)
+    id: Optional[str] = None  # The ID of the target (only valid at current step)
     type: Optional[str] = None  # The type of the target (e.g., process, app, etc.)
+    rect: Optional[List[int]] = (
+        None  # The rectangle of the target [left, top, width, height]
+    )
 
 
 class TargetRegistry:
@@ -77,6 +78,7 @@ class TargetRegistry:
             name=target_dict["name"],
             id=target_dict.get("id"),
             type=target_dict.get("type"),
+            rect=target_dict.get("rect"),
         )
         return self.register(target)
 
@@ -148,11 +150,11 @@ class TargetRegistry:
         """
         if keep_keys:
             return [
-                {k: v for k, v in asdict(t).items() if k in keep_keys}
+                {k: v for k, v in t.model_dump().items() if k in keep_keys}
                 for t in self._targets.values()
             ]
         else:
-            return [asdict(t) for t in self._targets.values()]
+            return [t.model_dump() for t in self._targets.values()]
 
     def clear(self) -> None:
         """

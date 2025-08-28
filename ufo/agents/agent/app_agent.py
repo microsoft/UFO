@@ -184,6 +184,8 @@ class AppAgent(BasicAgent):
         observation = response.observation
         thought = response.thought
         plan = response.plan
+        if type(plan) == str:
+            plan = [plan]
         status = response.status
         comment = response.comment
         function_call = response.function
