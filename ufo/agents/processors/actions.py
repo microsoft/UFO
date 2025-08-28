@@ -2,13 +2,12 @@
 # Licensed under the MIT License.
 
 import json
-from dataclasses import asdict, dataclass, field
-from typing import Any, Dict, List, Optional, Tuple
+from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
 from ufo.agents.processors.target import TargetInfo
-from ufo.config import Config
 from ufo.contracts.contracts import Result
 
 
