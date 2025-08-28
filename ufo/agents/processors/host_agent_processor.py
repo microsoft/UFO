@@ -336,6 +336,9 @@ class HostAgentProcessor(BaseProcessor):
         if target and target.kind == TargetKind.THIRD_PARTY_AGENT:
 
             self.assigned_third_party_agent = target.name
+            result = [
+                Result(status="success", result={"id": target.id, "name": target.name})
+            ]
 
         else:
 

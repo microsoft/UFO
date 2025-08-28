@@ -232,13 +232,13 @@ class BaseProcessor(ABC):
         utils.print_with_color(
             self._exeception_traceback[func_name]["traceback"], "red"
         )
-        if self.response is not None:
+        if self._response is not None:
             utils.print_with_color("Response: ", "red")
-            utils.print_with_color(self.response, "red")
+            utils.print_with_color(self._response, "red")
         self._status = self._agent_status_manager.ERROR.value
         self.sync_memory()
         self.add_to_memory({"error": self._exeception_traceback})
-        self.add_to_memory({"Status": self._status})
+        self.add_to_memory({"status": self._status})
         self.log_save()
 
     @abstractmethod

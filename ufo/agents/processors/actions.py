@@ -127,7 +127,7 @@ class ListActionCommandInfo:
         self,
         success_only: bool = False,
         keep_keys: Optional[List[str]] = None,
-        previous_actions: Optional[List[ActionCommandInfo]] = None,
+        previous_actions: Optional[List[ActionCommandInfo | Dict[str, Any]]] = None,
     ) -> List[Dict[str, Any]]:
         """
         Convert the action sequence to a dictionary.
@@ -141,6 +141,8 @@ class ListActionCommandInfo:
             if success_only and action.result.status != "success":
                 continue
             action_dict = action.model_dump()
+            if keep_keys:
+                action_dict = {k: v for k, v in action_dict.items() if k in keep_keys}
             if previous_actions:
                 repeat_time = self.count_repeat_times(action, previous_actions)
                 action_dict["repeat_time"] = repeat_time
@@ -163,7 +165,10 @@ class ListActionCommandInfo:
         )
 
     @staticmethod
-    def is_same_action(action1: ActionCommandInfo, action2: ActionCommandInfo) -> bool:
+    def is_same_action(
+        action1: ActionCommandInfo | Dict[str, Any],
+        action2: ActionCommandInfo | Dict[str, Any],
+    ) -> bool:
         """
         Check whether the two actions are the same.
         :param action1: The first action to compare.
@@ -171,15 +176,24 @@ class ListActionCommandInfo:
         :return: Whether the two actions are the same.
         """
 
-        return (
-            action1.function == action2.function
-            and action1.arguments == action2.arguments
-        )
+        if isinstance(action1, ActionCommandInfo):
+            action_dict_1 = action1.model_dump()
+        else:
+            action_dict_1 = action1
+
+        if isinstance(action2, ActionCommandInfo):
+            action_dict_2 = action2.model_dump()
+        else:
+            action_dict_2 = action2
+
+        return action_dict_1.get("function") == action_dict_2.get(
+            "function"
+        ) and action_dict_1.get("arguments") == action_dict_2.get("arguments")
 
     def count_repeat_times(
         self,
         target_action: ActionCommandInfo,
-        previous_actions: List[ActionCommandInfo],
+        previous_actions: List[ActionCommandInfo | Dict[str, Any]],
     ) -> int:
         """
         Get the times of the same action in the previous actions.
