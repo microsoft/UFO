@@ -13,8 +13,8 @@ from fastmcp import FastMCP
 from fastmcp.client import Client
 from pydantic import Field
 
-from ufo.agents.processors.actions import ActionSequence, OneStepAction
-from ufo.automator.action_execution import ActionSequenceExecutor
+from ufo.agents.processors.actions import ActionCommandInfo
+from ufo.automator.action_execution import ActionExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.config import get_config
 
@@ -45,6 +45,7 @@ def create_powerpoint_mcp_server(process_name: str) -> FastMCP:
     """
     # Get singleton UI state instance
     ui_state = UIServerState()
+    executor = ActionExecutor()
 
     ui_state.puppeteer = AppPuppeteer(
         process_name=process_name,
@@ -56,34 +57,16 @@ def create_powerpoint_mcp_server(process_name: str) -> FastMCP:
         process_name=process_name,
     )
 
-    def _execute_action_sequence(actions: List[OneStepAction]) -> List[Dict[str, Any]]:
+    def _execute_action(action: ActionCommandInfo) -> Dict[str, Any]:
         """
-        Execute a sequence of UI actions using direct AppPuppeteer interaction.
-        :param actions: List of OneStepAction objects to execute.
-        :return: List of execution results.
+        Execute a single UI action.
+        :param action: ActionCommandInfo object to execute.
+        :return: Execution result as a dictionary.
         """
         if not ui_state.puppeteer:
             raise ValueError("UI state not initialized.")
 
-        action_sequence = ActionSequence(actions)
-
-        # Execute the sequence like computer.py does
-        ActionSequenceExecutor.execute_all(
-            action_sequence,
-            ui_state.puppeteer,
-            {},
-            None,
-        )
-
-        return action_sequence.get_results()
-
-    def _execute_action(action: OneStepAction) -> Dict[str, Any]:
-        """
-        Execute a single UI action.
-        :param action: OneStepAction object to execute.
-        :return: Execution result as a dictionary.
-        """
-        return _execute_action_sequence([action])[0]
+        return executor.execute(action, ui_state.puppeteer)
 
     mcp = FastMCP("UFO PowerPoint MCP Server")
 
@@ -111,12 +94,9 @@ def create_powerpoint_mcp_server(process_name: str) -> FastMCP:
         A fast way to set the background color of one or more slides in a PowerPoint presentation.
         You should use this API to save your work since it is more efficient than using UI.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="set_background_color",
-            args={"color": color, "slide_index": slide_index},
-            control_label="",
-            control_text="",
-            after_status="CONTINUE",
+            arguments={"color": color, "slide_index": slide_index},
         )
 
         return _execute_action(action)
@@ -157,17 +137,14 @@ def create_powerpoint_mcp_server(process_name: str) -> FastMCP:
         The fastest way to save or export the PowerPoint presentation to a specified file format with one command.
         You should use this API to save your work since it is more efficient than manually saving the document.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="save_as",
-            args={
+            arguments={
                 "file_dir": file_dir,
                 "file_name": file_name,
                 "file_ext": file_ext,
                 "current_slide_only": current_slide_only,
             },
-            control_label="",
-            control_text="",
-            after_status="CONTINUE",
         )
 
         return _execute_action(action)

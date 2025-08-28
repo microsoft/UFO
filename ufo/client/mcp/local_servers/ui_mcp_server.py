@@ -19,8 +19,9 @@ from fastmcp.exceptions import ToolError
 from pydantic import Field
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ufo.agents.processors.actions import ActionSequence, OneStepAction
-from ufo.automator.action_execution import ActionSequenceExecutor
+from ufo.agents.processors.actions import ActionCommandInfo
+from ufo.agents.processors.target import TargetInfo
+from ufo.automator.action_execution import ActionExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.automator.ui_control import ui_tree
 from ufo.automator.ui_control.inspector import ControlInspectorFacade
@@ -227,39 +228,25 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
     """
     # Get singleton UI state instance
     ui_state = UIServerState()
+    executor = ActionExecutor()
 
-    def _execute_action_sequence(actions: List[OneStepAction]) -> List[Dict[str, Any]]:
+    def _execute_action(action: ActionCommandInfo) -> Dict[str, Any]:
         """
-        Execute a sequence of UI actions using direct AppPuppeteer interaction.
-        :param actions: List of OneStepAction objects to execute.
-        :return: List of execution results.
+        Execute a single UI action.
+        :param action: ActionCommandInfo object to execute.
+        :return: Execution result as a dictionary.
         """
         if not ui_state.puppeteer or not ui_state.selected_app_window:
             raise ValueError(
                 "UI state not initialized. Please select an application window first."
             )
 
-        action_sequence = ActionSequence(actions)
-
-        application_window = ui_state.selected_app_window
-
-        # Execute the sequence like computer.py does
-        ActionSequenceExecutor.execute_all(
-            action_sequence,
+        return executor.execute(
+            action,
             ui_state.puppeteer,
             ui_state.control_dict or {},
-            application_window,
+            ui_state.selected_app_window,
         )
-
-        return action_sequence.get_results()
-
-    def _execute_action(action: OneStepAction) -> Dict[str, Any]:
-        """
-        Execute a single UI action.
-        :param action: OneStepAction object to execute.
-        :return: Execution result as a dictionary.
-        """
-        return _execute_action_sequence([action])[0]
 
     action_mcp = FastMCP("UFO UI AppAgent Action MCP Server")
 
@@ -290,12 +277,10 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         """
         Click on a UI control element using the mouse. All type of controls elements are supported.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="click_input",
-            args={"button": button, "double": double},
-            control_label=id,
-            control_text=name,
-            after_status="CONTINUE",
+            arguments={"button": button, "double": double},
+            target=TargetInfo(id=id, name=name, kind="control"),
         )
 
         return _execute_action(action)
@@ -327,12 +312,10 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         This API is useful when the control item is not available in the control item list and screenshot, but you want to click on a specific point in the application window.
         When you use this API, you must estimate the relative fractional x and y coordinates of the point to click on, ranging from 0.0 to 1.0.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="click_on_coordinates",
-            args={"x": x, "y": y, "button": button, "double": double},
-            control_label="",
-            control_text="",
-            after_status="CONTINUE",
+            arguments={"x": x, "y": y, "button": button, "double": double},
+            status="CONTINUE",
         )
 
         return _execute_action(action)
@@ -382,9 +365,9 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         When you use this API, you must estimate the relative fractional x and y coordinates of the starting point and ending point to drag from and to, ranging from 0.0 to 1.0.
         The origin is the top-left corner of the application window.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="drag_on_coordinates",
-            args={
+            arguments={
                 "start_x": start_x,
                 "start_y": start_y,
                 "end_x": end_x,
@@ -393,9 +376,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
                 "duration": duration,
                 "key_hold": key_hold,
             },
-            control_label="",
-            control_text="",
-            after_status="CONTINUE",
+            status="CONTINUE",
         )
 
         return _execute_action(action)
@@ -430,12 +411,10 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         """
         Set text in a control element. Only works with Edit control items.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="set_edit_text",
-            args={"text": text, "clear_current_text": clear_current_text},
-            control_label=id,
-            control_text=name,
-            after_status="CONTINUE",
+            arguments={"text": text, "clear_current_text": clear_current_text},
+            target=TargetInfo(id=id, name=name, kind="control"),
         )
 
         return _execute_action(action)
@@ -473,12 +452,10 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         - keyboard_input(keys="{VK_CONTROL}c") --> Copy the selected text
         - keyboard_input(keys="{TAB 2}") --> Press the Tab key twice.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="keyboard_input",
-            args={"keys": keys, "control_focus": control_focus},
-            control_label=id,
-            control_text=name,
-            after_status="CONTINUE",
+            arguments={"keys": keys, "control_focus": control_focus},
+            target=TargetInfo(id=id, name=name, kind="control"),
         )
 
         return _execute_action(action)
@@ -507,12 +484,10 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         """
         Send mouse wheel input to scroll a control.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="wheel_mouse_input",
-            args={"wheel_dist": wheel_dist},
-            control_label=id,
-            control_text=name,
-            after_status="CONTINUE",
+            arguments={"wheel_dist": wheel_dist},
+            target=TargetInfo(id=id, name=name, kind="control"),
         )
 
         return _execute_action(action)
@@ -535,13 +510,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         """
         Retrieve all text content from a control element.
         """
-        action = OneStepAction(
-            function="texts",
-            args={},
-            control_label=id,
-            control_text=name,
-            after_status="CONTINUE",
-        )
+        action = ActionCommandInfo(function="texts", arguments={"id": id, "name": name})
 
         return _execute_action(action)
 

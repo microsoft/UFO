@@ -11,7 +11,7 @@ from ufo.agents.processors.actions import ActionCommandInfo
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.agents.processors.target import TargetKind, TargetRegistry
 from ufo.config import Config
-from ufo.contracts.contracts import Command
+from ufo.contracts.contracts import Command, Result
 from ufo.llm import AgentType
 from ufo.module.context import Context, ContextNames
 
@@ -289,13 +289,15 @@ class HostAgentProcessor(BaseProcessor):
         Execute the action.
         """
 
+        result = [Result(status="none")]
+
         function, arguments = self.response.function, self.response.arguments
 
         target_id = arguments.get("id")
 
         if function == self._select_application_command:
 
-            await self._select_application(target_id)
+            result = await self._select_application(target_id)
 
         elif function:
             result = await self.context.command_dispatcher.execute_commands(
@@ -311,8 +313,6 @@ class HostAgentProcessor(BaseProcessor):
             self.logger.info(
                 f"Executed command: {function}, with arguments: {arguments}"
             )
-
-        # TODO: May not need the OneStepAction wrapper for logging
 
         action = ActionCommandInfo(
             function=self.response.function,
@@ -359,7 +359,7 @@ class HostAgentProcessor(BaseProcessor):
         self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
         self.context.set(ContextNames.APPLICATION_PROCESS_NAME, target.name)
 
-        return self.target_registry.get(target_id).model_dump()
+        return result
 
     def sync_memory(self):
         """

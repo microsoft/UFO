@@ -16,8 +16,8 @@ from fastmcp import FastMCP
 from fastmcp.client import Client
 from pydantic import Field
 
-from ufo.agents.processors.actions import ActionSequence, OneStepAction
-from ufo.automator.action_execution import ActionSequenceExecutor
+from ufo.agents.processors.actions import ActionCommandInfo
+from ufo.automator.action_execution import ActionExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.config import get_config
 from ufo.client.mcp.mcp_registry import MCPRegistry
@@ -50,6 +50,7 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
     """
     # Get singleton UI state instance
     ui_state = UIServerState()
+    executor = ActionExecutor()
 
     ui_state.puppeteer = AppPuppeteer(
         process_name=process_name,
@@ -61,34 +62,16 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
         process_name=process_name,
     )
 
-    def _execute_action_sequence(actions: List[OneStepAction]) -> List[Dict[str, Any]]:
+    def _execute_action(action: ActionCommandInfo) -> Dict[str, Any]:
         """
-        Execute a sequence of UI actions using direct AppPuppeteer interaction.
-        :param actions: List of OneStepAction objects to execute.
-        :return: List of execution results.
+        Execute a single UI action.
+        :param action: ActionCommandInfo object to execute.
+        :return: Execution result as a dictionary.
         """
         if not ui_state.puppeteer:
             raise ValueError("UI state not initialized.")
 
-        action_sequence = ActionSequence(actions)
-
-        # Execute the sequence like computer.py does
-        ActionSequenceExecutor.execute_all(
-            action_sequence,
-            ui_state.puppeteer,
-            {},
-            None,
-        )
-
-        return action_sequence.get_results()
-
-    def _execute_action(action: OneStepAction) -> Dict[str, Any]:
-        """
-        Execute a single UI action.
-        :param action: OneStepAction object to execute.
-        :return: Execution result as a dictionary.
-        """
-        return _execute_action_sequence([action])[0]
+        return executor.execute(action, ui_state.puppeteer)
 
     mcp = FastMCP("UFO UI AppAgent Action MCP Server")
 
@@ -102,12 +85,9 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
         """
         Insert a table to a Word document.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="insert_table",
-            args={"rows": rows, "columns": columns},
-            control_label="",
-            control_text="",
-            after_status="CONTINUE",
+            arguments={"rows": rows, "columns": columns},
         )
 
         return _execute_action(action)
@@ -124,12 +104,9 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
         """
         Select the text in a Word document for further operations, such as changing the font size or color.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="select_text",
-            args={"text": text},
-            control_label="",
-            control_text="",
-            after_status="CONTINUE",
+            arguments={"text": text},
         )
 
         return _execute_action(action)
@@ -148,12 +125,9 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
         """
         Select a table in a Word document for further operations, such as deleting the table or changing the border color.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="select_table",
-            args={"number": number},
-            control_label="",
-            control_text="",
-            after_status="CONTINUE",
+            arguments={"number": number},
         )
 
         return _execute_action(action)
@@ -176,16 +150,13 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
         """
         Select a paragraph in a Word document for further operations, such as changing the alignment or indentation.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="select_paragraph",
-            args={
+            arguments={
                 "start_index": start_index,
                 "end_index": end_index,
                 "non_empty": non_empty,
             },
-            control_label="",
-            control_text="",
-            after_status="CONTINUE",
         )
 
         return _execute_action(action)
@@ -220,12 +191,13 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
         The fastest way to save or export the Word document to a specified file format with one command.
         You should use this API to save your work since it is more efficient than manually saving the document.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="save_as",
-            args={"file_dir": file_dir, "file_name": file_name, "file_ext": file_ext},
-            control_label="",
-            control_text="",
-            after_status="CONTINUE",
+            arguments={
+                "file_dir": file_dir,
+                "file_name": file_name,
+                "file_ext": file_ext,
+            },
         )
 
         return _execute_action(action)
@@ -253,12 +225,9 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
         """
         Set the font of the selected text in a Word document. The text must be selected before calling this command.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="set_font",
-            args={"font_name": font_name, "font_size": font_size},
-            control_label="",
-            control_text="",
-            after_status="CONTINUE",
+            arguments={"font_name": font_name, "font_size": font_size},
         )
 
         return _execute_action(action)

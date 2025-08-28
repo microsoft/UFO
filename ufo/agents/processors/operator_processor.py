@@ -9,7 +9,8 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 from PIL import Image
 
 from ufo import utils
-from ufo.agents.processors.actions import ActionSequence, OneStepAction
+
+from ufo.agents.processors.actions import ActionCommandInfo
 from ufo.agents.processors.app_agent_processor import (
     AppAgentAdditionalMemory,
     AppAgentProcessor,
@@ -327,24 +328,22 @@ class OpenAIOperatorProcessor(AppAgentProcessor):
         Execute the action.
         """
 
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function=self._operation,
-            args=self._args,
-            control_label=self._control_label,
-            control_text=self.control_text,
-            after_status=self.status,
+            arguments=self._args,
+            status=self.status,
         )
 
-        point_list = action.get_operation_point_list()
+        # point_list = action.get_operation_point_list()
 
-        # Save the screenshot of the tagged selected control.
-        self.capture_control_screenshot(point_list)
+        # # Save the screenshot of the tagged selected control.
+        # self.capture_control_screenshot(point_list)
 
         result = await self.context.command_dispatcher.execute_commands(
             [
                 Command(
                     tool_name=action.function,
-                    parameters=action.args,
+                    parameters=action.arguments,
                     tool_type="action",
                 )
             ]

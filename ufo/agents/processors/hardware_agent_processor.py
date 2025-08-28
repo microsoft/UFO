@@ -6,11 +6,7 @@ from dataclasses import asdict
 from typing import TYPE_CHECKING
 
 from ufo import utils
-from ufo.agents.processors.actions import (
-    ActionExecutionLog,
-    OneStepAction,
-    ActionCommandInfo,
-)
+from ufo.agents.processors.actions import ActionCommandInfo
 from ufo.agents.processors.app_agent_processor import (
     AppAgentProcessor,
     AppAgentRequestLog,

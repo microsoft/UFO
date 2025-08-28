@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 
-from ufo.agents.processors.actions import ActionSequence, OneStepAction
+from ufo.agents.processors.actions import ActionCommandInfo, ListActionCommandInfo
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.basic import BaseProcessor
 from ufo.config import Config
@@ -42,16 +42,14 @@ class AppAgentActionSequenceProcessor(AppAgentProcessor):
 
         action_sequence_dicts = self._response_json.get("ActionList", [])
         action_list = [
-            OneStepAction(
+            ActionCommandInfo(
                 function=action_dict.get("Function", ""),
-                args=action_dict.get("Args", {}),
-                control_label=action_dict.get("ControlLabel", ""),
-                control_text=action_dict.get("ControlText", ""),
-                after_status=action_dict.get("Status", "CONTINUE"),
+                arguments=action_dict.get("Args", {}),
+                status=action_dict.get("Status", "CONTINUE"),
             )
             for action_dict in action_sequence_dicts
         ]
-        self.actions = ActionSequence(action_list)
+        self.actions = ListActionCommandInfo(actions=action_list)
         self.function_calls = self.actions.get_function_calls()
 
         commands = [

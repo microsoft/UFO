@@ -1,31 +1,23 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-import sys
-
-sys.path.append("./")
-
-import time
-from dataclasses import asdict
-from typing import Any, Dict, Optional, TYPE_CHECKING
+import logging
+from typing import Any, Dict, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
+from ufo.agents.processors.actions import ActionCommandInfo, BaseControlLog
 from ufo.automator.puppeteer import AppPuppeteer
 
-from ufo.agents.processors.actions import (
-    OneStepAction,
-    ActionSequence,
-    BaseControlLog,
-    ActionExecutionLog,
-)
 
+class ActionExecutor:
+    """
+    Execution logic for ActionCommandInfo.
+    """
 
-class OneStepActionExecutor:
-    """
-    Execution logic for OneStepAction.
-    """
+    def __init__(self):
+        self.logger = logging.getLogger(__name__)
 
     @staticmethod
     def _control_validation(control: UIAWrapper) -> bool:
@@ -44,17 +36,8 @@ class OneStepActionExecutor:
             return False
 
     @staticmethod
-    def execute(action: OneStepAction, puppeteer: AppPuppeteer) -> Any:
-        """
-        Execute the action.
-        :param action: The action to execute.
-        :param puppeteer: The puppeteer that controls the application.
-        """
-        return puppeteer.execute_command(action.function, action.args)
-
-    @staticmethod
     def _get_control_log(
-        action: OneStepAction,
+        action: ActionCommandInfo,
         control_selected: Optional[UIAWrapper] = None,
         application_window: Optional[UIAWrapper] = None,
     ) -> BaseControlLog:
@@ -77,7 +60,11 @@ class OneStepActionExecutor:
             control_name=control_selected.element_info.name,
             control_class=control_selected.element_info.class_name,
             control_type=control_selected.element_info.control_type,
-            control_matched=control_selected.element_info.name == action.control_text,
+            control_matched=(
+                control_selected.element_info.name == action.target.name
+                if action.target
+                else False
+            ),
             control_automation_id=control_selected.element_info.automation_id,
             control_friendly_class_name=control_selected.friendly_class_name(),
             control_coordinates={
@@ -90,203 +77,50 @@ class OneStepActionExecutor:
 
         return control_log
 
-    @staticmethod
-    def action_flow(
-        action: OneStepAction,
+    def execute(
+        self,
+        action: ActionCommandInfo,
         puppeteer: AppPuppeteer,
         control_dict: Dict[str, UIAWrapper],
         application_window: Optional[UIAWrapper] = None,
-    ) -> ActionExecutionLog:
+    ) -> Any:
         """
         Execute the action flow.
         :param action: The action to execute.
         :param puppeteer: The puppeteer that controls the application.
         :param control_dict: The control dictionary.
         :param application_window: The application window where the control is located.
-        :return: The action execution log.
+        :return: The action result.
         """
-        control_selected = control_dict.get(action.control_label, None)
+        control_id = action.target.id if action.target else None
+
+        control_selected = control_dict.get(control_id, None)
 
         # If the control is selected, but not available, return an error.
-        if (
-            control_selected is not None
-            and not OneStepActionExecutor._control_validation(control_selected)
+        if control_selected is not None and not ActionExecutor._control_validation(
+            control_selected
         ):
-            action.results = ActionExecutionLog(
-                status="error",
-                traceback="Control is not available.",
-                error="Control is not available.",
-            )
-            action.control_log = BaseControlLog()
-
-            return action.results
-
-        import logging
-
-        logger = logging.getLogger(__name__)
-        logger.info(
-            f"Application window: {application_window}, Control selected: {control_selected}"
-        )
+            raise ValueError("Control is not available.")
 
         # Create the control receiver.
         if application_window:
             puppeteer.receiver_manager.create_ui_control_receiver(
                 control_selected, application_window
             )
-            logger.info(
+            self.logger.info(
                 f"Create AppPuppeteer for window: {application_window.window_text()}"
             )
-            logger.info(f"Available commands: {puppeteer.list_commands()}")
 
-        if action.function:
+        self.logger.info(f"Available commands: {puppeteer.list_commands()}")
 
-            if action._configs.get("SHOW_VISUAL_OUTLINE_ON_SCREEN", True):
-                if control_selected:
-                    control_selected.draw_outline(colour="red", thickness=3)
-                    time.sleep(action._configs.get("RECTANGLE_TIME", 0))
+        if not action.function:
+            return None
 
-            action.control_log = OneStepActionExecutor._get_control_log(
-                action=action,
-                control_selected=control_selected,
-                application_window=application_window,
-            )
+        try:
+            result = puppeteer.execute_command(action.function, action.arguments)
+            if not utils.is_json_serializable(result):
+                result = ""
 
-            try:
-                return_value = OneStepActionExecutor.execute(
-                    action=action, puppeteer=puppeteer
-                )
-                if not utils.is_json_serializable(return_value):
-                    return_value = ""
-
-                action.results = ActionExecutionLog(
-                    status="success",
-                    return_value=return_value,
-                )
-
-            except Exception as e:
-
-                import traceback
-
-                action.results = ActionExecutionLog(
-                    status="error",
-                    traceback=traceback.format_exc(),
-                    error=str(e),
-                )
-            return action.results
-
-    @staticmethod
-    def print_result(action: OneStepAction) -> None:
-        """
-        Print the action execution result.
-        :param action: The action to print results for.
-        """
-
-        utils.print_with_color(
-            "Selected item🕹️: {control_text}, Label: {label}".format(
-                control_text=action.control_text, label=action.control_label
-            ),
-            "yellow",
-        )
-        utils.print_with_color(
-            "Action applied⚒️: {action}".format(action=action.command_string), "blue"
-        )
-
-        result_color = "red" if action.results.status != "success" else "green"
-
-        utils.print_with_color(
-            "Execution result📜: {result}".format(result=asdict(action.results)),
-            result_color,
-        )
-
-
-class ActionSequenceExecutor:
-    """
-    Execution logic for ActionSequence.
-    """
-
-    @staticmethod
-    def execute_all(
-        action_sequence: ActionSequence,
-        puppeteer: AppPuppeteer,
-        control_dict: Dict[str, UIAWrapper],
-        application_window: Optional[UIAWrapper] = None,
-    ) -> None:
-        """
-        Execute all the actions.
-        :param action_sequence: The action sequence to execute.
-        :param puppeteer: The puppeteer.
-        :param control_dict: The control dictionary.
-        :param application_window: The application window.
-        """
-
-        early_stop = False
-
-        for action in action_sequence.actions:
-            if early_stop:
-                action.results = ActionExecutionLog(
-                    status="error", error="Early stop due to error in previous actions."
-                )
-
-            else:
-                action_sequence._status = action.after_status
-
-                OneStepActionExecutor.action_flow(
-                    action, puppeteer, control_dict, application_window
-                )
-
-                # Sleep for a while to avoid the UI being too busy.
-                time.sleep(0.5)
-
-            if action.results.status != "success":
-                early_stop = True
-
-    @staticmethod
-    def print_all_results(
-        action_sequence: ActionSequence, success_only: bool = False
-    ) -> None:
-        """
-        Print the action execution result.
-        :param action_sequence: The action sequence to print results for.
-        :param success_only: Whether to print successful actions only.
-        """
-        index = 1
-        for action in action_sequence.actions:
-            if success_only and action.results.status != "success":
-                continue
-            if action_sequence.length > 1:
-                utils.print_with_color(f"Action {index}:", "cyan")
-            OneStepActionExecutor.print_result(action)
-            index += 1
-        utils.print_with_color(f"Final status: {action_sequence.status}", "yellow")
-
-
-# Monkey patch the execution methods back to the contract classes for backward compatibility
-def _patch_execution_methods():
-    """Add execution methods to the contract classes for backward compatibility."""
-
-    # Add execution methods to OneStepAction
-    OneStepAction._control_validation = OneStepActionExecutor._control_validation
-    OneStepAction.execute = lambda self, puppeteer: OneStepActionExecutor.execute(
-        self, puppeteer
-    )
-    OneStepAction.action_flow = lambda self, puppeteer, control_dict, application_window: OneStepActionExecutor.action_flow(
-        self, puppeteer, control_dict, application_window
-    )
-    OneStepAction._get_control_log = lambda self, control_selected, application_window: OneStepActionExecutor._get_control_log(
-        self, control_selected, application_window
-    )
-    OneStepAction.print_result = lambda self: OneStepActionExecutor.print_result(self)
-
-    # Add execution methods to ActionSequence
-    ActionSequence.execute_all = lambda self, puppeteer, control_dict, application_window: ActionSequenceExecutor.execute_all(
-        self, puppeteer, control_dict, application_window
-    )
-    ActionSequence.print_all_results = (
-        lambda self, success_only=False: ActionSequenceExecutor.print_all_results(
-            self, success_only
-        )
-    )
-
-
-# Apply the patches when this module is imported
-_patch_execution_methods()
+            return result
+        except Exception as e:
+            raise RuntimeError(f"Failed to execute action {action.function}: {e}")

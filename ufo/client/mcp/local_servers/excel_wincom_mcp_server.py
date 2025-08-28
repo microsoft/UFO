@@ -13,8 +13,8 @@ from fastmcp import FastMCP
 from fastmcp.client import Client
 from pydantic import Field
 
-from ufo.agents.processors.actions import ActionSequence, OneStepAction
-from ufo.automator.action_execution import ActionSequenceExecutor
+from ufo.agents.processors.actions import ActionCommandInfo
+from ufo.automator.action_execution import ActionExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.config import get_config
 
@@ -45,6 +45,7 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
     """
     # Get singleton UI state instance
     ui_state = UIServerState()
+    executor = ActionExecutor()
 
     ui_state.puppeteer = AppPuppeteer(
         process_name=process_name,
@@ -56,34 +57,16 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
         process_name=process_name,
     )
 
-    def _execute_action_sequence(actions: List[OneStepAction]) -> List[Dict[str, Any]]:
+    def _execute_action(action: ActionCommandInfo) -> Dict[str, Any]:
         """
-        Execute a sequence of UI actions using direct AppPuppeteer interaction.
-        :param actions: List of OneStepAction objects to execute.
-        :return: List of execution results.
+        Execute a single UI action.
+        :param action: ActionCommandInfo object to execute.
+        :return: Execution result as a dictionary.
         """
         if not ui_state.puppeteer:
             raise ValueError("UI state not initialized.")
 
-        action_sequence = ActionSequence(actions)
-
-        # Execute the sequence like computer.py does
-        ActionSequenceExecutor.execute_all(
-            action_sequence,
-            ui_state.puppeteer,
-            {},
-            None,
-        )
-
-        return action_sequence.get_results()
-
-    def _execute_action(action: OneStepAction) -> Dict[str, Any]:
-        """
-        Execute a single UI action.
-        :param action: OneStepAction object to execute.
-        :return: Execution result as a dictionary.
-        """
-        return _execute_action_sequence([action])[0]
+        return executor.execute(action, ui_state.puppeteer)
 
     mcp = FastMCP("UFO Excel MCP Server")
 
@@ -104,10 +87,9 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
         """
         Get the table content in a sheet of the Excel app and convert it to markdown format.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="table2markdown",
-            args={"sheet_name": sheet_name},
-            after_status="CONTINUE",
+            arguments={"sheet_name": sheet_name},
         )
 
         return _execute_action(action)
@@ -137,15 +119,14 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
         """
         Insert a table to the Excel sheet. The table is a list of list of strings or numbers.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="insert_excel_table",
-            args={
+            arguments={
                 "table": table,
                 "sheet_name": sheet_name,
                 "start_row": start_row,
                 "start_col": start_col,
             },
-            after_status="CONTINUE",
         )
 
         return _execute_action(action)
@@ -181,16 +162,15 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
         """
         A quick way to select a range of cells in the sheet of the Excel app instead of dragging the mouse.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="select_table_range",
-            args={
+            arguments={
                 "sheet_name": sheet_name,
                 "start_row": start_row,
                 "start_col": start_col,
                 "end_row": end_row,
                 "end_col": end_col,
             },
-            after_status="CONTINUE",
         )
 
         return _execute_action(action)
@@ -224,10 +204,13 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
         """
         A shortcut and quickest way to save or export the Excel document to a specified file format with one command.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="save_as",
-            args={"file_dir": file_dir, "file_name": file_name, "file_ext": file_ext},
-            after_status="CONTINUE",
+            arguments={
+                "file_dir": file_dir,
+                "file_name": file_name,
+                "file_ext": file_ext,
+            },
         )
 
         return _execute_action(action)
@@ -247,10 +230,9 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
         """
         Reorder the columns in the sheet of the Excel app based on the desired order.
         """
-        action = OneStepAction(
+        action = ActionCommandInfo(
             function="reorder_columns",
-            args={"sheet_name": sheet_name, "desired_order": desired_order},
-            after_status="CONTINUE",
+            arguments={"sheet_name": sheet_name, "desired_order": desired_order},
         )
 
         return _execute_action(action)
