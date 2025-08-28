@@ -150,9 +150,10 @@ class Computer:
 
         tool_key = tool_call.tool_key
         tool_info = self._tools_registry.get(tool_key, None)
+        namespace = tool_info.namespace if tool_info else None
 
         self.logger.info(
-            f"Running [{tool_info.namespace}] tool: {tool_info.tool_name} with parameters: {tool_info.parameters}"
+            f"Running [{namespace}] tool: {tool_info.tool_name} with parameters: {tool_info.parameters}"
         )
 
         if not tool_info:
@@ -184,7 +185,7 @@ class Computer:
             result: CallToolResult = await client.call_tool(
                 name=tool_name, arguments=params, raise_on_error=False
             )
-            return result
+            return result, namespace
 
     async def run_actions(self, tool_calls: List[MCPToolCall]) -> List[CallToolResult]:
         """
@@ -641,6 +642,7 @@ class CommandRouter:
 
             tool_call = computer.command2tool(command)
             result = await computer.run_actions([tool_call])
+            namespace = tool_call.namespace if tool_call else None
 
             call_tool_result: CallToolResult = result[0]
 
@@ -657,6 +659,7 @@ class CommandRouter:
                         result=None,
                         error="Early exit due to previous failure.",
                         call_id=call_id,
+                        namespace=namespace,
                     )
                 )
 
@@ -667,6 +670,7 @@ class CommandRouter:
                         result=text_content,
                         error=None,
                         call_id=call_id,
+                        namespace=namespace,
                     )
                 )
             else:
@@ -676,6 +680,7 @@ class CommandRouter:
                         error=text_content,
                         result=None,
                         call_id=call_id,
+                        namespace=namespace,
                     )
                 )
                 self.logger.warning(

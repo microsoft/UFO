@@ -136,6 +136,7 @@ class Result(BaseModel):
     status: Literal["success", "failure", "skipped", "none"]
     error: Optional[str] = None
     result: Any = None
+    namespace: Optional[str] = None
     call_id: Optional[str] = None
 
 

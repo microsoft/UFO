@@ -709,7 +709,7 @@ class AppAgentProcessor(BaseProcessor):
 
         app_root = self.app_root
 
-        action_type = ["UIControl" for _ in self.actions.actions]  # TODO: fix this
+        action_type = [action.result.namespace for action in self.actions.actions]
 
         all_previous_success_actions = self.get_all_success_actions()
 

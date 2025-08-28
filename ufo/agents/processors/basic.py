@@ -227,7 +227,7 @@ class BaseProcessor(ABC):
             "message": str(e),
             "traceback": traceback.format_exc(),
         }
-        # 你自己的处理逻辑 ↓
+        # Print the error information
         utils.print_with_color(f"Error Occurs at {func_name}", "red")
         utils.print_with_color(
             self._exeception_traceback[func_name]["traceback"], "red"
