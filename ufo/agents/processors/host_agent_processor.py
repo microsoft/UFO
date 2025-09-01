@@ -331,7 +331,7 @@ class HostAgentProcessor(BaseProcessor):
         :return: The selected application information.
         """
 
-        target = self.target_registry.get(target_id)
+        target: TargetKind = self.target_registry.get(target_id)
 
         if target and target.kind == TargetKind.THIRD_PARTY_AGENT:
 
@@ -378,7 +378,7 @@ class HostAgentProcessor(BaseProcessor):
             SubtaskIndex=-1,
             FunctionCall=self.actions.get_function_calls(),
             Action=self.actions.to_list_of_dicts(),
-            ActionType="MCP",
+            ActionType=self.actions.actions[0].result.namespace,
             Request=self.request,
             Agent="HostAgent",
             AgentName=self.host_agent.name,
