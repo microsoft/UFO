@@ -85,7 +85,7 @@ def create_powerpoint_mcp_server(process_name: str) -> FastMCP:
             ),
         ] = None,
     ) -> Annotated[
-        Dict,
+        str,
         Field(
             description="A message indicating the success or failure of setting the background color."
         ),
@@ -128,7 +128,7 @@ def create_powerpoint_mcp_server(process_name: str) -> FastMCP:
             ),
         ] = False,
     ) -> Annotated[
-        Dict,
+        str,
         Field(
             description="A message indicating the success or failure of saving the document."
         ),

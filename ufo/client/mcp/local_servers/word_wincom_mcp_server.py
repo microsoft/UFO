@@ -81,7 +81,9 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
         columns: Annotated[
             int, Field(description="The number of columns in the table.")
         ],
-    ) -> Annotated[Dict, Field(description="None")]:
+    ) -> Annotated[
+        str, Field(description="A message indicating the result of the operation.")
+    ]:
         """
         Insert a table to a Word document.
         """
@@ -96,7 +98,7 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
     def select_text(
         text: Annotated[str, Field(description="The exact text to be selected.")],
     ) -> Annotated[
-        Dict,
+        str,
         Field(
             description="A string of the selected text if successful, otherwise a text not found message."
         ),
@@ -117,7 +119,7 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
             int, Field(description="The index number of the table to be selected.")
         ],
     ) -> Annotated[
-        Dict,
+        str,
         Field(
             description="A string of the selected table if successful, otherwise an out of range message."
         ),
@@ -146,7 +148,9 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
         non_empty: Annotated[
             bool, Field(description="If True, select the non-empty paragraphs only.")
         ] = True,
-    ) -> Annotated[Dict, Field(description="None")]:
+    ) -> Annotated[
+        str, Field(description="A message indicating the result of the operation.")
+    ]:
         """
         Select a paragraph in a Word document for further operations, such as changing the alignment or indentation.
         """
@@ -182,7 +186,7 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
             ),
         ] = "",
     ) -> Annotated[
-        Dict,
+        str,
         Field(
             description="A message indicating the success or failure of saving the document."
         ),
@@ -217,7 +221,7 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
             ),
         ] = None,
     ) -> Annotated[
-        Dict,
+        str,
         Field(
             description="A message indicating the font and font size changes if successful, otherwise a message indicating no text selected."
         ),
