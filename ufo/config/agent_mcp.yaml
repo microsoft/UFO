@@ -88,36 +88,36 @@ AppAgent:
         type: stdio
         start_args: []
         reset: true
-  msedge.exe:
-    data_collection:
-      - namespace: UICollector
-        type: stdio
-        start_args: []
-        reset: false
-    action:
-      - namespace: UICollector
-        type: stdio
-        start_args: []
-        reset: false
-      - namespace: WebExecutor
-        type: stdio
-        start_args: []
-        reset: true
-  chrome.exe:
-    data_collection:
-      - namespace: UICollector
-        type: stdio
-        start_args: []
-        reset: false
-    action:
-      - namespace: UICollector
-        type: stdio
-        start_args: []
-        reset: false
-      - namespace: WebExecutor
-        type: stdio
-        start_args: []
-        reset: true
+  # msedge.exe:
+  #   data_collection:
+  #     - namespace: UICollector
+  #       type: stdio
+  #       start_args: []
+  #       reset: false
+  #   action:
+  #     - namespace: UICollector
+  #       type: stdio
+  #       start_args: []
+  #       reset: false
+  #     - namespace: WebExecutor
+  #       type: stdio
+  #       start_args: []
+  #       reset: true
+  # chrome.exe:
+  #   data_collection:
+  #     - namespace: UICollector
+  #       type: stdio
+  #       start_args: []
+  #       reset: false
+  #   action:
+  #     - namespace: UICollector
+  #       type: stdio
+  #       start_args: []
+  #       reset: false
+  #     - namespace: WebExecutor
+  #       type: stdio
+  #       start_args: []
+  #       reset: true
 
 
 HardwareAgent:

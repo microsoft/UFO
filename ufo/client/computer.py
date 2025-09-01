@@ -740,45 +740,32 @@ def test_command_router():
 
     commands = [
         Command(
-            tool_name="get_app_window_controls_info",
-            parameters={"field_list": ["control_text", "control_type"]},
+            tool_name="list_tools",
+            parameters={"tool_type": "action"},
             tool_type="data_collection",
-        ),
-        Command(
-            tool_name="keyboard_input",
-            tool_type="action",
-            parameters={
-                "id": "1",
-                "name": "Untitled. Unmodified.",
-                "keys": "hi",
-                "control_focus": True,
-            },
-        ),
-        Command(
-            tool_name="click_input",
-            tool_type="action",
-            parameters={
-                "id": "2",
-                "name": "Untitled. Unmodified.",
-            },
-        ),
+        )
     ]
 
     results2 = asyncio.run(
         command_router.execute(
             agent_name="AppAgent",  # From server
             process_name="",  # From server
-            root_name="",  # From server
+            root_name="chrome.exe",  # From server
             commands=commands,
         )
     )
 
-    for result in results1 + results2:
-        # print(f"Command executed with status: {result.status}")
-        if result.status == "failure":
-            print(f"Error: {result.error}")
-        else:
-            print(f"Result: {result.result}")
+    # for result in results1 + results2:
+    #     # print(f"Command executed with status: {result.status}")
+    #     if result.status == "failure":
+    #         print(f"Error: {result.error}")
+    #     else:
+    #         print(f"Result: {result.result}")
+
+    tool_list = results2[0].result
+
+    for tool in tool_list:
+        print(tool.get("tool_name"))
 
 
 if __name__ == "__main__":

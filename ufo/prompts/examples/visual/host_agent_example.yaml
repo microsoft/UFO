@@ -18,8 +18,8 @@ example1:
     plan: []
     function: select_application_window
     arguments:
-      - id: "12"
-      - name: "Mail - Outlook - Zac"
+      id: "12"
+      name: "Mail - Outlook - Zac"
     comment: |-
       It is time to open the outlook application!
     questions: []
@@ -43,8 +43,8 @@ example2:
       - Send the message to Tom on Teams by including the text extracted from 'framework.docx' and a detailed description of the workflow of the framework in the image of 'framework.png' you completed previously.
     function: select_application_window
     arguments:
-      - id: "21"
-      - name: "framework.png | image"
+      id: "21"
+      name: "framework.png | image"
     comment: |-
       After I get the text of the Document control named 'framework.docx', I need to switch to the image of framework.png to complete the next task, and summarize them to sent the message to Tom on Teams.
     questions: []
@@ -69,8 +69,8 @@ example3:
     plan: []
     function: select_application_window
     arguments:
-      - id: "21"
-      - name: "presentation - PowerPoint"
+      id: "21"
+      name: "presentation - PowerPoint"
     comment: |-
       I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
     questions: []
@@ -95,8 +95,8 @@ example4:
     plan: []
     function: select_application_window
     arguments:
-      - id: "7"
-      - name: Google - Microsoft​ Edge
+      id: "7"
+      name: Google - Microsoft​ Edge
     comment: |-
       I plan to Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
     questions: []
@@ -120,8 +120,8 @@ example5:
     plan: []
     function: select_application_window
     arguments:
-      - id: "6"
-      - name: "Microsoft To Do"
+      id: "6"
+      name: "Microsoft To Do"
     comment: |-
       I plan to use the Microsoft To Do application to set a reminder for the user, and add details and notes to the reminder.
     questions: []
@@ -143,8 +143,8 @@ example6:
     plan: []
     function: select_application_window
     arguments:
-      - id: "4"
-      - name: "presentation1 - PowerPoint"
+      id: "4"
+      name: "presentation1 - PowerPoint"
     comment: |-
       I plan to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx.
     questions: []
@@ -168,8 +168,8 @@ example7:
     plan: []
     function: select_application_window
     arguments:
-      - id: "6"
-      - name: Tom Jim | Microsoft Teams
+      id: "6"
+      name: Tom Jim | Microsoft Teams
     comment: |-
       I plan to use the Teams application to send the alias and address to Tom.
     questions:
@@ -198,8 +198,8 @@ example8:
       - Write a summary about the meeting notes email on the meeting_notes.docx.
     function: select_application_window
     arguments:
-      - id: "16"
-      - name: Mail - Outlook - Jim
+      id: "16"
+      name: Mail - Outlook - Jim
     comment: |-
       I plan to first summarize all to do items from the meeting notes email in Outlook.
     questions: []
@@ -220,7 +220,7 @@ example9:
     plan: []
     function: run_shell
     arguments:
-      - bash_command: start powerpnt "Desktop\test.pptx"
+      bash_command: start powerpnt "Desktop\test.pptx"
     comment: |-
       Since the PowerPoint application is not visible in the screenshot, I will use the bash command to open the PowerPoint application directly. Then modify the title to 'Apple is the best tech Company' in the test.pptx file.
     questions: []
@@ -242,7 +242,7 @@ example10:
     plan: []
     function: run_shell
     arguments:
-      - bash_command: start explorer
+      bash_command: start explorer
     comment: |-
       Since the file explorer application is not visible in the screenshot, I will use the bash command to open the file explorer application directly. Then find the label.txt file in the file explorer.
     questions: []
