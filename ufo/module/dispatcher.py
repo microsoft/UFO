@@ -41,6 +41,29 @@ class BasicCommandDispatcher(ABC):
         """
         pass
 
+    def generate_error_results(
+        self, commands: List[Command], error: Exception
+    ) -> Optional[List[Result]]:
+        """
+        Handle errors that occur during command execution.
+        :param commands: The list of commands that were being executed.
+        :param error: The error that occurred.
+        :return: An error result indicating the failure.
+        """
+
+        result_list = []
+        for command in commands:
+            error_msg = f"Error occurred while executing command {command}: {error}, please retry or execute a different command."
+            result = Result(
+                status="failure",
+                error=error_msg,
+                result=error_msg,
+                call_id=command.call_id,
+            )
+            result_list.append(result)
+
+        return result_list
+
 
 class LocalCommandDispatcher(BasicCommandDispatcher):
     """
@@ -76,17 +99,29 @@ class LocalCommandDispatcher(BasicCommandDispatcher):
         """
         from ufo.module.context import ContextNames
 
-        action_results = await asyncio.wait_for(
-            self.command_router.execute(
-                agent_name=self.session.current_agent_class,
-                root_name=self.session.context.get(ContextNames.APPLICATION_ROOT_NAME),
-                process_name=self.session.context.get(
-                    ContextNames.APPLICATION_PROCESS_NAME
+        try:
+            action_results = await asyncio.wait_for(
+                self.command_router.execute(
+                    agent_name=self.session.current_agent_class,
+                    root_name=self.session.context.get(
+                        ContextNames.APPLICATION_ROOT_NAME
+                    ),
+                    process_name=self.session.context.get(
+                        ContextNames.APPLICATION_PROCESS_NAME
+                    ),
+                    commands=commands,
                 ),
-                commands=commands,
-            ),
-            timeout=timeout,
-        )
+                timeout=timeout,
+            )
+        except asyncio.TimeoutError as e:
+            self.logger.warning(f"Command execution timed out for commands: {commands}")
+            return self.generate_error_results(commands, e)
+
+        except Exception as e:
+            self.logger.warning(
+                f"Error occurred while executing commands {commands}: {e}"
+            )
+            return self.generate_error_results(commands, e)
 
         return action_results
 
@@ -178,11 +213,11 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         try:
             result = await asyncio.wait_for(fut, timeout)
             return result
-        except asyncio.TimeoutError:
+        except asyncio.TimeoutError as e:
             self.logger.warning(
                 f"send_commands timed out for {server_message.response_id}"
             )
-            raise TimeoutError(f"Waiting for {server_message.response_id} timed out")
+            return self.generate_error_results(commands, e)
         finally:
             self.pending.pop(server_message.response_id, None)
 

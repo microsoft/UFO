@@ -273,7 +273,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         double: Annotated[
             bool, Field(description="Whether to perform a double click")
         ] = False,
-    ) -> Annotated[Dict, Field(description="None")]:
+    ) -> Annotated[str, Field(description="The result of the click action.")]:
         """
         Click on a UI control element using the mouse. All type of controls elements are supported.
         """
@@ -306,7 +306,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         double: Annotated[
             bool, Field(description="Whether to perform a double click")
         ] = False,
-    ) -> Annotated[Dict, Field(description="None")]:
+    ) -> Annotated[str, Field(description="The result of the click action.")]:
         """
         Click on specific coordinates within the application window, instead of clicking on a specific control item.
         This API is useful when the control item is not available in the control item list and screenshot, but you want to click on a specific point in the application window.
@@ -358,7 +358,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
                 description="Key to hold during drag operation (e.g., 'ctrl', 'shift')"
             ),
         ] = None,
-    ) -> Annotated[Dict, Field(description="None")]:
+    ) -> Annotated[str, Field(description="The result of the drag action.")]:
         """
         Drag from one point to another point in the application window, instead of dragging a specific control item.
         This API is useful when the control item is not available in the control item list and screenshot, but you want to drag from one point to another point in the application window.
@@ -407,7 +407,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
                 description="Whether to clear the current text in the Edit before setting the new text. If True, the current text will be completely replaced by the new text."
             ),
         ] = False,
-    ) -> Annotated[Dict, Field(description="None")]:
+    ) -> Annotated[str, Field(description="The text to set in the control element.")]:
         """
         Set text in a control element. Only works with Edit control items.
         """
@@ -445,7 +445,9 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
                 description="Whether to focus the selected control before sending keys. If False, the hotkeys will operate on the application window."
             ),
         ] = True,
-    ) -> Annotated[Dict, Field(description="None")]:
+    ) -> Annotated[
+        str, Field(description="The key of the control item to send keyboard input to.")
+    ]:
         """
         Simulate keyboard input to a control or the focused application, such as sending key presses or shortcuts.
         For example,
@@ -480,7 +482,9 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
                 description="The number of wheel notches to scroll. Positive values indicate upward scrolling, negative values indicate downward scrolling."
             ),
         ] = 0,
-    ) -> Annotated[Dict, Field(description="None")]:
+    ) -> Annotated[
+        str, Field(description="The result of the wheel mouse input action.")
+    ]:
         """
         Send mouse wheel input to scroll a control.
         """
@@ -506,7 +510,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
                 description="The precise name of the selected control item to retrieve text from, adhering strictly to the provided options in the field of 'name' in the control information."
             ),
         ],
-    ) -> Annotated[Dict, Field(description="the text content of the control item")]:
+    ) -> Annotated[str, Field(description="the text content of the control item")]:
         """
         Retrieve all text content from a control element.
         """
@@ -630,119 +634,6 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         return result
 
     @data_mcp.tool()
-    def get_app_window_controls() -> Dict[str, Any]:
-        """
-        Get information about controls in the currently selected window.
-        :return: Dictionary containing window info and control information in AppWindowControlInfo format.
-        """
-        if not ui_state.selected_app_window:
-            raise ToolError("No window is selected， please select a window first.")
-
-        temp_path = "temp_app_screenshot.png"  # Temporary path for capturing
-
-        try:
-            selected_window = ui_state.selected_app_window
-
-            # Capture screenshot to a temporary location
-            ui_state.photographer.capture_app_window_screenshot(
-                selected_window, save_path=temp_path
-            )
-
-            window_info = _window2window_info(selected_window)
-
-            api_backend = None
-            grounding_backend = None
-
-            control_detection_backend = configs.get("CONTROL_BACKEND", ["uia"])
-
-            if "uia" in control_detection_backend:
-                api_backend = "uia"
-            elif "win32" in control_detection_backend:
-                api_backend = "win32"
-
-            if "omniparser" in control_detection_backend:
-                grounding_backend = "omniparser"
-
-            if api_backend is not None:
-                api_control_list = (
-                    ui_state.control_inspector.find_control_elements_in_descendants(
-                        ui_state.selected_app_window,
-                        control_type_list=configs.get("CONTROL_LIST", []),
-                        class_name_list=configs.get("CONTROL_LIST", []),
-                    )
-                )
-            else:
-                api_control_list = []
-
-            api_control_dict = {
-                i + 1: control for i, control in enumerate(api_control_list)
-            }
-
-            if (
-                grounding_backend == "omniparser"
-                and ui_state.grounding_service is not None
-            ):
-
-                onmiparser_configs = configs.get("OMNIPARSER", {}) if configs else {}
-
-                grounding_control_list = (
-                    ui_state.grounding_service.convert_to_virtual_uia_elements(
-                        image_path=temp_path,
-                        application_window=ui_state.selected_app_window,
-                        box_threshold=onmiparser_configs.get("BOX_THRESHOLD", 0.05),
-                        iou_threshold=onmiparser_configs.get("IOU_THRESHOLD", 0.1),
-                        use_paddleocr=onmiparser_configs.get("USE_PADDLEOCR", True),
-                        imgsz=onmiparser_configs.get("IMGSZ", 640),
-                    )
-                )
-            else:
-                grounding_control_list = []
-
-            grounding_control_dict = {
-                i + 1: control for i, control in enumerate(grounding_control_list)
-            }
-
-            merged_control_list = ui_state.photographer.merge_control_list(
-                api_control_list,
-                grounding_control_list,
-                iou_overlap_threshold=(
-                    configs.get("IOU_THRESHOLD_FOR_MERGE", 0.1) if configs else 0.1
-                ),
-            )
-
-            merged_control_dict = {
-                i + 1: control for i, control in enumerate(merged_control_list)
-            }
-
-            ui_state.selected_app_window_controls = {
-                f"{item[0]}": item[1] for item in merged_control_dict.items()
-            }
-
-            # Convert control elements to ControlInfo objects
-            control_elements = []
-            for i, control in enumerate(merged_control_list):
-                try:
-                    control_element = _control2control_info(control, str(i + 1))
-                    control_elements.append(control_element)
-                except Exception as e:
-                    control_elements.append(
-                        ControlInfo(annotation_id=str(i + 1), name=f"Error: {str(e)}")
-                    )
-
-            app_window_control_info = AppWindowControlInfo(
-                window_info=window_info, controls=control_elements
-            )
-
-            return app_window_control_info.model_dump()
-
-        except Exception as e:
-            return {"error": f"Error getting window controls: {str(e)}"}
-        finally:
-            # Clean up temporary file
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
-
-    @data_mcp.tool()
     def capture_window_screenshot() -> str:
         """
         Capture a screenshot of the currently selected application window.
@@ -752,17 +643,12 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
             return "Error: No window selected"
 
         try:
-            temp_path = "temp_direct_mcp_screenshot.png"
-            ui_state.photographer.capture_app_window_screenshot(
-                ui_state.selected_app_window, save_path=temp_path
+            screenshot = ui_state.photographer.capture_app_window_screenshot(
+                ui_state.selected_app_window
             )
 
             # Encode as base64
-            screenshot_data = ui_state.photographer.encode_image_from_path(temp_path)
-
-            # Clean up
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
+            screenshot_data = ui_state.photographer.encode_image(screenshot)
 
             return screenshot_data
 
@@ -777,21 +663,14 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         :return: Base64 encoded image data of the desktop screenshot.
         """
         try:
-            temp_path = "temp_desktop_mcp_screenshot.png"
 
             # Capture desktop screenshot
-            ui_state.photographer.capture_desktop_screen_screenshot(
-                all_screens=all_screens, save_path=temp_path
+            screenshot = ui_state.photographer.capture_desktop_screen_screenshot(
+                all_screens=all_screens
             )
 
             # Encode as base64
-            desktop_screen_data = ui_state.photographer.encode_image_from_path(
-                temp_path
-            )
-
-            # Clean up
-            if os.path.exists(temp_path):
-                os.remove(temp_path)
+            desktop_screen_data = ui_state.photographer.encode_image(screenshot)
 
             return desktop_screen_data
 
