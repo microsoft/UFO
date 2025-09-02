@@ -3,6 +3,8 @@
 
 import json
 import os
+from typing import Any, Dict, Optional
+
 import yaml
 
 from ufo.utils import print_with_color
@@ -28,7 +30,7 @@ class Config:
             Config._instance = Config()
         return Config._instance
 
-    def load_config(self, config_path="ufo/config/") -> dict:
+    def load_config(self, config_path="ufo/config/") -> Dict[str, Any]:
         """
         Load the configuration from a YAML file and environment variables.
 
@@ -106,7 +108,7 @@ class Config:
                 )
 
     @classmethod
-    def optimize_configs(cls, configs: dict) -> dict:
+    def optimize_configs(cls, configs: dict) -> Dict[str, Any]:
         """
         Optimize the configurations.
         :param configs: The configurations.
@@ -138,7 +140,7 @@ def get_offline_learner_indexer_config():
     return records
 
 
-def get_config():
+def get_config() -> Optional[Dict[str, Any]]:
     """
     Get the configuration data from the Config singleton instance.
     :return: The configuration data dictionary.

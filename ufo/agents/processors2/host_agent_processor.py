@@ -18,9 +18,9 @@ while providing enhanced modularity, error handling, and extensibility.
 
 import json
 import logging
-import time
+from collections import OrderedDict
 from dataclasses import asdict
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from ufo import utils
 from ufo.agents.memory.memory import MemoryItem
@@ -31,29 +31,35 @@ from ufo.agents.processors.host_agent_processor import (
     HostAgentResponse,
 )
 from ufo.agents.processors.target import TargetKind, TargetRegistry
+from ufo.agents.processors2.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.agents.processors2.core.processor_framework import (
-    BaseProcessingStrategy,
     ProcessingContext,
     ProcessingPhase,
     ProcessingResult,
     ProcessorTemplate,
 )
+from ufo.agents.processors2.core.processing_context import (
+    HostAgentProcessorContext,
+    ProcessorContextFactory,
+)
 from ufo.agents.processors2.middleware.enhanced_middleware import (
     EnhancedLoggingMiddleware,
-    ErrorRecoveryMiddleware,
-    MetricsCollectionMiddleware,
-    ResourceCleanupMiddleware,
-)
-from ufo.agents.processors2.middleware.legacy_compatibility_middleware import (
-    LegacyCompatibilityMiddleware,
 )
 from ufo.config import Config
-from ufo.contracts.contracts import Command, Result
+from ufo.contracts.contracts import Command, Result, ResultStatus
 from ufo.llm import AgentType
 from ufo.module.context import Context, ContextNames
 
 # Load configuration
 configs = Config.get_instance().config_data
+
+if TYPE_CHECKING:
+    from ufo.agents.agent.host_agent import HostAgent
+
+
+# Note: HostAgentUnifiedMemory has been replaced with HostAgentProcessorContext
+# from the unified context system in processing_context.py
+
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
@@ -81,26 +87,12 @@ class HostAgentProcessorV2(ProcessorTemplate):
     def __init__(self, agent: "HostAgent", global_context: Context) -> None:
         """
         Initialize the Host Agent Processor with enhanced capabilities.
-
-        Args:
-            agent: The Host Agent instance to be processed
-            global_context: Global context shared across the session
+        :param agent: The Host Agent instance to be processed
+        :param global_context: Global context shared across the session
         """
+        # Core components and tools - kept in __init__
         self.host_agent: "HostAgent" = agent
         self.target_registry: TargetRegistry = TargetRegistry()
-
-        # Desktop environment state
-        self.desktop_screenshot_url: Optional[str] = None
-        self.target_info_list: List[Dict[str, Any]] = []
-
-        # Application selection state
-        self.selected_application_root: Optional[str] = None
-        self.selected_target_id: Optional[str] = None
-        self.assigned_third_party_agent: Optional[str] = None
-
-        # Response and action tracking
-        self.parsed_response: Optional[HostAgentResponse] = None
-        self.action_info: Optional[ActionCommandInfo] = None
 
         # Initialize parent class
         super().__init__(agent, global_context)
@@ -127,7 +119,6 @@ class HostAgentProcessorV2(ProcessorTemplate):
     def _setup_middleware(self) -> None:
         """
         Set up enhanced middleware chain with comprehensive monitoring and recovery.
-
         The middleware chain includes:
         - LegacyCompatibilityMiddleware: Provides @method_timer and @exception_capture functionality
         - MetricsCollectionMiddleware: Performance and error metrics collection
@@ -136,21 +127,13 @@ class HostAgentProcessorV2(ProcessorTemplate):
         - HostAgentLoggingMiddleware: Specialized logging for Host Agent operations
         """
         self.middleware_chain = [
-            LegacyCompatibilityMiddleware(),  # Legacy BaseProcessor compatibility
-            MetricsCollectionMiddleware(),  # Performance and error metrics
-            ResourceCleanupMiddleware(),  # Ensure proper cleanup
-            ErrorRecoveryMiddleware(  # Attempt recovery for recoverable errors
-                max_retries=2, recoverable_errors=["timeout", "network", "screenshot"]
-            ),
             HostAgentLoggingMiddleware(),  # Specialized logging for Host Agent
         ]
 
     def _create_memory_item(self) -> MemoryItem:
         """
         Create and initialize memory item for Host Agent processing.
-
-        Returns:
-            Initialized memory item with basic context information
+        :return: Initialized memory item with basic context information
         """
         memory_item = MemoryItem()
         memory_item.add_values_from_dict(
@@ -184,31 +167,61 @@ class HostAgentProcessorV2(ProcessorTemplate):
             "question_list",
         ]
 
-    def _get_initial_local_data(self) -> Dict[str, Any]:
+    def _create_processing_context(self) -> ProcessingContext:
         """
-        Initialize local data with Host Agent specific information.
-
-        Returns:
-            Dictionary containing initial local context data
+        Create Host Agent specific processing context using the new unified typed context system.
+        :return: ProcessingContext with Host Agent specific typed context
         """
-        initial_data = super()._get_initial_local_data()
-        initial_data.update(
-            {
-                "host_agent": self.host_agent,
-                "target_registry": self.target_registry,
-                "request": self.global_context.get("request", ""),
-                "prev_plan": self.global_context.get("prev_plan", []),
-                "previous_subtasks": self.global_context.get("previous_subtasks", []),
-                "log_path": self.global_context.get("log_path", ""),
-                "command_dispatcher": self.global_context.command_dispatcher,
-            }
+        # Create typed Host Agent context using factory
+        local_context = ProcessorContextFactory.create_host_context(
+            host_agent=self.host_agent,
+            processor=self,
+            global_context=self.global_context,
+            target_registry=self.target_registry,
         )
-        return initial_data
+
+        # Populate the HostAgentProcessorContext with data previously in HostAgentUnifiedMemory
+        local_context.host_agent = self.host_agent
+        local_context.target_registry = self.target_registry
+        local_context.request = self.global_context.get("request", "")
+        local_context.prev_plan = self.global_context.get("prev_plan", [])
+        local_context.previous_subtasks = self.global_context.get(
+            "previous_subtasks", []
+        )
+        local_context.log_path = self.global_context.get("log_path", "")
+        local_context.command_dispatcher = self.global_context.get(
+            "command_dispatcher", None
+        )
+
+        # Set session and round information
+        local_context.session_step = self.global_context.get("session_step", 0)
+        local_context.round_step = self.global_context.get("round_step", 0)
+        local_context.round_num = self.global_context.get("round_num", 0)
+
+        # Create ProcessingContext with the unified typed local_context
+        return ProcessingContext(
+            global_context=self.global_context, local_context=local_context
+        )
+
+    def _update_context_data(self, context: ProcessingContext, **updates: Any) -> None:
+        """
+        Update context data directly using the new unified context system.
+        :param context: Processing context with HostAgentProcessorContext
+        :param updates: Key-value pairs to update in context
+        """
+        # Update the typed context directly
+        for key, value in updates.items():
+            if hasattr(context.local_context, key):
+                setattr(context.local_context, key, value)
+            else:
+                # Store unknown keys in custom_data for backward compatibility
+                if not hasattr(context.local_context, "custom_data"):
+                    context.local_context.custom_data = {}
+                context.local_context.custom_data[key] = value
 
     def print_step_info(self) -> None:
         """
         Print step information for debugging and monitoring.
-
         Displays the current round, step, and processing status with color coding
         for better user experience and debugging visibility.
         """
@@ -232,7 +245,6 @@ class HostAgentProcessorV2(ProcessorTemplate):
     def sync_memory(self) -> None:
         """
         Sync the memory of the HostAgent (legacy compatibility method).
-
         This method provides compatibility with the original BaseProcessor
         interface. In the new architecture, memory syncing is handled by
         the HostMemoryUpdateStrategy.
@@ -242,9 +254,7 @@ class HostAgentProcessorV2(ProcessorTemplate):
     def add_to_memory(self, data_dict: Dict[str, Any]) -> None:
         """
         Add data to memory (legacy compatibility method).
-
-        Args:
-            data_dict: Dictionary of data to add to memory
+        :param data_dict: Dictionary of data to add to memory
         """
         if hasattr(self, "_memory_data") and self._memory_data:
             self._memory_data.add_values_from_dict(data_dict)
@@ -252,11 +262,59 @@ class HostAgentProcessorV2(ProcessorTemplate):
     def log_save(self) -> None:
         """
         Save logs (legacy compatibility method).
-
         This method provides compatibility with the original BaseProcessor
         interface. In the new architecture, logging is handled by middleware.
         """
         self.logger.debug("log_save called - handled by logging middleware")
+
+    def get_phase_results(self) -> OrderedDict[ProcessingPhase, ProcessingResult]:
+        """
+        Get all phase results as an OrderedDict in insertion order.
+        :return: OrderedDict mapping processing phases to their results,
+        preserving the order in which phases were executed
+        """
+        if hasattr(self, "processing_context"):
+            return self.processing_context.get_all_phase_results()
+        return OrderedDict()
+
+    def get_phase_results_summary(self) -> Dict[str, Any]:
+        """
+        Get a summary of all phase results.
+        :return: Dictionary with phase names and their execution summaries
+        """
+        if hasattr(self, "processing_context"):
+            return self.processing_context.get_phase_results_summary()
+        return {}
+
+    def get_phase_result(self, phase: ProcessingPhase) -> Optional[ProcessingResult]:
+        """
+        Get the result of a specific processing phase.
+        :param phase: The processing phase to get result for
+        :return: The ProcessingResult for the phase, or None if not found
+        """
+        if hasattr(self, "processing_context"):
+            return self.processing_context.get_phase_result(phase)
+        return None
+
+    def get_phase_results_in_order(
+        self,
+    ) -> List[tuple[ProcessingPhase, ProcessingResult]]:
+        """
+        Get phase results as a list of tuples in the order they were executed.
+        :return: List of (phase, result) tuples in execution order
+        """
+        if hasattr(self, "processing_context"):
+            return self.processing_context.get_phase_results_in_order()
+        return []
+
+    def get_phase_execution_order(self) -> List[ProcessingPhase]:
+        """
+        Get the phases in the order they were executed.
+        :return: List of ProcessingPhase in execution order
+        """
+        if hasattr(self, "processing_context"):
+            return self.processing_context.get_phase_execution_order()
+        return []
 
 
 class DesktopDataCollectionStrategy(BaseProcessingStrategy):
@@ -273,21 +331,15 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
     def __init__(self, fail_fast: bool = True) -> None:
         """
         Initialize desktop data collection strategy.
-
-        Args:
-            fail_fast: Whether to raise exceptions immediately on errors
+        :param fail_fast: Whether to raise exceptions immediately on errors
         """
-        super().__init__("desktop_data_collection", fail_fast=fail_fast)
+        super().__init__(name="desktop_data_collection", fail_fast=fail_fast)
 
     async def execute(self, context: ProcessingContext) -> ProcessingResult:
         """
         Execute comprehensive desktop data collection with enhanced error handling.
-
-        Args:
-            context: Processing context with global and local data
-
-        Returns:
-            ProcessingResult with collected desktop data or error information
+        :param context: Processing context with global and local data
+        :return: ProcessingResult with collected desktop data or error information
         """
         try:
             # Step 1: Capture desktop screenshot
@@ -329,11 +381,8 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
     ) -> Dict[str, str]:
         """
         Capture desktop screenshot with proper error handling and path management.
-
         :param context: Processing context containing command dispatcher and paths
-
         :return: Dictionary containing screenshot URL and file path
-
         :raises: Exception if screenshot capture fails
         """
         try:
@@ -358,7 +407,11 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
                 ]
             )
 
-            if not result or not result[0].result or result[0].status != "success":
+            if (
+                not result
+                or not result[0].result
+                or result[0].status != ResultStatus.SUCCESS
+            ):
                 raise RuntimeError("Screenshot capture returned empty result")
 
             desktop_screenshot_url = result[0].result
@@ -377,15 +430,9 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
     ) -> List[Dict[str, Any]]:
         """
         Get comprehensive desktop application information with filtering.
-
-        Args:
-            context: Processing context containing command dispatcher
-
-        Returns:
-            List of application window information dictionaries
-
-        Raises:
-            Exception: If application info collection fails
+        :param context: Processing context containing command dispatcher
+        :return: List of application window information dictionaries
+        :raises: Exception if application info collection fails
         """
         try:
             command_dispatcher = context.global_context.command_dispatcher
@@ -419,13 +466,9 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
     ) -> TargetRegistry:
         """
         Register desktop applications and third-party agents in target registry.
-
-        Args:
-            context: Processing context
-            app_windows_info: List of application window information
-
-        Returns:
-            Target registry with registered applications and agents
+        :param context: Processing context
+        :param app_windows_info: List of application window information
+        :return: Target registry with registered applications and agents
         """
         try:
             # Get or create target registry
@@ -454,13 +497,9 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
     ) -> int:
         """
         Register enabled third-party agents with proper indexing.
-
-        Args:
-            target_registry: Target registry to add agents to
-            start_index: Starting index for agent IDs
-
-        Returns:
-            Number of third-party agents registered
+        :param target_registry: Target registry to add agents to
+        :param start_index: Starting index for agent IDs
+        :return: Number of third-party agents registered
         """
         try:
             # Get enabled third-party agent names from configuration
@@ -507,21 +546,15 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
     def __init__(self, fail_fast: bool = True) -> None:
         """
         Initialize Host Agent LLM interaction strategy.
-
-        Args:
-            fail_fast: Whether to raise exceptions immediately on errors
+        :param fail_fast: Whether to raise exceptions immediately on errors
         """
-        super().__init__("host_llm_interaction", fail_fast=fail_fast)
+        super().__init__(name="host_llm_interaction", fail_fast=fail_fast)
 
     async def execute(self, context: ProcessingContext) -> ProcessingResult:
         """
         Execute LLM interaction with comprehensive error handling and retry logic.
-
-        Args:
-            context: Processing context with desktop data and agent information
-
-        Returns:
-            ProcessingResult containing parsed response or error information
+        :param context: Processing context with desktop data and agent information
+        :return: ProcessingResult containing parsed response or error information
         """
         try:
             host_agent = context.get("host_agent")
@@ -572,15 +605,11 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
     ) -> Dict[str, Any]:
         """
         Build comprehensive prompt message with all available context information.
-
-        Args:
-            context: Processing context containing desktop and agent data
-
-        Returns:
-            Complete prompt message dictionary for LLM interaction
+        :param context: Processing context containing desktop and agent data
+        :return: Complete prompt message dictionary for LLM interaction
         """
         try:
-            host_agent = context.get("host_agent")
+            host_agent = context.local_context
             target_info_list = context.get_local("target_info_list", [])
             desktop_screenshot_url = context.get_local("desktop_screenshot_url", "")
 
@@ -616,10 +645,8 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
     ) -> None:
         """
         Log request data for debugging and analysis (only in debug mode).
-
-        Args:
-            context: Processing context
-            prompt_message: Constructed prompt message
+        :param context: Processing context
+        :param prompt_message: Constructed prompt message
         """
         try:
             # Only log in debug mode to avoid performance impact
@@ -655,16 +682,10 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
     ) -> tuple[str, float]:
         """
         Get LLM response with retry logic for JSON parsing failures.
-
-        Args:
-            host_agent: Host agent instance
-            prompt_message: Prompt message for LLM
-
-        Returns:
-            Tuple of (response_text, cost)
-
-        Raises:
-            Exception: If all retry attempts fail
+        :param host_agent: Host agent instance
+        :param prompt_message: Prompt message for LLM
+        :return: Tuple of (response_text, cost)
+        :raises: Exception if all retry attempts fail
         """
         max_retries = configs.get("JSON_PARSING_RETRY", 3)
         last_exception = None
@@ -706,16 +727,10 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
     ) -> HostAgentResponse:
         """
         Parse and validate LLM response into structured format.
-
-        Args:
-            host_agent: Host agent instance
-            response_text: Raw response text from LLM
-
-        Returns:
-            Parsed and validated HostAgentResponse object
-
-        Raises:
-            Exception: If response parsing or validation fails
+        :param host_agent: Host agent instance
+        :param response_text: Raw response text from LLM
+        :return: Parsed and validated HostAgentResponse object
+        :raises: Exception if response parsing or validation fails
         """
         try:
             # Parse response to dictionary
@@ -739,12 +754,8 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
     def _validate_response_fields(self, response: HostAgentResponse) -> None:
         """
         Validate that response contains required fields and valid values.
-
-        Args:
-            response: Parsed response object
-
-        Raises:
-            ValueError: If response validation fails
+        :param response: Parsed response object
+        :raises: ValueError if If response validation fails
         """
         # Check for required fields
         if not response.observation:
@@ -766,12 +777,8 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
     ) -> Dict[str, Any]:
         """
         Extract structured data from parsed response for use by subsequent strategies.
-
-        Args:
-            response: Parsed response object
-
-        Returns:
-            Dictionary containing extracted structured data
+        :param response: Parsed response object
+        :return: Dictionary containing extracted structured data
         """
         # Convert plan from string to list if needed
         plan = response.plan
@@ -806,21 +813,15 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
     def __init__(self, fail_fast: bool = False) -> None:
         """
         Initialize Host Agent action execution strategy.
-
-        Args:
-            fail_fast: Whether to raise exceptions immediately on errors
+        :param fail_fast: Whether to raise exceptions immediately on errors
         """
-        super().__init__("host_action_execution", fail_fast=fail_fast)
+        super().__init__(name="host_action_execution", fail_fast=fail_fast)
 
     async def execute(self, context: ProcessingContext) -> ProcessingResult:
         """
         Execute Host Agent actions with comprehensive error handling and state management.
-
-        Args:
-            context: Processing context containing response and execution data
-
-        Returns:
-            ProcessingResult with execution results or error information
+        :param context: Processing context containing response and execution data
+        :return: ProcessingResult with execution results or error information
         """
         try:
             parsed_response = context.get_local("parsed_response")
@@ -885,13 +886,9 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
     ) -> List[Result]:
         """
         Execute application selection with proper handling of different target types.
-
-        Args:
-            context: Processing context
-            response: Parsed response containing function arguments
-
-        Returns:
-            List of execution results
+        :param context: Processing context
+        :param response: Parsed response containing function arguments
+        :return: List of execution results
         """
         try:
             target_id = response.arguments.get("id") if response.arguments else None
@@ -926,24 +923,23 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
     ) -> List[Result]:
         """
         Handle third-party agent selection and assignment.
-
         This method processes the selection of a third-party agent and records
         the assignment in the processing context for subsequent use.
-
-        Args:
-            context: Processing context for storing assignment information
-            target: Third-party agent target object containing agent details
-
-        Returns:
-            List of Result objects indicating successful third-party agent selection
-
-        Raises:
-            Exception: If third-party agent selection encounters critical errors
+        :param context: Processing context for storing assignment information
+        :param target: Third-party agent target object containing agent details
+        :return: List of Result objects indicating successful third-party agent selection
+        :raises: Exception if third-party agent selection encounters critical errors
         """
         try:
-            # Record third-party agent assignment
-            context.set_local("assigned_third_party_agent", target.name)
-            context.set_local("selected_target_id", target.id)
+            # Update using the new unified context system
+            if hasattr(context.local_context, "update_target_selection"):
+                context.local_context.update_target_selection(
+                    target_id=target.id, third_party_agent=target.name
+                )
+            else:
+                # Fallback to direct context update
+                context.set_local("assigned_third_party_agent", target.name)
+                context.set_local("selected_target_id", target.id)
 
             self.logger.info(f"Assigned third-party agent: {target.name}")
 
@@ -967,20 +963,13 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
     ) -> List[Result]:
         """
         Handle regular application selection and window management.
-
         This method executes the application selection command and manages
         the window state, including setting the application root and updating
         the global context for use by other components.
-
-        Args:
-            context: Processing context for state management
-            target: Application target object containing application details
-
-        Returns:
-            List of Result objects from application selection command execution
-
-        Raises:
-            Exception: If application selection or window management fails
+        :param context: Processing context for state management
+        :param target: Application target object containing application details
+        :return: List of Result objects from application selection command execution
+        :raises: Exception if application selection or window management fails
         """
         try:
             command_dispatcher = context.global_context.command_dispatcher
@@ -1001,8 +990,20 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
             # Extract application root information
             if execution_result and execution_result[0].result:
                 app_root = execution_result[0].result.get("root_name", "")
-                context.set_local("selected_application_root", app_root)
-                context.set_local("selected_target_id", target.id)
+
+                # Get processor instance from context to use context update
+                processor = context.get("processor")
+                if processor and hasattr(processor, "_update_context_data"):
+                    # Record application selection using context update
+                    processor._update_context_data(
+                        context,
+                        selected_application_root=app_root,
+                        selected_target_id=target.id,
+                    )
+                else:
+                    # Fallback to direct context update
+                    context.set_local("selected_application_root", app_root)
+                    context.set_local("selected_target_id", target.id)
 
                 # Update global context for other components
                 context.set_global(ContextNames.APPLICATION_ROOT_NAME, app_root)
@@ -1022,20 +1023,13 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
     ) -> List[Result]:
         """
         Execute generic command using command dispatcher.
-
         This method handles the execution of arbitrary commands that are not
         specifically handled by other execution methods. It provides a generic
         interface for command execution with proper error handling.
-
-        Args:
-            context: Processing context containing command dispatcher
-            response: Parsed response containing function name and arguments
-
-        Returns:
-            List of Result objects from command execution
-
-        Raises:
-            Exception: If command dispatcher is unavailable or command execution fails
+        :param context: Processing context containing command dispatcher
+        :param response: Parsed response containing function name and arguments
+        :return: List of Result objects from command execution
+        :raises: Exception if command dispatcher is unavailable or command execution fails
         """
         try:
             command_dispatcher = context.global_context.command_dispatcher
@@ -1073,18 +1067,13 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
     ) -> ActionCommandInfo:
         """
         Create action information object for memory and tracking.
-
         This method constructs a comprehensive action information object that
         captures the complete context of the executed action, including the
         target object, execution results, and status information.
-
-        Args:
-            context: Processing context containing target registry
-            response: Parsed response with action details
-            execution_result: Results from action execution
-
-        Returns:
-            ActionCommandInfo object with complete execution details
+        :param context: Processing context containing target registry
+        :param response: Parsed response with action details
+        :param execution_result: Results from action execution
+        :return: ActionCommandInfo object with complete execution details
         """
         try:
             target_registry = context.get_local("target_registry")
@@ -1127,31 +1116,44 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
     ) -> None:
         """
         Update context state based on action execution results.
-
         This method updates the processing context with relevant state information
         from the action execution, ensuring that subsequent processing phases have
         access to the updated state information.
-
-        Args:
-            context: Processing context to update with execution state
-            response: Parsed response containing action information
-            execution_result: Results from action execution for state updates
+        :param context: Processing context to update with execution state
+        :param response: Parsed response containing action information
+        :param execution_result: Results from action execution for state updates
         """
         try:
+            # Get processor instance for unified memory updates
+            processor = context.get("processor")
+
             # Update control label and text for memory
             selected_target_id = context.get_local("selected_target_id")
             if selected_target_id:
-                context.set_local("control_label", selected_target_id)
+                updates = {"control_label": selected_target_id}
 
                 target_registry = context.get_local("target_registry")
                 if target_registry:
                     target = target_registry.get(selected_target_id)
                     if target:
-                        context.set_local("control_text", target.name)
+                        updates["control_text"] = target.name
+
+                # Update using context data if available
+                if processor and hasattr(processor, "_update_context_data"):
+                    processor._update_context_data(context, **updates)
+                else:
+                    context.set_local("control_label", selected_target_id)
+                    if "control_text" in updates:
+                        context.set_local("control_text", updates["control_text"])
 
             # Store action result for memory
             if execution_result:
-                context.set_local("action_result", execution_result[0].result)
+                if processor and hasattr(processor, "_update_context_data"):
+                    processor._update_context_data(
+                        context, action_result=execution_result[0].result
+                    )
+                else:
+                    context.set_local("action_result", execution_result[0].result)
 
         except Exception as e:
             self.logger.warning(f"Failed to update context state: {str(e)}")
@@ -1171,21 +1173,15 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
     def __init__(self, fail_fast: bool = False) -> None:
         """
         Initialize Host Agent memory update strategy.
-
-        Args:
-            fail_fast: Whether to raise exceptions immediately on errors
+        :param fail_fast: Whether to raise exceptions immediately on errors
         """
-        super().__init__("host_memory_update", fail_fast=fail_fast)
+        super().__init__(name="host_memory_update", fail_fast=fail_fast)
 
     async def execute(self, context: ProcessingContext) -> ProcessingResult:
         """
         Execute comprehensive memory update with error handling.
-
-        Args:
-            context: Processing context containing all execution data
-
-        Returns:
-            ProcessingResult with memory update results or error information
+        :param context: Processing context containing all execution data
+        :return: ProcessingResult with memory update results or error information
         """
         try:
             host_agent = context.get("host_agent")
@@ -1231,81 +1227,54 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
         self, context: ProcessingContext
     ) -> HostAgentAdditionalMemory:
         """
-        Create comprehensive additional memory data from processing context.
-
-        This method constructs additional memory data that matches the original
-        BaseProcessor format for backward compatibility while leveraging the
-        enhanced context management of the new framework.
-
-        Args:
-            context: Processing context with execution data
-
-        Returns:
-            HostAgentAdditionalMemory object with structured data compatible with original format
+        Create comprehensive additional memory data from processing context using HostAgentProcessorContext.
+        This method extracts data from the unified typed context and converts to legacy format
+        for backward compatibility.
+        :param context: Processing context with execution data
+        :return: HostAgentAdditionalMemory object with structured data compatible with original format
         """
         try:
-            host_agent = context.get("host_agent")
-            action_info = context.get_local("action_info")
-            parsed_response = context.get_local("parsed_response")
+            # Access the typed context directly
+            host_context = context.local_context
 
-            # Get time cost information (equivalent to original _time_cost)
-            time_cost = self._calculate_time_costs(context)
-
-            # Create actions list for backward compatibility
-            actions_list = []
-            if action_info:
-                actions_list.append(action_info)
-
-            # Get action information (equivalent to original self.actions)
-            function_call = action_info.function if action_info else ""
-            action_data = [asdict(action_info)] if action_info else []
-
-            # Determine action type (equivalent to original logic)
-            action_type = "MCP"  # Default value
-            if (
-                action_info
-                and action_info.result
-                and hasattr(action_info.result, "namespace")
-            ):
-                action_type = action_info.result.namespace
-
-            # Get results string (equivalent to original self.actions.get_results())
-            results = ""
-            if action_info and action_info.result:
-                results = (
-                    str(action_info.result.result) if action_info.result.result else ""
-                )
-
-            # Get control information (equivalent to original self.actions.get_target_info())
-            control_log = self._create_control_log(context, action_info)
-
-            # Create comprehensive additional memory (matching original format)
-            additional_memory = HostAgentAdditionalMemory(
-                Step=context.get("session_step", 0),
-                RoundStep=context.get("round_step", 0),
-                AgentStep=host_agent.step if host_agent else 0,
-                Round=context.get("round_num", 0),
-                ControlLabel=context.get_local("control_label", ""),
-                SubtaskIndex=-1,  # Host agent doesn't track subtask index (original: -1)
-                Action=action_data,  # Equivalent to original self.actions.to_list_of_dicts()
-                FunctionCall=function_call,  # Equivalent to original self.actions.get_function_calls()
-                ActionType=action_type,  # Equivalent to original self.actions.actions[0].result.namespace
-                Request=context.get("request", ""),
-                Agent="HostAgent",
-                AgentName=host_agent.name if host_agent else "",
-                Application=context.get_local(
-                    "selected_application_root", ""
-                ),  # Equivalent to original self.app_root
-                Cost=context.get_local(
-                    "llm_cost", 0.0
-                ),  # Equivalent to original self._cost
-                Results=results,  # Equivalent to original self.actions.get_results()
-                error="",  # No error if we reached this point (original: self._exeception_traceback)
-                time_cost=time_cost,  # Equivalent to original self._time_cost
-                ControlLog=control_log,  # Equivalent to original self.actions.get_target_info()
+            # Update context with current processing state
+            host_context.step = context.get_global("session_step", 0)
+            host_context.round_step = context.get_global("round_step", 0)
+            host_context.round_num = context.get_global("round_num", 0)
+            host_context.agent_step = (
+                host_context.host_agent.step if host_context.host_agent else 0
             )
 
-            return additional_memory
+            # Update action information if available
+            if host_context.action_info:
+                host_context.action = [asdict(host_context.action_info)]
+                host_context.function_call = host_context.action_info.function or ""
+                if host_context.action_info.result and hasattr(
+                    host_context.action_info.result, "namespace"
+                ):
+                    host_context.action_type = host_context.action_info.result.namespace
+
+                # Get results
+                if (
+                    host_context.action_info.result
+                    and host_context.action_info.result.result
+                ):
+                    host_context.results = str(host_context.action_info.result.result)
+
+            # Update application and agent names
+            host_context.application = host_context.selected_application_root or ""
+            host_context.agent_name = (
+                host_context.host_agent.name if host_context.host_agent else ""
+            )
+
+            # Update time costs and control log
+            host_context.execution_times = self._calculate_time_costs(context)
+            host_context.control_log = self._create_control_log(
+                context, host_context.action_info
+            )
+
+            # Convert to legacy format using the new method
+            return host_context.to_legacy_memory()
 
         except Exception as e:
             raise Exception(f"Failed to create additional memory data: {str(e)}")
@@ -1313,12 +1282,8 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
     def _calculate_time_costs(self, context: ProcessingContext) -> Dict[str, float]:
         """
         Calculate time costs for different processing phases.
-
-        Args:
-            context: Processing context
-
-        Returns:
-            Dictionary mapping phase names to execution times
+        :param context: Processing context
+        :return: Dictionary mapping phase names to execution times
         """
         try:
             # Get execution times from processing context if available
@@ -1337,13 +1302,9 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
     ) -> Dict[str, Any]:
         """
         Create control log information for debugging and analysis.
-
-        Args:
-            context: Processing context
-            action_info: Action information if available
-
-        Returns:
-            Dictionary containing control log data
+        :param context: Processing context
+        :param action_info: Action information if available
+        :return: Dictionary containing control log data
         """
         try:
             control_log = {}
@@ -1367,13 +1328,9 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
     ) -> MemoryItem:
         """
         Create and populate memory item with response and additional data.
-
-        Args:
-            context: Processing context
-            additional_memory: Additional memory data
-
-        Returns:
-            Populated MemoryItem object
+        :param context: Processing context
+        :param additional_memory: Additional memory data
+        :return: Populated MemoryItem object
         """
         try:
             # Create new memory item
@@ -1397,10 +1354,8 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
     ) -> None:
         """
         Update structural logs for debugging and analysis.
-
-        Args:
-            context: Processing context
-            memory_item: Memory item to log
+        :param context: Processing context
+        :param memory_item: Memory item to log
         """
         try:
             # Add to structural logs if context supports it
@@ -1420,11 +1375,9 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
     ) -> None:
         """
         Update blackboard trajectories with memorized actions.
-
-        Args:
-            context: Processing context
-            host_agent: Host agent instance
-            memory_item: Memory item with trajectory data
+        :param context: Processing context
+        :param host_agent: Host agent instance
+        :param memory_item: Memory item with trajectory data
         """
         try:
             # Get history keys from configuration
@@ -1468,10 +1421,8 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
     ) -> None:
         """
         Log Host Agent processing start with detailed context information.
-
-        Args:
-            processor: Host Agent processor instance
-            context: Processing context with round and step information
+        :param processor: Host Agent processor instance
+        :param context: Processing context with round and step information
         """
         # Call parent implementation for standard logging
         await super().before_process(processor, context)
@@ -1497,7 +1448,9 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
 
         # Log available context data for debugging
         if self.logger.isEnabledFor(logging.DEBUG):
-            context_keys = list(context.local_data.keys())
+            context_keys = list(
+                context.local_data.keys()
+            )  # This uses the backward-compatible property
             self.logger.debug(f"Available context keys: {context_keys}")
 
     async def after_process(
@@ -1505,10 +1458,8 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
     ) -> None:
         """
         Log Host Agent processing completion with execution summary.
-
-        Args:
-            processor: Host Agent processor instance
-            result: Processing result with execution data
+        :param processor: Host Agent processor instance
+        :param result: Processing result with execution data
         """
         # Call parent implementation for standard logging
         await super().after_process(processor, result)
@@ -1550,10 +1501,8 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
     async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
         """
         Enhanced error handling for Host Agent with contextual information.
-
-        Args:
-            processor: Host Agent processor instance
-            error: Exception that occurred
+        :param processor: Host Agent processor instance
+        :param error: Exception that occurred
         """
         # Call parent implementation for standard error handling
         await super().on_error(processor, error)
@@ -1579,3 +1528,74 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         utils.print_with_color(
             f"HostAgent: Encountered error - {str(error)[:100]}", "red"
         )
+
+    # Property accessors for backward compatibility and encapsulation
+    @property
+    def desktop_screenshot_url(self) -> Optional[str]:
+        """Get the desktop screenshot URL from local context."""
+        return self.local_context.get("desktop_screenshot_url")
+
+    @desktop_screenshot_url.setter
+    def desktop_screenshot_url(self, value: Optional[str]):
+        """Set the desktop screenshot URL in local context."""
+        self.local_context["desktop_screenshot_url"] = value
+
+    @property
+    def target_info_list(self) -> List[Any]:
+        """Get the target info list from local context."""
+        return self.local_context.get("target_info_list", [])
+
+    @target_info_list.setter
+    def target_info_list(self, value: List[Any]):
+        """Set the target info list in local context."""
+        self.local_context["target_info_list"] = value
+
+    @property
+    def selected_application_root(self) -> Optional[Any]:
+        """Get the selected application root from local context."""
+        return self.local_context.get("selected_application_root")
+
+    @selected_application_root.setter
+    def selected_application_root(self, value: Optional[Any]):
+        """Set the selected application root in local context."""
+        self.local_context["selected_application_root"] = value
+
+    @property
+    def selected_target_id(self) -> Optional[str]:
+        """Get the selected target ID from local context."""
+        return self.local_context.get("selected_target_id")
+
+    @selected_target_id.setter
+    def selected_target_id(self, value: Optional[str]):
+        """Set the selected target ID in local context."""
+        self.local_context["selected_target_id"] = value
+
+    @property
+    def assigned_third_party_agent(self) -> Optional[Any]:
+        """Get the assigned third party agent from local context."""
+        return self.local_context.get("assigned_third_party_agent")
+
+    @assigned_third_party_agent.setter
+    def assigned_third_party_agent(self, value: Optional[Any]):
+        """Set the assigned third party agent in local context."""
+        self.local_context["assigned_third_party_agent"] = value
+
+    @property
+    def parsed_response(self) -> Optional[Dict[str, Any]]:
+        """Get the parsed response from local context."""
+        return self.local_context.get("parsed_response")
+
+    @parsed_response.setter
+    def parsed_response(self, value: Optional[Dict[str, Any]]):
+        """Set the parsed response in local context."""
+        self.local_context["parsed_response"] = value
+
+    @property
+    def action_info(self) -> Optional[Dict[str, Any]]:
+        """Get the action info from local context."""
+        return self.local_context.get("action_info")
+
+    @action_info.setter
+    def action_info(self, value: Optional[Dict[str, Any]]):
+        """Set the action info in local context."""
+        self.local_context["action_info"] = value

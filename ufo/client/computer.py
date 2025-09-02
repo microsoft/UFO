@@ -11,7 +11,7 @@ from fastmcp.client.client import CallToolResult
 from mcp.types import TextContent
 
 from ufo.client.mcp.mcp_server_manager import BaseMCPServer, MCPServerManager
-from ufo.contracts.contracts import Command, Result, MCPToolCall
+from ufo.contracts.contracts import Command, Result, MCPToolCall, ResultStatus
 import ufo.client.mcp.local_servers
 
 
@@ -655,7 +655,7 @@ class CommandRouter:
 
                 results.append(
                     Result(
-                        status="skipped",
+                        status=ResultStatus.SKIPPED,
                         result=None,
                         error="Early exit due to previous failure.",
                         call_id=call_id,
@@ -666,7 +666,7 @@ class CommandRouter:
             if not call_tool_result.is_error:
                 results.append(
                     Result(
-                        status="success",
+                        status=ResultStatus.SUCCESS,
                         result=text_content,
                         error=None,
                         call_id=call_id,
@@ -676,7 +676,7 @@ class CommandRouter:
             else:
                 results.append(
                     Result(
-                        status="failure",
+                        status=ResultStatus.FAILURE,
                         error=text_content,
                         result=None,
                         call_id=call_id,
@@ -687,7 +687,7 @@ class CommandRouter:
                     f"Command {call_id} failed with error: {text_content}"
                 )
 
-                status = "failure"
+                status = ResultStatus.FAILURE
 
             # Sleep to avoid overwhelming the server with requests
             time.sleep(0.1)

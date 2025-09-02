@@ -1,11 +1,11 @@
 from ufo.agents.processors2.core.processor_framework import (
-    ProcessorMiddleware,
     ProcessingResult,
     ProcessingContext,
     ProcessorTemplate,
 )
 import time
 import traceback
+from ufo.agents.processors2.middleware.processing_middleware import ProcessorMiddleware
 
 
 class TimingMiddleware(ProcessorMiddleware):

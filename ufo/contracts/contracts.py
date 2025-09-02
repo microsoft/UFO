@@ -128,12 +128,23 @@ class Command(BaseModel):
     call_id: Optional[str] = None
 
 
+class ResultStatus(str, Enum):
+    """
+    Represents the status of a command execution result.
+    """
+
+    SUCCESS = "success"
+    FAILURE = "failure"
+    SKIPPED = "skipped"
+    NONE = "none"
+
+
 class Result(BaseModel):
     """
     Represents the result of a command execution.
     """
 
-    status: Literal["success", "failure", "skipped", "none"]
+    status: ResultStatus
     error: Optional[str] = None
     result: Any = None
     namespace: Optional[str] = None
@@ -170,14 +181,8 @@ class ServerMessage(BaseModel):
     Represents a response from the server to the client.
     """
 
-    type: Literal[
-        ServerMessageType.TASK,
-        ServerMessageType.HEARTBEAT,
-        ServerMessageType.TASK_END,
-        ServerMessageType.COMMAND,
-        ServerMessageType.ERROR,
-    ]
-    status: Literal["continue", "completed", "failed", "ok", "error", "commands"]
+    type: ServerMessageType
+    status: TaskStatus
     user_request: Optional[str] = None
     agent_name: Optional[str] = None
     process_name: Optional[str] = None
@@ -196,20 +201,8 @@ class ClientMessage(BaseModel):
     Represents a request from the client to the server.
     """
 
-    type: Literal[
-        ClientMessageType.TASK,
-        ClientMessageType.HEARTBEAT,
-        ClientMessageType.COMMAND_RESULTS,
-        ClientMessageType.ERROR,
-        ClientMessageType.REGISTER,
-    ]
-    status: Literal[
-        TaskStatus.OK,
-        TaskStatus.ERROR,
-        TaskStatus.CONTINUE,
-        TaskStatus.COMPLETED,
-        TaskStatus.FAILED,
-    ]
+    type: ClientMessageType
+    status: TaskStatus
     session_id: Optional[str] = None
     task_name: Optional[str] = None
     client_id: Optional[str] = None

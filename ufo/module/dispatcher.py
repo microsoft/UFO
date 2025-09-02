@@ -3,7 +3,7 @@ import datetime
 import logging
 import uuid
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Awaitable, Callable, Dict, List, Optional
+from typing import TYPE_CHECKING, Callable, Coroutine, Any, Dict, List, Optional
 
 from fastapi import WebSocket
 
@@ -17,6 +17,7 @@ from ufo.contracts.contracts import (
     ServerMessage,
     ServerMessageType,
     TaskStatus,
+    ResultStatus,
 )
 
 if TYPE_CHECKING:
@@ -55,7 +56,7 @@ class BasicCommandDispatcher(ABC):
         for command in commands:
             error_msg = f"Error occurred while executing command {command}: {error}, please retry or execute a different command."
             result = Result(
-                status="failure",
+                status=ResultStatus.FAILURE,
                 error=error_msg,
                 result=error_msg,
                 call_id=command.call_id,
@@ -82,7 +83,7 @@ class LocalCommandDispatcher(BasicCommandDispatcher):
         self.pending: Dict[str, asyncio.Future] = {}
         self.logger = logging.getLogger(__name__)
 
-        configs = get_config()
+        configs = get_config() or {}
 
         self.mcp_server_manager = mcp_server_manager
         self.computer_manager = ComputerManager(configs, mcp_server_manager)
@@ -132,7 +133,7 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
     Handles sending commands and receiving results via WebSocket using observers.
     """
 
-    def __init__(self, session: "BaseSession", ws: Optional[WebSocket] = None) -> None:
+    def __init__(self, session: "BaseSession", ws: WebSocket) -> None:
         """
         Initializes the CommandDispatcher.
         :param session: The session associated with the command dispatcher.
@@ -148,7 +149,9 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         if ws:
             self.register_observer(self._send_loop)
 
-    def register_observer(self, observer: Callable[[], Awaitable[None]]) -> None:
+    def register_observer(
+        self, observer: Callable[[], Coroutine[Any, Any, None]]
+    ) -> None:
         """
         Register an observer (_send_loop task) to watch the send_queue.
         """
@@ -205,7 +208,8 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         """
         server_message = self.make_server_response(commands)
         fut = asyncio.get_event_loop().create_future()
-        self.pending[server_message.response_id] = fut
+        if server_message.response_id:
+            self.pending[server_message.response_id] = fut
 
         # Push to send_queue to notify observer (_send_loop)
         await self.notify_observers(server_message.model_dump_json())
@@ -219,7 +223,8 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
             )
             return self.generate_error_results(commands, e)
         finally:
-            self.pending.pop(server_message.response_id, None)
+            if server_message.response_id:
+                self.pending.pop(server_message.response_id, None)
 
     async def _send_loop(self) -> None:
         """
