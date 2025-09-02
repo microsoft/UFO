@@ -3,7 +3,7 @@ import datetime
 import logging
 import uuid
 from abc import ABC, abstractmethod
-from typing import TYPE_CHECKING, Dict, List, Optional
+from typing import TYPE_CHECKING, Awaitable, Callable, Dict, List, Optional
 
 from fastapi import WebSocket
 
@@ -148,7 +148,7 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         if ws:
             self.register_observer(self._send_loop)
 
-    def register_observer(self, observer: asyncio.coroutine) -> None:
+    def register_observer(self, observer: Callable[[], Awaitable[None]]) -> None:
         """
         Register an observer (_send_loop task) to watch the send_queue.
         """
