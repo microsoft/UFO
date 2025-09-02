@@ -89,9 +89,10 @@ class ControlReceiver(ReceiverBasic):
         api_name = configs.get("CLICK_API", "click_input")
 
         if api_name == "click":
-            return self.atomic_execution("click", params)
+            self.atomic_execution("click", params)
         else:
-            return self.atomic_execution("click_input", params)
+            self.atomic_execution("click_input", params)
+        return f"Click action has been executed, with parameters: {params}"
 
     def click_on_coordinates(self, params: Dict[str, str]) -> str:
         """
@@ -118,7 +119,7 @@ class ControlReceiver(ReceiverBasic):
             tranformed_x, tranformed_y, button=button, clicks=2 if double else 1
         )
 
-        return ""
+        return f"The click action has been executed at ({tranformed_x}, {tranformed_y}) with button '{button}' and {'double' if double else 'single'} click."
 
     def drag_on_coordinates(self, params: Dict[str, str]) -> str:
         """
@@ -151,7 +152,7 @@ class ControlReceiver(ReceiverBasic):
         if key_hold:
             pyautogui.keyUp(key_hold)
 
-        return ""
+        return f"The drag action has been executed from {start} to {end}, with a duration of {duration} and a button '{button}' held down."
 
     def summary(self, params: Dict[str, str]) -> str:
         """
@@ -265,11 +266,13 @@ class ControlReceiver(ReceiverBasic):
         """
 
         if self.control is not None:
-            return self.atomic_execution("wheel_mouse_input", params)
+            self.atomic_execution("wheel_mouse_input", params)
+            return "The wheel mouse input action has been executed on the selected control."
         else:
             keyboard.send_keys("{VK_CONTROL up}")
             dist = int(params.get("wheel_dist", 0))
-            return self.application.wheel_mouse_input(wheel_dist=dist)
+            self.application.wheel_mouse_input(wheel_dist=dist)
+            return "The wheel mouse input action has been executed on the application window."
 
     def scroll(self, params: Dict[str, str]) -> str:
         """

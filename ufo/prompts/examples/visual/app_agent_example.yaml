@@ -78,8 +78,7 @@ example3:
       click_input
     arguments: 
       {"id": "59", "name": "Find", "button": "left", "double": false}
-    status: |-
-      FINISH
+    status: FINISH
     plan:
       - <FINISH>
     comment: |-

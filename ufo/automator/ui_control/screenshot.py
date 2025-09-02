@@ -30,7 +30,7 @@ class Photographer(ABC):
     """
 
     @abstractmethod
-    def capture(self):
+    def capture(self) -> Image.Image:
         pass
 
     @staticmethod
@@ -70,11 +70,12 @@ class ControlPhotographer(Photographer):
         """
         self.control = control
 
-    def capture(self, save_path: str = None, scalar: List[int] = None):
+    def capture(self, save_path: str = None, scalar: List[int] = None) -> Image.Image:
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
-        :return: The screenshot."""
+        :return: The screenshot.
+        """
         # Capture single window screenshot
         screenshot = self.control.capture_as_image()
         if scalar is not None:
@@ -97,7 +98,7 @@ class DesktopPhotographer(Photographer):
         """
         self.all_screens = all_screens
 
-    def capture(self, save_path: str = None, scalar: List[int] = None):
+    def capture(self, save_path: str = None, scalar: List[int] = None) -> Image.Image:
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
@@ -123,7 +124,7 @@ class PhotographerDecorator(Photographer):
         """
         self.photographer = photographer
 
-    def capture(self, save_path=None):
+    def capture(self, save_path=None) -> Image.Image:
         """
         Capture a screenshot.
         :param save_path: The path to save the screenshot.
@@ -212,7 +213,9 @@ class RectangleDecorator(PhotographerDecorator):
         draw.rectangle(coordinate, outline=color, width=width)
         return image
 
-    def capture(self, save_path: str, background_screenshot_path: Optional[str] = None):
+    def capture(
+        self, save_path: str, background_screenshot_path: Optional[str] = None
+    ) -> Image.Image:
         """
         Capture a screenshot with rectangles.
         :param save_path: The path to save the screenshot.
@@ -438,7 +441,7 @@ class AnnotationDecorator(PhotographerDecorator):
         annotation_dict: Dict[str, UIAWrapper],
         save_path: Optional[str] = None,
         path: Optional[str] = None,
-    ):
+    ) -> Image.Image:
         """
         Capture a screenshot with the given annotation dictionary.
         :param annotation_dict: The dictionary of the controls with annotation labels as keys.
@@ -483,7 +486,7 @@ class AnnotationDecorator(PhotographerDecorator):
 
         return screenshot_annotated
 
-    def capture(self, save_path: Optional[str] = None):
+    def capture(self, save_path: Optional[str] = None) -> Image.Image:
         """
         Capture a screenshot with annotations.
         :param save_path: The path to save the screenshot.
@@ -532,7 +535,7 @@ class PhotographerFacade:
 
     def capture_app_window_screenshot(
         self, control: UIAWrapper, save_path=None, scalar: List[int] = None
-    ):
+    ) -> Image.Image:
         """
         Capture the control screenshot.
         :param control: The control item to capture.
@@ -543,7 +546,9 @@ class PhotographerFacade:
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
         return screenshot.capture(save_path, scalar)
 
-    def capture_desktop_screen_screenshot(self, all_screens=True, save_path=None):
+    def capture_desktop_screen_screenshot(
+        self, all_screens=True, save_path=None
+    ) -> Image.Image:
         """
         Capture the desktop screenshot.
         :param all_screens: Whether to capture all screens.

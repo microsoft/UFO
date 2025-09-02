@@ -79,7 +79,7 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
             ),
         ],
     ) -> Annotated[
-        Dict,
+        str,
         Field(
             description="The markdown format string of the table content of the sheet."
         ),
@@ -114,7 +114,7 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
             Field(description="The start column to insert the table, starting from 1."),
         ],
     ) -> Annotated[
-        Dict, Field(description="The table content is inserted to the Excel sheet.")
+        str, Field(description="The table content is inserted to the Excel sheet.")
     ]:
         """
         Insert a table to the Excel sheet. The table is a list of list of strings or numbers.
@@ -154,7 +154,7 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
             ),
         ],
     ) -> Annotated[
-        Dict,
+        str,
         Field(
             description="A message indicating whether the range is selected successfully or not."
         ),
@@ -196,7 +196,7 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
             ),
         ] = "",
     ) -> Annotated[
-        Dict,
+        str,
         Field(
             description="A message indicating whether the document is saved successfully or not."
         ),
@@ -222,7 +222,7 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
             List[str], Field(description="The list of column names in the new order.")
         ],
     ) -> Annotated[
-        Dict,
+        str,
         Field(
             description="A message indicating whether the columns are reordered successfully or not."
         ),
@@ -233,6 +233,30 @@ def create_excel_mcp_server(process_name: str) -> FastMCP:
         action = ActionCommandInfo(
             function="reorder_columns",
             arguments={"sheet_name": sheet_name, "desired_order": desired_order},
+        )
+
+        return _execute_action(action)
+
+    @mcp.tool(tags={"AppAgent"})
+    def get_range_values(
+        sheet_name: Annotated[str, Field(description="The name of the sheet.")],
+        start_row: Annotated[int, Field(description="The start row.")],
+        start_col: Annotated[int, Field(description="The start column.")],
+        end_row: Annotated[int, Field(description="The end row.")],
+        end_col: Annotated[int, Field(description="The end column.")],
+    ) -> Annotated[List, Field(description="The values in the specified range.")]:
+        """
+        Get the values from a specified range in the sheet.
+        """
+        action = ActionCommandInfo(
+            function="get_range_values",
+            arguments={
+                "sheet_name": sheet_name,
+                "start_row": start_row,
+                "start_col": start_col,
+                "end_row": end_row,
+                "end_col": end_col,
+            },
         )
 
         return _execute_action(action)
