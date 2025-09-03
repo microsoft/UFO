@@ -24,6 +24,7 @@ class BaseMCPServer(ABC):
         self._config = config
         self._server: Optional[FastMCP] = None
         self._namespace = config.get("namespace", "default")
+        self.logger = logging.getLogger(__name__)
 
     @abstractmethod
     def start(self, *args, **kwargs) -> None:
@@ -114,7 +115,11 @@ class LocalMCPServer(BaseMCPServer):
         try:
             # Try to get the server from the registry
             self._server = MCPRegistry.get(server_namespace, *args, **kwargs)
+            self.logger.info(f"Started local MCP server '{server_namespace}'.")
         except KeyError:
+            self.logger.error(
+                f"No MCP server found for name '{server_namespace}' in local server registry."
+            )
             raise ValueError(
                 f"No MCP server found for name '{server_namespace}' in local server registry."
             )

@@ -16,6 +16,7 @@ from pydantic import Field
 from ufo.agents.processors.actions import ActionCommandInfo
 from ufo.automator.action_execution import ActionExecutor
 from ufo.automator.puppeteer import AppPuppeteer
+from ufo.client.mcp.mcp_registry import MCPRegistry
 from ufo.config import get_config
 
 # Get config
@@ -38,6 +39,7 @@ class UIServerState:
             UIServerState._initialized = True
 
 
+@MCPRegistry.register_factory_decorator("PowerPointCOMExecutor")
 def create_powerpoint_mcp_server(process_name: str) -> FastMCP:
     """
     Create and return the PowerPoint MCP server instance.
@@ -66,7 +68,7 @@ def create_powerpoint_mcp_server(process_name: str) -> FastMCP:
         if not ui_state.puppeteer:
             raise ValueError("UI state not initialized.")
 
-        return executor.execute(action, ui_state.puppeteer)
+        return executor.execute(action, ui_state.puppeteer, control_dict={})
 
     mcp = FastMCP("UFO PowerPoint MCP Server")
 

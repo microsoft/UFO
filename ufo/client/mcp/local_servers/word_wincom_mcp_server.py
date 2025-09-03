@@ -71,7 +71,7 @@ def create_word_mcp_server(process_name: str, *args, **kwargs) -> FastMCP:
         if not ui_state.puppeteer:
             raise ValueError("UI state not initialized.")
 
-        return executor.execute(action, ui_state.puppeteer)
+        return executor.execute(action, ui_state.puppeteer, control_dict={})
 
     mcp = FastMCP("UFO UI AppAgent Action MCP Server")
 
