@@ -795,6 +795,8 @@ class AppAgentProcessor(BaseProcessor):
         self._update_image_blackboard()
         self.host_agent.blackboard.add_trajectories(memorized_action)
 
+        self.logger.info(f"Memorized action: {memorized_action}")
+
     def get_all_success_actions(self) -> List[Dict[str, Any]]:
         """
         Get the previous action.
