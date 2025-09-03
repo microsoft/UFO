@@ -238,6 +238,7 @@ class Computer:
 
         async with Client(mcp_server.server) as client:
             tools = await client.list_tools()
+
             for tool in tools:
                 tool_key = self.make_tool_key(tool_type, tool.name)
                 if tool_key not in self._tools_registry:
@@ -275,7 +276,7 @@ class Computer:
                 if tool_key not in self._tools_registry:
                     # Register the meta tool with the computer
                     self.logger.info(
-                        f"Registering meta tool: {meta_tool_name} with key: {tool_key} for computer {self._name}."
+                        f"Registering meta tool: {meta_tool_name} with key: {tool_key} for computer {self._name} for MCP server {namespace}."
                     )
                     self._register_tool(
                         tool_key=tool_key,
@@ -725,7 +726,7 @@ def test_command_router():
         Command(
             tool_name="select_application_window",
             tool_type="action",
-            parameters={"window_label": "2"},
+            parameters={"id": "3"},
         ),
     ]
 
@@ -746,23 +747,19 @@ def test_command_router():
         )
     ]
 
+    print(results1)
+
     results2 = asyncio.run(
         command_router.execute(
             agent_name="AppAgent",  # From server
-            process_name="",  # From server
-            root_name="chrome.exe",  # From server
+            process_name="Book1 - Excel",  # From server
+            root_name="EXCEL.EXE",  # From server
             commands=commands,
         )
     )
-
-    # for result in results1 + results2:
-    #     # print(f"Command executed with status: {result.status}")
-    #     if result.status == "failure":
-    #         print(f"Error: {result.error}")
-    #     else:
-    #         print(f"Result: {result.result}")
-
     tool_list = results2[0].result
+    print(results1)
+    print(tool_list)
 
     for tool in tool_list:
         print(tool.get("tool_name"))

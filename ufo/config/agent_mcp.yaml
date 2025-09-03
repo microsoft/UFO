@@ -61,31 +61,31 @@ AppAgent:
   EXCEL.EXE:
     data_collection:
       - namespace: UICollector
-        type: stdio
+        type: local
         start_args: []
         reset: false
     action:
-      - namespace: UICollector
-        type: stdio
+      - namespace: AppUIExecutor
+        type: local
         start_args: []
         reset: false
       - namespace: ExcelCOMExecutor
-        type: stdio
+        type: local
         start_args: []
         reset: true
   POWERPNT.EXE:
     data_collection:
       - namespace: UICollector
-        type: stdio
+        type: local
         start_args: []
         reset: false
     action:
-      - namespace: UICollector 
-        type: stdio
+      - namespace: AppUIExecutor
+        type: local
         start_args: []
         reset: false
       - namespace: PowerPointCOMExecutor
-        type: stdio
+        type: local
         start_args: []
         reset: true
   # msedge.exe:
