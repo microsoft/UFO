@@ -355,3 +355,163 @@ class StrategyDependencyValidator:
             if info["depends_on_phases"]:
                 print(f"    依赖阶段: {', '.join(info['depends_on_phases'])}")
             print()
+
+
+# ===== 策略装饰器实现 =====
+from functools import wraps
+from typing import Union, Type
+
+
+def strategy_config(
+    dependencies: Union[List[str], List[Dict[str, Any]]] = None,
+    provides: List[str] = None,
+    fail_fast: bool = True,
+    description: str = "",
+):
+    """
+    策略配置装饰器，声明策略的依赖和提供的字段
+
+    :param dependencies: 依赖的字段列表，可以是简单字符串列表或详细配置字典列表
+    :param provides: 提供的字段列表
+    :param fail_fast: 是否在错误时快速失败
+    :param description: 策略描述
+
+    Example:
+        @strategy_config(
+            dependencies=["command_dispatcher", "target_registry"],
+            provides=["desktop_screenshot_url", "target_info_list"]
+        )
+        class MyStrategy(BaseProcessingStrategy):
+            pass
+    """
+
+    def decorator(cls: Type) -> Type:
+        # 将配置信息存储在类属性中
+        cls._strategy_dependencies = _parse_dependencies(dependencies or [])
+        cls._strategy_provides = provides or []
+        cls._strategy_fail_fast = fail_fast
+        cls._strategy_description = description
+
+        # 添加 get_dependencies 和 get_provides 方法
+        def get_dependencies(self) -> List[StrategyDependency]:
+            return self.__class__._strategy_dependencies
+
+        def get_provides(self) -> List[str]:
+            return self.__class__._strategy_provides
+
+        def get_description(self) -> str:
+            return self.__class__._strategy_description
+
+        # 将方法添加到类中
+        cls.get_dependencies = get_dependencies
+        cls.get_provides = get_provides
+        cls.get_description = get_description
+
+        return cls
+
+    return decorator
+
+
+def depends_on(*dependencies: str):
+    """
+    简化的依赖声明装饰器，只声明依赖字段
+
+    Example:
+        @depends_on("command_dispatcher", "target_registry")
+        @provides("desktop_screenshot_url", "target_info_list")
+        class MyStrategy(BaseProcessingStrategy):
+            pass
+    """
+
+    def decorator(cls: Type) -> Type:
+        if not hasattr(cls, "_strategy_dependencies"):
+            cls._strategy_dependencies = []
+
+        for dep in dependencies:
+            cls._strategy_dependencies.append(StrategyDependency(field_name=dep))
+
+        def get_dependencies(self) -> List[StrategyDependency]:
+            return self.__class__._strategy_dependencies
+
+        cls.get_dependencies = get_dependencies
+        return cls
+
+    return decorator
+
+
+def provides(*fields: str):
+    """
+    提供字段声明装饰器
+
+    Example:
+        @provides("desktop_screenshot_url", "target_info_list")
+        class MyStrategy(BaseProcessingStrategy):
+            pass
+    """
+
+    def decorator(cls: Type) -> Type:
+        cls._strategy_provides = list(fields)
+
+        def get_provides(self) -> List[str]:
+            return self.__class__._strategy_provides
+
+        cls.get_provides = get_provides
+        return cls
+
+    return decorator
+
+
+def _parse_dependencies(
+    dependencies: Union[List[str], List[Dict[str, Any]]],
+) -> List[StrategyDependency]:
+    """
+    解析依赖配置，支持简单字符串和详细字典格式
+    """
+    parsed_dependencies = []
+
+    for dep in dependencies:
+        if isinstance(dep, str):
+            # 简单字符串格式
+            parsed_dependencies.append(StrategyDependency(field_name=dep))
+        elif isinstance(dep, dict):
+            # 详细字典格式
+            parsed_dependencies.append(StrategyDependency(**dep))
+        else:
+            raise ValueError(f"Invalid dependency format: {dep}")
+
+    return parsed_dependencies
+
+
+def validate_provides_consistency(
+    strategy_name: str, declared_provides: List[str], actual_provides: List[str], logger
+) -> None:
+    """
+    验证策略声明的provides字段和实际返回字段的一致性
+
+    :param strategy_name: 策略名称
+    :param declared_provides: 声明提供的字段列表
+    :param actual_provides: 实际提供的字段列表
+    :param logger: 日志记录器
+    """
+    declared_set = set(declared_provides)
+    actual_set = set(actual_provides)
+
+    # 检查缺少的字段（声明了但没有提供）
+    missing_fields = declared_set - actual_set
+    if missing_fields:
+        logger.warning(
+            f"Strategy '{strategy_name}' declared to provide {list(missing_fields)} "
+            f"but didn't return them in execution result"
+        )
+
+    # 检查额外的字段（提供了但没有声明）
+    extra_fields = actual_set - declared_set
+    if extra_fields:
+        logger.warning(
+            f"Strategy '{strategy_name}' returned extra fields {list(extra_fields)} "
+            f"that were not declared in provides"
+        )
+
+    # 如果完全匹配，记录调试信息
+    if declared_set == actual_set:
+        logger.debug(f"Strategy '{strategy_name}' provides consistency: PASS")

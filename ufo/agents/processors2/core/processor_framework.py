@@ -20,6 +20,7 @@ from ufo.agents.processors2.core.strategy_dependency import (
     StrategyDependency,
     StrategyDependencyValidator,
     DependencyValidationResult,
+    validate_provides_consistency,
 )
 
 T = TypeVar("T")
@@ -267,6 +268,23 @@ class ProcessorTemplate(ABC):
                     result = await strategy.execute(self.processing_context)
                     result.execution_time = time.time() - phase_start
                     result.phase = phase
+
+                    # Validate provides consistency after execution
+                    try:
+                        validation_errors = validate_provides_consistency(
+                            strategy, self.processing_context.local_context
+                        )
+                        if validation_errors:
+                            # Report as warning (configurable to error if needed)
+                            warning_msg = f"Strategy {strategy.name} provides consistency errors: {validation_errors}"
+                            self.logger.warning(warning_msg)
+                            # Could be configured to raise error instead based on configuration:
+                            # if getattr(self, 'strict_provides_validation', False):
+                            #     raise ProcessingException(warning_msg, phase=phase)
+                    except Exception as consistency_error:
+                        self.logger.error(
+                            f"Error during provides consistency check for {strategy.name}: {consistency_error}"
+                        )
 
                     # Store the phase result in context
                     self.processing_context.set_phase_result(phase, result)

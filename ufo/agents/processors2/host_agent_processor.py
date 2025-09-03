@@ -42,6 +42,13 @@ from ufo.agents.processors2.core.processing_context import (
     HostAgentProcessorContext,
     ProcessorContextFactory,
 )
+from ufo.agents.processors2.core.strategy_dependency import (
+    strategy_config,
+    depends_on,
+    provides,
+    StrategyDependency,
+    DependencyType,
+)
 from ufo.agents.processors2.middleware.enhanced_middleware import (
     EnhancedLoggingMiddleware,
 )
@@ -317,6 +324,28 @@ class HostAgentProcessorV2(ProcessorTemplate):
         return []
 
 
+@strategy_config(
+    dependencies=[
+        StrategyDependency(
+            "command_dispatcher",
+            DependencyType.REQUIRED,
+            "Command dispatcher for executing actions",
+        ),
+        StrategyDependency(
+            "log_path", DependencyType.REQUIRED, "Path for saving screenshots and logs"
+        ),
+        StrategyDependency(
+            "session_step", DependencyType.REQUIRED, "Current session step number"
+        ),
+    ],
+    provides=[
+        "desktop_screenshot_url",
+        "desktop_screenshot_path",
+        "application_windows_info",
+        "target_registry",
+        "target_info_list",
+    ],
+)
 class DesktopDataCollectionStrategy(BaseProcessingStrategy):
     """
     Enhanced strategy for collecting desktop environment data with comprehensive error handling.
@@ -532,6 +561,47 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
             return 0  # Don't fail the entire process for third-party agent registration
 
 
+@strategy_config(
+    dependencies=[
+        StrategyDependency(
+            "host_agent",
+            DependencyType.REQUIRED,
+            "Host agent instance for LLM interaction",
+        ),
+        StrategyDependency(
+            "target_info_list",
+            DependencyType.REQUIRED,
+            "List of available targets for LLM context",
+        ),
+        StrategyDependency(
+            "desktop_screenshot_url",
+            DependencyType.REQUIRED,
+            "Desktop screenshot for visual context",
+        ),
+        StrategyDependency(
+            "prev_plan", DependencyType.OPTIONAL, "Previous execution plan"
+        ),
+        StrategyDependency(
+            "previous_subtasks", DependencyType.OPTIONAL, "Previously executed subtasks"
+        ),
+        StrategyDependency(
+            "request", DependencyType.REQUIRED, "User request to process"
+        ),
+    ],
+    provides=[
+        "parsed_response",
+        "response_text",
+        "llm_cost",
+        "prompt_message",
+        "subtask",
+        "plan",
+        "host_message",
+        "status",
+        "question_list",
+        "function_name",
+        "function_arguments",
+    ],
+)
 class HostLLMInteractionStrategy(BaseProcessingStrategy):
     """
     Enhanced LLM interaction strategy for Host Agent with comprehensive context building.
@@ -799,6 +869,38 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
         }
 
 
+@strategy_config(
+    dependencies=[
+        StrategyDependency(
+            "parsed_response",
+            DependencyType.OPTIONAL,
+            "Parsed LLM response with action instructions",
+        ),
+        StrategyDependency(
+            "function_name", DependencyType.OPTIONAL, "Name of the function to execute"
+        ),
+        StrategyDependency(
+            "function_arguments",
+            DependencyType.OPTIONAL,
+            "Arguments for function execution",
+        ),
+        StrategyDependency(
+            "target_registry", DependencyType.REQUIRED, "Registry of available targets"
+        ),
+        StrategyDependency(
+            "command_dispatcher",
+            DependencyType.REQUIRED,
+            "Command dispatcher for action execution",
+        ),
+    ],
+    provides=[
+        "execution_result",
+        "action_info",
+        "selected_target_id",
+        "selected_application_root",
+        "assigned_third_party_agent",
+    ],
+)
 class HostActionExecutionStrategy(BaseProcessingStrategy):
     """
     Enhanced action execution strategy for Host Agent with comprehensive error handling.
@@ -1159,6 +1261,47 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
             self.logger.warning(f"Failed to update context state: {str(e)}")
 
 
+@strategy_config(
+    dependencies=[
+        StrategyDependency(
+            "host_agent",
+            DependencyType.REQUIRED,
+            "Host agent instance for memory operations",
+        ),
+        StrategyDependency(
+            "parsed_response",
+            DependencyType.OPTIONAL,
+            "Parsed response data for memory storage",
+        ),
+        StrategyDependency(
+            "action_info", DependencyType.OPTIONAL, "Action execution information"
+        ),
+        StrategyDependency(
+            "selected_application_root",
+            DependencyType.OPTIONAL,
+            "Selected application information",
+        ),
+        StrategyDependency(
+            "selected_target_id", DependencyType.OPTIONAL, "Selected target ID"
+        ),
+        StrategyDependency(
+            "assigned_third_party_agent",
+            DependencyType.OPTIONAL,
+            "Assigned third-party agent name",
+        ),
+        StrategyDependency(
+            "execution_result", DependencyType.OPTIONAL, "Action execution results"
+        ),
+        StrategyDependency(
+            "session_step", DependencyType.REQUIRED, "Current session step"
+        ),
+        StrategyDependency("round_step", DependencyType.REQUIRED, "Current round step"),
+        StrategyDependency(
+            "round_num", DependencyType.REQUIRED, "Current round number"
+        ),
+    ],
+    provides=["additional_memory", "memory_item", "memory_keys_count"],
+)
 class HostMemoryUpdateStrategy(BaseProcessingStrategy):
     """
     Enhanced memory update strategy for Host Agent with comprehensive data management.
