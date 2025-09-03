@@ -250,14 +250,19 @@ class HostAgent(BasicAgent):
         Process the agent.
         :param context: The context.
         """
+        from ufo.agents.processors2.host_agent_processor import HostAgentProcessorV2
+
         if not self._context_provision_executed:
             await self.context_provision(context=context)
             self._context_provision_executed = True
-        self.processor = HostAgentProcessor(agent=self, context=context)
+        self.processor = HostAgentProcessorV2(agent=self, global_context=context)
+        # self.processor = HostAgentProcessorV2(agent=self, context=context)
         await self.processor.process()
 
         # Sync the status with the processor.
-        self.status = self.processor.status
+        # self.status = self.processor.status
+        self.status = self.processor.processing_context.get_local("status")
+        self.logger.info(f"Host agent status updated to: {self.status}")
 
     async def context_provision(self, context: Context) -> None:
         """
@@ -304,9 +309,13 @@ class HostAgent(BasicAgent):
         """
         mode = RunningMode(context.get(ContextNames.MODE))
 
-        if self.processor.assigned_third_party_agent:
+        assigned_third_party_agent = self.processor.processing_context.get_local(
+            "assigned_third_party_agent"
+        )
+        # if self.processor.assigned_third_party_agent:
+        if assigned_third_party_agent:
             config = AgentConfigResolver.resolve_third_party_config(
-                self.processor.assigned_third_party_agent, mode
+                assigned_third_party_agent, mode
             )
         else:
             window_name = context.get(ContextNames.APPLICATION_PROCESS_NAME)

@@ -7,8 +7,8 @@ to ensure proper data flow and early detection of dependency issues.
 
 import logging
 from dataclasses import dataclass, field
-from typing import Set, List, Dict, Any, Optional
-from abc import ABC, abstractmethod
+from typing import Set, List, Dict, Any, Optional, Type
+
 
 from ufo.agents.processors2.core.processing_context import (
     ProcessingPhase,
@@ -39,6 +39,77 @@ class StrategyDependency:
 
     description: str = ""
     """Human-readable description of what this dependency is for."""
+
+
+class StrategyMetadataRegistry:
+    """
+    Centralized registry for strategy metadata including dependencies and provides.
+    This class manages all decorator-declared information in one place.
+    """
+
+    _registry: Dict[str, Dict[str, Any]] = {}
+
+    @classmethod
+    def register_strategy(
+        cls,
+        strategy_class: Type,
+        dependencies: List[StrategyDependency] = None,
+        provides: List[str] = None,
+    ):
+        """
+        Register a strategy with its metadata.
+
+        :param strategy_class: The strategy class
+        :param dependencies: List of strategy dependencies
+        :param provides: List of provided fields
+        """
+        class_name = strategy_class.__name__
+        cls._registry[class_name] = {
+            "dependencies": dependencies or [],
+            "provides": provides or [],
+            "class": strategy_class,
+        }
+
+    @classmethod
+    def get_dependencies(cls, strategy_class: Type) -> List[StrategyDependency]:
+        """
+        Get dependencies for a strategy class.
+
+        :param strategy_class: The strategy class
+        :return: List of dependencies
+        """
+        class_name = strategy_class.__name__
+        return cls._registry.get(class_name, {}).get("dependencies", [])
+
+    @classmethod
+    def get_provides(cls, strategy_class: Type) -> List[str]:
+        """
+        Get provides for a strategy class.
+
+        :param strategy_class: The strategy class
+        :return: List of provided fields
+        """
+        class_name = strategy_class.__name__
+        return cls._registry.get(class_name, {}).get("provides", [])
+
+    @classmethod
+    def is_registered(cls, strategy_class: Type) -> bool:
+        """
+        Check if a strategy class is registered.
+
+        :param strategy_class: The strategy class
+        :return: True if registered
+        """
+        return strategy_class.__name__ in cls._registry
+
+    @classmethod
+    def get_all_registered(cls) -> Dict[str, Dict[str, Any]]:
+        """
+        Get all registered strategy metadata.
+
+        :return: Dictionary of all registered strategies
+        """
+        return cls._registry.copy()
 
 
 @dataclass
@@ -176,10 +247,12 @@ class StrategyDependencyValidator:
         for i, strategy in enumerate(strategies):
             strategy_name = getattr(strategy, "name", f"Strategy{i}")
 
-            # Get dependencies and provides from strategy
+            # Get dependencies and provides from strategy metadata registry
             try:
-                dependencies = getattr(strategy, "get_dependencies", lambda: [])()
-                provides = getattr(strategy, "get_provides", lambda: [])()
+                dependencies = StrategyMetadataRegistry.get_dependencies(
+                    strategy.__class__
+                )
+                provides = StrategyMetadataRegistry.get_provides(strategy.__class__)
             except Exception as e:
                 warnings.append(
                     f"Could not get dependency info from {strategy_name}: {e}"
@@ -210,7 +283,6 @@ class StrategyDependencyValidator:
     ) -> Dict[str, Any]:
         """
         Validate the complete strategy chain for dependency consistency with detailed analysis.
-
         :param strategies: Dictionary mapping phases to strategies
         :return: Validation report with issues and dependency graph
         """
@@ -231,10 +303,12 @@ class StrategyDependencyValidator:
                 strategy = strategies[phase]
                 report["phase_order"].append(phase.value)
 
-                # Get strategy dependencies using the new interface
+                # Get strategy dependencies using metadata registry
                 try:
-                    dependencies = getattr(strategy, "get_dependencies", lambda: [])()
-                    provides = getattr(strategy, "get_provides", lambda: [])()
+                    dependencies = StrategyMetadataRegistry.get_dependencies(
+                        strategy.__class__
+                    )
+                    provides = StrategyMetadataRegistry.get_provides(strategy.__class__)
                 except Exception as e:
                     self.logger.warning(
                         f"Could not get dependency info from {strategy.__class__.__name__}: {e}"
@@ -308,56 +382,56 @@ class StrategyDependencyValidator:
     def print_dependency_report(self, report: Dict[str, Any]) -> None:
         """
         Print a detailed dependency validation report.
-
         :param report: Report from validate_strategy_chain_detailed
+        :return: None
         """
         print("\n" + "=" * 60)
-        print("策略依赖关系验证报告")
+        print("Strategy Dependency Validation Report")
         print("=" * 60)
 
         if report["valid"]:
-            print("✅ 所有策略依赖关系都满足")
+            print("✅ All strategy dependencies are satisfied")
         else:
-            print("❌ 发现依赖问题:")
+            print("❌ Dependency issues found:")
             for issue in report["issues"]:
                 if issue["type"] == "missing_required_fields":
                     print(
-                        f"  - {issue['phase']}: {issue['strategy']} 缺少必需字段: {issue['fields']}"
+                        f"  - {issue['phase']}: {issue['strategy']} missing required fields: {issue['fields']}"
                     )
                 elif issue["type"] == "missing_required_phases":
                     print(
-                        f"  - {issue['phase']}: {issue['strategy']} 缺少必需阶段: {issue['phases']}"
+                        f"  - {issue['phase']}: {issue['strategy']} missing required phases: {issue['phases']}"
                     )
 
-        print(f"\n处理阶段顺序: {' -> '.join(report['phase_order'])}")
+        print(f"\nProcessing phase order: {' -> '.join(report['phase_order'])}")
 
-        print("\n字段流向分析:")
+        print("\nField flow analysis:")
         for field, flow in report["field_flow"].items():
             providers = [f"{p['phase']}({p['strategy']})" for p in flow["providers"]]
             consumers = [f"{c['phase']}({c['strategy']})" for c in flow["consumers"]]
 
             if not providers:
-                print(f"  ⚠️  {field}: 无提供者 -> {', '.join(consumers)}")
+                print(f"  ⚠️  {field}: No providers -> {', '.join(consumers)}")
             elif not consumers:
-                print(f"  ℹ️  {field}: {', '.join(providers)} -> 无消费者")
+                print(f"  ℹ️  {field}: {', '.join(providers)} -> No consumers")
             else:
                 print(f"  ✅ {field}: {', '.join(providers)} -> {', '.join(consumers)}")
 
-        print("\n详细依赖图:")
+        print("\nDetailed dependency graph:")
         for phase, info in report["dependency_graph"].items():
             print(f"  {phase} ({info['strategy']}):")
             if info["requires"]:
-                print(f"    需要: {', '.join(info['requires'])}")
+                print(f"    Requires: {', '.join(info['requires'])}")
             if info["optional"]:
-                print(f"    可选: {', '.join(info['optional'])}")
+                print(f"    Optional: {', '.join(info['optional'])}")
             if info["provides"]:
-                print(f"    提供: {', '.join(info['provides'])}")
+                print(f"    Provides: {', '.join(info['provides'])}")
             if info["depends_on_phases"]:
-                print(f"    依赖阶段: {', '.join(info['depends_on_phases'])}")
+                print(f"    Depends on phases: {', '.join(info['depends_on_phases'])}")
             print()
 
 
-# ===== 策略装饰器实现 =====
+# ===== Strategy Decorator Implementation =====
 from functools import wraps
 from typing import Union, Type
 
@@ -369,30 +443,22 @@ def strategy_config(
     description: str = "",
 ):
     """
-    策略配置装饰器，声明策略的依赖和提供的字段
-
-    :param dependencies: 依赖的字段列表，可以是简单字符串列表或详细配置字典列表
-    :param provides: 提供的字段列表
-    :param fail_fast: 是否在错误时快速失败
-    :param description: 策略描述
-
-    Example:
-        @strategy_config(
-            dependencies=["command_dispatcher", "target_registry"],
-            provides=["desktop_screenshot_url", "target_info_list"]
-        )
-        class MyStrategy(BaseProcessingStrategy):
-            pass
+    Strategy configuration decorator that declares strategy dependencies and provided fields.
+    :param dependencies: List of dependency fields, can be simple string list or detailed config dict list
+    :param provides: List of provided fields
+    :param fail_fast: Whether to fail fast on errors
+    :param description: Strategy description
+    :return: Decorated class
     """
 
     def decorator(cls: Type) -> Type:
-        # 将配置信息存储在类属性中
+        # Store configuration information in class attributes
         cls._strategy_dependencies = _parse_dependencies(dependencies or [])
         cls._strategy_provides = provides or []
         cls._strategy_fail_fast = fail_fast
         cls._strategy_description = description
 
-        # 添加 get_dependencies 和 get_provides 方法
+        # Add get_dependencies and get_provides methods
         def get_dependencies(self) -> List[StrategyDependency]:
             return self.__class__._strategy_dependencies
 
@@ -402,7 +468,7 @@ def strategy_config(
         def get_description(self) -> str:
             return self.__class__._strategy_description
 
-        # 将方法添加到类中
+        # Add methods to the class
         cls.get_dependencies = get_dependencies
         cls.get_provides = get_provides
         cls.get_description = get_description
@@ -414,24 +480,26 @@ def strategy_config(
 
 def depends_on(*dependencies: str):
     """
-    简化的依赖声明装饰器，只声明依赖字段
-
-    Example:
-        @depends_on("command_dispatcher", "target_registry")
-        @provides("desktop_screenshot_url", "target_info_list")
-        class MyStrategy(BaseProcessingStrategy):
-            pass
+    Simplified dependency declaration decorator that registers dependencies in the metadata registry.
+    :param dependencies: Field names that this strategy depends on
+    :return: Decorated class
     """
 
     def decorator(cls: Type) -> Type:
-        if not hasattr(cls, "_strategy_dependencies"):
-            cls._strategy_dependencies = []
+        # Convert string dependencies to StrategyDependency objects
+        dep_objects = [StrategyDependency(field_name=dep) for dep in dependencies]
 
-        for dep in dependencies:
-            cls._strategy_dependencies.append(StrategyDependency(field_name=dep))
+        # Get existing provides if already registered
+        existing_provides = StrategyMetadataRegistry.get_provides(cls)
 
+        # Register in the metadata registry
+        StrategyMetadataRegistry.register_strategy(
+            cls, dependencies=dep_objects, provides=existing_provides
+        )
+
+        # Keep the old method for backward compatibility
         def get_dependencies(self) -> List[StrategyDependency]:
-            return self.__class__._strategy_dependencies
+            return StrategyMetadataRegistry.get_dependencies(self.__class__)
 
         cls.get_dependencies = get_dependencies
         return cls
@@ -441,19 +509,23 @@ def depends_on(*dependencies: str):
 
 def provides(*fields: str):
     """
-    提供字段声明装饰器
-
-    Example:
-        @provides("desktop_screenshot_url", "target_info_list")
-        class MyStrategy(BaseProcessingStrategy):
-            pass
+    Simplified provides declaration decorator that registers provides in the metadata registry.
+    :param fields: Field names that this strategy provides
+    :return: Decorated class
     """
 
     def decorator(cls: Type) -> Type:
-        cls._strategy_provides = list(fields)
+        # Get existing dependencies if already registered
+        existing_dependencies = StrategyMetadataRegistry.get_dependencies(cls)
 
+        # Register in the metadata registry
+        StrategyMetadataRegistry.register_strategy(
+            cls, dependencies=existing_dependencies, provides=list(fields)
+        )
+
+        # Keep the old method for backward compatibility
         def get_provides(self) -> List[str]:
-            return self.__class__._strategy_provides
+            return StrategyMetadataRegistry.get_provides(self.__class__)
 
         cls.get_provides = get_provides
         return cls
@@ -465,16 +537,18 @@ def _parse_dependencies(
     dependencies: Union[List[str], List[Dict[str, Any]]],
 ) -> List[StrategyDependency]:
     """
-    解析依赖配置，支持简单字符串和详细字典格式
+    Parse dependency configuration, supporting both simple strings and detailed dictionary formats.
+    :param dependencies: List of dependency configurations
+    :return: List of parsed StrategyDependency objects
     """
     parsed_dependencies = []
 
     for dep in dependencies:
         if isinstance(dep, str):
-            # 简单字符串格式
+            # Simple string format
             parsed_dependencies.append(StrategyDependency(field_name=dep))
         elif isinstance(dep, dict):
-            # 详细字典格式
+            # Detailed dictionary format
             parsed_dependencies.append(StrategyDependency(**dep))
         else:
             raise ValueError(f"Invalid dependency format: {dep}")
@@ -486,17 +560,16 @@ def validate_provides_consistency(
     strategy_name: str, declared_provides: List[str], actual_provides: List[str], logger
 ) -> None:
     """
-    验证策略声明的provides字段和实际返回字段的一致性
-
-    :param strategy_name: 策略名称
-    :param declared_provides: 声明提供的字段列表
-    :param actual_provides: 实际提供的字段列表
-    :param logger: 日志记录器
+    Validate consistency between declared provides fields and actual returned fields.
+    :param strategy_name: Strategy name
+    :param declared_provides: List of declared provided fields
+    :param actual_provides: List of actually provided fields
+    :param logger: Logger instance
     """
     declared_set = set(declared_provides)
     actual_set = set(actual_provides)
 
-    # 检查缺少的字段（声明了但没有提供）
+    # Check for missing fields (declared but not provided)
     missing_fields = declared_set - actual_set
     if missing_fields:
         logger.warning(
@@ -504,7 +577,7 @@ def validate_provides_consistency(
             f"but didn't return them in execution result"
         )
 
-    # 检查额外的字段（提供了但没有声明）
+    # Check for extra fields (provided but not declared)
     extra_fields = actual_set - declared_set
     if extra_fields:
         logger.warning(
@@ -512,6 +585,6 @@ def validate_provides_consistency(
             f"that were not declared in provides"
         )
 
-    # 如果完全匹配，记录调试信息
+    # If perfectly matched, log debug information
     if declared_set == actual_set:
         logger.debug(f"Strategy '{strategy_name}' provides consistency: PASS")

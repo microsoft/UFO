@@ -20,6 +20,7 @@ from ufo.agents.processors2.core.strategy_dependency import (
     StrategyDependency,
     StrategyDependencyValidator,
     DependencyValidationResult,
+    StrategyMetadataRegistry,
     validate_provides_consistency,
 )
 
@@ -129,6 +130,7 @@ class ProcessorTemplate(ABC):
                 global_context=self.global_context, local_context=basic_context
             )
 
+    @abstractmethod
     def _finalize_processing_context(
         self, processing_context: ProcessingContext
     ) -> None:
@@ -137,18 +139,7 @@ class ProcessorTemplate(ABC):
         Can be overridden by subclasses.
         :param processing_context: The processing context to finalize.
         """
-        # Promote keys from local context to global context
-        keys_to_promote = self._get_keys_to_promote()
-        processing_context.promote_multiple_to_global(keys_to_promote)
-
-    def _get_keys_to_promote(self) -> List[str]:
-        """
-        Get keys that should be promoted to global context.
-        Can be overridden by subclasses.
-        :return: A list of keys to promote.
-        """
-        # This method can be overridden by subclasses to customize the keys to promote
-        return []
+        pass
 
     def _validate_strategy_chain(self) -> None:
         """
@@ -196,8 +187,8 @@ class ProcessorTemplate(ABC):
         :raises: ProcessingException if dependencies not satisfied
         """
         try:
-            # Get strategy dependencies
-            dependencies = getattr(strategy, "get_dependencies", lambda: [])()
+            # Get strategy dependencies from metadata registry
+            dependencies = StrategyMetadataRegistry.get_dependencies(strategy.__class__)
             if not dependencies:
                 return  # No dependencies to validate
 
@@ -271,16 +262,18 @@ class ProcessorTemplate(ABC):
 
                     # Validate provides consistency after execution
                     try:
-                        validation_errors = validate_provides_consistency(
-                            strategy, self.processing_context.local_context
+                        declared_provides = StrategyMetadataRegistry.get_provides(
+                            strategy.__class__
                         )
-                        if validation_errors:
-                            # Report as warning (configurable to error if needed)
-                            warning_msg = f"Strategy {strategy.name} provides consistency errors: {validation_errors}"
-                            self.logger.warning(warning_msg)
-                            # Could be configured to raise error instead based on configuration:
-                            # if getattr(self, 'strict_provides_validation', False):
-                            #     raise ProcessingException(warning_msg, phase=phase)
+                        actual_provides = (
+                            list(result.data.keys()) if result.data else []
+                        )
+                        validate_provides_consistency(
+                            strategy.name,
+                            declared_provides,
+                            actual_provides,
+                            self.logger,
+                        )
                     except Exception as consistency_error:
                         self.logger.error(
                             f"Error during provides consistency check for {strategy.name}: {consistency_error}"

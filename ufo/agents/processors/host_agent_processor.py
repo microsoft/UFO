@@ -102,8 +102,6 @@ class HostAgentProcessor(BaseProcessor):
 
         self._desktop_screen_url = None
 
-        self.bash_command = None
-
         self.target_registry = TargetRegistry()
 
         self.assigned_third_party_agent: str | None = None

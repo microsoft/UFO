@@ -34,20 +34,15 @@ from ufo.agents.processors.target import TargetKind, TargetRegistry
 from ufo.agents.processors2.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.agents.processors2.core.processor_framework import (
     ProcessingContext,
+    ProcessingException,
     ProcessingPhase,
     ProcessingResult,
     ProcessorTemplate,
 )
-from ufo.agents.processors2.core.processing_context import (
-    HostAgentProcessorContext,
-    ProcessorContextFactory,
-)
+from ufo.agents.processors2.core.processing_context import ProcessorContextFactory
 from ufo.agents.processors2.core.strategy_dependency import (
-    strategy_config,
     depends_on,
     provides,
-    StrategyDependency,
-    DependencyType,
 )
 from ufo.agents.processors2.middleware.enhanced_middleware import (
     EnhancedLoggingMiddleware,
@@ -127,10 +122,6 @@ class HostAgentProcessorV2(ProcessorTemplate):
         """
         Set up enhanced middleware chain with comprehensive monitoring and recovery.
         The middleware chain includes:
-        - LegacyCompatibilityMiddleware: Provides @method_timer and @exception_capture functionality
-        - MetricsCollectionMiddleware: Performance and error metrics collection
-        - ResourceCleanupMiddleware: Ensures proper cleanup of resources
-        - ErrorRecoveryMiddleware: Attempts recovery for recoverable errors
         - HostAgentLoggingMiddleware: Specialized logging for Host Agent operations
         """
         self.middleware_chain = [
@@ -147,32 +138,65 @@ class HostAgentProcessorV2(ProcessorTemplate):
             {
                 "agent_type": "HostAgent",
                 "agent_name": self.host_agent.name,
-                "session_step": self.global_context.get("session_step", 0),
-                "round_num": self.global_context.get("round_num", 0),
-                "round_step": self.global_context.get("round_step", 0),
+                "session_step": self.global_context.get(ContextNames.SESSION_STEP),
+                "round_num": self.global_context.get(ContextNames.CURRENT_ROUND_ID),
+                "round_step": self.global_context.get(ContextNames.CURRENT_ROUND_STEP),
             }
         )
         return memory_item
 
-    def _get_keys_to_promote(self) -> List[str]:
+    def _finalize_processing_context(
+        self, processing_context: ProcessingContext
+    ) -> None:
         """
-        Define keys that should be promoted from local to global context.
-        :return: List of keys that contain important state information
+        Finalize processing context by updating existing ContextNames fields.
+        Instead of promoting arbitrary keys, we update the predefined ContextNames
+        that the system actually uses.
+        :param processing_context: The processing context to finalize.
         """
-        return [
-            "selected_application_root",
-            "selected_target_id",
-            "assigned_third_party_agent",
-            "desktop_screenshot_url",
-            "target_registry",
-            "llm_cost",
-            "action_result",
-            "subtask",
-            "plan",
-            "host_message",
-            "status",
-            "question_list",
-        ]
+        try:
+            # Update SUBTASK if available
+            subtask = processing_context.get_local("subtask")
+            if subtask:
+                self.global_context.set(ContextNames.SUBTASK, subtask)
+
+            # Update HOST_MESSAGE if available
+            host_message = processing_context.get_local("host_message")
+            if host_message:
+                self.global_context.set(ContextNames.HOST_MESSAGE, host_message)
+
+            # Update APPLICATION_ROOT_NAME if selected
+            selected_app_root = processing_context.get_local(
+                "selected_application_root"
+            )
+            if selected_app_root:
+                self.global_context.set(
+                    ContextNames.APPLICATION_ROOT_NAME, selected_app_root
+                )
+
+            # Accumulate LLM cost to CURRENT_ROUND_COST
+            llm_cost = processing_context.get_local("llm_cost")
+            if llm_cost and isinstance(llm_cost, (int, float)):
+                current_cost = (
+                    self.global_context.get(ContextNames.CURRENT_ROUND_COST) or 0
+                )
+                self.global_context.set(
+                    ContextNames.CURRENT_ROUND_COST, current_cost + llm_cost
+                )
+
+            # Accumulate to SESSION_COST as well
+            if llm_cost and isinstance(llm_cost, (int, float)):
+                session_cost = self.global_context.get(ContextNames.SESSION_COST) or 0
+                self.global_context.set(
+                    ContextNames.SESSION_COST, session_cost + llm_cost
+                )
+
+            self.logger.debug(
+                "Successfully updated ContextNames from processing results"
+            )
+
+        except Exception as e:
+            self.logger.warning(f"Failed to update ContextNames from results: {e}")
 
     def _create_processing_context(self) -> ProcessingContext:
         """
@@ -184,28 +208,28 @@ class HostAgentProcessorV2(ProcessorTemplate):
             host_agent=self.host_agent,
             processor=self,
             global_context=self.global_context,
-            target_registry=self.target_registry,
         )
 
-        # Populate the HostAgentProcessorContext with data previously in HostAgentUnifiedMemory
-        local_context.host_agent = self.host_agent
-        local_context.target_registry = self.target_registry
-        local_context.request = self.global_context.get("request", "")
-        local_context.prev_plan = self.global_context.get("prev_plan", [])
-        local_context.previous_subtasks = self.global_context.get(
-            "previous_subtasks", []
-        )
-        local_context.log_path = self.global_context.get("log_path", "")
-        local_context.command_dispatcher = self.global_context.get(
-            "command_dispatcher", None
-        )
+        # # Populate the HostAgentProcessorContext with data previously in HostAgentUnifiedMemory
+        # local_context.host_agent = self.host_agent
+        # local_context.target_registry = self.target_registry
+        # local_context.request = self.global_context.get(ContextNames.REQUEST)
+        # # Get prev_plan from agent's memory instead of global_context
+        # agent_memory = self.host_agent.memory
+        # if agent_memory.length > 0:
+        #     local_context.prev_plan = agent_memory.get_latest_item().to_dict().get("plan", [])
+        # else:
+        #     local_context.prev_plan = []
+        # local_context.previous_subtasks = self.global_context.get(ContextNames.PREVIOUS_SUBTASKS)
+        # local_context.log_path = self.global_context.get(ContextNames.LOG_PATH)
+        # local_context.command_dispatcher = self.global_context.command_dispatcher
 
-        # Set session and round information
-        local_context.session_step = self.global_context.get("session_step", 0)
-        local_context.round_step = self.global_context.get("round_step", 0)
-        local_context.round_num = self.global_context.get("round_num", 0)
+        # # Set session and round information
+        # local_context.session_step = self.global_context.get(ContextNames.SESSION_STEP)
+        # local_context.round_step = self.global_context.get(ContextNames.CURRENT_ROUND_STEP)
+        # local_context.round_num = self.global_context.get(ContextNames.CURRENT_ROUND_ID)
 
-        # Create ProcessingContext with the unified typed local_context
+        # # Create ProcessingContext with the unified typed local_context
         return ProcessingContext(
             global_context=self.global_context, local_context=local_context
         )
@@ -232,8 +256,8 @@ class HostAgentProcessorV2(ProcessorTemplate):
         Displays the current round, step, and processing status with color coding
         for better user experience and debugging visibility.
         """
-        round_num = self.global_context.get("round_num", 0)
-        round_step = self.global_context.get("round_step", 0)
+        round_num = self.global_context.get(ContextNames.CURRENT_ROUND_ID)
+        round_step = self.global_context.get(ContextNames.CURRENT_ROUND_STEP)
 
         # Log detailed information
         self.logger.info(
@@ -248,16 +272,6 @@ class HostAgentProcessorV2(ProcessorTemplate):
             "magenta",
         )
 
-    # Legacy compatibility methods for BaseProcessor interface
-    def sync_memory(self) -> None:
-        """
-        Sync the memory of the HostAgent (legacy compatibility method).
-        This method provides compatibility with the original BaseProcessor
-        interface. In the new architecture, memory syncing is handled by
-        the HostMemoryUpdateStrategy.
-        """
-        self.logger.debug("sync_memory called - handled by HostMemoryUpdateStrategy")
-
     def add_to_memory(self, data_dict: Dict[str, Any]) -> None:
         """
         Add data to memory (legacy compatibility method).
@@ -265,14 +279,6 @@ class HostAgentProcessorV2(ProcessorTemplate):
         """
         if hasattr(self, "_memory_data") and self._memory_data:
             self._memory_data.add_values_from_dict(data_dict)
-
-    def log_save(self) -> None:
-        """
-        Save logs (legacy compatibility method).
-        This method provides compatibility with the original BaseProcessor
-        interface. In the new architecture, logging is handled by middleware.
-        """
-        self.logger.debug("log_save called - handled by logging middleware")
 
     def get_phase_results(self) -> OrderedDict[ProcessingPhase, ProcessingResult]:
         """
@@ -324,27 +330,13 @@ class HostAgentProcessorV2(ProcessorTemplate):
         return []
 
 
-@strategy_config(
-    dependencies=[
-        StrategyDependency(
-            "command_dispatcher",
-            DependencyType.REQUIRED,
-            "Command dispatcher for executing actions",
-        ),
-        StrategyDependency(
-            "log_path", DependencyType.REQUIRED, "Path for saving screenshots and logs"
-        ),
-        StrategyDependency(
-            "session_step", DependencyType.REQUIRED, "Current session step number"
-        ),
-    ],
-    provides=[
-        "desktop_screenshot_url",
-        "desktop_screenshot_path",
-        "application_windows_info",
-        "target_registry",
-        "target_info_list",
-    ],
+@depends_on("command_dispatcher", "log_path", "session_step")
+@provides(
+    "desktop_screenshot_url",
+    "desktop_screenshot_path",
+    "application_windows_info",
+    "target_registry",
+    "target_info_list",
 )
 class DesktopDataCollectionStrategy(BaseProcessingStrategy):
     """
@@ -561,46 +553,19 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
             return 0  # Don't fail the entire process for third-party agent registration
 
 
-@strategy_config(
-    dependencies=[
-        StrategyDependency(
-            "host_agent",
-            DependencyType.REQUIRED,
-            "Host agent instance for LLM interaction",
-        ),
-        StrategyDependency(
-            "target_info_list",
-            DependencyType.REQUIRED,
-            "List of available targets for LLM context",
-        ),
-        StrategyDependency(
-            "desktop_screenshot_url",
-            DependencyType.REQUIRED,
-            "Desktop screenshot for visual context",
-        ),
-        StrategyDependency(
-            "prev_plan", DependencyType.OPTIONAL, "Previous execution plan"
-        ),
-        StrategyDependency(
-            "previous_subtasks", DependencyType.OPTIONAL, "Previously executed subtasks"
-        ),
-        StrategyDependency(
-            "request", DependencyType.REQUIRED, "User request to process"
-        ),
-    ],
-    provides=[
-        "parsed_response",
-        "response_text",
-        "llm_cost",
-        "prompt_message",
-        "subtask",
-        "plan",
-        "host_message",
-        "status",
-        "question_list",
-        "function_name",
-        "function_arguments",
-    ],
+@depends_on("host_agent", "target_info_list", "desktop_screenshot_url", "request")
+@provides(
+    "parsed_response",
+    "response_text",
+    "llm_cost",
+    "prompt_message",
+    "subtask",
+    "plan",
+    "host_message",
+    "status",
+    "question_list",
+    "function_name",
+    "function_arguments",
 )
 class HostLLMInteractionStrategy(BaseProcessingStrategy):
     """
@@ -650,6 +615,13 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
                 host_agent, response_text
             )
 
+            # Update processor status from parsed response
+            context.set_local("status", parsed_response.status)
+
+            self.logger.info(
+                f"Host LLM interaction status set to: {context.get_local('status')}"
+            )
+
             # Step 5: Extract structured information from response
             structured_data = self._extract_structured_response_data(parsed_response)
 
@@ -679,7 +651,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
         :return: Complete prompt message dictionary for LLM interaction
         """
         try:
-            host_agent = context.local_context
+            host_agent = context.host_agent
             target_info_list = context.get_local("target_info_list", [])
             desktop_screenshot_url = context.get_local("desktop_screenshot_url", "")
 
@@ -813,8 +785,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
             self._validate_response_fields(parsed_response)
 
             # Print response for user feedback
-            if hasattr(host_agent, "print_response"):
-                host_agent.print_response(parsed_response)
+            host_agent.print_response(parsed_response)
 
             return parsed_response
 
@@ -869,37 +840,13 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
         }
 
 
-@strategy_config(
-    dependencies=[
-        StrategyDependency(
-            "parsed_response",
-            DependencyType.OPTIONAL,
-            "Parsed LLM response with action instructions",
-        ),
-        StrategyDependency(
-            "function_name", DependencyType.OPTIONAL, "Name of the function to execute"
-        ),
-        StrategyDependency(
-            "function_arguments",
-            DependencyType.OPTIONAL,
-            "Arguments for function execution",
-        ),
-        StrategyDependency(
-            "target_registry", DependencyType.REQUIRED, "Registry of available targets"
-        ),
-        StrategyDependency(
-            "command_dispatcher",
-            DependencyType.REQUIRED,
-            "Command dispatcher for action execution",
-        ),
-    ],
-    provides=[
-        "execution_result",
-        "action_info",
-        "selected_target_id",
-        "selected_application_root",
-        "assigned_third_party_agent",
-    ],
+@depends_on("target_registry", "command_dispatcher")
+@provides(
+    "execution_result",
+    "action_info",
+    "selected_target_id",
+    "selected_application_root",
+    "assigned_third_party_agent",
 )
 class HostActionExecutionStrategy(BaseProcessingStrategy):
     """
@@ -1261,47 +1208,8 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
             self.logger.warning(f"Failed to update context state: {str(e)}")
 
 
-@strategy_config(
-    dependencies=[
-        StrategyDependency(
-            "host_agent",
-            DependencyType.REQUIRED,
-            "Host agent instance for memory operations",
-        ),
-        StrategyDependency(
-            "parsed_response",
-            DependencyType.OPTIONAL,
-            "Parsed response data for memory storage",
-        ),
-        StrategyDependency(
-            "action_info", DependencyType.OPTIONAL, "Action execution information"
-        ),
-        StrategyDependency(
-            "selected_application_root",
-            DependencyType.OPTIONAL,
-            "Selected application information",
-        ),
-        StrategyDependency(
-            "selected_target_id", DependencyType.OPTIONAL, "Selected target ID"
-        ),
-        StrategyDependency(
-            "assigned_third_party_agent",
-            DependencyType.OPTIONAL,
-            "Assigned third-party agent name",
-        ),
-        StrategyDependency(
-            "execution_result", DependencyType.OPTIONAL, "Action execution results"
-        ),
-        StrategyDependency(
-            "session_step", DependencyType.REQUIRED, "Current session step"
-        ),
-        StrategyDependency("round_step", DependencyType.REQUIRED, "Current round step"),
-        StrategyDependency(
-            "round_num", DependencyType.REQUIRED, "Current round number"
-        ),
-    ],
-    provides=["additional_memory", "memory_item", "memory_keys_count"],
-)
+@depends_on("host_agent", "session_step", "round_step", "round_num")
+@provides("additional_memory", "memory_item", "memory_keys_count")
 class HostMemoryUpdateStrategy(BaseProcessingStrategy):
     """
     Enhanced memory update strategy for Host Agent with comprehensive data management.
@@ -1381,16 +1289,21 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
             host_context = context.local_context
 
             # Update context with current processing state
-            host_context.step = context.get_global("session_step", 0)
-            host_context.round_step = context.get_global("round_step", 0)
-            host_context.round_num = context.get_global("round_num", 0)
+            host_context.step = context.get_global(ContextNames.SESSION_STEP.name, 0)
+            host_context.round_step = context.get_global(
+                ContextNames.CURRENT_ROUND_STEP.name, 0
+            )
+            host_context.round_num = context.get_global(
+                ContextNames.CURRENT_ROUND_ID.name, 0
+            )
             host_context.agent_step = (
                 host_context.host_agent.step if host_context.host_agent else 0
             )
 
             # Update action information if available
             if host_context.action_info:
-                host_context.action = [asdict(host_context.action_info)]
+                # ActionCommandInfo is a Pydantic BaseModel, use model_dump() instead of asdict()
+                host_context.action = [host_context.action_info.model_dump()]
                 host_context.function_call = host_context.action_info.function or ""
                 if host_context.action_info.result and hasattr(
                     host_context.action_info.result, "namespace"
@@ -1482,6 +1395,7 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
             # Add response data if available
             parsed_response = context.get_local("parsed_response")
             if parsed_response:
+                # HostAgentResponse is a regular class, use vars() to convert to dict
                 memory_item.add_values_from_dict(asdict(parsed_response))
 
             # Add additional memory data
@@ -1659,7 +1573,7 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
                 else "unknown"
             ),
             "target_registry_size": (
-                len(getattr(processor, "target_registry", {}).targets)
+                len(getattr(processor, "target_registry", {})._targets)
                 if hasattr(processor, "target_registry")
                 else 0
             ),

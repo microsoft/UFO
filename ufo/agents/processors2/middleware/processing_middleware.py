@@ -24,7 +24,7 @@ class ProcessorMiddleware(ABC):
 
     @abstractmethod
     async def before_process(
-        self, processor: ProcessorTemplate, context: ProcessingContext
+        self, processor: "ProcessorTemplate", context: ProcessingContext
     ) -> None:
         """
         Before processing hook.
@@ -35,7 +35,7 @@ class ProcessorMiddleware(ABC):
 
     @abstractmethod
     async def after_process(
-        self, processor: ProcessorTemplate, result: ProcessingResult
+        self, processor: "ProcessorTemplate", result: ProcessingResult
     ) -> None:
         """
         After processing hook.
@@ -45,7 +45,7 @@ class ProcessorMiddleware(ABC):
         pass
 
     @abstractmethod
-    async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
+    async def on_error(self, processor: "ProcessorTemplate", error: Exception) -> None:
         """
         Error handling hook.
         :param processor: The processor instance.

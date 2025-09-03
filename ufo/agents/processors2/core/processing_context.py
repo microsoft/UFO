@@ -16,12 +16,12 @@ from dataclasses import dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, TypeVar, Union
 from abc import ABC, abstractmethod
+from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
     from ufo.agents.agent.basic import BasicAgent
     from ufo.agents.agent.host_agent import HostAgent
     from ufo.agents.agent.app_agent import AppAgent
-    from ufo.module.context import Context
 
 
 class ProcessingPhase(Enum):
@@ -92,6 +92,7 @@ class BasicProcessorContext(ProcessorContextProtocol):
     round_step: int = 0
     round_num: int = 0
     cost: float = 0.0
+    status: Optional[str] = None
 
     # Request and response data
     request: str = ""
@@ -208,6 +209,8 @@ class HostAgentProcessorContext(BasicProcessorContext):
     control_label: str = ""
     control_text: str = ""
     action_result: Optional[Any] = None
+
+    assigned_third_party_agent: Optional[str] = None
 
     # Additional fields from HostAgentUnifiedMemory for complete compatibility
     step: int = (
@@ -628,7 +631,20 @@ class ProcessingContext:
         :param default: Default value
         :return: Value from global context or default
         """
-        return self.global_context.get(key, default)
+        # Try to find matching ContextNames enum first
+        context_name = None
+        for name in ContextNames:
+            if name.name == key or name.value == key:
+                context_name = name
+                break
+
+        if context_name:
+            # Use the enum if found
+            value = self.global_context.get(context_name)
+            return value if value is not None else default
+        else:
+            # For keys not in ContextNames, check the internal dict directly
+            return self.global_context._context.get(key, default)
 
     def set_global(self, key: str, value: Any) -> None:
         """
@@ -636,7 +652,19 @@ class ProcessingContext:
         :param key: Key to set
         :param value: Value to set
         """
-        self.global_context.set(key, value)
+        # Try to find matching ContextNames enum first
+        context_name = None
+        for name in ContextNames:
+            if name.name == key or name.value == key:
+                context_name = name
+                break
+
+        if context_name:
+            # Use the enum if found
+            self.global_context.set(context_name, value)
+        else:
+            # For keys not in ContextNames, set directly to the internal dict
+            self.global_context._context[key] = value
 
     def get(self, key: str, default: Any = None) -> Any:
         """
@@ -663,7 +691,20 @@ class ProcessingContext:
         """
         local_value = self.get_local(key)
         if local_value is not None:
-            self.global_context.set(key, local_value)
+            # Try to find matching ContextNames enum first
+            context_name = None
+            for name in ContextNames:
+                if name.name == key or name.value == key:
+                    context_name = name
+                    break
+
+            if context_name:
+                # Use the enum if found
+                self.global_context.set(context_name, local_value)
+            else:
+                # For keys not in ContextNames, set directly to the internal dict
+                # This handles processor-specific keys that aren't in the global enum
+                self.global_context._context[key] = local_value
 
     def promote_multiple_to_global(self, keys: List[str]) -> None:
         """
@@ -928,10 +969,10 @@ class ProcessorContextFactory:
         common_data = {
             "agent": agent,
             "processor": processor,
-            "session_step": global_context.get("session_step", 0),
-            "round_step": global_context.get("round_step", 0),
-            "round_num": global_context.get("round_num", 0),
-            "request": global_context.get("request", ""),
+            "session_step": global_context.get(ContextNames.SESSION_STEP),
+            "round_step": global_context.get(ContextNames.CURRENT_ROUND_STEP),
+            "round_num": global_context.get(ContextNames.CURRENT_ROUND_ID),
+            "request": global_context.get(ContextNames.REQUEST),
             **kwargs,
         }
 
@@ -939,13 +980,20 @@ class ProcessorContextFactory:
         agent_type = agent.__class__.__name__
 
         if agent_type == "HostAgent":
+            # Get prev_plan from agent's memory instead of global_context
+            agent_memory = agent.memory
+            if agent_memory.length > 0:
+                prev_plan = agent_memory.get_latest_item().to_dict().get("plan", [])
+            else:
+                prev_plan = []
+
             return HostAgentProcessorContext(
                 host_agent=agent,
                 target_registry=getattr(processor, "target_registry", None),
                 command_dispatcher=global_context.command_dispatcher,
-                prev_plan=global_context.get("prev_plan", []),
-                previous_subtasks=global_context.get("previous_subtasks", []),
-                log_path=global_context.get("log_path", ""),
+                prev_plan=prev_plan,
+                previous_subtasks=global_context.get(ContextNames.PREVIOUS_SUBTASKS),
+                log_path=global_context.get(ContextNames.LOG_PATH),
                 **common_data,
             )
 
@@ -954,7 +1002,7 @@ class ProcessorContextFactory:
                 app_agent=agent,
                 host_agent=getattr(agent, "host", None),
                 grounding_service=getattr(processor, "grounding_service", None),
-                app_root=global_context.get("app_root", ""),
+                app_root=global_context.get(ContextNames.APPLICATION_ROOT_NAME),
                 **common_data,
             )
 
@@ -964,7 +1012,7 @@ class ProcessorContextFactory:
 
     @staticmethod
     def create_host_context(
-        host_agent: "HostAgent", processor: Any, global_context: Any, **kwargs
+        host_agent: "HostAgent", processor: Any, global_context: Context, **kwargs
     ) -> HostAgentProcessorContext:
         """
         Create Host Agent specific context.
@@ -974,19 +1022,26 @@ class ProcessorContextFactory:
         :param kwargs: Additional parameters
         :return: Host Agent processor context
         """
+        # Get prev_plan from agent's memory instead of global_context
+        agent_memory = host_agent.memory
+        if agent_memory.length > 0:
+            prev_plan = agent_memory.get_latest_item().to_dict().get("plan", [])
+        else:
+            prev_plan = []
+
         return HostAgentProcessorContext(
             host_agent=host_agent,
             agent=host_agent,
             processor=processor,
             target_registry=getattr(processor, "target_registry", None),
             command_dispatcher=global_context.command_dispatcher,
-            session_step=global_context.get("session_step", 0),
-            round_step=global_context.get("round_step", 0),
-            round_num=global_context.get("round_num", 0),
-            request=global_context.get("request", ""),
-            prev_plan=global_context.get("prev_plan", []),
-            previous_subtasks=global_context.get("previous_subtasks", []),
-            log_path=global_context.get("log_path", ""),
+            session_step=global_context.get(ContextNames.SESSION_STEP),
+            round_step=global_context.get(ContextNames.CURRENT_ROUND_STEP),
+            round_num=global_context.get(ContextNames.CURRENT_ROUND_ID),
+            request=global_context.get(ContextNames.REQUEST),
+            prev_plan=prev_plan,
+            previous_subtasks=global_context.get(ContextNames.PREVIOUS_SUBTASKS),
+            log_path=global_context.get(ContextNames.LOG_PATH),
             **kwargs,
         )
 
@@ -1008,10 +1063,10 @@ class ProcessorContextFactory:
             processor=processor,
             host_agent=getattr(app_agent, "host", None),
             grounding_service=getattr(processor, "grounding_service", None),
-            session_step=global_context.get("session_step", 0),
-            round_step=global_context.get("round_step", 0),
-            round_num=global_context.get("round_num", 0),
-            request=global_context.get("request", ""),
-            app_root=global_context.get("app_root", ""),
+            session_step=global_context.get(ContextNames.SESSION_STEP),
+            round_step=global_context.get(ContextNames.CURRENT_ROUND_STEP),
+            round_num=global_context.get(ContextNames.CURRENT_ROUND_ID),
+            request=global_context.get(ContextNames.REQUEST),
+            app_root=global_context.get(ContextNames.APPLICATION_ROOT_NAME),
             **kwargs,
         )
