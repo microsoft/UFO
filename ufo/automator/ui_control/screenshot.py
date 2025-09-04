@@ -313,7 +313,7 @@ class AnnotationDecorator(PhotographerDecorator):
         label_text: str,
         botton_margin: int = 5,
         border_width: int = 2,
-        font_size: int = 25,
+        font_size: int = 32,
         font_color: str = "#000000",
         border_color: str = "#FF0000",
         button_color: str = "#FFF68F",
@@ -441,12 +441,14 @@ class AnnotationDecorator(PhotographerDecorator):
         annotation_dict: Dict[str, UIAWrapper],
         save_path: Optional[str] = None,
         path: Optional[str] = None,
+        highlight_bbox: bool = False,
     ) -> Image.Image:
         """
         Capture a screenshot with the given annotation dictionary.
         :param annotation_dict: The dictionary of the controls with annotation labels as keys.
         :param save_path: The path to save the screenshot.
         :param path: The path to the image.
+        :param highlight_bbox: Whether to highlight control bounding boxes with semi-transparent overlays.
         :return: The screenshot with annotations.
         """
 
@@ -461,6 +463,48 @@ class AnnotationDecorator(PhotographerDecorator):
 
         color_dict = configs.get("ANNOTATION_COLORS", {})
 
+        # First pass: Draw bounding box highlights if requested
+        if highlight_bbox:
+            # Create an overlay for semi-transparent rectangles
+            overlay = Image.new("RGBA", screenshot_annotated.size, (255, 255, 255, 0))
+            overlay_draw = ImageDraw.Draw(overlay)
+
+            for label_text, control in annotation_dict.items():
+                control_rect = control.rectangle()
+                adjusted_rect = self.coordinate_adjusted(window_rect, control_rect)
+
+                # Get the color for this control type
+                button_color = (
+                    color_dict.get(
+                        control.element_info.control_type, self.color_default
+                    )
+                    if self.color_diff
+                    else self.color_default
+                )
+
+                # Convert hex color to RGBA with transparency
+                if button_color.startswith("#"):
+                    # Remove # and convert hex to RGB
+                    rgb = tuple(int(button_color[i : i + 2], 16) for i in (1, 3, 5))
+                    rgba_color = rgb + (80,)  # 80/255 ≈ 31% opacity
+                else:
+                    # Default to yellow with transparency if color parsing fails
+                    rgba_color = (255, 246, 143, 80)
+
+                # Draw semi-transparent rectangle with light red border
+                overlay_draw.rectangle(
+                    adjusted_rect,
+                    fill=rgba_color,
+                    outline=(255, 160, 160, 180),
+                    width=2,
+                )
+
+            # Composite the overlay onto the screenshot
+            screenshot_annotated = Image.alpha_composite(
+                screenshot_annotated.convert("RGBA"), overlay
+            ).convert("RGB")
+
+        # Second pass: Draw annotation labels
         for label_text, control in annotation_dict.items():
             control_rect = control.rectangle()
             adjusted_rect = self.coordinate_adjusted(window_rect, control_rect)
@@ -621,6 +665,7 @@ class PhotographerFacade:
         color_default: str = "#FFF68F",
         save_path: Optional[str] = None,
         path: Optional[str] = None,
+        highlight_bbox: bool = False,
     ) -> Image.Image:
         """
         Capture the control screenshot with annotations.
@@ -629,6 +674,7 @@ class PhotographerFacade:
         :param annotation_type: The type of the annotation.
         :param color_diff: Whether to use different colors for different control types.
         :param color_default: The default color of the annotation.
+        :param highlight_bbox: Whether to highlight control bounding boxes with semi-transparent overlays.
         :return: The screenshot.
         """
         screenshot = self.screenshot_factory.create_screenshot("app_window", control)
@@ -637,7 +683,7 @@ class PhotographerFacade:
             screenshot, sub_control_list, annotation_type, color_diff, color_default
         )
         return screenshot.capture_with_annotation_dict(
-            annotation_control_dict, save_path, path
+            annotation_control_dict, save_path, path, highlight_bbox
         )
 
     def capture_app_window_screenshot_with_annotation(

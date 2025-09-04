@@ -33,6 +33,8 @@ ANNOTATION_COLORS: {
         "Hyperlink": "#91FFEB",
         "ComboBox": "#D8B6D4"
     }
+
+HIGHLIGHT_BBOX: True
     
 ANNOTATION_FONT_SIZE: 22  # The font size for the annotation
 

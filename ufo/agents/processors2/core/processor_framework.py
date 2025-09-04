@@ -1,13 +1,10 @@
 import logging
 import time
 from abc import ABC, abstractmethod
-from collections import OrderedDict
-from dataclasses import dataclass, field
-from enum import Enum
-from typing import Any, Dict, List, Optional, Protocol, TypeVar
+from typing import Any, Dict, List, Optional, TypeVar
 
 from ufo.agents.agent.basic import BasicAgent
-from ufo.module.context import Context
+from ufo.module.context import Context, ContextNames
 from ufo.agents.processors2.core.processing_context import (
     ProcessingContext,
     ProcessingPhase,
@@ -17,9 +14,7 @@ from ufo.agents.processors2.core.processing_context import (
 from ufo.agents.processors2.middleware.processing_middleware import ProcessorMiddleware
 from ufo.agents.processors2.strategies.processing_strategy import ProcessingStrategy
 from ufo.agents.processors2.core.strategy_dependency import (
-    StrategyDependency,
     StrategyDependencyValidator,
-    DependencyValidationResult,
     StrategyMetadataRegistry,
     validate_provides_consistency,
 )
@@ -88,13 +83,6 @@ class ProcessorTemplate(ABC):
         """
         pass
 
-    @abstractmethod
-    def _create_memory_item(self) -> None:
-        """
-        Create a memory item for this processor.
-        """
-        pass
-
     def _create_processing_context(self) -> ProcessingContext:
         """
         Create a processing context for this execution.
@@ -139,7 +127,43 @@ class ProcessorTemplate(ABC):
         Can be overridden by subclasses.
         :param processing_context: The processing context to finalize.
         """
-        pass
+        try:
+
+            # Accumulate LLM cost to CURRENT_ROUND_COST
+            llm_cost = processing_context.get_local("llm_cost")
+            if llm_cost and isinstance(llm_cost, (int, float)):
+                current_cost = (
+                    self.global_context.get(ContextNames.CURRENT_ROUND_COST) or 0
+                )
+                self.global_context.set(
+                    ContextNames.CURRENT_ROUND_COST, current_cost + llm_cost
+                )
+
+            # Accumulate to SESSION_COST as well
+            if llm_cost and isinstance(llm_cost, (int, float)):
+                session_cost = self.global_context.get(ContextNames.SESSION_COST) or 0
+                self.global_context.set(
+                    ContextNames.SESSION_COST, session_cost + llm_cost
+                )
+
+            # Update CURRENT_ROUND_STEP
+            current_round_step = (
+                self.global_context.get(ContextNames.CURRENT_ROUND_STEP) or 0
+            )
+            self.global_context.set(
+                ContextNames.CURRENT_ROUND_STEP, current_round_step + 1
+            )
+
+            # Update CURRENT_SESSION_STEP
+            session_step = self.global_context.get(ContextNames.SESSION_STEP) or 0
+            self.global_context.set(ContextNames.SESSION_STEP, session_step + 1)
+
+            self.logger.debug(
+                "Successfully updated ContextNames from processing results"
+            )
+
+        except Exception as e:
+            self.logger.warning(f"Failed to update ContextNames from results: {e}")
 
     def _validate_strategy_chain(self) -> None:
         """
@@ -159,15 +183,7 @@ class ProcessorTemplate(ABC):
             )
 
             if not validation_result.is_valid:
-                self.logger.error(
-                    f"Strategy chain validation failed: {validation_result.report}"
-                )
-                # Log detailed errors
-                for error in validation_result.errors:
-                    self.logger.error(f"  - {error}")
 
-                # You can choose to raise an exception or just log warnings
-                # For now, we'll log as warnings to allow flexibility
                 for error in validation_result.errors:
                     self.logger.warning(f"Strategy dependency issue: {error}")
             else:
@@ -177,7 +193,7 @@ class ProcessorTemplate(ABC):
             self.logger.error(f"Error during strategy chain validation: {e}")
 
     def _validate_strategy_dependencies_runtime(
-        self, strategy, processing_context: ProcessingContext
+        self, strategy: ProcessingStrategy, processing_context: ProcessingContext
     ) -> None:
         """
         Validate strategy dependencies at runtime before execution.
@@ -223,6 +239,30 @@ class ProcessorTemplate(ABC):
                 f"Runtime dependency validation error for {strategy.name}: {e}"
             )
 
+    def _validate_strategy_provides_runtime(
+        self, strategy: ProcessingStrategy, result: ProcessingResult
+    ) -> None:
+        """
+        Validate strategy provides at runtime.
+        :param strategy: Strategy to validate
+        :param result: Processing result from strategy execution
+        """
+        try:
+            declared_provides = StrategyMetadataRegistry.get_provides(
+                strategy.__class__
+            )
+            actual_provides = list(result.data.keys()) if result.data else []
+            validate_provides_consistency(
+                strategy.name,
+                declared_provides,
+                actual_provides,
+                self.logger,
+            )
+        except Exception as consistency_error:
+            self.logger.error(
+                f"Error during provides consistency check for {strategy.name}: {consistency_error}"
+            )
+
     async def process(self) -> ProcessingResult:
         """
         A template method that defines the processing workflow.
@@ -256,28 +296,12 @@ class ProcessorTemplate(ABC):
                         strategy, self.processing_context
                     )
 
-                    result = await strategy.execute(self.processing_context)
+                    result = await strategy.execute(self.agent, self.processing_context)
                     result.execution_time = time.time() - phase_start
                     result.phase = phase
 
                     # Validate provides consistency after execution
-                    try:
-                        declared_provides = StrategyMetadataRegistry.get_provides(
-                            strategy.__class__
-                        )
-                        actual_provides = (
-                            list(result.data.keys()) if result.data else []
-                        )
-                        validate_provides_consistency(
-                            strategy.name,
-                            declared_provides,
-                            actual_provides,
-                            self.logger,
-                        )
-                    except Exception as consistency_error:
-                        self.logger.error(
-                            f"Error during provides consistency check for {strategy.name}: {consistency_error}"
-                        )
+                    self._validate_strategy_provides_runtime(strategy, result)
 
                     # Store the phase result in context
                     self.processing_context.set_phase_result(phase, result)

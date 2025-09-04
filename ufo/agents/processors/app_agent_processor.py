@@ -230,6 +230,7 @@ class AppAgentProcessor(BaseProcessor):
             annotation_type="number",
             save_path=annotated_screenshot_save_path,
             path=screenshot_save_path,
+            highlight_bbox=configs.get("HIGHLIGHT_BBOX", False),
         )
 
         if configs.get("SAVE_UI_TREE", False):
@@ -237,7 +238,7 @@ class AppAgentProcessor(BaseProcessor):
 
         if configs.get("SAVE_FULL_SCREEN", False):
 
-            await self.save_full_screenshot()
+            await self.save_desktop_screenshot()
 
         # If the configuration is set to include the last screenshot with selected controls tagged, save the last screenshot.
         if configs.get("INCLUDE_LAST_SCREENSHOT", True):

@@ -128,8 +128,8 @@ system_nonvisual: |-
   Make sure you answer must be strictly in JSON format only, without other redundant text such as json header. Otherwise it will crash the system.
 
 user: |-
-  <Available Applications:> {control_item}
-  <Previous Sub-tasks:> {prev_subtask}
-  <Previous Plan:> {prev_plan}
+  <Available Applications/Agents:> {control_item}
+  <Earlier Sub-tasks Assigned and Completion Status:> {prev_subtask}
+  <Future Plan Constructed in the last decision:> {prev_plan}
   <Current User Request:> {user_request}
   <Your response:>

@@ -7,6 +7,8 @@ import logging
 import time
 import traceback
 from typing import Dict, Any, Optional
+
+from flask import json
 from ufo.agents.processors2.core.processor_framework import (
     ProcessorMiddleware,
     ProcessorTemplate,
@@ -14,6 +16,7 @@ from ufo.agents.processors2.core.processor_framework import (
     ProcessingContext,
     ProcessingException,
 )
+from ufo.module.context import ContextNames
 
 
 class EnhancedLoggingMiddleware(ProcessorMiddleware):
@@ -56,6 +59,25 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
         else:
             self.logger.warning(f"Processing completed with failure: {result.error}")
 
+        local_logger: logging.Logger = processor.processing_context.get_global(
+            ContextNames.LOGGER
+        )
+        local_context = processor.processing_context.local_context
+
+        local_context.total_time_cost = result.execution_time
+
+        phrase_time_cost = {}
+        for phrase, phrase_result in processor.processing_context.phase_results.items():
+            phrase_time_cost[phrase.name] = phrase_result.execution_time
+
+        local_context.time_cost = phrase_time_cost
+
+        local_context_string = json.dumps(
+            local_context.to_dict(serialize=True), ensure_ascii=False
+        )
+
+        local_logger.info(local_context_string)
+
     async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
         """Enhanced error logging with context information."""
         if isinstance(error, ProcessingException):
@@ -69,7 +91,7 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
             )
 
             if error.original_exception:
-                self.logger.debug(f"Original traceback:\n{traceback.format_exc()}")
+                self.logger.info(f"Original traceback:\n{traceback.format_exc()}")
         else:
             # 记录其他类型的异常
             self.logger.error(

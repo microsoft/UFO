@@ -12,7 +12,7 @@ type-safe context management with clear separation of concerns.
 """
 
 from collections import OrderedDict
-from dataclasses import dataclass, field
+from dataclasses import asdict, dataclass, field
 from enum import Enum
 from typing import Any, Dict, List, Optional, TYPE_CHECKING, TypeVar, Union
 from abc import ABC, abstractmethod
@@ -59,7 +59,7 @@ class ProcessorContextProtocol(ABC):
     """
 
     @abstractmethod
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, serialize: bool = False) -> Dict[str, Any]:
         """Convert context to dictionary for framework compatibility."""
         pass
 
@@ -83,10 +83,6 @@ class BasicProcessorContext(ProcessorContextProtocol):
     the fundamental data needed by the processing framework.
     """
 
-    # Core processor data
-    agent: Optional["BasicAgent"] = None
-    processor: Optional[Any] = None  # Reference to the processor instance
-
     # Session and timing information
     session_step: int = 0
     round_step: int = 0
@@ -106,25 +102,14 @@ class BasicProcessorContext(ProcessorContextProtocol):
     # Generic data storage for extensibility
     custom_data: Dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self, serialize: bool = False) -> Dict[str, Any]:
         """
         Convert context to dictionary for framework compatibility.
         :return: Dictionary representation of context data
         """
-        return {
-            "agent": self.agent,
-            "processor": self.processor,
-            "session_step": self.session_step,
-            "round_step": self.round_step,
-            "round_num": self.round_num,
-            "cost": self.cost,
-            "request": self.request,
-            "parsed_response": self.parsed_response,
-            "execution_times": self.execution_times.copy(),
-            "error_count": self.error_count,
-            "last_error": self.last_error,
-            **self.custom_data,
-        }
+        if serialize:
+            return self.to_serializable_dict()
+        return asdict(self)
 
     def update_from_dict(self, data: Dict[str, Any]) -> None:
         """
@@ -152,27 +137,155 @@ class BasicProcessorContext(ProcessorContextProtocol):
             "has_response": self.parsed_response is not None,
         }
 
-    def add_execution_time(self, phase: str, time: float) -> None:
+    def to_serializable_dict(self) -> Dict[str, Any]:
         """
-        Add execution time for a processing phase.
-        :param phase: Name of the processing phase
-        :param time: Execution time in seconds
+        Convert context to a dictionary which only keeps serializable fields.
+        If encountering non-serializable fields, they will be omitted from the resulting dictionary.
+        If encountering BaseModel fields, they will be converted to dictionaries using their `to_dict` method and keep serializable fields recursively.
+        :return: Dictionary representation of context data
         """
-        self.execution_times[phase] = time
+        import json
+        from typing import get_origin, get_args
 
-    def increment_error_count(self, error_msg: Optional[str] = None) -> None:
-        """
-        Increment error count and optionally store last error.
-        :param error_msg: Optional error message to store
-        """
-        self.error_count += 1
-        if error_msg:
-            self.last_error = error_msg
+        def is_serializable(obj) -> bool:
+            """Check if an object is JSON serializable"""
+            try:
+                json.dumps(obj)
+                return True
+            except (TypeError, ValueError, OverflowError):
+                return False
 
-    def reset_error_tracking(self) -> None:
-        """Reset error tracking counters."""
-        self.error_count = 0
-        self.last_error = None
+        def serialize_value(value: Any) -> Any:
+            """Recursively serialize a value, handling different types"""
+            # Handle None
+            if value is None:
+                return None
+
+            # Handle basic serializable types
+            if isinstance(value, (str, int, float, bool)):
+                return value
+
+            # Handle BaseModel with model_dump method (Pydantic models)
+            if hasattr(value, "model_dump"):
+                try:
+                    model_dict = value.model_dump()
+                    return serialize_value(model_dict)
+                except Exception:
+                    # If model_dump fails, try to_dict
+                    pass
+
+            # Handle objects with to_dict method
+            if hasattr(value, "to_dict") and callable(getattr(value, "to_dict")):
+                try:
+                    obj_dict = value.to_dict()
+                    return serialize_value(obj_dict)
+                except Exception:
+                    # If to_dict fails, continue to other methods
+                    pass
+
+            # Handle dataclass instances
+            if hasattr(value, "__dataclass_fields__"):
+                try:
+                    from dataclasses import asdict
+
+                    dc_dict = asdict(value)
+                    return serialize_value(dc_dict)
+                except Exception:
+                    # If asdict fails, continue to other methods
+                    pass
+
+            # Handle dictionaries
+            if isinstance(value, dict):
+                result = {}
+                for k, v in value.items():
+                    # Key must be string for JSON serialization
+                    if isinstance(k, str):
+                        serialized_v = serialize_value(v)
+                        # Always include the key, even if value is None or was filtered out
+                        result[k] = serialized_v
+                    elif is_serializable(k):
+                        # Convert non-string keys to strings
+                        serialized_v = serialize_value(v)
+                        result[str(k)] = serialized_v
+                return result
+
+            # Handle lists and tuples
+            if isinstance(value, (list, tuple)):
+                result = []
+                for item in value:
+                    serialized_item = serialize_value(item)
+                    result.append(serialized_item)
+                return result
+
+            # Handle sets (convert to lists)
+            if isinstance(value, set):
+                result = []
+                for item in value:
+                    serialized_item = serialize_value(item)
+                    result.append(serialized_item)
+                return result
+
+            # Handle Enum types
+            if hasattr(value, "value") and hasattr(value, "name"):
+                try:
+                    return value.value if is_serializable(value.value) else value.name
+                except Exception:
+                    pass
+
+            # Handle objects with __dict__ (regular classes)
+            if hasattr(value, "__dict__"):
+                try:
+                    obj_dict = {}
+                    for attr_name, attr_value in value.__dict__.items():
+                        if not attr_name.startswith("_"):  # Skip private attributes
+                            serialized_attr = serialize_value(attr_value)
+                            obj_dict[attr_name] = serialized_attr
+
+                    # If we got some serialized attributes, return them
+                    if obj_dict:
+                        return obj_dict
+
+                    # If no attributes were serializable, fall through to string representation
+                except Exception:
+                    pass
+
+            # Test if the value is directly serializable
+            if is_serializable(value):
+                return value
+
+            # For non-serializable objects, return a string representation
+            try:
+                if hasattr(value, "__str__"):
+                    str_repr = str(value)
+                    if len(str_repr) < 1000:  # Avoid very long string representations
+                        return f"<{type(value).__name__}: {str_repr}>"
+                return f"<{type(value).__name__}>"
+            except Exception:
+                return f"<{type(value).__name__}: unrepresentable>"
+
+        # Get the base dictionary representation
+        try:
+            base_dict = self.to_dict()
+        except Exception:
+            # Fallback: use asdict if available
+            try:
+                base_dict = asdict(self)
+            except Exception:
+                # Last resort: manually create dict from __dict__
+                base_dict = {}
+                if hasattr(self, "__dict__"):
+                    for key, value in self.__dict__.items():
+                        if not key.startswith("_"):
+                            base_dict[key] = value
+
+        # Serialize the dictionary recursively
+        serializable_dict = serialize_value(base_dict)
+
+        # Ensure the result is a dictionary
+        if not isinstance(serializable_dict, dict):
+            return {}
+
+        return serializable_dict
 
 
 @dataclass
@@ -220,7 +333,7 @@ class HostAgentProcessorContext(BasicProcessorContext):
     subtask_index: int = -1
     action: List[Dict[str, Any]] = field(default_factory=list)
     function_call: str = ""
-    action_type: str = "MCP"
+    action_type: str = ""
     agent_name: str = ""
     application: str = ""
     results: str = ""
@@ -234,48 +347,6 @@ class HostAgentProcessorContext(BasicProcessorContext):
     # Logging and debugging
     log_path: str = ""
     debug_info: Dict[str, Any] = field(default_factory=dict)
-
-    def to_dict(self) -> Dict[str, Any]:
-        """
-        Convert Host Agent context to dictionary.
-        :return: Dictionary representation including Host Agent specific data
-        """
-        base_dict = super().to_dict()
-        host_dict = {
-            "host_agent": self.host_agent,
-            "target_registry": self.target_registry,
-            "command_dispatcher": self.command_dispatcher,
-            "prev_plan": self.prev_plan.copy(),
-            "previous_subtasks": self.previous_subtasks.copy(),
-            "current_plan": self.current_plan.copy(),
-            "target_info_list": self.target_info_list.copy(),
-            "selected_application_root": self.selected_application_root,
-            "selected_target_id": self.selected_target_id,
-            "assigned_third_party_agent": self.assigned_third_party_agent,
-            "desktop_screenshot_url": self.desktop_screenshot_url,
-            "screenshot_paths": self.screenshot_paths.copy(),
-            "action_info": self.action_info,
-            "control_label": self.control_label,
-            "control_text": self.control_text,
-            "action_result": self.action_result,
-            "step": self.step,
-            "agent_step": self.agent_step,
-            "subtask_index": self.subtask_index,
-            "action": self.action.copy(),
-            "function_call": self.function_call,
-            "action_type": self.action_type,
-            "agent_name": self.agent_name,
-            "application": self.application,
-            "results": self.results,
-            "control_log": self.control_log.copy(),
-            "llm_cost": self.llm_cost,
-            "prompt_tokens": self.prompt_tokens,
-            "completion_tokens": self.completion_tokens,
-            "log_path": self.log_path,
-            "debug_info": self.debug_info.copy(),
-        }
-        base_dict.update(host_dict)
-        return base_dict
 
     def get_context_summary(self) -> Dict[str, Any]:
         """
@@ -294,50 +365,6 @@ class HostAgentProcessorContext(BasicProcessorContext):
         }
         base_summary.update(host_summary)
         return host_summary
-
-    def update_target_selection(
-        self,
-        target_id: Optional[str] = None,
-        app_root: Optional[str] = None,
-        third_party_agent: Optional[str] = None,
-    ) -> None:
-        """
-        Update target selection information.
-        :param target_id: Selected target ID
-        :param app_root: Selected application root
-        :param third_party_agent: Assigned third-party agent
-        """
-        if target_id is not None:
-            self.selected_target_id = target_id
-        if app_root is not None:
-            self.selected_application_root = app_root
-        if third_party_agent is not None:
-            self.assigned_third_party_agent = third_party_agent
-
-    def update_control_info(self, label: str = "", text: str = "") -> None:
-        """
-        Update control information.
-        :param label: Control label
-        :param text: Control text
-        """
-        if label:
-            self.control_label = label
-        if text:
-            self.control_text = text
-
-    def add_llm_cost(
-        self, cost: float, prompt_tokens: int = 0, completion_tokens: int = 0
-    ) -> None:
-        """
-        Add LLM cost and token usage.
-        :param cost: LLM cost to add
-        :param prompt_tokens: Number of prompt tokens
-        :param completion_tokens: Number of completion tokens
-        """
-        self.llm_cost += cost
-        self.cost += cost  # Update base cost as well
-        self.prompt_tokens += prompt_tokens
-        self.completion_tokens += completion_tokens
 
     def to_legacy_memory(self) -> Any:
         """
@@ -419,49 +446,6 @@ class AppAgentProcessorContext(BasicProcessorContext):
     # Application context
     app_root: str = ""
     window_info: Dict[str, Any] = field(default_factory=dict)
-
-    # Performance metrics
-    screenshot_time: float = 0.0
-    control_extraction_time: float = 0.0
-    llm_response_time: float = 0.0
-    action_execution_time: float = 0.0
-
-    def to_dict(self) -> Dict[str, Any]:
-        """
-        Convert App Agent context to dictionary.
-        :return: Dictionary representation including App Agent specific data
-        """
-        base_dict = super().to_dict()
-        app_dict = {
-            "app_agent": self.app_agent,
-            "host_agent": self.host_agent,
-            "grounding_service": self.grounding_service,
-            "image_urls": self.image_urls.copy(),
-            "screenshot_paths": self.screenshot_paths.copy(),
-            "clean_screenshot_path": self.clean_screenshot_path,
-            "annotated_screenshot_path": self.annotated_screenshot_path,
-            "filtered_controls": self.filtered_controls.copy(),
-            "control_filter_strategy": self.control_filter_strategy,
-            "max_controls": self.max_controls,
-            "subtask": self.subtask,
-            "subtask_index": self.subtask_index,
-            "plan": self.plan.copy(),
-            "completed_subtasks": self.completed_subtasks.copy(),
-            "action_history": self.action_history.copy(),
-            "last_action_success": self.last_action_success,
-            "consecutive_failures": self.consecutive_failures,
-            "prompt_message": self.prompt_message,
-            "backup_engine_used": self.backup_engine_used,
-            "llm_cost": self.llm_cost,
-            "app_root": self.app_root,
-            "window_info": self.window_info.copy(),
-            "screenshot_time": self.screenshot_time,
-            "control_extraction_time": self.control_extraction_time,
-            "llm_response_time": self.llm_response_time,
-            "action_execution_time": self.action_execution_time,
-        }
-        base_dict.update(app_dict)
-        return base_dict
 
     def get_context_summary(self) -> Dict[str, Any]:
         """
@@ -595,13 +579,7 @@ class ProcessingContext:
         Backward compatibility: Provide dictionary view
         :return: Dictionary representation of local context
         """
-        if hasattr(self.local_context, "to_dict"):
-            return self.local_context.to_dict()
-        else:
-            # Fallback: if no to_dict method, return custom_data
-            if hasattr(self.local_context, "custom_data"):
-                return self.local_context.custom_data
-            return {}
+        return self.local_context.to_dict()
 
     # === Typed context convenience methods ===
     def get_typed_context(self) -> ProcessorContextType:

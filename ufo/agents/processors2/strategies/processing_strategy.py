@@ -11,6 +11,7 @@ from ufo.agents.processors2.core.processing_context import (
 if TYPE_CHECKING:
     from ufo.agents.processors2.core.processor_framework import ProcessingException
     from ufo.agents.processors2.core.strategy_dependency import StrategyDependency
+    from ufo.agents.agent.basic import BasicAgent
 
 
 class ProcessingStrategy(Protocol):
@@ -20,7 +21,9 @@ class ProcessingStrategy(Protocol):
 
     name: str  # Strategy name for logging and identification
 
-    async def execute(self, context: ProcessingContext) -> ProcessingResult: ...
+    async def execute(
+        self, agent: "BasicAgent", context: ProcessingContext
+    ) -> ProcessingResult: ...
 
 
 class BaseProcessingStrategy(ABC):
@@ -91,9 +94,12 @@ class BaseProcessingStrategy(ABC):
         return context.require_local(field_name, expected_type)
 
     @abstractmethod
-    async def execute(self, context: ProcessingContext) -> ProcessingResult:
+    async def execute(
+        self, agent: "BasicAgent", context: ProcessingContext
+    ) -> ProcessingResult:
         """
         Execute the processing strategy.
+        :param agent: The agent instance that owns this processor.
         :param context: The processing context with both global and local data.
         :return: The processing result.
         """
