@@ -217,12 +217,31 @@ def decode_base64_image(base64_string: str) -> bytes:
     :return: The decoded bytes.
     """
     import base64
+    import binascii
 
     # Remove the prefix if it exists
     if base64_string.startswith("data:image/png;base64,"):
         base64_string = base64_string[len("data:image/png;base64,") :]
+    elif base64_string.startswith("data:image/jpeg;base64,"):
+        base64_string = base64_string[len("data:image/jpeg;base64,") :]
+    elif base64_string.startswith("data:image/jpg;base64,"):
+        base64_string = base64_string[len("data:image/jpg;base64,") :]
 
-    return base64.b64decode(base64_string)
+    # Fix padding if necessary
+    # Base64 strings should have length that's a multiple of 4
+    padding_needed = 4 - (len(base64_string) % 4)
+    if padding_needed != 4:
+        base64_string += "=" * padding_needed
+
+    try:
+        return base64.b64decode(base64_string)
+    except (binascii.Error, ValueError) as e:
+        # If decoding fails, try with validation disabled
+        try:
+            return base64.b64decode(base64_string, validate=False)
+        except Exception:
+            # As a last resort, return an empty image
+            return base64.b64decode(_empty_image_string.split(",")[1])
 
 
 _empty_image_string = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg=="
@@ -290,7 +309,27 @@ def load_image(image_path: str) -> Image.Image:
     :param image_path: The path of the image.
     :return: The image.
     """
-    return Image.open(image_path)
+    try:
+        if not os.path.exists(image_path):
+            print_with_color(f"Warning: Image file {image_path} does not exist.", "yellow")
+            return Image.new('RGB', (1, 1), color='white')
+        
+        image = Image.open(image_path)
+        
+        # Verify the image by accessing its properties
+        try:
+            _ = image.size
+            _ = image.format
+            # Try to load the image data to ensure it's not corrupted
+            image.load()
+            return image
+        except Exception as e:
+            print_with_color(f"Warning: Image {image_path} appears to be corrupted: {e}", "yellow")
+            return Image.new('RGB', (1, 1), color='white')
+            
+    except Exception as e:
+        print_with_color(f"Error loading image from {image_path}: {e}", "red")
+        return Image.new('RGB', (1, 1), color='white')
 
 
 def save_image_string(image_string: str, save_path: str) -> Image.Image:
@@ -300,11 +339,66 @@ def save_image_string(image_string: str, save_path: str) -> Image.Image:
     :param save_path: The path to save the image file.
     :return: The saved image.
     """
-    # Decode the base64 string
-    image_data = decode_base64_image(image_string)
-
-    # Save the image data to a file
-    with open(save_path, "wb") as f:
-        f.write(image_data)
-
-    return load_image(save_path)
+    try:
+        # Ensure the directory exists
+        os.makedirs(os.path.dirname(save_path), exist_ok=True)
+        
+        # Decode the base64 string
+        image_data = decode_base64_image(image_string)
+        
+        # Save the image data to a file
+        with open(save_path, "wb") as f:
+            f.write(image_data)
+        
+        # Verify the saved image can be opened and is valid
+        try:
+            saved_image = load_image(save_path)
+            # Try to access basic image properties to verify it's valid
+            _ = saved_image.size
+            _ = saved_image.format
+            return saved_image
+        except Exception as e:
+            print_with_color(f"Warning: Saved image at {save_path} appears to be corrupted: {e}", "yellow")
+            
+            # Try alternative approach: decode through PIL directly
+            try:
+                image_data = decode_base64_image(image_string)
+                image_buffer = BytesIO(image_data)
+                pil_image = Image.open(image_buffer)
+                
+                # Save using PIL with explicit format
+                file_ext = os.path.splitext(save_path)[1].lower()
+                if file_ext in ['.jpg', '.jpeg']:
+                    # Convert to RGB for JPEG (remove alpha channel if present)
+                    if pil_image.mode in ['RGBA', 'LA']:
+                        pil_image = pil_image.convert('RGB')
+                    pil_image.save(save_path, 'JPEG', quality=95)
+                elif file_ext == '.png':
+                    pil_image.save(save_path, 'PNG')
+                else:
+                    # Default to PNG
+                    pil_image.save(save_path, 'PNG')
+                
+                return load_image(save_path)
+                
+            except Exception as fallback_error:
+                print_with_color(f"Error: Failed to save image using fallback method: {fallback_error}", "red")
+                
+                # As last resort, save empty image
+                empty_data = decode_base64_image(_empty_image_string)
+                with open(save_path, "wb") as f:
+                    f.write(empty_data)
+                return load_image(save_path)
+                
+    except Exception as e:
+        print_with_color(f"Error: Failed to save image string to {save_path}: {e}", "red")
+        
+        # Ensure we always return a valid image
+        try:
+            empty_data = decode_base64_image(_empty_image_string)
+            with open(save_path, "wb") as f:
+                f.write(empty_data)
+            return load_image(save_path)
+        except Exception:
+            # Return a minimal 1x1 pixel image in memory
+            return Image.new('RGB', (1, 1), color='white')

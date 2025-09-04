@@ -88,6 +88,21 @@ AppAgent:
         type: local
         start_args: []
         reset: true
+  explorer.exe:
+    data_collection:
+      - namespace: UICollector
+        type: local
+        start_args: []
+        reset: false
+    action:
+      - namespace: AppUIExecutor
+        type: local
+        start_args: []
+        reset: false
+      - namespace: PDFReaderExecutor
+        type: local
+        start_args: []
+        reset: true
   # msedge.exe:
   #   data_collection:
   #     - namespace: UICollector

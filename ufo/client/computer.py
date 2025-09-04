@@ -586,6 +586,8 @@ class ComputerManager:
             )
             await computer.async_init()
 
+            self.logger.info(f"Initialized computer: {key}")
+
             self.computers[key] = computer
 
         return self.computers[key]
