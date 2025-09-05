@@ -1,7 +1,7 @@
 art==6.1
 colorama==0.4.6
 langchain==0.3.24
-langchain_community==0.3.22
+langchain_community==0.3.27
 msal==1.31.0
 openai==1.66.2
 Pillow==10.3.0
