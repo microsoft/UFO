@@ -1,11 +1,12 @@
 import logging
 import time
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, TypeVar
+from typing import Any, Dict, List, Optional, Type, TypeVar
 
 from ufo.agents.agent.basic import BasicAgent
 from ufo.module.context import Context, ContextNames
 from ufo.agents.processors2.core.processing_context import (
+    BasicProcessorContext,
     ProcessingContext,
     ProcessingPhase,
     ProcessingResult,
@@ -43,7 +44,13 @@ class ProcessingException(Exception):
 class ProcessorTemplate(ABC):
     """
     Processor template base class - defines the processing workflow.
+
+    Subclasses can override the processor_context_class to use their own
+    ProcessorContext type for enhanced type safety and functionality.
     """
+
+    # Class attribute that subclasses can override to specify their context class
+    processor_context_class: Type[BasicProcessorContext] = BasicProcessorContext
 
     def __init__(self, agent: BasicAgent, global_context: Context):
         """
@@ -86,37 +93,109 @@ class ProcessorTemplate(ABC):
     def _create_processing_context(self) -> ProcessingContext:
         """
         Create a processing context for this execution.
-        Uses the new unified type-safe context system.
+        Uses the unified type-safe context system with configurable context class.
+
+        Subclasses can override processor_context_class or this method entirely
+        for complete customization.
         """
-        # Import here to avoid circular imports
+        # Get the context class to use (allows subclass override)
+        context_class = self.get_processor_context_class()
+
+        # Create local context instance with common initialization
+        local_context = self._create_local_context(context_class)
+
+        # Create ProcessingContext with the initialized local context
+        return ProcessingContext(
+            global_context=self.global_context, local_context=local_context
+        )
+
+    def get_processor_context_class(self) -> Type[BasicProcessorContext]:
+        """
+        Get the processor context class to use for this processor.
+
+        This method allows subclasses to dynamically determine the context class,
+        or they can simply override the processor_context_class class attribute.
+
+        :return: The processor context class to instantiate
+        """
+        return self.processor_context_class
+
+    def _create_local_context(
+        self, context_class: Type[BasicProcessorContext]
+    ) -> BasicProcessorContext:
+        """
+        Create and initialize the local context instance.
+
+        This method handles the common initialization logic and can be overridden
+        by subclasses that need special initialization behavior.
+
+        :param context_class: The context class to instantiate
+        :return: Initialized local context instance
+        """
+        # Common initialization data that most processors need
+        common_data = self._get_common_context_data()
+
+        # Get processor-specific initialization data
+        processor_data = self._get_processor_specific_context_data()
+
+        # Combine data and create context instance
+        context_data = {**common_data, **processor_data}
+
+        # Try to create the context with the available data
         try:
-            from ufo.agents.processors2.core.processing_context import (
-                ProcessorContextFactory,
+            return context_class(**context_data)
+        except TypeError as e:
+            # If the context class doesn't accept some parameters, try with just common data
+            self.logger.warning(
+                f"Failed to initialize {context_class.__name__} with full data: {e}"
             )
+            self.logger.info("Falling back to basic initialization")
+            try:
+                return context_class(**common_data)
+            except TypeError:
+                # Final fallback: create with no parameters and set attributes manually
+                instance = context_class()
+                for key, value in context_data.items():
+                    if hasattr(instance, key):
+                        setattr(instance, key, value)
+                return instance
 
-            # Create typed processor context using factory
-            local_context = ProcessorContextFactory.create_context(
-                agent=self.agent, processor=self, global_context=self.global_context
-            )
+    def _get_common_context_data(self) -> Dict[str, Any]:
+        """
+        Get common context data that most processors need.
 
-            # Create ProcessingContext with unified type-safe local_context
-            return ProcessingContext(
-                global_context=self.global_context, local_context=local_context
-            )
+        :return: Dictionary of common context initialization data
+        """
+        agent_memory = self.agent.memory
+        if agent_memory.length > 0:
+            prev_plan = agent_memory.get_latest_item().to_dict().get("plan", [])
+        else:
+            prev_plan = []
 
-        except ImportError:
-            # Fallback to basic context if factory not available
-            self.logger.warning("Context factory not available, using basic context")
-            from ufo.agents.processors2.core.processing_context import (
-                BasicProcessorContext,
-            )
+        return {
+            "command_dispatcher": self.global_context.command_dispatcher,
+            "prev_plan": prev_plan,
+            "previous_subtasks": self.global_context.get(
+                ContextNames.PREVIOUS_SUBTASKS
+            ),
+            "agent_name": self.agent.name,
+            "session_step": self.global_context.get(ContextNames.SESSION_STEP),
+            "round_step": self.global_context.get(ContextNames.CURRENT_ROUND_STEP),
+            "round_num": self.global_context.get(ContextNames.CURRENT_ROUND_ID),
+            "request": self.global_context.get(ContextNames.REQUEST),
+            "log_path": self.global_context.get(ContextNames.LOG_PATH),
+        }
 
-            basic_context = BasicProcessorContext()
-            # Initialize with fallback data
+    def _get_processor_specific_context_data(self) -> Dict[str, Any]:
+        """
+        Get processor-specific context data.
 
-            return ProcessingContext(
-                global_context=self.global_context, local_context=basic_context
-            )
+        Subclasses can override this method to provide additional context data
+        specific to their processor type.
+
+        :return: Dictionary of processor-specific context initialization data
+        """
+        return {}
 
     @abstractmethod
     def _finalize_processing_context(

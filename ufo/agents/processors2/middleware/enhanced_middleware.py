@@ -59,24 +59,26 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
         else:
             self.logger.warning(f"Processing completed with failure: {result.error}")
 
-        local_logger: logging.Logger = processor.processing_context.get_global(
+        local_logger: logging.Logger = processor.processing_context.global_context.get(
             ContextNames.LOGGER
         )
         local_context = processor.processing_context.local_context
 
-        local_context.total_time_cost = result.execution_time
+        local_context.total_time = result.execution_time
 
         phrase_time_cost = {}
         for phrase, phrase_result in processor.processing_context.phase_results.items():
             phrase_time_cost[phrase.name] = phrase_result.execution_time
 
-        local_context.time_cost = phrase_time_cost
+        local_context.execution_times = phrase_time_cost
 
         local_context_string = json.dumps(
-            local_context.to_dict(serialize=True), ensure_ascii=False
+            local_context.to_dict(selective=True), ensure_ascii=False
         )
 
         local_logger.info(local_context_string)
+
+        self.logger.info("Log saved successfully.")
 
     async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
         """Enhanced error logging with context information."""

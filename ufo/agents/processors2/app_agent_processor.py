@@ -1,311 +1,299 @@
-from typing import List, Dict, Any, Optional
-from dataclasses import asdict
-from ufo.agents.processors2.core.processor_framework import (
-    BaseProcessingStrategy,
-    ProcessorTemplate,
-    ProcessingPhase,
-)
-from ufo.agents.processors2.strategies.strategy import (
-    ScreenshotCollectionStrategy,
-    ControlInfoCollectionStrategy,
-    PromptConstructionStrategy,
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+"""
+App Agent Processor V2 - Modern, extensible App Agent processing implementation.
+
+This module implements the V2 architecture for App Agent processing, providing:
+- Type-safe context management with AppAgentProcessorContext
+- Modular strategy-based processing pipeline
+- Comprehensive middleware stack for error handling, performance monitoring, and logging
+- Flexible dependency injection and configuration
+- Robust error handling and recovery mechanisms
+
+The processor follows the established V2 patterns:
+- ProcessorTemplate with processor_context_class override
+- Strategy-based phase processing (screenshot, control info, LLM, action, memory)
+- Middleware pipeline for cross-cutting concerns
+- Structured logging and performance monitoring
+"""
+
+from dataclasses import dataclass, field
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
+
+from ufo.agents.processors2.core.processor_framework import ProcessorTemplate
+from ufo.agents.processors2.core.processing_context import (
+    BasicProcessorContext,
+    ProcessingContext,
 )
 
-# from ufo.agents.processors2.strategies.strategy import LLMInteractionStrategy
-# from ufo.agents.processors2.strategies.strategy import ActionExecutionStrategy
-from ufo.agents.processors2.middleware.common_middleware import (
-    TimingMiddleware,
-    LoggingMiddleware,
-    MemoryMiddleware,
-    ExceptionHandlingMiddleware,
+from ufo.agents.processors2.middleware.enhanced_middleware import (
+    EnhancedLoggingMiddleware,
 )
-from ufo.agents.processors.actions import ActionCommandInfo
-from ufo.agents.processors.app_agent_processor import (
-    AppAgentResponse,
-    AppAgentAdditionalMemory,
+from ufo.agents.processors2.strategies.app_agent_processing_strategy import (
+    AppActionExecutionStrategy,
+    AppLLMInteractionStrategy,
+    AppMemoryUpdateStrategy,
+    ComposedAppDataCollectionStrategy,
 )
-from ufo.agents.memory.memory import MemoryItem
+from ufo.module.context import Context
+
+if TYPE_CHECKING:
+    from ufo.agents.agent.app_agent import AppAgent
+
+
+@dataclass
+class AppAgentProcessorContext(BasicProcessorContext):
+    """
+    Extended processing context for App Agent with app-specific data fields.
+
+    This context extends the basic ProcessingContext to include app-specific data:
+    - Application window information and screenshot paths
+    - UI control information and filtering results
+    - LLM interaction data and parsed responses
+    - Action execution results and memory updates
+    - Performance metrics and debugging information
+
+    All fields support selective serialization for robust error handling.
+    """
+
+    # App Agent type identifier
+    agent_type: str = "AppAgent"
+
+    # Application and UI data
+    app_root: Optional[Any] = None  # Application window root element
+    current_application: str = ""  # Application name/identifier
+
+    # Screenshot and visual data
+    clean_screenshot_path: str = ""  # Path to clean screenshot
+    annotated_screenshot_path: str = ""  # Path to annotated screenshot
+    desktop_screenshot_path: str = ""  # Path to desktop screenshot
+    screenshot_saved_time: float = 0.0  # Time taken for screenshot operations
+
+    # Control and UI information
+    filtered_controls: List[Dict[str, Any]] = field(
+        default_factory=list
+    )  # Filtered UI controls
+    control_info: List[Dict[str, Any]] = field(
+        default_factory=list
+    )  # Alias for filtered_controls
+    annotation_dict: Dict[str, Any] = field(
+        default_factory=dict
+    )  # Control annotation dictionary
+    control_filter_time: float = 0.0  # Time taken for control filtering
+    control_info_recorder: Optional[Any] = None  # Control information recorder
+
+    # LLM interaction data - extends base parsed_response
+    response_text: str = ""  # Raw LLM response text
+    prompt_message: Dict[str, Any] = field(
+        default_factory=dict
+    )  # Constructed prompt message
+    function_name: str = ""  # Function name from response
+    function_arguments: Dict[str, Any] = field(
+        default_factory=dict
+    )  # Function arguments from response
+    save_screenshot: Dict[str, Any] = field(
+        default_factory=dict
+    )  # Screenshot saving configuration
+
+    # Action execution data
+    execution_result: List[Any] = field(
+        default_factory=list
+    )  # Action execution results
+    action_info: Optional[Any] = None  # Action command information
+    action_success: bool = False  # Whether action was successful
+    control_log: Dict[str, Any] = field(default_factory=dict)  # Control interaction log
+
+    # Memory and blackboard data
+    additional_memory: Optional[Any] = (
+        None  # Additional memory data (AppAgentAdditionalMemory)
+    )
+    memory_item: Optional[Any] = None  # Created memory item
+    updated_blackboard: bool = False  # Whether blackboard was updated
+
+    # Performance and debugging data
+    app_performance_metrics: Dict[str, Any] = field(
+        default_factory=dict
+    )  # Performance monitoring data
+    app_error_handler_active: bool = False  # Error handler status
+    app_logging_active: bool = False  # Logging middleware status
+    app_memory_sync_active: bool = False  # Memory sync middleware status
+
+    def __post_init__(self) -> None:
+        """
+        Initialize after dataclass construction.
+        """
+        super().__post_init__() if hasattr(super(), "__post_init__") else None
+
+        # Initialize app-specific performance metrics
+        if not self.app_performance_metrics:
+            self.app_performance_metrics = {
+                "agent_type": "AppAgent",
+                "start_time": 0.0,
+                "phase_timings": {},
+            }
+
+    @property
+    def selected_keys(self) -> List[str]:
+        """
+        Get keys that should be included in selective serialization.
+        Excludes potentially unpicklable objects.
+        """
+        return [
+            # Basic fields from parent
+            "agent_type",
+            "session_step",
+            "round_step",
+            "round_num",
+            "cost",
+            "status",
+            "request",
+            "llm_cost",
+            # App-specific serializable fields
+            "current_application",
+            "clean_screenshot_path",
+            "annotated_screenshot_path",
+            "desktop_screenshot_path",
+            "screenshot_saved_time",
+            "filtered_controls",
+            "annotation_dict",
+            "control_filter_time",
+            "response_text",
+            "prompt_message",
+            "function_name",
+            "function_arguments",
+            "save_screenshot",
+            "action_success",
+            "control_log",
+            "updated_blackboard",
+            "app_performance_metrics",
+            "app_error_handler_active",
+            "app_logging_active",
+            "app_memory_sync_active",
+            # Performance and error tracking from parent
+            "execution_times",
+            "total_time",
+            "error_count",
+            "last_error",
+        ]
 
 
 class AppAgentProcessorV2(ProcessorTemplate):
-    """重构后的App Agent处理器"""
+    """
+    App Agent Processor V2 - Modern, extensible App Agent processing implementation.
 
-    def __init__(self, agent, context, ground_service=None):
-        self.app_agent = agent
-        self.host_agent = agent.host
-        self.grounding_service = ground_service
+    This processor implements the complete V2 architecture for App Agent:
+    - Uses AppAgentProcessorContext for type-safe app-specific data
+    - Implements modular strategy-based processing pipeline
+    - Provides comprehensive middleware stack
+    - Supports flexible configuration and dependency injection
+    - Includes robust error handling and performance monitoring
 
-        # 初始化处理器状态
-        self._image_urls = []
-        self._memory_data = MemoryItem()
-        self._response = None
-        self._cost = 0.0
+    Processing Pipeline:
+    1. Data Collection: Screenshot capture and UI control information
+    2. LLM Interaction: Context-aware prompting and response parsing
+    3. Action Execution: UI automation and control interaction
+    4. Memory Update: Agent memory and blackboard synchronization
 
-        super().__init__(agent, context)
+    Middleware Stack:
+    - Error handling and recovery middleware
+    - Performance monitoring and timing middleware
+    - Structured logging and debugging middleware
+    - Memory and blackboard synchronization middleware
+    """
+
+    # Specify the custom context class for this processor
+    processor_context_class = AppAgentProcessorContext
+
+    def __init__(self, agent: "AppAgent", global_context: "Context") -> None:
+        """Initialize App Agent Processor V2."""
+        super().__init__(agent, global_context)
+
+        # Initialize processing strategies
+        self._setup_strategies()
+
+        # Initialize middleware pipeline
+        self._setup_middleware()
 
     def _setup_strategies(self) -> None:
-        """配置App Agent特定的处理策略"""
+        """Setup processing strategies for App Agent."""
+        from ufo.agents.processors2.core.processing_context import ProcessingPhase
 
-        # 数据收集阶段策略
-        self.strategies[ProcessingPhase.DATA_COLLECTION] = (
-            CompositeDataCollectionStrategy(
-                [
-                    ScreenshotCollectionStrategy(),
-                    ControlInfoCollectionStrategy(backends=["uia", "omniparser"]),
-                    PromptConstructionStrategy(),
-                ]
-            )
+        # Data collection strategy (combines screenshot + control info)
+        self.strategies[ProcessingPhase.DATA_COLLECTION] = ComposedAppDataCollectionStrategy(
+            fail_fast=True  # Data collection is critical for App Agent
         )
 
-        # LLM交互阶段策略
-        self.strategies[ProcessingPhase.LLM_INTERACTION] = AppAgentLLMStrategy()
+        # LLM interaction strategy
+        self.strategies[ProcessingPhase.LLM_INTERACTION] = AppLLMInteractionStrategy(
+            fail_fast=True  # LLM interaction failure should trigger recovery
+        )
 
-        # 动作执行阶段策略
-        self.strategies[ProcessingPhase.ACTION_EXECUTION] = AppAgentActionStrategy()
+        # Action execution strategy
+        self.strategies[ProcessingPhase.ACTION_EXECUTION] = AppActionExecutionStrategy(
+            fail_fast=False  # Action failures can be handled gracefully
+        )
 
-        # 内存更新阶段策略
-        self.strategies[ProcessingPhase.MEMORY_UPDATE] = AppAgentMemoryStrategy()
+        # Memory update strategy
+        self.strategies[ProcessingPhase.MEMORY_UPDATE] = AppMemoryUpdateStrategy(
+            fail_fast=False  # Memory update failures shouldn't stop the process
+        )
 
     def _setup_middleware(self) -> None:
-        """设置中间件链"""
-        self.middleware_chain = [
-            TimingMiddleware(),
-            LoggingMiddleware(),
-            ExceptionHandlingMiddleware(),
-            MemoryMiddleware(),
+        """Setup middleware pipeline for App Agent."""
+        # Core middleware (order matters)
+        self.middleware_chain = [EnhancedLoggingMiddleware()]
+
+    def get_required_context_keys(self) -> List[str]:
+        """
+        Get list of required context keys for App Agent processing.
+        :return: List of required context keys
+        """
+        return [
+            # Basic processing data
+            "request",  # User request
+            "subtask",  # Current subtask
+            "plan",  # Task plan
+            "session_step",  # Current step number
+            "round_step",  # Round step number
+            "round_num",  # Round number
+            "log_path",  # Logging path
+            # Application-specific data
+            "app_root",  # Application window root
+            "current_application",  # Application identifier
+            # Optional but commonly used
+            "previous_subtasks",  # Previous subtasks (optional)
+            "subtask_index",  # Subtask index (optional)
         ]
 
-    def _create_memory_item(self) -> MemoryItem:
-        """创建内存项"""
-        return MemoryItem()
-
-    def _sync_memory_with_result(self, result) -> None:
-        """同步内存数据"""
-        # 实现内存同步逻辑
-        if hasattr(self, "_response") and self._response:
-            self._memory_data.add_values_from_dict(asdict(self._response))
-
-
-# 复合数据收集策略
-class CompositeDataCollectionStrategy(BaseProcessingStrategy):
-    """复合数据收集策略"""
-
-    def __init__(self, strategies: List[BaseProcessingStrategy]):
-        self.strategies = strategies
-
-    async def execute(self, context: Any):
-        """执行所有数据收集策略"""
-        combined_data = {}
-
-        for strategy in self.strategies:
-            result = await strategy.execute(context)
-            if not result.success:
-                return result
-            combined_data.update(result.data)
-
-        # 准备上下文数据
-        self._prepare_context_data(context, combined_data)
-
-        from ufo.agents.processors2.core.processor_framework import (
-            ProcessingResult,
-            ProcessingPhase,
-        )
-
-        return ProcessingResult(
-            success=True, data=combined_data, phase=ProcessingPhase.DATA_COLLECTION
-        )
-
-    def _prepare_context_data(self, context: Any, data: Dict[str, Any]) -> None:
-        """准备上下文数据供后续阶段使用"""
-        context.update(
-            {
-                "image_urls": data.get("image_urls", []),
-                "filtered_controls": data.get("filtered_controls", []),
-                "prompt_message": data.get("prompt_message"),
-                "screenshot_paths": data.get("screenshot_paths", {}),
-            }
-        )
-
-
-# App Agent特定的LLM策略
-class AppAgentLLMStrategy(BaseProcessingStrategy):
-    """App Agent LLM交互策略"""
-
-    async def execute(self, context: Any):
-        """执行LLM交互"""
+    def _finalize_processing_context(
+        self, processing_context: "ProcessingContext"
+    ) -> None:
+        """
+        Finalize processing context, deciding what to promote to global context.
+        :param processing_context: The processing context to finalize.
+        """
         try:
-            agent = context.get("agent")
-            prompt_message = context.get("prompt_message")
+            # Call parent implementation for standard finalization
+            super()._finalize_processing_context(processing_context)
 
-            if not prompt_message:
-                raise ValueError("No prompt message available")
-
-            # 获取LLM响应
-            response_text, cost = agent.get_response(
-                prompt_message, agent_type="APP", use_backup_engine=True
-            )
-
-            # 解析响应
-            response_dict = agent.response_to_dict(response_text)
-            response = AppAgentResponse(**response_dict)
-
-            from ufo.agents.processors2.core.processor_framework import (
-                ProcessingResult,
-                ProcessingPhase,
-            )
-
-            return ProcessingResult(
-                success=True,
-                data={
-                    "response": response,
-                    "response_text": response_text,
-                    "cost": cost,
-                },
-                phase=ProcessingPhase.LLM_INTERACTION,
-            )
-
-        except Exception as e:
-            from ufo.agents.processors2.core.processor_framework import (
-                ProcessingResult,
-                ProcessingPhase,
-            )
-
-            return ProcessingResult(
-                success=False,
-                error=f"LLM interaction failed: {str(e)}",
-                data={},
-                phase=ProcessingPhase.LLM_INTERACTION,
-            )
-
-
-# App Agent动作执行策略
-class AppAgentActionStrategy(BaseProcessingStrategy):
-    """App Agent动作执行策略"""
-
-    async def execute(self, context: Any):
-        """执行动作"""
-        try:
-            response = context.get("response")
-            command_dispatcher = context.get("command_dispatcher")
-
-            if not response or not response.function:
-                from ufo.agents.processors2.core.processor_framework import (
-                    ProcessingResult,
-                    ProcessingPhase,
+            # Add app-specific context finalization
+            if hasattr(processing_context, "llm_cost"):
+                self.logger.debug(
+                    f"App Agent LLM cost: ${processing_context.llm_cost:.4f}"
                 )
 
-                return ProcessingResult(
-                    success=True,
-                    data={"message": "No action to execute"},
-                    phase=ProcessingPhase.ACTION_EXECUTION,
+            if hasattr(processing_context, "action_success"):
+                self.logger.debug(
+                    f"App Agent action success: {processing_context.action_success}"
                 )
 
-            # 执行命令
-            from ufo.contracts.contracts import Command
-
-            result = await command_dispatcher.execute_commands(
-                [
-                    Command(
-                        tool_name=response.function,
-                        parameters=response.arguments,
-                        tool_type="action",
+            if hasattr(processing_context, "app_performance_metrics"):
+                metrics = processing_context.app_performance_metrics
+                if "total_time" in metrics:
+                    self.logger.debug(
+                        f"App Agent total processing time: {metrics['total_time']:.2f}s"
                     )
-                ]
-            )
-
-            # 创建动作信息
-            action = ActionCommandInfo(
-                function=response.function,
-                arguments=response.arguments,
-                target=None,  # 需要根据实际情况设置
-                status=response.status,
-                result=result[0],
-            )
-
-            from ufo.agents.processors2.core.processor_framework import (
-                ProcessingResult,
-                ProcessingPhase,
-            )
-
-            return ProcessingResult(
-                success=True,
-                data={"action": action, "execution_result": result},
-                phase=ProcessingPhase.ACTION_EXECUTION,
-            )
 
         except Exception as e:
-            from ufo.agents.processors2.core.processor_framework import (
-                ProcessingResult,
-                ProcessingPhase,
-            )
-
-            return ProcessingResult(
-                success=False,
-                error=f"Action execution failed: {str(e)}",
-                data={},
-                phase=ProcessingPhase.ACTION_EXECUTION,
-            )
-
-
-# App Agent内存更新策略
-class AppAgentMemoryStrategy(BaseProcessingStrategy):
-    """App Agent内存更新策略"""
-
-    async def execute(self, context: Any):
-        """更新内存"""
-        try:
-            agent = context.get("agent")
-            response = context.get("response")
-            action = context.get("action")
-
-            # 创建额外内存数据
-            additional_memory = AppAgentAdditionalMemory(
-                Step=context.get("session_step", 0),
-                RoundStep=context.get("round_step", 0),
-                AgentStep=agent.step,
-                Round=context.get("round_num", 0),
-                Subtask=context.get("subtask", ""),
-                SubtaskIndex=context.get("round_subtask_amount", 0),
-                FunctionCall=[action.function] if action else [],
-                Action=[asdict(action)] if action else [],
-                ActionSuccess=[],  # 需要根据实际成功动作填充
-                ActionType=(
-                    [action.result.namespace] if action and action.result else []
-                ),
-                Request=context.get("request", ""),
-                Agent=agent.__class__.__name__,
-                AgentName=agent.name,
-                Application=context.get("app_root", ""),
-                Cost=context.get("cost", 0.0),
-                Results="",  # 需要根据实际结果填充
-                error="",
-                time_cost=context.get("time_cost", {}),
-                ControlLog={},
-            )
-
-            from ufo.agents.processors2.core.processor_framework import (
-                ProcessingResult,
-                ProcessingPhase,
-            )
-
-            return ProcessingResult(
-                success=True,
-                data={
-                    "additional_memory": additional_memory,
-                    "response_data": asdict(response) if response else {},
-                },
-                phase=ProcessingPhase.MEMORY_UPDATE,
-            )
-
-        except Exception as e:
-            from ufo.agents.processors2.core.processor_framework import (
-                ProcessingResult,
-                ProcessingPhase,
-            )
-
-            return ProcessingResult(
-                success=False,
-                error=f"Memory update failed: {str(e)}",
-                data={},
-                phase=ProcessingPhase.MEMORY_UPDATE,
-            )
+            self.logger.error(f"App Agent context finalization failed: {str(e)}")
