@@ -4,14 +4,16 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
-from logging import Logger
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type, Union, TYPE_CHECKING
 
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.module.dispatcher import BasicCommandDispatcher
 from ufo.utils import is_json_serializable, print_with_color
+
+if TYPE_CHECKING:
+    from ufo.module.basic import FileWriter
 
 
 class ContextNames(Enum):
@@ -157,7 +159,7 @@ class ContextNames(Enum):
             or self == ContextNames.LOGGER
             or self == ContextNames.EVALUATION_LOGGER
         ):
-            return Logger
+            return "FileWriter"  # Use string to avoid circular import
         elif self == ContextNames.APPLICATION_WINDOW:
             return UIAWrapper
         else:

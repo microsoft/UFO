@@ -28,7 +28,7 @@ from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.client.mcp.mcp_registry import MCPRegistry
 from ufo.config import get_config
-from ufo.contracts.contracts import AppWindowControlInfo, ControlInfo, Rect, WindowInfo
+from ufo.contracts.contracts import ControlInfo, Rect, WindowInfo
 
 # Get config
 configs = get_config()
@@ -152,6 +152,27 @@ class UIServerState:
         self.logger.info(f"Available commands: {self.puppeteer.list_commands()}")
 
 
+def _verify_id(id: str, name: str, control_dict: Dict[str, UIAWrapper]):
+
+    if not id:
+        raise ToolError("Window id is required for select_application_window")
+
+    if not control_dict:
+        raise ToolError(
+            "No application windows available. Please call get_desktop_app_info first."
+        )
+
+    # Find the window with the matching id
+    control = control_dict.get(id)
+
+    if not control:
+        raise ToolError(
+            f"Control with id '{id}' not found. Available control ids: {list(control_dict.keys())}"
+        )
+
+    return True if control.element_info.name == name else False
+
+
 @MCPRegistry.register_factory_decorator("HostUIExecutor")
 def create_host_action_mcp_server(*args, **kwargs) -> FastMCP:
     """
@@ -176,25 +197,14 @@ def create_host_action_mcp_server(*args, **kwargs) -> FastMCP:
         Select an application window for UI automation.
         :return: Information about the selected window.
         """
-        if not id:
-            raise ToolError("Window label is required for select_application_window")
 
         # Use the last app windows retrieved from get_desktop_app_info
         app_window_dict = ui_state.last_app_windows
 
-        if not app_window_dict:
-            raise ToolError(
-                "No application windows available. Please call get_desktop_app_info first."
-            )
+        _verify_id(id, name, app_window_dict)
 
-        # Find the window with the matching label
+        # Find the window with the matching id
         window = app_window_dict.get(id)
-
-        if not window:
-            available_windows = list(app_window_dict.keys())
-            raise ToolError(
-                f"Window with label '{id}' not found. Available windows: {available_windows}"
-            )
 
         # Set focus on the window
         try:
@@ -277,13 +287,22 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         """
         Click on a UI control element using the mouse. All type of controls elements are supported.
         """
+
+        control_verified = _verify_id(id, name, ui_state.control_dict)
+
         action = ActionCommandInfo(
             function="click_input",
             arguments={"button": button, "double": double},
             target=TargetInfo(id=id, name=name, kind="control"),
         )
 
-        return _execute_action(action)
+        result = _execute_action(action)
+
+        if control_verified:
+            return result
+        else:
+            true_name = ui_state.control_dict.get(id).element_info.name
+            return f"Warning: The name of your chosen control id {id} is {true_name}, but the name argument is {name}. The action is performed on control {id}:{true_name}."
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def click_on_coordinates(
@@ -411,13 +430,22 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         """
         Set text in a control element. Only works with Edit control items.
         """
+
+        control_verified = _verify_id(id, name, ui_state.control_dict)
+
         action = ActionCommandInfo(
             function="set_edit_text",
             arguments={"text": text, "clear_current_text": clear_current_text},
             target=TargetInfo(id=id, name=name, kind="control"),
         )
 
-        return _execute_action(action)
+        result = _execute_action(action)
+
+        if control_verified:
+            return result
+        else:
+            true_name = ui_state.control_dict.get(id).element_info.name
+            return f"Warning: The name of your chosen control id {id} is {true_name}, but the name argument is {name}. The action is performed on control {id}:{true_name}."
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def keyboard_input(
@@ -442,7 +470,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         control_focus: Annotated[
             bool,
             Field(
-                description="Whether to focus the selected control before sending keys. If False, the hotkeys will operate on the application window."
+                description="Whether to focus the selected control id before sending keys. If False, the hotkeys will operate on the application window."
             ),
         ] = True,
     ) -> Annotated[
@@ -488,13 +516,21 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         """
         Send mouse wheel input to scroll a control.
         """
+        control_verified = _verify_id(id, name, ui_state.control_dict)
+
         action = ActionCommandInfo(
             function="wheel_mouse_input",
             arguments={"wheel_dist": wheel_dist},
             target=TargetInfo(id=id, name=name, kind="control"),
         )
 
-        return _execute_action(action)
+        result = _execute_action(action)
+
+        if control_verified:
+            return result
+        else:
+            true_name = ui_state.control_dict.get(id).element_info.name
+            return f"Warning: The name of your chosen control id {id} is {true_name}, but the name argument is {name}. The action is performed on control {id}:{true_name}."
 
     @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
     def texts(
@@ -514,9 +550,18 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         """
         Retrieve all text content from a control element.
         """
+
+        control_verified = _verify_id(id, name, ui_state.control_dict)
+
         action = ActionCommandInfo(function="texts", arguments={"id": id, "name": name})
 
-        return _execute_action(action)
+        result = _execute_action(action)
+
+        if control_verified:
+            return result
+        else:
+            true_name = ui_state.control_dict.get(id).element_info.name
+            return f"Warning: The name of your chosen control id {id} is {true_name}, but the name argument is {name}. The action is performed on control {id}:{true_name}."
 
     @action_mcp.tool()
     def summary(

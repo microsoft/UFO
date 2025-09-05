@@ -861,15 +861,55 @@ class PhotographerFacade:
         if image is None:
             return cls._empty_image_string
 
-        buffered = BytesIO()
-        image.save(buffered, format="PNG", optimize=True)
-        encoded_image = base64.b64encode(buffered.getvalue()).decode("ascii")
+        try:
+            buffered = BytesIO()
 
-        if mime_type is None:
-            mime_type = "image/png"
+            # Ensure image is in a valid mode for PNG saving
+            if image.mode not in ["RGB", "RGBA", "L", "P"]:
+                # Convert to RGB if mode is not supported
+                image = image.convert("RGB")
 
-        image_url = f"data:{mime_type};base64," + encoded_image
-        return image_url
+            # Handle different image modes for better compatibility
+            if mime_type and "jpeg" in mime_type.lower():
+                # For JPEG, convert RGBA to RGB (remove alpha channel)
+                if image.mode in ["RGBA", "LA"]:
+                    # Create a white background
+                    background = Image.new("RGB", image.size, (255, 255, 255))
+                    if image.mode == "RGBA":
+                        background.paste(
+                            image, mask=image.split()[-1]
+                        )  # Use alpha channel as mask
+                    else:
+                        background.paste(image)
+                    image = background
+                image.save(buffered, format="JPEG", quality=95, optimize=True)
+                if mime_type is None:
+                    mime_type = "image/jpeg"
+            else:
+                # Default to PNG
+                image.save(buffered, format="PNG", optimize=True)
+                if mime_type is None:
+                    mime_type = "image/png"
+
+            encoded_image = base64.b64encode(buffered.getvalue()).decode("ascii")
+            image_url = f"data:{mime_type};base64," + encoded_image
+            return image_url
+
+        except Exception as e:
+            utils.print_with_color(f"Error encoding image: {e}", "red")
+            # Fallback: try with a simple conversion
+            try:
+                # Convert to RGB and try again
+                rgb_image = image.convert("RGB")
+                buffered = BytesIO()
+                rgb_image.save(buffered, format="PNG")
+                encoded_image = base64.b64encode(buffered.getvalue()).decode("ascii")
+                return f"data:image/png;base64,{encoded_image}"
+            except Exception as fallback_error:
+                utils.print_with_color(
+                    f"Fallback encoding also failed: {fallback_error}", "red"
+                )
+                return cls._empty_image_string
 
     @classmethod
     def encode_image_from_path(
@@ -884,23 +924,46 @@ class PhotographerFacade:
 
         # If image path not exist, return an empty image string
         if not os.path.exists(image_path):
-
-            utils.print_with_color(f"Waring: {image_path} does not exist.", "yellow")
+            utils.print_with_color(f"Warning: {image_path} does not exist.", "yellow")
             return cls._empty_image_string
 
-        file_name = os.path.basename(image_path)
-        mime_type = (
-            mime_type if mime_type is not None else mimetypes.guess_type(file_name)[0]
-        )
-        with open(image_path, "rb") as image_file:
-            encoded_image = base64.b64encode(image_file.read()).decode("ascii")
+        try:
+            # Try to load and validate the image first
+            image = Image.open(image_path)
+            # Verify the image by accessing its properties
+            _ = image.size
+            _ = image.format
 
-        if mime_type is None or not mime_type.startswith("image/"):
+            # Use the improved encode_image method
+            return cls.encode_image(image, mime_type)
+
+        except Exception as image_error:
             utils.print_with_color(
-                "Warning: mime_type is not specified or not an image mime type. Defaulting to png.",
-                "yellow",
+                f"Error loading image {image_path}: {image_error}", "yellow"
             )
-            mime_type = "image/png"
 
-        image_url = f"data:{mime_type};base64," + encoded_image
-        return image_url
+            # Fallback: try direct file encoding (for valid image files that PIL can't handle)
+            try:
+                file_name = os.path.basename(image_path)
+                if mime_type is None:
+                    mime_type = mimetypes.guess_type(file_name)[0]
+
+                with open(image_path, "rb") as image_file:
+                    encoded_image = base64.b64encode(image_file.read()).decode("ascii")
+
+                if mime_type is None or not mime_type.startswith("image/"):
+                    utils.print_with_color(
+                        "Warning: mime_type is not specified or not an image mime type. Defaulting to png.",
+                        "yellow",
+                    )
+                    mime_type = "image/png"
+
+                image_url = f"data:{mime_type};base64," + encoded_image
+                return image_url
+
+            except Exception as fallback_error:
+                utils.print_with_color(
+                    f"Fallback encoding failed for {image_path}: {fallback_error}",
+                    "red",
+                )
+                return cls._empty_image_string

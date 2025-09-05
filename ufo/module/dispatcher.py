@@ -89,7 +89,7 @@ class LocalCommandDispatcher(BasicCommandDispatcher):
         self.command_router = CommandRouter(self.computer_manager)
 
     async def execute_commands(
-        self, commands: List[Command], timeout=10
+        self, commands: List[Command], timeout=60
     ) -> Optional[List[Result]]:
         """
         Publish commands to the command dispatcher and wait for the result.
@@ -195,7 +195,7 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         await self.send_queue.put(message)
 
     async def execute_commands(
-        self, commands: List[Command], timeout: float = 10.0
+        self, commands: List[Command], timeout: float = 60
     ) -> Optional[List[Result]]:
         """
         Publish commands to the command dispatcher and wait for the result.

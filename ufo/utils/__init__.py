@@ -311,11 +311,13 @@ def load_image(image_path: str) -> Image.Image:
     """
     try:
         if not os.path.exists(image_path):
-            print_with_color(f"Warning: Image file {image_path} does not exist.", "yellow")
-            return Image.new('RGB', (1, 1), color='white')
-        
+            print_with_color(
+                f"Warning: Image file {image_path} does not exist.", "yellow"
+            )
+            return Image.new("RGB", (1, 1), color="white")
+
         image = Image.open(image_path)
-        
+
         # Verify the image by accessing its properties
         try:
             _ = image.size
@@ -324,12 +326,14 @@ def load_image(image_path: str) -> Image.Image:
             image.load()
             return image
         except Exception as e:
-            print_with_color(f"Warning: Image {image_path} appears to be corrupted: {e}", "yellow")
-            return Image.new('RGB', (1, 1), color='white')
-            
+            print_with_color(
+                f"Warning: Image {image_path} appears to be corrupted: {e}", "yellow"
+            )
+            return Image.new("RGB", (1, 1), color="white")
+
     except Exception as e:
         print_with_color(f"Error loading image from {image_path}: {e}", "red")
-        return Image.new('RGB', (1, 1), color='white')
+        return Image.new("RGB", (1, 1), color="white")
 
 
 def save_image_string(image_string: str, save_path: str) -> Image.Image:
@@ -341,15 +345,19 @@ def save_image_string(image_string: str, save_path: str) -> Image.Image:
     """
     try:
         # Ensure the directory exists
-        os.makedirs(os.path.dirname(save_path), exist_ok=True)
-        
+        save_dir = os.path.dirname(save_path)
+        if (
+            save_dir
+        ):  # Only create directory if it's not empty (i.e., not current directory)
+            os.makedirs(save_dir, exist_ok=True)
+
         # Decode the base64 string
         image_data = decode_base64_image(image_string)
-        
+
         # Save the image data to a file
         with open(save_path, "wb") as f:
             f.write(image_data)
-        
+
         # Verify the saved image can be opened and is valid
         try:
             saved_image = load_image(save_path)
@@ -358,41 +366,49 @@ def save_image_string(image_string: str, save_path: str) -> Image.Image:
             _ = saved_image.format
             return saved_image
         except Exception as e:
-            print_with_color(f"Warning: Saved image at {save_path} appears to be corrupted: {e}", "yellow")
-            
+            print_with_color(
+                f"Warning: Saved image at {save_path} appears to be corrupted: {e}",
+                "yellow",
+            )
+
             # Try alternative approach: decode through PIL directly
             try:
                 image_data = decode_base64_image(image_string)
                 image_buffer = BytesIO(image_data)
                 pil_image = Image.open(image_buffer)
-                
+
                 # Save using PIL with explicit format
                 file_ext = os.path.splitext(save_path)[1].lower()
-                if file_ext in ['.jpg', '.jpeg']:
+                if file_ext in [".jpg", ".jpeg"]:
                     # Convert to RGB for JPEG (remove alpha channel if present)
-                    if pil_image.mode in ['RGBA', 'LA']:
-                        pil_image = pil_image.convert('RGB')
-                    pil_image.save(save_path, 'JPEG', quality=95)
-                elif file_ext == '.png':
-                    pil_image.save(save_path, 'PNG')
+                    if pil_image.mode in ["RGBA", "LA"]:
+                        pil_image = pil_image.convert("RGB")
+                    pil_image.save(save_path, "JPEG", quality=95)
+                elif file_ext == ".png":
+                    pil_image.save(save_path, "PNG")
                 else:
                     # Default to PNG
-                    pil_image.save(save_path, 'PNG')
-                
+                    pil_image.save(save_path, "PNG")
+
                 return load_image(save_path)
-                
+
             except Exception as fallback_error:
-                print_with_color(f"Error: Failed to save image using fallback method: {fallback_error}", "red")
-                
+                print_with_color(
+                    f"Error: Failed to save image using fallback method: {fallback_error}",
+                    "red",
+                )
+
                 # As last resort, save empty image
                 empty_data = decode_base64_image(_empty_image_string)
                 with open(save_path, "wb") as f:
                     f.write(empty_data)
                 return load_image(save_path)
-                
+
     except Exception as e:
-        print_with_color(f"Error: Failed to save image string to {save_path}: {e}", "red")
-        
+        print_with_color(
+            f"Error: Failed to save image string to {save_path}: {e}", "red"
+        )
+
         # Ensure we always return a valid image
         try:
             empty_data = decode_base64_image(_empty_image_string)
@@ -401,4 +417,4 @@ def save_image_string(image_string: str, save_path: str) -> Image.Image:
             return load_image(save_path)
         except Exception:
             # Return a minimal 1x1 pixel image in memory
-            return Image.new('RGB', (1, 1), color='white')
+            return Image.new("RGB", (1, 1), color="white")

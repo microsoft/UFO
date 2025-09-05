@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import json
+import logging
 import os
 import re
 import sys
@@ -45,6 +46,7 @@ class Trajectory:
         self._step_log = self._load_response_data()
         self._evaluation_log = self._load_evaluation_data()
         self._structured_data = self._load_all_data()
+        self.logger = logging.getLogger(__name__)
 
     def _load_response_data(self) -> List[Dict[str, Any]]:
         """
@@ -340,16 +342,16 @@ class Trajectory:
         """
         :return: The total number of steps.
         """
-        return (
-            max(
-                [
-                    self.step_log[i].get("Step")
-                    for i in range(len(self.step_log))
-                    if isinstance(self.step_log[i].get("Step"), int)
-                ]
-            )
-            + 1
-        )
+        step_numbers = [
+            self.step_log[i].get("Step")
+            for i in range(len(self.step_log))
+            if isinstance(self.step_log[i].get("Step"), int)
+        ]
+
+        if len(step_numbers) == 0:
+            return 0
+
+        return max(step_numbers) + 1
 
     @property
     def structured_data(self) -> Dict[str, Any]:
@@ -375,12 +377,46 @@ class Trajectory:
         :param output_path: The output path to save the markdown file.
         :param key_shown: The keys to show at each step.
         """
+
+        if len(self.step_log) == 0:
+            print_with_color(
+                "Warning: No step data to export to markdown. The trajectory appears to be empty.",
+                "yellow",
+            )
+            with open(output_path, "w", encoding="utf-8") as file:
+                file.write("# Trajectory Data\n\n")
+                file.write("❌ **No trajectory data found**\n\n")
+                file.write(
+                    "This log directory appears to be empty or the response.log file contains no valid JSON entries.\n\n"
+                )
+                file.write("Possible reasons:\n")
+                file.write(
+                    "- The UFO session was interrupted before any actions were completed\n"
+                )
+                file.write("- The response.log file is corrupted or empty\n")
+                file.write("- The UFO session failed to start properly\n\n")
+                file.write(
+                    "To fix this, try running UFO again and ensure it completes successfully.\n"
+                )
+            return
+
         with open(output_path, "w", encoding="utf-8") as file:
             file.write("# Trajectory Data\n\n")
 
+            # Add summary information
+            file.write("## Summary\n\n")
+            file.write(f"- **Request**: {self.request or 'Not specified'}\n")
+            file.write(f"- **Total Steps**: {self.step_number}\n")
+            file.write(f"- **Total Rounds**: {self.round_number}\n")
+            file.write(f"- **Host Agent Steps**: {len(self.host_agent_log)}\n")
+            file.write(f"- **App Agent Steps**: {len(self.app_agent_log)}\n\n")
+
             file.write("## Evaluation Results\n\n")
-            for key, value in self.evaluation_log.items():
-                file.write(f"- **{key}**: {value}\n")
+            if self.evaluation_log:
+                for key, value in self.evaluation_log.items():
+                    file.write(f"- **{key}**: {value}\n")
+            else:
+                file.write("No evaluation results found.\n")
 
             file.write("\n")
 
@@ -410,6 +446,73 @@ class Trajectory:
 
 
 if __name__ == "__main__":
-    file_path = r"ufo/trajectory/data"
-    trajectory = Trajectory(file_path)
-    trajectory.to_markdown(file_path + "/output.md")
+    import glob
+
+    print_with_color("🔍 UFO Trajectory Parser", "blue")
+    print("Searching for valid trajectory logs...\n")
+
+    # Try to find the most recent log directory with valid data
+    log_dirs = glob.glob("logs/*")
+
+    if not log_dirs:
+        print_with_color("❌ No log directories found!", "red")
+        print("Make sure you have run UFO and generated some logs first.")
+        print("Log directories should be in the 'logs/' folder.")
+        exit(1)
+
+    log_dirs.sort(reverse=True)  # Sort by name (which is date-time based)
+
+    valid_trajectory = None
+    valid_log_path = None
+    empty_count = 0
+    error_count = 0
+
+    for log_dir in log_dirs:
+        try:
+            print(f"📁 Checking: {log_dir}...", end=" ")
+            trajectory = Trajectory(log_dir)
+
+            if len(trajectory.step_log) > 0:
+                print_with_color("✅ Valid!", "green")
+                print(f"   📊 Steps: {len(trajectory.step_log)}")
+                print(f"   🎯 Request: {trajectory.request}")
+                valid_trajectory = trajectory
+                valid_log_path = log_dir
+                break
+            else:
+                print_with_color("❌ Empty", "yellow")
+                empty_count += 1
+
+        except Exception as e:
+            print_with_color("❌ Error", "red")
+            print(f"   ⚠️  {str(e)[:60]}...")
+            error_count += 1
+
+    print(f"\n📈 Summary: Checked {len(log_dirs)} directories")
+    print(f"   🟢 Valid: {1 if valid_trajectory else 0}")
+    print(f"   🟡 Empty: {empty_count}")
+    print(f"   🔴 Errors: {error_count}")
+
+    if valid_trajectory is not None:
+        output_path = valid_log_path + "/output_auto.md"
+        print(f"\n📝 Generating markdown report...")
+        print(f"   📄 Output: {output_path}")
+
+        valid_trajectory.to_markdown(output_path)
+        print_with_color("✅ Successfully generated trajectory markdown!", "green")
+
+        # Show some statistics
+        print(f"\n📊 Trajectory Statistics:")
+        print(f"   🎯 Request: {valid_trajectory.request}")
+        print(f"   📏 Total Steps: {valid_trajectory.step_number}")
+        print(f"   🔄 Rounds: {valid_trajectory.round_number}")
+        print(f"   🏠 Host Agent Steps: {len(valid_trajectory.host_agent_log)}")
+        print(f"   📱 App Agent Steps: {len(valid_trajectory.app_agent_log)}")
+
+    else:
+        print_with_color("\n❌ No valid trajectory logs found!", "red")
+        print("📋 Common issues and solutions:")
+        print("   • Empty logs: UFO session was interrupted or failed")
+        print("   • Missing response.log: UFO didn't save properly")
+        print("   • Corrupted files: Try running UFO again")
+        print("\n💡 To fix: Run a complete UFO session and try again.")
