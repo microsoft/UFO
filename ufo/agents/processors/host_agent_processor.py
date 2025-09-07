@@ -235,7 +235,7 @@ class HostAgentProcessor(BaseProcessor):
 
         # Log the prompt message. Only save them in debug mode.
         request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
-        self.request_logger.debug(request_log_str)
+        self.request_logger.write(request_log_str)
 
     @BaseProcessor.exception_capture
     @BaseProcessor.method_timer

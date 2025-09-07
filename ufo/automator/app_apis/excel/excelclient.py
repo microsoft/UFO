@@ -295,6 +295,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
             )
             return f"Document is saved to {file_path}."
         except Exception as e:
+
             raise RuntimeError(f"Error occurred while saving document: {e}")
 
     @staticmethod

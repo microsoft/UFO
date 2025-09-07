@@ -10,7 +10,7 @@ import time
 import traceback
 from abc import ABC, abstractmethod
 from functools import wraps
-from typing import Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -22,6 +22,9 @@ from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
 from ufo.contracts.contracts import WindowInfo
 from ufo.module.context import Context, ContextNames
+
+if TYPE_CHECKING:
+    from ufo.module.basic import FileWriter
 
 configs = Config.get_instance().config_data
 
@@ -138,7 +141,7 @@ class BaseProcessor(ABC):
 
             return
 
-    def resume(self) -> None:
+    async def resume(self) -> None:
         """
         Resume the process of action execution after the session is paused.
         """
@@ -147,7 +150,7 @@ class BaseProcessor(ABC):
 
         try:
             # Step 1: Execute the action.
-            self.execute_action()
+            await self.execute_action()
 
             # Step 2: Update the memory.
             self.update_memory()
@@ -291,7 +294,7 @@ class BaseProcessor(ABC):
         pass
 
     @abstractmethod
-    def execute_action(self) -> None:
+    async def execute_action(self) -> None:
         """
         Execute the action.
         """
@@ -630,7 +633,7 @@ class BaseProcessor(ABC):
         return self.context.get(ContextNames.REQUEST)
 
     @property
-    def request_logger(self) -> str:
+    def request_logger(self) -> "FileWriter":
         """
         Get the request logger.
         :return: The request logger.
@@ -638,7 +641,7 @@ class BaseProcessor(ABC):
         return self.context.get(ContextNames.REQUEST_LOGGER)
 
     @property
-    def response_logger(self) -> str:
+    def response_logger(self) -> "FileWriter":
         """
         Get the response logger.
         :return: The response logger.
@@ -647,7 +650,7 @@ class BaseProcessor(ABC):
 
     @property
     def subtask(self) -> str:
-        """
+        """F
         Get the subtask.
         :return: The subtask.
         """
@@ -806,7 +809,7 @@ class BaseProcessor(ABC):
         return: The response json.
         """
 
-        self.response_logger.info(json.dumps(response_json))
+        self.response_logger.write(json.dumps(response_json))
 
     @property
     def name(self) -> str:

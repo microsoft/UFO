@@ -38,6 +38,46 @@ from ufo.trajectory.parser import Trajectory
 configs = Config.get_instance().config_data
 
 
+class FileWriter:
+    """
+    Simple file writer that bypasses global logging settings.
+    Provides a unified write interface for logging to files.
+    """
+
+    def __init__(self, file_path: str, mode: str = "a"):
+        """
+        Initialize file writer.
+        :param file_path: Path to the log file
+        :param mode: File open mode (default: 'a' for append)
+        """
+        self.file_path = file_path
+        self.mode = mode
+
+        # Ensure directory exists (only if there's a directory part)
+        dir_path = os.path.dirname(file_path)
+        if dir_path:  # Only create directory if there's a directory part
+            os.makedirs(dir_path, exist_ok=True)
+
+        # Create or open the file to ensure it exists
+        with open(file_path, mode, encoding="utf-8") as f:
+            pass
+
+    def write(self, message: str) -> None:
+        """
+        Write message to file.
+        :param message: Message to write
+        """
+        try:
+            with open(self.file_path, self.mode, encoding="utf-8") as f:
+                f.write(message)
+                if not message.endswith("\n"):
+                    f.write("\n")
+                f.flush()  # Ensure immediate write
+        except Exception as e:
+            # Fallback: at least try to print the error
+            print(f"Failed to write to file {self.file_path}: {e}")
+
+
 class BaseRound(ABC):
     """
     A round of a session in UFO.
@@ -497,16 +537,23 @@ class BaseSession(ABC):
         # Initialize the ID
         self.context.set(ContextNames.ID, self.id)
 
-        # Initialize the log path and the logger
-        logger = self.initialize_logger(self.log_path, "response.log")
-        request_logger = self.initialize_logger(self.log_path, "request.log")
-        eval_logger = self.initialize_logger(self.log_path, "evaluation.log")
-
+        # Initialize the log path and create file writers
         self.context.set(ContextNames.LOG_PATH, self.log_path)
 
-        self.context.set(ContextNames.LOGGER, logger)
-        self.context.set(ContextNames.REQUEST_LOGGER, request_logger)
-        self.context.set(ContextNames.EVALUATION_LOGGER, eval_logger)
+        # Create file writers that bypass global logging.disable()
+        response_writer = FileWriter(
+            os.path.join(self.log_path, "response.log"), mode="a"
+        )
+        request_writer = FileWriter(
+            os.path.join(self.log_path, "request.log"), mode="a"
+        )
+        eval_writer = FileWriter(
+            os.path.join(self.log_path, "evaluation.log"), mode="a"
+        )
+
+        self.context.set(ContextNames.LOGGER, response_writer)
+        self.context.set(ContextNames.REQUEST_LOGGER, request_writer)
+        self.context.set(ContextNames.EVALUATION_LOGGER, eval_writer)
 
         # Initialize the session cost and step
         self.context.set(ContextNames.SESSION_COST, 0)
@@ -585,10 +632,10 @@ class BaseSession(ABC):
         return self.context.get(ContextNames.SESSION_STEP)
 
     @property
-    def evaluation_logger(self) -> logging.Logger:
+    def evaluation_logger(self) -> FileWriter:
         """
-        Get the logger for evaluation.
-        return: The logger for evaluation.
+        Get the file writer for evaluation.
+        return: The file writer for evaluation.
         """
         return self.context.get(ContextNames.EVALUATION_LOGGER)
 
@@ -761,7 +808,7 @@ class BaseSession(ABC):
 
         evaluator.print_response(result)
 
-        self.evaluation_logger.info(json.dumps(result))
+        self.evaluation_logger.write(json.dumps(result))
 
         self.logger.info(
             f"Evaluation result saved to {os.path.join(self.log_path, 'evaluation.log')}"
