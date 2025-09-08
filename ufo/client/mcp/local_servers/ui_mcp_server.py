@@ -20,7 +20,7 @@ from pydantic import Field
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.agents.processors.actions import ActionCommandInfo
-from ufo.agents.processors.target import TargetInfo
+from ufo.agents.processors.target import TargetInfo, TargetKind
 from ufo.automator.action_execution import ActionExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.automator.ui_control import ui_tree
@@ -636,6 +636,48 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
 
         return revised_desktop_windows_info
 
+    def get_desktop_app_target_info(
+        remove_empty: bool = True, refresh_app_windows: bool = True
+    ) -> List:
+        """
+        Get information about all application windows currently open on the desktop.
+        :param remove_empty: Whether to remove windows with no visible content.
+        :param refresh_app_windows: Whether to refresh the list of application windows.
+        :return: Dictionary containing list of window information and metadata.
+        """
+        if refresh_app_windows:
+            app_windows = ui_state.control_inspector.get_desktop_app_dict(
+                remove_empty=remove_empty
+            )
+        else:
+            # Use existing windows if available
+            app_windows = getattr(ui_state, "last_app_windows", {})
+            if not app_windows:
+                app_windows = ui_state.control_inspector.get_desktop_app_dict(
+                    remove_empty=remove_empty
+                )
+
+        # Store for future use
+        ui_state.last_app_windows = app_windows
+
+        # Convert to WindowInfo objects
+        desktop_windows_info = ui_state.control_inspector.get_control_info_list_of_dict(
+            app_windows, ["control_text", "control_type"]
+        )
+        from ufo.agents.processors.target import TargetKind
+
+        revised_desktop_windows_info = [
+            TargetInfo(
+                id=window_info["label"],
+                name=window_info["control_text"],
+                type=window_info["control_type"],
+                kind=TargetKind.WINDOW,
+            )
+            for window_info in desktop_windows_info
+        ]
+
+        return revised_desktop_windows_info
+
     @data_mcp.tool()
     def get_app_window_info(field_list: List[str]) -> Dict[str, Any]:
         """
@@ -677,6 +719,48 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         ui_state.control_dict = control_dict
 
         return result
+
+    @data_mcp.tool()
+    def get_app_window_controls_target_info(field_list: List[str]) -> List:
+        """
+        Get information about controls in the currently selected application window.
+        :param field_list: List of fields to retrieve from the control info.
+        :return: Dictionary containing the requested control information.
+        """
+        if not ui_state.selected_app_window:
+            raise ToolError("No window is selected， please select a window first.")
+
+        controls_list = ui_state.control_inspector.find_control_elements_in_descendants(
+            ui_state.selected_app_window,
+            control_type_list=configs.get("CONTROL_LIST", []),
+            class_name_list=configs.get("CONTROL_LIST", []),
+        )
+
+        control_dict = {str(i + 1): control for i, control in enumerate(controls_list)}
+
+        result = ui_state.control_inspector.get_control_info_list_of_dict(
+            control_dict, field_list=field_list
+        )
+
+        ui_state.control_dict = control_dict
+
+        target_info_list = []
+        for id, control in control_dict.items():
+            control_info = ui_state.control_inspector.get_control_info(
+                control, field_list
+            )
+            target_info_list.append(
+                TargetInfo(
+                    kind=TargetKind.CONTROL,
+                    id=str(id),
+                    name=control_info.get("control_text"),
+                    type=control_info.get("control_type"),
+                    rect=control_info.get("control_rect"),
+                    source="uia",
+                )
+            )
+
+        return target_info_list
 
     @data_mcp.tool()
     def capture_window_screenshot() -> str:

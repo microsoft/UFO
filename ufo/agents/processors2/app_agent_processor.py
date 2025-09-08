@@ -19,6 +19,7 @@ The processor follows the established V2 patterns:
 """
 
 from dataclasses import dataclass, field
+import logging
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from ufo.agents.processors2.core.processor_framework import ProcessorTemplate
@@ -27,7 +28,10 @@ from ufo.agents.processors2.core.processing_context import (
     ProcessingContext,
 )
 
-from ufo.agents.processors2.middleware.enhanced_middleware import (
+if TYPE_CHECKING:
+    from ufo.agents.processors2.core.processor_framework import ProcessingResult
+
+from ufo.agents.processors2.core.processing_middleware import (
     EnhancedLoggingMiddleware,
 )
 from ufo.agents.processors2.strategies.app_agent_processing_strategy import (
@@ -82,6 +86,12 @@ class AppAgentProcessorContext(BasicProcessorContext):
     )  # Control annotation dictionary
     control_filter_time: float = 0.0  # Time taken for control filtering
     control_info_recorder: Optional[Any] = None  # Control information recorder
+    target_registry: Optional[Any] = (
+        None  # Target registry for control management (from original)
+    )
+    application_window: Optional[Any] = (
+        None  # Application window object (from original)
+    )
 
     # LLM interaction data - extends base parsed_response
     response_text: str = ""  # Raw LLM response text
@@ -118,20 +128,6 @@ class AppAgentProcessorContext(BasicProcessorContext):
     app_error_handler_active: bool = False  # Error handler status
     app_logging_active: bool = False  # Logging middleware status
     app_memory_sync_active: bool = False  # Memory sync middleware status
-
-    def __post_init__(self) -> None:
-        """
-        Initialize after dataclass construction.
-        """
-        super().__post_init__() if hasattr(super(), "__post_init__") else None
-
-        # Initialize app-specific performance metrics
-        if not self.app_performance_metrics:
-            self.app_performance_metrics = {
-                "agent_type": "AppAgent",
-                "start_time": 0.0,
-                "phase_timings": {},
-            }
 
     @property
     def selected_keys(self) -> List[str]:
@@ -190,7 +186,7 @@ class AppAgentProcessorV2(ProcessorTemplate):
     - Includes robust error handling and performance monitoring
 
     Processing Pipeline:
-    1. Data Collection: Screenshot capture and UI control information
+    1. Data Collection: Screenshot capture and UI control information (using a composed strategy)
     2. LLM Interaction: Context-aware prompting and response parsing
     3. Action Execution: UI automation and control interaction
     4. Memory Update: Agent memory and blackboard synchronization
@@ -209,19 +205,21 @@ class AppAgentProcessorV2(ProcessorTemplate):
         """Initialize App Agent Processor V2."""
         super().__init__(agent, global_context)
 
-        # Initialize processing strategies
-        self._setup_strategies()
+        # Initialize target_registry (from original implementation)
+        from ufo.agents.processors.target import TargetRegistry
 
-        # Initialize middleware pipeline
-        self._setup_middleware()
+        if not hasattr(global_context, "target_registry"):
+            global_context.target_registry = TargetRegistry()
 
     def _setup_strategies(self) -> None:
         """Setup processing strategies for App Agent."""
         from ufo.agents.processors2.core.processing_context import ProcessingPhase
 
         # Data collection strategy (combines screenshot + control info)
-        self.strategies[ProcessingPhase.DATA_COLLECTION] = ComposedAppDataCollectionStrategy(
-            fail_fast=True  # Data collection is critical for App Agent
+        self.strategies[ProcessingPhase.DATA_COLLECTION] = (
+            ComposedAppDataCollectionStrategy(
+                fail_fast=True  # Data collection is critical for App Agent
+            )
         )
 
         # LLM interaction strategy
@@ -242,7 +240,7 @@ class AppAgentProcessorV2(ProcessorTemplate):
     def _setup_middleware(self) -> None:
         """Setup middleware pipeline for App Agent."""
         # Core middleware (order matters)
-        self.middleware_chain = [EnhancedLoggingMiddleware()]
+        self.middleware_chain = [AppAgentLoggingMiddleware()]
 
     def get_required_context_keys(self) -> List[str]:
         """
@@ -297,3 +295,141 @@ class AppAgentProcessorV2(ProcessorTemplate):
 
         except Exception as e:
             self.logger.error(f"App Agent context finalization failed: {str(e)}")
+
+
+class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
+    """
+    Specialized logging middleware for App Agent with enhanced contextual information.
+
+    This middleware provides:
+    - App Agent specific progress messages with color coding
+    - Detailed step information with subtask and application context
+    - Performance metrics and execution summaries
+    - Enhanced error reporting with App Agent context
+    - Maintains compatibility with legacy AppAgent logging features
+    """
+
+    def __init__(self) -> None:
+        """Initialize App Agent logging middleware with appropriate log level."""
+        super().__init__(log_level=logging.INFO)
+
+    async def before_process(
+        self, processor: ProcessorTemplate, context: ProcessingContext
+    ) -> None:
+        """
+        Log App Agent processing start with detailed context information.
+        Replicates the functionality of the legacy print_step_info method.
+
+        :param processor: App Agent processor instance
+        :param context: Processing context with round and step information
+        """
+        # Import here to avoid circular imports
+        from ufo import utils
+
+        # Call parent implementation for standard logging
+        await super().before_process(processor, context)
+
+        # Extract context information
+        round_num = context.get("round_num", 0)
+        round_step = context.get("round_step", 0)
+        subtask = context.get("subtask", "")
+        app_root = context.get("app_root", "")
+        current_application = context.get("current_application", app_root)
+        request = context.get("request", "")
+
+        # Log detailed context information (similar to legacy logger.info)
+        self.logger.info(
+            f"Round {round_num + 1}, Step {round_step + 1}, AppAgent: "
+            f"Completing the subtask [{subtask}] on application [{current_application}]."
+        )
+
+        # Display colored progress message for user feedback (maintaining original UX)
+        # This replicates the legacy print_step_info functionality
+        utils.print_with_color(
+            f"Round {round_num + 1}, Step {round_step + 1}, AppAgent: "
+            f"Completing the subtask [{subtask}] on application [{current_application}].",
+            "magenta",
+        )
+
+        # Additional context logging for debugging
+        if self.logger.isEnabledFor(logging.DEBUG):
+            context_keys = list(context.local_data.keys())
+            self.logger.debug(f"Available App Agent context keys: {context_keys}")
+
+            if request:
+                self.logger.debug(
+                    f"App Agent Request: '{request[:100]}{'...' if len(request) > 100 else ''}'"
+                )
+
+    async def after_process(
+        self, processor: ProcessorTemplate, result: "ProcessingResult"
+    ) -> None:
+        """
+        Log App Agent processing completion with execution summary.
+
+        :param processor: App Agent processor instance
+        :param result: Processing result with execution data
+        """
+        # Import here to avoid circular imports
+        from ufo import utils
+
+        # Call parent implementation for standard logging
+        await super().after_process(processor, result)
+
+        if result.success:
+            # Log App Agent specific success information
+            subtask = result.data.get("subtask", "")
+            current_application = result.data.get("current_application", "")
+            action_result = result.data.get("action_result", "")
+            llm_cost = result.data.get("llm_cost", 0.0)
+
+            success_msg = "App Agent processing completed successfully"
+            if subtask:
+                success_msg += f" - Subtask: {subtask}"
+            if current_application:
+                success_msg += f" - Application: {current_application}"
+            if action_result:
+                success_msg += f" - Action: {action_result}"
+
+            self.logger.info(success_msg)
+
+            # Log cost information if available
+            if llm_cost > 0:
+                self.logger.debug(f"App Agent LLM cost: ${llm_cost:.4f}")
+
+            # Display user-friendly completion message (maintaining original UX)
+            if subtask and current_application:
+                utils.print_with_color(
+                    f"AppAgent: Successfully completed subtask '{subtask}' "
+                    f"on application '{current_application}'",
+                    "green",
+                )
+        else:
+            # Enhanced error logging for App Agent
+            error_phase = getattr(result, "phase", "unknown")
+            self.logger.error(
+                f"App Agent processing failed at phase: {error_phase} - {result.error}"
+            )
+
+            # Display user-friendly error message (maintaining original UX)
+            utils.print_with_color(
+                f"AppAgent: Processing failed - {result.error}", "red"
+            )
+
+    async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
+        """
+        Enhanced error handling for App Agent with contextual information.
+
+        :param processor: App Agent processor instance
+        :param error: Exception that occurred
+        """
+        # Import here to avoid circular imports
+        from ufo import utils
+
+        # Call parent implementation for standard error handling
+        await super().on_error(processor, error)
+
+        # Display user-friendly error message (maintaining original UX)
+        utils.print_with_color(
+            f"AppAgent: Encountered error - {str(error)[:100]}", "red"
+        )

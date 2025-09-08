@@ -12,7 +12,7 @@ from ufo.agents.processors2.core.processing_context import (
     ProcessingResult,
 )
 
-from ufo.agents.processors2.middleware.processing_middleware import ProcessorMiddleware
+from ufo.agents.processors2.core.processing_middleware import ProcessorMiddleware
 from ufo.agents.processors2.strategies.processing_strategy import ProcessingStrategy
 from ufo.agents.processors2.core.strategy_dependency import (
     StrategyDependencyValidator,

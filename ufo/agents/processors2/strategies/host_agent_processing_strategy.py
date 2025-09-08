@@ -45,6 +45,7 @@ from ufo.config import Config
 from ufo.contracts.contracts import Command, Result, ResultStatus
 from ufo.llm import AgentType
 from ufo.module.context import ContextNames
+from ufo.module.dispatcher import BasicCommandDispatcher
 
 # Load configuration
 configs = Config.get_instance().config_data
@@ -97,18 +98,31 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
         :return: ProcessingResult with collected desktop data or error information
         """
         try:
+            # Extract context variables
+            command_dispatcher = context.global_context.command_dispatcher
+            log_path = context.get("log_path", "")
+            session_step = context.get("session_step", 0)
+
             # Step 1: Capture desktop screenshot
             self.logger.info("Starting desktop screenshot capture")
-            screenshot_data = await self._capture_desktop_screenshot(context)
+
+            desktop_save_path = f"{log_path}action_step{session_step}.png"
+            desktop_screenshot_url = await self._capture_desktop_screenshot(
+                command_dispatcher, desktop_save_path
+            )
 
             # Step 2: Collect application window information
             self.logger.info("Collecting desktop application information")
-            app_windows_info = await self._get_desktop_application_info(context)
+            app_windows_info = await self._get_desktop_application_info(
+                command_dispatcher
+            )
 
             # Step 3: Register applications and third-party agents
             self.logger.info(f"Registering {len(app_windows_info)} applications")
+            existing_target_registry = context.get_local("target_registry")
+
             target_registry = self._register_applications_and_agents(
-                context, app_windows_info
+                app_windows_info, existing_target_registry
             )
 
             # Step 4: Prepare target information for LLM
@@ -117,8 +131,8 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
             return ProcessingResult(
                 success=True,
                 data={
-                    "desktop_screenshot_url": screenshot_data["url"],
-                    "desktop_screenshot_path": screenshot_data["path"],
+                    "desktop_screenshot_url": desktop_screenshot_url,
+                    "desktop_screenshot_path": desktop_save_path,
                     "application_windows_info": app_windows_info,
                     "target_registry": target_registry,
                     "target_info_list": target_info_list,
@@ -132,24 +146,20 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
             return self.handle_error(e, ProcessingPhase.DATA_COLLECTION, context)
 
     async def _capture_desktop_screenshot(
-        self, context: ProcessingContext
-    ) -> Dict[str, str]:
+        self,
+        command_dispatcher: BasicCommandDispatcher,
+        save_path: str,
+    ) -> str:
         """
         Capture desktop screenshot with proper error handling and path management.
-        :param context: Processing context containing command dispatcher and paths
-        :return: Dictionary containing screenshot URL and file path
+        :param command_dispatcher: Command dispatcher for executing commands
+        :param save_path: Log path for saving screenshots
+        :return: Screenshot URL
         :raises: Exception if screenshot capture fails
         """
         try:
-            command_dispatcher = context.global_context.command_dispatcher
-
             if not command_dispatcher:
                 raise ValueError("Command dispatcher not available in context")
-
-            log_path = context.get("log_path", "")
-            session_step = context.get("session_step", 0)
-
-            desktop_save_path = f"{log_path}action_step{session_step}.png"
 
             # Execute screenshot capture command
             result = await command_dispatcher.execute_commands(
@@ -172,25 +182,24 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
             desktop_screenshot_url = result[0].result
 
             # Save screenshot to file
-            utils.save_image_string(desktop_screenshot_url, desktop_save_path)
-            self.logger.info(f"Desktop screenshot saved to: {desktop_save_path}")
+            utils.save_image_string(desktop_screenshot_url, save_path)
+            self.logger.info(f"Desktop screenshot saved to: {save_path}")
 
-            return {"url": desktop_screenshot_url, "path": desktop_save_path}
+            return desktop_screenshot_url
 
         except Exception as e:
             raise Exception(f"Failed to capture desktop screenshot: {str(e)}")
 
     async def _get_desktop_application_info(
-        self, context: ProcessingContext
-    ) -> List[Dict[str, Any]]:
+        self, command_dispatcher: BasicCommandDispatcher
+    ) -> List[TargetInfo]:
         """
         Get comprehensive desktop application information with filtering.
-        :param context: Processing context containing command dispatcher
+        :param command_dispatcher: Command dispatcher for executing commands
         :return: List of application window information dictionaries
         :raises: Exception if application info collection fails
         """
         try:
-            command_dispatcher = context.global_context.command_dispatcher
             if not command_dispatcher:
                 raise ValueError("Command dispatcher not available in context")
 
@@ -198,7 +207,7 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
             result = await command_dispatcher.execute_commands(
                 [
                     Command(
-                        tool_name="get_desktop_app_info",
+                        tool_name="get_desktop_app_target_info",
                         parameters={"remove_empty": True, "refresh_app_windows": True},
                         tool_type="data_collection",
                     )
@@ -217,23 +226,24 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
             raise Exception(f"Failed to get desktop application info: {str(e)}")
 
     def _register_applications_and_agents(
-        self, context: ProcessingContext, app_windows_info: List[Dict[str, Any]]
+        self,
+        app_windows_info: List[TargetInfo],
+        target_registry: TargetRegistry = None,
     ) -> TargetRegistry:
         """
         Register desktop applications and third-party agents in target registry.
-        :param context: Processing context
         :param app_windows_info: List of application window information
+        :param target_registry: Target registry to use, creates new one if None
         :return: Target registry with registered applications and agents
         """
         try:
             # Get or create target registry
-            target_registry = context.get_local("target_registry")
             if not target_registry:
                 target_registry = TargetRegistry()
-                context.set_local("target_registry", target_registry)
 
             # Register desktop application windows
-            target_registry.register_from_dicts(app_windows_info)
+            target_registry.register(app_windows_info)
+
             self.logger.info(f"Registered {len(app_windows_info)} application windows")
 
             # Register third-party agents
@@ -269,16 +279,16 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
             for i, agent_name in enumerate(third_party_agent_names):
                 agent_id = str(i + start_index + 1)  # +1 for proper indexing
                 third_party_agent_list.append(
-                    {
-                        "kind": TargetKind.THIRD_PARTY_AGENT.value,
-                        "id": agent_id,
-                        "type": "ThirdPartyAgent",
-                        "name": agent_name,
-                    }
+                    TargetInfo(
+                        kind=TargetKind.THIRD_PARTY_AGENT.value,
+                        id=agent_id,
+                        type="ThirdPartyAgent",
+                        name=agent_name,
+                    )
                 )
 
             # Register third-party agents in registry
-            target_registry.register_from_dicts(third_party_agent_list)
+            target_registry.register(third_party_agent_list)
 
             return len(third_party_agent_list)
 
@@ -329,6 +339,15 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
         :return: ProcessingResult containing parsed response or error information
         """
         try:
+            # Extract context variables
+            target_info_list = context.get_local("target_info_list", [])
+            desktop_screenshot_url = context.get_local("desktop_screenshot_url", "")
+            prev_plan = context.get("prev_plan", [])
+            previous_subtasks = context.get("previous_subtasks", [])
+            request = context.get("request", "")
+            session_step = context.get("session_step", 0)
+            request_logger = context.get_global("request_logger")
+
             # Use the agent parameter directly instead of getting from context
             host_agent = agent
             if not host_agent:
@@ -336,7 +355,16 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
 
             # Step 1: Build comprehensive prompt message
             self.logger.info("Building prompt message with context")
-            prompt_message = await self._build_comprehensive_prompt(host_agent, context)
+            prompt_message = await self._build_comprehensive_prompt(
+                host_agent,
+                target_info_list,
+                desktop_screenshot_url,
+                prev_plan,
+                previous_subtasks,
+                request,
+                session_step,
+                request_logger,
+            )
 
             # Step 3: Get LLM response with retry logic
             self.logger.info("Sending request to LLM")
@@ -350,8 +378,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
                 host_agent, response_text
             )
 
-            # Update processor status from parsed response
-            context.set_local("status", parsed_response.status)
+            # # Update processor status from parsed response
 
             self.logger.info(
                 f"Host LLM interaction status set to: {context.get_local('status')}"
@@ -378,18 +405,30 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
             return self.handle_error(e, ProcessingPhase.LLM_INTERACTION, context)
 
     async def _build_comprehensive_prompt(
-        self, agent: "HostAgent", context: ProcessingContext
+        self,
+        agent: "HostAgent",
+        target_info_list: List[Any],
+        desktop_screenshot_url: str,
+        prev_plan: List[Any],
+        previous_subtasks: List[Any],
+        request: str,
+        session_step: int,
+        request_logger,
     ) -> Dict[str, Any]:
         """
         Build comprehensive prompt message with all available context information.
         :param agent: The HostAgent instance.
-        :param context: Processing context containing desktop and agent data
+        :param target_info_list: List of target information
+        :param desktop_screenshot_url: URL of desktop screenshot
+        :param prev_plan: Previous plan
+        :param previous_subtasks: Previous subtasks
+        :param request: User request
+        :param session_step: Current session step
+        :param request_logger: Request logger
         :return: Complete prompt message dictionary for LLM interaction
         """
         try:
             host_agent: "HostAgent" = agent  # Use agent parameter directly
-            target_info_list = context.get_local("target_info_list", [])
-            desktop_screenshot_url = context.get_local("desktop_screenshot_url", "")
 
             # Get blackboard context if available
             blackboard_prompt = []
@@ -403,14 +442,24 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
             prompt_message = host_agent.message_constructor(
                 image_list=[desktop_screenshot_url] if desktop_screenshot_url else [],
                 os_info=target_info_list,
-                plan=context.get("prev_plan", []),
-                prev_subtask=context.get("previous_subtasks", []),
-                request=context.get("request", ""),
+                plan=prev_plan,
+                prev_subtask=previous_subtasks,
+                request=request,
                 blackboard_prompt=blackboard_prompt,
             )
 
             # Log request data for debugging
-            self._log_request_data(context, prompt_message, blackboard_prompt)
+            self._log_request_data(
+                session_step,
+                desktop_screenshot_url,
+                target_info_list,
+                prev_plan,
+                previous_subtasks,
+                request,
+                blackboard_prompt,
+                prompt_message,
+                request_logger,
+            )
 
             self.logger.debug(f"Built prompt with {len(target_info_list)} targets")
             return prompt_message
@@ -420,25 +469,36 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
 
     def _log_request_data(
         self,
-        context: ProcessingContext,
+        session_step: int,
+        desktop_screenshot_url: str,
+        target_info_list: List[Any],
+        prev_plan: List[Any],
+        previous_subtasks: List[Any],
+        request: str,
+        blackboard_prompt: List[str],
         prompt_message: Dict[str, Any],
-        blackboard_prompt: List[str] = [],
+        request_logger,
     ) -> None:
         """
         Log request data for debugging and analysis (only in debug mode).
-        :param context: Processing context
-        :param prompt_message: Constructed prompt message
+        :param session_step: Current session step
+        :param desktop_screenshot_url: Desktop screenshot URL
+        :param target_info_list: List of target information
+        :param prev_plan: Previous plan
+        :param previous_subtasks: Previous subtasks
+        :param request: User request
         :param blackboard_prompt: Extracted blackboard prompt items
+        :param prompt_message: Constructed prompt message
+        :param request_logger: Request logger
         """
         try:
-            desktop_screenshot_url = context.get_local("desktop_screenshot_url", "")
             request_data = HostAgentRequestLog(
-                step=context.get("session_step", 0),
+                step=session_step,
                 image_list=[desktop_screenshot_url] if desktop_screenshot_url else [],
-                os_info=context.get_local("target_info_list", []),
-                plan=context.get("prev_plan", []),
-                prev_subtask=context.get("previous_subtasks", []),
-                request=context.get("request", ""),
+                os_info=target_info_list,
+                plan=prev_plan,
+                prev_subtask=previous_subtasks,
+                request=request,
                 blackboard_prompt=blackboard_prompt,
                 prompt=prompt_message,
             )
@@ -447,7 +507,6 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
             request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
 
             # Use request logger if available
-            request_logger = context.get_global("request_logger")
             if request_logger:
                 request_logger.debug(request_log_str)
 
@@ -614,6 +673,7 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
         :return: ProcessingResult with execution results or error information
         """
         try:
+            # Extract all needed variables from context
             parsed_response = context.get_local("parsed_response")
             if not parsed_response:
                 return ProcessingResult(
@@ -630,38 +690,66 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
                     phase=ProcessingPhase.ACTION_EXECUTION,
                 )
 
+            target_registry: TargetRegistry = context.get_local("target_registry")
+            command_dispatcher = context.global_context.command_dispatcher
+
+            selected_target_id = context.get_local("selected_target_id")
+            selected_application_root = context.get_local(
+                "selected_application_root", ""
+            )
+            assigned_third_party_agent = context.get_local(
+                "assigned_third_party_agent", ""
+            )
+
             self.logger.info(f"Executing action: {function_name}")
 
             # Execute the appropriate action based on function name
             if function_name == self.SELECT_APPLICATION_COMMAND:
                 execution_result = await self._execute_application_selection(
-                    context, parsed_response
+                    parsed_response, target_registry, command_dispatcher
                 )
+                # Get target info for context updates
+                target_id = (
+                    parsed_response.arguments.get("id")
+                    if parsed_response.arguments
+                    else None
+                )
+                target = (
+                    target_registry.get(target_id)
+                    if target_registry and target_id
+                    else None
+                )
+                selected_target_id = target_id
+                selected_application_root = ""
+                assigned_third_party_agent = ""
+
+                if target:
+                    if target.kind == TargetKind.THIRD_PARTY_AGENT:
+                        assigned_third_party_agent = target.name
+                    else:
+                        if execution_result and execution_result[0].result:
+                            selected_application_root = execution_result[0].result.get(
+                                "root_name", ""
+                            )
+
             else:
                 execution_result = await self._execute_generic_command(
-                    context, parsed_response
+                    parsed_response, command_dispatcher
                 )
 
             # Create action info for memory and tracking
             action_info = self._create_action_info(
-                context, parsed_response, execution_result
+                parsed_response, execution_result, target_registry, selected_target_id
             )
-
-            # Update context state based on execution results
-            self._update_context_state(context, parsed_response, execution_result)
 
             return ProcessingResult(
                 success=True,
                 data={
                     "execution_result": execution_result,
                     "action_info": action_info,
-                    "selected_target_id": context.get_local("selected_target_id"),
-                    "selected_application_root": context.get_local(
-                        "selected_application_root"
-                    ),
-                    "assigned_third_party_agent": context.get_local(
-                        "assigned_third_party_agent"
-                    ),
+                    "selected_target_id": selected_target_id,
+                    "selected_application_root": selected_application_root,
+                    "assigned_third_party_agent": assigned_third_party_agent,
                 },
                 phase=ProcessingPhase.ACTION_EXECUTION,
             )
@@ -672,20 +760,26 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
             return self.handle_error(e, ProcessingPhase.ACTION_EXECUTION, context)
 
     async def _execute_application_selection(
-        self, context: ProcessingContext, response: HostAgentResponse
+        self,
+        parsed_response: HostAgentResponse,
+        target_registry: TargetRegistry,
+        command_dispatcher: BasicCommandDispatcher,
     ) -> List[Result]:
         """
         Execute application selection with proper handling of different target types.
-        :param context: Processing context
-        :param response: Parsed response containing function arguments
+        :param parsed_response: Parsed response containing function arguments
+        :param target_registry: Target registry containing available targets
+        :param command_dispatcher: Command dispatcher for executing commands
         :return: List of execution results
         """
         try:
-            target_id = response.arguments.get("id") if response.arguments else None
+            target_id = (
+                parsed_response.arguments.get("id")
+                if parsed_response.arguments
+                else None
+            )
             if not target_id:
                 raise ValueError("No target ID specified for application selection")
-
-            target_registry: TargetRegistry = context.get_local("target_registry")
 
             if not target_registry:
                 raise ValueError("Target registry not available")
@@ -698,35 +792,29 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
                 f"Selecting target: {target.name} (ID: {target_id}, Kind: {target.kind})"
             )
 
-            context.set_local("target", target)
-
             # Handle third-party agent selection
             if target.kind == TargetKind.THIRD_PARTY_AGENT:
-                return await self._select_third_party_agent(context, target)
+                return await self._select_third_party_agent(target)
 
             # Handle regular application selection
             else:
-                return await self._select_regular_application(context, target)
+                return await self._select_regular_application(
+                    target, command_dispatcher
+                )
 
         except Exception as e:
             raise Exception(f"Application selection failed: {str(e)}")
 
-    async def _select_third_party_agent(
-        self, context: ProcessingContext, target: TargetInfo
-    ) -> List[Result]:
+    async def _select_third_party_agent(self, target: TargetInfo) -> List[Result]:
         """
         Handle third-party agent selection and assignment.
         This method processes the selection of a third-party agent and records
         the assignment in the processing context for subsequent use.
-        :param context: Processing context for storing assignment information
         :param target: Third-party agent target object containing agent details
         :return: List of Result objects indicating successful third-party agent selection
         :raises: Exception if third-party agent selection encounters critical errors
         """
         try:
-
-            context.set_local("assigned_third_party_agent", target.name)
-            context.set_local("selected_target_id", target.id)
 
             self.logger.info(f"Assigned third-party agent: {target.name}")
 
@@ -746,20 +834,19 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
             raise Exception(f"Third-party agent selection failed: {str(e)}")
 
     async def _select_regular_application(
-        self, context: ProcessingContext, target: Any
+        self, target: TargetInfo, command_dispatcher: BasicCommandDispatcher
     ) -> List[Result]:
         """
         Handle regular application selection and window management.
         This method executes the application selection command and manages
         the window state, including setting the application root and updating
         the global context for use by other components.
-        :param context: Processing context for state management
         :param target: Application target object containing application details
+        :param command_dispatcher: Command dispatcher for executing commands
         :return: List of Result objects from application selection command execution
         :raises: Exception if application selection or window management fails
         """
         try:
-            command_dispatcher = context.global_context.command_dispatcher
             if not command_dispatcher:
                 raise ValueError("Command dispatcher not available")
 
@@ -778,13 +865,6 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
             if execution_result and execution_result[0].result:
                 app_root = execution_result[0].result.get("root_name", "")
 
-                context.set_local("selected_application_root", app_root)
-                context.set_local("selected_target_id", target.id)
-
-                # Update global context for other components
-                # context.set_global(ContextNames.APPLICATION_ROOT_NAME, app_root)
-                # context.set_global(ContextNames.APPLICATION_PROCESS_NAME, target.name)
-
                 self.logger.info(
                     f"Selected application: {target.name}, root: {app_root}"
                 )
@@ -795,25 +875,26 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
             raise Exception(f"Regular application selection failed: {str(e)}")
 
     async def _execute_generic_command(
-        self, context: ProcessingContext, response: HostAgentResponse
+        self,
+        parsed_response: HostAgentResponse,
+        command_dispatcher: BasicCommandDispatcher,
     ) -> List[Result]:
         """
         Execute generic command using command dispatcher.
         This method handles the execution of arbitrary commands that are not
         specifically handled by other execution methods. It provides a generic
         interface for command execution with proper error handling.
-        :param context: Processing context containing command dispatcher
-        :param response: Parsed response containing function name and arguments
+        :param parsed_response: Parsed response containing function name and arguments
+        :param command_dispatcher: Command dispatcher for executing commands
         :return: List of Result objects from command execution
         :raises: Exception if command dispatcher is unavailable or command execution fails
         """
         try:
-            command_dispatcher = context.global_context.command_dispatcher
             if not command_dispatcher:
                 raise ValueError("Command dispatcher not available")
 
-            function_name = response.function
-            arguments = response.arguments or {}
+            function_name = parsed_response.function
+            arguments = parsed_response.arguments or {}
 
             self.logger.info(
                 f"Executing generic command: {function_name} with args: {arguments}"
@@ -837,24 +918,23 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
 
     def _create_action_info(
         self,
-        context: ProcessingContext,
-        response: HostAgentResponse,
+        parsed_response: HostAgentResponse,
         execution_result: List[Result],
+        target_registry: TargetRegistry,
+        selected_target_id: str,
     ) -> ActionCommandInfo:
         """
         Create action information object for memory and tracking.
         This method constructs a comprehensive action information object that
         captures the complete context of the executed action, including the
         target object, execution results, and status information.
-        :param context: Processing context containing target registry
-        :param response: Parsed response with action details
+        :param parsed_response: Parsed response with action details
         :param execution_result: Results from action execution
+        :param target_registry: Target registry containing available targets
+        :param selected_target_id: ID of the selected target
         :return: ActionCommandInfo object with complete execution details
         """
         try:
-            target_registry = context.get_local("target_registry")
-            selected_target_id = context.get_local("selected_target_id")
-
             # Get target object for action info
             target_object = None
             if target_registry and selected_target_id:
@@ -862,10 +942,10 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
 
             # Create action info
             action_info = ActionCommandInfo(
-                function=response.function,
-                arguments=response.arguments or {},
+                function=parsed_response.function,
+                arguments=parsed_response.arguments or {},
                 target=target_object,
-                status=response.status,
+                status=parsed_response.status,
                 result=(
                     execution_result[0] if execution_result else Result(status="none")
                 ),
@@ -877,52 +957,12 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
             self.logger.warning(f"Failed to create action info: {str(e)}")
             # Return basic action info on failure
             return ActionCommandInfo(
-                function=response.function or "unknown",
-                arguments=response.arguments or {},
+                function=parsed_response.function or "unknown",
+                arguments=parsed_response.arguments or {},
                 target=None,
-                status=response.status or "unknown",
+                status=parsed_response.status or "unknown",
                 result=Result(status="error", result={"error": str(e)}),
             )
-
-    def _update_context_state(
-        self,
-        context: ProcessingContext,
-        response: HostAgentResponse,
-        execution_result: List[Result],
-    ) -> None:
-        """
-        Update context state based on action execution results.
-        This method updates the processing context with relevant state information
-        from the action execution, ensuring that subsequent processing phases have
-        access to the updated state information.
-        :param context: Processing context to update with execution state
-        :param response: Parsed response containing action information
-        :param execution_result: Results from action execution for state updates
-        """
-        try:
-
-            # Update control label and text for memory
-            selected_target_id = context.get_local("selected_target_id")
-            if selected_target_id:
-                updates = {"control_label": selected_target_id}
-
-                target_registry = context.get_local("target_registry")
-                if target_registry:
-                    target = target_registry.get(selected_target_id)
-                    if target:
-                        updates["control_text"] = target.name
-
-                context.set_local("control_label", selected_target_id)
-                if "control_text" in updates:
-                    context.set_local("control_text", updates["control_text"])
-
-            # Store action result for memory
-            if execution_result:
-
-                context.set_local("action_result", execution_result[0].result)
-
-        except Exception as e:
-            self.logger.warning(f"Failed to update context state: {str(e)}")
 
 
 @depends_on("session_step", "round_step", "round_num")
@@ -955,23 +995,26 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
         :return: ProcessingResult with memory update results or error information
         """
         try:
+            # Extract all needed variables from context
+            parsed_response = context.get_local("parsed_response")
+
             # Use the agent parameter directly
             host_agent = agent
 
             # Step 1: Create comprehensive additional memory data
             self.logger.info("Creating additional memory data")
-            additional_memory = self._create_additional_memory_data(agent, context)
+            additional_memory = self._create_additional_memory_data(host_agent, context)
 
             # Step 2: Create and populate memory item
             memory_item = self._create_and_populate_memory_item(
-                context, additional_memory
+                parsed_response, additional_memory
             )
 
             # Step 3: Add memory to agent
             host_agent.add_memory(memory_item)
 
             # Step 4: Update structural logs
-            self._update_structural_logs(context, memory_item)
+            self._update_structural_logs(memory_item, context.global_context)
 
             # Step 5: Update blackboard trajectories
             self._update_blackboard_trajectories(host_agent, memory_item)
@@ -1037,9 +1080,9 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
             host_context.agent_name = agent.name
 
             # Update time costs and control log
-            host_context.execution_times = self._calculate_time_costs(context)
+            host_context.execution_times = self._calculate_time_costs()
             host_context.control_log = self._create_control_log(
-                context, host_context.action_info
+                host_context.action_info, context.get_local("control_text", "")
             )
 
             # Convert to legacy format using the new method
@@ -1048,10 +1091,9 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
         except Exception as e:
             raise Exception(f"Failed to create additional memory data: {str(e)}")
 
-    def _calculate_time_costs(self, context: ProcessingContext) -> Dict[str, float]:
+    def _calculate_time_costs(self) -> Dict[str, float]:
         """
         Calculate time costs for different processing phases.
-        :param context: Processing context
         :return: Dictionary mapping phase names to execution times
         """
         try:
@@ -1067,12 +1109,12 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
             return {}
 
     def _create_control_log(
-        self, context: ProcessingContext, action_info: Optional[ActionCommandInfo]
+        self, action_info: Optional[ActionCommandInfo], control_text: str = ""
     ) -> Dict[str, Any]:
         """
         Create control log information for debugging and analysis.
-        :param context: Processing context
         :param action_info: Action information if available
+        :param control_text: Control text from context
         :return: Dictionary containing control log data
         """
         try:
@@ -1083,7 +1125,7 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
                     "target_id": getattr(action_info.target, "id", ""),
                     "target_name": getattr(action_info.target, "name", ""),
                     "target_kind": getattr(action_info.target, "kind", ""),
-                    "control_text": context.get_local("control_text", ""),
+                    "control_text": control_text,
                 }
 
             return control_log
@@ -1093,11 +1135,13 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
             return {}
 
     def _create_and_populate_memory_item(
-        self, context: ProcessingContext, additional_memory: HostAgentAdditionalMemory
+        self,
+        parsed_response: HostAgentResponse,
+        additional_memory: HostAgentAdditionalMemory,
     ) -> MemoryItem:
         """
         Create and populate memory item with response and additional data.
-        :param context: Processing context
+        :param parsed_response: Parsed response containing response data
         :param additional_memory: Additional memory data
         :return: Populated MemoryItem object
         """
@@ -1106,7 +1150,6 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
             memory_item = MemoryItem()
 
             # Add response data if available
-            parsed_response = context.get_local("parsed_response")
             if parsed_response:
                 # HostAgentResponse is a regular class, use vars() to convert to dict
                 memory_item.add_values_from_dict(asdict(parsed_response))
@@ -1119,17 +1162,15 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
         except Exception as e:
             raise Exception(f"Failed to create and populate memory item: {str(e)}")
 
-    def _update_structural_logs(
-        self, context: ProcessingContext, memory_item: MemoryItem
-    ) -> None:
+    def _update_structural_logs(self, memory_item: MemoryItem, global_context) -> None:
         """
         Update structural logs for debugging and analysis.
-        :param context: Processing context
         :param memory_item: Memory item to log
+        :param global_context: Global context for structural logs
         """
         try:
             # Add to structural logs if context supports it
-            context.global_context.add_to_structural_logs(memory_item.to_dict())
+            global_context.add_to_structural_logs(memory_item.to_dict())
 
         except Exception as e:
             self.logger.warning(f"Failed to update structural logs: {str(e)}")

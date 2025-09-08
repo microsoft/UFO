@@ -1,22 +1,70 @@
-"""
-Middleware implementations with enhanced error handling capabilities.
-"""
-
-import asyncio
 import logging
-import time
 import traceback
-from typing import Dict, Any, Optional
+from abc import ABC, abstractmethod
+from typing import TYPE_CHECKING, Optional
 
 from flask import json
-from ufo.agents.processors2.core.processor_framework import (
-    ProcessorMiddleware,
-    ProcessorTemplate,
+
+from ufo.agents.processors2.core.processing_context import (
+    ProcessingContext,
     ProcessingResult,
+)
+from ufo.agents.processors2.core.processor_framework import (
     ProcessingContext,
     ProcessingException,
+    ProcessingResult,
+    ProcessorMiddleware,
+    ProcessorTemplate,
 )
+from ufo.module.basic import FileWriter
 from ufo.module.context import ContextNames
+
+if TYPE_CHECKING:
+    from ufo.agents.processors2.core.processor_framework import ProcessorTemplate
+
+
+class ProcessorMiddleware(ABC):
+    """
+    Processor middleware base class.
+    """
+
+    def __init__(self, name: Optional[str] = None):
+        """
+        Initialize the middleware.
+        :param name: Optional custom name for the middleware. If not provided, uses class name.
+        """
+        self.name = name or self.__class__.__name__
+
+    @abstractmethod
+    async def before_process(
+        self, processor: "ProcessorTemplate", context: ProcessingContext
+    ) -> None:
+        """
+        Before processing hook.
+        :param processor: The processor instance.
+        :param context: The processing context.
+        """
+        pass
+
+    @abstractmethod
+    async def after_process(
+        self, processor: "ProcessorTemplate", result: ProcessingResult
+    ) -> None:
+        """
+        After processing hook.
+        :param processor: The processor instance.
+        :param result: The processing result.
+        """
+        pass
+
+    @abstractmethod
+    async def on_error(self, processor: "ProcessorTemplate", error: Exception) -> None:
+        """
+        Error handling hook.
+        :param processor: The processor instance.
+        :param error: The error that occurred.
+        """
+        pass
 
 
 class EnhancedLoggingMiddleware(ProcessorMiddleware):
@@ -59,7 +107,7 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
         else:
             self.logger.warning(f"Processing completed with failure: {result.error}")
 
-        local_logger: logging.Logger = processor.processing_context.global_context.get(
+        local_logger: FileWriter = processor.processing_context.global_context.get(
             ContextNames.LOGGER
         )
         local_context = processor.processing_context.local_context
@@ -76,14 +124,14 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
             local_context.to_dict(selective=True), ensure_ascii=False
         )
 
-        local_logger.info(local_context_string)
+        local_logger.write(local_context_string)
 
         self.logger.info("Log saved successfully.")
 
     async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
         """Enhanced error logging with context information."""
         if isinstance(error, ProcessingException):
-            # 详细记录ProcessingException的上下文信息
+            # record error
             self.logger.error(
                 f"ProcessingException in {processor.__class__.__name__}:\n"
                 f"  Phase: {error.phase}\n"

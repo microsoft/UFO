@@ -2,13 +2,16 @@
 # Licensed under the MIT License.
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List
+from typing import Any, Dict, List, TYPE_CHECKING
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.uia_element_info import UIAElementInfo
 from pywinauto.win32structures import RECT
 
 from ufo.llm.base import BaseService
+
+if TYPE_CHECKING:
+    from ufo.agents.processors.target import TargetInfo
 
 
 class VirtualUIAElementInfo(UIAElementInfo):
@@ -102,6 +105,21 @@ class BasicGrounding(ABC):
             "x1": The absolute right coordinate of the bounding box in integer,
             "y1": The absolute bottom coordinate of the bounding box in integer,
         }
+        """
+        pass
+
+    @abstractmethod
+    def screen_parsing(
+        self,
+        screenshot_path: str,
+        application_window_info: TargetInfo = None,
+    ) -> List[TargetInfo]:
+        """
+        Parse the grounding results using TargetInfo for application window information.
+        :param screenshot_path: The path to the screenshot image.
+        :param results: The list of grounding results dictionaries from the grounding model.
+        :param application_window_info: The application window TargetInfo.
+        :return: The list of control elements target information dictionaries.
         """
         pass
 

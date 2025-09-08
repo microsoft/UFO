@@ -40,9 +40,7 @@ from ufo.agents.processors2.core.processor_framework import (
     ProcessorTemplate,
 )
 from ufo.agents.processors2.core.processing_context import BasicProcessorContext
-from ufo.agents.processors2.middleware.enhanced_middleware import (
-    EnhancedLoggingMiddleware,
-)
+from ufo.agents.processors2.core.processing_middleware import EnhancedLoggingMiddleware
 from ufo.config import Config
 from ufo.module.context import Context, ContextNames
 
@@ -86,8 +84,6 @@ class HostAgentProcessorContext(BasicProcessorContext):
 
     # Action and control information
     action_info: Optional[ActionCommandInfo] = None
-    control_label: str = ""
-    control_text: str = ""
     action_result: Optional[Any] = None
 
     assigned_third_party_agent: Optional[str] = None
@@ -126,8 +122,7 @@ class HostAgentProcessorContext(BasicProcessorContext):
             "step",  # Step
             "round_step",  # RoundStep
             "agent_step",  # AgentStep
-            "round_num",  # Round
-            "control_label",  # ControlLabel
+            "round_num",  # RoundNum
             "subtask_index",  # SubtaskIndex
             "action",  # Action
             "function_call",  # FunctionCall
@@ -171,8 +166,6 @@ class HostAgentProcessorV2(ProcessorTemplate):
         :param agent: The Host Agent instance to be processed
         :param global_context: Global context shared across the session
         """
-        # Core components and tools - kept in __init__
-        self.host_agent: "HostAgent" = agent
 
         # Initialize parent class
         super().__init__(agent, global_context)

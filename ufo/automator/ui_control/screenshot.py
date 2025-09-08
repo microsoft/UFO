@@ -7,7 +7,7 @@ import mimetypes
 import os
 from abc import ABC, abstractmethod
 from io import BytesIO
-from typing import Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 from PIL import Image, ImageDraw, ImageFont, ImageGrab
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -15,6 +15,9 @@ from pywinauto.win32structures import RECT
 
 from ufo import utils
 from ufo.config import Config
+
+if TYPE_CHECKING:
+    from ufo.agents.processors.target import TargetInfo
 
 configs = Config.get_instance().config_data
 
@@ -541,6 +544,131 @@ class AnnotationDecorator(PhotographerDecorator):
         self.capture_with_annotation_dict(annotation_dict, save_path)
 
 
+class TargetAnnotationDecorator(PhotographerDecorator):
+    """
+    Class to annotate controls using TargetInfo instead of UIAWrapper.
+    This avoids the need to convert between TargetInfo and UIAWrapper.
+    """
+
+    def __init__(
+        self,
+        screenshot: Optional[Image.Image],
+        annotation_type: str = "number",
+        color_diff: bool = True,
+        color_default: str = "#FFF68F",
+    ) -> None:
+        """
+        Initialize the TargetAnnotationDecorator.
+        :param screenshot: The screenshot (can be None, will be loaded from path).
+        :param target_list: The list of TargetInfo objects.
+        :param annotation_type: The type of the annotation.
+        :param color_diff: Whether to use different colors for different control types.
+        :param color_default: The default color of the annotation.
+        """
+        super().__init__(screenshot)
+        self.annotation_type = annotation_type
+        self.color_diff = color_diff
+        self.color_default = color_default
+
+    def capture_with_target_info(
+        self,
+        target_list: List["TargetInfo"],
+        save_path: Optional[str] = None,
+        path: Optional[str] = None,
+        highlight_bbox: bool = False,
+    ) -> Image.Image:
+        """
+        Capture a screenshot with annotations using target information.
+        :param target_list: The list of TargetInfo objects.
+        :param save_path: The path to save the screenshot.
+        :param path: The path to the background image.
+        :param highlight_bbox: Whether to highlight control bounding boxes.
+        :return: The screenshot with annotations.
+        """
+        # Load screenshot from path (since we don't have application window)
+        if path and os.path.exists(path):
+            screenshot_annotated = Image.open(path)
+        else:
+            raise ValueError("Background screenshot path is required and must exist")
+
+        configs = Config.get_instance().config_data
+        color_dict = configs.get("ANNOTATION_COLORS", {})
+
+        # First pass: Draw bounding box highlights if requested
+        if highlight_bbox:
+            overlay = Image.new("RGBA", screenshot_annotated.size, (255, 255, 255, 0))
+            overlay_draw = ImageDraw.Draw(overlay)
+
+            for target in target_list:
+                if not target.rect or len(target.rect) < 4:
+                    continue
+
+                # Use target.rect directly (already in absolute coordinates)
+                adjusted_rect = (
+                    target.rect[0],
+                    target.rect[1],
+                    target.rect[2],
+                    target.rect[3],
+                )
+
+                # Get the color for this control type
+                button_color = (
+                    color_dict.get(target.type, self.color_default)
+                    if self.color_diff
+                    else self.color_default
+                )
+
+                # Convert hex color to RGBA with transparency
+                if button_color and button_color.startswith("#"):
+                    rgb = tuple(int(button_color[i : i + 2], 16) for i in (1, 3, 5))
+                    rgba_color = rgb + (80,)
+                else:
+                    rgba_color = (255, 246, 143, 80)
+
+                # Draw semi-transparent rectangle
+                overlay_draw.rectangle(
+                    adjusted_rect,
+                    fill=rgba_color,
+                    outline=(255, 160, 160, 180),
+                    width=2,
+                )
+
+            # Composite the overlay onto the screenshot
+            screenshot_annotated = Image.alpha_composite(
+                screenshot_annotated.convert("RGBA"), overlay
+            ).convert("RGB")
+
+        # Second pass: Draw annotation labels
+        for i, target in enumerate(target_list):
+            if not target.rect or len(target.rect) < 4:
+                continue
+
+            # Use target.rect directly
+            adjusted_coordinate = (target.rect[0], target.rect[1])
+
+            # Generate label text
+            label_text = target.id or str(i + 1)
+
+            screenshot_annotated = AnnotationDecorator.draw_rectangles_controls(
+                screenshot_annotated,
+                adjusted_coordinate,
+                label_text,
+                font_size=configs.get("ANNOTATION_FONT_SIZE", 25),
+                button_color=(
+                    color_dict.get(target.type, self.color_default)
+                    if self.color_diff
+                    else self.color_default
+                ),
+            )
+
+        if save_path is not None and screenshot_annotated is not None:
+            screenshot_annotated.save(
+                save_path, compress_level=configs.get("DEFAULT_PNG_COMPRESS_LEVEL", 1)
+            )
+
+        return screenshot_annotated
+
+
 class PhotographerFactory:
     @staticmethod
     def create_screenshot(screenshot_type: str, *args, **kwargs):
@@ -895,6 +1023,76 @@ class PhotographerFacade:
 
         return merged_control_list
 
+    @staticmethod
+    def target_info_iou(target1: "TargetInfo", target2: "TargetInfo") -> float:
+        """
+        Calculate the IOU overlap between two TargetInfo objects.
+        :param target1: The first target.
+        :param target2: The second target.
+        :return: The IOU overlap.
+        """
+        # Check if both targets have valid rect information
+        if not target1.rect or not target2.rect:
+            return 0.0
+
+        # TargetInfo rect format: [left, top, width, height]
+        # Convert to [left, top, right, bottom] for calculation
+        rect1_left, rect1_top, rect1_width, rect1_height = target1.rect
+        rect1_right = rect1_left + rect1_width
+        rect1_bottom = rect1_top + rect1_height
+
+        rect2_left, rect2_top, rect2_width, rect2_height = target2.rect
+        rect2_right = rect2_left + rect2_width
+        rect2_bottom = rect2_top + rect2_height
+
+        # Calculate intersection
+        left = max(rect1_left, rect2_left)
+        top = max(rect1_top, rect2_top)
+        right = min(rect1_right, rect2_right)
+        bottom = min(rect1_bottom, rect2_bottom)
+
+        intersection_area = max(0, right - left) * max(0, bottom - top)
+        area1 = rect1_width * rect1_height
+        area2 = rect2_width * rect2_height
+
+        # Avoid division by zero
+        union_area = area1 + area2 - intersection_area
+        if union_area == 0:
+            return 0.0
+
+        iou = intersection_area / union_area
+        return iou
+
+    @staticmethod
+    def merge_target_info_list(
+        main_target_list: List["TargetInfo"],
+        additional_target_list: List["TargetInfo"],
+        iou_overlap_threshold: float = 0.1,
+    ) -> List["TargetInfo"]:
+        """
+        Merge two TargetInfo lists by removing the overlapping targets in the additional target list.
+        :param main_target_list: The main target list. All targets in this list will be kept.
+        :param additional_target_list: The additional target list. The overlapping targets in this list will be removed.
+        :param iou_overlap_threshold: The threshold of the IOU overlap to consider two targets as overlapping.
+        :return: The merged target list.
+        """
+        merged_target_list = main_target_list.copy()
+
+        for additional_target in additional_target_list:
+            is_overlapping = False
+            for main_target in main_target_list:
+                if (
+                    PhotographerFacade.target_info_iou(additional_target, main_target)
+                    > iou_overlap_threshold
+                ):
+                    is_overlapping = True
+                    break
+
+            if not is_overlapping:
+                merged_target_list.append(additional_target)
+
+        return merged_target_list
+
     @classmethod
     def encode_image(cls, image: Image.Image, mime_type: Optional[str] = None) -> str:
         """
@@ -1013,3 +1211,32 @@ class PhotographerFacade:
                     "red",
                 )
                 return cls._empty_image_string
+
+    def capture_app_window_screenshot_with_target_list(
+        self,
+        target_list: List["TargetInfo"],
+        color_diff: bool = True,
+        color_default: str = "#FFF68F",
+        save_path: Optional[str] = None,
+        path: Optional[str] = None,
+        highlight_bbox: bool = False,
+    ) -> Image.Image:
+        """
+        Capture the control screenshot with annotations using TargetRegistry.
+        This method avoids the need to convert TargetInfo to UIAWrapper.
+
+        :param target_registry: The target registry containing control information.
+        :param annotation_type: The type of the annotation.
+        :param color_diff: Whether to use different colors for different control types.
+        :param color_default: The default color of the annotation.
+        :param save_path: The path to save the screenshot.
+        :param path: The path to the background image.
+        :param highlight_bbox: Whether to highlight control bounding boxes with semi-transparent overlays.
+        :return: The screenshot with annotations.
+        """
+
+        # Create screenshot and annotate directly with target info
+        screenshot = TargetAnnotationDecorator(None, color_diff, color_default)
+        return screenshot.capture_with_target_info(
+            target_list, save_path, path, highlight_bbox
+        )
