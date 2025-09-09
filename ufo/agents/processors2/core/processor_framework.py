@@ -1,7 +1,7 @@
 import logging
 import time
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Type, TypeVar
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, TypeVar
 
 from ufo.agents.agent.basic import BasicAgent
 from ufo.module.context import Context, ContextNames
@@ -12,13 +12,16 @@ from ufo.agents.processors2.core.processing_context import (
     ProcessingResult,
 )
 
-from ufo.agents.processors2.core.processing_middleware import ProcessorMiddleware
+
 from ufo.agents.processors2.strategies.processing_strategy import ProcessingStrategy
 from ufo.agents.processors2.core.strategy_dependency import (
     StrategyDependencyValidator,
     StrategyMetadataRegistry,
     validate_provides_consistency,
 )
+
+if TYPE_CHECKING:
+    from ufo.agents.processors2.core.processing_middleware import ProcessorMiddleware
 
 T = TypeVar("T")
 
@@ -61,7 +64,7 @@ class ProcessorTemplate(ABC):
         self.agent = agent
         self.global_context = global_context  # Shared global context
         self.strategies: Dict[ProcessingPhase, ProcessingStrategy] = {}
-        self.middleware_chain: List[ProcessorMiddleware] = []
+        self.middleware_chain: List["ProcessorMiddleware"] = []
         self.logger = logging.getLogger(self.__class__.__name__)
         self._exceptions: List[Dict[str, Any]] = []
 

@@ -2,16 +2,14 @@
 # Licensed under the MIT License.
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.uia_element_info import UIAElementInfo
 from pywinauto.win32structures import RECT
 
+from ufo.agents.processors.target import TargetInfo
 from ufo.llm.base import BaseService
-
-if TYPE_CHECKING:
-    from ufo.agents.processors.target import TargetInfo
 
 
 class VirtualUIAElementInfo(UIAElementInfo):

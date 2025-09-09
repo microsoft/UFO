@@ -270,7 +270,9 @@ class BasicAgent(ABC):
         _none_answer_message = "The answer for the question is not available, please proceed with your own knowledge or experience, or leave it as a placeholder. Do not ask the same question again."
 
         if self.processor:
-            question_list = self.processor.question_list
+            question_list = self.processor.processing_context.local_context.get(
+                "questions", []
+            )
 
             if ask_user:
                 utils.print_with_color(
@@ -406,6 +408,7 @@ class AgentRegistry:
 
     _registry: Dict[str, Type["BasicAgent"]] = {}
     logger = logging.getLogger(__name__)
+    logger.propagate = True
 
     @classmethod
     def register(
@@ -432,7 +435,7 @@ class AgentRegistry:
                     cls.logger.warning(
                         f"[AgentRegistry] Skipping third-party agent '{agent_name}' (not in config)."
                     )
-                    return agent_cls  # 返回但不注册
+                    return agent_cls
 
             # if agent_name in cls._registry:
             #     raise ValueError(

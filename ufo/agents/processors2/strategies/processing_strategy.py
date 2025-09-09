@@ -8,8 +8,8 @@ from ufo.agents.processors2.core.processing_context import (
     ProcessingResult,
 )
 
+
 if TYPE_CHECKING:
-    from ufo.agents.processors2.core.processor_framework import ProcessingException
     from ufo.agents.processors2.core.strategy_dependency import StrategyDependency
     from ufo.agents.agent.basic import BasicAgent
 
@@ -119,6 +119,10 @@ class BaseProcessingStrategy(ABC):
 
         if self.fail_fast:
             # Throw ProcessingException to trigger middleware's on_error
+            from ufo.agents.processors2.core.processor_framework import (
+                ProcessingException,
+            )
+
             raise ProcessingException(
                 message=error_message,
                 phase=phase,

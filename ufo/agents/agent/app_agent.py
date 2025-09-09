@@ -26,6 +26,7 @@ from ufo.contracts.contracts import Command, MCPToolInfo
 from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
+from ufo.agents.processors2.app_agent_processor import AppAgentProcessorV2
 
 if TYPE_CHECKING:
     from ufo.agents.processors.app_agent_processor import AppAgentResponse
@@ -39,11 +40,13 @@ class AppAgent(BasicAgent):
     The AppAgent class that manages the interaction with the application.
     """
 
-    _processor_cls = (
-        AppAgentActionSequenceProcessor
-        if configs.get("ACTION_SEQUENCE", False)
-        else AppAgentProcessor
-    )
+    # _processor_cls = (
+    #     AppAgentActionSequenceProcessor
+    #     if configs.get("ACTION_SEQUENCE", False)
+    #     else AppAgentProcessor
+    # )
+
+    _processor_cls = AppAgentProcessorV2
 
     def __init__(
         self,
@@ -394,10 +397,10 @@ class AppAgent(BasicAgent):
         if not self._processor_cls:
             raise ValueError(f"{self.__class__.__name__} has no processor assigned.")
 
-        self.processor = self._processor_cls(agent=self, context=context)
+        self.processor = self._processor_cls(agent=self, global_context=context)
         await self.processor.process()
 
-        self.status = self.processor.status
+        self.status = self.processor.processing_context.get_local("status")
 
     def process_confirmation(self) -> bool:
         """

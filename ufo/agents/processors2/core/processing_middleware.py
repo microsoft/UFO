@@ -11,16 +11,14 @@ from ufo.agents.processors2.core.processing_context import (
 )
 from ufo.agents.processors2.core.processor_framework import (
     ProcessingContext,
-    ProcessingException,
     ProcessingResult,
-    ProcessorMiddleware,
-    ProcessorTemplate,
 )
-from ufo.module.basic import FileWriter
+
 from ufo.module.context import ContextNames
 
 if TYPE_CHECKING:
     from ufo.agents.processors2.core.processor_framework import ProcessorTemplate
+    from ufo.module.basic import FileWriter
 
 
 class ProcessorMiddleware(ABC):
@@ -78,7 +76,7 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
         self.log_level = log_level
 
     async def before_process(
-        self, processor: ProcessorTemplate, context: ProcessingContext
+        self, processor: "ProcessorTemplate", context: ProcessingContext
     ) -> None:
         """Log processing start with context information."""
         round_num = context.get("round_num", 0)
@@ -91,7 +89,7 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
         )
 
     async def after_process(
-        self, processor: ProcessorTemplate, result: ProcessingResult
+        self, processor: "ProcessorTemplate", result: ProcessingResult
     ) -> None:
         """Log processing completion with result summary."""
         if result.success:
@@ -107,7 +105,7 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
         else:
             self.logger.warning(f"Processing completed with failure: {result.error}")
 
-        local_logger: FileWriter = processor.processing_context.global_context.get(
+        local_logger: "FileWriter" = processor.processing_context.global_context.get(
             ContextNames.LOGGER
         )
         local_context = processor.processing_context.local_context
@@ -128,8 +126,11 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
 
         self.logger.info("Log saved successfully.")
 
-    async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
+    async def on_error(self, processor: "ProcessorTemplate", error: Exception) -> None:
         """Enhanced error logging with context information."""
+
+        from ufo.agents.processors2.core.processor_framework import ProcessingException
+
         if isinstance(error, ProcessingException):
             # record error
             self.logger.error(

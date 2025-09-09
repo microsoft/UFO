@@ -52,6 +52,7 @@ configs = Config.get_instance().config_data
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
+    from ufo.agents.processors2.host_agent_processor import HostAgentProcessorContext
 
 
 # Note: HostAgentUnifiedMemory has been replaced with HostAgentProcessorContext
@@ -220,7 +221,11 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
             app_windows_info = result[0].result or []
             self.logger.info(f"Found {len(app_windows_info)} desktop windows")
 
-            return app_windows_info
+            target_info = [
+                TargetInfo(**control_info) for control_info in app_windows_info
+            ]
+
+            return target_info
 
         except Exception as e:
             raise Exception(f"Failed to get desktop application info: {str(e)}")
@@ -674,7 +679,7 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
         """
         try:
             # Extract all needed variables from context
-            parsed_response = context.get_local("parsed_response")
+            parsed_response: HostAgentResponse = context.get_local("parsed_response")
             if not parsed_response:
                 return ProcessingResult(
                     success=True,
@@ -682,7 +687,7 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
                     phase=ProcessingPhase.ACTION_EXECUTION,
                 )
 
-            function_name = context.get_local("function_name")
+            function_name: str = context.get_local("function_name")
             if not function_name:
                 return ProcessingResult(
                     success=True,
@@ -747,6 +752,7 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
                 data={
                     "execution_result": execution_result,
                     "action_info": action_info,
+                    "target": action_info.target,
                     "selected_target_id": selected_target_id,
                     "selected_application_root": selected_application_root,
                     "assigned_third_party_agent": assigned_third_party_agent,
@@ -1086,7 +1092,7 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
             )
 
             # Convert to legacy format using the new method
-            return host_context.to_legacy_memory()
+            return host_context
 
         except Exception as e:
             raise Exception(f"Failed to create additional memory data: {str(e)}")
@@ -1137,7 +1143,7 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
     def _create_and_populate_memory_item(
         self,
         parsed_response: HostAgentResponse,
-        additional_memory: HostAgentAdditionalMemory,
+        additional_memory: "HostAgentProcessorContext",
     ) -> MemoryItem:
         """
         Create and populate memory item with response and additional data.
@@ -1154,12 +1160,14 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
                 # HostAgentResponse is a regular class, use vars() to convert to dict
                 memory_item.add_values_from_dict(asdict(parsed_response))
 
-            # Add additional memory data
-            memory_item.add_values_from_dict(asdict(additional_memory))
+            memory_item.add_values_from_dict(additional_memory.to_dict(selective=True))
 
             return memory_item
 
         except Exception as e:
+            import traceback
+
+            traceback.print_exc()
             raise Exception(f"Failed to create and populate memory item: {str(e)}")
 
     def _update_structural_logs(self, memory_item: MemoryItem, global_context) -> None:

@@ -50,7 +50,6 @@ from ufo.config import Config
 from ufo.contracts.contracts import Command, Result, ResultStatus
 from ufo.llm import AgentType
 from ufo.llm.grounding_model.omniparser_service import OmniParser
-from ufo.module.basic import FileWriter
 from ufo.module.context import ContextNames
 from ufo.module.dispatcher import BasicCommandDispatcher
 
@@ -59,6 +58,7 @@ configs = Config.get_instance().config_data
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
+    from ufo.module.basic import FileWriter
 
 if configs is not None:
     CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"])
@@ -520,7 +520,11 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
                 f"Get {len(api_controls_info)} API controls from current application window"
             )
 
-            return api_controls_info
+            target_info_list = [
+                TargetInfo(**control_info) for control_info in api_controls_info
+            ]
+
+            return target_info_list
 
         except Exception as e:
             self.logger.warning(f"UIA control collection failed: {str(e)}")
@@ -911,7 +915,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         last_success_actions: List[Dict],
         include_last_screenshot: bool,
         prompt_message: List[Dict],
-        request_logger: FileWriter,
+        request_logger: "FileWriter",
     ) -> None:
         """
         Log request data for debugging.

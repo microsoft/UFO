@@ -86,7 +86,7 @@ class HostAgentProcessorContext(BasicProcessorContext):
     action_info: Optional[ActionCommandInfo] = None
     action_result: Optional[Any] = None
 
-    assigned_third_party_agent: Optional[str] = None
+    target: Optional[TargetInfo] = None
 
     # Additional fields from HostAgentUnifiedMemory for complete compatibility
     step: int = (

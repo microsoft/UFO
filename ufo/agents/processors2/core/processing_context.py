@@ -92,7 +92,7 @@ class BasicProcessorContext(ProcessorContextProtocol):
     round_num: int = 0
     cost: float = 0.0
     status: Optional[str] = None
-    target_registry: TargetRegistry = TargetRegistry()
+    target_registry: TargetRegistry = field(default_factory=TargetRegistry)
     command_dispatcher: Optional[BasicCommandDispatcher] = None
 
     action: List[Dict[str, Any]] = field(default_factory=list)

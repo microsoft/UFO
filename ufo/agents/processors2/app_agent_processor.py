@@ -330,12 +330,11 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         await super().before_process(processor, context)
 
         # Extract context information
-        round_num = context.get("round_num", 0)
-        round_step = context.get("round_step", 0)
-        subtask = context.get("subtask", "")
-        app_root = context.get("app_root", "")
-        current_application = context.get("current_application", app_root)
-        request = context.get("request", "")
+        round_num = context.get("round_num")
+        round_step = context.get("round_step")
+        subtask = context.get("subtask")
+        current_application = context.get("current_application")
+        request = context.get("request")
 
         # Log detailed context information (similar to legacy logger.info)
         self.logger.info(

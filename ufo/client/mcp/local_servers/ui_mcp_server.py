@@ -636,6 +636,7 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
 
         return revised_desktop_windows_info
 
+    @data_mcp.tool()
     def get_desktop_app_target_info(
         remove_empty: bool = True, refresh_app_windows: bool = True
     ) -> List:
