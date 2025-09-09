@@ -16,6 +16,7 @@ Each strategy is designed to be modular, testable, and follows the dependency in
 
 import json
 import os
+import time
 from dataclasses import asdict
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
@@ -30,7 +31,10 @@ from ufo.agents.processors.app_agent_processor import (
     ControlInfoRecorder,
 )
 from ufo.agents.processors.target import TargetInfo, TargetKind, TargetRegistry
-from ufo.agents.processors2.strategies.processing_strategy import BaseProcessingStrategy
+from ufo.agents.processors2.strategies.processing_strategy import (
+    BaseProcessingStrategy,
+    ComposedStrategy,
+)
 from ufo.agents.processors2.core.processing_context import (
     ProcessingContext,
     ProcessingPhase,
@@ -386,8 +390,6 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
         :return: ProcessingResult with filtered controls and timing
         """
         try:
-            import time
-
             start_time = time.time()
 
             self.logger.info("Collecting UI control information")
@@ -813,7 +815,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         host_message: str,
         session_step: int,
         request_logger,
-    ) -> Dict[str, Any]:
+    ) -> List[Dict]:
         """
         Build comprehensive prompt for App Agent.
         :param agent: The AppAgent instance
@@ -883,7 +885,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         except Exception as e:
             raise Exception(f"Failed to build app prompt: {str(e)}")
 
-    def _get_last_success_actions(self, agent: "AppAgent") -> List[Dict[str, Any]]:
+    def _get_last_success_actions(self, agent: "AppAgent") -> List[Dict]:
         """
         Get last successful actions from agent memory.
         :param agent: The AppAgent instance
@@ -900,15 +902,15 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
     def _log_request_data(
         self,
         session_step: int,
-        plan: List[Any],
-        prev_subtask: List[Any],
+        plan: List[str],
+        prev_subtask: List[str],
         request: str,
-        filtered_controls: List[Any],
+        filtered_controls: List[TargetInfo],
         subtask: str,
         host_message: str,
-        last_success_actions: List[Dict[str, Any]],
+        last_success_actions: List[Dict],
         include_last_screenshot: bool,
-        prompt_message: Dict[str, Any],
+        prompt_message: List[Dict],
         request_logger: FileWriter,
     ) -> None:
         """
@@ -960,7 +962,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             self.logger.warning(f"Failed to log request data: {str(e)}")
 
     async def _get_llm_response(
-        self, agent: "AppAgent", prompt_message: Dict[str, Any]
+        self, agent: "AppAgent", prompt_message: List[Dict[str, Any]]
     ) -> tuple[str, float]:
         """
         Get response from LLM with retry logic.
@@ -1088,7 +1090,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         """
         try:
             # Extract context variables
-            parsed_response = context.get("parsed_response")
+            parsed_response: AppAgentResponse = context.get("parsed_response")
             filtered_controls = context.get("filtered_controls", [])
             command_dispatcher = context.global_context.command_dispatcher
 
@@ -1099,7 +1101,8 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                     phase=ProcessingPhase.ACTION_EXECUTION,
                 )
 
-            function_name = getattr(parsed_response, "function", None)
+            function_name = parsed_response.function
+
             if not function_name:
                 return ProcessingResult(
                     success=True,
@@ -1145,7 +1148,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
 
     async def _execute_app_action(
         self, command_dispatcher, response: AppAgentResponse
-    ) -> List[Any]:
+    ) -> List[Result]:
         """
         Execute the specific action from the response.
         :param command_dispatcher: Command dispatcher for executing commands
@@ -1178,9 +1181,9 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
 
     def _create_action_info(
         self,
-        filtered_controls: List[Any],
+        filtered_controls: List[TargetInfo],
         response: AppAgentResponse,
-        execution_result: List[Any],
+        execution_result: List[Result],
     ) -> ActionCommandInfo:
         """
         Create action information for memory tracking.
@@ -1215,7 +1218,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                 result=None,
             )
 
-    def _determine_action_success(self, execution_result: List[Any]) -> bool:
+    def _determine_action_success(self, execution_result: List[Result]) -> bool:
         """
         Determine if the action was successful.
         :param execution_result: Execution results
@@ -1239,9 +1242,9 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
 
     def _create_control_log(
         self,
-        filtered_controls: List[Any],
+        filtered_controls: List[TargetInfo],
         response: AppAgentResponse,
-        execution_result: List[Any],
+        execution_result: List[Result],
     ) -> Dict[str, Any]:
         """
         Create control log for debugging and analysis.
@@ -1274,8 +1277,8 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             # Add execution result information
             if execution_result:
                 result = execution_result[0]
-                control_log["execution_status"] = getattr(result, "status", "unknown")
-                control_log["execution_result"] = getattr(result, "result", None)
+                control_log["execution_status"] = result.status
+                control_log["execution_result"] = result.result
 
             return control_log
 
@@ -1397,9 +1400,9 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
         app_root: str,
         llm_cost: float,
         last_error: str,
-        action_info,
+        action_info: ActionCommandInfo,
         action_success: bool,
-        execution_result: List[Any],
+        execution_result: List[Result],
         control_log: Dict[str, Any],
         screenshot_saved_time: float,
         control_filter_time: float,
@@ -1435,11 +1438,7 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
                 function_call.append(action_info.function)
                 action.append(action_info.arguments)
                 action_success_list.append({"success": action_success})
-                action_type.append(
-                    getattr(action_info.result, "namespace", "")
-                    if action_info.result
-                    else ""
-                )
+                action_type.append(action_info.result.namespace)
 
             # Calculate time costs
             time_cost = {
@@ -1452,7 +1451,7 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
             return AppAgentAdditionalMemory(
                 Step=session_step,
                 RoundStep=round_step,
-                AgentStep=getattr(agent, "step", 0),
+                AgentStep=agent.step,
                 Round=round_num,
                 Subtask=subtask,
                 SubtaskIndex=subtask_index,
@@ -1462,7 +1461,7 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
                 ActionType=action_type,
                 Request=request,
                 Agent="AppAgent",
-                AgentName=getattr(agent, "name", "AppAgent"),
+                AgentName=agent.name,
                 Application=app_root,
                 Cost=llm_cost,
                 Results=(
@@ -1549,115 +1548,34 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
 
 
 # ============================================================================
-# Composed Strategy - Combines multiple strategies for framework compatibility
+# App-specific Composed Strategy - Uses the generic ComposedStrategy
 # ============================================================================
 
 
-@depends_on("app_root", "log_path", "session_step")
-@provides(
-    "clean_screenshot_path",
-    "annotated_screenshot_path",
-    "desktop_screenshot_path",
-    "screenshot_saved_time",
-    "filtered_controls",
-    "control_info",
-    "annotation_dict",
-    "control_filter_time",
-    "control_info_recorder",
-)
-class ComposedAppDataCollectionStrategy(BaseProcessingStrategy):
+class ComposedAppDataCollectionStrategy(ComposedStrategy):
     """
-    Composed strategy for App Agent data collection combining screenshot capture and control info collection.
+    Composed strategy for App Agent data collection using the generic ComposedStrategy.
 
-    This strategy combines the functionality of:
+    This strategy combines:
     - AppScreenshotCaptureStrategy: Screenshot capture and path management
     - AppControlInfoStrategy: UI control information collection and filtering
-
-    This design follows the framework requirement of one strategy per processing phase,
-    while maintaining the modularity of individual operations.
     """
 
     def __init__(self, fail_fast: bool = True) -> None:
         """
-        Initialize composed App Agent data collection strategy.
+        Initialize App Agent data collection strategy using composition.
         :param fail_fast: Whether to raise exceptions immediately on errors
         """
-        super().__init__(name="composed_app_data_collection", fail_fast=fail_fast)
+        # Create component strategies
+        strategies = [
+            AppScreenshotCaptureStrategy(fail_fast=fail_fast),
+            AppControlInfoStrategy(fail_fast=fail_fast),
+        ]
 
-        # Initialize component strategies
-        self.screenshot_strategy = AppScreenshotCaptureStrategy(fail_fast=fail_fast)
-        self.control_info_strategy = AppControlInfoStrategy(fail_fast=fail_fast)
-
-    async def execute(
-        self, agent: "AppAgent", context: ProcessingContext
-    ) -> ProcessingResult:
-        """
-        Execute composed data collection for App Agent.
-        :param agent: The AppAgent instance
-        :param context: Processing context with app information
-        :return: ProcessingResult with combined screenshot and control data
-        """
-        try:
-            import time
-
-            start_time = time.time()
-            self.logger.info("Starting composed App Agent data collection")
-
-            # Step 1: Execute screenshot capture
-            self.logger.info("Phase 1: Capturing screenshots")
-            screenshot_result = await self.screenshot_strategy.execute(agent, context)
-
-            if not screenshot_result.success:
-                return screenshot_result  # Return screenshot error if fail_fast
-
-            # Update context with screenshot data for control info strategy
-            for key, value in screenshot_result.data.items():
-                context.set(key, value)
-
-            # Step 2: Execute control info collection
-            self.logger.info("Phase 2: Collecting control information")
-            control_result: ProcessingResult = await self.control_info_strategy.execute(
-                agent, context
-            )
-
-            if not control_result.success:
-                if self.fail_fast:
-                    return control_result
-                else:
-                    # Continue with partial data if not fail_fast
-                    self.logger.warning(
-                        f"Control info collection failed: {control_result.error}"
-                    )
-
-            # Step 3: Combine results
-            combined_data = {}
-            combined_data.update(screenshot_result.data)
-
-            if control_result.success:
-                combined_data.update(control_result.data)
-            else:
-                # Provide fallback data for control info
-                combined_data.update(
-                    {
-                        "filtered_controls": [],
-                        "control_info": [],
-                        "annotation_dict": {},
-                        "control_filter_time": 0.0,
-                        "control_info_recorder": None,
-                    }
-                )
-
-            total_time = time.time() - start_time
-            self.logger.info(f"Composed data collection completed in {total_time:.2f}s")
-
-            return ProcessingResult(
-                success=True,
-                data=combined_data,
-                phase=ProcessingPhase.DATA_COLLECTION,
-                execution_time=total_time,
-            )
-
-        except Exception as e:
-            error_msg = f"Composed data collection failed: {str(e)}"
-            self.logger.error(error_msg)
-            return self.handle_error(e, ProcessingPhase.DATA_COLLECTION, context)
+        # Initialize with the generic composed strategy
+        super().__init__(
+            strategies=strategies,
+            name="composed_app_data_collection",
+            fail_fast=fail_fast,
+            phase=ProcessingPhase.DATA_COLLECTION,
+        )
