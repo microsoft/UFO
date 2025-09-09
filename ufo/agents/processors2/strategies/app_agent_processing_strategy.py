@@ -1549,37 +1549,3 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
             context.global_context.add_to_structural_logs(memory_item.to_dict())
         except Exception as e:
             self.logger.warning(f"Failed to update structural logs: {str(e)}")
-
-
-# ============================================================================
-# App-specific Composed Strategy - Uses the generic ComposedStrategy
-# ============================================================================
-
-
-class ComposedAppDataCollectionStrategy(ComposedStrategy):
-    """
-    Composed strategy for App Agent data collection using the generic ComposedStrategy.
-
-    This strategy combines:
-    - AppScreenshotCaptureStrategy: Screenshot capture and path management
-    - AppControlInfoStrategy: UI control information collection and filtering
-    """
-
-    def __init__(self, fail_fast: bool = True) -> None:
-        """
-        Initialize App Agent data collection strategy using composition.
-        :param fail_fast: Whether to raise exceptions immediately on errors
-        """
-        # Create component strategies
-        strategies = [
-            AppScreenshotCaptureStrategy(fail_fast=fail_fast),
-            AppControlInfoStrategy(fail_fast=fail_fast),
-        ]
-
-        # Initialize with the generic composed strategy
-        super().__init__(
-            strategies=strategies,
-            name="composed_app_data_collection",
-            fail_fast=fail_fast,
-            phase=ProcessingPhase.DATA_COLLECTION,
-        )

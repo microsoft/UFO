@@ -18,32 +18,29 @@ The processor follows the established V2 patterns:
 - Structured logging and performance monitoring
 """
 
-from dataclasses import dataclass, field
 import logging
+from dataclasses import dataclass, field
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-from ufo.agents.processors2.core.processor_framework import ProcessorTemplate
 from ufo.agents.processors2.core.processing_context import (
     BasicProcessorContext,
     ProcessingContext,
 )
-
-if TYPE_CHECKING:
-    from ufo.agents.processors2.core.processor_framework import ProcessingResult
-
-from ufo.agents.processors2.core.processing_middleware import (
-    EnhancedLoggingMiddleware,
-)
+from ufo.agents.processors2.core.processing_middleware import EnhancedLoggingMiddleware
+from ufo.agents.processors2.core.processor_framework import ProcessorTemplate
 from ufo.agents.processors2.strategies.app_agent_processing_strategy import (
     AppActionExecutionStrategy,
+    AppControlInfoStrategy,
     AppLLMInteractionStrategy,
     AppMemoryUpdateStrategy,
-    ComposedAppDataCollectionStrategy,
+    AppScreenshotCaptureStrategy,
 )
+from ufo.agents.processors2.strategies.processing_strategy import ComposedStrategy
 from ufo.module.context import Context
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
+    from ufo.agents.processors2.core.processor_framework import ProcessingResult
 
 
 @dataclass
@@ -217,9 +214,14 @@ class AppAgentProcessorV2(ProcessorTemplate):
 
         # Data collection strategy (combines screenshot + control info)
         self.strategies[ProcessingPhase.DATA_COLLECTION] = (
-            ComposedAppDataCollectionStrategy(
-                fail_fast=True  # Data collection is critical for App Agent
-            )
+            ComposedStrategy(
+                strategies=[
+                    AppScreenshotCaptureStrategy(),
+                    AppControlInfoStrategy(),
+                ],
+                name="AppDataCollectionStrategy",
+                fail_fast=True,
+            ),
         )
 
         # LLM interaction strategy
