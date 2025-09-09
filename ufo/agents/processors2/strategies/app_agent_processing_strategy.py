@@ -40,15 +40,13 @@ from ufo.agents.processors2.core.strategy_dependency import (
     depends_on,
     provides,
 )
-from ufo.automator.ui_control.control_filter import ControlFilterFactory
-from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.automator.ui_control.grounding.omniparser import OmniparserGrounding
-from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
 from ufo.contracts.contracts import Command, Result, ResultStatus
 from ufo.llm import AgentType
 from ufo.llm.grounding_model.omniparser_service import OmniParser
+from ufo.module.basic import FileWriter
 from ufo.module.context import ContextNames
 from ufo.module.dispatcher import BasicCommandDispatcher
 
@@ -651,38 +649,66 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             subtask = context.get("subtask", "")
             plan = context.get("plan", [])
             prev_subtask = context.get("previous_subtasks", [])
-            host_message = context.global_context.get(ContextNames.HOST_MESSAGE, "")
+            host_message = context.global_context.get(ContextNames.HOST_MESSAGE)
+            application_process_name = context.global_context.get(
+                ContextNames.APPLICATION_PROCESS_NAME
+            )
             desktop_screenshot_path = context.get("desktop_screenshot_path", "")
             session_step = context.get("session_step", 0)
             request_logger = context.global_context.get(ContextNames.REQUEST_LOGGER)
+            log_path = context.get("log_path", "")
+            annotated_screenshot_path = context.get("annotated_screenshot_path")
 
-            # Step 1: Build comprehensive prompt
+            # Step 1: Collect image strings:
+
+            self.logger.info("Collecting screenshots...")
+            last_control_screenshot_path = (
+                log_path + f"action_step{session_step - 1}_selected_controls.png"
+            )
+
+            concat_screenshot_path = log_path + f"action_step{session_step}_concat.png"
+
+            image_string_list = self._collect_image_strings(
+                last_control_screenshot_path,
+                clean_screenshot_path,
+                annotated_screenshot_path,
+                concat_screenshot_path,
+            )
+
+            # Step 2: Retrieve knowledge from the knowledge base
+            self.logger.info("Retrieving knowledge from the knowledge base")
+
+            knowledge_retrieved = self._knowledge_retrieval(self.agent, subtask)
+
+            # Step 3: Build comprehensive prompt
             self.logger.info("Building App Agent prompt with control information")
             prompt_message = await self._build_app_prompt(
                 agent,
                 control_info,
-                clean_screenshot_path,
+                image_string_list,
+                knowledge_retrieved,
                 request,
                 subtask,
                 plan,
                 prev_subtask,
                 host_message,
+                application_process_name,
                 desktop_screenshot_path,
                 session_step,
                 request_logger,
             )
 
-            # Step 2: Get LLM response
+            # Step 4: Get LLM response
             self.logger.info("Getting LLM response for App Agent")
             response_text, llm_cost = await self._get_llm_response(
                 agent, prompt_message
             )
 
-            # Step 3: Parse and validate response
+            # Step 5: Parse and validate response
             self.logger.info("Parsing App Agent response")
             parsed_response = self._parse_app_response(agent, response_text)
 
-            # Step 4: Extract structured data
+            # Step 5: Extract structured data
             structured_data = self._extract_response_data(parsed_response)
 
             return ProcessingResult(
@@ -691,6 +717,8 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
                     "parsed_response": parsed_response,
                     "response_text": response_text,
                     "llm_cost": llm_cost,
+                    "concat_screenshot_path": concat_screenshot_path,
+                    "last_control_screenshot_path": last_control_screenshot_path,
                     "prompt_message": prompt_message,
                     **structured_data,
                 },
@@ -702,17 +730,87 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             self.logger.error(error_msg)
             return self.handle_error(e, ProcessingPhase.LLM_INTERACTION, context)
 
+    def _collect_image_strings(
+        self,
+        last_control_screenshot_path: str,
+        clean_screenshot_path: str,
+        annotated_screenshot_path: str,
+        concat_screenshot_save_path: str,
+    ):
+        """
+        Collect a list of image strings for prompt construction.
+        :param last_control_screenshot_path: The path of screenshot of last step with selected control annotated
+        :param clean_screenshot_path: The path of clean application window screenshot
+        :param annotated_screenshot_path: The path of application window screenshot with detected controls with SoM
+        :concat_screenshot_save_path: The concated clean and annotated sceenshot path
+        :return: A list of image base64 string.
+        """
+
+        photographer = PhotographerFacade()
+        image_string_list = []
+
+        if configs.get("INCLUDE_LAST_SCREENSHOT", True):
+
+            image_string_list += [
+                photographer.encode_image_from_path(last_control_screenshot_path)
+            ]
+
+        if configs.get("CONCAT_SCREENSHOT", False):
+            photographer.concat_screenshots(
+                clean_screenshot_path,
+                annotated_screenshot_path,
+                concat_screenshot_save_path,
+            )
+            image_string_list += [
+                photographer.encode_image_from_path(concat_screenshot_save_path)
+            ]
+        else:
+            screenshot_url = photographer.encode_image_from_path(clean_screenshot_path)
+            screenshot_annotated_url = photographer.encode_image_from_path(
+                annotated_screenshot_path
+            )
+            image_string_list += [screenshot_url, screenshot_annotated_url]
+
+        return image_string_list
+
+    def _knowledge_retrieval(self, agent: "AppAgent", subtask: str):
+        """
+        Retrieve knowledge for the given subtask.
+        :param: agent: The agent to conduct the retrieval
+        :param: subtask: The subtask for which to retrieve knowledge.
+        """
+
+        experience_examples, demonstration_examples = agent.demonstration_prompt_helper(
+            request=subtask
+        )
+
+        # Get the external knowledge prompt for the AppAgent using the offline and online retrievers.
+
+        offline_docs, online_docs = agent.external_knowledge_prompt_helper(
+            subtask,
+            configs.get("RAG_OFFLINE_DOCS_RETRIEVED_TOPK", 0),
+            configs.get("RAG_ONLINE_RETRIEVED_TOPK", 0),
+        )
+
+        return {
+            "experience_examples": experience_examples,
+            "demonstration_examples": demonstration_examples,
+            "offline_docs": offline_docs,
+            "online_docs": online_docs,
+        }
+
     async def _build_app_prompt(
         self,
         agent: "AppAgent",
-        filtered_controls: List[Any],
-        clean_screenshot_path: str,
+        control_info: List[TargetInfo],
+        image_string_list: List[str],
+        knowledge_retrieved: Dict[str, str],
         request: str,
         subtask: str,
-        plan: List[Any],
-        prev_subtask: List[Any],
+        plan: List[str],
+        prev_subtask: List[str],
+        application_process_name: str,
         host_message: str,
-        desktop_screenshot_path: str,
         session_step: int,
         request_logger,
     ) -> Dict[str, Any]:
@@ -734,35 +832,34 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         try:
             # Get blackboard context
             blackboard_prompt = []
-            if hasattr(agent, "blackboard") and not agent.blackboard.is_empty():
+            if not agent.blackboard.is_empty():
                 blackboard_prompt = agent.blackboard.blackboard_to_prompt()
 
             # Get last successful actions
             last_success_actions = self._get_last_success_actions(agent)
 
-            # Build image list
-            image_list = []
-            if clean_screenshot_path and os.path.exists(clean_screenshot_path):
-                image_list = [clean_screenshot_path]
-
-            # Include desktop screenshot if configured
-            include_last_screenshot = configs.get("INCLUDE_LAST_SCREENSHOT", False)
-            if include_last_screenshot:
-                if desktop_screenshot_path and os.path.exists(desktop_screenshot_path):
-                    image_list.append(desktop_screenshot_path)
+            retrieved_examples = knowledge_retrieved.get(
+                "experience_examples"
+            ) + knowledge_retrieved.get("demonstration_examples")
+            retrieved_knowledge = knowledge_retrieved.get(
+                "offline_docs"
+            ) + knowledge_retrieved.get("online_docs")
 
             # Build prompt using agent's message constructor
             prompt_message = agent.message_constructor(
-                image_list=image_list,
-                control_info=filtered_controls,
+                dynamic_examples=retrieved_examples,
+                dynamic_knowledge=retrieved_knowledge,
+                image_list=image_string_list,
+                control_info=control_info,
                 prev_subtask=prev_subtask,
                 plan=plan,
                 request=request,
                 subtask=subtask,
+                current_application=application_process_name,
                 host_message=host_message,
                 blackboard_prompt=blackboard_prompt,
                 last_success_actions=last_success_actions,
-                include_last_screenshot=include_last_screenshot,
+                include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
             )
 
             # Log request data for debugging
@@ -771,11 +868,11 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
                 plan,
                 prev_subtask,
                 request,
-                filtered_controls,
+                control_info,
                 subtask,
                 host_message,
                 last_success_actions,
-                include_last_screenshot,
+                configs.get("INCLUDE_LAST_SCREENSHOT", False),
                 prompt_message,
                 agent,
                 request_logger,
@@ -812,7 +909,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         last_success_actions: List[Dict[str, Any]],
         include_last_screenshot: bool,
         prompt_message: Dict[str, Any],
-        request_logger,
+        request_logger: FileWriter,
     ) -> None:
         """
         Log request data for debugging.
@@ -857,7 +954,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
 
             # Use request logger if available
             if request_logger:
-                request_logger.debug(request_log_str)
+                request_logger.write(request_log_str)
 
         except Exception as e:
             self.logger.warning(f"Failed to log request data: {str(e)}")
