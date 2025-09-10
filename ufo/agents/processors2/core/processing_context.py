@@ -301,6 +301,9 @@ class ProcessingContext:
         :return: Value from global context or default
         """
         # Try to find matching ContextNames enum first
+
+        key = key.upper()
+
         context_name = None
         for name in ContextNames:
             if name.name == key or name.value == key:
@@ -350,8 +353,8 @@ class ProcessingContext:
         except AttributeError:
             pass
 
-        # Then get from global context
-        return self.global_context.get(key, default)
+        # Then get from global context using the proper method
+        return self.get_global(key, default)
 
     # === Phase result management methods ===
     def set_phase_result(

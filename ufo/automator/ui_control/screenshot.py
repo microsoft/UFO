@@ -920,12 +920,12 @@ class PhotographerFacade:
         """
         # Open the images
         if not os.path.exists(image1_path):
-            utils.print_with_color(f"Waring: {image1_path} does not exist.", "yellow")
+            utils.print_with_color(f"Warning: {image1_path} does not exist.", "yellow")
 
             return Image.new("RGB", (0, 0))
 
         if not os.path.exists(image2_path):
-            utils.print_with_color(f"Waring: {image2_path} does not exist.", "yellow")
+            utils.print_with_color(f"Warning: {image2_path} does not exist.", "yellow")
 
             return Image.new("RGB", (0, 0))
 

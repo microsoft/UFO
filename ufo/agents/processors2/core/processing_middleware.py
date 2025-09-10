@@ -142,10 +142,13 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
             )
 
             if error.original_exception:
-                self.logger.info(f"Original traceback:\n{traceback.format_exc()}")
+                self.logger.info(
+                    f"Original traceback:\n{''.join(traceback.format_exception(type(error.original_exception), error.original_exception, error.original_exception.__traceback__))}"
+                )
         else:
             # 记录其他类型的异常
             self.logger.error(
                 f"Unexpected error in {processor.__class__.__name__}: {str(error)}\n"
-                f"Traceback:\n{traceback.format_exc()}"
+                f"Error type: {type(error).__name__}\n"
+                f"Traceback:\n{''.join(traceback.format_exception(type(error), error, error.__traceback__))}"
             )

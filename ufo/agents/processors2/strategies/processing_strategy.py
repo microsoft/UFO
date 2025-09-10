@@ -156,7 +156,7 @@ class ComposedStrategy(BaseProcessingStrategy):
     def __init__(
         self,
         strategies: List[BaseProcessingStrategy],
-        name: str = "composed_strategy",
+        name: str = "",
         fail_fast: bool = True,
         phase: ProcessingPhase = ProcessingPhase.DATA_COLLECTION,
     ) -> None:
@@ -175,6 +175,9 @@ class ComposedStrategy(BaseProcessingStrategy):
 
         self.strategies = strategies
         self.execution_phase = phase
+
+        if not self.name:
+            self.name = "ComposedStrategy_" + "_".join([s.name for s in strategies])
 
         # Collect all dependencies and provides from component strategies
         self._collect_strategy_metadata()
@@ -249,9 +252,7 @@ class ComposedStrategy(BaseProcessingStrategy):
                     if result.success:
                         # Update context with strategy results for next strategy
                         if result.data:
-                            for key, value in result.data.items():
-                                context.set(key, value)
-                                combined_data[key] = value
+                            context.update_local(result.data)
 
                         self.logger.debug(
                             f"Strategy '{strategy_name}' completed successfully"

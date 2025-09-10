@@ -178,9 +178,6 @@ class ProcessorTemplate(ABC):
         return {
             "command_dispatcher": self.global_context.command_dispatcher,
             "prev_plan": prev_plan,
-            "previous_subtasks": self.global_context.get(
-                ContextNames.PREVIOUS_SUBTASKS
-            ),
             "agent_name": self.agent.name,
             "session_step": self.global_context.get(ContextNames.SESSION_STEP),
             "round_step": self.global_context.get(ContextNames.CURRENT_ROUND_STEP),

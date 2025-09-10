@@ -36,7 +36,7 @@ from ufo.agents.processors2.strategies.app_agent_processing_strategy import (
     AppScreenshotCaptureStrategy,
 )
 from ufo.agents.processors2.strategies.processing_strategy import ComposedStrategy
-from ufo.module.context import Context
+from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -60,10 +60,13 @@ class AppAgentProcessorContext(BasicProcessorContext):
 
     # App Agent type identifier
     agent_type: str = "AppAgent"
+    prev_plan: List[str] = field(default_factory=list)
+    subtask: str = ""  # Current subtask description
+    agent_name: str = ""  # Agent name for logging
 
     # Application and UI data
     app_root: Optional[Any] = None  # Application window root element
-    current_application: str = ""  # Application name/identifier
+    application_process_name: str = ""  # Application window name/identifier
 
     # Screenshot and visual data
     clean_screenshot_path: str = ""  # Path to clean screenshot
@@ -81,11 +84,6 @@ class AppAgentProcessorContext(BasicProcessorContext):
     annotation_dict: Dict[str, Any] = field(
         default_factory=dict
     )  # Control annotation dictionary
-    control_filter_time: float = 0.0  # Time taken for control filtering
-    control_info_recorder: Optional[Any] = None  # Control information recorder
-    target_registry: Optional[Any] = (
-        None  # Target registry for control management (from original)
-    )
     application_window: Optional[Any] = (
         None  # Application window object (from original)
     )
@@ -117,6 +115,7 @@ class AppAgentProcessorContext(BasicProcessorContext):
     )
     memory_item: Optional[Any] = None  # Created memory item
     updated_blackboard: bool = False  # Whether blackboard was updated
+    log_path: str = ""
 
     # Performance and debugging data
     app_performance_metrics: Dict[str, Any] = field(
@@ -207,15 +206,13 @@ class AppAgentProcessorV2(ProcessorTemplate):
         from ufo.agents.processors2.core.processing_context import ProcessingPhase
 
         # Data collection strategy (combines screenshot + control info)
-        self.strategies[ProcessingPhase.DATA_COLLECTION] = (
-            ComposedStrategy(
-                strategies=[
-                    AppScreenshotCaptureStrategy(),
-                    AppControlInfoStrategy(),
-                ],
-                name="AppDataCollectionStrategy",
-                fail_fast=True,
-            ),
+        self.strategies[ProcessingPhase.DATA_COLLECTION] = ComposedStrategy(
+            strategies=[
+                AppScreenshotCaptureStrategy(),
+                AppControlInfoStrategy(),
+            ],
+            name="AppDataCollectionStrategy",
+            fail_fast=True,
         )
 
         # LLM interaction strategy
@@ -238,6 +235,21 @@ class AppAgentProcessorV2(ProcessorTemplate):
         # Core middleware (order matters)
         self.middleware_chain = [AppAgentLoggingMiddleware()]
 
+    def _get_processor_specific_context_data(self) -> Dict[str, Any]:
+        """
+        Get processor-specific context data for App Agent.
+        :return: Dictionary of processor-specific context data
+        """
+        context_data = {
+            "subtask": self.global_context.get(ContextNames.SUBTASK),
+            "application_process_name": self.global_context.get(
+                ContextNames.APPLICATION_PROCESS_NAME
+            ),
+            "app_root": self.global_context.get(ContextNames.APPLICATION_ROOT_NAME),
+        }
+
+        return context_data
+
     def get_required_context_keys(self) -> List[str]:
         """
         Get list of required context keys for App Agent processing.
@@ -254,7 +266,7 @@ class AppAgentProcessorV2(ProcessorTemplate):
             "log_path",  # Logging path
             # Application-specific data
             "app_root",  # Application window root
-            "current_application",  # Application identifier
+            "application_process_name",  # Application identifier
             # Optional but commonly used
             "previous_subtasks",  # Previous subtasks (optional)
             "subtask_index",  # Subtask index (optional)
@@ -329,20 +341,20 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         round_num = context.get("round_num")
         round_step = context.get("round_step")
         subtask = context.get("subtask")
-        current_application = context.get("current_application")
+        application_process_name = context.get("application_process_name")
         request = context.get("request")
 
         # Log detailed context information (similar to legacy logger.info)
         self.logger.info(
             f"Round {round_num + 1}, Step {round_step + 1}, AppAgent: "
-            f"Completing the subtask [{subtask}] on application [{current_application}]."
+            f"Completing the subtask [{subtask}] on application [{application_process_name}]."
         )
 
         # Display colored progress message for user feedback (maintaining original UX)
         # This replicates the legacy print_step_info functionality
         utils.print_with_color(
             f"Round {round_num + 1}, Step {round_step + 1}, AppAgent: "
-            f"Completing the subtask [{subtask}] on application [{current_application}].",
+            f"Completing the subtask [{subtask}] on application [{application_process_name}].",
             "magenta",
         )
 
@@ -374,15 +386,15 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         if result.success:
             # Log App Agent specific success information
             subtask = result.data.get("subtask", "")
-            current_application = result.data.get("current_application", "")
+            application_process_name = result.data.get("application_process_name", "")
             action_result = result.data.get("action_result", "")
             llm_cost = result.data.get("llm_cost", 0.0)
 
             success_msg = "App Agent processing completed successfully"
             if subtask:
                 success_msg += f" - Subtask: {subtask}"
-            if current_application:
-                success_msg += f" - Application: {current_application}"
+            if application_process_name:
+                success_msg += f" - Application: {application_process_name}"
             if action_result:
                 success_msg += f" - Action: {action_result}"
 
@@ -393,10 +405,10 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
                 self.logger.debug(f"App Agent LLM cost: ${llm_cost:.4f}")
 
             # Display user-friendly completion message (maintaining original UX)
-            if subtask and current_application:
+            if subtask and application_process_name:
                 utils.print_with_color(
                     f"AppAgent: Successfully completed subtask '{subtask}' "
-                    f"on application '{current_application}'",
+                    f"on application '{application_process_name}'",
                     "green",
                 )
         else:
@@ -425,6 +437,4 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         await super().on_error(processor, error)
 
         # Display user-friendly error message (maintaining original UX)
-        utils.print_with_color(
-            f"AppAgent: Encountered error - {str(error)[:100]}", "red"
-        )
+        utils.print_with_color(f"AppAgent: Encountered error - {str(error)}", "red")

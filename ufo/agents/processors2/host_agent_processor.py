@@ -199,6 +199,19 @@ class HostAgentProcessorV2(ProcessorTemplate):
             HostAgentLoggingMiddleware(),  # Specialized logging for Host Agent
         ]
 
+    def _get_processor_specific_context_data(self) -> Dict[str, Any]:
+        """
+        Get processor-specific context data.
+
+        Subclasses can override this method to provide additional context data
+        specific to their processor type.
+
+        :return: Dictionary of processor-specific context initialization data
+        """
+        return {
+            "previous_subtasks": self.global_context.get(ContextNames.PREVIOUS_SUBTASKS)
+        }
+
     def _finalize_processing_context(
         self, processing_context: ProcessingContext
     ) -> None:
@@ -347,6 +360,4 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         # Call parent implementation for standard error handling
         await super().on_error(processor, error)
 
-        utils.print_with_color(
-            f"HostAgent: Encountered error - {str(error)[:100]}", "red"
-        )
+        utils.print_with_color(f"HostAgent: Encountered error - {str(error)}", "red")

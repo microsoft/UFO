@@ -31,10 +31,7 @@ from ufo.agents.processors.app_agent_processor import (
     ControlInfoRecorder,
 )
 from ufo.agents.processors.target import TargetInfo, TargetKind, TargetRegistry
-from ufo.agents.processors2.strategies.processing_strategy import (
-    BaseProcessingStrategy,
-    ComposedStrategy,
-)
+from ufo.agents.processors2.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.agents.processors2.core.processing_context import (
     ProcessingContext,
     ProcessingPhase,
@@ -108,13 +105,22 @@ class AppScreenshotCaptureStrategy(BaseProcessingStrategy):
 
             start_time = time.time()
 
-            # Extract context variables
-            log_path = context.get("log_path", "")
+            # Extract context variables with validation
+            log_path = context.get("log_path")
             session_step = context.get("session_step", 0)
             command_dispatcher = context.global_context.command_dispatcher
 
+            # Validate required context variables
+            if log_path is None:
+                raise ValueError("log_path is required but not found in context")
+            if command_dispatcher is None:
+                raise ValueError(
+                    "command_dispatcher is required but not found in global context"
+                )
+
             # Step 1: Capture application window screenshot
             self.logger.info("Capturing application window screenshot")
+
             clean_screenshot_path = f"{log_path}action_step{session_step}.png"
 
             clean_screenshot_url = await self._capture_app_screenshot(
@@ -211,7 +217,7 @@ class AppScreenshotCaptureStrategy(BaseProcessingStrategy):
 
     async def _get_application_window_info(
         self, command_dispatcher: BasicCommandDispatcher
-    ) -> None:
+    ) -> TargetInfo:
         """
         Get application window information and set up the application window (from original implementation).
         :param command_dispatcher: Command dispatcher for executing commands
@@ -232,7 +238,7 @@ class AppScreenshotCaptureStrategy(BaseProcessingStrategy):
             )
 
             if result and result[0].result:
-                app_window_info = result[0].result
+                app_window_info: Dict[str, Any] = result[0].result
                 self.logger.info(f"Application window information: {app_window_info}")
 
                 # Convert to virtual UIA representation (from original implementation)
@@ -395,14 +401,14 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
             self.logger.info("Collecting UI control information")
 
             # Extract context variables
-            target_registry: TargetRegistry = context.local_context.get(
-                "target_registry"
+            target_registry: TargetRegistry = context.get_local("target_registry")
+            application_window_info: TargetInfo = context.get_local(
+                "application_window_info"
             )
-            application_window_info: TargetInfo = context.get("application_window_info")
-            clean_screenshot_path = context.get("clean_screenshot_path")
+            clean_screenshot_path = context.get_local("clean_screenshot_path")
             command_dispatcher = context.global_context.command_dispatcher
-            log_path = context.get("log_path", "")
-            session_step = context.get("session_step", 0)
+            log_path = context.get_local("log_path")
+            session_step = context.get_local("session_step")
 
             # Step 1: Getting control info from UIA
             if "uia" in self.control_detection_backend:
@@ -426,6 +432,7 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
                 grounding_control_list = await self._collect_grounding_controls(
                     clean_screenshot_path, application_window_info
                 )
+                # TODO: Push added control info to client.
                 self.control_recorder.grounding_controls_info = grounding_control_list
                 self.logger.info(
                     f"Collected {len(grounding_control_list)} controls from OmniParser."
@@ -649,20 +656,20 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         """
         try:
             # Extract context variables
-            control_info = context.get("control_info", [])
+            control_info = context.get("control_info")
             clean_screenshot_path = context.get("clean_screenshot_path", "")
-            request = context.get("request", "")
-            subtask = context.get("subtask", "")
-            plan = context.get("plan", [])
-            prev_subtask = context.get("previous_subtasks", [])
+            request = context.get("request")
+            subtask = context.get("subtask")
+            plan = context.get("plan")
+            prev_subtask = context.get("previous_subtasks")
             host_message = context.global_context.get(ContextNames.HOST_MESSAGE)
             application_process_name = context.global_context.get(
                 ContextNames.APPLICATION_PROCESS_NAME
             )
-            desktop_screenshot_path = context.get("desktop_screenshot_path", "")
-            session_step = context.get("session_step", 0)
+            desktop_screenshot_path = context.get("desktop_screenshot_path")
+            session_step = context.get("session_step")
             request_logger = context.global_context.get(ContextNames.REQUEST_LOGGER)
-            log_path = context.get("log_path", "")
+            log_path = context.get("log_path")
             annotated_screenshot_path = context.get("annotated_screenshot_path")
 
             # Step 1: Collect image strings:
@@ -684,7 +691,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             # Step 2: Retrieve knowledge from the knowledge base
             self.logger.info("Retrieving knowledge from the knowledge base")
 
-            knowledge_retrieved = self._knowledge_retrieval(self.agent, subtask)
+            knowledge_retrieved = self._knowledge_retrieval(agent, subtask)
 
             # Step 3: Build comprehensive prompt
             self.logger.info("Building App Agent prompt with control information")
@@ -1095,7 +1102,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         try:
             # Extract context variables
             parsed_response: AppAgentResponse = context.get("parsed_response")
-            filtered_controls = context.get("filtered_controls", [])
+            filtered_controls = context.get("filtered_controls")
             command_dispatcher = context.global_context.command_dispatcher
 
             if not parsed_response:
