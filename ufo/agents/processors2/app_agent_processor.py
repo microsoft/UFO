@@ -202,12 +202,6 @@ class AppAgentProcessorV2(ProcessorTemplate):
         """Initialize App Agent Processor V2."""
         super().__init__(agent, global_context)
 
-        # Initialize target_registry (from original implementation)
-        from ufo.agents.processors.target import TargetRegistry
-
-        if not hasattr(global_context, "target_registry"):
-            global_context.target_registry = TargetRegistry()
-
     def _setup_strategies(self) -> None:
         """Setup processing strategies for App Agent."""
         from ufo.agents.processors2.core.processing_context import ProcessingPhase
