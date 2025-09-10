@@ -405,6 +405,7 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
             application_window_info: TargetInfo = context.get_local(
                 "application_window_info"
             )
+
             clean_screenshot_path = context.get_local("clean_screenshot_path")
             command_dispatcher = context.global_context.command_dispatcher
             log_path = context.get_local("log_path")
@@ -461,6 +462,7 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
             )
 
             annotated_screenshot_url = self._save_annotated_screenshot(
+                application_window_info,
                 clean_screenshot_path,
                 target_registry.all_targets(),
                 annotated_screenshot_path,
@@ -586,10 +588,11 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
             self.logger.warning(f"Control collection failed: {str(e)}")
             return []
 
-    async def _save_annotated_screenshot(
+    def _save_annotated_screenshot(
         self,
+        application_window_info: TargetInfo,
         clean_screenshot_path: str,
-        target_list: Dict[str, TargetInfo],
+        target_list: List[TargetInfo],
         save_path: str,
     ) -> str:
         """
@@ -599,8 +602,11 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
         :param save_path: The saved path of the annotated screenshot
         :return: The return annotated image string
         """
+
         try:
+            print(application_window_info)
             self.photographer.capture_app_window_screenshot_with_target_list(
+                application_window_info=application_window_info,
                 target_list=target_list,
                 path=clean_screenshot_path,
                 save_path=save_path,
@@ -612,7 +618,10 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
             )
             return annotated_screenshot_url
         except Exception as e:
-            self.logger.warning(f"Failed to save annotated screenshot: {str(e)}")
+            import traceback
+
+            self.logger.error(f"Failed to save annotated screenshot: {str(e)}")
+            self.logger.error(traceback.format_exc())
             return None
 
 

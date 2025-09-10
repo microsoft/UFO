@@ -556,6 +556,7 @@ class TargetAnnotationDecorator(PhotographerDecorator):
         annotation_type: str = "number",
         color_diff: bool = True,
         color_default: str = "#FFF68F",
+        application_window_info: Optional["TargetInfo"] = None,
     ) -> None:
         """
         Initialize the TargetAnnotationDecorator.
@@ -569,6 +570,38 @@ class TargetAnnotationDecorator(PhotographerDecorator):
         self.annotation_type = annotation_type
         self.color_diff = color_diff
         self.color_default = color_default
+        self.application_window_info = application_window_info
+
+    def _convert_absolute_to_relative_coords(
+        self, target_rect: List[int]
+    ) -> Tuple[int, int, int, int]:
+        """
+        Convert absolute screen coordinates to relative coordinates within the application window.
+        Similar to coordinate_adjusted method but for TargetInfo objects.
+        :param target_rect: TargetInfo rect in format [left, top, right, bottom] (absolute screen coordinates)
+        :return: Tuple of (left, top, right, bottom) relative to the application window
+        """
+        print(self.application_window_info.rect)
+        if not self.application_window_info or not self.application_window_info.rect:
+            # If no application window info, assume coordinates are already relative
+            left, top, right, bottom = target_rect
+            return (left, top, right, bottom)
+
+        # Application window rect: [left, top, right, bottom]
+        app_left, app_top, _, _ = self.application_window_info.rect
+
+        # Target rect: [left, top, right, bottom] (absolute coordinates)
+        target_left, target_top, target_right, target_bottom = target_rect
+
+        # Convert to relative coordinates
+        relative_left = target_left - app_left
+        relative_top = target_top - app_top
+        relative_right = target_right - app_left
+        relative_bottom = target_bottom - app_top
+
+        print((relative_left, relative_top, relative_right, relative_bottom))
+
+        return (relative_left, relative_top, relative_right, relative_bottom)
 
     def capture_with_target_info(
         self,
@@ -603,13 +636,8 @@ class TargetAnnotationDecorator(PhotographerDecorator):
                 if not target.rect or len(target.rect) < 4:
                     continue
 
-                # Use target.rect directly (already in absolute coordinates)
-                adjusted_rect = (
-                    target.rect[0],
-                    target.rect[1],
-                    target.rect[2],
-                    target.rect[3],
-                )
+                # Convert absolute coordinates to relative coordinates within the application window
+                adjusted_rect = self._convert_absolute_to_relative_coords(target.rect)
 
                 # Get the color for this control type
                 button_color = (
@@ -643,8 +671,9 @@ class TargetAnnotationDecorator(PhotographerDecorator):
             if not target.rect or len(target.rect) < 4:
                 continue
 
-            # Use target.rect directly
-            adjusted_coordinate = (target.rect[0], target.rect[1])
+            # Convert absolute coordinates to relative coordinates within the application window
+            adjusted_rect = self._convert_absolute_to_relative_coords(target.rect)
+            adjusted_coordinate = (adjusted_rect[0], adjusted_rect[1])
 
             # Generate label text
             label_text = target.id or str(i + 1)
@@ -664,6 +693,10 @@ class TargetAnnotationDecorator(PhotographerDecorator):
         if save_path is not None and screenshot_annotated is not None:
             screenshot_annotated.save(
                 save_path, compress_level=configs.get("DEFAULT_PNG_COMPRESS_LEVEL", 1)
+            )
+        if not screenshot_annotated:
+            utils.print_with_color(
+                f"Warning: screenshot annotated is not valid.", "yellow"
             )
 
         return screenshot_annotated
@@ -1214,6 +1247,7 @@ class PhotographerFacade:
 
     def capture_app_window_screenshot_with_target_list(
         self,
+        application_window_info: "TargetInfo",
         target_list: List["TargetInfo"],
         color_diff: bool = True,
         color_default: str = "#FFF68F",
@@ -1236,7 +1270,12 @@ class PhotographerFacade:
         """
 
         # Create screenshot and annotate directly with target info
-        screenshot = TargetAnnotationDecorator(None, color_diff, color_default)
+        screenshot = TargetAnnotationDecorator(
+            screenshot=None,
+            color_diff=color_diff,
+            color_default=color_default,
+            application_window_info=application_window_info,
+        )
         return screenshot.capture_with_target_info(
             target_list, save_path, path, highlight_bbox
         )

@@ -53,14 +53,7 @@ configs = Config.get_instance().config_data
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
     from ufo.agents.processors2.host_agent_processor import HostAgentProcessorContext
-
-
-# Note: HostAgentUnifiedMemory has been replaced with HostAgentProcessorContext
-# from the unified context system in processing_context.py
-
-
-if TYPE_CHECKING:
-    from ufo.agents.agent.host_agent import HostAgent
+    from ufo.module.basic import FileWriter
 
 
 @depends_on("command_dispatcher", "log_path", "session_step")
@@ -482,7 +475,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
         request: str,
         blackboard_prompt: List[str],
         prompt_message: Dict[str, Any],
-        request_logger,
+        request_logger: "FileWriter",
     ) -> None:
         """
         Log request data for debugging and analysis (only in debug mode).
@@ -513,7 +506,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
 
             # Use request logger if available
             if request_logger:
-                request_logger.debug(request_log_str)
+                request_logger.write(request_log_str)
 
         except Exception as e:
             self.logger.warning(f"Failed to log request data: {str(e)}")
