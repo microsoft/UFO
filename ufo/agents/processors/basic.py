@@ -141,7 +141,7 @@ class BaseProcessor(ABC):
 
             return
 
-    def resume(self) -> None:
+    async def resume(self) -> None:
         """
         Resume the process of action execution after the session is paused.
         """
@@ -150,7 +150,7 @@ class BaseProcessor(ABC):
 
         try:
             # Step 1: Execute the action.
-            self.execute_action()
+            await self.execute_action()
 
             # Step 2: Update the memory.
             self.update_memory()
@@ -294,7 +294,7 @@ class BaseProcessor(ABC):
         pass
 
     @abstractmethod
-    def execute_action(self) -> None:
+    async def execute_action(self) -> None:
         """
         Execute the action.
         """
