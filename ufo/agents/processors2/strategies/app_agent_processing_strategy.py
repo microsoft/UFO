@@ -679,6 +679,11 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
                 log_path + f"action_step{session_step - 1}_selected_controls.png"
             )
 
+            if not os.path.exists(last_control_screenshot_path):
+                last_control_screenshot_path = (
+                    log_path + f"action_step{session_step - 1}.png"
+                )
+
             concat_screenshot_path = log_path + f"action_step{session_step}_concat.png"
 
             image_string_list = self._collect_image_strings(
