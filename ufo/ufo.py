@@ -5,8 +5,6 @@ import argparse
 import logging
 from datetime import datetime
 
-from ufo.module.session_pool import SessionFactory, SessionPool
-
 args = argparse.ArgumentParser()
 args.add_argument(
     "--task",
@@ -67,6 +65,8 @@ async def main():
     To use batch mode that follows a plan file or folder, run the following command:
     python -m ufo -t task_name -m batch_normal -p path_to_plan_file_or_folder
     """
+    from ufo.module.session_pool import SessionFactory, SessionPool
+
     sessions = SessionFactory().create_session(
         task=parsed_args.task,
         mode=parsed_args.mode,

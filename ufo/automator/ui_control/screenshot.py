@@ -581,7 +581,6 @@ class TargetAnnotationDecorator(PhotographerDecorator):
         :param target_rect: TargetInfo rect in format [left, top, right, bottom] (absolute screen coordinates)
         :return: Tuple of (left, top, right, bottom) relative to the application window
         """
-        print(self.application_window_info.rect)
         if not self.application_window_info or not self.application_window_info.rect:
             # If no application window info, assume coordinates are already relative
             left, top, right, bottom = target_rect
@@ -598,8 +597,6 @@ class TargetAnnotationDecorator(PhotographerDecorator):
         relative_top = target_top - app_top
         relative_right = target_right - app_left
         relative_bottom = target_bottom - app_top
-
-        print((relative_left, relative_top, relative_right, relative_bottom))
 
         return (relative_left, relative_top, relative_right, relative_bottom)
 

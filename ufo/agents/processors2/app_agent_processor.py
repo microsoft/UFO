@@ -36,6 +36,7 @@ from ufo.agents.processors2.strategies.app_agent_processing_strategy import (
     AppScreenshotCaptureStrategy,
 )
 from ufo.agents.processors2.strategies.processing_strategy import ComposedStrategy
+from ufo.agents.processors.target import TargetInfo
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
@@ -78,7 +79,7 @@ class AppAgentProcessorContext(BasicProcessorContext):
     filtered_controls: List[Dict[str, Any]] = field(
         default_factory=list
     )  # Filtered UI controls
-    control_info: List[Dict[str, Any]] = field(
+    control_info: List[Dict[str, TargetInfo]] = field(
         default_factory=list
     )  # Alias for filtered_controls
     annotation_dict: Dict[str, Any] = field(
@@ -151,22 +152,17 @@ class AppAgentProcessorContext(BasicProcessorContext):
             "annotation_dict",
             "control_filter_time",
             "response_text",
-            "prompt_message",
             "function_name",
             "function_arguments",
             "save_screenshot",
             "action_success",
             "control_log",
             "updated_blackboard",
-            "app_performance_metrics",
-            "app_error_handler_active",
             "app_logging_active",
             "app_memory_sync_active",
             # Performance and error tracking from parent
             "execution_times",
             "total_time",
-            "error_count",
-            "last_error",
         ]
 
 

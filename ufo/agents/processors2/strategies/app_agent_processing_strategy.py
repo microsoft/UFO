@@ -23,7 +23,7 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from ufo import utils
 from ufo.agents.memory.memory import MemoryItem
-from ufo.agents.processors.actions import ActionCommandInfo
+from ufo.agents.processors.actions import ActionCommandInfo, ListActionCommandInfo
 from ufo.agents.processors.app_agent_processor import (
     AppAgentAdditionalMemory,
     AppAgentRequestLog,
@@ -665,7 +665,9 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         """
         try:
             # Extract context variables
-            control_info = context.get("control_info")
+            control_info: List[Dict[str, Any]] = context.get("target_registry").to_list(
+                keep_keys=["id", "name", "type"]
+            )
             clean_screenshot_path = context.get("clean_screenshot_path", "")
             request = context.get("request")
             subtask = context.get("subtask")
@@ -710,19 +712,18 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             # Step 3: Build comprehensive prompt
             self.logger.info("Building App Agent prompt with control information")
             prompt_message = await self._build_app_prompt(
-                agent,
-                control_info,
-                image_string_list,
-                knowledge_retrieved,
-                request,
-                subtask,
-                plan,
-                prev_subtask,
-                host_message,
-                application_process_name,
-                desktop_screenshot_path,
-                session_step,
-                request_logger,
+                agent=agent,
+                control_info=control_info,
+                image_string_list=image_string_list,
+                knowledge_retrieved=knowledge_retrieved,
+                request=request,
+                subtask=subtask,
+                plan=plan,
+                prev_subtask=prev_subtask,
+                host_message=host_message,
+                application_process_name=application_process_name,
+                session_step=session_step,
+                request_logger=request_logger,
             )
 
             # Step 4: Get LLM response
@@ -829,7 +830,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
     async def _build_app_prompt(
         self,
         agent: "AppAgent",
-        control_info: List[TargetInfo],
+        control_info: List[Dict[str, Any]],
         image_string_list: List[str],
         knowledge_retrieved: Dict[str, str],
         request: str,
@@ -844,17 +845,17 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         """
         Build comprehensive prompt for App Agent.
         :param agent: The AppAgent instance
-        :param filtered_controls: List of filtered controls
-        :param clean_screenshot_path: Path to clean screenshot
-        :param request: User request
-        :param subtask: Current subtask
-        :param plan: Current plan
-        :param prev_subtask: Previous subtasks
-        :param host_message: Host message
-        :param desktop_screenshot_path: Path to desktop screenshot
+        :param control_info: List of TargetInfo objects representing UI controls
+        :param image_string_list: List of image base64 strings
+        :param knowledge_retrieved: Retrieved knowledge including examples and documents
+        :param request: The user request
+        :param subtask: The current subtask
+        :param plan: The current plan
+        :param prev_subtask: List of previous subtasks
+        :param application_process_name: The name of the current application process
+        :param host_message: The host message
         :param session_step: Current session step
-        :param request_logger: Request logger
-        :return: Prompt message dictionary
+        :param request_logger: Request logger for logging prompts
         """
         try:
             # Get blackboard context
@@ -873,6 +874,15 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             ) + knowledge_retrieved.get("online_docs")
 
             # Build prompt using agent's message constructor
+
+            print("Building prompt with the following parameters:")
+            print(f"Image List: {len(image_string_list)} images")
+            print(f"Control Info: {len(control_info)} controls")
+            print(f"Previous Subtasks: {prev_subtask}")
+            print(f"Plan: {plan}")
+            print(f"Blackboard Prompt: {blackboard_prompt}")
+            print(f"Last Successful Actions: {last_success_actions}")
+
             prompt_message = agent.message_constructor(
                 dynamic_examples=retrieved_examples,
                 dynamic_knowledge=retrieved_knowledge,
@@ -891,18 +901,18 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
 
             # Log request data for debugging
             self._log_request_data(
-                session_step,
-                plan,
-                prev_subtask,
-                request,
-                control_info,
-                subtask,
-                host_message,
-                last_success_actions,
-                configs.get("INCLUDE_LAST_SCREENSHOT", False),
-                prompt_message,
-                agent,
-                request_logger,
+                session_step=session_step,
+                plan=plan,
+                prev_subtask=prev_subtask,
+                request=request,
+                control_info=control_info,
+                image_list=image_string_list,
+                subtask=subtask,
+                host_message=host_message,
+                last_success_actions=last_success_actions,
+                include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", False),
+                prompt_message=prompt_message,
+                request_logger=request_logger,
             )
 
             return prompt_message
@@ -917,9 +927,17 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         :return: List of last successful actions
         """
         try:
-            if hasattr(agent, "get_last_success_actions"):
-                return agent.get_last_success_actions()
-            return []
+            agent_memory = agent.memory
+
+            if agent_memory.length > 0:
+                last_success_actions = (
+                    agent_memory.get_latest_item().to_dict().get("ActionSuccess", [])
+                )
+
+            else:
+                last_success_actions = []
+
+            return last_success_actions
         except Exception as e:
             self.logger.warning(f"Failed to get last success actions: {str(e)}")
             return []
@@ -930,7 +948,8 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         plan: List[str],
         prev_subtask: List[str],
         request: str,
-        filtered_controls: List[TargetInfo],
+        control_info: List[TargetInfo],
+        image_list: List[str],
         subtask: str,
         host_message: str,
         last_success_actions: List[Dict],
@@ -944,7 +963,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         :param plan: Current plan
         :param prev_subtask: Previous subtasks
         :param request: User request
-        :param filtered_controls: List of filtered controls
+        :param control_info: List of filtered controls
         :param subtask: Current subtask
         :param host_message: Host message
         :param last_success_actions: Last successful actions
@@ -962,11 +981,11 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
                 offline_docs="",
                 online_docs="",
                 dynamic_knowledge="",
-                image_list=prompt_message.get("image_list", []),
+                image_list=image_list,
                 prev_subtask=prev_subtask,
                 plan=plan,
                 request=request,
-                control_info=filtered_controls,
+                control_info=control_info,
                 subtask=subtask,
                 current_application="",  # Would need app_root from context
                 host_message=host_message,
@@ -1046,29 +1065,12 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             # Create structured response
             parsed_response = AppAgentResponse(**response_dict)
 
-            # Validate response fields
-            self._validate_app_response(parsed_response)
-
-            # Print response for user feedback
-            if hasattr(agent, "print_response"):
-                agent.print_response(parsed_response)
+            agent.print_response(parsed_response)
 
             return parsed_response
 
         except Exception as e:
             raise Exception(f"Failed to parse app response: {str(e)}")
-
-    def _validate_app_response(self, response: AppAgentResponse) -> None:
-        """
-        Validate App Agent response fields.
-        :param response: Parsed response
-        """
-        if not response.observation:
-            raise ValueError("Response missing required 'observation' field")
-        if not response.thought:
-            raise ValueError("Response missing required 'thought' field")
-        if not response.status:
-            raise ValueError("Response missing required 'status' field")
 
     def _extract_response_data(self, response: AppAgentResponse) -> Dict[str, Any]:
         """
@@ -1084,7 +1086,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         }
 
 
-@depends_on("parsed_response", "filtered_controls")
+@depends_on("parsed_response", "control_info")
 @provides("execution_result", "action_info", "action_success", "control_log")
 class AppActionExecutionStrategy(BaseProcessingStrategy):
     """
@@ -1116,7 +1118,8 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         try:
             # Extract context variables
             parsed_response: AppAgentResponse = context.get("parsed_response")
-            filtered_controls = context.get("filtered_controls")
+            control_info = context.get("control_info")
+            annotation_dict = context.get("annotation_dict")
             command_dispatcher = context.global_context.command_dispatcher
 
             if not parsed_response:
@@ -1143,17 +1146,17 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             )
 
             # Create action info for memory
-            action_info = self._create_action_info(
-                filtered_controls, parsed_response, execution_result
+            action = self._create_action_info(
+                control_info, parsed_response, execution_result
             )
+
+            action_info = ListActionCommandInfo([action])
 
             # Determine action success
             action_success = self._determine_action_success(execution_result)
 
             # Create control log
-            control_log = self._create_control_log(
-                filtered_controls, parsed_response, execution_result
-            )
+            control_log = action_info.get_target_info()
 
             return ProcessingResult(
                 success=True,
@@ -1206,13 +1209,13 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
 
     def _create_action_info(
         self,
-        filtered_controls: List[TargetInfo],
+        annotation_dict: Dict[str, TargetInfo],
         response: AppAgentResponse,
-        execution_result: List[Result],
+        execution_result: Result,
     ) -> ActionCommandInfo:
         """
         Create action information for memory tracking.
-        :param filtered_controls: List of filtered controls
+        :param control_info: List of filtered controls
         :param response: Parsed response
         :param execution_result: Execution results
         :return: ActionCommandInfo object
@@ -1220,28 +1223,20 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         try:
             # Get control information if action involved a control
             target_control = None
-            if response.arguments and "control_id" in response.arguments:
-                control_id = response.arguments["control_id"]
-                if control_id.isdigit() and int(control_id) < len(filtered_controls):
-                    target_control = filtered_controls[int(control_id)]
+            if response.arguments and "id" in response.arguments:
+                control_id = response.arguments["id"]
+                target_control = annotation_dict.get(control_id)
 
             return ActionCommandInfo(
-                function=response.function or "unknown",
+                function=response.function,
                 arguments=response.arguments or {},
                 target=target_control,
-                status=response.status or "unknown",
-                result=execution_result[0] if execution_result else None,
+                status=response.status,
+                result=execution_result,
             )
 
         except Exception as e:
             self.logger.warning(f"Failed to create action info: {str(e)}")
-            return ActionCommandInfo(
-                function=response.function or "unknown",
-                arguments=response.arguments or {},
-                target=None,
-                status=response.status or "unknown",
-                result=None,
-            )
 
     def _determine_action_success(self, execution_result: List[Result]) -> bool:
         """
@@ -1254,65 +1249,14 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                 return False
 
             result = execution_result[0]
-            if hasattr(result, "status"):
-                return result.status == ResultStatus.SUCCESS
-            elif hasattr(result, "success"):
-                return result.success
-
-            return True  # Assume success if no clear indication
+            return result.status == ResultStatus.SUCCESS
 
         except Exception as e:
             self.logger.warning(f"Failed to determine action success: {str(e)}")
             return False
 
-    def _create_control_log(
-        self,
-        filtered_controls: List[TargetInfo],
-        response: AppAgentResponse,
-        execution_result: List[Result],
-    ) -> Dict[str, Any]:
-        """
-        Create control log for debugging and analysis.
-        :param filtered_controls: List of filtered controls
-        :param response: Parsed response
-        :param execution_result: Execution results
-        :return: Control log dictionary
-        """
-        try:
-            control_log = {
-                "function": response.function,
-                "arguments": response.arguments,
-                "status": response.status,
-            }
 
-            # Add control-specific information if available
-            if response.arguments and "control_id" in response.arguments:
-                control_id = response.arguments["control_id"]
-
-                if control_id.isdigit() and int(control_id) < len(filtered_controls):
-                    control = filtered_controls[int(control_id)]
-                    control_log.update(
-                        {
-                            "control_text": control.get("control_text", ""),
-                            "control_type": control.get("control_type", ""),
-                            "control_rect": control.get("control_rect", {}),
-                        }
-                    )
-
-            # Add execution result information
-            if execution_result:
-                result = execution_result[0]
-                control_log["execution_status"] = result.status
-                control_log["execution_result"] = result.result
-
-            return control_log
-
-        except Exception as e:
-            self.logger.warning(f"Failed to create control log: {str(e)}")
-            return {"error": str(e)}
-
-
-@depends_on("session_step", "round_step", "round_num")
+@depends_on("session_step", "round_step", "round_num", "parsed_response")
 @provides("additional_memory", "memory_item", "updated_blackboard")
 class AppMemoryUpdateStrategy(BaseProcessingStrategy):
     """
@@ -1356,10 +1300,13 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
             action_success = context.get("action_success", False)
             execution_result = context.get("execution_result", [])
             control_log = context.get("control_log", {})
-            parsed_response = context.get("parsed_response")
+            parsed_response: AppAgentResponse = context.get("parsed_response")
             clean_screenshot_path = context.get("clean_screenshot_path", "")
             screenshot_saved_time = context.get("screenshot_saved_time", 0.0)
             control_filter_time = context.get("control_filter_time", 0.0)
+            application_process_name = context.global_context.get(
+                ContextNames.APPLICATION_PROCESS_NAME
+            )
 
             # Step 1: Create additional memory data
             self.logger.info("Creating App Agent additional memory data")
@@ -1390,13 +1337,22 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
             # Step 3: Add memory to agent
             agent.add_memory(memory_item)
 
+            save_screenshot = parsed_response.save_screenshot
+
             # Step 4: Update blackboard
-            self._update_blackboard(agent, clean_screenshot_path, memory_item)
+            self._update_blackboard(
+                agent=agent,
+                save_screenshot=save_screenshot.get("save", False),
+                screenshot_path=clean_screenshot_path,
+                memory_item=memory_item,
+                save_reason=save_screenshot.get("reason", ""),
+                application_process_name=application_process_name,
+            )
 
             # Step 5: Update structural logs
             self._update_structural_logs(context, memory_item)
 
-            self.logger.info("App Agent memory update completed successfully")
+            self.logger.info("AppAgent memory update completed successfully")
 
             return ProcessingResult(
                 success=True,
@@ -1527,22 +1483,23 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
             raise Exception(f"Failed to create memory item: {str(e)}")
 
     def _update_blackboard(
-        self, agent: "AppAgent", clean_screenshot_path: str, memory_item: MemoryItem
+        self,
+        agent: "AppAgent",
+        save_screenshot: bool,
+        save_reason: str,
+        screenshot_path: str,
+        memory_item: MemoryItem,
+        application_process_name: str = "",
     ) -> None:
         """
         Update agent blackboard with screenshots and actions.
         :param agent: The AppAgent instance
-        :param clean_screenshot_path: Path to clean screenshot
+        :param save_screenshot: Whether to save screenshot to blackboard
+        :param screenshot_path: Path to screenshot
         :param memory_item: Memory item with action data
+        :param application_process_name: Name of the application process
         """
         try:
-            if not hasattr(agent, "blackboard"):
-                return
-
-            # Update image blackboard with screenshots
-            if clean_screenshot_path and os.path.exists(clean_screenshot_path):
-                agent.blackboard.add_screenshot(clean_screenshot_path)
-
             # Add action trajectories to blackboard
             history_keys = configs.get("HISTORY_KEYS", [])
             if history_keys:
@@ -1553,7 +1510,15 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
                     if key in memory_dict
                 }
                 if memorized_action:
-                    agent.blackboard.add_trajectory(memorized_action)
+                    agent.blackboard.add_trajectories(memorized_action)
+
+            if save_screenshot:
+
+                metadata = {
+                    "screenshot application": application_process_name,
+                    "saving reason": save_reason,
+                }
+                agent.blackboard.add_image(screenshot_path, metadata)
 
         except Exception as e:
             self.logger.warning(f"Failed to update blackboard: {str(e)}")
