@@ -668,13 +668,13 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             clean_screenshot_path = context.get("clean_screenshot_path", "")
             request = context.get("request")
             subtask = context.get("subtask")
-            plan = context.get("plan")
+            plan = self._get_prev_plan(agent)
             prev_subtask = context.get("previous_subtasks")
             host_message = context.global_context.get(ContextNames.HOST_MESSAGE)
             application_process_name = context.global_context.get(
                 ContextNames.APPLICATION_PROCESS_NAME
             )
-            desktop_screenshot_path = context.get("desktop_screenshot_path")
+
             session_step = context.get("session_step")
             request_logger = context.global_context.get(ContextNames.REQUEST_LOGGER)
             log_path = context.get("log_path")
@@ -797,6 +797,26 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             image_string_list += [screenshot_url, screenshot_annotated_url]
 
         return image_string_list
+
+    def _get_prev_plan(self, agent: "AppAgent") -> List[str]:
+        """
+        Get the previous plan from the agent's memory.
+        :param agent: The AppAgent instance
+        :return: List of previous plan steps
+        """
+        try:
+            agent_memory = agent.memory
+
+            if agent_memory.length > 0:
+                prev_plan = agent_memory.get_latest_item().to_dict().get("plan", [])
+            else:
+                prev_plan = []
+
+            return prev_plan
+
+        except Exception as e:
+            self.logger.warning(f"Failed to get previous plan: {str(e)}")
+            return []
 
     def _knowledge_retrieval(self, agent: "AppAgent", subtask: str):
         """
@@ -929,7 +949,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
 
             if agent_memory.length > 0:
                 last_success_actions = (
-                    agent_memory.get_latest_item().to_dict().get("ActionSuccess", [])
+                    agent_memory.get_latest_item().to_dict().get("action_success", [])
                 )
 
             else:
@@ -1348,11 +1368,11 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
 
         if agent_memory.length > 0:
             success_action_memory = agent_memory.filter_memory_from_keys(
-                ["ActionSuccess"]
+                ["action_success"]
             )
             success_actions = []
             for success_action in success_action_memory:
-                success_actions += success_action.get("ActionSuccess", [])
+                success_actions += success_action.get("action_success", [])
 
         else:
             success_actions = []
@@ -1382,6 +1402,7 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
             action_info: ListActionCommandInfo = context.get("action_info")
 
             if action_info:
+
                 app_context.function_call = action_info.get_function_calls()
                 app_context.action = action_info.to_list_of_dicts(
                     previous_actions=all_previous_success_actions
@@ -1394,6 +1415,7 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
                 app_context.action_type = [
                     action.result.namespace for action in action_info.actions
                 ]
+                app_context.action_representation = action_info.to_representation()
 
             app_context.session_step = context.get_global(
                 ContextNames.SESSION_STEP.name, 0

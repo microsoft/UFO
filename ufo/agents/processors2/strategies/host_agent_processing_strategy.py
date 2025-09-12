@@ -340,7 +340,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
             # Extract context variables
             target_info_list = context.get_local("target_info_list", [])
             desktop_screenshot_url = context.get_local("desktop_screenshot_url", "")
-            prev_plan = context.get("prev_plan", [])
+            prev_plan = self._get_prev_plan(agent)
             previous_subtasks = context.get("previous_subtasks", [])
             request = context.get("request", "")
             session_step = context.get("session_step", 0)
@@ -401,6 +401,25 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
             error_msg = f"Host LLM interaction failed: {str(e)}"
             self.logger.error(error_msg)
             return self.handle_error(e, ProcessingPhase.LLM_INTERACTION, context)
+
+    def _get_prev_plan(self, agent: "HostAgent") -> List[str]:
+        """
+        Get the previous plan from the agent's memory.
+        :param agent: The AppAgent instance
+        :return: List of previous plan steps
+        """
+        try:
+            agent_memory = agent.memory
+
+            if agent_memory.length > 0:
+                prev_plan = agent_memory.get_latest_item().to_dict().get("plan", [])
+            else:
+                prev_plan = []
+
+            return prev_plan
+        except Exception as e:
+            self.logger.error(f"Failed to get previous plan: {str(e)}")
+            return []
 
     async def _build_comprehensive_prompt(
         self,
@@ -1069,6 +1088,7 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
                 host_context.action = [action_info.model_dump()]
                 host_context.function_call = action_info.function or ""
                 host_context.arguments = action_info.arguments
+                host_context.action_representation = action_info.to_representation()
                 if action_info.result:
                     host_context.action_type = action_info.result.namespace
 

@@ -112,12 +112,20 @@ class HostAgentProcessorContext(BasicProcessorContext):
         """
         return [
             "step",  # Step
+            "observation",  # Observation
+            "thought",  # Thought
+            "status",  # Status
+            "message",  # Message
+            "questions",  # Questions
+            "current_subtask",  # CurrentSubtask
+            "plan",  # Plan
             "round_step",  # RoundStep
             "agent_step",  # AgentStep
             "round_num",  # RoundNum
             "subtask_index",  # SubtaskIndex
             "action",  # Action
             "function_call",  # FunctionCall
+            "action_representation",
             "arguments",  # Arguments
             "action_type",  # ActionType
             "request",  # Request

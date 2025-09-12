@@ -52,22 +52,44 @@ class ActionCommandInfo(BaseModel):
     target: Optional[TargetInfo] = None
     result: Result = Field(default_factory=lambda: Result(status="none"))
     action_string: str = ""
+    action_representation: str = ""
 
     def model_post_init(self, __context: Any) -> None:
         """
         Initialize the action string.
         """
-        self.action_string = ActionCommandInfo.generate_command_string(
-            self.function, self.arguments
-        )
+        self.action_string = ActionCommandInfo.to_string(self.function, self.arguments)
 
     @staticmethod
-    def generate_command_string(command_name: str, params: Dict[str, Any]) -> str:
+    def to_string(command_name: str, params: Dict[str, Any]) -> str:
         """
         Generate a function call string.
         """
         args_str = ", ".join(f"{k}={v!r}" for k, v in params.items())
         return f"{command_name}({args_str})"
+
+    def to_representation(self) -> str:
+        """
+        Generate a function call representation string.
+        """
+        components = []
+        components.append(f"[Action] {self.action_string}")
+        if self.target:
+            target_info = ", ".join(
+                f"{k}={v}"
+                for k, v in self.target.model_dump(exclude_none=True).items()
+                if k not in {"rect"}  # rect 通常不必要
+            )
+            components.append(f"[Target] {target_info}")
+
+        if self.result:
+            components.append(f"[Status] {self.result.status}")
+            if self.result.error:
+                components.append(f"[Error] {self.result.error}")
+            elif self.result.result is not None:
+                components.append(f"[Result] {self.result.result}")
+
+        return "\n".join(components)
 
 
 class ListActionCommandInfo:
@@ -163,6 +185,22 @@ class ListActionCommandInfo:
         return json.dumps(
             self.to_list_of_dicts(success_only, previous_actions), ensure_ascii=False
         )
+
+    def to_representation(
+        self,
+        success_only: bool = False,
+    ) -> List[str]:
+        """
+        Convert the action sequence to a representation string.
+        :param success_only: Whether to convert the successful actions only.
+        :return: The representation string of the action sequence.
+        """
+        representations = []
+        for action in self.actions:
+            if success_only and action.result.status != "success":
+                continue
+            representations.append(action.to_representation())
+        return representations
 
     @staticmethod
     def is_same_action(

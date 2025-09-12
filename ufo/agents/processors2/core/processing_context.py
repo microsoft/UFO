@@ -92,6 +92,7 @@ class BasicProcessorContext(ProcessorContextProtocol):
     command_dispatcher: Optional[BasicCommandDispatcher] = None
 
     action: List[Dict[str, Any]] = field(default_factory=list)
+    action_representation: str = ""
     results: str = ""
     function_call: Optional[Any] = None
     arguments: Dict[str, Any] = field(default_factory=dict)

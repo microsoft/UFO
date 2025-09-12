@@ -154,6 +154,7 @@ class AppAgentProcessorContext(BasicProcessorContext):
             "action_type",
             "subtask",
             "app_root",
+            "action_representation",
             # App-specific serializable fields
             "clean_screenshot_path",
             "annotated_screenshot_path",
@@ -162,7 +163,6 @@ class AppAgentProcessorContext(BasicProcessorContext):
             "action_success",
             "function_call",
             "save_screenshot",
-            "action_success",
             "control_log",
         ]
 
