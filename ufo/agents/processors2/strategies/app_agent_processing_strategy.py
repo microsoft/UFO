@@ -1137,8 +1137,10 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         :return: ProcessingResult with execution results
         """
         try:
-            # Extract context variables
+            # Step 1: Extract context variables
             parsed_response: AppAgentResponse = context.get_local("parsed_response")
+            log_path = context.get_local("log_path")
+            session_step = context.get_local("step")
             annotation_dict = context.get_local("annotation_dict")
             command_dispatcher = context.global_context.command_dispatcher
 
@@ -1178,6 +1180,18 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             # Create control log
             control_log = action_info.get_target_info()
 
+            # Save annotated screenshot after action execution
+            selected_control_screenshot_path = (
+                log_path + f"action_step{session_step}_selected_controls.png"
+            )
+
+            self._save_annotated_screenshot(
+                application_window_info=context.get_local("application_window_info"),
+                clean_screenshot_path=context.get_local("clean_screenshot_path"),
+                save_path=selected_control_screenshot_path,
+                target_list=[action.target] if action.target else [],
+            )
+
             return ProcessingResult(
                 success=True,
                 data={
@@ -1196,7 +1210,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             return self.handle_error(e, ProcessingPhase.ACTION_EXECUTION, context)
 
     async def _execute_app_action(
-        self, command_dispatcher, response: AppAgentResponse
+        self, command_dispatcher: BasicCommandDispatcher, response: AppAgentResponse
     ) -> List[Result]:
         """
         Execute the specific action from the response.
@@ -1275,6 +1289,40 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         except Exception as e:
             self.logger.warning(f"Failed to determine action success: {str(e)}")
             return False
+
+    def _save_annotated_screenshot(
+        self,
+        application_window_info: TargetInfo,
+        clean_screenshot_path: str,
+        target_list: List[TargetInfo],
+        save_path: str,
+    ) -> str:
+        """
+        Save annotated screenshot using photographer with optimized TargetRegistry approach.
+        :param clean_screenshot_path: Path to the clean screenshot
+        :param target_list: List of TargetInfo objects
+        :param save_path: The saved path of the annotated screenshot
+        :return: The return annotated image string
+        """
+
+        try:
+            photographer = PhotographerFacade()
+            photographer.capture_app_window_screenshot_with_target_list(
+                application_window_info=application_window_info,
+                target_list=target_list,
+                path=clean_screenshot_path,
+                save_path=save_path,
+                highlight_bbox=True,
+            )
+
+            annotated_screenshot_url = photographer.encode_image_from_path(save_path)
+            return annotated_screenshot_url
+        except Exception as e:
+            import traceback
+
+            self.logger.error(f"Failed to save annotated screenshot: {str(e)}")
+            self.logger.error(traceback.format_exc())
+            return None
 
 
 @depends_on("session_step", "round_step", "round_num", "parsed_response")

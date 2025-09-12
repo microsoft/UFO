@@ -25,10 +25,10 @@ class Trajectory:
     _evaluation_file = "evaluation.log"
 
     _screenshot_keys = [
-        "CleanScreenshot",
-        "AnnotatedScreenshot",
-        "ConcatScreenshot",
-        "SelectedControlScreenshot",
+        "clean_screenshot_path",
+        "annotated_screenshot_path",
+        "concat_screenshot_path",
+        "selected_control_screenshot_path",
     ]
 
     _step_screenshot_key = "ScreenshotImages"
@@ -364,8 +364,8 @@ class Trajectory:
         self,
         output_path: str,
         key_shown: List[str] = [
-            "Request",
-            "Subtask",
+            "request",
+            "subtask",
             "thought",
             "status",
             "action",

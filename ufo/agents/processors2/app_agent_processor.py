@@ -158,6 +158,8 @@ class AppAgentProcessorContext(BasicProcessorContext):
             # App-specific serializable fields
             "clean_screenshot_path",
             "annotated_screenshot_path",
+            "concat_screenshot_path",
+            "selected_control_screenshot_path",
             "desktop_screenshot_path",
             "results",
             "action_success",
