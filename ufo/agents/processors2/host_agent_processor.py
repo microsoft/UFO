@@ -84,23 +84,16 @@ class HostAgentProcessorContext(BasicProcessorContext):
 
     # Action and control information
     action_info: Optional[ActionCommandInfo] = None
-    action_result: Optional[Any] = None
 
     target: Optional[TargetInfo] = None
 
-    # Additional fields from HostAgentUnifiedMemory for complete compatibility
-    step: int = (
-        0  # Duplicated from basic context session_step but kept for compatibility
-    )
     agent_step: int = 0
     subtask_index: int = -1
     action: List[Dict[str, Any]] = field(default_factory=list)
-    function_call: str = ""
-    arguments: Dict[str, Any] = field(default_factory=dict)
-    action_type: str = ""
+
     agent_name: str = ""
     application: str = ""
-    results: str = ""
+
     control_log: Dict[str, Any] = field(default_factory=dict)
 
     # LLM and cost tracking
@@ -110,7 +103,6 @@ class HostAgentProcessorContext(BasicProcessorContext):
 
     # Logging and debugging
     log_path: str = ""
-    debug_info: Dict[str, Any] = field(default_factory=dict)
 
     @property
     def selected_keys(self) -> List[str]:

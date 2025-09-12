@@ -17,12 +17,19 @@ Each strategy is designed to be modular, testable, and follows the dependency in
 import json
 import os
 import time
+import traceback
 from dataclasses import asdict
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-
 from ufo import utils
 from ufo.agents.memory.memory import MemoryItem
+from ufo.agents.processors2.core.processing_context import (
+    ProcessingContext,
+    ProcessingPhase,
+    ProcessingResult,
+)
+from ufo.agents.processors2.core.strategy_dependency import depends_on, provides
+from ufo.agents.processors2.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.agents.processors.actions import ActionCommandInfo, ListActionCommandInfo
 from ufo.agents.processors.app_agent_processor import (
     AppAgentAdditionalMemory,
@@ -31,16 +38,6 @@ from ufo.agents.processors.app_agent_processor import (
     ControlInfoRecorder,
 )
 from ufo.agents.processors.target import TargetInfo, TargetKind, TargetRegistry
-from ufo.agents.processors2.strategies.processing_strategy import BaseProcessingStrategy
-from ufo.agents.processors2.core.processing_context import (
-    ProcessingContext,
-    ProcessingPhase,
-    ProcessingResult,
-)
-from ufo.agents.processors2.core.strategy_dependency import (
-    depends_on,
-    provides,
-)
 from ufo.automator.ui_control.grounding.omniparser import OmniparserGrounding
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
@@ -55,6 +52,7 @@ configs = Config.get_instance().config_data
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
+    from ufo.agents.processors2.app_agent_processor import AppAgentProcessorContext
     from ufo.module.basic import FileWriter
 
 if configs is not None:
@@ -604,7 +602,6 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
         """
 
         try:
-            print(application_window_info)
             self.photographer.capture_app_window_screenshot_with_target_list(
                 application_window_info=application_window_info,
                 target_list=target_list,
@@ -909,6 +906,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
                 image_list=image_string_list,
                 subtask=subtask,
                 host_message=host_message,
+                application_process_name=application_process_name,
                 last_success_actions=last_success_actions,
                 include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", False),
                 prompt_message=prompt_message,
@@ -953,6 +951,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         subtask: str,
         host_message: str,
         last_success_actions: List[Dict],
+        application_process_name: str,
         include_last_screenshot: bool,
         prompt_message: List[Dict],
         request_logger: "FileWriter",
@@ -965,6 +964,8 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         :param request: User request
         :param control_info: List of filtered controls
         :param subtask: Current subtask
+        :param application_process_name: Current application process name
+        :param image_list: List of image base64 strings
         :param host_message: Host message
         :param last_success_actions: Last successful actions
         :param include_last_screenshot: Whether to include last screenshot
@@ -987,7 +988,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
                 request=request,
                 control_info=control_info,
                 subtask=subtask,
-                current_application="",  # Would need app_root from context
+                current_application=application_process_name,  # Would need app_root from context
                 host_message=host_message,
                 blackboard_prompt=[],
                 last_success_actions=last_success_actions,
@@ -1117,9 +1118,8 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         """
         try:
             # Extract context variables
-            parsed_response: AppAgentResponse = context.get("parsed_response")
-            control_info = context.get("control_info")
-            annotation_dict = context.get("annotation_dict")
+            parsed_response: AppAgentResponse = context.get_local("parsed_response")
+            annotation_dict = context.get_local("annotation_dict")
             command_dispatcher = context.global_context.command_dispatcher
 
             if not parsed_response:
@@ -1147,7 +1147,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
 
             # Create action info for memory
             action = self._create_action_info(
-                control_info, parsed_response, execution_result
+                annotation_dict, parsed_response, execution_result[0]
             )
 
             action_info = ListActionCommandInfo([action])
@@ -1170,7 +1170,8 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             )
 
         except Exception as e:
-            error_msg = f"App action execution failed: {str(e)}"
+
+            error_msg = f"App action execution failed: {str(traceback.format_exc())}"
             self.logger.error(error_msg)
             return self.handle_error(e, ProcessingPhase.ACTION_EXECUTION, context)
 
@@ -1287,47 +1288,15 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
         """
         try:
             # Extract context variables
-            session_step = context.get("session_step", 0)
-            round_step = context.get("round_step", 0)
-            round_num = context.get("round_num", 0)
-            subtask = context.get("subtask", "")
-            subtask_index = context.get("subtask_index", 0)
-            request = context.get("request", "")
-            app_root = context.get("app_root", "")
-            llm_cost = context.get("llm_cost", 0.0)
-            last_error = context.get("last_error", "")
-            action_info = context.get("action_info")
-            action_success = context.get("action_success", False)
-            execution_result = context.get("execution_result", [])
-            control_log = context.get("control_log", {})
             parsed_response: AppAgentResponse = context.get("parsed_response")
             clean_screenshot_path = context.get("clean_screenshot_path", "")
-            screenshot_saved_time = context.get("screenshot_saved_time", 0.0)
-            control_filter_time = context.get("control_filter_time", 0.0)
             application_process_name = context.global_context.get(
                 ContextNames.APPLICATION_PROCESS_NAME
             )
 
             # Step 1: Create additional memory data
             self.logger.info("Creating App Agent additional memory data")
-            additional_memory = self._create_additional_memory_data(
-                agent,
-                session_step,
-                round_step,
-                round_num,
-                subtask,
-                subtask_index,
-                request,
-                app_root,
-                llm_cost,
-                last_error,
-                action_info,
-                action_success,
-                execution_result,
-                control_log,
-                screenshot_saved_time,
-                control_filter_time,
-            )
+            additional_memory = self._create_additional_memory_data(agent, context)
 
             # Step 2: Create and populate memory item
             memory_item = self._create_and_populate_memory_item(
@@ -1365,101 +1334,99 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
             )
 
         except Exception as e:
-            error_msg = f"App memory update failed: {str(e)}"
+
+            error_msg = f"App memory update failed: {str(traceback.format_exc())}"
             self.logger.error(error_msg)
             return self.handle_error(e, ProcessingPhase.MEMORY_UPDATE, context)
+
+    def _get_all_success_actions(self, agent: "AppAgent") -> List[Dict[str, Any]]:
+        """
+        Get the previous action.
+        :return: The previous action of the agent.
+        """
+        agent_memory = agent.memory
+
+        if agent_memory.length > 0:
+            success_action_memory = agent_memory.filter_memory_from_keys(
+                ["ActionSuccess"]
+            )
+            success_actions = []
+            for success_action in success_action_memory:
+                success_actions += success_action.get("ActionSuccess", [])
+
+        else:
+            success_actions = []
+
+        return success_actions
 
     def _create_additional_memory_data(
         self,
         agent: "AppAgent",
-        session_step: int,
-        round_step: int,
-        round_num: int,
-        subtask: str,
-        subtask_index: int,
-        request: str,
-        app_root: str,
-        llm_cost: float,
-        last_error: str,
-        action_info: ActionCommandInfo,
-        action_success: bool,
-        execution_result: List[Result],
-        control_log: Dict[str, Any],
-        screenshot_saved_time: float,
-        control_filter_time: float,
+        context: ProcessingContext,
     ) -> AppAgentAdditionalMemory:
         """
         Create additional memory data for App Agent.
         :param agent: The AppAgent instance
-        :param session_step: Current session step
-        :param round_step: Current round step
-        :param round_num: Current round number
-        :param subtask: Current subtask
-        :param subtask_index: Current subtask index
-        :param request: User request
-        :param app_root: Application root
-        :param llm_cost: LLM cost
-        :param last_error: Last error
-        :param action_info: Action information
-        :param action_success: Action success flag
-        :param execution_result: Execution results
-        :param control_log: Control log
-        :param screenshot_saved_time: Screenshot time
-        :param control_filter_time: Control filter time
-        :return: AppAgentAdditionalMemory object
+        :param context: Current session ste
+        :return: ProcessingContext object
         """
         try:
             # Build action lists
-            function_call = []
-            action = []
-            action_success_list = []
-            action_type = []
+            from ufo.agents.processors2.app_agent_processor import (
+                AppAgentProcessorContext,
+            )
+
+            app_context: AppAgentProcessorContext = context.local_context
+
+            all_previous_success_actions = self._get_all_success_actions(agent)
+            action_info: ListActionCommandInfo = context.get("action_info")
 
             if action_info:
-                function_call.append(action_info.function)
-                action.append(action_info.arguments)
-                action_success_list.append({"success": action_success})
-                action_type.append(action_info.result.namespace)
+                app_context.function_call = action_info.get_function_calls()
+                app_context.action = action_info.to_list_of_dicts(
+                    previous_actions=all_previous_success_actions
+                )
+                app_context.action_success = action_info.to_list_of_dicts(
+                    success_only=True,
+                    previous_actions=all_previous_success_actions,
+                    keep_keys=["action_string", "result", "repeat_time"],
+                )
+                app_context.action_type = [
+                    action.result.namespace for action in action_info.actions
+                ]
 
-            # Calculate time costs
-            time_cost = {
-                "screenshot_time": screenshot_saved_time,
-                "control_filter_time": control_filter_time,
-                "llm_time": 0.0,  # Would be tracked if available
-                "action_time": 0.0,  # Would be tracked if available
-            }
-
-            return AppAgentAdditionalMemory(
-                Step=session_step,
-                RoundStep=round_step,
-                AgentStep=agent.step,
-                Round=round_num,
-                Subtask=subtask,
-                SubtaskIndex=subtask_index,
-                FunctionCall=function_call,
-                Action=action,
-                ActionSuccess=action_success_list,
-                ActionType=action_type,
-                Request=request,
-                Agent="AppAgent",
-                AgentName=agent.name,
-                Application=app_root,
-                Cost=llm_cost,
-                Results=(
-                    str(execution_result[0].result)
-                    if execution_result and execution_result[0].result
-                    else ""
-                ),
-                error=last_error,
-                time_cost=time_cost,
-                ControlLog=control_log,
+            app_context.session_step = context.get_global(
+                ContextNames.SESSION_STEP.name, 0
             )
+            app_context.round_step = context.get_global(
+                ContextNames.CURRENT_ROUND_STEP.name, 0
+            )
+            app_context.round_num = context.get_global(
+                ContextNames.CURRENT_ROUND_ID.name, 0
+            )
+            app_context.agent_step = agent.step if agent else 0
+
+            app_context.subtask = context.get("subtask", "")
+            app_context.subtask_index = context.get("subtask_index", 0)
+            app_context.request = context.get("request", "")
+            app_context.app_root = context.get("app_root", "")
+
+            app_context.cost = context.get("llm_cost", 0.0)
+
+            execution_result = context.get("execution_result", [])
+            if execution_result:
+                #  and execution_result[0].result:
+                app_context.results = execution_result[0].result
+            else:
+                app_context.results = None
+
+            return app_context
 
         except Exception as e:
             raise Exception(f"Failed to create additional memory data: {str(e)}")
 
     def _create_and_populate_memory_item(
-        self, parsed_response, additional_memory: AppAgentAdditionalMemory
+        self, parsed_response, additional_memory: "AppAgentProcessorContext"
     ) -> MemoryItem:
         """
         Create and populate memory item.
@@ -1475,7 +1442,7 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
                 memory_item.add_values_from_dict(asdict(parsed_response))
 
             # Add additional memory data
-            memory_item.add_values_from_dict(asdict(additional_memory))
+            memory_item.add_values_from_dict(additional_memory.to_dict(selective=True))
 
             return memory_item
 

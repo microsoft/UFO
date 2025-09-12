@@ -20,10 +20,6 @@ from ufo.agents.processors.target import TargetRegistry
 from ufo.module.context import Context, ContextNames
 from ufo.module.dispatcher import BasicCommandDispatcher
 
-if TYPE_CHECKING:
-    from ufo.agents.agent.host_agent import HostAgent
-    from ufo.agents.agent.app_agent import AppAgent
-
 
 class ProcessingPhase(Enum):
     """
@@ -96,6 +92,10 @@ class BasicProcessorContext(ProcessorContextProtocol):
     command_dispatcher: Optional[BasicCommandDispatcher] = None
 
     action: List[Dict[str, Any]] = field(default_factory=list)
+    results: str = ""
+    function_call: Optional[Any] = None
+    arguments: Dict[str, Any] = field(default_factory=dict)
+    action_type: str = ""
 
     # Request and response data
     request: str = ""

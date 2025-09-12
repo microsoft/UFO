@@ -1047,10 +1047,12 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
         """
         try:
             # Access the typed context directly
-            host_context = context.local_context
+            host_context: HostAgentProcessorContext = context.local_context
 
             # Update context with current processing state
-            host_context.step = context.get_global(ContextNames.SESSION_STEP.name, 0)
+            host_context.session_step = context.get_global(
+                ContextNames.SESSION_STEP.name, 0
+            )
             host_context.round_step = context.get_global(
                 ContextNames.CURRENT_ROUND_STEP.name, 0
             )

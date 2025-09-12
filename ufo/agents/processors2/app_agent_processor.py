@@ -63,7 +63,9 @@ class AppAgentProcessorContext(BasicProcessorContext):
     agent_type: str = "AppAgent"
     prev_plan: List[str] = field(default_factory=list)
     subtask: str = ""  # Current subtask description
+    subtask_index: int = 0
     agent_name: str = ""  # Agent name for logging
+    agent_step: int = 0
 
     # Application and UI data
     app_root: Optional[Any] = None  # Application window root element
@@ -135,34 +137,33 @@ class AppAgentProcessorContext(BasicProcessorContext):
         return [
             # Basic fields from parent
             "agent_type",
+            "agent_name",
+            "app_root",
+            "application_process_name",
             "session_step",
             "round_step",
             "round_num",
-            "cost",
             "status",
             "request",
             "llm_cost",
+            "observation",
+            "thought",
+            "plan",
+            "comment",
+            "action",
+            "action_type",
+            "subtask",
+            "app_root",
             # App-specific serializable fields
-            "current_application",
             "clean_screenshot_path",
             "annotated_screenshot_path",
             "desktop_screenshot_path",
-            "screenshot_saved_time",
-            "filtered_controls",
-            "annotation_dict",
-            "control_filter_time",
-            "response_text",
-            "function_name",
-            "function_arguments",
+            "results",
+            "action_success",
+            "function_call",
             "save_screenshot",
             "action_success",
             "control_log",
-            "updated_blackboard",
-            "app_logging_active",
-            "app_memory_sync_active",
-            # Performance and error tracking from parent
-            "execution_times",
-            "total_time",
         ]
 
 
