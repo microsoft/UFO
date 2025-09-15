@@ -225,7 +225,7 @@ class Trajectory:
         """
         if len(self.step_log) == 0:
             return None
-        return self.step_log[0].get("Request")
+        return self.step_log[0].get("request")
 
     @classmethod
     def get_subtask(cls, folder_path: str, round_number: int) -> int:
@@ -286,7 +286,7 @@ class Trajectory:
         host_agent_log = []
 
         for step in self.step_log:
-            if step.get("Agent") == "HostAgent":
+            if step.get("agent_type") == "HostAgent":
                 host_agent_log.append(step)
 
         return host_agent_log
@@ -300,7 +300,7 @@ class Trajectory:
         app_agent_log = []
 
         for step in self.step_log:
-            if step.get("Agent") == "AppAgent":
+            if step.get("agent_type") == "AppAgent":
                 app_agent_log.append(step)
 
         return app_agent_log

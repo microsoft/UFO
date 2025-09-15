@@ -949,7 +949,9 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
 
             if agent_memory.length > 0:
                 last_success_actions = (
-                    agent_memory.get_latest_item().to_dict().get("action_success", [])
+                    agent_memory.get_latest_item()
+                    .to_dict()
+                    .get("action_representation", [])
                 )
 
             else:
@@ -1198,6 +1200,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                     "execution_result": execution_result,
                     "action_info": action_info,
                     "action_success": action_success,
+                    "selected_control_screenshot_path": selected_control_screenshot_path,
                     "control_log": control_log,
                 },
                 phase=ProcessingPhase.ACTION_EXECUTION,
