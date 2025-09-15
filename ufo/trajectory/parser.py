@@ -116,9 +116,15 @@ class Trajectory:
         if screenshot_log_path is not None:
             screenshot_file_name = os.path.basename(screenshot_log_path)
             screenshot_file_path = os.path.join(self.file_path, screenshot_file_name)
+
             if os.path.exists(screenshot_file_path):
                 screenshot = self.load_screenshot(screenshot_file_path)
                 return screenshot
+            else:
+                print_with_color(
+                    f"Warning: Screenshot file not found at {screenshot_file_path}.",
+                    "yellow",
+                )
 
         return None
 
@@ -368,7 +374,7 @@ class Trajectory:
             "subtask",
             "thought",
             "status",
-            "Action",
+            "action",
             "error",
         ],
     ) -> None:
@@ -414,18 +420,18 @@ class Trajectory:
             file.write("## Evaluation Results\n\n")
             if self.evaluation_log:
                 for key, value in self.evaluation_log.items():
-                    file.write(f"- **{key}**: {value}\n")
+                    file.write(f"- **{key.title()}**: {value}\n")
             else:
                 file.write("No evaluation results found.\n")
 
             file.write("\n")
 
             for data in self.app_agent_log:
-                step = data.get("Step")
+                step = data.get("session_step")
                 file.write(f"### Step {step}:\n")
                 for key, value in data.items():
                     if key in key_shown:
-                        if key == "Action":
+                        if key == "action":
                             if len(value) > 0:
                                 file.write(
                                     f"- **Action**: {value[0].get('action_string')}\n"
@@ -434,14 +440,14 @@ class Trajectory:
                             else:
                                 file.write(f"- **Action**: None\n")
                         else:
-                            file.write(f"- **{key}**: {value}\n")
+                            file.write(f"- **{key.title()}**: {value}\n")
                 file.write("\n")
 
                 annotated_screenshot_filename = os.path.basename(
-                    data.get("AnnotatedScreenshot", "")
+                    data.get("annotated_screenshot_path", "")
                 )
                 selected_control_screenshot_filename = os.path.basename(
-                    data.get("SelectedControlScreenshot", "")
+                    data.get("selected_control_screenshot_path", "")
                 )
 
                 file.write(
@@ -455,12 +461,11 @@ class Trajectory:
 
 
 if __name__ == "__main__":
-    import glob
 
     print_with_color("🔍 UFO Trajectory Parser", "blue")
     print("Searching for valid trajectory logs...\n")
 
     # Try to find the most recent log directory with valid data
-    log_dirs = "./logs/demo_detailed_query2/"
+    log_dirs = "./logs/2025-09-15-15-24-09/"
 
     Trajectory(log_dirs).to_markdown(log_dirs + "output2.md")

@@ -1109,8 +1109,21 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         }
 
 
-@depends_on("parsed_response", "control_info")
-@provides("execution_result", "action_info", "action_success", "control_log")
+@depends_on(
+    "parsed_response",
+    "log_path",
+    "session_step",
+    "annotation_dict",
+    "application_window_info",
+    "clean_screenshot_path",
+)
+@provides(
+    "execution_result",
+    "action_info",
+    "action_success",
+    "control_log",
+    "selected_control_screenshot_path",
+)
 class AppActionExecutionStrategy(BaseProcessingStrategy):
     """
     Strategy for executing App Agent actions.
@@ -1142,7 +1155,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             # Step 1: Extract context variables
             parsed_response: AppAgentResponse = context.get_local("parsed_response")
             log_path = context.get_local("log_path")
-            session_step = context.get_local("step")
+            session_step = context.get_local("session_step")
             annotation_dict = context.get_local("annotation_dict")
             command_dispatcher = context.global_context.command_dispatcher
 
@@ -1155,12 +1168,12 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
 
             function_name = parsed_response.function
 
-            if not function_name:
-                return ProcessingResult(
-                    success=True,
-                    data={"message": "No action to execute"},
-                    phase=ProcessingPhase.ACTION_EXECUTION,
-                )
+            # if not function_name:
+            #     return ProcessingResult(
+            #         success=True,
+            #         data={"message": "No action to execute"},
+            #         phase=ProcessingPhase.ACTION_EXECUTION,
+            #     )
 
             self.logger.info(f"Executing App Agent action: {function_name}")
 
@@ -1171,7 +1184,9 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
 
             # Create action info for memory
             action = self._create_action_info(
-                annotation_dict, parsed_response, execution_result[0]
+                annotation_dict,
+                parsed_response,
+                execution_result[0] if execution_result else None,
             )
 
             action_info = ListActionCommandInfo([action])
@@ -1225,6 +1240,9 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             function_name = response.function
             arguments = response.arguments or {}
 
+            if not function_name:
+                return []
+
             # Use the command dispatcher to execute the action
             if not command_dispatcher:
                 raise ValueError("Command dispatcher not available")
@@ -1264,6 +1282,9 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             if response.arguments and "id" in response.arguments:
                 control_id = response.arguments["id"]
                 target_control = annotation_dict.get(control_id)
+
+            if not response.function:
+                return ActionCommandInfo(function="no_action", arguments={})
 
             return ActionCommandInfo(
                 function=response.function,
@@ -1316,6 +1337,12 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                 path=clean_screenshot_path,
                 save_path=save_path,
                 highlight_bbox=True,
+            )
+            self.logger.info(
+                f"application_window_info: {application_window_info}, clean_screenshot_path: {clean_screenshot_path}, target_list: {target_list}, save_path: {save_path}"
+            )
+            self.logger.info(
+                f"Annotated screenshot for selected controls is saved to {save_path}"
             )
 
             annotated_screenshot_url = photographer.encode_image_from_path(save_path)

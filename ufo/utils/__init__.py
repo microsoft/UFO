@@ -332,7 +332,11 @@ def load_image(image_path: str) -> Image.Image:
             return Image.new("RGB", (1, 1), color="white")
 
     except Exception as e:
-        print_with_color(f"Error loading image from {image_path}: {e}", "red")
+        import traceback
+
+        print_with_color(
+            f"Error loading image from {image_path}: {traceback.format_exc()}", "red"
+        )
         return Image.new("RGB", (1, 1), color="white")
 
 

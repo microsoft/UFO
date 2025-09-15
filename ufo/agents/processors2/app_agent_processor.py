@@ -75,6 +75,8 @@ class AppAgentProcessorContext(BasicProcessorContext):
     clean_screenshot_path: str = ""  # Path to clean screenshot
     annotated_screenshot_path: str = ""  # Path to annotated screenshot
     desktop_screenshot_path: str = ""  # Path to desktop screenshot
+    selected_control_screenshot_path: str = ""  # Path to selected control screenshot
+    concat_screenshot_path: str = ""  # Path to concatenated screenshot
     screenshot_saved_time: float = 0.0  # Time taken for screenshot operations
 
     # Control and UI information
