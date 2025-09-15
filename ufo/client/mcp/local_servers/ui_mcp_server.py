@@ -773,9 +773,14 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
             return "Error: No window selected"
 
         try:
-            screenshot = ui_state.photographer.capture_app_window_screenshot(
-                ui_state.selected_app_window
-            )
+            if ui_state.selected_app_window:
+                screenshot = ui_state.photographer.capture_app_window_screenshot(
+                    ui_state.selected_app_window
+                )
+            else:
+                screenshot = ui_state.photographer.capture_desktop_screen_screenshot(
+                    all_screens=True
+                )
 
             # Encode as base64
             screenshot_data = ui_state.photographer.encode_image(screenshot)

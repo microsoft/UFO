@@ -622,7 +622,7 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
             return None
 
 
-@depends_on("control_info", "clean_screenshot_path", "request")
+@depends_on("target_registry", "clean_screenshot_path", "request")
 @provides(
     "parsed_response",
     "response_text",
@@ -891,14 +891,6 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             ) + knowledge_retrieved.get("online_docs")
 
             # Build prompt using agent's message constructor
-
-            print("Building prompt with the following parameters:")
-            print(f"Image List: {len(image_string_list)} images")
-            print(f"Control Info: {len(control_info)} controls")
-            print(f"Previous Subtasks: {prev_subtask}")
-            print(f"Plan: {plan}")
-            print(f"Blackboard Prompt: {blackboard_prompt}")
-            print(f"Last Successful Actions: {last_success_actions}")
 
             prompt_message = agent.message_constructor(
                 dynamic_examples=retrieved_examples,

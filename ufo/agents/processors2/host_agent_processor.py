@@ -249,6 +249,9 @@ class HostAgentProcessorV2(ProcessorTemplate):
                 self.global_context.set(
                     ContextNames.APPLICATION_PROCESS_NAME, selected_target.name
                 )
+                self.global_context.set(
+                    ContextNames.APPLICATION_WINDOW_INFO, selected_target
+                )
 
         except Exception as e:
             self.logger.warning(f"Failed to update ContextNames from results: {e}")

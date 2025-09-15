@@ -1182,8 +1182,9 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
         except Exception as e:
             import traceback
 
-            traceback.print_exc()
-            raise Exception(f"Failed to create and populate memory item: {str(e)}")
+            raise Exception(
+                f"Failed to create and populate memory item: {str(traceback.format_exc())}"
+            )
 
     def _update_structural_logs(self, memory_item: MemoryItem, global_context) -> None:
         """

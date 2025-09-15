@@ -166,8 +166,7 @@ class BaseRound(ABC):
             {"request_{i}".format(i=self.id): self.request}
         )
 
-        if self.application_window is not None:
-            await self.capture_last_snapshot()
+        await self.capture_last_snapshot()
 
         if self._should_evaluate:
             self.evaluation()
@@ -484,8 +483,7 @@ class BaseSession(ABC):
                 break
             await round.run()
 
-        if self.application_window is not None:
-            await self.capture_last_snapshot()
+        await self.capture_last_snapshot()
 
         if self._should_evaluate and not self.is_error():
             self.evaluation()
