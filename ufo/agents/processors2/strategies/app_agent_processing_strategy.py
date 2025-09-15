@@ -662,9 +662,14 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         """
         try:
             # Extract context variables
-            control_info: List[Dict[str, Any]] = context.get("target_registry").to_list(
-                keep_keys=["id", "name", "type"]
-            )
+            target_registry: TargetRegistry = context.get_local("target_registry")
+            if target_registry:
+                control_info: List[Dict[str, Any]] = target_registry.to_list(
+                    keep_keys=["id", "name", "type"]
+                )
+            else:
+                self.logger.warning("Target registry is not available.")
+                control_info = []
             clean_screenshot_path = context.get("clean_screenshot_path", "")
             request = context.get("request")
             subtask = context.get("subtask")
@@ -1159,13 +1164,6 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                 )
 
             function_name = parsed_response.function
-
-            # if not function_name:
-            #     return ProcessingResult(
-            #         success=True,
-            #         data={"message": "No action to execute"},
-            #         phase=ProcessingPhase.ACTION_EXECUTION,
-            #     )
 
             self.logger.info(f"Executing App Agent action: {function_name}")
 

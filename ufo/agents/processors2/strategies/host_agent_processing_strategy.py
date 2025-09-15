@@ -700,12 +700,6 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
                 )
 
             function_name: str = context.get_local("function_name")
-            if not function_name:
-                return ProcessingResult(
-                    success=True,
-                    data={"message": "No action to execute"},
-                    phase=ProcessingPhase.ACTION_EXECUTION,
-                )
 
             target_registry: TargetRegistry = context.get_local("target_registry")
             command_dispatcher = context.global_context.command_dispatcher
@@ -914,6 +908,9 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
             function_name = parsed_response.function
             arguments = parsed_response.arguments or {}
 
+            if not function_name:
+                return []
+
             self.logger.info(
                 f"Executing generic command: {function_name} with args: {arguments}"
             )
@@ -954,6 +951,9 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
         """
         try:
             # Get target object for action info
+            if not parsed_response.function:
+                return ActionCommandInfo(function="no_action", arguments={})
+
             target_object = None
             if target_registry and selected_target_id:
                 target_object = target_registry.get(selected_target_id)
