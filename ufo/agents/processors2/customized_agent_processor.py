@@ -35,42 +35,23 @@ from ufo.module.context import Context
 
 
 if TYPE_CHECKING:
-    from ufo.agents.agent.app_agent import AppAgent
+    from ufo.agents.agent.customized_agent import CustomizedAgent
 
 
 class CustomizedProcessorV2(AppAgentProcessorV2):
     """
     Customized Agent Processor V2 - Modern, extensible Customized Agent processing implementation.
-
-    This processor implements the complete V2 architecture for Customized Agent:
-    - Uses AppAgentProcessorContext for type-safe app-specific data
-    - Implements modular strategy-based processing pipeline
-    - Provides comprehensive middleware stack
-    - Supports flexible configuration and dependency injection
-    - Includes robust error handling and performance monitoring
-
-    Processing Pipeline:
-    1. Data Collection: Screenshot capture and UI control information (using a composed strategy)
-    2. LLM Interaction: Context-aware prompting and response parsing
-    3. Action Execution: UI automation and control interaction
-    4. Memory Update: Agent memory and blackboard synchronization
-
-    Middleware Stack:
-    - Error handling and recovery middleware
-    - Performance monitoring and timing middleware
-    - Structured logging and debugging middleware
-    - Memory and blackboard synchronization middleware
     """
 
     # Specify the custom context class for this processor
     processor_context_class = AppAgentProcessorContext
 
-    def __init__(self, agent: "AppAgent", global_context: "Context") -> None:
-        """Initialize App Agent Processor V2."""
+    def __init__(self, agent: "CustomizedAgent", global_context: "Context") -> None:
+        """Initialize Customized Agent Processor V2."""
         super().__init__(agent, global_context)
 
     def _setup_strategies(self) -> None:
-        """Setup processing strategies for App Agent."""
+        """Setup processing strategies for Customized Agent."""
         from ufo.agents.processors2.core.processing_context import ProcessingPhase
 
         # Data collection strategy (combines screenshot + control info)

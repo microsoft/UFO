@@ -37,7 +37,7 @@ from ufo.module.dispatcher import BasicCommandDispatcher
 configs = Config.get_instance().config_data
 
 if TYPE_CHECKING:
-    from ufo.agents.agent.app_agent import AppAgent
+    from ufo.agents.agent.app_agent import CustomizedAgent
 
 
 @depends_on("app_root", "log_path", "session_step")
@@ -70,11 +70,11 @@ class CustomizedScreenshotCaptureStrategy(BaseProcessingStrategy):
         super().__init__(name="app_screenshot_capture", fail_fast=fail_fast)
 
     async def execute(
-        self, agent: "AppAgent", context: ProcessingContext
+        self, agent: "CustomizedAgent", context: ProcessingContext
     ) -> ProcessingResult:
         """
-        Execute screenshot capture for App Agent.
-        :param agent: The AppAgent instance
+        Execute screenshot capture for Customized Agent.
+        :param agent: The CustomizedAgent instance
         :param context: Processing context with app information
         :return: ProcessingResult with screenshot paths and timing
         """
