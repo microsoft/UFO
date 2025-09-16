@@ -2,11 +2,10 @@
 # Licensed under the MIT License.
 
 """
-App Agent Processing Strategies V2 - Modular strategies for App Agent using the new framework.
+Customized Agent Processing Strategies - Modular strategies for Customized Agent using the new framework.
 
-This module contains all the processing strategies for App Agent including:
+This module contains all the processing strategies for Customized Agent including:
 - Screenshot capture and UI control information collection
-- Control filtering and annotation
 - LLM interaction with app-specific prompting
 - Action execution and control interaction
 - Memory management and blackboard updates
@@ -51,7 +50,6 @@ class CustomizedScreenshotCaptureStrategy(BaseProcessingStrategy):
 
     This strategy handles:
     - Application window screenshot capture
-    - Desktop screenshot capture (if needed)
     - Screenshot path management and storage
     - Performance timing for screenshot operations
     """

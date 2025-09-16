@@ -2,20 +2,14 @@
 # Licensed under the MIT License.
 
 """
-Customized Agent Processor V2 - Modern, extensible Customized Agent processing implementation.
+Customized Agent Processor - Modern, extensible Customized Agent processing implementation.
 
-This module implements the V2 architecture for Customized Agent processing, providing:
+This module implements the architecture for Customized Agent processing, providing:
 - Type-safe context management with AppAgentProcessorContext
 - Modular strategy-based processing pipeline
 - Comprehensive middleware stack for error handling, performance monitoring, and logging
 - Flexible dependency injection and configuration
 - Robust error handling and recovery mechanisms
-
-The processor follows the established V2 patterns:
-- ProcessorTemplate with processor_context_class override
-- Strategy-based phase processing (screenshot, control info, LLM, action, memory)
-- Middleware pipeline for cross-cutting concerns
-- Structured logging and performance monitoring
 """
 
 from typing import TYPE_CHECKING
@@ -47,7 +41,7 @@ class CustomizedProcessor(AppAgentProcessor):
     processor_context_class = AppAgentProcessorContext
 
     def __init__(self, agent: "CustomizedAgent", global_context: "Context") -> None:
-        """Initialize Customized Agent Processor V2."""
+        """Initialize Customized Agent Processor."""
         super().__init__(agent, global_context)
 
     def _setup_strategies(self) -> None:
@@ -81,7 +75,7 @@ class CustomizedProcessor(AppAgentProcessor):
 
 class HardwareAgentProcessor(CustomizedProcessor):
     """
-    Processor for Hardware Agent using V2 architecture.
+    Processor for Hardware Agent.
     """
 
     pass

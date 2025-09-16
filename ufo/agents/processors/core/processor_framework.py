@@ -3,25 +3,22 @@ import time
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, TypeVar
 
-
-from ufo.module.context import Context, ContextNames
 from ufo.agents.processors.context.processing_context import (
     BasicProcessorContext,
     ProcessingContext,
     ProcessingPhase,
     ProcessingResult,
 )
-
-
-from ufo.agents.processors.strategies.processing_strategy import ProcessingStrategy
+from ufo.agents.processors.core.processing_middleware import ProcessorMiddleware
 from ufo.agents.processors.core.strategy_dependency import (
     StrategyDependencyValidator,
     StrategyMetadataRegistry,
     validate_provides_consistency,
 )
+from ufo.agents.processors.strategies.processing_strategy import ProcessingStrategy
+from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
-    from ufo.agents.processors.core.processing_middleware import ProcessorMiddleware
     from ufo.agents.agent.basic import BasicAgent
 
 T = TypeVar("T")
@@ -65,7 +62,7 @@ class ProcessorTemplate(ABC):
         self.agent = agent
         self.global_context = global_context  # Shared global context
         self.strategies: Dict[ProcessingPhase, ProcessingStrategy] = {}
-        self.middleware_chain: List["ProcessorMiddleware"] = []
+        self.middleware_chain: List[ProcessorMiddleware] = []
         self.logger = logging.getLogger(self.__class__.__name__)
         self._exceptions: List[Dict[str, Any]] = []
 
@@ -170,15 +167,9 @@ class ProcessorTemplate(ABC):
 
         :return: Dictionary of common context initialization data
         """
-        agent_memory = self.agent.memory
-        if agent_memory.length > 0:
-            prev_plan = agent_memory.get_latest_item().to_dict().get("plan", [])
-        else:
-            prev_plan = []
 
         return {
             "command_dispatcher": self.global_context.command_dispatcher,
-            "prev_plan": prev_plan,
             "agent_name": self.agent.name,
             "session_step": self.global_context.get(ContextNames.SESSION_STEP),
             "round_step": self.global_context.get(ContextNames.CURRENT_ROUND_STEP),
