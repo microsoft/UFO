@@ -42,12 +42,7 @@ if TYPE_CHECKING:
 @depends_on("app_root", "log_path", "session_step")
 @provides(
     "clean_screenshot_path",
-    "annotated_screenshot_path",
-    "desktop_screenshot_path",
-    "ui_tree_path",
     "clean_screenshot_url",
-    "desktop_screenshot_url",
-    "application_window_info",
     "screenshot_saved_time",
 )
 class CustomizedScreenshotCaptureStrategy(BaseProcessingStrategy):

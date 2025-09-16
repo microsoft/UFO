@@ -51,10 +51,6 @@ if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
 
 
-if TYPE_CHECKING:
-    from ufo.agents.agent.host_agent import HostAgent
-
-
 class HostAgentProcessor(ProcessorTemplate):
     """
     Enhanced processor for Host Agent with comprehensive functionality.
