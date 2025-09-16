@@ -2,20 +2,14 @@
 # Licensed under the MIT License.
 
 """
-App Agent Processor V2 - Modern, extensible App Agent processing implementation.
+App Agent Processor - Modern, extensible App Agent processing implementation.
 
-This module implements the V2 architecture for App Agent processing, providing:
+This module implements the architecture for App Agent processing, providing:
 - Type-safe context management with AppAgentProcessorContext
 - Modular strategy-based processing pipeline
 - Comprehensive middleware stack for error handling, performance monitoring, and logging
 - Flexible dependency injection and configuration
 - Robust error handling and recovery mechanisms
-
-The processor follows the established V2 patterns:
-- ProcessorTemplate with processor_context_class override
-- Strategy-based phase processing (screenshot, control info, LLM, action, memory)
-- Middleware pipeline for cross-cutting concerns
-- Structured logging and performance monitoring
 """
 
 import logging
@@ -44,9 +38,9 @@ if TYPE_CHECKING:
 
 class AppAgentProcessor(ProcessorTemplate):
     """
-    App Agent Processor V2 - Modern, extensible App Agent processing implementation.
+    App Agent Processor - Modern, extensible App Agent processing implementation.
 
-    This processor implements the complete V2 architecture for App Agent:
+    This processor implements the complete  architecture for App Agent:
     - Uses AppAgentProcessorContext for type-safe app-specific data
     - Implements modular strategy-based processing pipeline
     - Provides comprehensive middleware stack
@@ -60,17 +54,14 @@ class AppAgentProcessor(ProcessorTemplate):
     4. Memory Update: Agent memory and blackboard synchronization
 
     Middleware Stack:
-    - Error handling and recovery middleware
-    - Performance monitoring and timing middleware
     - Structured logging and debugging middleware
-    - Memory and blackboard synchronization middleware
     """
 
     # Specify the custom context class for this processor
     processor_context_class = AppAgentProcessorContext
 
     def __init__(self, agent: "AppAgent", global_context: "Context") -> None:
-        """Initialize App Agent Processor V2."""
+        """Initialize App Agent Processor."""
         super().__init__(agent, global_context)
 
     def _setup_strategies(self) -> None:
@@ -109,7 +100,7 @@ class AppAgentProcessor(ProcessorTemplate):
 
     def _get_processor_specific_context_data(self) -> Dict[str, Any]:
         """
-        Get processor-specific context data for App Agent.
+        Get processor-specific context data for App Agent. This data is merged into the processing local context.
         :return: Dictionary of processor-specific context data
         """
         context_data = {
@@ -121,60 +112,6 @@ class AppAgentProcessor(ProcessorTemplate):
         }
 
         return context_data
-
-    def get_required_context_keys(self) -> List[str]:
-        """
-        Get list of required context keys for App Agent processing.
-        :return: List of required context keys
-        """
-        return [
-            # Basic processing data
-            "request",  # User request
-            "subtask",  # Current subtask
-            "plan",  # Task plan
-            "session_step",  # Current step number
-            "round_step",  # Round step number
-            "round_num",  # Round number
-            "log_path",  # Logging path
-            # Application-specific data
-            "app_root",  # Application window root
-            "application_process_name",  # Application identifier
-            # Optional but commonly used
-            "previous_subtasks",  # Previous subtasks (optional)
-            "subtask_index",  # Subtask index (optional)
-        ]
-
-    def _finalize_processing_context(
-        self, processing_context: "ProcessingContext"
-    ) -> None:
-        """
-        Finalize processing context, deciding what to promote to global context.
-        :param processing_context: The processing context to finalize.
-        """
-        try:
-            # Call parent implementation for standard finalization
-            super()._finalize_processing_context(processing_context)
-
-            # Add app-specific context finalization
-            if hasattr(processing_context, "llm_cost"):
-                self.logger.debug(
-                    f"App Agent LLM cost: ${processing_context.llm_cost:.4f}"
-                )
-
-            if hasattr(processing_context, "action_success"):
-                self.logger.debug(
-                    f"App Agent action success: {processing_context.action_success}"
-                )
-
-            if hasattr(processing_context, "app_performance_metrics"):
-                metrics = processing_context.app_performance_metrics
-                if "total_time" in metrics:
-                    self.logger.debug(
-                        f"App Agent total processing time: {metrics['total_time']:.2f}s"
-                    )
-
-        except Exception as e:
-            self.logger.error(f"App Agent context finalization failed: {str(e)}")
 
 
 class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):

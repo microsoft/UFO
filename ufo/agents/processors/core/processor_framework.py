@@ -182,7 +182,7 @@ class ProcessorTemplate(ABC):
         """
         Get processor-specific context data.
 
-        Subclasses can override this method to provide additional context data
+        Subclasses can override this method to provide additional local context data
         specific to their processor type.
 
         :return: Dictionary of processor-specific context initialization data

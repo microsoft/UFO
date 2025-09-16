@@ -13,10 +13,7 @@ This module implements the architecture for Customized Agent processing, providi
 """
 
 from typing import TYPE_CHECKING
-from ufo.agents.processors.app_agent_processor import (
-    AppAgentProcessorContext,
-    AppAgentProcessor,
-)
+from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 from ufo.agents.processors.strategies.app_agent_processing_strategy import (
     AppActionExecutionStrategy,
     AppMemoryUpdateStrategy,
@@ -34,11 +31,8 @@ if TYPE_CHECKING:
 
 class CustomizedProcessor(AppAgentProcessor):
     """
-    Customized Agent Processor V2 - Modern, extensible Customized Agent processing implementation.
+    Customized Agent Processor - Modern, extensible Customized Agent processing implementation.
     """
-
-    # Specify the custom context class for this processor
-    processor_context_class = AppAgentProcessorContext
 
     def __init__(self, agent: "CustomizedAgent", global_context: "Context") -> None:
         """Initialize Customized Agent Processor."""

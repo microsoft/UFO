@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 """
-Host Agent Processor V2 - Refactored processor for Host Agent using the new framework.
+Host Agent Processor - Processor for Host Agent using the new framework.
 
 This processor handles the Host Agent's workflow including:
 - Desktop screenshot capture
