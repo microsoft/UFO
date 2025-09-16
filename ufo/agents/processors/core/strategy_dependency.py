@@ -10,7 +10,7 @@ from dataclasses import dataclass, field
 from typing import Set, List, Dict, Any, Optional, Type
 
 
-from ufo.agents.processors2.core.processing_context import (
+from ufo.agents.processors.context.processing_context import (
     ProcessingPhase,
     ProcessingContext,
 )

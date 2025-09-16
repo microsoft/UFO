@@ -8,9 +8,8 @@ to ensure proper data flow and early detection of dependency issues.
 import logging
 from dataclasses import dataclass, field
 from typing import Set, List, Dict, Any, Optional
-from abc import ABC, abstractmethod
 
-from ufo.agents.processors2.core.processing_context import (
+from ufo.agents.processors.context.processing_context import (
     ProcessingPhase,
     ProcessingContext,
 )

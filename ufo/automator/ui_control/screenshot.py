@@ -7,7 +7,7 @@ import mimetypes
 import os
 from abc import ABC, abstractmethod
 from io import BytesIO
-from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import Dict, List, Optional, Tuple, TYPE_CHECKING
 
 from PIL import Image, ImageDraw, ImageFont, ImageGrab
 from pywinauto.controls.uiawrapper import UIAWrapper
@@ -17,7 +17,7 @@ from ufo import utils
 from ufo.config import Config
 
 if TYPE_CHECKING:
-    from ufo.agents.processors.target import TargetInfo
+    from ufo.agents.processors.schemas.target import TargetInfo
 
 configs = Config.get_instance().config_data
 

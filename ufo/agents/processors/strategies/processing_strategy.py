@@ -2,7 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import List, Optional, Protocol, TYPE_CHECKING
 import time
-from ufo.agents.processors2.core.processing_context import (
+from ufo.agents.processors.context.processing_context import (
     ProcessingContext,
     ProcessingPhase,
     ProcessingResult,
@@ -10,7 +10,7 @@ from ufo.agents.processors2.core.processing_context import (
 
 
 if TYPE_CHECKING:
-    from ufo.agents.processors2.core.strategy_dependency import StrategyDependency
+    from ufo.agents.processors.core.strategy_dependency import StrategyDependency
     from ufo.agents.agent.basic import BasicAgent
 
 
@@ -119,7 +119,7 @@ class BaseProcessingStrategy(ABC):
 
         if self.fail_fast:
             # Throw ProcessingException to trigger middleware's on_error
-            from ufo.agents.processors2.core.processor_framework import (
+            from ufo.agents.processors.core.processor_framework import (
                 ProcessingException,
             )
 

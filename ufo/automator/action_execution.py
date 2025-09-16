@@ -7,7 +7,7 @@ from typing import Any, Dict, Optional
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.processors.actions import ActionCommandInfo, BaseControlLog
+from ufo.agents.processors.schemas.actions import ActionCommandInfo, BaseControlLog
 from ufo.automator.puppeteer import AppPuppeteer
 
 

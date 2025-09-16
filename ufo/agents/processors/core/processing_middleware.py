@@ -5,11 +5,11 @@ from typing import TYPE_CHECKING, Optional
 
 from flask import json
 
-from ufo.agents.processors2.core.processing_context import (
+from ufo.agents.processors.context.processing_context import (
     ProcessingContext,
     ProcessingResult,
 )
-from ufo.agents.processors2.core.processor_framework import (
+from ufo.agents.processors.core.processor_framework import (
     ProcessingContext,
     ProcessingResult,
 )
@@ -17,7 +17,7 @@ from ufo.agents.processors2.core.processor_framework import (
 from ufo.module.context import ContextNames
 
 if TYPE_CHECKING:
-    from ufo.agents.processors2.core.processor_framework import ProcessorTemplate
+    from ufo.agents.processors.core.processor_framework import ProcessorTemplate
     from ufo.module.basic import FileWriter
 
 
@@ -129,7 +129,7 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
     async def on_error(self, processor: "ProcessorTemplate", error: Exception) -> None:
         """Enhanced error logging with context information."""
 
-        from ufo.agents.processors2.core.processor_framework import ProcessingException
+        from ufo.agents.processors.core.processor_framework import ProcessingException
 
         if isinstance(error, ProcessingException):
             # record error

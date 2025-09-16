@@ -3,9 +3,9 @@ import time
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Any, Dict, List, Optional, Type, TypeVar
 
-from ufo.agents.agent.basic import BasicAgent
+
 from ufo.module.context import Context, ContextNames
-from ufo.agents.processors2.core.processing_context import (
+from ufo.agents.processors.context.processing_context import (
     BasicProcessorContext,
     ProcessingContext,
     ProcessingPhase,
@@ -13,15 +13,16 @@ from ufo.agents.processors2.core.processing_context import (
 )
 
 
-from ufo.agents.processors2.strategies.processing_strategy import ProcessingStrategy
-from ufo.agents.processors2.core.strategy_dependency import (
+from ufo.agents.processors.strategies.processing_strategy import ProcessingStrategy
+from ufo.agents.processors.core.strategy_dependency import (
     StrategyDependencyValidator,
     StrategyMetadataRegistry,
     validate_provides_consistency,
 )
 
 if TYPE_CHECKING:
-    from ufo.agents.processors2.core.processing_middleware import ProcessorMiddleware
+    from ufo.agents.processors.core.processing_middleware import ProcessorMiddleware
+    from ufo.agents.agent.basic import BasicAgent
 
 T = TypeVar("T")
 
@@ -55,7 +56,7 @@ class ProcessorTemplate(ABC):
     # Class attribute that subclasses can override to specify their context class
     processor_context_class: Type[BasicProcessorContext] = BasicProcessorContext
 
-    def __init__(self, agent: BasicAgent, global_context: Context):
+    def __init__(self, agent: "BasicAgent", global_context: Context):
         """
         Initialize the processor template.
         :param agent: The agent instance which this processor serves.

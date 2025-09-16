@@ -19,15 +19,15 @@ The processor follows the established V2 patterns:
 """
 
 from typing import TYPE_CHECKING
-from ufo.agents.processors2.app_agent_processor import (
+from ufo.agents.processors.app_agent_processor import (
     AppAgentProcessorContext,
-    AppAgentProcessorV2,
+    AppAgentProcessor,
 )
-from ufo.agents.processors2.strategies.app_agent_processing_strategy import (
+from ufo.agents.processors.strategies.app_agent_processing_strategy import (
     AppActionExecutionStrategy,
     AppMemoryUpdateStrategy,
 )
-from ufo.agents.processors2.strategies.customized_agent_processing_strategy import (
+from ufo.agents.processors.strategies.customized_agent_processing_strategy import (
     CustomizedLLMInteractionStrategy,
     CustomizedScreenshotCaptureStrategy,
 )
@@ -38,7 +38,7 @@ if TYPE_CHECKING:
     from ufo.agents.agent.customized_agent import CustomizedAgent
 
 
-class CustomizedProcessorV2(AppAgentProcessorV2):
+class CustomizedProcessor(AppAgentProcessor):
     """
     Customized Agent Processor V2 - Modern, extensible Customized Agent processing implementation.
     """
@@ -52,9 +52,9 @@ class CustomizedProcessorV2(AppAgentProcessorV2):
 
     def _setup_strategies(self) -> None:
         """Setup processing strategies for Customized Agent."""
-        from ufo.agents.processors2.core.processing_context import ProcessingPhase
+        from ufo.agents.processors.context.processing_context import ProcessingPhase
 
-        # Data collection strategy (combines screenshot + control info)
+        # Data collection strategy for screenshots capture
         self.strategies[ProcessingPhase.DATA_COLLECTION] = (
             CustomizedScreenshotCaptureStrategy(
                 fail_fast=True,
@@ -77,3 +77,11 @@ class CustomizedProcessorV2(AppAgentProcessorV2):
         self.strategies[ProcessingPhase.MEMORY_UPDATE] = AppMemoryUpdateStrategy(
             fail_fast=False  # Memory update failures shouldn't stop the process
         )
+
+
+class HardwareAgentProcessor(CustomizedProcessor):
+    """
+    Processor for Hardware Agent using V2 architecture.
+    """
+
+    pass

@@ -14,20 +14,19 @@ This module contains all the processing strategies for App Agent including:
 Each strategy is designed to be modular, testable, and follows the dependency injection pattern.
 """
 
-import traceback
 from typing import TYPE_CHECKING
 
 from ufo import utils
-from ufo.agents.processors2.core.processing_context import (
+from ufo.agents.processors.context.processing_context import (
     ProcessingContext,
     ProcessingPhase,
     ProcessingResult,
 )
-from ufo.agents.processors2.core.strategy_dependency import depends_on, provides
-from ufo.agents.processors2.strategies.app_agent_processing_strategy import (
+from ufo.agents.processors.core.strategy_dependency import depends_on, provides
+from ufo.agents.processors.strategies.app_agent_processing_strategy import (
     AppLLMInteractionStrategy,
 )
-from ufo.agents.processors2.strategies.processing_strategy import BaseProcessingStrategy
+from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
 from ufo.contracts.contracts import Command, ResultStatus
@@ -37,7 +36,7 @@ from ufo.module.dispatcher import BasicCommandDispatcher
 configs = Config.get_instance().config_data
 
 if TYPE_CHECKING:
-    from ufo.agents.agent.app_agent import CustomizedAgent
+    from ufo.agents.agent.customized_agent import CustomizedAgent
 
 
 @depends_on("app_root", "log_path", "session_step")

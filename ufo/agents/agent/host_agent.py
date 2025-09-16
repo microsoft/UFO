@@ -20,7 +20,7 @@ from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import HostAgentPrompter
 
 if TYPE_CHECKING:
-    from ufo.agents.processors.host_agent_processor import HostAgentResponse
+    from ufo.agents.processors.schemas.response_schema import HostAgentResponse
 
 configs = Config.get_instance().config_data
 
@@ -250,13 +250,13 @@ class HostAgent(BasicAgent):
         Process the agent.
         :param context: The context.
         """
-        from ufo.agents.processors2.host_agent_processor import HostAgentProcessorV2
+        # from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 
         if not self._context_provision_executed:
             await self.context_provision(context=context)
             self._context_provision_executed = True
-        self.processor = HostAgentProcessorV2(agent=self, global_context=context)
-        # self.processor = HostAgentProcessorV2(agent=self, context=context)
+        self.processor = HostAgentProcessor(agent=self, global_context=context)
+        # self.processor = HostAgentProcessor(agent=self, context=context)
         await self.processor.process()
 
         # Sync the status with the processor.

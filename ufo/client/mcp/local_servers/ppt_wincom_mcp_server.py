@@ -13,7 +13,7 @@ from fastmcp import FastMCP
 from fastmcp.client import Client
 from pydantic import Field
 
-from ufo.agents.processors.actions import ActionCommandInfo
+from ufo.agents.processors.schemas.actions import ActionCommandInfo
 from ufo.automator.action_execution import ActionExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.client.mcp.mcp_registry import MCPRegistry

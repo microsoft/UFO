@@ -9,7 +9,7 @@ from typing import Any, Dict, List
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.win32structures import RECT
 
-from ufo.agents.processors.target import TargetInfo, TargetKind
+from ufo.agents.processors.schemas.target import TargetInfo, TargetKind
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
 from ufo.utils import print_with_color
 

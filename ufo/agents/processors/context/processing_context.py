@@ -14,9 +14,9 @@ type-safe context management with clear separation of concerns.
 from collections import OrderedDict
 from dataclasses import asdict, dataclass, field
 from enum import Enum
-from typing import Any, Dict, List, Optional, TYPE_CHECKING, TypeVar
+from typing import Any, Dict, List, Optional, TypeVar
 from abc import ABC, abstractmethod
-from ufo.agents.processors.target import TargetRegistry
+from ufo.agents.processors.schemas.target import TargetRegistry
 from ufo.module.context import Context, ContextNames
 from ufo.module.dispatcher import BasicCommandDispatcher
 
@@ -454,7 +454,7 @@ class ProcessingContext:
         """
         value = self.get_local(key)
         if value is None:
-            from ufo.agents.processors2.core.processor_framework import (
+            from ufo.agents.processors.core.processor_framework import (
                 ProcessingException,
             )
 
@@ -467,7 +467,7 @@ class ProcessingContext:
             )
 
         if expected_type and not isinstance(value, expected_type):
-            from ufo.agents.processors2.core.processor_framework import (
+            from ufo.agents.processors.core.processor_framework import (
                 ProcessingException,
             )
 

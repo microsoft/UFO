@@ -15,6 +15,7 @@ from ufo.config import Config
 from ufo.llm import llm_call
 from ufo.module.context import Context
 from ufo.module.interactor import question_asker
+from ufo.agents.processors.core.processor_framework import ProcessorTemplate
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
@@ -23,7 +24,7 @@ retriever = utils.LazyImport("..rag.retriever")
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
     from ufo.agents.memory.blackboard import Blackboard
-    from ufo.agents.processors.basic import BaseProcessor
+
 
 configs = Config.get_instance().config_data
 
@@ -46,7 +47,7 @@ class BasicAgent(ABC):
         self.retriever_factory = retriever.RetrieverFactory()
         self._memory = Memory()
         self._host = None
-        self._processor: Optional[BaseProcessor] = None
+        self._processor: Optional[ProcessorTemplate] = None
         self._state = None
         self.logger = logging.getLogger(__name__)
 
@@ -307,7 +308,7 @@ class BasicAgent(ABC):
         pass
 
     @property
-    def processor(self) -> BaseProcessor:
+    def processor(self) -> ProcessorTemplate:
         """
         Get the processor.
         :return: The processor.
@@ -315,7 +316,7 @@ class BasicAgent(ABC):
         return self._processor
 
     @processor.setter
-    def processor(self, processor: BaseProcessor) -> None:
+    def processor(self, processor: ProcessorTemplate) -> None:
         """
         Set the processor.
         :param processor: The processor.
@@ -415,7 +416,7 @@ class AgentRegistry:
         cls,
         agent_name: str,
         third_party: Optional[bool] = False,
-        processor_cls: Optional[Type["BaseProcessor"]] = None,
+        processor_cls: Optional[Type["ProcessorTemplate"]] = None,
     ) -> Callable[[Type["BasicAgent"]], Type["BasicAgent"]]:
         """
         Decorator to register an agent class.

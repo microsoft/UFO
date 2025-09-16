@@ -14,27 +14,26 @@ import openai
 from ufo import utils
 from ufo.agents.agent.basic import AgentRegistry, BasicAgent
 from ufo.agents.memory.blackboard import Blackboard
-from ufo.agents.processors.app_agent_action_seq_processor import (
-    AppAgentActionSequenceProcessor,
-)
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
-from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
+
+# from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
+from ufo.agents.processors.core.processor_framework import ProcessorTemplate
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
+
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
 from ufo.config import Config
 from ufo.contracts.contracts import Command, MCPToolInfo
 from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
-from ufo.agents.processors2.app_agent_processor import AppAgentProcessorV2
 
 if TYPE_CHECKING:
-    from ufo.agents.processors.app_agent_processor import AppAgentResponse
+    from ufo.agents.processors.schemas.response_schema import AppAgentResponse
 
 configs = Config.get_instance().config_data
 
 
-@AgentRegistry.register(agent_name="appagent")
+@AgentRegistry.register(agent_name="appagent", processor_cls=AppAgentProcessor)
 class AppAgent(BasicAgent):
     """
     The AppAgent class that manages the interaction with the application.
@@ -45,8 +44,6 @@ class AppAgent(BasicAgent):
     #     if configs.get("ACTION_SEQUENCE", False)
     #     else AppAgentProcessor
     # )
-
-    _processor_cls = AppAgentProcessorV2
 
     def __init__(
         self,
@@ -397,7 +394,9 @@ class AppAgent(BasicAgent):
         if not self._processor_cls:
             raise ValueError(f"{self.__class__.__name__} has no processor assigned.")
 
-        self.processor = self._processor_cls(agent=self, global_context=context)
+        self.processor: ProcessorTemplate = self._processor_cls(
+            agent=self, global_context=context
+        )
         await self.processor.process()
 
         self.status = self.processor.processing_context.get_local("status")
@@ -612,13 +611,14 @@ class OpenAIOperatorAgent(AppAgent):
         Process the agent workflow in each step.
         :param context: The context.
         """
+        pass
 
-        scaler = configs.get("OPERATOR", {}).get("SCALER", None)
-        self.processor = OpenAIOperatorProcessor(
-            agent=self, context=context, scaler=scaler
-        )
-        self.processor.process()
-        self.status = self.processor.status
+        # scaler = configs.get("OPERATOR", {}).get("SCALER", None)
+        # self.processor = OpenAIOperatorProcessor(
+        #     agent=self, context=context, scaler=scaler
+        # )
+        # self.processor.process()
+        # self.status = self.processor.status
 
     def get_prompter(self, main_prompt: str, app_root_name: str) -> AppAgentPrompter:
         """

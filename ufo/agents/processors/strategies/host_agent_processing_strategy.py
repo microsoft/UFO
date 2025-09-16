@@ -20,27 +20,22 @@ import json
 from dataclasses import asdict
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
-
 from ufo import utils
 from ufo.agents.memory.memory import MemoryItem
-from ufo.agents.processors.actions import ActionCommandInfo
-from ufo.agents.processors.host_agent_processor import (
-    HostAgentAdditionalMemory,
-    HostAgentRequestLog,
-    HostAgentResponse,
+from ufo.agents.processors.context.host_agent_processing_context import (
+    HostAgentProcessorContext,
 )
-from ufo.agents.processors.target import TargetInfo, TargetKind, TargetRegistry
-from ufo.agents.processors2.strategies.processing_strategy import BaseProcessingStrategy
-from ufo.agents.processors2.core.processor_framework import (
+from ufo.agents.processors.core.processor_framework import (
     ProcessingContext,
     ProcessingPhase,
     ProcessingResult,
 )
-from ufo.agents.processors2.core.strategy_dependency import (
-    depends_on,
-    provides,
-)
-
+from ufo.agents.processors.core.strategy_dependency import depends_on, provides
+from ufo.agents.processors.schemas.actions import ActionCommandInfo
+from ufo.agents.processors.schemas.log_schema import HostAgentRequestLog
+from ufo.agents.processors.schemas.response_schema import HostAgentResponse
+from ufo.agents.processors.schemas.target import TargetInfo, TargetKind, TargetRegistry
+from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.config import Config
 from ufo.contracts.contracts import Command, Result, ResultStatus
 from ufo.llm import AgentType
@@ -52,7 +47,6 @@ configs = Config.get_instance().config_data
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
-    from ufo.agents.processors2.host_agent_processor import HostAgentProcessorContext
     from ufo.module.basic import FileWriter
 
 
@@ -1056,13 +1050,13 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
 
     def _create_additional_memory_data(
         self, agent: "HostAgent", context: ProcessingContext
-    ) -> HostAgentAdditionalMemory:
+    ) -> "HostAgentProcessorContext":
         """
         Create comprehensive additional memory data from processing context using HostAgentProcessorContext.
         This method extracts data from the unified typed context and converts to legacy format
         for backward compatibility.
         :param context: Processing context with execution data
-        :return: HostAgentAdditionalMemory object with structured data compatible with original format
+        :return: HostAgentProcessorContext object with structured data compatible with original format
         """
         try:
             # Access the typed context directly

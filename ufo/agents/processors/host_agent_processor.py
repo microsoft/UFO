@@ -1,413 +1,280 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+"""
+Host Agent Processor V2 - Refactored processor for Host Agent using the new framework.
 
-import json
-from dataclasses import asdict, dataclass
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+This processor handles the Host Agent's workflow including:
+- Desktop screenshot capture
+- Application window detection and registration
+- Third-party agent integration
+- LLM interaction with proper context building
+- Action execution and application selection
+- Memory management and logging
+
+The processor maintains backward compatibility with BaseProcessor interface
+while providing enhanced modularity, error handling, and extensibility.
+"""
+
+
+import logging
+
+from typing import TYPE_CHECKING, Any, Dict, Type
+
 
 from ufo import utils
-from ufo.agents.processors.actions import ActionCommandInfo
-from ufo.agents.processors.basic import BaseProcessor
-from ufo.agents.processors.target import TargetKind, TargetRegistry
+
+from ufo.agents.processors.context.host_agent_processing_context import (
+    HostAgentProcessorContext,
+)
+from ufo.agents.processors.schemas.target import TargetInfo
+from ufo.agents.processors.strategies.host_agent_processing_strategy import (
+    DesktopDataCollectionStrategy,
+    HostLLMInteractionStrategy,
+    HostActionExecutionStrategy,
+    HostMemoryUpdateStrategy,
+)
+from ufo.agents.processors.core.processor_framework import (
+    ProcessingContext,
+    ProcessingPhase,
+    ProcessingResult,
+    ProcessorTemplate,
+)
+from ufo.agents.processors.core.processing_middleware import EnhancedLoggingMiddleware
 from ufo.config import Config
-from ufo.contracts.contracts import Command, Result
-from ufo.llm import AgentType
 from ufo.module.context import Context, ContextNames
 
+# Load configuration
 configs = Config.get_instance().config_data
+
+if TYPE_CHECKING:
+    from ufo.agents.agent.host_agent import HostAgent
 
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
 
 
-@dataclass
-class HostAgentAdditionalMemory:
+class HostAgentProcessor(ProcessorTemplate):
     """
-    The additional memory for the host agent.
-    """
+    Enhanced processor for Host Agent with comprehensive functionality.
 
-    Step: int
-    RoundStep: int
-    AgentStep: int
-    Round: int
-    ControlLabel: str
-    SubtaskIndex: int
-    Action: str
-    FunctionCall: str
-    ActionType: str
-    Request: str
-    Agent: str
-    AgentName: str
-    Application: str
-    Cost: float
-    Results: str
-    error: str
-    time_cost: Dict[str, float]
-    ControlLog: Dict[str, Any]
+    This processor manages the complete workflow of a Host Agent including:
+    - Desktop environment analysis and screenshot capture
+    - Application window detection and registration
+    - Third-party agent integration and management
+    - LLM-based decision making with context-aware prompting
+    - Action execution including application selection and command dispatch
+    - Memory management with detailed logging and state tracking
 
-
-@dataclass
-class HostAgentRequestLog:
-    """
-    The request log data for the AppAgent.
+    This processor maintains compatibility with the original BaseProcessor
+    interface while providing enhanced modularity and error handling.
     """
 
-    step: int
-    image_list: List[str]
-    os_info: Dict[str, str]
-    plan: List[str]
-    prev_subtask: List[str]
-    request: str
-    blackboard_prompt: List[str]
-    prompt: Dict[str, Any]
+    # Override the processor context class to use HostAgentProcessorContext
+    processor_context_class: Type[HostAgentProcessorContext] = HostAgentProcessorContext
 
-
-@dataclass
-class HostAgentResponse:
-    """
-    The response data for the HostAgent.
-    """
-
-    observation: str
-    thought: str
-    status: str
-    message: Optional[List[str]] = None
-    questions: Optional[List[str]] = None
-    current_subtask: Optional[str] = None
-    plan: Optional[List[str]] = None
-    comment: Optional[str] = None
-    function: Optional[str] = None
-    arguments: Optional[Dict[str, Any]] = None
-
-
-class HostAgentProcessor(BaseProcessor):
-    """
-    The processor for the host agent at a single step.
-    """
-
-    _select_application_command = "select_application_window"
-
-    def __init__(self, agent: "HostAgent", context: Context) -> None:
+    def __init__(self, agent: "HostAgent", global_context: Context) -> None:
         """
-        Initialize the host agent processor.
-        :param agent: The host agent to be processed.
-        :param context: The context.
+        Initialize the Host Agent Processor with enhanced capabilities.
+        :param agent: The Host Agent instance to be processed
+        :param global_context: Global context shared across the session
         """
 
-        super().__init__(agent=agent, context=context)
+        # Initialize parent class
+        super().__init__(agent, global_context)
 
-        self.host_agent = agent
-
-        self._desktop_screen_url = None
-
-        self.target_registry = TargetRegistry()
-
-        self.assigned_third_party_agent: str | None = None
-
-        self.target_info: List[Dict[str, str]] = []
-
-    def print_step_info(self) -> None:
+    def _setup_strategies(self) -> None:
         """
-        Print the step information.
+        Configure processing strategies with enhanced error handling and logging capabilities.
         """
+        self.strategies[ProcessingPhase.DATA_COLLECTION] = (
+            DesktopDataCollectionStrategy(
+                fail_fast=True  # Desktop data collection is critical for Host Agent
+            )
+        )
+        self.strategies[ProcessingPhase.LLM_INTERACTION] = HostLLMInteractionStrategy(
+            fail_fast=True  # LLM interaction failure should trigger recovery
+        )
+        self.strategies[ProcessingPhase.ACTION_EXECUTION] = HostActionExecutionStrategy(
+            fail_fast=False  # Action failures can be handled gracefully
+        )
+        self.strategies[ProcessingPhase.MEMORY_UPDATE] = HostMemoryUpdateStrategy(
+            fail_fast=False  # Memory update failures shouldn't stop the process
+        )
+
+    def _setup_middleware(self) -> None:
+        """
+        Set up enhanced middleware chain with comprehensive monitoring and recovery.
+        The middleware chain includes:
+        - HostAgentLoggingMiddleware: Specialized logging for Host Agent operations
+        """
+        self.middleware_chain = [
+            HostAgentLoggingMiddleware(),  # Specialized logging for Host Agent
+        ]
+
+    def _get_processor_specific_context_data(self) -> Dict[str, Any]:
+        """
+        Get processor-specific context data.
+
+        Subclasses can override this method to provide additional context data
+        specific to their processor type.
+
+        :return: Dictionary of processor-specific context initialization data
+        """
+        return {
+            "previous_subtasks": self.global_context.get(ContextNames.PREVIOUS_SUBTASKS)
+        }
+
+    def _finalize_processing_context(
+        self, processing_context: ProcessingContext
+    ) -> None:
+        """
+        Finalize processing context by updating existing ContextNames fields.
+        Instead of promoting arbitrary keys, we update the predefined ContextNames
+        that the system actually uses.
+        :param processing_context: The processing context to finalize.
+        """
+
+        super()._finalize_processing_context(processing_context)
+        try:
+            # Update SUBTASK if available
+            subtask = processing_context.get_local("subtask")
+            if subtask:
+                self.global_context.set(ContextNames.SUBTASK, subtask)
+
+            # Update HOST_MESSAGE if available
+            host_message = processing_context.get_local("host_message")
+            if host_message:
+                self.global_context.set(ContextNames.HOST_MESSAGE, host_message)
+
+            # Update APPLICATION_ROOT_NAME if selected
+            selected_app_root = processing_context.get_local(
+                "selected_application_root"
+            )
+            if selected_app_root:
+                self.global_context.set(
+                    ContextNames.APPLICATION_ROOT_NAME, selected_app_root
+                )
+
+            selected_target: TargetInfo = processing_context.get_local("target")
+
+            if selected_target:
+                self.global_context.set(
+                    ContextNames.APPLICATION_PROCESS_NAME, selected_target.name
+                )
+                self.global_context.set(
+                    ContextNames.APPLICATION_WINDOW_INFO, selected_target
+                )
+
+        except Exception as e:
+            self.logger.warning(f"Failed to update ContextNames from results: {e}")
+
+
+class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
+    """
+    Specialized logging middleware for Host Agent with enhanced contextual information.
+
+    This middleware provides:
+    - Host Agent specific progress messages with color coding
+    - Detailed step information and context logging
+    - Performance metrics and execution summaries
+    - Enhanced error reporting with Host Agent context
+    """
+
+    def __init__(self) -> None:
+        """Initialize Host Agent logging middleware with appropriate log level."""
+        super().__init__(log_level=logging.INFO)
+
+    async def before_process(
+        self, processor: ProcessorTemplate, context: ProcessingContext
+    ) -> None:
+        """
+        Log Host Agent processing start with detailed context information.
+        :param processor: Host Agent processor instance
+        :param context: Processing context with round and step information
+        """
+        # Call parent implementation for standard logging
+        await super().before_process(processor, context)
+
+        # Add Host Agent specific logging
+        round_num = context.get("round_num", 0)
+        round_step = context.get("round_step", 0)
+        request = context.get("request", "")
+
+        # Log detailed context information
+        self.logger.info(
+            f"Host Agent Processing Context - "
+            f"Round: {round_num + 1}, Step: {round_step + 1}, "
+            f"Request: '{request[:100]}{'...' if len(request) > 100 else ''}'"
+        )
+
+        # Display colored progress message for user feedback (maintaining original UX)
         utils.print_with_color(
-            "Round {round_num}, Step {step}, HostAgent: Analyzing the user intent and decomposing the request...".format(
-                round_num=self.round_num + 1, step=self.round_step + 1
-            ),
+            f"Round {round_num + 1}, Step {round_step + 1}, HostAgent: "
+            f"Analyzing user intent and decomposing request...",
             "magenta",
         )
 
-    @BaseProcessor.exception_capture
-    @BaseProcessor.method_timer
-    async def capture_screenshot(self) -> None:
+        # Log available context data for debugging
+        if self.logger.isEnabledFor(logging.DEBUG):
+            context_keys = list(
+                context.local_data.keys()
+            )  # This uses the backward-compatible property
+            self.logger.debug(f"Available context keys: {context_keys}")
+
+    async def after_process(
+        self, processor: ProcessorTemplate, result: ProcessingResult
+    ) -> None:
         """
-        Capture the screenshot.
+        Log Host Agent processing completion with execution summary.
+        :param processor: Host Agent processor instance
+        :param result: Processing result with execution data
         """
+        # Call parent implementation for standard logging
+        await super().after_process(processor, result)
 
-        desktop_save_path = self.log_path + f"action_step{self.session_step}.png"
+        if result.success:
+            # Log Host Agent specific success information
+            selected_app = result.data.get("selected_application_root", "")
+            assigned_agent = result.data.get("assigned_third_party_agent", "")
+            subtask = result.data.get("subtask", "")
 
-        self._memory_data.add_values_from_dict({"CleanScreenshot": desktop_save_path})
+            success_msg = "Host Agent processing completed successfully"
+            if selected_app:
+                success_msg += f" - Selected application: {selected_app}"
+            elif assigned_agent:
+                success_msg += f" - Assigned third-party agent: {assigned_agent}"
+            if subtask:
+                success_msg += f" - Current subtask: {subtask}"
 
-        result = await self.context.command_dispatcher.execute_commands(
-            [
-                Command(
-                    tool_name="capture_desktop_screenshot",
-                    parameters={"all_screens": True},
-                    tool_type="data_collection",
+            self.logger.info(success_msg)
+
+            # Display user-friendly completion message (maintaining original UX)
+            if selected_app or assigned_agent:
+                target_name = selected_app or assigned_agent
+                utils.print_with_color(
+                    f"HostAgent: Successfully selected target '{target_name}'", "green"
                 )
-            ]
-        )
-
-        self._desktop_screen_url = result[0].result
-
-        utils.save_image_string(self._desktop_screen_url, desktop_save_path)
-
-        self.logger.info(f"Desktop screenshot saved at: {desktop_save_path}")
-
-    @BaseProcessor.exception_capture
-    @BaseProcessor.method_timer
-    async def get_control_info(self) -> None:
-        """
-        Get the control information.
-        """
-
-        result = await self.context.command_dispatcher.execute_commands(
-            [
-                Command(
-                    tool_name="get_desktop_app_info",
-                    parameters={"remove_empty": True, "refresh_app_windows": True},
-                    tool_type="data_collection",
-                )
-            ]
-        )
-
-        desktop_windows_info = result[0].result
-
-        self.logger.info(f"Got {len(desktop_windows_info)} desktop windows in total.")
-
-        self.target_registry.register_from_dicts(desktop_windows_info)
-        self.register_third_party_agents(start_index=len(desktop_windows_info) + 1)
-
-    def register_third_party_agents(self, start_index: int = 0) -> None:
-        """
-        Create a list of third-party agents.
-        :param start_index: The starting index of the third-party agent list.
-        """
-
-        third_party_agent_names = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
-
-        self.logger.info(f"Enabled third-party agents: {third_party_agent_names}")
-
-        third_party_agent_list = []
-
-        for i, agentname in enumerate(third_party_agent_names):
-            label = str(i + start_index)
-            third_party_agent_list.append(
-                {
-                    "kind": TargetKind.THIRD_PARTY_AGENT.value,
-                    "id": label,
-                    "type": "ThirdPartyAgent",
-                    "name": agentname,
-                }
-            )
-        self.target_registry.register_from_dicts(third_party_agent_list)
-
-    @BaseProcessor.exception_capture
-    @BaseProcessor.method_timer
-    async def get_prompt_message(self) -> None:
-        """
-        Get the prompt message.
-        """
-
-        if not self.host_agent.blackboard.is_empty():
-            blackboard_prompt = self.host_agent.blackboard.blackboard_to_prompt()
         else:
-            blackboard_prompt = []
-
-        self.target_info = self.target_registry.to_list(
-            keep_keys=["id", "name", "kind"]
-        )
-
-        # Construct the prompt message for the host agent.
-        self._prompt_message = self.host_agent.message_constructor(
-            image_list=[self._desktop_screen_url],
-            os_info=self.target_info,
-            plan=self.prev_plan,
-            prev_subtask=self.previous_subtasks,
-            request=self.request,
-            blackboard_prompt=blackboard_prompt,
-        )
-
-        # print(f"Prompt message: {self._prompt_message}")
-
-        request_data = HostAgentRequestLog(
-            step=self.session_step,
-            image_list=[self._desktop_screen_url],
-            os_info=self.target_info,
-            plan=self.prev_plan,
-            prev_subtask=self.previous_subtasks,
-            request=self.request,
-            blackboard_prompt=blackboard_prompt,
-            prompt=self._prompt_message,
-        )
-
-        # Log the prompt message. Only save them in debug mode.
-        request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
-        self.request_logger.write(request_log_str)
-
-    @BaseProcessor.exception_capture
-    @BaseProcessor.method_timer
-    async def get_response(self) -> None:
-        """
-        Get the response from the LLM.
-        """
-
-        retry = 0
-        while retry < configs.get("JSON_PARSING_RETRY", 3):
-            # Try to get the response from the LLM. If an error occurs, catch the exception and log the error.
-            self._response, self.cost = self.host_agent.get_response(
-                self._prompt_message, AgentType.HOST, use_backup_engine=True
+            # Enhanced error logging for Host Agent
+            error_phase = getattr(result, "phase", "unknown")
+            self.logger.error(
+                f"Host Agent processing failed at phase: {error_phase} - {result.error}"
             )
 
-            try:
-                self.host_agent.response_to_dict(self._response)
-                break
-            except Exception:
-                print(f"Error in parsing response into json, retrying: {retry}")
-                retry += 1
-
-    @BaseProcessor.exception_capture
-    @BaseProcessor.method_timer
-    def parse_response(self) -> None:
-        """
-        Parse the response.
-        """
-
-        response_dict = self.host_agent.response_to_dict(self._response)
-
-        self.response = HostAgentResponse(**response_dict)
-
-        self.subtask = self.response.current_subtask
-        self.host_message = self.response.message
-
-        # Convert the plan from a string to a list if the plan is a string.
-        self.plan = self.string2list(self.response.plan)
-
-        self.status = self.response.status
-        self.question_list = self.response.questions
-
-        self.host_agent.print_response(self.response)
-
-    @BaseProcessor.exception_capture
-    @BaseProcessor.method_timer
-    async def execute_action(self) -> None:
-        """
-        Execute the action.
-        """
-
-        result = [Result(status="none")]
-
-        function, arguments = self.response.function, self.response.arguments
-
-        target_id = arguments.get("id")
-
-        if function == self._select_application_command:
-
-            result = await self._select_application(target_id)
-
-        elif function:
-            result = await self.context.command_dispatcher.execute_commands(
-                [
-                    Command(
-                        tool_name=function,
-                        parameters=arguments,
-                        tool_type="action",
-                    )
-                ]
+            # Display user-friendly error message (maintaining original UX)
+            utils.print_with_color(
+                f"HostAgent: Processing failed - {result.error}", "red"
             )
 
-            self.logger.info(
-                f"Executed command: {function}, with arguments: {arguments}"
-            )
-
-        action = ActionCommandInfo(
-            function=self.response.function,
-            arguments=self.response.arguments,
-            target=self.target_registry.get(self.control_label),
-            status=self.response.status,
-            result=result[0],
-        )
-
-        self.actions.add_action(action)
-
-    async def _select_application(self, target_id: str) -> Dict[str, Any]:
+    async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
         """
-        Select an application.
-        :param target_id: The ID of the target application.
-        :return: The selected application information.
+        Enhanced error handling for Host Agent with contextual information.
+        :param processor: Host Agent processor instance
+        :param error: Exception that occurred
         """
+        # Call parent implementation for standard error handling
+        await super().on_error(processor, error)
 
-        target: TargetKind = self.target_registry.get(target_id)
-
-        if target and target.kind == TargetKind.THIRD_PARTY_AGENT:
-
-            self.assigned_third_party_agent = target.name
-            result = [
-                Result(status="success", result={"id": target.id, "name": target.name})
-            ]
-
-        else:
-
-            result = await self.context.command_dispatcher.execute_commands(
-                [
-                    Command(
-                        tool_name=self._select_application_command,
-                        parameters={"id": str(target_id), "name": target.name},
-                        tool_type="action",
-                    )
-                ]
-            )
-
-            self.app_root = result[0].result.get("root_name", "")
-            self.logger.info(
-                f"Selected application process name: {target.name}, root name: {self.app_root}"
-            )
-
-        self.control_label = target_id
-        self.control_text = target.name
-        self.context.set(ContextNames.APPLICATION_ROOT_NAME, self.app_root)
-        self.context.set(ContextNames.APPLICATION_PROCESS_NAME, target.name)
-
-        return result
-
-    def sync_memory(self):
-        """
-        Sync the memory of the HostAgent.
-        """
-
-        additional_memory = HostAgentAdditionalMemory(
-            Step=self.session_step,
-            RoundStep=self.round_step,
-            AgentStep=self.host_agent.step,
-            Round=self.round_num,
-            ControlLabel=self.control_label,
-            SubtaskIndex=-1,
-            FunctionCall=self.actions.get_function_calls(),
-            Action=self.actions.to_list_of_dicts(),
-            ActionType=self.actions.actions[0].result.namespace,
-            Request=self.request,
-            Agent="HostAgent",
-            AgentName=self.host_agent.name,
-            Application=self.app_root,
-            Cost=self._cost,
-            Results=self.actions.get_results(),
-            error=self._exeception_traceback,
-            time_cost=self._time_cost,
-            ControlLog=self.actions.get_target_info(),
-        )
-
-        self.add_to_memory(asdict(self.response))
-        self.add_to_memory(asdict(additional_memory))
-
-    def update_memory(self) -> None:
-        """
-        Update the memory of the Agent.
-        """
-
-        # Sync the memory
-        self.sync_memory()
-
-        self.host_agent.add_memory(self._memory_data)
-
-        # Log the memory item.
-        self.context.add_to_structural_logs(self._memory_data.to_dict())
-        # self.log(self._memory_data.to_dict())
-
-        # Only memorize the keys in the HISTORY_KEYS list to feed into the prompt message in the future steps.
-        memorized_action = {
-            key: self._memory_data.to_dict().get(key) for key in configs["HISTORY_KEYS"]
-        }
-
-        self.host_agent.blackboard.add_trajectories(memorized_action)
+        utils.print_with_color(f"HostAgent: Encountered error - {str(error)}", "red")

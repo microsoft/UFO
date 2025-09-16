@@ -8,7 +8,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.uia_element_info import UIAElementInfo
 from pywinauto.win32structures import RECT
 
-from ufo.agents.processors.target import TargetInfo
+from ufo.agents.processors.schemas.target import TargetInfo
 from ufo.llm.base import BaseService
 
 

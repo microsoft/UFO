@@ -23,21 +23,27 @@ from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from ufo import utils
 from ufo.agents.memory.memory import MemoryItem
-from ufo.agents.processors2.core.processing_context import (
+from ufo.agents.processors.context.app_agent_processing_context import (
+    AppAgentProcessorContext,
+)
+from ufo.agents.processors.context.processing_context import (
+    BasicProcessorContext,
     ProcessingContext,
     ProcessingPhase,
     ProcessingResult,
 )
-from ufo.agents.processors2.core.strategy_dependency import depends_on, provides
-from ufo.agents.processors2.strategies.processing_strategy import BaseProcessingStrategy
-from ufo.agents.processors.actions import ActionCommandInfo, ListActionCommandInfo
-from ufo.agents.processors.app_agent_processor import (
-    AppAgentAdditionalMemory,
+from ufo.agents.processors.core.strategy_dependency import depends_on, provides
+from ufo.agents.processors.schemas.actions import (
+    ActionCommandInfo,
+    ListActionCommandInfo,
+)
+from ufo.agents.processors.schemas.log_schema import (
     AppAgentRequestLog,
-    AppAgentResponse,
     ControlInfoRecorder,
 )
-from ufo.agents.processors.target import TargetInfo, TargetKind, TargetRegistry
+from ufo.agents.processors.schemas.response_schema import AppAgentResponse
+from ufo.agents.processors.schemas.target import TargetInfo, TargetKind, TargetRegistry
+from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.automator.ui_control.grounding.omniparser import OmniparserGrounding
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.config import Config
@@ -52,7 +58,6 @@ configs = Config.get_instance().config_data
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
-    from ufo.agents.processors2.app_agent_processor import AppAgentProcessorContext
     from ufo.module.basic import FileWriter
 
 if configs is not None:
@@ -1451,16 +1456,16 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
         self,
         agent: "AppAgent",
         context: ProcessingContext,
-    ) -> AppAgentAdditionalMemory:
+    ) -> "BasicProcessorContext":
         """
         Create additional memory data for App Agent.
         :param agent: The AppAgent instance
-        :param context: Current session ste
+        :param context: Current session step
         :return: ProcessingContext object
         """
         try:
             # Build action lists
-            from ufo.agents.processors2.app_agent_processor import (
+            from ufo.agents.processors.app_agent_processor import (
                 AppAgentProcessorContext,
             )
 

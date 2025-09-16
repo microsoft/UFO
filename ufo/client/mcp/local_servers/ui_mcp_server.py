@@ -19,8 +19,8 @@ from fastmcp.exceptions import ToolError
 from pydantic import Field
 from pywinauto.controls.uiawrapper import UIAWrapper
 
-from ufo.agents.processors.actions import ActionCommandInfo
-from ufo.agents.processors.target import TargetInfo, TargetKind
+from ufo.agents.processors.schemas.actions import ActionCommandInfo
+from ufo.agents.processors.schemas.target import TargetInfo, TargetKind
 from ufo.automator.action_execution import ActionExecutor
 from ufo.automator.puppeteer import AppPuppeteer
 from ufo.automator.ui_control import ui_tree
@@ -622,7 +622,7 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         desktop_windows_info = ui_state.control_inspector.get_control_info_list_of_dict(
             app_windows, ["control_text", "control_type"]
         )
-        from ufo.agents.processors.target import TargetKind
+        from ufo.agents.processors.schemas.target import TargetKind
 
         revised_desktop_windows_info = [
             {
@@ -665,7 +665,7 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
         desktop_windows_info = ui_state.control_inspector.get_control_info_list_of_dict(
             app_windows, ["control_text", "control_type"]
         )
-        from ufo.agents.processors.target import TargetKind
+        from ufo.agents.processors.schemas.target import TargetKind
 
         revised_desktop_windows_info = [
             TargetInfo(
