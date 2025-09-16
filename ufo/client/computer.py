@@ -638,7 +638,7 @@ class CommandRouter:
 
         results: List[Result] = []
 
-        status = "success"
+        status = ResultStatus.SUCCESS
 
         for command in commands:
             call_id = command.call_id
@@ -651,7 +651,7 @@ class CommandRouter:
 
             text_content = call_tool_result.data if call_tool_result.data else None
 
-            if early_exit and status == "failure":
+            if early_exit and status == ResultStatus.FAILURE:
                 self.logger.warning(
                     f"Skipping further commands due to previous failure."
                 )
