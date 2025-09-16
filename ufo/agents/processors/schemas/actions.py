@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 from ufo.agents.processors.schemas.target import TargetInfo
-from ufo.contracts.contracts import Result
+from ufo.contracts.contracts import Result, ResultStatus
 
 
 @dataclass
@@ -78,7 +78,7 @@ class ActionCommandInfo(BaseModel):
             target_info = ", ".join(
                 f"{k}={v}"
                 for k, v in self.target.model_dump(exclude_none=True).items()
-                if k not in {"rect"}  # rect 通常不必要
+                if k not in {"rect"}  # rect is not needed in representation
             )
             components.append(f"[Target] {target_info}")
 
@@ -160,7 +160,7 @@ class ListActionCommandInfo:
 
         action_list = []
         for action in self.actions:
-            if success_only and action.result.status != "success":
+            if success_only and action.result.status != ResultStatus.SUCCESS:
                 continue
             action_dict = action.model_dump()
             if keep_keys:
@@ -197,7 +197,7 @@ class ListActionCommandInfo:
         """
         representations = []
         for action in self.actions:
-            if success_only and action.result.status != "success":
+            if success_only and action.result.status != ResultStatus.SUCCESS:
                 continue
             representations.append(action.to_representation())
         return representations
@@ -257,7 +257,7 @@ class ListActionCommandInfo:
         return [
             action.result.model_dump()
             for action in self.actions
-            if not success_only or action.result.status == "success"
+            if not success_only or action.result.status == ResultStatus.SUCCESS
         ]
 
     def get_target_info(self, success_only: bool = False) -> List[Dict[str, Any]]:
@@ -270,7 +270,7 @@ class ListActionCommandInfo:
         target_info = []
 
         for action in self.actions:
-            if not success_only or action.result.status == "success":
+            if not success_only or action.result.status == ResultStatus.SUCCESS:
                 if action.target:
                     target_info.append(action.target.model_dump())
                 else:
@@ -287,5 +287,5 @@ class ListActionCommandInfo:
         return [
             action.action_string
             for action in self.actions
-            if not is_success_only or action.result.status == "success"
+            if not is_success_only or action.result.status == ResultStatus.SUCCESS
         ]
