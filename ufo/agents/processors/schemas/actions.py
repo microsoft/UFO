@@ -7,6 +7,7 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
+from ufo import utils
 from ufo.agents.processors.schemas.target import TargetInfo
 from ufo.contracts.contracts import Result, ResultStatus
 
@@ -130,13 +131,15 @@ class ListActionCommandInfo:
         Get the status of the actions.
         :return: The status of the actions.
         """
-        if not actions:
-            actions = []
-            self._status = "FINISH"
+        if not self.actions:
+            status = "FINISH"
         else:
-            self._status = actions[0].status
+            status = "CONTINUE"
+            for action in self.actions:
+                if action.result.status == ResultStatus.SUCCESS:
+                    status = action.status
 
-        return self._status
+        return status
 
     def add_action(self, action: ActionCommandInfo) -> None:
         """
@@ -201,6 +204,21 @@ class ListActionCommandInfo:
                 continue
             representations.append(action.to_representation())
         return representations
+
+    def color_print(self, success_only: bool = False) -> None:
+        """
+        Color print the action sequence.
+        :param success_only: Whether to print the successful actions only.
+        """
+        index = 1
+
+        for action in self.actions:
+            if success_only and action.result.status != ResultStatus.SUCCESS:
+                continue
+            utils.print_with_color(f"Action {index}:", "cyan")
+            utils.print_with_color(action.to_representation(), "green")
+            index += 1
+        utils.print_with_color(f"Final status: {self.status}", "yellow")
 
     @staticmethod
     def is_same_action(

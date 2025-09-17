@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 """
-App Agent Processing Strategies V2 - Modular strategies for App Agent using the new framework.
+App Agent Processing Strategies - Modular strategies for App Agent using the new framework.
 
 This module contains all the processing strategies for App Agent including:
 - Screenshot capture and UI control information collection
