@@ -100,7 +100,9 @@ class ActionExecutor:
         if control_selected is not None and not ActionExecutor._control_validation(
             control_selected
         ):
-            raise ValueError("Control is not available.")
+            raise ValueError(
+                f"Control {control_id}: {action.target.name} is not available or not interactable for the action {action.action_representation()}, please refresh the application state to get the latest interactable control information."
+            )
 
         # Create the control receiver.
         if application_window:

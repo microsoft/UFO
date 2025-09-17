@@ -739,10 +739,6 @@ def create_data_mcp_server(*args, **kwargs) -> FastMCP:
 
         control_dict = {str(i + 1): control for i, control in enumerate(controls_list)}
 
-        result = ui_state.control_inspector.get_control_info_list_of_dict(
-            control_dict, field_list=field_list
-        )
-
         ui_state.control_dict = control_dict
 
         target_info_list = []
