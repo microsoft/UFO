@@ -641,6 +641,15 @@ class CommandRouter:
         status = ResultStatus.SUCCESS
 
         for command in commands:
+            if not command.tool_name:
+                results.append(
+                    Result(
+                        status=ResultStatus.SUCCESS,
+                        result="No action taken.",
+                        error="",
+                        call_id=command.call_id,
+                    )
+                )
             call_id = command.call_id
 
             tool_call = computer.command2tool(command)

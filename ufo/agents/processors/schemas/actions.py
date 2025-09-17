@@ -278,6 +278,30 @@ class ListActionCommandInfo:
 
         return target_info
 
+    def get_target_objects(self, success_only: bool = False) -> List[TargetInfo]:
+        """
+        Get the control logs of the actions.
+        :param success_only: Whether to get the successful actions only.
+        :return: The control logs of the actions.
+        """
+        target_objects = []
+
+        for action in self.actions:
+            if not success_only or action.result.status == ResultStatus.SUCCESS:
+                if action.target:
+                    target_objects.append(action.target)
+
+        return target_objects
+
+        target_info = []
+
+        for action in self.actions:
+            if not success_only or action.result.status == ResultStatus.SUCCESS:
+                if action.target:
+                    target_info.append(action.target)
+
+        return target_info
+
     def get_function_calls(self, is_success_only: bool = False) -> List[str]:
         """
         Get the function calls of the actions.

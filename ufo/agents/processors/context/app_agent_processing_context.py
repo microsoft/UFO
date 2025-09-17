@@ -123,7 +123,6 @@ class AppAgentProcessorContext(BasicProcessorContext):
             "concat_screenshot_path",
             "selected_control_screenshot_path",
             "desktop_screenshot_path",
-            "results",
             "action_success",
             "function_call",
             "save_screenshot",

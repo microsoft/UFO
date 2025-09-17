@@ -189,7 +189,6 @@ class ProcessorTemplate(ABC):
         """
         return {}
 
-    @abstractmethod
     def _finalize_processing_context(
         self, processing_context: ProcessingContext
     ) -> None:

@@ -10,12 +10,13 @@ example1:
       The screenshot shows that I am on the Main Page of Outlook. The Main Page has a list of control items and email received. The new email editing window is not opened. The last action took effect by opening the Outlook application.
     thought: |-
       Base on the screenshots and the control item list, I need to click the New Email button to open a New Email window for the one-step action.
-    function: |-
-      click_input
-    arguments: 
-      {"id": "1", "name": "New Email", "button": "left", "double": false}
-    status: |-
-      CONTINUE
+    action:
+      function: |-
+        click_input
+      arguments: 
+        {"id": "1", "name": "New Email", "button": "left", "double": false}
+      status: |-
+        CONTINUE
     plan:
       - (1) Input the email address of the receiver.
       - (2) Input the title of the email. I need to input 'Thanks for your contribution on the open source.'.
@@ -39,20 +40,21 @@ example2:
       The screenshot shows that I am on the editing window of a new email, and the 'To', 'CC', 'Title' and 'Email Body' blocks are visible and ready to input. The title of the email has already been filled. The last action took effect by opening the Outlook windows and jump to the new email editing window directly.
     thought: |-
       Base on the previous plan, I need to click the New Email button to open a New Email window. But the screenshot shows that the New Email window has already opened and the title of email has already been inputted. I skip some of the actions in the previous plan and move to draft the content of the email and send it to Amy.
-    function: |-
-      set_edit_text
-    arguments:
-      id: "36"
-      name: "Email Body"
-      text: |
-        Dear Amy,
+    action:
+      function: |-
+        set_edit_text
+      arguments:
+        id: "36"
+        name: "Email Body"
+        text: |
+          Dear Amy,
 
-        I hope this message finds you well. I am writing to ask how you feel about the new project. Let me know if you have any concerns.
+          I hope this message finds you well. I am writing to ask how you feel about the new project. Let me know if you have any concerns.
 
-        Best regards,
-        [Sender's Name]
-    status: |-
-      FINISH
+          Best regards,
+          [Sender's Name]
+      status: |-
+        FINISH
     plan:
       - <FINISH>
     comment: |-
@@ -74,11 +76,12 @@ example3:
       The screenshot shows that I am on the editing window of a Word file. The search box is visible and the word 'UFO' is already inputted. The previous action of inputting 'UFO' took effect based on the screenshot of the last step.
     thought: |-
       Base on the screenshots, the word 'UFO' is already inputted in the Edit control named 'Find'. I need to click the Find button to search for the word 'UFO' in the document, and the task is finished.
-    function: |-
-      click_input
-    arguments: 
-      {"id": "59", "name": "Find", "button": "left", "double": false}
-    status: FINISH
+    action:
+      function: |-
+        click_input
+      arguments: 
+        {"id": "59", "name": "Find", "button": "left", "double": false}
+      status: FINISH
     plan:
       - <FINISH>
     comment: |-
@@ -99,11 +102,12 @@ example4:
       The screenshot shows that I am on the main window of the Word file named 'framework.docx'. The text of the file, which I am interest, is visible in the screenshot. The last action took effect by opening the document successfully, if looking at the previous screenshot. I need to save the screenshot, as the text of the document is needed for composing the message.
     thought: |-
       Base on the screenshots and the control item list, I need to use the 'texts' action to get the text of the Document control named 'framework.docx'. Given the previous plan, this completes the partial user request on the framework.docx, and therefore I need to set the status as 'FINISH' immediately.
-    function: |-
-      texts
-    arguments: {"id": "83", "name": "framework - Word"}
-    status: |-
-      FINISH
+    action:
+      function: |-
+        texts
+      arguments: {"id": "83", "name": "framework - Word"}
+      status: |-
+        FINISH
     plan:
       - <FINISH>
     comment: |-
@@ -124,12 +128,13 @@ example5:
       The current screenshot shows the PowerPoint application with the 'presentation.pptx' file open. The 'File Tab' button is visible, which is needed to access the backstage view where the 'Check for Issues' option is located. This matches the next step in the previous plan. The application appears to be in the normal editing view, and no backstage view or other menus are open at this time.
     thought: |-
       The user request to do it quickly. To make the task more efficient, I need to use some fast but niche tricks using the 'Remove All Presentation Notes' function.  To do so, I need to first click the 'File' button to open the menu.
-    function: |-
-      click_input
-    arguments: 
-      {"id": "59", "name": "File", "button": "left", "double": false}
-    status: |-
-      CONTINUE
+    action:
+      function: |-
+        click_input
+      arguments: 
+        {"id": "59", "name": "File", "button": "left", "double": false}
+      status: |-
+        CONTINUE
     plan:
       - (1) Click the 'Info' ListItem, to access the 'Info' page.
       - (2) Click the 'Check for Issues' MenuItem, to open a menu for checking.
@@ -156,12 +161,13 @@ example6:
       I observe that the Edge browser is visible in the screenshot, with the Google search page opened.
     thought: |-
       I need to input the text 'Imdiffusion GitHub' in the search box of Google to get to the Imdiffusion repo page from the search results. The search box is usually in a type of ComboBox.
-    function: |-
-      set_edit_text
-    arguments: 
-      {"id": "36", "name": "搜索", "text": "Imdiffusion GitHub"}
-    status: |-
-      CONTINUE
+    action:
+      function: |-
+        set_edit_text
+      arguments: 
+        {"id": "36", "name": "搜索", "text": "Imdiffusion GitHub"}
+      status: |-
+        CONTINUE
     plan:
       - (1) After input 'Imdiffusion GitHub', click Google Search to search for the Imdiffusion repo on github.
       - (2) Once the searched results are visible, click the Imdiffusion repo Hyperlink in the searched results to open the repo page.
@@ -186,12 +192,13 @@ example7:
       The current screenshot shows that I am on the Microsoft To Do application. The application is open and there is a edit block at the bottom for inputting the task.
     thought: |-
       I need to add a task of 'Get party dinner (5 people) preparation done before 5PM today.' to the edit block of 'Add a task in “My Day”'. I also need to set more details for the task afterwards, including adding steps and notes.
-    function: |-
-      set_edit_text
-    arguments: 
-      {"id": "19", "name": "Add a task in “My Day”", "text": "Get party dinner (5 people) preparation done before 5PM today."}
-    status: |-
-      CONTINUE
+    action:
+      function: |-
+        set_edit_text
+      arguments: 
+        {"id": "19", "name": "Add a task in “My Day”", "text": "Get party dinner (5 people) preparation done before 5PM today."}
+      status: |-
+        CONTINUE
     plan:
       - (1) After inputting the task, press the Enter key to create the task.
       - (2) Click the ListItem of the task that was just created to set more details.
@@ -220,12 +227,13 @@ example8:
       The current screenshot shows that I am on the Microsoft PowerPoint application. The Copilot Add-in is visible in the screenshot.
     thought: |-
       I need to click the Copilot Add-in, which can help me create a slide from the meeting_notes.docx. The Copilot Add-in can directly create a slide from the meeting_notes.docx.
-    function: |- 
-      click_input
-    arguments: 
-      {"id": "60", "name": "Copilot", "button": "left", "double": false}
-    status: |-
-      CONTINUE
+    action:
+      function: |- 
+        click_input
+      arguments: 
+        {"id": "60", "name": "Copilot", "button": "left", "double": false}
+      status: |-
+        CONTINUE
     plan:
       - (1) Click the 'Create presentation from file' button to open a file picker.
       - (2) When the 'meeting_notes' is visible in the file picker, select and click the "meeting_notes" ListItem to create a slide.
@@ -248,12 +256,13 @@ example9:
       The current screenshot shows that I am on the Microsoft PowerPoint application. The first slide of the presentation.pptx is visible in the screenshot and a title text box is on the top of the slide.
     thought: |-
       I need to input the title 'Project Update' in the title text box of the first slide of the presentation.pptx. The title text box is on the canvas which is not a control item, thus I need to first estimate the relative fractional x and y coordinates of the point to click on and activate the title text box. The estimated coordinates of the point to click on are (0.35, 0.4).
-    function: |- 
-      click_on_coordinates
-    arguments: 
-      {"x": 0.35, "y": 0.4, "button": "left", "double": false}
-    status: |-
-      CONTINUE
+    action:
+      function: |- 
+        click_on_coordinates
+      arguments: 
+        {"x": 0.35, "y": 0.4, "button": "left", "double": false}
+      status: |-
+        CONTINUE
     plan:
       - (1) Input the title 'Project Update' in the title text box of the first slide of the presentation.pptx.
     save_screenshot:
@@ -274,12 +283,13 @@ example10:
       The screenshot shows that I am on the 'Private Event Bookings' web page. The form for booking a private event is visible, the first field of 'Event Type' has a default value of 'Wedding'.
     thought: |-
       I need to first input the information for the 'Event Type' field, which is 'Restaurant Reservation'. However, the 'Event Type' field is already filled with 'Wedding'. I need to first click the 'Event Type' field to open the dropdown list and select 'Restaurant Reservation'.
-    function: |-
-      click_input
-    arguments:
-      {"id": "70", "name": "Event Type", "button": "left", "double": false}
-    status: |-
-      CONTINUE
+    action:
+      function: |-
+        click_input
+      arguments:
+        {"id": "70", "name": "Event Type", "button": "left", "double": false}
+      status: |-
+        CONTINUE
     plan:
       - (1) Select 'Restaurant Reservation' from the dropdown list.
       - (2) Input the information for the 'Event Name' field, which is 'Birthday Party'.

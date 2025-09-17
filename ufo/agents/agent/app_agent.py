@@ -18,6 +18,7 @@ from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 
 # from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
 from ufo.agents.processors.core.processor_framework import ProcessorTemplate
+from ufo.agents.processors.schemas.actions import ActionCommandInfo
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
@@ -26,9 +27,8 @@ from ufo.contracts.contracts import Command, MCPToolInfo
 from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
+from ufo.agents.processors.schemas.response_schema import AppAgentResponse
 
-if TYPE_CHECKING:
-    from ufo.agents.processors.schemas.response_schema import AppAgentResponse
 
 configs = Config.get_instance().config_data
 
@@ -174,49 +174,60 @@ class AppAgent(BasicAgent):
         :param print_action: The flag indicating whether to print the action.
         """
 
-        control_label, control_text = None, None
-        if type(response.arguments) == dict:
-            if "id" in response.arguments:
-                control_label = response.arguments.get("id", "")
-            if "name" in response.arguments:
-                control_text = response.arguments.get("name", "")
+        actions = response.action
+        if isinstance(actions, ActionCommandInfo):
+            actions = [actions]
 
         observation = response.observation
         thought = response.thought
         plan = response.plan
+        comment = response.comment
+
         if type(plan) == str:
             plan = [plan]
-        status = response.status
-        comment = response.comment
-        function_call = response.function
-
-        arguments = response.arguments
-
-        if type(arguments) == dict:
-            args = utils.revise_line_breaks(arguments)
-        else:
-            args = json.loads(arguments)
-            args = utils.revise_line_breaks(args)
-
-        # Generate the function call string
-        action = AppAgent.get_command_string(function_call, args)
 
         utils.print_with_color(
-            "Observations👀: {observation}".format(observation=observation), "cyan"
+            "Observations👀: {observation}".format(observation=observation), "yellow"
         )
         utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
+
         if print_action:
-            if control_label or control_text:
+            for i, action in enumerate(actions):
+                utils.print_with_color(f"Action {i+1}:", "cyan")
+
+                control_label, control_text = None, None
+                if type(action.arguments) == dict:
+                    if "id" in action.arguments:
+                        control_label = action.arguments.get("id", "")
+                    if "name" in action.arguments:
+                        control_text = action.arguments.get("name", "")
+
+                status = action.status
+
+                function_call = action.function
+
+                arguments = action.arguments
+
+                if type(arguments) == dict:
+                    args = utils.revise_line_breaks(arguments)
+                else:
+                    args = json.loads(arguments)
+                    args = utils.revise_line_breaks(args)
+
+                # Generate the function call string
+                action = AppAgent.get_command_string(function_call, args)
+
+                if control_label or control_text:
+                    utils.print_with_color(
+                        "Selected item🕹️: {control_text}, Label: {label}".format(
+                            control_text=control_text, label=control_label
+                        ),
+                        "yellow",
+                    )
                 utils.print_with_color(
-                    "Selected item🕹️: {control_text}, Label: {label}".format(
-                        control_text=control_text, label=control_label
-                    ),
-                    "yellow",
+                    "Action applied⚒️: {action}".format(action=action), "blue"
                 )
-            utils.print_with_color(
-                "Action applied⚒️: {action}".format(action=action), "blue"
-            )
-            utils.print_with_color("Status📊: {status}".format(status=status), "blue")
+        utils.print_with_color("Status📊: {status}".format(status=status), "blue")
         utils.print_with_color(
             "Next Plan📚: {plan}".format(plan="\n".join(plan)), "cyan"
         )

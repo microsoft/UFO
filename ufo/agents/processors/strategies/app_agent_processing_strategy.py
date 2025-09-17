@@ -1088,7 +1088,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             response_dict = agent.response_to_dict(response_text)
 
             # Create structured response
-            parsed_response = AppAgentResponse(**response_dict)
+            parsed_response = AppAgentResponse.model_validate(response_dict)
 
             agent.print_response(parsed_response)
 
@@ -1104,9 +1104,9 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         :return: Dictionary with extracted data
         """
         return {
-            "status": response.status,
-            "function_name": response.function,
-            "function_arguments": response.arguments or {},
+            "status": response.action.status,
+            "function_name": response.action.function,
+            "function_arguments": response.action.arguments or {},
             "save_screenshot": response.save_screenshot or {},
         }
 
@@ -1122,7 +1122,6 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
 @provides(
     "execution_result",
     "action_info",
-    "action_success",
     "control_log",
     "selected_control_screenshot_path",
 )
@@ -1168,29 +1167,23 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                     phase=ProcessingPhase.ACTION_EXECUTION,
                 )
 
-            function_name = parsed_response.function
-
-            self.logger.info(f"Executing App Agent action: {function_name}")
-
             # Execute the action
-            execution_result = await self._execute_app_action(
-                command_dispatcher, parsed_response
+            execution_results = await self._execute_app_action(
+                command_dispatcher, parsed_response.action
             )
 
             # Create action info for memory
-            action = self._create_action_info(
+            actions = self._create_action_info(
                 annotation_dict,
-                parsed_response,
-                execution_result[0] if execution_result else None,
+                parsed_response.action,
+                execution_results,
             )
 
-            action_info = ListActionCommandInfo([action])
-
-            # Determine action success
-            action_success = self._determine_action_success(execution_result)
+            action_info = ListActionCommandInfo(actions)
 
             # Create control log
             control_log = action_info.get_target_info()
+            control_objects = action_info.get_target_objects()
 
             # Save annotated screenshot after action execution
             selected_control_screenshot_path = (
@@ -1201,15 +1194,14 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                 application_window_info=context.get_local("application_window_info"),
                 clean_screenshot_path=context.get_local("clean_screenshot_path"),
                 save_path=selected_control_screenshot_path,
-                target_list=[action.target] if action.target else [],
+                target_list=control_objects,
             )
 
             return ProcessingResult(
                 success=True,
                 data={
-                    "execution_result": execution_result,
+                    "execution_result": execution_results,
                     "action_info": action_info,
-                    "action_success": action_success,
                     "selected_control_screenshot_path": selected_control_screenshot_path,
                     "control_log": control_log,
                 },
@@ -1223,7 +1215,9 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             return self.handle_error(e, ProcessingPhase.ACTION_EXECUTION, context)
 
     async def _execute_app_action(
-        self, command_dispatcher: BasicCommandDispatcher, response: AppAgentResponse
+        self,
+        command_dispatcher: BasicCommandDispatcher,
+        actions: ActionCommandInfo | List[ActionCommandInfo],
     ) -> List[Result]:
         """
         Execute the specific action from the response.
@@ -1231,39 +1225,52 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         :param response: Parsed response with action details
         :return: List of execution results
         """
-        try:
-            function_name = response.function
-            arguments = response.arguments or {}
+        if not actions:
 
-            if not function_name:
-                return []
+            return []
+
+        try:
+            commands = []
+
+            if isinstance(actions, ActionCommandInfo):
+                actions = [actions]
+
+            for action in actions:
+                if not action.function:
+                    continue
+                command = self._action_to_command(action)
+                commands.append(command)
 
             # Use the command dispatcher to execute the action
             if not command_dispatcher:
                 raise ValueError("Command dispatcher not available")
 
             # Execute the command
-            execution_result = await command_dispatcher.execute_commands(
-                [
-                    Command(
-                        tool_name=function_name,
-                        parameters=arguments,
-                        tool_type="action",
-                    )
-                ]
-            )
+            execution_result = await command_dispatcher.execute_commands(commands)
 
             return execution_result
 
         except Exception as e:
             raise Exception(f"Failed to execute app action: {str(e)}")
 
+    def _action_to_command(self, action: ActionCommandInfo) -> Command:
+        """
+        Convert ActionCommandInfo to Command for execution.
+        :param action: ActionCommandInfo object
+        :return: Command object
+        """
+        return Command(
+            tool_name=action.function,
+            parameters=action.arguments or {},
+            tool_type="action",
+        )
+
     def _create_action_info(
         self,
         annotation_dict: Dict[str, TargetInfo],
-        response: AppAgentResponse,
-        execution_result: Result,
-    ) -> ActionCommandInfo:
+        actions: ActionCommandInfo | List[ActionCommandInfo],
+        execution_results: List[Result],
+    ) -> List[ActionCommandInfo]:
         """
         Create action information for memory tracking.
         :param control_info: List of filtered controls
@@ -1273,41 +1280,26 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         """
         try:
             # Get control information if action involved a control
-            target_control = None
-            if response.arguments and "id" in response.arguments:
-                control_id = response.arguments["id"]
-                target_control = annotation_dict.get(control_id)
 
-            if not response.function:
-                return ActionCommandInfo(function="no_action", arguments={})
+            if isinstance(actions, ActionCommandInfo):
+                actions = [actions]
 
-            return ActionCommandInfo(
-                function=response.function,
-                arguments=response.arguments or {},
-                target=target_control,
-                status=response.status,
-                result=execution_result,
-            )
+            for i, action in enumerate(actions):
+
+                target_control = None
+                if action.arguments and "id" in action.arguments:
+                    control_id = action.arguments["id"]
+                    target_control = annotation_dict.get(control_id)
+                    action.target = target_control
+                    action.result = execution_results[i]
+
+                if not action.function:
+                    action.function = "no_action"
+
+            return actions
 
         except Exception as e:
             self.logger.warning(f"Failed to create action info: {str(e)}")
-
-    def _determine_action_success(self, execution_result: List[Result]) -> bool:
-        """
-        Determine if the action was successful.
-        :param execution_result: Execution results
-        :return: True if successful, False otherwise
-        """
-        try:
-            if not execution_result:
-                return False
-
-            result = execution_result[0]
-            return result.status == ResultStatus.SUCCESS
-
-        except Exception as e:
-            self.logger.warning(f"Failed to determine action success: {str(e)}")
-            return False
 
     def _save_annotated_screenshot(
         self,
@@ -1508,12 +1500,7 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
 
             app_context.cost = context.get("llm_cost", 0.0)
 
-            execution_result = context.get("execution_result", [])
-            if execution_result:
-                #  and execution_result[0].result:
-                app_context.results = execution_result[0].result
-            else:
-                app_context.results = None
+            app_context.results = context.get("execution_result", [])
 
             return app_context
 
@@ -1521,7 +1508,9 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
             raise Exception(f"Failed to create additional memory data: {str(e)}")
 
     def _create_and_populate_memory_item(
-        self, parsed_response, additional_memory: "AppAgentProcessorContext"
+        self,
+        parsed_response: AppAgentResponse,
+        additional_memory: "AppAgentProcessorContext",
     ) -> MemoryItem:
         """
         Create and populate memory item.
@@ -1534,7 +1523,7 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
 
             # Add response data if available
             if parsed_response:
-                memory_item.add_values_from_dict(asdict(parsed_response))
+                memory_item.add_values_from_dict(parsed_response.model_dump())
 
             # Add additional memory data
             memory_item.add_values_from_dict(additional_memory.to_dict(selective=True))
