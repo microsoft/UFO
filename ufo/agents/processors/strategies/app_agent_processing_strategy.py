@@ -1104,7 +1104,6 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         :return: Dictionary with extracted data
         """
         return {
-            "status": response.action.status,
             "function_name": response.action.function,
             "function_arguments": response.action.arguments or {},
             "save_screenshot": response.save_screenshot or {},
@@ -1123,6 +1122,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
     "execution_result",
     "action_info",
     "control_log",
+    "status",
     "selected_control_screenshot_path",
 )
 class AppActionExecutionStrategy(BaseProcessingStrategy):
@@ -1197,6 +1197,12 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                 target_list=control_objects,
             )
 
+            status = (
+                parsed_response.action.status
+                if isinstance(parsed_response.action, ActionCommandInfo)
+                else action_info.status
+            )
+
             return ProcessingResult(
                 success=True,
                 data={
@@ -1204,6 +1210,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                     "action_info": action_info,
                     "selected_control_screenshot_path": selected_control_screenshot_path,
                     "control_log": control_log,
+                    "status": status,
                 },
                 phase=ProcessingPhase.ACTION_EXECUTION,
             )

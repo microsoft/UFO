@@ -33,7 +33,7 @@ from ufo.agents.processors.core.processor_framework import (
 from ufo.agents.processors.core.strategy_dependency import depends_on, provides
 from ufo.agents.processors.schemas.actions import ActionCommandInfo
 from ufo.agents.processors.schemas.log_schema import HostAgentRequestLog
-from ufo.agents.processors.schemas.response_schema import HostAgentResponseV2
+from ufo.agents.processors.schemas.response_schema import HostAgentResponse
 from ufo.agents.processors.schemas.target import TargetInfo, TargetKind, TargetRegistry
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.config import Config
@@ -571,7 +571,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
 
     def _parse_and_validate_response(
         self, host_agent: "HostAgent", response_text: str
-    ) -> HostAgentResponseV2:
+    ) -> HostAgentResponse:
         """
         Parse and validate LLM response into structured format.
         :param host_agent: Host agent instance
@@ -584,7 +584,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
             response_dict = host_agent.response_to_dict(response_text)
 
             # Create structured response object
-            parsed_response = HostAgentResponseV2.model_validate(response_dict)
+            parsed_response = HostAgentResponse.model_validate(response_dict)
 
             # Validate required fields
             self._validate_response_fields(parsed_response)
@@ -597,7 +597,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
         except Exception as e:
             raise Exception(f"Failed to parse LLM response: {str(e)}")
 
-    def _validate_response_fields(self, response: HostAgentResponseV2) -> None:
+    def _validate_response_fields(self, response: HostAgentResponse) -> None:
         """
         Validate that response contains required fields and valid values.
         :param response: Parsed response object
@@ -619,7 +619,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
             self.logger.warning(f"Unexpected status value: {response.status}")
 
     def _extract_structured_response_data(
-        self, response: HostAgentResponseV2
+        self, response: HostAgentResponse
     ) -> Dict[str, Any]:
         """
         Extract structured data from parsed response for use by subsequent strategies.
@@ -685,7 +685,7 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
         """
         try:
             # Extract all needed variables from context
-            parsed_response: HostAgentResponseV2 = context.get_local("parsed_response")
+            parsed_response: HostAgentResponse = context.get_local("parsed_response")
             if not parsed_response:
                 return ProcessingResult(
                     success=True,
@@ -767,7 +767,7 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
 
     async def _execute_application_selection(
         self,
-        parsed_response: HostAgentResponseV2,
+        parsed_response: HostAgentResponse,
         target_registry: TargetRegistry,
         command_dispatcher: BasicCommandDispatcher,
     ) -> List[Result]:
@@ -882,7 +882,7 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
 
     async def _execute_generic_command(
         self,
-        parsed_response: HostAgentResponseV2,
+        parsed_response: HostAgentResponse,
         command_dispatcher: BasicCommandDispatcher,
     ) -> List[Result]:
         """
@@ -927,7 +927,7 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
 
     def _create_action_info(
         self,
-        parsed_response: HostAgentResponseV2,
+        parsed_response: HostAgentResponse,
         execution_result: List[Result],
         target_registry: TargetRegistry,
         selected_target_id: str,
@@ -1151,7 +1151,7 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
 
     def _create_and_populate_memory_item(
         self,
-        parsed_response: HostAgentResponseV2,
+        parsed_response: HostAgentResponse,
         additional_memory: "HostAgentProcessorContext",
     ) -> MemoryItem:
         """
