@@ -100,12 +100,6 @@ class ListActionCommandInfo:
 
     def __init__(self, actions: Optional[List[ActionCommandInfo]] = None):
 
-        if not actions:
-            actions = []
-            self._status = "FINISH"
-        else:
-            self._status = actions[0].status
-
         self._actions = actions
         self._length = len(actions)
 
@@ -310,15 +304,6 @@ class ListActionCommandInfo:
                     target_objects.append(action.target)
 
         return target_objects
-
-        target_info = []
-
-        for action in self.actions:
-            if not success_only or action.result.status == ResultStatus.SUCCESS:
-                if action.target:
-                    target_info.append(action.target)
-
-        return target_info
 
     def get_function_calls(self, is_success_only: bool = False) -> List[str]:
         """
