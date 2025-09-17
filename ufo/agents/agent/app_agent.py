@@ -39,12 +39,6 @@ class AppAgent(BasicAgent):
     The AppAgent class that manages the interaction with the application.
     """
 
-    # _processor_cls = (
-    #     AppAgentActionSequenceProcessor
-    #     if configs.get("ACTION_SEQUENCE", False)
-    #     else AppAgentProcessor
-    # )
-
     def __init__(
         self,
         name: str,

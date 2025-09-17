@@ -409,7 +409,7 @@ class AppAgentPrompter(BasicPrompter):
         response_copy = deepcopy(response)
         for key in ["function", "arguments", "status"]:
             response_copy.pop(key, None)
-        response_copy["ActionList"] = action_list
+        response_copy["action"] = action_list
 
         return response_copy
 
