@@ -240,7 +240,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
     ui_state = UIServerState()
     executor = ActionExecutor()
 
-    def _execute_action(action: ActionCommandInfo) -> Dict[str, Any]:
+    def _execute_action(action: ActionCommandInfo) -> str:
         """
         Execute a single UI action.
         :param action: ActionCommandInfo object to execute.
@@ -251,12 +251,18 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
                 "UI state not initialized. Please select an application window first."
             )
 
-        return executor.execute(
+        result = executor.execute(
             action,
             ui_state.puppeteer,
             ui_state.control_dict or {},
             ui_state.selected_app_window,
         )
+
+        if not result:
+            if not result:
+                result = f"Executed action {action.action_string}, please check the application for whether it took effect."
+
+        return result
 
     action_mcp = FastMCP("UFO UI AppAgent Action MCP Server")
 

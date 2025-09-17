@@ -1090,7 +1090,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             # Create structured response
             parsed_response = AppAgentResponse.model_validate(response_dict)
 
-            agent.print_response(parsed_response)
+            agent.print_response(parsed_response, print_action=False)
 
             return parsed_response
 
@@ -1179,7 +1179,9 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                 execution_results,
             )
 
+            # Print action info
             action_info = ListActionCommandInfo(actions)
+            action_info.color_print()
 
             # Create control log
             control_log = action_info.get_target_info()

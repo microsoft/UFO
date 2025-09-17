@@ -221,7 +221,7 @@ class AppAgent(BasicAgent):
                 utils.print_with_color(
                     "Action applied⚒️: {action}".format(action=action), "blue"
                 )
-        utils.print_with_color("Status📊: {status}".format(status=status), "blue")
+        # utils.print_with_color("Status📊: {status}".format(status=status), "blue")
         utils.print_with_color(
             "Next Plan📚: {plan}".format(plan="\n".join(plan)), "cyan"
         )
