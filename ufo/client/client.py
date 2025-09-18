@@ -9,53 +9,59 @@ from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.client.ufo_client import UFOClient
 from ufo.client.websocket import UFOWebSocketClient
 from ufo.config import Config
+from ufo.logging.setup import setup_logger
 
 tracemalloc.start()
 CONFIGS = Config.get_instance().config_data
 
-# Configure logging
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+parser = argparse.ArgumentParser(description="UFO Web Client")
+parser.add_argument(
+    "--client-id",
+    dest="client_id",
+    default="client_001",
+    help="Client ID for the UFO Web Client (default: client_001)",
 )
+parser.add_argument(
+    "--ws-server",
+    dest="ws_server_url",
+    default="ws://localhost:5000/ws",
+    help="WebSocket server address (default: ws://localhost:5000/ws)",
+)
+parser.add_argument("--ws", action="store_true", help="Run in WebSocket mode")
+parser.add_argument(
+    "--max-retries",
+    type=int,
+    default=5,
+    dest="max_retries",
+    help="Maximum retries for failed requests (default: 5)",
+)
+parser.add_argument(
+    "--request",
+    dest="request_text",
+    default=None,
+    help="The task request text",
+)
+parser.add_argument(
+    "--task_name",
+    dest="task_name",
+    default=None,
+    help="The name of the task",
+)
+parser.add_argument(
+    "--log-level",
+    dest="log_level",
+    default="INFO",
+    help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL, OFF). Use OFF to disable logs (default: INFO)",
+)
+args = parser.parse_args()
+
+# Configure logging
+setup_logger(args.log_level)
 logger = logging.getLogger(__name__)
 
 
 async def main():
     # Parse command line arguments
-    parser = argparse.ArgumentParser(description="UFO Web Client")
-    parser.add_argument(
-        "--client-id",
-        dest="client_id",
-        default="client_001",
-        help="Client ID for the UFO Web Client (default: client_001)",
-    )
-    parser.add_argument(
-        "--ws-server",
-        dest="ws_server_url",
-        default="ws://localhost:5000/ws",
-        help="WebSocket server address (default: ws://localhost:5000/ws)",
-    )
-    parser.add_argument("--ws", action="store_true", help="Run in WebSocket mode")
-    parser.add_argument(
-        "--max-retries",
-        type=int,
-        default=5,
-        dest="max_retries",
-        help="Maximum retries for failed requests (default: 5)",
-    )
-    parser.add_argument(
-        "--request",
-        dest="request_text",
-        default=None,
-        help="The task request text",
-    )
-    parser.add_argument(
-        "--task_name",
-        dest="task_name",
-        default=None,
-        help="The name of the task",
-    )
-    args = parser.parse_args()
 
     # Initialize the MCP server manager and computer manager
     mcp_server_manager = MCPServerManager()
@@ -87,4 +93,5 @@ async def main():
 
 
 if __name__ == "__main__":
+
     asyncio.run(main())

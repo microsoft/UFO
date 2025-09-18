@@ -2,8 +2,9 @@
 # Licensed under the MIT License.
 
 import argparse
-import logging
 from datetime import datetime
+
+from ufo.logging.setup import setup_logger
 
 args = argparse.ArgumentParser()
 args.add_argument(
@@ -43,13 +44,8 @@ args.add_argument(
 
 parsed_args = args.parse_args()
 
-if parsed_args.log_level.upper() == "OFF":
-    logging.disable(logging.CRITICAL)  # Disable all logs
-else:
-    logging.basicConfig(
-        level=getattr(logging, parsed_args.log_level.upper(), logging.INFO),
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    )
+# Initialize logger
+setup_logger(parsed_args.log_level)
 
 
 async def main():

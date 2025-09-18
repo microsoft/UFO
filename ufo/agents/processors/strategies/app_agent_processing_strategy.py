@@ -1283,6 +1283,10 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         try:
             # Get control information if action involved a control
 
+            assert len(execution_results) == len(
+                actions
+            ), "Mismatch in actions and execution results length"
+
             if isinstance(actions, ActionCommandInfo):
                 actions = [actions]
 

@@ -614,7 +614,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
             raise ValueError("Response missing required 'status' field")
 
         # Validate status values
-        valid_statuses = ["CONTINUE", "FINISH", "CONFIRM", "ERROR"]
+        valid_statuses = ["CONTINUE", "FINISH", "CONFIRM", "ERROR", "ASSIGN"]
         if response.status.upper() not in valid_statuses:
             self.logger.warning(f"Unexpected status value: {response.status}")
 
