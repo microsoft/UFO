@@ -4,16 +4,12 @@
 
 from __future__ import annotations
 
-import json
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional, Union
 
 from rich.console import Console
 from rich.panel import Panel
-from rich.table import Table
-from rich.text import Text
 
-from ufo import utils
 from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
 from ufo.agents.agent.basic import AgentRegistry, BasicAgent
 from ufo.agents.memory.blackboard import Blackboard
@@ -402,7 +398,11 @@ class HostAgent(BasicAgent):
         # Next selected application
         if application:
             console.print(
-                Panel(application, title="📲 Next Selected Application", style="yellow")
+                Panel(
+                    application,
+                    title="📲 Next Selected Application/Agent",
+                    style="yellow",
+                )
             )
 
         # Messages
@@ -415,61 +415,6 @@ class HostAgent(BasicAgent):
         # Comment
         if comment:
             console.print(Panel(comment, title="💬 Comment", style="green"))
-
-    # def print_response(self, response: HostAgentResponse) -> None:
-    #     """
-    #     Print the response.
-    #     :param response: The response object to print.
-    #     """
-
-    #     function = response.function
-    #     arguments = response.arguments
-
-    #     observation = response.observation
-    #     thought = response.thought
-    #     subtask = response.current_subtask
-    #     message = list(response.message)
-    #     message = "\n".join(message)
-
-    #     plan = list(response.plan)
-    #     plan = [subtask] + plan
-    #     plan = "\n".join([f"({i+1}) " + str(item) for i, item in enumerate(plan)])
-
-    #     status = response.status
-    #     comment = response.comment
-
-    #     if function == "select_application_window":
-    #         application = arguments.get("name")
-    #     else:
-    #         application = None
-
-    #     utils.print_with_color(
-    #         "Observations👀: {observation}".format(observation=observation), "cyan"
-    #     )
-    #     utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
-    #     if function:
-    #         # Generate the function call string
-    #         action = self.get_command_string(function, arguments)
-    #         utils.print_with_color(
-    #             "Action applied⚒️: {action}".format(action=action), "blue"
-    #         )
-    #     utils.print_with_color(
-    #         "Plans📚: {plan}".format(plan=plan),
-    #         "cyan",
-    #     )
-    #     if application:
-    #         utils.print_with_color(
-    #             "Next Selected application📲: {application}".format(
-    #                 application=application
-    #             ),
-    #             "yellow",
-    #         )
-    #     utils.print_with_color(
-    #         "Messages to AppAgent📩: {message}".format(message=message), "cyan"
-    #     )
-    #     utils.print_with_color("Status📊: {status}".format(status=status), "blue")
-
-    #     utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
 
     @property
     def status_manager(self) -> HostAgentStatus:
