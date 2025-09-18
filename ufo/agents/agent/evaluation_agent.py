@@ -204,41 +204,6 @@ class EvaluationAgent(BasicAgent):
                 )
             )
 
-    # def print_response(self, response_dict: Dict[str, Any]) -> None:
-    #     """
-    #     Print the response of the evaluation.
-    #     :param response_dict: The response dictionary.
-    #     """
-
-    #     emoji_map = {
-    #         "yes": "✅",
-    #         "no": "❌",
-    #         "maybe": "❓",
-    #     }
-
-    #     complete = emoji_map.get(
-    #         response_dict.get("complete"), response_dict.get("complete")
-    #     )
-
-    #     sub_scores = response_dict.get("sub_scores", {})
-    #     reason = response_dict.get("reason", "")
-
-    #     print_with_color(f"Evaluation result🧐:", "magenta")
-    #     print_with_color(f"[Sub-scores📊:]", "green")
-
-    #     for sub_score in sub_scores:
-    #         score = sub_score.get("name")
-    #         evaluation = sub_score.get("evaluation")
-    #         print_with_color(
-    #             f"{score}: {emoji_map.get(evaluation, evaluation)}", "green"
-    #         )
-
-    #     print_with_color(
-    #         "[Task is complete💯:] {complete}".format(complete=complete), "cyan"
-    #     )
-
-    #     print_with_color(f"[Reason🤔:] {reason}".format(reason=reason), "blue")
-
 
 # The following code is used for testing the agent.
 if __name__ == "__main__":

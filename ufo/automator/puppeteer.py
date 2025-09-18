@@ -102,7 +102,7 @@ class AppPuppeteer:
         command = self.create_command(command_name, params, *args, **kwargs)
         self.command_queue.append(command)
 
-    def list_commands(self):
+    def list_commands(self) -> set:
         """
         List all available commands.
         """
@@ -111,7 +111,8 @@ class AppPuppeteer:
         command_list = []
         for receiver in receiver_list:
             command_list.extend(receiver.list_commands())
-        return command_list
+
+        return set(command_list)
 
     def get_command_queue_length(self) -> int:
         """
