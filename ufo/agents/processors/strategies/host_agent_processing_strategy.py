@@ -652,6 +652,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
     "selected_target_id",
     "selected_application_root",
     "assigned_third_party_agent",
+    "target",
 )
 class HostActionExecutionStrategy(BaseProcessingStrategy):
     """

@@ -7,9 +7,12 @@ from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel, Field
 
-from ufo import utils
 from ufo.agents.processors.schemas.target import TargetInfo
 from ufo.contracts.contracts import Result, ResultStatus
+from rich.console import Console
+from rich.panel import Panel
+
+console = Console()
 
 
 @dataclass
@@ -98,6 +101,9 @@ class ListActionCommandInfo:
     """
 
     def __init__(self, actions: Optional[List[ActionCommandInfo]] = None):
+
+        if actions is None:
+            actions = []
 
         self._actions = actions
         self._length = len(actions)
@@ -200,18 +206,24 @@ class ListActionCommandInfo:
 
     def color_print(self, success_only: bool = False) -> None:
         """
-        Color print the action sequence.
-        :param success_only: Whether to print the successful actions only.
+        Pretty-print the action sequence using Rich.
+        :param success_only: Whether to print only successful actions.
         """
         index = 1
 
         for action in self.actions:
             if success_only and action.result.status != ResultStatus.SUCCESS:
                 continue
-            utils.print_with_color(f"Action {index}:", "cyan")
-            utils.print_with_color(action.to_representation(), "green")
+
+            # Print action representation
+            action_repr = action.to_representation()
+            # add panel for action representation
+            console.print(Panel(action_repr, style="cyan", title=f"⚒️ Action {index}"))
+
             index += 1
-        utils.print_with_color(f"Final status: {self.status}", "yellow")
+
+        # Print final status
+        console.print(Panel(str(self.status), title="📊 Final Status", style="yellow"))
 
     @staticmethod
     def is_same_action(

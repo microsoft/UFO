@@ -18,31 +18,33 @@ while providing enhanced modularity, error handling, and extensibility.
 
 
 import logging
-
 from typing import TYPE_CHECKING, Any, Dict, Type
 
+from rich.console import Console
+from rich.panel import Panel
 
 from ufo import utils
-
 from ufo.agents.processors.context.host_agent_processing_context import (
     HostAgentProcessorContext,
 )
-from ufo.agents.processors.schemas.target import TargetInfo
-from ufo.agents.processors.strategies.host_agent_processing_strategy import (
-    DesktopDataCollectionStrategy,
-    HostLLMInteractionStrategy,
-    HostActionExecutionStrategy,
-    HostMemoryUpdateStrategy,
-)
+from ufo.agents.processors.core.processing_middleware import EnhancedLoggingMiddleware
 from ufo.agents.processors.core.processor_framework import (
     ProcessingContext,
     ProcessingPhase,
     ProcessingResult,
     ProcessorTemplate,
 )
-from ufo.agents.processors.core.processing_middleware import EnhancedLoggingMiddleware
+from ufo.agents.processors.schemas.target import TargetInfo
+from ufo.agents.processors.strategies.host_agent_processing_strategy import (
+    DesktopDataCollectionStrategy,
+    HostActionExecutionStrategy,
+    HostLLMInteractionStrategy,
+    HostMemoryUpdateStrategy,
+)
 from ufo.config import Config
 from ufo.module.context import Context, ContextNames
+
+console = Console()
 
 # Load configuration
 configs = Config.get_instance().config_data
@@ -206,11 +208,16 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         )
 
         # Display colored progress message for user feedback (maintaining original UX)
-        utils.print_with_color(
-            f"Round {round_num + 1}, Step {round_step + 1}, HostAgent: "
-            f"Analyzing user intent and decomposing request...",
-            "magenta",
-        )
+        # utils.print_with_color(
+        #     f"Round {round_num + 1}, Step {round_step + 1}, HostAgent: "
+        #     f"Analyzing user intent and decomposing request...",
+        #     "magenta",
+        # )
+
+        panel_title = f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
+        panel_content = f"Analyzing user intent and decomposing request..."
+
+        console.print(Panel(panel_content, title=panel_title, style="magenta"))
 
         # Log available context data for debugging
         if self.logger.isEnabledFor(logging.DEBUG):

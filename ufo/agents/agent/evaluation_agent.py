@@ -4,6 +4,10 @@
 
 from typing import Any, Dict, List, Optional, Tuple
 
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.evaluaton_agent_state import EvaluatonAgentStatus
 from ufo.config import Config
@@ -11,6 +15,8 @@ from ufo.contracts.contracts import MCPToolInfo
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 from ufo.utils import json_parser, print_with_color
+
+console = Console()
 
 configs = Config.get_instance().config_data
 
@@ -138,12 +144,11 @@ class EvaluationAgent(BasicAgent):
         """
         pass
 
-    def print_response(self, response_dict: Dict[str, Any]) -> None:
+    def print_response(self, response_dict: Dict[str, str]) -> None:
         """
-        Print the response of the evaluation.
+        Pretty-print the evaluation response using Rich.
         :param response_dict: The response dictionary.
         """
-
         emoji_map = {
             "yes": "✅",
             "no": "❌",
@@ -153,25 +158,86 @@ class EvaluationAgent(BasicAgent):
         complete = emoji_map.get(
             response_dict.get("complete"), response_dict.get("complete")
         )
-
-        sub_scores = response_dict.get("sub_scores", {})
+        sub_scores = response_dict.get("sub_scores", [])
         reason = response_dict.get("reason", "")
 
-        print_with_color(f"Evaluation result🧐:", "magenta")
-        print_with_color(f"[Sub-scores📊:]", "green")
-
-        for sub_score in sub_scores:
-            score = sub_score.get("name")
-            evaluation = sub_score.get("evaluation")
-            print_with_color(
-                f"{score}: {emoji_map.get(evaluation, evaluation)}", "green"
+        # Evaluation result title
+        console.print(
+            Panel(
+                "",
+                title="[bold magenta]Evaluation result🧐[/bold magenta]",
+                expand=False,
             )
-
-        print_with_color(
-            "[Task is complete💯:] {complete}".format(complete=complete), "cyan"
         )
 
-        print_with_color(f"[Reason🤔:] {reason}".format(reason=reason), "blue")
+        # Sub-scores table
+        if sub_scores:
+            table = Table(
+                title="[bold green]Sub-scores📊[/bold green]", show_lines=True
+            )
+            table.add_column("Metric", style="cyan", no_wrap=True)
+            table.add_column("Evaluation", style="green")
+            for sub_score in sub_scores:
+                score = sub_score.get("name")
+                evaluation = sub_score.get("evaluation")
+                table.add_row(str(score), str(emoji_map.get(evaluation, evaluation)))
+            console.print(table)
+
+        # Task complete
+        console.print(
+            Panel(
+                f"{complete}",
+                title="[bold cyan]Task is complete💯[/bold cyan]",
+                expand=False,
+                style="cyan",
+            )
+        )
+
+        # Reason
+        if reason:
+            console.print(
+                Panel(
+                    reason,
+                    title="[bold blue]Reason🤔[/bold blue]",
+                    expand=False,
+                    style="blue",
+                )
+            )
+
+    # def print_response(self, response_dict: Dict[str, Any]) -> None:
+    #     """
+    #     Print the response of the evaluation.
+    #     :param response_dict: The response dictionary.
+    #     """
+
+    #     emoji_map = {
+    #         "yes": "✅",
+    #         "no": "❌",
+    #         "maybe": "❓",
+    #     }
+
+    #     complete = emoji_map.get(
+    #         response_dict.get("complete"), response_dict.get("complete")
+    #     )
+
+    #     sub_scores = response_dict.get("sub_scores", {})
+    #     reason = response_dict.get("reason", "")
+
+    #     print_with_color(f"Evaluation result🧐:", "magenta")
+    #     print_with_color(f"[Sub-scores📊:]", "green")
+
+    #     for sub_score in sub_scores:
+    #         score = sub_score.get("name")
+    #         evaluation = sub_score.get("evaluation")
+    #         print_with_color(
+    #             f"{score}: {emoji_map.get(evaluation, evaluation)}", "green"
+    #         )
+
+    #     print_with_color(
+    #         "[Task is complete💯:] {complete}".format(complete=complete), "cyan"
+    #     )
+
+    #     print_with_color(f"[Reason🤔:] {reason}".format(reason=reason), "blue")
 
 
 # The following code is used for testing the agent.

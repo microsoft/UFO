@@ -10,6 +10,10 @@ import os
 from typing import Any, Dict, List, Optional, Tuple, Union
 
 import openai
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
 
 from ufo import utils
 from ufo.agents.agent.basic import AgentRegistry, BasicAgent
@@ -19,15 +23,16 @@ from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 # from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
 from ufo.agents.processors.core.processor_framework import ProcessorTemplate
 from ufo.agents.processors.schemas.actions import ActionCommandInfo
+from ufo.agents.processors.schemas.response_schema import AppAgentResponse
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
-
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
 from ufo.config import Config
 from ufo.contracts.contracts import Command, MCPToolInfo
 from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter
-from ufo.agents.processors.schemas.response_schema import AppAgentResponse
+
+console = Console()
 
 
 configs = Config.get_instance().config_data
@@ -174,72 +179,54 @@ class AppAgent(BasicAgent):
 
         observation = response.observation
         thought = response.thought
-        plan = response.plan
+        plan = response.plan if isinstance(response.plan, list) else [response.plan]
         comment = response.comment
 
-        if type(plan) == str:
-            plan = [plan]
+        # Observations
+        console.print(Panel(observation, title="👀 Observations", style="cyan"))
 
-        utils.print_with_color(
-            "Observations👀: {observation}".format(observation=observation), "yellow"
-        )
-        utils.print_with_color("Thoughts💡: {thought}".format(thought=thought), "green")
+        # Thoughts
+        console.print(Panel(thought, title="💡 Thoughts", style="green"))
 
         if print_action:
+            table = Table(title="⚒️ Actions", show_lines=True, style="blue")
+            table.add_column("Step", style="cyan", no_wrap=True)
+            table.add_column("Function", style="yellow")
+            table.add_column("Arguments", style="magenta")
+            table.add_column("Status", style="red")
+
             for i, action in enumerate(actions):
-                utils.print_with_color(f"Action {i+1}:", "cyan")
-
-                control_label, control_text = None, None
-                if type(action.arguments) == dict:
-                    if "id" in action.arguments:
-                        control_label = action.arguments.get("id", "")
-                    if "name" in action.arguments:
-                        control_text = action.arguments.get("name", "")
-
-                status = action.status
-
-                function_call = action.function
-
-                arguments = action.arguments
-
-                if type(arguments) == dict:
-                    args = utils.revise_line_breaks(arguments)
+                args = action.arguments
+                if isinstance(args, dict):
+                    args_str = str(args)
                 else:
-                    args = json.loads(arguments)
-                    args = utils.revise_line_breaks(args)
+                    args_str = str(json.loads(args))
 
-                # Generate the function call string
-                action = AppAgent.get_command_string(function_call, args)
-
-                if control_label or control_text:
-                    utils.print_with_color(
-                        "Selected item🕹️: {control_text}, Label: {label}".format(
-                            control_text=control_text, label=control_label
-                        ),
-                        "yellow",
-                    )
-                utils.print_with_color(
-                    "Action applied⚒️: {action}".format(action=action), "blue"
+                table.add_row(
+                    f"{i+1}",
+                    str(action.function),
+                    args_str,
+                    str(action.status),
                 )
-            utils.print_with_color("Status📊: {status}".format(status=status), "blue")
 
-        utils.print_with_color(
-            "Next Plan📚: {plan}".format(plan="\n".join(plan)), "cyan"
-        )
-        utils.print_with_color("Comment💬: {comment}".format(comment=comment), "green")
+            console.print(table)
 
+        # Next Plan
+        console.print(Panel("\n".join(plan), title="📚 Next Plan", style="cyan"))
+
+        # Comment
+        console.print(Panel(comment, title="💬 Comment", style="green"))
+
+        # Screenshot saving
         screenshot_saving = response.save_screenshot
-
         if screenshot_saving.get("save", False):
-            utils.print_with_color(
-                "Notice: The current screenshot📸 is saved to the blackboard.",
-                "yellow",
-            )
-            utils.print_with_color(
-                "Saving reason: {reason}".format(
-                    reason=screenshot_saving.get("reason")
-                ),
-                "yellow",
+            reason = screenshot_saving.get("reason")
+            console.print(
+                Panel(
+                    f"📸 Screenshot saved to the blackboard.\nReason: {reason}",
+                    title="Notice",
+                    style="yellow",
+                )
             )
 
     def demonstration_prompt_helper(self, request) -> Tuple[List[Dict[str, Any]]]:

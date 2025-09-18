@@ -13,8 +13,14 @@ This module implements the architecture for App Agent processing, providing:
 """
 
 import logging
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, Any, Dict
 
+from rich.console import Console
+from rich.panel import Panel
+
+from ufo.agents.processors.context.app_agent_processing_context import (
+    AppAgentProcessorContext,
+)
 from ufo.agents.processors.context.processing_context import ProcessingContext
 from ufo.agents.processors.core.processing_middleware import EnhancedLoggingMiddleware
 from ufo.agents.processors.core.processor_framework import ProcessorTemplate
@@ -26,10 +32,9 @@ from ufo.agents.processors.strategies.app_agent_processing_strategy import (
     AppScreenshotCaptureStrategy,
 )
 from ufo.agents.processors.strategies.processing_strategy import ComposedStrategy
-from ufo.agents.processors.context.app_agent_processing_context import (
-    AppAgentProcessorContext,
-)
 from ufo.module.context import Context, ContextNames
+
+console = Console()
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -153,19 +158,10 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         application_process_name = context.get("application_process_name")
         request = context.get("request")
 
-        # Log detailed context information (similar to legacy logger.info)
-        self.logger.info(
-            f"Round {round_num + 1}, Step {round_step + 1}, AppAgent: "
-            f"Completing the subtask [{subtask}] on application [{application_process_name}]."
-        )
+        panel_title = f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
+        panel_content = f"Completing the subtask [{subtask}] on application [{application_process_name}]."
 
-        # Display colored progress message for user feedback (maintaining original UX)
-        # This replicates the legacy print_step_info functionality
-        utils.print_with_color(
-            f"Round {round_num + 1}, Step {round_step + 1}, AppAgent: "
-            f"Completing the subtask [{subtask}] on application [{application_process_name}].",
-            "magenta",
-        )
+        console.print(Panel(panel_content, title=panel_title, style="magenta"))
 
         # Additional context logging for debugging
         if self.logger.isEnabledFor(logging.DEBUG):

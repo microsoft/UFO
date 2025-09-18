@@ -633,10 +633,14 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
     "response_text",
     "llm_cost",
     "prompt_message",
-    "status",
-    "function_name",
-    "function_arguments",
     "save_screenshot",
+    "comment",
+    "concat_screenshot_path",
+    "plan",
+    "observation",
+    "last_control_screenshot_path",
+    "action",
+    "thought",
 )
 class AppLLMInteractionStrategy(BaseProcessingStrategy):
     """
@@ -1282,6 +1286,10 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
         """
         try:
             # Get control information if action involved a control
+            if not actions:
+                actions = []
+            if not execution_results:
+                execution_results = []
 
             assert len(execution_results) == len(
                 actions
