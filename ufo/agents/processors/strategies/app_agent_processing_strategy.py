@@ -794,12 +794,13 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
                 photographer.encode_image_from_path(last_control_screenshot_path)
             ]
 
+        photographer.concat_screenshots(
+            clean_screenshot_path,
+            annotated_screenshot_path,
+            concat_screenshot_save_path,
+        )
+
         if configs.get("CONCAT_SCREENSHOT", False):
-            photographer.concat_screenshots(
-                clean_screenshot_path,
-                annotated_screenshot_path,
-                concat_screenshot_save_path,
-            )
             image_string_list += [
                 photographer.encode_image_from_path(concat_screenshot_save_path)
             ]
