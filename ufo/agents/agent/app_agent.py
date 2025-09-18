@@ -7,7 +7,7 @@ from __future__ import annotations
 import json
 import logging
 import os
-from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple, Union
+from typing import Any, Dict, List, Optional, Tuple, Union
 
 import openai
 
@@ -221,7 +221,8 @@ class AppAgent(BasicAgent):
                 utils.print_with_color(
                     "Action applied⚒️: {action}".format(action=action), "blue"
                 )
-        # utils.print_with_color("Status📊: {status}".format(status=status), "blue")
+            utils.print_with_color("Status📊: {status}".format(status=status), "blue")
+
         utils.print_with_color(
             "Next Plan📚: {plan}".format(plan="\n".join(plan)), "cyan"
         )
