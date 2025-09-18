@@ -152,7 +152,7 @@ class EvaluationAgent(BasicAgent):
         emoji_map = {
             "yes": "✅",
             "no": "❌",
-            "maybe": "❓",
+            "unsure": "❓",
         }
 
         complete = emoji_map.get(
