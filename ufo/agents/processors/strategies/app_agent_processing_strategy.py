@@ -711,6 +711,10 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
                 concat_screenshot_path,
             )
 
+            self.logger.info(
+                f"Collected {len(image_string_list)} screenshots for prompt."
+            )
+
             # Step 2: Retrieve knowledge from the knowledge base
             self.logger.info("Retrieving knowledge from the knowledge base")
 
@@ -744,7 +748,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             parsed_response = self._parse_app_response(agent, response_text)
 
             # Step 5: Extract structured data
-            structured_data = self._extract_response_data(parsed_response)
+            structured_data = parsed_response.model_dump()
 
             return ProcessingResult(
                 success=True,
@@ -1096,18 +1100,6 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
 
         except Exception as e:
             raise Exception(f"Failed to parse app response: {str(e)}")
-
-    def _extract_response_data(self, response: AppAgentResponse) -> Dict[str, Any]:
-        """
-        Extract structured data from parsed response.
-        :param response: Parsed response
-        :return: Dictionary with extracted data
-        """
-        return {
-            "function_name": response.action.function,
-            "function_arguments": response.action.arguments or {},
-            "save_screenshot": response.save_screenshot or {},
-        }
 
 
 @depends_on(

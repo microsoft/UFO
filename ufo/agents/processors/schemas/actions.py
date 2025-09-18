@@ -87,7 +87,7 @@ class ActionCommandInfo(BaseModel):
             components.append(f"[Status] {self.result.status}")
             if self.result.error:
                 components.append(f"[Error] {self.result.error}")
-                components.append(f"[Result] {self.result.result}")
+            components.append(f"[Result] {self.result.result}")
 
         return "\n".join(components)
 
