@@ -176,6 +176,9 @@ class FollowerSession(BaseSession):
         super()._init_context()
 
         self.context.set(ContextNames.MODE, "follower")
+        mcp_server_manager = MCPServerManager()
+        command_dispatcher = LocalCommandDispatcher(self, mcp_server_manager)
+        self.context.attach_command_dispatcher(command_dispatcher)
 
     def create_new_round(self) -> None:
         """

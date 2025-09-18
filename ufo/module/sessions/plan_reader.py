@@ -81,7 +81,7 @@ class PlanReader:
         object_name = self.get_operation_object()
 
         request = (
-            f"Open and select the application of {object_name}, and output the FINISH status immediately. "
+            f"Open and select the application of {object_name}, and output the FINISH status immediately, without assigning any subtask"
             "You must output the selected application with their control text and label even if it is already open."
         )
 

@@ -146,7 +146,6 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         :param context: Processing context with round and step information
         """
         # Import here to avoid circular imports
-        from ufo import utils
 
         # Call parent implementation for standard logging
         await super().before_process(processor, context)
