@@ -75,7 +75,7 @@ ufo/galaxy/
 - 设备分配
 - 状态监控
 
-### ModularConstellationClient
+### ConstellationClient
 模块化客户端，管理:
 - 设备连接
 - 任务分发

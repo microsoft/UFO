@@ -21,7 +21,6 @@ from ufo.contracts.contracts import (
     TaskStatus,
 )
 from .device_registry import DeviceRegistry
-from .task_manager import TaskExecutionManager
 from .heartbeat_manager import HeartbeatManager
 from .event_manager import EventManager
 
@@ -35,12 +34,10 @@ class MessageProcessor:
     def __init__(
         self,
         device_registry: DeviceRegistry,
-        task_manager: TaskExecutionManager,
         heartbeat_manager: HeartbeatManager,
         event_manager: EventManager,
     ):
         self.device_registry = device_registry
-        self.task_manager = task_manager
         self.heartbeat_manager = heartbeat_manager
         self.event_manager = event_manager
         self._message_handlers: Dict[str, asyncio.Task] = {}
@@ -131,13 +128,6 @@ class MessageProcessor:
                 "timestamp": server_msg.timestamp,
             }
 
-            # Complete the task
-            self.task_manager.complete_task(session_id, result)
-
-            # Process device info if present
-            if hasattr(server_msg, "results") and server_msg.results:
-                await self._process_device_info_response(device_id, server_msg.results)
-
             # Notify event handlers
             task_id = session_id  # Using session_id as task_id for now
             await self.event_manager.notify_task_completed(device_id, task_id, result)
@@ -156,7 +146,10 @@ class MessageProcessor:
 
         session_id = getattr(server_msg, "session_id", None)
         if session_id:
-            self.task_manager.fail_task(session_id, error_text)
+            # Notify event handlers about task failure
+            await self.event_manager.notify_task_failed(
+                device_id, session_id, error_text
+            )
 
     async def _handle_command_message(
         self, device_id: str, server_msg: ServerMessage

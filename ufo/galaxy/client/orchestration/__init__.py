@@ -13,17 +13,11 @@ This module provides modular components for ConstellationClient orchestration:
 - ClientConfigManager: Configuration-based initialization
 """
 
-from .task_orchestrator import TaskOrchestrator
-from .device_selector import DeviceSelector
-from .parallel_task_manager import ParallelTaskManager
 from .client_event_handler import ClientEventHandler
 from .status_manager import StatusManager
 from .client_config_manager import ClientConfigManager
 
 __all__ = [
-    "TaskOrchestrator",
-    "ParallelTaskManager",
-    "DeviceSelector",
     "ClientEventHandler",
     "StatusManager",
     "ClientConfigManager",

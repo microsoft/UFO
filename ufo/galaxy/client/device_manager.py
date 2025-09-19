@@ -18,7 +18,6 @@ from .components import (
     TaskRequest,
     DeviceRegistry,
     WebSocketConnectionManager,
-    TaskExecutionManager,
     HeartbeatManager,
     EventManager,
     MessageProcessor,
@@ -32,7 +31,6 @@ class ConstellationDeviceManager:
     This refactored class delegates responsibilities to focused components:
     - DeviceRegistry: Device registration and information
     - WebSocketConnectionManager: Connection management
-    - TaskExecutionManager: Task assignment and results
     - HeartbeatManager: Health monitoring
     - EventManager: Event handling
     - MessageProcessor: Message routing
@@ -57,14 +55,12 @@ class ConstellationDeviceManager:
         # Initialize modular components
         self.device_registry = DeviceRegistry()
         self.connection_manager = WebSocketConnectionManager(constellation_id)
-        self.task_manager = TaskExecutionManager(self.connection_manager)
         self.heartbeat_manager = HeartbeatManager(
             self.connection_manager, self.device_registry, heartbeat_interval
         )
         self.event_manager = EventManager()
         self.message_processor = MessageProcessor(
             self.device_registry,
-            self.task_manager,
             self.heartbeat_manager,
             self.event_manager,
         )
@@ -218,8 +214,61 @@ class ConstellationDeviceManager:
         :param timeout: Task timeout in seconds
         :return: Task execution result
         """
-        return await self.task_manager.assign_task_to_device(
-            task_id, device_id, target_client_id, task_description, task_data, timeout
+        # Check if device is connected
+        device_info = self.device_registry.get_device(device_id)
+        if not device_info or device_info.status != DeviceStatus.CONNECTED:
+            raise ValueError(f"Device {device_id} is not connected")
+
+        # Create task request
+        task_request = TaskRequest(
+            task_id=task_id,
+            device_id=device_id,
+            target_client_id=target_client_id,
+            request=task_description,
+            task_name=task_id,
+            metadata=task_data,
+            timeout=timeout,
+        )
+
+        # Execute task through connection manager
+        try:
+            result = await self.connection_manager.send_task_to_device(
+                device_id, task_request
+            )
+
+            # Notify task completion handlers
+            await self.event_manager.notify_task_completed(device_id, task_id, result)
+
+            return result
+        except Exception as e:
+            self.logger.error(f"❌ Task {task_id} failed on device {device_id}: {e}")
+            raise
+
+    async def execute_task_direct(
+        self,
+        task_id: str,
+        device_id: str,
+        description: str,
+        task_data: Dict[str, Any],
+        timeout: float = 300.0,
+    ) -> Dict[str, Any]:
+        """
+        直接执行任务，整合原TaskExecutionManager功能
+
+        :param task_id: Task identifier
+        :param device_id: Target device ID
+        :param description: Task description
+        :param task_data: Task data
+        :param timeout: Timeout in seconds
+        :return: Task execution result
+        """
+        return await self.assign_task_to_device(
+            task_id=task_id,
+            device_id=device_id,
+            target_client_id=None,
+            task_description=description,
+            task_data=task_data,
+            timeout=timeout,
         )
 
     # Event handler registration (delegate to EventManager)
@@ -259,7 +308,6 @@ class ConstellationDeviceManager:
         # Stop all background services
         self.message_processor.stop_all_handlers()
         self.heartbeat_manager.stop_all_heartbeats()
-        self.task_manager.cancel_all_tasks()
 
         # Disconnect all devices
         await self.connection_manager.disconnect_all()

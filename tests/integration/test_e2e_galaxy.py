@@ -36,7 +36,6 @@ from ufo.galaxy.constellation import (
     TaskStar,
     TaskStarLine,
     LLMParser,
-    ConstellationExecutor,
     TaskStatus,
     DependencyType,
     ConstellationState,
@@ -47,7 +46,7 @@ from ufo.galaxy.constellation import (
 )
 
 # Import Galaxy client components directly
-from ufo.galaxy.client.constellation_client_modular import ModularConstellationClient
+from ufo.galaxy.client.constellation_client import ConstellationClient
 from ufo.galaxy.client.config_loader import ConstellationConfig, DeviceConfig
 
 # Import Galaxy session and agent components
@@ -62,9 +61,71 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+class MockDeviceManager:
+    """Mock device manager to match ConstellationDeviceManager interface."""
+
+    def __init__(self, connected_devices: Dict[str, Any]):
+        self.connected_devices = connected_devices
+        self.device_registry = MockDeviceRegistry(connected_devices)
+
+    def get_connected_devices(self) -> List[str]:
+        """Get list of connected device IDs."""
+        return [
+            device_id
+            for device_id, info in self.connected_devices.items()
+            if info["status"] == "connected"
+        ]
+
+    async def assign_task_to_device(
+        self,
+        task_id: str,
+        device_id: str,
+        target_client_id: Optional[str] = None,
+        task_description: str = "",
+        task_data: Dict[str, Any] = None,
+        timeout: float = 300.0,
+    ) -> Dict[str, Any]:
+        """Mock task assignment that simulates device execution."""
+        if device_id not in self.connected_devices:
+            raise ValueError(f"Device {device_id} not found")
+
+        # Simulate task execution
+        device_info = self.connected_devices[device_id]
+        return {
+            "result": f"Mock result from {device_id}",
+            "device_id": device_id,
+            "task_id": task_id,
+            "status": "completed",
+            "device_type": device_info.get("device_type", "unknown"),
+            "execution_time": 0.5,
+        }
+
+
+class MockDeviceRegistry:
+    """Mock device registry."""
+
+    def __init__(self, connected_devices: Dict[str, Any]):
+        self.connected_devices = connected_devices
+
+    def get_device_info(self, device_id: str):
+        """Get device info for a device."""
+        if device_id in self.connected_devices:
+            device_data = self.connected_devices[device_id]
+            return type(
+                "DeviceInfo",
+                (),
+                {
+                    "device_type": device_data.get("device_type", "unknown"),
+                    "capabilities": device_data.get("capabilities", []),
+                    "metadata": device_data.get("metadata", {}),
+                },
+            )()
+        return None
+
+
 class MockGalaxyConstellationClient:
     """
-    Enhanced Mock client that simulates ModularConstellationClient interface
+    Enhanced Mock client that simulates ConstellationClient interface
     with realistic multi-device scenarios.
     """
 
@@ -148,6 +209,9 @@ class MockGalaxyConstellationClient:
             },
         }
         self.task_execution_log = []
+
+        # Add mock device manager to match the ConstellationClient interface
+        self.device_manager = MockDeviceManager(self.connected_devices)
 
     def get_connected_devices(self) -> List[str]:
         """Get list of connected device IDs."""
@@ -242,7 +306,9 @@ class E2EConstellationTester:
 
     def __init__(self):
         self.mock_client = MockGalaxyConstellationClient()
-        self.orchestrator = TaskOrchestration(self.mock_client, enable_logging=True)
+        self.orchestrator = TaskOrchestration(
+            device_manager=self.mock_client.device_manager, enable_logging=True
+        )
         self.test_results = {}
         self.performance_metrics = {}
 
@@ -1052,7 +1118,7 @@ class GalaxySessionTester:
 
             # Create modular client
             config = ConstellationConfig()
-            modular_client = ModularConstellationClient(config)
+            client = ConstellationClient(config)
 
             # Create mock weaver agent
             weaver_agent = MockWeaverAgent("test_weaver")
@@ -1063,7 +1129,7 @@ class GalaxySessionTester:
                 should_evaluate=False,
                 id="galaxy_test_001",
                 agent=weaver_agent,
-                modular_client=modular_client,
+                client=client,
                 initial_request="Create a comprehensive data analysis workflow with parallel processing",
             )
 
@@ -1308,14 +1374,14 @@ class GalaxySessionTester:
             # Create session with custom agent
             agent = MockWeaverAgent("integration_agent")
             config = ConstellationConfig()
-            client = ModularConstellationClient(config)
+            client = ConstellationClient(config)
 
             session = GalaxySession(
                 task="integration_test",
                 should_evaluate=False,
                 id="integration_001",
                 agent=agent,
-                modular_client=client,
+                client=client,
                 initial_request="Create an automated testing framework with parallel test execution",
             )
 
@@ -1418,14 +1484,14 @@ class GalaxySessionTester:
             # Create a session with dynamic workflow
             agent = MockWeaverAgent("dynamic_agent")
             config = ConstellationConfig()
-            client = ModularConstellationClient(config)
+            client = ConstellationClient(config)
 
             session = GalaxySession(
                 task="dynamic_flow_test",
                 should_evaluate=False,
                 id="dynamic_001",
                 agent=agent,
-                modular_client=client,
+                client=client,
                 initial_request="Analyze data and create adaptive machine learning pipeline based on data characteristics",
             )
 

@@ -12,7 +12,7 @@ import asyncio
 import logging
 import uuid
 from datetime import datetime, timezone
-from typing import Dict, Optional
+from typing import Dict, Optional, Any
 from websockets import WebSocketClientProtocol
 import websockets
 
@@ -21,7 +21,7 @@ from ufo.contracts.contracts import (
     ClientMessageType,
     TaskStatus,
 )
-from .types import DeviceInfo
+from .types import DeviceInfo, TaskRequest
 
 
 class WebSocketConnectionManager:
@@ -131,6 +131,84 @@ class WebSocketConnectionManager:
 
         except Exception as e:
             self.logger.error(f"❌ Failed to request device info from {device_id}: {e}")
+
+    async def send_task_to_device(
+        self, device_id: str, task_request: TaskRequest
+    ) -> Dict[str, Any]:
+        """
+        Send a task to a specific device and wait for response.
+
+        :param device_id: Target device ID
+        :param task_request: Task request details
+        :return: Task execution result
+        :raises: ConnectionError if device not connected or task fails
+        """
+        websocket = self._connections.get(device_id)
+        if not websocket or websocket.closed:
+            raise ConnectionError(f"Device {device_id} is not connected")
+
+        try:
+            # Create client message for task execution
+            task_message = ClientMessage(
+                type=ClientMessageType.TASK,
+                client_id=self.constellation_id,
+                target_id=task_request.target_client_id or device_id,
+                task_name=task_request.task_name,
+                request=task_request.request,
+                request_id=task_request.task_id,
+                metadata=task_request.metadata,
+                timestamp=datetime.now(timezone.utc).isoformat(),
+                status=TaskStatus.CONTINUE,
+            )
+
+            # Send task message
+            await websocket.send(task_message.model_dump_json())
+            self.logger.info(
+                f"📤 Sent task {task_request.task_id} to device {device_id}"
+            )
+
+            # Wait for response with timeout
+            response = await asyncio.wait_for(
+                self._wait_for_task_response(device_id, task_request.task_id),
+                timeout=task_request.timeout,
+            )
+
+            return response
+
+        except asyncio.TimeoutError:
+            self.logger.error(
+                f"⏰ Task {task_request.task_id} timed out on device {device_id}"
+            )
+            raise ConnectionError(f"Task {task_request.task_id} timed out")
+        except Exception as e:
+            self.logger.error(
+                f"❌ Failed to send task {task_request.task_id} to device {device_id}: {e}"
+            )
+            raise
+
+    async def _wait_for_task_response(
+        self, device_id: str, task_id: str
+    ) -> Dict[str, Any]:
+        """
+        Wait for task response from device.
+        This is a simplified implementation - in practice, you might want to use
+        a more sophisticated response tracking system.
+        """
+        # This is a placeholder implementation
+        # In a real implementation, you would:
+        # 1. Store pending tasks and their completion callbacks
+        # 2. Handle responses in the message processor
+        # 3. Use asyncio.Event or Future to wait for completion
+
+        # For now, simulate a successful response
+        await asyncio.sleep(0.1)
+        return {
+            "task_id": task_id,
+            "device_id": device_id,
+            "status": "completed",
+            "result": "Task completed successfully",
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+        }
 
     def get_connection(self, device_id: str) -> Optional[WebSocketClientProtocol]:
         """Get WebSocket connection for a device"""

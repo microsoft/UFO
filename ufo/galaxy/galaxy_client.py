@@ -40,7 +40,7 @@ from ufo.module.context import Context, ContextNames
 from .session.galaxy_session import GalaxySession
 from .agents.weaver_agent import WeaverAgent, MockWeaverAgent
 from .constellation import TaskOrchestration
-from .client.constellation_client_modular import ModularConstellationClient
+from .client.constellation_client import ConstellationClient
 from .core.types import ProcessingContext
 
 tracemalloc.start()
@@ -93,7 +93,7 @@ class GalaxyClient:
         # Initialize components
         self._agent: Optional[WeaverAgent] = None
         self._orchestration: Optional[TaskOrchestration] = None
-        self._client: Optional[ModularConstellationClient] = None
+        self._client: Optional[ConstellationClient] = None
         self._session: Optional[GalaxySession] = None
 
         # Rich console for this instance
@@ -143,18 +143,18 @@ class GalaxyClient:
                 progress.update(
                     task, description="[cyan]Setting up Constellation Client..."
                 )
-                self._client = ModularConstellationClient()
+                self._client = ConstellationClient()
                 await self._client.initialize()
-                self.console.print(
-                    "[green]✅ ModularConstellationClient initialized[/green]"
-                )
-                self.logger.info("✅ ModularConstellationClient initialized")
+                self.console.print("[green]✅ ConstellationClient initialized[/green]")
+                self.logger.info("✅ ConstellationClient initialized")
 
                 # Initialize orchestration
                 progress.update(
                     task, description="[cyan]Setting up Task Orchestration..."
                 )
-                self._orchestration = TaskOrchestration()
+                self._orchestration = TaskOrchestration(
+                    device_manager=self._client.device_manager, enable_logging=True
+                )
                 self.console.print("[green]✅ TaskOrchestration initialized[/green]")
                 self.logger.info("✅ TaskOrchestration initialized")
 
@@ -171,7 +171,7 @@ class GalaxyClient:
                     should_evaluate=False,
                     id=self.session_name,
                     agent=self._agent,
-                    modular_client=self._client,
+                    client=self._client,
                 )
                 self.console.print("[green]✅ GalaxySession initialized[/green]")
                 self.logger.info("✅ GalaxySession initialized")

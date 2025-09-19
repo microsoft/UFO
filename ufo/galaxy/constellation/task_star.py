@@ -147,17 +147,55 @@ class TaskStar(ITask):
         self, context: Optional[ProcessingContext] = None
     ) -> ExecutionResult:
         """
-        Execute the task (placeholder implementation).
+        Execute the task using the provided execution context.
 
-        :param context: Optional processing context
+        :param context: Processing context containing device manager
         :return: Execution result
-        :raises NotImplementedError: This is a base implementation
+        :raises ValueError: If context or device manager not provided
         """
-        # This is a placeholder implementation
-        # Actual execution logic should be handled by an executor
-        raise NotImplementedError(
-            "TaskStar.execute() should be called through an ITaskExecutor implementation"
-        )
+        import time
+
+        if not context or not context.device_manager:
+            raise ValueError("Execution context with device manager required")
+
+        if not self.target_device_id:
+            raise ValueError(f"No device assigned to task {self.task_id}")
+
+        start_time = datetime.now(timezone.utc)
+
+        try:
+            # Execute task directly using ConstellationDeviceManager
+            result = await context.device_manager.assign_task_to_device(
+                task_id=self.task_id,
+                device_id=self.target_device_id,
+                target_client_id=None,  # Auto-select if not specified
+                task_description=self.description,
+                task_data=self.task_data or {},
+                timeout=self._timeout or 300.0,
+            )
+
+            end_time = datetime.now(timezone.utc)
+
+            return ExecutionResult(
+                task_id=self.task_id,
+                status=TaskStatus.COMPLETED,
+                result=result,
+                start_time=start_time,
+                end_time=end_time,
+                metadata={"device_id": self.target_device_id},
+            )
+
+        except Exception as e:
+            end_time = datetime.now(timezone.utc)
+
+            return ExecutionResult(
+                task_id=self.task_id,
+                status=TaskStatus.FAILED,
+                error=e,
+                start_time=start_time,
+                end_time=end_time,
+                metadata={"device_id": self.target_device_id},
+            )
 
     def validate(self) -> bool:
         """

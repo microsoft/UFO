@@ -21,7 +21,7 @@ from ufo.module.context import Context, ContextNames
 from ..agents.weaver_agent import WeaverAgent
 from ..constellation import TaskOrchestration, TaskConstellation, TaskStatus
 from ..constellation.enums import ConstellationState
-from ..client.constellation_client_modular import ModularConstellationClient
+from ..client.constellation_client import ConstellationClient
 
 
 class GalaxyRound(BaseRound):
@@ -240,7 +240,7 @@ class GalaxySession(BaseSession):
         should_evaluate: bool,
         id: str,
         agent: Optional[WeaverAgent] = None,
-        modular_client: Optional[ModularConstellationClient] = None,
+        client: Optional[ConstellationClient] = None,
         initial_request: str = "",
     ):
         """
@@ -251,7 +251,7 @@ class GalaxySession(BaseSession):
             should_evaluate: Whether to evaluate the session
             id: Session ID
             agent: WeaverAgent instance (creates MockWeaverAgent if None)
-            modular_client: ModularConstellationClient for device management
+            client: ConstellationClient for device management
             initial_request: Initial user request
         """
         super().__init__(task, should_evaluate, id)
@@ -270,9 +270,9 @@ class GalaxySession(BaseSession):
             self._weaver_agent = agent
 
         # Set up client and orchestration
-        self._modular_client = modular_client
+        self._client = client
         self._orchestration = TaskOrchestration(
-            modular_client=modular_client, enable_logging=True
+            device_manager=client.device_manager, enable_logging=True
         )
 
         # Session state
@@ -401,10 +401,10 @@ class GalaxySession(BaseSession):
         """Get the request for evaluation."""
         return self._initial_request or self.task
 
-    def set_modular_client(self, client: ModularConstellationClient) -> None:
+    def set_client(self, client: ConstellationClient) -> None:
         """Set the modular constellation client."""
-        self._modular_client = client
-        self._orchestration.set_modular_client(client)
+        self._client = client
+        self._orchestration.set_client(client)
 
     def set_weaver_agent(self, agent: WeaverAgent) -> None:
         """Set the weaver agent."""
@@ -461,7 +461,7 @@ async def create_galaxy_session(
     task_name: str = "galaxy_task",
     session_id: Optional[str] = None,
     agent: Optional[WeaverAgent] = None,
-    modular_client: Optional[ModularConstellationClient] = None,
+    client: Optional[ConstellationClient] = None,
     should_evaluate: bool = False,
 ) -> GalaxySession:
     """
@@ -472,7 +472,7 @@ async def create_galaxy_session(
         task_name: Task name
         session_id: Optional session ID
         agent: Optional WeaverAgent
-        modular_client: Optional ModularConstellationClient
+        client: Optional ConstellationClient
         should_evaluate: Whether to evaluate the session
 
     Returns:
@@ -484,18 +484,18 @@ async def create_galaxy_session(
         session_id = f"galaxy_{uuid.uuid4().hex[:8]}"
 
     # Create default modular client if not provided
-    if modular_client is None:
+    if client is None:
         from ..client.config_loader import ConstellationConfig
 
         config = ConstellationConfig()
-        modular_client = ModularConstellationClient(config)
+        client = ConstellationClient(config)
 
     session = GalaxySession(
         task=task_name,
         should_evaluate=should_evaluate,
         id=session_id,
         agent=agent,
-        modular_client=modular_client,
+        client=client,
         initial_request=request,
     )
 

@@ -4,52 +4,50 @@
 """
 Task Orchestration Bridge for TaskConstellation V2.
 
-This module provides the bridge between the TaskConstellation orchestration system
-and the ModularConstellationClient device management infrastructure.
+This module provides the simplified orchestration bridge between the TaskConstellation
+orchestration system and the ConstellationDeviceManager device management infrastructure.
 """
 
 import asyncio
 import logging
 from typing import Any, Dict, List, Optional, Callable, Union
 
+from ufo.galaxy.client.device_manager import ConstellationDeviceManager
+from ..core.types import ProcessingContext
+
 from .enums import TaskStatus, DeviceType
 from .task_star import TaskStar
 from .task_constellation import TaskConstellation
-from .executor import ConstellationExecutor
 from .parser import LLMParser
 
 
 class TaskOrchestration:
     """
-    Bridge between TaskConstellation orchestration and ModularConstellationClient.
+    Simplified DAG orchestrator with direct device communication.
 
-    This class provides the interface for managing TaskConstellation execution
-    using the existing device management and client infrastructure.
+    This class provides direct interface for managing TaskConstellation execution
+    using the device management infrastructure without unnecessary intermediate layers.
     """
 
     def __init__(
         self,
-        modular_client: Optional[Any] = None,
+        device_manager: Optional[ConstellationDeviceManager] = None,
         enable_logging: bool = True,
     ):
         """
         Initialize the TaskOrchestration.
 
         Args:
-            modular_client: Instance of ModularConstellationClient
+            device_manager: Instance of ConstellationDeviceManager
             enable_logging: Whether to enable logging
         """
-        self._modular_client = modular_client
-        self._executor = ConstellationExecutor(enable_logging=enable_logging)
+        self._device_manager = device_manager
         self._parser = LLMParser()
         self._logger = logging.getLogger(__name__) if enable_logging else None
 
-        # Set up client interface for executor
-        self._executor.set_client_interface(self._execute_task_on_device)
-
-    def set_modular_client(self, client: Any) -> None:
-        """Set the modular constellation client for device communication."""
-        self._modular_client = client
+    def set_device_manager(self, device_manager: ConstellationDeviceManager) -> None:
+        """Set the device manager for device communication."""
+        self._device_manager = device_manager
 
     async def create_constellation_from_llm(
         self,
@@ -88,7 +86,7 @@ class TaskOrchestration:
         progress_callback: Optional[Callable[[str, TaskStatus, Any], None]] = None,
     ) -> Dict[str, Any]:
         """
-        Orchestrate the execution of a TaskConstellation.
+        直接编排DAG执行，无需中间层
 
         Args:
             constellation: TaskConstellation to orchestrate
@@ -98,9 +96,9 @@ class TaskOrchestration:
         Returns:
             Orchestration results and statistics
         """
-        if not self._modular_client:
+        if not self._device_manager:
             raise ValueError(
-                "ModularConstellationClient not set. Use set_modular_client() first."
+                "ConstellationDeviceManager not set. Use set_device_manager() first."
             )
 
         if self._logger:
@@ -108,24 +106,84 @@ class TaskOrchestration:
                 f"Starting orchestration of constellation {constellation.constellation_id}"
             )
 
-        # Apply device assignments if provided
+        # 验证DAG
+        is_valid, errors = constellation.validate_dag()
+        if not is_valid:
+            raise ValueError(f"Invalid DAG: {errors}")
+
+        # 应用设备分配
         if device_assignments:
             self._apply_device_assignments(constellation, device_assignments)
 
-        # Get available devices from modular client
-        device_client_map = await self._get_available_devices()
+        # 创建执行上下文
+        context = ProcessingContext(device_manager=self._device_manager)
 
-        # Execute the constellation
-        result = await self._executor.execute_constellation(
-            constellation,
-            device_client_map=device_client_map,
-            progress_callback=progress_callback,
-        )
+        # 直接执行DAG
+        results = {}
+        constellation.start_execution()
 
-        if self._logger:
-            self._logger.info(
-                f"Completed orchestration of constellation {constellation.constellation_id}"
-            )
+        try:
+            while not constellation.is_complete():
+                ready_tasks = constellation.get_ready_tasks()
+
+                # 并行执行就绪任务
+                tasks = []
+                for task in ready_tasks:
+                    if not task.target_device_id:
+                        task.target_device_id = await self._auto_assign_device(task)
+
+                    # 使用TaskStar.execute接口
+                    tasks.append(task.execute(context))
+
+                if tasks:
+                    completed_results = await asyncio.gather(
+                        *tasks, return_exceptions=True
+                    )
+
+                    for i, result in enumerate(completed_results):
+                        task = ready_tasks[i]
+                        if isinstance(result, Exception):
+                            constellation.mark_task_completed(
+                                task.task_id, False, None, result
+                            )
+                            if self._logger:
+                                self._logger.error(
+                                    f"Task {task.task_id} failed: {result}"
+                                )
+                        else:
+                            constellation.mark_task_completed(
+                                task.task_id, True, result.result
+                            )
+                            results[task.task_id] = result.result
+
+                            if progress_callback:
+                                progress_callback(
+                                    task.task_id, TaskStatus.COMPLETED, result.result
+                                )
+
+                            if self._logger:
+                                self._logger.info(
+                                    f"Task {task.task_id} completed successfully"
+                                )
+
+            constellation.complete_execution()
+
+            if self._logger:
+                self._logger.info(
+                    f"Completed orchestration of constellation {constellation.constellation_id}"
+                )
+
+            return {
+                "results": results,
+                "status": "completed",
+                "total_tasks": len(results),
+            }
+
+        except Exception as e:
+            constellation.complete_execution()
+            if self._logger:
+                self._logger.error(f"Orchestration failed: {e}")
+            raise
 
         return result
 
@@ -147,7 +205,15 @@ class TaskOrchestration:
         if target_device_id:
             task.target_device_id = target_device_id
 
-        return await self._executor.execute_single_task(task)
+        if not task.target_device_id:
+            task.target_device_id = await self._auto_assign_device(task)
+
+        # 创建执行上下文
+        context = ProcessingContext(device_manager=self._device_manager)
+
+        # 直接使用TaskStar.execute
+        result = await task.execute(context)
+        return result.result
 
     async def modify_constellation_with_llm(
         self,
@@ -206,34 +272,37 @@ class TaskOrchestration:
                 task.task_id for task in constellation.get_completed_tasks()
             ],
             "failed_tasks": [task.task_id for task in constellation.get_failed_tasks()],
-            "executor_stats": self._executor.stats,
         }
 
     async def get_available_devices(self) -> List[Dict[str, Any]]:
         """
-        Get list of available devices from modular client.
+        Get list of available devices from device manager.
 
         Returns:
             List of available device information
         """
-        if not self._modular_client:
+        if not self._device_manager:
             return []
 
         try:
-            # Get connected devices from ModularConstellationClient
-            connected_device_ids = self._modular_client.get_connected_devices()
+            # 获取连接的设备
+            connected_device_ids = self._device_manager.get_connected_devices()
             devices = []
 
             for device_id in connected_device_ids:
-                device_status = self._modular_client.get_device_status(device_id)
-                if device_status:
+                device_info = self._device_manager.device_registry.get_device_info(
+                    device_id
+                )
+                if device_info:
                     devices.append(
                         {
                             "device_id": device_id,
-                            "device_type": device_status.get("device_type", "unknown"),
-                            "capabilities": device_status.get("capabilities", []),
-                            "status": device_status.get("status", "unknown"),
-                            "metadata": device_status.get("metadata", {}),
+                            "device_type": getattr(
+                                device_info, "device_type", "unknown"
+                            ),
+                            "capabilities": getattr(device_info, "capabilities", []),
+                            "status": "connected",
+                            "metadata": getattr(device_info, "metadata", {}),
                         }
                     )
 
@@ -337,67 +406,42 @@ class TaskOrchestration:
         else:
             raise ValueError(f"Unsupported import format: {format}")
 
-    async def _execute_task_on_device(self, task: TaskStar) -> Any:
-        """
-        Execute a task on the assigned device using modular client.
+    async def _auto_assign_device(self, task: TaskStar) -> str:
+        """自动为任务分配设备"""
+        if not self._device_manager:
+            raise ValueError("Device manager not available for auto-assignment")
 
-        Args:
-            task: TaskStar to execute
+        # 获取连接的设备
+        connected_devices = self._device_manager.get_connected_devices()
+        if not connected_devices:
+            raise ValueError("No connected devices available")
 
-        Returns:
-            Task execution result
-        """
-        if not self._modular_client:
-            raise ValueError("ModularConstellationClient not configured")
-
-        if not task.target_device_id:
-            raise ValueError(f"No device assigned to task {task.task_id}")
-
-        try:
-            # Execute task using ModularConstellationClient with correct method signature
-            result = await self._modular_client.execute_task(
-                request=task.description,
-                device_id=task.target_device_id,
-                task_name=task.task_id,
-                metadata=task.task_data,
-                timeout=task._timeout,
-            )
-
-            return result
-
-        except Exception as e:
-            if self._logger:
-                self._logger.error(
-                    f"Failed to execute task {task.task_id} on device {task.target_device_id}: {e}"
-                )
-            raise
+        # 简单策略：选择第一个可用设备
+        # 更复杂的策略可以基于任务要求和设备能力
+        return connected_devices[0]
 
     async def _get_available_devices(self) -> Dict[str, Any]:
         """Get available devices as a map for the executor."""
-        if not self._modular_client:
+        if not self._device_manager:
             return {}
 
         try:
-            # Get connected devices from ModularConstellationClient
-            connected_device_ids = self._modular_client.get_connected_devices()
+            # 获取连接的设备
+            connected_device_ids = self._device_manager.get_connected_devices()
             device_map = {}
 
             for device_id in connected_device_ids:
-                device_status = self._modular_client.get_device_status(device_id)
-                if device_status:
-                    # Create a simple device info object
-                    device_info = type(
-                        "DeviceInfo",
-                        (),
-                        {
-                            "device_id": device_id,
-                            "device_type": device_status.get("device_type", "unknown"),
-                            "capabilities": device_status.get("capabilities", []),
-                            "status": device_status.get("status", "unknown"),
-                            "metadata": device_status.get("metadata", {}),
-                        },
-                    )
-                    device_map[device_id] = device_info
+                device_info = self._device_manager.device_registry.get_device_info(
+                    device_id
+                )
+                if device_info:
+                    device_map[device_id] = {
+                        "device_id": device_id,
+                        "device_type": getattr(device_info, "device_type", "unknown"),
+                        "capabilities": getattr(device_info, "capabilities", []),
+                        "status": "connected",
+                        "metadata": getattr(device_info, "metadata", {}),
+                    }
 
             return device_map
         except Exception:
@@ -427,7 +471,7 @@ async def create_and_orchestrate_from_llm(
 
     Args:
         llm_output: LLM output describing tasks
-        modular_client: ModularConstellationClient instance
+        modular_client: ConstellationClient instance
         constellation_name: Optional constellation name
         progress_callback: Optional progress callback
 

@@ -483,6 +483,9 @@ class ProcessingContext:
     user_id: Optional[str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
     timestamp: datetime = field(default_factory=datetime.utcnow)
+    device_manager: Optional[Any] = (
+        None  # ConstellationDeviceManager (avoiding circular import)
+    )
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert context to dictionary."""
