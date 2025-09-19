@@ -112,6 +112,8 @@ class UFOWebSocketHandler:
                 await self.handle_heartbeat(data, websocket)
             elif msg_type == ClientMessageType.ERROR:
                 await self.handle_error(data, websocket)
+            elif msg_type == ClientMessageType.DEVICE_INFO:
+                await self.handle_device_info(data, websocket)
             else:
                 await self.handle_unknown(data, websocket)
         except Exception as e:
@@ -243,3 +245,40 @@ class UFOWebSocketHandler:
         )
 
         await command_dispatcher.set_result(response_id, data)
+
+    async def handle_device_info(
+        self, data: ClientMessage, websocket: WebSocket
+    ) -> None:
+        """
+        Handle device information requests.
+        :param data: The data from the client.
+        :param websocket: The WebSocket connection.
+        """
+        device_id = data.target_id
+        self.logger.info(f"[WS] Handling device info request from {data.target_id}")
+
+        if device_id not in self.ws_manager.online_clients:
+            self.logger.warning(f"[WS] Device is not online: {data.target_id}")
+            await websocket.send_text(
+                ServerMessage(
+                    type=ServerMessageType.ERROR,
+                    error=f"Device not online: {data.target_id}",
+                    timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                    response_id=str(uuid.uuid4()),
+                ).model_dump_json()
+            )
+            return
+
+        # device_info = self.ws_manager.online_clients[device_id]
+        device_info = f"Obtain info for {device_id}"
+        self.logger.info(f"[WS] Got device info for {data.target_id}: {device_info}")
+
+        await websocket.send_text(
+            ServerMessage(
+                type=ServerMessageType.DEVICE_INFO,
+                status=TaskStatus.OK,
+                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                result=device_info,
+                response_id=str(uuid.uuid4()),
+            ).model_dump_json()
+        )

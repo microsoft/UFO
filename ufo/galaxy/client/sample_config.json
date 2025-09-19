@@ -1,0 +1,68 @@
+{
+  "constellation_id": "constellation_main",
+  "heartbeat_interval": 30.0,
+  "reconnect_delay": 5.0,
+  "max_concurrent_tasks": 8,
+  "devices": [
+    {
+      "device_id": "laptop_001",
+      "server_url": "ws://192.168.1.100:5000/ws",
+      "local_client_ids": [
+        "client_browser",
+        "client_office"
+      ],
+      "capabilities": [
+        "web_browsing",
+        "office_applications",
+        "file_management"
+      ],
+      "metadata": {
+        "location": "office",
+        "os": "windows",
+        "performance": "medium"
+      },
+      "auto_connect": true,
+      "max_retries": 5
+    },
+    {
+      "device_id": "workstation_002",
+      "server_url": "ws://192.168.1.101:5000/ws",
+      "local_client_ids": [
+        "client_dev",
+        "client_analysis"
+      ],
+      "capabilities": [
+        "software_development",
+        "data_analysis",
+        "heavy_compute"
+      ],
+      "metadata": {
+        "location": "lab",
+        "os": "windows",
+        "performance": "high"
+      },
+      "auto_connect": true,
+      "max_retries": 3
+    },
+    {
+      "device_id": "server_003",
+      "server_url": "ws://192.168.1.102:5000/ws",
+      "local_client_ids": [
+        "client_database",
+        "client_api"
+      ],
+      "capabilities": [
+        "database_management",
+        "api_services",
+        "backup"
+      ],
+      "metadata": {
+        "location": "datacenter",
+        "os": "linux",
+        "performance": "high"
+      },
+      "auto_connect": true,
+      "max_retries": 10
+    }
+  ]
+}

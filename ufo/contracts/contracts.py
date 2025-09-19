@@ -160,6 +160,7 @@ class TaskStatus(str, Enum):
 
 
 class ClientMessageType(str, Enum):
+    DEVICE_INFO = "device_info"
     TASK = "task"
     HEARTBEAT = "heartbeat"
     COMMAND_RESULTS = "command_results"
@@ -169,6 +170,7 @@ class ClientMessageType(str, Enum):
 
 
 class ServerMessageType(str, Enum):
+    DEVICE_INFO = "device_info"
     TASK = "task"
     HEARTBEAT = "heartbeat"
     TASK_END = "task_end"
@@ -194,6 +196,7 @@ class ServerMessage(BaseModel):
     task_name: Optional[str] = None
     timestamp: Optional[str] = None
     response_id: Optional[str] = None
+    result: Optional[Any] = None
 
 
 class ClientMessage(BaseModel):
@@ -206,6 +209,7 @@ class ClientMessage(BaseModel):
     session_id: Optional[str] = None
     task_name: Optional[str] = None
     client_id: Optional[str] = None
+    target_id: Optional[str] = None
     request: Optional[str] = None
     action_results: Optional[List[Result]] = None
     timestamp: Optional[str] = None

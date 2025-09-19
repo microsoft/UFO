@@ -1,0 +1,26 @@
+{
+  "timestamp": "2025-09-19T18:45:41.890484",
+  "total_tests": 4,
+  "passed_tests": 0,
+  "failed_tests": 4,
+  "test_details": {
+    "Basic Constellation Workflow": {
+      "status": "FAILED",
+      "execution_time": 0.25926637649536133
+    },
+    "Real-time DAG Updates": {
+      "status": "FAILED",
+      "execution_time": 0.22218656539916992
+    },
+    "Complex DAG Structure": {
+      "status": "FAILED",
+      "execution_time": 0.6010355949401855
+    },
+    "Error Handling": {
+      "status": "FAILED",
+      "execution_time": 0.2656092643737793
+    }
+  },
+  "total_execution_time": 1.348097801208496,
+  "success_rate": 0.0
+}
