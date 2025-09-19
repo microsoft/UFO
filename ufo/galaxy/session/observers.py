@@ -1,0 +1,133 @@
+# Copyright (c) Microsoft Corporation.
+# Licensed under the MIT License.
+
+"""
+Observer classes for constellation events.
+"""
+
+import asyncio
+import logging
+from typing import Any, Dict, List, Optional
+
+from ..core.events import (
+    Event,
+    EventType,
+    TaskEvent,
+    ConstellationEvent,
+    IEventObserver,
+)
+from ..constellation import TaskConstellation, TaskStatus
+from ..agents.weaver_agent import WeaverAgent
+from ufo.module.context import Context
+
+
+class ConstellationProgressObserver(IEventObserver):
+    """
+    Observer that handles constellation progress updates.
+
+    This replaces the complex callback logic in GalaxyRound.
+    """
+
+    def __init__(self, agent: WeaverAgent, context: Context):
+        self.agent = agent
+        self.context = context
+        self.task_results: Dict[str, Dict[str, Any]] = {}
+        self.logger = logging.getLogger(__name__)
+
+    async def on_event(self, event: Event) -> None:
+        """Handle constellation-related events."""
+        if isinstance(event, TaskEvent):
+            await self._handle_task_event(event)
+        elif isinstance(event, ConstellationEvent):
+            await self._handle_constellation_event(event)
+
+    async def _handle_task_event(self, event: TaskEvent) -> None:
+        """Handle task progress events."""
+        try:
+            self.logger.info(f"Task progress: {event.task_id} -> {event.status}")
+
+            # Store task result
+            self.task_results[event.task_id] = {
+                "task_id": event.task_id,
+                "status": event.status,
+                "result": event.result,
+                "error": event.error,
+                "timestamp": event.timestamp,
+            }
+
+            # If task completed or failed, update constellation via agent
+            if event.event_type in [EventType.TASK_COMPLETED, EventType.TASK_FAILED]:
+                if isinstance(self.agent, WeaverAgent):
+                    updated_constellation = (
+                        await self.agent.update_constellation_with_lock(
+                            self.task_results[event.task_id], self.context
+                        )
+                    )
+
+                    # Publish constellation update event
+                    from ..core.events import get_event_bus
+
+                    constellation_event = ConstellationEvent(
+                        event_type=EventType.CONSTELLATION_UPDATED,
+                        source_id=f"observer_{id(self)}",
+                        timestamp=event.timestamp,
+                        data={"updated_constellation": updated_constellation},
+                        constellation_id=updated_constellation.constellation_id,
+                        constellation_state=updated_constellation.state.value,
+                    )
+                    await get_event_bus().publish_event(constellation_event)
+
+        except Exception as e:
+            self.logger.error(f"Error handling task event: {e}")
+
+    async def _handle_constellation_event(self, event: ConstellationEvent) -> None:
+        """Handle constellation update events."""
+        try:
+            if event.event_type == EventType.NEW_TASKS_READY:
+                self.logger.info(f"New ready tasks detected: {event.new_ready_tasks}")
+                # The orchestration will automatically pick up new ready tasks
+
+        except Exception as e:
+            self.logger.error(f"Error handling constellation event: {e}")
+
+
+class SessionMetricsObserver(IEventObserver):
+    """
+    Observer that collects session metrics and statistics.
+    """
+
+    def __init__(self, session_id: str, logger: Optional[logging.Logger] = None):
+        self.session_id = session_id
+        self.metrics: Dict[str, Any] = {
+            "session_id": session_id,
+            "task_count": 0,
+            "completed_tasks": 0,
+            "failed_tasks": 0,
+            "total_execution_time": 0.0,
+            "task_timings": {},
+        }
+        self.logger = logger or logging.getLogger(__name__)
+
+    async def on_event(self, event: Event) -> None:
+        """Collect metrics from events."""
+        if isinstance(event, TaskEvent):
+            if event.event_type == EventType.TASK_STARTED:
+                self.metrics["task_count"] += 1
+                self.metrics["task_timings"][event.task_id] = {"start": event.timestamp}
+
+            elif event.event_type == EventType.TASK_COMPLETED:
+                self.metrics["completed_tasks"] += 1
+                if event.task_id in self.metrics["task_timings"]:
+                    duration = (
+                        event.timestamp
+                        - self.metrics["task_timings"][event.task_id]["start"]
+                    )
+                    self.metrics["task_timings"][event.task_id]["duration"] = duration
+                    self.metrics["total_execution_time"] += duration
+
+            elif event.event_type == EventType.TASK_FAILED:
+                self.metrics["failed_tasks"] += 1
+
+    def get_metrics(self) -> Dict[str, Any]:
+        """Get collected metrics."""
+        return self.metrics.copy()

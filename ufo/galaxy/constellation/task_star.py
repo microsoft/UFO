@@ -14,8 +14,10 @@ import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Union
 
+from ufo.galaxy.client.device_manager import ConstellationDeviceManager
+
 from ..core.interfaces import ITask
-from ..core.types import TaskId, ExecutionResult, ProcessingContext, TaskConfiguration
+from ..core.types import TaskId, ExecutionResult, TaskConfiguration
 from .enums import TaskStatus, TaskPriority, DeviceType
 
 
@@ -144,19 +146,17 @@ class TaskStar(ITask):
         self._updated_at = datetime.now(timezone.utc)
 
     async def execute(
-        self, context: Optional[ProcessingContext] = None
+        self, device_manager: ConstellationDeviceManager
     ) -> ExecutionResult:
         """
-        Execute the task using the provided execution context.
+        Execute the task using the provided device manager.
 
-        :param context: Processing context containing device manager
+        :param device_manager: Device manager instance for task execution
         :return: Execution result
-        :raises ValueError: If context or device manager not provided
+        :raises ValueError: If device manager not provided or no device assigned
         """
-        import time
-
-        if not context or not context.device_manager:
-            raise ValueError("Execution context with device manager required")
+        if not device_manager:
+            raise ValueError("Device manager is required for task execution")
 
         if not self.target_device_id:
             raise ValueError(f"No device assigned to task {self.task_id}")
@@ -165,7 +165,7 @@ class TaskStar(ITask):
 
         try:
             # Execute task directly using ConstellationDeviceManager
-            result = await context.device_manager.assign_task_to_device(
+            result = await device_manager.assign_task_to_device(
                 task_id=self.task_id,
                 device_id=self.target_device_id,
                 target_client_id=None,  # Auto-select if not specified

@@ -22,6 +22,8 @@ from ..agents.weaver_agent import WeaverAgent
 from ..constellation import TaskOrchestration, TaskConstellation, TaskStatus
 from ..constellation.enums import ConstellationState
 from ..client.constellation_client import ConstellationClient
+from ..core.events import get_event_bus, EventType, TaskEvent, ConstellationEvent
+from .observers import ConstellationProgressObserver, SessionMetricsObserver
 
 
 class GalaxyRound(BaseRound):
@@ -44,6 +46,31 @@ class GalaxyRound(BaseRound):
         self._constellation: Optional[TaskConstellation] = None
         self._task_results: Dict[str, Any] = {}
         self._execution_start_time: Optional[float] = None
+
+        # Event system
+        self._event_bus = get_event_bus()
+        self._observers = []
+
+        # Set up observers
+        self._setup_observers()
+
+    def _setup_observers(self) -> None:
+        """Set up event observers for this round."""
+        # Progress observer for task updates
+        progress_observer = ConstellationProgressObserver(
+            agent=self._agent, context=self._context
+        )
+        self._observers.append(progress_observer)
+
+        # Metrics observer for performance tracking
+        metrics_observer = SessionMetricsObserver(
+            session_id=f"galaxy_round_{self._id}", logger=self.logger
+        )
+        self._observers.append(metrics_observer)
+
+        # Subscribe observers to event bus
+        for observer in self._observers:
+            self._event_bus.subscribe(observer)
 
     async def run(self) -> None:
         """Run the round with constellation orchestration."""
@@ -77,9 +104,25 @@ class GalaxyRound(BaseRound):
             # Assign devices automatically
             await self._orchestration.assign_devices_automatically(self._constellation)
 
-            # Execute constellation with progress callback
+            # Publish constellation started event
+            constellation_start_event = ConstellationEvent(
+                event_type=EventType.CONSTELLATION_UPDATED,
+                source_id=f"galaxy_round_{self._id}",
+                timestamp=time.time(),
+                data={
+                    "total_tasks": self._constellation.task_count,
+                    "round_id": self._id,
+                    "action": "started",
+                },
+                constellation_id=self._constellation.constellation_id,
+                constellation_state="running",
+            )
+            await self._event_bus.publish_event(constellation_start_event)
+
+            # Execute constellation using event-driven orchestration
+            # No need for progress_callback as observers handle events
             result = await self._orchestration.orchestrate_constellation(
-                self._constellation, progress_callback=self._sync_progress_callback
+                self._constellation
             )
 
             execution_time = time.time() - self._execution_start_time
@@ -87,8 +130,21 @@ class GalaxyRound(BaseRound):
                 f"Constellation execution completed in {execution_time:.2f}s"
             )
 
-            # Process any remaining progress updates asynchronously
-            await self._process_progress_queue()
+            # Publish constellation completed event
+            constellation_end_event = ConstellationEvent(
+                event_type=EventType.CONSTELLATION_UPDATED,
+                source_id=f"galaxy_round_{self._id}",
+                timestamp=time.time(),
+                data={
+                    "total_tasks": self._constellation.task_count,
+                    "round_id": self._id,
+                    "action": "completed",
+                    "execution_time": execution_time,
+                },
+                constellation_id=self._constellation.constellation_id,
+                constellation_state="completed",
+            )
+            await self._event_bus.publish_event(constellation_end_event)
 
             # Update context with results - use existing SUBTASK context
             self._context.set(
@@ -101,106 +157,6 @@ class GalaxyRound(BaseRound):
             import traceback
 
             traceback.print_exc()
-
-    def _sync_progress_callback(
-        self, task_id: str, status: TaskStatus, result: Any = None
-    ) -> None:
-        """
-        Synchronous wrapper for async progress callback.
-
-        This method handles task progress updates from the orchestration system.
-        It provides a synchronous interface to avoid async conflicts while
-        storing progress data for later async processing.
-
-        Args:
-            task_id: ID of the task being updated
-            status: Current task status
-            result: Task result if completed
-        """
-        try:
-            # Log progress synchronously to avoid async issues
-            self.logger.info(f"Task progress: {task_id} -> {status.value}")
-
-            # Initialize progress queue if it doesn't exist
-            if not hasattr(self, "_task_progress_queue"):
-                self._task_progress_queue = []
-
-            # Store progress for later async processing
-            progress_entry = {
-                "task_id": task_id,
-                "status": status,
-                "result": result,
-                "timestamp": time.time(),
-            }
-            self._task_progress_queue.append(progress_entry)
-
-            # Store in task results for immediate access
-            self._task_results[task_id] = progress_entry
-
-        except Exception as e:
-            self.logger.error(f"Error in progress callback for task {task_id}: {e}")
-
-    async def _process_progress_queue(self) -> None:
-        """
-        Process the progress queue asynchronously.
-
-        This method handles any queued progress updates that require
-        async processing, such as updating constellation state or
-        triggering agent actions.
-        """
-        if not hasattr(self, "_task_progress_queue"):
-            return
-
-        while self._task_progress_queue:
-            progress_entry = self._task_progress_queue.pop(0)
-            try:
-                await self._on_task_progress(
-                    progress_entry["task_id"],
-                    progress_entry["status"],
-                    progress_entry.get("result"),
-                )
-            except Exception as e:
-                self.logger.error(f"Error processing progress queue: {e}")
-
-    async def _on_task_progress(
-        self, task_id: str, status: TaskStatus, result: Any = None
-    ) -> None:
-        """
-        Handle task progress updates and trigger agent updates.
-
-        Args:
-            task_id: ID of the task
-            status: Current task status
-            result: Task result if completed
-        """
-        try:
-            self.logger.info(f"Task progress: {task_id} -> {status.value}")
-
-            # Store result for later processing
-            self._task_results[task_id] = {
-                "task_id": task_id,
-                "status": status.value,
-                "result": result,
-                "timestamp": time.time(),
-            }
-
-            # If task completed or failed, update constellation via agent
-            if status in [TaskStatus.completed, TaskStatus.failed]:
-                if isinstance(self._agent, WeaverAgent):
-                    updated_constellation = (
-                        await self._agent.update_constellation_with_lock(
-                            self._task_results[task_id], self._context
-                        )
-                    )
-
-                    # Update our local reference
-                    self._constellation = updated_constellation
-
-                    # Check if we need to add new tasks to orchestration
-                    await self._check_for_new_tasks()
-
-        except Exception as e:
-            self.logger.error(f"Error handling task progress: {e}")
 
     async def _check_for_new_tasks(self) -> None:
         """Check if new tasks were added and schedule them for execution."""
