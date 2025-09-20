@@ -9,6 +9,11 @@ from typing import Any, Dict, List, Optional, Union
 
 from rich.console import Console
 from rich.panel import Panel
+from rich.text import Text
+from rich.align import Align
+from rich.columns import Columns
+from rich.box import HEAVY, ROUNDED, DOUBLE
+from rich.style import Style
 
 from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
 from ufo.agents.agent.basic import AgentRegistry, BasicAgent
@@ -362,6 +367,51 @@ class HostAgent(BasicAgent):
         """
         pass
 
+    def _display_agent_comment(self, comment: str) -> None:
+        """
+        Display agent comment with enhanced UX for agent-user dialogue.
+
+        :param comment: The comment text from the agent
+        """
+        if not comment:
+            return
+
+        # Create a conversation-style comment display
+        comment_text = Text()
+
+        # Add agent identifier
+        comment_text.append("🤖 UFO Agent", style="bold blue")
+        comment_text.append(" says:\n\n", style="dim blue")
+
+        # Add the actual comment with proper formatting
+        comment_lines = comment.split("\n")
+        for i, line in enumerate(comment_lines):
+            if line.strip():
+                # Add bullet point for multiple lines
+                if len(comment_lines) > 1 and line.strip():
+                    comment_text.append("💭 ", style="cyan")
+                comment_text.append(line.strip(), style="white")
+                if i < len(comment_lines) - 1:
+                    comment_text.append("\n")
+
+        # Create enhanced panel with conversation styling
+        comment_panel = Panel(
+            Align.left(comment_text),
+            title="💬 [bold yellow]Agent Dialogue[/bold yellow]",
+            title_align="left",
+            border_style="yellow",
+            box=DOUBLE,
+            padding=(1, 2),
+            width=80,
+        )
+
+        # Add some visual spacing and emphasis
+        console.print()  # Empty line before
+        console.print("─" * 80, style="dim yellow")  # Separator line
+        console.print(comment_panel)
+        console.print("─" * 80, style="dim yellow")  # Separator line
+        console.print()  # Empty line after
+
     def print_response(self, response: HostAgentResponse) -> None:
         """
         Pretty-print the HostAgentResponse using Rich.
@@ -412,9 +462,9 @@ class HostAgent(BasicAgent):
         # Status
         console.print(Panel(status, title="📊 Status", style="blue"))
 
-        # Comment
+        # Comment - Enhanced agent-user dialogue display
         if comment:
-            console.print(Panel(comment, title="💬 Comment", style="green"))
+            self._display_agent_comment(comment)
 
     @property
     def status_manager(self) -> HostAgentStatus:
