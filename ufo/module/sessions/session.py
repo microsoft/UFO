@@ -129,9 +129,8 @@ class Session(BaseSession):
             # If the request is provided via command line, use it directly.
             if self._init_request:
                 return self._init_request
-            # Otherwise, ask the user to input the request.
+            # Otherwise, ask the user to input the request with enhanced UX.
             else:
-                utils.print_with_color(interactor.WELCOME_TEXT, "cyan")
                 return interactor.first_request()
         else:
             request, iscomplete = interactor.new_request()

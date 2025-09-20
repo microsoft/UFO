@@ -25,11 +25,46 @@ Please enter your request to be completed🛸: """.format(
 
 def first_request() -> str:
     """
-    Ask for the first request.
+    Ask for the first request with enhanced UX.
     :return: The first request.
     """
 
-    return input()
+    # Create an attractive welcome panel
+    welcome_panel = Panel(
+        f"[bold cyan]🚀 Welcome to UFO - Your AI Assistant for Windows![/bold cyan]\n\n"
+        f"[white]{text2art('UFO', font='small')}[/white]\n"
+        f"[dim]A UI-focused Agent for seamless Windows OS interaction[/dim]\n\n"
+        f"[bold yellow]🎯 What can I help you with today?[/bold yellow]\n"
+        f"[dim]Examples:[/dim]\n"
+        f"[dim]• 📝 'Open Notepad and type a message'[/dim]\n"
+        f"[dim]• 🔍 'Search for files on my desktop'[/dim]\n"
+        f"[dim]• 📊 'Create a new Excel spreadsheet'[/dim]",
+        title="🛸 [bold blue]UFO Assistant[/bold blue]",
+        border_style="blue",
+        box=box.DOUBLE,
+        padding=(1, 2),
+    )
+
+    console.print()
+    console.print(welcome_panel)
+    console.print()
+
+    request = Prompt.ask(
+        "[bold green]✨ Your request[/bold green]",
+        console=console,
+    )
+
+    # Show confirmation with a nice message
+    confirmation_text = Text()
+    confirmation_text.append("🎯 ", style="bold yellow")
+    confirmation_text.append("Got it! Starting to work on: ", style="dim")
+    confirmation_text.append(f'"{request}"', style="bold cyan")
+
+    console.print(confirmation_text)
+    console.print("[dim green]🚀 Let's get started![/dim green]")
+    console.print()
+
+    return request
 
 
 def new_request() -> Tuple[str, bool]:
