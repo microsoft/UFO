@@ -230,6 +230,7 @@ class ControlReceiver(ReceiverBasic):
         keys = TextTransformer.transform_text(keys, "all")
 
         if control_focus:
+            self.control.set_focus()
             self.atomic_execution("type_keys", {"keys": keys})
         else:
             self.application.type_keys(keys=keys)

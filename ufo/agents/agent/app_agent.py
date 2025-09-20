@@ -14,6 +14,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
+from rich.align import Align
+from rich.box import DOUBLE
 
 from ufo import utils
 from ufo.agents.agent.basic import AgentRegistry, BasicAgent
@@ -164,6 +166,51 @@ class AppAgent(BasicAgent):
 
         return appagent_prompt_message
 
+    def _display_agent_comment(self, comment: str) -> None:
+        """
+        Display agent comment with enhanced UX for agent-user dialogue.
+
+        :param comment: The comment text from the agent
+        """
+        if not comment:
+            return
+
+        # Create a conversation-style comment display
+        comment_text = Text()
+
+        # Add agent identifier with app-specific styling
+        comment_text.append("📱 App Agent", style="bold magenta")
+        comment_text.append(" says:\n\n", style="dim magenta")
+
+        # Add the actual comment with proper formatting
+        comment_lines = comment.split("\n")
+        for i, line in enumerate(comment_lines):
+            if line.strip():
+                # Add bullet point for multiple lines
+                if len(comment_lines) > 1 and line.strip():
+                    comment_text.append("💭 ", style="cyan")
+                comment_text.append(line.strip(), style="white")
+                if i < len(comment_lines) - 1:
+                    comment_text.append("\n")
+
+        # Create enhanced panel with conversation styling
+        comment_panel = Panel(
+            Align.left(comment_text),
+            title="💬 [bold magenta]App Agent Dialogue[/bold magenta]",
+            title_align="left",
+            border_style="magenta",
+            box=DOUBLE,
+            padding=(1, 2),
+            width=80,
+        )
+
+        # Add some visual spacing and emphasis
+        console.print()  # Empty line before
+        console.print("─" * 80, style="dim magenta")  # Separator line
+        console.print(comment_panel)
+        console.print("─" * 80, style="dim magenta")  # Separator line
+        console.print()  # Empty line after
+
     def print_response(
         self, response: AppAgentResponse, print_action: bool = True
     ) -> None:
@@ -214,8 +261,8 @@ class AppAgent(BasicAgent):
         # Next Plan
         console.print(Panel("\n".join(plan), title="📚 Next Plan", style="cyan"))
 
-        # Comment
-        console.print(Panel(comment, title="💬 Comment", style="green"))
+        # Comment - Enhanced agent-user dialogue display
+        self._display_agent_comment(comment)
 
         # Screenshot saving
         screenshot_saving = response.save_screenshot
