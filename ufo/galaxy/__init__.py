@@ -8,7 +8,7 @@ A comprehensive framework for DAG-based task orchestration and device management
 
 This package provides:
 - Constellation: DAG management and execution
-- Agents: Task orchestration agents (WeaverAgent)
+- Agents: Task orchestration agents (GalaxyWeaverAgent)
 - Session: Galaxy session management
 - Client: Device management and coordination
 """
@@ -30,7 +30,7 @@ from .constellation import (
 )
 
 # Agent components
-from .agents import WeaverAgent
+from .agents import GalaxyWeaverAgent
 
 # Session components
 from .session import GalaxySession
@@ -53,7 +53,7 @@ __all__ = [
     "create_and_orchestrate_from_llm",
     "create_simple_constellation",
     # Agents
-    "WeaverAgent",
+    "GalaxyWeaverAgent",
     # Session
     "GalaxySession",
     # Client

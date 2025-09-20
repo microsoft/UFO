@@ -11,16 +11,16 @@ orchestration system and the ConstellationDeviceManager device management infras
 import asyncio
 import logging
 import time
-from typing import Any, Dict, List, Optional, Callable, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from ufo.galaxy.client.device_manager import ConstellationDeviceManager
-from ..core.types import ProcessingContext
-from ..core.events import EventBus, get_event_bus
 
-from .enums import TaskStatus, DeviceType
-from .task_star import TaskStar
-from .task_constellation import TaskConstellation
+from ..core.events import EventBus, EventType, TaskEvent, get_event_bus
+from ..core.types import ProcessingContext
+from .enums import DeviceType, TaskStatus
 from .parser import LLMParser
+from .task_constellation import TaskConstellation
+from .task_star import TaskStar
 
 
 class TaskOrchestration:
@@ -40,16 +40,15 @@ class TaskOrchestration:
         """
         Initialize the TaskOrchestration.
 
-        Args:
-            device_manager: Instance of ConstellationDeviceManager
-            enable_logging: Whether to enable logging
-            event_bus: Event bus for publishing events
+        :param device_manager: Instance of ConstellationDeviceManager
+        :param enable_logging: Whether to enable logging
+        :param event_bus: Event bus for publishing events
         """
         self._device_manager = device_manager
         self._parser = LLMParser()
         self._logger = logging.getLogger(__name__) if enable_logging else None
 
-        # Import event bus if not provided
+        # Initialize event bus for publishing events
         if event_bus is None:
             from ..core.events import get_event_bus
 
@@ -57,11 +56,16 @@ class TaskOrchestration:
         else:
             self._event_bus = event_bus
 
+        # Track active constellations and their execution tasks
         self._active_constellations: Dict[str, TaskConstellation] = {}
         self._execution_tasks: Dict[str, asyncio.Task] = {}
 
     def set_device_manager(self, device_manager: ConstellationDeviceManager) -> None:
-        """Set the device manager for device communication."""
+        """
+        Set the device manager for device communication.
+
+        :param device_manager: The constellation device manager instance
+        """
         self._device_manager = device_manager
 
     async def create_constellation_from_llm(
@@ -72,12 +76,9 @@ class TaskOrchestration:
         """
         Create a TaskConstellation from LLM output.
 
-        Args:
-            llm_output: Raw LLM output describing tasks and dependencies
-            constellation_name: Optional name for the constellation
-
-        Returns:
-            TaskConstellation instance
+        :param llm_output: Raw LLM output describing tasks and dependencies
+        :param constellation_name: Optional name for the constellation
+        :return: TaskConstellation instance
         """
         if self._logger:
             self._logger.info(
@@ -100,14 +101,11 @@ class TaskOrchestration:
         device_assignments: Optional[Dict[str, str]] = None,
     ) -> Dict[str, Any]:
         """
-        直接编排DAG执行，使用事件驱动模式
+        Orchestrate DAG execution using event-driven pattern.
 
-        Args:
-            constellation: TaskConstellation to orchestrate
-            device_assignments: Optional manual device assignments
-
-        Returns:
-            Orchestration results and statistics
+        :param constellation: TaskConstellation to orchestrate
+        :param device_assignments: Optional manual device assignments
+        :return: Orchestration results and statistics
         """
         if not self._device_manager:
             raise ValueError(
@@ -122,44 +120,46 @@ class TaskOrchestration:
                 f"Starting orchestration of constellation {constellation_id}"
             )
 
-        # 验证DAG
+        # Validate DAG structure
         is_valid, errors = constellation.validate_dag()
         if not is_valid:
             raise ValueError(f"Invalid DAG: {errors}")
 
-        # 应用设备分配
+        # Apply device assignments if provided
         if device_assignments:
             self._apply_device_assignments(constellation, device_assignments)
 
-        # 直接执行DAG
+        # Execute DAG with event-driven approach
         results = {}
         constellation.start_execution()
 
         try:
+            # Main execution loop - continue until all tasks complete
             while not constellation.is_complete():
                 ready_tasks = constellation.get_ready_tasks()
 
-                # 为就绪任务创建执行task
+                # Create execution tasks for ready tasks
                 for task in ready_tasks:
                     if task.task_id not in self._execution_tasks:
+                        # Auto-assign device if not already assigned
                         if not task.target_device_id:
                             task.target_device_id = await self._auto_assign_device(task)
 
-                        # 创建任务执行future
+                        # Create task execution future
                         task_future = asyncio.create_task(
                             self._execute_task_with_events(task, constellation)
                         )
                         self._execution_tasks[task.task_id] = task_future
 
-                # 等待至少一个任务完成
+                # Wait for at least one task to complete
                 if self._execution_tasks:
                     done, pending = await asyncio.wait(
                         self._execution_tasks.values(),
                         return_when=asyncio.FIRST_COMPLETED,
-                        timeout=1.0,  # 定期检查新任务
+                        timeout=1.0,  # Periodically check for new tasks
                     )
 
-                    # 清理已完成的任务
+                    # Clean up completed tasks
                     completed_task_ids = []
                     for task_future in done:
                         for task_id, future in self._execution_tasks.items():
@@ -170,10 +170,10 @@ class TaskOrchestration:
                     for task_id in completed_task_ids:
                         del self._execution_tasks[task_id]
                 else:
-                    # 没有运行中的任务，等待一下
+                    # No running tasks, wait briefly
                     await asyncio.sleep(0.1)
 
-            # 等待所有剩余任务完成
+            # Wait for all remaining tasks to complete
             if self._execution_tasks:
                 await asyncio.gather(
                     *self._execution_tasks.values(), return_exceptions=True
@@ -200,7 +200,7 @@ class TaskOrchestration:
             raise
 
         finally:
-            # 清理
+            # Cleanup resources
             if constellation_id in self._active_constellations:
                 del self._active_constellations[constellation_id]
 
@@ -209,10 +209,15 @@ class TaskOrchestration:
         task: TaskStar,
         constellation: TaskConstellation,
     ) -> None:
-        """Execute a single task and publish events."""
+        """
+        Execute a single task and publish events.
+
+        :param task: The TaskStar to execute
+        :param constellation: The parent TaskConstellation
+        :return: Task execution result
+        """
         try:
             # Import event classes
-            from ..core.events import TaskEvent, EventType
 
             # Publish task started event
             start_event = TaskEvent(
@@ -258,7 +263,6 @@ class TaskOrchestration:
             )
 
             # Publish task failed event
-            from ..core.events import TaskEvent, EventType
 
             failed_event = TaskEvent(
                 event_type=EventType.TASK_FAILED,
@@ -290,12 +294,9 @@ class TaskOrchestration:
         """
         Execute a single task on a specific device.
 
-        Args:
-            task: TaskStar to execute
-            target_device_id: Optional target device ID
-
-        Returns:
-            Task execution result
+        :param task: TaskStar to execute
+        :param target_device_id: Optional target device ID
+        :return: Task execution result
         """
         if target_device_id:
             task.target_device_id = target_device_id
@@ -303,7 +304,7 @@ class TaskOrchestration:
         if not task.target_device_id:
             task.target_device_id = await self._auto_assign_device(task)
 
-        # 直接使用TaskStar.execute
+        # Execute task directly using TaskStar.execute
         result = await task.execute(self._device_manager)
         return result.result
 
@@ -315,12 +316,9 @@ class TaskOrchestration:
         """
         Modify an existing constellation using LLM.
 
-        Args:
-            constellation: Existing TaskConstellation
-            modification_request: LLM request for modifications
-
-        Returns:
-            Modified TaskConstellation
+        :param constellation: Existing TaskConstellation
+        :param modification_request: LLM request for modifications
+        :return: Modified TaskConstellation
         """
         # Generate prompt for LLM
         prompt = self._parser.generate_llm_prompt(constellation)
@@ -345,11 +343,8 @@ class TaskOrchestration:
         """
         Get detailed status of a constellation.
 
-        Args:
-            constellation: TaskConstellation to check
-
-        Returns:
-            Status information
+        :param constellation: TaskConstellation to check
+        :return: Status information
         """
         return {
             "constellation_id": constellation.constellation_id,
@@ -370,14 +365,13 @@ class TaskOrchestration:
         """
         Get list of available devices from device manager.
 
-        Returns:
-            List of available device information
+        :return: List of available device information
         """
         if not self._device_manager:
             return []
 
         try:
-            # 获取连接的设备
+            # Get connected devices
             connected_device_ids = self._device_manager.get_connected_devices()
             devices = []
 
@@ -412,9 +406,8 @@ class TaskOrchestration:
         """
         Automatically assign devices to tasks based on capabilities and preferences.
 
-        Args:
-            constellation: TaskConstellation to assign devices to
-            device_preferences: Optional device preferences by task ID
+        :param constellation: TaskConstellation to assign devices to
+        :param device_preferences: Optional device preferences by task ID
         """
         available_devices = await self.get_available_devices()
 
@@ -458,12 +451,9 @@ class TaskOrchestration:
         """
         Export constellation to various formats.
 
-        Args:
-            constellation: TaskConstellation to export
-            format: Export format ("json", "yaml", "llm")
-
-        Returns:
-            Exported string representation
+        :param constellation: TaskConstellation to export
+        :param format: Export format ("json", "yaml", "llm")
+        :return: Exported string representation
         """
         if format.lower() == "json":
             return constellation.to_json(indent=2)
@@ -484,12 +474,9 @@ class TaskOrchestration:
         """
         Import constellation from various formats.
 
-        Args:
-            data: String data to import
-            format: Import format ("json", "llm")
-
-        Returns:
-            TaskConstellation instance
+        :param data: String data to import
+        :param format: Import format ("json", "llm")
+        :return: TaskConstellation instance
         """
         if format.lower() == "json":
             return TaskConstellation.from_json(data)
@@ -499,26 +486,35 @@ class TaskOrchestration:
             raise ValueError(f"Unsupported import format: {format}")
 
     async def _auto_assign_device(self, task: TaskStar) -> str:
-        """自动为任务分配设备"""
+        """
+        Automatically assign a device to the task.
+
+        :param task: TaskStar that needs device assignment
+        :return: Device ID for the assigned device
+        """
         if not self._device_manager:
             raise ValueError("Device manager not available for auto-assignment")
 
-        # 获取连接的设备
+        # Get connected devices
         connected_devices = self._device_manager.get_connected_devices()
         if not connected_devices:
             raise ValueError("No connected devices available")
 
-        # 简单策略：选择第一个可用设备
-        # 更复杂的策略可以基于任务要求和设备能力
+        # Simple strategy: choose the first available device
+        # More complex strategies can be based on task requirements and device capabilities
         return connected_devices[0]
 
     async def _get_available_devices(self) -> Dict[str, Any]:
-        """Get available devices as a map for the executor."""
+        """
+        Get available devices as a map for the executor.
+
+        :return: Dictionary mapping device IDs to device information
+        """
         if not self._device_manager:
             return {}
 
         try:
-            # 获取连接的设备
+            # Get connected devices
             connected_device_ids = self._device_manager.get_connected_devices()
             device_map = {}
 
@@ -544,7 +540,12 @@ class TaskOrchestration:
         constellation: TaskConstellation,
         assignments: Dict[str, str],
     ) -> None:
-        """Apply manual device assignments to tasks."""
+        """
+        Apply manual device assignments to tasks.
+
+        :param constellation: TaskConstellation containing the tasks
+        :param assignments: Dictionary mapping task IDs to device IDs
+        """
         for task_id, device_id in assignments.items():
             task = constellation.get_task(task_id)
             if task:
@@ -560,13 +561,10 @@ async def create_and_orchestrate_from_llm(
     """
     Convenience function to create and orchestrate a constellation from LLM output.
 
-    Args:
-        llm_output: LLM output describing tasks
-        modular_client: ConstellationClient instance
-        constellation_name: Optional constellation name
-
-    Returns:
-        Orchestration results
+    :param llm_output: LLM output describing tasks
+    :param modular_client: ConstellationClient instance
+    :param constellation_name: Optional constellation name
+    :return: Orchestration results
     """
     orchestrator = TaskOrchestration(modular_client)
 
@@ -590,13 +588,10 @@ def create_simple_constellation(
     """
     Create a simple constellation from a list of task descriptions.
 
-    Args:
-        task_descriptions: List of task descriptions
-        constellation_name: Name for the constellation
-        sequential: Whether to make tasks sequential (True) or parallel (False)
-
-    Returns:
-        TaskConstellation instance
+    :param task_descriptions: List of task descriptions
+    :param constellation_name: Name for the constellation
+    :param sequential: Whether to make tasks sequential (True) or parallel (False)
+    :return: TaskConstellation instance
     """
     from .task_star_line import TaskStarLine
 

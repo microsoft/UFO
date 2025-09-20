@@ -51,8 +51,8 @@ from ufo.galaxy.client.config_loader import ConstellationConfig, DeviceConfig
 
 # Import Galaxy session and agent components
 from ufo.galaxy.session import GalaxySession
-from ufo.galaxy.agents import WeaverAgent
-from ufo.galaxy.agents.weaver_agent import MockWeaverAgent
+from ufo.galaxy.agents import GalaxyWeaverAgent
+from ufo.galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
 
 # Setup logging
 logging.basicConfig(
@@ -1095,14 +1095,14 @@ class E2EConstellationTester:
 
 class GalaxySessionTester:
     """
-    Comprehensive tester for GalaxySession and WeaverAgent integration.
+    Comprehensive tester for GalaxySession and GalaxyWeaverAgent integration.
     """
 
     def __init__(self):
         self.logger = logging.getLogger(__name__)
 
     async def test_galaxy_session_lifecycle(self) -> Dict[str, Any]:
-        """Test complete GalaxySession lifecycle with WeaverAgent."""
+        """Test complete GalaxySession lifecycle with GalaxyWeaverAgent."""
         self.logger.info("\n🌌 Testing GalaxySession Lifecycle...")
 
         results = {
@@ -1121,7 +1121,7 @@ class GalaxySessionTester:
             client = ConstellationClient(config)
 
             # Create mock weaver agent
-            weaver_agent = MockWeaverAgent("test_weaver")
+            weaver_agent = MockGalaxyWeaverAgent("test_weaver")
 
             # Create galaxy session
             session = GalaxySession(
@@ -1249,8 +1249,8 @@ class GalaxySessionTester:
         return results
 
     async def test_weaver_agent_scenarios(self) -> Dict[str, Any]:
-        """Test various WeaverAgent scenarios."""
-        self.logger.info("\n🤖 Testing WeaverAgent Scenarios...")
+        """Test various GalaxyWeaverAgent scenarios."""
+        self.logger.info("\n🤖 Testing GalaxyWeaverAgent Scenarios...")
 
         results = {
             "test_name": "weaver_agent_scenarios",
@@ -1263,7 +1263,7 @@ class GalaxySessionTester:
             # Scenario 1: Complex Request Processing
             self.logger.info("📝 Scenario 1: Complex request processing...")
 
-            agent = MockWeaverAgent("scenario_agent_1")
+            agent = MockGalaxyWeaverAgent("scenario_agent_1")
             complex_request = "Build a complex distributed system with microservices, load balancing, monitoring, and CI/CD pipeline"
 
             constellation = await agent.process_initial_request(complex_request)
@@ -1279,7 +1279,7 @@ class GalaxySessionTester:
             # Scenario 2: Parallel Processing Request
             self.logger.info("📝 Scenario 2: Parallel processing request...")
 
-            agent2 = MockWeaverAgent("scenario_agent_2")
+            agent2 = MockGalaxyWeaverAgent("scenario_agent_2")
             parallel_request = "Create a parallel data processing system with multiple data streams and aggregation"
 
             constellation2 = await agent2.process_initial_request(parallel_request)
@@ -1318,7 +1318,7 @@ class GalaxySessionTester:
             # Scenario 4: Concurrent Updates
             self.logger.info("📝 Scenario 4: Concurrent update handling...")
 
-            agent3 = MockWeaverAgent("scenario_agent_3")
+            agent3 = MockGalaxyWeaverAgent("scenario_agent_3")
             await agent3.process_initial_request("Simple linear workflow")
 
             # Simulate concurrent updates
@@ -1343,13 +1343,15 @@ class GalaxySessionTester:
             results["status"] = "success"
             results["total_execution_time"] = time.time() - results["start_time"]
 
-            self.logger.info("✅ WeaverAgent scenarios test completed successfully")
+            self.logger.info(
+                "✅ GalaxyWeaverAgent scenarios test completed successfully"
+            )
 
         except Exception as e:
             results["status"] = "failed"
             results["error"] = str(e)
             results["total_execution_time"] = time.time() - results["start_time"]
-            self.logger.error(f"❌ WeaverAgent scenarios test failed: {e}")
+            self.logger.error(f"❌ GalaxyWeaverAgent scenarios test failed: {e}")
             import traceback
 
             traceback.print_exc()
@@ -1357,7 +1359,7 @@ class GalaxySessionTester:
         return results
 
     async def test_session_agent_integration(self) -> Dict[str, Any]:
-        """Test integration between GalaxySession and WeaverAgent."""
+        """Test integration between GalaxySession and GalaxyWeaverAgent."""
         self.logger.info("\n🔗 Testing Session-Agent Integration...")
 
         results = {
@@ -1372,7 +1374,7 @@ class GalaxySessionTester:
             self.logger.info("📝 Integration Test 1: End-to-end request processing...")
 
             # Create session with custom agent
-            agent = MockWeaverAgent("integration_agent")
+            agent = MockGalaxyWeaverAgent("integration_agent")
             config = ConstellationConfig()
             client = ConstellationClient(config)
 
@@ -1482,7 +1484,7 @@ class GalaxySessionTester:
             )
 
             # Create a session with dynamic workflow
-            agent = MockWeaverAgent("dynamic_agent")
+            agent = MockGalaxyWeaverAgent("dynamic_agent")
             config = ConstellationConfig()
             client = ConstellationClient(config)
 

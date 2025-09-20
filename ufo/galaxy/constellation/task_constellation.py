@@ -8,27 +8,17 @@ This module provides comprehensive task DAG management with LLM integration,
 dynamic modification, and advanced dependency handling capabilities.
 """
 
-import asyncio
+
 import json
+import uuid
 from collections import defaultdict, deque
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
-import uuid
+from typing import Any, Dict, List, Optional, Tuple
 
-from ..core.interfaces import IConstellation, ITask, IDependency
-from .enums import TaskStatus, DependencyType, ConstellationState
-from .task_star import TaskStar
-from .task_star_line import TaskStarLine
+from ufo.contracts.contracts import TaskStatus
+from ufo.galaxy.constellation.enums import ConstellationState
 
-import asyncio
-import json
-from collections import defaultdict, deque
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
-import uuid
-
-from ..core.interfaces import IConstellation, ITask, IDependency
-from .enums import TaskStatus, DependencyType, ConstellationState
+from ..core.interfaces import IConstellation
 from .task_star import TaskStar
 from .task_star_line import TaskStarLine
 
@@ -189,14 +179,8 @@ class TaskConstellation(IConstellation):
         self._tasks[task.task_id] = task
         self._updated_at = datetime.now(timezone.utc)
 
-        # Display visualization if enabled
-        if self._enable_visualization and self._visualizer and len(self._tasks) <= 10:
-            try:
-                self._visualizer.display_constellation_overview(
-                    self, f"✚ Added Task: {task.name}"
-                )
-            except Exception:
-                pass  # Silently fail visualization errors
+        # Publish task added event for visualization (handled by observer)
+        # Note: Visualization logic moved to DAGVisualizationObserver
 
     def remove_task(self, task_id: str) -> None:
         """
@@ -273,29 +257,12 @@ class TaskConstellation(IConstellation):
 
         self._updated_at = datetime.now(timezone.utc)
 
-        # Display topology update if visualization enabled
-        if (
-            self._enable_visualization
-            and self._visualizer
-            and len(self._dependencies) <= 20
-        ):
-            try:
-                from_name = (
-                    from_task.name[:15] + "..."
-                    if len(from_task.name) > 15
-                    else from_task.name
-                )
-                to_name = (
-                    to_task.name[:15] + "..."
-                    if len(to_task.name) > 15
-                    else to_task.name
-                )
-                self._visualizer.display_dag_topology(self)
-                self._visualizer.console.print(
-                    f"[green]✅ Added dependency: {from_name} → {to_name}[/green]"
-                )
-            except Exception:
-                pass  # Silently fail visualization errors
+        # Log dependency addition (visualization handled by observer)
+        from_name = (
+            from_task.name[:15] + "..." if len(from_task.name) > 15 else from_task.name
+        )
+        to_name = to_task.name[:15] + "..." if len(to_task.name) > 15 else to_task.name
+        # Note: Visualization logic moved to DAGVisualizationObserver
 
     def remove_dependency(self, dependency_id: str) -> None:
         """
@@ -484,12 +451,7 @@ class TaskConstellation(IConstellation):
         self.update_state()
         self._updated_at = datetime.now(timezone.utc)
 
-        # Display execution progress if visualization enabled
-        if self._enable_visualization and self._visualizer:
-            try:
-                self._visualizer.display_execution_flow(self)
-            except Exception:
-                pass  # Silently fail visualization errors
+        # Note: Execution progress visualization moved to DAGVisualizationObserver
 
         return newly_ready
 

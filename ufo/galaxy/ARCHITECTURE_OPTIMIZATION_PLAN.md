@@ -31,7 +31,7 @@
 ### Areas for Improvement
 
 #### 1. Interface Design
-- **Issue**: Some interfaces are too broad (e.g., WeaverAgent)
+- **Issue**: Some interfaces are too broad (e.g., GalaxyWeaverAgent)
 - **Solution**: Split into smaller, focused interfaces (ISP principle)
 
 #### 2. Dependency Management

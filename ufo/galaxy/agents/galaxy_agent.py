@@ -2,10 +2,10 @@
 # Licensed under the MIT License.
 
 """
-WeaverAgent - DAG-based Task Orchestration Agent
+GalaxyWeaverAgent - DAG-based Task Orchestration Agent
 
-This module provides the WeaverAgent interface for managing DAG-based task orchestration
-in the Galaxy framework. The WeaverAgent is responsible for processing user requests,
+This module provides the GalaxyWeaverAgent interface for managing DAG-based task orchestration
+in the Galaxy framework. The GalaxyWeaverAgent is responsible for processing user requests,
 generating and updating DAGs, and managing task execution status.
 
 Optimized for type safety, maintainability, and follows SOLID principles.
@@ -33,11 +33,11 @@ from ..constellation import TaskConstellation, TaskStar, TaskStatus
 from ..constellation.enums import ConstellationState, TaskPriority
 
 
-class WeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
+class GalaxyWeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     """
-    WeaverAgent - A specialized agent for DAG-based task orchestration.
+    GalaxyWeaverAgent - A specialized agent for DAG-based task orchestration.
 
-    The WeaverAgent extends BasicAgent and implements multiple interfaces:
+    The GalaxyWeaverAgent extends BasicAgent and implements multiple interfaces:
     - IRequestProcessor: Process user requests to generate initial DAGs
     - IResultProcessor: Process task execution results and update DAGs
 
@@ -53,7 +53,7 @@ class WeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
     def __init__(self, name: str = "weaver_agent"):
         """
-        Initialize the WeaverAgent.
+        Initialize the GalaxyWeaverAgent.
 
         :param name: Agent name (default: "weaver_agent")
         """
@@ -233,18 +233,10 @@ class WeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
             self._current_constellation = updated_constellation
 
-            # Display updated constellation if significant changes occurred
-            try:
-                task_id = task_result.get("task_id", "unknown")
-                status = task_result.get("status", "unknown")
-                self._current_constellation.display_dag("execution", force=True)
-                self.logger.info(
-                    f"Updated constellation after task {task_id} -> {status}"
-                )
-            except Exception as e:
-                self.logger.debug(
-                    f"Visualization failed during constellation update: {e}"
-                )
+            # Log constellation update (visualization handled by observer)
+            task_id = task_result.get("task_id", "unknown")
+            status = task_result.get("status", "unknown")
+            self.logger.info(f"Updated constellation after task {task_id} -> {status}")
 
             return updated_constellation
 
@@ -318,7 +310,7 @@ class WeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     # Required BasicAgent abstract methods - basic implementations
     def get_prompter(self) -> str:
         """Get the prompter for the agent."""
-        return "WeaverAgent"
+        return "GalaxyWeaverAgent"
 
     @property
     def status_manager(self):
@@ -336,16 +328,16 @@ class WeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         pass
 
 
-class MockWeaverAgent(WeaverAgent):
+class MockGalaxyWeaverAgent(GalaxyWeaverAgent):
     """
-    Mock implementation of WeaverAgent for testing and demonstration.
+    Mock implementation of GalaxyWeaverAgent for testing and demonstration.
 
     This implementation provides basic DAG generation and update logic
     for testing the Galaxy framework without requiring actual LLM integration.
     """
 
     def __init__(self, name: str = "mock_weaver_agent"):
-        """Initialize the MockWeaverAgent."""
+        """Initialize the MockGalaxyWeaverAgent."""
         super().__init__(name)
 
     def message_constructor(self) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
@@ -358,7 +350,7 @@ class MockWeaverAgent(WeaverAgent):
         return [
             {
                 "role": "system",
-                "content": "You are a mock WeaverAgent for testing purposes.",
+                "content": "You are a mock GalaxyWeaverAgent for testing purposes.",
             },
             {
                 "role": "user",

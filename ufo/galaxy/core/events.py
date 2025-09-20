@@ -11,17 +11,22 @@ from dataclasses import dataclass
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 import logging
-import time
 
 
 class EventType(Enum):
     """Types of events in the Galaxy system."""
 
+    # Task-level events (micro-level state changes)
     TASK_STARTED = "task_started"
     TASK_COMPLETED = "task_completed"
     TASK_FAILED = "task_failed"
-    CONSTELLATION_UPDATED = "constellation_updated"
-    NEW_TASKS_READY = "new_tasks_ready"
+
+    # Constellation lifecycle events (macro-level state changes)
+    CONSTELLATION_STARTED = "constellation_started"
+    CONSTELLATION_COMPLETED = "constellation_completed"
+    CONSTELLATION_FAILED = "constellation_failed"
+
+    # Structure modification events (for dynamic DAG changes)
     DAG_MODIFIED = "dag_modified"
 
 
@@ -112,7 +117,7 @@ class EventBus(IEventPublisher):
 
     async def publish_event(self, event: Event) -> None:
         """Publish an event to all relevant subscribers."""
-        observers_to_notify = set()
+        observers_to_notify: Set[IEventObserver] = set()
 
         # Add observers subscribed to this specific event type
         if event.event_type in self._observers:

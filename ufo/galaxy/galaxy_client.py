@@ -38,7 +38,7 @@ from ufo.logging.setup import setup_logger
 from ufo.module.context import Context, ContextNames
 
 from .session.galaxy_session import GalaxySession
-from .agents.weaver_agent import WeaverAgent, MockWeaverAgent
+from .agents.galaxy_agent import GalaxyWeaverAgent, MockGalaxyWeaverAgent
 from .constellation import TaskOrchestration
 from .client.constellation_client import ConstellationClient
 from .core.types import ProcessingContext
@@ -91,7 +91,7 @@ class GalaxyClient:
         self.logger = logging.getLogger(__name__)
 
         # Initialize components
-        self._agent: Optional[WeaverAgent] = None
+        self._agent: Optional[GalaxyWeaverAgent] = None
         self._orchestration: Optional[TaskOrchestration] = None
         self._client: Optional[ConstellationClient] = None
         self._session: Optional[GalaxySession] = None
@@ -131,13 +131,17 @@ class GalaxyClient:
                 # Initialize agent
                 progress.update(task, description="[cyan]Setting up Agent...")
                 if self.use_mock_agent:
-                    self._agent = MockWeaverAgent("galaxy_mock_agent")
-                    self.console.print("[green]✅ Mock WeaverAgent initialized[/green]")
-                    self.logger.info("✅ Mock WeaverAgent initialized")
+                    self._agent = MockGalaxyWeaverAgent("galaxy_mock_agent")
+                    self.console.print(
+                        "[green]✅ Mock GalaxyWeaverAgent initialized[/green]"
+                    )
+                    self.logger.info("✅ Mock GalaxyWeaverAgent initialized")
                 else:
-                    self._agent = WeaverAgent("galaxy_weaver_agent")
-                    self.console.print("[green]✅ WeaverAgent initialized[/green]")
-                    self.logger.info("✅ WeaverAgent initialized")
+                    self._agent = GalaxyWeaverAgent("galaxy_weaver_agent")
+                    self.console.print(
+                        "[green]✅ GalaxyWeaverAgent initialized[/green]"
+                    )
+                    self.logger.info("✅ GalaxyWeaverAgent initialized")
 
                 # Initialize constellation client
                 progress.update(

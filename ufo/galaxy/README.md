@@ -9,7 +9,7 @@ UFO Galaxy Framework 是一个基于DAG的任务编排和设备管理框架，�
 - **Constellation执行引擎**: 高效的任务调度和执行引擎
 - **设备管理**: 智能设备分配和资源管理
 - **交互式CLI**: 支持命令行交互和批处理模式，带有Rich面板和表格
-- **WeaverAgent**: 智能代理用于任务分解和编排
+- **GalaxyWeaverAgent**: 智能代理用于任务分解和编排
 - **实时进度**: Rich进度条和状态指示器
 
 ## 🚀 快速开始
@@ -48,7 +48,7 @@ ufo/galaxy/
 ├── galaxy.py                # 快速入口脚本
 ├── USAGE.md                 # 详细使用指南
 ├── constellation/           # DAG编排和执行
-├── agents/                  # WeaverAgent实现
+├── agents/                  # GalaxyWeaverAgent实现
 ├── session/                 # Galaxy会话管理
 ├── client/                  # 设备和constellation客户端
 └── core/                    # 核心类型和接口
@@ -63,7 +63,7 @@ ufo/galaxy/
 - 交互模式
 - 结果输出
 
-### WeaverAgent
+### GalaxyWeaverAgent
 智能代理，负责:
 - 任务分解
 - DAG生成
