@@ -55,8 +55,9 @@ class ConstellationProgressObserver(IEventObserver):
                 "timestamp": event.timestamp,
             }
 
-            # Task events are sufficient for constellation state tracking
-            # No need to publish additional constellation events
+            self.agent.update_constellation_with_lock(
+                task_result=self.task_results[event.task_id], context=None
+            )
 
         except Exception as e:
             self.logger.error(f"Error handling task event: {e}")

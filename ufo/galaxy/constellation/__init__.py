@@ -20,7 +20,7 @@ from .task_star_line import TaskStarLine
 from .task_constellation import TaskConstellation
 from .parser import LLMParser
 from .orchestrator import (
-    TaskOrchestration,
+    TaskConstellationOrchestrator,
     create_and_orchestrate_from_llm,
     create_simple_constellation,
 )
@@ -35,7 +35,7 @@ __all__ = [
     "TaskStarLine",
     "TaskConstellation",
     "LLMParser",
-    "TaskOrchestration",
+    "TaskConstellationOrchestrator",
     "create_and_orchestrate_from_llm",
     "create_simple_constellation",
 ]

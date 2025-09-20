@@ -15,7 +15,7 @@ This package provides:
 
 # Core constellation components
 from .constellation import (
-    TaskOrchestration,
+    TaskConstellationOrchestrator,
     TaskConstellation,
     TaskStar,
     TaskStarLine,
@@ -40,7 +40,7 @@ from .galaxy_client import GalaxyClient
 
 __all__ = [
     # Constellation
-    "TaskOrchestration",
+    "TaskConstellationOrchestrator",
     "TaskConstellation",
     "TaskStar",
     "TaskStarLine",

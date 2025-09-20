@@ -29,7 +29,7 @@ class ConstellationClient:
 
     This client serves as a support component for the main GalaxyClient,
     handling device-level operations while complex DAG orchestration
-    is handled by the TaskOrchestration system.
+    is handled by the TaskConstellationOrchestrator system.
     """
 
     def __init__(

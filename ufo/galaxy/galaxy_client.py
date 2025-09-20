@@ -39,7 +39,7 @@ from ufo.module.context import Context, ContextNames
 
 from .session.galaxy_session import GalaxySession
 from .agents.galaxy_agent import GalaxyWeaverAgent, MockGalaxyWeaverAgent
-from .constellation import TaskOrchestration
+from .constellation import TaskConstellationOrchestrator
 from .client.constellation_client import ConstellationClient
 from .core.types import ProcessingContext
 
@@ -92,7 +92,7 @@ class GalaxyClient:
 
         # Initialize components
         self._agent: Optional[GalaxyWeaverAgent] = None
-        self._orchestration: Optional[TaskOrchestration] = None
+        self._orchestration: Optional[TaskConstellationOrchestrator] = None
         self._client: Optional[ConstellationClient] = None
         self._session: Optional[GalaxySession] = None
 
@@ -156,11 +156,13 @@ class GalaxyClient:
                 progress.update(
                     task, description="[cyan]Setting up Task Orchestration..."
                 )
-                self._orchestration = TaskOrchestration(
+                self._orchestration = TaskConstellationOrchestrator(
                     device_manager=self._client.device_manager, enable_logging=True
                 )
-                self.console.print("[green]✅ TaskOrchestration initialized[/green]")
-                self.logger.info("✅ TaskOrchestration initialized")
+                self.console.print(
+                    "[green]✅ TaskConstellationOrchestrator initialized[/green]"
+                )
+                self.logger.info("✅ TaskConstellationOrchestrator initialized")
 
                 # Initialize context
                 progress.update(task, description="[cyan]Setting up Session Context...")

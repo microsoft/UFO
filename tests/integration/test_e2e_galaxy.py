@@ -31,7 +31,7 @@ if project_root not in sys.path:
 
 # Import Galaxy constellation components
 from ufo.galaxy.constellation import (
-    TaskOrchestration,
+    TaskConstellationOrchestrator,
     TaskConstellation,
     TaskStar,
     TaskStarLine,
@@ -306,7 +306,7 @@ class E2EConstellationTester:
 
     def __init__(self):
         self.mock_client = MockGalaxyConstellationClient()
-        self.orchestrator = TaskOrchestration(
+        self.orchestrator = TaskConstellationOrchestrator(
             device_manager=self.mock_client.device_manager, enable_logging=True
         )
         self.test_results = {}

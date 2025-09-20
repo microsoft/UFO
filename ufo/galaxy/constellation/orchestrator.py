@@ -23,7 +23,7 @@ from .task_constellation import TaskConstellation
 from .task_star import TaskStar
 
 
-class TaskOrchestration:
+class TaskConstellationOrchestrator:
     """
     Simplified DAG orchestrator with direct device communication.
 
@@ -38,7 +38,7 @@ class TaskOrchestration:
         event_bus=None,
     ):
         """
-        Initialize the TaskOrchestration.
+        Initialize the TaskConstellationOrchestrator.
 
         :param device_manager: Instance of ConstellationDeviceManager
         :param enable_logging: Whether to enable logging
@@ -566,7 +566,7 @@ async def create_and_orchestrate_from_llm(
     :param constellation_name: Optional constellation name
     :return: Orchestration results
     """
-    orchestrator = TaskOrchestration(modular_client)
+    orchestrator = TaskConstellationOrchestrator(modular_client)
 
     # Create constellation from LLM
     constellation = await orchestrator.create_constellation_from_llm(

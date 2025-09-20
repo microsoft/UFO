@@ -45,7 +45,7 @@ class GalaxyWeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     - Process user requests to generate initial DAGs
     - Update DAGs based on task execution results
     - Manage task status and constellation state
-    - Coordinate with TaskOrchestration for execution
+    - Coordinate with TaskConstellationOrchestrator for execution
 
     This class follows the Interface Segregation Principle by implementing
     focused interfaces rather than one large interface.

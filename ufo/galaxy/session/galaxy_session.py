@@ -7,7 +7,7 @@ GalaxySession - DAG-based Task Orchestration Session
 This module provides the GalaxySession class that extends BaseSession to support
 DAG-based task orchestration using the Galaxy framework. The session manages
 the lifecycle of constellation execution and coordinates between GalaxyWeaverAgent
-and TaskOrchestration.
+and TaskConstellationOrchestrator.
 """
 
 import asyncio
@@ -19,7 +19,7 @@ from ufo.module.basic import BaseSession, BaseRound
 from ufo.module.context import Context, ContextNames
 
 from ..agents.galaxy_agent import GalaxyWeaverAgent
-from ..constellation import TaskOrchestration, TaskConstellation, TaskStatus
+from ..constellation import TaskConstellationOrchestrator, TaskConstellation, TaskStatus
 from ..constellation.enums import ConstellationState
 from ..client.constellation_client import ConstellationClient
 from ..core.events import get_event_bus, EventType, TaskEvent, ConstellationEvent
@@ -42,7 +42,7 @@ class GalaxyRound(BaseRound):
         context: Context,
         should_evaluate: bool,
         id: int,
-        orchestration: TaskOrchestration,
+        orchestration: TaskConstellationOrchestrator,
     ):
         """Initialize GalaxyRound with orchestration support."""
         super().__init__(request, agent, context, should_evaluate, id)
@@ -189,7 +189,7 @@ class GalaxySession(BaseSession):
     Galaxy Session for DAG-based task orchestration.
 
     This session extends BaseSession to support constellation-based task execution
-    using GalaxyWeaverAgent for DAG management and TaskOrchestration for execution.
+    using GalaxyWeaverAgent for DAG management and TaskConstellationOrchestrator for execution.
     """
 
     def __init__(
@@ -229,7 +229,7 @@ class GalaxySession(BaseSession):
 
         # Set up client and orchestration
         self._client = client
-        self._orchestration = TaskOrchestration(
+        self._orchestration = TaskConstellationOrchestrator(
             device_manager=client.device_manager, enable_logging=True
         )
 
@@ -403,7 +403,7 @@ class GalaxySession(BaseSession):
         return self._weaver_agent
 
     @property
-    def orchestration(self) -> TaskOrchestration:
+    def orchestration(self) -> TaskConstellationOrchestrator:
         """Get the task orchestration."""
         return self._orchestration
 
