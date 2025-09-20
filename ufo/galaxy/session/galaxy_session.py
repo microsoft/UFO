@@ -42,11 +42,11 @@ class GalaxyRound(BaseRound):
         context: Context,
         should_evaluate: bool,
         id: int,
-        orchestration: TaskConstellationOrchestrator,
+        orchestratior: TaskConstellationOrchestrator,
     ):
-        """Initialize GalaxyRound with orchestration support."""
+        """Initialize GalaxyRound with orchestratior support."""
         super().__init__(request, agent, context, should_evaluate, id)
-        self._orchestration = orchestration
+        self._orchestratior = orchestratior
         self._constellation: Optional[TaskConstellation] = None
         self._task_results: Dict[str, Any] = {}
         self._execution_start_time: Optional[float] = None
@@ -82,7 +82,7 @@ class GalaxyRound(BaseRound):
             self._event_bus.subscribe(observer)
 
     async def run(self) -> None:
-        """Run the round with constellation orchestration."""
+        """Run the round with constellation orchestratior."""
         try:
             self.logger.info(
                 f"Starting GalaxyRound {self._id} with request: {self._request[:100]}..."
@@ -101,11 +101,11 @@ class GalaxyRound(BaseRound):
                 f"Generated constellation with {self._constellation.task_count} tasks"
             )
 
-            # Step 2: Set up orchestration and start execution
+            # Step 2: Set up orchestratior and start execution
             self._execution_start_time = time.time()
 
             # Assign devices automatically
-            await self._orchestration.assign_devices_automatically(self._constellation)
+            await self._orchestratior.assign_devices_automatically(self._constellation)
 
             # Publish constellation started event (combines creation + execution start)
             constellation_start_event = ConstellationEvent(
@@ -122,9 +122,9 @@ class GalaxyRound(BaseRound):
             )
             await self._event_bus.publish_event(constellation_start_event)
 
-            # Execute constellation using event-driven orchestration
+            # Execute constellation using event-driven orchestratior
             # No need for progress_callback as observers handle events
-            result = await self._orchestration.orchestrate_constellation(
+            result = await self._orchestratior.orchestrate_constellation(
                 self._constellation
             )
 
@@ -171,7 +171,7 @@ class GalaxyRound(BaseRound):
         for task in ready_tasks:
             if task.task_id not in self._task_results:
                 self.logger.info(f"New ready task detected: {task.task_id}")
-                # The orchestration will pick up new ready tasks automatically
+                # The orchestratior will pick up new ready tasks automatically
 
     @property
     def constellation(self) -> Optional[TaskConstellation]:
@@ -186,7 +186,7 @@ class GalaxyRound(BaseRound):
 
 class GalaxySession(BaseSession):
     """
-    Galaxy Session for DAG-based task orchestration.
+    Galaxy Session for DAG-based task orchestratior.
 
     This session extends BaseSession to support constellation-based task execution
     using GalaxyWeaverAgent for DAG management and TaskConstellationOrchestrator for execution.
@@ -227,9 +227,9 @@ class GalaxySession(BaseSession):
         else:
             self._weaver_agent = agent
 
-        # Set up client and orchestration
+        # Set up client and orchestratior
         self._client = client
-        self._orchestration = TaskConstellationOrchestrator(
+        self._orchestratior = TaskConstellationOrchestrator(
             device_manager=client.device_manager, enable_logging=True
         )
 
@@ -242,7 +242,7 @@ class GalaxySession(BaseSession):
         self.logger = logging.getLogger(__name__)
 
     async def run(self) -> None:
-        """Run the Galaxy session with constellation orchestration."""
+        """Run the Galaxy session with constellation orchestratior."""
         try:
             self.logger.info(f"Starting GalaxySession: {self.task}")
             self._session_start_time = time.time()
@@ -342,7 +342,7 @@ class GalaxySession(BaseSession):
             context=self._context,
             should_evaluate=self._should_evaluate,
             id=round_id,
-            orchestration=self._orchestration,
+            orchestratior=self._orchestratior,
         )
 
         self.add_round(round_id, galaxy_round)
@@ -362,7 +362,7 @@ class GalaxySession(BaseSession):
     def set_client(self, client: ConstellationClient) -> None:
         """Set the modular constellation client."""
         self._client = client
-        self._orchestration.set_client(client)
+        self._orchestratior.set_client(client)
 
     def set_weaver_agent(self, agent: GalaxyWeaverAgent) -> None:
         """Set the weaver agent."""
@@ -403,9 +403,9 @@ class GalaxySession(BaseSession):
         return self._weaver_agent
 
     @property
-    def orchestration(self) -> TaskConstellationOrchestrator:
-        """Get the task orchestration."""
-        return self._orchestration
+    def orchestratior(self) -> TaskConstellationOrchestrator:
+        """Get the task orchestratior."""
+        return self._orchestratior
 
     @property
     def session_results(self) -> Dict[str, Any]:
