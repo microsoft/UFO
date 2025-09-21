@@ -15,7 +15,8 @@ from collections import defaultdict, deque
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
-from ufo.contracts.contracts import TaskStatus
+# Use the constellation-specific TaskStatus instead of contracts
+from .enums import TaskStatus, ConstellationState
 from ufo.galaxy.constellation.enums import ConstellationState
 
 from ..core.interfaces import IConstellation

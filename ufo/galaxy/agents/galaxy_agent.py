@@ -18,6 +18,7 @@ from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Union
 
 from ufo.agents.agent.basic import BasicAgent
+from ufo.galaxy.constellation.orchestrator import TaskConstellationOrchestrator
 from ufo.module.context import Context
 
 from ..core.interfaces import IRequestProcessor, IResultProcessor, IConstellationUpdater
@@ -62,6 +63,17 @@ class GalaxyWeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self._status: str = "ready"  # ready, processing, finished, failed
         self._update_lock: asyncio.Lock = asyncio.Lock()
         self.logger = logging.getLogger(__name__)
+
+        # Add state machine support
+        self.task_completion_queue: asyncio.Queue = asyncio.Queue()
+        self._orchestration_task: Optional[asyncio.Task] = None
+        self.current_request: str = ""
+        self.orchestrator: Optional[TaskConstellationOrchestrator] = None
+
+        # Initialize with start state
+        from .galaxy_agent_states import StartGalaxyAgentState
+
+        self.set_state(StartGalaxyAgentState())
 
     @property
     def current_constellation(self) -> Optional[TaskConstellation]:
@@ -315,9 +327,9 @@ class GalaxyWeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     @property
     def status_manager(self):
         """Get the status manager."""
-        return type(
-            "StatusManager", (), {"CONTINUE": type("Status", (), {"value": "continue"})}
-        )()
+        from .galaxy_agent_states import GalaxyAgentStateManager
+
+        return GalaxyAgentStateManager()
 
     async def context_provision(self) -> None:
         """Provide context for the agent."""

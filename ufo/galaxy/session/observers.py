@@ -42,7 +42,7 @@ class ConstellationProgressObserver(IEventObserver):
             await self._handle_constellation_event(event)
 
     async def _handle_task_event(self, event: TaskEvent) -> None:
-        """Handle task progress events."""
+        """Handle task progress events and queue them for agent processing."""
         try:
             self.logger.info(f"Task progress: {event.task_id} -> {event.status}")
 
@@ -55,18 +55,25 @@ class ConstellationProgressObserver(IEventObserver):
                 "timestamp": event.timestamp,
             }
 
-            self.agent.update_constellation_with_lock(
-                task_result=self.task_results[event.task_id], context=None
+            # Put event into agent's queue - this will wake up the Monitor state
+            await self.agent.task_completion_queue.put(event)
+
+            self.logger.info(
+                f"Queued task completion: {event.task_id} -> {event.status}"
             )
 
         except Exception as e:
             self.logger.error(f"Error handling task event: {e}")
 
     async def _handle_constellation_event(self, event: ConstellationEvent) -> None:
-        """Handle constellation update events."""
+        """Handle constellation update events - now handled by agent state machine."""
         try:
-            if event.event_type == EventType.NEW_TASKS_READY:
-                self.logger.info(f"New ready tasks detected: {event.new_ready_tasks}")
+            if (
+                event.event_type == EventType.DAG_MODIFIED
+            ):  # Changed from NEW_TASKS_READY to DAG_MODIFIED
+                self.logger.info(
+                    f"DAG modified, new ready tasks: {event.new_ready_tasks}"
+                )
                 # The orchestration will automatically pick up new ready tasks
 
         except Exception as e:
