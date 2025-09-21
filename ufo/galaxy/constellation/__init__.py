@@ -22,8 +22,12 @@ from .parser import LLMParser
 from .orchestrator import (
     TaskConstellationOrchestrator,
     create_and_orchestrate_from_llm,
-    create_simple_constellation,
+    create_simple_constellation_standalone,
 )
+from .constellation_parser import ConstellationParser
+from .constellation_manager import ConstellationManager
+from .constellation_serializer import ConstellationSerializer
+from .constellation_updater import ConstellationUpdater
 
 __all__ = [
     "TaskStatus",
@@ -37,5 +41,9 @@ __all__ = [
     "LLMParser",
     "TaskConstellationOrchestrator",
     "create_and_orchestrate_from_llm",
-    "create_simple_constellation",
+    "create_simple_constellation_standalone",
+    "ConstellationParser",
+    "ConstellationManager",
+    "ConstellationSerializer",
+    "ConstellationUpdater",
 ]

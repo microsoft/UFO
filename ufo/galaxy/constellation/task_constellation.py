@@ -159,10 +159,51 @@ class TaskConstellation(IConstellation):
         """Get a copy of the metadata."""
         return self._metadata.copy()
 
+    @property
+    def llm_source(self) -> Optional[str]:
+        """Get the LLM source information."""
+        return self._llm_source
+
     def update_metadata(self, metadata: Dict[str, Any]) -> None:
         """Update the constellation metadata."""
         self._metadata.update(metadata)
         self._updated_at = datetime.now(timezone.utc)
+
+    def _restore_from_data(self, data: Dict[str, Any]) -> None:
+        """
+        Internal method to restore constellation state from data.
+        Used by ConstellationSerializer for deserialization.
+        """
+        # Restore state
+        self._state = ConstellationState(
+            data.get("state", ConstellationState.CREATED.value)
+        )
+        self._metadata = data.get("metadata", {})
+        self._llm_source = data.get("llm_source")
+
+        # Restore timestamps
+        if data.get("created_at"):
+            self._created_at = datetime.fromisoformat(data["created_at"])
+        if data.get("updated_at"):
+            self._updated_at = datetime.fromisoformat(data["updated_at"])
+        if data.get("execution_start_time"):
+            self._execution_start_time = datetime.fromisoformat(
+                data["execution_start_time"]
+            )
+        if data.get("execution_end_time"):
+            self._execution_end_time = datetime.fromisoformat(
+                data["execution_end_time"]
+            )
+
+        # Restore tasks
+        for task_data in data.get("tasks", {}).values():
+            task = TaskStar.from_dict(task_data)
+            self._tasks[task.task_id] = task
+
+        # Restore dependencies
+        for dep_data in data.get("dependencies", {}).values():
+            dependency = TaskStarLine.from_dict(dep_data)
+            self._dependencies[dependency.line_id] = dependency
 
     def add_task(self, task: TaskStar) -> None:
         """
@@ -549,111 +590,7 @@ class TaskConstellation(IConstellation):
             "updated_at": self._updated_at.isoformat(),
         }
 
-    def to_dict(self) -> Dict[str, Any]:
-        """
-        Convert the constellation to a dictionary representation.
-
-        Returns:
-            Dictionary representation of the constellation
-        """
-        return {
-            "constellation_id": self._constellation_id,
-            "name": self._name,
-            "state": self._state.value,
-            "tasks": {task_id: task.to_dict() for task_id, task in self._tasks.items()},
-            "dependencies": {
-                dep_id: dep.to_dict() for dep_id, dep in self._dependencies.items()
-            },
-            "metadata": self._metadata,
-            "llm_source": self._llm_source,
-            "created_at": self._created_at.isoformat(),
-            "updated_at": self._updated_at.isoformat(),
-            "execution_start_time": (
-                self._execution_start_time.isoformat()
-                if self._execution_start_time
-                else None
-            ),
-            "execution_end_time": (
-                self._execution_end_time.isoformat()
-                if self._execution_end_time
-                else None
-            ),
-        }
-
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "TaskConstellation":
-        """
-        Create a TaskConstellation from a dictionary representation.
-
-        Args:
-            data: Dictionary representation
-
-        Returns:
-            TaskConstellation instance
-        """
-        constellation = cls(
-            constellation_id=data.get("constellation_id"),
-            name=data.get("name"),
-        )
-
-        # Restore state
-        constellation._state = ConstellationState(
-            data.get("state", ConstellationState.CREATED.value)
-        )
-        constellation._metadata = data.get("metadata", {})
-        constellation._llm_source = data.get("llm_source")
-
-        # Restore timestamps
-        if data.get("created_at"):
-            constellation._created_at = datetime.fromisoformat(data["created_at"])
-        if data.get("updated_at"):
-            constellation._updated_at = datetime.fromisoformat(data["updated_at"])
-        if data.get("execution_start_time"):
-            constellation._execution_start_time = datetime.fromisoformat(
-                data["execution_start_time"]
-            )
-        if data.get("execution_end_time"):
-            constellation._execution_end_time = datetime.fromisoformat(
-                data["execution_end_time"]
-            )
-
-        # Restore tasks
-        for task_data in data.get("tasks", {}).values():
-            task = TaskStar.from_dict(task_data)
-            constellation._tasks[task.task_id] = task
-
-        # Restore dependencies
-        for dep_data in data.get("dependencies", {}).values():
-            dependency = TaskStarLine.from_dict(dep_data)
-            constellation._dependencies[dependency.line_id] = dependency
-
-        return constellation
-
-    def to_json(self, indent: Optional[int] = 2) -> str:
-        """
-        Convert the constellation to JSON string.
-
-        Args:
-            indent: JSON indentation level
-
-        Returns:
-            JSON string representation
-        """
-        return json.dumps(self.to_dict(), indent=indent, default=str)
-
-    @classmethod
-    def from_json(cls, json_str: str) -> "TaskConstellation":
-        """
-        Create a TaskConstellation from JSON string.
-
-        Args:
-            json_str: JSON string representation
-
-        Returns:
-            TaskConstellation instance
-        """
-        data = json.loads(json_str)
-        return cls.from_dict(data)
+    # Serialization methods moved to ConstellationSerializer class
 
     def to_llm_string(self) -> str:
         """

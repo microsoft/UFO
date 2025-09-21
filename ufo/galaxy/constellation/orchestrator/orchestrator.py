@@ -2,33 +2,37 @@
 # Licensed under the MIT License.
 
 """
-Task Orchestration Bridge for TaskConstellation V2.
+Task Execution Orchestrator for TaskConstellation V2.
 
-This module provides the simplified orchestration bridge between the TaskConstellation
-orchestration system and the ConstellationDeviceManager device management infrastructure.
+This module provides the execution orchestrator for TaskConstellation,
+focused purely on execution flow control and coordination.
+Delegates constellation creation/parsing to ConstellationParser and
+device/state management to ConstellationManager.
 """
 
 import asyncio
 import logging
 import time
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from ufo.galaxy.client.device_manager import ConstellationDeviceManager
 
 from ..core.events import EventBus, EventType, TaskEvent, get_event_bus
 from ..core.types import ProcessingContext
+from .constellation_manager import ConstellationManager
+from .constellation_parser import ConstellationParser
 from .enums import DeviceType, TaskStatus
-from .parser import LLMParser
 from .task_constellation import TaskConstellation
 from .task_star import TaskStar
 
 
 class TaskConstellationOrchestrator:
     """
-    Simplified DAG orchestrator with direct device communication.
+    Task execution orchestrator focused on flow control and coordination.
 
-    This class provides direct interface for managing TaskConstellation execution
-    using the device management infrastructure without unnecessary intermediate layers.
+    This class provides execution orchestration for TaskConstellation using
+    event-driven patterns. It delegates constellation creation/parsing to
+    ConstellationParser and device/state management to ConstellationManager.
     """
 
     def __init__(
@@ -45,7 +49,10 @@ class TaskConstellationOrchestrator:
         :param event_bus: Event bus for publishing events
         """
         self._device_manager = device_manager
-        self._parser = LLMParser()
+        self._constellation_parser = ConstellationParser(enable_logging)
+        self._constellation_manager = ConstellationManager(
+            device_manager, enable_logging
+        )
         self._logger = logging.getLogger(__name__) if enable_logging else None
 
         # Initialize event bus for publishing events
@@ -56,8 +63,7 @@ class TaskConstellationOrchestrator:
         else:
             self._event_bus = event_bus
 
-        # Track active constellations and their execution tasks
-        self._active_constellations: Dict[str, TaskConstellation] = {}
+        # Track active execution tasks
         self._execution_tasks: Dict[str, asyncio.Task] = {}
 
     def set_device_manager(self, device_manager: ConstellationDeviceManager) -> None:
@@ -67,6 +73,7 @@ class TaskConstellationOrchestrator:
         :param device_manager: The constellation device manager instance
         """
         self._device_manager = device_manager
+        self._constellation_manager.set_device_manager(device_manager)
 
     async def create_constellation_from_llm(
         self,
@@ -74,7 +81,7 @@ class TaskConstellationOrchestrator:
         constellation_name: Optional[str] = None,
     ) -> TaskConstellation:
         """
-        Create a TaskConstellation from LLM output.
+        Create a TaskConstellation from LLM output using ConstellationParser.
 
         :param llm_output: Raw LLM output describing tasks and dependencies
         :param constellation_name: Optional name for the constellation
@@ -85,7 +92,12 @@ class TaskConstellationOrchestrator:
                 f"Creating constellation from LLM output: {constellation_name}"
             )
 
-        constellation = self._parser.parse_from_string(llm_output, constellation_name)
+        constellation = await self._constellation_parser.create_from_llm(
+            llm_output, constellation_name
+        )
+
+        # Register with constellation manager
+        self._constellation_manager.register_constellation(constellation)
 
         if self._logger:
             self._logger.info(
@@ -95,16 +107,67 @@ class TaskConstellationOrchestrator:
 
         return constellation
 
+    async def create_constellation_from_json(
+        self,
+        json_data: str,
+        constellation_name: Optional[str] = None,
+    ) -> TaskConstellation:
+        """
+        Create a TaskConstellation from JSON data using ConstellationParser.
+
+        :param json_data: JSON string representing constellation
+        :param constellation_name: Optional name for the constellation
+        :return: TaskConstellation instance
+        """
+        constellation = self._constellation_parser.create_from_json(
+            json_data, constellation_name
+        )
+
+        # Register with constellation manager
+        self._constellation_manager.register_constellation(constellation)
+
+        return constellation
+
+    async def create_simple_constellation(
+        self,
+        task_descriptions: List[str],
+        constellation_name: str = "Simple Constellation",
+        sequential: bool = True,
+    ) -> TaskConstellation:
+        """
+        Create a simple constellation using ConstellationParser.
+
+        :param task_descriptions: List of task descriptions
+        :param constellation_name: Name for the constellation
+        :param sequential: Whether to make tasks sequential (True) or parallel (False)
+        :return: TaskConstellation instance
+        """
+        if sequential:
+            constellation = self._constellation_parser.create_simple_sequential(
+                task_descriptions, constellation_name
+            )
+        else:
+            constellation = self._constellation_parser.create_simple_parallel(
+                task_descriptions, constellation_name
+            )
+
+        # Register with constellation manager
+        self._constellation_manager.register_constellation(constellation)
+
+        return constellation
+
     async def orchestrate_constellation(
         self,
         constellation: TaskConstellation,
         device_assignments: Optional[Dict[str, str]] = None,
+        assignment_strategy: str = "round_robin",
     ) -> Dict[str, Any]:
         """
         Orchestrate DAG execution using event-driven pattern.
 
         :param constellation: TaskConstellation to orchestrate
         :param device_assignments: Optional manual device assignments
+        :param assignment_strategy: Device assignment strategy for auto-assignment
         :return: Orchestration results and statistics
         """
         if not self._device_manager:
@@ -113,21 +176,40 @@ class TaskConstellationOrchestrator:
             )
 
         constellation_id = constellation.constellation_id
-        self._active_constellations[constellation_id] = constellation
 
         if self._logger:
             self._logger.info(
                 f"Starting orchestration of constellation {constellation_id}"
             )
 
-        # Validate DAG structure
-        is_valid, errors = constellation.validate_dag()
+        # Validate DAG structure using constellation parser
+        is_valid, errors = self._constellation_parser.validate_constellation(
+            constellation
+        )
         if not is_valid:
             raise ValueError(f"Invalid DAG: {errors}")
 
-        # Apply device assignments if provided
+        # Handle device assignments
         if device_assignments:
-            self._apply_device_assignments(constellation, device_assignments)
+            # Apply manual assignments
+            for task_id, device_id in device_assignments.items():
+                self._constellation_manager.reassign_task_device(
+                    constellation, task_id, device_id
+                )
+        else:
+            # Auto-assign devices using constellation manager
+            await self._constellation_manager.assign_devices_automatically(
+                constellation, assignment_strategy
+            )
+
+        # Validate all tasks have device assignments
+        is_valid, errors = (
+            self._constellation_manager.validate_constellation_assignments(
+                constellation
+            )
+        )
+        if not is_valid:
+            raise ValueError(f"Device assignment validation failed: {errors}")
 
         # Execute DAG with event-driven approach
         results = {}
@@ -141,10 +223,6 @@ class TaskConstellationOrchestrator:
                 # Create execution tasks for ready tasks
                 for task in ready_tasks:
                     if task.task_id not in self._execution_tasks:
-                        # Auto-assign device if not already assigned
-                        if not task.target_device_id:
-                            task.target_device_id = await self._auto_assign_device(task)
-
                         # Create task execution future
                         task_future = asyncio.create_task(
                             self._execute_task_with_events(task, constellation)
@@ -191,6 +269,7 @@ class TaskConstellationOrchestrator:
                 "results": results,
                 "status": "completed",
                 "total_tasks": len(results),
+                "statistics": constellation.get_statistics(),
             }
 
         except Exception as e:
@@ -200,9 +279,8 @@ class TaskConstellationOrchestrator:
             raise
 
         finally:
-            # Cleanup resources
-            if constellation_id in self._active_constellations:
-                del self._active_constellations[constellation_id]
+            # Unregister constellation from manager
+            self._constellation_manager.unregister_constellation(constellation_id)
 
     async def _execute_task_with_events(
         self,
@@ -280,8 +358,6 @@ class TaskConstellationOrchestrator:
 
             if self._logger:
                 self._logger.error(f"Task {task.task_id} failed: {e}")
-            if self._logger:
-                self._logger.error(f"Orchestration failed: {e}")
             raise
 
         return result
@@ -302,7 +378,13 @@ class TaskConstellationOrchestrator:
             task.target_device_id = target_device_id
 
         if not task.target_device_id:
-            task.target_device_id = await self._auto_assign_device(task)
+            # Use constellation manager to auto-assign device
+            available_devices = (
+                await self._constellation_manager.get_available_devices()
+            )
+            if not available_devices:
+                raise ValueError("No available devices for task execution")
+            task.target_device_id = available_devices[0]["device_id"]
 
         # Execute task directly using TaskStar.execute
         result = await task.execute(self._device_manager)
@@ -314,134 +396,54 @@ class TaskConstellationOrchestrator:
         modification_request: str,
     ) -> TaskConstellation:
         """
-        Modify an existing constellation using LLM.
+        Modify an existing constellation using LLM via ConstellationParser.
 
         :param constellation: Existing TaskConstellation
         :param modification_request: LLM request for modifications
         :return: Modified TaskConstellation
         """
-        # Generate prompt for LLM
-        prompt = self._parser.generate_llm_prompt(constellation)
-        full_prompt = f"{prompt}\n\nModification Request: {modification_request}"
-
-        # In a real implementation, you would call an LLM service here
-        # For now, we'll just log the prompt and return the original constellation
-        if self._logger:
-            self._logger.info(
-                f"Generated LLM prompt for modification: {full_prompt[:200]}..."
-            )
-
-        # Placeholder for LLM integration
-        # llm_response = await call_llm_service(full_prompt)
-        # return self._parser.update_constellation_from_llm(constellation, llm_response)
-
-        return constellation
+        return self._constellation_parser.update_from_llm(
+            constellation, modification_request
+        )
 
     async def get_constellation_status(
         self, constellation: TaskConstellation
     ) -> Dict[str, Any]:
         """
-        Get detailed status of a constellation.
+        Get detailed status of a constellation using ConstellationManager.
 
         :param constellation: TaskConstellation to check
         :return: Status information
         """
-        return {
-            "constellation_id": constellation.constellation_id,
-            "name": constellation.name,
-            "state": constellation.state.value,
-            "statistics": constellation.get_statistics(),
-            "ready_tasks": [task.task_id for task in constellation.get_ready_tasks()],
-            "running_tasks": [
-                task.task_id for task in constellation.get_running_tasks()
-            ],
-            "completed_tasks": [
-                task.task_id for task in constellation.get_completed_tasks()
-            ],
-            "failed_tasks": [task.task_id for task in constellation.get_failed_tasks()],
-        }
+        return await self._constellation_manager.get_constellation_status(
+            constellation.constellation_id
+        )
 
     async def get_available_devices(self) -> List[Dict[str, Any]]:
         """
-        Get list of available devices from device manager.
+        Get list of available devices from ConstellationManager.
 
         :return: List of available device information
         """
-        if not self._device_manager:
-            return []
-
-        try:
-            # Get connected devices
-            connected_device_ids = self._device_manager.get_connected_devices()
-            devices = []
-
-            for device_id in connected_device_ids:
-                device_info = self._device_manager.device_registry.get_device_info(
-                    device_id
-                )
-                if device_info:
-                    devices.append(
-                        {
-                            "device_id": device_id,
-                            "device_type": getattr(
-                                device_info, "device_type", "unknown"
-                            ),
-                            "capabilities": getattr(device_info, "capabilities", []),
-                            "status": "connected",
-                            "metadata": getattr(device_info, "metadata", {}),
-                        }
-                    )
-
-            return devices
-        except Exception as e:
-            if self._logger:
-                self._logger.error(f"Failed to get available devices: {e}")
-            return []
+        return await self._constellation_manager.get_available_devices()
 
     async def assign_devices_automatically(
         self,
         constellation: TaskConstellation,
+        strategy: str = "round_robin",
         device_preferences: Optional[Dict[str, str]] = None,
-    ) -> None:
+    ) -> Dict[str, str]:
         """
-        Automatically assign devices to tasks based on capabilities and preferences.
+        Automatically assign devices to tasks using ConstellationManager.
 
         :param constellation: TaskConstellation to assign devices to
+        :param strategy: Assignment strategy
         :param device_preferences: Optional device preferences by task ID
+        :return: Dictionary mapping task IDs to assigned device IDs
         """
-        available_devices = await self.get_available_devices()
-
-        if not available_devices:
-            if self._logger:
-                self._logger.warning("No available devices for task assignment")
-            return
-
-        # Simple assignment logic - can be enhanced
-        for task in constellation.tasks.values():
-            if task.target_device_id:
-                continue  # Already assigned
-
-            # Check preferences first
-            if device_preferences and task.task_id in device_preferences:
-                preferred_device = device_preferences[task.task_id]
-                if any(d["device_id"] == preferred_device for d in available_devices):
-                    task.target_device_id = preferred_device
-                    continue
-
-            # Auto-assign based on device type
-            if task.device_type:
-                matching_devices = [
-                    d
-                    for d in available_devices
-                    if d["device_type"] == task.device_type.value
-                ]
-                if matching_devices:
-                    task.target_device_id = matching_devices[0]["device_id"]
-                    continue
-
-            # Fall back to first available device
-            if available_devices:
-                task.target_device_id = available_devices[0]["device_id"]
+        return await self._constellation_manager.assign_devices_automatically(
+            constellation, strategy, device_preferences
+        )
 
     def export_constellation(
         self,
@@ -449,124 +451,120 @@ class TaskConstellationOrchestrator:
         format: str = "json",
     ) -> str:
         """
-        Export constellation to various formats.
+        Export constellation using ConstellationParser.
 
         :param constellation: TaskConstellation to export
         :param format: Export format ("json", "yaml", "llm")
         :return: Exported string representation
         """
-        if format.lower() == "json":
-            return constellation.to_json(indent=2)
-        elif format.lower() == "llm":
-            return constellation.to_llm_string()
-        elif format.lower() == "yaml":
-            # For YAML export, you would need PyYAML
-            # For now, return JSON with a note
-            return f"# YAML export not implemented, returning JSON:\n{constellation.to_json(indent=2)}"
-        else:
-            raise ValueError(f"Unsupported export format: {format}")
+        return self._constellation_parser.export_constellation(constellation, format)
 
-    def import_constellation(
+    async def import_constellation(
         self,
         data: str,
         format: str = "json",
     ) -> TaskConstellation:
         """
-        Import constellation from various formats.
+        Import constellation using ConstellationParser.
 
         :param data: String data to import
         :param format: Import format ("json", "llm")
         :return: TaskConstellation instance
         """
         if format.lower() == "json":
-            return TaskConstellation.from_json(data)
+            return self._constellation_parser.create_from_json(data)
         elif format.lower() == "llm":
-            return self._parser.parse_from_string(data)
+            return await self._constellation_parser.create_from_llm(data)
         else:
             raise ValueError(f"Unsupported import format: {format}")
 
-    async def _auto_assign_device(self, task: TaskStar) -> str:
-        """
-        Automatically assign a device to the task.
-
-        :param task: TaskStar that needs device assignment
-        :return: Device ID for the assigned device
-        """
-        if not self._device_manager:
-            raise ValueError("Device manager not available for auto-assignment")
-
-        # Get connected devices
-        connected_devices = self._device_manager.get_connected_devices()
-        if not connected_devices:
-            raise ValueError("No connected devices available")
-
-        # Simple strategy: choose the first available device
-        # More complex strategies can be based on task requirements and device capabilities
-        return connected_devices[0]
-
-    async def _get_available_devices(self) -> Dict[str, Any]:
-        """
-        Get available devices as a map for the executor.
-
-        :return: Dictionary mapping device IDs to device information
-        """
-        if not self._device_manager:
-            return {}
-
-        try:
-            # Get connected devices
-            connected_device_ids = self._device_manager.get_connected_devices()
-            device_map = {}
-
-            for device_id in connected_device_ids:
-                device_info = self._device_manager.device_registry.get_device_info(
-                    device_id
-                )
-                if device_info:
-                    device_map[device_id] = {
-                        "device_id": device_id,
-                        "device_type": getattr(device_info, "device_type", "unknown"),
-                        "capabilities": getattr(device_info, "capabilities", []),
-                        "status": "connected",
-                        "metadata": getattr(device_info, "metadata", {}),
-                    }
-
-            return device_map
-        except Exception:
-            return {}
-
-    def _apply_device_assignments(
+    def add_task_to_constellation(
         self,
         constellation: TaskConstellation,
-        assignments: Dict[str, str],
-    ) -> None:
+        task: TaskStar,
+        dependencies: Optional[List[str]] = None,
+    ) -> bool:
         """
-        Apply manual device assignments to tasks.
+        Add a task to constellation using ConstellationParser.
 
-        :param constellation: TaskConstellation containing the tasks
-        :param assignments: Dictionary mapping task IDs to device IDs
+        :param constellation: Target constellation
+        :param task: TaskStar to add
+        :param dependencies: Optional list of task IDs that this task depends on
+        :return: True if added successfully
         """
-        for task_id, device_id in assignments.items():
-            task = constellation.get_task(task_id)
-            if task:
-                task.target_device_id = device_id
+        return self._constellation_parser.add_task_to_constellation(
+            constellation, task, dependencies
+        )
+
+    def remove_task_from_constellation(
+        self,
+        constellation: TaskConstellation,
+        task_id: str,
+    ) -> bool:
+        """
+        Remove a task from constellation using ConstellationParser.
+
+        :param constellation: Target constellation
+        :param task_id: ID of task to remove
+        :return: True if removed successfully
+        """
+        return self._constellation_parser.remove_task_from_constellation(
+            constellation, task_id
+        )
+
+    def clone_constellation(
+        self,
+        constellation: TaskConstellation,
+        new_name: Optional[str] = None,
+    ) -> TaskConstellation:
+        """
+        Clone a constellation using ConstellationParser.
+
+        :param constellation: Constellation to clone
+        :param new_name: Optional new name for the cloned constellation
+        :return: Cloned TaskConstellation
+        """
+        cloned = self._constellation_parser.clone_constellation(constellation, new_name)
+
+        # Register cloned constellation with manager
+        self._constellation_manager.register_constellation(cloned)
+
+        return cloned
+
+    def merge_constellations(
+        self,
+        constellation1: TaskConstellation,
+        constellation2: TaskConstellation,
+        merged_name: Optional[str] = None,
+    ) -> TaskConstellation:
+        """
+        Merge two constellations using ConstellationParser.
+
+        :param constellation1: First constellation
+        :param constellation2: Second constellation
+        :param merged_name: Optional name for merged constellation
+        :return: Merged TaskConstellation
+        """
+        return self._constellation_parser.merge_constellations(
+            constellation1, constellation2, merged_name
+        )
 
 
 # Convenience functions for easier usage
 async def create_and_orchestrate_from_llm(
     llm_output: str,
-    modular_client: Any,
+    device_manager: ConstellationDeviceManager,
     constellation_name: Optional[str] = None,
 ) -> Dict[str, Any]:
     """
     Convenience function to create and orchestrate a constellation from LLM output.
 
     :param llm_output: LLM output describing tasks
-    :param modular_client: ConstellationClient instance
+    :param device_manager: ConstellationDeviceManager instance
     :param constellation_name: Optional constellation name
     :return: Orchestration results
     """
-    orchestrator = TaskConstellationOrchestrator(modular_client)
+    orchestrator = TaskConstellationOrchestrator(device_manager)
 
     # Create constellation from LLM
     constellation = await orchestrator.create_constellation_from_llm(
@@ -580,13 +578,13 @@ async def create_and_orchestrate_from_llm(
     return await orchestrator.orchestrate_constellation(constellation)
 
 
-def create_simple_constellation(
+def create_simple_constellation_standalone(
     task_descriptions: List[str],
     constellation_name: str = "Simple Constellation",
     sequential: bool = True,
 ) -> TaskConstellation:
     """
-    Create a simple constellation from a list of task descriptions.
+    Create a simple constellation from a list of task descriptions without orchestrator.
 
     :param task_descriptions: List of task descriptions
     :param constellation_name: Name for the constellation

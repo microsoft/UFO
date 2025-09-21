@@ -26,7 +26,9 @@ from .constellation import (
     DeviceType,
     TaskPriority,
     create_and_orchestrate_from_llm,
-    create_simple_constellation,
+    create_simple_constellation_standalone,
+    ConstellationParser,
+    ConstellationManager,
 )
 
 # Agent components
@@ -51,7 +53,9 @@ __all__ = [
     "DeviceType",
     "TaskPriority",
     "create_and_orchestrate_from_llm",
-    "create_simple_constellation",
+    "create_simple_constellation_standalone",
+    "ConstellationParser",
+    "ConstellationManager",
     # Agents
     "GalaxyWeaverAgent",
     # Session
