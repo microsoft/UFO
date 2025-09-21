@@ -13,7 +13,7 @@ import json
 import pytest
 from typing import Dict, List, Optional
 
-from ufo.galaxy.constellation.constellation_parser import ConstellationParser
+from ufo.galaxy.constellation.parsers.constellation_parser import ConstellationParser
 from ufo.galaxy.constellation.enums import TaskStatus, DeviceType
 from ufo.galaxy.constellation.task_constellation import TaskConstellation
 from ufo.galaxy.constellation.task_star import TaskStar

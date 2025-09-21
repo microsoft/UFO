@@ -7,9 +7,9 @@ import json
 from datetime import datetime
 from typing import Dict, Any, Optional
 
-from .task_constellation import TaskConstellation, ConstellationState
-from .task_star import TaskStar
-from .task_star_line import TaskStarLine
+from ..task_constellation import TaskConstellation, ConstellationState
+from ..task_star import TaskStar
+from ..task_star_line import TaskStarLine
 
 
 class ConstellationSerializer:
@@ -34,11 +34,10 @@ class ConstellationSerializer:
             "name": constellation.name,
             "state": constellation.state.value,
             "tasks": {
-                task_id: task.to_dict() 
-                for task_id, task in constellation.tasks.items()
+                task_id: task.to_dict() for task_id, task in constellation.tasks.items()
             },
             "dependencies": {
-                dep_id: dep.to_dict() 
+                dep_id: dep.to_dict()
                 for dep_id, dep in constellation.dependencies.items()
             },
             "metadata": constellation.metadata,
@@ -122,7 +121,9 @@ class ConstellationSerializer:
         normalized = data.copy()
 
         # Handle dependencies as list (convert to dict format)
-        if "dependencies" in normalized and isinstance(normalized["dependencies"], list):
+        if "dependencies" in normalized and isinstance(
+            normalized["dependencies"], list
+        ):
             deps_dict = {}
             for i, dep in enumerate(normalized["dependencies"]):
                 dep_id = f"dep_{i}"
@@ -132,7 +133,7 @@ class ConstellationSerializer:
                     "from_task_id": dep.get("predecessor_id"),
                     "to_task_id": dep.get("successor_id"),
                     "dependency_type": dep.get("dependency_type", "unconditional"),
-                    "condition_description": dep.get("condition_description")
+                    "condition_description": dep.get("condition_description"),
                 }
             normalized["dependencies"] = deps_dict
 

@@ -18,7 +18,9 @@ from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Union
 
 from ufo.agents.agent.basic import BasicAgent
-from ufo.galaxy.constellation.orchestrator import TaskConstellationOrchestrator
+from ufo.galaxy.constellation.orchestrator.orchestrator import (
+    TaskConstellationOrchestrator,
+)
 from ufo.module.context import Context
 
 from ..core.interfaces import IRequestProcessor, IResultProcessor, IConstellationUpdater

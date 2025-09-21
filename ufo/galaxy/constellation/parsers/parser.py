@@ -13,11 +13,11 @@ import re
 from typing import Any, Dict, List, Optional, Tuple
 import uuid
 
-from ..core.interfaces import IRequestProcessor
-from .enums import DependencyType, TaskPriority, DeviceType
-from .task_star import TaskStar
-from .task_star_line import TaskStarLine
-from .task_constellation import TaskConstellation
+from ...core.interfaces import IRequestProcessor
+from ..enums import DependencyType, TaskPriority, DeviceType
+from ..task_star import TaskStar
+from ..task_star_line import TaskStarLine
+from ..task_constellation import TaskConstellation
 
 
 class LLMParser:

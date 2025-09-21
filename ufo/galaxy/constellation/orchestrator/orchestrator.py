@@ -17,13 +17,13 @@ from typing import Any, Dict, List, Optional
 
 from ufo.galaxy.client.device_manager import ConstellationDeviceManager
 
-from ..core.events import EventBus, EventType, TaskEvent, get_event_bus
-from ..core.types import ProcessingContext
+from ...core.events import EventBus, EventType, TaskEvent, get_event_bus
+from ...core.types import ProcessingContext
 from .constellation_manager import ConstellationManager
-from .constellation_parser import ConstellationParser
-from .enums import DeviceType, TaskStatus
-from .task_constellation import TaskConstellation
-from .task_star import TaskStar
+from ..parsers.constellation_parser import ConstellationParser
+from ..enums import DeviceType, TaskStatus
+from ..task_constellation import TaskConstellation
+from ..task_star import TaskStar
 
 
 class TaskConstellationOrchestrator:
@@ -57,7 +57,7 @@ class TaskConstellationOrchestrator:
 
         # Initialize event bus for publishing events
         if event_bus is None:
-            from ..core.events import get_event_bus
+            from ...core.events import get_event_bus
 
             self._event_bus = get_event_bus()
         else:
@@ -591,7 +591,7 @@ def create_simple_constellation_standalone(
     :param sequential: Whether to make tasks sequential (True) or parallel (False)
     :return: TaskConstellation instance
     """
-    from .task_star_line import TaskStarLine
+    from ..task_star_line import TaskStarLine
 
     constellation = TaskConstellation(name=constellation_name)
 

@@ -6,9 +6,9 @@ Handles updating existing TaskConstellation objects with new tasks, dependencies
 import logging
 from typing import Any, Dict, List, Optional, Set
 
-from .task_constellation import TaskConstellation
-from .task_star import TaskStar, TaskPriority, TaskStatus
-from .task_star_line import TaskStarLine
+from ..task_constellation import TaskConstellation
+from ..task_star import TaskStar, TaskPriority, TaskStatus
+from ..task_star_line import TaskStarLine
 
 
 class ConstellationUpdater:

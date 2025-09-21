@@ -7,7 +7,9 @@ import json
 import pytest
 from datetime import datetime
 
-from ufo.galaxy.constellation.constellation_serializer import ConstellationSerializer
+from ufo.galaxy.constellation.parsers.constellation_serializer import (
+    ConstellationSerializer,
+)
 from ufo.galaxy.constellation.task_constellation import (
     TaskConstellation,
     ConstellationState,

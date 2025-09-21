@@ -7,9 +7,11 @@ import pytest
 import json
 from unittest.mock import Mock, patch
 
-from ufo.galaxy.constellation.constellation_parser import ConstellationParser
-from ufo.galaxy.constellation.constellation_serializer import ConstellationSerializer
-from ufo.galaxy.constellation.constellation_updater import ConstellationUpdater
+from ufo.galaxy.constellation.parsers.constellation_parser import ConstellationParser
+from ufo.galaxy.constellation.parsers.constellation_serializer import (
+    ConstellationSerializer,
+)
+from ufo.galaxy.constellation.parsers.constellation_updater import ConstellationUpdater
 from ufo.galaxy.constellation.task_constellation import TaskConstellation
 from ufo.galaxy.constellation.task_star import TaskStar, TaskPriority
 

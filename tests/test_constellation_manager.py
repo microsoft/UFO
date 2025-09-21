@@ -13,7 +13,9 @@ import pytest
 from typing import Dict, List, Optional
 from unittest.mock import AsyncMock, MagicMock, Mock
 
-from ufo.galaxy.constellation.constellation_manager import ConstellationManager
+from ufo.galaxy.constellation.orchestrator.constellation_manager import (
+    ConstellationManager,
+)
 from ufo.galaxy.constellation.enums import TaskStatus, DeviceType
 from ufo.galaxy.constellation.task_constellation import TaskConstellation
 from ufo.galaxy.constellation.task_star import TaskStar

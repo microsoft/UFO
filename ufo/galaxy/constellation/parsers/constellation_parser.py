@@ -14,10 +14,10 @@ import uuid
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Union
 
-from .enums import TaskPriority
-from .task_constellation import TaskConstellation
-from .task_star import TaskStar
-from .task_star_line import TaskStarLine
+from ..enums import TaskPriority
+from ..task_constellation import TaskConstellation
+from ..task_star import TaskStar
+from ..task_star_line import TaskStarLine
 from .constellation_serializer import ConstellationSerializer
 from .constellation_updater import ConstellationUpdater
 
