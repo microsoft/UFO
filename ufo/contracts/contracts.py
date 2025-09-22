@@ -216,3 +216,4 @@ class ClientMessage(BaseModel):
     request_id: Optional[str] = None
     prev_response_id: Optional[str] = None
     error: Optional[str] = None
+    metadata: Optional[Dict[str, Any]] = None

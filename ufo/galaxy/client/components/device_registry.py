@@ -30,7 +30,6 @@ class DeviceRegistry:
         self,
         device_id: str,
         server_url: str,
-        local_client_ids: List[str],
         capabilities: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         max_retries: int = 5,
@@ -40,7 +39,6 @@ class DeviceRegistry:
 
         :param device_id: Unique device identifier
         :param server_url: UFO WebSocket server URL
-        :param local_client_ids: List of local client IDs
         :param capabilities: Device capabilities
         :param metadata: Additional metadata
         :param max_retries: Maximum connection retry attempts
@@ -49,7 +47,6 @@ class DeviceRegistry:
         device_info = DeviceInfo(
             device_id=device_id,
             server_url=server_url,
-            local_client_ids=local_client_ids.copy(),
             capabilities=capabilities.copy() if capabilities else [],
             metadata=metadata.copy() if metadata else {},
             status=DeviceStatus.DISCONNECTED,
@@ -58,7 +55,7 @@ class DeviceRegistry:
 
         self._devices[device_id] = device_info
         self.logger.info(
-            f"📝 Registered device {device_id} with {len(local_client_ids)} local clients"
+            f"📝 Registered device {device_id} with capabilities: {capabilities}"
         )
         return device_info
 

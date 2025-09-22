@@ -11,9 +11,8 @@ from rich.console import Console
 from rich.panel import Panel
 from rich.text import Text
 from rich.align import Align
-from rich.columns import Columns
-from rich.box import HEAVY, ROUNDED, DOUBLE
-from rich.style import Style
+from rich.box import DOUBLE
+
 
 from ufo.agents.agent.app_agent import AppAgent, OpenAIOperatorAgent
 from ufo.agents.agent.basic import AgentRegistry, BasicAgent

@@ -74,7 +74,6 @@ class ConstellationDeviceManager:
         self,
         device_id: str,
         server_url: str,
-        local_client_ids: List[str],
         capabilities: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         auto_connect: bool = True,
@@ -84,7 +83,6 @@ class ConstellationDeviceManager:
 
         :param device_id: Unique device identifier
         :param server_url: UFO WebSocket server URL
-        :param local_client_ids: List of local client IDs on this device
         :param capabilities: Device capabilities list
         :param metadata: Additional device metadata
         :param auto_connect: Whether to automatically connect after registration
@@ -93,7 +91,7 @@ class ConstellationDeviceManager:
         try:
             # Register device in registry
             device_info = self.device_registry.register_device(
-                device_id, server_url, local_client_ids, capabilities, metadata
+                device_id, server_url, capabilities, metadata
             )
 
             if auto_connect:
@@ -300,6 +298,27 @@ class ConstellationDeviceManager:
     def get_all_devices(self) -> Dict[str, DeviceInfo]:
         """Get all registered devices"""
         return self.device_registry.get_all_devices()
+
+    def get_device_status(self, device_id: str) -> Dict[str, Any]:
+        """Get device status information"""
+        device_info = self.device_registry.get_device(device_id)
+        if not device_info:
+            return {"error": f"Device {device_id} not found"}
+
+        return {
+            "device_id": device_info.device_id,
+            "status": device_info.status.value,
+            "server_url": device_info.server_url,
+            "capabilities": device_info.capabilities,
+            "metadata": device_info.metadata,
+            "last_heartbeat": (
+                device_info.last_heartbeat.isoformat()
+                if device_info.last_heartbeat
+                else None
+            ),
+            "connection_attempts": device_info.connection_attempts,
+            "max_retries": device_info.max_retries,
+        }
 
     async def shutdown(self) -> None:
         """Shutdown the device manager and disconnect all devices"""

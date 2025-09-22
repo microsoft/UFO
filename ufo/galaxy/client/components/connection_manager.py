@@ -71,7 +71,13 @@ class WebSocketConnectionManager:
     async def _register_constellation_client(
         self, device_info: DeviceInfo, websocket: WebSocketClientProtocol
     ) -> bool:
-        """Register this constellation as a special client with the UFO server"""
+        """
+        Register this constellation as a special client with the UFO server.
+
+        :param device_info: Device information to register with
+        :param websocket: WebSocket connection to the server
+        :return: True if registration successful, False otherwise
+        """
         try:
             constellation_client_id = f"{self.constellation_id}@{device_info.device_id}"
 
@@ -84,7 +90,6 @@ class WebSocketConnectionManager:
                     "type": "constellation_client",
                     "constellation_id": self.constellation_id,
                     "device_id": device_info.device_id,
-                    "local_clients": device_info.local_client_ids,
                     "capabilities": [
                         "task_distribution",
                         "session_management",
@@ -99,13 +104,70 @@ class WebSocketConnectionManager:
                 f"📝 Sent registration for constellation client: {constellation_client_id}"
             )
 
-            # Brief pause to allow server processing
-            await asyncio.sleep(0.5)
-            return True
+            # Wait for server response to validate registration
+            registration_success = await self._validate_registration_response(
+                websocket, constellation_client_id, device_info.device_id
+            )
+
+            return registration_success
 
         except Exception as e:
             self.logger.error(
                 f"❌ Registration failed for device {device_info.device_id}: {e}"
+            )
+            return False
+
+    async def _validate_registration_response(
+        self,
+        websocket: WebSocketClientProtocol,
+        constellation_client_id: str,
+        device_id: str,
+    ) -> bool:
+        """
+        Validate the server's response to constellation client registration.
+
+        :param websocket: WebSocket connection to the server
+        :param constellation_client_id: The constellation client ID that was registered
+        :param device_id: The target device ID
+        :return: True if registration was accepted, False otherwise
+        """
+        try:
+            # Wait for server response with timeout
+            response_text = await asyncio.wait_for(websocket.recv(), timeout=10.0)
+
+            # Parse server response
+            from ufo.contracts.contracts import ServerMessage
+
+            response = ServerMessage.model_validate_json(response_text)
+
+            if response.status == TaskStatus.ERROR:
+                self.logger.error(
+                    f"❌ Server rejected constellation registration for {constellation_client_id}: {response.error}"
+                )
+                if "not connected" in (response.error or "").lower():
+                    self.logger.warning(
+                        f"⚠️ Target device '{device_id}' is not connected to the server"
+                    )
+                return False
+            elif response.status == TaskStatus.OK:
+                self.logger.info(
+                    f"✅ Server accepted constellation registration for {constellation_client_id}"
+                )
+                return True
+            else:
+                self.logger.warning(
+                    f"⚠️ Unexpected server response status: {response.status}"
+                )
+                return False
+
+        except asyncio.TimeoutError:
+            self.logger.error(
+                f"⏰ Timeout waiting for registration response for {constellation_client_id}"
+            )
+            return False
+        except Exception as e:
+            self.logger.error(
+                f"❌ Error validating registration response for {constellation_client_id}: {e}"
             )
             return False
 
@@ -117,7 +179,7 @@ class WebSocketConnectionManager:
                 return
 
             info_request = ClientMessage(
-                type=ClientMessageType.GET_INFO,
+                type=ClientMessageType.DEVICE_INFO,
                 client_id=self.constellation_id,
                 target_id=device_id,
                 task_name="device_info_request",
@@ -156,7 +218,6 @@ class WebSocketConnectionManager:
                 task_name=task_request.task_name,
                 request=task_request.request,
                 request_id=task_request.task_id,
-                metadata=task_request.metadata,
                 timestamp=datetime.now(timezone.utc).isoformat(),
                 status=TaskStatus.CONTINUE,
             )

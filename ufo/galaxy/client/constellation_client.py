@@ -91,11 +91,14 @@ class ConstellationClient:
         return results
 
     async def register_device_from_config(self, device_config: DeviceConfig) -> bool:
-        """Register a device from configuration."""
+        """
+        Register a device from configuration.
+        :param device_config: Device configuration
+        :return: True if registration was successful, False otherwise
+        """
         return await self.device_manager.register_device(
             device_id=device_config.device_id,
             server_url=device_config.server_url,
-            local_client_ids=device_config.local_client_ids,
             capabilities=device_config.capabilities,
             metadata=device_config.metadata,
             auto_connect=device_config.auto_connect,
@@ -105,7 +108,6 @@ class ConstellationClient:
         self,
         device_id: str,
         server_url: str,
-        local_client_ids: List[str],
         capabilities: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         auto_connect: bool = True,
@@ -114,7 +116,6 @@ class ConstellationClient:
         return await self.device_manager.register_device(
             device_id=device_id,
             server_url=server_url,
-            local_client_ids=local_client_ids,
             capabilities=capabilities,
             metadata=metadata,
             auto_connect=auto_connect,
@@ -213,7 +214,6 @@ class ConstellationClient:
         self,
         device_id: str,
         server_url: str,
-        local_client_ids: List[str],
         capabilities: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         auto_connect: bool = True,
@@ -224,7 +224,6 @@ class ConstellationClient:
         device_config = DeviceConfig(
             device_id=device_id,
             server_url=server_url,
-            local_client_ids=local_client_ids,
             capabilities=capabilities or [],
             metadata=metadata or {},
             auto_connect=auto_connect,
@@ -278,7 +277,6 @@ async def create_constellation_client(
             config.add_device(
                 device_id=device["device_id"],
                 server_url=device["server_url"],
-                local_client_ids=device["local_client_ids"],
                 capabilities=device.get("capabilities"),
                 metadata=device.get("metadata"),
             )

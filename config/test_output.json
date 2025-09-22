@@ -1,0 +1,45 @@
+{
+  "constellation_id": "test_constellation",
+  "heartbeat_interval": 30.0,
+  "reconnect_delay": 5.0,
+  "max_concurrent_tasks": 6,
+  "devices": [
+    {
+      "device_id": "dev_laptop",
+      "server_url": "ws://192.168.1.100:5000/ws",
+      "capabilities": [
+        "web_browsing",
+        "office_applications",
+        "file_management",
+        "text_editing"
+      ],
+      "metadata": {
+        "location": "home_office",
+        "os": "windows",
+        "performance": "medium",
+        "description": "Primary development laptop"
+      },
+      "auto_connect": true,
+      "max_retries": 5
+    },
+    {
+      "device_id": "dev_workstation",
+      "server_url": "ws://192.168.1.101:5000/ws",
+      "capabilities": [
+        "software_development",
+        "data_analysis",
+        "heavy_compute",
+        "machine_learning",
+        "database_operations"
+      ],
+      "metadata": {
+        "location": "lab",
+        "os": "windows",
+        "performance": "high",
+        "description": "High-performance workstation for complex tasks"
+      },
+      "auto_connect": true,
+      "max_retries": 3
+    }
+  ]
+}

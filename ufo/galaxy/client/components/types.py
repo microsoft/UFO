@@ -30,7 +30,6 @@ class DeviceInfo:
 
     device_id: str
     server_url: str
-    local_client_ids: List[str]
     capabilities: List[str] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
     status: DeviceStatus = DeviceStatus.DISCONNECTED

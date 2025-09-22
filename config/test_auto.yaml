@@ -1,0 +1,34 @@
+constellation_id: test_constellation
+devices:
+- auto_connect: true
+  capabilities:
+  - web_browsing
+  - office_applications
+  - file_management
+  - text_editing
+  device_id: dev_laptop
+  max_retries: 5
+  metadata:
+    description: Primary development laptop
+    location: home_office
+    os: windows
+    performance: medium
+  server_url: ws://192.168.1.100:5000/ws
+- auto_connect: true
+  capabilities:
+  - software_development
+  - data_analysis
+  - heavy_compute
+  - machine_learning
+  - database_operations
+  device_id: dev_workstation
+  max_retries: 3
+  metadata:
+    description: High-performance workstation for complex tasks
+    location: lab
+    os: windows
+    performance: high
+  server_url: ws://192.168.1.101:5000/ws
+heartbeat_interval: 30.0
+max_concurrent_tasks: 6
+reconnect_delay: 5.0
