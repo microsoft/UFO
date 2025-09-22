@@ -8,16 +8,13 @@ This module handles the management logic for TaskConstellation objects,
 including device assignment, status tracking, and execution coordination.
 """
 
-import asyncio
 import logging
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 from ufo.galaxy.client.device_manager import ConstellationDeviceManager
 
 from ..parsers.constellation_parser import ConstellationParser
-from ..enums import DeviceType, TaskStatus
 from ..task_constellation import TaskConstellation
-from ..task_star import TaskStar
 
 
 class ConstellationManager:

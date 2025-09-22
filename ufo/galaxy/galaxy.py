@@ -34,7 +34,12 @@ console = Console()
 
 
 async def run_demo():
-    """Run a demo showcasing Galaxy framework capabilities."""
+    """
+    Run a demo showcasing Galaxy framework capabilities.
+
+    Demonstrates the Galaxy Framework's DAG-based task orchestration
+    with predefined demo requests and mock execution.
+    """
     demo_panel = Panel(
         "[bold cyan]🌟 Galaxy Framework Demo[/bold cyan]\n\n"
         "[white]This demo showcases the Galaxy Framework's DAG-based task orchestration capabilities.[/white]\n"
@@ -79,7 +84,14 @@ async def run_demo():
 async def galaxy_quick_start(
     request: str, session_name: str = "galaxy_quick", use_mock: bool = True
 ):
-    """Quick start function for single requests."""
+    """
+    Quick start function for single requests.
+
+    :param request: User request text to process
+    :param session_name: Name for the Galaxy session (default: "galaxy_quick")
+    :param use_mock: Whether to use mock agent for testing (default: True)
+    :return: Processing result dictionary
+    """
     client = GalaxyClient(
         session_name=session_name, use_mock_agent=use_mock, log_level="INFO"
     )
@@ -94,7 +106,12 @@ async def galaxy_quick_start(
 async def galaxy_interactive(
     session_name: str = "galaxy_interactive", use_mock: bool = True
 ):
-    """Interactive function for command-line interaction."""
+    """
+    Interactive function for command-line interaction.
+
+    :param session_name: Name for the Galaxy session (default: "galaxy_interactive")
+    :param use_mock: Whether to use mock agent for testing (default: True)
+    """
     client = GalaxyClient(
         session_name=session_name, use_mock_agent=use_mock, log_level="INFO"
     )
@@ -105,7 +122,12 @@ async def galaxy_interactive(
 
 
 async def main():
-    """Main entry point."""
+    """
+    Main entry point.
+
+    Handles command-line arguments and routes to appropriate
+    execution mode (demo, interactive, or single request).
+    """
     if len(sys.argv) == 1:
         welcome_panel = Panel(
             "[bold cyan]🌌 Galaxy Framework Quick Start[/bold cyan]\n\n"

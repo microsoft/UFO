@@ -42,14 +42,14 @@ class TaskStarLine(IDependency):
         """
         Initialize a TaskStarLine.
 
-        Args:
-            from_task_id: ID of the prerequisite task
-            to_task_id: ID of the task that depends on from_task_id
-            dependency_type: Type of dependency relationship
-            condition_description: Natural language description of the condition
-            condition_evaluator: Function to evaluate if condition is met
-            line_id: Unique identifier for this dependency (auto-generated if None)
-            metadata: Additional metadata for the dependency
+        :param from_task_id: ID of the prerequisite task
+        :param to_task_id: ID of the task that depends on from_task_id
+        :param dependency_type: Type of dependency relationship
+        :param condition_description: Natural language description of the condition
+        :param condition_evaluator: Function to evaluate if condition is met
+        :param line_id: Unique identifier for this dependency (auto-generated if None)
+        :param metadata: Additional metadata for the dependency
+        :return: None
         """
         self._line_id: str = line_id or str(uuid.uuid4())
         self._from_task_id: str = from_task_id
@@ -157,8 +157,8 @@ class TaskStarLine(IDependency):
         """
         Update the metadata.
 
-        Args:
-            metadata: Metadata to merge
+        :param metadata: Metadata to merge
+        :return: None
         """
         self._metadata.update(metadata)
         self._updated_at = datetime.now(timezone.utc)
@@ -167,8 +167,8 @@ class TaskStarLine(IDependency):
         """
         Set the condition evaluator function.
 
-        Args:
-            evaluator: Function that takes task result and returns bool
+        :param evaluator: Function that takes task result and returns bool
+        :return: None
         """
         self._condition_evaluator = evaluator
         self._updated_at = datetime.now(timezone.utc)
@@ -180,11 +180,8 @@ class TaskStarLine(IDependency):
         """
         Evaluate if the dependency condition is satisfied.
 
-        Args:
-            prerequisite_result: Result from the prerequisite task
-
-        Returns:
-            True if condition is satisfied, False otherwise
+        :param prerequisite_result: Result from the prerequisite task
+        :return: True if condition is satisfied, False otherwise
         """
         self._last_evaluation_time = datetime.now(timezone.utc)
 
@@ -235,8 +232,7 @@ class TaskStarLine(IDependency):
         """
         Convert the TaskStarLine to a dictionary representation.
 
-        Returns:
-            Dictionary representation of the TaskStarLine
+        :return: Dictionary representation of the TaskStarLine
         """
         return {
             "line_id": self._line_id,
@@ -261,11 +257,8 @@ class TaskStarLine(IDependency):
         """
         Create a TaskStarLine from a dictionary representation.
 
-        Args:
-            data: Dictionary representation
-
-        Returns:
-            TaskStarLine instance
+        :param data: Dictionary representation
+        :return: TaskStarLine instance
         """
         line = cls(
             from_task_id=data["from_task_id"],
@@ -304,13 +297,10 @@ class TaskStarLine(IDependency):
         """
         Create an unconditional dependency.
 
-        Args:
-            from_task_id: Prerequisite task ID
-            to_task_id: Dependent task ID
-            description: Description of the dependency
-
-        Returns:
-            TaskStarLine instance
+        :param from_task_id: Prerequisite task ID
+        :param to_task_id: Dependent task ID
+        :param description: Description of the dependency
+        :return: TaskStarLine instance
         """
         return cls(
             from_task_id=from_task_id,
@@ -329,13 +319,10 @@ class TaskStarLine(IDependency):
         """
         Create a success-only dependency.
 
-        Args:
-            from_task_id: Prerequisite task ID
-            to_task_id: Dependent task ID
-            description: Description of the dependency
-
-        Returns:
-            TaskStarLine instance
+        :param from_task_id: Prerequisite task ID
+        :param to_task_id: Dependent task ID
+        :param description: Description of the dependency
+        :return: TaskStarLine instance
         """
         return cls(
             from_task_id=from_task_id,
@@ -355,14 +342,11 @@ class TaskStarLine(IDependency):
         """
         Create a conditional dependency.
 
-        Args:
-            from_task_id: Prerequisite task ID
-            to_task_id: Dependent task ID
-            condition_description: Natural language description of condition
-            condition_evaluator: Function to evaluate the condition
-
-        Returns:
-            TaskStarLine instance
+        :param from_task_id: Prerequisite task ID
+        :param to_task_id: Dependent task ID
+        :param condition_description: Natural language description of condition
+        :param condition_evaluator: Function to evaluate the condition
+        :return: TaskStarLine instance
         """
         return cls(
             from_task_id=from_task_id,

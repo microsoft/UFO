@@ -21,8 +21,7 @@ class ConstellationUpdater:
         """
         Initialize the constellation updater.
 
-        Args:
-            logger: Optional logger for debugging
+        :param logger: Optional logger for debugging
         """
         self._logger = logger
 
@@ -35,10 +34,9 @@ class ConstellationUpdater:
         """
         Update an existing constellation based on LLM output.
 
-        Args:
-            constellation: Existing constellation to update
-            llm_output: LLM response with update instructions
-            preserve_existing: Whether to preserve existing tasks/dependencies
+        :param constellation: Existing constellation to update
+        :param llm_output: LLM response with update instructions
+        :param preserve_existing: Whether to preserve existing tasks/dependencies
         """
         if self._logger:
             self._logger.info(
@@ -67,15 +65,12 @@ class ConstellationUpdater:
         priority: TaskPriority = TaskPriority.MEDIUM,
     ) -> List[TaskStar]:
         """
-        Add new tasks to an existing constellation.
+        Add new tasks to the constellation.
 
-        Args:
-            constellation: Target constellation
-            task_descriptions: List of task descriptions to add
-            priority: Priority for new tasks
-
-        Returns:
-            List of created TaskStar objects
+        :param constellation: Target constellation
+        :param task_descriptions: List of task descriptions to add
+        :param priority: Priority for new tasks
+        :return: List of created TaskStar objects
         """
         created_tasks = []
 
@@ -108,10 +103,9 @@ class ConstellationUpdater:
         """
         Remove tasks from a constellation.
 
-        Args:
-            constellation: Target constellation
-            task_ids: List of task IDs to remove
-            remove_dependencies: Whether to remove related dependencies
+        :param constellation: Target constellation
+        :param task_ids: List of task IDs to remove
+        :param remove_dependencies: Whether to remove related dependencies
         """
         removed_count = 0
 
@@ -138,13 +132,11 @@ class ConstellationUpdater:
         """
         Add new dependencies to a constellation.
 
-        Args:
-            constellation: Target constellation
-            dependencies: List of dependency specifications
-
-        Returns:
-            List of created TaskStarLine objects
+        :param constellation: Target constellation
+        :param dependencies: List of dependency specifications
+        :return: List of created TaskStarLine objects
         """
+
         created_deps = []
 
         for dep_spec in dependencies:
@@ -165,11 +157,9 @@ class ConstellationUpdater:
         """
         Parse LLM output for update instructions.
 
-        Args:
-            llm_output: Raw LLM response
+        :param llm_output: Raw LLM response
 
-        Returns:
-            List of parsed update instructions
+        :return: List of parsed update instructions
         """
         # This is a simplified parser - in practice, this would be more sophisticated
         instructions = []
@@ -217,10 +207,9 @@ class ConstellationUpdater:
         """
         Apply a single update instruction to the constellation.
 
-        Args:
-            constellation: Target constellation
-            instruction: Update instruction to apply
-            preserve_existing: Whether to preserve existing elements
+        :param constellation: Target constellation
+        :param instruction: Update instruction to apply
+        :param preserve_existing: Whether to preserve existing elements
         """
         instruction_type = instruction.get("type")
 
@@ -240,9 +229,8 @@ class ConstellationUpdater:
         """
         Remove all dependencies related to a specific task.
 
-        Args:
-            constellation: Target constellation
-            task_id: Task ID whose dependencies should be removed
+        :param constellation: Target constellation
+        :param task_id: Task ID whose dependencies should be removed
         """
         deps_to_remove = []
 
@@ -261,12 +249,10 @@ class ConstellationUpdater:
         """
         Create a TaskStarLine from a dependency specification.
 
-        Args:
-            constellation: Target constellation
-            dep_spec: Dependency specification
+        :param constellation: Target constellation
+        :param dep_spec: Dependency specification
 
-        Returns:
-            Created TaskStarLine or None if invalid
+        :return: Created TaskStarLine or None if invalid
         """
         from_task_id = dep_spec.get("from_task_id") or dep_spec.get("predecessor_id")
         to_task_id = dep_spec.get("to_task_id") or dep_spec.get("successor_id")
@@ -292,11 +278,9 @@ class ConstellationUpdater:
         """
         Parse a dependency specification string.
 
-        Args:
-            spec_string: String representation of dependency
+        :param spec_string: String representation of dependency
 
-        Returns:
-            Parsed dependency specification or None
+        :return: Parsed dependency specification or None
         """
         # Simple parser for "task1 -> task2" format
         if "->" in spec_string:

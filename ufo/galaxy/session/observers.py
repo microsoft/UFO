@@ -16,7 +16,7 @@ from ..core.events import (
     ConstellationEvent,
     IEventObserver,
 )
-from ..constellation import TaskConstellation, TaskStatus
+from ..constellation import TaskConstellation
 from ..agents.galaxy_agent import GalaxyWeaverAgent
 from ufo.module.context import Context
 
@@ -29,20 +29,34 @@ class ConstellationProgressObserver(IEventObserver):
     """
 
     def __init__(self, agent: GalaxyWeaverAgent, context: Context):
+        """
+        Initialize ConstellationProgressObserver.
+
+        :param agent: GalaxyWeaverAgent instance for task coordination
+        :param context: Context object for the session
+        """
         self.agent = agent
         self.context = context
         self.task_results: Dict[str, Dict[str, Any]] = {}
         self.logger = logging.getLogger(__name__)
 
     async def on_event(self, event: Event) -> None:
-        """Handle constellation-related events."""
+        """
+        Handle constellation-related events.
+
+        :param event: Event instance to handle (TaskEvent or ConstellationEvent)
+        """
         if isinstance(event, TaskEvent):
             await self._handle_task_event(event)
         elif isinstance(event, ConstellationEvent):
             await self._handle_constellation_event(event)
 
     async def _handle_task_event(self, event: TaskEvent) -> None:
-        """Handle task progress events and queue them for agent processing."""
+        """
+        Handle task progress events and queue them for agent processing.
+
+        :param event: TaskEvent instance containing task status updates
+        """
         try:
             self.logger.info(f"Task progress: {event.task_id} -> {event.status}")
 
@@ -66,7 +80,11 @@ class ConstellationProgressObserver(IEventObserver):
             self.logger.error(f"Error handling task event: {e}")
 
     async def _handle_constellation_event(self, event: ConstellationEvent) -> None:
-        """Handle constellation update events - now handled by agent state machine."""
+        """
+        Handle constellation update events - now handled by agent state machine.
+
+        :param event: ConstellationEvent instance containing constellation updates
+        """
         try:
             if (
                 event.event_type == EventType.DAG_MODIFIED
@@ -86,7 +104,12 @@ class SessionMetricsObserver(IEventObserver):
     """
 
     def __init__(self, session_id: str, logger: Optional[logging.Logger] = None):
-        self.session_id = session_id
+        """
+        Initialize SessionMetricsObserver.
+
+        :param session_id: Unique session identifier for metrics tracking
+        :param logger: Optional logger instance (creates default if None)
+        """
         self.metrics: Dict[str, Any] = {
             "session_id": session_id,
             "task_count": 0,
@@ -98,7 +121,11 @@ class SessionMetricsObserver(IEventObserver):
         self.logger = logger or logging.getLogger(__name__)
 
     async def on_event(self, event: Event) -> None:
-        """Collect metrics from events."""
+        """
+        Collect metrics from events.
+
+        :param event: Event instance for metrics collection
+        """
         if isinstance(event, TaskEvent):
             if event.event_type == EventType.TASK_STARTED:
                 self.metrics["task_count"] += 1
@@ -118,7 +145,11 @@ class SessionMetricsObserver(IEventObserver):
                 self.metrics["failed_tasks"] += 1
 
     def get_metrics(self) -> Dict[str, Any]:
-        """Get collected metrics."""
+        """
+        Get collected metrics.
+
+        :return: Dictionary containing session metrics and statistics
+        """
         return self.metrics.copy()
 
 
@@ -151,7 +182,12 @@ class DAGVisualizationObserver(IEventObserver):
             self._init_visualizer()
 
     def _init_visualizer(self) -> None:
-        """Initialize the DAG visualizer."""
+        """
+        Initialize the DAG visualizer.
+
+        Attempts to import and create DAGVisualizer instance,
+        disables visualization if import fails.
+        """
         try:
             from ..visualization.dag_visualizer import DAGVisualizer
 
@@ -161,7 +197,11 @@ class DAGVisualizationObserver(IEventObserver):
             self.enable_visualization = False
 
     async def on_event(self, event: Event) -> None:
-        """Handle visualization events."""
+        """
+        Handle visualization events.
+
+        :param event: Event instance for visualization processing
+        """
         if not self.enable_visualization or not self._visualizer:
             return
 
@@ -174,7 +214,11 @@ class DAGVisualizationObserver(IEventObserver):
             self.logger.debug(f"Visualization error: {e}")
 
     async def _handle_constellation_event(self, event: ConstellationEvent) -> None:
-        """Handle constellation-related visualization events."""
+        """
+        Handle constellation-related visualization events.
+
+        :param event: ConstellationEvent instance for visualization updates
+        """
         constellation_id = event.constellation_id
 
         # Get constellation from event data if available
@@ -197,7 +241,11 @@ class DAGVisualizationObserver(IEventObserver):
             await self._handle_constellation_failed(event, constellation)
 
     async def _handle_task_event(self, event: TaskEvent) -> None:
-        """Handle task-related visualization events."""
+        """
+        Handle task-related visualization events.
+
+        :param event: TaskEvent instance for task visualization updates
+        """
         constellation_id = event.data.get("constellation_id") if event.data else None
         if not constellation_id:
             return
@@ -218,7 +266,12 @@ class DAGVisualizationObserver(IEventObserver):
     async def _handle_constellation_started(
         self, event: ConstellationEvent, constellation: Optional[TaskConstellation]
     ) -> None:
-        """Handle constellation start visualization and auto-registration."""
+        """
+        Handle constellation start visualization and auto-registration.
+
+        :param event: ConstellationEvent instance
+        :param constellation: TaskConstellation instance if available
+        """
         if not constellation:
             return
 
@@ -236,7 +289,12 @@ class DAGVisualizationObserver(IEventObserver):
     async def _handle_constellation_completed(
         self, event: ConstellationEvent, constellation: Optional[TaskConstellation]
     ) -> None:
-        """Handle constellation completion visualization."""
+        """
+        Handle constellation completion visualization.
+
+        :param event: ConstellationEvent instance
+        :param constellation: TaskConstellation instance if available
+        """
         if not constellation:
             return
 
@@ -254,7 +312,12 @@ class DAGVisualizationObserver(IEventObserver):
     async def _handle_constellation_failed(
         self, event: ConstellationEvent, constellation: Optional[TaskConstellation]
     ) -> None:
-        """Handle constellation failure visualization."""
+        """
+        Handle constellation failure visualization.
+
+        :param event: ConstellationEvent instance
+        :param constellation: TaskConstellation instance if available
+        """
         if not constellation:
             return
 
@@ -269,7 +332,12 @@ class DAGVisualizationObserver(IEventObserver):
     async def _handle_task_started(
         self, event: TaskEvent, constellation: TaskConstellation
     ) -> None:
-        """Handle task started visualization."""
+        """
+        Handle task started visualization.
+
+        :param event: TaskEvent instance
+        :param constellation: TaskConstellation containing the task
+        """
         try:
             # Limit task-level visualization to avoid spam
             if constellation.task_count <= 10:
@@ -280,7 +348,12 @@ class DAGVisualizationObserver(IEventObserver):
     async def _handle_task_completed(
         self, event: TaskEvent, constellation: TaskConstellation
     ) -> None:
-        """Handle task completion visualization."""
+        """
+        Handle task completion visualization.
+
+        :param event: TaskEvent instance
+        :param constellation: TaskConstellation containing the task
+        """
         try:
             # Show execution progress for smaller constellations
             if constellation.task_count <= 10:
@@ -291,7 +364,12 @@ class DAGVisualizationObserver(IEventObserver):
     async def _handle_task_failed(
         self, event: TaskEvent, constellation: TaskConstellation
     ) -> None:
-        """Handle task failure visualization."""
+        """
+        Handle task failure visualization.
+
+        :param event: TaskEvent instance
+        :param constellation: TaskConstellation containing the task
+        """
         try:
             # Always show failure status regardless of constellation size
             self._visualizer.display_execution_flow(constellation)

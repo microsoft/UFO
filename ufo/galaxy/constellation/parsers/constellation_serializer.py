@@ -23,11 +23,8 @@ class ConstellationSerializer:
         """
         Convert a constellation to a dictionary representation.
 
-        Args:
-            constellation: TaskConstellation to serialize
-
-        Returns:
-            Dictionary representation of the constellation
+        :param constellation: TaskConstellation to serialize
+        :return: Dictionary representation of the constellation
         """
         return {
             "constellation_id": constellation.constellation_id,
@@ -61,11 +58,8 @@ class ConstellationSerializer:
         """
         Create a TaskConstellation from a dictionary representation.
 
-        Args:
-            data: Dictionary representation
-
-        Returns:
-            TaskConstellation instance
+        :param data: Dictionary representation
+        :return: TaskConstellation instance
         """
         constellation = TaskConstellation(
             constellation_id=data.get("constellation_id"),
@@ -82,12 +76,9 @@ class ConstellationSerializer:
         """
         Convert a constellation to JSON string.
 
-        Args:
-            constellation: TaskConstellation to serialize
-            indent: JSON indentation level
-
-        Returns:
-            JSON string representation
+        :param constellation: TaskConstellation to serialize
+        :param indent: JSON indentation level
+        :return: JSON string representation
         """
         data = ConstellationSerializer.to_dict(constellation)
         return json.dumps(data, indent=indent, default=str)
@@ -97,11 +88,8 @@ class ConstellationSerializer:
         """
         Create a TaskConstellation from JSON string.
 
-        Args:
-            json_str: JSON string representation
-
-        Returns:
-            TaskConstellation instance
+        :param json_str: JSON string representation
+        :return: TaskConstellation instance
         """
         data = json.loads(json_str)
         return ConstellationSerializer.from_dict(data)
@@ -112,11 +100,8 @@ class ConstellationSerializer:
         Normalize JSON data to ensure consistent format.
         Handles various input formats and converts them to standard format.
 
-        Args:
-            data: Raw dictionary data
-
-        Returns:
-            Normalized dictionary data
+        :param data: Raw dictionary data
+        :return: Normalized dictionary data
         """
         normalized = data.copy()
 

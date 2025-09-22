@@ -13,16 +13,16 @@ and TaskConstellationOrchestrator.
 import asyncio
 import logging
 import time
-from typing import Any, Dict, List, Optional, Callable
+from typing import Any, Dict, Optional
 
 from ufo.module.basic import BaseSession, BaseRound
-from ufo.module.context import Context, ContextNames
+from ufo.module.context import Context
 
 from ..agents.galaxy_agent import GalaxyWeaverAgent
-from ..constellation import TaskConstellationOrchestrator, TaskConstellation, TaskStatus
+from ..constellation import TaskConstellationOrchestrator, TaskConstellation
 from ..constellation.enums import ConstellationState
 from ..client.constellation_client import ConstellationClient
-from ..core.events import get_event_bus, EventType, TaskEvent, ConstellationEvent
+from ..core.events import get_event_bus
 from .observers import (
     ConstellationProgressObserver,
     SessionMetricsObserver,
@@ -44,7 +44,16 @@ class GalaxyRound(BaseRound):
         id: int,
         orchestrator: TaskConstellationOrchestrator,
     ):
-        """Initialize GalaxyRound with orchestrator support."""
+        """
+        Initialize GalaxyRound with orchestrator support.
+
+        :param request: User request string
+        :param agent: GalaxyWeaverAgent instance
+        :param context: Context object for the round
+        :param should_evaluate: Whether to evaluate the round
+        :param id: Round identifier
+        :param orchestrator: TaskConstellationOrchestrator for task execution
+        """
         super().__init__(request, agent, context, should_evaluate, id)
         self._orchestrator = orchestrator
         self._constellation: Optional[TaskConstellation] = None
@@ -60,7 +69,12 @@ class GalaxyRound(BaseRound):
         self._setup_observers()
 
     def _setup_observers(self) -> None:
-        """Set up event observers for this round."""
+        """
+        Set up event observers for this round.
+
+        Initializes progress, metrics, and visualization observers
+        and subscribes them to the event bus.
+        """
         # Progress observer for task updates
         progress_observer = ConstellationProgressObserver(
             agent=self._agent, context=self._context
@@ -82,7 +96,12 @@ class GalaxyRound(BaseRound):
             self._event_bus.subscribe(observer)
 
     async def run(self) -> None:
-        """Run the round using agent state machine."""
+        """
+        Run the round using agent state machine.
+
+        Executes the agent state machine until completion,
+        managing state transitions and error handling.
+        """
         try:
             self.logger.info(
                 f"Starting GalaxyRound {self._id} with request: {self._request[:100]}..."
@@ -128,7 +147,12 @@ class GalaxyRound(BaseRound):
             traceback.print_exc()
 
     async def _check_for_new_tasks(self) -> None:
-        """Check if new tasks were added and schedule them for execution."""
+        """
+        Check if new tasks were added and schedule them for execution.
+
+        Identifies ready tasks that haven't been executed yet
+        and logs them for orchestrator pickup.
+        """
         if not self._constellation:
             return
 
@@ -142,12 +166,20 @@ class GalaxyRound(BaseRound):
 
     @property
     def constellation(self) -> Optional[TaskConstellation]:
-        """Get the current constellation."""
+        """
+        Get the current constellation.
+
+        :return: TaskConstellation instance if available, None otherwise
+        """
         return self._constellation
 
     @property
     def task_results(self) -> Dict[str, Any]:
-        """Get all task results."""
+        """
+        Get all task results.
+
+        :return: Dictionary mapping task IDs to their results
+        """
         return self._task_results
 
 
@@ -171,13 +203,12 @@ class GalaxySession(BaseSession):
         """
         Initialize GalaxySession.
 
-        Args:
-            task: Task name/description
-            should_evaluate: Whether to evaluate the session
-            id: Session ID
-            agent: GalaxyWeaverAgent instance (creates MockGalaxyWeaverAgent if None)
-            client: ConstellationClient for device management
-            initial_request: Initial user request
+        :param task: Task name/description
+        :param should_evaluate: Whether to evaluate the session
+        :param id: Session ID
+        :param agent: GalaxyWeaverAgent instance (creates MockGalaxyWeaverAgent if None)
+        :param client: ConstellationClient for device management
+        :param initial_request: Initial user request
         """
         super().__init__(task, should_evaluate, id)
 
@@ -209,7 +240,12 @@ class GalaxySession(BaseSession):
         self.logger = logging.getLogger(__name__)
 
     async def run(self) -> None:
-        """Run the Galaxy session with constellation orchestrator."""
+        """
+        Run the Galaxy session with constellation orchestrator.
+
+        Executes the session using the base session logic with
+        constellation support and tracks performance metrics.
+        """
         try:
             self.logger.info(f"Starting GalaxySession: {self.task}")
             self._session_start_time = time.time()
@@ -239,7 +275,11 @@ class GalaxySession(BaseSession):
     def is_error(self) -> bool:
         """
         Check if the session is in error state.
-        Override base implementation to handle Galaxy-specific logic.
+
+        Override base implementation to handle Galaxy-specific logic
+        by checking weaver agent status and constellation state.
+
+        :return: True if session is in error state, False otherwise
         """
         # Check if weaver agent indicates error
         if self._weaver_agent and hasattr(self._weaver_agent, "_status"):
@@ -267,7 +307,11 @@ class GalaxySession(BaseSession):
     def is_finished(self) -> bool:
         """
         Check if the session is finished.
-        Override base implementation to handle Galaxy-specific logic.
+
+        Override base implementation to handle Galaxy-specific logic
+        by checking completion conditions, error states, and constellation status.
+
+        :return: True if session is finished, False otherwise
         """
         # Check standard completion conditions
         if (
@@ -296,7 +340,11 @@ class GalaxySession(BaseSession):
         return False
 
     def create_new_round(self) -> Optional[GalaxyRound]:
-        """Create a new GalaxyRound."""
+        """
+        Create a new GalaxyRound.
+
+        :return: GalaxyRound instance if request is available, None otherwise
+        """
         request = self.next_request()
         if not request:
             return None
@@ -316,27 +364,47 @@ class GalaxySession(BaseSession):
         return galaxy_round
 
     def next_request(self) -> str:
-        """Get the next request for the session."""
+        """
+        Get the next request for the session.
+
+        :return: Request string for the next round, empty string if no more requests
+        """
         # For now, only process one request per session
         if len(self._rounds) == 0:
             return self._initial_request or self.task
         return ""  # No more requests
 
     def request_to_evaluate(self) -> str:
-        """Get the request for evaluation."""
+        """
+        Get the request for evaluation.
+
+        :return: Request string to be used for evaluation
+        """
         return self._initial_request or self.task
 
     def set_client(self, client: ConstellationClient) -> None:
-        """Set the modular constellation client."""
+        """
+        Set the modular constellation client.
+
+        :param client: ConstellationClient instance for device management
+        """
         self._client = client
         self._orchestrator.set_client(client)
 
     def set_weaver_agent(self, agent: GalaxyWeaverAgent) -> None:
-        """Set the weaver agent."""
+        """
+        Set the weaver agent.
+
+        :param agent: GalaxyWeaverAgent instance for task orchestration
+        """
         self._weaver_agent = agent
 
     async def get_session_status(self) -> Dict[str, Any]:
-        """Get comprehensive session status."""
+        """
+        Get comprehensive session status.
+
+        :return: Dictionary containing session status information
+        """
         status = {
             "session_id": self._id,
             "task": self.task,
@@ -353,7 +421,11 @@ class GalaxySession(BaseSession):
         return status
 
     async def force_finish(self, reason: str = "Manual termination") -> None:
-        """Force finish the session."""
+        """
+        Force finish the session.
+
+        :param reason: Reason for forcing the finish (default: "Manual termination")
+        """
         self.logger.info(f"Force finishing session: {reason}")
         self._finish = True
         self._weaver_agent.agent_status = "finished"
@@ -361,22 +433,38 @@ class GalaxySession(BaseSession):
 
     @property
     def current_constellation(self) -> Optional[TaskConstellation]:
-        """Get the current constellation."""
+        """
+        Get the current constellation.
+
+        :return: TaskConstellation instance from weaver agent if available
+        """
         return self._weaver_agent.current_constellation
 
     @property
     def weaver_agent(self) -> GalaxyWeaverAgent:
-        """Get the weaver agent."""
+        """
+        Get the weaver agent.
+
+        :return: GalaxyWeaverAgent instance for task orchestration
+        """
         return self._weaver_agent
 
     @property
     def orchestrator(self) -> TaskConstellationOrchestrator:
-        """Get the task orchestrator."""
+        """
+        Get the task orchestrator.
+
+        :return: TaskConstellationOrchestrator instance for execution management
+        """
         return self._orchestrator
 
     @property
     def session_results(self) -> Dict[str, Any]:
-        """Get session results."""
+        """
+        Get session results.
+
+        :return: Dictionary containing session execution results and metrics
+        """
         return self._session_results
 
 
@@ -392,16 +480,13 @@ async def create_galaxy_session(
     """
     Create a GalaxySession with default configuration.
 
-    Args:
-        request: User request string
-        task_name: Task name
-        session_id: Optional session ID
-        agent: Optional GalaxyWeaverAgent
-        client: Optional ConstellationClient
-        should_evaluate: Whether to evaluate the session
-
-    Returns:
-        Configured GalaxySession
+    :param request: User request string
+    :param task_name: Task name (default: "galaxy_task")
+    :param session_id: Optional session ID (auto-generated if None)
+    :param agent: Optional GalaxyWeaverAgent instance
+    :param client: Optional ConstellationClient instance
+    :param should_evaluate: Whether to evaluate the session (default: False)
+    :return: Configured GalaxySession instance
     """
     if session_id is None:
         import uuid
@@ -434,12 +519,9 @@ async def run_simple_galaxy_request(
     """
     Run a simple Galaxy request with default configuration.
 
-    Args:
-        request: User request string
-        timeout: Execution timeout in seconds
-
-    Returns:
-        Session results
+    :param request: User request string
+    :param timeout: Execution timeout in seconds (default: 300.0)
+    :return: Dictionary containing session results and status
     """
     session = await create_galaxy_session(request)
 

@@ -9,10 +9,10 @@ with comprehensive metadata, execution tracking, and device targeting.
 Optimized for type safety, maintainability, and follows SOLID principles.
 """
 
-import asyncio
+import logging
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 
 from ufo.galaxy.client.device_manager import ConstellationDeviceManager
 
@@ -40,6 +40,7 @@ class TaskStar(ITask):
         task_id: Optional[TaskId] = None,
         name: str = "",
         description: str = "",
+        tips: List[str] = None,
         target_device_id: Optional[str] = None,
         device_type: Optional[DeviceType] = None,
         priority: TaskPriority = TaskPriority.MEDIUM,
@@ -55,6 +56,7 @@ class TaskStar(ITask):
         :param task_id: Unique identifier for the task (auto-generated if None)
         :param name: Short name for the task
         :param description: Natural language description of the task
+        :param tips: List of tips or hints for the completing the task
         :param target_device_id: ID of the device to execute this task
         :param device_type: Type of the target device
         :param priority: Priority level for execution scheduling
@@ -67,6 +69,7 @@ class TaskStar(ITask):
         self._task_id: TaskId = task_id or str(uuid.uuid4())
         self._name: str = name or f"task_{self._task_id[:8]}"
         self._description: str = description
+        self._tips: Optional[List[str]] = tips
         self._target_device_id: Optional[str] = target_device_id
         self._device_type: Optional[DeviceType] = device_type
         self._priority: TaskPriority = priority
@@ -100,6 +103,8 @@ class TaskStar(ITask):
 
         # Validation errors cache
         self._validation_errors: List[str] = []
+
+        self.logger = logging.getLogger(__name__)
 
     # ITask interface implementation
     @property
@@ -163,12 +168,14 @@ class TaskStar(ITask):
 
         start_time = datetime.now(timezone.utc)
 
+        request_string = self.to_request_string()
+
         try:
             # Execute task directly using ConstellationDeviceManager
             result = await device_manager.assign_task_to_device(
                 task_id=self.task_id,
                 device_id=self.target_device_id,
-                task_description=self.description,
+                task_description=request_string,
                 task_data=self.task_data or {},
                 timeout=self._timeout or 300.0,
             )
@@ -363,11 +370,8 @@ class TaskStar(ITask):
         """
         Update the task data.
 
-        Args:
-            data: Data to merge into task data
-
-        Raises:
-            ValueError: If task is currently running
+        :param data: Data to merge into task data
+        :raises ValueError: If task is currently running
         """
         if self._status == TaskStatus.RUNNING:
             raise ValueError(f"Cannot modify task data of running task {self._task_id}")
@@ -379,8 +383,7 @@ class TaskStar(ITask):
         """
         Mark the task as started.
 
-        Raises:
-            ValueError: If task is not ready to execute
+        :raises ValueError: If task is not ready to execute
         """
         if self._status != TaskStatus.PENDING:
             raise ValueError(
@@ -400,11 +403,8 @@ class TaskStar(ITask):
         """
         Mark the task as successfully completed.
 
-        Args:
-            result: The execution result
-
-        Raises:
-            ValueError: If task is not running
+        :param result: The execution result
+        :raises ValueError: If task is not running
         """
         if self._status != TaskStatus.RUNNING:
             raise ValueError(
@@ -420,11 +420,8 @@ class TaskStar(ITask):
         """
         Mark the task as failed.
 
-        Args:
-            error: The error that caused the failure
-
-        Raises:
-            ValueError: If task is not running
+        :param error: The error that caused the failure
+        :raises ValueError: If task is not running
         """
         if self._status != TaskStatus.RUNNING:
             raise ValueError(
@@ -455,8 +452,7 @@ class TaskStar(ITask):
         """
         Reset the task for retry.
 
-        Raises:
-            ValueError: If task cannot be retried
+        :raises ValueError: If task cannot be retried
         """
         if not self.should_retry():
             raise ValueError(f"Task {self._task_id} cannot be retried")
@@ -500,6 +496,17 @@ class TaskStar(ITask):
         """
         self._dependents.discard(dependent_task_id)
 
+    def to_request_string(self):
+        """
+        Convert the TaskStar to a formated string representation (description + tips) for requests.
+        """
+        tips = (
+            "\n".join(f" - {tip}" for tip in self._tips)
+            if self._tips
+            else "No tips available."
+        )
+        return f"Task Description: {self._description}\nTips for Completion:\n{tips}"
+
     def to_dict(self) -> Dict[str, Any]:
         """
         Convert the TaskStar to a dictionary representation.
@@ -510,6 +517,7 @@ class TaskStar(ITask):
             "task_id": self._task_id,
             "name": self._name,
             "description": self._description,
+            "tips": self._tips,
             "task_description": self._description,  # Backwards compatibility
             "target_device_id": self._target_device_id,
             "device_type": self._device_type.value if self._device_type else None,
@@ -550,8 +558,8 @@ class TaskStar(ITask):
         task = cls(
             task_id=data.get("task_id"),
             name=data.get("name", ""),
-            description=data.get("description")
-            or data.get("task_description", ""),  # Backwards compatibility
+            description=data.get("description", ""),  # Backwards compatibility
+            tips=data.get("tips", []),
             target_device_id=data.get("target_device_id"),
             device_type=(
                 DeviceType(data["device_type"]) if data.get("device_type") else None

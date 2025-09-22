@@ -72,12 +72,11 @@ class GalaxyClient:
         """
         Initialize Galaxy client.
 
-        Args:
-            session_name: Name for the Galaxy session
-            use_mock_agent: Whether to use mock agent for testing
-            max_rounds: Maximum number of rounds per session
-            log_level: Logging level
-            output_dir: Output directory for logs and results
+        :param session_name: Name for the Galaxy session (auto-generated if None)
+        :param use_mock_agent: Whether to use mock agent for testing (default: False)
+        :param max_rounds: Maximum number of rounds per session (default: 10)
+        :param log_level: Logging level (default: "INFO")
+        :param output_dir: Output directory for logs and results (default: "./logs")
         """
         self.session_name = (
             session_name or f"galaxy_session_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
@@ -107,7 +106,11 @@ class GalaxyClient:
         self.logger.info(f"🌌 Galaxy Client initialized: {self.session_name}")
 
     def _show_galaxy_banner(self) -> None:
-        """Show the Galaxy Framework banner."""
+        """
+        Show the Galaxy Framework banner.
+
+        Displays a formatted banner for the UFO3 Galaxy Framework.
+        """
         banner = """╔══════════════════════════════════════╗
 ║           🌌 UFO3 FRAMEWORK          ║
 ║      DAG-based Task Orchestration    ║
@@ -115,7 +118,12 @@ class GalaxyClient:
         self.console.print(Panel(banner, style="bold blue", expand=False))
 
     async def initialize(self) -> None:
-        """Initialize all Galaxy framework components."""
+        """
+        Initialize all Galaxy framework components.
+
+        Sets up agent, constellation client, orchestration, context,
+        and Galaxy session with progress indication.
+        """
         try:
             with Progress(
                 SpinnerColumn(),
@@ -202,12 +210,10 @@ class GalaxyClient:
         """
         Process a single user request.
 
-        Args:
-            request: User request text
-            task_name: Optional task name
-
-        Returns:
-            Processing result with execution details
+        :param request: User request text to process
+        :param task_name: Optional task name for the request
+        :return: Dictionary containing processing result with execution details
+        :raises RuntimeError: If Galaxy client is not initialized
         """
         if not self._session:
             raise RuntimeError(
@@ -293,7 +299,12 @@ class GalaxyClient:
             }
 
     async def interactive_mode(self) -> None:
-        """Run in interactive mode, accepting user input."""
+        """
+        Run in interactive mode, accepting user input.
+
+        Starts an interactive command-line interface that accepts
+        user requests and processes them through the Galaxy framework.
+        """
         self.logger.info("🎯 Starting interactive mode. Type 'quit' or 'exit' to stop.")
 
         # Display interactive banner
@@ -352,7 +363,12 @@ class GalaxyClient:
                 self.console.print(f"[bold red]❌ Error: {e}[/bold red]")
 
     def _show_help(self) -> None:
-        """Show help information."""
+        """
+        Show help information.
+
+        Displays a formatted table of available commands and usage tips
+        for the interactive mode.
+        """
         help_table = Table(title="[bold cyan]📖 UFO3 Framework Commands[/bold cyan]")
         help_table.add_column("Command", style="cyan", no_wrap=True)
         help_table.add_column("Description", style="white")
@@ -376,7 +392,12 @@ class GalaxyClient:
         self.console.print(tips_panel)
 
     def _show_status(self) -> None:
-        """Show current session status."""
+        """
+        Show current session status.
+
+        Displays a formatted table with current Galaxy session
+        configuration and state information.
+        """
         status_table = Table(title="[bold cyan]📊 Galaxy Session Status[/bold cyan]")
         status_table.add_column("Property", style="cyan", no_wrap=True)
         status_table.add_column("Value", style="white")
@@ -395,7 +416,11 @@ class GalaxyClient:
         self.console.print(status_table)
 
     def _display_result(self, result: Dict[str, Any]) -> None:
-        """Display execution result with rich formatting."""
+        """
+        Display execution result with rich formatting.
+
+        :param result: Dictionary containing execution results and metadata
+        """
         # Create main result panel
         status_color = "green" if result["status"] == "completed" else "red"
         status_icon = "✅" if result["status"] == "completed" else "❌"
@@ -448,7 +473,12 @@ class GalaxyClient:
             self.console.print(constellation_panel)
 
     async def shutdown(self) -> None:
-        """Shutdown the Galaxy client."""
+        """
+        Shutdown the Galaxy client.
+
+        Properly closes all components including the constellation client
+        and session, ensuring clean resource cleanup.
+        """
         try:
             self.console.print(
                 "[bold yellow]🛑 Shutting down Galaxy client...[/bold yellow]"
@@ -473,7 +503,12 @@ class GalaxyClient:
 
 
 async def main():
-    """Main entry point for Galaxy client."""
+    """
+    Main entry point for Galaxy client.
+
+    Parses command-line arguments and initializes the Galaxy client
+    for interactive or single-request execution modes.
+    """
     # Parse command line arguments
     parser = argparse.ArgumentParser(description="UFO3 Framework Client")
 

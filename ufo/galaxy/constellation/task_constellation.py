@@ -47,10 +47,9 @@ class TaskConstellation(IConstellation):
         """
         Initialize a TaskConstellation.
 
-        Args:
-            constellation_id: Unique identifier (auto-generated if None)
-            name: Human-readable name for the constellation
-            enable_visualization: Whether to enable DAG visualization
+        :param constellation_id: Unique identifier (auto-generated if None)
+        :param name: Human-readable name for the constellation
+        :param enable_visualization: Whether to enable DAG visualization
         """
         self._constellation_id: str = (
             constellation_id
@@ -209,11 +208,8 @@ class TaskConstellation(IConstellation):
         """
         Add a task to the constellation.
 
-        Args:
-            task: TaskStar instance to add
-
-        Raises:
-            ValueError: If task with same ID already exists
+        :param task: TaskStar instance to add
+        :raises ValueError: If task with same ID already exists
         """
         if task.task_id in self._tasks:
             raise ValueError(f"Task with ID {task.task_id} already exists")
@@ -228,11 +224,8 @@ class TaskConstellation(IConstellation):
         """
         Remove a task from the constellation.
 
-        Args:
-            task_id: ID of the task to remove
-
-        Raises:
-            ValueError: If task doesn't exist or is running
+        :param task_id: ID of the task to remove
+        :raises ValueError: If task doesn't exist or is running
         """
         if task_id not in self._tasks:
             raise ValueError(f"Task {task_id} not found")
@@ -257,11 +250,8 @@ class TaskConstellation(IConstellation):
         """
         Get a task by ID.
 
-        Args:
-            task_id: ID of the task
-
-        Returns:
-            TaskStar instance or None if not found
+        :param task_id: ID of the task
+        :return: TaskStar instance or None if not found
         """
         return self._tasks.get(task_id)
 
@@ -269,11 +259,8 @@ class TaskConstellation(IConstellation):
         """
         Add a dependency to the constellation.
 
-        Args:
-            dependency: TaskStarLine instance to add
-
-        Raises:
-            ValueError: If dependency would create a cycle or tasks don't exist
+        :param dependency: TaskStarLine instance to add
+        :raises ValueError: If dependency would create a cycle or tasks don't exist
         """
         # Validate tasks exist
         if dependency.from_task_id not in self._tasks:
@@ -303,8 +290,7 @@ class TaskConstellation(IConstellation):
         """
         Remove a dependency from the constellation.
 
-        Args:
-            dependency_id: ID of the dependency to remove
+        :param dependency_id: ID of the dependency to remove
         """
         if dependency_id not in self._dependencies:
             return
@@ -327,11 +313,8 @@ class TaskConstellation(IConstellation):
         """
         Get a dependency by ID.
 
-        Args:
-            dependency_id: ID of the dependency
-
-        Returns:
-            TaskStarLine instance or None if not found
+        :param dependency_id: ID of the dependency
+        :return: TaskStarLine instance or None if not found
         """
         return self._dependencies.get(dependency_id)
 
@@ -339,8 +322,7 @@ class TaskConstellation(IConstellation):
         """
         Get all tasks that are ready to execute.
 
-        Returns:
-            List of TaskStar instances ready for execution
+        :return: List of TaskStar instances ready for execution
         """
         ready_tasks = []
         for task in self._tasks.values():
@@ -426,11 +408,8 @@ class TaskConstellation(IConstellation):
         """
         Start execution of a task.
 
-        Args:
-            task_id: ID of the task to start
-
-        Raises:
-            ValueError: If task not found or not ready to start
+        :param task_id: ID of the task to start
+        :raises ValueError: If task not found or not ready to start
         """
         if task_id not in self._tasks:
             raise ValueError(f"Task {task_id} not found")
@@ -444,14 +423,11 @@ class TaskConstellation(IConstellation):
         """
         Mark a task as completed and update dependent tasks.
 
-        Args:
-            task_id: ID of the completed task
-            success: Whether the task completed successfully
-            result: Task result (if successful)
-            error: Error information (if failed)
-
-        Returns:
-            List of newly ready tasks after dependency updates
+        :param task_id: ID of the completed task
+        :param success: Whether the task completed successfully
+        :param result: Task result (if successful)
+        :param error: Error information (if failed)
+        :return: List of newly ready tasks after dependency updates
         """
         if task_id not in self._tasks:
             raise ValueError(f"Task {task_id} not found")
@@ -486,16 +462,13 @@ class TaskConstellation(IConstellation):
         self.update_state()
         self._updated_at = datetime.now(timezone.utc)
 
-        # Note: Execution progress visualization moved to DAGVisualizationObserver
-
         return newly_ready
 
     def validate_dag(self) -> Tuple[bool, List[str]]:
         """
         Validate the DAG structure.
 
-        Returns:
-            Tuple of (is_valid, list_of_errors)
+        :return: Tuple of (is_valid, list_of_errors)
         """
         errors = []
 
@@ -520,11 +493,8 @@ class TaskConstellation(IConstellation):
         """
         Get a topological ordering of the DAG.
 
-        Returns:
-            List of task IDs in topological order
-
-        Raises:
-            ValueError: If DAG contains cycles
+        :return: List of task IDs in topological order
+        :raises ValueError: If DAG contains cycles
         """
         # Build adjacency list from dependencies
         in_degree = defaultdict(int)
@@ -564,8 +534,7 @@ class TaskConstellation(IConstellation):
         """
         Get statistics about the constellation.
 
-        Returns:
-            Dictionary with statistics
+        :return: Dictionary with statistics
         """
         status_counts = defaultdict(int)
         for task in self._tasks.values():
@@ -589,8 +558,7 @@ class TaskConstellation(IConstellation):
         """
         Generate a string representation suitable for LLM consumption.
 
-        Returns:
-            String representation for LLM
+        :return: String representation for LLM
         """
         lines = [
             f"TaskConstellation: {self._name} (ID: {self._constellation_id})",
@@ -717,9 +685,8 @@ class TaskConstellation(IConstellation):
         """
         Manually display the DAG visualization.
 
-        Args:
-            mode: Visualization mode ('overview', 'topology', 'details', 'execution')
-            force: Force display even if visualization is disabled
+        :param mode: Visualization mode ('overview', 'topology', 'details', 'execution')
+        :param force: Force display even if visualization is disabled
         """
         if not self._enable_visualization and not force:
             return
@@ -747,8 +714,7 @@ class TaskConstellation(IConstellation):
         """
         Enable or disable visualization.
 
-        Args:
-            enabled: Whether to enable visualization
+        :param enabled: Whether to enable visualization
         """
         self._enable_visualization = enabled
         if enabled and not self._visualizer:

@@ -71,15 +71,12 @@ class LLMParser:
         """
         Parse LLM output string into a TaskConstellation.
 
-        Args:
-            llm_output: Raw LLM output string
-            constellation_name: Optional name for the constellation
+        :param llm_output: Raw LLM output string
+        :param constellation_name: Optional name for the constellation
 
-        Returns:
-            TaskConstellation instance
+        :return: TaskConstellation instance
 
-        Raises:
-            ValueError: If parsing fails
+        :raises ValueError: If parsing fails
         """
         # Try to parse as JSON first
         try:
@@ -102,12 +99,10 @@ class LLMParser:
         """
         Parse JSON data into a TaskConstellation.
 
-        Args:
-            json_data: JSON data dictionary
-            constellation_name: Optional name for the constellation
+        :param json_data: JSON data dictionary
+        :param constellation_name: Optional name for the constellation
 
-        Returns:
-            TaskConstellation instance
+        :return: TaskConstellation instance
         """
         constellation = TaskConstellation(name=constellation_name)
         constellation._llm_source = json.dumps(json_data)
@@ -397,11 +392,9 @@ class LLMParser:
         """
         Generate a prompt string for LLM modification of the constellation.
 
-        Args:
-            constellation: TaskConstellation to generate prompt for
+        :param constellation: TaskConstellation to generate prompt for
 
-        Returns:
-            Formatted prompt string
+        :return: Formatted prompt string
         """
         prompt = f"""
 Current TaskConstellation: {constellation.name}
@@ -438,12 +431,10 @@ Respond with a JSON structure containing:
         """
         Update an existing constellation based on LLM response.
 
-        Args:
-            constellation: Existing TaskConstellation
+        :param constellation: Existing TaskConstellation
             llm_response: LLM response with modifications
 
-        Returns:
-            Updated TaskConstellation
+        :return: Updated TaskConstellation
         """
         try:
             # Parse the LLM response

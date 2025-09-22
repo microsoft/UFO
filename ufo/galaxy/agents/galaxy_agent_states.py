@@ -10,15 +10,11 @@ events and agent updates.
 """
 
 import asyncio
-import logging
 from enum import Enum
-from typing import Optional, Dict, Any, Type, TYPE_CHECKING
-from dataclasses import dataclass
+from typing import TYPE_CHECKING, Dict, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
-
-from ufo.galaxy.constellation import TaskConstellation, ConstellationState
-from ufo.galaxy.core.events import TaskEvent
+from ufo.galaxy.constellation import ConstellationState
 
 if TYPE_CHECKING:
     from ufo.galaxy.agents.galaxy_agent import GalaxyWeaverAgent
