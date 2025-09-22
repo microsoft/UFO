@@ -23,10 +23,8 @@ from ufo.galaxy.constellation.orchestrator.orchestrator import (
 )
 from ufo.module.context import Context
 
-from ..core.interfaces import IRequestProcessor, IResultProcessor, IConstellationUpdater
+from ..core.interfaces import IRequestProcessor, IResultProcessor
 from ..core.types import (
-    TaskId,
-    ConstellationId,
     ExecutionResult,
     ProcessingContext,
     TaskExecutionError,

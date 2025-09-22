@@ -299,13 +299,6 @@ class TaskConstellation(IConstellation):
 
         self._updated_at = datetime.now(timezone.utc)
 
-        # Log dependency addition (visualization handled by observer)
-        from_name = (
-            from_task.name[:15] + "..." if len(from_task.name) > 15 else from_task.name
-        )
-        to_name = to_task.name[:15] + "..." if len(to_task.name) > 15 else to_task.name
-        # Note: Visualization logic moved to DAGVisualizationObserver
-
     def remove_dependency(self, dependency_id: str) -> None:
         """
         Remove a dependency from the constellation.

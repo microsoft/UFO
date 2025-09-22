@@ -10,7 +10,7 @@ relationships between tasks with conditional logic support.
 
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Optional, Union
+from typing import Any, Callable, Dict, List, Optional
 
 from ..core.interfaces import IDependency
 from .enums import DependencyType

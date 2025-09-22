@@ -160,7 +160,6 @@ class TaskStatus(str, Enum):
 
 
 class ClientMessageType(str, Enum):
-    DEVICE_INFO = "device_info"
     TASK = "task"
     HEARTBEAT = "heartbeat"
     COMMAND_RESULTS = "command_results"
@@ -170,7 +169,6 @@ class ClientMessageType(str, Enum):
 
 
 class ServerMessageType(str, Enum):
-    DEVICE_INFO = "device_info"
     TASK = "task"
     HEARTBEAT = "heartbeat"
     TASK_END = "task_end"
