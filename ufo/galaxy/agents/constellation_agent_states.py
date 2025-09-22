@@ -129,17 +129,7 @@ class ContinueConstellationAgentState(ConstellationAgentState):
             )
 
             # Update constellation based on task completion
-            constellation = await agent.process_editing(context=context)
-            if constellation.is_complete():
-                agent.logger.info(
-                    f"The old constellation {constellation.constellation_id} is completed."
-                )
-                # IMPORTANT: Restart the constellation orchestration when there is new update.
-                if agent.status == "CONTINUE":
-                    agent.logger.info(
-                        f"New update to the constellation {constellation.constellation_id} needed, restart the orchestration"
-                    )
-                    agent.status = "START"
+            await agent.process_editing(context=context)
 
         except Exception as e:
             agent.logger.error(f"Error in continue state: {e}")

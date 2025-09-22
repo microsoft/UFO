@@ -12,9 +12,9 @@ Optimized for type safety, maintainability, and follows SOLID principles.
 """
 
 import asyncio
+import copy
 import logging
 import time
-from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Union
 
 from ufo.agents.agent.basic import BasicAgent
@@ -106,15 +106,15 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         )
 
         is_dag, errors = self._current_constellation.validate_dag()
+        self.status = self.processor.processing_context.get_local("status").upper()
 
         if not is_dag:
             self.logger.error(f"The created constellation is not a valid DAG: {errors}")
-            self.status = "failed"
+            self.status = "FAIL"
 
         # Sync the status with the processor.
-        self.status = self.processor.processing_context.get_local("status")
-        self.logger.info(f"Host agent status updated to: {self.status}")
 
+        self.logger.info(f"Host agent status updated to: {self.status}")
         return self._current_constellation
 
     # IResultProcessor implementation
@@ -135,8 +135,10 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         await self.processor.process()
 
         # Sync the status with the processor.
-        self.status = self.processor.processing_context.get_local("status")
+        self.status = self.processor.processing_context.get_local("status").upper()
         self.logger.info(f"Host agent status updated to: {self.status}")
+
+        old_constellation = copy.deepcopy(self._current_constellation)
 
         update_string = self.processor.processing_context.get_local("editing")
 
@@ -148,7 +150,18 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         if not is_dag:
             self.logger.error(f"The created constellation is not a valid DAG: {errors}")
-            self.status = "failed"
+            self.status = "FAIL"
+
+        if old_constellation.is_complete():
+            self.logger.info(
+                f"The old constellation {old_constellation.constellation_id} is completed."
+            )
+            # IMPORTANT: Restart the constellation orchestration when there is new update.
+            if self.status == "CONTINUE":
+                self.logger.info(
+                    f"New update to the constellation {self._current_constellation.constellation_id} needed, restart the orchestration"
+                )
+                self.status = "START"
 
         self._current_constellation = updated_constellation
 
@@ -415,36 +428,3 @@ class MockConstellationAgent(ConstellationAgent):
             self._status = "processing"
 
         return constellation
-
-    async def should_continue(
-        self,
-        constellation: TaskConstellation,
-        context: Optional[Context] = None,
-    ) -> bool:
-        """
-        Determine if session should continue based on completion status.
-
-        Args:
-            constellation: Current constellation
-            context: Optional context
-
-        Returns:
-            True if should continue, False if finished
-        """
-        if self._status in ["finished", "failed"]:
-            return False
-
-        # Continue if there are pending or ready tasks
-        stats = constellation.get_statistics()
-        status_counts = stats.get("task_status_counts", {})
-
-        pending_tasks = status_counts.get("pending", 0)
-        running_tasks = status_counts.get("running", 0)
-        waiting_tasks = status_counts.get("waiting_dependency", 0)
-
-        has_active_tasks = pending_tasks + running_tasks + waiting_tasks > 0
-        pending_tasks = (
-            constellation.task_count - stats["completed_tasks"] - stats["failed_tasks"]
-        )
-
-        return pending_tasks > 0

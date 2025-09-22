@@ -20,8 +20,7 @@ from pathlib import Path
 
 from rich.console import Console
 from rich.panel import Panel
-from rich.progress import Progress, SpinnerColumn, TextColumn
-from rich import print as rprint
+
 
 # Add UFO2 to path to enable imports
 UFO_ROOT = Path(__file__).parent.parent.parent

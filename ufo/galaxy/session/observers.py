@@ -69,7 +69,7 @@ class ConstellationProgressObserver(IEventObserver):
                 "timestamp": event.timestamp,
             }
 
-            # Put event into agent's queue - this will wake up the Monitor state
+            # Put event into agent's queue - this will wake up the Continue state
             await self.agent.task_completion_queue.put(event)
 
             self.logger.info(
@@ -87,10 +87,10 @@ class ConstellationProgressObserver(IEventObserver):
         """
         try:
             if (
-                event.event_type == EventType.DAG_MODIFIED
+                event.event_type == EventType.CONSTELLATION_MODIFIED
             ):  # Changed from NEW_TASKS_READY to DAG_MODIFIED
                 self.logger.info(
-                    f"DAG modified, new ready tasks: {event.new_ready_tasks}"
+                    f"Constellation modified, new ready tasks: {event.new_ready_tasks}"
                 )
                 # The orchestration will automatically pick up new ready tasks
 
