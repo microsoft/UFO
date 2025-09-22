@@ -178,6 +178,11 @@ class ServerMessageType(str, Enum):
     ERROR = "error"
 
 
+class ClientType(str, Enum):
+    DEVICE = "device"
+    CONSTELLATION = "constellation"
+
+
 class ServerMessage(BaseModel):
     """
     Represents a response from the server to the client.
@@ -206,6 +211,7 @@ class ClientMessage(BaseModel):
 
     type: ClientMessageType
     status: TaskStatus
+    client_type: ClientType = ClientType.DEVICE
     session_id: Optional[str] = None
     task_name: Optional[str] = None
     client_id: Optional[str] = None

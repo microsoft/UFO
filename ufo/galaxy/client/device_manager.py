@@ -196,7 +196,6 @@ class ConstellationDeviceManager:
         self,
         task_id: str,
         device_id: str,
-        target_client_id: Optional[str],
         task_description: str,
         task_data: Dict[str, Any],
         timeout: float = 300.0,
@@ -221,7 +220,6 @@ class ConstellationDeviceManager:
         task_request = TaskRequest(
             task_id=task_id,
             device_id=device_id,
-            target_client_id=target_client_id,
             request=task_description,
             task_name=task_id,
             metadata=task_data,
@@ -263,7 +261,6 @@ class ConstellationDeviceManager:
         return await self.assign_task_to_device(
             task_id=task_id,
             device_id=device_id,
-            target_client_id=None,
             task_description=description,
             task_data=task_data,
             timeout=timeout,

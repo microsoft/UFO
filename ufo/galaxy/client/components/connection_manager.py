@@ -10,7 +10,6 @@ Single responsibility: Connection management.
 
 import asyncio
 import logging
-import uuid
 from datetime import datetime, timezone
 from typing import Dict, Optional, Any
 from websockets import WebSocketClientProtocol
@@ -19,6 +18,7 @@ import websockets
 from ufo.contracts.contracts import (
     ClientMessage,
     ClientMessageType,
+    ClientType,
     TaskStatus,
 )
 from .types import DeviceInfo, TaskRequest
@@ -84,12 +84,14 @@ class WebSocketConnectionManager:
             registration_message = ClientMessage(
                 type=ClientMessageType.REGISTER,
                 client_id=constellation_client_id,
+                client_type=ClientType.CONSTELLATION,
+                target_id=device_info.device_id,
                 status=TaskStatus.OK,
                 timestamp=datetime.now(timezone.utc).isoformat(),
                 metadata={
                     "type": "constellation_client",
                     "constellation_id": self.constellation_id,
-                    "device_id": device_info.device_id,
+                    "targeted_device_id": device_info.device_id,
                     "capabilities": [
                         "task_distribution",
                         "session_management",
@@ -171,29 +173,6 @@ class WebSocketConnectionManager:
             )
             return False
 
-    async def request_device_info(self, device_id: str) -> None:
-        """Request device information and capabilities from the server"""
-        try:
-            websocket = self._connections.get(device_id)
-            if not websocket:
-                return
-
-            info_request = ClientMessage(
-                type=ClientMessageType.DEVICE_INFO,
-                client_id=self.constellation_id,
-                target_id=device_id,
-                task_name="device_info_request",
-                request_id=str(uuid.uuid4()),
-                timestamp=datetime.now(timezone.utc).isoformat(),
-                status=TaskStatus.CONTINUE,
-            )
-
-            await websocket.send(info_request.model_dump_json())
-            self.logger.info(f"📊 Requested device info from {device_id}")
-
-        except Exception as e:
-            self.logger.error(f"❌ Failed to request device info from {device_id}: {e}")
-
     async def send_task_to_device(
         self, device_id: str, task_request: TaskRequest
     ) -> Dict[str, Any]:
@@ -214,7 +193,7 @@ class WebSocketConnectionManager:
             task_message = ClientMessage(
                 type=ClientMessageType.TASK,
                 client_id=self.constellation_id,
-                target_id=task_request.target_client_id or device_id,
+                target_id=device_id,
                 task_name=task_request.task_name,
                 request=task_request.request,
                 request_id=task_request.task_id,

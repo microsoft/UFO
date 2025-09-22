@@ -8,12 +8,10 @@ Simplified client focused on device connection and basic task execution.
 Serves as a support component for the main GalaxyClient system.
 """
 
-import asyncio
 import logging
-from typing import Dict, List, Optional, Any, Callable
+from typing import Dict, List, Optional, Any
 
 from .device_manager import ConstellationDeviceManager
-from .components import DeviceInfo, TaskRequest
 from .config_loader import ConstellationConfig, DeviceConfig
 
 

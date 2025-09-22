@@ -168,7 +168,6 @@ class TaskStar(ITask):
             result = await device_manager.assign_task_to_device(
                 task_id=self.task_id,
                 device_id=self.target_device_id,
-                target_client_id=None,  # Auto-select if not specified
                 task_description=self.description,
                 task_data=self.task_data or {},
                 timeout=self._timeout or 300.0,

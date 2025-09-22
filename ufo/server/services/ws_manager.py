@@ -1,8 +1,11 @@
 import threading
-from fastapi import WebSocket
-from typing import List, Dict, Tuple
 from dataclasses import dataclass
 from datetime import datetime
+from typing import Dict, List
+
+from fastapi import WebSocket
+
+from ufo.contracts.contracts import ClientType
 
 
 @dataclass
@@ -10,7 +13,7 @@ class ClientInfo:
     """Information about a connected client."""
 
     websocket: WebSocket
-    client_type: str  # "device" or "constellation"
+    client_type: ClientType
     connected_at: datetime
     metadata: Dict = None
 
@@ -32,7 +35,7 @@ class WSManager:
         self,
         client_id: str,
         ws: WebSocket,
-        client_type: str = "device",
+        client_type: ClientType = ClientType.DEVICE,
         metadata: Dict = None,
     ):
         """
@@ -103,9 +106,11 @@ class WSManager:
         """
         with self.lock:
             client_info = self.online_clients.get(device_id)
-            return client_info is not None and client_info.client_type == "device"
+            return (
+                client_info is not None and client_info.client_type == ClientType.DEVICE
+            )
 
-    def list_clients_by_type(self, client_type: str) -> List[str]:
+    def list_clients_by_type(self, client_type: ClientType) -> List[str]:
         """
         List all online clients of a specific type.
         :param client_type: The type of clients to list ("device" or "constellation").
@@ -127,12 +132,12 @@ class WSManager:
             device_count = sum(
                 1
                 for info in self.online_clients.values()
-                if info.client_type == "device"
+                if info.client_type == ClientType.DEVICE
             )
             constellation_count = sum(
                 1
                 for info in self.online_clients.values()
-                if info.client_type == "constellation"
+                if info.client_type == ClientType.CONSTELLATION
             )
             return {
                 "total": len(self.online_clients),

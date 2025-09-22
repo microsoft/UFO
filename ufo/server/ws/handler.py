@@ -8,6 +8,7 @@ from fastapi import WebSocket, WebSocketDisconnect
 from ufo.contracts.contracts import (
     ClientMessage,
     ClientMessageType,
+    ClientType,
     ServerMessage,
     ServerMessageType,
     TaskStatus,
@@ -36,12 +37,12 @@ class UFOWebSocketHandler:
         self.session_manager = session_manager
         self.logger = logging.getLogger(self.__class__.__name__)
 
-    async def connect(self, websocket: WebSocket) -> tuple[str, str]:
+    async def connect(self, websocket: WebSocket) -> str:
         """
         Connects a client and registers it in the WS manager.
         Expects the first message to contain {"client_id": ...}.
         :param websocket: The WebSocket connection.
-        :return: A tuple of (client_id, client_type).
+        :return: The client_id.
         """
         await websocket.accept()
 
@@ -49,12 +50,13 @@ class UFOWebSocketHandler:
         reg_info = await self._parse_registration_message(websocket)
 
         # Determine and validate client type
-        client_type = await self._determine_and_validate_client_type(
-            reg_info, websocket
-        )
+        client_type = reg_info.client_type
 
         # Register client
         client_id = reg_info.client_id
+        if client_type == ClientType.CONSTELLATION:
+            await self._validate_constellation_client(reg_info, websocket)
+
         self.ws_manager.add_client(client_id, websocket, client_type, reg_info.metadata)
 
         # Send registration confirmation
@@ -63,7 +65,7 @@ class UFOWebSocketHandler:
         # Log successful connection
         self._log_client_connection(client_id, client_type)
 
-        return client_id, client_type
+        return client_id
 
     async def _parse_registration_message(self, websocket: WebSocket) -> ClientMessage:
         """
@@ -82,27 +84,6 @@ class UFOWebSocketHandler:
 
         return reg_info
 
-    async def _determine_and_validate_client_type(
-        self, reg_info: ClientMessage, websocket: WebSocket
-    ) -> str:
-        """
-        Determine client type and validate constellation clients.
-        :param reg_info: Registration message information.
-        :param websocket: The WebSocket connection.
-        :return: Client type ("device" or "constellation").
-        :raises: ValueError if constellation validation fails.
-        """
-        # Default to device client
-        if not (
-            reg_info.metadata
-            and reg_info.metadata.get("type") == "constellation_client"
-        ):
-            return "device"
-
-        # Validate constellation client
-        await self._validate_constellation_client(reg_info, websocket)
-        return "constellation"
-
     async def _validate_constellation_client(
         self, reg_info: ClientMessage, websocket: WebSocket
     ) -> None:
@@ -112,7 +93,8 @@ class UFOWebSocketHandler:
         :param websocket: The WebSocket connection.
         :raises: ValueError if validation fails.
         """
-        claimed_device_id = reg_info.metadata.get("device_id")
+        claimed_device_id = reg_info.target_id
+
         if not claimed_device_id:
             return  # No device_id to validate
 
@@ -152,13 +134,13 @@ class UFOWebSocketHandler:
         )
         await websocket.send_text(error_response.model_dump_json())
 
-    def _log_client_connection(self, client_id: str, client_type: str) -> None:
+    def _log_client_connection(self, client_id: str, client_type: ClientType) -> None:
         """
         Log successful client connection with appropriate emoji.
         :param client_id: The client ID.
         :param client_type: The client type.
         """
-        if client_type == "constellation":
+        if client_type == ClientType.CONSTELLATION:
             self.logger.info(f"[WS] 🌟 Constellation client {client_id} connected")
         else:
             self.logger.info(f"[WS] 📱 Device client {client_id} connected")
@@ -178,12 +160,12 @@ class UFOWebSocketHandler:
         :param websocket: The WebSocket connection.
         """
         client_id = None
-        client_type = None
+
         try:
-            client_id, client_type = await self.connect(websocket)
+            client_id = await self.connect(websocket)
             while True:
                 msg = await websocket.receive_text()
-                asyncio.create_task(self.handle_message(msg, websocket, client_type))
+                asyncio.create_task(self.handle_message(msg, websocket))
         except WebSocketDisconnect:
             self.logger.info(f"[WS] {client_id} disconnected normally")
             if client_id:
@@ -193,9 +175,7 @@ class UFOWebSocketHandler:
             if client_id:
                 await self.disconnect(client_id)
 
-    async def handle_message(
-        self, msg: str, websocket: WebSocket, client_type: str = "device"
-    ) -> None:
+    async def handle_message(self, msg: str, websocket: WebSocket) -> None:
         """
         Dispatch incoming WS messages to specific handlers.
         :param msg: The message received from the client.
@@ -208,9 +188,10 @@ class UFOWebSocketHandler:
             data = ClientMessage.model_validate_json(msg)
 
             client_id = data.client_id
+            client_type = data.client_type
 
             # Log message with client type context
-            if client_type == "constellation":
+            if client_type == ClientType.CONSTELLATION:
                 self.logger.info(
                     f"[WS] 🌟 Handling constellation message from {client_id}, type: {data.type}"
                 )
@@ -222,7 +203,7 @@ class UFOWebSocketHandler:
             msg_type = data.type
 
             if msg_type == ClientMessageType.TASK:
-                await self.handle_task_request(data, websocket, client_type)
+                await self.handle_task_request(data, websocket)
             elif msg_type == ClientMessageType.COMMAND_RESULTS:
                 await self.handle_command_result(data)
             elif msg_type == ClientMessageType.HEARTBEAT:
@@ -294,15 +275,15 @@ class UFOWebSocketHandler:
         await websocket.send_text(server_message.model_dump_json())
 
     async def handle_task_request(
-        self, data: ClientMessage, websocket: WebSocket, client_type: str = "device"
+        self, data: ClientMessage, websocket: WebSocket
     ) -> None:
         """
         Handle a task request message from the client.
         :param data: The data from the client.
         :param websocket: The WebSocket connection.
-        :param client_type: The type of client ("device" or "constellation").
         """
-        if client_type == "constellation":
+        client_type = data.client_type
+        if client_type == ClientType.CONSTELLATION:
             self.logger.info(
                 f"[WS] 🌟 Handling constellation task request: {data.request} from {data.client_id}"
             )

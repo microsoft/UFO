@@ -44,7 +44,6 @@ class TaskRequest:
 
     task_id: str
     device_id: str
-    target_client_id: Optional[str]
     request: str
     task_name: str
     metadata: Dict[str, Any] = field(default_factory=dict)
