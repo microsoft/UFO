@@ -6,7 +6,7 @@ GalaxySession - DAG-based Task Orchestration Session
 
 This module provides the GalaxySession class that extends BaseSession to support
 DAG-based task orchestration using the Galaxy framework. The session manages
-the lifecycle of constellation execution and coordinates between GalaxyWeaverAgent
+the lifecycle of constellation execution and coordinates between Constellation
 and TaskConstellationOrchestrator.
 """
 
@@ -18,7 +18,7 @@ from typing import Any, Dict, Optional
 from ufo.module.basic import BaseSession, BaseRound
 from ufo.module.context import Context
 
-from ..agents.galaxy_agent import GalaxyWeaverAgent
+from ..agents.constellation_agent import ConstellationAgent
 from ..constellation import TaskConstellationOrchestrator, TaskConstellation
 from ..constellation.enums import ConstellationState
 from ..client.constellation_client import ConstellationClient
@@ -38,7 +38,7 @@ class GalaxyRound(BaseRound):
     def __init__(
         self,
         request: str,
-        agent: GalaxyWeaverAgent,
+        agent: ConstellationAgent,
         context: Context,
         should_evaluate: bool,
         id: int,
@@ -48,7 +48,7 @@ class GalaxyRound(BaseRound):
         Initialize GalaxyRound with orchestrator support.
 
         :param request: User request string
-        :param agent: GalaxyWeaverAgent instance
+        :param agent: ConstellationAgent instance
         :param context: Context object for the round
         :param should_evaluate: Whether to evaluate the round
         :param id: Round identifier
@@ -112,9 +112,9 @@ class GalaxyRound(BaseRound):
             self._agent.orchestrator = self._orchestrator
 
             # Initialize agent in START state
-            from ..agents.galaxy_agent_states import StartGalaxyAgentState
+            from ..agents.constellation_agent_states import StartConstellationAgentState
 
-            self._agent.set_state(StartGalaxyAgentState())
+            self._agent.set_state(StartConstellationAgentState())
 
             # Run agent state machine until completion
             while not self._agent.state.is_round_end():
@@ -188,7 +188,7 @@ class GalaxySession(BaseSession):
     Galaxy Session for DAG-based task orchestrator.
 
     This session extends BaseSession to support constellation-based task execution
-    using GalaxyWeaverAgent for DAG management and TaskConstellationOrchestrator for execution.
+    using Constellation for DAG management and TaskConstellationOrchestrator for execution.
     """
 
     def __init__(
@@ -196,7 +196,7 @@ class GalaxySession(BaseSession):
         task: str,
         should_evaluate: bool,
         id: str,
-        agent: Optional[GalaxyWeaverAgent] = None,
+        agent: Optional[ConstellationAgent] = None,
         client: Optional[ConstellationClient] = None,
         initial_request: str = "",
     ):
@@ -206,7 +206,7 @@ class GalaxySession(BaseSession):
         :param task: Task name/description
         :param should_evaluate: Whether to evaluate the session
         :param id: Session ID
-        :param agent: GalaxyWeaverAgent instance (creates MockGalaxyWeaverAgent if None)
+        :param agent: ConstellationAgent instance (creates MockConstellationAgent if None)
         :param client: ConstellationClient for device management
         :param initial_request: Initial user request
         """
@@ -219,9 +219,9 @@ class GalaxySession(BaseSession):
 
         # Set up agent
         if agent is None:
-            from ..agents.galaxy_agent import MockGalaxyWeaverAgent
+            from ..agents.constellation_agent import MockConstellation
 
-            self._weaver_agent = MockGalaxyWeaverAgent()
+            self._weaver_agent = MockConstellation()
         else:
             self._weaver_agent = agent
 
@@ -391,11 +391,11 @@ class GalaxySession(BaseSession):
         self._client = client
         self._orchestrator.set_client(client)
 
-    def set_weaver_agent(self, agent: GalaxyWeaverAgent) -> None:
+    def set_weaver_agent(self, agent: ConstellationAgent) -> None:
         """
         Set the weaver agent.
 
-        :param agent: GalaxyWeaverAgent instance for task orchestration
+        :param agent: ConstellationAgent instance for task orchestration
         """
         self._weaver_agent = agent
 
@@ -441,11 +441,11 @@ class GalaxySession(BaseSession):
         return self._weaver_agent.current_constellation
 
     @property
-    def weaver_agent(self) -> GalaxyWeaverAgent:
+    def weaver_agent(self) -> ConstellationAgent:
         """
         Get the weaver agent.
 
-        :return: GalaxyWeaverAgent instance for task orchestration
+        :return: ConstellationAgent instance for task orchestration
         """
         return self._weaver_agent
 
@@ -473,7 +473,7 @@ async def create_galaxy_session(
     request: str,
     task_name: str = "galaxy_task",
     session_id: Optional[str] = None,
-    agent: Optional[GalaxyWeaverAgent] = None,
+    agent: Optional[ConstellationAgent] = None,
     client: Optional[ConstellationClient] = None,
     should_evaluate: bool = False,
 ) -> GalaxySession:
@@ -483,7 +483,7 @@ async def create_galaxy_session(
     :param request: User request string
     :param task_name: Task name (default: "galaxy_task")
     :param session_id: Optional session ID (auto-generated if None)
-    :param agent: Optional GalaxyWeaverAgent instance
+    :param agent: Optional ConstellationAgent instance
     :param client: Optional ConstellationClient instance
     :param should_evaluate: Whether to evaluate the session (default: False)
     :return: Configured GalaxySession instance

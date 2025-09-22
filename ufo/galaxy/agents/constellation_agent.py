@@ -2,10 +2,10 @@
 # Licensed under the MIT License.
 
 """
-GalaxyWeaverAgent - DAG-based Task Orchestration Agent
+Constellation - DAG-based Task Orchestration Agent
 
-This module provides the GalaxyWeaverAgent interface for managing DAG-based task orchestration
-in the Galaxy framework. The GalaxyWeaverAgent is responsible for processing user requests,
+This module provides the Constellation interface for managing DAG-based task orchestration
+in the Galaxy framework. The Constellation is responsible for processing user requests,
 generating and updating DAGs, and managing task execution status.
 
 Optimized for type safety, maintainability, and follows SOLID principles.
@@ -18,27 +18,23 @@ from abc import abstractmethod
 from typing import Any, Dict, List, Optional, Union
 
 from ufo.agents.agent.basic import BasicAgent
+from ufo.galaxy.agents.processors.processor import ConstellationAgentProcessor
 from ufo.galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
 )
 from ufo.module.context import Context
 
 from ..core.interfaces import IRequestProcessor, IResultProcessor
-from ..core.types import (
-    ExecutionResult,
-    ProcessingContext,
-    TaskExecutionError,
-    ConstellationError,
-)
-from ..constellation import TaskConstellation, TaskStar, TaskStatus
+from ..core.types import ProcessingContext
+from ..constellation import TaskConstellation, TaskStar
 from ..constellation.enums import ConstellationState, TaskPriority
 
 
-class GalaxyWeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
+class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     """
-    GalaxyWeaverAgent - A specialized agent for DAG-based task orchestration.
+    Constellation - A specialized agent for DAG-based task orchestration.
 
-    The GalaxyWeaverAgent extends BasicAgent and implements multiple interfaces:
+    The Constellation extends BasicAgent and implements multiple interfaces:
     - IRequestProcessor: Process user requests to generate initial DAGs
     - IResultProcessor: Process task execution results and update DAGs
 
@@ -52,48 +48,41 @@ class GalaxyWeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     focused interfaces rather than one large interface.
     """
 
-    def __init__(self, name: str = "weaver_agent"):
+    def __init__(
+        self,
+        orchestrator: TaskConstellationOrchestrator,
+        name: str = "constellation_agent",
+    ):
         """
-        Initialize the GalaxyWeaverAgent.
+        Initialize the Constellation.
 
-        :param name: Agent name (default: "weaver_agent")
+        :param name: Agent name (default: "constellation_agent")
+        :param orchestrator: Task orchestrator instance
         """
+
         super().__init__(name)
         self._current_constellation: Optional[TaskConstellation] = None
-        self._status: str = "ready"  # ready, processing, finished, failed
-        self._update_lock: asyncio.Lock = asyncio.Lock()
+        self._status: str = "start"  # ready, processing, finished, failed
         self.logger = logging.getLogger(__name__)
 
         # Add state machine support
         self.task_completion_queue: asyncio.Queue = asyncio.Queue()
-        self._orchestration_task: Optional[asyncio.Task] = None
         self.current_request: str = ""
-        self.orchestrator: Optional[TaskConstellationOrchestrator] = None
+        self._orchestrator = orchestrator
 
         # Initialize with start state
-        from .galaxy_agent_states import StartGalaxyAgentState
+        from .constellation_agent_states import StartConstellationAgentState
 
-        self.set_state(StartGalaxyAgentState())
+        self.set_state(StartConstellationAgentState())
 
     @property
     def current_constellation(self) -> Optional[TaskConstellation]:
         """Get the current constellation being managed."""
         return self._current_constellation
 
-    @property
-    def agent_status(self) -> str:
-        """Get the current agent status."""
-        return self._status
-
-    @agent_status.setter
-    def agent_status(self, status: str) -> None:
-        """Set the agent status."""
-        self._status = status
-
     # IRequestProcessor implementation
-    async def process_request(
+    async def process_creation(
         self,
-        request: str,
         context: Optional[ProcessingContext] = None,
     ) -> TaskConstellation:
         """
@@ -104,252 +93,98 @@ class GalaxyWeaverAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         :return: Generated constellation
         :raises ConstellationError: If constellation generation fails
         """
-        # This is the interface method, delegate to the existing method for compatibility
-        compat_context = None
-        if context and hasattr(context, "to_dict"):
-            # Convert ProcessingContext to UFO Context if needed
-            pass  # For now, maintain compatibility
 
-        try:
-            return await self.process_initial_request(request, compat_context)
-        except Exception as e:
-            raise ConstellationError(
-                "request_processing", f"Failed to process request: {e}"
-            ) from e
+        self.processor = ConstellationAgentProcessor(agent=self, global_context=context)
+        # self.processor = HostAgentProcessor(agent=self, context=context)
+        await self.processor.process()
+        constellation_string = self.processor.processing_context.get_local(
+            "constellation_string"
+        )
+
+        self._current_constellation = (
+            await self._orchestrator.create_constellation_from_llm(constellation_string)
+        )
+
+        is_dag, errors = self._current_constellation.validate_dag()
+
+        if not is_dag:
+            self.logger.error(f"The created constellation is not a valid DAG: {errors}")
+            self.status = "failed"
+
+        # Sync the status with the processor.
+        self.status = self.processor.processing_context.get_local("status")
+        self.logger.info(f"Host agent status updated to: {self.status}")
+
+        return self._current_constellation
 
     # IResultProcessor implementation
-    async def process_result(
+    async def process_editing(
         self,
-        result: ExecutionResult,
-        constellation: TaskConstellation,
         context: Optional[ProcessingContext] = None,
     ) -> TaskConstellation:
         """
         Process a task result and potentially update the constellation.
 
         :param result: Task execution result
-        :param constellation: Current constellation
         :param context: Optional processing context
         :return: Updated constellation
         :raises TaskExecutionError: If result processing fails
         """
-        try:
-            # Convert ExecutionResult to the format expected by existing methods
-            task_result = {
-                "task_id": result.task_id,
-                "status": result.status,
-                "result": result.result,
-                "error": result.error,
-                "metadata": result.metadata,
-            }
 
-            compat_context = None
-            if context and hasattr(context, "to_dict"):
-                # Convert ProcessingContext to UFO Context if needed
-                pass  # For now, maintain compatibility
+        self.processor = ConstellationAgentProcessor(agent=self, global_context=context)
+        await self.processor.process()
 
-            return await self.process_task_result(
-                task_result, constellation, compat_context
-            )
-        except Exception as e:
-            raise TaskExecutionError(
-                result.task_id, f"Failed to process result: {e}", e
-            ) from e
+        # Sync the status with the processor.
+        self.status = self.processor.processing_context.get_local("status")
+        self.logger.info(f"Host agent status updated to: {self.status}")
 
-    # Original interface methods (for backwards compatibility)
-    @abstractmethod
-    async def process_initial_request(
-        self,
-        request: str,
-        context: Optional[Context] = None,
-    ) -> TaskConstellation:
-        """
-        Process the initial user request to generate a DAG.
+        update_string = self.processor.processing_context.get_local("editing")
 
-        :param request: User request string
-        :param context: Optional UFO context for processing
-        :return: TaskConstellation representing the initial DAG
-        :raises ConstellationError: If constellation generation fails
-        """
-        pass
+        updated_constellation = await self._orchestrator.modify_constellation_with_llm(
+            self._current_constellation, update_string
+        )
 
-    @abstractmethod
-    async def process_task_result(
-        self,
-        task_result: Dict[str, Any],
-        constellation: TaskConstellation,
-        context: Optional[Context] = None,
-    ) -> TaskConstellation:
-        """
-        Process task execution results and update the DAG.
+        is_dag, errors = updated_constellation.validate_dag()
 
-        :param task_result: Result from task execution
-        :param constellation: Current constellation to update
-        :param context: Optional UFO context for processing
-        :return: Updated TaskConstellation
-        :raises TaskExecutionError: If result processing fails
-        """
-        pass
+        if not is_dag:
+            self.logger.error(f"The created constellation is not a valid DAG: {errors}")
+            self.status = "failed"
 
-    @abstractmethod
-    async def should_continue(
-        self,
-        constellation: TaskConstellation,
-        context: Optional[Context] = None,
-    ) -> bool:
-        """
-        Determine if the session should continue based on constellation state.
+        self._current_constellation = updated_constellation
 
-        Args:
-            constellation: Current constellation
-            context: Optional context for decision making
-
-        Returns:
-            True if session should continue, False otherwise
-        """
-        pass
-
-    async def update_constellation_with_lock(
-        self,
-        task_result: Dict[str, Any],
-        context: Optional[Context] = None,
-    ) -> TaskConstellation:
-        """
-        Thread-safe method to update constellation based on task results.
-
-        Args:
-            task_result: Result from task execution
-            context: Optional context for processing
-
-        Returns:
-            Updated TaskConstellation
-        """
-        async with self._update_lock:
-            if self._current_constellation is None:
-                raise ValueError("No current constellation to update")
-
-            # Only update if constellation is not finished
-            if self._current_constellation.state in [
-                ConstellationState.COMPLETED,
-                ConstellationState.FAILED,
-            ]:
-                self.logger.warning(
-                    "Attempted to update completed/failed constellation"
-                )
-                return self._current_constellation
-
-            # Process the result and update constellation
-            updated_constellation = await self.process_task_result(
-                task_result, self._current_constellation, context
-            )
-
-            self._current_constellation = updated_constellation
-
-            # Log constellation update (visualization handled by observer)
-            task_id = task_result.get("task_id", "unknown")
-            status = task_result.get("status", "unknown")
-            self.logger.info(f"Updated constellation after task {task_id} -> {status}")
-
-            return updated_constellation
-
-    def validate_constellation_update(
-        self,
-        constellation: TaskConstellation,
-        updates: Dict[str, Any],
-    ) -> bool:
-        """
-        Validate that constellation updates only affect unexecuted tasks.
-
-        Args:
-            constellation: Constellation to validate
-            updates: Proposed updates
-
-        Returns:
-            True if updates are valid, False otherwise
-        """
-        try:
-            # Get all running and completed tasks
-            executed_or_running_tasks = set()
-
-            for task in constellation.tasks.values():
-                if task.status in [TaskStatus.running, TaskStatus.completed]:
-                    executed_or_running_tasks.add(task.task_id)
-
-            # Check if any updates affect executed/running tasks
-            for task_id in updates.get("modified_tasks", []):
-                if task_id in executed_or_running_tasks:
-                    self.logger.error(f"Cannot modify executed/running task: {task_id}")
-                    return False
-
-            # Check if any removed tasks are executed/running
-            for task_id in updates.get("removed_tasks", []):
-                if task_id in executed_or_running_tasks:
-                    self.logger.error(f"Cannot remove executed/running task: {task_id}")
-                    return False
-
-            return True
-        except Exception as e:
-            self.logger.error(f"Error validating constellation update: {e}")
-            return False
-
-    def get_constellation_statistics(self) -> Dict[str, Any]:
-        """
-        Get current constellation statistics.
-
-        Returns:
-            Dictionary containing constellation statistics
-        """
-        if not self._current_constellation:
-            return {"error": "No current constellation"}
-
-        return {
-            "constellation_id": self._current_constellation.constellation_id,
-            "name": self._current_constellation.name,
-            "state": self._current_constellation.state.value,
-            "total_tasks": self._current_constellation.task_count,
-            "total_dependencies": self._current_constellation.dependency_count,
-            "statistics": self._current_constellation.get_statistics(),
-            "agent_status": self._status,
-        }
-
-    async def reset_constellation(self) -> None:
-        """Reset the current constellation and agent state."""
-        async with self._update_lock:
-            self._current_constellation = None
-            self._status = "ready"
-            self.logger.info("Constellation and agent state reset")
+        return updated_constellation
 
     # Required BasicAgent abstract methods - basic implementations
     def get_prompter(self) -> str:
         """Get the prompter for the agent."""
-        return "GalaxyWeaverAgent"
+        return "Constellation"
 
     @property
     def status_manager(self):
         """Get the status manager."""
-        from .galaxy_agent_states import GalaxyAgentStateManager
+        from .constellation_agent_states import ConstellationAgentStateManager
 
-        return GalaxyAgentStateManager()
+        return ConstellationAgentStateManager()
 
-    async def context_provision(self) -> None:
-        """Provide context for the agent."""
-        pass
+    @property
+    def orchestrator(self) -> TaskConstellationOrchestrator:
+        """
+        The orchestrator for managing constellation tasks.
+        :return: The task constellation orchestrator.
+        """
+        return self._orchestrator
 
-    def process_confirmation(self) -> None:
-        """Process confirmation."""
-        pass
 
-
-class MockGalaxyWeaverAgent(GalaxyWeaverAgent):
+class MockConstellationAgent(ConstellationAgent):
     """
-    Mock implementation of GalaxyWeaverAgent for testing and demonstration.
+    Mock implementation of Constellation for testing and demonstration.
 
     This implementation provides basic DAG generation and update logic
     for testing the Galaxy framework without requiring actual LLM integration.
     """
 
     def __init__(self, name: str = "mock_weaver_agent"):
-        """Initialize the MockGalaxyWeaverAgent."""
+        """Initialize the MockConstellation."""
         super().__init__(name)
 
     def message_constructor(self) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
@@ -362,7 +197,7 @@ class MockGalaxyWeaverAgent(GalaxyWeaverAgent):
         return [
             {
                 "role": "system",
-                "content": "You are a mock GalaxyWeaverAgent for testing purposes.",
+                "content": "You are a mock Constellation for testing purposes.",
             },
             {
                 "role": "user",

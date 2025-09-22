@@ -38,7 +38,7 @@ from ufo.logging.setup import setup_logger
 from ufo.module.context import Context, ContextNames
 
 from .session.galaxy_session import GalaxySession
-from .agents.galaxy_agent import GalaxyWeaverAgent, MockGalaxyWeaverAgent
+from .agents.constellation_agent import ConstellationAgent, MockConstellationAgent
 from .constellation import TaskConstellationOrchestrator
 from .client.constellation_client import ConstellationClient
 from .core.types import ProcessingContext
@@ -90,7 +90,7 @@ class GalaxyClient:
         self.logger = logging.getLogger(__name__)
 
         # Initialize components
-        self._agent: Optional[GalaxyWeaverAgent] = None
+        self._agent: Optional[ConstellationAgent] = None
         self._orchestration: Optional[TaskConstellationOrchestrator] = None
         self._client: Optional[ConstellationClient] = None
         self._session: Optional[GalaxySession] = None
@@ -139,17 +139,15 @@ class GalaxyClient:
                 # Initialize agent
                 progress.update(task, description="[cyan]Setting up Agent...")
                 if self.use_mock_agent:
-                    self._agent = MockGalaxyWeaverAgent("galaxy_mock_agent")
+                    self._agent = MockConstellationAgent("galaxy_mock_agent")
                     self.console.print(
-                        "[green]✅ Mock GalaxyWeaverAgent initialized[/green]"
+                        "[green]✅ Mock Constellation initialized[/green]"
                     )
-                    self.logger.info("✅ Mock GalaxyWeaverAgent initialized")
+                    self.logger.info("✅ Mock Constellation initialized")
                 else:
-                    self._agent = GalaxyWeaverAgent("galaxy_weaver_agent")
-                    self.console.print(
-                        "[green]✅ GalaxyWeaverAgent initialized[/green]"
-                    )
-                    self.logger.info("✅ GalaxyWeaverAgent initialized")
+                    self._agent = MockConstellationAgent("galaxy_weaver_agent")
+                    self.console.print("[green]✅ Constellation initialized[/green]")
+                    self.logger.info("✅ Constellation initialized")
 
                 # Initialize constellation client
                 progress.update(

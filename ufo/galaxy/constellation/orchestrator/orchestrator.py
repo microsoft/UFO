@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 """
-Task Execution Orchestrator for TaskConstellation V2.
+Task Execution Orchestrator for TaskConstellation.
 
 This module provides the execution orchestrator for TaskConstellation,
 focused purely on execution flow control and coordination.
@@ -17,7 +17,13 @@ from typing import Any, Dict, List, Optional
 
 from ufo.galaxy.client.device_manager import ConstellationDeviceManager
 
-from ...core.events import EventBus, EventType, TaskEvent, get_event_bus
+from ...core.events import (
+    ConstellationEvent,
+    Event,
+    EventType,
+    TaskEvent,
+    get_event_bus,
+)
 from ...core.types import ProcessingContext
 from .constellation_manager import ConstellationManager
 from ..parsers.constellation_parser import ConstellationParser
@@ -94,6 +100,19 @@ class TaskConstellationOrchestrator:
 
         constellation = await self._constellation_parser.create_from_llm(
             llm_output, constellation_name
+        )
+
+        self._event_bus.publish_event(
+            ConstellationEvent(
+                event_type=EventType.CONSTELLATION_STARTED,
+                source_id=f"orchestrator_{id(self)}",
+                timestamp=time.time(),
+                data={
+                    "constellation_id": constellation.constellation_id,
+                    "creation_request": llm_output,
+                    "constellation": constellation,
+                },
+            )
         )
 
         # Register with constellation manager
@@ -402,9 +421,22 @@ class TaskConstellationOrchestrator:
         :param modification_request: LLM request for modifications
         :return: Modified TaskConstellation
         """
-        return self._constellation_parser.update_from_llm(
+        constellation = self._constellation_parser.update_from_llm(
             constellation, modification_request
         )
+        self._event_bus.publish_event(
+            ConstellationEvent(
+                event_type=EventType.CONSTELLATION_MODIFIED,
+                source_id=f"orchestrator_{id(self)}",
+                timestamp=time.time(),
+                data={
+                    "constellation_id": constellation.constellation_id,
+                    "modification_request": modification_request,
+                    "constellation": constellation,
+                },
+            )
+        )
+        return constellation
 
     async def get_constellation_status(
         self, constellation: TaskConstellation
@@ -548,6 +580,12 @@ class TaskConstellationOrchestrator:
         return self._constellation_parser.merge_constellations(
             constellation1, constellation2, merged_name
         )
+
+    def publish_event(self, event: Event):
+        """
+        An interface to publish an event for Task or Constellation.
+        """
+        self._event_bus.publish_event(event)
 
 
 # Convenience functions for easier usage

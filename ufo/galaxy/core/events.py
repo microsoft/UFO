@@ -26,8 +26,8 @@ class EventType(Enum):
     CONSTELLATION_COMPLETED = "constellation_completed"
     CONSTELLATION_FAILED = "constellation_failed"
 
-    # Structure modification events (for dynamic DAG changes)
-    DAG_MODIFIED = "dag_modified"
+    # Structure modification events (for dynamic constellation changes)
+    CONSTELLATION_MODIFIED = "constellation_modified"
 
 
 @dataclass

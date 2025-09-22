@@ -17,7 +17,7 @@ from ..core.events import (
     IEventObserver,
 )
 from ..constellation import TaskConstellation
-from ..agents.galaxy_agent import GalaxyWeaverAgent
+from ..agents.constellation_agent import ConstellationAgent
 from ufo.module.context import Context
 
 
@@ -28,11 +28,11 @@ class ConstellationProgressObserver(IEventObserver):
     This replaces the complex callback logic in GalaxyRound.
     """
 
-    def __init__(self, agent: GalaxyWeaverAgent, context: Context):
+    def __init__(self, agent: ConstellationAgent, context: Context):
         """
         Initialize ConstellationProgressObserver.
 
-        :param agent: GalaxyWeaverAgent instance for task coordination
+        :param agent: ConstellationAgent instance for task coordination
         :param context: Context object for the session
         """
         self.agent = agent

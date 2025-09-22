@@ -5,9 +5,9 @@
 Galaxy Agents Package
 
 This package contains agent implementations for the Galaxy framework,
-including the GalaxyWeaverAgent for DAG-based task orchestration.
+including the Constellation for DAG-based task orchestration.
 """
 
-from .galaxy_agent import GalaxyWeaverAgent
+from .constellation_agent import ConstellationAgent
 
-__all__ = ["GalaxyWeaverAgent"]
+__all__ = ["ConstellationAgent"]

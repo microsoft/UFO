@@ -473,7 +473,7 @@ class TaskConstellation(IConstellation):
         errors = []
 
         # Check for cycles
-        if self._has_cycle():
+        if self.has_cycle():
             errors.append("DAG contains cycles")
 
         # Check for invalid dependencies
@@ -636,7 +636,7 @@ class TaskConstellation(IConstellation):
 
         return has_path(to_task_id, from_task_id)
 
-    def _has_cycle(self) -> bool:
+    def has_cycle(self) -> bool:
         """Check if the DAG has any cycles."""
         try:
             self.get_topological_order()
