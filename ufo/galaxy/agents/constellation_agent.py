@@ -186,7 +186,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
                 data={
                     "old_constellation": before_constellation,
                     "new_constellation": after_constellation,
-                    "modification_type": "agent_processing_result",
+                    "modification_type": f"Edited by {self.name}",
                 },
                 constellation_id=after_constellation.constellation_id,
                 constellation_state=(
