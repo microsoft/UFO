@@ -15,8 +15,9 @@ import logging
 import time
 from typing import Any, Dict, Optional
 
+from ufo.config import Config
 from ufo.module.basic import BaseSession, BaseRound
-from ufo.module.context import Context
+from ufo.module.context import Context, ContextNames
 
 from ..agents.constellation_agent import ConstellationAgent
 from ..constellation import TaskConstellationOrchestrator, TaskConstellation
@@ -28,6 +29,8 @@ from .observers import (
     SessionMetricsObserver,
     DAGVisualizationObserver,
 )
+
+configs = Config.get_instance().config_data
 
 
 class GalaxyRound(BaseRound):
@@ -57,40 +60,7 @@ class GalaxyRound(BaseRound):
         self._task_results: Dict[str, Any] = {}
         self._execution_start_time: Optional[float] = None
 
-        # Event system
-        self._event_bus = get_event_bus()
-        self._observers = []
         self._agent = agent
-
-        # Set up observers
-        self._setup_observers()
-
-    def _setup_observers(self) -> None:
-        """
-        Set up event observers for this round.
-
-        Initializes progress, metrics, and visualization observers
-        and subscribes them to the event bus.
-        """
-        # Progress observer for task updates
-        progress_observer = ConstellationProgressObserver(
-            agent=self._agent, context=self._context
-        )
-        self._observers.append(progress_observer)
-
-        # Metrics observer for performance tracking
-        metrics_observer = SessionMetricsObserver(
-            session_id=f"galaxy_round_{self._id}", logger=self.logger
-        )
-        self._observers.append(metrics_observer)
-
-        # DAG visualization observer for constellation visualization
-        visualization_observer = DAGVisualizationObserver(enable_visualization=True)
-        self._observers.append(visualization_observer)
-
-        # Subscribe observers to event bus
-        for observer in self._observers:
-            self._event_bus.subscribe(observer)
 
     async def run(self) -> None:
         """
@@ -113,7 +83,7 @@ class GalaxyRound(BaseRound):
             self._agent.set_state(StartConstellationAgentState())
 
             # Run agent state machine until completion
-            while not self._agent.state.is_round_end():
+            while not self.is_finished():
                 # Execute current state
                 await self._agent.handle(self._context)
 
@@ -126,10 +96,6 @@ class GalaxyRound(BaseRound):
                 # Small delay to prevent busy waiting
                 await asyncio.sleep(0.01)
 
-            # Get final constellation for context update
-            if self._agent.current_constellation:
-                self._constellation = self._agent.current_constellation
-
                 self.logger.info(
                     f"GalaxyRound {self._id} completed with status: {self._agent._status}"
                 )
@@ -139,6 +105,16 @@ class GalaxyRound(BaseRound):
             import traceback
 
             traceback.print_exc()
+
+    def is_finished(self):
+        """
+        Verify if the round is finished.
+        """
+
+        return (
+            self.state.is_round_end()
+            or self.context.get(ContextNames.SESSION_STEP) >= configs["MAX_STEP"]
+        )
 
     @property
     def constellation(self) -> Optional[TaskConstellation]:
@@ -206,6 +182,40 @@ class GalaxySession(BaseSession):
         self._session_results: Dict[str, Any] = {}
 
         self.logger = logging.getLogger(__name__)
+
+        # Event system
+        self._event_bus = get_event_bus()
+        self._observers = []
+
+        # Set up observers
+        self._setup_observers()
+
+    def _setup_observers(self) -> None:
+        """
+        Set up event observers for this round.
+
+        Initializes progress, metrics, and visualization observers
+        and subscribes them to the event bus.
+        """
+        # Progress observer for task updates
+        progress_observer = ConstellationProgressObserver(
+            agent=self._agent, context=self._context
+        )
+        self._observers.append(progress_observer)
+
+        # Metrics observer for performance tracking
+        metrics_observer = SessionMetricsObserver(
+            session_id=f"galaxy_round_{self._id}", logger=self.logger
+        )
+        self._observers.append(metrics_observer)
+
+        # DAG visualization observer for constellation visualization
+        visualization_observer = DAGVisualizationObserver(enable_visualization=True)
+        self._observers.append(visualization_observer)
+
+        # Subscribe observers to event bus
+        for observer in self._observers:
+            self._event_bus.subscribe(observer)
 
     async def run(self) -> None:
         """

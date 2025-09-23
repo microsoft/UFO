@@ -64,8 +64,9 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         """
 
         super().__init__(name)
+
         self._current_constellation: Optional[TaskConstellation] = None
-        self._status: str = "start"  # ready, processing, finished, failed
+        self._status: str = "START"  # ready, processing, finished, failed
         self.logger = logging.getLogger(__name__)
 
         # Add state machine support
@@ -108,7 +109,9 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         await self.processor.process()
 
-        created_constellation = context.get(ContextNames.CONSTELLATION)
+        created_constellation: TaskConstellation = context.get(
+            ContextNames.CONSTELLATION
+        )
 
         is_dag, errors = created_constellation.validate_dag()
         self.status = self.processor.processing_context.get_local("status").upper()

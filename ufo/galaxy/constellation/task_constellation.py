@@ -168,42 +168,6 @@ class TaskConstellation(IConstellation):
         self._metadata.update(metadata)
         self._updated_at = datetime.now(timezone.utc)
 
-    def _restore_from_data(self, data: Dict[str, Any]) -> None:
-        """
-        Internal method to restore constellation state from data.
-        Used by ConstellationSerializer for deserialization.
-        """
-        # Restore state
-        self._state = ConstellationState(
-            data.get("state", ConstellationState.CREATED.value)
-        )
-        self._metadata = data.get("metadata", {})
-        self._llm_source = data.get("llm_source")
-
-        # Restore timestamps
-        if data.get("created_at"):
-            self._created_at = datetime.fromisoformat(data["created_at"])
-        if data.get("updated_at"):
-            self._updated_at = datetime.fromisoformat(data["updated_at"])
-        if data.get("execution_start_time"):
-            self._execution_start_time = datetime.fromisoformat(
-                data["execution_start_time"]
-            )
-        if data.get("execution_end_time"):
-            self._execution_end_time = datetime.fromisoformat(
-                data["execution_end_time"]
-            )
-
-        # Restore tasks
-        for task_data in data.get("tasks", {}).values():
-            task = TaskStar.from_dict(task_data)
-            self._tasks[task.task_id] = task
-
-        # Restore dependencies
-        for dep_data in data.get("dependencies", {}).values():
-            dependency = TaskStarLine.from_dict(dep_data)
-            self._dependencies[dependency.line_id] = dependency
-
     def add_task(self, task: TaskStar) -> None:
         """
         Add a task to the constellation.
@@ -751,8 +715,6 @@ class TaskConstellation(IConstellation):
 
         # Create TaskConstellation instance from dictionary
         return cls.from_dict(data)
-
-    # Serialization methods moved to ConstellationSerializer class
 
     def to_llm_string(self) -> str:
         """

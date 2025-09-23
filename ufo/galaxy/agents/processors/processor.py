@@ -32,21 +32,15 @@ from ufo.agents.processors.core.processing_middleware import EnhancedLoggingMidd
 from ufo.agents.processors.core.processor_framework import (
     ProcessingContext,
     ProcessingPhase,
-    ProcessingResult,
     ProcessorTemplate,
 )
-from ufo.agents.processors.schemas.target import TargetInfo
-from ufo.agents.processors.strategies.host_agent_processing_strategy import (
-    DesktopDataCollectionStrategy,
-    HostActionExecutionStrategy,
-    HostLLMInteractionStrategy,
-    HostMemoryUpdateStrategy,
-)
+
 from ufo.config import Config
 
 from ufo.galaxy.agents.processors.strategy import (
-    ConstellationDataCollectionStrategy,
+    ConstellationActionExecutionStrategy,
     ConstellationLLMInteractionStrategy,
+    ConstellationMemoryUpdateStrategy,
 )
 from ufo.module.context import Context, ContextNames
 
@@ -93,21 +87,20 @@ class ConstellationAgentProcessor(ProcessorTemplate):
         """
         Configure processing strategies with enhanced error handling and logging capabilities.
         """
-        self.strategies[ProcessingPhase.DATA_COLLECTION] = (
-            ConstellationDataCollectionStrategy(
-                fail_fast=True  # Desktop data collection is critical for Host Agent
-            )
-        )
         self.strategies[ProcessingPhase.LLM_INTERACTION] = (
             ConstellationLLMInteractionStrategy(
                 fail_fast=True  # LLM interaction failure should trigger recovery
             )
         )
-        self.strategies[ProcessingPhase.ACTION_EXECUTION] = HostActionExecutionStrategy(
-            fail_fast=False  # Action failures can be handled gracefully
+        self.strategies[ProcessingPhase.ACTION_EXECUTION] = (
+            ConstellationActionExecutionStrategy(
+                fail_fast=False  # Action failures can be handled gracefully
+            )
         )
-        self.strategies[ProcessingPhase.MEMORY_UPDATE] = HostMemoryUpdateStrategy(
-            fail_fast=False  # Memory update failures shouldn't stop the process
+        self.strategies[ProcessingPhase.MEMORY_UPDATE] = (
+            ConstellationMemoryUpdateStrategy(
+                fail_fast=False  # Memory update failures shouldn't stop the process
+            )
         )
 
     def _setup_middleware(self) -> None:
@@ -186,7 +179,9 @@ class ConstellationLoggingMiddleware(EnhancedLoggingMiddleware):
         )
 
         panel_title = f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
-        panel_content = f"Analyzing user intent and decomposing request..."
+        panel_content = (
+            f"Analyzing user intent and decomposing request into device agents..."
+        )
 
         console.print(Panel(panel_content, title=panel_title, style="magenta"))
 
