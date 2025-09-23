@@ -1,777 +1,716 @@
 # Galaxy Core Module
 
-The Core module provides the foundational components, interfaces, and type system that underpin the entire Galaxy Framework. It defines the essential abstractions, event system, and shared utilities used across all other modules.
+The Core module provides the foundational type system and interface definitions that underpin the entire Galaxy Framework. It defines the essential types, protocols, data classes, and abstract interfaces used across all other modules to ensure type safety, modularity, and clear contracts between components.
 
 ## ⚡ Overview
 
-The Core module establishes the fundamental architecture of Galaxy through well-defined interfaces, a robust event system, and comprehensive type definitions. It enables loose coupling, extensibility, and maintainability across the framework.
+The Core module establishes the fundamental architecture of Galaxy through:
+- **Comprehensive Type System**: Type aliases, protocols, dataclasses, and exception hierarchy
+- **Interface Segregation**: Well-defined, focused abstract interfaces following SOLID principles  
+- **Cross-Module Integration**: Types that integrate with constellation, session, and agent modules
+- **Type Safety**: Runtime-checkable protocols and comprehensive type annotations
+- **Exception Handling**: Hierarchical exception system with detailed error context
 
 ## 🏗️ Architecture
 
 ```
 ufo/galaxy/core/
-├── __init__.py                     # Module exports
-├── events.py                      # Event system and observer pattern
-├── interfaces.py                  # Core interfaces and abstractions
-├── types.py                       # Type definitions and enums
-├── exceptions.py                  # Custom exception hierarchy
-├── utils.py                       # Shared utility functions
-└── base/                          # Base classes and mixins
-    ├── __init__.py
-    ├── base_component.py          # Base component class
-    ├── configurable.py            # Configuration mixin
-    └── serializable.py            # Serialization mixin
+├── __init__.py                     # Module exports (types and interfaces only)
+├── types.py                       # Complete type system with protocols and dataclasses
+├── interfaces.py                  # Abstract interface definitions (ISP compliance)
+├── di_container.py               # Dependency injection (standalone, not exported)
+├── events.py                     # Event system (standalone, not exported)  
+└── README.md                     # This documentation
 ```
 
-## ⚡ Event System
+**Note**: The `di_container.py` and `events.py` files exist but are not currently exported by the module's `__init__.py`, meaning they are standalone utilities rather than core framework components.
 
-### EventBus
+## 🎯 Core Type System (`types.py`)
 
-The central event distribution system that enables loose coupling between components.
+The type system defines all fundamental types, protocols, and data structures used throughout Galaxy. It integrates with constellation module enums and provides comprehensive type safety.
 
-#### Key Features
-- **Type-Safe Events**: Strongly typed event system with validation
-- **Async/Await Support**: Full asynchronous event handling
-- **Event Filtering**: Subscribe to specific event types or patterns
-- **Event History**: Optional event history tracking and replay
-- **Error Handling**: Robust error handling and recovery
+### Core Type Aliases
 
-#### Usage Example
 ```python
-from ufo.galaxy.core.events import EventBus, Event, EventType
+# Identifier Types  
+TaskId = str
+ConstellationId = str
+DeviceId = str
+SessionId = str
+AgentId = str
 
-# Create event bus
-event_bus = EventBus(
-    enable_history=True,
-    max_history_size=1000,
-    enable_async_delivery=True
-)
-
-# Define custom event
-class TaskCompletedEvent(Event):
-    def __init__(self, task_id: str, result: Dict):
-        super().__init__(EventType.TASK_COMPLETED)
-        self.task_id = task_id
-        self.result = result
-
-# Subscribe to events
-async def handle_task_completion(event: TaskCompletedEvent):
-    print(f"Task {event.task_id} completed with result: {event.result}")
-
-event_bus.subscribe(EventType.TASK_COMPLETED, handle_task_completion)
-
-# Emit events
-await event_bus.emit(TaskCompletedEvent("task_1", {"status": "success"}))
+# Callback Types (with rich signatures)
+ProgressCallback = Callable[[TaskId, TaskStatus, Optional[Any]], None]
+AsyncProgressCallback = Callable[[TaskId, TaskStatus, Optional[Any]], Awaitable[None]]
+ErrorCallback = Callable[[Exception, Optional[Dict[str, Any]]], None]
+AsyncErrorCallback = Callable[[Exception, Optional[Dict[str, Any]]], Awaitable[None]]
 ```
 
-#### Key Methods
-```python
-class EventBus:
-    def subscribe(self, event_type: EventType, handler: Callable) -> str
-    def unsubscribe(self, subscription_id: str) -> bool
-    async def emit(self, event: Event) -> None
-    def subscribe_pattern(self, pattern: str, handler: Callable) -> str
-    def get_event_history(self, event_type: EventType = None) -> List[Event]
-    def replay_events(self, from_timestamp: datetime = None) -> None
-    def clear_history(self) -> None
-    def get_subscription_count(self) -> int
-```
+### Imported Enumerations
 
-### Event Types
-
-Comprehensive event type definitions for the Galaxy Framework.
+The core module imports enums from the constellation module (with fallback definitions):
 
 ```python
-class EventType(Enum):
-    # Session Events
-    SESSION_STARTED = "session_started"
-    SESSION_COMPLETED = "session_completed"
-    SESSION_FAILED = "session_failed"
-    ROUND_STARTED = "round_started"
-    ROUND_COMPLETED = "round_completed"
-    
-    # Agent Events
-    AGENT_STATE_CHANGED = "agent_state_changed"
-    REQUEST_PROCESSING_STARTED = "request_processing_started"
-    REQUEST_PROCESSING_COMPLETED = "request_processing_completed"
-    
-    # Constellation Events
-    CONSTELLATION_CREATED = "constellation_created"
-    CONSTELLATION_UPDATED = "constellation_updated"
-    TASK_ADDED = "task_added"
-    TASK_REMOVED = "task_removed"
-    TASK_STATUS_CHANGED = "task_status_changed"
-    DEPENDENCY_ADDED = "dependency_added"
-    DEPENDENCY_REMOVED = "dependency_removed"
-    
-    # Execution Events
-    EXECUTION_STARTED = "execution_started"
-    EXECUTION_COMPLETED = "execution_completed"
-    EXECUTION_FAILED = "execution_failed"
-    TASK_STARTED = "task_started"
-    TASK_COMPLETED = "task_completed"
-    TASK_FAILED = "task_failed"
-    
-    # Device Events
-    DEVICE_CONNECTED = "device_connected"
-    DEVICE_DISCONNECTED = "device_disconnected"
-    DEVICE_STATUS_CHANGED = "device_status_changed"
-    
-    # System Events
-    ERROR_OCCURRED = "error_occurred"
-    WARNING_ISSUED = "warning_issued"
-    PERFORMANCE_METRIC_RECORDED = "performance_metric_recorded"
-```
-
-### Observer Pattern Implementation
-
-Advanced observer pattern with type safety and error handling.
-
-```python
-from ufo.galaxy.core.events import Observer, Subject
-
-# Create observable subject
-class ConstellationSubject(Subject):
-    def __init__(self):
-        super().__init__()
-        self._constellation_state = {}
-    
-    def update_constellation(self, changes: Dict):
-        self._constellation_state.update(changes)
-        # Notify all observers
-        self.notify_observers(ConstellationUpdatedEvent(changes))
-
-# Create observer
-class ConstellationObserver(Observer):
-    async def update(self, event: Event) -> None:
-        if isinstance(event, ConstellationUpdatedEvent):
-            print(f"Constellation updated: {event.changes}")
-
-# Setup observer relationship
-subject = ConstellationSubject()
-observer = ConstellationObserver()
-subject.attach_observer(observer)
-
-# Update will automatically notify observer
-subject.update_constellation({"task_count": 5})
-```
-
-## 🔌 Interfaces and Abstractions
-
-### Core Interfaces
-
-Define the essential contracts for Galaxy components.
-
-```python
-from abc import ABC, abstractmethod
-from typing import Dict, Any, Optional
-
-class Agent(ABC):
-    """Abstract base for all Galaxy agents"""
-    
-    @abstractmethod
-    async def process_request(self, request: str, context: Dict[str, Any]) -> Any:
-        """Process a user request and return result"""
-        pass
-    
-    @abstractmethod
-    def get_capabilities(self) -> List[str]:
-        """Return list of agent capabilities"""
-        pass
-    
-    @abstractmethod
-    def get_status(self) -> AgentStatus:
-        """Get current agent status"""
-        pass
-
-class Orchestrator(ABC):
-    """Abstract base for workflow orchestrators"""
-    
-    @abstractmethod
-    async def execute_constellation(self, constellation: 'TaskConstellation') -> ExecutionResult:
-        """Execute a task constellation"""
-        pass
-    
-    @abstractmethod
-    def get_execution_status(self) -> ExecutionStatus:
-        """Get current execution status"""
-        pass
-    
-    @abstractmethod
-    def cancel_execution(self) -> bool:
-        """Cancel ongoing execution"""
-        pass
-
-class DeviceManager(ABC):
-    """Abstract base for device management"""
-    
-    @abstractmethod
-    def discover_devices(self) -> List[Device]:
-        """Discover available devices"""
-        pass
-    
-    @abstractmethod
-    def assign_task(self, task: 'TaskStar', device: Device) -> bool:
-        """Assign task to specific device"""
-        pass
-    
-    @abstractmethod
-    def get_device_capabilities(self, device: Device) -> List[str]:
-        """Get device capabilities"""
-        pass
-```
-
-### Component Interfaces
-
-Specialized interfaces for specific Galaxy components.
-
-```python
-class ConstellationEditor(ABC):
-    """Interface for constellation editing operations"""
-    
-    @abstractmethod
-    def add_task(self, task: 'TaskStar') -> bool:
-        """Add task to constellation"""
-        pass
-    
-    @abstractmethod
-    def remove_task(self, task_id: str) -> bool:
-        """Remove task from constellation"""
-        pass
-    
-    @abstractmethod
-    def add_dependency(self, from_task: str, to_task: str) -> bool:
-        """Add dependency between tasks"""
-        pass
-
-class SessionManager(ABC):
-    """Interface for session management"""
-    
-    @abstractmethod
-    async def create_session(self, config: Dict[str, Any]) -> 'Session':
-        """Create new session"""
-        pass
-    
-    @abstractmethod
-    def get_active_sessions(self) -> List['Session']:
-        """Get list of active sessions"""
-        pass
-    
-    @abstractmethod
-    async def cleanup_session(self, session_id: str) -> bool:
-        """Cleanup and remove session"""
-        pass
-```
-
-## 🎯 Type System
-
-### Core Types
-
-Fundamental type definitions used throughout Galaxy.
-
-```python
-from typing import Union, Optional, Dict, List, Any
-from enum import Enum
-from dataclasses import dataclass
-from datetime import datetime
-
-# Status Enums
+# From constellation.enums (or fallback definitions)
 class TaskStatus(Enum):
     PENDING = "pending"
-    RUNNING = "running"
+    RUNNING = "running" 
     COMPLETED = "completed"
     FAILED = "failed"
     CANCELLED = "cancelled"
-    SKIPPED = "skipped"
+    WAITING_DEPENDENCY = "waiting_dependency"
 
-class ExecutionStatus(Enum):
-    IDLE = "idle"
-    RUNNING = "running"
-    PAUSED = "paused"
+class ConstellationState(Enum):
+    CREATED = "created"
+    READY = "ready"
+    EXECUTING = "executing"
     COMPLETED = "completed"
     FAILED = "failed"
-    CANCELLED = "cancelled"
+    PARTIALLY_FAILED = "partially_failed"
 
-class DeviceStatus(Enum):
-    AVAILABLE = "available"
-    BUSY = "busy"
-    OFFLINE = "offline"
-    ERROR = "error"
-
-# Priority and Type Enums
 class TaskPriority(Enum):
     LOW = 1
     MEDIUM = 2
     HIGH = 3
     CRITICAL = 4
 
-class TaskType(Enum):
-    DATA_PROCESSING = "data_processing"
-    MACHINE_LEARNING = "machine_learning"
-    WEB_AUTOMATION = "web_automation"
-    FILE_OPERATION = "file_operation"
-    API_CALL = "api_call"
-    CUSTOM = "custom"
+class DeviceType(Enum):
+    WINDOWS = "windows"
+    MACOS = "macos"
+    LINUX = "linux"
+    ANDROID = "android"
+    IOS = "ios"
+    WEB = "web"
+    API = "api"
+
+class DependencyType(Enum):
+    UNCONDITIONAL = "unconditional"
+    CONDITIONAL = "conditional"
+    SUCCESS_ONLY = "success_only" 
+    COMPLETION_ONLY = "completion_only"
 ```
 
-### Data Structures
+### Core Data Classes
 
-Core data structures for Galaxy operations.
+Rich dataclasses with computed properties and business logic:
 
 ```python
 @dataclass
 class ExecutionResult:
-    """Result of constellation execution"""
-    success: bool
-    completed_tasks: List[str]
-    failed_tasks: List[str]
-    execution_time_seconds: float
-    total_tasks: int
-    error_messages: List[str]
-    performance_metrics: Dict[str, Any]
-    metadata: Dict[str, Any]
-
-@dataclass
-class ValidationResult:
-    """Result of constellation validation"""
-    is_valid: bool
-    errors: List['ValidationError']
-    warnings: List['ValidationWarning']
-    validation_time_seconds: float
-    checks_performed: List[str]
-
-@dataclass
-class DeviceInfo:
-    """Device information and capabilities"""
-    device_id: str
-    device_type: str
-    capabilities: List[str]
-    status: DeviceStatus
-    resource_usage: Dict[str, float]
-    last_seen: datetime
-    metadata: Dict[str, Any]
-
-@dataclass
-class SessionResult:
-    """Result of session execution"""
-    session_id: str
-    success: bool
-    rounds_completed: int
-    total_duration_seconds: float
-    final_constellation: Optional['TaskConstellation']
-    error_info: Optional['ErrorInfo']
-    performance_summary: Dict[str, Any]
-```
-
-### Type Aliases
-
-Convenient type aliases for common patterns.
-
-```python
-from typing import TypeAlias
-
-# Configuration types
-ConfigDict: TypeAlias = Dict[str, Any]
-TaskId: TypeAlias = str
-DeviceId: TypeAlias = str
-SessionId: TypeAlias = str
-
-# Handler types
-EventHandler: TypeAlias = Callable[[Event], Awaitable[None]]
-ErrorHandler: TypeAlias = Callable[[Exception], Optional[bool]]
-ProgressCallback: TypeAlias = Callable[[float], None]
-
-# Result types
-TaskResult: TypeAlias = Dict[str, Any]
-ConstellationMetrics: TypeAlias = Dict[str, Union[int, float, str]]
-PerformanceMetrics: TypeAlias = Dict[str, Union[int, float]]
-```
-
-## 🚨 Exception Hierarchy
-
-### Custom Exception Classes
-
-Comprehensive exception hierarchy for error handling.
-
-```python
-class GalaxyError(Exception):
-    """Base exception for all Galaxy errors"""
+    """Result of a task execution with computed properties."""
     
-    def __init__(self, message: str, error_code: str = None, context: Dict = None):
+    task_id: TaskId
+    status: TaskStatus
+    result: Optional[Any] = None
+    error: Optional[Exception] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+
+    @property
+    def execution_time(self) -> Optional[float]:
+        """Calculate execution time in seconds."""
+        if self.start_time and self.end_time:
+            return (self.end_time - self.start_time).total_seconds()
+        return None
+
+    @property
+    def is_successful(self) -> bool:
+        """Check if execution was successful."""
+        return self.status in ["completed", "success"] and self.error is None
+
+@dataclass
+class ConstellationResult:
+    """Result of a constellation execution with aggregated metrics."""
+    
+    constellation_id: ConstellationId
+    status: ConstellationState
+    task_results: Dict[TaskId, ExecutionResult] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    start_time: Optional[datetime] = None
+    end_time: Optional[datetime] = None
+
+    @property
+    def execution_time(self) -> Optional[float]:
+        """Calculate total execution time in seconds."""
+        if self.start_time and self.end_time:
+            return (self.end_time - self.start_time).total_seconds()
+        return None
+
+    @property
+    def success_rate(self) -> float:
+        """Calculate success rate of completed tasks."""
+        if not self.task_results:
+            return 0.0
+        successful = sum(1 for result in self.task_results.values() if result.is_successful)
+        return successful / len(self.task_results)
+```
+
+### Configuration Classes
+
+```python
+@dataclass
+class TaskConfiguration:
+    """Configuration for individual task execution."""
+    
+    timeout: Optional[float] = None
+    retry_count: int = 0
+    retry_delay: float = 1.0
+    priority: Optional[TaskPriority] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+@dataclass  
+class ConstellationConfiguration:
+    """Configuration for constellation execution."""
+    
+    max_parallel_tasks: int = 10
+    timeout: Optional[float] = None
+    enable_retries: bool = True
+    enable_progress_callbacks: bool = True
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+@dataclass
+class DeviceConfiguration:
+    """Configuration for device management."""
+    
+    device_id: DeviceId
+    device_type: DeviceType
+    capabilities: List[str] = field(default_factory=list)
+    connection_config: Dict[str, Any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+```
+
+### Runtime-Checkable Protocols
+
+```python
+@runtime_checkable
+class IExecutable(Protocol):
+    """Protocol for executable objects."""
+    async def execute(self, context: Optional[TContext] = None) -> ExecutionResult: ...
+
+@runtime_checkable  
+class IConfigurable(Protocol):
+    """Protocol for configurable objects."""
+    def configure(self, config: Dict[str, Any]) -> None: ...
+
+@runtime_checkable
+class IObservable(Protocol):
+    """Protocol for observable objects that can notify listeners."""
+    def add_observer(self, observer: Callable[[Any], None]) -> None: ...
+    def remove_observer(self, observer: Callable[[Any], None]) -> None: ...
+    def notify_observers(self, event: Any) -> None: ...
+
+@runtime_checkable
+class IValidatable(Protocol):
+    """Protocol for objects that can be validated."""
+    def validate(self) -> bool: ...
+    def get_validation_errors(self) -> List[str]: ...
+```
+
+### Abstract Base Classes
+
+```python
+class ITaskProcessor(ABC):
+    """Interface for task processors."""
+    @abstractmethod
+    async def process_task(self, task: "ITask", context: Optional[TContext] = None) -> ExecutionResult: ...
+
+class IConstellationManager(ABC):
+    """Interface for constellation managers."""
+    @abstractmethod
+    async def create_constellation(self, tasks: List["ITask"], dependencies: Optional[List["IDependency"]] = None) -> "IConstellation": ...
+    @abstractmethod
+    async def execute_constellation(self, constellation: "IConstellation", progress_callback: Optional[AsyncProgressCallback] = None) -> ConstellationResult: ...
+
+class IDeviceManager(ABC):
+    """Interface for device managers."""
+    @abstractmethod
+    async def register_device(self, device_config: DeviceConfiguration) -> bool: ...
+    @abstractmethod  
+    async def get_available_devices(self, capabilities: Optional[List[str]] = None) -> List[DeviceId]: ...
+    @abstractmethod
+    async def assign_task_to_device(self, task: "ITask", device_id: Optional[DeviceId] = None) -> bool: ...
+
+class IAgentProcessor(ABC):
+    """Interface for agent processors."""
+    @abstractmethod
+    async def process_request(self, request: str, context: Optional[TContext] = None) -> "IConstellation": ...
+    @abstractmethod
+    async def process_result(self, result: ExecutionResult, constellation: "IConstellation", context: Optional[TContext] = None) -> "IConstellation": ...
+```
+
+### Exception Hierarchy
+
+Comprehensive exception hierarchy with rich error context:
+
+```python
+class GalaxyFrameworkError(Exception):
+    """Base exception for Galaxy framework with metadata support."""
+    
+    def __init__(self, message: str, error_code: Optional[str] = None, metadata: Optional[Dict[str, Any]] = None):
         super().__init__(message)
-        self.message = message
-        self.error_code = error_code
-        self.context = context or {}
+        self.error_code = error_code or self.__class__.__name__
+        self.metadata = metadata or {}
         self.timestamp = datetime.utcnow()
 
-class SessionError(GalaxyError):
-    """Errors related to session management"""
-    pass
+class TaskExecutionError(GalaxyFrameworkError):
+    """Exception raised during task execution."""
+    def __init__(self, task_id: TaskId, message: str, original_error: Optional[Exception] = None):
+        super().__init__(f"Task {task_id}: {message}")
+        self.task_id = task_id
+        self.original_error = original_error
 
-class AgentError(GalaxyError):
-    """Errors related to agent operations"""
-    pass
+class ConstellationError(GalaxyFrameworkError):
+    """Exception raised during constellation operations."""
+    def __init__(self, constellation_id: ConstellationId, message: str):
+        super().__init__(f"Constellation {constellation_id}: {message}")
+        self.constellation_id = constellation_id
 
-class ConstellationError(GalaxyError):
-    """Errors related to constellation operations"""
-    pass
+class DeviceError(GalaxyFrameworkError):
+    """Exception raised during device operations."""
+    def __init__(self, device_id: DeviceId, message: str):
+        super().__init__(f"Device {device_id}: {message}")
+        self.device_id = device_id
 
-class ExecutionError(GalaxyError):
-    """Errors during task execution"""
-    pass
-
-class ValidationError(GalaxyError):
-    """Errors during validation"""
-    pass
-
-class DeviceError(GalaxyError):
-    """Errors related to device operations"""
-    pass
-
-class ConfigurationError(GalaxyError):
-    """Errors in configuration"""
-    pass
+class ValidationError(GalaxyFrameworkError):
+    """Exception raised for validation errors."""
+    def __init__(self, message: str, validation_errors: List[str]):
+        super().__init__(message)
+        self.validation_errors = validation_errors
 ```
 
-### Error Handling Utilities
-
-Utilities for robust error handling and recovery.
+### Utility Classes
 
 ```python
-from ufo.galaxy.core.exceptions import GalaxyErrorHandler
-
-class GalaxyErrorHandler:
-    def __init__(self):
-        self._error_handlers = {}
-        self._default_handler = self._default_error_handler
+@dataclass
+class Statistics:
+    """Statistics for monitoring and debugging with auto-update methods."""
     
-    def register_handler(self, error_type: type, handler: ErrorHandler):
-        """Register custom error handler for specific error type"""
-        self._error_handlers[error_type] = handler
+    total_tasks: int = 0
+    completed_tasks: int = 0
+    failed_tasks: int = 0
+    average_execution_time: float = 0.0
+    success_rate: float = 0.0
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def update_from_result(self, result: ExecutionResult) -> None:
+        """Update statistics from an execution result."""
+        self.total_tasks += 1
+        if result.is_successful:
+            self.completed_tasks += 1
+        else:
+            self.failed_tasks += 1
+        
+        # Update success rate
+        self.success_rate = self.completed_tasks / self.total_tasks if self.total_tasks > 0 else 0.0
+        
+        # Update average execution time
+        if result.execution_time is not None:
+            current_total_time = self.average_execution_time * (self.total_tasks - 1)
+            self.average_execution_time = (current_total_time + result.execution_time) / self.total_tasks
+
+@dataclass
+class ProcessingContext:
+    """Context for processing operations with serialization support."""
     
-    async def handle_error(self, error: Exception) -> bool:
-        """Handle error with appropriate handler"""
-        error_type = type(error)
-        handler = self._error_handlers.get(error_type, self._default_handler)
-        return await handler(error)
-    
-    def _default_error_handler(self, error: Exception) -> bool:
-        """Default error handling logic"""
-        logger.error(f"Unhandled error: {error}")
-        return False
+    session_id: Optional[SessionId] = None
+    agent_id: Optional[AgentId] = None
+    user_id: Optional[str] = None
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    timestamp: datetime = field(default_factory=datetime.utcnow)
+    device_manager: Optional[Any] = None  # ConstellationDeviceManager (avoiding circular import)
 
-# Usage
-error_handler = GalaxyErrorHandler()
-
-# Register custom handlers
-error_handler.register_handler(
-    ConstellationError,
-    lambda e: print(f"Constellation error: {e.message}")
-)
-
-# Handle errors
-try:
-    # Galaxy operations
-    pass
-except Exception as e:
-    await error_handler.handle_error(e)
-```
-
-## 🛠️ Base Classes and Mixins
-
-### BaseComponent
-
-Base class for all Galaxy components with common functionality.
-
-```python
-from ufo.galaxy.core.base import BaseComponent
-
-class BaseComponent:
-    """Base class for all Galaxy components"""
-    
-    def __init__(self, component_name: str, config: ConfigDict = None):
-        self.component_name = component_name
-        self.config = config or {}
-        self.logger = self._setup_logger()
-        self.is_initialized = False
-        self.creation_time = datetime.utcnow()
-    
-    def initialize(self) -> bool:
-        """Initialize component"""
-        try:
-            self._validate_config()
-            self._setup_resources()
-            self.is_initialized = True
-            return True
-        except Exception as e:
-            self.logger.error(f"Failed to initialize {self.component_name}: {e}")
-            return False
-    
-    def cleanup(self) -> None:
-        """Cleanup component resources"""
-        self._cleanup_resources()
-        self.is_initialized = False
-    
-    def _setup_logger(self) -> logging.Logger:
-        """Setup component logger"""
-        return logging.getLogger(f"galaxy.{self.component_name}")
-    
-    def _validate_config(self) -> None:
-        """Validate component configuration"""
-        pass
-    
-    def _setup_resources(self) -> None:
-        """Setup component resources"""
-        pass
-    
-    def _cleanup_resources(self) -> None:
-        """Cleanup component resources"""
-        pass
-```
-
-### Configurable Mixin
-
-Mixin for components that need configuration management.
-
-```python
-from ufo.galaxy.core.base import Configurable
-
-class Configurable:
-    """Mixin for configurable components"""
-    
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self._config_schema = {}
-        self._config_defaults = {}
-    
-    def set_config(self, config: ConfigDict) -> bool:
-        """Set component configuration with validation"""
-        try:
-            validated_config = self._validate_config_schema(config)
-            merged_config = {**self._config_defaults, **validated_config}
-            self.config = merged_config
-            return True
-        except Exception as e:
-            self.logger.error(f"Invalid configuration: {e}")
-            return False
-    
-    def get_config(self, key: str = None) -> Any:
-        """Get configuration value or entire config"""
-        if key is None:
-            return self.config.copy()
-        return self.config.get(key)
-    
-    def update_config(self, updates: ConfigDict) -> bool:
-        """Update specific configuration values"""
-        try:
-            current_config = self.config.copy()
-            current_config.update(updates)
-            return self.set_config(current_config)
-        except Exception as e:
-            self.logger.error(f"Failed to update config: {e}")
-            return False
-```
-
-### Serializable Mixin
-
-Mixin for components that need serialization support.
-
-```python
-from ufo.galaxy.core.base import Serializable
-
-class Serializable:
-    """Mixin for serializable components"""
-    
     def to_dict(self) -> Dict[str, Any]:
-        """Convert component to dictionary"""
+        """Convert context to dictionary for serialization."""
         return {
-            "component_name": self.component_name,
-            "component_type": self.__class__.__name__,
-            "config": self.config,
-            "creation_time": self.creation_time.isoformat(),
-            "is_initialized": self.is_initialized
+            "session_id": self.session_id,
+            "agent_id": self.agent_id,
+            "user_id": self.user_id,
+            "metadata": self.metadata,
+            "timestamp": self.timestamp.isoformat(),
         }
-    
-    @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> 'Serializable':
-        """Create component from dictionary"""
-        instance = cls(
-            component_name=data["component_name"],
-            config=data["config"]
-        )
-        instance.creation_time = datetime.fromisoformat(data["creation_time"])
-        instance.is_initialized = data["is_initialized"]
-        return instance
-    
-    def save_to_file(self, filepath: str) -> bool:
-        """Save component to file"""
-        try:
-            with open(filepath, 'w') as f:
-                json.dump(self.to_dict(), f, indent=2, default=str)
-            return True
-        except Exception as e:
-            self.logger.error(f"Failed to save to {filepath}: {e}")
-            return False
-    
-    @classmethod
-    def load_from_file(cls, filepath: str) -> Optional['Serializable']:
-        """Load component from file"""
-        try:
-            with open(filepath, 'r') as f:
-                data = json.load(f)
-            return cls.from_dict(data)
-        except Exception as e:
-            logging.error(f"Failed to load from {filepath}: {e}")
-            return None
 ```
 
-## 🔧 Utility Functions
+## 🔌 Interface System (`interfaces.py`)
 
-### Core Utilities
+The interface system follows the Interface Segregation Principle, providing focused contracts for different aspects of the Galaxy framework. All interfaces are abstract base classes.
 
-Shared utility functions used across Galaxy.
+### Task Management Interfaces
 
 ```python
-from ufo.galaxy.core.utils import (
-    generate_unique_id, validate_graph_structure, 
-    deep_merge_dicts, safe_json_serialize
-)
-
-# ID generation
-task_id = generate_unique_id("task")  # "task_abc123def456"
-session_id = generate_unique_id("session")  # "session_xyz789uvw012"
-
-# Graph utilities
-is_valid_dag = validate_graph_structure(tasks, dependencies)
-
-# Dictionary utilities
-merged_config = deep_merge_dicts(default_config, user_config)
-
-# Serialization utilities
-json_str = safe_json_serialize(complex_object, indent=2)
-```
-
-### Performance Utilities
-
-Performance monitoring and optimization utilities.
-
-```python
-from ufo.galaxy.core.utils import PerformanceMonitor, timing_decorator
-
-# Performance monitoring
-monitor = PerformanceMonitor()
-
-with monitor.measure("constellation_creation"):
-    constellation = create_constellation()
-
-metrics = monitor.get_metrics()
-print(f"Constellation creation took {metrics['constellation_creation']}ms")
-
-# Timing decorator
-@timing_decorator("request_processing")
-async def process_request(request: str):
-    # Process request
-    return result
-```
-
-## 🧪 Testing Support
-
-### Core Testing Utilities
-
-Testing utilities for Galaxy components.
-
-```python
-from ufo.galaxy.core.testing import ComponentTestHarness, MockEventBus
-
-# Component testing
-test_harness = ComponentTestHarness()
-
-# Test component lifecycle
-lifecycle_test = test_harness.test_component_lifecycle(MyComponent)
-assert lifecycle_test.passed
-
-# Mock event bus for testing
-mock_event_bus = MockEventBus()
-mock_event_bus.subscribe(EventType.TASK_COMPLETED, mock_handler)
-
-# Events will be captured for testing
-await mock_event_bus.emit(TaskCompletedEvent("test_task", {}))
-captured_events = mock_event_bus.get_captured_events()
-```
-
-## 🚀 Getting Started
-
-### Basic Core Usage
-
-```python
-from ufo.galaxy.core import EventBus, BaseComponent, Configurable
-
-# Create event-driven component
-class MyGalaxyComponent(BaseComponent, Configurable):
-    def __init__(self, name: str):
-        super().__init__(name)
-        self.event_bus = EventBus()
+class ITask(ABC):
+    """Interface for task objects."""
     
-    def setup_events(self):
-        self.event_bus.subscribe(
-            EventType.TASK_COMPLETED,
-            self.handle_task_completion
-        )
+    @property
+    @abstractmethod
+    def task_id(self) -> TaskId: ...
     
-    async def handle_task_completion(self, event):
-        self.logger.info(f"Task completed: {event.task_id}")
+    @property
+    @abstractmethod
+    def name(self) -> str: ...
+    
+    @property
+    @abstractmethod
+    def description(self) -> str: ...
+    
+    @abstractmethod
+    async def execute(self, context: Optional[ProcessingContext] = None) -> ExecutionResult: ...
+    
+    @abstractmethod
+    def validate(self) -> bool: ...
 
-# Use the component
-component = MyGalaxyComponent("my_component")
-component.initialize()
-component.setup_events()
+class ITaskFactory(ABC):
+    """Interface for creating tasks."""
+    
+    @abstractmethod
+    def create_task(self, name: str, description: str, config: Optional[TaskConfiguration] = None, **kwargs) -> ITask: ...
+    
+    @abstractmethod
+    def supports_task_type(self, task_type: str) -> bool: ...
+
+class ITaskExecutor(ABC):
+    """Interface for executing individual tasks."""
+    
+    @abstractmethod
+    async def execute_task(self, task: ITask, context: Optional[ProcessingContext] = None) -> ExecutionResult: ...
+    
+    @abstractmethod
+    def can_execute(self, task: ITask) -> bool: ...
 ```
 
-### Advanced Core Usage
+### Dependency Management Interfaces
+
+```python
+class IDependency(ABC):
+    """Interface for task dependencies."""
+    
+    @property
+    @abstractmethod
+    def source_task_id(self) -> TaskId: ...
+    
+    @property
+    @abstractmethod
+    def target_task_id(self) -> TaskId: ...
+    
+    @property
+    @abstractmethod
+    def dependency_type(self) -> str: ...
+    
+    @abstractmethod
+    def is_satisfied(self, completed_tasks: List[TaskId]) -> bool: ...
+
+class IDependencyResolver(ABC):
+    """Interface for resolving task dependencies."""
+    
+    @abstractmethod
+    def get_ready_tasks(self, all_tasks: List[ITask], dependencies: List[IDependency], completed_tasks: List[TaskId]) -> List[ITask]: ...
+    
+    @abstractmethod
+    def validate_dependencies(self, tasks: List[ITask], dependencies: List[IDependency]) -> bool: ...
+```
+
+### Constellation Management Interfaces
+
+```python
+class IConstellation(ABC):
+    """Interface for constellation objects."""
+    
+    @property
+    @abstractmethod
+    def constellation_id(self) -> ConstellationId: ...
+    
+    @property
+    @abstractmethod
+    def name(self) -> str: ...
+    
+    @property
+    @abstractmethod
+    def tasks(self) -> Dict[TaskId, ITask]: ...
+    
+    @property
+    @abstractmethod
+    def dependencies(self) -> List[IDependency]: ...
+    
+    @abstractmethod
+    def add_task(self, task: ITask) -> None: ...
+    
+    @abstractmethod
+    def add_dependency(self, dependency: IDependency) -> None: ...
+    
+    @abstractmethod
+    def get_ready_tasks(self, completed_tasks: Optional[List[TaskId]] = None) -> List[ITask]: ...
+
+class IConstellationBuilder(ABC):
+    """Interface for building constellations."""
+    
+    @abstractmethod
+    def create_constellation(self, name: str) -> IConstellation: ...
+    
+    @abstractmethod
+    def add_task(self, constellation: IConstellation, task: ITask) -> IConstellation: ...
+    
+    @abstractmethod
+    def add_dependency(self, constellation: IConstellation, source_task_id: TaskId, target_task_id: TaskId, dependency_type: str = "finish_to_start") -> IConstellation: ...
+
+class IConstellationExecutor(ABC):
+    """Interface for executing constellations."""
+    
+    @abstractmethod
+    async def execute_constellation(self, constellation: IConstellation, config: Optional[ConstellationConfiguration] = None, progress_callback: Optional[AsyncProgressCallback] = None, error_callback: Optional[AsyncErrorCallback] = None) -> ConstellationResult: ...
+    
+    @abstractmethod
+    async def pause_execution(self, constellation_id: ConstellationId) -> bool: ...
+    
+    @abstractmethod
+    async def resume_execution(self, constellation_id: ConstellationId) -> bool: ...
+    
+    @abstractmethod
+    async def cancel_execution(self, constellation_id: ConstellationId) -> bool: ...
+```
+
+### Device Management Interfaces
+
+```python
+class IDevice(ABC):
+    """Interface for device objects."""
+    
+    @property
+    @abstractmethod
+    def device_id(self) -> DeviceId: ...
+    
+    @property
+    @abstractmethod
+    def device_type(self) -> str: ...
+    
+    @property
+    @abstractmethod
+    def capabilities(self) -> List[str]: ...
+    
+    @property
+    @abstractmethod
+    def is_connected(self) -> bool: ...
+    
+    @abstractmethod
+    async def connect(self) -> bool: ...
+    
+    @abstractmethod
+    async def disconnect(self) -> bool: ...
+    
+    @abstractmethod
+    async def execute_task(self, task: ITask) -> ExecutionResult: ...
+
+class IDeviceRegistry(ABC):
+    """Interface for device registry."""
+    
+    @abstractmethod
+    async def register_device(self, device: IDevice) -> bool: ...
+    
+    @abstractmethod
+    async def unregister_device(self, device_id: DeviceId) -> bool: ...
+    
+    @abstractmethod
+    async def get_device(self, device_id: DeviceId) -> Optional[IDevice]: ...
+    
+    @abstractmethod
+    async def get_available_devices(self, capabilities: Optional[List[str]] = None) -> List[IDevice]: ...
+
+class IDeviceSelector(ABC):
+    """Interface for device selection strategies."""
+    
+    @abstractmethod
+    async def select_device(self, task: ITask, available_devices: List[IDevice], context: Optional[ProcessingContext] = None) -> Optional[IDevice]: ...
+```
+
+### Agent and Session Interfaces
+
+```python
+class IRequestProcessor(ABC):
+    """Interface for processing user requests."""
+    
+    @abstractmethod
+    async def process_creation(self, context: Optional[ProcessingContext] = None) -> IConstellation: ...
+
+class IResultProcessor(ABC):
+    """Interface for processing task results."""
+    
+    @abstractmethod
+    async def process_editing(self, context: Optional[ProcessingContext] = None) -> IConstellation: ...
+
+class IConstellationUpdater(ABC):
+    """Interface for updating constellations based on results."""
+    
+    @abstractmethod
+    async def should_update(self, result: ExecutionResult, constellation: IConstellation) -> bool: ...
+    
+    @abstractmethod
+    async def update_constellation(self, result: ExecutionResult, constellation: IConstellation, context: Optional[ProcessingContext] = None) -> IConstellation: ...
+
+class ISession(ABC):
+    """Interface for session objects."""
+    
+    @property
+    @abstractmethod
+    def session_id(self) -> SessionId: ...
+    
+    @property
+    @abstractmethod
+    def is_active(self) -> bool: ...
+    
+    @abstractmethod
+    async def process_request(self, request: str) -> ConstellationResult: ...
+    
+    @abstractmethod
+    async def get_status(self) -> Dict[str, Any]: ...
+
+class ISessionManager(ABC):
+    """Interface for session management."""
+    
+    @abstractmethod
+    async def create_session(self, session_id: SessionId, initial_request: str, context: Optional[ProcessingContext] = None) -> ISession: ...
+    
+    @abstractmethod
+    async def get_session(self, session_id: SessionId) -> Optional[ISession]: ...
+    
+    @abstractmethod
+    async def end_session(self, session_id: SessionId) -> bool: ...
+```
+
+### Monitoring and Observability Interfaces
+
+```python
+class IMetricsCollector(ABC):
+    """Interface for collecting metrics."""
+    
+    @abstractmethod
+    def record_task_execution(self, result: ExecutionResult) -> None: ...
+    
+    @abstractmethod
+    def record_constellation_execution(self, result: ConstellationResult) -> None: ...
+    
+    @abstractmethod
+    def get_metrics(self) -> Dict[str, Any]: ...
+
+class IEventLogger(ABC):
+    """Interface for event logging."""
+    
+    @abstractmethod
+    def log_event(self, event_type: str, event_data: Dict[str, Any], context: Optional[ProcessingContext] = None) -> None: ...
+    
+    @abstractmethod
+    def get_events(self, event_type: Optional[str] = None, limit: Optional[int] = None) -> List[Dict[str, Any]]: ...
+```
+
+## 📦 Module Exports (`__init__.py`)
+
+The core module exports only types and interfaces through its `__init__.py`. The dependency injection and event system files exist but are not exported.
+
+### Exported Types (from `types.py`)
+- **Type Aliases**: `TaskId`, `ConstellationId`, `DeviceId`, `SessionId`, `AgentId`
+- **Callbacks**: `ProgressCallback`, `AsyncProgressCallback`, `ErrorCallback`, `AsyncErrorCallback`
+- **Data Classes**: `ExecutionResult`, `ConstellationResult`, `TaskConfiguration`, `ConstellationConfiguration`, `DeviceConfiguration`, `ProcessingContext`, `Statistics`
+- **Exceptions**: `GalaxyFrameworkError`, `TaskExecutionError`, `ConstellationError`, `DeviceError`, `ConfigurationError`, `ValidationError`
+
+### Exported Interfaces (from `interfaces.py`)
+- **Task Interfaces**: `ITask`, `ITaskFactory`, `ITaskExecutor`
+- **Dependency Interfaces**: `IDependency`, `IDependencyResolver`  
+- **Constellation Interfaces**: `IConstellation`, `IConstellationBuilder`, `IConstellationExecutor`
+- **Device Interfaces**: `IDevice`, `IDeviceRegistry`, `IDeviceSelector`
+- **Agent Interfaces**: `IRequestProcessor`, `IResultProcessor`, `IConstellationUpdater`
+- **Session Interfaces**: `ISession`, `ISessionManager`
+- **Monitoring Interfaces**: `IMetricsCollector`, `IEventLogger`
+
+### Not Exported (Standalone Files)
+- **Dependency Injection**: `di_container.py` (exists but not in `__init__.py`)
+- **Event System**: `events.py` (exists but not in `__init__.py`)
+
+## 🚀 Usage Patterns
+
+### Basic Type Usage
 
 ```python
 from ufo.galaxy.core import (
-    EventBus, Observer, Subject, 
-    GalaxyErrorHandler, PerformanceMonitor
+    TaskId, ConstellationId, ExecutionResult,
+    TaskConfiguration, ProcessingContext,
+    GalaxyFrameworkError
 )
 
-# Create advanced component with error handling and monitoring
-class AdvancedGalaxyComponent(BaseComponent, Observer):
-    def __init__(self, name: str):
-        super().__init__(name)
-        self.event_bus = EventBus(enable_history=True)
-        self.error_handler = GalaxyErrorHandler()
-        self.performance_monitor = PerformanceMonitor()
-        
-        # Setup error handlers
-        self.error_handler.register_handler(
-            ConstellationError,
-            self.handle_constellation_error
-        )
-    
-    async def handle_constellation_error(self, error):
-        self.logger.error(f"Constellation error: {error.message}")
-        # Implement recovery logic
-        return True
-    
-    async def update(self, event):
-        with self.performance_monitor.measure("event_processing"):
-            try:
-                await self.process_event(event)
-            except Exception as e:
-                await self.error_handler.handle_error(e)
+# Create execution result
+result = ExecutionResult(
+    task_id="task_1",
+    status=TaskStatus.COMPLETED,
+    result={"output": "success"},
+    metadata={"duration": 1.5}
+)
+
+# Check success
+if result.is_successful:
+    print(f"Task completed in {result.execution_time}s")
 ```
 
-## 🔗 Integration
+### Interface Implementation
 
-The core module provides the foundation for all Galaxy components:
+```python
+from ufo.galaxy.core import ITask, ITaskExecutor
 
-- **[Agents](../agents/README.md)**: Use interfaces and event system
-- **[Constellation](../constellation/README.md)**: Leverage types and events
-- **[Session](../session/README.md)**: Use observer pattern and events
-- **[Client](../client/README.md)**: Implement core interfaces
-- **[Visualization](../visualization/README.md)**: Subscribe to event streams
+class MyTask(ITask):
+    def __init__(self, task_id: TaskId, name: str, description: str):
+        self._task_id = task_id
+        self._name = name
+        self._description = description
+    
+    @property
+    def task_id(self) -> TaskId:
+        return self._task_id
+    
+    @property
+    def name(self) -> str:
+        return self._name
+    
+    @property
+    def description(self) -> str:
+        return self._description
+    
+    async def execute(self, context: Optional[ProcessingContext] = None) -> ExecutionResult:
+        # Implementation here
+        return ExecutionResult(
+            task_id=self.task_id,
+            status=TaskStatus.COMPLETED,
+            result={"success": True}
+        )
+    
+    def validate(self) -> bool:
+        return bool(self.task_id and self.name)
+```
+
+### Exception Handling
+
+```python
+from ufo.galaxy.core import TaskExecutionError, ValidationError
+
+try:
+    # Galaxy operations
+    pass
+except TaskExecutionError as e:
+    print(f"Task {e.task_id} failed: {e}")
+    if e.original_error:
+        print(f"Original error: {e.original_error}")
+except ValidationError as e:
+    print(f"Validation failed: {e}")
+    for error in e.validation_errors:
+        print(f"  - {error}")
+```
+
+## 🔗 Integration with Other Modules
+
+The core module provides the foundation that other Galaxy modules build upon:
+
+- **[Constellation](../constellation/README.md)**: Provides enums imported by core types, implements constellation interfaces
+- **[Session](../session/README.md)**: Implements session interfaces, uses core types for results
+- **[Agents](../agents/README.md)**: Implements agent interfaces, uses processing context and callbacks
+- **[Client](../client/README.md)**: Uses device interfaces and core types for coordination
+
+The core module's cross-module integration approach (importing enums from constellation) ensures type consistency while maintaining clear architectural boundaries.
 
 ---
 
-*The foundational bedrock that enables elegant, extensible, and robust Galaxy architecture* ⚡
+*The type-safe foundation enabling consistent, well-defined contracts across the entire Galaxy framework* 🎯

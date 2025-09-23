@@ -13,7 +13,7 @@ Galaxy transforms complex user requests into executable DAGs (Directed Acyclic G
 - **📱 Multi-Device Coordination**: Seamlessly distribute tasks across different devices and platforms
 - **⚡ Real-time Event System**: Observer pattern implementation for live monitoring and visualization
 - **🎯 Context-Aware Execution**: Maintain execution context across complex multi-step workflows
-- **📊 Rich Visualization**: Interactive DAG visualization with real-time updates
+- **📊 Rich Console Visualization**: Beautiful DAG visualization with Rich terminal output
 - **🔄 Dynamic Adaptation**: Runtime modification of task graphs based on execution results
 
 ## 🏗️ Architecture
@@ -33,14 +33,18 @@ Galaxy Framework
 ├── 🎯 Session/                  # Session lifecycle and event-driven monitoring
 │   ├── GalaxySession           # BaseSession extension with constellation support
 │   └── Observers/              # Event-driven observers for monitoring and visualization
-├── 📡 Client/                   # Device and client management
-│   ├── ConstellationClient     # Main client interface
-│   └── DeviceManager/          # Multi-device coordination
+├── 📡 Client/                   # Device management support component
+│   ├── ConstellationClient     # Device registration and connection interface
+│   ├── ConstellationDeviceManager # Core device management coordinator
+│   ├── ConstellationConfig     # Configuration loading (JSON/YAML/CLI/env)
+│   ├── Components/             # Modular components (registry, connections, heartbeat)
+│   └── Orchestration/          # Client orchestration and event handling
 ├── ⚡ Core/                     # Foundational components
-│   ├── Events                  # Event system and observers
-│   ├── Interfaces              # Core abstractions (IRequestProcessor, IResultProcessor)
-│   └── Types                   # Type definitions
-└── 🎨 Visualization/           # Real-time DAG visualization
+│   ├── Types                   # Type system: protocols, dataclasses, enums
+│   ├── Interfaces              # Interface definitions following ISP
+│   ├── DI Container            # Dependency injection with lifecycle management
+│   └── Events                  # Observer pattern and event system
+└── 🎨 Visualization/           # Rich console DAG visualization
 ```
 
 ## 🚀 Quick Start
@@ -217,9 +221,9 @@ Each module contains detailed documentation and implementation guides:
 - **[Agents](./agents/README.md)** - AI agents, state machines, and processing logic
 - **[Constellation](./constellation/README.md)** - DAG management, task orchestration, and editing
 - **[Session](./session/README.md)** - BaseSession extension, event-driven observers, and constellation lifecycle management
-- **[Client](./client/README.md)** - Device management, client interfaces, and coordination
-- **[Core](./core/README.md)** - Foundational components, interfaces, and type system
-- **[Visualization](./visualization/README.md)** - Real-time DAG visualization and monitoring
+- **[Client](./client/README.md)** - Device management support component for WebSocket connections and basic task execution
+- **[Core](./core/README.md)** - Type system, interfaces, dependency injection, and event system
+- **[Visualization](./visualization/README.md)** - Beautiful console DAG visualization using Rich library
 
 ## 🔧 Configuration
 
@@ -265,11 +269,11 @@ agent_config = {
 
 The framework provides comprehensive monitoring capabilities:
 
-### Real-time DAG Visualization
-- **Live Task Updates**: Visual representation of task execution progress
-- **Dependency Tracking**: Dynamic visualization of task dependencies
-- **Change Detection**: Automatic highlighting of DAG modifications
-- **Rich Console Output**: Beautiful terminal visualization with colors and formatting
+### Console DAG Visualization  
+- **Topology Display**: Hierarchical tree visualization of task dependencies
+- **Task Status Tracking**: Color-coded status indicators with icons
+- **Dependency Analysis**: Visual representation of task relationships
+- **Rich Console Output**: Beautiful terminal formatting using Rich library
 
 ### Event Streaming
 - **Task Events**: Creation, update, completion, and failure events

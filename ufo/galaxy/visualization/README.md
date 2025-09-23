@@ -1,780 +1,552 @@
 # Galaxy Visualization Module
 
-The Visualization module provides real-time DAG visualization, change detection, and interactive monitoring capabilities for the Galaxy Framework. It transforms complex workflow data into beautiful, informative visual representations.
+The Visualization module provides comprehensive DAG visualization capabilities for the Galaxy Framework using rich console output. It specializes in displaying TaskConstellation structures, execution progress, and task relationships in beautiful terminal-based interfaces.
 
 ## 🎨 Overview
 
-Galaxy visualization brings workflows to life through dynamic, interactive displays that show task relationships, execution progress, and system state changes in real-time. The module supports multiple visualization backends and provides rich terminal output for comprehensive workflow monitoring.
+Galaxy visualization transforms complex DAG workflows into readable, informative console displays using the Rich library. It provides detailed topology visualization, task status monitoring, dependency tracking, and execution flow analysis through beautifully formatted terminal output.
+
+### Key Features
+- **DAG Topology Visualization**: Tree-based display of task hierarchies and dependencies
+- **Rich Console Output**: Beautiful terminal rendering with colors, tables, and panels
+- **Task Status Tracking**: Real-time status indicators with icons and color coding
+- **Dependency Analysis**: Visual representation of task relationships and satisfaction status
+- **Execution Flow Monitoring**: Display of ready, running, completed, and failed tasks
+- **Statistics Panels**: Comprehensive task and constellation metrics
 
 ## 🏗️ Architecture
 
 ```
 ufo/galaxy/visualization/
 ├── __init__.py                     # Module exports
-├── constellation_visualizer.py     # Main DAG visualization engine
-├── change_detector.py             # DAG change detection and highlighting
-├── rich_renderer.py               # Rich terminal rendering
-├── observers/                     # Visualization observers
-│   ├── __init__.py
-│   ├── base_viz_observer.py       # Base visualization observer
-│   ├── dag_observer.py            # DAG structure observer
-│   └── progress_observer.py       # Execution progress observer
-├── renderers/                     # Visualization renderers
-│   ├── __init__.py
-│   ├── console_renderer.py        # Console-based rendering
-│   ├── web_renderer.py            # Web-based rendering
-│   └── export_renderer.py         # Static export rendering
-└── layouts/                       # Graph layout algorithms
-    ├── __init__.py
-    ├── hierarchical_layout.py     # Hierarchical layout
-    ├── force_directed_layout.py   # Force-directed layout
-    └── circular_layout.py         # Circular layout
+└── dag_visualizer.py              # Complete DAG visualization implementation
 ```
 
-## 🌟 Core Components
+### Simple and Focused Design
+The visualization module follows a single-responsibility principle with one comprehensive class that handles all DAG visualization needs through the Rich library.
 
-### ConstellationVisualizer
+## 🌟 Core Component
 
-The main visualization engine that renders DAG structures and execution states.
+### DAGVisualizer
+
+The main visualization class that provides comprehensive DAG visualization capabilities using Rich console output.
 
 #### Key Features
-- **Real-time Updates**: Live visualization updates as constellations change
-- **Multiple Layouts**: Support for various graph layout algorithms
-- **Interactive Elements**: Clickable nodes and edges for detailed information
-- **Customizable Styling**: Flexible styling and theming options
-- **Export Capabilities**: Save visualizations as images or interactive HTML
+- **Constellation Overview**: Complete constellation information with statistics
+- **DAG Topology Display**: Hierarchical tree visualization of task dependencies
+- **Task Details Table**: Comprehensive task information in formatted tables
+- **Dependency Summary**: Visual representation of all dependency relationships
+- **Execution Flow**: Real-time display of task execution states
+- **Rich Formatting**: Beautiful colors, icons, and styling throughout
 
-#### Usage Example
+#### Usage Examples
+
+**Basic Constellation Overview**
 ```python
-from ufo.galaxy.visualization import ConstellationVisualizer
+from ufo.galaxy.visualization import DAGVisualizer
 from ufo.galaxy.constellation import TaskConstellation
 
-# Initialize visualizer
-visualizer = ConstellationVisualizer(
-    layout="hierarchical",
-    enable_real_time_updates=True,
-    theme="galaxy_dark",
-    show_task_details=True
+# Create visualizer
+visualizer = DAGVisualizer()
+
+# Display complete constellation overview
+visualizer.display_constellation_overview(
+    constellation, 
+    title="My Data Pipeline"
+)
+```
+
+**Specific Visualization Modes**
+```python
+# Display just the DAG topology
+visualizer.display_dag_topology(constellation)
+
+# Show detailed task information
+visualizer.display_task_details(constellation)
+
+# Display dependency relationships
+visualizer.display_dependency_summary(constellation)
+
+# Show execution flow and ready tasks
+visualizer.display_execution_flow(constellation)
+```
+
+**Convenience Functions**
+```python
+from ufo.galaxy.visualization import (
+    display_constellation_creation,
+    display_constellation_update,
+    display_execution_progress,
+    visualize_dag
 )
 
-# Create constellation
-constellation = TaskConstellation(name="Data Pipeline")
-# Add tasks and dependencies...
+# Display when constellation is first created
+display_constellation_creation(constellation)
 
-# Start visualization
-await visualizer.visualize_constellation(constellation)
+# Display after constellation updates
+display_constellation_update(constellation, "Added new data validation task")
 
-# Visualization will automatically update as constellation changes
-constellation.add_task(new_task)  # Updates visualization
-constellation.add_dependency("task1", "task2")  # Shows new edge
+# Display execution progress
+display_execution_progress(constellation)
+
+# Quick visualization with different modes
+visualize_dag(constellation, mode="overview")    # Full overview
+visualize_dag(constellation, mode="topology")    # Just topology
+visualize_dag(constellation, mode="details")     # Just task details
+visualize_dag(constellation, mode="execution")   # Just execution flow
 ```
 
-#### Key Methods
+#### Core Methods
 ```python
-class ConstellationVisualizer:
-    async def visualize_constellation(self, constellation: TaskConstellation) -> None
-    def update_visualization(self, changes: ConstellationChanges) -> None
-    def set_layout_algorithm(self, layout: LayoutAlgorithm) -> None
-    def apply_theme(self, theme: VisualizationTheme) -> None
-    def highlight_tasks(self, task_ids: List[str], style: HighlightStyle) -> None
-    def export_visualization(self, format: ExportFormat, filepath: str) -> bool
-    def get_visualization_metrics(self) -> VisualizationMetrics
-    def capture_snapshot(self) -> VisualizationSnapshot
+class DAGVisualizer:
+    def __init__(self, console: Optional[Console] = None)
+    
+    # Main visualization methods
+    def display_constellation_overview(self, constellation: TaskConstellation, title: str = "Task Constellation Overview") -> None
+    def display_dag_topology(self, constellation: TaskConstellation) -> None
+    def display_task_details(self, constellation: TaskConstellation) -> None
+    def display_dependency_summary(self, constellation: TaskConstellation) -> None
+    def display_execution_flow(self, constellation: TaskConstellation) -> None
+    
+    # Private helper methods for formatting and layout
+    def _create_info_panel(self, constellation: TaskConstellation) -> Panel
+    def _create_stats_panel(self, constellation: TaskConstellation) -> Panel
+    def _build_topology_layers(self, constellation: TaskConstellation) -> List[List[TaskStar]]
+    def _format_task_for_tree(self, task: TaskStar, compact: bool = False) -> str
+    def _get_status_text(self, status: TaskStatus) -> str
+    def _get_status_icon(self, status: TaskStatus) -> str
 ```
 
-### ChangeDetector
+## 🎯 Visualization Features
 
-Intelligent change detection system that identifies and highlights DAG modifications.
+### Rich Console Integration
 
-#### Change Detection Features
-- **Structural Changes**: Detect added/removed tasks and dependencies
-- **Property Changes**: Track changes in task properties and metadata
-- **Visual Highlighting**: Highlight changes with different colors and animations
-- **Change History**: Maintain history of changes for replay and analysis
-- **Diff Generation**: Generate detailed change reports and summaries
+The visualization module leverages the Rich library to provide beautiful terminal output with:
 
-#### Usage Example
+#### Visual Elements
+- **Status Icons**: Intuitive icons for task states (⭕ pending, 🔵 running, ✅ completed, ❌ failed)
+- **Color Coding**: Consistent color scheme for status, priority, and state indicators
+- **Formatted Tables**: Well-structured tables with proper alignment and borders
+- **Tree Structures**: Hierarchical tree displays for DAG topology
+- **Information Panels**: Organized panels for constellation info and statistics
+- **Progress Indicators**: Visual representation of execution progress
+
+#### Status Mapping
 ```python
-from ufo.galaxy.visualization import ChangeDetector, ChangeHighlighter
+# Status colors and icons used throughout the visualization
+status_colors = {
+    TaskStatus.PENDING: "yellow",
+    TaskStatus.WAITING_DEPENDENCY: "orange1", 
+    TaskStatus.RUNNING: "blue",
+    TaskStatus.COMPLETED: "green",
+    TaskStatus.FAILED: "red",
+    TaskStatus.CANCELLED: "dim"
+}
 
-# Initialize change detector
-change_detector = ChangeDetector(
-    enable_property_tracking=True,
-    enable_visual_highlighting=True,
-    change_retention_hours=24
-)
-
-# Setup change highlighting
-highlighter = ChangeHighlighter(
-    new_task_color="green",
-    removed_task_color="red",
-    modified_task_color="yellow",
-    animation_duration=2.0
-)
-
-# Detect changes between constellation versions
-old_constellation = constellation.copy()
-constellation.add_task(new_task)
-
-changes = change_detector.detect_changes(old_constellation, constellation)
-print(f"Detected {len(changes)} changes:")
-
-for change in changes:
-    print(f"  {change.change_type}: {change.description}")
-    if change.change_type == ChangeType.TASK_ADDED:
-        highlighter.highlight_new_task(change.task_id)
+status_icons = {
+    TaskStatus.PENDING: "⭕",
+    TaskStatus.WAITING_DEPENDENCY: "⏳",
+    TaskStatus.RUNNING: "🔵", 
+    TaskStatus.COMPLETED: "✅",
+    TaskStatus.FAILED: "❌",
+    TaskStatus.CANCELLED: "⭕"
+}
 ```
 
-#### Change Types
+#### Dependency Symbols
 ```python
-class ChangeType(Enum):
-    TASK_ADDED = "task_added"
-    TASK_REMOVED = "task_removed"
-    TASK_MODIFIED = "task_modified"
-    DEPENDENCY_ADDED = "dependency_added"
-    DEPENDENCY_REMOVED = "dependency_removed"
-    PROPERTY_CHANGED = "property_changed"
-    STATUS_CHANGED = "status_changed"
-    METADATA_UPDATED = "metadata_updated"
+# Visual symbols for different dependency types
+dependency_symbols = {
+    DependencyType.UNCONDITIONAL: "→",
+    DependencyType.SUCCESS_ONLY: "⇒", 
+    DependencyType.CONDITIONAL: "⇝",
+    DependencyType.COMPLETION_ONLY: "⟶"
+}
 ```
 
-### RichRenderer
+### Topology Visualization
 
-Advanced terminal rendering using the Rich library for beautiful console output.
+The DAG topology visualization uses intelligent layering to display task hierarchies:
 
-#### Rich Features
-- **Colorful Tables**: Beautiful task status tables with colors and formatting
-- **Progress Bars**: Real-time progress indicators with smooth animations
-- **Status Panels**: Interactive status panels showing system state
-- **Live Updates**: Live updating displays without screen flicker
-- **Custom Themes**: Configurable color schemes and styling
+#### Topology Algorithm
+- **Topological Sorting**: Arranges tasks in dependency-respecting layers
+- **Layer-based Display**: Groups tasks by their position in the dependency graph
+- **Cycle Detection**: Identifies and reports potential cycles in the DAG
+- **Tree Structure**: Uses Rich Tree widget for clear hierarchical display
 
-#### Usage Example
+#### Topology Features
 ```python
-from ufo.galaxy.visualization import RichRenderer
+# Example topology display structure
+🌌 Task Constellation
+├── Layer 1
+│   ├── 🟡 Data Collection Task (dc_001...)
+│   │   └── Dependencies: none
+│   └── 🟡 Configuration Setup (cfg_001...)
+│       └── Dependencies: none
+├── Layer 2  
+│   ├── 🔵 Data Validation (dv_001...)
+│   │   └── Dependencies:
+│   │       └── ⬅️ 🟡 Data Collection Task
+│   └── 🟡 Processing Prep (pp_001...)
+│       └── Dependencies:
+│           ├── ⬅️ 🟡 Data Collection Task
+│           └── ⬅️ 🟡 Configuration Setup
+└── Layer 3
+    └── ✅ Final Report (fr_001...)
+        └── Dependencies:
+            └── ⬅️ 🔵 Data Validation
+```
+
+## 📊 Example Outputs
+
+### Constellation Overview Display
+
+When you call `display_constellation_overview()`, you get a comprehensive view:
+
+```
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 🆕 New Task Constellation Created ━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+┌─────── 📊 Constellation Info ────────┐ ┌────────── 📈 Statistics ─────────────┐
+│ ID: data_pipeline_001                 │ │ Total Tasks: 5                        │
+│ Name: Data Processing Pipeline        │ │ Dependencies: 6                       │
+│ State: READY                          │ │ ✅ Completed: 0                       │
+│ Created: 2025-09-23 14:30:15         │ │ 🔵 Running: 0                         │
+│                                       │ │ 🟡 Ready: 2                          │
+│                                       │ │ ❌ Failed: 0                         │
+└───────────────────────────────────────┘ └───────────────────────────────────────┘
+
+📊 DAG Topology
+🌌 Task Constellation
+├── Layer 1
+│   ├── ⭕ Data Collection (data_001...)
+│   │   └── Dependencies: none
+│   └── ⭕ Config Setup (conf_001...)
+│       └── Dependencies: none
+├── Layer 2
+│   ├── ⏳ Data Validation (valid_001...)
+│   │   └── Dependencies:
+│   │       └── ⬅️ ⭕ Data Collection
+│   └── ⏳ Processing Prep (prep_001...)
+│       └── Dependencies:
+│           ├── ⬅️ ⭕ Data Collection
+│           └── ⬅️ ⭕ Config Setup
+└── Layer 3
+    └── ⏳ Final Report (report_001...)
+        └── Dependencies:
+            └── ⬅️ ⏳ Data Validation
+```
+
+### Task Details Table
+
+```
+📋 Task Details
+┌──────────────┬───────────────────────────┬──────────────┬──────────┬───────────────┬──────────┐
+│ ID           │ Name                      │    Status    │ Priority │ Dependencies  │ Progress │
+├──────────────┼───────────────────────────┼──────────────┼──────────┼───────────────┼──────────┤
+│ data_001...  │ Data Collection Task      │ ⭕ pending   │    5     │ none          │   N/A    │
+│ conf_001...  │ Configuration Setup       │ ⭕ pending   │    8     │ none          │   N/A    │
+│ valid_001... │ Data Validation Process   │ ⏳ waiting   │    6     │ 1 deps        │   N/A    │
+│ prep_001...  │ Processing Preparation    │ ⏳ waiting   │    5     │ 2 deps        │   N/A    │
+│ report_001...│ Final Report Generation   │ ⏳ waiting   │    3     │ 1 deps        │   N/A    │
+└──────────────┴───────────────────────────┴──────────────┴──────────┴───────────────┴──────────┘
+```
+
+### Dependency Summary
+
+```
+🔗 Dependency Relationships
+
+┌─────────── → Unconditional (4) ───────────┐
+│ ⭕ Data Collection → ⏳ Data Validation ✅   │
+│ ⭕ Data Collection → ⏳ Processing Prep ✅  │
+│ ⭕ Config Setup → ⏳ Processing Prep ✅     │
+│ ⏳ Data Validation → ⏳ Final Report ❌     │
+└──────────────────────────────────────────────┘
+
+┌─────────── ⇒ Success Only (2) ────────────┐
+│ ⏳ Processing Prep → ⏳ Final Report ❌     │
+│ ⏳ Data Validation → ⏳ Report Upload ❌   │
+└──────────────────────────────────────────────┘
+```
+
+### Execution Flow Display
+
+```
+⚡ Execution Flow
+
+┌─── Ready (2) ────┐ ┌─── Running (1) ───┐ ┌── Completed ──┐ ┌─── Failed (0) ────┐
+│ 🟡 Data Collection │ │ 🔵 Config Setup   │ │ ✅ 3 tasks     │ │                   │
+│ 🟡 Input Validation│ │                   │ │ completed      │ │                   │
+└───────────────────┘ └───────────────────┘ └───────────────┘ └───────────────────┘
+```
+
+## 🔧 Customization and Configuration
+
+### Console Customization
+
+You can customize the visualization output by providing your own Rich Console:
+
+```python
 from rich.console import Console
+from ufo.galaxy.visualization import DAGVisualizer
 
-# Initialize rich renderer
-console = Console()
-renderer = RichRenderer(
-    console=console,
-    enable_animations=True,
-    color_scheme="galaxy",
-    update_interval=0.5
+# Custom console with specific settings
+custom_console = Console(
+    width=100,           # Narrower output
+    color_system="256",  # 256 color support
+    force_terminal=True, # Force terminal mode
+    legacy_windows=False # Modern Windows terminal support
 )
 
-# Render constellation as table
-constellation_table = renderer.render_constellation_table(constellation)
-console.print(constellation_table)
-
-# Show execution progress
-with renderer.create_progress_display() as progress:
-    for task in constellation.tasks:
-        task_progress = progress.add_task(f"[cyan]{task.description}", total=100)
-        # Update progress as task executes
-        progress.update(task_progress, advance=20)
-
-# Display live status panel
-with renderer.create_live_status_panel() as live:
-    while execution_active:
-        status_panel = renderer.create_status_panel(constellation)
-        live.update(status_panel)
-        await asyncio.sleep(1)
+# Use custom console with visualizer
+visualizer = DAGVisualizer(console=custom_console)
+visualizer.display_constellation_overview(constellation)
 ```
 
-## 📊 Visualization Observers
+### Display Customization
 
-### BaseVizObserver
-
-Abstract base class for all visualization observers.
+The visualizer provides several helper methods for customizing appearance:
 
 ```python
-from abc import ABC, abstractmethod
-from ufo.galaxy.core.events import Event
-
-class BaseVizObserver(ABC):
-    def __init__(self, observer_name: str):
-        self.observer_name = observer_name
-        self.is_active = True
-        self.visualization_config = {}
-    
-    @abstractmethod
-    async def handle_visualization_event(self, event: Event) -> None:
-        """Handle visualization-related events"""
-        pass
-    
-    @abstractmethod
-    def update_visualization(self, data: Any) -> None:
-        """Update visualization display"""
-        pass
-    
-    @abstractmethod
-    def cleanup_visualization(self) -> None:
-        """Cleanup visualization resources"""
-        pass
-```
-
-### DAGObserver
-
-Specialized observer for DAG structure and changes.
-
-```python
-from ufo.galaxy.visualization.observers import DAGObserver
-
-class DAGObserver(BaseVizObserver):
-    def __init__(self):
-        super().__init__("dag_observer")
-        self.visualizer = ConstellationVisualizer()
-        self.change_detector = ChangeDetector()
-        self.current_constellation = None
-    
-    async def handle_visualization_event(self, event: Event) -> None:
-        """Handle DAG-related events"""
-        if event.event_type == EventType.CONSTELLATION_UPDATED:
-            await self._handle_constellation_update(event)
-        elif event.event_type == EventType.TASK_ADDED:
-            await self._handle_task_added(event)
-        elif event.event_type == EventType.DEPENDENCY_ADDED:
-            await self._handle_dependency_added(event)
-    
-    async def _handle_constellation_update(self, event):
-        """Handle constellation update event"""
-        old_constellation = self.current_constellation
-        new_constellation = event.constellation
-        
-        if old_constellation:
-            changes = self.change_detector.detect_changes(
-                old_constellation, new_constellation
-            )
-            self.visualizer.highlight_changes(changes)
-        
-        self.current_constellation = new_constellation
-        self.visualizer.update_visualization(new_constellation)
-```
-
-### ProgressObserver
-
-Observer for execution progress and performance metrics.
-
-```python
-from ufo.galaxy.visualization.observers import ProgressObserver
-
-class ProgressObserver(BaseVizObserver):
-    def __init__(self):
-        super().__init__("progress_observer")
-        self.progress_renderer = RichRenderer()
-        self.progress_displays = {}
-        self.performance_metrics = {}
-    
-    async def handle_visualization_event(self, event: Event) -> None:
-        """Handle progress-related events"""
-        if event.event_type == EventType.TASK_STARTED:
-            self._start_task_progress(event.task_id)
-        elif event.event_type == EventType.TASK_COMPLETED:
-            self._complete_task_progress(event.task_id)
-        elif event.event_type == EventType.EXECUTION_PROGRESS:
-            self._update_execution_progress(event.progress_data)
-    
-    def _start_task_progress(self, task_id: str):
-        """Start progress tracking for task"""
-        progress_display = self.progress_renderer.create_task_progress(task_id)
-        self.progress_displays[task_id] = progress_display
-    
-    def _update_execution_progress(self, progress_data):
-        """Update overall execution progress"""
-        overall_progress = self.progress_renderer.create_overall_progress(
-            progress_data.completed_tasks,
-            progress_data.total_tasks
-        )
-        self.progress_renderer.update_display(overall_progress)
-```
-
-## 🎨 Visualization Renderers
-
-### ConsoleRenderer
-
-Console-based rendering for terminal environments.
-
-```python
-from ufo.galaxy.visualization.renderers import ConsoleRenderer
-
-class ConsoleRenderer:
-    def __init__(self, width: int = 120, height: int = 40):
-        self.width = width
-        self.height = height
-        self.color_enabled = True
-    
-    def render_dag_ascii(self, constellation: TaskConstellation) -> str:
-        """Render DAG as ASCII art"""
-        graph_builder = ASCIIGraphBuilder(self.width, self.height)
-        
-        # Add nodes
-        for task in constellation.tasks:
-            graph_builder.add_node(
-                task.task_id,
-                task.description[:20],
-                self._get_task_color(task)
-            )
-        
-        # Add edges
-        for dependency in constellation.dependencies:
-            graph_builder.add_edge(
-                dependency.from_task_id,
-                dependency.to_task_id
-            )
-        
-        return graph_builder.render()
-    
-    def render_task_table(self, constellation: TaskConstellation) -> str:
-        """Render tasks as formatted table"""
-        table_builder = ASCIITableBuilder()
-        table_builder.add_column("Task ID", width=15)
-        table_builder.add_column("Description", width=40)
-        table_builder.add_column("Status", width=12)
-        table_builder.add_column("Priority", width=10)
-        
-        for task in constellation.tasks:
-            table_builder.add_row([
-                task.task_id,
-                task.description,
-                task.status.value,
-                task.priority.name
-            ])
-        
-        return table_builder.render()
-```
-
-### WebRenderer
-
-Web-based rendering for browser visualization.
-
-```python
-from ufo.galaxy.visualization.renderers import WebRenderer
-
-class WebRenderer:
-    def __init__(self, port: int = 8080):
-        self.port = port
-        self.web_server = None
-        self.visualization_data = {}
-    
-    async def start_web_server(self):
-        """Start web server for visualization"""
-        app = self._create_web_app()
-        self.web_server = await aiohttp.web.start_server(
-            app, '0.0.0.0', self.port
-        )
-        print(f"Visualization server started at http://localhost:{self.port}")
-    
-    def render_interactive_dag(self, constellation: TaskConstellation) -> str:
-        """Render interactive DAG using D3.js"""
-        dag_data = self._convert_to_d3_format(constellation)
-        
-        html_template = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <script src="https://d3js.org/d3.v7.min.js"></script>
-            <style>
-                .node { fill: #69b3a2; stroke: #333; stroke-width: 2px; }
-                .link { stroke: #999; stroke-width: 2px; }
-                .node-text { font-family: Arial; font-size: 12px; }
-            </style>
-        </head>
-        <body>
-            <div id="visualization"></div>
-            <script>
-                const data = {dag_data};
-                // D3.js visualization code here
-            </script>
-        </body>
-        </html>
-        """
-        
-        return html_template.format(dag_data=json.dumps(dag_data))
-```
-
-## 🎭 Layout Algorithms
-
-### Hierarchical Layout
-
-Hierarchical layout algorithm for DAG visualization.
-
-```python
-from ufo.galaxy.visualization.layouts import HierarchicalLayout
-
-class HierarchicalLayout:
-    def __init__(self, node_spacing: int = 100, level_spacing: int = 150):
-        self.node_spacing = node_spacing
-        self.level_spacing = level_spacing
-    
-    def calculate_layout(self, constellation: TaskConstellation) -> LayoutResult:
-        """Calculate hierarchical layout positions"""
-        
-        # Perform topological sort to determine levels
-        levels = self._calculate_task_levels(constellation)
-        
-        # Position nodes within each level
-        positions = {}
-        for level, tasks in levels.items():
-            y_position = level * self.level_spacing
-            total_width = len(tasks) * self.node_spacing
-            start_x = -total_width / 2
-            
-            for i, task_id in enumerate(tasks):
-                x_position = start_x + (i * self.node_spacing)
-                positions[task_id] = Position(x_position, y_position)
-        
-        return LayoutResult(positions, self._calculate_edge_paths(positions))
-    
-    def _calculate_task_levels(self, constellation: TaskConstellation) -> Dict[int, List[str]]:
-        """Calculate hierarchical levels for tasks"""
-        levels = {}
-        task_levels = {}
-        
-        # Find root tasks (no dependencies)
-        root_tasks = [
-            task.task_id for task in constellation.tasks
-            if not constellation.get_dependencies(task.task_id)
-        ]
-        
-        # Assign level 0 to root tasks
-        for task_id in root_tasks:
-            task_levels[task_id] = 0
-            levels.setdefault(0, []).append(task_id)
-        
-        # Calculate levels for dependent tasks
-        self._propagate_levels(constellation, task_levels, levels)
-        
-        return levels
-```
-
-### Force-Directed Layout
-
-Physics-based force-directed layout algorithm.
-
-```python
-from ufo.galaxy.visualization.layouts import ForceDirectedLayout
-
-class ForceDirectedLayout:
-    def __init__(self, iterations: int = 1000, cooling_factor: float = 0.95):
-        self.iterations = iterations
-        self.cooling_factor = cooling_factor
-        self.spring_length = 100
-        self.spring_strength = 0.1
-        self.repulsion_strength = 1000
-    
-    def calculate_layout(self, constellation: TaskConstellation) -> LayoutResult:
-        """Calculate force-directed layout using physics simulation"""
-        
-        # Initialize random positions
-        positions = self._initialize_random_positions(constellation.tasks)
-        velocities = {task.task_id: Vector(0, 0) for task in constellation.tasks}
-        
-        temperature = 100.0
-        
-        for iteration in range(self.iterations):
-            forces = self._calculate_forces(constellation, positions)
-            
-            # Update positions and velocities
-            for task_id in positions:
-                velocities[task_id] += forces[task_id] * temperature
-                velocities[task_id] *= 0.9  # Damping
-                positions[task_id] += velocities[task_id]
-            
-            # Cool down the system
-            temperature *= self.cooling_factor
-        
-        return LayoutResult(positions, self._calculate_edge_paths(positions))
-    
-    def _calculate_forces(self, constellation, positions):
-        """Calculate attractive and repulsive forces"""
-        forces = {task_id: Vector(0, 0) for task_id in positions}
-        
-        # Repulsive forces between all nodes
-        for task1_id in positions:
-            for task2_id in positions:
-                if task1_id != task2_id:
-                    repulsive_force = self._calculate_repulsive_force(
-                        positions[task1_id], positions[task2_id]
-                    )
-                    forces[task1_id] += repulsive_force
-        
-        # Attractive forces for connected nodes
-        for dependency in constellation.dependencies:
-            attractive_force = self._calculate_attractive_force(
-                positions[dependency.from_task_id],
-                positions[dependency.to_task_id]
-            )
-            forces[dependency.from_task_id] += attractive_force
-            forces[dependency.to_task_id] -= attractive_force
-        
-        return forces
-```
-
-## 🎯 Real-time Updates and Animations
-
-### Animation System
-
-Smooth animations for visualization updates.
-
-```python
-from ufo.galaxy.visualization import AnimationSystem
-
-class AnimationSystem:
-    def __init__(self, fps: int = 60):
-        self.fps = fps
-        self.active_animations = {}
-        self.animation_queue = []
-    
-    def animate_task_addition(self, task_id: str, position: Position):
-        """Animate new task appearance"""
-        animation = TaskAdditionAnimation(
-            task_id=task_id,
-            start_position=Position(position.x, position.y - 50),
-            end_position=position,
-            duration=1.0,
-            easing=EasingFunction.EASE_OUT
-        )
-        self.add_animation(animation)
-    
-    def animate_dependency_addition(self, from_task: str, to_task: str):
-        """Animate new dependency edge"""
-        animation = EdgeAdditionAnimation(
-            from_task=from_task,
-            to_task=to_task,
-            duration=0.8,
-            easing=EasingFunction.EASE_IN_OUT
-        )
-        self.add_animation(animation)
-    
-    def animate_status_change(self, task_id: str, new_status: TaskStatus):
-        """Animate task status change"""
-        animation = StatusChangeAnimation(
-            task_id=task_id,
-            new_status=new_status,
-            duration=0.5,
-            effect=AnimationEffect.PULSE
-        )
-        self.add_animation(animation)
-```
-
-### Live Update Manager
-
-Manages real-time updates to visualizations.
-
-```python
-from ufo.galaxy.visualization import LiveUpdateManager
-
-class LiveUpdateManager:
-    def __init__(self, update_interval: float = 0.1):
-        self.update_interval = update_interval
-        self.update_queue = asyncio.Queue()
-        self.subscribers = []
-        self.is_running = False
-    
-    async def start_live_updates(self):
-        """Start live update processing"""
-        self.is_running = True
-        while self.is_running:
-            try:
-                update = await asyncio.wait_for(
-                    self.update_queue.get(),
-                    timeout=self.update_interval
-                )
-                await self._process_update(update)
-            except asyncio.TimeoutError:
-                # Process periodic updates
-                await self._process_periodic_updates()
-    
-    def queue_update(self, update: VisualizationUpdate):
-        """Queue update for processing"""
-        self.update_queue.put_nowait(update)
-    
-    async def _process_update(self, update: VisualizationUpdate):
-        """Process queued update"""
-        for subscriber in self.subscribers:
-            await subscriber.handle_update(update)
-```
-
-## 🔧 Configuration
-
-### Visualization Configuration
-
-```python
-visualization_config = {
-    "layout": {
-        "algorithm": "hierarchical",  # "hierarchical", "force_directed", "circular"
-        "node_spacing": 100,
-        "level_spacing": 150,
-        "auto_layout": True
-    },
-    "appearance": {
-        "theme": "galaxy_dark",
-        "node_size": 20,
-        "edge_width": 2,
-        "font_size": 12,
-        "show_task_details": True,
-        "show_dependencies": True
-    },
-    "animation": {
-        "enable_animations": True,
-        "animation_duration": 1.0,
-        "fps": 60,
-        "easing_function": "ease_out"
-    },
-    "updates": {
-        "enable_real_time_updates": True,
-        "update_interval": 0.1,
-        "batch_updates": True,
-        "max_update_queue_size": 1000
-    },
-    "export": {
-        "default_format": "png",
-        "image_resolution": "1920x1080",
-        "include_metadata": True
+class DAGVisualizer:
+    # Status color mapping (can be customized)
+    status_colors = {
+        TaskStatus.PENDING: "yellow",
+        TaskStatus.WAITING_DEPENDENCY: "orange1",
+        TaskStatus.RUNNING: "blue", 
+        TaskStatus.COMPLETED: "green",
+        TaskStatus.FAILED: "red",
+        TaskStatus.CANCELLED: "dim"
     }
-}
-```
-
-### Rich Console Configuration
-
-```python
-rich_config = {
-    "console": {
-        "width": 120,
-        "height": 40,
-        "color_system": "auto",
-        "legacy_windows": False
-    },
-    "tables": {
-        "show_header": True,
-        "show_lines": True,
-        "expand": True,
-        "padding": 1
-    },
-    "progress": {
-        "show_progress": True,
-        "show_percentage": True,
-        "show_time": True,
-        "show_speed": True
-    },
-    "themes": {
-        "galaxy": {
-            "primary": "#4A90E2",
-            "secondary": "#7ED321",
-            "accent": "#F5A623",
-            "error": "#D0021B",
-            "warning": "#F8E71C"
-        }
+    
+    # Dependency symbols (can be customized)
+    dependency_symbols = {
+        DependencyType.UNCONDITIONAL: "→",
+        DependencyType.SUCCESS_ONLY: "⇒",
+        DependencyType.CONDITIONAL: "⇝", 
+        DependencyType.COMPLETION_ONLY: "⟶"
     }
-}
 ```
 
-## 🧪 Testing
+### Truncation and Formatting
 
-### Visualization Testing
+The visualizer automatically handles text truncation and formatting:
+
+- **Task Names**: Truncated to fit display width
+- **Task IDs**: Shortened to first 6-8 characters with ellipsis
+- **Long Lists**: Limited display with "... and N more" indicators
+- **Priority Colors**: Color-coded based on priority values
+
+## 🧪 Testing and Development
+
+### Unit Testing
+
+The visualization module includes comprehensive testing capabilities:
 
 ```python
-from tests.galaxy.visualization import VisualizationTestHarness
+import pytest
+from rich.console import Console
+from io import StringIO
+from ufo.galaxy.visualization import DAGVisualizer, visualize_dag
+from ufo.galaxy.constellation import TaskConstellation
 
-# Test visualization components
-test_harness = VisualizationTestHarness()
+def test_dag_visualizer_basic():
+    """Test basic DAG visualizer functionality"""
+    # Create test constellation
+    constellation = TaskConstellation(name="Test Pipeline")
+    
+    # Add some test tasks
+    task1 = constellation.create_task("task1", "First Task")
+    task2 = constellation.create_task("task2", "Second Task")
+    constellation.add_dependency("task1", "task2")
+    
+    # Create visualizer with string buffer
+    output = StringIO()
+    console = Console(file=output, force_terminal=True, width=80)
+    visualizer = DAGVisualizer(console=console)
+    
+    # Test visualization methods
+    visualizer.display_constellation_overview(constellation)
+    visualizer.display_dag_topology(constellation)
+    visualizer.display_task_details(constellation)
+    
+    # Verify output was generated
+    output_text = output.getvalue()
+    assert "Task Constellation" in output_text
+    assert "task1" in output_text
+    assert "task2" in output_text
 
-# Test layout algorithms
-layout_tests = test_harness.test_layout_algorithms([
-    "hierarchical_layout",
-    "force_directed_layout",
-    "circular_layout"
-])
-
-# Test rendering systems
-rendering_tests = test_harness.test_renderers([
-    "console_renderer",
-    "web_renderer",
-    "export_renderer"
-])
-
-# Test animation system
-animation_tests = test_harness.test_animations([
-    "task_addition_animation",
-    "dependency_animation",
-    "status_change_animation"
-])
+def test_convenience_functions():
+    """Test convenience visualization functions"""
+    constellation = TaskConstellation(name="Test")
+    
+    # Test all convenience functions don't crash
+    display_constellation_creation(constellation)
+    display_constellation_update(constellation, "Test update")
+    display_execution_progress(constellation)
+    
+    # Test visualize_dag with different modes
+    visualize_dag(constellation, mode="overview")
+    visualize_dag(constellation, mode="topology")
+    visualize_dag(constellation, mode="details")
+    visualize_dag(constellation, mode="execution")
 ```
 
-### Mock Visualization Components
+### Manual Testing
+
+You can manually test the visualization with sample data:
 
 ```python
-from tests.galaxy.mocks import MockVisualizer, MockRenderer
+from ufo.galaxy.visualization import DAGVisualizer
+from ufo.galaxy.constellation import TaskConstellation, TaskPriority
+from ufo.galaxy.constellation.enums import TaskStatus
 
-# Mock visualizer for testing
-mock_visualizer = MockVisualizer()
-mock_visualizer.enable_capture_mode()
+# Create a sample constellation for testing
+constellation = TaskConstellation(name="Sample Data Pipeline")
 
-# Render constellation
-await mock_visualizer.visualize_constellation(constellation)
+# Add various tasks with different statuses
+data_task = constellation.create_task(
+    "data_collection", 
+    "Data Collection Task",
+    priority=TaskPriority.HIGH
+)
+data_task.status = TaskStatus.COMPLETED
 
-# Verify visualization calls
-captured_calls = mock_visualizer.get_captured_calls()
-assert len(captured_calls) > 0
-assert captured_calls[0].method == "render_constellation"
+validation_task = constellation.create_task(
+    "data_validation",
+    "Data Validation Process", 
+    priority=TaskPriority.MEDIUM
+)
+validation_task.status = TaskStatus.RUNNING
+
+process_task = constellation.create_task(
+    "data_processing",
+    "Data Processing and Transformation",
+    priority=TaskPriority.LOW
+)
+process_task.status = TaskStatus.WAITING_DEPENDENCY
+
+# Add dependencies
+constellation.add_dependency("data_collection", "data_validation")
+constellation.add_dependency("data_validation", "data_processing")
+
+# Test visualization
+visualizer = DAGVisualizer()
+visualizer.display_constellation_overview(constellation, "Sample Pipeline Test")
 ```
 
 ## 🚀 Getting Started
 
-### Basic Visualization
+### Quick Start
+
+The simplest way to visualize a constellation:
 
 ```python
-from ufo.galaxy.visualization import ConstellationVisualizer
+from ufo.galaxy.visualization import visualize_dag
 from ufo.galaxy.constellation import TaskConstellation
 
-# Create constellation
-constellation = TaskConstellation(name="Sample Workflow")
-# Add tasks and dependencies...
+# Create your constellation
+constellation = TaskConstellation(name="My Workflow")
+# ... add tasks and dependencies ...
 
-# Create visualizer
-visualizer = ConstellationVisualizer(
-    layout="hierarchical",
-    enable_real_time_updates=True
-)
-
-# Start visualization
-await visualizer.visualize_constellation(constellation)
+# Quick visualization
+visualize_dag(constellation)  # Shows full overview by default
 ```
 
-### Advanced Visualization
+### Step-by-Step Usage
 
 ```python
-from ufo.galaxy.visualization import (
-    ConstellationVisualizer, ChangeDetector, 
-    RichRenderer, AnimationSystem
-)
+from ufo.galaxy.visualization import DAGVisualizer
 
-# Setup advanced visualization system
-visualizer = ConstellationVisualizer(layout="force_directed")
-change_detector = ChangeDetector(enable_visual_highlighting=True)
-rich_renderer = RichRenderer(enable_animations=True)
-animation_system = AnimationSystem(fps=60)
+# 1. Create visualizer
+visualizer = DAGVisualizer()
 
-# Combine components
-visualizer.set_change_detector(change_detector)
-visualizer.set_renderer(rich_renderer)
-visualizer.set_animation_system(animation_system)
+# 2. Choose what to display based on your needs:
 
-# Start comprehensive visualization
-await visualizer.start_comprehensive_visualization(constellation)
+# Full overview (recommended for first look)
+visualizer.display_constellation_overview(constellation)
+
+# Just the DAG structure
+visualizer.display_dag_topology(constellation)  
+
+# Detailed task information
+visualizer.display_task_details(constellation)
+
+# Dependency relationships
+visualizer.display_dependency_summary(constellation)
+
+# Current execution state
+visualizer.display_execution_flow(constellation)
 ```
 
-## 🔗 Integration
+### Integration with Galaxy Framework
 
-The visualization module enhances all Galaxy components:
+The visualization module integrates seamlessly with the Galaxy Framework:
 
-- **[Agents](../agents/README.md)**: Visualize agent state and processing
-- **[Constellation](../constellation/README.md)**: Render DAG structures and changes
-- **[Session](../session/README.md)**: Monitor session progress and lifecycle
-- **[Client](../client/README.md)**: Display device assignments and execution
-- **[Core](../core/README.md)**: Subscribe to events for real-time updates
+```python
+# In Galaxy Session observers
+from ufo.galaxy.visualization import display_constellation_update
+
+class MySessionObserver:
+    async def handle_constellation_update(self, constellation):
+        # Automatically visualize constellation changes
+        display_constellation_update(
+            constellation, 
+            "Constellation updated by agent"
+        )
+
+# In Galaxy agents for debugging
+from ufo.galaxy.visualization import visualize_dag
+
+class MyConstellationAgent:
+    def process_constellation(self, constellation):
+        # Debug visualization during development
+        if self.debug_mode:
+            visualize_dag(constellation, mode="topology")
+```
+
+## 🌟 Key Benefits
+
+### Why Use Galaxy Visualization?
+
+1. **Instant Understanding**: Quickly grasp complex DAG structures at a glance
+2. **Debug Friendly**: Identify circular dependencies, bottlenecks, and issues
+3. **Progress Tracking**: Monitor execution progress in real-time
+4. **Beautiful Output**: Professional-quality terminal visualization with Rich
+5. **Zero Configuration**: Works out of the box with sensible defaults
+6. **Lightweight**: Single-file implementation with minimal dependencies
+
+### Use Cases
+
+- **Development**: Debug constellation creation and modification
+- **Monitoring**: Track execution progress during workflow runs
+- **Documentation**: Generate visual representations for documentation
+- **Troubleshooting**: Identify dependency issues and execution problems
+- **Demo and Presentation**: Show workflow structures in presentations
+
+## 🔗 Integration with Galaxy Framework
+
+The visualization module serves Galaxy Framework components:
+
+- **[Constellation](../constellation/README.md)**: Visualizes TaskConstellation DAG structures and execution states
+- **[Session](../session/README.md)**: Used by session observers to display progress and changes
+- **[Agents](../agents/README.md)**: Provides debugging visualization for constellation creation and modification
+- **[Core](../core/README.md)**: Uses core types and enums for consistent representation
+
+### Framework Integration Points
+
+The module integrates through:
+- **Convenience Functions**: Easy-to-use functions for different lifecycle events
+- **Rich Console**: Professional terminal output that fits Galaxy's user experience
+- **Type Compatibility**: Full support for Galaxy's type system (TaskStatus, TaskPriority, etc.)
+- **Observer Pattern**: Can be used in Galaxy's observer-based session monitoring
+
+## 📋 Requirements
+
+- **Python 3.8+**
+- **Rich library**: For beautiful console output and formatting
+- **Galaxy Core Types**: Uses TaskConstellation, TaskStar, TaskStarLine, and related enums
 
 ---
 
-*Bringing Galaxy workflows to life through beautiful, interactive visualizations* 🎨
+*Beautiful console visualization for Galaxy's intelligent task orchestration* 🎨

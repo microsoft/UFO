@@ -27,8 +27,7 @@ from ufo.galaxy.core.events import get_event_bus, ConstellationEvent, EventType
 from ufo.module.context import Context, ContextNames
 
 from ..core.interfaces import IRequestProcessor, IResultProcessor
-from ..constellation import TaskConstellation, TaskStar
-from ..constellation.enums import ConstellationState, TaskPriority
+from ..constellation import TaskConstellation
 
 
 class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
@@ -154,7 +153,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         # Sync the status with the processor.
         self.status = self.processor.processing_context.get_local("status").upper()
-        self.logger.info(f"Host agent status updated to: {self.status}")
+        self.logger.info(f"Constellation agent status updated to: {self.status}")
 
         after_constellation: TaskConstellation = context.get(ContextNames.CONSTELLATION)
 
