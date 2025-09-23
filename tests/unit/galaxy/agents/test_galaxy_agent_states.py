@@ -11,8 +11,13 @@ for the Constellation state machine implementation.
 import asyncio
 import pytest
 import time
+import sys
+import os
 from unittest.mock import Mock, AsyncMock, patch, MagicMock
 from typing import Dict, Any, Optional
+
+# Add project root to path for imports
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
 
 from ufo.galaxy.agents.constellation_agent_states import (
     StartConstellationAgentState,
@@ -22,7 +27,7 @@ from ufo.galaxy.agents.constellation_agent_states import (
     ConstellationAgentStateManager,
     ConstellationAgentStatus,
 )
-from ufo.galaxy.agents.constellation_agent import MockConstellationAgent
+from tests.galaxy.mocks import MockConstellationAgent
 from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStatus
 from ufo.galaxy.constellation.enums import ConstellationState, TaskPriority
 from ufo.galaxy.constellation.task_star_line import TaskStarLine

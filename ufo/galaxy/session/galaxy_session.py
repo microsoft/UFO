@@ -171,8 +171,14 @@ class GalaxySession(BaseSession):
         self._id = id
         self.task = task
 
-        # Logging-related properties
-        self.log_path = f"logs/galaxy/{task}/"
+        # Logging-related properties (sanitize task name for path)
+        safe_task_name = "".join(
+            c for c in task if c.isalnum() or c in (" ", "-", "_")
+        ).rstrip()
+        safe_task_name = safe_task_name[:50]  # Limit length to 50 characters
+        if not safe_task_name:
+            safe_task_name = f"galaxy_session_{id}"
+        self.log_path = f"logs/galaxy/{safe_task_name}/"
         utils.create_folder(self.log_path)
 
         self._rounds: Dict[int, BaseRound] = {}
@@ -194,7 +200,8 @@ class GalaxySession(BaseSession):
         self._orchestrator = TaskConstellationOrchestrator(
             device_manager=client.device_manager, enable_logging=True
         )
-        self.agent = ConstellationAgent(orchestrator=self._orchestrator)
+
+        self._agent = ConstellationAgent(orchestrator=self._orchestrator)
 
         # Session state
         self._initial_request = initial_request

@@ -5,9 +5,14 @@ Test script for ConstellationAgent event publishing functionality.
 
 import asyncio
 import time
+import sys
+import os
 from unittest.mock import AsyncMock, MagicMock
 
-from ufo.galaxy.agents.constellation_agent import MockConstellationAgent
+# Add project root to path for imports
+sys.path.append(os.path.join(os.path.dirname(__file__), "..", ".."))
+
+from tests.galaxy.mocks import MockConstellationAgent
 from ufo.galaxy.constellation import TaskConstellation, TaskStar
 from ufo.galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,

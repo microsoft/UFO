@@ -14,10 +14,11 @@ Optimized for type safety, maintainability, and follows SOLID principles.
 import asyncio
 import logging
 import time
-from typing import Optional
+from typing import Dict, List, Optional, Union
 
 from ufo.agents.agent.basic import BasicAgent
 from ufo.contracts.contracts import Command, MCPToolInfo
+from ufo.galaxy.agents.constellation_agent_states import ConstellationAgentStatus
 from ufo.galaxy.agents.processors.processor import ConstellationAgentProcessor
 from ufo.galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
@@ -26,7 +27,8 @@ from ufo.galaxy.core.events import get_event_bus, ConstellationEvent, EventType
 from ufo.module.context import Context, ContextNames
 
 from ..core.interfaces import IRequestProcessor, IResultProcessor
-from ..constellation import TaskConstellation
+from ..constellation import TaskConstellation, TaskStar
+from ..constellation.enums import ConstellationState, TaskPriority
 
 
 class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
@@ -120,7 +122,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         # Sync the status with the processor.
 
-        self.logger.info(f"Host agent status updated to: {self.status}")
+        self.logger.info(f"Constellation agent status updated to: {self.status}")
         self._current_constellation = created_constellation
 
         return self._current_constellation
@@ -256,12 +258,40 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         """Get the prompter for the agent."""
         return "Constellation"
 
+    def message_constructor(self) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
+        """
+        Construct the message for LLM interaction.
+
+        Returns:
+            List of message dictionaries for LLM
+        """
+        return [
+            {
+                "role": "system",
+                "content": "You are a Constellation agent for DAG-based task orchestration.",
+            },
+            {
+                "role": "user",
+                "content": self.current_request or "Please process the current task.",
+            },
+        ]
+
+    async def process_confirmation(self, context: Context = None) -> bool:
+        """
+        Process confirmation for constellation operations.
+
+        :param context: Processing context
+        :return: True if confirmed, False otherwise
+        """
+        # For now, always confirm for constellation operations
+        # This can be extended with actual confirmation logic
+        return True
+
     @property
     def status_manager(self):
         """Get the status manager."""
-        from .constellation_agent_states import ConstellationAgentStateManager
 
-        return ConstellationAgentStateManager()
+        return ConstellationAgentStatus
 
     @property
     def orchestrator(self) -> TaskConstellationOrchestrator:
