@@ -35,15 +35,16 @@ class DAGVisualizer:
     """
     Advanced DAG visualization for TaskConstellation with rich console output.
 
-    Provides multiple visualization styles:
-    - Tree structure view
-    - Topology graph view
-    - Status summary
-    - Dependency matrix
+    Provides multiple visualization styles including tree structure view, topology graph view,
+    status summary, and dependency matrix.
     """
 
     def __init__(self, console: Optional[Console] = None):
-        """Initialize the visualizer with optional console."""
+        """
+        Initialize the visualizer with optional console.
+
+        :param console: Optional Rich Console instance for output
+        """
         self.console = console or Console()
 
         # Status color mapping
@@ -72,9 +73,8 @@ class DAGVisualizer:
         """
         Display comprehensive constellation overview.
 
-        Args:
-            constellation: The TaskConstellation to visualize
-            title: Custom title for the display
+        :param constellation: The TaskConstellation to visualize
+        :param title: Custom title for the display
         """
         self.console.print()
         self.console.rule(f"[bold cyan]{title}[/bold cyan]")
@@ -104,8 +104,7 @@ class DAGVisualizer:
         """
         Display DAG topology in a visual tree structure.
 
-        Args:
-            constellation: The TaskConstellation to visualize
+        :param constellation: The TaskConstellation to visualize
         """
         self.console.print()
         self.console.print("[bold blue]📊 DAG Topology[/bold blue]")
@@ -151,8 +150,7 @@ class DAGVisualizer:
         """
         Display detailed task information in a table.
 
-        Args:
-            constellation: The TaskConstellation to visualize
+        :param constellation: The TaskConstellation to visualize
         """
         self.console.print()
         self.console.print("[bold blue]📋 Task Details[/bold blue]")
@@ -216,8 +214,7 @@ class DAGVisualizer:
         """
         Display dependency relationships summary.
 
-        Args:
-            constellation: The TaskConstellation to visualize
+        :param constellation: The TaskConstellation to visualize
         """
         self.console.print()
         self.console.print("[bold blue]🔗 Dependency Relationships[/bold blue]")
@@ -272,8 +269,7 @@ class DAGVisualizer:
         """
         Display execution flow and ready tasks.
 
-        Args:
-            constellation: The TaskConstellation to visualize
+        :param constellation: The TaskConstellation to visualize
         """
         self.console.print()
         self.console.print("[bold blue]⚡ Execution Flow[/bold blue]")
@@ -343,7 +339,12 @@ class DAGVisualizer:
             self.console.print("[dim]No tasks in active execution states[/dim]")
 
     def _create_info_panel(self, constellation: "TaskConstellation") -> Panel:
-        """Create constellation information panel."""
+        """
+        Create constellation information panel.
+
+        :param constellation: The TaskConstellation to extract info from
+        :return: Rich Panel with constellation information
+        """
         info_lines = [
             f"[bold]ID:[/bold] {constellation.constellation_id}",
             f"[bold]Name:[/bold] {constellation.name or 'Unnamed'}",
@@ -370,7 +371,12 @@ class DAGVisualizer:
         )
 
     def _create_stats_panel(self, constellation: "TaskConstellation") -> Panel:
-        """Create constellation statistics panel."""
+        """
+        Create constellation statistics panel.
+
+        :param constellation: The TaskConstellation to extract statistics from
+        :return: Rich Panel with constellation statistics
+        """
         stats = constellation.get_statistics()
 
         # Handle different statistics formats
@@ -420,7 +426,12 @@ class DAGVisualizer:
     def _build_topology_layers(
         self, constellation: "TaskConstellation"
     ) -> List[List[TaskStar]]:
-        """Build topology layers using topological sort."""
+        """
+        Build topology layers using topological sort.
+
+        :param constellation: The TaskConstellation to build layers from
+        :return: List of task layers in topological order
+        """
         tasks = {task.task_id: task for task in constellation.get_all_tasks()}
         dependencies = constellation.get_all_dependencies()
 
@@ -463,7 +474,13 @@ class DAGVisualizer:
         return layers
 
     def _format_task_for_tree(self, task: TaskStar, compact: bool = False) -> str:
-        """Format task for tree display."""
+        """
+        Format task for tree display.
+
+        :param task: The TaskStar to format
+        :param compact: Whether to use compact formatting
+        :return: Formatted task string for tree display
+        """
         name = self._truncate_name(task.name, 15 if compact else 25)
         status_icon = self._get_status_icon(task.status)
         priority_color = self._get_priority_color(task.priority)
@@ -477,13 +494,23 @@ class DAGVisualizer:
             return f"{status_icon} [{priority_color}]{name}[/] [dim]({task_id_short})[/dim]"
 
     def _get_status_text(self, status: TaskStatus) -> str:
-        """Get formatted status text with color and icon."""
+        """
+        Get formatted status text with color and icon.
+
+        :param status: The TaskStatus to format
+        :return: Formatted status text with color and icon
+        """
         icon = self._get_status_icon(status)
         color = self.status_colors.get(status, "white")
         return f"[{color}]{icon} {status.value}[/]"
 
     def _get_status_icon(self, status: TaskStatus) -> str:
-        """Get status icon."""
+        """
+        Get status icon.
+
+        :param status: The TaskStatus to get icon for
+        :return: Unicode icon string for the status
+        """
         icons = {
             TaskStatus.PENDING: "⭕",
             TaskStatus.WAITING_DEPENDENCY: "⏳",
@@ -495,7 +522,12 @@ class DAGVisualizer:
         return icons.get(status, "❓")
 
     def _get_state_text(self, state: ConstellationState) -> str:
-        """Get formatted constellation state text."""
+        """
+        Get formatted constellation state text.
+
+        :param state: The ConstellationState to format
+        :return: Formatted state text with color
+        """
         state_colors = {
             ConstellationState.CREATED: "yellow",
             ConstellationState.READY: "blue",
@@ -508,7 +540,12 @@ class DAGVisualizer:
         return f"[{color}]{state.value.upper()}[/]"
 
     def _get_priority_color(self, priority) -> str:
-        """Get color for task priority."""
+        """
+        Get color for task priority.
+
+        :param priority: The task priority value
+        :return: Color string for the priority
+        """
         # Assuming priority has a value attribute
         if hasattr(priority, "value"):
             if priority.value >= 8:
@@ -520,7 +557,13 @@ class DAGVisualizer:
         return "white"
 
     def _truncate_name(self, name: str, max_length: int) -> str:
-        """Truncate name to max length."""
+        """
+        Truncate name to max length.
+
+        :param name: The name string to truncate
+        :param max_length: Maximum length for the name
+        :return: Truncated name string with ellipsis if needed
+        """
         if len(name) <= max_length:
             return name
         return name[: max_length - 3] + "..."

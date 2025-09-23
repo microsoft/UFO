@@ -8,6 +8,8 @@ Task-specific visualization handler.
 import logging
 from typing import Optional
 
+from ufo.galaxy.visualization.dag_visualizer import DAGVisualizer
+
 from ...core.events import TaskEvent, EventType
 from ...constellation import TaskConstellation
 
@@ -20,7 +22,9 @@ class TaskVisualizationHandler:
     task start, completion, and failure displays with Rich formatting.
     """
 
-    def __init__(self, visualizer, logger: Optional[logging.Logger] = None):
+    def __init__(
+        self, visualizer: DAGVisualizer, logger: Optional[logging.Logger] = None
+    ):
         """
         Initialize TaskVisualizationHandler.
 
