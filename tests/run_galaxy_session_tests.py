@@ -2,13 +2,16 @@
 """
 Galaxy Session Test Runner
 
-Convenient script to run all Galaxy Session tests from the root directory.
+Convenient script to run all Galaxy Session tests from the tests directory.
 """
 
 import subprocess
 import sys
 import os
 from pathlib import Path
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 
 def run_test(test_file, description):
@@ -45,20 +48,24 @@ def main():
 
     tests = [
         (
-            "tests/galaxy/session/test_galaxy_session.py",
-            "Basic GalaxySession Functionality",
-        ),
-        (
-            "tests/galaxy/session/test_galaxy_session_integration.py",
-            "Integration Tests",
-        ),
-        (
-            "tests/galaxy/session/test_galaxy_session_proper_mock.py",
+            "test_galaxy_session_proper_mock.py",
             "Proper Mocking Tests",
         ),
         (
-            "tests/galaxy/session/test_galaxy_session_final.py",
-            "Final Comprehensive Tests",
+            "test_session_observers.py",
+            "Session Observer Tests",
+        ),
+        (
+            "test_session_visualization_integration.py",
+            "Session-Visualization Integration",
+        ),
+        (
+            "test_color_fix.py",
+            "Color Display Fix Tests",
+        ),
+        (
+            "test_galaxy_framework_summary.py",
+            "Galaxy Framework Summary",
         ),
     ]
 

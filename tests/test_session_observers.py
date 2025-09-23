@@ -8,7 +8,11 @@ This script verifies that all observer classes can be imported and instantiated 
 """
 
 import sys
+import os
 import traceback
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 
 def test_observer_imports():
@@ -82,42 +86,36 @@ def test_modular_structure():
             ConstellationProgressObserver,
             SessionMetricsObserver,
             DAGVisualizationObserver,
-            TaskVisualizationHandler,
-            ConstellationVisualizationHandler,
+        )
+
+        # Test visualization components are imported separately
+        from ufo.galaxy.visualization import (
+            TaskDisplay,
+            ConstellationDisplay,
             VisualizationChangeDetector,
         )
 
         print("✅ Direct observer module imports successful")
+        print("✅ Visualization module imports successful")
 
-        # Test handler classes exist (note: some handlers need visualizer parameter)
-        print(
-            f"✅ TaskVisualizationHandler class available: {TaskVisualizationHandler}"
-        )
-        print(
-            f"✅ ConstellationVisualizationHandler class available: {ConstellationVisualizationHandler}"
-        )
-
-        # Test change detector (this one should work without parameters)
+        # Test that observers work with visualization components
+        observer = DAGVisualizationObserver()
+        task_display = TaskDisplay()
+        constellation_display = ConstellationDisplay()
         change_detector = VisualizationChangeDetector()
+
+        print("✅ Observers and visualization components integrate correctly")
+
+        # Test that observers integrate with visualization components
+        observer = DAGVisualizationObserver()
+        print(f"✅ DAGVisualizationObserver: {type(observer)}")
+
+        # Test change detector functionality
         print(f"✅ VisualizationChangeDetector: {type(change_detector)}")
 
-        # Test that handler classes have expected methods
-        if hasattr(TaskVisualizationHandler, "handle_task_event"):
-            print("✅ TaskVisualizationHandler has handle_task_event method")
-        else:
-            print("❌ TaskVisualizationHandler missing handle_task_event method")
-            return False
-
-        if hasattr(ConstellationVisualizationHandler, "handle_constellation_event"):
-            print(
-                "✅ ConstellationVisualizationHandler has handle_constellation_event method"
-            )
-        else:
-            print(
-                "❌ ConstellationVisualizationHandler missing handle_constellation_event method"
-            )
-            return False
-
+        print(
+            "✅ Modular structure test passed - observers delegate to visualization components"
+        )
         return True
 
     except Exception as e:

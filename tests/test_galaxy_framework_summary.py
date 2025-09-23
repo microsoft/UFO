@@ -7,6 +7,11 @@ This script demonstrates the successful completion of the visualization refactor
 and validates the new modular architecture described in the updated documentation.
 """
 
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
 
 def test_refactoring_completion():
     """Test that the refactoring is complete and consistent"""
@@ -69,9 +74,9 @@ def test_refactoring_completion():
     import os
 
     readme_files = [
-        "ufo/galaxy/README.md",
-        "ufo/galaxy/visualization/README.md",
-        "ufo/galaxy/session/README.md",
+        "../ufo/galaxy/README.md",
+        "../ufo/galaxy/visualization/README.md",
+        "../ufo/galaxy/session/README.md",
     ]
 
     for readme in readme_files:

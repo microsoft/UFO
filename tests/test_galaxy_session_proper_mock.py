@@ -10,9 +10,13 @@ while keeping the real ConstellationAgent structure intact.
 import asyncio
 import logging
 import sys
+import os
 import time
 from unittest.mock import AsyncMock, MagicMock, patch
 from typing import Optional
+
+# Add parent directory to path for imports
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
 # Add UFO path
 sys.path.append(".")

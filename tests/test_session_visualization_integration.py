@@ -4,6 +4,11 @@
 Test integration between session observers and refactored visualization module.
 """
 
+import sys
+import os
+
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
+
 from ufo.galaxy.session.observers import DAGVisualizationObserver
 from ufo.galaxy.visualization import (
     TaskDisplay,
