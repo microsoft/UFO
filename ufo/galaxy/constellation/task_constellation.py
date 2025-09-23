@@ -552,6 +552,206 @@ class TaskConstellation(IConstellation):
             "updated_at": self._updated_at.isoformat(),
         }
 
+    def to_dict(self) -> Dict[str, Any]:
+        """
+        Convert the TaskConstellation to a dictionary representation.
+
+        :return: Dictionary representation of the TaskConstellation
+        """
+        # Convert tasks using their to_dict methods
+        tasks_dict = {}
+        for task_id, task in self._tasks.items():
+            tasks_dict[task_id] = task.to_dict()
+
+        # Convert dependencies using their to_dict methods
+        dependencies_dict = {}
+        for dep_id, dependency in self._dependencies.items():
+            dependencies_dict[dep_id] = dependency.to_dict()
+
+        return {
+            "constellation_id": self._constellation_id,
+            "name": self._name,
+            "state": self._state.value,
+            "tasks": tasks_dict,
+            "dependencies": dependencies_dict,
+            "metadata": self._metadata,
+            "llm_source": self._llm_source,
+            "enable_visualization": self._enable_visualization,
+            "created_at": self._created_at.isoformat(),
+            "updated_at": self._updated_at.isoformat(),
+            "execution_start_time": (
+                self._execution_start_time.isoformat()
+                if self._execution_start_time
+                else None
+            ),
+            "execution_end_time": (
+                self._execution_end_time.isoformat()
+                if self._execution_end_time
+                else None
+            ),
+            "execution_duration": self.execution_duration,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "TaskConstellation":
+        """
+        Create a TaskConstellation from a dictionary representation.
+
+        :param data: Dictionary representation
+        :return: TaskConstellation instance
+        """
+        # Create constellation with basic properties
+        constellation = cls(
+            constellation_id=data.get("constellation_id"),
+            name=data.get("name"),
+            enable_visualization=data.get("enable_visualization", True),
+        )
+
+        # Restore state and metadata
+        constellation._state = ConstellationState(
+            data.get("state", ConstellationState.CREATED.value)
+        )
+        constellation._metadata = data.get("metadata", {})
+        constellation._llm_source = data.get("llm_source")
+
+        # Restore timestamps
+        if data.get("created_at"):
+            constellation._created_at = datetime.fromisoformat(data["created_at"])
+        if data.get("updated_at"):
+            constellation._updated_at = datetime.fromisoformat(data["updated_at"])
+        if data.get("execution_start_time"):
+            constellation._execution_start_time = datetime.fromisoformat(
+                data["execution_start_time"]
+            )
+        if data.get("execution_end_time"):
+            constellation._execution_end_time = datetime.fromisoformat(
+                data["execution_end_time"]
+            )
+
+        # Restore tasks using TaskStar.from_dict
+        for task_id, task_data in data.get("tasks", {}).items():
+            task = TaskStar.from_dict(task_data)
+            constellation._tasks[task_id] = task
+
+        # Restore dependencies using TaskStarLine.from_dict
+        for dep_id, dep_data in data.get("dependencies", {}).items():
+            dependency = TaskStarLine.from_dict(dep_data)
+            constellation._dependencies[dep_id] = dependency
+
+        return constellation
+
+    def to_json(self, save_path: Optional[str] = None) -> str:
+        """
+        Convert the TaskConstellation to a JSON string representation.
+
+        :param save_path: Optional file path to save the JSON to disk
+        :return: JSON string representation of the TaskConstellation
+        :raises IOError: If file writing fails when save_path is provided
+        """
+        import json
+
+        # Get dictionary representation
+        constellation_dict = self.to_dict()
+
+        # Handle potentially non-serializable attributes
+        serializable_dict = self._ensure_json_serializable(constellation_dict)
+
+        # Convert to JSON string with proper formatting
+        json_str = json.dumps(serializable_dict, indent=2, ensure_ascii=False)
+
+        # Save to file if path provided
+        if save_path:
+            try:
+                with open(save_path, "w", encoding="utf-8") as f:
+                    f.write(json_str)
+            except Exception as e:
+                raise IOError(f"Failed to save TaskConstellation to {save_path}: {e}")
+
+        return json_str
+
+    def _ensure_json_serializable(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Ensure all values in the dictionary are JSON serializable.
+
+        :param data: Dictionary to make serializable
+        :return: JSON serializable dictionary
+        """
+        import json
+
+        serializable_data = {}
+
+        for key, value in data.items():
+            try:
+                # Test if the value is JSON serializable
+                json.dumps(value)
+                serializable_data[key] = value
+            except (TypeError, ValueError):
+                # Handle non-serializable values
+                if hasattr(value, "__dict__"):
+                    # For complex objects, try to convert to dict
+                    try:
+                        serializable_data[key] = vars(value)
+                    except:
+                        serializable_data[key] = str(value)
+                elif isinstance(value, set):
+                    # Convert sets to lists
+                    serializable_data[key] = list(value)
+                elif callable(value):
+                    # Skip callable objects
+                    serializable_data[key] = f"<callable: {value.__name__}>"
+                else:
+                    # Convert to string as fallback
+                    serializable_data[key] = str(value)
+
+        return serializable_data
+
+    @classmethod
+    def from_json(
+        cls, json_data: Optional[str] = None, file_path: Optional[str] = None
+    ) -> "TaskConstellation":
+        """
+        Create a TaskConstellation from a JSON string or JSON file.
+
+        :param json_data: JSON string representation of the TaskConstellation
+        :param file_path: Path to JSON file containing TaskConstellation data
+        :return: TaskConstellation instance
+        :raises ValueError: If neither json_data nor file_path is provided, or both are provided
+        :raises FileNotFoundError: If file_path is provided but file doesn't exist
+        :raises json.JSONDecodeError: If JSON parsing fails
+        :raises IOError: If file reading fails
+        """
+        import json
+
+        if json_data is None and file_path is None:
+            raise ValueError("Either json_data or file_path must be provided")
+
+        if json_data is not None and file_path is not None:
+            raise ValueError("Only one of json_data or file_path should be provided")
+
+        # Load JSON data
+        if file_path:
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except FileNotFoundError:
+                raise FileNotFoundError(f"JSON file not found: {file_path}")
+            except Exception as e:
+                raise IOError(f"Failed to read JSON file {file_path}: {e}")
+        else:
+            try:
+                data = json.loads(json_data)
+            except json.JSONDecodeError as e:
+                raise json.JSONDecodeError(
+                    f"Invalid JSON format: {e}", json_data, e.pos
+                )
+
+        # Validate that data is a dictionary
+        if not isinstance(data, dict):
+            raise ValueError("JSON data must represent a dictionary/object")
+
+        # Create TaskConstellation instance from dictionary
+        return cls.from_dict(data)
+
     # Serialization methods moved to ConstellationSerializer class
 
     def to_llm_string(self) -> str:

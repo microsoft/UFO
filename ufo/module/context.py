@@ -14,6 +14,9 @@ from ufo.utils import is_json_serializable, print_with_color
 
 if TYPE_CHECKING:
     from ufo.module.basic import FileWriter
+    from ufo.galaxy.client.components.types import DeviceInfo
+    from ufo.galaxy.constellation.task_constellation import TaskConstellation
+    from ufo.galaxy.agents.schema import WeavingMode
 
 
 class ContextNames(Enum):
@@ -60,6 +63,11 @@ class ContextNames(Enum):
 
     TOOL_INFO = "TOOL_INFO"  # The information of the tools
 
+    # Constellation-specific context names
+    DEVICE_INFO = "DEVICE_INFO"  # List of device information
+    CONSTELLATION = "CONSTELLATION"  # The task constellation
+    WEAVING_MODE = "WEAVING_MODE"  # The weaving mode for constellation operations
+
     @property
     def default_value(self) -> Any:
         """
@@ -98,18 +106,28 @@ class ContextNames(Enum):
             self == ContextNames.CONTROL_REANNOTATION
             or self == ContextNames.HOST_MESSAGE
             or self == ContextNames.PREVIOUS_SUBTASKS
+            or self == ContextNames.DEVICE_INFO
         ):
             return []
         elif (
             self == ContextNames.REQUEST_LOGGER
             or self == ContextNames.LOGGER
             or self == ContextNames.EVALUATION_LOGGER
+            or self == ContextNames.CONSTELLATION
         ):
             return None  # Assuming Logger should be initialized elsewhere
         elif self == ContextNames.APPLICATION_WINDOW:
             return None  # Assuming UIAWrapper should be initialized elsewhere
         elif self == ContextNames.STRUCTURAL_LOGS:
             return defaultdict(lambda: defaultdict(list))
+        elif self == ContextNames.WEAVING_MODE:
+            # Import here to avoid circular imports
+            try:
+                from ufo.galaxy.agents.schema import WeavingMode
+
+                return WeavingMode.CREATION
+            except ImportError:
+                return "creation"  # Fallback string value
         else:
             return None
 
@@ -152,16 +170,20 @@ class ContextNames(Enum):
             self == ContextNames.CONTROL_REANNOTATION
             or self == ContextNames.HOST_MESSAGE
             or self == ContextNames.PREVIOUS_SUBTASKS
+            or self == ContextNames.DEVICE_INFO
         ):
             return list
         elif (
             self == ContextNames.REQUEST_LOGGER
             or self == ContextNames.LOGGER
             or self == ContextNames.EVALUATION_LOGGER
+            or self == ContextNames.CONSTELLATION
         ):
             return "FileWriter"  # Use string to avoid circular import
         elif self == ContextNames.APPLICATION_WINDOW:
             return UIAWrapper
+        elif self == ContextNames.WEAVING_MODE:
+            return "WeavingMode"  # Use string to avoid circular import
         else:
             return Any
 

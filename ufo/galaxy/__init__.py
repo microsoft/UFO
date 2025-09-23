@@ -25,14 +25,11 @@ from .constellation import (
     ConstellationState,
     DeviceType,
     TaskPriority,
-    create_and_orchestrate_from_llm,
-    create_simple_constellation_standalone,
-    ConstellationParser,
     ConstellationManager,
 )
 
 # Agent components
-from .agents import GalaxyWeaverAgent
+from .agents import ConstellationAgent
 
 # Session components
 from .session import GalaxySession
@@ -52,12 +49,9 @@ __all__ = [
     "ConstellationState",
     "DeviceType",
     "TaskPriority",
-    "create_and_orchestrate_from_llm",
-    "create_simple_constellation_standalone",
-    "ConstellationParser",
     "ConstellationManager",
     # Agents
-    "GalaxyWeaverAgent",
+    "ConstellationAgent",
     # Session
     "GalaxySession",
     # Client

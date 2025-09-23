@@ -6,8 +6,7 @@ Task Execution Orchestrator for TaskConstellation.
 
 This module provides the execution orchestrator for TaskConstellation,
 focused purely on execution flow control and coordination.
-Delegates constellation creation/parsing to ConstellationParser and
-device/state management to ConstellationManager.
+Delegates device/state management to ConstellationManager.
 """
 
 import asyncio
@@ -26,7 +25,6 @@ from ...core.events import (
 )
 from ...core.types import ProcessingContext
 from .constellation_manager import ConstellationManager
-from ..parsers.constellation_parser import ConstellationParser
 from ..enums import DeviceType, TaskStatus
 from ..task_constellation import TaskConstellation
 from ..task_star import TaskStar
@@ -37,8 +35,8 @@ class TaskConstellationOrchestrator:
     Task execution orchestrator focused on flow control and coordination.
 
     This class provides execution orchestration for TaskConstellation using
-    event-driven patterns. It delegates constellation creation/parsing to
-    ConstellationParser and device/state management to ConstellationManager.
+    event-driven patterns. It delegates device/state management to
+    ConstellationManager.
     """
 
     def __init__(
@@ -55,7 +53,6 @@ class TaskConstellationOrchestrator:
         :param event_bus: Event bus for publishing events
         """
         self._device_manager = device_manager
-        self._constellation_parser = ConstellationParser(enable_logging)
         self._constellation_manager = ConstellationManager(
             device_manager, enable_logging
         )
@@ -80,100 +77,6 @@ class TaskConstellationOrchestrator:
         """
         self._device_manager = device_manager
         self._constellation_manager.set_device_manager(device_manager)
-
-    async def create_constellation_from_llm(
-        self,
-        llm_output: str,
-        constellation_name: Optional[str] = None,
-    ) -> TaskConstellation:
-        """
-        Create a TaskConstellation from LLM output using ConstellationParser.
-
-        :param llm_output: Raw LLM output describing tasks and dependencies
-        :param constellation_name: Optional name for the constellation
-        :return: TaskConstellation instance
-        """
-        if self._logger:
-            self._logger.info(
-                f"Creating constellation from LLM output: {constellation_name}"
-            )
-
-        constellation = await self._constellation_parser.create_from_llm(
-            llm_output, constellation_name
-        )
-
-        self._event_bus.publish_event(
-            ConstellationEvent(
-                event_type=EventType.CONSTELLATION_STARTED,
-                source_id=f"orchestrator_{id(self)}",
-                timestamp=time.time(),
-                data={
-                    "constellation_id": constellation.constellation_id,
-                    "creation_request": llm_output,
-                    "constellation": constellation,
-                },
-            )
-        )
-
-        # Register with constellation manager
-        self._constellation_manager.register_constellation(constellation)
-
-        if self._logger:
-            self._logger.info(
-                f"Created constellation with {constellation.task_count} tasks "
-                f"and {constellation.dependency_count} dependencies"
-            )
-
-        return constellation
-
-    async def create_constellation_from_json(
-        self,
-        json_data: str,
-        constellation_name: Optional[str] = None,
-    ) -> TaskConstellation:
-        """
-        Create a TaskConstellation from JSON data using ConstellationParser.
-
-        :param json_data: JSON string representing constellation
-        :param constellation_name: Optional name for the constellation
-        :return: TaskConstellation instance
-        """
-        constellation = self._constellation_parser.create_from_json(
-            json_data, constellation_name
-        )
-
-        # Register with constellation manager
-        self._constellation_manager.register_constellation(constellation)
-
-        return constellation
-
-    async def create_simple_constellation(
-        self,
-        task_descriptions: List[str],
-        constellation_name: str = "Simple Constellation",
-        sequential: bool = True,
-    ) -> TaskConstellation:
-        """
-        Create a simple constellation using ConstellationParser.
-
-        :param task_descriptions: List of task descriptions
-        :param constellation_name: Name for the constellation
-        :param sequential: Whether to make tasks sequential (True) or parallel (False)
-        :return: TaskConstellation instance
-        """
-        if sequential:
-            constellation = self._constellation_parser.create_simple_sequential(
-                task_descriptions, constellation_name
-            )
-        else:
-            constellation = self._constellation_parser.create_simple_parallel(
-                task_descriptions, constellation_name
-            )
-
-        # Register with constellation manager
-        self._constellation_manager.register_constellation(constellation)
-
-        return constellation
 
     async def orchestrate_constellation(
         self,
@@ -202,9 +105,8 @@ class TaskConstellationOrchestrator:
             )
 
         # Validate DAG structure using constellation parser
-        is_valid, errors = self._constellation_parser.validate_constellation(
-            constellation
-        )
+        is_valid, errors = constellation.validate_dag()
+
         if not is_valid:
             raise ValueError(f"Invalid DAG: {errors}")
 
@@ -409,35 +311,6 @@ class TaskConstellationOrchestrator:
         result = await task.execute(self._device_manager)
         return result.result
 
-    async def modify_constellation_with_llm(
-        self,
-        constellation: TaskConstellation,
-        modification_request: str,
-    ) -> TaskConstellation:
-        """
-        Modify an existing constellation using LLM via ConstellationParser.
-
-        :param constellation: Existing TaskConstellation
-        :param modification_request: LLM request for modifications
-        :return: Modified TaskConstellation
-        """
-        constellation = self._constellation_parser.update_from_llm(
-            constellation, modification_request
-        )
-        self._event_bus.publish_event(
-            ConstellationEvent(
-                event_type=EventType.CONSTELLATION_MODIFIED,
-                source_id=f"orchestrator_{id(self)}",
-                timestamp=time.time(),
-                data={
-                    "constellation_id": constellation.constellation_id,
-                    "modification_request": modification_request,
-                    "constellation": constellation,
-                },
-            )
-        )
-        return constellation
-
     async def get_constellation_status(
         self, constellation: TaskConstellation
     ) -> Dict[str, Any]:
@@ -476,181 +349,3 @@ class TaskConstellationOrchestrator:
         return await self._constellation_manager.assign_devices_automatically(
             constellation, strategy, device_preferences
         )
-
-    def export_constellation(
-        self,
-        constellation: TaskConstellation,
-        format: str = "json",
-    ) -> str:
-        """
-        Export constellation using ConstellationParser.
-
-        :param constellation: TaskConstellation to export
-        :param format: Export format ("json", "yaml", "llm")
-        :return: Exported string representation
-        """
-        return self._constellation_parser.export_constellation(constellation, format)
-
-    async def import_constellation(
-        self,
-        data: str,
-        format: str = "json",
-    ) -> TaskConstellation:
-        """
-        Import constellation using ConstellationParser.
-
-        :param data: String data to import
-        :param format: Import format ("json", "llm")
-        :return: TaskConstellation instance
-        """
-        if format.lower() == "json":
-            return self._constellation_parser.create_from_json(data)
-        elif format.lower() == "llm":
-            return await self._constellation_parser.create_from_llm(data)
-        else:
-            raise ValueError(f"Unsupported import format: {format}")
-
-    def add_task_to_constellation(
-        self,
-        constellation: TaskConstellation,
-        task: TaskStar,
-        dependencies: Optional[List[str]] = None,
-    ) -> bool:
-        """
-        Add a task to constellation using ConstellationParser.
-
-        :param constellation: Target constellation
-        :param task: TaskStar to add
-        :param dependencies: Optional list of task IDs that this task depends on
-        :return: True if added successfully
-        """
-        return self._constellation_parser.add_task_to_constellation(
-            constellation, task, dependencies
-        )
-
-    def remove_task_from_constellation(
-        self,
-        constellation: TaskConstellation,
-        task_id: str,
-    ) -> bool:
-        """
-        Remove a task from constellation using ConstellationParser.
-
-        :param constellation: Target constellation
-        :param task_id: ID of task to remove
-        :return: True if removed successfully
-        """
-        return self._constellation_parser.remove_task_from_constellation(
-            constellation, task_id
-        )
-
-    def clone_constellation(
-        self,
-        constellation: TaskConstellation,
-        new_name: Optional[str] = None,
-    ) -> TaskConstellation:
-        """
-        Clone a constellation using ConstellationParser.
-
-        :param constellation: Constellation to clone
-        :param new_name: Optional new name for the cloned constellation
-        :return: Cloned TaskConstellation
-        """
-        cloned = self._constellation_parser.clone_constellation(constellation, new_name)
-
-        # Register cloned constellation with manager
-        self._constellation_manager.register_constellation(cloned)
-
-        return cloned
-
-    def merge_constellations(
-        self,
-        constellation1: TaskConstellation,
-        constellation2: TaskConstellation,
-        merged_name: Optional[str] = None,
-    ) -> TaskConstellation:
-        """
-        Merge two constellations using ConstellationParser.
-
-        :param constellation1: First constellation
-        :param constellation2: Second constellation
-        :param merged_name: Optional name for merged constellation
-        :return: Merged TaskConstellation
-        """
-        return self._constellation_parser.merge_constellations(
-            constellation1, constellation2, merged_name
-        )
-
-    def publish_event(self, event: Event):
-        """
-        An interface to publish an event for Task or Constellation.
-        """
-        self._event_bus.publish_event(event)
-
-
-# Convenience functions for easier usage
-async def create_and_orchestrate_from_llm(
-    llm_output: str,
-    device_manager: ConstellationDeviceManager,
-    constellation_name: Optional[str] = None,
-) -> Dict[str, Any]:
-    """
-    Convenience function to create and orchestrate a constellation from LLM output.
-
-    :param llm_output: LLM output describing tasks
-    :param device_manager: ConstellationDeviceManager instance
-    :param constellation_name: Optional constellation name
-    :return: Orchestration results
-    """
-    orchestrator = TaskConstellationOrchestrator(device_manager)
-
-    # Create constellation from LLM
-    constellation = await orchestrator.create_constellation_from_llm(
-        llm_output, constellation_name
-    )
-
-    # Assign devices automatically
-    await orchestrator.assign_devices_automatically(constellation)
-
-    # Orchestrate constellation
-    return await orchestrator.orchestrate_constellation(constellation)
-
-
-def create_simple_constellation_standalone(
-    task_descriptions: List[str],
-    constellation_name: str = "Simple Constellation",
-    sequential: bool = True,
-) -> TaskConstellation:
-    """
-    Create a simple constellation from a list of task descriptions without orchestrator.
-
-    :param task_descriptions: List of task descriptions
-    :param constellation_name: Name for the constellation
-    :param sequential: Whether to make tasks sequential (True) or parallel (False)
-    :return: TaskConstellation instance
-    """
-    from ..task_star_line import TaskStarLine
-
-    constellation = TaskConstellation(name=constellation_name)
-
-    # Create tasks
-    tasks = []
-    for i, description in enumerate(task_descriptions):
-        task = TaskStar(
-            task_id=f"task_{i+1}",
-            description=description,
-        )
-        constellation.add_task(task)
-        tasks.append(task)
-
-    # Add dependencies if sequential
-    if sequential and len(tasks) > 1:
-        for i in range(len(tasks) - 1):
-            dep = TaskStarLine.create_unconditional(
-                tasks[i].task_id,
-                tasks[i + 1].task_id,
-                f"Sequential dependency: {tasks[i].task_id} -> {tasks[i + 1].task_id}",
-            )
-            constellation.add_dependency(dep)
-
-    return constellation

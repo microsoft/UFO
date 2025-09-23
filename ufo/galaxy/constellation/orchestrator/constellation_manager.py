@@ -13,7 +13,6 @@ from typing import Any, Dict, List, Optional
 
 from ufo.galaxy.client.device_manager import ConstellationDeviceManager
 
-from ..parsers.constellation_parser import ConstellationParser
 from ..task_constellation import TaskConstellation
 
 
@@ -40,7 +39,6 @@ class ConstellationManager:
         :param enable_logging: Whether to enable logging
         """
         self._device_manager = device_manager
-        self._parser = ConstellationParser(enable_logging)
         self._logger = logging.getLogger(__name__) if enable_logging else None
 
         # Track managed constellations

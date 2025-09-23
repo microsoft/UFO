@@ -12,17 +12,18 @@ Optimized for type safety, maintainability, and follows SOLID principles.
 """
 
 import asyncio
-import copy
 import logging
 import time
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 from ufo.agents.agent.basic import BasicAgent
+from ufo.contracts.contracts import Command, MCPToolInfo
 from ufo.galaxy.agents.processors.processor import ConstellationAgentProcessor
 from ufo.galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
 )
-from ufo.module.context import Context
+from ufo.galaxy.core.events import get_event_bus
+from ufo.module.context import Context, ContextNames
 
 from ..core.interfaces import IRequestProcessor, IResultProcessor
 from ..core.types import ProcessingContext
@@ -48,6 +49,8 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     focused interfaces rather than one large interface.
     """
 
+    _constellation_creation_tool_name: str = "build_constellation"
+
     def __init__(
         self,
         orchestrator: TaskConstellationOrchestrator,
@@ -66,9 +69,12 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self.logger = logging.getLogger(__name__)
 
         # Add state machine support
-        self.task_completion_queue: asyncio.Queue = asyncio.Queue()
         self.current_request: str = ""
         self._orchestrator = orchestrator
+
+        self.task_completion_queue = asyncio.Queue()
+        self._context_provision_executed = False
+        self._event_bus = get_event_bus()
 
         # Initialize with start state
         from .constellation_agent_states import StartConstellationAgentState
@@ -83,7 +89,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     # IRequestProcessor implementation
     async def process_creation(
         self,
-        context: Optional[ProcessingContext] = None,
+        context: Context,
     ) -> TaskConstellation:
         """
         Process a user request and generate a constellation.
@@ -94,18 +100,17 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         :raises ConstellationError: If constellation generation fails
         """
 
+        if not self._context_provision_executed:
+            await self.context_provision(context=context)
+            self._context_provision_executed = True
+
         self.processor = ConstellationAgentProcessor(agent=self, global_context=context)
-        # self.processor = HostAgentProcessor(agent=self, context=context)
+
         await self.processor.process()
-        constellation_string = self.processor.processing_context.get_local(
-            "constellation_string"
-        )
 
-        self._current_constellation = (
-            await self._orchestrator.create_constellation_from_llm(constellation_string)
-        )
+        created_constellation = context.get(ContextNames.CONSTELLATION)
 
-        is_dag, errors = self._current_constellation.validate_dag()
+        is_dag, errors = created_constellation.validate_dag()
         self.status = self.processor.processing_context.get_local("status").upper()
 
         if not is_dag:
@@ -115,12 +120,19 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         # Sync the status with the processor.
 
         self.logger.info(f"Host agent status updated to: {self.status}")
+        self._current_constellation = created_constellation
+
+        # TODO: Publish DAG Creation Event
+        # self._event_bus.publish_event(
+
+        # )
+
         return self._current_constellation
 
     # IResultProcessor implementation
     async def process_editing(
         self,
-        context: Optional[ProcessingContext] = None,
+        context: Context = None,
     ) -> TaskConstellation:
         """
         Process a task result and potentially update the constellation.
@@ -131,6 +143,14 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         :raises TaskExecutionError: If result processing fails
         """
 
+        if not self._context_provision_executed:
+            await self.context_provision(context=context)
+            self._context_provision_executed = True
+
+        before_constellation: TaskConstellation = context.get(
+            ContextNames.CONSTELLATION
+        )
+
         self.processor = ConstellationAgentProcessor(agent=self, global_context=context)
         await self.processor.process()
 
@@ -138,23 +158,17 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self.status = self.processor.processing_context.get_local("status").upper()
         self.logger.info(f"Host agent status updated to: {self.status}")
 
-        old_constellation = copy.deepcopy(self._current_constellation)
+        after_constellation: TaskConstellation = context.get(ContextNames.CONSTELLATION)
 
-        update_string = self.processor.processing_context.get_local("editing")
-
-        updated_constellation = await self._orchestrator.modify_constellation_with_llm(
-            self._current_constellation, update_string
-        )
-
-        is_dag, errors = updated_constellation.validate_dag()
+        is_dag, errors = after_constellation.validate_dag()
 
         if not is_dag:
             self.logger.error(f"The created constellation is not a valid DAG: {errors}")
             self.status = "FAIL"
 
-        if old_constellation.is_complete():
+        if before_constellation.is_complete():
             self.logger.info(
-                f"The old constellation {old_constellation.constellation_id} is completed."
+                f"The old constellation {before_constellation.constellation_id} is completed."
             )
             # IMPORTANT: Restart the constellation orchestration when there is new update.
             if self.status == "CONTINUE":
@@ -163,9 +177,68 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
                 )
                 self.status = "START"
 
-        self._current_constellation = updated_constellation
+        self._current_constellation = after_constellation
 
-        return updated_constellation
+        # TODO: Publish DAG Modified Event
+        # self._event_bus.publish_event(
+
+        # )
+
+        return after_constellation
+
+    async def context_provision(
+        self, context: Context, mask_creation: bool = True
+    ) -> None:
+        """
+        Provide the context for the agent.
+        :param context: The context for the agent.
+        :param mask_creation: Whether to mask the tool for creation of constellation.
+        """
+        await self._load_mcp_context(context, mask_creation)
+
+    async def _load_mcp_context(
+        self, context: Context, mask_creation: bool = True
+    ) -> None:
+        """
+        Load MCP context information for the current application.
+        :param context: The context for the agent.
+        :param mask_creation: Whether to mask the tool for creation of constellation.
+        """
+
+        self.logger.info("Loading MCP tool information...")
+        result = await context.command_dispatcher.execute_commands(
+            [
+                Command(
+                    tool_name="list_tools",
+                    parameters={
+                        "tool_type": "action",
+                    },
+                    tool_type="action",
+                )
+            ]
+        )
+
+        tool_list = result[0].result if result else None
+
+        # Mask the creation tool for the prompt
+        if mask_creation:
+            tool_list = [
+                tool
+                for tool in tool_list
+                if tool.get("tool_name") != self._constellation_creation_tool_name
+            ]
+
+        tool_name_list = (
+            [tool.get("tool_name") for tool in tool_list if tool.get("tool_name")]
+            if tool_list
+            else []
+        )
+
+        self.logger.info(f"Loaded tool list: {tool_name_list} for the HostAgent.")
+
+        tools_info = [MCPToolInfo(**tool) for tool in tool_list]
+
+        self.prompter.create_api_prompt_template(tools=tools_info)
 
     # Required BasicAgent abstract methods - basic implementations
     def get_prompter(self) -> str:
@@ -196,9 +269,18 @@ class MockConstellationAgent(ConstellationAgent):
     for testing the Galaxy framework without requiring actual LLM integration.
     """
 
-    def __init__(self, name: str = "mock_weaver_agent"):
-        """Initialize the MockConstellation."""
-        super().__init__(name)
+    def __init__(
+        self,
+        orchestrator: TaskConstellationOrchestrator,
+        name: str = "mock_constellation_agent",
+    ):
+        """
+        Initialize the MockConstellationAgent.
+
+        :param orchestrator: Task orchestrator instance
+        :param name: Agent name (default: "mock_constellation_agent")
+        """
+        super().__init__(orchestrator, name)
 
     def message_constructor(self) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
@@ -218,25 +300,28 @@ class MockConstellationAgent(ConstellationAgent):
             },
         ]
 
-    async def process_initial_request(
+    async def process_creation(
         self,
-        request: str,
-        context: Optional[Context] = None,
+        context: Optional[ProcessingContext] = None,
     ) -> TaskConstellation:
         """
-        Process initial request by generating a simple DAG based on request keywords.
+        Process a user request and generate a constellation (Mock implementation).
 
-        Args:
-            request: User request string
-            context: Optional context
-
-        Returns:
-            TaskConstellation with generated tasks
+        :param context: Optional processing context
+        :return: Generated constellation
+        :raises ConstellationError: If constellation generation fails
         """
-        self.logger.info(f"Processing initial request: {request[:100]}...")
+        # Get request from context or use a default
+        request = "mock request"
+        if context and hasattr(context, "get_local"):
+            request = context.get_local("request", "mock request")
+
+        self.logger.info(f"Mock processing creation request: {request[:100]}...")
 
         # Simple keyword-based DAG generation for testing
-        from ..constellation import create_simple_constellation
+        from ..constellation.orchestrator.orchestrator import (
+            create_simple_constellation_standalone,
+        )
 
         # Generate tasks based on request content
         if "complex" in request.lower():
@@ -264,43 +349,51 @@ class MockConstellationAgent(ConstellationAgent):
                 "Validate results",
             ]
 
-        constellation = create_simple_constellation(
+        constellation = create_simple_constellation_standalone(
             task_descriptions=tasks,
             constellation_name=f"MockDAG_{request[:20]}",
             sequential=True,
         )
 
         self._current_constellation = constellation
-        self._status = "processing"
+        self._status = "CONTINUE"
 
         self.logger.info(
-            f"Generated constellation with {constellation.task_count} tasks"
+            f"Generated mock constellation with {constellation.task_count} tasks"
         )
 
         return constellation
 
-    async def process_task_result(
+    async def process_editing(
         self,
-        task_result: Dict[str, Any],
-        constellation: TaskConstellation,
-        context: Optional[Context] = None,
+        context: Optional[ProcessingContext] = None,
     ) -> TaskConstellation:
         """
-        Enhanced process task results with intelligent task generation based on result content.
+        Process a task result and potentially update the constellation (Mock implementation).
 
-        Args:
-            task_result: Task execution result
-            constellation: Current constellation
-            context: Optional context
-
-        Returns:
-            Updated constellation
+        :param context: Optional processing context
+        :return: Updated constellation
+        :raises TaskExecutionError: If result processing fails
         """
+        self.logger.info("Mock processing editing request...")
+
+        if not self._current_constellation:
+            self.logger.warning("No current constellation to edit in mock agent")
+            return await self.process_creation(context)
+
+        # Mock task result processing
+        task_result = {
+            "task_id": "mock_task",
+            "status": "completed",
+            "result": {"recommendations": ["optimize_performance", "add_monitoring"]},
+        }
+
+        constellation = self._current_constellation
         task_id = task_result.get("task_id")
         status = task_result.get("status")
         result_data = task_result.get("result", {})
 
-        self.logger.info(f"Processing result for task {task_id}: {status}")
+        self.logger.info(f"Mock processing result for task {task_id}: {status}")
 
         # Enhanced logic for dynamic task generation based on result content
         if status == "completed" and isinstance(result_data, dict):
@@ -322,41 +415,6 @@ class MockConstellationAgent(ConstellationAgent):
                         new_tasks_added += 1
                         self.logger.info(f"Added triggered task: {new_task_id}")
 
-            # Check for data analysis results that need follow-up
-            if "data_analysis" in result_data:
-                analysis = result_data["data_analysis"]
-                if analysis.get("complexity") == "high":
-                    # Add advanced processing task
-                    advanced_task = TaskStar(
-                        task_id=f"advanced_processing_{int(time.time() * 1000) % 10000}",
-                        description="Perform advanced data processing for high complexity data",
-                        priority=TaskPriority.HIGH,
-                    )
-                    if advanced_task.task_id not in constellation.tasks:
-                        constellation.add_task(advanced_task)
-                        new_tasks_added += 1
-                        self.logger.info(
-                            f"Added advanced processing task: {advanced_task.task_id}"
-                        )
-
-            # Check for model training results that need evaluation
-            if "model_training" in result_data:
-                training_result = result_data["model_training"]
-                accuracy = training_result.get("validation_accuracy", 0)
-
-                if accuracy < 0.9:  # Low accuracy, add optimization tasks
-                    optimization_task = TaskStar(
-                        task_id=f"model_optimization_{int(time.time() * 1000) % 10000}",
-                        description=f"Optimize model performance (current accuracy: {accuracy:.2f})",
-                        priority=TaskPriority.HIGH,
-                    )
-                    if optimization_task.task_id not in constellation.tasks:
-                        constellation.add_task(optimization_task)
-                        new_tasks_added += 1
-                        self.logger.info(
-                            f"Added optimization task: {optimization_task.task_id}"
-                        )
-
             # Check for recommendations in results
             if "recommendations" in result_data:
                 for i, recommendation in enumerate(
@@ -374,21 +432,9 @@ class MockConstellationAgent(ConstellationAgent):
                             f"Added recommendation task: {rec_task.task_id}"
                         )
 
-            # Check if deployment is ready
-            if result_data.get("deployment_ready"):
-                deploy_task = TaskStar(
-                    task_id=f"deployment_pipeline_{int(time.time() * 1000) % 10000}",
-                    description="Set up deployment pipeline for production",
-                    priority=TaskPriority.HIGH,
-                )
-                if deploy_task.task_id not in constellation.tasks:
-                    constellation.add_task(deploy_task)
-                    new_tasks_added += 1
-                    self.logger.info(f"Added deployment task: {deploy_task.task_id}")
-
             if new_tasks_added > 0:
                 self.logger.info(
-                    f"Total new tasks added based on result analysis: {new_tasks_added}"
+                    f"Total new tasks added based on mock result analysis: {new_tasks_added}"
                 )
 
         # Handle error cases
@@ -421,10 +467,12 @@ class MockConstellationAgent(ConstellationAgent):
             completed_tasks + failed_tasks >= total_tasks * 0.8
         ):  # 80% completion threshold
             if failed_tasks > completed_tasks * 0.3:  # More than 30% failed
-                self._status = "needs_attention"
+                self._status = "FAIL"
             elif completed_tasks >= total_tasks * 0.9:  # 90% completed successfully
-                self._status = "finishing"
+                self._status = "FINISH"
+            else:
+                self._status = "CONTINUE"
         else:
-            self._status = "processing"
+            self._status = "CONTINUE"
 
         return constellation

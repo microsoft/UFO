@@ -17,31 +17,34 @@ while providing enhanced modularity, error handling, and extensibility.
 """
 
 import json
+import traceback
 from dataclasses import asdict
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any, Dict, List
 
 from ufo.agents.memory.memory import MemoryItem
-
 from ufo.agents.processors.core.processor_framework import (
     ProcessingContext,
     ProcessingPhase,
     ProcessingResult,
 )
 from ufo.agents.processors.core.strategy_dependency import depends_on, provides
-from ufo.agents.processors.schemas.actions import ActionCommandInfo
-
+from ufo.agents.processors.schemas.actions import (
+    ActionCommandInfo,
+    ListActionCommandInfo,
+)
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.config import Config
-from ufo.contracts.contracts import Result
+from ufo.contracts.contracts import Command, Result
 from ufo.galaxy.agents.processors.context import ConstellationProcessorContext
 from ufo.galaxy.agents.schema import (
     ConstellationAgentResponse,
     ConstellationRequestLog,
     WeavingMode,
 )
+from ufo.galaxy.constellation.task_constellation import TaskConstellation
 from ufo.llm import AgentType
-from ufo.module.context import ContextNames
-
+from ufo.module.context import Context, ContextNames
+from ufo.module.dispatcher import BasicCommandDispatcher
 
 # Load configuration
 configs = Config.get_instance().config_data
@@ -49,56 +52,6 @@ configs = Config.get_instance().config_data
 if TYPE_CHECKING:
     from ufo.galaxy.agents.constellation_agent import ConstellationAgent
     from ufo.module.basic import FileWriter
-
-
-@depends_on("log_path", "session_step")
-@provides(
-    "device_info",
-    "constellation",
-)
-class ConstellationDataCollectionStrategy(BaseProcessingStrategy):
-    """
-    Enhanced strategy for collecting desktop environment data with comprehensive error handling.
-
-    This strategy handles:
-    - Desktop screenshot capture with proper path management
-    - Application window detection and filtering
-    - Third-party agent registration and configuration
-    - Target registry management for application selection
-    """
-
-    def __init__(self, fail_fast: bool = True) -> None:
-        """
-        Initialize desktop data collection strategy.
-        :param fail_fast: Whether to raise exceptions immediately on errors
-        """
-        super().__init__(name="constellation_data_collection", fail_fast=fail_fast)
-
-    async def execute(
-        self, agent: "ConstellationAgent", context: ProcessingContext
-    ) -> ProcessingResult:
-        """
-        Execute comprehensive desktop data collection with enhanced error handling.
-        :param agent: The Constellation instance.
-        :param context: Processing context with global and local data
-        :return: ProcessingResult with collected desktop data or error information
-        """
-        try:
-            # Extract context variables
-
-            return ProcessingResult(
-                success=True,
-                data={
-                    "device_info": "",
-                    "constellation": "",
-                },
-                phase=ProcessingPhase.DATA_COLLECTION,
-            )
-
-        except Exception as e:
-            error_msg = f"Desktop data collection failed: {str(e)}"
-            self.logger.error(error_msg)
-            return self.handle_error(e, ProcessingPhase.DATA_COLLECTION, context)
 
 
 @depends_on("device_info", "constellation", "request")
@@ -146,7 +99,9 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             # Extract context variables
             session_step = context.get_local("session_step", 0)
             device_info = context.get_local("device_info", [])
-            constellation = context.get_local("constellation", "")
+            constellation: TaskConstellation = context.get_global(
+                ContextNames.CONSTELLATION
+            )
             weaving_mode = context.get_local("weaving_mode", "")
             request = context.get("request", "")
             request_logger = context.get_global("request_logger")
@@ -174,7 +129,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             self.logger.info("Parsing LLM response")
             parsed_response = self._parse_and_validate_response(agent, response_text)
 
-            # # Update processor status from parsed response
+            weaving_mode = context.get_local("weaving_mode")
 
             self.logger.info(
                 f"Host LLM interaction status set to: {context.get_local('status')}"
@@ -201,7 +156,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
         self,
         agent: "ConstellationAgent",
         device_info: List[str],
-        constellation: str,
+        constellation: TaskConstellation,
         weaving_mode: str,
         request: str,
         session_step: int,
@@ -209,7 +164,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
     ) -> Dict[str, Any]:
         """
         Build comprehensive prompt message with all available context information.
-        :param agent: The Constellation instance.
+        :param agent: The Constellation Agent instance.
         :param target_info_list: List of target information
         :param desktop_screenshot_url: URL of desktop screenshot
         :param prev_plan: Previous plan
@@ -229,11 +184,13 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
                 request=request,
             )
 
+            constellation_json = constellation.to_json()
+
             # Log request data for debugging
             self._log_request_data(
                 session_step=session_step,
                 device_info=device_info,
-                constellation=constellation,
+                constellation_json=constellation_json,
                 weaving_mode=weaving_mode,
                 request=request,
                 prompt_message=prompt_message,
@@ -249,7 +206,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
         self,
         session_step: int,
         device_info: str,
-        constellation: str,
+        constellation_json: str,
         weaving_mode: WeavingMode,
         request: str,
         prompt_message: Dict[str, Any],
@@ -271,7 +228,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             request_data = ConstellationRequestLog(
                 step=session_step,
                 device_info=device_info,
-                constellation=constellation,
+                constellation=constellation_json,
                 weaving_mode=weaving_mode,
                 request=request,
                 prompt=prompt_message,
@@ -360,6 +317,16 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
         except Exception as e:
             raise Exception(f"Failed to parse LLM response: {str(e)}")
 
+        except Exception as e:
+            self.logger.warning(f"Failed to create action info: {str(e)}")
+            # Return basic action info on failure
+            return ActionCommandInfo(
+                function=function,
+                arguments=parsed_response.constellation,
+                status=parsed_response.status,
+                result=Result(status="error", result={"error": str(e)}),
+            )
+
     def _validate_response_fields(self, response: ConstellationAgentResponse) -> None:
         """
         Validate that response contains required fields and valid values.
@@ -380,112 +347,189 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             self.logger.warning(f"Unexpected status value: {response.status}")
 
 
-@depends_on("target_registry", "command_dispatcher")
+@depends_on(
+    "parsed_response",
+    "log_path",
+    "session_step",
+    "annotation_dict",
+    "application_window_info",
+    "clean_screenshot_path",
+)
 @provides(
     "execution_result",
     "action_info",
-    "selected_target_id",
-    "selected_application_root",
-    "assigned_third_party_agent",
-    "target",
+    "control_log",
+    "status",
+    "selected_control_screenshot_path",
 )
 class ConstellationActionExecutionStrategy(BaseProcessingStrategy):
     """
-    Enhanced action execution strategy for Constellation Agent with comprehensive error handling.
+    Strategy for executing Constellation actions.
 
     This strategy handles:
-    - Application selection and window management
-    - Third-party agent assignment and coordination
-    - Generic command execution with proper error handling
-    - Context state management and updates
+    - Action execution with UI controls
+    - Control interaction and automation
+    - Action result validation
+    - Error handling and recovery
     """
 
     def __init__(self, fail_fast: bool = False) -> None:
         """
-        Initialize Constellation Agent action execution strategy.
+        Initialize App Agent action execution strategy.
         :param fail_fast: Whether to raise exceptions immediately on errors
         """
-        super().__init__(name="constellation_action_execution", fail_fast=fail_fast)
+        super().__init__(name="app_action_execution", fail_fast=fail_fast)
 
     async def execute(
         self, agent: "ConstellationAgent", context: ProcessingContext
     ) -> ProcessingResult:
         """
-        Execute Host Agent actions with comprehensive error handling and state management.
-        :param agent: The Constellation instance.
-        :param context: Processing context containing response and execution data
-        :return: ProcessingResult with execution results or error information
+        Execute Constellation actions.
+        :param agent: The ConstellationAgent instance
+        :param context: Processing context with response and control data
+        :return: ProcessingResult with execution results
         """
         try:
-            # Extract all needed variables from context
+            # Step 1: Extract context variables
             parsed_response: ConstellationAgentResponse = context.get_local(
                 "parsed_response"
             )
-
-            # Create action info for memory and tracking
             weaving_mode = context.get_local("weaving_mode")
-            action_info = self._create_action_info(parsed_response, weaving_mode)
+
+            command_dispatcher = context.global_context.command_dispatcher
 
             if weaving_mode == WeavingMode.CREATION:
-                pass
+                action_info = [
+                    ActionCommandInfo(
+                        function=agent._constellation_creation_tool_name,
+                        arguments={"config": parsed_response.constellation},
+                    )
+                ]
             elif weaving_mode == WeavingMode.EDITING:
-                pass
+                action_info = parsed_response.action
+
+            # Execute the action
+            execution_results = await self._execute_constellation_action(
+                command_dispatcher, action_info
+            )
+
+            # Create action info for memory
+            actions = self._create_action_info(
+                action_info,
+                execution_results,
+            )
+
+            # Print action info
+            action_info = ListActionCommandInfo(actions)
+            action_info.color_print()
+
+            status = parsed_response.action.status
 
             return ProcessingResult(
                 success=True,
                 data={
-                    "constellation": "",
+                    "execution_result": execution_results,
                     "action_info": action_info,
+                    "status": status,
                 },
                 phase=ProcessingPhase.ACTION_EXECUTION,
             )
 
         except Exception as e:
-            error_msg = f"Host action execution failed: {str(e)}"
+
+            error_msg = f"App action execution failed: {str(traceback.format_exc())}"
             self.logger.error(error_msg)
             return self.handle_error(e, ProcessingPhase.ACTION_EXECUTION, context)
 
-    def _create_action_info(
-        self, parsed_response: ConstellationAgentResponse, weaving_mode: WeavingMode
-    ) -> ActionCommandInfo:
+    async def _execute_constellation_action(
+        self,
+        command_dispatcher: BasicCommandDispatcher,
+        actions: ActionCommandInfo | List[ActionCommandInfo],
+    ) -> List[Result]:
         """
-        Create action information object for memory and tracking.
-        This method constructs a comprehensive action information object that
-        captures the complete context of the executed action, including the
-        target object, execution results, and status information.
-        :param parsed_response: Parsed response with action details
-        :param execution_result: Results from action execution
-        :param target_registry: Target registry containing available targets
-        :param selected_target_id: ID of the selected target
-        :return: ActionCommandInfo object with complete execution details
+        Execute the specific action from the response.
+        :param command_dispatcher: Command dispatcher for executing commands
+        :param response: Parsed response with action details
+        :return: List of execution results
+        """
+        if not actions:
+
+            return []
+
+        try:
+            commands = []
+
+            if isinstance(actions, ActionCommandInfo):
+                actions = [actions]
+
+            for action in actions:
+                if not action.function:
+                    continue
+                command = self._action_to_command(action)
+                commands.append(command)
+
+            # Use the command dispatcher to execute the action
+            if not command_dispatcher:
+                raise ValueError("Command dispatcher not available")
+
+            # Execute the command
+            execution_result = await command_dispatcher.execute_commands(commands)
+
+            return execution_result
+
+        except Exception as e:
+            raise Exception(f"Failed to execute app action: {str(e)}")
+
+    def _action_to_command(self, action: ActionCommandInfo) -> Command:
+        """
+        Convert ActionCommandInfo to Command for execution.
+        :param action: ActionCommandInfo object
+        :return: Command object
+        """
+        return Command(
+            tool_name=action.function,
+            parameters=action.arguments or {},
+            tool_type="action",
+        )
+
+    def _create_action_info(
+        self,
+        actions: ActionCommandInfo | List[ActionCommandInfo],
+        execution_results: List[Result],
+    ) -> List[ActionCommandInfo]:
+        """
+        Create action information for memory tracking.
+        :param control_info: List of filtered controls
+        :param response: Parsed response
+        :param execution_result: Execution results
+        :return: ActionCommandInfo object
         """
         try:
-            # Get target object for action info
+            # Get control information if action involved a control
+            if not actions:
+                actions = []
+            if not execution_results:
+                execution_results = []
 
-            if weaving_mode == WeavingMode.CREATION:
-                function = "create_constellation"
-            elif weaving_mode == WeavingMode.EDITING:
-                function = "edit_constellation"
-            # Create action info
+            assert len(execution_results) == len(
+                actions
+            ), "Mismatch in actions and execution results length"
 
-            action_info = ActionCommandInfo(
-                function=function,
-                arguments=parsed_response.constellation,
-                status=parsed_response.status,
-                result=Result(status="none"),
-            )
+            if isinstance(actions, ActionCommandInfo):
+                actions = [actions]
 
-            return action_info
+            for i, action in enumerate(actions):
+
+                if action.arguments and "id" in action.arguments:
+                    action.result = execution_results[i]
+
+                if not action.function:
+                    action.function = "no_action"
+
+            return actions
 
         except Exception as e:
             self.logger.warning(f"Failed to create action info: {str(e)}")
-            # Return basic action info on failure
-            return ActionCommandInfo(
-                function=function,
-                arguments=parsed_response.constellation,
-                status=parsed_response.status,
-                result=Result(status="error", result={"error": str(e)}),
-            )
 
 
 @depends_on("session_step", "round_step", "round_num")
@@ -567,94 +611,56 @@ class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
         """
         try:
             # Access the typed context directly
-            host_context: ConstellationProcessorContext = context.local_context
+            constellation_context: ConstellationProcessorContext = context.local_context
 
             # Update context with current processing state
-            host_context.session_step = context.get_global(
+            constellation_context.session_step = context.get_global(
                 ContextNames.SESSION_STEP.name, 0
             )
-            host_context.round_step = context.get_global(
+            constellation_context.round_step = context.get_global(
                 ContextNames.CURRENT_ROUND_STEP.name, 0
             )
-            host_context.round_num = context.get_global(
+            constellation_context.round_num = context.get_global(
                 ContextNames.CURRENT_ROUND_ID.name, 0
             )
-            host_context.agent_step = agent.step if agent else 0
+            constellation_context.agent_step = agent.step if agent else 0
 
-            action_info: ActionCommandInfo = host_context.action_info
+            action_info: ActionCommandInfo = constellation_context.action_info
 
             # Update action information if available
             if action_info:
                 # ActionCommandInfo is a Pydantic BaseModel, use model_dump() instead of asdict()
-                host_context.action = [action_info.model_dump()]
-                host_context.function_call = action_info.function or ""
-                host_context.arguments = action_info.arguments
-                host_context.action_representation = action_info.to_representation()
+                constellation_context.action = [action_info.model_dump()]
+                constellation_context.function_call = action_info.function or ""
+                constellation_context.arguments = action_info.arguments
+                constellation_context.action_representation = (
+                    action_info.to_representation()
+                )
+
+                constellation_after: TaskConstellation = context.get_global(
+                    ContextNames.CONSTELLATION.name
+                )
+
+                if constellation_after:
+                    constellation_context.constellation_after = (
+                        constellation_after.to_json()
+                    )
+
                 if action_info.result:
-                    host_context.action_type = action_info.result.namespace
+                    constellation_context.action_type = action_info.result.namespace
 
                 # Get results
                 if action_info.result and action_info.result.result:
-                    host_context.results = str(action_info.result.result)
+                    constellation_context.results = str(action_info.result.result)
 
             # Update application and agent names
-            host_context.application = host_context.selected_application_root or ""
-            host_context.agent_name = agent.name
-
-            # Update time costs and control log
-            host_context.execution_times = self._calculate_time_costs()
-            host_context.control_log = self._create_control_log(
-                host_context.action_info, context.get_local("control_text", "")
-            )
+            constellation_context.agent_name = agent.name
 
             # Convert to legacy format using the new method
-            return host_context
+            return constellation_context
 
         except Exception as e:
             raise Exception(f"Failed to create additional memory data: {str(e)}")
-
-    def _calculate_time_costs(self) -> Dict[str, float]:
-        """
-        Calculate time costs for different processing phases.
-        :return: Dictionary mapping phase names to execution times
-        """
-        try:
-            # Get execution times from processing context if available
-            time_costs = {}
-
-            # This would be populated by middleware or strategies if they track timing
-            # For now, return empty dict as the framework handles timing differently
-            return time_costs
-
-        except Exception as e:
-            self.logger.warning(f"Failed to calculate time costs: {str(e)}")
-            return {}
-
-    def _create_control_log(
-        self, action_info: Optional[ActionCommandInfo], control_text: str = ""
-    ) -> Dict[str, Any]:
-        """
-        Create control log information for debugging and analysis.
-        :param action_info: Action information if available
-        :param control_text: Control text from context
-        :return: Dictionary containing control log data
-        """
-        try:
-            control_log = {}
-
-            if action_info and action_info.target:
-                control_log = {
-                    "target_id": getattr(action_info.target, "id", ""),
-                    "target_name": getattr(action_info.target, "name", ""),
-                    "target_kind": getattr(action_info.target, "kind", ""),
-                    "control_text": control_text,
-                }
-
-            return control_log
-
-        except Exception as e:
-            self.logger.warning(f"Failed to create control log: {str(e)}")
-            return {}
 
     def _create_and_populate_memory_item(
         self,
@@ -687,7 +693,9 @@ class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
                 f"Failed to create and populate memory item: {str(traceback.format_exc())}"
             )
 
-    def _update_structural_logs(self, memory_item: MemoryItem, global_context) -> None:
+    def _update_structural_logs(
+        self, memory_item: MemoryItem, global_context: Context
+    ) -> None:
         """
         Update structural logs for debugging and analysis.
         :param memory_item: Memory item to log
@@ -699,34 +707,3 @@ class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
 
         except Exception as e:
             self.logger.warning(f"Failed to update structural logs: {str(e)}")
-
-    def _update_blackboard_trajectories(
-        self,
-        host_agent: "ConstellationAgent",
-        memory_item: MemoryItem,
-    ) -> None:
-        """
-        Update blackboard trajectories with memorized actions.
-        :param host_agent: Host agent instance
-        :param memory_item: Memory item with trajectory data
-        """
-        try:
-            # Get history keys from configuration
-            history_keys = configs.get("HISTORY_KEYS", [])
-            if not history_keys:
-                self.logger.debug("No history keys configured for blackboard")
-                return
-
-            # Extract memorized action data
-            memory_dict = memory_item.to_dict()
-            memorized_action = {
-                key: memory_dict.get(key) for key in history_keys if key in memory_dict
-            }
-
-            # Add trajectories to blackboard if available
-            if memorized_action:
-                host_agent.blackboard.add_trajectories(memorized_action)
-                self.logger.debug(f"Added {len(memorized_action)} items to blackboard")
-
-        except Exception as e:
-            self.logger.warning(f"Failed to update blackboard trajectories: {str(e)}")

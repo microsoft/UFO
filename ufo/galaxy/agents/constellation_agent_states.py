@@ -14,6 +14,8 @@ from enum import Enum
 from typing import TYPE_CHECKING, Dict, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
+from ufo.galaxy.agents.schema import WeavingMode
+from ufo.module.context import Context, ContextNames
 
 
 if TYPE_CHECKING:
@@ -63,7 +65,7 @@ class ConstellationAgentState(AgentState):
 class StartConstellationAgentState(ConstellationAgentState):
     """Start state - create and execute constellation"""
 
-    async def handle(self, agent: "ConstellationAgent", context=None) -> None:
+    async def handle(self, agent: "ConstellationAgent", context: Context) -> None:
         try:
             agent.logger.info("Starting constellation orchestration")
 
@@ -72,6 +74,8 @@ class StartConstellationAgentState(ConstellationAgentState):
 
             # Create constellation if not exists
             if not agent.current_constellation:
+                context.set(ContextNames.WEAVING_MODE, WeavingMode.CREATION)
+
                 agent._current_constellation = await agent.process_creation(
                     agent.current_request, context
                 )
@@ -121,6 +125,7 @@ class ContinueConstellationAgentState(ConstellationAgentState):
             # Wait for task completion event - NO timeout here
             # The timeout is handled at task execution level
             agent.logger.debug("Continue waiting for task completion events...")
+            context.set(ContextNames.WEAVING_MODE, WeavingMode.EDITING)
 
             task_event = await agent.task_completion_queue.get()
 

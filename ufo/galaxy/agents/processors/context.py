@@ -4,7 +4,6 @@ from typing import Any, Dict, List, Optional
 from ufo.agents.processors.context.processing_context import BasicProcessorContext
 from ufo.agents.processors.schemas.actions import ActionCommandInfo
 from ufo.agents.processors.schemas.target import TargetInfo
-from ufo.galaxy.agents.schema import WeavingMode
 
 
 @dataclass
@@ -18,10 +17,13 @@ class ConstellationProcessorContext(BasicProcessorContext):
 
     # Constellation specific data
     agent_type: str = "ConstellationAgent"
-    weaving_mode: WeavingMode = WeavingMode.CREATION
-    device_info: List[Any] = field(default_factory=list)
-    editing: str = ""
-    constellation: str = ""
+    weaving_mode: str = "CREATION"
+
+    device_info: List[Dict] = field(default_factory=list)
+
+    constellation_before: Optional[str] = None
+
+    constellation_after: Optional[str] = None
 
     # Action and control information
     action_info: Optional[ActionCommandInfo] = None
@@ -69,6 +71,7 @@ class ConstellationProcessorContext(BasicProcessorContext):
             "total_time",
             "control_log",  # ControlLog
             "device_info",
-            "editing",
-            "constellation",
+            "constellation_before",
+            "constellation_after",
+            "weaving_mode",
         ]

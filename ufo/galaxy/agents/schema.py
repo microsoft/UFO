@@ -1,8 +1,10 @@
 from dataclasses import dataclass
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from pydantic import BaseModel
 from enum import Enum
+
+from ufo.agents.processors.schemas.actions import ActionCommandInfo
 
 
 class WeavingMode(str, Enum):
@@ -22,7 +24,7 @@ class ConstellationAgentResponse(BaseModel):
     thought: str
     status: str
     constellation: Optional[str] = None
-    editing: Optional[str] = None
+    action: Optional[List[ActionCommandInfo]] = None
     results: Any = None
 
 

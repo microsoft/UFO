@@ -17,6 +17,7 @@ while providing enhanced modularity, error handling, and extensibility.
 """
 
 
+from dataclasses import asdict
 import logging
 from typing import TYPE_CHECKING, Any, Dict, Type
 
@@ -43,6 +44,10 @@ from ufo.agents.processors.strategies.host_agent_processing_strategy import (
 )
 from ufo.config import Config
 
+from ufo.galaxy.agents.processors.strategy import (
+    ConstellationDataCollectionStrategy,
+    ConstellationLLMInteractionStrategy,
+)
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
@@ -89,12 +94,14 @@ class ConstellationAgentProcessor(ProcessorTemplate):
         Configure processing strategies with enhanced error handling and logging capabilities.
         """
         self.strategies[ProcessingPhase.DATA_COLLECTION] = (
-            DesktopDataCollectionStrategy(
+            ConstellationDataCollectionStrategy(
                 fail_fast=True  # Desktop data collection is critical for Host Agent
             )
         )
-        self.strategies[ProcessingPhase.LLM_INTERACTION] = HostLLMInteractionStrategy(
-            fail_fast=True  # LLM interaction failure should trigger recovery
+        self.strategies[ProcessingPhase.LLM_INTERACTION] = (
+            ConstellationLLMInteractionStrategy(
+                fail_fast=True  # LLM interaction failure should trigger recovery
+            )
         )
         self.strategies[ProcessingPhase.ACTION_EXECUTION] = HostActionExecutionStrategy(
             fail_fast=False  # Action failures can be handled gracefully
@@ -110,7 +117,7 @@ class ConstellationAgentProcessor(ProcessorTemplate):
         - HostAgentLoggingMiddleware: Specialized logging for Host Agent operations
         """
         self.middleware_chain = [
-            HostAgentLoggingMiddleware(),  # Specialized logging for Host Agent
+            ConstellationLoggingMiddleware(),  # Specialized logging for Constellation Agent
         ]
 
     def _get_processor_specific_context_data(self) -> Dict[str, Any]:
@@ -122,56 +129,25 @@ class ConstellationAgentProcessor(ProcessorTemplate):
 
         :return: Dictionary of processor-specific context initialization data
         """
+
+        before_constellation = self.global_context.get(ContextNames.CONSTELLATION)
+
+        if before_constellation:
+            constellation_before_json = before_constellation.to_json()
+        else:
+            constellation_before_json = None
+
         return {
-            "previous_subtasks": self.global_context.get(ContextNames.PREVIOUS_SUBTASKS)
+            "weaving_mode": self.global_context.get(ContextNames.WEAVING_MODE).value(),
+            "device_info": [
+                asdict(device)
+                for device in self.global_context.get(ContextNames.DEVICE_INFO)
+            ],
+            "constellation_before": constellation_before_json,
         }
 
-    def _finalize_processing_context(
-        self, processing_context: ProcessingContext
-    ) -> None:
-        """
-        Finalize processing context by updating existing ContextNames fields.
-        Instead of promoting arbitrary keys, we update the predefined ContextNames
-        that the system actually uses.
-        :param processing_context: The processing context to finalize.
-        """
 
-        super()._finalize_processing_context(processing_context)
-        try:
-            # Update SUBTASK if available
-            subtask = processing_context.get_local("subtask")
-            if subtask:
-                self.global_context.set(ContextNames.SUBTASK, subtask)
-
-            # Update HOST_MESSAGE if available
-            host_message = processing_context.get_local("host_message")
-            if host_message:
-                self.global_context.set(ContextNames.HOST_MESSAGE, host_message)
-
-            # Update APPLICATION_ROOT_NAME if selected
-            selected_app_root = processing_context.get_local(
-                "selected_application_root"
-            )
-            if selected_app_root:
-                self.global_context.set(
-                    ContextNames.APPLICATION_ROOT_NAME, selected_app_root
-                )
-
-            selected_target: TargetInfo = processing_context.get_local("target")
-
-            if selected_target:
-                self.global_context.set(
-                    ContextNames.APPLICATION_PROCESS_NAME, selected_target.name
-                )
-                self.global_context.set(
-                    ContextNames.APPLICATION_WINDOW_INFO, selected_target
-                )
-
-        except Exception as e:
-            self.logger.warning(f"Failed to update ContextNames from results: {e}")
-
-
-class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
+class ConstellationLoggingMiddleware(EnhancedLoggingMiddleware):
     """
     Specialized logging middleware for Host Agent with enhanced contextual information.
 
@@ -204,7 +180,7 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
 
         # Log detailed context information
         self.logger.info(
-            f"Host Agent Processing Context - "
+            f"Constellation Agent Processing Context - "
             f"Round: {round_num + 1}, Step: {round_step + 1}, "
             f"Request: '{request[:100]}{'...' if len(request) > 100 else ''}'"
         )
@@ -221,51 +197,6 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
             )  # This uses the backward-compatible property
             self.logger.debug(f"Available context keys: {context_keys}")
 
-    async def after_process(
-        self, processor: ProcessorTemplate, result: ProcessingResult
-    ) -> None:
-        """
-        Log Host Agent processing completion with execution summary.
-        :param processor: Host Agent processor instance
-        :param result: Processing result with execution data
-        """
-        # Call parent implementation for standard logging
-        await super().after_process(processor, result)
-
-        if result.success:
-            # Log Host Agent specific success information
-            selected_app = result.data.get("selected_application_root", "")
-            assigned_agent = result.data.get("assigned_third_party_agent", "")
-            subtask = result.data.get("subtask", "")
-
-            success_msg = "Host Agent processing completed successfully"
-            if selected_app:
-                success_msg += f" - Selected application: {selected_app}"
-            elif assigned_agent:
-                success_msg += f" - Assigned third-party agent: {assigned_agent}"
-            if subtask:
-                success_msg += f" - Current subtask: {subtask}"
-
-            self.logger.info(success_msg)
-
-            # Display user-friendly completion message (maintaining original UX)
-            if selected_app or assigned_agent:
-                target_name = selected_app or assigned_agent
-                utils.print_with_color(
-                    f"HostAgent: Successfully selected target '{target_name}'", "green"
-                )
-        else:
-            # Enhanced error logging for Host Agent
-            error_phase = getattr(result, "phase", "unknown")
-            self.logger.error(
-                f"Host Agent processing failed at phase: {error_phase} - {result.error}"
-            )
-
-            # Display user-friendly error message (maintaining original UX)
-            utils.print_with_color(
-                f"HostAgent: Processing failed - {result.error}", "red"
-            )
-
     async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
         """
         Enhanced error handling for Host Agent with contextual information.
@@ -275,4 +206,6 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         # Call parent implementation for standard error handling
         await super().on_error(processor, error)
 
-        utils.print_with_color(f"HostAgent: Encountered error - {str(error)}", "red")
+        utils.print_with_color(
+            f"ConstellationAgent: Encountered error - {str(error)}", "red"
+        )

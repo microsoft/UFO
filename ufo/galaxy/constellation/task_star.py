@@ -150,6 +150,39 @@ class TaskStar(ITask):
         self._description = value
         self._updated_at = datetime.now(timezone.utc)
 
+    @property
+    def tips(self) -> List[str]:
+        """Get the task tips."""
+        return self._tips
+
+    @tips.setter
+    def tips(self, value: List[str]) -> None:
+        """
+        Set the task tips.
+
+        :param value: New task tips
+        :raises ValueError: If task is currently running
+        """
+        if self._status == TaskStatus.RUNNING:
+            raise ValueError(f"Cannot modify tips of running task {self._task_id}")
+        self._tips = value
+        self._updated_at = datetime.now(timezone.utc)
+
+    @description.setter
+    def description(self, value: str) -> None:
+        """
+        Set the task description.
+
+        :param value: New task description
+        :raises ValueError: If task is currently running
+        """
+        if self._status == TaskStatus.RUNNING:
+            raise ValueError(
+                f"Cannot modify description of running task {self._task_id}"
+            )
+        self._description = value
+        self._updated_at = datetime.now(timezone.utc)
+
     async def execute(
         self, device_manager: ConstellationDeviceManager
     ) -> ExecutionResult:
@@ -523,12 +556,12 @@ class TaskStar(ITask):
             "device_type": self._device_type.value if self._device_type else None,
             "priority": self._priority.value,
             "status": self._status.value,
-            "result": self._result,
+            "result": self._serialize_result(self._result),
             "error": str(self._error) if self._error else None,
             "timeout": self._timeout,
             "retry_count": self._retry_count,
             "current_retry": self._current_retry,
-            "task_data": self._task_data,
+            "task_data": self._serialize_task_data(self._task_data),
             "expected_output_type": self._expected_output_type,
             "created_at": self._created_at.isoformat(),
             "updated_at": self._updated_at.isoformat(),
@@ -546,6 +579,61 @@ class TaskStar(ITask):
             "dependencies": list(self._dependencies),
             "dependents": list(self._dependents),
         }
+
+    def _serialize_result(self, result: Any) -> Any:
+        """
+        Serialize the task result for JSON compatibility.
+
+        :param result: The result to serialize
+        :return: JSON-compatible result
+        """
+        if result is None:
+            return None
+
+        try:
+            import json
+
+            json.dumps(result)
+            return result
+        except (TypeError, ValueError):
+            # If result is not JSON serializable, convert to string
+            if hasattr(result, "__dict__"):
+                try:
+                    return vars(result)
+                except:
+                    return str(result)
+            else:
+                return str(result)
+
+    def _serialize_task_data(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Serialize task data for JSON compatibility.
+
+        :param task_data: The task data to serialize
+        :return: JSON-compatible task data
+        """
+        if not task_data:
+            return {}
+
+        serialized = {}
+        for key, value in task_data.items():
+            try:
+                import json
+
+                json.dumps(value)
+                serialized[key] = value
+            except (TypeError, ValueError):
+                if hasattr(value, "__dict__"):
+                    try:
+                        serialized[key] = vars(value)
+                    except:
+                        serialized[key] = str(value)
+                elif isinstance(value, set):
+                    serialized[key] = list(value)
+                else:
+                    serialized[key] = str(value)
+
+        return serialized
 
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "TaskStar":
@@ -594,6 +682,120 @@ class TaskStar(ITask):
             )
 
         return task
+
+    @classmethod
+    def from_json(
+        cls, json_data: Optional[str] = None, file_path: Optional[str] = None
+    ) -> "TaskStar":
+        """
+        Create a TaskStar from a JSON string or JSON file.
+
+        :param json_data: JSON string representation of the TaskStar
+        :param file_path: Path to JSON file containing TaskStar data
+        :return: TaskStar instance
+        :raises ValueError: If neither json_data nor file_path is provided, or both are provided
+        :raises FileNotFoundError: If file_path is provided but file doesn't exist
+        :raises json.JSONDecodeError: If JSON parsing fails
+        :raises IOError: If file reading fails
+        """
+        import json
+
+        if json_data is None and file_path is None:
+            raise ValueError("Either json_data or file_path must be provided")
+
+        if json_data is not None and file_path is not None:
+            raise ValueError("Only one of json_data or file_path should be provided")
+
+        # Load JSON data
+        if file_path:
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except FileNotFoundError:
+                raise FileNotFoundError(f"JSON file not found: {file_path}")
+            except Exception as e:
+                raise IOError(f"Failed to read JSON file {file_path}: {e}")
+        else:
+            try:
+                data = json.loads(json_data)
+            except json.JSONDecodeError as e:
+                raise json.JSONDecodeError(
+                    f"Invalid JSON format: {e}", json_data, e.pos
+                )
+
+        # Validate that data is a dictionary
+        if not isinstance(data, dict):
+            raise ValueError("JSON data must represent a dictionary/object")
+
+        # Create TaskStar instance from dictionary
+        return cls.from_dict(data)
+
+    def to_json(self, save_path: Optional[str] = None) -> str:
+        """
+        Convert the TaskStar to a JSON string representation.
+
+        :param save_path: Optional file path to save the JSON to disk
+        :return: JSON string representation of the TaskStar
+        :raises IOError: If file writing fails when save_path is provided
+        """
+        import json
+
+        # Get dictionary representation
+        task_dict = self.to_dict()
+
+        # Handle potentially non-serializable attributes
+        serializable_dict = self._ensure_json_serializable(task_dict)
+
+        # Convert to JSON string with proper formatting
+        json_str = json.dumps(serializable_dict, indent=2, ensure_ascii=False)
+
+        # Save to file if path provided
+        if save_path:
+            try:
+                with open(save_path, "w", encoding="utf-8") as f:
+                    f.write(json_str)
+                self.logger.info(f"TaskStar {self.task_id} saved to {save_path}")
+            except Exception as e:
+                self.logger.error(f"Failed to save TaskStar to {save_path}: {e}")
+                raise IOError(f"Failed to save TaskStar to {save_path}: {e}")
+
+        return json_str
+
+    def _ensure_json_serializable(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Ensure all values in the dictionary are JSON serializable.
+
+        :param data: Dictionary to make serializable
+        :return: JSON serializable dictionary
+        """
+        import json
+
+        serializable_data = {}
+
+        for key, value in data.items():
+            try:
+                # Test if the value is JSON serializable
+                json.dumps(value)
+                serializable_data[key] = value
+            except (TypeError, ValueError):
+                # Handle non-serializable values
+                if hasattr(value, "__dict__"):
+                    # For complex objects, try to convert to dict
+                    try:
+                        serializable_data[key] = vars(value)
+                    except:
+                        serializable_data[key] = str(value)
+                elif isinstance(value, set):
+                    # Convert sets to lists
+                    serializable_data[key] = list(value)
+                elif callable(value):
+                    # Skip callable objects
+                    serializable_data[key] = f"<callable: {value.__name__}>"
+                else:
+                    # Convert to string as fallback
+                    serializable_data[key] = str(value)
+
+        return serializable_data
 
     def __str__(self) -> str:
         """String representation of the TaskStar."""

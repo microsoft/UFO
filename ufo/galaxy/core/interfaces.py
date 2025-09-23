@@ -9,20 +9,18 @@ Each interface has a single, well-defined responsibility.
 """
 
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional, Protocol, runtime_checkable
+from typing import Any, Dict, List, Optional
 
 from .types import (
     TaskId,
     ConstellationId,
     DeviceId,
     SessionId,
-    AgentId,
     ExecutionResult,
     ConstellationResult,
     ProcessingContext,
     TaskConfiguration,
     ConstellationConfiguration,
-    DeviceConfiguration,
     AsyncProgressCallback,
     AsyncErrorCallback,
 )
@@ -485,13 +483,12 @@ class IRequestProcessor(ABC):
     """Interface for processing user requests."""
 
     @abstractmethod
-    async def process_request(
-        self, request: str, context: Optional[ProcessingContext] = None
-    ) -> IConstellation:
+    async def process_creation(
+        self, context: Optional[ProcessingContext] = None
+    ) -> "IConstellation":
         """
         Process a user request into a constellation.
 
-        :param request: User request string
         :param context: Optional processing context
         :return: Generated constellation
         """
@@ -502,17 +499,13 @@ class IResultProcessor(ABC):
     """Interface for processing task results."""
 
     @abstractmethod
-    async def process_result(
+    async def process_editing(
         self,
-        result: ExecutionResult,
-        constellation: IConstellation,
         context: Optional[ProcessingContext] = None,
-    ) -> IConstellation:
+    ) -> "IConstellation":
         """
         Process a task result and potentially update the constellation.
 
-        :param result: Task execution result
-        :param constellation: Current constellation
         :param context: Optional processing context
         :return: Updated constellation
         """

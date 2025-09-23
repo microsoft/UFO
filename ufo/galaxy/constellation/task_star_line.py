@@ -287,6 +287,118 @@ class TaskStarLine(IDependency):
 
         return line
 
+    def to_json(self, save_path: Optional[str] = None) -> str:
+        """
+        Convert the TaskStarLine to a JSON string representation.
+
+        :param save_path: Optional file path to save the JSON to disk
+        :return: JSON string representation of the TaskStarLine
+        :raises IOError: If file writing fails when save_path is provided
+        """
+        import json
+
+        # Get dictionary representation
+        line_dict = self.to_dict()
+
+        # Handle potentially non-serializable attributes
+        serializable_dict = self._ensure_json_serializable(line_dict)
+
+        # Convert to JSON string with proper formatting
+        json_str = json.dumps(serializable_dict, indent=2, ensure_ascii=False)
+
+        # Save to file if path provided
+        if save_path:
+            try:
+                with open(save_path, "w", encoding="utf-8") as f:
+                    f.write(json_str)
+            except Exception as e:
+                raise IOError(f"Failed to save TaskStarLine to {save_path}: {e}")
+
+        return json_str
+
+    def _ensure_json_serializable(self, data: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Ensure all values in the dictionary are JSON serializable.
+
+        :param data: Dictionary to make serializable
+        :return: JSON serializable dictionary
+        """
+        import json
+
+        serializable_data = {}
+
+        for key, value in data.items():
+            try:
+                # Test if the value is JSON serializable
+                json.dumps(value)
+                serializable_data[key] = value
+            except (TypeError, ValueError):
+                # Handle non-serializable values
+                if hasattr(value, "__dict__"):
+                    # For complex objects, try to convert to dict
+                    try:
+                        serializable_data[key] = vars(value)
+                    except:
+                        serializable_data[key] = str(value)
+                elif isinstance(value, set):
+                    # Convert sets to lists
+                    serializable_data[key] = list(value)
+                elif callable(value):
+                    # Skip callable objects
+                    serializable_data[key] = f"<callable: {value.__name__}>"
+                else:
+                    # Convert to string as fallback
+                    serializable_data[key] = str(value)
+
+        return serializable_data
+
+    @classmethod
+    def from_json(
+        cls, json_data: Optional[str] = None, file_path: Optional[str] = None
+    ) -> "TaskStarLine":
+        """
+        Create a TaskStarLine from a JSON string or JSON file.
+
+        :param json_data: JSON string representation of the TaskStarLine
+        :param file_path: Path to JSON file containing TaskStarLine data
+        :return: TaskStarLine instance
+        :raises ValueError: If neither json_data nor file_path is provided, or both are provided
+        :raises FileNotFoundError: If file_path is provided but file doesn't exist
+        :raises json.JSONDecodeError: If JSON parsing fails
+        :raises IOError: If file reading fails
+        """
+        import json
+
+        if json_data is None and file_path is None:
+            raise ValueError("Either json_data or file_path must be provided")
+
+        if json_data is not None and file_path is not None:
+            raise ValueError("Only one of json_data or file_path should be provided")
+
+        # Load JSON data
+        if file_path:
+            try:
+                with open(file_path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+            except FileNotFoundError:
+                raise FileNotFoundError(f"JSON file not found: {file_path}")
+            except Exception as e:
+                raise IOError(f"Failed to read JSON file {file_path}: {e}")
+        else:
+            try:
+                data = json.loads(json_data)
+            except json.JSONDecodeError as e:
+                raise json.JSONDecodeError(
+                    f"Invalid JSON format: {e}", json_data, e.pos
+                )
+
+        # Validate that data is a dictionary
+        if not isinstance(data, dict):
+            raise ValueError("JSON data must represent a dictionary/object")
+
+        # Create TaskStarLine instance from dictionary
+        return cls.from_dict(data)
+
     @classmethod
     def create_unconditional(
         cls,
