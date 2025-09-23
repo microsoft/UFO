@@ -35,7 +35,7 @@ from ufo.agents.processors.schemas.actions import (
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.config import Config
 from ufo.contracts.contracts import Command, Result
-from ufo.galaxy.agents.processors.context import ConstellationProcessorContext
+from ufo.galaxy.agents.processors.processor_context import ConstellationProcessorContext
 from ufo.galaxy.agents.schema import (
     ConstellationAgentResponse,
     ConstellationRequestLog,
@@ -60,13 +60,8 @@ if TYPE_CHECKING:
     "response_text",
     "llm_cost",
     "prompt_message",
-    "subtask",
-    "plan",
-    "host_message",
     "status",
     "question_list",
-    "function_name",
-    "function_arguments",
 )
 class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
     """
@@ -342,7 +337,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             raise ValueError("Response missing required 'status' field")
 
         # Validate status values
-        valid_statuses = ["MONITOR", "FINISH", "FAILED"]
+        valid_statuses = ["CONTINUE", "FINISH", "FAILED"]
         if response.status.upper() not in valid_statuses:
             self.logger.warning(f"Unexpected status value: {response.status}")
 

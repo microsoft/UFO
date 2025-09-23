@@ -111,10 +111,13 @@ class GalaxyRound(BaseRound):
         Verify if the round is finished.
         """
 
-        return (
+        if (
             self.state.is_round_end()
             or self.context.get(ContextNames.SESSION_STEP) >= configs["MAX_STEP"]
-        )
+        ):
+            return True
+
+        return False
 
     @property
     def constellation(self) -> Optional[TaskConstellation]:
@@ -265,11 +268,7 @@ class GalaxySession(BaseSession):
             return self._current_constellation.state == ConstellationState.FAILED
 
         # Fall back to checking rounds if they exist
-        if (
-            self.current_round is not None
-            and hasattr(self.current_round, "state")
-            and self.current_round.state is not None
-        ):
+        if self.current_round is not None and self.current_round.state is not None:
             try:
                 from ufo.agents.states.basic import AgentStatus
 
@@ -295,18 +294,6 @@ class GalaxySession(BaseSession):
             or self.total_rounds >= self._config.get("MAX_ROUND", 10)
         ):
             return True
-
-        # Check if in error state
-        if self.is_error():
-            return True
-
-        # Check if constellation is completed
-        if self._current_constellation:
-            return self._current_constellation.state in [
-                ConstellationState.COMPLETED,
-                ConstellationState.FAILED,
-                ConstellationState.PARTIALLY_FAILED,
-            ]
 
         return False
 
