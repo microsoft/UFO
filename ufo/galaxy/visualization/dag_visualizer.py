@@ -4,15 +4,12 @@
 """
 DAG Visualization Module for Galaxy Framework
 
-This module provides comprehensive visualization capabilities for TaskConstellation
-DAGs with rich console output, including topology visualization, status indicators,
-and dependency relationships.
+This module provides DAG topology visualization capabilities for TaskConstellation
+with rich console output, focusing on structure, dependencies, and topology analysis.
 """
 
-import re
 from typing import Dict, List, Set, Optional, Tuple, Any, TYPE_CHECKING
 from collections import defaultdict, deque
-from datetime import datetime
 
 from rich.console import Console
 from rich.panel import Panel
@@ -20,23 +17,23 @@ from rich.table import Table
 from rich.tree import Tree
 from rich.text import Text
 from rich.columns import Columns
-from rich.align import Align
 from rich import box
 
 if TYPE_CHECKING:
     from ..constellation.task_constellation import TaskConstellation
 
-from ..constellation.enums import TaskStatus, DependencyType, ConstellationState
+from ..constellation.enums import TaskStatus, DependencyType
 from ..constellation.task_star import TaskStar
-from ..constellation.task_star_line import TaskStarLine
+from .task_display import TaskDisplay
+from .constellation_display import ConstellationDisplay
 
 
 class DAGVisualizer:
     """
-    Advanced DAG visualization for TaskConstellation with rich console output.
+    DAG topology visualization for TaskConstellation.
 
-    Provides multiple visualization styles including tree structure view, topology graph view,
-    status summary, and dependency matrix.
+    Focuses specifically on DAG structure, topology analysis, and dependency
+    visualization. Event-specific displays are handled by separate display classes.
     """
 
     def __init__(self, console: Optional[Console] = None):
@@ -46,6 +43,8 @@ class DAGVisualizer:
         :param console: Optional Rich Console instance for output
         """
         self.console = console or Console()
+        self.task_display = TaskDisplay(console)
+        self.constellation_display = ConstellationDisplay(console)
 
         # Status color mapping
         self.status_colors = {
@@ -71,7 +70,7 @@ class DAGVisualizer:
         title: str = "Task Constellation Overview",
     ) -> None:
         """
-        Display comprehensive constellation overview.
+        Display comprehensive constellation overview using specialized display components.
 
         :param constellation: The TaskConstellation to visualize
         :param title: Custom title for the display
@@ -79,11 +78,13 @@ class DAGVisualizer:
         self.console.print()
         self.console.rule(f"[bold cyan]{title}[/bold cyan]")
 
-        # Basic information
-        info_panel = self._create_info_panel(constellation)
-
-        # Statistics
-        stats_panel = self._create_stats_panel(constellation)
+        # Use constellation display for basic info and stats
+        info_panel = self.constellation_display._create_basic_info_panel(
+            constellation, title
+        )
+        stats_panel = self.constellation_display._create_basic_stats_panel(
+            constellation
+        )
 
         # Display side by side
         self.console.print(Columns([info_panel, stats_panel], equal=True))
@@ -338,90 +339,25 @@ class DAGVisualizer:
         else:
             self.console.print("[dim]No tasks in active execution states[/dim]")
 
-    def _create_info_panel(self, constellation: "TaskConstellation") -> Panel:
+    def _format_task_for_tree(self, task: TaskStar, compact: bool = False) -> str:
         """
-        Create constellation information panel.
+        Format task for tree display.
 
-        :param constellation: The TaskConstellation to extract info from
-        :return: Rich Panel with constellation information
+        :param task: The TaskStar to format
+        :param compact: Whether to use compact formatting
+        :return: Formatted task string for tree display
         """
-        info_lines = [
-            f"[bold]ID:[/bold] {constellation.constellation_id}",
-            f"[bold]Name:[/bold] {constellation.name or 'Unnamed'}",
-            f"[bold]State:[/bold] {self._get_state_text(constellation.state)}",
-            f"[bold]Created:[/bold] {constellation.created_at.strftime('%Y-%m-%d %H:%M:%S')}",
-        ]
+        name = self._truncate_name(task.name, 15 if compact else 25)
+        status_icon = self.task_display.get_task_status_icon(task.status)
+        priority_color = self._get_priority_color(task.priority)
 
-        if constellation.execution_start_time:
-            info_lines.append(
-                f"[bold]Started:[/bold] {constellation.execution_start_time.strftime('%H:%M:%S')}"
-            )
-
-        if constellation.execution_end_time:
-            info_lines.append(
-                f"[bold]Ended:[/bold] {constellation.execution_end_time.strftime('%H:%M:%S')}"
-            )
-            duration = (
-                constellation.execution_end_time - constellation.execution_start_time
-            )
-            info_lines.append(f"[bold]Duration:[/bold] {duration.total_seconds():.1f}s")
-
-        return Panel(
-            "\n".join(info_lines), title="📊 Constellation Info", border_style="cyan"
-        )
-
-    def _create_stats_panel(self, constellation: "TaskConstellation") -> Panel:
-        """
-        Create constellation statistics panel.
-
-        :param constellation: The TaskConstellation to extract statistics from
-        :return: Rich Panel with constellation statistics
-        """
-        stats = constellation.get_statistics()
-
-        # Handle different statistics formats
-        if "task_status_counts" in stats:
-            # Format from real TaskConstellation
-            status_counts = stats["task_status_counts"]
-            completed_tasks = status_counts.get("completed", 0)
-            failed_tasks = status_counts.get("failed", 0)
-            running_tasks = status_counts.get("running", 0)
-            pending_tasks = status_counts.get("pending", 0)
-
-            # Calculate ready tasks if get_ready_tasks method exists
-            try:
-                ready_tasks = len(constellation.get_ready_tasks())
-            except AttributeError:
-                ready_tasks = pending_tasks  # Fallback
-
-            # Calculate success rate
-            total_terminal = completed_tasks + failed_tasks
-            success_rate = (
-                completed_tasks / total_terminal if total_terminal > 0 else None
-            )
+        if compact:
+            return f"{status_icon} [{priority_color}]{name}[/]"
         else:
-            # Format from simple test constellation
-            completed_tasks = stats.get("completed_tasks", 0)
-            failed_tasks = stats.get("failed_tasks", 0)
-            running_tasks = stats.get("running_tasks", 0)
-            ready_tasks = stats.get("ready_tasks", 0)
-            success_rate = stats.get("success_rate")
-
-        stats_lines = [
-            f"[bold]Total Tasks:[/bold] {stats['total_tasks']}",
-            f"[bold]Dependencies:[/bold] {stats['total_dependencies']}",
-            f"[green]✅ Completed:[/green] {completed_tasks}",
-            f"[blue]🔵 Running:[/blue] {running_tasks}",
-            f"[yellow]🟡 Ready:[/yellow] {ready_tasks}",
-            f"[red]❌ Failed:[/red] {failed_tasks}",
-        ]
-
-        if success_rate is not None:
-            stats_lines.append(f"[bold]Success Rate:[/bold] {success_rate:.1%}")
-
-        return Panel(
-            "\n".join(stats_lines), title="📈 Statistics", border_style="green"
-        )
+            task_id_short = (
+                task.task_id[:6] + "..." if len(task.task_id) > 8 else task.task_id
+            )
+            return f"{status_icon} [{priority_color}]{name}[/] [dim]({task_id_short})[/dim]"
 
     def _build_topology_layers(
         self, constellation: "TaskConstellation"
@@ -473,26 +409,6 @@ class DAGVisualizer:
 
         return layers
 
-    def _format_task_for_tree(self, task: TaskStar, compact: bool = False) -> str:
-        """
-        Format task for tree display.
-
-        :param task: The TaskStar to format
-        :param compact: Whether to use compact formatting
-        :return: Formatted task string for tree display
-        """
-        name = self._truncate_name(task.name, 15 if compact else 25)
-        status_icon = self._get_status_icon(task.status)
-        priority_color = self._get_priority_color(task.priority)
-
-        if compact:
-            return f"{status_icon} [{priority_color}]{name}[/]"
-        else:
-            task_id_short = (
-                task.task_id[:6] + "..." if len(task.task_id) > 8 else task.task_id
-            )
-            return f"{status_icon} [{priority_color}]{name}[/] [dim]({task_id_short})[/dim]"
-
     def _get_status_text(self, status: TaskStatus) -> str:
         """
         Get formatted status text with color and icon.
@@ -500,44 +416,9 @@ class DAGVisualizer:
         :param status: The TaskStatus to format
         :return: Formatted status text with color and icon
         """
-        icon = self._get_status_icon(status)
+        icon = self.task_display.get_task_status_icon(status)
         color = self.status_colors.get(status, "white")
         return f"[{color}]{icon} {status.value}[/]"
-
-    def _get_status_icon(self, status: TaskStatus) -> str:
-        """
-        Get status icon.
-
-        :param status: The TaskStatus to get icon for
-        :return: Unicode icon string for the status
-        """
-        icons = {
-            TaskStatus.PENDING: "⭕",
-            TaskStatus.WAITING_DEPENDENCY: "⏳",
-            TaskStatus.RUNNING: "🔵",
-            TaskStatus.COMPLETED: "✅",
-            TaskStatus.FAILED: "❌",
-            TaskStatus.CANCELLED: "⭕",
-        }
-        return icons.get(status, "❓")
-
-    def _get_state_text(self, state: ConstellationState) -> str:
-        """
-        Get formatted constellation state text.
-
-        :param state: The ConstellationState to format
-        :return: Formatted state text with color
-        """
-        state_colors = {
-            ConstellationState.CREATED: "yellow",
-            ConstellationState.READY: "blue",
-            ConstellationState.EXECUTING: "blue",
-            ConstellationState.COMPLETED: "green",
-            ConstellationState.FAILED: "red",
-            ConstellationState.PARTIALLY_FAILED: "orange1",
-        }
-        color = state_colors.get(state, "white")
-        return f"[{color}]{state.value.upper()}[/]"
 
     def _get_priority_color(self, priority) -> str:
         """
@@ -579,9 +460,9 @@ def display_constellation_creation(
         constellation: Newly created TaskConstellation
         console: Optional console for output
     """
-    visualizer = DAGVisualizer(console)
-    visualizer.display_constellation_overview(
-        constellation, "🆕 New Task Constellation Created"
+    display = ConstellationDisplay(console)
+    display.display_constellation_started(
+        constellation, {"status": "New constellation created"}
     )
 
 
@@ -598,6 +479,7 @@ def display_constellation_update(
         change_description: Description of what changed
         console: Optional console for output
     """
+    # For updates, we use the DAGVisualizer for full overview
     visualizer = DAGVisualizer(console)
 
     title = "🔄 Task Constellation Updated"

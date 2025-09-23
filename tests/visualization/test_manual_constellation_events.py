@@ -28,6 +28,32 @@ class TestEventObserver:
         print(f"   Data keys: {list(event.data.keys())}")
 
 
+#!/usr/bin/env python
+"""
+Simple test script for ConstellationAgent event publishing functionality.
+"""
+
+import asyncio
+import time
+import pytest
+from unittest.mock import AsyncMock, MagicMock
+
+from ufo.galaxy.constellation import TaskConstellation, TaskStar
+from ufo.galaxy.core.events import ConstellationEvent, EventType, EventBus
+from ufo.galaxy.session.observers import DAGVisualizationObserver
+from ufo.module.context import Context, ContextNames
+
+
+class TestEventObserver:
+    def __init__(self):
+        self.events_received = []
+
+    async def on_event(self, event):
+        self.events_received.append(event)
+        print(f"📧 Received event: {event.event_type.value} - {event.data}")
+
+
+@pytest.mark.asyncio
 async def test_manual_constellation_event_publishing():
     """Test manual ConstellationEvent publishing and DAG visualization."""
     print("🧪 Testing Manual ConstellationEvent Publishing and Visualization\n")
@@ -79,10 +105,10 @@ async def test_manual_constellation_event_publishing():
     await asyncio.sleep(0.1)
 
     print(f"\n📊 Event Publishing Results:")
-    print(f"   Events captured by test observer: {len(test_observer.received_events)}")
+    print(f"   Events captured by test observer: {len(test_observer.events_received)}")
 
-    if test_observer.received_events:
-        event = test_observer.received_events[0]
+    if test_observer.events_received:
+        event = test_observer.events_received[0]
         print(f"   ✅ Event type: {event.event_type.value}")
         print(f"   ✅ Source ID: {event.source_id}")
         print(f"   ✅ Constellation ID: {event.constellation_id}")
@@ -130,7 +156,7 @@ async def test_manual_constellation_event_publishing():
         await event_bus.publish_event(event)
         await asyncio.sleep(0.05)  # Small delay for processing
 
-    print(f"\n📈 Total events processed: {len(test_observer.received_events)}")
+    print(f"\n📈 Total events processed: {len(test_observer.events_received)}")
 
     print("\n✅ All ConstellationEvent publishing tests completed!")
     print("🎉 Event publishing and DAG visualization integration successful!")

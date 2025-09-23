@@ -3,12 +3,17 @@
 
 """
 Visualization change detection and comparison utilities.
+
+This module provides comprehensive change detection for visualization observers,
+including task and dependency modifications, additions, and removals.
 """
 
-from typing import Any, Dict, Optional
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
-from ...constellation import TaskConstellation
-from ...constellation.task_star_line import TaskStarLine
+if TYPE_CHECKING:
+    from ..constellation.task_constellation import TaskConstellation
+
+from ..constellation.task_star_line import TaskStarLine
 
 
 class VisualizationChangeDetector:
@@ -21,8 +26,8 @@ class VisualizationChangeDetector:
 
     @staticmethod
     def calculate_constellation_changes(
-        old_constellation: Optional[TaskConstellation],
-        new_constellation: TaskConstellation,
+        old_constellation: Optional["TaskConstellation"],
+        new_constellation: "TaskConstellation",
     ) -> Dict[str, Any]:
         """
         Calculate detailed changes between old and new constellation by comparing their structure.

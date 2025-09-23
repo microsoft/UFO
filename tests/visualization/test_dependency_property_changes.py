@@ -4,11 +4,13 @@ Test script for dependency property change detection and visualization.
 """
 
 import asyncio
+import pytest
 from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
 from ufo.galaxy.session.observers import DAGVisualizationObserver
 from ufo.galaxy.core.events import ConstellationEvent, EventType
 
 
+@pytest.mark.asyncio
 async def test_dependency_property_changes():
     """Test dependency property change detection."""
     print("🧪 Testing Dependency Property Change Detection\n")
