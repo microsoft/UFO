@@ -22,7 +22,7 @@ from ufo.galaxy.agents.processors.processor import ConstellationAgentProcessor
 from ufo.galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
 )
-from ufo.galaxy.core.events import get_event_bus
+from ufo.galaxy.core.events import get_event_bus, ConstellationEvent, EventType
 from ufo.module.context import Context, ContextNames
 
 from ..core.interfaces import IRequestProcessor, IResultProcessor
@@ -125,11 +125,6 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self.logger.info(f"Host agent status updated to: {self.status}")
         self._current_constellation = created_constellation
 
-        # TODO: Publish DAG Creation Event
-        # self._event_bus.publish_event(
-
-        # )
-
         return self._current_constellation
 
     # IResultProcessor implementation
@@ -182,10 +177,25 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         self._current_constellation = after_constellation
 
-        # TODO: Publish DAG Modified Event
-        # self._event_bus.publish_event(
-
-        # )
+        # Publish DAG Modified Event
+        await self._event_bus.publish_event(
+            ConstellationEvent(
+                event_type=EventType.CONSTELLATION_MODIFIED,
+                source_id=self.name,
+                timestamp=time.time(),
+                data={
+                    "old_constellation": before_constellation,
+                    "new_constellation": after_constellation,
+                    "modification_type": "agent_processing_result",
+                },
+                constellation_id=after_constellation.constellation_id,
+                constellation_state=(
+                    after_constellation.state.value
+                    if after_constellation.state
+                    else "unknown"
+                ),
+            )
+        )
 
         return after_constellation
 
@@ -477,5 +487,23 @@ class MockConstellationAgent(ConstellationAgent):
                 self._status = "CONTINUE"
         else:
             self._status = "CONTINUE"
+
+        # Publish DAG Modified Event for mock agent
+        await self._event_bus.publish_event(
+            ConstellationEvent(
+                event_type=EventType.CONSTELLATION_MODIFIED,
+                source_id=self.name,
+                timestamp=time.time(),
+                data={
+                    "old_constellation": self._current_constellation,
+                    "new_constellation": constellation,
+                    "modification_type": "mock_agent_processing",
+                },
+                constellation_id=constellation.constellation_id,
+                constellation_state=(
+                    constellation.state.value if constellation.state else "unknown"
+                ),
+            )
+        )
 
         return constellation

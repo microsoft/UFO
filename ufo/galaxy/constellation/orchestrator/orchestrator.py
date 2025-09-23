@@ -136,12 +136,27 @@ class TaskConstellationOrchestrator:
         results = {}
         constellation.start_execution()
 
+        # Publish constellation started event
+        constellation_started_event = ConstellationEvent(
+            event_type=EventType.CONSTELLATION_STARTED,
+            source_id=f"orchestrator_{id(self)}",
+            timestamp=time.time(),
+            data={
+                "total_tasks": len(constellation.tasks),
+                "assignment_strategy": assignment_strategy,
+                "device_assignments": device_assignments or {},
+            },
+            constellation_id=constellation_id,
+            constellation_state="executing",
+        )
+        await self._event_bus.publish_event(constellation_started_event)
+
         try:
             # Main execution loop - continue until all tasks complete
             while not constellation.is_complete():
                 ready_tasks = constellation.get_ready_tasks()
 
-                # Create execution tasks for ready tasks
+                # Create execution tasks for ready tasks in parallel
                 for task in ready_tasks:
                     if task.task_id not in self._execution_tasks:
                         # Create task execution future
@@ -180,6 +195,22 @@ class TaskConstellationOrchestrator:
                 self._execution_tasks.clear()
 
             constellation.complete_execution()
+
+            # Publish constellation completed event
+            constellation_completed_event = ConstellationEvent(
+                event_type=EventType.CONSTELLATION_COMPLETED,
+                source_id=f"orchestrator_{id(self)}",
+                timestamp=time.time(),
+                data={
+                    "total_tasks": len(constellation.tasks),
+                    "statistics": constellation.get_statistics(),
+                    "execution_duration": time.time()
+                    - constellation_started_event.timestamp,
+                },
+                constellation_id=constellation_id,
+                constellation_state="completed",
+            )
+            await self._event_bus.publish_event(constellation_completed_event)
 
             if self._logger:
                 self._logger.info(

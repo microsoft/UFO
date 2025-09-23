@@ -210,7 +210,7 @@ class TaskStar(ITask):
                 device_id=self.target_device_id,
                 task_description=request_string,
                 task_data=self.task_data or {},
-                timeout=self._timeout or 300.0,
+                timeout=self._timeout or 1000.0,
             )
 
             end_time = datetime.now(timezone.utc)
