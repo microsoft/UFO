@@ -5,9 +5,8 @@
 Observer classes for constellation events.
 """
 
-import asyncio
 import logging
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict,  Optional
 
 from ..core.events import (
     Event,

@@ -15,9 +15,12 @@ import logging
 import time
 from typing import Any, Dict, Optional
 
+from ufo import utils
+from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.config import Config
 from ufo.module.basic import BaseSession, BaseRound
 from ufo.module.context import Context, ContextNames
+from ufo.module.dispatcher import LocalCommandDispatcher
 
 from ..agents.constellation_agent import ConstellationAgent
 from ..constellation import TaskConstellationOrchestrator, TaskConstellation
@@ -164,7 +167,22 @@ class GalaxySession(BaseSession):
         :param client: ConstellationClient for device management
         :param initial_request: Initial user request
         """
-        super().__init__(task, should_evaluate, id)
+        self._should_evaluate = should_evaluate
+        self._id = id
+        self.task = task
+
+        # Logging-related properties
+        self.log_path = f"logs/galaxy/{task}/"
+        utils.create_folder(self.log_path)
+
+        self._rounds: Dict[int, BaseRound] = {}
+
+        self._context = Context()
+        self._init_context()
+        self._finish = False
+        self._results = {}
+        self.logger = logging.getLogger(__name__)
+        self._results = None
 
         # Import config
         from ufo.config import Config
@@ -193,6 +211,16 @@ class GalaxySession(BaseSession):
         # Set up observers
         self._setup_observers()
 
+    def _init_context(self) -> None:
+        """
+        Initialize the context.
+        """
+        super()._init_context()
+
+        mcp_server_manager = MCPServerManager()
+        command_dispatcher = LocalCommandDispatcher(self, mcp_server_manager)
+        self.context.attach_command_dispatcher(command_dispatcher)
+
     def _setup_observers(self) -> None:
         """
         Set up event observers for this round.
@@ -208,7 +236,7 @@ class GalaxySession(BaseSession):
 
         # Metrics observer for performance tracking
         metrics_observer = SessionMetricsObserver(
-            session_id=f"galaxy_round_{self._id}", logger=self.logger
+            session_id=f"galaxy_session_{self._id}", logger=self.logger
         )
         self._observers.append(metrics_observer)
 
