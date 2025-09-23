@@ -13,7 +13,7 @@ Galaxy transforms complex user requests into executable DAGs (Directed Acyclic G
 - **📱 Multi-Device Coordination**: Seamlessly distribute tasks across different devices and platforms
 - **⚡ Real-time Event System**: Observer pattern implementation for live monitoring and visualization
 - **🎯 Context-Aware Execution**: Maintain execution context across complex multi-step workflows
-- **📊 Rich Console Visualization**: Beautiful DAG visualization with Rich terminal output
+- **📊 Modular Rich Visualization**: Beautiful DAG visualization with specialized display components using Rich
 - **🔄 Dynamic Adaptation**: Runtime modification of task graphs based on execution results
 
 ## 🏗️ Architecture
@@ -32,7 +32,7 @@ Galaxy Framework
 │   └── Orchestrator/           # Event-driven execution coordination and device management
 ├── 🎯 Session/                  # Session lifecycle and event-driven monitoring
 │   ├── GalaxySession           # BaseSession extension with constellation support
-│   └── Observers/              # Event-driven observers for monitoring and visualization
+│   └── Observers/              # Event-driven observers with visualization integration
 ├── 📡 Client/                   # Device management support component
 │   ├── ConstellationClient     # Device registration and connection interface
 │   ├── ConstellationDeviceManager # Core device management coordinator
@@ -44,7 +44,11 @@ Galaxy Framework
 │   ├── Interfaces              # Interface definitions following ISP
 │   ├── DI Container            # Dependency injection with lifecycle management
 │   └── Events                  # Observer pattern and event system
-└── 🎨 Visualization/           # Rich console DAG visualization
+└── 🎨 Visualization/           # Modular Rich console DAG visualization
+    ├── DAGVisualizer           # DAG topology and structure visualization
+    ├── TaskDisplay             # Task-specific displays and formatting
+    ├── ConstellationDisplay    # Constellation lifecycle event displays
+    └── VisualizationChangeDetector # Change detection and comparison
 ```
 
 ## 🚀 Quick Start
@@ -202,9 +206,17 @@ The core DAG container implementing IConstellation interface that:
 The session orchestrator that extends BaseSession framework to:
 - Manages constellation-based workflow execution through round-based processing
 - Coordinates ConstellationAgent state machine and TaskConstellationOrchestrator
-- Provides event-driven monitoring through ConstellationProgressObserver, SessionMetricsObserver, and DAGVisualizationObserver
+- Provides event-driven monitoring through specialized observers that integrate with visualization components
 - Handles session lifecycle, state persistence, and error recovery with constellation awareness
 - Integrates with UFO BaseSession for round management, context handling, and evaluation framework
+
+### Visualization System
+Modular visualization components that provide beautiful terminal displays:
+- **DAGVisualizer**: Specialized for DAG topology and structure visualization with Rich console output
+- **TaskDisplay**: Task-specific displays including status grids, detail tables, and execution flow
+- **ConstellationDisplay**: Constellation lifecycle event displays with professional notifications
+- **VisualizationChangeDetector**: Intelligent change detection and visual comparison of constellation modifications
+- **Session Integration**: Observers use visualization components for real-time monitoring and event displays
 
 ### Event System
 Real-time communication system that:
@@ -223,7 +235,7 @@ Each module contains detailed documentation and implementation guides:
 - **[Session](./session/README.md)** - BaseSession extension, event-driven observers, and constellation lifecycle management
 - **[Client](./client/README.md)** - Device management support component for WebSocket connections and basic task execution
 - **[Core](./core/README.md)** - Type system, interfaces, dependency injection, and event system
-- **[Visualization](./visualization/README.md)** - Beautiful console DAG visualization using Rich library
+- **[Visualization](./visualization/README.md)** - Modular Rich console DAG visualization with specialized display components
 
 ## 🔧 Configuration
 
@@ -253,7 +265,8 @@ session_config = {
     "enable_visualization": True,
     "observer_config": {
         "enable_rich_output": True,
-        "enable_change_detection": True
+        "enable_change_detection": True,
+        "visualization_components": ["DAGVisualizer", "TaskDisplay", "ConstellationDisplay"]
     }
 }
 
@@ -267,13 +280,20 @@ agent_config = {
 
 ## 📊 Monitoring and Visualization
 
-The framework provides comprehensive monitoring capabilities:
+The framework provides comprehensive monitoring capabilities through modular visualization components:
 
-### Console DAG Visualization  
-- **Topology Display**: Hierarchical tree visualization of task dependencies
-- **Task Status Tracking**: Color-coded status indicators with icons
-- **Dependency Analysis**: Visual representation of task relationships
-- **Rich Console Output**: Beautiful terminal formatting using Rich library
+### Modular Console Visualization  
+- **DAG Topology Display**: Hierarchical tree visualization of task dependencies using DAGVisualizer
+- **Task Status Tracking**: Color-coded status indicators and grids using TaskDisplay
+- **Constellation Events**: Professional lifecycle notifications using ConstellationDisplay  
+- **Change Detection**: Intelligent tracking and visual comparison using VisualizationChangeDetector
+- **Rich Console Output**: Beautiful terminal formatting with specialized components
+
+### Session Observer Integration
+- **Real-time Monitoring**: Observers integrate with visualization components for live updates
+- **Event-driven Displays**: Professional notifications for constellation lifecycle events
+- **Progress Tracking**: Visual representation of task execution and constellation changes
+- **Modular Architecture**: Mix and match visualization components based on specific needs
 
 ### Event Streaming
 - **Task Events**: Creation, update, completion, and failure events

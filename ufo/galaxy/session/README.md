@@ -12,13 +12,12 @@ Galaxy sessions represent complete workflow execution contexts, managing the int
 ufo/galaxy/session/
 ├── __init__.py                     # Module exports and observer imports
 ├── galaxy_session.py              # Main session and round implementation
-└── observers/                     # Modular observer implementations
+└── observers/                     # Event-driven observer implementations
     ├── __init__.py                # Observer exports
     ├── base_observer.py           # ConstellationProgressObserver and SessionMetricsObserver
     ├── dag_visualization_observer.py  # Main DAGVisualizationObserver
-    ├── task_visualization_handler.py  # Task-specific visualization logic
-    ├── constellation_visualization_handler.py  # Constellation-specific visualization logic
-    └── visualization_change_detector.py  # Change detection and comparison utilities
+    ├── task_visualization_handler.py  # Task-specific event handling (legacy)
+    └── constellation_visualization_handler.py  # Constellation-specific event handling (legacy)
 ```
 
 **Key Components:**
@@ -26,10 +25,7 @@ ufo/galaxy/session/
 - **GalaxyRound**: Individual execution rounds within sessions extending BaseRound
 - **ConstellationProgressObserver**: Handles task completion events and agent state coordination
 - **SessionMetricsObserver**: Collects session performance metrics and statistics
-- **DAGVisualizationObserver**: Provides real-time constellation visualization with modular handlers
-- **TaskVisualizationHandler**: Specialized handler for task-specific visualization logic
-- **ConstellationVisualizationHandler**: Specialized handler for constellation-specific visualization logic
-- **VisualizationChangeDetector**: Utility class for detecting and analyzing constellation changes
+- **DAGVisualizationObserver**: Provides real-time constellation visualization using modular visualization components
 
 ## 🎪 Core Components
 
@@ -237,13 +233,13 @@ The session module uses a modular event-driven observer system with specialized 
 
 ### Modular Observer Architecture
 
-The observer system is organized into specialized modules:
+The observer system is organized into specialized modules with clear separation of concerns:
 
 - **`base_observer.py`**: Core observers for progress tracking and metrics collection
-- **`dag_visualization_observer.py`**: Main visualization coordinator with handler delegation
-- **`task_visualization_handler.py`**: Specialized task-specific visualization logic
-- **`constellation_visualization_handler.py`**: Specialized constellation-specific visualization logic  
-- **`visualization_change_detector.py`**: Change detection and comparison utilities
+- **`dag_visualization_observer.py`**: Main visualization coordinator that delegates to Galaxy visualization module
+- **Legacy handlers** (deprecated): Task and constellation handlers have been refactored into the dedicated visualization module
+
+The visualization functionality has been moved to the dedicated [`ufo.galaxy.visualization`](../visualization/README.md) module for better modularity and separation of concerns.
 
 ### ConstellationProgressObserver
 
@@ -301,127 +297,132 @@ class SessionMetricsObserver(IEventObserver):
 
 ### DAGVisualizationObserver
 
-Provides real-time constellation visualization with modular handler architecture. Located in `dag_visualization_observer.py`.
+Provides real-time constellation visualization by integrating with the dedicated Galaxy visualization module. Located in `dag_visualization_observer.py`.
 
-#### Modular Visualization Architecture
+#### Integration with Visualization Module
 ```python
 class DAGVisualizationObserver(IEventObserver):
     def __init__(self, enable_visualization: bool = True, console=None):
         self.enable_visualization = enable_visualization
         self._constellations: Dict[str, TaskConstellation] = {}
-        self._visualizer = None
         
-        # Initialize specialized handlers
-        self._task_handler = TaskVisualizationHandler()
-        self._constellation_handler = ConstellationVisualizationHandler()
+        # Initialize visualization components from dedicated module
+        from ufo.galaxy.visualization import (
+            TaskDisplay, ConstellationDisplay, VisualizationChangeDetector
+        )
+        
+        self._task_display = TaskDisplay(console)
+        self._constellation_display = ConstellationDisplay(console)
         self._change_detector = VisualizationChangeDetector()
-        
-        # Initialize visualizer if enabled
-        if self.enable_visualization:
-            self._init_visualizer()
 
     async def on_event(self, event: Event) -> None:
-        """Handle visualization events using specialized handlers."""
-        if not self.enable_visualization or not self._visualizer:
+        """Handle visualization events using dedicated visualization components."""
+        if not self.enable_visualization:
             return
 
         try:
             if isinstance(event, ConstellationEvent):
-                await self._constellation_handler.handle_event(
-                    event, self._visualizer, self._constellations, self._change_detector
-                )
+                await self._handle_constellation_event(event)
             elif isinstance(event, TaskEvent):
-                await self._task_handler.handle_event(
-                    event, self._visualizer, self._constellations
-                )
+                await self._handle_task_event(event)
         except Exception as e:
             self.logger.debug(f"Visualization error: {e}")
+
+    async def _handle_constellation_event(self, event: ConstellationEvent) -> None:
+        """Handle constellation events using ConstellationDisplay from visualization module."""
+        constellation = event.constellation
+        
+        if event.event_type == "constellation_started":
+            self._constellation_display.display_constellation_started(constellation)
+            self._change_detector.capture_constellation_state(constellation, "started")
+            
+        elif event.event_type == "constellation_completed":
+            self._constellation_display.display_constellation_completed(
+                constellation, 
+                execution_time=event.execution_time
+            )
+            
+        elif event.event_type == "constellation_modified":
+            changes = self._change_detector.detect_changes(constellation, "started")
+            if changes:
+                self._constellation_display.display_constellation_modified(
+                    constellation, changes
+                )
+
+    async def _handle_task_event(self, event: TaskEvent) -> None:
+        """Handle task events using TaskDisplay from visualization module."""
+        constellation = self._constellations.get(event.constellation_id)
+        if not constellation:
+            return
+            
+        if event.event_type == "task_completed":
+            # Update execution flow display
+            self._task_display.display_execution_flow(constellation)
+            
+        elif event.event_type == "task_failed":
+            # Show updated task status
+            self._task_display.display_task_details_table(constellation)
 ```
 
-### TaskVisualizationHandler
+#### Key Features
+- **Visualization Module Integration**: Delegates all visualization to the dedicated `ufo.galaxy.visualization` module
+- **Event Coordination**: Routes constellation and task events to appropriate visualization components
+- **Change Detection**: Uses `VisualizationChangeDetector` for intelligent change tracking
+- **Modular Display**: Leverages `TaskDisplay` and `ConstellationDisplay` for specialized visualizations
+- **Error Handling**: Graceful degradation when visualization components are unavailable
 
-Specialized handler for task-specific visualization logic with Rich formatting. Located in `task_visualization_handler.py`.
+### Legacy Visualization Handlers (Deprecated)
 
-#### Task Event Visualization
+The following handlers have been refactored and moved to the dedicated [`ufo.galaxy.visualization`](../visualization/README.md) module:
+
+#### TaskVisualizationHandler (Moved to ufo.galaxy.visualization.TaskDisplay)
+Previously located in `task_visualization_handler.py`, this functionality is now provided by the `TaskDisplay` class in the visualization module.
+
 ```python
-class TaskVisualizationHandler:
-    """Handles task-specific visualization events with Rich formatting."""
-    
-    async def handle_event(
-        self, 
-        event: TaskEvent, 
-        visualizer, 
-        constellations: Dict[str, TaskConstellation]
-    ) -> None:
-        """Handle task events with appropriate visualization."""
-        
-    async def handle_task_started(self, event: TaskEvent, task, visualizer) -> None:
-        """Beautiful task started display with Rich panels."""
-        
-    async def handle_task_completed(self, event: TaskEvent, task, visualizer) -> None:
-        """Enhanced task completion display with execution details."""
-        
-    async def handle_task_failed(self, event: TaskEvent, task, visualizer) -> None:
-        """Comprehensive task failure display with error information."""
+# Old usage (deprecated)
+from ufo.galaxy.session.observers.task_visualization_handler import TaskVisualizationHandler
+
+# New usage (recommended)
+from ufo.galaxy.visualization import TaskDisplay
+task_display = TaskDisplay()
+task_display.display_execution_flow(constellation)
 ```
 
-### ConstellationVisualizationHandler
+#### ConstellationVisualizationHandler (Moved to ufo.galaxy.visualization.ConstellationDisplay)  
+Previously located in `constellation_visualization_handler.py`, this functionality is now provided by the `ConstellationDisplay` class in the visualization module.
 
-Specialized handler for constellation-specific visualization logic. Located in `constellation_visualization_handler.py`.
-
-#### Constellation Event Visualization
 ```python
-class ConstellationVisualizationHandler:
-    """Handles constellation-specific visualization events."""
-    
-    async def handle_event(
-        self,
-        event: ConstellationEvent,
-        visualizer,
-        constellations: Dict[str, TaskConstellation],
-        change_detector
-    ) -> None:
-        """Handle constellation events with appropriate visualization."""
-        
-    async def handle_constellation_started(self, event, constellation, visualizer) -> None:
-        """Display constellation start with overview."""
-        
-    async def handle_constellation_completed(self, event, constellation, visualizer) -> None:
-        """Display constellation completion with execution metrics."""
-        
-    async def handle_constellation_modified(self, event, constellation, visualizer, change_detector) -> None:
-        """Display constellation modifications with detailed change analysis."""
+# Old usage (deprecated)
+from ufo.galaxy.session.observers.constellation_visualization_handler import ConstellationVisualizationHandler
+
+# New usage (recommended)  
+from ufo.galaxy.visualization import ConstellationDisplay
+constellation_display = ConstellationDisplay()
+constellation_display.display_constellation_started(constellation)
 ```
 
-### VisualizationChangeDetector
+#### VisualizationChangeDetector (Moved to ufo.galaxy.visualization.VisualizationChangeDetector)
+Previously located in `visualization_change_detector.py`, this functionality is now provided by the `VisualizationChangeDetector` class in the visualization module.
 
-Utility class for detecting and analyzing constellation changes. Located in `visualization_change_detector.py`.
-
-#### Change Detection Capabilities
 ```python
-class VisualizationChangeDetector:
-    """Utility class for detecting and analyzing constellation changes."""
-    
-    def calculate_constellation_changes(
-        self, 
-        old_constellation: Optional[TaskConstellation], 
-        new_constellation: TaskConstellation
-    ) -> Dict[str, Any]:
-        """
-        Calculate detailed changes between old and new constellation.
-        
-        Returns comprehensive change analysis including:
-        - Added/removed tasks and dependencies
-        - Modified task or dependency properties
-        - Overall modification type classification
-        """
-        
-    def _task_properties_changed(self, old_task, new_task) -> bool:
-        """Check if task properties have changed."""
-        
-    def _dependency_properties_changed(self, old_dep, new_dep) -> bool:
-        """Check if dependency properties have changed."""
+# Old usage (deprecated)
+from ufo.galaxy.session.observers.visualization_change_detector import VisualizationChangeDetector
+
+# New usage (recommended)
+from ufo.galaxy.visualization import VisualizationChangeDetector
+change_detector = VisualizationChangeDetector()
+changes = change_detector.detect_changes(constellation, "baseline")
 ```
+
+### Migration Benefits
+
+The refactoring provides several benefits:
+
+- **Modular Architecture**: Visualization logic is centralized in a dedicated module
+- **Reusability**: Visualization components can be used outside of session observers
+- **Testability**: Each visualization component can be tested independently
+- **Maintainability**: Clear separation of concerns between session management and visualization
+- **Extensibility**: Easy to add new visualization components without modifying session code
 
 ### Observer Usage
 
@@ -446,20 +447,31 @@ for observer in session._observers:
 
 #### Advanced Observer Configuration
 ```python
-# Custom visualization observer with specific handlers
+from rich.console import Console
+
+# Custom visualization observer with specific console
+custom_console = Console(width=120, color_system="256")
 dag_observer = DAGVisualizationObserver(
     enable_visualization=True,
     console=custom_console
 )
 
-# Access specialized handlers
-task_handler = dag_observer._task_handler
-constellation_handler = dag_observer._constellation_handler
-change_detector = dag_observer._change_detector
+# Access visualization components (from dedicated visualization module)
+from ufo.galaxy.visualization import TaskDisplay, ConstellationDisplay, VisualizationChangeDetector
 
-# Custom change detection
-changes = change_detector.calculate_constellation_changes(old_constellation, new_constellation)
-print(f"Detected changes: {changes['modification_type']}")
+task_display = TaskDisplay(console=custom_console)
+constellation_display = ConstellationDisplay(console=custom_console)
+change_detector = VisualizationChangeDetector()
+
+# Manual constellation visualization
+constellation_display.display_constellation_started(constellation)
+task_display.display_execution_flow(constellation)
+
+# Manual change detection
+changes = change_detector.detect_changes(constellation, "baseline")
+if changes:
+    constellation_display.display_constellation_modified(constellation, changes)
+    print(f"Detected changes: {changes['modification_type']}")
 ```
 
 ## 🔄 Session Lifecycle
@@ -840,6 +852,40 @@ async def test_observer_functionality():
     # Verify metrics collection
     metrics = metrics_observer.get_metrics()
     assert metrics["task_count"] > 0
+
+async def test_visualization_observer():
+    """Test DAGVisualizationObserver integration with visualization module."""
+    from ufo.galaxy.session.observers import DAGVisualizationObserver
+    from rich.console import Console
+    from io import StringIO
+    
+    # Create observer with string buffer for testing
+    output = StringIO()
+    console = Console(file=output, force_terminal=True, width=80)
+    
+    dag_observer = DAGVisualizationObserver(
+        enable_visualization=True,
+        console=console
+    )
+    
+    # Test constellation event handling
+    constellation_event = ConstellationEvent(
+        event_type="constellation_started",
+        constellation=mock_constellation
+    )
+    await dag_observer.on_event(constellation_event)
+    
+    # Verify visualization output was generated
+    output_text = output.getvalue()
+    assert "Constellation Started" in output_text or len(output_text) > 0
+    
+    # Test task event handling
+    task_event = TaskEvent(
+        event_type="task_completed",
+        task_id="test_task",
+        constellation_id=mock_constellation.constellation_id
+    )
+    await dag_observer.on_event(task_event)
 ```
 
 ### Mock Session Testing
