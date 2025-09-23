@@ -4,6 +4,7 @@ Integration test demonstrating ConstellationAgent event publishing in a realisti
 """
 
 import asyncio
+import pytest
 import time
 from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
 from ufo.galaxy.core.events import ConstellationEvent, EventType, get_event_bus
@@ -48,6 +49,7 @@ class SimulatedConstellationAgent:
         return after_constellation
 
 
+@pytest.mark.asyncio
 async def test_constellation_agent_integration():
     """Integration test demonstrating full ConstellationAgent event flow."""
     print("🧪 ConstellationAgent Event Publishing Integration Test\n")

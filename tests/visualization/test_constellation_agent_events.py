@@ -4,6 +4,7 @@ Test script for ConstellationAgent event publishing functionality.
 """
 
 import asyncio
+import pytest
 import time
 import sys
 import os
@@ -37,6 +38,7 @@ class TestEventObserver:
         print(f"   Data keys: {list(event.data.keys())}")
 
 
+@pytest.mark.asyncio
 async def test_constellation_agent_event_publishing():
     """Test ConstellationAgent event publishing during process_editing."""
     print("🧪 Testing ConstellationAgent Event Publishing\n")

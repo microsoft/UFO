@@ -41,7 +41,7 @@ from .session.galaxy_session import GalaxySession
 from .agents.constellation_agent import ConstellationAgent
 from .constellation import TaskConstellationOrchestrator
 from .client.constellation_client import ConstellationClient
-from .core.types import ProcessingContext
+
 
 tracemalloc.start()
 CONFIGS = Config.get_instance().config_data
@@ -142,26 +142,31 @@ class GalaxyClient:
                     # Import mock only when needed
                     try:
                         from tests.galaxy.mocks import MockConstellationAgent
+
                         self._agent = MockConstellationAgent(
                             orchestrator=self._constellation_client.orchestrator,
-                            name="galaxy_mock_agent"
+                            name="galaxy_mock_agent",
                         )
                         self.console.print(
                             "[green]✅ Mock Constellation initialized[/green]"
                         )
                         self.logger.info("✅ Mock Constellation initialized")
                     except ImportError:
-                        self.logger.warning("MockConstellationAgent not available, using real agent")
+                        self.logger.warning(
+                            "MockConstellationAgent not available, using real agent"
+                        )
                         self._agent = ConstellationAgent(
                             orchestrator=self._constellation_client.orchestrator,
-                            name="galaxy_agent"
+                            name="galaxy_agent",
                         )
-                        self.console.print("[green]✅ Constellation initialized[/green]")
+                        self.console.print(
+                            "[green]✅ Constellation initialized[/green]"
+                        )
                         self.logger.info("✅ Constellation initialized")
                 else:
                     self._agent = ConstellationAgent(
                         orchestrator=self._constellation_client.orchestrator,
-                        name="galaxy_agent"
+                        name="galaxy_agent",
                     )
                     self.console.print("[green]✅ Constellation initialized[/green]")
                     self.logger.info("✅ Constellation initialized")

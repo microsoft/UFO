@@ -5,6 +5,7 @@ Test script to verify constellation events are properly published.
 
 import asyncio
 import logging
+import pytest
 from typing import List, Set
 
 from ufo.galaxy.constellation.task_constellation import TaskConstellation
@@ -98,6 +99,7 @@ class EventCollector(IEventObserver):
         await self.on_event(event)
 
 
+@pytest.mark.asyncio
 async def test_constellation_events():
     """Test constellation event publishing."""
     print("🧪 Testing Constellation Events...")

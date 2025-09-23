@@ -1,145 +1,381 @@
 # UFO Galaxy Framework
 
-UFO Galaxy Framework 是一个基于DAG的任务编排和设备管理框架，现在提供了完整的命令行界面支持。
+The UFO Galaxy Framework is a comprehensive system for DAG-based task orchestration and intelligent device management. It provides a sophisticated platform for automating complex workflows through constellation-based task organization and AI-powered agents.
 
-## 🌟 主要特性
+## 🌟 Overview
 
-- **Rich UI界面**: 使用Rich库提供美观的彩色命令行界面
-- **DAG-based工作流编排**: 自动将用户请求转换为有向无环图（DAG）工作流
-- **Constellation执行引擎**: 高效的任务调度和执行引擎
-- **设备管理**: 智能设备分配和资源管理
-- **交互式CLI**: 支持命令行交互和批处理模式，带有Rich面板和表格
-- **GalaxyWeaverAgent**: 智能代理用于任务分解和编排
-- **实时进度**: Rich进度条和状态指示器
+Galaxy transforms complex user requests into executable DAGs (Directed Acyclic Graphs) where each node represents a task and edges represent dependencies. The framework leverages AI agents to dynamically create, modify, and orchestrate these task constellations across multiple devices.
 
-## 🚀 快速开始
+### Key Features
 
-### 安装和运行
+- **🔗 DAG-based Task Orchestration**: Convert natural language requests into structured task workflows
+- **🤖 AI-Powered Agents**: Intelligent agents that understand context and dynamically modify task graphs
+- **📱 Multi-Device Coordination**: Seamlessly distribute tasks across different devices and platforms
+- **⚡ Real-time Event System**: Observer pattern implementation for live monitoring and visualization
+- **🎯 Context-Aware Execution**: Maintain execution context across complex multi-step workflows
+- **📊 Rich Visualization**: Interactive DAG visualization with real-time updates
+- **🔄 Dynamic Adaptation**: Runtime modification of task graphs based on execution results
+
+## 🏗️ Architecture
+
+```
+Galaxy Framework
+├── 🎭 Agents/                    # AI agents for constellation orchestration
+│   ├── ConstellationAgent       # Main DAG orchestration agent (extends BasicAgent)
+│   ├── Agent States             # State machine for agent workflow (START/CONTINUE/FINISH/FAIL)
+│   └── Processors/              # Request and result processing with MCP tools
+├── 🌟 Constellation/            # Core DAG management system
+│   ├── TaskConstellation        # DAG container with state machine and validation
+│   ├── TaskStar                 # Task nodes with device assignment and lifecycle
+│   ├── TaskStarLine            # Dependency edges with conditional logic
+│   ├── Editor/                  # Command pattern DAG editing with undo/redo
+│   └── Orchestrator/           # Event-driven execution coordination and device management
+├── 🎯 Session/                  # Session lifecycle and event-driven monitoring
+│   ├── GalaxySession           # BaseSession extension with constellation support
+│   └── Observers/              # Event-driven observers for monitoring and visualization
+├── 📡 Client/                   # Device and client management
+│   ├── ConstellationClient     # Main client interface
+│   └── DeviceManager/          # Multi-device coordination
+├── ⚡ Core/                     # Foundational components
+│   ├── Events                  # Event system and observers
+│   ├── Interfaces              # Core abstractions (IRequestProcessor, IResultProcessor)
+│   └── Types                   # Type definitions
+└── 🎨 Visualization/           # Real-time DAG visualization
+```
+
+## 🚀 Quick Start
+
+### Basic Usage
+
+```python
+from ufo.galaxy import GalaxyClient, GalaxySession
+
+# Initialize Galaxy client
+client = GalaxyClient(
+    session_name="my_workflow",
+    use_mock_agent=False,  # Use real AI agent
+    max_rounds=10
+)
+
+# Start interactive session
+await client.start_interactive_session()
+
+# Or execute a single request
+result = await client.execute_request(
+    "Create a data analysis pipeline with visualization"
+)
+```
+
+### Command Line Interface
+
 ```bash
-# 克隆项目
-cd UFO2
-
-# 运行单个任务
+# Execute a single request
 python -m ufo.galaxy --request "Create a data processing pipeline" --mock-agent
 
-# 启动交互模式
+# Start interactive mode
 python -m ufo.galaxy --interactive --mock-agent
+
+# Custom session configuration
+python -m ufo.galaxy --request "Task" --session-name "my_session" --max-rounds 5
 ```
 
-### 基本用法
+### Programmatic DAG Creation
+
+```python
+from ufo.galaxy import TaskConstellation, TaskStar, TaskStarLine, TaskPriority, DeviceType
+
+# Create a constellation with advanced features
+constellation = TaskConstellation(
+    name="Data Processing Pipeline",
+    description="Comprehensive data processing with validation",
+    enable_visualization=True
+)
+
+# Add tasks with device requirements and priorities
+data_task = TaskStar(
+    task_id="data_collection",
+    name="Data Collection",
+    description="Collect data from multiple sources",
+    priority=TaskPriority.HIGH,
+    device_type=DeviceType.WINDOWS,
+    max_retries=3,
+    timeout_seconds=300
+)
+constellation.add_task(data_task)
+
+process_task = TaskStar(
+    task_id="data_processing", 
+    name="Data Processing",
+    description="Process and transform collected data",
+    priority=TaskPriority.MEDIUM,
+    device_type=DeviceType.LINUX,
+    estimated_duration=600
+)
+constellation.add_task(process_task)
+
+# Add conditional dependency with metadata
+dependency = TaskStarLine(
+    from_task_id="data_collection",
+    to_task_id="data_processing",
+    dependency_type=DependencyType.SUCCESS_ONLY,
+    metadata={"validation_required": True}
+)
+constellation.add_dependency(dependency)
+
+# Validate and get metrics
+is_valid, errors = constellation.validate()
+metrics = constellation.get_metrics()
+print(f"Tasks: {metrics['total_tasks']}, Dependencies: {metrics['total_dependencies']}")
+```
+
+## 📋 Workflow Process
+
+The Galaxy Framework follows a sophisticated multi-stage workflow:
+
+### 1. Request Processing
+```
+User Request → ConstellationAgent → Task DAG Generation
+```
+- Natural language request parsing
+- Context analysis and requirement extraction
+- Initial DAG structure creation
+
+### 2. Constellation Creation
+```
+DAG Generation → TaskConstellation → Validation & Optimization
+```
+- Task breakdown and dependency analysis
+- DAG validation (cycle detection, feasibility)
+- Resource requirement analysis
+
+### 3. Device Assignment
+```
+Constellation → DeviceManager → Task Distribution
+```
+- Device capability matching
+- Load balancing and optimization
+- Task assignment to appropriate devices
+
+### 4. Execution Orchestration
+```
+Task Distribution → TaskOrchestrator → Parallel Execution
+```
+- Dependency-aware task scheduling
+- Real-time progress monitoring
+- Dynamic adaptation based on results
+
+### 5. Result Integration
+```
+Task Results → ConstellationAgent → DAG Updates
+```
+- Result analysis and validation
+- Dynamic DAG modification if needed
+- Success/failure propagation
+
+## 🎯 Core Components
+
+### ConstellationAgent
+The brain of the Galaxy Framework that:
+- Processes user requests using BasicAgent framework and LLM integration
+- Generates task DAGs through constellation creation via `process_creation()`
+- Updates constellations based on task results via `process_editing()`
+- Maintains state through ConstellationAgentStatus state machine
+- Publishes constellation modification events to the event bus
+- Implements IRequestProcessor and IResultProcessor interfaces
+
+### TaskConstellation
+The core DAG container implementing IConstellation interface that:
+- Manages task nodes (TaskStar) and dependency edges (TaskStarLine) with comprehensive validation
+- Provides DAG operations with cycle detection, topological sorting, and structural validation
+- Tracks constellation state through state machine (CREATED/READY/EXECUTING/COMPLETED/FAILED)
+- Supports complex dependency types (UNCONDITIONAL, CONDITIONAL, SUCCESS_ONLY) with metadata
+- Enables JSON serialization/deserialization for persistence and data interchange
+- Integrates with event system for real-time monitoring and change propagation
+- Works with ConstellationEditor for interactive modification using command pattern with undo/redo
+- Provides comprehensive statistics, metrics, and progress tracking for monitoring
+
+### GalaxySession
+The session orchestrator that extends BaseSession framework to:
+- Manages constellation-based workflow execution through round-based processing
+- Coordinates ConstellationAgent state machine and TaskConstellationOrchestrator
+- Provides event-driven monitoring through ConstellationProgressObserver, SessionMetricsObserver, and DAGVisualizationObserver
+- Handles session lifecycle, state persistence, and error recovery with constellation awareness
+- Integrates with UFO BaseSession for round management, context handling, and evaluation framework
+
+### Event System
+Real-time communication system that:
+- Propagates task and constellation events via EventBus
+- Enables live monitoring and visualization through observers
+- Supports observer pattern for extensibility and decoupling
+- Facilitates debugging, logging, and audit trails
+- Provides typed event system for type safety
+
+## 📚 Module Documentation
+
+Each module contains detailed documentation and implementation guides:
+
+- **[Agents](./agents/README.md)** - AI agents, state machines, and processing logic
+- **[Constellation](./constellation/README.md)** - DAG management, task orchestration, and editing
+- **[Session](./session/README.md)** - BaseSession extension, event-driven observers, and constellation lifecycle management
+- **[Client](./client/README.md)** - Device management, client interfaces, and coordination
+- **[Core](./core/README.md)** - Foundational components, interfaces, and type system
+- **[Visualization](./visualization/README.md)** - Real-time DAG visualization and monitoring
+
+## 🔧 Configuration
+
+Galaxy supports extensive configuration through multiple mechanisms:
+
+### CLI Configuration
 ```bash
-# 查看帮助
-python -m ufo.galaxy --help
+# Session settings
+--session-name "custom_session"    # Custom session name
+--max-rounds 15                    # Maximum execution rounds
+--task-name "my_task"             # Task identifier
 
-# 执行任务
-python -m ufo.galaxy --request "Your task description" --mock-agent
+# Agent settings
+--mock-agent                      # Use mock agent for testing
+--log-level DEBUG                 # Enable verbose logging
 
-# 自定义会话
-python -m ufo.galaxy --request "Task" --session-name "my_session" --mock-agent
+# Output settings
+--output-dir "./custom_logs"      # Custom output directory
 ```
 
-## 📁 项目结构
+### Programmatic Configuration
+```python
+# Session configuration
+session_config = {
+    "max_rounds": 10,
+    "timeout_seconds": 300,
+    "enable_visualization": True,
+    "observer_config": {
+        "enable_rich_output": True,
+        "enable_change_detection": True
+    }
+}
 
+# Agent configuration
+agent_config = {
+    "llm_model": "gpt-4",
+    "temperature": 0.7,
+    "max_tokens": 2000
+}
 ```
-ufo/galaxy/
-├── __init__.py              # 主包导入
-├── __main__.py              # 包执行入口
-├── galaxy_client.py         # 主CLI客户端
-├── galaxy.py                # 快速入口脚本
-├── USAGE.md                 # 详细使用指南
-├── constellation/           # DAG编排和执行
-├── agents/                  # GalaxyWeaverAgent实现
-├── session/                 # Galaxy会话管理
-├── client/                  # 设备和constellation客户端
-└── core/                    # 核心类型和接口
+
+## 📊 Monitoring and Visualization
+
+The framework provides comprehensive monitoring capabilities:
+
+### Real-time DAG Visualization
+- **Live Task Updates**: Visual representation of task execution progress
+- **Dependency Tracking**: Dynamic visualization of task dependencies
+- **Change Detection**: Automatic highlighting of DAG modifications
+- **Rich Console Output**: Beautiful terminal visualization with colors and formatting
+
+### Event Streaming
+- **Task Events**: Creation, update, completion, and failure events
+- **Constellation Events**: DAG structure changes and modifications
+- **Session Events**: Round progression and lifecycle management
+- **Observer Events**: Custom event handling and processing
+
+### Metrics and Analytics
+- **Execution Statistics**: Task completion times and success rates
+- **Resource Utilization**: Device and resource usage tracking
+- **Performance Metrics**: Throughput and latency measurements
+- **Error Analysis**: Failure patterns and debugging information
+
+## 🧪 Testing and Development
+
+Galaxy includes comprehensive testing infrastructure:
+
+### Mock Components
+```python
+from tests.galaxy.mocks import MockConstellationAgent, MockTaskConstellationOrchestrator
+
+# Use mock agent for testing
+client = GalaxyClient(use_mock_agent=True)
+
+# Mock orchestrator for unit tests
+orchestrator = MockTaskConstellationOrchestrator()
 ```
 
-## 🎯 核心组件
+### Test Scenarios
+- **Unit Tests**: Individual component testing
+- **Integration Tests**: End-to-end workflow validation
+- **Performance Tests**: Load and stress testing
+- **Regression Tests**: Automated testing for stability
 
-### GalaxyClient
-主要的CLI客户端，提供:
-- 会话管理
-- 请求处理
-- 交互模式
-- 结果输出
-
-### GalaxyWeaverAgent
-智能代理，负责:
-- 任务分解
-- DAG生成
-- 工作流编排
-
-### TaskConstellationOrchestrator
-任务编排器，支持:
-- DAG执行
-- 设备分配
-- 状态监控
-
-### ConstellationClient
-模块化客户端，管理:
-- 设备连接
-- 任务分发
-- 结果收集
-
-## 📋 CLI选项详解
-
-| 选项 | 描述 | 默认值 |
-|------|------|--------|
-| `--request` | 任务请求文本 | - |
-| `--interactive` | 启动交互模式 | False |
-| `--session-name` | 会话名称 | 自动生成 |
-| `--task-name` | 任务名称 | galaxy_task |
-| `--mock-agent` | 使用模拟代理 | False |
-| `--max-rounds` | 最大轮次 | 10 |
-| `--log-level` | 日志级别 | INFO |
-| `--output-dir` | 输出目录 | ./logs |
-
-## 🛠️ 开发模式
-
-### Mock Agent
-推荐在开发时使用mock agent:
+### Development Tools
 ```bash
-python -m ufo.galaxy --request "Test task" --mock-agent
+# Run all tests
+python -m pytest tests/galaxy/
+
+# Run specific test modules
+python -m pytest tests/galaxy/session/
+
+# Run with coverage
+python -m pytest --cov=ufo.galaxy tests/galaxy/
 ```
 
-### 调试模式
-启用详细日志:
+## 🏛️ Design Principles
+
+Galaxy follows established software engineering principles:
+
+### SOLID Principles
+- **Single Responsibility**: Each class has a focused, well-defined purpose
+- **Open/Closed**: Extensible through interfaces without modifying existing code
+- **Liskov Substitution**: Interchangeable implementations through abstract interfaces
+- **Interface Segregation**: Focused, minimal interfaces for specific concerns
+- **Dependency Inversion**: Depend on abstractions, not concrete implementations
+
+### Architectural Patterns
+- **Observer Pattern**: Event-driven architecture for loose coupling
+- **State Machine**: Well-defined agent states and transitions
+- **Command Pattern**: Encapsulated request processing
+- **Factory Pattern**: Flexible component creation and configuration
+- **Adapter Pattern**: Device and client abstraction
+
+### Best Practices
+- **Type Safety**: Comprehensive type hints and validation
+- **Error Handling**: Robust error recovery and reporting
+- **Logging**: Structured logging for debugging and monitoring
+- **Documentation**: Comprehensive docstrings and examples
+- **Testing**: High test coverage and quality assurance
+
+## 🚀 Getting Started
+
+### Installation
 ```bash
-python -m ufo.galaxy --request "Task" --log-level DEBUG --mock-agent
+# Clone the UFO repository
+git clone <repository-url>
+cd UFO2
+
+# Install dependencies
+pip install -r requirements.txt
 ```
 
-## 📊 执行结果
+### First Steps
+1. **Start with Mock Agent**: Use `--mock-agent` for initial exploration
+2. **Try Interactive Mode**: Use `--interactive` for hands-on experience
+3. **Review Examples**: Check the examples in each module's README
+4. **Read Documentation**: Explore module-specific documentation
+5. **Run Tests**: Validate your setup with the test suite
 
-Galaxy框架会输出:
-- 执行状态和时间
-- DAG统计信息
-- 任务结果
-- 错误和警告信息
-- JSON格式的详细结果
-
-## 🎪 示例
-
-### 数据处理管道
+### Example Workflows
 ```bash
+# Data processing pipeline
 python -m ufo.galaxy --request "Create a data processing pipeline with validation and transformation" --mock-agent
-```
 
-### 机器学习工作流
-```bash
+# Machine learning workflow
 python -m ufo.galaxy --request "Build a machine learning workflow with training and evaluation" --mock-agent
-```
 
-### 网页抓取系统
-```bash
+# Web scraping system
 python -m ufo.galaxy --request "Design a web scraping system with data validation" --mock-agent
 ```
 
-## 🔗 相关文档
+## 📄 License
 
-- [详细使用指南](USAGE.md)
-- [UFO项目主页](../README.md)
-- [API文档](docs/)
+Copyright (c) Microsoft Corporation. Licensed under the MIT License.
 
 ---
 
-**注意**: 当前版本建议使用 `--mock-agent` 标志进行测试和开发。
+*Galaxy Framework - Transforming natural language into intelligent task orchestration* 🌟

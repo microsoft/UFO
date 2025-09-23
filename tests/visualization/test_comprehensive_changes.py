@@ -4,12 +4,14 @@ Final comprehensive test for all constellation change detection features.
 """
 
 import asyncio
+import pytest
 import time
 from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
 from ufo.galaxy.session.observers import DAGVisualizationObserver
 from ufo.galaxy.core.events import ConstellationEvent, EventType
 
 
+@pytest.mark.asyncio
 async def test_all_change_types():
     """Comprehensive test for all types of constellation changes."""
     print("🧪 Comprehensive Constellation Change Detection Test\n")

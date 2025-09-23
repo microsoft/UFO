@@ -5,6 +5,7 @@ Test script to verify enhanced DAGVisualizationObserver functionality.
 
 import asyncio
 import logging
+import pytest
 from typing import List
 
 from ufo.galaxy.constellation.task_constellation import TaskConstellation
@@ -90,6 +91,7 @@ class MockDeviceManager(ConstellationDeviceManager):
         return {"success": True, "result": result}
 
 
+@pytest.mark.asyncio
 async def test_enhanced_visualization():
     """Test enhanced DAG visualization."""
     print("🎨 Testing Enhanced DAGVisualizationObserver...")

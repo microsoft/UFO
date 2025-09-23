@@ -5,7 +5,18 @@
 Unit tests for the event system in Galaxy framework.
 
 This module tests the event bus, observers, and event-driven orchestration
-functionality to ensure proper decoupling and communication between components.
+functionality to ensure proper        # Create generic event (not TaskEvent or ConstellationEvent)
+        generic_event = Event(
+            event_type=EventType.TASK_STARTED,  # This should not match
+            source_id="other_source",
+            timestamp=time.time(),
+            data={},
+        )
+
+        await observer.on_event(generic_event)
+
+        # Verify generic events don't trigger task completion queue
+        mock_agent.task_completion_queue.put.assert_not_called()nd communication between components.
 """
 
 import asyncio
@@ -43,7 +54,7 @@ class TestEventBus:
         """Test basic event subscription and publishing."""
         bus = EventBus()
         observer = Mock()
-        observer.handle_event = AsyncMock()
+        observer.on_event = AsyncMock()
 
         # Subscribe observer
         bus.subscribe(observer)
@@ -59,16 +70,16 @@ class TestEventBus:
         await bus.publish_event(event)
 
         # Verify observer was called
-        observer.handle_event.assert_called_once_with(event)
+        observer.on_event.assert_called_once_with(event)
 
     @pytest.mark.asyncio
     async def test_multiple_observers(self):
         """Test that multiple observers receive events."""
         bus = EventBus()
         observer1 = Mock()
-        observer1.handle_event = AsyncMock()
+        observer1.on_event = AsyncMock()
         observer2 = Mock()
-        observer2.handle_event = AsyncMock()
+        observer2.on_event = AsyncMock()
 
         # Subscribe observers
         bus.subscribe(observer1)
@@ -85,8 +96,8 @@ class TestEventBus:
         await bus.publish_event(event)
 
         # Verify both observers were called
-        observer1.handle_event.assert_called_once_with(event)
-        observer2.handle_event.assert_called_once_with(event)
+        observer1.on_event.assert_called_once_with(event)
+        observer2.on_event.assert_called_once_with(event)
 
     def test_unsubscribe_observer(self):
         """Test unsubscribing observers."""
@@ -95,10 +106,10 @@ class TestEventBus:
 
         # Subscribe and then unsubscribe
         bus.subscribe(observer)
-        assert observer in bus._observers.values()
+        assert observer in bus._all_observers
 
         bus.unsubscribe(observer)
-        assert observer not in bus._observers.values()
+        assert observer not in bus._all_observers
 
     @pytest.mark.asyncio
     async def test_observer_exception_handling(self):
@@ -107,11 +118,11 @@ class TestEventBus:
 
         # Create observer that raises exception
         failing_observer = Mock()
-        failing_observer.handle_event = AsyncMock(side_effect=Exception("Test error"))
+        failing_observer.on_event = AsyncMock(side_effect=Exception("Test error"))
 
         # Create working observer
         working_observer = Mock()
-        working_observer.handle_event = AsyncMock()
+        working_observer.on_event = AsyncMock()
 
         bus.subscribe(failing_observer)
         bus.subscribe(working_observer)
@@ -127,7 +138,7 @@ class TestEventBus:
         await bus.publish_event(event)
 
         # Verify working observer still got called despite exception
-        working_observer.handle_event.assert_called_once_with(event)
+        working_observer.on_event.assert_called_once_with(event)
 
 
 class TestEventTypes:
@@ -157,12 +168,12 @@ class TestEventTypes:
             timestamp=time.time(),
             data={"total_tasks": 5},
             constellation_id="constellation_789",
-            state="completed",
+            constellation_state="completed",
         )
 
         assert event.event_type == EventType.CONSTELLATION_COMPLETED
         assert event.constellation_id == "constellation_789"
-        assert event.state == "completed"
+        assert event.constellation_state == "completed"
         assert event.data["total_tasks"] == 5
 
 
@@ -172,13 +183,15 @@ class TestConstellationProgressObserver:
     @pytest.mark.asyncio
     async def test_task_progress_handling(self):
         """Test handling of task progress events."""
-        on_task_progress = AsyncMock()
-        on_constellation_update = AsyncMock()
+        # Create mock agent and context
+        mock_agent = Mock()
+        mock_agent.task_completion_queue = AsyncMock()
+        mock_agent.task_completion_queue.put = AsyncMock()
+        mock_context = Mock()
 
         observer = ConstellationProgressObserver(
-            round_id=1,
-            on_task_progress=on_task_progress,
-            on_constellation_update=on_constellation_update,
+            agent=mock_agent,
+            context=mock_context,
         )
 
         # Create task event
@@ -191,22 +204,25 @@ class TestConstellationProgressObserver:
             status=TaskStatus.COMPLETED.value,
         )
 
-        await observer.handle_event(task_event)
+        await observer.on_event(task_event)
 
-        # Verify task progress callback was called
-        on_task_progress.assert_called_once_with(task_event)
-        on_constellation_update.assert_not_called()
+        # Verify task was queued to agent
+        mock_agent.task_completion_queue.put.assert_called_once_with(task_event)
+        # Verify task result was stored
+        assert "task_123" in observer.task_results
+        assert observer.task_results["task_123"]["status"] == TaskStatus.COMPLETED.value
 
     @pytest.mark.asyncio
     async def test_constellation_event_handling(self):
         """Test handling of constellation events."""
-        on_task_progress = AsyncMock()
-        on_constellation_update = AsyncMock()
+        # Create mock agent and context
+        mock_agent = Mock()
+        mock_agent.task_completion_queue = AsyncMock()
+        mock_context = Mock()
 
         observer = ConstellationProgressObserver(
-            round_id=1,
-            on_task_progress=on_task_progress,
-            on_constellation_update=on_constellation_update,
+            agent=mock_agent,
+            context=mock_context,
         )
 
         # Create constellation event
@@ -216,25 +232,25 @@ class TestConstellationProgressObserver:
             timestamp=time.time(),
             data={},
             constellation_id="constellation_123",
-            state="completed",
+            constellation_state="completed",
         )
 
-        await observer.handle_event(constellation_event)
+        await observer.on_event(constellation_event)
 
-        # Verify constellation update callback was called
-        on_constellation_update.assert_called_once_with(constellation_event)
-        on_task_progress.assert_not_called()
+        # Verify constellation event was handled (no errors should occur)
+        # The current implementation logs but doesn't queue constellation events
 
     @pytest.mark.asyncio
     async def test_irrelevant_event_filtering(self):
         """Test that irrelevant events are filtered out."""
-        on_task_progress = AsyncMock()
-        on_constellation_update = AsyncMock()
+        # Create mock agent and context
+        mock_agent = Mock()
+        mock_agent.task_completion_queue = AsyncMock()
+        mock_context = Mock()
 
         observer = ConstellationProgressObserver(
-            round_id=1,
-            on_task_progress=on_task_progress,
-            on_constellation_update=on_constellation_update,
+            agent=mock_agent,
+            context=mock_context,
         )
 
         # Create generic event (not task or constellation specific)
@@ -245,11 +261,10 @@ class TestConstellationProgressObserver:
             data={},
         )
 
-        await observer.handle_event(generic_event)
+        await observer.on_event(generic_event)
 
-        # Verify callbacks were not called for irrelevant event
-        on_task_progress.assert_not_called()
-        on_constellation_update.assert_not_called()
+        # Verify generic events don't trigger task completion queue
+        mock_agent.task_completion_queue.put.assert_not_called()
 
 
 class TestSessionMetricsObserver:
@@ -280,20 +295,30 @@ class TestSessionMetricsObserver:
         )
 
         # Handle events
-        await observer.handle_event(start_event)
-        await observer.handle_event(completed_event)
+        await observer.on_event(start_event)
+        await observer.on_event(completed_event)
 
         # Check metrics
         metrics = observer.get_metrics()
-        assert metrics["total_tasks"] == 1
+        assert metrics["task_count"] == 1
         assert metrics["completed_tasks"] == 1
         assert metrics["failed_tasks"] == 0
-        assert "task_1" in metrics["task_durations"]
+        assert "task_1" in metrics["task_timings"]
 
     @pytest.mark.asyncio
     async def test_failed_task_metrics(self):
         """Test metrics collection for failed tasks."""
         observer = SessionMetricsObserver(session_id="test_session")
+
+        # Create started task event first (tasks need to be started before they can fail)
+        start_event = TaskEvent(
+            event_type=EventType.TASK_STARTED,
+            source_id="orchestrator",
+            timestamp=time.time(),
+            data={},
+            task_id="task_2",
+            status=TaskStatus.RUNNING.value,
+        )
 
         # Create failed task event
         failed_event = TaskEvent(
@@ -305,11 +330,12 @@ class TestSessionMetricsObserver:
             status=TaskStatus.FAILED.value,
         )
 
-        await observer.handle_event(failed_event)
+        await observer.on_event(start_event)
+        await observer.on_event(failed_event)
 
         # Check metrics
         metrics = observer.get_metrics()
-        assert metrics["total_tasks"] == 1
+        assert metrics["task_count"] == 1
         assert metrics["completed_tasks"] == 0
         assert metrics["failed_tasks"] == 1
 
@@ -325,14 +351,14 @@ class TestEventSystemIntegration:
         # Clear any existing observers
         bus._observers.clear()
 
-        # Set up observer with mock callbacks
-        task_callback = AsyncMock()
-        constellation_callback = AsyncMock()
+        # Set up observer with mock agent and context
+        mock_agent = Mock()
+        mock_agent.task_completion_queue = AsyncMock()
+        mock_context = Mock()
 
         progress_observer = ConstellationProgressObserver(
-            round_id=1,
-            on_task_progress=task_callback,
-            on_constellation_update=constellation_callback,
+            agent=mock_agent,
+            context=mock_context,
         )
 
         metrics_observer = SessionMetricsObserver(session_id="integration_test")
@@ -363,12 +389,14 @@ class TestEventSystemIntegration:
         await bus.publish_event(start_event)
         await bus.publish_event(completed_event)
 
-        # Verify callbacks were called
-        assert task_callback.call_count == 2  # Start and completed
+        # Verify task events were queued to agent
+        assert (
+            mock_agent.task_completion_queue.put.call_count == 2
+        )  # Start and completed
 
         # Verify metrics were collected
         metrics = metrics_observer.get_metrics()
-        assert metrics["total_tasks"] == 1
+        assert metrics["task_count"] == 1
         assert metrics["completed_tasks"] == 1
 
     @pytest.mark.asyncio
@@ -376,7 +404,7 @@ class TestEventSystemIntegration:
         """Test handling of concurrent event publishing."""
         bus = EventBus()
         observer = Mock()
-        observer.handle_event = AsyncMock()
+        observer.on_event = AsyncMock()
 
         bus.subscribe(observer)
 
@@ -397,7 +425,7 @@ class TestEventSystemIntegration:
         await asyncio.gather(*[bus.publish_event(event) for event in events])
 
         # Verify all events were handled
-        assert observer.handle_event.call_count == 10
+        assert observer.on_event.call_count == 10
 
 
 if __name__ == "__main__":

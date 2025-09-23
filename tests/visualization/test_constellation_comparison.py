@@ -4,6 +4,7 @@ Test script for constellation modification with automatic comparison.
 """
 
 import asyncio
+import pytest
 import sys
 import os
 from datetime import datetime
@@ -17,6 +18,7 @@ from ufo.galaxy.session.observers import DAGVisualizationObserver
 from rich.console import Console
 
 
+@pytest.mark.asyncio
 async def test_constellation_comparison():
     """Test constellation modification with automatic comparison."""
 
