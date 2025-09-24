@@ -329,7 +329,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         """
         return self._constellation_completion_queue
 
-    async def add_task_event(self, event: TaskEvent) -> None:
+    async def add_task_completion_event(self, event: TaskEvent) -> None:
         """
         Add a task event to the task completion queue.
 
@@ -343,6 +343,15 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
                 f"Only TaskEvent instances can be added to the task completion queue."
             )
 
+        if not event.event_type not in [
+            EventType.TASK_COMPLETED,
+            EventType.TASK_FAILED,
+        ]:
+            raise TypeError(
+                f"Expected TaskEvent with event_type in [TASK_COMPLETED, TASK_FAILED], "
+                f"got {event.event_type}."
+            )
+
         try:
             await self._task_completion_queue.put(event)
             self.logger.info(
@@ -352,7 +361,9 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
             self.logger.error(f"Failed to add task event to queue: {str(e)}")
             raise RuntimeError(f"Failed to add task event to queue: {str(e)}") from e
 
-    async def add_constellation_event(self, event: ConstellationEvent) -> None:
+    async def add_constellation_completion_event(
+        self, event: ConstellationEvent
+    ) -> None:
         """
         Add a constellation event to the constellation completion queue.
 
@@ -364,6 +375,12 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
             raise TypeError(
                 f"Expected ConstellationEvent instance, got {type(event).__name__}. "
                 f"Only ConstellationEvent instances can be added to the constellation completion queue."
+            )
+
+        if not event.event_type != EventType.CONSTELLATION_COMPLETED:
+            raise TypeError(
+                f"Expected ConstellationEvent with event_type of [CONSTELLATION_COMPLETED], "
+                f"got {event.event_type}."
             )
 
         try:

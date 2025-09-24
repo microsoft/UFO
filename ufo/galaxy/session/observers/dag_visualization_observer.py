@@ -105,7 +105,7 @@ class DAGVisualizationObserver(IEventObserver):
         if constellation:
             self._constellations[constellation_id] = constellation
 
-        # Delegate to constellation handler (使用旧的路由组件)
+        # Delegate to constellation handler
         if self._constellation_handler:
             await self._constellation_handler.handle_constellation_event(
                 event, constellation

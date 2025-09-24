@@ -66,7 +66,7 @@ class ConstellationProgressObserver(IEventObserver):
 
             # Put event into agent's queue - this will wake up the Continue state
             if event.event_type in [EventType.TASK_COMPLETED, EventType.TASK_FAILED]:
-                await self.agent.add_task_event(event)
+                await self.agent.add_task_completion_event(event)
 
             self.logger.info(
                 f"Queued task completion: {event.task_id} -> {event.status}"
@@ -82,11 +82,8 @@ class ConstellationProgressObserver(IEventObserver):
         :param event: ConstellationEvent instance containing constellation updates
         """
         try:
-            if event.event_type in [
-                EventType.CONSTELLATION_COMPLETED,
-                EventType.CONSTELLATION_FAILED,
-            ]:
-                await self.agent.add_constellation_event(event)
+            if event.event_type == EventType.CONSTELLATION_COMPLETED:
+                await self.agent.add_constellation_completion_event(event)
 
         except Exception as e:
             self.logger.error(f"Error handling constellation event: {e}")

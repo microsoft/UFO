@@ -124,7 +124,7 @@ class ContinueConstellationAgentState(ConstellationAgentState):
 
             # Wait for task completion event - NO timeout here
             # The timeout is handled at task execution level
-            agent.logger.debug("Continue waiting for task completion events...")
+            agent.logger.debug("Continue monitoring for task completion events...")
             context.set(ContextNames.WEAVING_MODE, WeavingMode.EDITING)
 
             task_event = await agent.task_completion_queue.get()
