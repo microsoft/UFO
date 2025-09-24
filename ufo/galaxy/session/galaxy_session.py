@@ -91,10 +91,13 @@ class GalaxyRound(BaseRound):
                 await self._agent.handle(self._context)
 
                 # Transition to next state
-                next_state = self._agent.state.next_state(self._agent)
+                self.state = self._agent.state.next_state(self._agent)
+                self.logger.info(
+                    f"Transitioning from {self._agent.state.name()} to {self.state.name()}"
+                )
 
                 # Update agent state
-                self._agent.set_state(next_state)
+                self._agent.set_state(self.state)
 
                 # Small delay to prevent busy waiting
                 await asyncio.sleep(0.01)

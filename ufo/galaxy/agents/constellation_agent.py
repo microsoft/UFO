@@ -17,7 +17,7 @@ import time
 from typing import Dict, List, Optional, Union
 
 from ufo.agents.agent.basic import BasicAgent
-from ufo.contracts.contracts import Command, MCPToolInfo
+from ufo.contracts.contracts import Command, MCPToolInfo, ResultStatus
 from ufo.galaxy.agents.constellation_agent_states import ConstellationAgentStatus
 from ufo.galaxy.agents.processors.processor import ConstellationAgentProcessor
 from ufo.galaxy.constellation.orchestrator.orchestrator import (
@@ -230,7 +230,13 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
             ]
         )
 
-        tool_list = result[0].result if result else None
+        if result[0].status == ResultStatus.FAILURE:
+            tool_list = []
+            self.logger.warning(
+                f"Failed to load MCP tool information: {result[0].result}"
+            )
+        else:
+            tool_list = result[0].result if result else []
 
         # Mask the creation tool for the prompt
         if mask_creation:
@@ -250,7 +256,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         tools_info = [MCPToolInfo(**tool) for tool in tool_list]
 
-        self.prompter.create_api_prompt_template(tools=tools_info)
+        # self.prompter.create_api_prompt_template(tools=tools_info)
 
     # Required BasicAgent abstract methods - basic implementations
     def get_prompter(self) -> str:

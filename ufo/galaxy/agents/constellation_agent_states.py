@@ -96,7 +96,9 @@ class StartConstellationAgentState(ConstellationAgentState):
                 agent.logger.error("Failed to create constellation")
 
         except Exception as e:
-            agent.logger.error(f"Error in start state: {e}")
+            import traceback
+
+            agent.logger.error(f"Error in start state: {traceback.format_exc()}")
             agent.status = "FAIL"
 
     def next_agent(self, agent):
