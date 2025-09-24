@@ -305,7 +305,7 @@ class ProcessorTemplate(ABC):
                 f"Strategy {strategy.name} has no dependency declarations"
             )
         except Exception as e:
-            self.logger.error(
+            self.logger.warning(
                 f"Runtime dependency validation error for {strategy.name}: {e}"
             )
 

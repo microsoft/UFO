@@ -54,14 +54,12 @@ if TYPE_CHECKING:
     from ufo.module.basic import FileWriter
 
 
-@depends_on("device_info", "constellation", "request")
 @provides(
     "parsed_response",
     "response_text",
     "llm_cost",
     "prompt_message",
     "status",
-    "question_list",
 )
 class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
     """
@@ -95,7 +93,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             session_step = context.get_local("session_step", 0)
             device_info = context.get_local("device_info", [])
             constellation: TaskConstellation = context.get_global(
-                ContextNames.CONSTELLATION
+                "CONSTELLATION"
             )
             weaving_mode = context.get_local("weaving_mode", "")
             request = context.get("request", "")
@@ -342,20 +340,11 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             self.logger.warning(f"Unexpected status value: {response.status}")
 
 
-@depends_on(
-    "parsed_response",
-    "log_path",
-    "session_step",
-    "annotation_dict",
-    "application_window_info",
-    "clean_screenshot_path",
-)
+@depends_on("parsed_response")
 @provides(
     "execution_result",
     "action_info",
-    "control_log",
     "status",
-    "selected_control_screenshot_path",
 )
 class ConstellationActionExecutionStrategy(BaseProcessingStrategy):
     """
@@ -527,7 +516,7 @@ class ConstellationActionExecutionStrategy(BaseProcessingStrategy):
             self.logger.warning(f"Failed to create action info: {str(e)}")
 
 
-@depends_on("session_step", "round_step", "round_num")
+@depends_on("parsed_response")
 @provides("additional_memory", "memory_item", "memory_keys_count")
 class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
     """
@@ -610,13 +599,13 @@ class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
 
             # Update context with current processing state
             constellation_context.session_step = context.get_global(
-                ContextNames.SESSION_STEP.name, 0
+                "SESSION_STEP", 0
             )
             constellation_context.round_step = context.get_global(
-                ContextNames.CURRENT_ROUND_STEP.name, 0
+                "CURRENT_ROUND_STEP", 0
             )
             constellation_context.round_num = context.get_global(
-                ContextNames.CURRENT_ROUND_ID.name, 0
+                "CURRENT_ROUND_ID", 0
             )
             constellation_context.agent_step = agent.step if agent else 0
 
@@ -633,7 +622,7 @@ class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
                 )
 
                 constellation_after: TaskConstellation = context.get_global(
-                    ContextNames.CONSTELLATION.name
+                    "CONSTELLATION"
                 )
 
                 if constellation_after:
