@@ -92,9 +92,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             # Extract context variables
             session_step = context.get_local("session_step", 0)
             device_info = context.get_local("device_info", [])
-            constellation: TaskConstellation = context.get_global(
-                "CONSTELLATION"
-            )
+            constellation: TaskConstellation = context.get_global("CONSTELLATION")
             weaving_mode = context.get_local("weaving_mode", "")
             request = context.get("request", "")
             request_logger = context.get_global("request_logger")
@@ -598,15 +596,11 @@ class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
             constellation_context: ConstellationProcessorContext = context.local_context
 
             # Update context with current processing state
-            constellation_context.session_step = context.get_global(
-                "SESSION_STEP", 0
-            )
+            constellation_context.session_step = context.get_global("SESSION_STEP", 0)
             constellation_context.round_step = context.get_global(
                 "CURRENT_ROUND_STEP", 0
             )
-            constellation_context.round_num = context.get_global(
-                "CURRENT_ROUND_ID", 0
-            )
+            constellation_context.round_num = context.get_global("CURRENT_ROUND_ID", 0)
             constellation_context.agent_step = agent.step if agent else 0
 
             action_info: ActionCommandInfo = constellation_context.action_info
