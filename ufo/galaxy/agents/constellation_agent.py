@@ -23,7 +23,12 @@ from ufo.galaxy.agents.processors.processor import ConstellationAgentProcessor
 from ufo.galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
 )
-from ufo.galaxy.core.events import get_event_bus, ConstellationEvent, EventType
+from ufo.galaxy.core.events import (
+    get_event_bus,
+    ConstellationEvent,
+    EventType,
+    TaskEvent,
+)
 from ufo.module.context import Context, ContextNames
 
 from ..core.interfaces import IRequestProcessor, IResultProcessor
@@ -72,7 +77,9 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self.current_request: str = ""
         self._orchestrator = orchestrator
 
-        self.task_completion_queue = asyncio.Queue()
+        self._task_completion_queue = asyncio.Queue()
+        self._constellation_completion_queue = asyncio.Queue()
+
         self._context_provision_executed = False
         self._event_bus = get_event_bus()
 
@@ -305,3 +312,68 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         :return: The task constellation orchestrator.
         """
         return self._orchestrator
+
+    @property
+    def task_completion_queue(self) -> asyncio.Queue[TaskEvent]:
+        """
+        Get the task completion queue.
+        :return: The task completion queue.
+        """
+        return self._task_completion_queue
+
+    @property
+    def constellation_completion_queue(self) -> asyncio.Queue[ConstellationEvent]:
+        """
+        Get the constellation completion queue.
+        :return: The constellation completion queue.
+        """
+        return self._constellation_completion_queue
+
+    async def add_task_event(self, event: TaskEvent) -> None:
+        """
+        Add a task event to the task completion queue.
+
+        :param event: TaskEvent instance to add to the queue
+        :raises TypeError: If the event is not a TaskEvent instance
+        :raises RuntimeError: If failed to add event to queue
+        """
+        if not isinstance(event, TaskEvent):
+            raise TypeError(
+                f"Expected TaskEvent instance, got {type(event).__name__}. "
+                f"Only TaskEvent instances can be added to the task completion queue."
+            )
+
+        try:
+            await self._task_completion_queue.put(event)
+            self.logger.info(
+                f"Added task event for task '{event.task_id}' with status '{event.status}' to completion queue"
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to add task event to queue: {str(e)}")
+            raise RuntimeError(f"Failed to add task event to queue: {str(e)}") from e
+
+    async def add_constellation_event(self, event: ConstellationEvent) -> None:
+        """
+        Add a constellation event to the constellation completion queue.
+
+        :param event: ConstellationEvent instance to add to the queue
+        :raises TypeError: If the event is not a ConstellationEvent instance
+        :raises RuntimeError: If failed to add event to queue
+        """
+        if not isinstance(event, ConstellationEvent):
+            raise TypeError(
+                f"Expected ConstellationEvent instance, got {type(event).__name__}. "
+                f"Only ConstellationEvent instances can be added to the constellation completion queue."
+            )
+
+        try:
+            await self._constellation_completion_queue.put(event)
+            self.logger.info(
+                f"Added constellation event for constellation '{event.constellation_id}' "
+                f"with state '{event.constellation_state}' to completion queue"
+            )
+        except Exception as e:
+            self.logger.error(f"Failed to add constellation event to queue: {str(e)}")
+            raise RuntimeError(
+                f"Failed to add constellation event to queue: {str(e)}"
+            ) from e

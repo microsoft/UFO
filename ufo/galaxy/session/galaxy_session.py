@@ -364,7 +364,7 @@ class GalaxySession(BaseSession):
         """
         # For now, only process one request per session
         if len(self._rounds) == 0:
-            return self._initial_request or self.task
+            return self._initial_request
         return ""  # No more requests
 
     def request_to_evaluate(self) -> str:

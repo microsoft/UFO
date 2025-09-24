@@ -111,17 +111,12 @@ class GalaxyClient:
                 self.display.print_success("✅ ConstellationClient initialized")
                 self.logger.info("✅ ConstellationClient initialized")
 
-                # Initialize Galaxy session
-                progress.update(task, description="[cyan]Creating Galaxy Session...")
-                self._session = GalaxySession(
-                    task=self.session_name,
-                    should_evaluate=False,
-                    id=self.session_name,
-                    client=self._client,
-                    initial_request="",
+                # Galaxy session will be created per request
+                progress.update(
+                    task, description="[cyan]Framework ready for requests..."
                 )
-                self.display.print_success("✅ GalaxySession initialized")
-                self.logger.info("✅ GalaxySession initialized")
+                self.display.print_success("✅ Framework initialized and ready")
+                self.logger.info("✅ Framework initialized and ready")
 
             self.display.print_success("\n🌟 UFO3 Framework initialization complete!\n")
             self.logger.info("🌟 UFO3 Framework initialization complete!")
@@ -144,7 +139,7 @@ class GalaxyClient:
         :return: Dictionary containing processing result with execution details
         :raises RuntimeError: If Galaxy client is not initialized
         """
-        if not self._session:
+        if not self._client:
             raise RuntimeError(
                 "Galaxy client not initialized. Call initialize() first."
             )
@@ -155,9 +150,16 @@ class GalaxyClient:
             )
             self.logger.info(f"📝 Processing request: {request[:100]}...")
 
-            # Update session task if provided
-            if task_name:
-                self._session.task = task_name
+            # Create a new session for this request
+            session_id = f"{self.session_name}_{task_name or 'request'}"
+            self._session = GalaxySession(
+                task=task_name
+                or f"request_{len(getattr(self, '_processed_requests', []))}",
+                should_evaluate=False,
+                id=session_id,
+                client=self._client,
+                initial_request=request,
+            )
 
             # Execute the session with progress
             start_time = datetime.now()
@@ -280,12 +282,10 @@ class GalaxyClient:
         """
         Show current session status using the display manager.
         """
-        session_info = None
-        if self._session:
-            session_info = {
-                "rounds": len(self._session._rounds),
-                "initialized": True,
-            }
+        session_info = {
+            "client_initialized": self._client is not None,
+            "last_session_rounds": len(self._session._rounds) if self._session else 0,
+        }
 
         self.display.show_status(
             self.session_name, self.max_rounds, self.output_dir, session_info
