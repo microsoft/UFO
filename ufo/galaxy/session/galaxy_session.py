@@ -236,9 +236,7 @@ class GalaxySession(BaseSession):
         and subscribes them to the event bus.
         """
         # Progress observer for task updates
-        progress_observer = ConstellationProgressObserver(
-            agent=self._agent, context=self._context
-        )
+        progress_observer = ConstellationProgressObserver(agent=self._agent)
         self._observers.append(progress_observer)
 
         # Metrics observer for performance tracking

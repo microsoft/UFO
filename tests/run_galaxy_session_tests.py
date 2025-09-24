@@ -60,6 +60,10 @@ def main():
             "Session-Visualization Integration",
         ),
         (
+            "test_dag_visualization_observer_events.py",
+            "DAG Visualization Observer Event Tests",
+        ),
+        (
             "test_color_fix.py",
             "Color Display Fix Tests",
         ),

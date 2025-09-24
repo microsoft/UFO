@@ -10,7 +10,6 @@ from typing import Dict, Optional
 
 from ...core.events import (
     Event,
-    EventType,
     TaskEvent,
     ConstellationEvent,
     IEventObserver,
@@ -106,7 +105,7 @@ class DAGVisualizationObserver(IEventObserver):
         if constellation:
             self._constellations[constellation_id] = constellation
 
-        # Delegate to constellation handler
+        # Delegate to constellation handler (使用旧的路由组件)
         if self._constellation_handler:
             await self._constellation_handler.handle_constellation_event(
                 event, constellation
@@ -141,7 +140,7 @@ class DAGVisualizationObserver(IEventObserver):
         :return: TaskConstellation instance if found, None otherwise
         """
         constellation = None
-        if hasattr(event, "data") and isinstance(event.data, dict):
+        if isinstance(event.data, dict):
             constellation = event.data.get("constellation")
             if not constellation and "updated_constellation" in event.data:
                 constellation = event.data["updated_constellation"]

@@ -21,12 +21,8 @@ from typing import (
     Optional,
     Protocol,
     TypeVar,
-    Union,
-    Generic,
-    Type,
     runtime_checkable,
 )
-import uuid
 
 # Import enums to resolve forward references
 try:
