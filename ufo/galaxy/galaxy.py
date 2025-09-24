@@ -3,23 +3,30 @@
 # Licensed under the MIT License.
 
 """
-Galaxy Framework Quick Start
+Galaxy Framework Main Entry Point
 
-Quick entry point for Galaxy Framework with simplified interface.
-This script provides an easy way to start Galaxy sessions.
+Primary command-line interface for Galaxy Framework with comprehensive functionality.
+This script provides both simple and advanced interfaces for Galaxy sessions.
 
-Usage:
+Simple Usage:
     python galaxy.py "Create a machine learning pipeline"
     python galaxy.py --interactive
     python galaxy.py --demo
+
+Advanced Usage:
+    python galaxy.py --request "Task description" --session-name "my_session"
+    python galaxy.py --request "Task" --output-dir "./results" --log-level DEBUG
+    python galaxy.py --interactive --max-rounds 20
 """
 
+import argparse
 import asyncio
+import json
+import logging
 import sys
 from pathlib import Path
 
 from rich.console import Console
-from rich.panel import Panel
 
 
 # Add UFO2 to path to enable imports
@@ -32,67 +39,26 @@ from ufo.galaxy.galaxy_client import GalaxyClient
 console = Console()
 
 
-async def run_demo():
-    """
-    Run a demo showcasing Galaxy framework capabilities.
-
-    Demonstrates the Galaxy Framework's DAG-based task orchestration
-    with predefined demo requests and mock execution.
-    """
-    demo_panel = Panel(
-        "[bold cyan]🌟 Galaxy Framework Demo[/bold cyan]\n\n"
-        "[white]This demo showcases the Galaxy Framework's DAG-based task orchestration capabilities.[/white]\n"
-        "[dim]Watch as complex requests are broken down into executable workflows![/dim]",
-        border_style="cyan",
-    )
-    console.print(demo_panel)
-
-    client = GalaxyClient(
-        session_name="galaxy_demo", use_mock_agent=True, log_level="INFO"
-    )
-
-    await client.initialize()
-
-    demo_requests = [
-        "Create a data analysis pipeline with parallel processing",
-        "Build a machine learning workflow with training and evaluation",
-        "Design a web scraping system with data validation",
-    ]
-
-    for i, request in enumerate(demo_requests, 1):
-        console.print(
-            f"\n[bold yellow]🎯 Demo {i}:[/bold yellow] [white]{request}[/white]"
-        )
-
-        with console.status(f"[bold cyan]Processing demo {i}..."):
-            result = await client.process_request(request, f"demo_task_{i}")
-
-        client._display_result(result)
-
-    await client.shutdown()
-
-    success_panel = Panel(
-        "[bold green]✨ Demo complete![/bold green]\n\n"
-        "[white]All demo workflows have been processed successfully.[/white]\n"
-        "[dim]Try running your own requests with --interactive or --request flags![/dim]",
-        border_style="green",
-    )
-    console.print(success_panel)
+# Utility functions for backward compatibility and convenience
 
 
 async def galaxy_quick_start(
-    request: str, session_name: str = "galaxy_quick", use_mock: bool = True
+    request: str,
+    session_name: str = "galaxy_quick",
+    log_level: str = "INFO",
+    output_dir: str = "./logs",
 ):
     """
-    Quick start function for single requests.
+    Quick start function for single requests (programmatic API).
 
     :param request: User request text to process
     :param session_name: Name for the Galaxy session (default: "galaxy_quick")
-    :param use_mock: Whether to use mock agent for testing (default: True)
+    :param log_level: Logging level (default: "INFO")
+    :param output_dir: Output directory for results (default: "./logs")
     :return: Processing result dictionary
     """
     client = GalaxyClient(
-        session_name=session_name, use_mock_agent=use_mock, log_level="INFO"
+        session_name=session_name, log_level=log_level, output_dir=output_dir
     )
 
     await client.initialize()
@@ -103,16 +69,24 @@ async def galaxy_quick_start(
 
 
 async def galaxy_interactive(
-    session_name: str = "galaxy_interactive", use_mock: bool = True
+    session_name: str = "galaxy_interactive",
+    log_level: str = "INFO",
+    max_rounds: int = 10,
+    output_dir: str = "./logs",
 ):
     """
-    Interactive function for command-line interaction.
+    Interactive function for programmatic use.
 
     :param session_name: Name for the Galaxy session (default: "galaxy_interactive")
-    :param use_mock: Whether to use mock agent for testing (default: True)
+    :param log_level: Logging level (default: "INFO")
+    :param max_rounds: Maximum rounds per session (default: 10)
+    :param output_dir: Output directory for results (default: "./logs")
     """
     client = GalaxyClient(
-        session_name=session_name, use_mock_agent=use_mock, log_level="INFO"
+        session_name=session_name,
+        log_level=log_level,
+        max_rounds=max_rounds,
+        output_dir=output_dir,
     )
 
     await client.initialize()
@@ -120,56 +94,199 @@ async def galaxy_interactive(
     await client.shutdown()
 
 
+def parse_args():
+    """Parse command-line arguments with support for both simple and advanced usage."""
+    parser = argparse.ArgumentParser(
+        description="Galaxy Framework - AI-powered DAG workflow orchestration",
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  Simple Usage:
+    python galaxy.py "Create a data analysis pipeline"
+    python galaxy.py --demo
+    python galaxy.py --interactive
+
+  Advanced Usage:
+    python galaxy.py --request "Build ML pipeline" --session-name "ml_session"
+    python galaxy.py --interactive --max-rounds 20 --log-level DEBUG
+    python galaxy.py --request "Task" --output-dir "./results" --mock
+        """,
+    )
+
+    # Core functionality
+    parser.add_argument(
+        "simple_request",
+        nargs="*",
+        help="Simple request text (alternative to --request)",
+    )
+
+    parser.add_argument(
+        "--request", dest="request_text", help="Task request text to process"
+    )
+
+    parser.add_argument(
+        "--interactive",
+        action="store_true",
+        help="Run in interactive command-line mode",
+    )
+
+    parser.add_argument(
+        "--demo",
+        action="store_true",
+        help="Run demonstration mode with sample workflows",
+    )
+
+    # Session configuration
+    parser.add_argument(
+        "--session-name", dest="session_name", help="Custom name for the Galaxy session"
+    )
+
+    parser.add_argument(
+        "--task-name", dest="task_name", help="Custom name for the specific task"
+    )
+
+    parser.add_argument(
+        "--max-rounds",
+        type=int,
+        default=10,
+        help="Maximum rounds per session (default: 10)",
+    )
+
+    # Output and logging
+    parser.add_argument(
+        "--output-dir",
+        default="./logs",
+        help="Output directory for logs and results (default: ./logs)",
+    )
+
+    parser.add_argument(
+        "--log-level",
+        default="INFO",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="Logging level (default: INFO)",
+    )
+
+    # Testing and development
+    parser.add_argument(
+        "--mock",
+        action="store_true",
+        help="Use mock agent for testing (no real LLM calls)",
+    )
+
+    return parser.parse_args()
+
+
 async def main():
     """
-    Main entry point.
+    Main entry point with unified simple and advanced CLI support.
 
-    Handles command-line arguments and routes to appropriate
-    execution mode (demo, interactive, or single request).
+    Supports both simple usage (direct arguments) and advanced usage (flags).
+    Routes to appropriate execution mode based on arguments provided.
     """
-    if len(sys.argv) == 1:
-        welcome_panel = Panel(
-            "[bold cyan]🌌 Galaxy Framework Quick Start[/bold cyan]\n\n"
-            "[white]Welcome to the Galaxy Framework![/white]\n\n"
-            "[bold yellow]Usage Examples:[/bold yellow]\n"
-            "  [cyan]python galaxy.py 'Your request here'[/cyan]\n"
-            "  [cyan]python galaxy.py --interactive[/cyan]\n"
-            "  [cyan]python galaxy.py --demo[/cyan]\n\n"
-            "[dim]Add --mock flag for testing without real execution[/dim]",
-            border_style="blue",
-        )
-        console.print(welcome_panel)
+    args = parse_args()
+
+    # Handle no arguments case
+    if not any([args.simple_request, args.request_text, args.interactive, args.demo]):
+        from ufo.galaxy.visualization.client_display import ClientDisplay
+
+        display = ClientDisplay(console)
+        display.show_welcome_with_usage()
         return
 
-    if "--demo" in sys.argv:
-        await run_demo()
-        return
+    # Initialize client with provided configuration
+    client = GalaxyClient(
+        session_name=args.session_name,
+        max_rounds=args.max_rounds,
+        log_level=args.log_level,
+        output_dir=args.output_dir,
+    )
 
-    if "--interactive" in sys.argv:
-        await galaxy_interactive(use_mock="--mock" in sys.argv)
-        return
+    try:
+        await client.initialize()
 
-    # Single request mode
-    request = " ".join(arg for arg in sys.argv[1:] if not arg.startswith("--"))
+        # Demo mode
+        if args.demo:
+            await run_demo_with_client(client)
 
-    if request:
-        console.print(
-            f"[bold cyan]🚀 Processing request:[/bold cyan] [white]{request}[/white]"
-        )
-        result = await galaxy_quick_start(request, use_mock="--mock" in sys.argv)
+        # Interactive mode
+        elif args.interactive:
+            await client.interactive_mode()
 
-        # Simple result display for quick start
-        if result.get("status") == "completed":
-            console.print(
-                f"[bold green]✅ Request completed successfully in {result.get('execution_time', 0):.2f}s[/bold green]"
-            )
+        # Request processing mode
+        elif args.request_text or args.simple_request:
+            # Determine request text
+            request_text = args.request_text or " ".join(args.simple_request)
+
+            client.display.show_processing_request(request_text)
+
+            # Process request
+            result = await client.process_request(request_text, args.task_name)
+
+            # Display results
+            client.display.show_execution_complete()
+            client.display.display_result(result)
+
+            # Save results if output directory specified
+            if args.output_dir:
+                output_path = (
+                    Path(args.output_dir) / f"{client.session_name}_result.json"
+                )
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+
+                with open(output_path, "w", encoding="utf-8") as f:
+                    json.dump(result, f, indent=2, ensure_ascii=False)
+
+                client.display.print_info(
+                    f"[bold cyan]📁 Result saved to:[/bold cyan] [green]{output_path}[/green]"
+                )
+
+    except KeyboardInterrupt:
+        if "client" in locals():
+            client.display.print_warning("\n👋 Interrupted by user")
         else:
-            console.print(
-                f"[bold red]❌ Request failed: {result.get('error', 'Unknown error')}[/bold red]"
-            )
-    else:
-        console.print("[bold red]❌ No request provided![/bold red]")
-        console.print("[dim]Example: python galaxy.py 'Create a data pipeline'[/dim]")
+            # Fallback display for when client is not yet initialized
+            from ufo.galaxy.visualization.client_display import ClientDisplay
+
+            display = ClientDisplay(console=console)
+            display.print_warning("\n👋 Interrupted by user")
+    except Exception as e:
+        if "client" in locals():
+            client.display.print_error(f"❌ Galaxy Framework error: {e}")
+        else:
+            # Fallback display for when client is not yet initialized
+            from ufo.galaxy.visualization.client_display import ClientDisplay
+
+            display = ClientDisplay(console=console)
+            display.print_error(f"❌ Galaxy Framework error: {e}")
+        logging.error(f"Galaxy Framework error: {e}", exc_info=True)
+        sys.exit(1)
+    finally:
+        await client.shutdown()
+
+
+async def run_demo_with_client(client: GalaxyClient):
+    """
+    Run demo mode with initialized client.
+
+    :param client: Initialized GalaxyClient instance
+    """
+    client.display.show_demo_banner()
+
+    demo_requests = [
+        "Create a data analysis pipeline with parallel processing",
+        "Build a machine learning workflow with training and evaluation",
+        "Design a web scraping system with data validation and storage",
+    ]
+
+    for i, request in enumerate(demo_requests, 1):
+        client.display.show_demo_step(i, request)
+
+        with client.display.console.status(f"[bold cyan]Processing demo {i}..."):
+            result = await client.process_request(request, f"demo_task_{i}")
+
+        client.display.display_result(result)
+
+    client.display.show_demo_complete()
 
 
 if __name__ == "__main__":

@@ -40,7 +40,6 @@ def create_simple_test_constellation(
     constellation = TaskConstellation(
         constellation_id=constellation_name,
         name=constellation_name,
-        description=f"Test constellation: {constellation_name}",
     )
 
     tasks = []
@@ -55,10 +54,13 @@ def create_simple_test_constellation(
 
     # Add sequential dependencies if requested
     if sequential and len(tasks) > 1:
+        from ufo.galaxy.constellation.task_star_line import TaskStarLine
+
         for i in range(len(tasks) - 1):
-            constellation.add_dependency(
-                predecessor_id=tasks[i].task_id, successor_id=tasks[i + 1].task_id
+            dependency = TaskStarLine(
+                from_task_id=tasks[i].task_id, to_task_id=tasks[i + 1].task_id
             )
+            constellation.add_dependency(dependency)
 
     return constellation
 
@@ -125,7 +127,10 @@ class MockConstellationAgent(ConstellationAgent):
         # Get request from context or use a default
         request = "mock request"
         if context and hasattr(context, "get"):
-            request = context.get(ContextNames.REQUEST, "mock request")
+            try:
+                request = context.get(ContextNames.REQUEST) or "mock request"
+            except (TypeError, AttributeError):
+                request = "mock request"
 
         self.logger.info(f"Mock processing creation request: {request[:100]}...")
 

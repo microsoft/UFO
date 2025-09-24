@@ -76,9 +76,7 @@ class StartConstellationAgentState(ConstellationAgentState):
             if not agent.current_constellation:
                 context.set(ContextNames.WEAVING_MODE, WeavingMode.CREATION)
 
-                agent._current_constellation = await agent.process_creation(
-                    agent.current_request, context
-                )
+                agent._current_constellation = await agent.process_creation(context)
 
             # Start orchestration
             if agent.current_constellation:
