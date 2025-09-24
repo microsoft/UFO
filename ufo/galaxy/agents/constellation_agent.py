@@ -20,6 +20,8 @@ from ufo.agents.agent.basic import BasicAgent
 from ufo.contracts.contracts import Command, MCPToolInfo, ResultStatus
 from ufo.galaxy.agents.constellation_agent_states import ConstellationAgentStatus
 from ufo.galaxy.agents.processors.processor import ConstellationAgentProcessor
+from ufo.galaxy.agents.prompter import ConstellationAgentPrompter
+from ufo.galaxy.agents.schema import WeavingMode
 from ufo.galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
 )
@@ -30,6 +32,7 @@ from ufo.galaxy.core.events import (
     TaskEvent,
 )
 from ufo.module.context import Context, ContextNames
+
 
 from ..core.interfaces import IRequestProcessor, IResultProcessor
 from ..constellation import TaskConstellation
@@ -59,6 +62,8 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self,
         orchestrator: TaskConstellationOrchestrator,
         name: str = "constellation_agent",
+        main_prompt: str = "",
+        example_prompt: str = "",
     ):
         """
         Initialize the Constellation.
@@ -82,6 +87,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         self._context_provision_executed = False
         self._event_bus = get_event_bus()
+        self.prompter = self.get_prompter(main_prompt, example_prompt)
 
         # Initialize with start state
         from .constellation_agent_states import StartConstellationAgentState
@@ -270,30 +276,40 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         tools_info = [MCPToolInfo(**tool) for tool in tool_list]
 
-        # self.prompter.create_api_prompt_template(tools=tools_info)
+        self.prompter.create_api_prompt_template(tools=tools_info)
 
-    # Required BasicAgent abstract methods - basic implementations
-    def get_prompter(self) -> str:
-        """Get the prompter for the agent."""
-        return "Constellation"
+    def get_prompter(
+        self, main_prompt: str, example_prompt: str, weaving_mode: WeavingMode
+    ) -> ConstellationAgentPrompter:
+        """
+        Get the prompter for the agent.
+        :param main_prompt: The main prompt for the agent.
+        :param example_prompt: The example prompt for the agent.
+        :param weaving_mode: The weaving mode for the agent.
+        :return: The prompter for the agent.
+        """
 
-    def message_constructor(self) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
+        return ConstellationAgentPrompter(main_prompt, example_prompt, weaving_mode)
+
+    def message_constructor(
+        self,
+        device_info: Dict[str, str],
+        constellation: TaskConstellation,
+    ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the message for LLM interaction.
 
         Returns:
             List of message dictionaries for LLM
         """
-        return [
-            {
-                "role": "system",
-                "content": "You are a Constellation agent for DAG-based task orchestration.",
-            },
-            {
-                "role": "user",
-                "content": self.current_request or "Please process the current task.",
-            },
-        ]
+        system_message = self.prompter.system_prompt_construction()
+        user_message = self.prompter.user_content_construction(
+            device_info=device_info, constellation=constellation
+        )
+
+        prompt = self.prompter.prompt_construction(system_message, user_message)
+
+        return prompt
 
     async def process_confirmation(self, context: Context = None) -> bool:
         """
