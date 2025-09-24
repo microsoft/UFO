@@ -27,71 +27,12 @@ import sys
 from pathlib import Path
 
 from rich.console import Console
+from ufo.logging.setup import setup_logger
 
 
 # Add UFO2 to path to enable imports
 UFO_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(UFO_ROOT))
-
-from ufo.galaxy.galaxy_client import GalaxyClient
-
-# Initialize rich console
-console = Console()
-
-
-# Utility functions for backward compatibility and convenience
-
-
-async def galaxy_quick_start(
-    request: str,
-    session_name: str = "galaxy_quick",
-    log_level: str = "INFO",
-    output_dir: str = "./logs",
-):
-    """
-    Quick start function for single requests (programmatic API).
-
-    :param request: User request text to process
-    :param session_name: Name for the Galaxy session (default: "galaxy_quick")
-    :param log_level: Logging level (default: "INFO")
-    :param output_dir: Output directory for results (default: "./logs")
-    :return: Processing result dictionary
-    """
-    client = GalaxyClient(
-        session_name=session_name, log_level=log_level, output_dir=output_dir
-    )
-
-    await client.initialize()
-    result = await client.process_request(request)
-    await client.shutdown()
-
-    return result
-
-
-async def galaxy_interactive(
-    session_name: str = "galaxy_interactive",
-    log_level: str = "INFO",
-    max_rounds: int = 10,
-    output_dir: str = "./logs",
-):
-    """
-    Interactive function for programmatic use.
-
-    :param session_name: Name for the Galaxy session (default: "galaxy_interactive")
-    :param log_level: Logging level (default: "INFO")
-    :param max_rounds: Maximum rounds per session (default: 10)
-    :param output_dir: Output directory for results (default: "./logs")
-    """
-    client = GalaxyClient(
-        session_name=session_name,
-        log_level=log_level,
-        max_rounds=max_rounds,
-        output_dir=output_dir,
-    )
-
-    await client.initialize()
-    await client.interactive_mode()
-    await client.shutdown()
 
 
 def parse_args():
@@ -176,6 +117,70 @@ Examples:
     return parser.parse_args()
 
 
+args = parse_args()
+setup_logger(args.log_level)
+
+from ufo.galaxy.galaxy_client import GalaxyClient
+
+# Initialize rich console
+console = Console()
+
+
+# Utility functions for backward compatibility and convenience
+
+
+async def galaxy_quick_start(
+    request: str,
+    session_name: str = "galaxy_quick",
+    log_level: str = "INFO",
+    output_dir: str = "./logs",
+):
+    """
+    Quick start function for single requests (programmatic API).
+
+    :param request: User request text to process
+    :param session_name: Name for the Galaxy session (default: "galaxy_quick")
+    :param log_level: Logging level (default: "INFO")
+    :param output_dir: Output directory for results (default: "./logs")
+    :return: Processing result dictionary
+    """
+    client = GalaxyClient(
+        session_name=session_name, log_level=log_level, output_dir=output_dir
+    )
+
+    await client.initialize()
+    result = await client.process_request(request)
+    await client.shutdown()
+
+    return result
+
+
+async def galaxy_interactive(
+    session_name: str = "galaxy_interactive",
+    log_level: str = "INFO",
+    max_rounds: int = 10,
+    output_dir: str = "./logs",
+):
+    """
+    Interactive function for programmatic use.
+
+    :param session_name: Name for the Galaxy session (default: "galaxy_interactive")
+    :param log_level: Logging level (default: "INFO")
+    :param max_rounds: Maximum rounds per session (default: 10)
+    :param output_dir: Output directory for results (default: "./logs")
+    """
+    client = GalaxyClient(
+        session_name=session_name,
+        log_level=log_level,
+        max_rounds=max_rounds,
+        output_dir=output_dir,
+    )
+
+    await client.initialize()
+    await client.interactive_mode()
+    await client.shutdown()
+
+
 async def main():
     """
     Main entry point with unified simple and advanced CLI support.
@@ -183,7 +188,6 @@ async def main():
     Supports both simple usage (direct arguments) and advanced usage (flags).
     Routes to appropriate execution mode based on arguments provided.
     """
-    args = parse_args()
 
     # Handle no arguments case
     if not any([args.simple_request, args.request_text, args.interactive, args.demo]):

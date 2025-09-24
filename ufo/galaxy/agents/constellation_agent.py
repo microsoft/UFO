@@ -70,7 +70,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         super().__init__(name)
 
         self._current_constellation: Optional[TaskConstellation] = None
-        self._status: str = "START"  # ready, processing, finished, failed
+        self._status: str = "START"  # start, continue, finish, fail
         self.logger = logging.getLogger(__name__)
 
         # Add state machine support
@@ -164,22 +164,29 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         after_constellation: TaskConstellation = context.get(ContextNames.CONSTELLATION)
 
+        try:
+            await asyncio.wait_for(
+                self.constellation_completion_queue.get(), timeout=1.0
+            )
+
+            self.logger.info(
+                f"The old constellation {before_constellation.constellation_id} is completed."
+            )
+
+            if self.status == ConstellationAgentStatus.CONTINUE.value:
+                self.logger.info(
+                    f"New update to the constellation {before_constellation.constellation_id} needed, restart the orchestration"
+                )
+                self.status = ConstellationAgentStatus.START.value
+
+        except asyncio.TimeoutError:
+            pass
+
         is_dag, errors = after_constellation.validate_dag()
 
         if not is_dag:
             self.logger.error(f"The created constellation is not a valid DAG: {errors}")
             self.status = "FAIL"
-
-        if before_constellation.is_complete():
-            self.logger.info(
-                f"The old constellation {before_constellation.constellation_id} is completed."
-            )
-            # IMPORTANT: Restart the constellation orchestration when there is new update.
-            if self.status == "CONTINUE":
-                self.logger.info(
-                    f"New update to the constellation {self._current_constellation.constellation_id} needed, restart the orchestration"
-                )
-                self.status = "START"
 
         self._current_constellation = after_constellation
 

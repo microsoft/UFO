@@ -138,7 +138,7 @@ class ContinueConstellationAgentState(ConstellationAgentState):
 
         except Exception as e:
             agent.logger.error(f"Error in continue state: {e}")
-            agent._status = "FAIL"
+            agent.status = "FAIL"
 
     def next_agent(self, agent):
         return agent
