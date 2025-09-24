@@ -2,9 +2,9 @@
 # Licensed under the MIT License.
 
 """
-Host Agent Processor V2 - Refactored processor for Host Agent using the new framework.
+Constellation Agent Processor.
 
-This processor handles the Host Agent's workflow including:
+This processor handles the Constellation Agent's workflow including:
 - Desktop screenshot capture
 - Application window detection and registration
 - Third-party agent integration
@@ -65,7 +65,7 @@ if TYPE_CHECKING:
 )
 class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
     """
-    Enhanced LLM interaction strategy for Host Agent with comprehensive context building.
+    Enhanced LLM interaction strategy for Constellation Agent with comprehensive context building.
 
     This strategy handles:
     - Context-aware prompt construction with blackboard integration
@@ -76,10 +76,10 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
 
     def __init__(self, fail_fast: bool = True) -> None:
         """
-        Initialize Host Agent LLM interaction strategy.
+        Initialize Constellation Agent LLM interaction strategy.
         :param fail_fast: Whether to raise exceptions immediately on errors
         """
-        super().__init__(name="host_llm_interaction", fail_fast=fail_fast)
+        super().__init__(name="constellation_llm_interaction", fail_fast=fail_fast)
 
     async def execute(
         self, agent: "ConstellationAgent", context: ProcessingContext
@@ -127,7 +127,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             weaving_mode = context.get_local("weaving_mode")
 
             self.logger.info(
-                f"Host LLM interaction status set to: {context.get_local('status')}"
+                f"Constellation LLM interaction status set to: {context.get_local('status')}"
             )
 
             return ProcessingResult(
@@ -143,7 +143,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             )
 
         except Exception as e:
-            error_msg = f"Host LLM interaction failed: {str(e)}"
+            error_msg = f"constellation LLM interaction failed: {str(e)}"
             self.logger.error(error_msg)
             return self.handle_error(e, ProcessingPhase.LLM_INTERACTION, context)
 
@@ -244,7 +244,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
     ) -> tuple[str, float]:
         """
         Get LLM response with retry logic for JSON parsing failures.
-        :param agent: Host agent instance
+        :param agent: Constellation agent instance
         :param prompt_message: Prompt message for LLM
         :return: Tuple of (response_text, cost)
         :raises: Exception if all retry attempts fail
@@ -289,7 +289,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
     ) -> ConstellationAgentResponse:
         """
         Parse and validate LLM response into structured format.
-        :param agent: Host agent instance
+        :param agent: Constellation agent instance
         :param response_text: Raw response text from LLM
         :return: Parsed and validated ConstellationAgentResponse object
         :raises: Exception if response parsing or validation fails
@@ -542,10 +542,10 @@ class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
 
     def __init__(self, fail_fast: bool = False) -> None:
         """
-        Initialize Host Agent memory update strategy.
+        Initialize Constellation Agent memory update strategy.
         :param fail_fast: Whether to raise exceptions immediately on errors
         """
-        super().__init__(name="host_memory_update", fail_fast=fail_fast)
+        super().__init__(name="constellation_memory_update", fail_fast=fail_fast)
 
     async def execute(
         self, agent: "ConstellationAgent", context: ProcessingContext
@@ -590,7 +590,7 @@ class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
             )
 
         except Exception as e:
-            error_msg = f"Host memory update failed: {str(e)}"
+            error_msg = f"Constellation Agent memory update failed: {str(e)}"
             self.logger.error(error_msg)
             return self.handle_error(e, ProcessingPhase.MEMORY_UPDATE, context)
 

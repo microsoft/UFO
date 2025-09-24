@@ -2,41 +2,26 @@
 # Licensed under the MIT License.
 
 """
-Host Agent Processor - Processor for Host Agent using the new framework.
-
-This processor handles the Host Agent's workflow including:
-- Desktop screenshot capture
-- Application window detection and registration
-- Third-party agent integration
-- LLM interaction with proper context building
-- Action execution and application selection
-- Memory management and logging
-
-The processor maintains backward compatibility with BaseProcessor interface
-while providing enhanced modularity, error handling, and extensibility.
+Constellation Agent Processor - Processor for Constellation Agent using the new framework.
 """
 
 
-from dataclasses import asdict
 import logging
+from dataclasses import asdict
 from typing import TYPE_CHECKING, Any, Dict, Type
 
 from rich.console import Console
 from rich.panel import Panel
 
 from ufo import utils
-from ufo.agents.processors.context.host_agent_processing_context import (
-    HostAgentProcessorContext,
-)
 from ufo.agents.processors.core.processing_middleware import EnhancedLoggingMiddleware
 from ufo.agents.processors.core.processor_framework import (
     ProcessingContext,
     ProcessingPhase,
     ProcessorTemplate,
 )
-
 from ufo.config import Config
-
+from ufo.galaxy.agents.processors.processor_context import ConstellationProcessorContext
 from ufo.galaxy.agents.processors.strategy import (
     ConstellationActionExecutionStrategy,
     ConstellationLLMInteractionStrategy,
@@ -70,8 +55,10 @@ class ConstellationAgentProcessor(ProcessorTemplate):
     interface while providing enhanced modularity and error handling.
     """
 
-    # Override the processor context class to use HostAgentProcessorContext
-    processor_context_class: Type[HostAgentProcessorContext] = HostAgentProcessorContext
+    # Override the processor context class to use ConstellationProcessorContext
+    processor_context_class: Type[ConstellationProcessorContext] = (
+        ConstellationProcessorContext
+    )
 
     def __init__(self, agent: "ConstellationAgent", global_context: Context) -> None:
         """
@@ -107,7 +94,7 @@ class ConstellationAgentProcessor(ProcessorTemplate):
         """
         Set up enhanced middleware chain with comprehensive monitoring and recovery.
         The middleware chain includes:
-        - HostAgentLoggingMiddleware: Specialized logging for Host Agent operations
+        - ConstellationLoggingMiddleware: Specialized logging for Constellation Agent operations
         """
         self.middleware_chain = [
             ConstellationLoggingMiddleware(),  # Specialized logging for Constellation Agent
@@ -131,7 +118,7 @@ class ConstellationAgentProcessor(ProcessorTemplate):
             constellation_before_json = None
 
         return {
-            "weaving_mode": self.global_context.get(ContextNames.WEAVING_MODE).value(),
+            "weaving_mode": self.global_context.get(ContextNames.WEAVING_MODE),
             "device_info": [
                 asdict(device)
                 for device in self.global_context.get(ContextNames.DEVICE_INFO)
@@ -142,31 +129,31 @@ class ConstellationAgentProcessor(ProcessorTemplate):
 
 class ConstellationLoggingMiddleware(EnhancedLoggingMiddleware):
     """
-    Specialized logging middleware for Host Agent with enhanced contextual information.
+    Specialized logging middleware for Constellation Agent with enhanced contextual information.
 
     This middleware provides:
-    - Host Agent specific progress messages with color coding
+    - Constellation Agent specific progress messages with color coding
     - Detailed step information and context logging
     - Performance metrics and execution summaries
-    - Enhanced error reporting with Host Agent context
+    - Enhanced error reporting with Constellation Agent context
     """
 
     def __init__(self) -> None:
-        """Initialize Host Agent logging middleware with appropriate log level."""
+        """Initialize Constellation Agent logging middleware with appropriate log level."""
         super().__init__(log_level=logging.INFO)
 
     async def before_process(
         self, processor: ProcessorTemplate, context: ProcessingContext
     ) -> None:
         """
-        Log Host Agent processing start with detailed context information.
-        :param processor: Host Agent processor instance
+        Log Constellation Agent processing start with detailed context information.
+        :param processor: Constellation Agent processor instance
         :param context: Processing context with round and step information
         """
         # Call parent implementation for standard logging
         await super().before_process(processor, context)
 
-        # Add Host Agent specific logging
+        # Add Constellation Agent specific logging
         round_num = context.get("round_num", 0)
         round_step = context.get("round_step", 0)
         request = context.get("request", "")
@@ -194,8 +181,8 @@ class ConstellationLoggingMiddleware(EnhancedLoggingMiddleware):
 
     async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
         """
-        Enhanced error handling for Host Agent with contextual information.
-        :param processor: Host Agent processor instance
+        Enhanced error handling for Constellation Agent with contextual information.
+        :param processor: Constellation Agent processor instance
         :param error: Exception that occurred
         """
         # Call parent implementation for standard error handling
