@@ -126,10 +126,7 @@ class ConstellationAgentProcessor(ProcessorTemplate):
 
         return {
             "weaving_mode": self.global_context.get(ContextNames.WEAVING_MODE),
-            "device_info": [
-                asdict(device)
-                for device in self.global_context.get(ContextNames.DEVICE_INFO)
-            ],
+            "device_info": [self.global_context.get(ContextNames.DEVICE_INFO)],
             "constellation_before": constellation_before_json,
         }
 

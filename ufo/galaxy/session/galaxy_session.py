@@ -187,10 +187,13 @@ class GalaxySession(BaseSession):
         self._rounds: Dict[int, BaseRound] = {}
 
         self._context = Context()
+        self._client = client
+        self.logger = logging.getLogger(__name__)
+
         self._init_context()
         self._finish = False
         self._results = {}
-        self.logger = logging.getLogger(__name__)
+
         self._results = None
 
         # Import config
@@ -199,7 +202,7 @@ class GalaxySession(BaseSession):
         self._config = Config.get_instance().config_data
 
         # Set up client and orchestrator
-        self._client = client
+
         self._orchestrator = TaskConstellationOrchestrator(
             device_manager=client.device_manager, enable_logging=True
         )
@@ -211,8 +214,6 @@ class GalaxySession(BaseSession):
         self._current_constellation: Optional[TaskConstellation] = None
         self._session_start_time: Optional[float] = None
         self._session_results: Dict[str, Any] = {}
-
-        self.logger = logging.getLogger(__name__)
 
         # Event system
         self._event_bus = get_event_bus()
@@ -226,6 +227,13 @@ class GalaxySession(BaseSession):
         Initialize the context.
         """
         super()._init_context()
+
+        self.context.set(
+            ContextNames.DEVICE_INFO, self._client.device_manager.get_all_devices()
+        )
+        self.logger.info(
+            f"The following devices has been registered and added to the context: {self.context.get(ContextNames.DEVICE_INFO)}"
+        )
 
         mcp_server_manager = MCPServerManager()
         command_dispatcher = LocalCommandDispatcher(self, mcp_server_manager)

@@ -8,14 +8,14 @@ This module provides specific strategies for constellation creation mode,
 implementing the abstract methods defined in the base strategies.
 """
 
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, List
 
 from ufo.agents.processors.schemas.actions import ActionCommandInfo
 from ufo.galaxy.agents.processors.strategies.base_constellation_strategy import (
     BaseConstellationActionExecutionStrategy,
 )
 from ufo.galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
+
 
 if TYPE_CHECKING:
     from ufo.galaxy.agents.constellation_agent import ConstellationAgent

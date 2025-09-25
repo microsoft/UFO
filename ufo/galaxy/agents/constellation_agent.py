@@ -26,6 +26,7 @@ from ufo.galaxy.agents.prompters.base_constellation_prompter import (
 )
 
 from ufo.galaxy.agents.schema import WeavingMode
+from ufo.galaxy.client.components.types import DeviceInfo
 from ufo.galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
 )
@@ -66,8 +67,6 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self,
         orchestrator: TaskConstellationOrchestrator,
         name: str = "constellation_agent",
-        main_prompt: str = "",
-        example_prompt: str = "",
     ):
         """
         Initialize the Constellation.
@@ -92,9 +91,6 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self._context_provision_executed = False
         self._event_bus = get_event_bus()
 
-        # Store prompt templates for later use with factory
-        self.main_prompt = main_prompt
-        self.example_prompt = example_prompt
         self.prompter = None  # Will be initialized when weaving_mode is known
 
         # Initialize with start state
@@ -300,18 +296,12 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         :param weaving_mode: The weaving mode for the agent.
         :return: The prompter for the agent.
         """
-        return ConstellationPrompterFactory.create_prompter(
-            weaving_mode=weaving_mode,
-            creation_prompt_template=self.main_prompt,
-            editing_prompt_template=self.main_prompt,  # Assuming same template for now
-            creation_example_prompt_template=self.example_prompt,
-            editing_example_prompt_template=self.example_prompt,  # Assuming same template for now
-        )
+        return ConstellationPrompterFactory.create_prompter(weaving_mode=weaving_mode)
 
     def message_constructor(
         self,
         request: str,
-        device_info: Dict[str, str],
+        device_info: Dict[str, DeviceInfo],
         constellation: TaskConstellation,
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """

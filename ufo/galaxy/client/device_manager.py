@@ -240,32 +240,6 @@ class ConstellationDeviceManager:
             self.logger.error(f"❌ Task {task_id} failed on device {device_id}: {e}")
             raise
 
-    async def execute_task_direct(
-        self,
-        task_id: str,
-        device_id: str,
-        description: str,
-        task_data: Dict[str, Any],
-        timeout: float = 300.0,
-    ) -> Dict[str, Any]:
-        """
-        直接执行任务，整合原TaskExecutionManager功能
-
-        :param task_id: Task identifier
-        :param device_id: Target device ID
-        :param description: Task description
-        :param task_data: Task data
-        :param timeout: Timeout in seconds
-        :return: Task execution result
-        """
-        return await self.assign_task_to_device(
-            task_id=task_id,
-            device_id=device_id,
-            task_description=description,
-            task_data=task_data,
-            timeout=timeout,
-        )
-
     # Event handler registration (delegate to EventManager)
     def add_connection_handler(self, handler: Callable) -> None:
         """Add a handler for device connection events"""

@@ -34,6 +34,7 @@ from ufo.galaxy.agents.schema import (
     ConstellationRequestLog,
     WeavingMode,
 )
+from ufo.galaxy.client.components.types import DeviceInfo
 from ufo.galaxy.constellation.task_constellation import TaskConstellation
 from ufo.llm import AgentType
 from ufo.module.context import Context, ContextNames
@@ -89,7 +90,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
         try:
             # Extract context variables
             session_step = context.get_local("session_step", 0)
-            device_info = context.get_local("device_info", [])
+            device_info = context.get_local("device_info", {})
             constellation: TaskConstellation = context.get_global("CONSTELLATION")
             request = context.get("request", "")
             request_logger = context.get_global("request_logger")
@@ -139,7 +140,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
     async def _build_comprehensive_prompt(
         self,
         agent: "ConstellationAgent",
-        device_info: List[str],
+        device_info: Dict[str, DeviceInfo],
         constellation: TaskConstellation,
         request: str,
         session_step: int,
@@ -220,7 +221,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             try:
                 # Get response from LLM
                 response_text, cost = agent.get_response(
-                    prompt_message, AgentType.HOST, use_backup_engine=True
+                    prompt_message, AgentType.CONSTELLATION, use_backup_engine=True
                 )
 
                 # Validate that response can be parsed as JSON

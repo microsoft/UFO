@@ -335,6 +335,61 @@ class TaskConstellation(IConstellation):
         """Get dependencies for a specific task."""
         return [dep for dep in self._dependencies.values() if dep.to_task_id == task_id]
 
+    def get_modifiable_tasks(self) -> List[TaskStar]:
+        """
+        Get all tasks that can be modified (PENDING or WAITING_DEPENDENCY status).
+
+        :return: List of tasks that are safe to modify
+        """
+        modifiable_statuses = {TaskStatus.PENDING, TaskStatus.WAITING_DEPENDENCY}
+        return [
+            task for task in self._tasks.values() if task.status in modifiable_statuses
+        ]
+
+    def get_modifiable_dependencies(self) -> List[TaskStarLine]:
+        """
+        Get all dependencies that can be modified.
+        A dependency can be modified if its target task (to_task_id) has not started.
+
+        :return: List of dependencies that are safe to modify
+        """
+        modifiable_deps = []
+        modifiable_statuses = {TaskStatus.PENDING, TaskStatus.WAITING_DEPENDENCY}
+
+        for dep in self._dependencies.values():
+            target_task = self._tasks.get(dep.to_task_id)
+            if target_task and target_task.status in modifiable_statuses:
+                modifiable_deps.append(dep)
+
+        return modifiable_deps
+
+    def is_task_modifiable(self, task_id: str) -> bool:
+        """
+        Check if a specific task can be modified.
+
+        :param task_id: ID of the task to check
+        :return: True if task is modifiable, False otherwise
+        """
+        task = self._tasks.get(task_id)
+        if not task:
+            return False
+        return task.status in {TaskStatus.PENDING, TaskStatus.WAITING_DEPENDENCY}
+
+    def is_dependency_modifiable(self, dependency_id: str) -> bool:
+        """
+        Check if a specific dependency can be modified.
+
+        :param dependency_id: ID of the dependency to check
+        :return: True if dependency is modifiable, False otherwise
+        """
+        dep = self._dependencies.get(dependency_id)
+        if not dep:
+            return False
+        target_task = self._tasks.get(dep.to_task_id)
+        if not target_task:
+            return False
+        return target_task.status in {TaskStatus.PENDING, TaskStatus.WAITING_DEPENDENCY}
+
     def is_complete(self) -> bool:
         """Check if the entire constellation has completed execution."""
         return all(task.is_terminal for task in self._tasks.values())
