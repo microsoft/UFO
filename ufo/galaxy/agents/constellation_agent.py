@@ -87,7 +87,9 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         self._context_provision_executed = False
         self._event_bus = get_event_bus()
-        self.prompter = self.get_prompter(main_prompt, example_prompt)
+        self.prompter: ConstellationAgentPrompter = self.get_prompter(
+            main_prompt, example_prompt
+        )
 
         # Initialize with start state
         from .constellation_agent_states import StartConstellationAgentState
