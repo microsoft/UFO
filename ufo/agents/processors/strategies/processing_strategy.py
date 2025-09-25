@@ -2,7 +2,7 @@ import logging
 from abc import ABC, abstractmethod
 from typing import List, Optional, Protocol, TYPE_CHECKING
 import time
-from ufo.agents.processors.context.processing_context import (
+from ufo.agents.processors.core.processor_framework import (
     ProcessingContext,
     ProcessingPhase,
     ProcessingResult,

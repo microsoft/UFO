@@ -20,7 +20,11 @@ from ufo.agents.agent.basic import BasicAgent
 from ufo.contracts.contracts import Command, MCPToolInfo, ResultStatus
 from ufo.galaxy.agents.constellation_agent_states import ConstellationAgentStatus
 from ufo.galaxy.agents.processors.processor import ConstellationAgentProcessor
-from ufo.galaxy.agents.prompter import ConstellationAgentPrompter
+from ufo.galaxy.agents.prompters.base_constellation_prompter import (
+    BaseConstellationPrompter,
+    ConstellationPrompterFactory,
+)
+
 from ufo.galaxy.agents.schema import WeavingMode
 from ufo.galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
@@ -87,9 +91,11 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         self._context_provision_executed = False
         self._event_bus = get_event_bus()
-        self.prompter: ConstellationAgentPrompter = self.get_prompter(
-            main_prompt, example_prompt
-        )
+
+        # Store prompt templates for later use with factory
+        self.main_prompt = main_prompt
+        self.example_prompt = example_prompt
+        self.prompter = None  # Will be initialized when weaving_mode is known
 
         # Initialize with start state
         from .constellation_agent_states import StartConstellationAgentState
@@ -114,6 +120,10 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         :return: Generated constellation
         :raises ConstellationError: If constellation generation fails
         """
+
+        if self.prompter is None:
+            weaving_mode = context.get(ContextNames.WEAVING_MODE)
+            self.prompter = self.get_prompter(weaving_mode)
 
         if not self._context_provision_executed:
             await self.context_provision(context=context)
@@ -154,6 +164,10 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         :return: Updated constellation
         :raises TaskExecutionError: If result processing fails
         """
+
+        if self.prompter is None:
+            weaving_mode = context.get(ContextNames.WEAVING_MODE)
+            self.prompter = self.get_prompter(weaving_mode)
 
         if not self._context_provision_executed:
             await self.context_provision(context=context)
@@ -280,33 +294,40 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         self.prompter.create_api_prompt_template(tools=tools_info)
 
-    def get_prompter(
-        self, main_prompt: str, example_prompt: str, weaving_mode: WeavingMode
-    ) -> ConstellationAgentPrompter:
+    def get_prompter(self, weaving_mode: WeavingMode) -> BaseConstellationPrompter:
         """
-        Get the prompter for the agent.
-        :param main_prompt: The main prompt for the agent.
-        :param example_prompt: The example prompt for the agent.
+        Get the prompter for the agent using factory pattern.
         :param weaving_mode: The weaving mode for the agent.
         :return: The prompter for the agent.
         """
-
-        return ConstellationAgentPrompter(main_prompt, example_prompt, weaving_mode)
+        return ConstellationPrompterFactory.create_prompter(
+            weaving_mode=weaving_mode,
+            creation_prompt_template=self.main_prompt,
+            editing_prompt_template=self.main_prompt,  # Assuming same template for now
+            creation_example_prompt_template=self.example_prompt,
+            editing_example_prompt_template=self.example_prompt,  # Assuming same template for now
+        )
 
     def message_constructor(
         self,
+        request: str,
         device_info: Dict[str, str],
         constellation: TaskConstellation,
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the message for LLM interaction.
-
-        Returns:
-            List of message dictionaries for LLM
+        :param request: The user request.
+        :param device_info: Information about the user's device.
+        :param constellation: The current task constellation.
+        :return: A list of message dictionaries for LLM interaction.
         """
+
+        if not self.prompter:
+            raise ValueError("Prompter is not initialized")
+
         system_message = self.prompter.system_prompt_construction()
         user_message = self.prompter.user_content_construction(
-            device_info=device_info, constellation=constellation
+            request=request, device_info=device_info, constellation=constellation
         )
 
         prompt = self.prompter.prompt_construction(system_message, user_message)

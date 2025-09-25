@@ -1,10 +1,10 @@
-# TaskConstellation 和 ConstellationParser 单一职责重构总结
+# Constellation Agent 策略和 Prompter 重构总结
 
 ## 重构概述
 
-根据用户要求，我们对 TaskConstellation 和 TaskConstellationOrchestrator 的职责混乱问题进行了重构，创建了单独的类来分离不同的职责，遵循单一职责原则。
+按照软件工程和设计模式的最佳实践，我们成功将 Constellation Agent 的策略和 Prompter 从统一实现重构为基于 WeavingMode 的分离实现。
 
-## 主要问题分析
+## 问题分析
 
 ### 原有问题
 1. **TaskConstellation** 既负责 DAG 管理，又负责序列化/反序列化

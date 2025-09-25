@@ -26,13 +26,12 @@ import logging
 import sys
 from pathlib import Path
 
-from rich.console import Console
-from ufo.logging.setup import setup_logger
-
-
 # Add UFO2 to path to enable imports
 UFO_ROOT = Path(__file__).parent.parent.parent
 sys.path.insert(0, str(UFO_ROOT))
+
+from rich.console import Console
+from ufo.logging.setup import setup_logger
 
 
 def parse_args():

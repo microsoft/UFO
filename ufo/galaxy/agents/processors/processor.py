@@ -22,10 +22,8 @@ from ufo.agents.processors.core.processor_framework import (
 )
 from ufo.config import Config
 from ufo.galaxy.agents.processors.processor_context import ConstellationProcessorContext
-from ufo.galaxy.agents.processors.strategy import (
-    ConstellationActionExecutionStrategy,
-    ConstellationLLMInteractionStrategy,
-    ConstellationMemoryUpdateStrategy,
+from ufo.galaxy.agents.processors.factory.constellation_factory import (
+    ConstellationStrategyFactory,
 )
 from ufo.module.context import Context, ContextNames
 
@@ -73,19 +71,28 @@ class ConstellationAgentProcessor(ProcessorTemplate):
     def _setup_strategies(self) -> None:
         """
         Configure processing strategies with enhanced error handling and logging capabilities.
+        Uses factory pattern to create appropriate strategies based on weaving mode.
         """
+        # Get weaving mode from global context
+        weaving_mode = self.global_context.get(ContextNames.WEAVING_MODE)
+
+        if not weaving_mode:
+            raise ValueError("Weaving mode must be specified in global context")
+
+        # Create strategies using factory based on weaving mode
         self.strategies[ProcessingPhase.LLM_INTERACTION] = (
-            ConstellationLLMInteractionStrategy(
-                fail_fast=True  # LLM interaction failure should trigger recovery
+            ConstellationStrategyFactory.create_llm_interaction_strategy(
+                fail_fast=True,  # LLM interaction failure should trigger recovery
             )
         )
         self.strategies[ProcessingPhase.ACTION_EXECUTION] = (
-            ConstellationActionExecutionStrategy(
-                fail_fast=False  # Action failures can be handled gracefully
+            ConstellationStrategyFactory.create_action_execution_strategy(
+                weaving_mode=weaving_mode,
+                fail_fast=False,  # Action failures can be handled gracefully
             )
         )
         self.strategies[ProcessingPhase.MEMORY_UPDATE] = (
-            ConstellationMemoryUpdateStrategy(
+            ConstellationStrategyFactory.create_memory_update_strategy(
                 fail_fast=False  # Memory update failures shouldn't stop the process
             )
         )
