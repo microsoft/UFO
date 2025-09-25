@@ -155,3 +155,13 @@ THIRD_PARTY_AGENT_CONFIG: {
     }
 }  # Configuration for third-party agents, including agent name, prompt path, etc.
 
+# Constellation
+CONSTELLATION_CREATION_PROMPT: "ufo/prompts/share/constellation/constellation_creation.yaml"  # The prompt for the app selection
+
+CONSTELLATION_EDITING_PROMPT: "ufo/prompts/share/constellation/constellation_editing.yaml"  # The prompt for the action selection
+
+CONSTELLATION_CREATION_EXAMPLE_PROMPT: "ufo/prompts/examples/constellation/constellation_creation_example.yaml"  # The prompt for the evaluation
+
+CONSTELLATION_EDITING_EXAMPLE_PROMPT: "ufo/prompts/examples/constellation/constellation_editing_example.yaml"  # The prompt for the app selection
+
+DEVICE_INFO: ufo/config/devices.yaml  # The device information file path

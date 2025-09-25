@@ -118,7 +118,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             self.logger.info("Parsing LLM response")
             parsed_response = self._parse_and_validate_response(agent, response_text)
 
-            self.logger.info(f"Constellation LLM interaction  completed successfully")
+            self.logger.info(f"Constellation LLM interaction completed successfully")
 
             return ProcessingResult(
                 success=True,

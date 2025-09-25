@@ -11,12 +11,7 @@ based on the weaving mode, following the Factory pattern for better modularity.
 from typing import Dict, Type
 
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
-from ufo.galaxy.agents.prompters.constellation_creation_prompter import (
-    ConstellationCreationPrompter,
-)
-from ufo.galaxy.agents.prompters.constellation_editing_prompter import (
-    ConstellationEditingPrompter,
-)
+
 from ufo.galaxy.agents.processors.strategies.base_constellation_strategy import (
     ConstellationLLMInteractionStrategy,
     ConstellationMemoryUpdateStrategy,
@@ -28,7 +23,6 @@ from ufo.galaxy.agents.processors.strategies.constellation_editing_strategy impo
     ConstellationEditingActionExecutionStrategy,
 )
 from ufo.galaxy.agents.schema import WeavingMode
-from ufo.prompter.basic import BasicPrompter
 
 
 class ConstellationStrategyFactory:

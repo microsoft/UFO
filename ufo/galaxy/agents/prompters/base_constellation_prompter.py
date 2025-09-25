@@ -333,11 +333,11 @@ class ConstellationPrompterFactory:
 
         # TODO
         if weaving_mode == WeavingMode.CREATION:
-            prompt_template = configs
-            example_prompt_template = configs
+            prompt_template = configs["CONSTELLATION_CREATION_PROMPT"]
+            example_prompt_template = configs["CONSTELLATION_CREATION_EXAMPLE_PROMPT"]
         elif weaving_mode == WeavingMode.EDITING:
-            prompt_template = configs
-            example_prompt_template = configs
+            prompt_template = configs["CONSTELLATION_EDITING_PROMPT"]
+            example_prompt_template = configs["CONSTELLATION_EDITING_EXAMPLE_PROMPT"]
 
         prompter_class = cls._prompter_classes[weaving_mode]
 

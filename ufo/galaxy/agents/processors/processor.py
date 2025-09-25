@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any, Dict, Type
 from rich.console import Console
 from rich.panel import Panel
 
+
 from ufo import utils
 from ufo.agents.processors.core.processing_middleware import EnhancedLoggingMiddleware
 from ufo.agents.processors.core.processor_framework import (
@@ -22,9 +23,10 @@ from ufo.agents.processors.core.processor_framework import (
 )
 from ufo.config import Config
 from ufo.galaxy.agents.processors.processor_context import ConstellationProcessorContext
-from ufo.galaxy.agents.processors.factory.constellation_factory import (
+from ufo.galaxy.agents.processors.strategies.constellation_factory import (
     ConstellationStrategyFactory,
 )
+from ufo.galaxy.constellation.task_constellation import TaskConstellation
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
@@ -117,7 +119,9 @@ class ConstellationAgentProcessor(ProcessorTemplate):
         :return: Dictionary of processor-specific context initialization data
         """
 
-        before_constellation = self.global_context.get(ContextNames.CONSTELLATION)
+        before_constellation: TaskConstellation = self.global_context.get(
+            ContextNames.CONSTELLATION
+        )
 
         if before_constellation:
             constellation_before_json = before_constellation.to_json()

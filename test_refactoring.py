@@ -18,7 +18,7 @@ project_root = os.path.abspath(
 )
 sys.path.insert(0, project_root)
 
-from ufo.galaxy.agents.processors.factory.constellation_factory import (
+from ufo.galaxy.agents.processors.strategies.constellation_factory import (
     ConstellationStrategyFactory,
     ConstellationPrompterFactory,
 )
