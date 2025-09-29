@@ -297,6 +297,11 @@ class TestRealGalaxySessionWithMockDevices:
         )
         console_handler.setFormatter(formatter)
         session_logger.addHandler(console_handler)
+        
+        # Also configure agent loggers to capture ConstellationAgent logs
+        agent_logger = logging.getLogger("ufo.galaxy.agents")
+        agent_logger.setLevel(logging.DEBUG)
+        agent_logger.addHandler(console_handler)
 
         try:
             print("\n🎬 Starting real session execution...")
@@ -331,6 +336,7 @@ class TestRealGalaxySessionWithMockDevices:
         finally:
             # Remove the handler to avoid duplicate logs
             session_logger.removeHandler(console_handler)
+            agent_logger.removeHandler(console_handler)
 
         # Analyze session results
         print("\n📊 Session Analysis:")

@@ -125,9 +125,8 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         :raises ConstellationError: If constellation generation fails
         """
 
-        if self.prompter is None:
-            weaving_mode = context.get(ContextNames.WEAVING_MODE)
-            self.prompter = self.get_prompter(weaving_mode)
+        weaving_mode = context.get(ContextNames.WEAVING_MODE)
+        self.prompter = self.get_prompter(weaving_mode)
 
         if not self._context_provision_executed:
             await self.context_provision(context=context)
@@ -169,9 +168,8 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         :raises TaskExecutionError: If result processing fails
         """
 
-        if self.prompter is None:
-            weaving_mode = context.get(ContextNames.WEAVING_MODE)
-            self.prompter = self.get_prompter(weaving_mode)
+        weaving_mode = context.get(ContextNames.WEAVING_MODE)
+        self.prompter = self.get_prompter(weaving_mode)
 
         if not self._context_provision_executed:
             await self.context_provision(context=context)
@@ -304,6 +302,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         :param weaving_mode: The weaving mode for the agent.
         :return: The prompter for the agent.
         """
+        self.logger.info(f"Creating prompter for {weaving_mode}")
         return ConstellationPrompterFactory.create_prompter(weaving_mode=weaving_mode)
 
     def message_constructor(
@@ -537,7 +536,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
                 f"Only TaskEvent instances can be added to the task completion queue."
             )
 
-        if not event.event_type not in [
+        if event.event_type not in [
             EventType.TASK_COMPLETED,
             EventType.TASK_FAILED,
         ]:
@@ -571,7 +570,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
                 f"Only ConstellationEvent instances can be added to the constellation completion queue."
             )
 
-        if not event.event_type != EventType.CONSTELLATION_COMPLETED:
+        if event.event_type != EventType.CONSTELLATION_COMPLETED:
             raise TypeError(
                 f"Expected ConstellationEvent with event_type of [CONSTELLATION_COMPLETED], "
                 f"got {event.event_type}."

@@ -247,9 +247,11 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
         return: The prompt for app selection.
         """
         examples = self.examples_prompt_helper()
+        apis = self.api_prompt_template
 
         return self.prompt_template["system"].format(
             examples=examples,
+            apis=apis,
         )
 
     def user_prompt_construction(
@@ -319,7 +321,9 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
         Create the API prompt template.
         :param tools: The list of tools.
         """
-        self.api_prompt_template = BasicPrompter.tools_to_llm_prompt(tools)
+        tool_prompt = BasicPrompter.tools_to_llm_prompt(tools)
+        self.api_prompt_template = tool_prompt
+        return tool_prompt
 
 
 class ConstellationPrompterFactory:

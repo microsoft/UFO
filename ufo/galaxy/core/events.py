@@ -188,11 +188,15 @@ class EventBus(IEventPublisher):
         """
         if event_types is None:
             self._all_observers.add(observer)
+            self.logger.debug(f"Observer {observer} subscribed to all events.")
         else:
             for event_type in event_types:
                 if event_type not in self._observers:
                     self._observers[event_type] = set()
                 self._observers[event_type].add(observer)
+                self.logger.info(
+                    f"Observer {observer} subscribed to event type {event_type}."
+                )
 
     def unsubscribe(self, observer: IEventObserver) -> None:
         """
@@ -219,6 +223,8 @@ class EventBus(IEventPublisher):
         :return: None
         """
         observers_to_notify: Set[IEventObserver] = set()
+
+        self.logger.info(f"Publishing event: {event.event_type} from {event.source_id}")
 
         # Add observers subscribed to this specific event type
         if event.event_type in self._observers:

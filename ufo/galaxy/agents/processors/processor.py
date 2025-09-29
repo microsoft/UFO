@@ -173,8 +173,11 @@ class ConstellationLoggingMiddleware(EnhancedLoggingMiddleware):
             f"Round: {round_num + 1}, Step: {round_step + 1}, "
             f"Request: '{request[:100]}{'...' if len(request) > 100 else ''}'"
         )
+        weaving_mode = context.global_context.get(
+            ContextNames.WEAVING_MODE
+        ).value.upper()
 
-        panel_title = f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
+        panel_title = f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}, Weaving Mode: {weaving_mode}"
         panel_content = (
             f"Analyzing user intent and decomposing request into device agents..."
         )

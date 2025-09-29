@@ -182,7 +182,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
     def _log_request_data(
         self,
         session_step: int,
-        device_info: str,
+        device_info: Dict[str, DeviceInfo],
         constellation_json: str,
         request: str,
         weaving_mode: str,
@@ -203,7 +203,9 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             )
 
             # Log request data as JSON
-            request_log_str = json.dumps(asdict(request_data), ensure_ascii=False)
+            request_log_str = json.dumps(
+                asdict(request_data), ensure_ascii=False, default=str
+            )
 
             # Use request logger if available
             if request_logger:

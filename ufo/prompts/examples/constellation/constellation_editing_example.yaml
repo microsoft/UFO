@@ -1,0 +1,378 @@
+version: 1.0
+
+example1: 
+  Request: "Add a validation step after downloading the sales report to check file integrity."
+  Current-Constellation:
+    tasks:
+      - task_id: "t1"
+        name: "Download report"
+        description: "Download today's sales report file from server-1 and save it into the default report directory."
+        tips: ["Ensure correct file path", "Check permissions on server directory"]
+        target_device_id: "server-1"
+    dependencies: []
+  Device-Info:
+    - device_id: "server-1"
+      os: "linux"
+      capabilities: ["download", "file_access", "file_validation"]
+    - device_id: "laptop-1"
+      os: "windows"
+      capabilities: ["local_storage", "file_view"]
+  Response:
+    thought: >
+      The user wants to add validation after the download task. I'll add a new task t2 for file integrity checking
+      that depends on the download task t1. Since server-1 has file_validation capability, I'll assign the 
+      validation task there. This creates a simple sequential DAG: t1 -> t2.
+    status: "CONTINUE"
+    constellation:
+      tasks:
+        - task_id: "t1"
+          name: "Download report"
+          description: "Download today's sales report file from server-1 and save it into the default report directory."
+          tips: ["Ensure correct file path", "Check permissions on server directory"]
+          target_device_id: "server-1"
+        - task_id: "t2"
+          name: "Validate file integrity"
+          description: "Check the downloaded sales report file for corruption using checksum validation."
+          tips: ["Use MD5 or SHA256 checksum", "Verify file size matches expected"]
+          target_device_id: "server-1"
+      dependencies:
+        - line_id: "l1"
+          from_task_id: "t1"
+          to_task_id: "t2"
+          condition_description: "Sales report file must be successfully downloaded and accessible."
+
+
+example2:
+  Request: "Remove the email sending step and instead save the compressed logs to a network drive."
+  Current-Constellation:
+    tasks:
+      - task_id: "t1"
+        name: "Extract logs"
+        description: "Retrieve all error logs from /var/log directory on server-2."
+        tips: ["Use sudo if permission denied", "Filter by 'ERROR' keyword"]
+        target_device_id: "server-2"
+      - task_id: "t2"
+        name: "Compress logs"
+        description: "Compress the retrieved error logs into a single .tar.gz file."
+        tips: ["Ensure tar and gzip are installed"]
+        target_device_id: "server-2"
+      - task_id: "t3"
+        name: "Send email"
+        description: "Send the compressed log archive to user@example.com as an email attachment."
+        tips: ["Check email configuration", "Ensure attachment size < 20MB"]
+        target_device_id: "laptop-2"
+    dependencies:
+      - line_id: "l1"
+        from_task_id: "t1"
+        to_task_id: "t2"
+        condition_description: "Logs must be successfully extracted."
+      - line_id: "l2"
+        from_task_id: "t2"
+        to_task_id: "t3"
+        condition_description: "Compressed file must be generated."
+  Device-Info:
+    - device_id: "server-2"
+      os: "linux"
+      capabilities: ["log_access", "compression", "network_storage"]
+    - device_id: "laptop-2"
+      os: "windows"
+      capabilities: ["email_client"]
+  Response:
+    thought: >
+      The user wants to remove the email task (t3) and replace it with saving to network drive. I'll remove 
+      task t3 and dependency l2, then add a new task t3 for network storage that depends on t2. Server-2 
+      has network_storage capability, so I'll assign the new task there. This maintains the sequential flow 
+      but changes the final destination.
+    status: "CONTINUE"
+    constellation:
+      tasks:
+        - task_id: "t1"
+          name: "Extract logs"
+          description: "Retrieve all error logs from /var/log directory on server-2."
+          tips: ["Use sudo if permission denied", "Filter by 'ERROR' keyword"]
+          target_device_id: "server-2"
+        - task_id: "t2"
+          name: "Compress logs"
+          description: "Compress the retrieved error logs into a single .tar.gz file."
+          tips: ["Ensure tar and gzip are installed"]
+          target_device_id: "server-2"
+        - task_id: "t3"
+          name: "Save to network drive"
+          description: "Copy the compressed log archive to the shared network drive at /mnt/shared/logs/."
+          tips: ["Ensure network drive is mounted", "Check write permissions", "Use unique filename with timestamp"]
+          target_device_id: "server-2"
+      dependencies:
+        - line_id: "l1"
+          from_task_id: "t1"
+          to_task_id: "t2"
+          condition_description: "Logs must be successfully extracted."
+        - line_id: "l2"
+          from_task_id: "t2"
+          to_task_id: "t3"
+          condition_description: "Compressed file must be generated and ready for storage."
+
+
+example3:
+  Request: "Add a backup task that runs in parallel with the Excel generation, backing up the collected metrics."
+  Current-Constellation:
+    tasks:
+      - task_id: "t1"
+        name: "Collect metrics server-a"
+        description: "Retrieve CPU usage metrics from server-a."
+        tips: ["Use top or mpstat command", "Ensure timestamps are included"]
+        target_device_id: "server-a"
+      - task_id: "t2"
+        name: "Collect metrics server-b"
+        description: "Retrieve CPU usage metrics from server-b."
+        tips: ["Use top or mpstat command", "Ensure timestamps are included"]
+        target_device_id: "server-b"
+      - task_id: "t3"
+        name: "Generate Excel"
+        description: "Combine collected metrics into a single Excel file with two sheets, one per server."
+        tips: ["Use consistent formatting", "Label sheets clearly"]
+        target_device_id: "workstation-1"
+    dependencies:
+      - line_id: "l1"
+        from_task_id: "t1"
+        to_task_id: "t3"
+        condition_description: "Metrics from server-a are collected."
+      - line_id: "l2"
+        from_task_id: "t2"
+        to_task_id: "t3"
+        condition_description: "Metrics from server-b are collected."
+  Device-Info:
+    - device_id: "server-a"
+      os: "linux"
+      capabilities: ["metrics_collection", "backup"]
+    - device_id: "server-b"
+      os: "linux"
+      capabilities: ["metrics_collection", "backup"]
+    - device_id: "workstation-1"
+      os: "windows"
+      capabilities: ["excel_editing"]
+  Response:
+    thought: >
+      The user wants to add a backup task that runs in parallel with Excel generation. I'll add task t4 for 
+      backing up collected metrics. Since both server-a and server-b have backup capability, I'll assign it 
+      to server-a. The backup task should depend on both metric collection tasks (t1 and t2) but can run 
+      in parallel with Excel generation (t3). This creates a diamond-shaped DAG where t4 and t3 both depend 
+      on t1 and t2 but are independent of each other.
+    status: "CONTINUE"
+    constellation:
+      tasks:
+        - task_id: "t1"
+          name: "Collect metrics server-a"
+          description: "Retrieve CPU usage metrics from server-a."
+          tips: ["Use top or mpstat command", "Ensure timestamps are included"]
+          target_device_id: "server-a"
+        - task_id: "t2"
+          name: "Collect metrics server-b"
+          description: "Retrieve CPU usage metrics from server-b."
+          tips: ["Use top or mpstat command", "Ensure timestamps are included"]
+          target_device_id: "server-b"
+        - task_id: "t3"
+          name: "Generate Excel"
+          description: "Combine collected metrics into a single Excel file with two sheets, one per server."
+          tips: ["Use consistent formatting", "Label sheets clearly"]
+          target_device_id: "workstation-1"
+        - task_id: "t4"
+          name: "Backup metrics"
+          description: "Create backup copies of the collected metrics from both servers in compressed archive format."
+          tips: ["Include timestamp in backup filename", "Store in secure backup location", "Verify backup integrity"]
+          target_device_id: "server-a"
+      dependencies:
+        - line_id: "l1"
+          from_task_id: "t1"
+          to_task_id: "t3"
+          condition_description: "Metrics from server-a are collected."
+        - line_id: "l2"
+          from_task_id: "t2"
+          to_task_id: "t3"
+          condition_description: "Metrics from server-b are collected."
+        - line_id: "l3"
+          from_task_id: "t1"
+          to_task_id: "t4"
+          condition_description: "Metrics from server-a are collected and available for backup."
+        - line_id: "l4"
+          from_task_id: "t2"
+          to_task_id: "t4"
+          condition_description: "Metrics from server-b are collected and available for backup."
+
+
+example4:
+  Request: "Change the PowerPoint task to run on a different device with presentation capabilities."
+  Current-Constellation:
+    tasks:
+      - task_id: "t5"
+        name: "Merge logs"
+        description: "Combine cleaned logs from srv1 and srv2 into a single master file."
+        tips: ["Ensure no duplicates", "Sort by timestamp"]
+        target_device_id: "pc1"
+      - task_id: "t6"
+        name: "Create PPT visualization"
+        description: "Generate PowerPoint slides summarizing key error trends from merged logs."
+        tips: ["Use charts for visualization", "Highlight peak error times"]
+        target_device_id: "pc1"
+    dependencies:
+      - line_id: "l5"
+        from_task_id: "t5"
+        to_task_id: "t6"
+        condition_description: "Merged logs ready."
+  Device-Info:
+    - device_id: "pc1"
+      os: "windows"
+      capabilities: ["file_merge"]
+    - device_id: "presentation-pc"
+      os: "windows"
+      capabilities: ["ppt_edit", "advanced_charts"]
+  Response:
+    thought: >
+      The user wants to change the PowerPoint task to run on presentation-pc instead of pc1. I need to modify 
+      task t6 to use presentation-pc as the target_device_id. The presentation-pc has ppt_edit capability 
+      which is required for this task. The dependency structure remains the same - t6 still depends on t5.
+    status: "CONTINUE"
+    constellation:
+      tasks:
+        - task_id: "t5"
+          name: "Merge logs"
+          description: "Combine cleaned logs from srv1 and srv2 into a single master file."
+          tips: ["Ensure no duplicates", "Sort by timestamp"]
+          target_device_id: "pc1"
+        - task_id: "t6"
+          name: "Create PPT visualization"
+          description: "Generate PowerPoint slides summarizing key error trends from merged logs."
+          tips: ["Use charts for visualization", "Highlight peak error times", "Leverage advanced charting capabilities"]
+          target_device_id: "presentation-pc"
+      dependencies:
+        - line_id: "l5"
+          from_task_id: "t5"
+          to_task_id: "t6"
+          condition_description: "Merged logs ready and accessible to presentation-pc."
+
+
+example5:
+  Request: "Insert a data transformation step between backup and verification to convert the backup format."
+  Current-Constellation:
+    tasks:
+      - task_id: "t1"
+        name: "Run backup"
+        description: "Perform a full backup of /data directory and compress into a .zip file."
+        tips: ["Check disk space before backup", "Ensure compression tools are installed"]
+        target_device_id: "backup-srv"
+      - task_id: "t2"
+        name: "Verify backup integrity"
+        description: "Compute checksum of the compressed backup file and validate integrity against reference hash."
+        tips: ["Use SHA256 checksum", "Ensure file not corrupted during transfer"]
+        target_device_id: "qa-pc"
+    dependencies:
+      - line_id: "l1"
+        from_task_id: "t1"
+        to_task_id: "t2"
+        condition_description: "Backup file must exist and be accessible."
+  Device-Info:
+    - device_id: "backup-srv"
+      os: "linux"
+      capabilities: ["file_backup", "compression", "format_conversion"]
+    - device_id: "qa-pc"
+      os: "windows"
+      capabilities: ["checksum", "file_validation"]
+  Response:
+    thought: >
+      The user wants to insert a data transformation step between t1 (backup) and t2 (verification). I'll add 
+      a new task t3 for format conversion that depends on t1, and modify the dependency so that t2 depends on 
+      t3 instead of t1. Since backup-srv has format_conversion capability, I'll assign the new task there. 
+      I need to remove the existing l1 dependency and add new dependencies: t1 -> t3 and t3 -> t2.
+    status: "CONTINUE"
+    constellation:
+      tasks:
+        - task_id: "t1"
+          name: "Run backup"
+          description: "Perform a full backup of /data directory and compress into a .zip file."
+          tips: ["Check disk space before backup", "Ensure compression tools are installed"]
+          target_device_id: "backup-srv"
+        - task_id: "t3"
+          name: "Convert backup format"
+          description: "Transform the .zip backup file into .tar.gz format for standardized processing."
+          tips: ["Ensure both compression formats are supported", "Verify conversion maintains data integrity"]
+          target_device_id: "backup-srv"
+        - task_id: "t2"
+          name: "Verify backup integrity"
+          description: "Compute checksum of the converted backup file and validate integrity against reference hash."
+          tips: ["Use SHA256 checksum", "Ensure file not corrupted during conversion"]
+          target_device_id: "qa-pc"
+      dependencies:
+        - line_id: "l1"
+          from_task_id: "t1"
+          to_task_id: "t3"
+          condition_description: "Original backup file must be created and accessible."
+        - line_id: "l2"
+          from_task_id: "t3"
+          to_task_id: "t2"
+          condition_description: "Converted backup file must be ready for validation."
+
+
+example6:
+  Request: "Remove the Excel report generation but keep the PowerPoint creation, and add a notification task that runs after PowerPoint is complete."
+  Current-Constellation:
+    tasks:
+      - task_id: "t5"
+        name: "Merge summaries"
+        description: "Merge summaries from srvA and srvB into a master dataset."
+        tips: ["Sort by timestamp", "Avoid duplicate rows"]
+        target_device_id: "analyst-pc"
+      - task_id: "t6"
+        name: "Update Excel report"
+        description: "Generate an Excel report from the merged dataset with pivot tables and charts."
+        tips: ["Use sheet names per server", "Format cells consistently"]
+        target_device_id: "analyst-pc"
+      - task_id: "t7"
+        name: "Create PowerPoint slides"
+        description: "Create a PowerPoint deck with key insights from merged dataset."
+        tips: ["Highlight trends", "Use charts for visualization"]
+        target_device_id: "analyst-pc"
+    dependencies:
+      - line_id: "l5"
+        from_task_id: "t5"
+        to_task_id: "t6"
+        condition_description: "Merged dataset available."
+      - line_id: "l6"
+        from_task_id: "t5"
+        to_task_id: "t7"
+        condition_description: "Merged dataset available."
+  Device-Info:
+    - device_id: "analyst-pc"
+      os: "windows"
+      capabilities: ["excel_editing", "ppt_edit", "email_notification"]
+  Response:
+    thought: >
+      The user wants to remove Excel task (t6) and its dependency (l5), keep PowerPoint task (t7), and add a 
+      notification task after PowerPoint completion. I'll remove t6 and l5, keep t5 and t7 with l6, and add 
+      new task t8 for notification that depends on t7. Since analyst-pc has email_notification capability, 
+      I'll assign the notification task there. The final flow will be: t5 -> t7 -> t8.
+    status: "CONTINUE"
+    constellation:
+      tasks:
+        - task_id: "t5"
+          name: "Merge summaries"
+          description: "Merge summaries from srvA and srvB into a master dataset."
+          tips: ["Sort by timestamp", "Avoid duplicate rows"]
+          target_device_id: "analyst-pc"
+        - task_id: "t7"
+          name: "Create PowerPoint slides"
+          description: "Create a PowerPoint deck with key insights from merged dataset."
+          tips: ["Highlight trends", "Use charts for visualization"]
+          target_device_id: "analyst-pc"
+        - task_id: "t8"
+          name: "Send notification"
+          description: "Send email notification to stakeholders that the PowerPoint analysis is complete and ready for review."
+          tips: ["Include PowerPoint file as attachment", "Provide summary of key findings in email body"]
+          target_device_id: "analyst-pc"
+      dependencies:
+        - line_id: "l6"
+          from_task_id: "t5"
+          to_task_id: "t7"
+          condition_description: "Merged dataset available."
+        - line_id: "l7"
+          from_task_id: "t7"
+          to_task_id: "t8"
+          condition_description: "PowerPoint presentation must be completed and saved."
