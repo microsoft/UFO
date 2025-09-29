@@ -20,6 +20,7 @@ from fastmcp.exceptions import ToolError
 
 from ufo.client.mcp.mcp_registry import MCPRegistry
 from ufo.config import get_config
+from ufo.galaxy.agents.schema import TaskConstellationSchema
 from ufo.galaxy.constellation.editor.constellation_editor import ConstellationEditor
 
 # Get config
@@ -286,7 +287,7 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
     @constellation_mcp.tool()
     def build_constellation(
         config: Annotated[
-            Dict[str, Any],
+            TaskConstellationSchema,
             Field(
                 description="""Configuration dictionary for building constellation with the following structure:
             {

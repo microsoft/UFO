@@ -13,7 +13,7 @@ import json
 import uuid
 from collections import defaultdict, deque
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
 
 # Use the constellation-specific TaskStatus instead of contracts
 from .enums import TaskStatus, ConstellationState
@@ -22,6 +22,9 @@ from ufo.galaxy.constellation.enums import ConstellationState
 from ..core.interfaces import IConstellation
 from .task_star import TaskStar
 from .task_star_line import TaskStarLine
+
+if TYPE_CHECKING:
+    from ufo.galaxy.agents.schema import TaskConstellationSchema
 
 
 class TaskConstellation(IConstellation):
@@ -611,6 +614,30 @@ class TaskConstellation(IConstellation):
             "execution_duration": self.execution_duration,
         }
 
+    @staticmethod
+    def _parse_constellation_state(state_value: Any) -> ConstellationState:
+        """
+        Parse constellation state value (string or ConstellationState) into ConstellationState enum.
+
+        :param state_value: State value to parse
+        :return: ConstellationState enum instance
+        """
+        if isinstance(state_value, ConstellationState):
+            return state_value
+        elif isinstance(state_value, str):
+            # Map string names to ConstellationState
+            state_map = {
+                "CREATED": ConstellationState.CREATED,
+                "READY": ConstellationState.READY,
+                "EXECUTING": ConstellationState.EXECUTING,
+                "COMPLETED": ConstellationState.COMPLETED,
+                "FAILED": ConstellationState.FAILED,
+                "PARTIALLY_FAILED": ConstellationState.PARTIALLY_FAILED,
+            }
+            return state_map.get(state_value.upper(), ConstellationState.CREATED)
+        else:
+            return ConstellationState.CREATED
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "TaskConstellation":
         """
@@ -627,7 +654,7 @@ class TaskConstellation(IConstellation):
         )
 
         # Restore state and metadata
-        constellation._state = ConstellationState(
+        constellation._state = cls._parse_constellation_state(
             data.get("state", ConstellationState.CREATED.value)
         )
         constellation._metadata = data.get("metadata", {})
@@ -770,6 +797,35 @@ class TaskConstellation(IConstellation):
 
         # Create TaskConstellation instance from dictionary
         return cls.from_dict(data)
+
+    @classmethod
+    def from_basemodel(cls, schema: "TaskConstellationSchema") -> "TaskConstellation":
+        """
+        Create a TaskConstellation from a Pydantic BaseModel schema.
+
+        :param schema: TaskConstellationSchema instance
+        :return: TaskConstellation instance
+        """
+        from ufo.galaxy.agents.schema import TaskConstellationSchema
+
+        if not isinstance(schema, TaskConstellationSchema):
+            raise ValueError("Expected TaskConstellationSchema instance")
+
+        # Convert schema to dict and use existing from_dict method
+        data = schema.model_dump()
+        return cls.from_dict(data)
+
+    def to_basemodel(self) -> "TaskConstellationSchema":
+        """
+        Convert the TaskConstellation to a Pydantic BaseModel schema.
+
+        :return: TaskConstellationSchema instance
+        """
+        from ufo.galaxy.agents.schema import TaskConstellationSchema
+
+        # Get dictionary representation and create schema
+        data = self.to_dict()
+        return TaskConstellationSchema(**data)
 
     def to_llm_string(self) -> str:
         """

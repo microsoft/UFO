@@ -15,6 +15,7 @@ from ufo.agents.processors.core.processor_framework import (
 )
 
 from ufo.module.context import ContextNames
+from pydantic_core import to_jsonable_python
 
 if TYPE_CHECKING:
     from ufo.agents.processors.core.processor_framework import ProcessorTemplate
@@ -118,9 +119,17 @@ class EnhancedLoggingMiddleware(ProcessorMiddleware):
 
         local_context.execution_times = phrase_time_cost
 
-        local_context_string = json.dumps(
-            local_context.to_dict(selective=True), ensure_ascii=False
-        )
+        for key, value in local_context.to_dict(selective=True).items():
+            print(f"{key}: {type(value)}")
+            try:
+                json.dumps(value)
+            except Exception as e:
+                self.logger.warning(f"Key {key} is not JSON serializable: {str(e)}")
+                # local_context.set(key, str(processor.processing_context.get_local(key)))
+
+        safe_obj = to_jsonable_python(local_context.to_dict(selective=True))
+
+        local_context_string = json.dumps(safe_obj, ensure_ascii=False)
 
         local_logger.write(local_context_string)
 

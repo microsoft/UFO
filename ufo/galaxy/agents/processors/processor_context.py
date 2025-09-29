@@ -52,7 +52,6 @@ class ConstellationProcessorContext(BasicProcessorContext):
         return [
             "step",  # Step
             "status",  # Status
-            "message",  # Message
             "round_step",  # RoundStep
             "agent_step",  # AgentStep
             "round_num",  # RoundNum
@@ -66,10 +65,8 @@ class ConstellationProcessorContext(BasicProcessorContext):
             "agent_name",  # AgentName
             "cost",  # Cost
             "results",  # Results
-            "last_error",  # error (mapped to last_error)
             "execution_times",  # time_cost (mapped to execution_times)
             "total_time",
-            "control_log",  # ControlLog
             "device_info",
             "constellation_before",
             "constellation_after",

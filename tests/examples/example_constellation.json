@@ -1,0 +1,122 @@
+{
+  "constellation_id": "example_constellation",
+  "name": "示例任务星座",
+  "state": "CREATED",
+  "tasks": {
+    "task_001": {
+      "task_id": "task_001",
+      "name": "数据提取",
+      "description": "从源系统提取数据",
+      "tips": null,
+      "target_device_id": null,
+      "device_type": "LINUX",
+      "priority": "HIGH",
+      "status": "PENDING",
+      "result": null,
+      "error": null,
+      "timeout": null,
+      "retry_count": 0,
+      "current_retry": 0,
+      "task_data": {},
+      "expected_output_type": null,
+      "created_at": "2025-09-29T06:58:36.713140+00:00",
+      "updated_at": "2025-09-29T06:58:36.713140+00:00",
+      "execution_start_time": null,
+      "execution_end_time": null,
+      "execution_duration": null,
+      "dependencies": [],
+      "dependents": [
+        "task_002"
+      ]
+    },
+    "task_002": {
+      "task_id": "task_002",
+      "name": "数据处理",
+      "description": "处理提取的数据",
+      "tips": null,
+      "target_device_id": null,
+      "device_type": "LINUX",
+      "priority": "MEDIUM",
+      "status": "PENDING",
+      "result": null,
+      "error": null,
+      "timeout": null,
+      "retry_count": 0,
+      "current_retry": 0,
+      "task_data": {},
+      "expected_output_type": null,
+      "created_at": "2025-09-29T06:58:36.713140+00:00",
+      "updated_at": "2025-09-29T06:58:36.713140+00:00",
+      "execution_start_time": null,
+      "execution_end_time": null,
+      "execution_duration": null,
+      "dependencies": [
+        "task_001"
+      ],
+      "dependents": [
+        "task_003"
+      ]
+    },
+    "task_003": {
+      "task_id": "task_003",
+      "name": "结果验证",
+      "description": "验证处理结果",
+      "tips": null,
+      "target_device_id": null,
+      "device_type": "LINUX",
+      "priority": "LOW",
+      "status": "PENDING",
+      "result": null,
+      "error": null,
+      "timeout": null,
+      "retry_count": 0,
+      "current_retry": 0,
+      "task_data": {},
+      "expected_output_type": null,
+      "created_at": "2025-09-29T06:58:36.713140+00:00",
+      "updated_at": "2025-09-29T06:58:36.713140+00:00",
+      "execution_start_time": null,
+      "execution_end_time": null,
+      "execution_duration": null,
+      "dependencies": [
+        "task_002"
+      ],
+      "dependents": []
+    }
+  },
+  "dependencies": {
+    "fa37dc62-d6db-4888-ad5d-c9eb0fb3556f": {
+      "line_id": "fa37dc62-d6db-4888-ad5d-c9eb0fb3556f",
+      "from_task_id": "task_001",
+      "to_task_id": "task_002",
+      "dependency_type": "SUCCESS_ONLY",
+      "condition_description": "",
+      "metadata": {},
+      "is_satisfied": false,
+      "last_evaluation_result": null,
+      "last_evaluation_time": null,
+      "created_at": "2025-09-29T06:58:36.713140+00:00",
+      "updated_at": "2025-09-29T06:58:36.713140+00:00"
+    },
+    "00b31a61-3b25-4c07-b33d-769cb8d75e02": {
+      "line_id": "00b31a61-3b25-4c07-b33d-769cb8d75e02",
+      "from_task_id": "task_002",
+      "to_task_id": "task_003",
+      "dependency_type": "UNCONDITIONAL",
+      "condition_description": "",
+      "metadata": {},
+      "is_satisfied": false,
+      "last_evaluation_result": null,
+      "last_evaluation_time": null,
+      "created_at": "2025-09-29T06:58:36.713140+00:00",
+      "updated_at": "2025-09-29T06:58:36.713140+00:00"
+    }
+  },
+  "metadata": {},
+  "enable_visualization": true,
+  "created_at": "2025-09-29T06:58:36.712112+00:00",
+  "updated_at": "2025-09-29T06:58:36.713140+00:00",
+  "execution_start_time": null,
+  "execution_end_time": null,
+  "execution_duration": null
+}

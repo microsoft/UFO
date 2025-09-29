@@ -9,6 +9,8 @@ using the command pattern.
 """
 
 from typing import Any, Dict, List, Optional, Union
+
+from ufo.galaxy.agents.schema import TaskConstellationSchema
 from .command_invoker import CommandInvoker
 from .command_registry import command_registry
 from .commands import (
@@ -276,7 +278,7 @@ class ConstellationEditor:
     # Bulk Operations
 
     def build_constellation(
-        self, config: Dict[str, Any], clear_existing: bool = True
+        self, config: TaskConstellationSchema, clear_existing: bool = True
     ) -> TaskConstellation:
         """
         Build constellation from configuration.

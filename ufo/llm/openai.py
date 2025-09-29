@@ -134,7 +134,7 @@ class BaseOpenAIService(BaseService):
                 base_params.update(
                     {
                         "temperature": temperature,
-                        "max_tokens": max_tokens,
+                        # "max_tokens": max_tokens,
                         "top_p": top_p,
                     }
                 )

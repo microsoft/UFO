@@ -16,6 +16,12 @@ import logging
 import time
 from typing import Dict, List, Optional, Union
 
+
+from rich.console import Console
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
+
 from ufo.agents.agent.basic import BasicAgent
 from ufo.contracts.contracts import Command, MCPToolInfo, ResultStatus
 from ufo.galaxy.agents.constellation_agent_states import ConstellationAgentStatus
@@ -25,7 +31,7 @@ from ufo.galaxy.agents.prompters.base_constellation_prompter import (
     ConstellationPrompterFactory,
 )
 
-from ufo.galaxy.agents.schema import WeavingMode
+from ufo.galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
 from ufo.galaxy.client.components.types import DeviceInfo
 from ufo.galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
@@ -41,6 +47,8 @@ from ufo.module.context import Context, ContextNames
 
 from ..core.interfaces import IRequestProcessor, IResultProcessor
 from ..constellation import TaskConstellation
+
+console = Console()
 
 
 class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
@@ -334,6 +342,156 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         # For now, always confirm for constellation operations
         # This can be extended with actual confirmation logic
         return True
+
+    def print_response(
+        self, response: ConstellationAgentResponse, print_action: bool = False
+    ) -> None:
+        """
+        Pretty-print the ConstellationAgentResponse using Rich.
+        :param response: The ConstellationAgentResponse object to display
+        :param print_action: Flag to indicate if action details should be printed
+        """
+        # Agent thoughts
+        if response.thought:
+            console.print(
+                Panel(
+                    response.thought,
+                    title="🧠 Constellation Agent Thoughts",
+                    style="green",
+                )
+            )
+
+        # Status display with appropriate styling
+        status_style = "blue"
+        status_emoji = "📊"
+        if response.status.upper() == "FINISH":
+            status_style = "green"
+            status_emoji = "✅"
+        elif response.status.upper() == "FAIL":
+            status_style = "red"
+            status_emoji = "❌"
+        elif response.status.upper() == "CONTINUE":
+            status_style = "yellow"
+            status_emoji = "🔄"
+
+        console.print(
+            Panel(
+                response.status.upper(),
+                title=f"{status_emoji} Processing Status",
+                style=status_style,
+            )
+        )
+
+        # Constellation (if available)
+        if response.constellation:
+            constellation_obj = response.constellation
+            constellation_name = (
+                constellation_obj.name
+                or f"Constellation {constellation_obj.constellation_id}"
+            )
+            task_count = len(constellation_obj.tasks)
+            dependency_count = len(constellation_obj.dependencies)
+            constellation_state = constellation_obj.state
+
+            constellation_info = Text()
+            constellation_info.append(f"🆔 ID: ", style="bold cyan")
+            constellation_info.append(
+                f"{constellation_obj.constellation_id}\n", style="white"
+            )
+            constellation_info.append(f"🌟 Name: ", style="bold cyan")
+            constellation_info.append(f"{constellation_name}\n", style="white")
+            constellation_info.append(f"📊 State: ", style="bold cyan")
+            constellation_info.append(f"{constellation_state}\n", style="white")
+            constellation_info.append(f"📋 Tasks: ", style="bold cyan")
+            constellation_info.append(f"{task_count}\n", style="white")
+            constellation_info.append(f"🔗 Dependencies: ", style="bold cyan")
+            constellation_info.append(f"{dependency_count}", style="white")
+
+            console.print(
+                Panel(
+                    constellation_info,
+                    title="🌌 Constellation Information",
+                    style="cyan",
+                )
+            )
+
+            # Display task details if available
+            if constellation_obj.tasks:
+                tasks_text = Text()
+                for task_id, task in constellation_obj.tasks.items():
+                    task_name = task.name
+                    target_device = task.target_device_id or "Unknown"
+                    tasks_text.append(f"• Task: {task_name} ", style="bold yellow")
+                    tasks_text.append(f"→ Device: {target_device}\n", style="white")
+
+                    # Show description if available
+                    if task.description:
+                        tasks_text.append(
+                            f"  Description: {task.description}\n", style="cyan"
+                        )
+
+                    # Show tips if available
+                    if task.tips:
+                        for tip in task.tips:
+                            tasks_text.append(f"  💡 {tip}\n", style="green")
+
+                console.print(
+                    Panel(
+                        tasks_text,
+                        title="📋 Task Details",
+                        style="yellow",
+                    )
+                )
+
+            # Display dependency details if available
+            if constellation_obj.dependencies:
+                deps_text = Text()
+                for line_id, dependency in constellation_obj.dependencies.items():
+                    deps_text.append(f"• {dependency.from_task_id} ", style="bold blue")
+                    deps_text.append(f"→ {dependency.to_task_id}\n", style="bold blue")
+                    # deps_text.append(
+                    #     f"  Type: {dependency.dependency_type}\n", style="white"
+                    # )
+                    if dependency.condition_description:
+                        deps_text.append(
+                            f"  Condition: {dependency.condition_description}\n",
+                            style="cyan",
+                        )
+
+                console.print(
+                    Panel(
+                        deps_text,
+                        title="🔗 Dependencies",
+                        style="blue",
+                    )
+                )
+
+        # Actions (if available)
+        if response.action and print_action:
+            if isinstance(response.action, list) and len(response.action) > 0:
+                actions_text = Text()
+                for i, action in enumerate(response.action):
+                    action_str = action.to_string(action.function, action.arguments)
+                    actions_text.append(f"{i+1}. ", style="bold cyan")
+                    actions_text.append(f"{action_str}\n", style="white")
+
+                console.print(
+                    Panel(
+                        actions_text,
+                        title="⚒️ Planned Actions",
+                        style="blue",
+                    )
+                )
+
+        # Results (if available)
+        if response.results:
+            results_content = str(response.results)
+            if len(results_content) > 500:
+                results_content = results_content[:497] + "..."
+
+            console.print(
+                Panel(results_content, title="📊 Execution Results", style="magenta")
+            )
 
     @property
     def status_manager(self):

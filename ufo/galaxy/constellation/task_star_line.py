@@ -10,10 +10,13 @@ relationships between tasks with conditional logic support.
 
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any, Callable, Dict, List, Optional, TYPE_CHECKING
 
 from ..core.interfaces import IDependency
 from .enums import DependencyType
+
+if TYPE_CHECKING:
+    from ufo.galaxy.agents.schema import TaskStarLineSchema
 
 
 class TaskStarLine(IDependency):
@@ -252,6 +255,30 @@ class TaskStarLine(IDependency):
             "updated_at": self._updated_at.isoformat(),
         }
 
+    @staticmethod
+    def _parse_dependency_type(dep_type_value: Any) -> DependencyType:
+        """
+        Parse dependency type value (string or DependencyType) into DependencyType enum.
+
+        :param dep_type_value: Dependency type value to parse
+        :return: DependencyType enum instance
+        """
+        if isinstance(dep_type_value, DependencyType):
+            return dep_type_value
+        elif isinstance(dep_type_value, str):
+            # Map string names to DependencyType
+            dep_type_map = {
+                "UNCONDITIONAL": DependencyType.UNCONDITIONAL,
+                "CONDITIONAL": DependencyType.CONDITIONAL,
+                "SUCCESS_ONLY": DependencyType.SUCCESS_ONLY,
+                "COMPLETION_ONLY": DependencyType.COMPLETION_ONLY,
+            }
+            return dep_type_map.get(
+                dep_type_value.upper(), DependencyType.UNCONDITIONAL
+            )
+        else:
+            return DependencyType.UNCONDITIONAL
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "TaskStarLine":
         """
@@ -263,7 +290,7 @@ class TaskStarLine(IDependency):
         line = cls(
             from_task_id=data["from_task_id"],
             to_task_id=data["to_task_id"],
-            dependency_type=DependencyType(
+            dependency_type=cls._parse_dependency_type(
                 data.get("dependency_type", DependencyType.UNCONDITIONAL.value)
             ),
             condition_description=data.get("condition_description"),
@@ -286,6 +313,35 @@ class TaskStarLine(IDependency):
             )
 
         return line
+
+    @classmethod
+    def from_basemodel(cls, schema: "TaskStarLineSchema") -> "TaskStarLine":
+        """
+        Create a TaskStarLine from a Pydantic BaseModel schema.
+
+        :param schema: TaskStarLineSchema instance
+        :return: TaskStarLine instance
+        """
+        from ufo.galaxy.agents.schema import TaskStarLineSchema
+
+        if not isinstance(schema, TaskStarLineSchema):
+            raise ValueError("Expected TaskStarLineSchema instance")
+
+        # Convert schema to dict and use existing from_dict method
+        data = schema.model_dump()
+        return cls.from_dict(data)
+
+    def to_basemodel(self) -> "TaskStarLineSchema":
+        """
+        Convert the TaskStarLine to a Pydantic BaseModel schema.
+
+        :return: TaskStarLineSchema instance
+        """
+        from ufo.galaxy.agents.schema import TaskStarLineSchema
+
+        # Get dictionary representation and create schema
+        data = self.to_dict()
+        return TaskStarLineSchema(**data)
 
     def to_json(self, save_path: Optional[str] = None) -> str:
         """

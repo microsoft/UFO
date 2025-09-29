@@ -45,7 +45,13 @@ def get_completions(
     :return: A tuple containing the completion responses and the cost.
     """
 
-    if agent in [AgentType.HOST, AgentType.APP, AgentType.OPERATOR, AgentType.BACKUP]:
+    if agent in [
+        AgentType.HOST,
+        AgentType.APP,
+        AgentType.OPERATOR,
+        AgentType.BACKUP,
+        AgentType.CONSTELLATION,
+    ]:
         agent_type = agent
     elif agent == AgentType.EVALUATION:
         # If evaluation agent is not in configs, use APP_AGENT as default.

@@ -22,6 +22,7 @@ from typing import Dict, Optional, Any
 from rich.console import Console
 
 from ufo.config import Config
+from ufo.galaxy.client.config_loader import ConstellationConfig
 from ufo.logging.setup import setup_logger
 
 from .session.galaxy_session import GalaxySession
@@ -75,6 +76,7 @@ class GalaxyClient:
         # Initialize components
         self._client: Optional[ConstellationClient] = None
         self._session: Optional[GalaxySession] = None
+        self._device_config = ConstellationConfig.from_yaml(CONFIGS["DEVICE_INFO"])
 
         # Rich console and display manager
         self.console = Console()
@@ -106,7 +108,7 @@ class GalaxyClient:
                 progress.update(
                     task, description="[cyan]Setting up Constellation Client..."
                 )
-                self._client = ConstellationClient()
+                self._client = ConstellationClient(config=self._device_config)
                 await self._client.initialize()
                 self.display.print_success("✅ ConstellationClient initialized")
                 self.logger.info("✅ ConstellationClient initialized")

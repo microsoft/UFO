@@ -10,13 +10,17 @@ implementing the abstract methods defined in the base strategies.
 
 from typing import TYPE_CHECKING, Any, Dict, List
 
-from ufo.agents.processors.schemas.actions import ActionCommandInfo
+from ufo.agents.processors.schemas.actions import (
+    ActionCommandInfo,
+    ListActionCommandInfo,
+)
 from ufo.contracts.contracts import Result
 from ufo.galaxy.agents.processors.strategies.base_constellation_strategy import (
     BaseConstellationActionExecutionStrategy,
 )
 from ufo.galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
 from ufo.galaxy.constellation.task_constellation import TaskConstellation
+from ufo.galaxy.core.types import ProcessingContext
 
 if TYPE_CHECKING:
     from ufo.galaxy.agents.constellation_agent import ConstellationAgent
@@ -98,3 +102,20 @@ class ConstellationEditingActionExecutionStrategy(
             return "CONTINUE"
         else:
             return "FAILED"
+
+    def print_actions(self, actions: ListActionCommandInfo) -> None:
+        """
+        Printing the action result.
+        :param actions: List of action command information
+        """
+        actions.color_print()
+
+    def sync_constellation(
+        self, results: List[Result], context: ProcessingContext
+    ) -> None:
+        """
+        Synchronize the constellation state. Do nothing for editing mode.
+        :param results: List of execution results
+        :param context: Processing context to access and update constellation state
+        """
+        pass

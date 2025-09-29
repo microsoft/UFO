@@ -9,6 +9,8 @@ Implements specific commands for TaskConstellation manipulation.
 
 import json
 from typing import Any, Dict, Optional
+
+from ufo.galaxy.agents.schema import TaskConstellationSchema
 from .command_interface import IUndoableCommand, CommandExecutionError, CommandUndoError
 from .command_registry import register_command
 from ..task_constellation import TaskConstellation
@@ -609,7 +611,7 @@ class BuildConstellationCommand(BaseConstellationCommand):
     def __init__(
         self,
         constellation: TaskConstellation,
-        config: Dict[str, Any],
+        config: TaskConstellationSchema,
         clear_existing: bool = True,
     ):
         """
@@ -619,10 +621,8 @@ class BuildConstellationCommand(BaseConstellationCommand):
         :param config: Configuration dictionary
         :param clear_existing: Whether to clear existing tasks/dependencies
         """
-        super().__init__(
-            constellation, f"Build constellation: {config.get('name', 'unnamed')}"
-        )
-        self._config = config.copy()
+        super().__init__(constellation, f"Build constellation: {config.name}")
+        self._config = config.model_copy()
         self._clear_existing = clear_existing
         self._original_state: Optional[Dict[str, Any]] = None
 
@@ -645,21 +645,7 @@ class BuildConstellationCommand(BaseConstellationCommand):
                 for task_id in list(self._constellation.tasks.keys()):
                     self._constellation.remove_task(task_id)
 
-            # Build tasks
-            if "tasks" in self._config:
-                for task_config in self._config["tasks"]:
-                    task = TaskStar.from_dict(task_config)
-                    self._constellation.add_task(task)
-
-            # Build dependencies
-            if "dependencies" in self._config:
-                for dep_config in self._config["dependencies"]:
-                    dependency = TaskStarLine.from_dict(dep_config)
-                    self._constellation.add_dependency(dependency)
-
-            # Update metadata if provided
-            if "metadata" in self._config:
-                self._constellation.update_metadata(self._config["metadata"])
+            self._constellation = TaskConstellation.from_basemodel(self._config)
 
             # Validate constellation after building
             is_valid, validation_errors = self._constellation.validate_dag()

@@ -12,13 +12,16 @@ Optimized for type safety, maintainability, and follows SOLID principles.
 import logging
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from ufo.galaxy.client.device_manager import ConstellationDeviceManager
 
 from ..core.interfaces import ITask
 from ..core.types import TaskId, ExecutionResult, TaskConfiguration
 from .enums import TaskStatus, TaskPriority, DeviceType
+
+if TYPE_CHECKING:
+    from ufo.galaxy.agents.schema import TaskStarSchema
 
 
 class TaskStar(ITask):
@@ -635,6 +638,85 @@ class TaskStar(ITask):
 
         return serialized
 
+    @staticmethod
+    def _parse_priority(priority_value: Any) -> TaskPriority:
+        """
+        Parse priority value (int, string, or TaskPriority) into TaskPriority enum.
+
+        :param priority_value: Priority value to parse
+        :return: TaskPriority enum instance
+        """
+        if isinstance(priority_value, TaskPriority):
+            return priority_value
+        elif isinstance(priority_value, str):
+            # Map string names to TaskPriority
+            priority_map = {
+                "LOW": TaskPriority.LOW,
+                "MEDIUM": TaskPriority.MEDIUM,
+                "HIGH": TaskPriority.HIGH,
+                "CRITICAL": TaskPriority.CRITICAL,
+            }
+            return priority_map.get(priority_value.upper(), TaskPriority.MEDIUM)
+        elif isinstance(priority_value, int):
+            # Direct enum creation from int value
+            try:
+                return TaskPriority(priority_value)
+            except ValueError:
+                return TaskPriority.MEDIUM
+        else:
+            return TaskPriority.MEDIUM
+
+    @staticmethod
+    def _parse_device_type(device_type_value: Any) -> Optional[DeviceType]:
+        """
+        Parse device type value (string or DeviceType) into DeviceType enum.
+
+        :param device_type_value: Device type value to parse
+        :return: DeviceType enum instance or None
+        """
+        if device_type_value is None:
+            return None
+        elif isinstance(device_type_value, DeviceType):
+            return device_type_value
+        elif isinstance(device_type_value, str):
+            # Map string names to DeviceType
+            device_type_map = {
+                "WINDOWS": DeviceType.WINDOWS,
+                "MACOS": DeviceType.MACOS,
+                "LINUX": DeviceType.LINUX,
+                "ANDROID": DeviceType.ANDROID,
+                "IOS": DeviceType.IOS,
+                "WEB": DeviceType.WEB,
+                "API": DeviceType.API,
+            }
+            return device_type_map.get(device_type_value.upper())
+        else:
+            return None
+
+    @staticmethod
+    def _parse_status(status_value: Any) -> TaskStatus:
+        """
+        Parse status value (string or TaskStatus) into TaskStatus enum.
+
+        :param status_value: Status value to parse
+        :return: TaskStatus enum instance
+        """
+        if isinstance(status_value, TaskStatus):
+            return status_value
+        elif isinstance(status_value, str):
+            # Map string names to TaskStatus
+            status_map = {
+                "PENDING": TaskStatus.PENDING,
+                "RUNNING": TaskStatus.RUNNING,
+                "COMPLETED": TaskStatus.COMPLETED,
+                "FAILED": TaskStatus.FAILED,
+                "CANCELLED": TaskStatus.CANCELLED,
+                "WAITING_DEPENDENCY": TaskStatus.WAITING_DEPENDENCY,
+            }
+            return status_map.get(status_value.upper(), TaskStatus.PENDING)
+        else:
+            return TaskStatus.PENDING
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "TaskStar":
         """
@@ -649,10 +731,10 @@ class TaskStar(ITask):
             description=data.get("description", ""),  # Backwards compatibility
             tips=data.get("tips", []),
             target_device_id=data.get("target_device_id"),
-            device_type=(
-                DeviceType(data["device_type"]) if data.get("device_type") else None
+            device_type=cls._parse_device_type(data.get("device_type")),
+            priority=cls._parse_priority(
+                data.get("priority", TaskPriority.MEDIUM.value)
             ),
-            priority=TaskPriority(data.get("priority", TaskPriority.MEDIUM.value)),
             timeout=data.get("timeout"),
             retry_count=data.get("retry_count", 0),
             task_data=data.get("task_data", {}),
@@ -660,7 +742,7 @@ class TaskStar(ITask):
         )
 
         # Restore state
-        task._status = TaskStatus(data.get("status", TaskStatus.PENDING.value))
+        task._status = cls._parse_status(data.get("status", TaskStatus.PENDING.value))
         task._result = data.get("result")
         task._current_retry = data.get("current_retry", 0)
 
@@ -682,6 +764,35 @@ class TaskStar(ITask):
             )
 
         return task
+
+    @classmethod
+    def from_basemodel(cls, schema: "TaskStarSchema") -> "TaskStar":
+        """
+        Create a TaskStar from a Pydantic BaseModel schema.
+
+        :param schema: TaskStarSchema instance
+        :return: TaskStar instance
+        """
+        from ufo.galaxy.agents.schema import TaskStarSchema
+
+        if not isinstance(schema, TaskStarSchema):
+            raise ValueError("Expected TaskStarSchema instance")
+
+        # Convert schema to dict and use existing from_dict method
+        data = schema.model_dump()
+        return cls.from_dict(data)
+
+    def to_basemodel(self) -> "TaskStarSchema":
+        """
+        Convert the TaskStar to a Pydantic BaseModel schema.
+
+        :return: TaskStarSchema instance
+        """
+        from ufo.galaxy.agents.schema import TaskStarSchema
+
+        # Get dictionary representation and create schema
+        data = self.to_dict()
+        return TaskStarSchema(**data)
 
     @classmethod
     def from_json(

@@ -266,9 +266,13 @@ class ConstellationDeviceManager:
         """Get device capabilities and information"""
         return self.device_registry.get_device_capabilities(device_id)
 
-    def get_all_devices(self) -> Dict[str, DeviceInfo]:
-        """Get all registered devices"""
-        return self.device_registry.get_all_devices()
+    def get_all_devices(self, connected=False) -> Dict[str, DeviceInfo]:
+        """
+        Get all registered devices
+        :param connected: If True, return only connected devices
+        :return: Dictionary of device_id to DeviceInfo
+        """
+        return self.device_registry.get_all_devices(connected=connected)
 
     def get_device_status(self, device_id: str) -> Dict[str, Any]:
         """Get device status information"""

@@ -8,6 +8,7 @@ Constellation Agent Processor - Processor for Constellation Agent using the new 
 
 import logging
 from dataclasses import asdict
+import traceback
 from typing import TYPE_CHECKING, Any, Dict, Type
 
 from rich.console import Console
@@ -130,7 +131,7 @@ class ConstellationAgentProcessor(ProcessorTemplate):
 
         return {
             "weaving_mode": self.global_context.get(ContextNames.WEAVING_MODE),
-            "device_info": [self.global_context.get(ContextNames.DEVICE_INFO)],
+            "device_info": self.global_context.get(ContextNames.DEVICE_INFO),
             "constellation_before": constellation_before_json,
         }
 
@@ -195,7 +196,10 @@ class ConstellationLoggingMiddleware(EnhancedLoggingMiddleware):
         """
         # Call parent implementation for standard error handling
         await super().on_error(processor, error)
+        tb_str = "".join(
+            traceback.format_exception(type(error), error, error.__traceback__)
+        )
 
         utils.print_with_color(
-            f"ConstellationAgent: Encountered error - {str(error)}", "red"
+            f"ConstellationAgent: Encountered error - {str(tb_str)}", "red"
         )

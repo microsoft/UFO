@@ -133,7 +133,9 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             )
 
         except Exception as e:
-            error_msg = f"constellation LLM interaction failed: {str(e)}"
+            error_msg = (
+                f"constellation LLM interaction failed: {str(traceback.format_exc())}"
+            )
             self.logger.error(error_msg)
             return self.handle_error(e, ProcessingPhase.LLM_INTERACTION, context)
 
@@ -173,7 +175,9 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
             return prompt_message
 
         except Exception as e:
-            raise Exception(f"Failed to build prompt message: {str(e)}")
+            raise Exception(
+                f"Failed to build prompt message: {str(traceback.format_exc())}"
+            )
 
     def _log_request_data(
         self,
@@ -342,13 +346,14 @@ class BaseConstellationActionExecutionStrategy(BaseProcessingStrategy):
             execution_results = await self._execute_constellation_action(
                 command_dispatcher, action_info
             )
+            self.sync_constellation(execution_results, context)
 
             # Step 4: Create action info for memory
             actions = self._create_action_info(action_info, execution_results)
 
             # Step 5: Print action info
             action_list_info = ListActionCommandInfo(actions)
-            action_list_info.color_print()
+            self.print_actions(action_list_info)
 
             # Step 6: Determine status
             status = self._determine_execution_status(
@@ -376,6 +381,24 @@ class BaseConstellationActionExecutionStrategy(BaseProcessingStrategy):
     ) -> ActionCommandInfo | List[ActionCommandInfo]:
         """
         Create mode-specific action information. Must be implemented by subclasses.
+        """
+        pass
+
+    @abstractmethod
+    def print_actions(self, actions: ListActionCommandInfo) -> None:
+        """
+        Printing the action result.
+        """
+        pass
+
+    @abstractmethod
+    def sync_constellation(
+        self, results: List[Result], context: ProcessingContext
+    ) -> None:
+        """
+        Synchronize the constellation state.
+        :param results: List of execution results
+        :param context: Processing context to access and update constellation state
         """
         pass
 
@@ -560,16 +583,22 @@ class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
             constellation_context.round_num = context.get_global("CURRENT_ROUND_ID", 0)
             constellation_context.agent_step = agent.step if agent else 0
 
-            action_info: ActionCommandInfo = constellation_context.action_info
+            action_info: ListActionCommandInfo = constellation_context.action_info
 
             # Update action information if available
             if action_info:
-                constellation_context.action = [action_info.model_dump()]
-                constellation_context.function_call = action_info.function or ""
-                constellation_context.arguments = action_info.arguments
-                constellation_context.action_representation = (
-                    action_info.to_representation()
-                )
+                constellation_context.action = [
+                    info.model_dump() for info in action_info.actions
+                ]
+                constellation_context.function_call = [
+                    info.function for info in action_info.actions
+                ]
+                constellation_context.arguments = [
+                    info.arguments for info in action_info.actions
+                ]
+                constellation_context.action_representation = [
+                    info.to_representation() for info in action_info.actions
+                ]
 
                 constellation_after: TaskConstellation = context.get_global(
                     "CONSTELLATION"
@@ -580,12 +609,13 @@ class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
                         constellation_after.to_json()
                     )
 
-                if action_info.result:
-                    constellation_context.action_type = action_info.result.namespace
-
-                # Get results
-                if action_info.result and action_info.result.result:
-                    constellation_context.results = str(action_info.result.result)
+                if action_info.actions:
+                    constellation_context.action_type = [
+                        info.result.namespace for info in action_info.actions
+                    ]
+                    constellation_context.results = [
+                        info.result.result for info in action_info.actions
+                    ]
 
             # Update application and agent names
             constellation_context.agent_name = agent.name
@@ -593,7 +623,9 @@ class ConstellationMemoryUpdateStrategy(BaseProcessingStrategy):
             return constellation_context
 
         except Exception as e:
-            raise Exception(f"Failed to create additional memory data: {str(e)}")
+            raise Exception(
+                f"Failed to create additional memory data: {str(traceback.format_exc())}"
+            )
 
     def _create_and_populate_memory_item(
         self,

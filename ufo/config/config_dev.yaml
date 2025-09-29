@@ -164,4 +164,4 @@ CONSTELLATION_CREATION_EXAMPLE_PROMPT: "ufo/prompts/examples/constellation/const
 
 CONSTELLATION_EDITING_EXAMPLE_PROMPT: "ufo/prompts/examples/constellation/constellation_editing_example.yaml"  # The prompt for the app selection
 
-DEVICE_INFO: ufo/config/devices.yaml  # The device information file path
+DEVICE_INFO: config/constellation_sample1.yaml  # The device information file path

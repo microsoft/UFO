@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import logging
 import os
 from abc import ABC, abstractmethod
 from typing import Any, Dict, List
@@ -36,6 +37,8 @@ class BasicPrompter(ABC):
             )
         else:
             self.example_prompt_template = ""
+
+        self.logger = logging.getLogger(__name__)
 
     @staticmethod
     def load_prompt_template(template_path: str, is_visual=None) -> Dict[str, str]:

@@ -30,6 +30,7 @@ class DeviceRegistry:
         self,
         device_id: str,
         server_url: str,
+        os: Optional[str] = None,
         capabilities: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         max_retries: int = 5,
@@ -47,6 +48,7 @@ class DeviceRegistry:
         device_info = DeviceInfo(
             device_id=device_id,
             server_url=server_url,
+            os=os,
             capabilities=capabilities.copy() if capabilities else [],
             metadata=metadata.copy() if metadata else {},
             status=DeviceStatus.DISCONNECTED,
@@ -63,8 +65,18 @@ class DeviceRegistry:
         """Get device information by ID"""
         return self._devices.get(device_id)
 
-    def get_all_devices(self) -> Dict[str, DeviceInfo]:
-        """Get all registered devices"""
+    def get_all_devices(self, connected: bool = False) -> Dict[str, DeviceInfo]:
+        """
+        Get all registered devices
+        :param connected: If True, return only connected devices
+        :return: Dictionary of device_id to DeviceInfo
+        """
+        if connected:
+            return {
+                device_id: device_info
+                for device_id, device_info in self._devices.items()
+                if device_info.status == DeviceStatus.CONNECTED
+            }
         return self._devices.copy()
 
     def update_device_status(self, device_id: str, status: DeviceStatus) -> None:

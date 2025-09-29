@@ -9,6 +9,7 @@ shared functionality between different weaving modes.
 """
 
 from abc import ABC
+import json
 from typing import Dict, List, Type
 from ufo.config import Config
 from ufo.contracts.contracts import MCPToolInfo
@@ -54,6 +55,7 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
         for _, info in device_info.items():
             # Format capabilities as a comma-separated list
             capabilities = ", ".join(info.capabilities) if info.capabilities else "None"
+            os = info.os if info.os else "Unknown"
 
             # Format metadata as key-value pairs
             metadata_str = ""
@@ -61,14 +63,10 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
                 metadata_items = [f"{k}: {v}" for k, v in info.metadata.items()]
                 metadata_str = f" | Metadata: {', '.join(metadata_items)}"
 
-            # Format last heartbeat timestamp
-            last_heartbeat_str = ""
-            if info.last_heartbeat:
-                last_heartbeat_str = f" | Last Heartbeat: {info.last_heartbeat.strftime('%Y-%m-%d %H:%M:%S UTC')}"
-
             # Create device summary
             device_summary = (
                 f"Device ID: {info.device_id}\n"
+                f"OS: {os}\n"
                 f"  - Capabilities: {capabilities}\n"
                 f"{metadata_str}"
             )
@@ -275,6 +273,46 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
         )
 
         return prompt
+
+    def examples_prompt_helper(
+        self,
+        header: str = "## Response Examples",
+        separator: str = "Example",
+    ) -> str:
+        """
+        Construct the prompt for examples.
+        :param examples: The examples.
+        :param header: The header of the prompt.
+        :param separator: The separator of the prompt.
+        :param additional_examples: The additional examples added to the prompt.
+        return: The prompt for examples.
+        """
+
+        template = """
+        [User Request]:
+            {request}
+        [Device Info]:
+            {device_info}
+        [Response]:
+            {response}"""
+
+        example_dict = [
+            self.example_prompt_template[key]
+            for key in self.example_prompt_template.keys()
+            if key.startswith("example")
+        ]
+
+        example_list = []
+
+        for example in example_dict:
+            example_str = template.format(
+                request=example.get("Request"),
+                device_info=json.dumps(example.get("Device-Info")),
+                response=json.dumps(example.get("Response")),
+            )
+            example_list.append(example_str)
+
+        return self.retrieved_documents_prompt_helper(header, separator, example_list)
 
     def create_api_prompt_template(self, tools: List[MCPToolInfo]):
         """

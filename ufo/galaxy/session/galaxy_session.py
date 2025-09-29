@@ -229,7 +229,8 @@ class GalaxySession(BaseSession):
         super()._init_context()
 
         self.context.set(
-            ContextNames.DEVICE_INFO, self._client.device_manager.get_all_devices()
+            ContextNames.DEVICE_INFO,
+            self._client.device_manager.get_all_devices(connected=True),
         )
         self.logger.info(
             f"The following devices has been registered and added to the context: {self.context.get(ContextNames.DEVICE_INFO)}"
