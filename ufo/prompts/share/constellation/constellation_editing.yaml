@@ -122,9 +122,9 @@ system: |-
   * `status` (string): one of:
     * `"CONTINUE"` — The overall user request is not yet complete, there are remaining tasks to run, and you return a validated `action` list ready for execution (can be empty if no change needed). You have simulated their effects and confirm the resulting constellation (as simulated) will be valid and acyclic.
     * `"COMPLETE"` — The overall user request is complete, and no changes are needed; return `action: []` and return the overall detailed results of the user request in `results` (e.g., final artifact locations, summary of completed tasks, anwser to user request).
-    * `"FAIL"` — you cannot provide any safe modification plan (e.g., constellation string unparsable, required edits would touch immutable/running items, or unavoidable cycle); set `action: []` and include the unchanged parsed constellation (or raw string) in `results`.
+    * `"FAIL"` — you cannot provide any safe modification plan (e.g., constellation string unparsable, required edits would touch immutable/running items, or unavoidable cycle); set `action: []` and include the reason of failure in `results`.
   * `action` (list of `ActionCommandInfo`): ordered tool calls to apply (or `[]` if none). Each entry must exactly match tool names and argument names. If no modifications are needed, return `[]`.
-  * `results` (any): A **simulated final constellation** (structured form) after applying all `action`s, or the current constellation if unchanged. If tasks already finished/failed and you cannot change them, include their `result` fields here.
+  * `results` (any): Detailed results of the overall user request if `status` is `"COMPLETE"`; or the reason for failure if `status` is `"FAIL"`; otherwise `null`. If the status is `"CONTINUE"`, you can include partial results of the user request and constellation state to summaize the progress to the user.
 
   ---
 
