@@ -137,8 +137,8 @@ class DAGVisualizer:
                 deps = constellation.get_task_dependencies(task.task_id)
                 if deps:
                     dep_branch = task_branch.add("[dim]Dependencies:[/dim]")
-                    for dep_id in deps:
-                        dep_task = constellation.get_task(dep_id)
+                    for dep in deps:
+                        dep_task = constellation.get_task(dep.from_task_id)
                         if dep_task:
                             dep_text = self._format_task_for_tree(
                                 dep_task, compact=True

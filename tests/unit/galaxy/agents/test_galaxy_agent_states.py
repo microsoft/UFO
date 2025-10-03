@@ -17,7 +17,7 @@ from unittest.mock import Mock, AsyncMock, patch, MagicMock
 from typing import Dict, Any, Optional
 
 # Add project root to path for imports
-sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", "..", ".."))
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
 
 from ufo.galaxy.agents.constellation_agent_states import (
     StartConstellationAgentState,

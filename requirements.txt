@@ -6,7 +6,7 @@ msal==1.31.0
 openai==1.66.2
 Pillow==11.3.0
 protobuf==3.20.3
-pywin32==306
+pywin32>=310
 pywinauto==0.6.8
 PyYAML==6.0.1
 requests==2.32.5
@@ -21,7 +21,6 @@ pandas==1.4.3
 html2text==2024.2.26
 pyautogui==0.9.54
 uiautomation==2.0.18
-gradio-client==1.7.1
 ##For removing stopwords
 #nltk==3.8.1
 ##For Gemini
@@ -31,7 +30,9 @@ gradio-client==1.7.1
 ## If use AAD to authenticate
 azure-identity==1.15.0
 azure-identity-broker==1.1.0
-azure_storage==0.37.0
+azure-storage-blob
+azure-storage-file-share
+azure-storage-queue
 pydantic==2.11.7
 
 flask==3.0.0

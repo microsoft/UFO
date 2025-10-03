@@ -291,6 +291,7 @@ class ConstellationEditor:
         command = BuildConstellationCommand(self._constellation, config, clear_existing)
         result = self._invoker.execute(command)
         self._notify_observers("build_constellation", result)
+        self._constellation = result  # Update reference in case of new instance
         return result
 
     def build_from_tasks_and_dependencies(

@@ -321,7 +321,7 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
         Create the API prompt template.
         :param tools: The list of tools.
         """
-        tool_prompt = BasicPrompter.tools_to_llm_prompt(tools)
+        tool_prompt = BasicPrompter.tools_to_llm_prompt(tools, generate_example=False)
         self.api_prompt_template = tool_prompt
         return tool_prompt
 

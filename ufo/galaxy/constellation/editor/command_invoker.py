@@ -40,9 +40,10 @@ class CommandInvoker:
         :raises: CommandExecutionError if execution fails or command cannot be executed
         """
         if not command.can_execute():
+            reason = command.get_cannot_execute_reason()
             raise CommandExecutionError(
                 command, 
-                f"Command cannot be executed: {command.description}"
+                f"Command cannot be executed: {command.description}. Reason: {reason}"
             )
         
         try:

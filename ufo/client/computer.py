@@ -637,44 +637,48 @@ class CommandRouter:
         )
 
         results: List[Result] = []
-
-        status = ResultStatus.SUCCESS
+        has_failed = False  # track if any command failed
 
         for command in commands:
+            call_id = command.call_id
+
+            # Handle commands without tool_name
             if not command.tool_name:
                 results.append(
                     Result(
                         status=ResultStatus.SUCCESS,
                         result="No action taken.",
                         error="",
-                        call_id=command.call_id,
+                        call_id=call_id,
                     )
                 )
-            call_id = command.call_id
+                continue
 
+            # If there was a failure before and early_exit is enabled, skip subsequent commands
+            if early_exit and has_failed:
+                self.logger.warning(
+                    f"Skipping command {call_id} (tool: {command.tool_name}) due to previous failure."
+                )
+                results.append(
+                    Result(
+                        status=ResultStatus.SKIPPED,
+                        result=None,
+                        error="Skipped due to previous failure (early_exit=True).",
+                        call_id=call_id,
+                        namespace=None,
+                    )
+                )
+                continue  # Skip this iteration, do not execute command
+
+            # Execute command
             tool_call = computer.command2tool(command)
             result = await computer.run_actions([tool_call])
             namespace = tool_call.namespace if tool_call else None
 
             call_tool_result: CallToolResult = result[0]
-
             text_content = call_tool_result.data if call_tool_result.data else None
 
-            if early_exit and status == ResultStatus.FAILURE:
-                self.logger.warning(
-                    f"Skipping further commands due to previous failure."
-                )
-
-                results.append(
-                    Result(
-                        status=ResultStatus.SKIPPED,
-                        result=None,
-                        error="Early exit due to previous failure.",
-                        call_id=call_id,
-                        namespace=namespace,
-                    )
-                )
-
+            # Build Result object based on execution result
             if not call_tool_result.is_error:
                 results.append(
                     Result(
@@ -686,20 +690,20 @@ class CommandRouter:
                     )
                 )
             else:
+                # Command execution failed
+                has_failed = True
                 results.append(
                     Result(
                         status=ResultStatus.FAILURE,
-                        error=text_content,
+                        error=call_tool_result.content[0].text,
                         result=None,
                         call_id=call_id,
                         namespace=namespace,
                     )
                 )
                 self.logger.warning(
-                    f"Command {call_id} failed with error: {text_content}"
+                    f"Command {call_id} (tool: {command.tool_name}) failed with error: {text_content}"
                 )
-
-                status = ResultStatus.FAILURE
 
             # Sleep to avoid overwhelming the server with requests
             time.sleep(0.1)

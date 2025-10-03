@@ -86,23 +86,6 @@ class ConstellationCreationActionExecutionStrategy(
                 )
             ]
 
-    def _determine_execution_status(
-        self, parsed_response: ConstellationAgentResponse, execution_results: List
-    ) -> str:
-        """
-        Determine execution status for creation mode.
-        """
-        # For creation mode, status typically comes from the response
-        if parsed_response and parsed_response.status:
-            return parsed_response.status
-
-        # Fallback to checking execution results
-        if execution_results and all(
-            result.status == "success" for result in execution_results
-        ):
-            return "CONTINUE"
-        else:
-            return "FAILED"
 
     def print_actions(self, actions: ListActionCommandInfo) -> None:
         """

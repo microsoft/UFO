@@ -37,6 +37,17 @@ class ICommand(ABC):
         :return: True if command can be executed, False otherwise
         """
         pass
+    
+    def get_cannot_execute_reason(self) -> str:
+        """
+        Get a detailed reason why the command cannot be executed.
+        
+        This method should be called when can_execute() returns False
+        to provide specific debugging information.
+        
+        :return: Detailed reason why command cannot execute
+        """
+        return "Command cannot be executed"
 
     @property
     @abstractmethod

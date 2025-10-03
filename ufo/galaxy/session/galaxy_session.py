@@ -31,6 +31,7 @@ from .observers import (
     ConstellationProgressObserver,
     SessionMetricsObserver,
     DAGVisualizationObserver,
+    ConstellationModificationSynchronizer,
 )
 
 configs = Config.get_instance().config_data
@@ -218,6 +219,9 @@ class GalaxySession(BaseSession):
         # Event system
         self._event_bus = get_event_bus()
         self._observers = []
+        self._modification_synchronizer: Optional[
+            ConstellationModificationSynchronizer
+        ] = None
 
         # Set up observers
         self._setup_observers()
@@ -261,9 +265,23 @@ class GalaxySession(BaseSession):
         visualization_observer = DAGVisualizationObserver(enable_visualization=True)
         self._observers.append(visualization_observer)
 
+        # Modification synchronizer for coordinating constellation updates
+        self._modification_synchronizer = ConstellationModificationSynchronizer(
+            orchestrator=self._orchestrator,
+            logger=self.logger,
+        )
+        self._observers.append(self._modification_synchronizer)
+
+        # Attach synchronizer to orchestrator
+        self._orchestrator.set_modification_synchronizer(self._modification_synchronizer)
+
         # Subscribe observers to event bus
         for observer in self._observers:
             self._event_bus.subscribe(observer)
+
+        self.logger.info(
+            f"Set up {len(self._observers)} observers including modification synchronizer"
+        )
 
     async def run(self) -> None:
         """

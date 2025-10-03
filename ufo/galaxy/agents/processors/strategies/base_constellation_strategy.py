@@ -358,9 +358,7 @@ class BaseConstellationActionExecutionStrategy(BaseProcessingStrategy):
             self.print_actions(action_list_info)
 
             # Step 6: Determine status
-            status = self._determine_execution_status(
-                parsed_response, execution_results
-            )
+            status = parsed_response.status
 
             return ProcessingResult(
                 success=True,
@@ -404,23 +402,6 @@ class BaseConstellationActionExecutionStrategy(BaseProcessingStrategy):
         """
         pass
 
-    def _determine_execution_status(
-        self,
-        parsed_response: ConstellationAgentResponse,
-        execution_results: List[Result],
-    ) -> str:
-        """
-        Determine the execution status based on response and results.
-        Can be overridden by subclasses for mode-specific logic.
-        """
-        if hasattr(parsed_response, "status"):
-            return parsed_response.status
-        elif execution_results and all(
-            result.status == "success" for result in execution_results
-        ):
-            return "CONTINUE"
-        else:
-            return "FAILED"
 
     async def _execute_constellation_action(
         self,

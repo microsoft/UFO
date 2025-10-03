@@ -11,9 +11,8 @@ Provides comprehensive MCP server for TaskConstellation operations:
 - File operations (load, save constellation)
 """
 
-from literalai import List
 from pydantic import Field
-from typing import Annotated, Dict, Any, Optional
+from typing import Annotated, Dict, List, Optional
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError
@@ -75,11 +74,12 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
     ) -> Annotated[
         str,
         Field(
-            description="JSON string representation of the created TaskStar object containing all task details, generated timestamps, validation status, and assigned properties"
+            description="JSON string representation of the complete updated TaskConstellation object containing all tasks, dependencies, and metadata after adding the new task"
         ),
     ]:
         """
         Add a new task to the constellation. The task will be validated and automatically assigned timestamps and default values.
+        Returns the complete constellation state after the operation.
         """
         try:
             task_data = {
@@ -96,8 +96,9 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
                 tips_list = [tips] if isinstance(tips, str) else tips
                 task_data["tips"] = tips_list
 
-            task = editor.add_task(task_data)
-            return task.to_json()
+            editor.add_task(task_data)
+            # Return complete constellation instead of just the task
+            return editor.constellation.to_json()
         except Exception as e:
             raise ToolError(f"Failed to add task: {str(e)}")
 
@@ -111,14 +112,18 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
         ],
     ) -> Annotated[
         str,
-        Field(description="The ID of the removed task, confirming successful removal"),
+        Field(
+            description="JSON string representation of the complete updated TaskConstellation object after removing the task"
+        ),
     ]:
         """
         Remove a task from the constellation. This operation will automatically remove all dependencies that reference this task (both incoming and outgoing) to maintain constellation integrity.
+        Returns the complete constellation state after the operation.
         """
         try:
-            result = editor.remove_task(task_id)
-            return f"Successfully removed task: {result}"
+            editor.remove_task(task_id)
+            # Return complete constellation instead of just the task ID
+            return editor.constellation.to_json()
         except Exception as e:
             raise ToolError(f"Failed to remove task: {str(e)}")
 
@@ -155,11 +160,12 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
     ) -> Annotated[
         str,
         Field(
-            description="JSON string representation of the updated TaskStar object with all current field values"
+            description="JSON string representation of the complete updated TaskConstellation object after updating the task"
         ),
     ]:
         """
         Update specific fields of an existing task in the constellation. Only the provided fields will be modified, other fields remain unchanged.
+        Returns the complete constellation state after the operation.
         """
         try:
             # Build updates dictionary from provided parameters
@@ -178,8 +184,9 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
             if not updates:
                 raise ToolError("At least one field must be provided for update")
 
-            task = editor.update_task(task_id, **updates)
-            return task.to_json()
+            editor.update_task(task_id, **updates)
+            # Return complete constellation instead of just the task
+            return editor.constellation.to_json()
         except Exception as e:
             raise ToolError(f"Failed to update task: {str(e)}")
 
@@ -187,6 +194,12 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
 
     @constellation_mcp.tool()
     def add_dependency(
+        dependency_id: Annotated[
+            str,
+            Field(
+                description="Unique identifier of the dependency relationship to add. This is the line_id of the TaskStarLine object, typically in format 'from_task_id->to_task_id'. You MUST generate a unique dependency_id in the arguments, and do not omit it!"
+            ),
+        ],
         from_task_id: Annotated[
             str,
             Field(
@@ -208,24 +221,27 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
     ) -> Annotated[
         str,
         Field(
-            description="JSON string representation of the created TaskStarLine dependency object with generated ID, timestamps, and validation status"
+            description="JSON string representation of the complete updated TaskConstellation object after adding the dependency"
         ),
     ]:
         """
         Add a dependency relationship between two tasks in the constellation. This creates a directed edge from source to target task, establishing execution order constraints where the target task waits for the source task to complete.
+        Returns the complete constellation state after the operation.
         """
         try:
             dependency_data = {
+                "line_id": dependency_id,
                 "from_task_id": from_task_id,
                 "to_task_id": to_task_id,
-                "dependency_type": "success_only",  # Default to success_only for safety
+                "dependency_type": "unconditional",  # Default to unconditional
             }
 
             if condition_description:
                 dependency_data["condition_description"] = condition_description
 
-            dependency = editor.add_dependency(dependency_data)
-            return dependency.to_json()
+            editor.add_dependency(dependency_data)
+            # Return complete constellation instead of just the dependency
+            return editor.constellation.to_json()
         except Exception as e:
             raise ToolError(f"Failed to add dependency: {str(e)}")
 
@@ -240,15 +256,17 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
     ) -> Annotated[
         str,
         Field(
-            description="The ID of the removed dependency, confirming successful removal"
+            description="JSON string representation of the complete updated TaskConstellation object after removing the dependency"
         ),
     ]:
         """
         Remove a specific dependency relationship from the constellation. This breaks the connection between two tasks without affecting the tasks themselves.
+        Returns the complete constellation state after the operation.
         """
         try:
-            result = editor.remove_dependency(dependency_id)
-            return f"Successfully removed dependency: {result}"
+            editor.remove_dependency(dependency_id)
+            # Return complete constellation instead of just the dependency ID
+            return editor.constellation.to_json()
         except Exception as e:
             raise ToolError(f"Failed to remove dependency: {str(e)}")
 
@@ -269,16 +287,18 @@ def create_constellation_mcp_server(*args, **kwargs) -> FastMCP:
     ) -> Annotated[
         str,
         Field(
-            description="JSON string representation of the updated TaskStarLine dependency object with current field values"
+            description="JSON string representation of the complete updated TaskConstellation object after updating the dependency"
         ),
     ]:
         """
         Update the condition description of an existing dependency relationship. This allows you to modify the explanation of why and how tasks depend on each other.
+        Returns the complete constellation state after the operation.
         """
         try:
             updates = {"condition_description": condition_description}
-            dependency = editor.update_dependency(dependency_id, **updates)
-            return dependency.to_json()
+            editor.update_dependency(dependency_id, **updates)
+            # Return complete constellation instead of just the dependency
+            return editor.constellation.to_json()
         except Exception as e:
             raise ToolError(f"Failed to update dependency: {str(e)}")
 

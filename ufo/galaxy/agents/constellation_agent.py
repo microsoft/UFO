@@ -156,14 +156,14 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
     # IResultProcessor implementation
     async def process_editing(
-        self,
-        context: Context = None,
+        self, context: Context = None, task_id: str = ""
     ) -> TaskConstellation:
         """
         Process a task result and potentially update the constellation.
 
         :param result: Task execution result
         :param context: Optional processing context
+        :param task_id: The ID of the task being processed
         :return: Updated constellation
         :raises TaskExecutionError: If result processing fails
         """
@@ -171,12 +171,18 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         weaving_mode = context.get(ContextNames.WEAVING_MODE)
         self.prompter = self.get_prompter(weaving_mode)
 
-        if not self._context_provision_executed:
-            await self.context_provision(context=context)
-            self._context_provision_executed = True
+        await self.context_provision(context=context)
 
         before_constellation: TaskConstellation = context.get(
             ContextNames.CONSTELLATION
+        )
+
+        self.logger.info(
+            f"Task ID for constellation before editing: {before_constellation.tasks.keys()}"
+        )
+
+        self.logger.info(
+            f"Dependency ID for constellation before editing: {before_constellation.dependencies.keys()}"
         )
 
         self.processor = ConstellationAgentProcessor(agent=self, global_context=context)
@@ -214,6 +220,14 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         self._current_constellation = after_constellation
 
+        self.logger.info(
+            f"Task ID for constellation after editing: {after_constellation.tasks.keys()}"
+        )
+
+        self.logger.info(
+            f"Dependency ID for constellation after editing: {after_constellation.dependencies.keys()}"
+        )
+
         # Publish DAG Modified Event
         await self._event_bus.publish_event(
             ConstellationEvent(
@@ -224,6 +238,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
                     "old_constellation": before_constellation,
                     "new_constellation": after_constellation,
                     "modification_type": f"Edited by {self.name}",
+                    "on_task_id": task_id,
                 },
                 constellation_id=after_constellation.constellation_id,
                 constellation_state=(
@@ -293,6 +308,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self.logger.info(f"Loaded tool list: {tool_name_list} for {self.name}.")
 
         tools_info = [MCPToolInfo(**tool) for tool in tool_list]
+        self.logger.debug(f"Loaded tool tools_info: {tools_info}.")
 
         self.prompter.create_api_prompt_template(tools=tools_info)
 

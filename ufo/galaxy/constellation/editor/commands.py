@@ -104,6 +104,14 @@ class AddTaskCommand(BaseConstellationCommand):
         return (
             self._task.task_id not in self._constellation.tasks and not self._executed
         )
+    
+    def get_cannot_execute_reason(self) -> str:
+        """Get the reason why the command cannot be executed."""
+        if self._task.task_id in self._constellation.tasks:
+            return f"Task with ID '{self._task.task_id}' already exists in constellation"
+        if self._executed:
+            return "Command has already been executed"
+        return "Unknown reason"
 
     def execute(self) -> TaskStar:
         """Execute the add task command with validation."""
@@ -185,6 +193,18 @@ class RemoveTaskCommand(BaseConstellationCommand):
             and not self._executed
             and task.status.name != "RUNNING"  # Cannot remove running tasks
         )
+    
+    def get_cannot_execute_reason(self) -> str:
+        """Get the reason why the command cannot be executed."""
+        task = self._constellation.get_task(self._task_id)
+        if task is None:
+            existing_ids = list(self._constellation.tasks.keys())
+            return f"Task with ID '{self._task_id}' not found in constellation. Existing task IDs: {existing_ids}"
+        if task.status.name == "RUNNING":
+            return f"Cannot remove task '{self._task_id}' because it is currently running"
+        if self._executed:
+            return "Command has already been executed"
+        return "Unknown reason"
 
     def execute(self) -> str:
         """Execute the remove task command."""
@@ -275,6 +295,16 @@ class UpdateTaskCommand(BaseConstellationCommand):
         """Check if the task can be updated."""
         task = self._constellation.get_task(self._task_id)
         return task is not None and not self._executed
+    
+    def get_cannot_execute_reason(self) -> str:
+        """Get the reason why the command cannot be executed."""
+        task = self._constellation.get_task(self._task_id)
+        if task is None:
+            existing_ids = list(self._constellation.tasks.keys())
+            return f"Task with ID '{self._task_id}' not found in constellation. Existing task IDs: {existing_ids}"
+        if self._executed:
+            return "Command has already been executed"
+        return "Unknown reason"
 
     def execute(self) -> TaskStar:
         """Execute the update task command with validation."""
@@ -370,6 +400,20 @@ class AddDependencyCommand(BaseConstellationCommand):
             and self._dependency.from_task_id in self._constellation.tasks
             and self._dependency.to_task_id in self._constellation.tasks
         )
+    
+    def get_cannot_execute_reason(self) -> str:
+        """Get the reason why the command cannot be executed."""
+        if self._dependency.line_id in self._constellation.dependencies:
+            return f"Dependency with ID '{self._dependency.line_id}' already exists in constellation"
+        if self._dependency.from_task_id not in self._constellation.tasks:
+            existing_task_ids = list(self._constellation.tasks.keys())
+            return f"Source task '{self._dependency.from_task_id}' not found in constellation. Existing task IDs: {existing_task_ids}"
+        if self._dependency.to_task_id not in self._constellation.tasks:
+            existing_task_ids = list(self._constellation.tasks.keys())
+            return f"Target task '{self._dependency.to_task_id}' not found in constellation. Existing task IDs: {existing_task_ids}"
+        if self._executed:
+            return "Command has already been executed"
+        return "Unknown reason"
 
     def execute(self) -> TaskStarLine:
         """Execute the add dependency command with validation."""
@@ -449,6 +493,15 @@ class RemoveDependencyCommand(BaseConstellationCommand):
             self._dependency_id in self._constellation.dependencies
             and not self._executed
         )
+    
+    def get_cannot_execute_reason(self) -> str:
+        """Get the reason why the command cannot be executed."""
+        if self._dependency_id not in self._constellation.dependencies:
+            existing_dep_ids = list(self._constellation.dependencies.keys())
+            return f"Dependency with ID '{self._dependency_id}' not found in constellation. Existing dependency IDs: {existing_dep_ids}"
+        if self._executed:
+            return "Command has already been executed"
+        return "Unknown reason"
 
     def execute(self) -> str:
         """Execute the remove dependency command."""
@@ -536,6 +589,16 @@ class UpdateDependencyCommand(BaseConstellationCommand):
         """Check if the dependency can be updated."""
         dependency = self._constellation.get_dependency(self._dependency_id)
         return dependency is not None and not self._executed
+    
+    def get_cannot_execute_reason(self) -> str:
+        """Get the reason why the command cannot be executed."""
+        dependency = self._constellation.get_dependency(self._dependency_id)
+        if dependency is None:
+            existing_dep_ids = list(self._constellation.dependencies.keys())
+            return f"Dependency with ID '{self._dependency_id}' not found in constellation. Existing dependency IDs: {existing_dep_ids}"
+        if self._executed:
+            return "Command has already been executed"
+        return "Unknown reason"
 
     def execute(self) -> TaskStarLine:
         """Execute the update dependency command with validation."""
@@ -629,6 +692,14 @@ class BuildConstellationCommand(BaseConstellationCommand):
     def can_execute(self) -> bool:
         """Check if the constellation can be built."""
         return not self._executed and bool(self._config)
+    
+    def get_cannot_execute_reason(self) -> str:
+        """Get the reason why the command cannot be executed."""
+        if not bool(self._config):
+            return "Configuration is empty or invalid"
+        if self._executed:
+            return "Command has already been executed"
+        return "Unknown reason"
 
     def execute(self) -> TaskConstellation:
         """Execute the build constellation command."""
@@ -702,6 +773,12 @@ class ClearConstellationCommand(BaseConstellationCommand):
     def can_execute(self) -> bool:
         """Check if the constellation can be cleared."""
         return not self._executed
+    
+    def get_cannot_execute_reason(self) -> str:
+        """Get the reason why the command cannot be executed."""
+        if self._executed:
+            return "Command has already been executed"
+        return "Unknown reason"
 
     def execute(self) -> TaskConstellation:
         """Execute the clear constellation command with validation."""
@@ -776,6 +853,16 @@ class LoadConstellationCommand(BaseConstellationCommand):
         import os
 
         return not self._executed and os.path.exists(self._file_path)
+    
+    def get_cannot_execute_reason(self) -> str:
+        """Get the reason why the command cannot be executed."""
+        import os
+        
+        if not os.path.exists(self._file_path):
+            return f"File '{self._file_path}' not found"
+        if self._executed:
+            return "Command has already been executed"
+        return "Unknown reason"
 
     def execute(self) -> TaskConstellation:
         """Execute the load constellation command with validation."""
@@ -857,6 +944,12 @@ class SaveConstellationCommand(BaseConstellationCommand):
     def can_execute(self) -> bool:
         """Check if the constellation can be saved."""
         return not self._executed
+    
+    def get_cannot_execute_reason(self) -> str:
+        """Get the reason why the command cannot be executed."""
+        if self._executed:
+            return "Command has already been executed"
+        return "Unknown reason"
 
     def execute(self) -> str:
         """Execute the save constellation command."""

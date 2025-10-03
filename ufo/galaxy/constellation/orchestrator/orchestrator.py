@@ -12,9 +12,12 @@ Delegates device/state management to ConstellationManager.
 import asyncio
 import logging
 import time
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, TYPE_CHECKING
 
 from ufo.galaxy.client.device_manager import ConstellationDeviceManager
+
+if TYPE_CHECKING:
+    from ...session.observers.constellation_sync_observer import ConstellationModificationSynchronizer
 
 from ...core.events import (
     ConstellationEvent,
@@ -68,6 +71,11 @@ class TaskConstellationOrchestrator:
 
         # Track active execution tasks
         self._execution_tasks: Dict[str, asyncio.Task] = {}
+        
+        # Modification synchronizer (will be set by session)
+        self._modification_synchronizer: Optional[
+            "ConstellationModificationSynchronizer"
+        ] = None
 
     def set_device_manager(self, device_manager: ConstellationDeviceManager) -> None:
         """
@@ -77,6 +85,18 @@ class TaskConstellationOrchestrator:
         """
         self._device_manager = device_manager
         self._constellation_manager.set_device_manager(device_manager)
+
+    def set_modification_synchronizer(
+        self, synchronizer: "ConstellationModificationSynchronizer"
+    ) -> None:
+        """
+        Set the modification synchronizer for coordination.
+
+        :param synchronizer: ConstellationModificationSynchronizer instance
+        """
+        self._modification_synchronizer = synchronizer
+        if self._logger:
+            self._logger.info("Modification synchronizer attached to orchestrator")
 
     async def orchestrate_constellation(
         self,
@@ -154,6 +174,10 @@ class TaskConstellationOrchestrator:
         try:
             # Main execution loop - continue until all tasks complete
             while not constellation.is_complete():
+                # Wait for pending modifications before getting ready tasks
+                if self._modification_synchronizer:
+                    await self._modification_synchronizer.wait_for_pending_modifications()
+                
                 ready_tasks = constellation.get_ready_tasks()
 
                 # Create execution tasks for ready tasks in parallel

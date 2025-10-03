@@ -110,10 +110,13 @@ class BasicPrompter(ABC):
         return prompt
 
     @staticmethod
-    def tool_to_llm_prompt(tool_info: MCPToolInfo) -> str:
+    def tool_to_llm_prompt(
+        tool_info: MCPToolInfo, generate_example: bool = True
+    ) -> str:
         """
         Convert tool information to a formatted string for LLM.
         :param tool_info: The tool information dictionary.
+        :param generate_example: Whether to generate example usage.
         :return: A formatted string representing the tool information.
         """
         name = tool_info.tool_name
@@ -130,28 +133,38 @@ class BasicPrompter(ABC):
         example_args = ", ".join(
             f"{k}={repr(v.get('default', ''))}" for k, v in in_props.items()
         )
-        return f"""\
-    Tool name: {name}
-    Description: {desc}
 
-    Parameters:
-    {params}
+        formated_string = f"""\
+        Tool name: {name}
+        Description: {desc}
 
-    Returns: {output_desc}
+        Parameters:
+        {params}
 
-    Example usage:
-    {name}({example_args})
-    """
+        Returns: {output_desc}
+        """
+
+        if generate_example:
+            formated_string += f"""
+        Example usage:
+        {name}({example_args})
+        """
+
+        return formated_string
 
     @staticmethod
-    def tools_to_llm_prompt(tools: List[MCPToolInfo]) -> str:
+    def tools_to_llm_prompt(
+        tools: List[MCPToolInfo], generate_example: bool = True
+    ) -> str:
         """
         Convert a list of tool information to a formatted string for LLM.
         :param tools: A list of tool information dictionaries.
+        :param generate_example: Whether to generate example usage for each tool.
         :return: A formatted string representing all tools.
         """
         return "\n\n---\n\n".join(
-            BasicPrompter.tool_to_llm_prompt(tool) for tool in tools
+            BasicPrompter.tool_to_llm_prompt(tool, generate_example=generate_example)
+            for tool in tools
         )
 
     @abstractmethod

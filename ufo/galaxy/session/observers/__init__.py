@@ -10,12 +10,14 @@ This package contains specialized observers for different aspects of Galaxy sess
 - DAGVisualizationObserver: Real-time constellation visualization
 - TaskVisualizationHandler: Task-specific visualization logic
 - ConstellationVisualizationHandler: Constellation-specific visualization logic
+- ConstellationModificationSynchronizer: Synchronizes constellation modifications with orchestrator
 """
 
 from .base_observer import ConstellationProgressObserver, SessionMetricsObserver
 from .dag_visualization_observer import DAGVisualizationObserver
 from .task_visualization_handler import TaskVisualizationHandler
 from .constellation_visualization_handler import ConstellationVisualizationHandler
+from .constellation_sync_observer import ConstellationModificationSynchronizer
 
 __all__ = [
     "ConstellationProgressObserver",
@@ -23,4 +25,5 @@ __all__ = [
     "DAGVisualizationObserver",
     "TaskVisualizationHandler",
     "ConstellationVisualizationHandler",
+    "ConstellationModificationSynchronizer",
 ]

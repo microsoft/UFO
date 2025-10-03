@@ -1,0 +1,19 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.10.11, pytest-8.4.2, pluggy-1.6.0 -- C:\Users\chaoyunzhang\ufo\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: C:\Users\chaoyunzhang\OneDrive - Microsoft\Desktop\research\GPTV\UFO-windows\github\saber\UFO2
+plugins: anyio-4.11.0, langsmith-0.4.31, asyncio-1.2.0
+asyncio: mode=strict, debug=False, asyncio_default_fixture_loop_scope=None, asyncio_default_test_loop_scope=function
+collecting ... collected 9 items
+
+tests/test_constellation_update_lock.py::TestConstellationUpdateLock::test_update_lock_exists PASSED [ 11%]
+tests/test_constellation_update_lock.py::TestConstellationUpdateLock::test_lock_basic_functionality PASSED [ 22%]
+tests/test_constellation_update_lock.py::TestConstellationUpdateLock::test_lock_context_manager PASSED [ 33%]
+tests/test_constellation_update_lock.py::TestConstellationUpdateLock::test_concurrent_access_blocked PASSED [ 44%]
+tests/test_constellation_update_lock.py::TestConstellationUpdateLock::test_race_condition_scenario PASSED [ 55%]
+tests/test_constellation_update_lock.py::TestConstellationUpdateLock::test_multiple_concurrent_readers_blocked PASSED [ 66%]
+tests/test_constellation_update_lock.py::TestConstellationUpdateLock::test_lock_prevents_stale_ready_tasks PASSED [ 77%]
+tests/test_constellation_update_lock.py::TestLockPerformance::test_lock_overhead PASSED [ 88%]
+tests/test_constellation_update_lock.py::TestLockPerformance::test_no_deadlock_with_nested_operations PASSED [100%]
+
+============================== 9 passed in 5.93s ==============================
