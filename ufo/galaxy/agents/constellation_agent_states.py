@@ -91,6 +91,7 @@ class StartConstellationAgentState(ConstellationAgentState):
                 agent.logger.info(
                     f"Started orchestration for constellation {agent.current_constellation.constellation_id}"
                 )
+                agent.status = "CONTINUE"
             else:
                 agent.status = "FAIL"
                 agent.logger.error("Failed to create constellation")
