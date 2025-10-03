@@ -206,10 +206,10 @@ class ConstellationEditingActionExecutionStrategy(
             return f"Update Task: '{task_id}' ({fields_str})"
 
         elif function == "add_dependency":
-            line_id = args.get("line_id", "?")
+            dep_id = args.get("dependency_id", "?")
             from_task = args.get("from_task_id", "?")
             to_task = args.get("to_task_id", "?")
-            return f"Add Dependency (line {line_id}): {from_task} → {to_task}"
+            return f"Add Dependency (ID {dep_id}): {from_task} → {to_task}"
 
         elif function == "remove_dependency":
             dep_id = args.get("dependency_id", "?")

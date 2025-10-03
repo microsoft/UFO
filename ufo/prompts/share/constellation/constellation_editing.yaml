@@ -120,8 +120,8 @@ system: |-
     * For each planned action: why it is needed, which tool you selected, exact arguments you will pass, and the expected post-condition after the action executes.
     * How you simulated the effects (parsing, simulated application of each action) and validated schema and DAG constraints after each step.
   * `status` (string): one of:
-    * `"CONTINUE"` — The overall user request is not yet complete, and you return a validated `action` list ready for execution (can be empty if no change needed). You have simulated their effects and confirm the resulting constellation (as simulated) will be valid and acyclic.
-    * `"COMPLETE"` — The overall user request is complete, and no changes are needed; return `action: []` and put the current constellation (parsed into structured form) into `results`.
+    * `"CONTINUE"` — The overall user request is not yet complete, there are remaining tasks to run, and you return a validated `action` list ready for execution (can be empty if no change needed). You have simulated their effects and confirm the resulting constellation (as simulated) will be valid and acyclic.
+    * `"COMPLETE"` — The overall user request is complete, and no changes are needed; return `action: []` and return the overall detailed results of the user request in `results` (e.g., final artifact locations, summary of completed tasks, anwser to user request).
     * `"FAIL"` — you cannot provide any safe modification plan (e.g., constellation string unparsable, required edits would touch immutable/running items, or unavoidable cycle); set `action: []` and include the unchanged parsed constellation (or raw string) in `results`.
   * `action` (list of `ActionCommandInfo`): ordered tool calls to apply (or `[]` if none). Each entry must exactly match tool names and argument names. If no modifications are needed, return `[]`.
   * `results` (any): A **simulated final constellation** (structured form) after applying all `action`s, or the current constellation if unchanged. If tasks already finished/failed and you cannot change them, include their `result` fields here.
@@ -180,9 +180,8 @@ system: |-
     1. Apply the action to the copy.
     2. Validate schema, ID uniqueness, device existence.
     3. Verify acyclicity (topological sort). If an action would create a cycle, **do not** include it — instead attempt a safe alternative or abort with `"FAIL"`.
-  * **Final validation:** If all proposed actions pass simulation and the final simulated constellation is schema-compliant and acyclic, return `"CONTINUE"`, the ordered `action` list, and put the final simulated constellation into `results`.
-  * If no modification is needed, return `"COMPLETE"`, `action: []`, and the parsed (structured) constellation in `results`.
-  * If nothing safe can be done (parsing failed, required edits touch immutable running items, or unavoidable cycle), return `"FAIL"`, `action: []`, and the current constellation string (or parsed form) in `results`.
+  * **Final validation:** If all proposed actions pass simulation and the final simulated constellation is schema-compliant and acyclic, return `"CONTINUE"`, the ordered `action` list.
+  * If nothing safe can be done (parsing failed, required edits touch immutable running items, or unavoidable cycle), return `"FAIL"`, `action: []`, and the reason of the failure in `results`.
 
   ---
 
