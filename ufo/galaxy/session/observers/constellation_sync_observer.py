@@ -4,9 +4,9 @@
 """
 Constellation Modification Synchronizer Observer
 
-This observer ensures proper synchronization between task completion and 
-constellation modifications. It prevents race conditions where the orchestrator 
-might execute newly ready tasks before the ConstellationAgent finishes updating 
+This observer ensures proper synchronization between task completion and
+constellation modifications. It prevents race conditions where the orchestrator
+might execute newly ready tasks before the ConstellationAgent finishes updating
 the constellation.
 
 Synchronization Flow:
@@ -43,12 +43,12 @@ if TYPE_CHECKING:
 class ConstellationModificationSynchronizer(IEventObserver):
     """
     Observer that synchronizes constellation modifications with orchestrator execution.
-    
+
     This observer solves the race condition where:
     - Task A completes → triggers constellation update
     - Orchestrator immediately gets ready tasks → might execute Task B
     - Agent's process_editing() is still modifying Task B or its dependencies
-    
+
     The synchronizer ensures orchestrator waits for modifications to complete
     before executing newly ready tasks.
     """
@@ -66,16 +66,16 @@ class ConstellationModificationSynchronizer(IEventObserver):
         """
         self.orchestrator = orchestrator
         self.logger = logger or logging.getLogger(__name__)
-        
+
         # Track pending modifications: task_id -> Future
         self._pending_modifications: Dict[str, asyncio.Future] = {}
-        
+
         # Track constellation being modified
         self._current_constellation_id: Optional[str] = None
-        
+
         # Timeout for modifications (safety measure)
-        self._modification_timeout = 120.0  # 120 seconds
-        
+        self._modification_timeout = 600.0  # 600 seconds
+
         # Statistics for monitoring
         self._stats = {
             "total_modifications": 0,
@@ -122,7 +122,7 @@ class ConstellationModificationSynchronizer(IEventObserver):
                 modification_future = asyncio.Future()
                 self._pending_modifications[event.task_id] = modification_future
                 self._stats["total_modifications"] += 1
-                
+
                 self.logger.info(
                     f"🔒 Registered pending modification for task '{event.task_id}' "
                     f"(constellation: {constellation_id})"
@@ -190,7 +190,7 @@ class ConstellationModificationSynchronizer(IEventObserver):
         """
         try:
             await asyncio.sleep(self._modification_timeout)
-            
+
             if not future.done():
                 self._stats["timeout_modifications"] += 1
                 self.logger.warning(
@@ -210,7 +210,7 @@ class ConstellationModificationSynchronizer(IEventObserver):
     ) -> bool:
         """
         Wait for all pending modifications to complete.
-        
+
         This method should be called by the orchestrator before getting ready tasks.
 
         :param timeout: Optional timeout in seconds (uses default if None)
@@ -221,7 +221,7 @@ class ConstellationModificationSynchronizer(IEventObserver):
 
         timeout = timeout or self._modification_timeout
         pending_tasks = list(self._pending_modifications.keys())
-        
+
         self.logger.info(
             f"⏳ Waiting for {len(pending_tasks)} pending modification(s): {pending_tasks}"
         )
@@ -230,12 +230,11 @@ class ConstellationModificationSynchronizer(IEventObserver):
             # Wait for all pending modifications with timeout
             await asyncio.wait_for(
                 asyncio.gather(
-                    *self._pending_modifications.values(),
-                    return_exceptions=True
+                    *self._pending_modifications.values(), return_exceptions=True
                 ),
                 timeout=timeout,
             )
-            
+
             self.logger.info("✅ All pending modifications completed")
             return True
 
@@ -283,7 +282,7 @@ class ConstellationModificationSynchronizer(IEventObserver):
     def clear_pending_modifications(self) -> None:
         """
         Clear all pending modifications (emergency use only).
-        
+
         This should only be used in error recovery scenarios.
         """
         count = len(self._pending_modifications)
@@ -291,12 +290,12 @@ class ConstellationModificationSynchronizer(IEventObserver):
             self.logger.warning(
                 f"⚠️ Forcefully clearing {count} pending modification(s)"
             )
-            
+
             # Complete all pending futures
             for task_id, future in self._pending_modifications.items():
                 if not future.done():
                     future.set_result(False)
-            
+
             self._pending_modifications.clear()
 
     def set_modification_timeout(self, timeout: float) -> None:
