@@ -37,7 +37,6 @@ class LinuxSession(LinuxBaseSession):
         id: int,
         request: str = "",
         mode: str = "normal",
-        application_name: str = None,
     ) -> None:
         """
         Initialize a Linux session.
@@ -50,7 +49,6 @@ class LinuxSession(LinuxBaseSession):
         """
         self._mode = mode
         self._init_request = request
-        self._application_name = application_name
         super().__init__(task, should_evaluate, id)
         self.logger = logging.getLogger(__name__)
 
@@ -61,7 +59,6 @@ class LinuxSession(LinuxBaseSession):
         super()._init_context()
 
         self.context.set(ContextNames.MODE, self._mode)
-        self.context.set(ContextNames.PLATFORM, "linux")
 
         # Initialize Linux-specific command dispatcher
         mcp_server_manager = MCPServerManager()
@@ -85,23 +82,9 @@ class LinuxSession(LinuxBaseSession):
         if self.is_finished():
             return None
 
-        # Create app agent directly without host agent
-        app_agent = AgentFactory.create_agent(
-            "app",
-            name="LinuxAppAgent",
-            process_name=self.context.get(ContextNames.APPLICATION_PROCESS_NAME),
-            app_root_name=self.context.get(ContextNames.APPLICATION_ROOT_NAME),
-            is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
-            main_prompt=configs["APPAGENT_PROMPT"],
-            example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
-            api_prompt=configs["API_PROMPT"],
-        )
-
-        app_agent.set_state(app_agent.default_state)
-
         round = BaseRound(
             request=request,
-            agent=app_agent,
+            agent=self._agent,
             context=self.context,
             should_evaluate=configs.get("EVA_ROUND", False),
             id=self.total_rounds,
@@ -137,27 +120,8 @@ class LinuxSession(LinuxBaseSession):
             return request_memory.to_json()
         return self._init_request
 
-    async def run(self) -> None:
-        """
-        Run the Linux session.
-        """
-        await super().run()
 
-        # Linux-specific post-processing
-        save_experience = configs.get("SAVE_EXPERIENCE", "always_not")
-
-        if save_experience == "always":
-            self.experience_saver()
-        elif save_experience == "ask":
-            if interactor.experience_asker():
-                self.experience_saver()
-        elif save_experience == "auto":
-            task_completed = self.results.get("complete", "no")
-            if task_completed.lower() == "yes":
-                self.experience_saver()
-
-
-class LinuxServiceSession(LinuxBaseSession):
+class LinuxServiceSession(LinuxSession):
     """
     A session for UFO service on Linux platform.
     Similar to Windows ServiceSession but without HostAgent - works directly with application agents.
@@ -181,8 +145,9 @@ class LinuxServiceSession(LinuxBaseSession):
         :param websocket: WebSocket connection for service communication.
         """
         self.websocket = websocket
-        self._init_request = request
-        super().__init__(task=task, should_evaluate=should_evaluate, id=id)
+        super().__init__(
+            task=task, should_evaluate=should_evaluate, id=id, request=request
+        )
 
     def _init_context(self) -> None:
         """
@@ -190,64 +155,6 @@ class LinuxServiceSession(LinuxBaseSession):
         """
         super()._init_context()
 
-        self.context.set(ContextNames.MODE, "service")
-
         # Use WebSocket command dispatcher for service mode
         command_dispatcher = WebSocketCommandDispatcher(self, self.websocket)
         self.context.attach_command_dispatcher(command_dispatcher)
-
-    def create_new_round(self) -> Optional[BaseRound]:
-        """
-        Create a new round for Linux service session.
-        """
-        request = self.next_request()
-
-        if self.is_finished():
-            return None
-
-        # Create app agent directly without host agent
-        app_agent = AgentFactory.create_agent(
-            "app",
-            name="LinuxServiceAppAgent",
-            process_name=self.context.get(ContextNames.APPLICATION_PROCESS_NAME),
-            app_root_name=self.context.get(ContextNames.APPLICATION_ROOT_NAME),
-            is_visual=configs["APP_AGENT"]["VISUAL_MODE"],
-            main_prompt=configs["APPAGENT_PROMPT"],
-            example_prompt=configs["APPAGENT_EXAMPLE_PROMPT"],
-            api_prompt=configs["API_PROMPT"],
-        )
-
-        app_agent.set_state(app_agent.default_state)
-
-        round = BaseRound(
-            request=request,
-            agent=app_agent,
-            context=self.context,
-            should_evaluate=configs.get("EVA_ROUND", False),
-            id=self.total_rounds,
-        )
-
-        self.add_round(round.id, round)
-        return round
-
-    def next_request(self) -> str:
-        """
-        Get the next request for the session.
-        For service mode, only process the initial request.
-        :return: The next request for the session.
-        """
-        if self.total_rounds != 0:
-            self._finish = True
-
-        return self._init_request
-
-    def request_to_evaluate(self) -> str:
-        """
-        Get the request to evaluate.
-        :return: The request(s) to evaluate.
-        """
-        # For Linux service session, return the initial request
-        if self.current_round and hasattr(self.current_round.agent, "blackboard"):
-            request_memory = self.current_round.agent.blackboard.requests
-            return request_memory.to_json()
-        return self._init_request

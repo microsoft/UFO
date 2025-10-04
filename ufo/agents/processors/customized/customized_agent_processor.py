@@ -14,6 +14,7 @@ This module implements the architecture for Customized Agent processing, providi
 
 from typing import TYPE_CHECKING
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
+from ufo.agents.processors.context.processing_context import ProcessingPhase
 from ufo.agents.processors.strategies.app_agent_processing_strategy import (
     AppActionExecutionStrategy,
     AppMemoryUpdateStrategy,
@@ -21,6 +22,10 @@ from ufo.agents.processors.strategies.app_agent_processing_strategy import (
 from ufo.agents.processors.strategies.customized_agent_processing_strategy import (
     CustomizedLLMInteractionStrategy,
     CustomizedScreenshotCaptureStrategy,
+)
+from ufo.agents.processors.strategies.linux_agent_strategy import (
+    LinuxActionExecutionStrategy,
+    LinuxLLMInteractionStrategy,
 )
 from ufo.module.context import Context
 
@@ -73,3 +78,26 @@ class HardwareAgentProcessor(CustomizedProcessor):
     """
 
     pass
+
+
+class LinuxAgentProcessor(CustomizedProcessor):
+    """
+    Processor for Linux MCP Agent.
+    """
+
+    def _setup_strategies(self) -> None:
+        # Call parent method to set up base strategies
+        super()._setup_strategies()
+
+        self.strategies[ProcessingPhase.LLM_INTERACTION] = LinuxLLMInteractionStrategy(
+            fail_fast=True
+        )
+
+        self.strategies[ProcessingPhase.ACTION_EXECUTION] = (
+            LinuxActionExecutionStrategy(fail_fast=False)
+        )
+
+        # Memory update strategy
+        self.strategies[ProcessingPhase.MEMORY_UPDATE] = AppMemoryUpdateStrategy(
+            fail_fast=False  # Memory update failures shouldn't stop the process
+        )

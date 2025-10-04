@@ -9,6 +9,7 @@ allowing for platform-specific agent initialization and behavior.
 
 from typing import Optional
 
+from ufo.agents.agent.customized_agent import LinuxAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
 from ufo.config import Config
 from ufo.module.basic import BaseRound, BaseSession
@@ -54,4 +55,11 @@ class LinuxBaseSession(BaseSession):
         # No host agent for Linux
         self._host_agent = None
         # Linux-specific agent initialization can be added here if needed
-        # For example: self._app_agent = LinuxAppAgentFactory.create_agent(...)
+        self._agent: LinuxAgent = AgentFactory.create_agent(
+            "LinuxAgent",
+            "LinuxAgent",
+            configs["THIRD_PARTY_AGENT_CONFIG"]["LinuxAgent"]["APPAGENT_PROMPT"],
+            configs["THIRD_PARTY_AGENT_CONFIG"]["LinuxAgent"][
+                "APPAGENT_EXAMPLE_PROMPT"
+            ],
+        )
