@@ -22,13 +22,14 @@ from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import ContextNames
 from ufo.module.dispatcher import LocalCommandDispatcher
 from ufo.module.sessions.plan_reader import PlanReader
+from ufo.module.sessions.platform_session import WindowsBaseSession
 from ufo.trajectory.parser import Trajectory
 from ufo.contracts.contracts import Command
 
 configs = Config.get_instance().config_data
 
 
-class Session(BaseSession):
+class Session(WindowsBaseSession):
     """
     A session for UFO.
     """
@@ -147,7 +148,7 @@ class Session(BaseSession):
         return request_memory.to_json()
 
 
-class FollowerSession(BaseSession):
+class FollowerSession(WindowsBaseSession):
     """
     A session for following a list of plan for action taken.
     This session is used for the follower agent, which accepts a plan file to follow using the PlanReader.
@@ -244,9 +245,9 @@ class FollowerSession(BaseSession):
         return self.plan_reader.get_task()
 
 
-class FromFileSession(BaseSession):
+class FromFileSession(WindowsBaseSession):
     """
-    A session for UFO from files.
+    A session for UFO from files on Windows.
     """
 
     def __init__(

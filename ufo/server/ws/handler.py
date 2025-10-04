@@ -294,8 +294,17 @@ class UFOWebSocketHandler:
         session_id = str(uuid.uuid4()) if not data.session_id else data.session_id
         task_name = data.task_name if data.task_name else str(uuid.uuid4())
 
+        # Extract platform information from metadata
+        platform_override = None
+        if data.metadata:
+            platform_override = data.metadata.get("platform")
+
         session = self.session_manager.get_or_create_session(
-            session_id, task_name, data.request, target_ws
+            session_id=session_id,
+            task_name=task_name,
+            request=data.request,
+            websocket=target_ws,
+            platform_override=platform_override,
         )
 
         error = None

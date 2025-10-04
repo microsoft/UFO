@@ -5,7 +5,10 @@
 import json
 import logging
 import os
-from typing import List
+import platform
+from typing import List, Optional
+
+from fastapi import WebSocket
 
 from ufo.config import Config
 from ufo.module.basic import BaseSession
@@ -15,6 +18,8 @@ from ufo.module.sessions.session import (
     OpenAIOperatorSession,
     Session,
 )
+from ufo.module.sessions.service_session import ServiceSession
+from ufo.module.sessions.linux_session import LinuxSession, LinuxServiceSession
 
 configs = Config.get_instance().config_data
 
@@ -65,21 +70,57 @@ class SessionPool:
 class SessionFactory:
     """
     The factory class to create a session.
+    Supports both Windows and Linux platforms with different session types.
     """
 
     logger = logging.getLogger(__name__)
 
     def create_session(
-        self, task: str, mode: str, plan: str, request: str = ""
+        self,
+        task: str,
+        mode: str,
+        plan: str,
+        request: str = "",
+        platform_override: Optional[str] = None,
+        **kwargs,
     ) -> List[BaseSession]:
         """
-        Create a session.
+        Create a session based on platform and mode.
         :param task: The name of current task.
         :param mode: The mode of the task.
-        :return: The created session.
+        :param plan: The plan file or folder path (for follower/batch modes).
+        :param request: The user request.
+        :param platform_override: Override platform detection ('windows' or 'linux').
+        :param kwargs: Additional platform-specific parameters:
+            - application_name: Target application (for Linux sessions)
+            - websocket: WebSocket connection (for service sessions)
+        :return: The created session list.
+        """
+        current_platform = platform_override or platform.system().lower()
+
+        if current_platform == "windows":
+            return self._create_windows_session(task, mode, plan, request, **kwargs)
+        elif current_platform == "linux":
+            return self._create_linux_session(task, mode, plan, request, **kwargs)
+        else:
+            raise NotImplementedError(
+                f"Platform {current_platform} is not supported yet."
+            )
+
+    def _create_windows_session(
+        self, task: str, mode: str, plan: str, request: str = "", **kwargs
+    ) -> List[BaseSession]:
+        """
+        Create Windows-specific sessions.
+        :param task: The name of current task.
+        :param mode: The mode of the task.
+        :param plan: The plan file or folder path.
+        :param request: The user request.
+        :param kwargs: Additional parameters.
+        :return: The created Windows session list.
         """
         if mode in ["normal", "normal_operator"]:
-            self.logger.info(f"Creating a normal session for mode: {mode}")
+            self.logger.info(f"Creating a normal Windows session for mode: {mode}")
             return [
                 Session(
                     task,
@@ -89,10 +130,21 @@ class SessionFactory:
                     mode=mode,
                 )
             ]
+        elif mode == "service":
+            self.logger.info(f"Creating a Windows service session for mode: {mode}")
+            return [
+                ServiceSession(
+                    task=task,
+                    should_evaluate=configs.get("EVA_SESSION", False),
+                    id=0,
+                    request=request,
+                    websocket=kwargs.get("websocket"),
+                )
+            ]
         elif mode == "follower":
             # If the plan is a folder, create a follower session for each plan file in the folder.
 
-            self.logger.info(f"Creating a follower session for mode: {mode}")
+            self.logger.info(f"Creating a Windows follower session for mode: {mode}")
             if self.is_folder(plan):
                 self.logger.info(f"Got a folder for plan, creating sessions in batch.")
                 return self.create_follower_session_in_batch(task, plan)
@@ -101,7 +153,9 @@ class SessionFactory:
                     FollowerSession(task, plan, configs.get("EVA_SESSION", False), id=0)
                 ]
         elif mode == "batch_normal":
-            self.logger.info(f"Creating a batch normal session for mode: {mode}")
+            self.logger.info(
+                f"Creating a batch normal Windows session for mode: {mode}"
+            )
             if self.is_folder(plan):
                 self.logger.info(f"Got a folder for plan, creating sessions in batch.")
                 return self.create_sessions_in_batch(task, plan)
@@ -110,14 +164,104 @@ class SessionFactory:
                     FromFileSession(task, plan, configs.get("EVA_SESSION", False), id=0)
                 ]
         elif mode == "operator":
-            self.logger.info(f"Creating an operator session for mode: {mode}")
+            self.logger.info(f"Creating a Windows operator session for mode: {mode}")
             return [
                 OpenAIOperatorSession(
                     task, configs.get("EVA_SESSION", False), id=0, request=request
                 )
             ]
         else:
-            raise ValueError(f"The {mode} mode is not supported.")
+            raise ValueError(f"The {mode} mode is not supported on Windows.")
+
+    def _create_linux_session(
+        self, task: str, mode: str, plan: str, request: str = "", **kwargs
+    ) -> List[BaseSession]:
+        """
+        Create Linux-specific sessions.
+        :param task: The name of current task.
+        :param mode: The mode of the task.
+        :param plan: The plan file or folder path (not used for normal/service modes).
+        :param request: The user request.
+        :param kwargs: Additional parameters:
+            - application_name: Target application name
+            - websocket: WebSocket connection (for service mode)
+        :return: The created Linux session list.
+        """
+        if mode in ["normal", "normal_operator"]:
+            self.logger.info(f"Creating a normal Linux session for mode: {mode}")
+            return [
+                LinuxSession(
+                    task=task,
+                    should_evaluate=configs.get("EVA_SESSION", False),
+                    id=0,
+                    request=request,
+                    mode=mode,
+                    application_name=kwargs.get("application_name"),
+                )
+            ]
+        elif mode == "service":
+            self.logger.info(f"Creating a Linux service session for mode: {mode}")
+            return [
+                LinuxServiceSession(
+                    task=task,
+                    should_evaluate=configs.get("EVA_SESSION", False),
+                    id=0,
+                    request=request,
+                    websocket=kwargs.get("websocket"),
+                )
+            ]
+        # TODO: Add Linux follower and batch modes if needed
+        # elif mode == "follower":
+        #     return self._create_linux_follower_session(...)
+        else:
+            raise ValueError(
+                f"The {mode} mode is not supported on Linux yet. "
+                f"Supported modes: normal, normal_operator, service"
+            )
+
+    def create_service_session(
+        self,
+        task: str,
+        should_evaluate: bool,
+        id: str,
+        request: str,
+        websocket: Optional[WebSocket] = None,
+        platform_override: Optional[str] = None,
+    ) -> BaseSession:
+        """
+        Convenient method to create a service session for any platform.
+        :param task: Task name.
+        :param should_evaluate: Whether to evaluate.
+        :param id: Session ID.
+        :param request: User request.
+        :param websocket: WebSocket connection.
+        :param platform_override: Override platform detection ('windows' or 'linux').
+        :return: Platform-specific service session.
+        """
+        current_platform = platform_override or platform.system().lower()
+
+        if current_platform == "windows":
+            self.logger.info("Creating Windows service session")
+            return ServiceSession(
+                task=task,
+                should_evaluate=should_evaluate,
+                id=id,
+                request=request,
+                websocket=websocket,
+            )
+        elif current_platform == "linux":
+            self.logger.info("Creating Linux service session")
+            return LinuxServiceSession(
+                task=task,
+                should_evaluate=should_evaluate,
+                id=id,
+                request=request,
+                websocket=websocket,
+            )
+        else:
+            raise NotImplementedError(
+                f"Service session not supported on {current_platform}"
+            )
 
     def create_follower_session_in_batch(
         self, task: str, plan: str

@@ -16,6 +16,13 @@ def parse_args():
     parser.add_argument(
         "--host", type=str, default="0.0.0.0", help="Flask API service host"
     )
+    parser.add_argument(
+        "--platform",
+        type=str,
+        default=None,
+        choices=["windows", "linux"],
+        help="Platform override (auto-detected if not specified)",
+    )
     return parser.parse_args()
 
 
@@ -25,11 +32,14 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
+# Parse command line arguments early to get platform configuration
+cli_args = parse_args()
+
 # Initialize FastAPI app
 app = FastAPI()
 
-# Initialize managers
-session_manager = SessionManager()
+# Initialize managers with platform support
+session_manager = SessionManager(platform_override=cli_args.platform)
 ws_manager = WSManager()
 
 
@@ -51,6 +61,6 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
 
 
 if __name__ == "__main__":
-
-    cli_args = parse_args()
+    logger.info(f"Starting UFO Server on {cli_args.host}:{cli_args.port}")
+    logger.info(f"Platform: {cli_args.platform or 'auto-detected'}")
     uvicorn.run(app, host=cli_args.host, port=cli_args.port, reload=True)

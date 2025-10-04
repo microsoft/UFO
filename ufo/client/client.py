@@ -1,6 +1,7 @@
 import argparse
 import asyncio
 import logging
+import platform as platform_module
 import sys
 import tracemalloc
 
@@ -53,11 +54,29 @@ parser.add_argument(
     default="INFO",
     help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL, OFF). Use OFF to disable logs (default: INFO)",
 )
+parser.add_argument(
+    "--platform",
+    dest="platform",
+    default=None,
+    choices=["windows", "linux"],
+    help="Platform override (windows or linux). If not specified, auto-detected from system.",
+)
 args = parser.parse_args()
+
+# Auto-detect platform if not specified
+if args.platform is None:
+    detected_platform = platform_module.system().lower()
+    if detected_platform in ["windows", "linux"]:
+        args.platform = detected_platform
+    else:
+        # Fallback to windows for unsupported platforms
+        args.platform = "windows"
 
 # Configure logging
 setup_logger(args.log_level)
 logger = logging.getLogger(__name__)
+
+logger.info(f"Platform detected/specified: {args.platform}")
 
 
 async def main():
@@ -67,12 +86,15 @@ async def main():
     mcp_server_manager = MCPServerManager()
     computer_manager = ComputerManager(CONFIGS, mcp_server_manager)
 
-    # Create UFO client
+    # Create UFO client with platform information
     client = UFOClient(
         mcp_server_manager=mcp_server_manager,
         computer_manager=computer_manager,
         client_id=args.client_id,
+        platform=args.platform,
     )
+
+    logger.info(f"UFO Client initialized for platform: {args.platform}")
 
     # Create WebSocket client and build the connection
     ws_client = UFOWebSocketClient(

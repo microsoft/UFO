@@ -462,14 +462,10 @@ class BaseSession(ABC):
         self.logger = logging.getLogger(__name__)
         self._results = None
 
-        self._host_agent: HostAgent = AgentFactory.create_agent(
-            "host",
-            "HostAgent",
-            configs["HOST_AGENT"]["VISUAL_MODE"],
-            configs["HOSTAGENT_PROMPT"],
-            configs["HOSTAGENT_EXAMPLE_PROMPT"],
-            configs["API_PROMPT"],
-        )
+        # Initialize platform-specific agents
+        # Subclasses should override _init_agents() to set up their agents
+        self._host_agent: Optional[HostAgent] = None
+        self._init_agents()
 
     async def run(self) -> None:
         """
@@ -496,6 +492,16 @@ class BaseSession(ABC):
             self.logger.info(f"Trajectory saved to {file_path + '/output.md'}")
 
         self.print_cost()
+
+    @abstractmethod
+    def _init_agents(self) -> None:
+        """
+        Initialize platform-specific agents.
+        Platform-specific sessions should override this to set up their agents.
+        For Windows sessions, this creates a HostAgent.
+        For Linux sessions, this may create different agent types or no host agent.
+        """
+        pass
 
     @abstractmethod
     def create_new_round(self) -> Optional[BaseRound]:
@@ -652,6 +658,15 @@ class BaseSession(ABC):
         return: The rounds of the session.
         """
         return self._rounds
+
+    @property
+    def host_agent(self) -> Optional[HostAgent]:
+        """
+        Get the host agent of the session.
+        May return None for sessions that don't use a host agent (e.g., Linux).
+        :return: The host agent of the session, or None if not applicable.
+        """
+        return self._host_agent
 
     @property
     def current_round(self) -> BaseRound:

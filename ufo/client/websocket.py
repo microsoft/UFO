@@ -173,6 +173,11 @@ class UFOWebSocketClient:
                 async with self.ufo_client.task_lock:
                     self.ufo_client.reset()
 
+                    # Build metadata with platform information
+                    metadata = {}
+                    if self.ufo_client.platform:
+                        metadata["platform"] = self.ufo_client.platform
+
                     client_message = ClientMessage(
                         type=ClientMessageType.TASK,
                         request=request_text,
@@ -184,8 +189,12 @@ class UFOWebSocketClient:
                             datetime.timezone.utc
                         ).isoformat(),
                         status=TaskStatus.CONTINUE,
+                        metadata=metadata if metadata else None,
                     )
 
+                    self.logger.info(
+                        f"[WS] Sending task with platform: {self.ufo_client.platform}"
+                    )
                     await self._ws.send(client_message.model_dump_json())
             except Exception as e:
                 self.logger.error(

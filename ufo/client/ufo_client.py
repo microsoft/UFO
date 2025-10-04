@@ -22,12 +22,14 @@ class UFOClient:
         mcp_server_manager: MCPServerManager,
         computer_manager: ComputerManager,
         client_id: Optional[str] = None,
+        platform: Optional[str] = None,
     ):
         """
         Initialize the UFO web client.
         :param mcp_server_manager: Instance of MCPServerManager to manage MCP servers
         :param computer_manager: Instance of ComputerManager to manage Computer instances
         :param client_id: Optional client ID for the UFO client
+        :param platform: Platform type ('windows' or 'linux'). Auto-detected if not specified.
         """
         self.mcp_server_manager = mcp_server_manager
         self.computer_manager = computer_manager
@@ -39,6 +41,7 @@ class UFOClient:
         self.task_lock = asyncio.Lock()
 
         self.client_id = client_id or "client_001"
+        self.platform = platform
 
         # Initialize session variables
         self._agent_name: Optional[str] = None

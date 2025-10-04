@@ -3,7 +3,7 @@ from typing import Optional
 from fastapi import WebSocket
 
 from ufo.config import Config
-from ufo.module.sessions.session import Session
+from ufo.module.sessions.platform_session import WindowsBaseSession
 from ufo.module.context import ContextNames
 from ufo.module.dispatcher import WebSocketCommandDispatcher
 
@@ -11,9 +11,9 @@ from ufo.module.dispatcher import WebSocketCommandDispatcher
 configs = Config.get_instance().config_data
 
 
-class ServiceSession(Session):
+class ServiceSession(WindowsBaseSession):
     """
-    A session for UFO service.
+    A session for UFO service on Windows platform.
     """
 
     def __init__(
