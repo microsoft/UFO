@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for ConstellationUpdater class.
 Validates constellation update and modification functionality.
 """
@@ -6,10 +6,10 @@ Validates constellation update and modification functionality.
 import pytest
 from unittest.mock import Mock
 
-from ufo.galaxy.constellation.parsers.constellation_updater import ConstellationUpdater
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
-from ufo.galaxy.constellation.task_star import TaskStar, TaskPriority, TaskStatus
-from ufo.galaxy.constellation.task_star_line import TaskStarLine
+from galaxy.constellation.parsers.constellation_updater import ConstellationUpdater
+from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.task_star import TaskStar, TaskPriority, TaskStatus
+from galaxy.constellation.task_star_line import TaskStarLine
 
 
 class TestConstellationUpdater:

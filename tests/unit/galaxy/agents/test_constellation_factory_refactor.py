@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -15,30 +15,30 @@ import pytest
 from unittest.mock import Mock, MagicMock, patch
 from typing import Dict, Any
 
-from ufo.galaxy.agents.schema import WeavingMode
-from ufo.galaxy.agents.processors.strategies.constellation_factory import (
+from galaxy.agents.schema import WeavingMode
+from galaxy.agents.processors.strategies.constellation_factory import (
     ConstellationStrategyFactory,
     ConstellationPrompterFactory,
 )
-from ufo.galaxy.agents.processors.strategies.base_constellation_strategy import (
+from galaxy.agents.processors.strategies.base_constellation_strategy import (
     BaseConstellationLLMInteractionStrategy,
     BaseConstellationActionExecutionStrategy,
 )
-from ufo.galaxy.agents.processors.strategies.constellation_creation_strategy import (
+from galaxy.agents.processors.strategies.constellation_creation_strategy import (
     ConstellationCreationLLMInteractionStrategy,
     ConstellationCreationActionExecutionStrategy,
 )
-from ufo.galaxy.agents.processors.strategies.constellation_editing_strategy import (
+from galaxy.agents.processors.strategies.constellation_editing_strategy import (
     ConstellationEditingLLMInteractionStrategy,
     ConstellationEditingActionExecutionStrategy,
 )
-from ufo.galaxy.agents.prompters.base_constellation_prompter import (
+from galaxy.agents.prompters.base_constellation_prompter import (
     BaseConstellationPrompter,
 )
-from ufo.galaxy.agents.prompters.constellation_creation_prompter import (
+from galaxy.agents.prompters.constellation_creation_prompter import (
     ConstellationCreationPrompter,
 )
-from ufo.galaxy.agents.prompters.constellation_editing_prompter import (
+from galaxy.agents.prompters.constellation_editing_prompter import (
     ConstellationEditingPrompter,
 )
 from ufo.agents.processors.core.processor_framework import (

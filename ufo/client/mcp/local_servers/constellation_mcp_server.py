@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -19,8 +19,8 @@ from fastmcp.exceptions import ToolError
 
 from ufo.client.mcp.mcp_registry import MCPRegistry
 from ufo.config import get_config
-from ufo.galaxy.agents.schema import TaskConstellationSchema
-from ufo.galaxy.constellation.editor.constellation_editor import ConstellationEditor
+from galaxy.agents.schema import TaskConstellationSchema
+from galaxy.constellation.editor.constellation_editor import ConstellationEditor
 
 # Get config
 configs = get_config()

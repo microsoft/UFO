@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -16,9 +16,9 @@ from pathlib import Path
 import tempfile
 import os
 
-from ufo.galaxy.galaxy_client import GalaxyClient
-from ufo.galaxy.client.components.types import DeviceInfo, DeviceStatus
-from ufo.galaxy.client.config_loader import ConstellationConfig, DeviceConfig
+from galaxy.galaxy_client import GalaxyClient
+from galaxy.client.components.types import DeviceInfo, DeviceStatus
+from galaxy.client.config_loader import ConstellationConfig, DeviceConfig
 
 
 class TestGalaxyClientLogCollectionSession:

@@ -1,12 +1,12 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Debug visualization issues.
 """
 
 import asyncio
-from ufo.galaxy.session.observers import DAGVisualizationObserver
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
-from ufo.galaxy.constellation.task_star import TaskStar
+from galaxy.session.observers import DAGVisualizationObserver
+from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.task_star import TaskStar
 
 
 async def debug_visualization():
@@ -62,7 +62,7 @@ async def debug_visualization():
     else:
         print("❌ Visualizer not initialized - checking why...")
         try:
-            from ufo.galaxy.visualization.dag_visualizer import DAGVisualizer
+            from galaxy.visualization.dag_visualizer import DAGVisualizer
 
             print("✅ DAGVisualizer import successful")
         except ImportError as e:

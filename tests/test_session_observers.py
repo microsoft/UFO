@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -20,7 +20,7 @@ def test_observer_imports():
     print("🧪 Testing observer imports...")
 
     try:
-        from ufo.galaxy.session import (
+        from galaxy.session import (
             GalaxySession,
             ConstellationProgressObserver,
             SessionMetricsObserver,
@@ -40,7 +40,7 @@ def test_observer_instantiation():
     print("\n🧪 Testing observer instantiation...")
 
     try:
-        from ufo.galaxy.session import SessionMetricsObserver, DAGVisualizationObserver
+        from galaxy.session import SessionMetricsObserver, DAGVisualizationObserver
 
         # Test SessionMetricsObserver
         metrics_observer = SessionMetricsObserver(session_id="test_session")
@@ -82,14 +82,14 @@ def test_modular_structure():
 
     try:
         # Test direct imports from observers module
-        from ufo.galaxy.session.observers import (
+        from galaxy.session.observers import (
             ConstellationProgressObserver,
             SessionMetricsObserver,
             DAGVisualizationObserver,
         )
 
         # Test visualization components are imported separately
-        from ufo.galaxy.visualization import (
+        from galaxy.visualization import (
             TaskDisplay,
             ConstellationDisplay,
             VisualizationChangeDetector,
@@ -129,8 +129,8 @@ def test_observer_interfaces():
     print("\n🧪 Testing observer interfaces...")
 
     try:
-        from ufo.galaxy.session import SessionMetricsObserver, DAGVisualizationObserver
-        from ufo.galaxy.core.events import IEventObserver
+        from galaxy.session import SessionMetricsObserver, DAGVisualizationObserver
+        from galaxy.core.events import IEventObserver
 
         # Test SessionMetricsObserver interface
         metrics_observer = SessionMetricsObserver(session_id="test")

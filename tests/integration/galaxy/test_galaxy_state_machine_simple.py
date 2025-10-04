@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -13,17 +13,17 @@ import time
 from unittest.mock import Mock, AsyncMock
 from typing import Dict, Any
 
-from ufo.galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
-from ufo.galaxy.agents.galaxy_agent_states import (
+from galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
+from galaxy.agents.galaxy_agent_states import (
     StartGalaxyAgentState,
     MonitorGalaxyAgentState,
     FinishGalaxyAgentState,
     FailGalaxyAgentState,
 )
-from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStatus
-from ufo.galaxy.constellation.task_star_line import TaskStarLine
-from ufo.galaxy.constellation.enums import ConstellationState, TaskPriority
-from ufo.galaxy.core.events import TaskEvent, EventType
+from galaxy.constellation import TaskConstellation, TaskStar, TaskStatus
+from galaxy.constellation.task_star_line import TaskStarLine
+from galaxy.constellation.enums import ConstellationState, TaskPriority
+from galaxy.core.events import TaskEvent, EventType
 from ufo.module.context import Context
 
 

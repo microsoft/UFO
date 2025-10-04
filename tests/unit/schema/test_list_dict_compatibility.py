@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -13,7 +13,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
-from ufo.galaxy.agents.schema import (
+from galaxy.agents.schema import (
     TaskStarSchema,
     TaskStarLineSchema,
     TaskConstellationSchema,

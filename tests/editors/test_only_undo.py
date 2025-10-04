@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 
 import sys
 from pathlib import Path
@@ -7,7 +7,7 @@ from pathlib import Path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-from ufo.galaxy.constellation.editor import ConstellationEditor
+from galaxy.constellation.editor import ConstellationEditor
 
 
 def test_only_undo():

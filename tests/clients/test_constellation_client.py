@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 测试 ConstellationClient 连接真实设备的脚本
 """
@@ -12,8 +12,8 @@ import logging
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-from ufo.galaxy.client.constellation_client import ConstellationClient
-from ufo.galaxy.client.config_loader import ConstellationConfig
+from galaxy.client.constellation_client import ConstellationClient
+from galaxy.client.config_loader import ConstellationConfig
 
 # 设置日志 - 只输出到控制台，避免文件编码问题
 logging.basicConfig(

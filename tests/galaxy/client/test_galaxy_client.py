@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -15,9 +15,9 @@ from unittest.mock import AsyncMock, MagicMock, patch, mock_open
 from pathlib import Path
 import json
 
-from ufo.galaxy.galaxy_client import GalaxyClient
-from ufo.galaxy.client.constellation_client import ConstellationClient
-from ufo.galaxy.session.galaxy_session import GalaxySession
+from galaxy.galaxy_client import GalaxyClient
+from galaxy.client.constellation_client import ConstellationClient
+from galaxy.session.galaxy_session import GalaxySession
 
 
 class TestGalaxyClient:

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Comprehensive example demonstrating all the updated features of the
 Constellation Editor with:
@@ -16,9 +16,9 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 ufo_path = os.path.dirname(current_dir)
 sys.path.insert(0, ufo_path)
 
-from ufo.galaxy.constellation.editor.constellation_editor import ConstellationEditor
-from ufo.galaxy.constellation.editor.command_registry import command_registry
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.editor.constellation_editor import ConstellationEditor
+from galaxy.constellation.editor.command_registry import command_registry
+from galaxy.constellation.task_constellation import TaskConstellation
 
 
 def demo_serializable_parameters():

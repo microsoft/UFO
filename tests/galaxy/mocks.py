@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -14,13 +14,13 @@ import logging
 import time
 from typing import Dict, List, Optional, Union
 
-from ufo.galaxy.agents.constellation_agent import ConstellationAgent
-from ufo.galaxy.constellation.orchestrator.orchestrator import (
+from galaxy.agents.constellation_agent import ConstellationAgent
+from galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
 )
-from ufo.galaxy.core.events import get_event_bus, ConstellationEvent, EventType
-from ufo.galaxy.constellation import TaskConstellation, TaskStar
-from ufo.galaxy.constellation.enums import ConstellationState, TaskPriority
+from galaxy.core.events import get_event_bus, ConstellationEvent, EventType
+from galaxy.constellation import TaskConstellation, TaskStar
+from galaxy.constellation.enums import ConstellationState, TaskPriority
 from ufo.module.context import Context, ContextNames
 
 
@@ -54,7 +54,7 @@ def create_simple_test_constellation(
 
     # Add sequential dependencies if requested
     if sequential and len(tasks) > 1:
-        from ufo.galaxy.constellation.task_star_line import TaskStarLine
+        from galaxy.constellation.task_star_line import TaskStarLine
 
         for i in range(len(tasks) - 1):
             dependency = TaskStarLine(

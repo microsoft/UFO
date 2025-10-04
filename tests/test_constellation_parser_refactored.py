@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for refactored ConstellationParser integration.
 Validates that ConstellationParser properly uses ConstellationSerializer and ConstellationUpdater.
 """
@@ -7,13 +7,13 @@ import pytest
 import json
 from unittest.mock import Mock, patch
 
-from ufo.galaxy.constellation.parsers.constellation_parser import ConstellationParser
-from ufo.galaxy.constellation.parsers.constellation_serializer import (
+from galaxy.constellation.parsers.constellation_parser import ConstellationParser
+from galaxy.constellation.parsers.constellation_serializer import (
     ConstellationSerializer,
 )
-from ufo.galaxy.constellation.parsers.constellation_updater import ConstellationUpdater
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
-from ufo.galaxy.constellation.task_star import TaskStar, TaskPriority
+from galaxy.constellation.parsers.constellation_updater import ConstellationUpdater
+from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.task_star import TaskStar, TaskPriority
 
 
 class TestConstellationParserRefactored:

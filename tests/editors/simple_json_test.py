@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -20,14 +20,14 @@ sys.path.insert(0, project_root)
 
 try:
     # Direct imports to avoid circular dependencies
-    from ufo.galaxy.constellation.enums import (
+    from galaxy.constellation.enums import (
         TaskStatus,
         TaskPriority,
         DeviceType,
         DependencyType,
     )
-    from ufo.galaxy.constellation.task_star import TaskStar
-    from ufo.galaxy.constellation.task_star_line import TaskStarLine
+    from galaxy.constellation.task_star import TaskStar
+    from galaxy.constellation.task_star_line import TaskStarLine
 
     print("✓ Successfully imported required modules")
 except ImportError as e:

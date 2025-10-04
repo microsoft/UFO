@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -21,21 +21,21 @@ from unittest.mock import MagicMock
 # Add parent directory to path for imports
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from ufo.galaxy.session.observers.dag_visualization_observer import (
+from galaxy.session.observers.dag_visualization_observer import (
     DAGVisualizationObserver,
 )
-from ufo.galaxy.constellation import (
+from galaxy.constellation import (
     TaskConstellation,
     TaskStar,
     TaskStarLine,
     TaskPriority,
 )
-from ufo.galaxy.constellation.enums import (
+from galaxy.constellation.enums import (
     TaskStatus,
     ConstellationState,
     DependencyType,
 )
-from ufo.galaxy.core.events import Event, EventType, TaskEvent, ConstellationEvent
+from galaxy.core.events import Event, EventType, TaskEvent, ConstellationEvent
 
 
 def create_test_constellation():

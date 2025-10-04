@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -9,12 +9,12 @@ import asyncio
 import pytest
 from unittest.mock import Mock, AsyncMock
 
-from ufo.galaxy.session.observers import (
+from galaxy.session.observers import (
     ConstellationProgressObserver,
     SessionMetricsObserver,
     DAGVisualizationObserver,
 )
-from ufo.galaxy.core.events import TaskEvent, ConstellationEvent, EventType
+from galaxy.core.events import TaskEvent, ConstellationEvent, EventType
 
 
 class TestModularObservers:

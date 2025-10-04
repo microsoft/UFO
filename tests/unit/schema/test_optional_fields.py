@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,7 +8,7 @@ This script verifies that created_at and updated_at fields are now optional
 and that task_description has been removed from TaskStarSchema.
 """
 
-from ufo.galaxy.agents.schema import (
+from galaxy.agents.schema import (
     TaskStarSchema,
     TaskStarLineSchema,
     TaskConstellationSchema,

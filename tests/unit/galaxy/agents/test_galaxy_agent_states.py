@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -19,7 +19,7 @@ from typing import Dict, Any, Optional
 # Add project root to path for imports
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', '..', '..', '..'))
 
-from ufo.galaxy.agents.constellation_agent_states import (
+from galaxy.agents.constellation_agent_states import (
     StartConstellationAgentState,
     MonitorConstellationAgentState,
     FinishConstellationAgentState,
@@ -28,10 +28,10 @@ from ufo.galaxy.agents.constellation_agent_states import (
     ConstellationAgentStatus,
 )
 from tests.galaxy.mocks import MockConstellationAgent
-from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStatus
-from ufo.galaxy.constellation.enums import ConstellationState, TaskPriority
-from ufo.galaxy.constellation.task_star_line import TaskStarLine
-from ufo.galaxy.core.events import TaskEvent, EventType
+from galaxy.constellation import TaskConstellation, TaskStar, TaskStatus
+from galaxy.constellation.enums import ConstellationState, TaskPriority
+from galaxy.constellation.task_star_line import TaskStarLine
+from galaxy.core.events import TaskEvent, EventType
 from ufo.module.context import Context
 
 

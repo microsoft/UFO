@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 """
 Final comprehensive test demonstrating all GalaxySession features.
 """
@@ -12,8 +12,8 @@ from unittest.mock import MagicMock
 # Add UFO path - adjust for tests/galaxy/session subdirectory
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
-from ufo.galaxy.session.galaxy_session import GalaxySession
-from ufo.galaxy.client.constellation_client import ConstellationClient
+from galaxy.session.galaxy_session import GalaxySession
+from galaxy.client.constellation_client import ConstellationClient
 
 
 async def test_galaxy_session_complete_features():
@@ -127,7 +127,7 @@ async def test_galaxy_session_complete_features():
 
     # Test event publishing capability
     try:
-        from ufo.galaxy.core.events import ConstellationEvent, EventType
+        from galaxy.core.events import ConstellationEvent, EventType
         import time
 
         # Create a test event

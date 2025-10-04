@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 """
 Simple test script for ConstellationAgent event publishing functionality.
 """
@@ -7,9 +7,9 @@ import asyncio
 import time
 from unittest.mock import AsyncMock, MagicMock
 
-from ufo.galaxy.constellation import TaskConstellation, TaskStar
-from ufo.galaxy.core.events import ConstellationEvent, EventType, EventBus
-from ufo.galaxy.session.observers import DAGVisualizationObserver
+from galaxy.constellation import TaskConstellation, TaskStar
+from galaxy.core.events import ConstellationEvent, EventType, EventBus
+from galaxy.session.observers import DAGVisualizationObserver
 from ufo.module.context import Context, ContextNames
 
 
@@ -38,9 +38,9 @@ import time
 import pytest
 from unittest.mock import AsyncMock, MagicMock
 
-from ufo.galaxy.constellation import TaskConstellation, TaskStar
-from ufo.galaxy.core.events import ConstellationEvent, EventType, EventBus
-from ufo.galaxy.session.observers import DAGVisualizationObserver
+from galaxy.constellation import TaskConstellation, TaskStar
+from galaxy.core.events import ConstellationEvent, EventType, EventBus
+from galaxy.session.observers import DAGVisualizationObserver
 from ufo.module.context import Context, ContextNames
 
 

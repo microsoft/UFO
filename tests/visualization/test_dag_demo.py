@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -18,16 +18,16 @@ import os
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, project_root)
 
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
-from ufo.galaxy.constellation.task_star import TaskStar
-from ufo.galaxy.constellation.task_star_line import TaskStarLine
-from ufo.galaxy.constellation.enums import (
+from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.task_star import TaskStar
+from galaxy.constellation.task_star_line import TaskStarLine
+from galaxy.constellation.enums import (
     TaskStatus,
     DependencyType,
     TaskPriority,
     ConstellationState,
 )
-from ufo.galaxy.visualization.dag_visualizer import DAGVisualizer, visualize_dag
+from galaxy.visualization.dag_visualizer import DAGVisualizer, visualize_dag
 
 
 def create_sample_constellation() -> TaskConstellation:

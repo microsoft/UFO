@@ -1,11 +1,11 @@
-"""
+﻿"""
 测试改进的constellation continuation机制
 """
 import asyncio
 import pytest
 from unittest.mock import MagicMock, AsyncMock
-from ufo.galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState, GalaxyAgentStatus
-from ufo.galaxy.core.events import EventType
+from galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState, GalaxyAgentStatus
+from galaxy.core.events import EventType
 from ufo.module.context import Context
 
 

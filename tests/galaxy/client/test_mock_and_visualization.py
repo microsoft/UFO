@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -22,10 +22,10 @@ from unittest.mock import MagicMock, AsyncMock, patch
 project_root = Path(__file__).parent.parent.parent.parent
 sys.path.insert(0, str(project_root))
 
-from ufo.galaxy.galaxy_client import GalaxyClient
-from ufo.galaxy.visualization.client_display import ClientDisplay
-from ufo.galaxy.client.constellation_client import ConstellationClient
-from ufo.galaxy.session.galaxy_session import GalaxySession
+from galaxy.galaxy_client import GalaxyClient
+from galaxy.visualization.client_display import ClientDisplay
+from galaxy.client.constellation_client import ConstellationClient
+from galaxy.session.galaxy_session import GalaxySession
 from tests.galaxy.mocks import MockConstellationAgent, MockTaskConstellationOrchestrator
 from rich.console import Console
 

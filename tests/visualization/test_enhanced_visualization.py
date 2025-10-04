@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Test script to verify enhanced DAGVisualizationObserver functionality.
 """
@@ -8,13 +8,13 @@ import logging
 import pytest
 from typing import List
 
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
-from ufo.galaxy.constellation.task_star import TaskStar
-from ufo.galaxy.constellation.task_star_line import TaskStarLine
-from ufo.galaxy.constellation.orchestrator.orchestrator import (
+from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.task_star import TaskStar
+from galaxy.constellation.task_star_line import TaskStarLine
+from galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
 )
-from ufo.galaxy.core.events import (
+from galaxy.core.events import (
     get_event_bus,
     Event,
     EventType,
@@ -22,8 +22,8 @@ from ufo.galaxy.core.events import (
     ConstellationEvent,
     IEventObserver,
 )
-from ufo.galaxy.client.device_manager import ConstellationDeviceManager
-from ufo.galaxy.session.observers import DAGVisualizationObserver
+from galaxy.client.device_manager import ConstellationDeviceManager
+from galaxy.session.observers import DAGVisualizationObserver
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

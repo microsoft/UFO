@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -18,11 +18,11 @@ project_root = os.path.abspath(
 )
 sys.path.insert(0, project_root)
 
-from ufo.galaxy.agents.processors.strategies.constellation_factory import (
+from galaxy.agents.processors.strategies.constellation_factory import (
     ConstellationStrategyFactory,
     ConstellationPrompterFactory,
 )
-from ufo.galaxy.agents.schema import WeavingMode
+from galaxy.agents.schema import WeavingMode
 
 
 def test_strategy_factory():

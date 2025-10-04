@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Test script for updated constellation editor with:
 1. Serializable command parameters
@@ -14,11 +14,11 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 ufo_path = os.path.dirname(current_dir)
 sys.path.insert(0, ufo_path)
 
-from ufo.galaxy.constellation.editor.constellation_editor import ConstellationEditor
-from ufo.galaxy.constellation.editor.command_registry import command_registry
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
-from ufo.galaxy.constellation.task_star import TaskStar
-from ufo.galaxy.constellation.task_star_line import TaskStarLine, DependencyType
+from galaxy.constellation.editor.constellation_editor import ConstellationEditor
+from galaxy.constellation.editor.command_registry import command_registry
+from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.task_star import TaskStar
+from galaxy.constellation.task_star_line import TaskStarLine, DependencyType
 
 
 def test_serializable_parameters():

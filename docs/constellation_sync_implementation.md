@@ -1,4 +1,4 @@
-# Constellation Sync Implementation - 方案 1
+﻿# Constellation Sync Implementation - 方案 1
 
 ## 概述
 
@@ -138,7 +138,7 @@ def sync_constellation(
     """
     from ufo.contracts.contracts import ResultStatus
     from ufo.module.context import ContextNames
-    from ufo.galaxy.constellation.task_constellation import TaskConstellation
+    from galaxy.constellation.task_constellation import TaskConstellation
     
     if not results:
         return

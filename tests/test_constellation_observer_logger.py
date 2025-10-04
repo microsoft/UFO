@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -12,10 +12,10 @@ import time
 from unittest.mock import Mock, AsyncMock, patch
 from typing import Dict, Any
 
-from ufo.galaxy.session.observers.base_observer import ConstellationProgressObserver
-from ufo.galaxy.agents.constellation_agent import ConstellationAgent
-from ufo.galaxy.core.events import TaskEvent, EventType
-from ufo.galaxy.constellation.orchestrator.orchestrator import (
+from galaxy.session.observers.base_observer import ConstellationProgressObserver
+from galaxy.agents.constellation_agent import ConstellationAgent
+from galaxy.core.events import TaskEvent, EventType
+from galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
 )
 

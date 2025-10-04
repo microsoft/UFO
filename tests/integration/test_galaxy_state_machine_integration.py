@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -17,13 +17,13 @@ import time
 from unittest.mock import AsyncMock, MagicMock, patch
 from typing import Dict, Any, List
 
-from ufo.galaxy.session.galaxy_session import GalaxyRound, GalaxySession
-from ufo.galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
-from ufo.galaxy.session.observers import ConstellationProgressObserver
-from ufo.galaxy.constellation import TaskConstellation, TaskStar, create_simple_constellation
-from ufo.galaxy.core.events import EventType, TaskEvent, get_event_bus
-from ufo.galaxy.client.constellation_client import ConstellationClient
-from ufo.galaxy.constellation.orchestrator import TaskConstellationOrchestrator
+from galaxy.session.galaxy_session import GalaxyRound, GalaxySession
+from galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
+from galaxy.session.observers import ConstellationProgressObserver
+from galaxy.constellation import TaskConstellation, TaskStar, create_simple_constellation
+from galaxy.core.events import EventType, TaskEvent, get_event_bus
+from galaxy.client.constellation_client import ConstellationClient
+from galaxy.constellation.orchestrator import TaskConstellationOrchestrator
 from ufo.module.context import Context
 
 
@@ -298,7 +298,7 @@ class TestEndToEndExecution:
         # 这个测试验证状态机是否正确处理异步任务完成
         
         # 创建真实的监控状态
-        from ufo.galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState
+        from galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState
         
         monitoring_state = MonitoringGalaxyAgentState()
         self.agent._state = monitoring_state
@@ -343,7 +343,7 @@ class TestEndToEndExecution:
     @pytest.mark.asyncio
     async def test_concurrent_task_updates(self):
         """测试并发任务更新"""
-        from ufo.galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState
+        from galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState
         
         monitoring_state = MonitoringGalaxyAgentState()
         self.agent._state = monitoring_state
@@ -379,7 +379,7 @@ class TestErrorScenarios:
         agent = MockGalaxyWeaverAgent()
         agent.process_initial_request = AsyncMock(side_effect=Exception("Creation failed"))
         
-        from ufo.galaxy.agents.galaxy_agent_state import CreatingGalaxyAgentState
+        from galaxy.agents.galaxy_agent_state import CreatingGalaxyAgentState
         
         creating_state = CreatingGalaxyAgentState()
         context = Context()
@@ -398,7 +398,7 @@ class TestErrorScenarios:
         agent = MockGalaxyWeaverAgent()
         agent._current_constellation = None
         
-        from ufo.galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState
+        from galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState
         
         monitoring_state = MonitoringGalaxyAgentState()
         
@@ -411,7 +411,7 @@ class TestErrorScenarios:
     @pytest.mark.asyncio
     async def test_invalid_task_update_handling(self):
         """测试无效任务更新处理"""
-        from ufo.galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState
+        from galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState
         
         monitoring_state = MonitoringGalaxyAgentState()
         agent = MockGalaxyWeaverAgent()

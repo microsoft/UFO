@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -16,7 +16,7 @@ from unittest.mock import Mock, AsyncMock, patch
 import tempfile
 import os
 
-from ufo.galaxy.client.components.types import DeviceInfo, DeviceStatus
+from galaxy.client.components.types import DeviceInfo, DeviceStatus
 
 
 class TestLinuxLogCollectionExcelGeneration:

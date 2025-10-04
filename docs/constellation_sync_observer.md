@@ -1,4 +1,4 @@
-# Constellation Modification Synchronizer
+﻿# Constellation Modification Synchronizer
 
 ## 概述
 
@@ -100,7 +100,7 @@ ConstellationModificationSynchronizer(IEventObserver)
 ### 在 GalaxySession 中集成
 
 ```python
-from ufo.galaxy.session.observers import ConstellationModificationSynchronizer
+from galaxy.session.observers import ConstellationModificationSynchronizer
 
 class GalaxySession(BaseSession):
     def _setup_observers(self) -> None:

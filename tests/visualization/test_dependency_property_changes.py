@@ -1,13 +1,13 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 """
 Test script for dependency property change detection and visualization.
 """
 
 import asyncio
 import pytest
-from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
-from ufo.galaxy.session.observers import DAGVisualizationObserver
-from ufo.galaxy.core.events import ConstellationEvent, EventType
+from galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
+from galaxy.session.observers import DAGVisualizationObserver
+from galaxy.core.events import ConstellationEvent, EventType
 
 
 @pytest.mark.asyncio

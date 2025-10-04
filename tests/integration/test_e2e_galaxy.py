@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 End-to-End TaskConstellation Demo
 
@@ -30,7 +30,7 @@ if project_root not in sys.path:
     sys.path.insert(0, project_root)
 
 # Import Galaxy constellation components
-from ufo.galaxy.constellation import (
+from galaxy.constellation import (
     TaskConstellationOrchestrator,
     TaskConstellation,
     TaskStar,
@@ -46,13 +46,13 @@ from ufo.galaxy.constellation import (
 )
 
 # Import Galaxy client components directly
-from ufo.galaxy.client.constellation_client import ConstellationClient
-from ufo.galaxy.client.config_loader import ConstellationConfig, DeviceConfig
+from galaxy.client.constellation_client import ConstellationClient
+from galaxy.client.config_loader import ConstellationConfig, DeviceConfig
 
 # Import Galaxy session and agent components
-from ufo.galaxy.session import GalaxySession
-from ufo.galaxy.agents import GalaxyWeaverAgent
-from ufo.galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
+from galaxy.session import GalaxySession
+from galaxy.agents import GalaxyWeaverAgent
+from galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
 
 # Setup logging
 logging.basicConfig(

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Simple test for DAG visualization.
 """
@@ -11,10 +11,10 @@ project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, project_root)
 
 try:
-    from ufo.galaxy.constellation.task_constellation import TaskConstellation
-    from ufo.galaxy.constellation.task_star import TaskStar
-    from ufo.galaxy.constellation.enums import TaskPriority
-    from ufo.galaxy.visualization.dag_visualizer import DAGVisualizer
+    from galaxy.constellation.task_constellation import TaskConstellation
+    from galaxy.constellation.task_star import TaskStar
+    from galaxy.constellation.enums import TaskPriority
+    from galaxy.visualization.dag_visualizer import DAGVisualizer
 
     print("✅ All imports successful!")
 

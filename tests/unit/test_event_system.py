@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -24,7 +24,7 @@ import pytest
 import time
 from unittest.mock import Mock, AsyncMock, patch
 
-from ufo.galaxy.core.events import (
+from galaxy.core.events import (
     EventBus,
     Event,
     TaskEvent,
@@ -33,11 +33,11 @@ from ufo.galaxy.core.events import (
     IEventObserver,
     get_event_bus,
 )
-from ufo.galaxy.session.observers import (
+from galaxy.session.observers import (
     ConstellationProgressObserver,
     SessionMetricsObserver,
 )
-from ufo.galaxy.constellation.enums import TaskStatus
+from galaxy.constellation.enums import TaskStatus
 
 
 class TestEventBus:

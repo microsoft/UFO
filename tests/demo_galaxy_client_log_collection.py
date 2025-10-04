@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -19,9 +19,9 @@ from pathlib import Path
 import tempfile
 from unittest.mock import Mock, AsyncMock, patch
 
-from ufo.galaxy.galaxy_client import GalaxyClient
-from ufo.galaxy.client.components.types import DeviceInfo, DeviceStatus
-from ufo.galaxy.client.config_loader import ConstellationConfig, DeviceConfig
+from galaxy.galaxy_client import GalaxyClient
+from galaxy.client.components.types import DeviceInfo, DeviceStatus
+from galaxy.client.config_loader import ConstellationConfig, DeviceConfig
 
 # Suppress debug logs for cleaner demo output
 logging.getLogger("ufo.galaxy.galaxy_client").setLevel(logging.WARNING)

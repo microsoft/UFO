@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -17,11 +17,11 @@ import tempfile
 import os
 from unittest.mock import Mock, AsyncMock, patch
 
-from ufo.galaxy.galaxy_client import GalaxyClient
-from ufo.galaxy.session.galaxy_session import GalaxySession
-from ufo.galaxy.client.components.types import DeviceInfo, DeviceStatus
-from ufo.galaxy.client.config_loader import ConstellationConfig, DeviceConfig
-from ufo.galaxy.client.constellation_client import ConstellationClient
+from galaxy.galaxy_client import GalaxyClient
+from galaxy.session.galaxy_session import GalaxySession
+from galaxy.client.components.types import DeviceInfo, DeviceStatus
+from galaxy.client.config_loader import ConstellationConfig, DeviceConfig
+from galaxy.client.constellation_client import ConstellationClient
 
 
 class TestRealGalaxySessionWithMockDevices:

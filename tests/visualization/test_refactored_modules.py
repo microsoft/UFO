@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Test the refactored visualization modules.
 """
@@ -7,13 +7,13 @@ import pytest
 from unittest.mock import Mock
 from io import StringIO
 
-from ufo.galaxy.visualization import (
+from galaxy.visualization import (
     DAGVisualizer,
     TaskDisplay,
     ConstellationDisplay,
     VisualizationChangeDetector,
 )
-from ufo.galaxy.constellation.enums import TaskStatus, TaskPriority
+from galaxy.constellation.enums import TaskStatus, TaskPriority
 
 
 class MockTaskStar:

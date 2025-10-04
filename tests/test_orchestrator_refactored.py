@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -13,12 +13,12 @@ import pytest
 from typing import Dict, List, Optional
 from unittest.mock import AsyncMock, MagicMock, Mock, patch
 
-from ufo.galaxy.constellation.orchestrator.orchestrator import (
+from galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
 )
-from ufo.galaxy.constellation.enums import TaskStatus, DeviceType
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
-from ufo.galaxy.constellation.task_star import TaskStar
+from galaxy.constellation.enums import TaskStatus, DeviceType
+from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.task_star import TaskStar
 
 
 class MockConstellationDeviceManager:

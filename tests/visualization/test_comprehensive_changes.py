@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 """
 Final comprehensive test for all constellation change detection features.
 """
@@ -6,9 +6,9 @@ Final comprehensive test for all constellation change detection features.
 import asyncio
 import pytest
 import time
-from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
-from ufo.galaxy.session.observers import DAGVisualizationObserver
-from ufo.galaxy.core.events import ConstellationEvent, EventType
+from galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
+from galaxy.session.observers import DAGVisualizationObserver
+from galaxy.core.events import ConstellationEvent, EventType
 
 
 @pytest.mark.asyncio

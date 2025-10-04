@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Proper Galaxy Session Test with Mocking
 
@@ -72,7 +72,7 @@ class MockProcessor:
         logger.info("Mock processor processing...")
 
         # Create a simple mock constellation
-        from ufo.galaxy.constellation.orchestrator.orchestrator import (
+        from galaxy.constellation.orchestrator.orchestrator import (
             create_simple_constellation_standalone,
         )
 
@@ -117,7 +117,7 @@ async def test_galaxy_session_with_proper_mocks():
             MockProcessor,
         ):
             # Import ConstellationAgent to patch its methods
-            from ufo.galaxy.agents.constellation_agent import ConstellationAgent
+            from galaxy.agents.constellation_agent import ConstellationAgent
 
             # Mock context provision method to avoid MCP calls
             with patch.object(
@@ -125,8 +125,8 @@ async def test_galaxy_session_with_proper_mocks():
             ) as mock_context_provision:
 
                 # Import after patches are set up
-                from ufo.galaxy.session.galaxy_session import GalaxySession
-                from ufo.galaxy.core.events import get_event_bus
+                from galaxy.session.galaxy_session import GalaxySession
+                from galaxy.core.events import get_event_bus
                 from ufo.module.context import Context, ContextNames
 
                 # Create Galaxy Session (uses real ConstellationAgent but with mocked dependencies)
@@ -208,7 +208,7 @@ async def test_agent_mocking_specifically():
 
     logger.info("\n🔧 Testing ConstellationAgent with Method-Level Mocking")
 
-    from ufo.galaxy.agents.constellation_agent import ConstellationAgent
+    from galaxy.agents.constellation_agent import ConstellationAgent
     from ufo.module.context import Context, ContextNames
 
     # Create real agent with mocked orchestrator
@@ -244,7 +244,7 @@ async def test_agent_mocking_specifically():
             logger.info("✅ Agent status management validated")
 
             # Test state management
-            from ufo.galaxy.agents.constellation_agent_states import (
+            from galaxy.agents.constellation_agent_states import (
                 StartConstellationAgentState,
             )
 
@@ -260,7 +260,7 @@ async def test_event_system_with_mocks():
 
     logger.info("\n📡 Testing Event System Integration")
 
-    from ufo.galaxy.core.events import get_event_bus, ConstellationEvent, EventType
+    from galaxy.core.events import get_event_bus, ConstellationEvent, EventType
 
     # Get event bus
     event_bus = get_event_bus()

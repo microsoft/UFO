@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -24,10 +24,10 @@ from unittest.mock import Mock, AsyncMock, patch, MagicMock
 # Add parent directory to path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
-from ufo.galaxy.session.observers.constellation_sync_observer import (
+from galaxy.session.observers.constellation_sync_observer import (
     ConstellationModificationSynchronizer,
 )
-from ufo.galaxy.core.events import (
+from galaxy.core.events import (
     TaskEvent,
     ConstellationEvent,
     EventType,

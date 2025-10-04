@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 
 """
 Test integration between session observers and refactored visualization module.
@@ -9,8 +9,8 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from ufo.galaxy.session.observers import DAGVisualizationObserver
-from ufo.galaxy.visualization import (
+from galaxy.session.observers import DAGVisualizationObserver
+from galaxy.visualization import (
     TaskDisplay,
     ConstellationDisplay,
     VisualizationChangeDetector,

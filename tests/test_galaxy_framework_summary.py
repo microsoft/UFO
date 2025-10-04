@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Galaxy Framework Refactoring Summary Test
 =========================================
@@ -22,7 +22,7 @@ def test_refactoring_completion():
     # Test 1: Modular Visualization Components
     print("\n📦 Testing Modular Visualization Components:")
     try:
-        from ufo.galaxy.visualization import (
+        from galaxy.visualization import (
             DAGVisualizer,
             TaskDisplay,
             ConstellationDisplay,
@@ -43,7 +43,7 @@ def test_refactoring_completion():
     # Test 2: Session Observer Integration
     print("\n🎯 Testing Session Observer Integration:")
     try:
-        from ufo.galaxy.session.observers import (
+        from galaxy.session.observers import (
             DAGVisualizationObserver,
             ConstellationProgressObserver,
             SessionMetricsObserver,
@@ -59,9 +59,9 @@ def test_refactoring_completion():
     # Test 3: Galaxy Framework Integration
     print("\n🚀 Testing Galaxy Framework Integration:")
     try:
-        from ufo.galaxy import GalaxyClient, GalaxySession
-        from ufo.galaxy.constellation import TaskConstellation
-        from ufo.galaxy.agents import ConstellationAgent
+        from galaxy import GalaxyClient, GalaxySession
+        from galaxy.constellation import TaskConstellation
+        from galaxy.agents import ConstellationAgent
 
         print("  ✅ Galaxy framework components imported successfully")
         print("  ✅ Full integration between all modules")
@@ -90,13 +90,13 @@ def test_refactoring_completion():
     print("\n🔄 Testing Backwards Compatibility:")
     try:
         # Old style should still work
-        from ufo.galaxy.visualization import DAGVisualizer
+        from galaxy.visualization import DAGVisualizer
 
         visualizer = DAGVisualizer()
         print("  ✅ DAGVisualizer still works for backwards compatibility")
 
         # New style should work
-        from ufo.galaxy.visualization import TaskDisplay, ConstellationDisplay
+        from galaxy.visualization import TaskDisplay, ConstellationDisplay
 
         task_display = TaskDisplay()
         constellation_display = ConstellationDisplay()

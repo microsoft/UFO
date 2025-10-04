@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 from collections import defaultdict
@@ -14,9 +14,9 @@ from ufo.utils import is_json_serializable, print_with_color
 
 if TYPE_CHECKING:
     from ufo.module.basic import FileWriter
-    from ufo.galaxy.client.components.types import DeviceInfo
-    from ufo.galaxy.constellation.task_constellation import TaskConstellation
-    from ufo.galaxy.agents.schema import WeavingMode
+    from galaxy.client.components.types import DeviceInfo
+    from galaxy.constellation.task_constellation import TaskConstellation
+    from galaxy.agents.schema import WeavingMode
 
 
 class ContextNames(Enum):
@@ -123,7 +123,7 @@ class ContextNames(Enum):
         elif self == ContextNames.WEAVING_MODE:
             # Import here to avoid circular imports
             try:
-                from ufo.galaxy.agents.schema import WeavingMode
+                from galaxy.agents.schema import WeavingMode
 
                 return WeavingMode.CREATION
             except ImportError:

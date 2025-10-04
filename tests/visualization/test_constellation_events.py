@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Test script to verify constellation events are properly published.
 """
@@ -8,14 +8,14 @@ import logging
 import pytest
 from typing import List, Set
 
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
-from ufo.galaxy.constellation.task_star import TaskStar
-from ufo.galaxy.constellation.task_star_line import TaskStarLine
-from ufo.galaxy.constellation.orchestrator.orchestrator import (
+from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.task_star import TaskStar
+from galaxy.constellation.task_star_line import TaskStarLine
+from galaxy.constellation.orchestrator.orchestrator import (
     TaskConstellationOrchestrator,
 )
-from ufo.galaxy.core.events import get_event_bus, Event, EventType, IEventObserver
-from ufo.galaxy.client.device_manager import ConstellationDeviceManager
+from galaxy.core.events import get_event_bus, Event, EventType, IEventObserver
+from galaxy.client.device_manager import ConstellationDeviceManager
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

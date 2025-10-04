@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -8,8 +8,8 @@ This test suite focuses on verifying the core factory functionality works.
 """
 
 import pytest
-from ufo.galaxy.agents.schema import WeavingMode
-from ufo.galaxy.agents.processors.strategies.constellation_factory import (
+from galaxy.agents.schema import WeavingMode
+from galaxy.agents.processors.strategies.constellation_factory import (
     ConstellationStrategyFactory,
     ConstellationPrompterFactory,
 )

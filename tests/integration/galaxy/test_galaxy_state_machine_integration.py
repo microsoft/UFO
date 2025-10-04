@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -27,20 +27,20 @@ from typing import Dict, List, Any
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
-from ufo.galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
-from ufo.galaxy.agents.galaxy_agent_states import (
+from galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
+from galaxy.agents.galaxy_agent_states import (
     StartGalaxyAgentState,
     MonitorGalaxyAgentState,
     FinishGalaxyAgentState,
     FailGalaxyAgentState,
 )
-from ufo.galaxy.session.galaxy_session import GalaxyRound, GalaxySession
-from ufo.galaxy.session.observers import ConstellationProgressObserver
-from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStatus
-from ufo.galaxy.constellation.task_star_line import TaskStarLine
-from ufo.galaxy.constellation.enums import ConstellationState, TaskPriority
-from ufo.galaxy.constellation import TaskConstellationOrchestrator
-from ufo.galaxy.core.events import TaskEvent, EventType
+from galaxy.session.galaxy_session import GalaxyRound, GalaxySession
+from galaxy.session.observers import ConstellationProgressObserver
+from galaxy.constellation import TaskConstellation, TaskStar, TaskStatus
+from galaxy.constellation.task_star_line import TaskStarLine
+from galaxy.constellation.enums import ConstellationState, TaskPriority
+from galaxy.constellation import TaskConstellationOrchestrator
+from galaxy.core.events import TaskEvent, EventType
 from ufo.module.context import Context
 
 

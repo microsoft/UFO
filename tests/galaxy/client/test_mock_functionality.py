@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -64,7 +64,7 @@ async def test_mock_constellation_agent_creation():
 
 def test_visualization_display():
     """Test basic visualization display functionality."""
-    from ufo.galaxy.visualization.client_display import ClientDisplay
+    from galaxy.visualization.client_display import ClientDisplay
     from rich.console import Console
 
     console = Console()

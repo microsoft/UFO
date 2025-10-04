@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -14,7 +14,7 @@ def test_simple():
 
 def test_import_client_display():
     """Test importing ClientDisplay."""
-    from ufo.galaxy.visualization.client_display import ClientDisplay
+    from galaxy.visualization.client_display import ClientDisplay
     from rich.console import Console
 
     console = Console()

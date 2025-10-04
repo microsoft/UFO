@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -14,9 +14,9 @@ import json
 from datetime import datetime, timezone
 
 # Import the classes to test
-from ufo.galaxy.constellation.task_star import TaskStar
-from ufo.galaxy.constellation.task_star_line import TaskStarLine
-from ufo.galaxy.constellation.enums import (
+from galaxy.constellation.task_star import TaskStar
+from galaxy.constellation.task_star_line import TaskStarLine
+from galaxy.constellation.enums import (
     TaskStatus,
     TaskPriority,
     DeviceType,

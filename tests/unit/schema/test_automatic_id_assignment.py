@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -8,7 +8,7 @@ This script tests the automatic generation of constellation_id, task_id, and lin
 as well as the uniqueness validation within constellation contexts.
 """
 
-from ufo.galaxy.agents.schema import (
+from galaxy.agents.schema import (
     TaskStarSchema, 
     TaskStarLineSchema, 
     TaskConstellationSchema,

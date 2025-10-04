@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 """
 Integration test demonstrating ConstellationAgent event publishing in a realistic scenario.
 """
@@ -6,9 +6,9 @@ Integration test demonstrating ConstellationAgent event publishing in a realisti
 import asyncio
 import pytest
 import time
-from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
-from ufo.galaxy.core.events import ConstellationEvent, EventType, get_event_bus
-from ufo.galaxy.session.observers import DAGVisualizationObserver
+from galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
+from galaxy.core.events import ConstellationEvent, EventType, get_event_bus
+from galaxy.session.observers import DAGVisualizationObserver
 
 
 class SimulatedConstellationAgent:

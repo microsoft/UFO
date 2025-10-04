@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -12,14 +12,14 @@ import pytest
 from datetime import datetime, timezone
 from unittest.mock import Mock, MagicMock, patch
 
-from ufo.galaxy.agents.prompters.base_constellation_prompter import (
+from galaxy.agents.prompters.base_constellation_prompter import (
     BaseConstellationPrompter,
 )
-from ufo.galaxy.client.components.types import DeviceInfo, DeviceStatus
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
-from ufo.galaxy.constellation.task_star import TaskStar
-from ufo.galaxy.constellation.task_star_line import TaskStarLine
-from ufo.galaxy.constellation.enums import (
+from galaxy.client.components.types import DeviceInfo, DeviceStatus
+from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.task_star import TaskStar
+from galaxy.constellation.task_star_line import TaskStarLine
+from galaxy.constellation.enums import (
     TaskStatus,
     ConstellationState,
     DependencyType,

@@ -1,4 +1,4 @@
-# 🎯 Constellation Modification Synchronizer - Quick Reference
+﻿# 🎯 Constellation Modification Synchronizer - Quick Reference
 
 ## 问题与解决方案
 
@@ -35,7 +35,7 @@ Task A 完成 → Synchronizer 注册修改 → Agent 修改中...
 ### 1. 导入
 
 ```python
-from ufo.galaxy.session.observers import ConstellationModificationSynchronizer
+from galaxy.session.observers import ConstellationModificationSynchronizer
 ```
 
 ### 2. 创建并附加

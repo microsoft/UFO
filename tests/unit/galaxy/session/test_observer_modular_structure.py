@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -25,7 +25,7 @@ def test_modular_imports():
 
     # Test main observer imports
     try:
-        from ufo.galaxy.session.observers import (
+        from galaxy.session.observers import (
             ConstellationProgressObserver,
             SessionMetricsObserver,
             DAGVisualizationObserver,
@@ -38,7 +38,7 @@ def test_modular_imports():
 
     # Test individual module imports
     try:
-        from ufo.galaxy.session.observers.base_observer import (
+        from galaxy.session.observers.base_observer import (
             ConstellationProgressObserver as DirectProgressObserver,
             SessionMetricsObserver as DirectMetricsObserver,
         )
@@ -49,7 +49,7 @@ def test_modular_imports():
         return False
 
     try:
-        from ufo.galaxy.session.observers.dag_visualization_observer import (
+        from galaxy.session.observers.dag_visualization_observer import (
             DAGVisualizationObserver as DirectDAGObserver,
         )
 
@@ -72,7 +72,7 @@ def test_observer_modules():
 
     print("\nTesting observer module structure...")
 
-    from ufo.galaxy.session.observers import (
+    from galaxy.session.observers import (
         ConstellationProgressObserver,
         SessionMetricsObserver,
         DAGVisualizationObserver,
@@ -103,7 +103,7 @@ def test_observer_instantiation():
 
     print("\nTesting observer instantiation...")
 
-    from ufo.galaxy.session.observers import (
+    from galaxy.session.observers import (
         ConstellationProgressObserver,
         SessionMetricsObserver,
         DAGVisualizationObserver,
@@ -145,11 +145,11 @@ def test_backward_compatibility():
 
     try:
         # Test imports that existing code uses
-        from ufo.galaxy.session.observers import ConstellationProgressObserver
-        from ufo.galaxy.session import GalaxySession
+        from galaxy.session.observers import ConstellationProgressObserver
+        from galaxy.session import GalaxySession
 
         # Test that GalaxySession can still import observers
-        import ufo.galaxy.session.galaxy_session as gs_module
+        import galaxy.session.galaxy_session as gs_module
 
         # Check that galaxy_session.py can access the observers
         assert hasattr(gs_module, "ConstellationProgressObserver")

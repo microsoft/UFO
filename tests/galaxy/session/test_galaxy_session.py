@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+﻿#!/usr/bin/env python
 """
 Comprehensive test for GalaxySession functionality.
 """
@@ -12,9 +12,9 @@ from unittest.mock import MagicMock, AsyncMock
 # Add UFO path - adjust for tests/galaxy/session subdirectory
 sys.path.append(os.path.join(os.path.dirname(__file__), "..", "..", ".."))
 
-from ufo.galaxy.session.galaxy_session import GalaxySession
-from ufo.galaxy.client.constellation_client import ConstellationClient
-from ufo.galaxy.constellation import TaskConstellation
+from galaxy.session.galaxy_session import GalaxySession
+from galaxy.client.constellation_client import ConstellationClient
+from galaxy.constellation import TaskConstellation
 
 
 async def test_galaxy_session_basic_functionality():
@@ -176,9 +176,9 @@ async def test_galaxy_session_issues():
 
     # Test 1: Missing imports
     try:
-        from ufo.galaxy.session.galaxy_session import GalaxySession, GalaxyRound
-        from ufo.galaxy.agents.constellation_agent import ConstellationAgent
-        from ufo.galaxy.constellation import TaskConstellationOrchestrator
+        from galaxy.session.galaxy_session import GalaxySession, GalaxyRound
+        from galaxy.agents.constellation_agent import ConstellationAgent
+        from galaxy.constellation import TaskConstellationOrchestrator
 
         print("✅ All imports available")
     except ImportError as e:

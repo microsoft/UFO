@@ -1,4 +1,4 @@
-"""
+﻿"""
 Tests for ConstellationSerializer class.
 Validates serialization and deserialization functionality.
 """
@@ -7,15 +7,15 @@ import json
 import pytest
 from datetime import datetime
 
-from ufo.galaxy.constellation.parsers.constellation_serializer import (
+from galaxy.constellation.parsers.constellation_serializer import (
     ConstellationSerializer,
 )
-from ufo.galaxy.constellation.task_constellation import (
+from galaxy.constellation.task_constellation import (
     TaskConstellation,
     ConstellationState,
 )
-from ufo.galaxy.constellation.task_star import TaskStar, TaskPriority, TaskStatus
-from ufo.galaxy.constellation.task_star_line import TaskStarLine
+from galaxy.constellation.task_star import TaskStar, TaskPriority, TaskStatus
+from galaxy.constellation.task_star_line import TaskStarLine
 
 
 class TestConstellationSerializer:

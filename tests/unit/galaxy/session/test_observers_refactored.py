@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -13,9 +13,9 @@ import pytest
 import time
 from unittest.mock import Mock, AsyncMock, patch
 
-from ufo.galaxy.session.observers import ConstellationProgressObserver
-from ufo.galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
-from ufo.galaxy.core.events import TaskEvent, ConstellationEvent, EventType
+from galaxy.session.observers import ConstellationProgressObserver
+from galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
+from galaxy.core.events import TaskEvent, ConstellationEvent, EventType
 from ufo.module.context import Context
 
 
@@ -376,7 +376,7 @@ class TestObserverIntegrationWithAgent:
         await observer._handle_task_event(task_event)
 
         # Simulate agent state machine processing the queued event
-        from ufo.galaxy.agents.galaxy_agent_states import MonitorGalaxyAgentState
+        from galaxy.agents.galaxy_agent_states import MonitorGalaxyAgentState
 
         state = MonitorGalaxyAgentState()
         await state.handle(agent, context)
@@ -415,7 +415,7 @@ class TestObserverIntegrationWithAgent:
             await observer._handle_task_event(event)
 
         # Simulate agent processing events sequentially
-        from ufo.galaxy.agents.galaxy_agent_states import MonitorGalaxyAgentState
+        from galaxy.agents.galaxy_agent_states import MonitorGalaxyAgentState
 
         state = MonitorGalaxyAgentState()
         processed_tasks = []

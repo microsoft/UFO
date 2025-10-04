@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Debug script for constellation modification event handling.
 """
@@ -11,9 +11,9 @@ from datetime import datetime
 # Add the project root to the path
 sys.path.insert(0, os.path.abspath("."))
 
-from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
-from ufo.galaxy.core.events import ConstellationEvent, EventType
-from ufo.galaxy.session.observers import DAGVisualizationObserver
+from galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
+from galaxy.core.events import ConstellationEvent, EventType
+from galaxy.session.observers import DAGVisualizationObserver
 from rich.console import Console
 
 

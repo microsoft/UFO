@@ -1,4 +1,4 @@
-# UFO Constellation Editor 更新文档
+﻿# UFO Constellation Editor 更新文档
 
 ## 概述
 
@@ -135,8 +135,8 @@ ufo/galaxy/constellation/editor/
 ## 示例应用
 
 ```python
-from ufo.galaxy.constellation.editor.constellation_editor import ConstellationEditor
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.editor.constellation_editor import ConstellationEditor
+from galaxy.constellation.task_constellation import TaskConstellation
 
 # 创建编辑器
 constellation = TaskConstellation()

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Test script for constellation modification with automatic comparison.
 """
@@ -12,9 +12,9 @@ from datetime import datetime
 # Add the project root to the path
 sys.path.insert(0, os.path.abspath("."))
 
-from ufo.galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
-from ufo.galaxy.core.events import ConstellationEvent, EventType
-from ufo.galaxy.session.observers import DAGVisualizationObserver
+from galaxy.constellation import TaskConstellation, TaskStar, TaskStarLine
+from galaxy.core.events import ConstellationEvent, EventType
+from galaxy.session.observers import DAGVisualizationObserver
 from rich.console import Console
 
 
@@ -52,7 +52,7 @@ async def test_constellation_comparison():
     old_constellation.add_task(task2)
 
     # Create dependency object
-    from ufo.galaxy.constellation import TaskStarLine
+    from galaxy.constellation import TaskStarLine
 
     dep1 = TaskStarLine(
         from_task_id=task1.task_id,

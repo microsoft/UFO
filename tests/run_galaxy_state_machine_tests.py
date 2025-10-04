@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -18,18 +18,18 @@ from typing import Dict, Any, List
 project_root = Path(__file__).parent.parent
 sys.path.insert(0, str(project_root))
 
-from ufo.galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
-from ufo.galaxy.agents.galaxy_agent_state import (
+from galaxy.agents.galaxy_agent import MockGalaxyWeaverAgent
+from galaxy.agents.galaxy_agent_state import (
     GalaxyAgentStatus,
     CreatingGalaxyAgentState,
     MonitoringGalaxyAgentState,
     FinishedGalaxyAgentState,
     FailedGalaxyAgentState
 )
-from ufo.galaxy.agents.galaxy_agent_state_manager import GalaxyAgentStateManager
-from ufo.galaxy.session.observers import ConstellationProgressObserver
-from ufo.galaxy.core.events import EventType, TaskEvent, get_event_bus
-from ufo.galaxy.constellation import create_simple_constellation
+from galaxy.agents.galaxy_agent_state_manager import GalaxyAgentStateManager
+from galaxy.session.observers import ConstellationProgressObserver
+from galaxy.core.events import EventType, TaskEvent, get_event_bus
+from galaxy.constellation import create_simple_constellation
 from ufo.module.context import Context
 
 
@@ -190,7 +190,7 @@ class GalaxyStateMachineTestRunner:
             event_bus = get_event_bus()
             
             # 设置监控状态
-            from ufo.galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState
+            from galaxy.agents.galaxy_agent_state import MonitoringGalaxyAgentState
             monitoring_state = MonitoringGalaxyAgentState()
             agent._state = monitoring_state
             agent.queue_task_update_to_current_state = monitoring_state.queue_task_update

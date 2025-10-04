@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 测试 Constellation Client 注册时的设备验证机制
 """
@@ -11,8 +11,8 @@ import os
 # 设置路径
 sys.path.insert(0, os.path.abspath("."))
 
-from ufo.galaxy.client.config_loader import ConstellationConfig
-from ufo.galaxy.client.constellation_client import ConstellationClient
+from galaxy.client.config_loader import ConstellationConfig
+from galaxy.client.constellation_client import ConstellationClient
 
 # 设置日志
 logging.basicConfig(

@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 
 import sys
 from pathlib import Path
@@ -7,10 +7,10 @@ from pathlib import Path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-from ufo.galaxy.constellation.editor import ConstellationEditor
-from ufo.galaxy.constellation.editor.command_interface import IUndoableCommand
-from ufo.galaxy.constellation.editor.commands import AddTaskCommand
-from ufo.galaxy.constellation.task_star import TaskStar
+from galaxy.constellation.editor import ConstellationEditor
+from galaxy.constellation.editor.command_interface import IUndoableCommand
+from galaxy.constellation.editor.commands import AddTaskCommand
+from galaxy.constellation.task_star import TaskStar
 
 
 def test_simple_undo():

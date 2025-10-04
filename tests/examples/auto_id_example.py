@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -13,7 +13,7 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 
-from ufo.galaxy.agents.schema import (
+from galaxy.agents.schema import (
     TaskStarSchema,
     TaskStarLineSchema,
     TaskConstellationSchema,
@@ -126,7 +126,7 @@ def example_sequential_generation():
     print("\n🔢 序列化 ID 生成示例")
     print("=" * 60)
 
-    from ufo.galaxy.agents.schema import IDManager
+    from galaxy.agents.schema import IDManager
 
     # 获取 ID 管理器实例
     id_manager = IDManager()

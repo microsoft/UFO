@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 """
 Simplified DAG visualization test without full dependencies.
 """
@@ -13,7 +13,7 @@ project_root = os.path.dirname(os.path.dirname(os.path.dirname(__file__)))
 sys.path.insert(0, project_root)
 
 # Import real enums from Galaxy framework
-from ufo.galaxy.constellation.enums import (
+from galaxy.constellation.enums import (
     TaskStatus,
     ConstellationState,
     DependencyType,
@@ -92,7 +92,7 @@ class SimpleTaskConstellation:
 
         if enable_visualization:
             try:
-                from ufo.galaxy.visualization.dag_visualizer import DAGVisualizer
+                from galaxy.visualization.dag_visualizer import DAGVisualizer
 
                 self._visualizer = DAGVisualizer()
                 print("✅ DAG visualizer loaded successfully")

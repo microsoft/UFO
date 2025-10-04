@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
@@ -15,8 +15,8 @@ from pathlib import Path
 project_root = Path(__file__).parent
 sys.path.insert(0, str(project_root))
 
-from ufo.galaxy.constellation.editor import ConstellationEditor
-from ufo.galaxy.constellation.enums import TaskPriority, DependencyType
+from galaxy.constellation.editor import ConstellationEditor
+from galaxy.constellation.enums import TaskPriority, DependencyType
 
 
 def example_basic_operations():

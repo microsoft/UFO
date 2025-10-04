@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -14,14 +14,14 @@ import time
 import pytest
 from unittest.mock import Mock, AsyncMock, MagicMock, patch
 
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
-from ufo.galaxy.constellation.task_star import TaskStar
-from ufo.galaxy.constellation.enums import TaskStatus
-from ufo.galaxy.constellation.orchestrator.orchestrator import TaskConstellationOrchestrator
-from ufo.galaxy.session.observers.constellation_sync_observer import (
+from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.task_star import TaskStar
+from galaxy.constellation.enums import TaskStatus
+from galaxy.constellation.orchestrator.orchestrator import TaskConstellationOrchestrator
+from galaxy.session.observers.constellation_sync_observer import (
     ConstellationModificationSynchronizer,
 )
-from ufo.galaxy.core.events import (
+from galaxy.core.events import (
     get_event_bus,
     EventType,
     TaskEvent,

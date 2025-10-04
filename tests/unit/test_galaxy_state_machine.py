@@ -1,4 +1,4 @@
-# Copyright (c) Microsoft Corporation.
+﻿# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 """
@@ -17,7 +17,7 @@ import time
 from unittest.mock import AsyncMock, MagicMock, patch
 from typing import Dict, Any
 
-from ufo.galaxy.agents.galaxy_agent_state import (
+from galaxy.agents.galaxy_agent_state import (
     GalaxyAgentStatus,
     GalaxyAgentState,
     CreatingGalaxyAgentState,
@@ -25,8 +25,8 @@ from ufo.galaxy.agents.galaxy_agent_state import (
     FinishedGalaxyAgentState,
     FailedGalaxyAgentState,
 )
-from ufo.galaxy.agents.galaxy_agent_state_manager import GalaxyAgentStateManager
-from ufo.galaxy.core.events import EventType
+from galaxy.agents.galaxy_agent_state_manager import GalaxyAgentStateManager
+from galaxy.core.events import EventType
 from ufo.module.context import Context
 
 

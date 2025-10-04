@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+﻿#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 """
@@ -16,16 +16,16 @@ sys.path.insert(0, os.path.join(os.path.dirname(__file__), "..", ".."))
 import json
 from datetime import datetime
 
-from ufo.galaxy.constellation.task_star import TaskStar
-from ufo.galaxy.constellation.task_star_line import TaskStarLine
-from ufo.galaxy.constellation.task_constellation import TaskConstellation
-from ufo.galaxy.constellation.enums import (
+from galaxy.constellation.task_star import TaskStar
+from galaxy.constellation.task_star_line import TaskStarLine
+from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.constellation.enums import (
     TaskStatus,
     TaskPriority,
     DeviceType,
     DependencyType,
 )
-from ufo.galaxy.agents.schema import (
+from galaxy.agents.schema import (
     TaskStarSchema,
     TaskStarLineSchema,
     TaskConstellationSchema,
