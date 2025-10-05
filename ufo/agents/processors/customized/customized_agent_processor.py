@@ -26,6 +26,7 @@ from ufo.agents.processors.strategies.customized_agent_processing_strategy impor
 from ufo.agents.processors.strategies.linux_agent_strategy import (
     LinuxActionExecutionStrategy,
     LinuxLLMInteractionStrategy,
+    LinuxLoggingMiddleware,
 )
 from ufo.module.context import Context
 
@@ -86,8 +87,6 @@ class LinuxAgentProcessor(CustomizedProcessor):
     """
 
     def _setup_strategies(self) -> None:
-        # Call parent method to set up base strategies
-        super()._setup_strategies()
 
         self.strategies[ProcessingPhase.LLM_INTERACTION] = LinuxLLMInteractionStrategy(
             fail_fast=True
@@ -101,3 +100,8 @@ class LinuxAgentProcessor(CustomizedProcessor):
         self.strategies[ProcessingPhase.MEMORY_UPDATE] = AppMemoryUpdateStrategy(
             fail_fast=False  # Memory update failures shouldn't stop the process
         )
+
+    def _setup_middleware(self) -> None:
+        """Setup middleware pipeline for App Agent."""
+        # Core middleware (order matters)
+        self.middleware_chain = [LinuxLoggingMiddleware()]

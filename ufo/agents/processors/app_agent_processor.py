@@ -153,12 +153,12 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         # Extract context information
         round_num = context.get("round_num")
         round_step = context.get("round_step")
-        subtask = context.get("subtask")
-        application_process_name = context.get("application_process_name")
         request = context.get("request")
 
         panel_title = f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
-        panel_content = f"Completing the subtask [{subtask}] on application [{application_process_name}]."
+        panel_content = self.starting_message(context)
+
+        print(panel_content)
 
         console.print(Panel(panel_content, title=panel_title, style="magenta"))
 
@@ -171,6 +171,17 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
                 self.logger.debug(
                     f"App Agent Request: '{request[:100]}{'...' if len(request) > 100 else ''}'"
                 )
+
+    def starting_message(self, context: ProcessingContext) -> str:
+        """
+        Return the starting message of the agent.
+        :param context: Processing context with round and step information
+        :return: Starting message string
+        """
+        subtask = context.get("subtask")
+        application_process_name = context.get("application_process_name")
+
+        return f"Completing the subtask \[{subtask}] on application \[{application_process_name}]."
 
     async def after_process(
         self, processor: ProcessorTemplate, result: "ProcessingResult"

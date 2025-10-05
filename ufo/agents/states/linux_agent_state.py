@@ -7,18 +7,12 @@ from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
-from ufo.agents.states.host_agent_state import (
-    FinishHostAgentState,
-    NoneHostAgentState,
-)
 from ufo.config import Config
 from ufo.module.context import Context
 
 # Avoid circular import
 if TYPE_CHECKING:
     from ufo.agents.agent.customized_agent import LinuxAgent
-    from ufo.agents.agent.host_agent import HostAgent
-    from ufo.agents.states.host_agent_state import HostAgentState
 
 
 configs = Config.get_instance().config_data
@@ -114,18 +108,25 @@ class FinishLinuxAgentState(LinuxAgentState):
         """
         return agent
 
-    def next_state(self, agent: "LinuxAgent") -> HostAgentState:
+    def next_state(self, agent: "LinuxAgent") -> LinuxAgentState:
         """
         Get the next state of the agent.
         :param agent: The agent for the current step.
         :return: The state for the next step.
         """
-        return FinishHostAgentState()
+        return FinishLinuxAgentState()
 
     def is_subtask_end(self) -> bool:
         """
         Check if the subtask ends.
         :return: True if the subtask ends, False otherwise.
+        """
+        return True
+
+    def is_round_end(self) -> bool:
+        """
+        Check if the round ends.
+        :return: True if the round ends, False otherwise.
         """
         return True
 
@@ -185,20 +186,20 @@ class FailLinuxAgentState(LinuxAgentState):
         """
         return agent
 
-    def next_state(self, agent: "LinuxAgent") -> HostAgentState:
+    def next_state(self, agent: "LinuxAgent") -> LinuxAgentState:
         """
         Get the next state of the agent.
         :param agent: The agent for the current step.
         :return: The state for the next step.
         """
-        return FinishHostAgentState()
+        return FinishLinuxAgentState()
 
     def is_round_end(self) -> bool:
         """
         Check if the round ends.
         :return: True if the round ends, False otherwise.
         """
-        return False
+        return True
 
     def is_subtask_end(self) -> bool:
         """
@@ -230,18 +231,25 @@ class NoneLinuxAgentState(LinuxAgentState):
         """
         return agent
 
-    def next_state(self, agent: "LinuxAgent") -> HostAgentState:
+    def next_state(self, agent: "LinuxAgent") -> LinuxAgentState:
         """
         Get the next state of the agent.
         :param agent: The agent for the current step.
         :return: The state for the next step.
         """
-        return NoneHostAgentState()
+        return FinishLinuxAgentState()
 
     def is_subtask_end(self) -> bool:
         """
         Check if the subtask ends.
         :return: True if the subtask ends, False otherwise.
+        """
+        return True
+
+    def is_round_end(self) -> bool:
+        """
+        Check if the round ends.
+        :return: True if the round ends, False otherwise.
         """
         return True
 

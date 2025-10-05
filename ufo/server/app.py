@@ -1,15 +1,10 @@
 import argparse
 import logging
-
-import uvicorn
-from fastapi import FastAPI, WebSocket
-
-from ufo.server.services.api import create_api_router
-from ufo.server.services.session_manager import SessionManager
-from ufo.server.services.ws_manager import WSManager
-from ufo.server.ws.handler import UFOWebSocketHandler
+import sys
 
 
+# Parse arguments FIRST before importing other modules
+# This allows us to set up logging before any module initialization
 def parse_args():
     parser = argparse.ArgumentParser(description="UFO Server")
     parser.add_argument("--port", type=int, default=5000, help="Flask API service port")
@@ -23,23 +18,51 @@ def parse_args():
         choices=["windows", "linux"],
         help="Platform override (auto-detected if not specified)",
     )
+    parser.add_argument(
+        "--log-level",
+        dest="log_level",
+        default="INFO",
+        help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL, OFF). Use OFF to disable logs (default: INFO)",
+    )
     return parser.parse_args()
 
 
-logging.basicConfig(
-    level=logging.INFO, format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-)
+# Parse arguments early (only when running with uvicorn, parse_args won't be called at import time)
+# When running directly with python, it will be called in __main__ block
+cli_args = None
+if __name__ == "__main__":
+    cli_args = parse_args()
+
+# Setup logger before importing other UFO modules
+if cli_args:
+    from ufo.logging.setup import setup_logger
+
+    setup_logger(cli_args.log_level)
+else:
+    # Default logging setup when imported by uvicorn
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    )
+
+# Now import other modules after logging is configured
+import uvicorn
+from fastapi import FastAPI, WebSocket
+
+from ufo.server.services.api import create_api_router
+from ufo.server.services.session_manager import SessionManager
+from ufo.server.services.ws_manager import WSManager
+from ufo.server.ws.handler import UFOWebSocketHandler
+
+
 logger = logging.getLogger(__name__)
 
-
-# Parse command line arguments early to get platform configuration
-cli_args = parse_args()
 
 # Initialize FastAPI app
 app = FastAPI()
 
-# Initialize managers with platform support
-session_manager = SessionManager(platform_override=cli_args.platform)
+# Initialize managers with default platform (will be overridden if run directly)
+session_manager = SessionManager(platform_override=None)
 ws_manager = WSManager()
 
 
@@ -61,6 +84,18 @@ async def websocket_endpoint(websocket: WebSocket) -> None:
 
 
 if __name__ == "__main__":
+    # Arguments already parsed at module level
+    if cli_args is None:
+        cli_args = parse_args()
+        from ufo.logging.setup import setup_logger
+
+        setup_logger(cli_args.log_level)
+
+    # Update session manager with platform override if specified
+    if cli_args.platform:
+        session_manager._platform_override = cli_args.platform
+
     logger.info(f"Starting UFO Server on {cli_args.host}:{cli_args.port}")
     logger.info(f"Platform: {cli_args.platform or 'auto-detected'}")
+    logger.info(f"Log level: {cli_args.log_level}")
     uvicorn.run(app, host=cli_args.host, port=cli_args.port, reload=True)

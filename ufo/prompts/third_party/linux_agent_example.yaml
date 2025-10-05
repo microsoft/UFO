@@ -1,0 +1,115 @@
+version: 1.0
+
+example1:
+  Request: |-
+    Please check the current CPU and memory usage of the system.
+  Response:
+    observation: |-
+      The system prompt shows a standard Linux shell environment. No command has been executed yet. The user request asks for CPU and memory usage.
+    thought: |-
+      To inspect CPU and memory usage, I should run the 'top -b -n 1' command and summarize the CPU and memory statistics.
+    action:
+      function: |-
+        execute_command
+      arguments:
+        {"command": "top -b -n 1 | head -n 10", "timeout": 30}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Execute the command to get system load and memory summary.
+      - (2) Parse CPU and memory information from stdout.
+      - (3) Summarize the result and mark the request as FINISH.
+    comment: |-
+      Next, I will execute 'top -b -n 1' to capture real-time CPU and memory usage information.
+
+example2:
+  Request: |-
+    List all files in /var/log and show their permissions.
+  Response:
+    observation: |-
+      The system is idle in the Linux environment. The directory '/var/log' exists on most Linux systems and contains log files.
+    thought: |-
+      To list all files along with their permissions, I can use 'ls -l /var/log'.
+    action:
+      function: |-
+        execute_command
+      arguments:
+        {"command": "ls -l /var/log", "timeout": 30}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Execute the 'ls -l /var/log' command.
+      - (2) Display the results showing file names and permissions.
+      - (3) Summarize completion and mark FINISH.
+    comment: |-
+      This command will return a detailed list of files and directories under /var/log with ownership and permission details.
+
+example3:
+  Request: |-
+    Find how many error lines are in /var/log/syslog.
+  Response:
+    observation: |-
+      The system appears to have a standard syslog file at '/var/log/syslog'. No prior actions have been taken.
+    thought: |-
+      To count error lines, I can use grep to search for the keyword 'error' (case-insensitive) and count the matches.
+    action:
+      function: |-
+        execute_command
+      arguments:
+        {"command": "grep -i 'error' /var/log/syslog | wc -l", "timeout": 30}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Execute grep to filter all error lines.
+      - (2) Count the total occurrences.
+      - (3) Output the number of errors and mark FINISH.
+    comment: |-
+      This step will determine how many log entries in /var/log/syslog contain the keyword 'error'.
+
+
+example4:
+  Request: |-
+    Check if port 22 is open on this machine.
+  Response:
+    observation: |-
+      The Linux environment supports standard networking tools like 'ss' or 'netstat'. The user wants to verify if SSH port 22 is listening.
+    thought: |-
+      I can use the 'ss -tuln | grep :22' command to check if port 22 is active and listening.
+    action:
+      function: |-
+        execute_command
+      arguments:
+        {"command": "ss -tuln | grep :22", "timeout": 30}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Run the command to detect listening ports.
+      - (2) If the output includes port 22, report it as open.
+      - (3) If no output, conclude that port 22 is closed.
+      - (4) Mark the task as FINISH with the result summary.
+    comment: |-
+      Checking port 22 will help determine if the SSH service is currently running and accessible.
+
+
+example5:
+  Request: |-
+    Kill the process running on port 8080.
+  Response:
+    observation: |-
+      The Linux system is ready. The goal is to identify and terminate the process listening on port 8080, typically used by web services.
+    thought: |-
+      First, I should find the process ID using 'lsof -t -i:8080', then terminate it with 'kill -9 <pid>'.
+    action:
+      function: |-
+        execute_command
+      arguments:
+        {"command": "lsof -t -i:8080", "timeout": 30}
+      status: |-
+        CONTINUE
+    plan:
+      - (1) Find the PID of the process on port 8080.
+      - (2) Execute 'kill -9 <pid>' to terminate it safely.
+      - (3) Verify that the port is freed using 'ss -tuln | grep :8080'.
+      - (4) Mark as FINISH if no process remains.
+    comment: |-
+      This step locates the target process. The next step will terminate it to fulfill the request.

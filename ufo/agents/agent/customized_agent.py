@@ -2,12 +2,13 @@ import logging
 from typing import Any, Dict, List, Union
 from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import AgentRegistry
+from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.customized.customized_agent_processor import (
     CustomizedProcessor,
     HardwareAgentProcessor,
     LinuxAgentProcessor,
 )
-from ufo.agents.states.linux_agent_state import LinuxAgentState
+from ufo.agents.states.linux_agent_state import ContinueLinuxAgentState
 from ufo.prompter.customized.linux_agent_prompter import LinuxAgentPrompter
 
 
@@ -57,37 +58,46 @@ class LinuxAgent(CustomizedAgent):
         :param example_prompt: The example prompt file path.
         :param mode: The mode of the agent.
         """
-        super().__init__(name=name)
-        self.prompter = self.get_prompter(main_prompt, example_prompt)
-
+        super().__init__(
+            name=name,
+            main_prompt=main_prompt,
+            example_prompt=example_prompt,
+            process_name=None,
+            app_root_name=None,
+            is_visual=None,
+        )
+        self._blackboard = Blackboard()
         self.set_state(self.default_state)
 
         self._context_provision_executed = False
         self.logger = logging.getLogger(__name__)
 
+        self.logger.info(
+            f"Main prompt: {main_prompt}, Example prompt: {example_prompt}"
+        )
+
     def get_prompter(
-        self,
-        main_prompt: str,
-        example_prompt: str,
+        self, is_visual: bool, main_prompt: str, example_prompt: str
     ) -> LinuxAgentPrompter:
         """
         Get the prompt for the agent.
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
+        :param is_visual: Whether the agent is visual or not. (Not enabled for LinuxAgent)
         :return: The prompter instance.
         """
         return LinuxAgentPrompter(main_prompt, example_prompt)
 
     @property
-    def default_state(self) -> LinuxAgentState:
+    def default_state(self) -> ContinueLinuxAgentState:
         """
         Get the default state.
         """
-        return LinuxAgentState()
+        return ContinueLinuxAgentState()
 
     def message_constructor(
         self,
-        dynamic_examples: str,
+        dynamic_examples: List[str],
         dynamic_knowledge: str,
         plan: List[str],
         request: str,
@@ -125,3 +135,11 @@ class LinuxAgent(CustomizedAgent):
         )
 
         return appagent_prompt_message
+
+    @property
+    def blackboard(self) -> Blackboard:
+        """
+        Get the blackboard.
+        :return: The blackboard.
+        """
+        return self._blackboard

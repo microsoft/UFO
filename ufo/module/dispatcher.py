@@ -7,7 +7,6 @@ from typing import TYPE_CHECKING, Callable, Coroutine, Any, Dict, List, Optional
 
 from fastapi import WebSocket
 
-from ufo.client.computer import CommandRouter, ComputerManager
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.config import get_config
 from ufo.contracts.contracts import (
@@ -22,6 +21,7 @@ from ufo.contracts.contracts import (
 
 if TYPE_CHECKING:
     from ufo.module.basic import BaseSession
+    from ufo.client.computer import CommandRouter, ComputerManager
 
 
 class BasicCommandDispatcher(ABC):
@@ -79,6 +79,9 @@ class LocalCommandDispatcher(BasicCommandDispatcher):
         :param session: The session associated with the command dispatcher.
         :param mcp_server_manager: The MCP server manager.
         """
+        # Lazy import to avoid circular dependency
+        from ufo.client.computer import CommandRouter, ComputerManager
+
         self.session = session
         self.pending: Dict[str, asyncio.Future] = {}
         self.logger = logging.getLogger(__name__)

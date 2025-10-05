@@ -159,4 +159,14 @@ HardwareAgent:
         path: "/mcp"
         reset: false
 
+LinuxAgent:
+  default:
+    action:
+      - namespace: BashExecutor
+        type: http
+        host: "localhost"
+        port: 8010
+        path: "/mcp"
+        reset: false
+
     

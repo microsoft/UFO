@@ -9,7 +9,6 @@ from ufo.agents.processors.context.processing_context import (
     ProcessingPhase,
     ProcessingResult,
 )
-from ufo.agents.processors.core.processing_middleware import ProcessorMiddleware
 from ufo.agents.processors.core.strategy_dependency import (
     StrategyDependencyValidator,
     StrategyMetadataRegistry,
@@ -20,6 +19,7 @@ from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
     from ufo.agents.agent.basic import BasicAgent
+    from ufo.agents.processors.core.processing_middleware import ProcessorMiddleware
 
 T = TypeVar("T")
 

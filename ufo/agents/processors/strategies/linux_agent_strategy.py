@@ -1,7 +1,8 @@
 import traceback
-from typing import List
-from ufo.agents.agent.customized_agent import LinuxAgent
+from typing import List, TYPE_CHECKING
 
+
+from ufo.agents.processors.app_agent_processor import AppAgentLoggingMiddleware
 from ufo.agents.processors.context.processing_context import (
     ProcessingContext,
     ProcessingResult,
@@ -18,6 +19,9 @@ from ufo.agents.processors.strategies.app_agent_processing_strategy import (
 )
 from ufo.contracts.contracts import Result
 from ufo.llm.response_schema import AppAgentResponse
+
+if TYPE_CHECKING:
+    from ufo.agents.agent.customized_agent import LinuxAgent
 
 
 @depends_on("request")
@@ -46,7 +50,7 @@ class LinuxLLMInteractionStrategy(AppLLMInteractionStrategy):
         Initialize App Agent LLM interaction strategy.
         :param fail_fast: Whether to raise exceptions immediately on errors
         """
-        super().__init__(name="app_llm_interaction", fail_fast=fail_fast)
+        super().__init__(fail_fast=fail_fast)
 
     async def execute(
         self, agent: "LinuxAgent", context: ProcessingContext
@@ -69,7 +73,7 @@ class LinuxLLMInteractionStrategy(AppLLMInteractionStrategy):
                 blackboard_prompt = agent.blackboard.blackboard_to_prompt()
 
             prompt_message = agent.message_constructor(
-                dynamic_examples="",
+                dynamic_examples=[],
                 dynamic_knowledge="",
                 plan=plan,
                 request=request,
@@ -122,7 +126,7 @@ class LinuxActionExecutionStrategy(AppActionExecutionStrategy):
         Initialize Linux action execution strategy.
         :param fail_fast: Whether to raise exceptions immediately on errors
         """
-        super().__init__(name="Linux_action_execution", fail_fast=fail_fast)
+        super().__init__(fail_fast=fail_fast)
 
     async def execute(
         self, agent: "LinuxAgent", context: ProcessingContext
@@ -205,12 +209,12 @@ class LinuxActionExecutionStrategy(AppActionExecutionStrategy):
             if not execution_results:
                 execution_results = []
 
+            if isinstance(actions, ActionCommandInfo):
+                actions = [actions]
+
             assert len(execution_results) == len(
                 actions
             ), "Mismatch in actions and execution results length"
-
-            if isinstance(actions, ActionCommandInfo):
-                actions = [actions]
 
             for i, action in enumerate(actions):
                 action.result = execution_results[i]
@@ -222,3 +226,20 @@ class LinuxActionExecutionStrategy(AppActionExecutionStrategy):
 
         except Exception as e:
             self.logger.warning(f"Failed to create action info: {str(e)}")
+
+
+class LinuxLoggingMiddleware(AppAgentLoggingMiddleware):
+    """
+    Specialized logging middleware for Linux Agent with enhanced contextual information.
+    """
+
+    def starting_message(self, context: ProcessingContext) -> str:
+        """
+        Return the starting message of the agent.
+        :param context: Processing context with round and step information
+        :return: Starting message string
+        """
+
+        request = context.get_local("request")
+
+        return f"Completing the user request \[{request}] on Linux."

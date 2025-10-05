@@ -1291,12 +1291,12 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             if not execution_results:
                 execution_results = []
 
+            if isinstance(actions, ActionCommandInfo):
+                actions = [actions]
+
             assert len(execution_results) == len(
                 actions
             ), "Mismatch in actions and execution results length"
-
-            if isinstance(actions, ActionCommandInfo):
-                actions = [actions]
 
             for i, action in enumerate(actions):
 

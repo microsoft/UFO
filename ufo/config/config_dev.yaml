@@ -142,7 +142,7 @@ MCP_LOG_EXECUTION: False  # Whether to log MCP tool execution details
 
 # Third-party Agent Integration
 
-ENABLED_THIRD_PARTY_AGENTS: ["HardwareAgent"]
+ENABLED_THIRD_PARTY_AGENTS: ["HardwareAgent", "LinuxAgent"]
 
 THIRD_PARTY_AGENT_CONFIG: {
     "HardwareAgent": {
@@ -152,8 +152,15 @@ THIRD_PARTY_AGENT_CONFIG: {
         "APPAGENT_EXAMPLE_PROMPT": "ufo/prompts/examples/visual/app_agent_example.yaml",
         "API_PROMPT": "ufo/prompts/third_party/hardware_agent_api.yaml",
         "INTRODUCTION": "The HardwareAgent is used to manipulate hardware components of the computer without using GUI, such as robotic arms for keyboard input and mouse control, plug and unplug devices such as USB drives, and other hardware-related tasks."
-    }
-}  # Configuration for third-party agents, including agent name, prompt path, etc.
+    },
+    "LinuxAgent":
+    {
+        "AGENT_NAME": "LinuxAgent",
+        "APPAGENT_PROMPT": "ufo/prompts/third_party/linux_agent.yaml",
+        "APPAGENT_EXAMPLE_PROMPT": "ufo/prompts/third_party/linux_agent_example.yaml",
+        "INTRODUCTION": "For Linux Use Only."
+    },
+}
 
 # Constellation
 CONSTELLATION_CREATION_PROMPT: "ufo/prompts/share/constellation/constellation_creation.yaml"  # The prompt for the app selection

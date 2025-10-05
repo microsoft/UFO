@@ -12,8 +12,9 @@ import os
 import sys
 import shlex
 import asyncio
-from typing import Any, Dict, Optional
+from typing import Annotated, Any, Dict, Optional
 from fastmcp import FastMCP
+from pydantic import Field
 
 
 def create_bash_mcp_server(host: str = "", port: int = 8010) -> None:
@@ -29,8 +30,30 @@ def create_bash_mcp_server(host: str = "", port: int = 8010) -> None:
 
     @mcp.tool()
     async def execute_command(
-        command: str, timeout: int = 30, cwd: Optional[str] = None
-    ) -> Dict[str, Any]:
+        command: Annotated[
+            str,
+            Field(
+                description="Shell command to execute on the Linux system. This should be a valid bash/sh command that will be executed in a shell environment. Examples: 'ls -la /home', 'cat /etc/os-release', 'python3 --version', 'grep -r \"pattern\" /path/to/search'. Be cautious with destructive commands as some dangerous operations are blocked for safety."
+            ),
+        ],
+        timeout: Annotated[
+            int,
+            Field(
+                description="Maximum execution time in seconds before the command is forcefully terminated. Use this to prevent commands from running indefinitely. Default is 30 seconds. For long-running operations like large file transfers or complex compilations, increase this value accordingly. Examples: 30 for quick operations, 300 for file processing, 600 for builds."
+            ),
+        ] = 30,
+        cwd: Annotated[
+            Optional[str],
+            Field(
+                description="Working directory path where the command should be executed. If not specified, the command runs in the server's current working directory. Use absolute paths for reliability. Examples: '/home/user/project', '/var/log', '/tmp/workspace'. Leave empty to use the default directory."
+            ),
+        ] = None,
+    ) -> Annotated[
+        Dict[str, Any],
+        Field(
+            description="Dictionary containing execution results with keys: 'success' (bool indicating if command succeeded), 'exit_code' (int return code from the process), 'stdout' (str standard output from the command), 'stderr' (str standard error output), or 'error' (str error message if execution failed)"
+        ),
+    ]:
         """
         Execute a shell command on Linux and return stdout/stderr.
         """
@@ -70,7 +93,12 @@ def create_bash_mcp_server(host: str = "", port: int = 8010) -> None:
             return {"success": False, "error": str(e)}
 
     @mcp.tool()
-    async def get_system_info() -> Dict[str, Any]:
+    async def get_system_info() -> Annotated[
+        Dict[str, Any],
+        Field(
+            description="Dictionary containing basic Linux system information with keys: 'uname' (system and kernel information from uname -a), 'uptime' (system uptime and load averages), 'memory' (memory usage statistics in human-readable format from free -h), 'disk' (disk space usage for all mounted filesystems from df -h). Each value is either the command output string or an error message if retrieval failed."
+        ),
+    ]:
         """
         Get basic system info (uname, uptime, memory, disk).
         """

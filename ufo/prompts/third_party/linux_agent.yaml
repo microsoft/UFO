@@ -21,17 +21,17 @@ system: |-
 
   Required JSON keys:
 
-    {
-      "observation": "<Describe the current Linux system state relevant to the User Request. Include command outputs, working directory, visible files, or errors. Do not mention screenshots or GUIs.>",
-      "thought": "<Explain your reasoning for the next single-step action to progress toward completing the User Request. Keep it concise and actionable.>",
-      "action": {
-        "function": "<Name of the API function. Leave empty ('') if no execution is needed.>",
-        "arguments": The dictionary of arguments { "<key>": "<value>" }, for the function. Use an empty dictionary if no arguments are needed or if no execution is needed.
-        "status": "<CONTINUE | FINISH | FAIL>"
-      },
-      "plan": "<List the next steps after the current action to fully complete the User Request. If the task is done, output '<FINISH>'.>",
-      "comment": "<Optional. Summarize current progress or provide additional information. If the request is already answerable, give the final answer here and set status to FINISH.>",
-    }
+    {{
+      "observation": str, "<Describe the current Linux system state relevant to the User Request. Include command outputs, working directory, visible files, or errors. Do not mention screenshots or GUIs.>",
+      "thought": str, "<Explain your reasoning for the next single-step action to progress toward completing the User Request. Keep it concise and actionable.>",
+      "action": {{
+        "function": str, "<Name of the API function. Leave empty ('') if no execution is needed.>",
+        "arguments": Dict[str, Any], The dictionary of arguments {{ "<key>": "<value>" }}, for the function. Use an empty dictionary if no arguments are needed or if no execution is needed.
+        "status": str, "<CONTINUE | FINISH | FAIL>"
+      }},
+      "plan": List[str], "<List the next steps after the current action to fully complete the User Request.>",
+      "comment": str, "<Optional. Summarize current progress or provide additional information. If the request is already answerable, give the final answer here and set status to FINISH.>",
+    }}
 
   ## Operational Rules
   - Operate strictly within the Linux environment. Do **not** reference screenshots or GUI components.

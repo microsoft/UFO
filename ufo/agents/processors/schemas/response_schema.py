@@ -32,4 +32,4 @@ class AppAgentResponse(BaseModel):
     plan: Optional[List[str]] = None
     comment: Optional[str] = None
     action: Union[List[ActionCommandInfo], ActionCommandInfo, None] = None
-    save_screenshot: Optional[Dict[str, Any]] = None
+    save_screenshot: Optional[Dict[str, Any]] = {}

@@ -14,7 +14,7 @@ Optimized for type safety, maintainability, and follows SOLID principles.
 import asyncio
 import logging
 import time
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union, TYPE_CHECKING, Any
 
 
 from rich.console import Console
@@ -22,9 +22,7 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.text import Text
 
-from ufo.agents.agent.basic import BasicAgent
 from ufo.contracts.contracts import Command, MCPToolInfo, ResultStatus
-from galaxy.agents.constellation_agent_states import ConstellationAgentStatus
 from galaxy.agents.processors.processor import ConstellationAgentProcessor
 from galaxy.agents.prompters.base_constellation_prompter import (
     BaseConstellationPrompter,
@@ -49,6 +47,10 @@ from ..core.interfaces import IRequestProcessor, IResultProcessor
 from ..constellation import TaskConstellation
 
 console = Console()
+
+# Import BasicAgent and ConstellationAgentStatus here to avoid circular import at module level
+from ufo.agents.agent.basic import BasicAgent
+from galaxy.agents.constellation_agent_states import ConstellationAgentStatus
 
 
 class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):

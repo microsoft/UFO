@@ -65,13 +65,6 @@ class LinuxSession(LinuxBaseSession):
         command_dispatcher = LocalCommandDispatcher(self, mcp_server_manager)
         self.context.attach_command_dispatcher(command_dispatcher)
 
-        # Set application context if provided
-        if self._application_name:
-            self.context.set(
-                ContextNames.APPLICATION_PROCESS_NAME, self._application_name
-            )
-            self.context.set(ContextNames.APPLICATION_ROOT_NAME, self._application_name)
-
     def create_new_round(self) -> Optional[BaseRound]:
         """
         Create a new round for Linux session.

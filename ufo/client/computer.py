@@ -14,6 +14,9 @@ from ufo.client.mcp.mcp_server_manager import BaseMCPServer, MCPServerManager
 from ufo.contracts.contracts import Command, Result, MCPToolCall, ResultStatus
 import ufo.client.mcp.local_servers
 
+# Load all local MCP servers
+ufo.client.mcp.local_servers.load_all_servers()
+
 
 class Computer:
     """
