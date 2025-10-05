@@ -208,7 +208,7 @@ class GalaxySession(BaseSession):
             device_manager=client.device_manager, enable_logging=True
         )
 
-        self._agent = ConstellationAgent(orchestrator=self._orchestrator)
+        self._init_agents()
 
         # Session state
         self._initial_request = initial_request
@@ -244,6 +244,12 @@ class GalaxySession(BaseSession):
         command_dispatcher = LocalCommandDispatcher(self, mcp_server_manager)
         self.context.attach_command_dispatcher(command_dispatcher)
 
+    def _init_agents(self) -> None:
+        """
+        Initilize the agent.
+        """
+        self._agent = ConstellationAgent(orchestrator=self._orchestrator)
+
     def _setup_observers(self) -> None:
         """
         Set up event observers for this round.
@@ -273,7 +279,9 @@ class GalaxySession(BaseSession):
         self._observers.append(self._modification_synchronizer)
 
         # Attach synchronizer to orchestrator
-        self._orchestrator.set_modification_synchronizer(self._modification_synchronizer)
+        self._orchestrator.set_modification_synchronizer(
+            self._modification_synchronizer
+        )
 
         # Subscribe observers to event bus
         for observer in self._observers:
