@@ -182,6 +182,6 @@ example6:
       Device inventory query can be answered from Device-Info metadata.
       No tasks to add, dependencies or constellation updates are needed.
       Response can directly summarize current devices for user.
-    status: "COMPLETE"
+    status: "FINISH"
     action: []
     results: "Current registered devices: admin-laptop (macOS), node1 (Linux), node2 (Linux)."

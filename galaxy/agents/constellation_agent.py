@@ -222,6 +222,20 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         self._current_constellation = after_constellation
 
+        # Update the constellation on the MCP server side.
+        await context.command_dispatcher.execute_commands(
+            commands=[
+                Command(
+                    tool_name="build_constellation",
+                    parameters={
+                        "config": after_constellation.to_basemodel(),
+                        "clear_existing": True,
+                    },
+                    tool_type="action",
+                )
+            ]
+        )
+
         self.logger.info(
             f"Task ID for constellation after editing: {after_constellation.tasks.keys()}"
         )

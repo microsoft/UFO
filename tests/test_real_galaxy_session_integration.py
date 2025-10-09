@@ -27,6 +27,70 @@ from galaxy.client.constellation_client import ConstellationClient
 class TestRealGalaxySessionWithMockDevices:
     """Test real GalaxySession execution with mock DeviceInfo to find bugs."""
 
+    class NoComputerRunActionFilter(logging.Filter):
+        """Filter to exclude Computer._run_action logs."""
+
+        def filter(self, record):
+            # Filter out Computer logger's _run_action messages
+            if record.name == "Computer" and record.funcName == "_run_action":
+                return False
+            # Also filter out any ufo.agents.agent.basic logs which might be noisy
+            if "ufo.agents" in record.name and record.funcName == "_run_action":
+                return False
+            return True
+
+    def _setup_comprehensive_logging(self):
+        """Setup comprehensive logging for all galaxy components."""
+        # Set root logger to info
+        root_logger = logging.getLogger()
+        original_level = root_logger.level
+        root_logger.setLevel(logging.INFO)
+
+        # Create detailed console handler
+        console_handler = logging.StreamHandler()
+        console_handler.setLevel(logging.INFO)
+
+        # Add filter to exclude Computer._run_action logs
+        log_filter = self.NoComputerRunActionFilter()
+        console_handler.addFilter(log_filter)
+
+        # Use detailed formatter
+        detailed_formatter = logging.Formatter(
+            "%(asctime)s.%(msecs)03d - %(name)s - %(levelname)s - %(funcName)s:%(lineno)d - %(message)s",
+            datefmt="%H:%M:%S",
+        )
+        console_handler.setFormatter(detailed_formatter)
+
+        # Configure all relevant loggers
+        loggers_to_configure = [
+            "ufo.galaxy.session",
+            "ufo.galaxy.agents",
+            "ufo.galaxy.constellation",
+            "ufo.galaxy.client",
+            "ufo.galaxy.core",
+            "galaxy.session",
+            "galaxy.agents",
+            "galaxy.constellation",
+            "galaxy.client",
+            "galaxy.core",
+            "",
+        ]
+
+        configured_loggers = []
+        for logger_name in loggers_to_configure:
+            logger = logging.getLogger(logger_name)
+            logger.setLevel(logging.INFO)
+            logger.addHandler(console_handler)
+            configured_loggers.append(logger)
+
+        return console_handler, configured_loggers, original_level
+
+    def _cleanup_logging(self, console_handler, configured_loggers, original_level):
+        """Clean up logging configuration."""
+        for logger in configured_loggers:
+            logger.removeHandler(console_handler)
+        logging.getLogger().setLevel(original_level)
+
     @pytest.fixture
     def mock_linux_server_1(self) -> DeviceInfo:
         """Mock DeviceInfo for first Linux server."""
@@ -191,20 +255,24 @@ class TestRealGalaxySessionWithMockDevices:
         mock_device_manager.get_all_devices = Mock(side_effect=mock_get_all_devices)
 
         # Mock task execution - this is where real device communication would happen
-        async def mock_execute_task(device_id: str, task_request: dict):
-            """Mock task execution with realistic responses."""
+        async def mock_assign_task_to_device(
+            task_id: str,
+            device_id: str,
+            task_description: str,
+            task_data: dict,
+            timeout: float = 300.0,
+        ):
+            """Mock task assignment with realistic responses."""
             device = device_dict.get(device_id)
             if not device:
                 raise ValueError(f"Device {device_id} not found")
 
-            task_type = task_request.get("task_name", "unknown_task")
-
-            # Simulate different responses based on device type and task
-            if device.os == "linux" and "log_collection" in task_type:
+            # Simulate different responses based on device type and task description
+            if device.os == "linux" and "log_collection" in task_description.lower():
                 return {
                     "status": "completed",
                     "device_id": device_id,
-                    "task_id": task_request.get("task_id"),
+                    "task_id": task_id,
                     "result": {
                         "logs_collected": len(device.metadata.get("log_paths", [])),
                         "total_size_mb": 25.6,
@@ -212,11 +280,11 @@ class TestRealGalaxySessionWithMockDevices:
                         "execution_time": 12.3,
                     },
                 }
-            elif device.os == "windows" and "excel" in task_type.lower():
+            elif device.os == "windows" and "excel" in task_description.lower():
                 return {
                     "status": "completed",
                     "device_id": device_id,
-                    "task_id": task_request.get("task_id"),
+                    "task_id": task_id,
                     "result": {
                         "report_generated": True,
                         "file_path": "C:\\Reports\\log_analysis_report.xlsx",
@@ -229,11 +297,15 @@ class TestRealGalaxySessionWithMockDevices:
                 return {
                     "status": "completed",
                     "device_id": device_id,
-                    "task_id": task_request.get("task_id"),
-                    "result": {"message": f"Task {task_type} completed on {device_id}"},
+                    "task_id": task_id,
+                    "result": {
+                        "message": f"Task {task_description} completed on {device_id}"
+                    },
                 }
 
-        mock_device_manager.execute_task = AsyncMock(side_effect=mock_execute_task)
+        mock_device_manager.assign_task_to_device = AsyncMock(
+            side_effect=mock_assign_task_to_device
+        )
 
         mock_client.device_manager = mock_device_manager
         mock_client.get_constellation_info.return_value = {
@@ -285,23 +357,11 @@ class TestRealGalaxySessionWithMockDevices:
         print(f"   Task: {session.task}")
         print(f"   Client: {type(session._client)}")
 
-        # Capture detailed logging to identify issues
-        session_logger = logging.getLogger("ufo.galaxy.session")
-        session_logger.setLevel(logging.DEBUG)
-
-        # Add console handler to see real-time logs
-        console_handler = logging.StreamHandler()
-        console_handler.setLevel(logging.INFO)
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        # Configure comprehensive logging to capture ALL logs
+        console_handler, configured_loggers, original_level = (
+            self._setup_comprehensive_logging()
         )
-        console_handler.setFormatter(formatter)
-        session_logger.addHandler(console_handler)
-        
-        # Also configure agent loggers to capture ConstellationAgent logs
-        agent_logger = logging.getLogger("ufo.galaxy.agents")
-        agent_logger.setLevel(logging.DEBUG)
-        agent_logger.addHandler(console_handler)
+        print(f"📋 Configured {len(configured_loggers)} loggers for detailed output")
 
         try:
             print("\n🎬 Starting real session execution...")
@@ -334,9 +394,9 @@ class TestRealGalaxySessionWithMockDevices:
             raise
 
         finally:
-            # Remove the handler to avoid duplicate logs
-            session_logger.removeHandler(console_handler)
-            agent_logger.removeHandler(console_handler)
+            # Clean up all configured loggers to avoid duplicate logs in subsequent tests
+            print(f"\n🧹 Cleaning up {len(configured_loggers)} loggers")
+            self._cleanup_logging(console_handler, configured_loggers, original_level)
 
         # Analyze session results
         print("\n📊 Session Analysis:")
@@ -377,24 +437,29 @@ class TestRealGalaxySessionWithMockDevices:
 
         # Verify device interactions
         print(f"\n🔧 Device Interaction Analysis:")
-        execute_task_calls = (
-            mock_constellation_client.device_manager.execute_task.call_count
+        assign_task_calls = (
+            mock_constellation_client.device_manager.assign_task_to_device.call_count
         )
-        print(f"   Total device task executions: {execute_task_calls}")
+        print(f"   Total device task executions: {assign_task_calls}")
 
-        if execute_task_calls > 0:
+        if assign_task_calls > 0:
             print(f"   Device tasks executed: ✅")
             # Analyze call arguments
             for (
                 call
-            ) in mock_constellation_client.device_manager.execute_task.call_args_list:
+            ) in (
+                mock_constellation_client.device_manager.assign_task_to_device.call_args_list
+            ):
                 args, kwargs = call
-                device_id = args[0] if args else kwargs.get("device_id", "unknown")
-                task_request = (
-                    args[1] if len(args) > 1 else kwargs.get("task_request", {})
+                device_id = (
+                    args[1] if len(args) > 1 else kwargs.get("device_id", "unknown")
                 )
-                task_name = task_request.get("task_name", "unknown")
-                print(f"     • {device_id}: {task_name}")
+                task_description = (
+                    args[2]
+                    if len(args) > 2
+                    else kwargs.get("task_description", "unknown")
+                )
+                print(f"     • {device_id}: {task_description}")
         else:
             print(f"   Device tasks executed: ❌ (No device interactions detected)")
 
@@ -412,16 +477,18 @@ class TestRealGalaxySessionWithMockDevices:
             issues_found.append("No constellation was created")
 
         # Check 3: Device tasks were executed
-        if execute_task_calls == 0:
+        if assign_task_calls == 0:
             issues_found.append("No device tasks were executed")
 
         # Check 4: All expected devices were used
         device_calls = set()
         for (
             call
-        ) in mock_constellation_client.device_manager.execute_task.call_args_list:
+        ) in (
+            mock_constellation_client.device_manager.assign_task_to_device.call_args_list
+        ):
             args, kwargs = call
-            device_id = args[0] if args else kwargs.get("device_id")
+            device_id = args[1] if len(args) > 1 else kwargs.get("device_id")
             if device_id:
                 device_calls.add(device_id)
 
@@ -456,7 +523,7 @@ class TestRealGalaxySessionWithMockDevices:
         print(f"\n🎯 Test Summary:")
         print(f"   Real session execution: ✅ Completed")
         print(f"   Issues found: {len(issues_found)}")
-        print(f"   Device interactions: {execute_task_calls}")
+        print(f"   Device interactions: {assign_task_calls}")
         print(f"   Execution time: {execution_time:.2f}s")
 
         # Assert basic success criteria
@@ -469,7 +536,7 @@ class TestRealGalaxySessionWithMockDevices:
             "execution_time": execution_time,
             "rounds": len(getattr(session, "_rounds", [])),
             "constellation_created": constellation is not None,
-            "device_interactions": execute_task_calls,
+            "device_interactions": assign_task_calls,
             "issues": issues_found,
         }
 
@@ -482,6 +549,11 @@ class TestRealGalaxySessionWithMockDevices:
         temp_output_dir: Path,
     ):
         """Test different types of requests to find parsing/handling bugs."""
+
+        # Setup logging for this test too
+        console_handler, configured_loggers, original_level = (
+            self._setup_comprehensive_logging()
+        )
 
         test_requests = [
             # Simple request
@@ -496,51 +568,58 @@ class TestRealGalaxySessionWithMockDevices:
 
         results = []
 
-        for i, request in enumerate(test_requests, 1):
-            print(f"\n🧪 Test {i}/{len(test_requests)}: {request[:50]}...")
+        try:
+            for i, request in enumerate(test_requests, 1):
+                print(f"\n🧪 Test {i}/{len(test_requests)}: {request[:50]}...")
 
-            session = GalaxySession(
-                task=f"test_request_{i}",
-                should_evaluate=False,
-                id=f"test_session_{i:03d}",
-                client=mock_constellation_client,
-                initial_request=request,
+                session = GalaxySession(
+                    task=f"test_request_{i}",
+                    should_evaluate=False,
+                    id=f"test_session_{i:03d}",
+                    client=mock_constellation_client,
+                    initial_request=request,
+                )
+
+                try:
+                    await session.run()
+
+                    result = {
+                        "request": request[:100],
+                        "success": True,
+                        "rounds": len(getattr(session, "_rounds", [])),
+                        "error": None,
+                    }
+                    print(f"   ✅ Success: {result['rounds']} rounds")
+
+                except Exception as e:
+                    result = {
+                        "request": request[:100],
+                        "success": False,
+                        "rounds": len(getattr(session, "_rounds", [])),
+                        "error": str(e),
+                    }
+                    print(f"   ❌ Failed: {e}")
+
+                results.append(result)
+
+            # Analyze results
+            print(f"\n📈 Request Type Analysis:")
+            success_count = sum(1 for r in results if r["success"])
+            print(
+                f"   Success rate: {success_count}/{len(results)} ({success_count/len(results)*100:.1f}%)"
             )
 
-            try:
-                await session.run()
+            for i, result in enumerate(results, 1):
+                status = "✅" if result["success"] else "❌"
+                print(
+                    f"   {i}. {status} {result['request']} (rounds: {result['rounds']})"
+                )
+                if not result["success"]:
+                    print(f"      Error: {result['error']}")
 
-                result = {
-                    "request": request[:100],
-                    "success": True,
-                    "rounds": len(getattr(session, "_rounds", [])),
-                    "error": None,
-                }
-                print(f"   ✅ Success: {result['rounds']} rounds")
-
-            except Exception as e:
-                result = {
-                    "request": request[:100],
-                    "success": False,
-                    "rounds": len(getattr(session, "_rounds", [])),
-                    "error": str(e),
-                }
-                print(f"   ❌ Failed: {e}")
-
-            results.append(result)
-
-        # Analyze results
-        print(f"\n📈 Request Type Analysis:")
-        success_count = sum(1 for r in results if r["success"])
-        print(
-            f"   Success rate: {success_count}/{len(results)} ({success_count/len(results)*100:.1f}%)"
-        )
-
-        for i, result in enumerate(results, 1):
-            status = "✅" if result["success"] else "❌"
-            print(f"   {i}. {status} {result['request']} (rounds: {result['rounds']})")
-            if not result["success"]:
-                print(f"      Error: {result['error']}")
+        finally:
+            # Clean up logging configuration
+            self._cleanup_logging(console_handler, configured_loggers, original_level)
 
         return results
 
@@ -550,42 +629,67 @@ class TestRealGalaxySessionWithMockDevices:
     ):
         """Test session error handling with problematic scenarios."""
 
-        # Make device manager fail for specific tasks
-        original_execute_task = mock_constellation_client.device_manager.execute_task
-
-        async def failing_execute_task(device_id: str, task_request: dict):
-            task_name = task_request.get("task_name", "")
-            if "fail_test" in task_name.lower():
-                raise ConnectionError(f"Mock connection failure to {device_id}")
-            return await original_execute_task(device_id, task_request)
-
-        mock_constellation_client.device_manager.execute_task = AsyncMock(
-            side_effect=failing_execute_task
+        # Setup logging for this test too
+        console_handler, configured_loggers, original_level = (
+            self._setup_comprehensive_logging()
         )
-
-        error_request = "Execute a fail_test task on any device to test error handling"
-
-        session = GalaxySession(
-            task="error_handling_test",
-            should_evaluate=False,
-            id="error_test_session",
-            client=mock_constellation_client,
-            initial_request=error_request,
-        )
-
-        print(f"\n🚨 Testing error handling with failing task...")
 
         try:
-            await session.run()
-            print(f"   ⚠️  Session completed despite errors (error recovery working)")
+            # Make device manager fail for specific tasks
+            original_assign_task = (
+                mock_constellation_client.device_manager.assign_task_to_device
+            )
 
-        except Exception as e:
-            print(f"   ❌ Session failed with error: {e}")
-            print(f"   Error type: {type(e).__name__}")
+            async def failing_assign_task(
+                task_id: str,
+                device_id: str,
+                task_description: str,
+                task_data: dict,
+                timeout: float = 300.0,
+            ):
+                if "fail_test" in task_description.lower():
+                    raise ConnectionError(f"Mock connection failure to {device_id}")
+                return await original_assign_task(
+                    task_id, device_id, task_description, task_data, timeout
+                )
 
-        # Check if session handled errors gracefully
-        rounds = getattr(session, "_rounds", [])
-        print(f"   Rounds completed before/during error: {len(rounds)}")
+            mock_constellation_client.device_manager.assign_task_to_device = AsyncMock(
+                side_effect=failing_assign_task
+            )
 
-        # Restore original method
-        mock_constellation_client.device_manager.execute_task = original_execute_task
+            error_request = (
+                "Execute a fail_test task on any device to test error handling"
+            )
+
+            session = GalaxySession(
+                task="error_handling_test",
+                should_evaluate=False,
+                id="error_test_session",
+                client=mock_constellation_client,
+                initial_request=error_request,
+            )
+
+            print(f"\n🚨 Testing error handling with failing task...")
+
+            try:
+                await session.run()
+                print(
+                    f"   ⚠️  Session completed despite errors (error recovery working)"
+                )
+
+            except Exception as e:
+                print(f"   ❌ Session failed with error: {e}")
+                print(f"   Error type: {type(e).__name__}")
+
+            # Check if session handled errors gracefully
+            rounds = getattr(session, "_rounds", [])
+            print(f"   Rounds completed before/during error: {len(rounds)}")
+
+            # Restore original method
+            mock_constellation_client.device_manager.assign_task_to_device = (
+                original_assign_task
+            )
+
+        finally:
+            # Clean up logging configuration
+            self._cleanup_logging(console_handler, configured_loggers, original_level)

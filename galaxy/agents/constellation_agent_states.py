@@ -135,7 +135,10 @@ class ContinueConstellationAgentState(ConstellationAgentState):
             )
 
             # Update constellation based on task completion
-            await agent.process_editing(context=context)
+            await agent.process_editing(context=context, task_id=task_event.task_id)
+
+            # Sleep for waiting
+            await asyncio.sleep(0.5)
 
         except Exception as e:
             agent.logger.error(f"Error in continue state: {e}")

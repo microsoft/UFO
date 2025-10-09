@@ -181,7 +181,7 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         subtask = context.get("subtask")
         application_process_name = context.get("application_process_name")
 
-        return f"Completing the subtask \[{subtask}] on application \[{application_process_name}]."
+        return f"Completing the subtask [{subtask}] on application [{application_process_name}]."
 
     async def after_process(
         self, processor: ProcessorTemplate, result: "ProcessingResult"

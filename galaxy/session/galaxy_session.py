@@ -103,9 +103,9 @@ class GalaxyRound(BaseRound):
                 # Small delay to prevent busy waiting
                 await asyncio.sleep(0.01)
 
-                self.logger.info(
-                    f"GalaxyRound {self._id} completed with status: {self._agent._status}"
-                )
+            self.logger.info(
+                f"GalaxyRound {self._id} completed with status: {self._agent._status}"
+            )
 
         except Exception as e:
             self.logger.error(f"Error in GalaxyRound execution: {e}")
