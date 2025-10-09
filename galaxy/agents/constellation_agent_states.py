@@ -69,7 +69,10 @@ class StartConstellationAgentState(ConstellationAgentState):
         try:
             agent.logger.info("Starting constellation orchestration")
 
-            if agent.status in ["FINISH", "FAIL"]:
+            if agent.status in [
+                ConstellationAgentStatus.FINISH.value,
+                ConstellationAgentStatus.FAIL.value,
+            ]:
                 return
 
             # Create constellation if not exists
@@ -91,16 +94,16 @@ class StartConstellationAgentState(ConstellationAgentState):
                 agent.logger.info(
                     f"Started orchestration for constellation {agent.current_constellation.constellation_id}"
                 )
-                agent.status = "CONTINUE"
+                agent.status = ConstellationAgentStatus.CONTINUE.value
             else:
-                agent.status = "FAIL"
+                agent.status = ConstellationAgentStatus.FAIL.value
                 agent.logger.error("Failed to create constellation")
 
         except Exception as e:
             import traceback
 
             agent.logger.error(f"Error in start state: {traceback.format_exc()}")
-            agent.status = "FAIL"
+            agent.status = ConstellationAgentStatus.FAIL.value
 
     def next_agent(self, agent):
         return agent
@@ -142,7 +145,7 @@ class ContinueConstellationAgentState(ConstellationAgentState):
 
         except Exception as e:
             agent.logger.error(f"Error in continue state: {e}")
-            agent.status = "FAIL"
+            agent.status = ConstellationAgentStatus.FAIL.value
 
     def next_agent(self, agent):
         return agent
@@ -164,7 +167,7 @@ class FinishConstellationAgentState(ConstellationAgentState):
 
     async def handle(self, agent: "ConstellationAgent", context=None) -> None:
         agent.logger.info("Galaxy task completed successfully")
-        agent._status = "FINISH"
+        agent._status = ConstellationAgentStatus.FINISH.value
 
     def next_state(self, agent: "ConstellationAgent") -> AgentState:
         return self  # Terminal state
@@ -189,7 +192,7 @@ class FailConstellationAgentState(ConstellationAgentState):
 
     async def handle(self, agent: "ConstellationAgent", context=None) -> None:
         agent.logger.error("Galaxy task failed")
-        agent._status = "FAIL"
+        agent._status = ConstellationAgentStatus.FAIL.value
 
     def next_state(self, agent: "ConstellationAgent") -> AgentState:
         return self  # Terminal state

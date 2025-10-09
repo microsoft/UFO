@@ -14,43 +14,33 @@ Optimized for type safety, maintainability, and follows SOLID principles.
 import asyncio
 import logging
 import time
-from typing import Dict, List, Optional, Union, TYPE_CHECKING, Any
-
+from typing import Dict, List, Optional, Union
 
 from rich.console import Console
 from rich.panel import Panel
-from rich.table import Table
 from rich.text import Text
 
-from ufo.contracts.contracts import Command, MCPToolInfo, ResultStatus
 from galaxy.agents.processors.processor import ConstellationAgentProcessor
 from galaxy.agents.prompters.base_constellation_prompter import (
     BaseConstellationPrompter,
     ConstellationPrompterFactory,
 )
-
 from galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
 from galaxy.client.components.types import DeviceInfo
-from galaxy.constellation.orchestrator.orchestrator import (
-    TaskConstellationOrchestrator,
-)
-from galaxy.core.events import (
-    get_event_bus,
-    ConstellationEvent,
-    EventType,
-    TaskEvent,
-)
+from galaxy.constellation.orchestrator.orchestrator import TaskConstellationOrchestrator
+from galaxy.core.events import ConstellationEvent, EventType, TaskEvent, get_event_bus
+from ufo.contracts.contracts import Command, MCPToolInfo, ResultStatus
 from ufo.module.context import Context, ContextNames
 
-
-from ..core.interfaces import IRequestProcessor, IResultProcessor
 from ..constellation import TaskConstellation
+from ..core.interfaces import IRequestProcessor, IResultProcessor
 
 console = Console()
 
+from galaxy.agents.constellation_agent_states import ConstellationAgentStatus
+
 # Import BasicAgent and ConstellationAgentStatus here to avoid circular import at module level
 from ufo.agents.agent.basic import BasicAgent
-from galaxy.agents.constellation_agent_states import ConstellationAgentStatus
 
 
 class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
@@ -147,7 +137,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         if not is_dag:
             self.logger.error(f"The created constellation is not a valid DAG: {errors}")
-            self.status = "FAIL"
+            self.status = ConstellationAgentStatus.FAIL.value
 
         # Sync the status with the processor.
 
@@ -205,7 +195,10 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
                 f"The old constellation {before_constellation.constellation_id} is completed."
             )
 
-            if self.status == ConstellationAgentStatus.CONTINUE.value:
+            if (
+                self.status == ConstellationAgentStatus.CONTINUE.value
+                and not after_constellation.is_complete()
+            ):
                 self.logger.info(
                     f"New update to the constellation {before_constellation.constellation_id} needed, restart the orchestration"
                 )

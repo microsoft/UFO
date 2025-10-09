@@ -184,6 +184,9 @@ class TaskConstellation(IConstellation):
         self._tasks[task.task_id] = task
         self._updated_at = datetime.now(timezone.utc)
 
+        # Update constellation state as task composition changed
+        self.update_state()
+
         # Publish task added event for visualization (handled by observer)
         # Note: Visualization logic moved to DAGVisualizationObserver
 
@@ -212,6 +215,9 @@ class TaskConstellation(IConstellation):
 
         del self._tasks[task_id]
         self._updated_at = datetime.now(timezone.utc)
+
+        # Update constellation state as task composition changed
+        self.update_state()
 
     def get_task(self, task_id: str) -> Optional[TaskStar]:
         """
@@ -253,6 +259,9 @@ class TaskConstellation(IConstellation):
 
         self._updated_at = datetime.now(timezone.utc)
 
+        # Update constellation state as dependencies changed
+        self.update_state()
+
     def remove_dependency(self, dependency_id: str) -> None:
         """
         Remove a dependency from the constellation.
@@ -275,6 +284,9 @@ class TaskConstellation(IConstellation):
 
         del self._dependencies[dependency_id]
         self._updated_at = datetime.now(timezone.utc)
+
+        # Update constellation state as dependencies changed
+        self.update_state()
 
     def get_dependency(self, dependency_id: str) -> Optional[TaskStarLine]:
         """
@@ -438,6 +450,9 @@ class TaskConstellation(IConstellation):
 
         task = self._tasks[task_id]
         task.start_execution()
+
+        # Update constellation state as task status changed
+        self.update_state()
 
     def mark_task_completed(
         self, task_id: str, success: bool, result: Any = None, error: Exception = None
