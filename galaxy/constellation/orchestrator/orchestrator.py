@@ -17,7 +17,9 @@ from typing import Any, Dict, List, Optional, TYPE_CHECKING
 from galaxy.client.device_manager import ConstellationDeviceManager
 
 if TYPE_CHECKING:
-    from ...session.observers.constellation_sync_observer import ConstellationModificationSynchronizer
+    from ...session.observers.constellation_sync_observer import (
+        ConstellationModificationSynchronizer,
+    )
 
 from ...core.events import (
     ConstellationEvent,
@@ -71,7 +73,7 @@ class TaskConstellationOrchestrator:
 
         # Track active execution tasks
         self._execution_tasks: Dict[str, asyncio.Task] = {}
-        
+
         # Modification synchronizer (will be set by session)
         self._modification_synchronizer: Optional[
             "ConstellationModificationSynchronizer"
@@ -165,6 +167,7 @@ class TaskConstellationOrchestrator:
                 "total_tasks": len(constellation.tasks),
                 "assignment_strategy": assignment_strategy,
                 "device_assignments": device_assignments or {},
+                "constellation": constellation,
             },
             constellation_id=constellation_id,
             constellation_state="executing",
@@ -175,10 +178,25 @@ class TaskConstellationOrchestrator:
             # Main execution loop - continue until all tasks complete
             while not constellation.is_complete():
                 # Wait for pending modifications before getting ready tasks
+                self._logger.info(
+                    f"⚠️ Old Ready tasks: {[t.task_id for t in constellation.get_ready_tasks()]}"
+                )
+
                 if self._modification_synchronizer:
                     await self._modification_synchronizer.wait_for_pending_modifications()
-                
+                    constellation = (
+                        self._modification_synchronizer.get_current_constellation()
+                    )
+
                 ready_tasks = constellation.get_ready_tasks()
+
+                self._logger.debug(
+                    f"🆕 Task ID for constellation after editing: {constellation.tasks.keys()}"
+                )
+
+                self._logger.info(
+                    f"🆕 New Ready tasks: {[t.task_id for t in ready_tasks]}"
+                )
 
                 # Create execution tasks for ready tasks in parallel
                 for task in ready_tasks:
@@ -287,9 +305,11 @@ class TaskConstellationOrchestrator:
             # Execute the task
             result = await task.execute(self._device_manager)
 
+            is_success = result.status == TaskStatus.COMPLETED
+
             # Mark task as completed in constellation
             newly_ready = constellation.mark_task_completed(
-                task.task_id, success=True, result=result
+                task.task_id, success=is_success, result=result
             )
 
             # Publish task completed event

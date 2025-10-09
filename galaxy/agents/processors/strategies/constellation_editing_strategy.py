@@ -8,23 +8,23 @@ This module provides specific strategies for constellation editing mode,
 implementing the abstract methods defined in the base strategies.
 """
 
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, List
 
-from ufo.agents.processors.schemas.actions import (
-    ActionCommandInfo,
-    ListActionCommandInfo,
-)
-from ufo.contracts.contracts import Result
 from galaxy.agents.processors.strategies.base_constellation_strategy import (
     BaseConstellationActionExecutionStrategy,
 )
 from galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
 from galaxy.constellation.task_constellation import TaskConstellation
 from galaxy.core.types import ProcessingContext
+from ufo.agents.processors.schemas.actions import (
+    ActionCommandInfo,
+    ListActionCommandInfo,
+)
+from ufo.contracts.contracts import Result, ResultStatus
+from ufo.module.context import ContextNames
 
 if TYPE_CHECKING:
     from galaxy.agents.constellation_agent import ConstellationAgent
-    from rich.console import Console
 
 
 class ConstellationEditingActionExecutionStrategy(
@@ -96,9 +96,6 @@ class ConstellationEditingActionExecutionStrategy(
         :param results: List of execution results from MCP tools
         :param context: Processing context to access and update constellation state
         """
-        from ufo.contracts.contracts import ResultStatus
-        from ufo.module.context import ContextNames
-        from galaxy.constellation.task_constellation import TaskConstellation
 
         if not results:
             self.logger.debug("No results to sync constellation from")

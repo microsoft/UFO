@@ -28,6 +28,8 @@ import asyncio
 import logging
 from typing import Dict, Optional, TYPE_CHECKING
 
+from galaxy.constellation.task_constellation import TaskConstellation
+
 from ...core.events import (
     Event,
     EventType,
@@ -72,6 +74,7 @@ class ConstellationModificationSynchronizer(IEventObserver):
 
         # Track constellation being modified
         self._current_constellation_id: Optional[str] = None
+        self._current_constellation: Optional["TaskConstellation"] = None
 
         # Timeout for modifications (safety measure)
         self._modification_timeout = 600.0  # 600 seconds
@@ -146,7 +149,15 @@ class ConstellationModificationSynchronizer(IEventObserver):
         """
         try:
             # Only care about constellation modified events
-            if event.event_type != EventType.CONSTELLATION_MODIFIED:
+            if event.event_type not in [
+                EventType.CONSTELLATION_MODIFIED,
+                EventType.CONSTELLATION_STARTED,
+            ]:
+                return
+
+            if event.event_type == EventType.CONSTELLATION_STARTED:
+                self._current_constellation_id = event.constellation_id
+                self._current_constellation = event.data.get("constellation")
                 return
 
             task_id = event.data.get("on_task_id")
@@ -155,6 +166,15 @@ class ConstellationModificationSynchronizer(IEventObserver):
                     "CONSTELLATION_MODIFIED event missing 'on_task_id' field"
                 )
                 return
+
+            new_constellation = event.data.get("new_constellation")
+
+            if new_constellation:
+                self._current_constellation = new_constellation
+
+                self.logger.info(
+                    f"🔄 Updated constellation reference for '{event.constellation_id}'"
+                )
 
             # Mark the modification as complete
             if task_id in self._pending_modifications:
@@ -246,6 +266,15 @@ class ConstellationModificationSynchronizer(IEventObserver):
             # Clear all pending modifications to prevent permanent deadlock
             self._pending_modifications.clear()
             return False
+
+    def get_current_constellation(self) -> Optional[TaskConstellation]:
+        """
+        Get the ID of the constellation currently being modified.
+
+        :return: Constellation or None if not set
+        """
+
+        return self._current_constellation
 
     def has_pending_modifications(self) -> bool:
         """

@@ -61,8 +61,8 @@ class TaskVisualizationHandler:
                 self.task_display.display_task_started(task, additional_info)
 
             # Show topology for smaller constellations
-            if constellation.task_count <= 10:
-                self._visualizer.display_dag_topology(constellation)
+            # if constellation.task_count <= 10:
+            #     self._visualizer.display_dag_topology(constellation)
 
         except Exception as e:
             self.logger.debug(f"Error displaying task start: {e}")

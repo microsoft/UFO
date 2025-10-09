@@ -163,8 +163,26 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
             ContextNames.CONSTELLATION
         )
 
+        # Update the constellation on the MCP server side.
+        await context.command_dispatcher.execute_commands(
+            commands=[
+                Command(
+                    tool_name="build_constellation",
+                    parameters={
+                        "config": before_constellation.to_basemodel(),
+                        "clear_existing": True,
+                    },
+                    tool_type="action",
+                )
+            ]
+        )
+
         self.logger.info(
             f"Task ID for constellation before editing: {before_constellation.tasks.keys()}"
+        )
+
+        self.logger.info(
+            f"📊 Status for task before editing {task_id}: {before_constellation.get_task(task_id).status}"
         )
 
         self.logger.info(
@@ -179,6 +197,10 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self.logger.info(f"Constellation agent status updated to: {self.status}")
 
         after_constellation: TaskConstellation = context.get(ContextNames.CONSTELLATION)
+
+        self.logger.info(
+            f"📊 Status for task after editing {task_id}: {after_constellation.get_task(task_id).status}"
+        )
 
         try:
             await asyncio.wait_for(
