@@ -149,9 +149,16 @@ class DAGVisualizer:
                             status_icon = self.task_display.get_task_status_icon(
                                 dep_task.status
                             )
-                            dep_branch.add(
-                                f"⬅️ {status_icon} [cyan]{task_id_short}[/cyan]"
-                            )
+
+                            # Add condition description if available
+                            dep_text = f"⬅️ {status_icon} [cyan]{task_id_short}: [/cyan]"
+                            if dep.condition_description:
+                                condition_short = self._truncate_name(
+                                    dep.condition_description, 50
+                                )
+                                dep_text += f" [dim]{condition_short}[/dim]"
+
+                            dep_branch.add(dep_text)
 
         self.console.print(tree)
 
