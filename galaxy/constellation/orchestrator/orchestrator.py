@@ -324,6 +324,9 @@ class TaskConstellationOrchestrator:
             # Wait for pending modifications and refresh constellation
             constellation = await self._sync_constellation_modifications(constellation)
 
+            # Validate existing device assignments
+            self._validate_existing_device_assignments(constellation)
+
             # Get ready tasks and schedule them
             ready_tasks = constellation.get_ready_tasks()
             await self._schedule_ready_tasks(ready_tasks, constellation)

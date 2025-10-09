@@ -241,7 +241,6 @@ class TaskConstellationSchema(BaseModel):
         Field(default_factory=dict)
     )
     metadata: Dict[str, Any] = Field(default_factory=dict)
-    enable_visualization: bool = True
     created_at: Optional[str] = None
     updated_at: Optional[str] = None
     execution_start_time: Optional[str] = None

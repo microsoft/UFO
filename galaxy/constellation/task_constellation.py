@@ -9,11 +9,12 @@ dynamic modification, and advanced dependency handling capabilities.
 """
 
 
-import json
 import uuid
 from collections import defaultdict, deque
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
+
+from galaxy.visualization.dag_visualizer import DAGVisualizer
 
 # Use the constellation-specific TaskStatus instead of contracts
 from .enums import TaskStatus, ConstellationState
@@ -45,14 +46,12 @@ class TaskConstellation(IConstellation):
         self,
         constellation_id: Optional[str] = None,
         name: Optional[str] = None,
-        enable_visualization: bool = True,
     ) -> None:
         """
         Initialize a TaskConstellation.
 
         :param constellation_id: Unique identifier (auto-generated if None)
         :param name: Human-readable name for the constellation
-        :param enable_visualization: Whether to enable DAG visualization
         """
         self._constellation_id: str = (
             constellation_id
@@ -73,18 +72,6 @@ class TaskConstellation(IConstellation):
 
         # Metadata
         self._metadata: Dict[str, Any] = {}
-        self._llm_source: Optional[str] = None
-
-        # Visualization settings
-        self._enable_visualization: bool = enable_visualization
-        self._visualizer = None
-        if enable_visualization:
-            try:
-                from ..visualization.dag_visualizer import DAGVisualizer
-
-                self._visualizer = DAGVisualizer()
-            except ImportError:
-                self._enable_visualization = False
 
     @property
     def constellation_id(self) -> str:
@@ -161,11 +148,6 @@ class TaskConstellation(IConstellation):
         """Get a copy of the metadata."""
         return self._metadata.copy()
 
-    @property
-    def llm_source(self) -> Optional[str]:
-        """Get the LLM source information."""
-        return self._llm_source
-
     def update_metadata(self, metadata: Dict[str, Any]) -> None:
         """Update the constellation metadata."""
         self._metadata.update(metadata)
@@ -186,9 +168,6 @@ class TaskConstellation(IConstellation):
 
         # Update constellation state as task composition changed
         self.update_state()
-
-        # Publish task added event for visualization (handled by observer)
-        # Note: Visualization logic moved to DAGVisualizationObserver
 
     def remove_task(self, task_id: str) -> None:
         """
@@ -612,8 +591,6 @@ class TaskConstellation(IConstellation):
             "tasks": tasks_dict,
             "dependencies": dependencies_dict,
             "metadata": self._metadata,
-            "llm_source": self._llm_source,
-            "enable_visualization": self._enable_visualization,
             "created_at": self._created_at.isoformat(),
             "updated_at": self._updated_at.isoformat(),
             "execution_start_time": (
@@ -663,9 +640,7 @@ class TaskConstellation(IConstellation):
         """
         # Create constellation with basic properties
         constellation = cls(
-            constellation_id=data.get("constellation_id"),
-            name=data.get("name"),
-            enable_visualization=data.get("enable_visualization", True),
+            constellation_id=data.get("constellation_id"), name=data.get("name")
         )
 
         # Restore state and metadata
@@ -673,7 +648,6 @@ class TaskConstellation(IConstellation):
             data.get("state", ConstellationState.CREATED.value)
         )
         constellation._metadata = data.get("metadata", {})
-        constellation._llm_source = data.get("llm_source")
 
         # Restore timestamps
         if data.get("created_at"):
@@ -842,40 +816,6 @@ class TaskConstellation(IConstellation):
         data = self.to_dict()
         return TaskConstellationSchema(**data)
 
-    def to_llm_string(self) -> str:
-        """
-        Generate a string representation suitable for LLM consumption.
-
-        :return: String representation for LLM
-        """
-        lines = [
-            f"TaskConstellation: {self._name} (ID: {self._constellation_id})",
-            f"State: {self._state.value}",
-            f"Tasks: {len(self._tasks)}, Dependencies: {len(self._dependencies)}",
-            "",
-            "Tasks:",
-        ]
-
-        for task in self._tasks.values():
-            lines.append(f"  - {task.task_id}: {task.task_description}")
-            lines.append(
-                f"    Status: {task.status.value}, Device: {task.target_device_id}"
-            )
-            if task.result is not None:
-                lines.append(f"    Result: {str(task.result)[:100]}...")
-
-        lines.append("")
-        lines.append("Dependencies:")
-
-        for dep in self._dependencies.values():
-            lines.append(f"  - {dep.from_task_id} -> {dep.to_task_id}")
-            lines.append(f"    Type: {dep.dependency_type.value}")
-            if dep.condition_description:
-                lines.append(f"    Condition: {dep.condition_description}")
-            lines.append(f"    Satisfied: {dep.is_satisfied}")
-
-        return "\n".join(lines)
-
     def _are_dependencies_satisfied(self, task_id: str) -> bool:
         """Check if all dependencies for a task are satisfied."""
         task = self._tasks.get(task_id)
@@ -934,21 +874,10 @@ class TaskConstellation(IConstellation):
 
     def start_execution(self) -> None:
         """Mark the constellation as started."""
-        if self._state not in (ConstellationState.CREATED, ConstellationState.READY):
-            raise ValueError(f"Cannot start constellation in state {self._state.value}")
 
         self._state = ConstellationState.EXECUTING
         self._execution_start_time = datetime.now(timezone.utc)
         self._updated_at = self._execution_start_time
-
-        # Display constellation overview when execution starts
-        if self._enable_visualization and self._visualizer:
-            try:
-                self._visualizer.display_constellation_overview(
-                    self, "🚀 Constellation Execution Started"
-                )
-            except Exception:
-                pass  # Silently fail visualization errors
 
     def complete_execution(self) -> None:
         """Mark the constellation as completed."""
@@ -956,62 +885,27 @@ class TaskConstellation(IConstellation):
         self._updated_at = self._execution_end_time
         self.update_state()
 
-        # Display final constellation state
-        if self._enable_visualization and self._visualizer:
-            try:
-                if self._state == ConstellationState.COMPLETED:
-                    title = "✅ Constellation Execution Completed"
-                elif self._state == ConstellationState.FAILED:
-                    title = "❌ Constellation Execution Failed"
-                else:
-                    title = "⚠️ Constellation Execution Finished"
-                self._visualizer.display_constellation_overview(self, title)
-            except Exception:
-                pass  # Silently fail visualization errors
-
-    def display_dag(self, mode: str = "overview", force: bool = False) -> None:
+    def display_dag(self, mode: str = "overview") -> None:
         """
         Manually display the DAG visualization.
 
         :param mode: Visualization mode ('overview', 'topology', 'details', 'execution')
-        :param force: Force display even if visualization is disabled
         """
-        if not self._enable_visualization and not force:
-            return
-
         try:
-            if not self._visualizer:
-                from ..visualization.dag_visualizer import DAGVisualizer
-
-                self._visualizer = DAGVisualizer()
+            visualizer = DAGVisualizer()
 
             if mode == "overview":
-                self._visualizer.display_constellation_overview(self)
+                visualizer.display_constellation_overview(self)
             elif mode == "topology":
-                self._visualizer.display_dag_topology(self)
+                visualizer.display_dag_topology(self)
             elif mode == "details":
-                self._visualizer.display_task_details(self)
+                visualizer.display_task_details(self)
             elif mode == "execution":
-                self._visualizer.display_execution_flow(self)
+                visualizer.display_execution_flow(self)
             else:
-                self._visualizer.display_constellation_overview(self)
+                visualizer.display_constellation_overview(self)
         except Exception as e:
             print(f"Visualization error: {e}")
-
-    def set_visualization_enabled(self, enabled: bool) -> None:
-        """
-        Enable or disable visualization.
-
-        :param enabled: Whether to enable visualization
-        """
-        self._enable_visualization = enabled
-        if enabled and not self._visualizer:
-            try:
-                from ..visualization.dag_visualizer import DAGVisualizer
-
-                self._visualizer = DAGVisualizer()
-            except ImportError:
-                self._enable_visualization = False
 
     def __str__(self) -> str:
         """String representation of the TaskConstellation."""
