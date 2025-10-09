@@ -51,6 +51,12 @@ class BasicAgent(ABC):
         self._state = None
         self.logger = logging.getLogger(__name__)
 
+        # Initialize presenter for output formatting
+        from ufo.agents.presenters import PresenterFactory
+
+        presenter_type = configs.get("OUTPUT_PRESENTER", "rich")
+        self.presenter = PresenterFactory.create_presenter(presenter_type)
+
     @property
     def status(self) -> str:
         """

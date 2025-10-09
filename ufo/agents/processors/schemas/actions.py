@@ -206,24 +206,13 @@ class ListActionCommandInfo:
 
     def color_print(self, success_only: bool = False) -> None:
         """
-        Pretty-print the action sequence using Rich.
+        Pretty-print the action sequence using presenter.
         :param success_only: Whether to print only successful actions.
         """
-        index = 1
-
-        for action in self.actions:
-            if success_only and action.result.status != ResultStatus.SUCCESS:
-                continue
-
-            # Print action representation
-            action_repr = action.to_representation()
-            # add panel for action representation
-            console.print(Panel(action_repr, style="cyan", title=f"⚒️ Action {index}"))
-
-            index += 1
-
-        # Print final status
-        console.print(Panel(str(self.status), title="📊 Final Status", style="yellow"))
+        from ufo.agents.presenters import PresenterFactory
+        
+        presenter = PresenterFactory.create_presenter("rich")
+        presenter.present_action_list(self, success_only=success_only)
 
     @staticmethod
     def is_same_action(

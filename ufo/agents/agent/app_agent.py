@@ -215,66 +215,11 @@ class AppAgent(BasicAgent):
         self, response: AppAgentResponse, print_action: bool = True
     ) -> None:
         """
-        Print the response.
-        :param response_dict: The response dictionary to print.
+        Print the response using the presenter.
+        :param response: The response object to print.
         :param print_action: The flag indicating whether to print the action.
         """
-
-        actions = response.action
-        if isinstance(actions, ActionCommandInfo):
-            actions = [actions]
-
-        observation = response.observation
-        thought = response.thought
-        plan = response.plan if isinstance(response.plan, list) else [response.plan]
-        comment = response.comment
-
-        # Observations
-        console.print(Panel(observation, title="👀 Observations", style="cyan"))
-
-        # Thoughts
-        console.print(Panel(thought, title="💡 Thoughts", style="green"))
-
-        if print_action:
-            table = Table(title="⚒️ Actions", show_lines=True, style="blue")
-            table.add_column("Step", style="cyan", no_wrap=True)
-            table.add_column("Function", style="yellow")
-            table.add_column("Arguments", style="magenta")
-            table.add_column("Status", style="red")
-
-            for i, action in enumerate(actions):
-                args = action.arguments
-                if isinstance(args, dict):
-                    args_str = str(args)
-                else:
-                    args_str = str(json.loads(args))
-
-                table.add_row(
-                    f"{i+1}",
-                    str(action.function),
-                    args_str,
-                    str(action.status),
-                )
-
-            console.print(table)
-
-        # Next Plan
-        console.print(Panel("\n".join(plan), title="📚 Next Plan", style="cyan"))
-
-        # Comment - Enhanced agent-user dialogue display
-        self._display_agent_comment(comment)
-
-        # Screenshot saving
-        screenshot_saving = response.save_screenshot
-        if screenshot_saving.get("save", False):
-            reason = screenshot_saving.get("reason")
-            console.print(
-                Panel(
-                    f"📸 Screenshot saved to the blackboard.\nReason: {reason}",
-                    title="Notice",
-                    style="yellow",
-                )
-            )
+        self.presenter.present_app_agent_response(response, print_action=print_action)
 
     def demonstration_prompt_helper(self, request) -> Tuple[List[Dict[str, Any]]]:
         """

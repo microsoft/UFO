@@ -413,57 +413,19 @@ class HostAgent(BasicAgent):
 
     def print_response(self, response: HostAgentResponse) -> None:
         """
-        Pretty-print the HostAgentResponse using Rich.
+        Print the response using the presenter.
+        :param response: The response object to print.
         """
+        # Format the action string using get_command_string and pass to presenter
         function = response.function
         arguments = response.arguments
-        observation = response.observation
-        thought = response.thought
-        subtask = response.current_subtask
-        message = "\n".join(response.message) if response.message else ""
-        plan = [subtask] + list(response.plan)
-        plan_str = "\n".join([f"({i+1}) {str(item)}" for i, item in enumerate(plan)])
-        status = response.status
-        comment = response.comment
-
-        application = (
-            arguments.get("name") if function == "select_application_window" else None
-        )
-
-        # Observations
-        console.print(Panel(observation, title="👀 Observations", style="cyan"))
-
-        # Thoughts
-        console.print(Panel(thought, title="💡 Thoughts", style="green"))
-
-        # Action
+        
+        action_str = None
         if function:
             action_str = self.get_command_string(function, arguments)
-            console.print(Panel(action_str, title="⚒️ Action applied", style="blue"))
-
-        # Plan
-        console.print(Panel(plan_str, title="📚 Plans", style="cyan"))
-
-        # Next selected application
-        if application:
-            console.print(
-                Panel(
-                    application,
-                    title="📲 Next Selected Application/Agent",
-                    style="yellow",
-                )
-            )
-
-        # Messages
-        if message:
-            console.print(Panel(message, title="📩 Messages to AppAgent", style="cyan"))
-
-        # Status
-        console.print(Panel(status, title="📊 Status", style="blue"))
-
-        # Comment - Enhanced agent-user dialogue display
-        if comment:
-            self._display_agent_comment(comment)
+        
+        # Pass formatted action string as parameter instead of modifying response
+        self.presenter.present_host_agent_response(response, action_str=action_str)
 
     @property
     def status_manager(self) -> HostAgentStatus:
