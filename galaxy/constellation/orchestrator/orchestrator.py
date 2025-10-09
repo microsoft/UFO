@@ -104,7 +104,7 @@ class TaskConstellationOrchestrator:
         self,
         constellation: TaskConstellation,
         device_assignments: Optional[Dict[str, str]] = None,
-        assignment_strategy: str = "round_robin",
+        assignment_strategy: Optional[str] = None,
     ) -> Dict[str, Any]:
         """
         Orchestrate DAG execution using event-driven pattern.
@@ -150,7 +150,7 @@ class TaskConstellationOrchestrator:
         self,
         constellation: TaskConstellation,
         device_assignments: Optional[Dict[str, str]],
-        assignment_strategy: str,
+        assignment_strategy: Optional[str] = None,
     ) -> None:
         """
         Validate DAG structure and prepare device assignments.
@@ -193,7 +193,7 @@ class TaskConstellationOrchestrator:
         self,
         constellation: TaskConstellation,
         device_assignments: Optional[Dict[str, str]],
-        assignment_strategy: str,
+        assignment_strategy: Optional[str] = None,
     ) -> None:
         """
         Assign devices to tasks either manually or automatically.
@@ -201,6 +201,7 @@ class TaskConstellationOrchestrator:
         :param constellation: TaskConstellation to assign devices to
         :param device_assignments: Optional manual device assignments
         :param assignment_strategy: Device assignment strategy for auto-assignment
+        :raises ValueError: If assignment_strategy is None and tasks have no target_device_id
         """
         if device_assignments:
             # Apply manual assignments
@@ -208,10 +209,72 @@ class TaskConstellationOrchestrator:
                 self._constellation_manager.reassign_task_device(
                     constellation, task_id, device_id
                 )
-        else:
+        elif assignment_strategy:
             # Auto-assign devices
             await self._constellation_manager.assign_devices_automatically(
                 constellation, assignment_strategy
+            )
+        else:
+            # No assignment strategy provided, validate that all tasks have target_device_id
+            self._validate_existing_device_assignments(constellation)
+
+    def _validate_existing_device_assignments(
+        self, constellation: TaskConstellation
+    ) -> None:
+        """
+        Validate that all tasks in constellation have target_device_id assigned.
+
+        This is called when no device_assignments or assignment_strategy is provided,
+        ensuring that tasks already have device assignments.
+
+        :param constellation: TaskConstellation to validate
+        :raises ValueError: If any task is missing target_device_id or device_id is invalid
+        """
+        tasks_without_device = []
+        tasks_with_invalid_device = []
+
+        # Get all registered devices from device manager
+        all_devices = self._device_manager.get_all_devices()
+        valid_device_ids = set(all_devices.keys())
+
+        for task_id, task in constellation.tasks.items():
+            # Check if target_device_id is None or empty string
+            if not task.target_device_id:
+                tasks_without_device.append(task_id)
+            else:
+                # Check if the device_id exists in device manager
+                if task.target_device_id not in valid_device_ids:
+                    tasks_with_invalid_device.append(
+                        f"{task_id} (assigned to unknown device: {task.target_device_id})"
+                    )
+
+        # Build error message if there are issues
+        error_parts = []
+        if tasks_without_device:
+            error_parts.append(
+                f"Tasks without device assignment: {tasks_without_device}"
+            )
+        if tasks_with_invalid_device:
+            error_parts.append(
+                f"Tasks with invalid device IDs: {tasks_with_invalid_device}"
+            )
+
+        if error_parts:
+            error_msg = (
+                f"Device assignment validation failed:\n"
+                + "\n".join(f"  - {part}" for part in error_parts)
+                + f"\n  Available devices: {list(valid_device_ids)}"
+                + "\n  Please provide either 'device_assignments' or 'assignment_strategy' parameter."
+            )
+            if self._logger:
+                self._logger.error(error_msg)
+            raise ValueError(error_msg)
+
+        if self._logger:
+            self._logger.info(
+                f"All tasks have valid device assignments. "
+                f"Total tasks validated: {len(constellation.tasks)}, "
+                f"Available devices: {list(valid_device_ids)}"
             )
 
     async def _start_constellation_execution(
