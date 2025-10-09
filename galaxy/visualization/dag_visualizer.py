@@ -140,10 +140,18 @@ class DAGVisualizer:
                     for dep in deps:
                         dep_task = constellation.get_task(dep.from_task_id)
                         if dep_task:
-                            dep_text = self._format_task_for_tree(
-                                dep_task, compact=True
+                            # Only show task ID for dependencies
+                            task_id_short = (
+                                dep_task.task_id[:8] + "..."
+                                if len(dep_task.task_id) > 8
+                                else dep_task.task_id
                             )
-                            dep_branch.add(f"⬅️ {dep_text}")
+                            status_icon = self.task_display.get_task_status_icon(
+                                dep_task.status
+                            )
+                            dep_branch.add(
+                                f"⬅️ {status_icon} [cyan]{task_id_short}[/cyan]"
+                            )
 
         self.console.print(tree)
 
@@ -347,7 +355,7 @@ class DAGVisualizer:
         :param compact: Whether to use compact formatting
         :return: Formatted task string for tree display
         """
-        name = self._truncate_name(task.name, 15 if compact else 25)
+        name = self._truncate_name(task.name, 15 if compact else 50)
         status_icon = self.task_display.get_task_status_icon(task.status)
         priority_color = self._get_priority_color(task.priority)
 

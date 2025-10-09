@@ -80,7 +80,10 @@ class TestRealGalaxySessionWithMockDevices:
         for logger_name in loggers_to_configure:
             logger = logging.getLogger(logger_name)
             logger.setLevel(logging.INFO)
+            # Clear existing handlers to avoid duplicate logging
+            logger.handlers.clear()
             logger.addHandler(console_handler)
+            logger.propagate = False
             configured_loggers.append(logger)
 
         return console_handler, configured_loggers, original_level
