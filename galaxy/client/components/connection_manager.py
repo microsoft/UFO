@@ -15,10 +15,12 @@ from typing import Dict, Optional, Any
 from websockets import WebSocketClientProtocol
 import websockets
 
+from galaxy.core.types import ExecutionResult
 from ufo.contracts.contracts import (
     ClientMessage,
     ClientMessageType,
     ClientType,
+    ServerMessage,
     TaskStatus,
 )
 from .types import DeviceInfo, TaskRequest
@@ -33,6 +35,9 @@ class WebSocketConnectionManager:
     def __init__(self, constellation_id: str):
         self.constellation_id = constellation_id
         self._connections: Dict[str, WebSocketClientProtocol] = {}
+        # Dictionary to track pending task responses using asyncio.Future
+        # Key: task_id (request_id), Value: Future that will be resolved with ServerMessage
+        self._pending_tasks: Dict[str, asyncio.Future] = {}
         self.logger = logging.getLogger(f"{__name__}.WebSocketConnectionManager")
 
     async def connect_to_device(
@@ -175,7 +180,7 @@ class WebSocketConnectionManager:
 
     async def send_task_to_device(
         self, device_id: str, task_request: TaskRequest
-    ) -> Dict[str, Any]:
+    ) -> ExecutionResult:
         """
         Send a task to a specific device and wait for response.
 
@@ -192,11 +197,11 @@ class WebSocketConnectionManager:
             # Create client message for task execution
             task_message = ClientMessage(
                 type=ClientMessageType.TASK,
-                client_id=self.constellation_id,
+                client_type=ClientType.CONSTELLATION,
                 target_id=device_id,
                 task_name=task_request.task_name,
                 request=task_request.request,
-                request_id=task_request.task_id,
+                session_id=task_request.task_id,
                 timestamp=datetime.now(timezone.utc).isoformat(),
                 status=TaskStatus.CONTINUE,
             )
@@ -213,14 +218,26 @@ class WebSocketConnectionManager:
                 timeout=task_request.timeout,
             )
 
-            return response
+            task_result = ExecutionResult(
+                task_id=task_request.task_id,
+                status=response.status == TaskStatus.COMPLETED,
+                metadata={"device_id": device_id},
+                error=response.error,
+                result=response.result,
+            )
+
+            return task_result
 
         except asyncio.TimeoutError:
+            # Clean up the pending future for this task
+            self._pending_tasks.pop(task_request.task_id, None)
             self.logger.error(
                 f"⏰ Task {task_request.task_id} timed out on device {device_id}"
             )
             raise ConnectionError(f"Task {task_request.task_id} timed out")
         except Exception as e:
+            # Clean up the pending future for this task
+            self._pending_tasks.pop(task_request.task_id, None)
             self.logger.error(
                 f"❌ Failed to send task {task_request.task_id} to device {device_id}: {e}"
             )
@@ -228,27 +245,93 @@ class WebSocketConnectionManager:
 
     async def _wait_for_task_response(
         self, device_id: str, task_id: str
-    ) -> Dict[str, Any]:
+    ) -> ServerMessage:
         """
         Wait for task response from device.
-        This is a simplified implementation - in practice, you might want to use
-        a more sophisticated response tracking system.
-        """
-        # This is a placeholder implementation
-        # In a real implementation, you would:
-        # 1. Store pending tasks and their completion callbacks
-        # 2. Handle responses in the message processor
-        # 3. Use asyncio.Event or Future to wait for completion
 
-        # For now, simulate a successful response
-        await asyncio.sleep(0.1)
-        return {
-            "task_id": task_id,
-            "device_id": device_id,
-            "status": "completed",
-            "result": "Task completed successfully",
-            "timestamp": datetime.now(timezone.utc).isoformat(),
-        }
+        This method creates an asyncio.Future that will be completed by the MessageProcessor
+        when it receives a TASK_END message for this task. The Future-based approach allows
+        synchronous-style waiting for asynchronous task completion.
+
+        Workflow:
+        1. Create a Future and register it in _pending_tasks
+        2. Wait for the Future to be resolved (by complete_task_response)
+        3. Return the ServerMessage result
+        4. Clean up the Future from _pending_tasks
+
+        :param device_id: Target device ID
+        :param task_id: Unique task identifier (request_id)
+        :return: ServerMessage containing task execution result
+        :raises: Exception if task fails or is cancelled
+
+        Example:
+            >>> # This method is called internally by send_task_to_device
+            >>> response = await self._wait_for_task_response(device_id, task_id)
+            >>> print(response.status)  # TaskStatus.COMPLETED
+        """
+        # Create a Future to wait for task completion
+        task_future = asyncio.Future()
+        self._pending_tasks[task_id] = task_future
+
+        self.logger.debug(
+            f"⏳ Waiting for response for task {task_id} from device {device_id}"
+        )
+
+        try:
+            # Wait for Future to be completed by MessageProcessor
+            response = await task_future
+            self.logger.debug(
+                f"✅ Received response for task {task_id} from device {device_id}"
+            )
+            return response
+        finally:
+            # Clean up completed Future to prevent memory leaks
+            self._pending_tasks.pop(task_id, None)
+
+    def complete_task_response(self, task_id: str, response: ServerMessage) -> None:
+        """
+        Complete a pending task response with the result from the server.
+
+        This method is called by MessageProcessor when it receives a TASK_END message.
+        It resolves the asyncio.Future associated with the task_id, which unblocks
+        the corresponding _wait_for_task_response() call.
+
+        Thread-safety: This method is safe to call from the MessageProcessor's
+        async context as asyncio.Future.set_result() is thread-safe.
+
+        :param task_id: Unique task identifier (request_id from ServerMessage)
+        :param response: ServerMessage containing task execution result
+
+        Behavior:
+        - If task_id exists and Future is pending: Resolves the Future with response
+        - If task_id doesn't exist: Logs a warning (task may have timed out)
+        - If Future already completed: Logs a warning (duplicate response)
+
+        Example:
+            >>> # Called by MessageProcessor when TASK_END is received
+            >>> server_msg = ServerMessage(type=ServerMessageType.TASK_END, ...)
+            >>> connection_manager.complete_task_response(server_msg.request_id, server_msg)
+        """
+        task_future = self._pending_tasks.get(task_id)
+
+        if task_future is None:
+            self.logger.warning(
+                f"⚠️ Received task completion for unknown task: {task_id} "
+                f"(task may have timed out or was already completed)"
+            )
+            return
+
+        if task_future.done():
+            self.logger.warning(
+                f"⚠️ Received duplicate task completion for already completed task: {task_id}"
+            )
+            return
+
+        # Resolve the Future with the server response
+        task_future.set_result(response)
+        self.logger.debug(
+            f"✅ Completed task response for {task_id} (status: {response.status})"
+        )
 
     def get_connection(self, device_id: str) -> Optional[WebSocketClientProtocol]:
         """Get WebSocket connection for a device"""

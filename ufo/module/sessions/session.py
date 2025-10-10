@@ -17,14 +17,14 @@ from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.config import Config
+from ufo.contracts.contracts import Command
 from ufo.module import interactor
-from ufo.module.basic import BaseRound, BaseSession
+from ufo.module.basic import BaseRound
 from ufo.module.context import ContextNames
 from ufo.module.dispatcher import LocalCommandDispatcher
 from ufo.module.sessions.plan_reader import PlanReader
 from ufo.module.sessions.platform_session import WindowsBaseSession
 from ufo.trajectory.parser import Trajectory
-from ufo.contracts.contracts import Command
 
 configs = Config.get_instance().config_data
 

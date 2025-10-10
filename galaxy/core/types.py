@@ -100,7 +100,7 @@ class ExecutionResult:
     task_id: TaskId
     status: TaskStatus
     result: Optional[Any] = None
-    error: Optional[Exception] = None
+    error: Optional[Exception | str] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
     start_time: Optional[datetime] = None
     end_time: Optional[datetime] = None

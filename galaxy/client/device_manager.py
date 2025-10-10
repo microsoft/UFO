@@ -12,6 +12,8 @@ import asyncio
 import logging
 from typing import Dict, List, Optional, Any, Callable
 
+from galaxy.core.types import ExecutionResult
+
 from .components import (
     DeviceStatus,
     DeviceInfo,
@@ -63,6 +65,7 @@ class ConstellationDeviceManager:
             self.device_registry,
             self.heartbeat_manager,
             self.event_manager,
+            self.connection_manager,
         )
 
         # Reconnection management
@@ -90,7 +93,7 @@ class ConstellationDeviceManager:
         """
         try:
             # Register device in registry
-            device_info = self.device_registry.register_device(
+            self.device_registry.register_device(
                 device_id, server_url, capabilities, metadata
             )
 
@@ -199,7 +202,7 @@ class ConstellationDeviceManager:
         task_description: str,
         task_data: Dict[str, Any],
         timeout: float = 300.0,
-    ) -> Dict[str, Any]:
+    ) -> ExecutionResult:
         """
         Assign a task to a specific device.
 

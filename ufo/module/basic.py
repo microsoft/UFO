@@ -24,10 +24,9 @@ from typing import Any, Dict, Optional
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo import utils
-from ufo.agents.agent.app_agent import AppAgent
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
-from ufo.agents.agent.host_agent import AgentFactory, HostAgent
+from ufo.agents.agent.host_agent import HostAgent
 from ufo.agents.states.basic import AgentState, AgentStatus
 from ufo.config import Config
 from ufo.contracts.contracts import Command

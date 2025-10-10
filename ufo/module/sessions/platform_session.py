@@ -76,5 +76,6 @@ class LinuxBaseSession(BaseSession):
         """
         Save the log of the session to markdown file.
         """
+        # Implement markdown logging specific to Linux sessions
         self.logger.warning("Markdown logging not yet implemented for Linux sessions.")
         pass

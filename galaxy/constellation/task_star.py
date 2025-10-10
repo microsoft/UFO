@@ -218,14 +218,10 @@ class TaskStar(ITask):
 
             end_time = datetime.now(timezone.utc)
 
-            return ExecutionResult(
-                task_id=self.task_id,
-                status=TaskStatus.COMPLETED,
-                result=result,
-                start_time=start_time,
-                end_time=end_time,
-                metadata={"device_id": self.target_device_id},
-            )
+            result.start_time = start_time
+            result.end_time = end_time
+
+            return result
 
         except Exception as e:
             end_time = datetime.now(timezone.utc)

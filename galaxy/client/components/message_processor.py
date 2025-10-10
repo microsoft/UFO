@@ -11,24 +11,28 @@ Single responsibility: Message handling and routing.
 import asyncio
 import json
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional, TYPE_CHECKING
 from websockets import WebSocketClientProtocol
 import websockets
 
-from ufo.contracts.contracts import (
-    ServerMessage,
-    ServerMessageType,
-    TaskStatus,
-)
+from ufo.contracts.contracts import ServerMessage, ServerMessageType, TaskStatus
 from .device_registry import DeviceRegistry
 from .heartbeat_manager import HeartbeatManager
 from .event_manager import EventManager
+
+# Avoid circular import
+if TYPE_CHECKING:
+    from .connection_manager import WebSocketConnectionManager
 
 
 class MessageProcessor:
     """
     Processes incoming messages from UFO servers.
     Single responsibility: Message handling and routing.
+
+    The MessageProcessor listens for incoming WebSocket messages from UFO servers
+    and routes them to appropriate handlers based on message type. It also coordinates
+    with the ConnectionManager to complete pending task responses.
     """
 
     def __init__(
@@ -36,12 +40,37 @@ class MessageProcessor:
         device_registry: DeviceRegistry,
         heartbeat_manager: HeartbeatManager,
         event_manager: EventManager,
+        connection_manager: Optional["WebSocketConnectionManager"] = None,
     ):
+        """
+        Initialize the MessageProcessor.
+
+        :param device_registry: Registry for tracking connected devices
+        :param heartbeat_manager: Manager for device heartbeat monitoring
+        :param event_manager: Manager for event callbacks
+        :param connection_manager: Optional ConnectionManager for completing task responses
+                                  (set later via set_connection_manager to avoid circular dependency)
+        """
         self.device_registry = device_registry
         self.heartbeat_manager = heartbeat_manager
         self.event_manager = event_manager
+        self.connection_manager = connection_manager
         self._message_handlers: Dict[str, asyncio.Task] = {}
         self.logger = logging.getLogger(f"{__name__}.MessageProcessor")
+
+    def set_connection_manager(
+        self, connection_manager: "WebSocketConnectionManager"
+    ) -> None:
+        """
+        Set the connection manager reference.
+
+        This method is used to set the ConnectionManager after initialization
+        to avoid circular dependency issues during object construction.
+
+        :param connection_manager: The WebSocketConnectionManager instance
+        """
+        self.connection_manager = connection_manager
+        self.logger.debug("🔗 ConnectionManager reference set")
 
     def start_message_handler(
         self, device_id: str, websocket: WebSocketClientProtocol
@@ -113,28 +142,74 @@ class MessageProcessor:
     async def _handle_task_completion(
         self, device_id: str, server_msg: ServerMessage
     ) -> None:
-        """Handle task completion messages"""
-        try:
-            session_id = server_msg.session_id
+        """
+        Handle task completion messages from UFO servers.
 
-            # Prepare result
+        This method performs two critical operations when a TASK_END message is received:
+        1. Completes the pending task response Future in ConnectionManager (for synchronous waiting)
+        2. Notifies event handlers via EventManager (for asynchronous callbacks)
+
+        Workflow:
+        - Extract task_id from server_msg (uses request_id or falls back to session_id)
+        - Call ConnectionManager.complete_task_response() to unblock send_task_to_device()
+        - Prepare result dictionary with task execution details
+        - Notify EventManager to trigger registered callbacks
+
+        :param device_id: Device that completed the task
+        :param server_msg: ServerMessage containing task completion details
+
+        Example ServerMessage:
+            ServerMessage(
+                type=ServerMessageType.TASK_END,
+                request_id="task_12345",
+                status=TaskStatus.COMPLETED,
+                result={"output": "success"},
+                ...
+            )
+        """
+        try:
+            # Prefer response_id over session_id for task identification
+            # response_id corresponds to the request_id sent in ClientMessage
+            # Fallback to session_id if response_id is not available
+            session_id = server_msg.session_id
+            task_id = server_msg.response_id or session_id
+
+            # Step 1: Complete the pending task response Future
+            # This unblocks the corresponding send_task_to_device() call
+            if self.connection_manager:
+                self.connection_manager.complete_task_response(task_id, server_msg)
+                self.logger.debug(
+                    f"🔄 Completed task response Future for task {task_id}"
+                )
+            else:
+                self.logger.warning(
+                    f"⚠️ ConnectionManager not set, cannot complete task response for {task_id}"
+                )
+
+            # Step 2: Prepare result data for event handlers
             result = {
                 "success": server_msg.status == TaskStatus.COMPLETED,
                 "device_id": device_id,
                 "session_id": session_id,
+                "task_id": task_id,
                 "status": server_msg.status,
-                "error": getattr(server_msg, "error", None),
-                "results": getattr(server_msg, "results", None),
+                "error": server_msg.error,
+                "result": server_msg.result,
                 "timestamp": server_msg.timestamp,
             }
 
-            # Notify event handlers
-            task_id = session_id  # Using session_id as task_id for now
+            # Step 3: Notify event handlers (asynchronous callbacks)
             await self.event_manager.notify_task_completed(device_id, task_id, result)
+
+            self.logger.info(
+                f"✅ Task {task_id} completed on device {device_id} "
+                f"(status: {server_msg.status})"
+            )
 
         except Exception as e:
             self.logger.error(
-                f"❌ Error handling task completion from device {device_id}: {e}"
+                f"❌ Error handling task completion from device {device_id}: {e}",
+                exc_info=True,
             )
 
     async def _handle_error_message(
