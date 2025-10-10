@@ -486,10 +486,7 @@ class BaseSession(ABC):
 
         if configs.get("LOG_TO_MARKDOWN", True):
 
-            file_path = self.log_path
-            trajectory = Trajectory(file_path)
-            trajectory.to_markdown(file_path + "/output.md")
-            self.logger.info(f"Trajectory saved to {file_path + '/output.md'}")
+            self.save_log_to_markdown()
 
         self.print_cost()
 
@@ -532,6 +529,16 @@ class BaseSession(ABC):
         :param round: The round to be added.
         """
         self._rounds[id] = round
+
+    def save_log_to_markdown(self) -> None:
+        """
+        Save the log of the session to markdown file.
+        """
+
+        file_path = self.log_path
+        trajectory = Trajectory(file_path)
+        trajectory.to_markdown(file_path + "/output.md")
+        self.logger.info(f"Trajectory saved to {file_path + '/output.md'}")
 
     def _init_context(self) -> None:
         """

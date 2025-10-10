@@ -63,3 +63,18 @@ class LinuxBaseSession(BaseSession):
                 "APPAGENT_EXAMPLE_PROMPT"
             ],
         )
+
+    def evaluation(self) -> None:
+        """
+        Evaluation logic for Linux sessions.
+        """
+        # Implement evaluation logic specific to Linux sessions
+        self.logger.warning("Evaluation not yet implemented for Linux sessions.")
+        pass
+
+    def save_log_to_markdown(self) -> None:
+        """
+        Save the log of the session to markdown file.
+        """
+        self.logger.warning("Markdown logging not yet implemented for Linux sessions.")
+        pass
