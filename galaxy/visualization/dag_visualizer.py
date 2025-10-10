@@ -471,9 +471,8 @@ def display_constellation_creation(
     """
     Display constellation when first created.
 
-    Args:
-        constellation: Newly created TaskConstellation
-        console: Optional console for output
+    :param constellation: Newly created TaskConstellation
+    :param console: Optional console for output
     """
     display = ConstellationDisplay(console)
     display.display_constellation_started(
@@ -489,10 +488,9 @@ def display_constellation_update(
     """
     Display constellation after updates/modifications.
 
-    Args:
-        constellation: Updated TaskConstellation
-        change_description: Description of what changed
-        console: Optional console for output
+    :param constellation: Updated TaskConstellation
+    :param change_description: Description of what changed
+    :param console: Optional console for output
     """
     # For updates, we use the DAGVisualizer for full overview
     visualizer = DAGVisualizer(console)
@@ -510,9 +508,8 @@ def display_execution_progress(
     """
     Display constellation execution progress.
 
-    Args:
-        constellation: TaskConstellation in execution
-        console: Optional console for output
+    :param constellation: TaskConstellation in execution
+    :param console: Optional console for output
     """
     visualizer = DAGVisualizer(console)
     visualizer.display_execution_flow(constellation)
@@ -527,10 +524,9 @@ def visualize_dag(
     """
     Quick visualization of DAG.
 
-    Args:
-        constellation: TaskConstellation to visualize
-        mode: Visualization mode ('overview', 'topology', 'details', 'execution')
-        console: Optional console for output
+    :param constellation: TaskConstellation to visualize
+    :param mode: Visualization mode ('overview', 'topology', 'details', 'execution')
+    :param console: Optional console for output
     """
     visualizer = DAGVisualizer(console)
 

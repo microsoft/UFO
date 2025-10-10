@@ -148,8 +148,6 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
                 result = task_data.get("result")
                 if result is not None:
                     result_str = str(result)
-                    if len(result_str) > 100:
-                        result_str = result_str[:100] + "..."
                     lines.append(f"    Result: {result_str}")
 
                 # Error (if failed)

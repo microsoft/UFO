@@ -8,6 +8,8 @@ Constellation-specific visualization handler.
 import logging
 from typing import Optional
 
+from galaxy.visualization.dag_visualizer import DAGVisualizer
+
 from ...core.events import ConstellationEvent, EventType
 from ...constellation import TaskConstellation
 from ...visualization import ConstellationDisplay, VisualizationChangeDetector
@@ -21,7 +23,9 @@ class ConstellationVisualizationHandler:
     delegating actual visualization to specialized display classes.
     """
 
-    def __init__(self, visualizer, logger: Optional[logging.Logger] = None):
+    def __init__(
+        self, visualizer: DAGVisualizer, logger: Optional[logging.Logger] = None
+    ):
         """
         Initialize ConstellationVisualizationHandler.
 
@@ -54,6 +58,9 @@ class ConstellationVisualizationHandler:
             self.constellation_display.display_constellation_started(
                 constellation, additional_info
             )
+
+            # Show initial topology using DAGVisualizer
+            self._visualizer.display_dag_topology(constellation)
         except Exception as e:
             self.logger.debug(f"Error displaying constellation start: {e}")
 

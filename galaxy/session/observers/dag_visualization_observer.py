@@ -8,15 +8,12 @@ Main DAG visualization observer with delegated handlers.
 import logging
 from typing import Dict, Optional
 
-from ...core.events import (
-    Event,
-    TaskEvent,
-    ConstellationEvent,
-    IEventObserver,
-)
+from galaxy.visualization.dag_visualizer import DAGVisualizer
+
 from ...constellation import TaskConstellation
-from .task_visualization_handler import TaskVisualizationHandler
+from ...core.events import ConstellationEvent, Event, IEventObserver, TaskEvent
 from .constellation_visualization_handler import ConstellationVisualizationHandler
+from .task_visualization_handler import TaskVisualizationHandler
 
 
 class DAGVisualizationObserver(IEventObserver):
@@ -59,7 +56,6 @@ class DAGVisualizationObserver(IEventObserver):
         disables visualization if import fails.
         """
         try:
-            from ...visualization.dag_visualizer import DAGVisualizer
 
             self._visualizer = DAGVisualizer(console=self._console)
 

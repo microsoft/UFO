@@ -274,8 +274,6 @@ class TestRealGalaxySessionWithMockDevices:
             if device.os == "linux" and "log_collection" in task_description.lower():
                 return {
                     "status": "completed",
-                    "device_id": device_id,
-                    "task_id": task_id,
                     "result": {
                         "logs_collected": len(device.metadata.get("log_paths", [])),
                         "total_size_mb": 25.6,
@@ -286,8 +284,6 @@ class TestRealGalaxySessionWithMockDevices:
             elif device.os == "windows" and "excel" in task_description.lower():
                 return {
                     "status": "completed",
-                    "device_id": device_id,
-                    "task_id": task_id,
                     "result": {
                         "report_generated": True,
                         "file_path": "C:\\Reports\\log_analysis_report.xlsx",
@@ -299,8 +295,6 @@ class TestRealGalaxySessionWithMockDevices:
             else:
                 return {
                     "status": "completed",
-                    "device_id": device_id,
-                    "task_id": task_id,
                     "result": {
                         "message": f"Task {task_description} completed on {device_id}"
                     },

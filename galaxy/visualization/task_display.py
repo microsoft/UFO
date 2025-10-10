@@ -16,6 +16,8 @@ from rich.text import Text
 from rich.table import Table
 from rich.console import Group
 
+from galaxy.core.types import ExecutionResult
+
 from ..constellation.enums import TaskStatus
 from ..constellation.task_star import TaskStar
 
@@ -102,9 +104,18 @@ class TaskDisplay:
             table.add_row("📱 Device:", task.target_device_id)
 
         if result is not None:
-            result_preview = (
-                str(result)[:50] + "..." if len(str(result)) > 50 else str(result)
-            )
+            if isinstance(result, ExecutionResult):
+                result_text = result.result
+                result_preview = (
+                    str(result_text)[:100] + "..."
+                    if len(str(result_text)) > 100
+                    else str(result_text)
+                )
+
+            else:
+                result_preview = (
+                    str(result)[:100] + "..." if len(str(result)) > 100 else str(result)
+                )
             table.add_row("📊 Result:", result_preview)
 
         if newly_ready_tasks is not None and newly_ready_tasks > 0:
