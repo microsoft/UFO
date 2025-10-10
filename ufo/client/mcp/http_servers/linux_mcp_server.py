@@ -22,7 +22,7 @@ def create_bash_mcp_server(host: str = "", port: int = 8010) -> None:
     mcp = FastMCP(
         "Linux Bash MCP Server",
         instructions="MCP server for executing shell commands on Linux.",
-        stateless_http=True,
+        stateless_http=False,
         json_response=True,
         host=host,
         port=port,
