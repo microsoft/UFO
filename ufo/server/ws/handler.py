@@ -333,6 +333,7 @@ class UFOWebSocketHandler:
                 timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 session_id=session_id,
                 error=error,
+                result=session.results,
                 response_id=str(uuid.uuid4()),
             )
             await websocket.send_text(server_message.model_dump_json())
