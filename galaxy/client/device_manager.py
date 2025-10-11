@@ -147,7 +147,7 @@ class ConstellationDeviceManager:
             self.heartbeat_manager.start_heartbeat(device_id)
 
             # Request device capabilities
-            await self.connection_manager.request_device_info(device_id)
+            # await self.connection_manager.request_device_info(device_id)
 
             # Set device to IDLE (ready to accept tasks)
             self.device_registry.set_device_idle(device_id)
@@ -207,7 +207,7 @@ class ConstellationDeviceManager:
         device_id: str,
         task_description: str,
         task_data: Dict[str, Any],
-        timeout: float = 300.0,
+        timeout: float = 1000,
     ) -> ExecutionResult:
         """
         Assign a task to a specific device.
@@ -224,9 +224,15 @@ class ConstellationDeviceManager:
         device_info = self.device_registry.get_device(device_id)
         if not device_info:
             raise ValueError(f"Device {device_id} is not registered")
-        
-        if device_info.status not in [DeviceStatus.CONNECTED, DeviceStatus.IDLE, DeviceStatus.BUSY]:
-            raise ValueError(f"Device {device_id} is not connected (status: {device_info.status.value})")
+
+        if device_info.status not in [
+            DeviceStatus.CONNECTED,
+            DeviceStatus.IDLE,
+            DeviceStatus.BUSY,
+        ]:
+            raise ValueError(
+                f"Device {device_id} is not connected (status: {device_info.status.value})"
+            )
 
         # Create task request
         task_request = TaskRequest(
@@ -278,7 +284,9 @@ class ConstellationDeviceManager:
             )
 
             # Complete the task in queue manager if it was queued
-            self.task_queue_manager.complete_task(device_id, task_request.task_id, result)
+            self.task_queue_manager.complete_task(
+                device_id, task_request.task_id, result
+            )
 
             return result
 
@@ -293,7 +301,7 @@ class ConstellationDeviceManager:
         finally:
             # Set device back to IDLE
             self.device_registry.set_device_idle(device_id)
-            
+
             # Check if there are queued tasks and process next one
             await self._process_next_queued_task(device_id)
 
@@ -373,7 +381,7 @@ class ConstellationDeviceManager:
     def get_task_queue_status(self, device_id: str) -> Dict[str, Any]:
         """
         Get task queue status for a device.
-        
+
         :param device_id: Device ID
         :return: Queue status information
         """

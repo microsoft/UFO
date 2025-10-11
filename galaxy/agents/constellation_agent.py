@@ -121,17 +121,20 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self.processor = ConstellationAgentProcessor(agent=self, global_context=context)
 
         await self.processor.process()
+        self.status = self.processor.processing_context.get_local("status").upper()
 
         created_constellation: TaskConstellation = context.get(
             ContextNames.CONSTELLATION
         )
 
-        is_dag, errors = created_constellation.validate_dag()
-        self.status = self.processor.processing_context.get_local("status").upper()
+        if created_constellation:
+            is_dag, errors = created_constellation.validate_dag()
 
-        if not is_dag:
-            self.logger.error(f"The created constellation is not a valid DAG: {errors}")
-            self.status = ConstellationAgentStatus.FAIL.value
+            if not is_dag:
+                self.logger.error(
+                    f"The created constellation is not a valid DAG: {errors}"
+                )
+                self.status = ConstellationAgentStatus.FAIL.value
 
         # Sync the status with the processor.
 

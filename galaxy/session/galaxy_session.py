@@ -193,9 +193,7 @@ class GalaxySession(BaseSession):
 
         self._init_context()
         self._finish = False
-        self._results = {}
-
-        self._results = None
+        self._results = []
 
         # Import config
         from ufo.config import Config

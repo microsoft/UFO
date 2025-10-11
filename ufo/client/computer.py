@@ -155,7 +155,7 @@ class Computer:
         tool_info = self._tools_registry.get(tool_key, None)
         namespace = tool_info.namespace if tool_info else None
 
-        self.logger.info(
+        self.logger.debug(
             f"Running [{namespace}] tool: {tool_info.tool_name} with parameters: {tool_info.parameters}"
         )
 

@@ -75,7 +75,8 @@ class DeviceRegistry:
             return {
                 device_id: device_info
                 for device_id, device_info in self._devices.items()
-                if device_info.status == DeviceStatus.CONNECTED
+                if device_info.status
+                in [DeviceStatus.CONNECTED, DeviceStatus.IDLE, DeviceStatus.BUSY]
             }
         return self._devices.copy()
 

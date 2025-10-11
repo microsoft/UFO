@@ -207,16 +207,19 @@ class WebSocketConnectionManager:
             )
 
             # Send task message
-            await websocket.send(task_message.model_dump_json())
             self.logger.info(
                 f"📤 Sent task {task_request.task_id} to device {device_id}"
             )
+
+            await websocket.send(task_message.model_dump_json())
 
             # Wait for response with timeout
             response = await asyncio.wait_for(
                 self._wait_for_task_response(device_id, task_request.task_id),
                 timeout=task_request.timeout,
             )
+
+            self.logger.info(f"📤📤 Received response: {response}")
 
             task_result = ExecutionResult(
                 task_id=task_request.task_id,

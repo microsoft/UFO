@@ -271,7 +271,7 @@ class TaskConstellationOrchestrator:
             raise ValueError(error_msg)
 
         if self._logger:
-            self._logger.info(
+            self._logger.debug(
                 f"All tasks have valid device assignments. "
                 f"Total tasks validated: {len(constellation.tasks)}, "
                 f"Available devices: {list(valid_device_ids)}"
@@ -348,7 +348,7 @@ class TaskConstellationOrchestrator:
         """
         if self._logger:
             old_ready = [t.task_id for t in constellation.get_ready_tasks()]
-            self._logger.info(f"⚠️ Old Ready tasks: {old_ready}")
+            self._logger.debug(f"⚠️ Old Ready tasks: {old_ready}")
 
         if self._modification_synchronizer:
             await self._modification_synchronizer.wait_for_pending_modifications()
@@ -359,7 +359,7 @@ class TaskConstellationOrchestrator:
                 f"🆕 Task ID for constellation after editing: {list(constellation.tasks.keys())}"
             )
             new_ready = [t.task_id for t in constellation.get_ready_tasks()]
-            self._logger.info(f"🆕 New Ready tasks: {new_ready}")
+            self._logger.debug(f"🆕 New Ready tasks: {new_ready}")
 
         return constellation
 

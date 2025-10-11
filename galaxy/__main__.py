@@ -12,7 +12,7 @@ This module allows Galaxy framework to be run as a package:
 
 import asyncio
 import sys
-from .galaxy_client import main
+from .galaxy import main
 
 if __name__ == "__main__":
     asyncio.run(main())

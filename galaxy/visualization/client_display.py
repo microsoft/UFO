@@ -222,6 +222,7 @@ class ClientDisplay:
             SpinnerColumn(),
             TextColumn("[progress.description]{task.description}"),
             console=self.console,
+            refresh_per_second=1,
         )
 
     def show_processing_request(self, request_text: str) -> None:

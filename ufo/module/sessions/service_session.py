@@ -6,12 +6,13 @@ from ufo.config import Config
 from ufo.module.sessions.platform_session import WindowsBaseSession
 from ufo.module.context import ContextNames
 from ufo.module.dispatcher import WebSocketCommandDispatcher
+from ufo.module.sessions.session import Session
 
 
 configs = Config.get_instance().config_data
 
 
-class ServiceSession(WindowsBaseSession):
+class ServiceSession(Session):
     """
     A session for UFO service on Windows platform.
     """

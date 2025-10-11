@@ -215,9 +215,9 @@ class UFOWebSocketClient:
         Handle commands received from the server.
         """
 
-        if not self.current_task:
-            self.logger.error("[WS] Received command without an active task")
-            return
+        # if not self.current_task:
+        #     self.logger.error("[WS] Received command without an active task")
+        #     return
 
         response_id = server_response.response_id
         task_status = server_response.status

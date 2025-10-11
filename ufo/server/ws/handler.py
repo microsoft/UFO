@@ -283,14 +283,15 @@ class UFOWebSocketHandler:
         client_type = data.client_type
         if client_type == ClientType.CONSTELLATION:
             self.logger.info(
-                f"[WS] 🌟 Handling constellation task request: {data.request} from {data.client_id}"
+                f"[WS] 🌟 Handling constellation task request: {data.request} from {data.target_id}"
             )
             target_ws = self.ws_manager.get_client(data.target_id)
         else:
             self.logger.info(
                 f"[WS] 📱 Handling device task request: {data.request} from {data.client_id}"
             )
-        target_ws = websocket
+            target_ws = websocket
+
         session_id = str(uuid.uuid4()) if not data.session_id else data.session_id
         task_name = data.task_name if data.task_name else str(uuid.uuid4())
 
@@ -337,6 +338,10 @@ class UFOWebSocketHandler:
                 response_id=str(uuid.uuid4()),
             )
             await websocket.send_text(server_message.model_dump_json())
+
+            # If constellation client, also notify the target device
+            if client_type == ClientType.CONSTELLATION:
+                await target_ws.send_text(server_message.model_dump_json())
 
             # Save results to session manager
             self.session_manager.set_results(session_id)
