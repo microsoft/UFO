@@ -11,23 +11,24 @@ using the command pattern.
 from typing import Any, Dict, List, Optional, Union
 
 from galaxy.agents.schema import TaskConstellationSchema
-from .command_invoker import CommandInvoker
-from .command_registry import command_registry
-from .commands import (
-    AddTaskCommand,
-    RemoveTaskCommand,
-    UpdateTaskCommand,
-    AddDependencyCommand,
-    RemoveDependencyCommand,
-    UpdateDependencyCommand,
-    BuildConstellationCommand,
-    ClearConstellationCommand,
-    LoadConstellationCommand,
-    SaveConstellationCommand,
-)
+
 from ..task_constellation import TaskConstellation
 from ..task_star import TaskStar
 from ..task_star_line import TaskStarLine
+from .command_invoker import CommandInvoker
+from .command_registry import command_registry
+from .commands import (
+    AddDependencyCommand,
+    AddTaskCommand,
+    BuildConstellationCommand,
+    ClearConstellationCommand,
+    LoadConstellationCommand,
+    RemoveDependencyCommand,
+    RemoveTaskCommand,
+    SaveConstellationCommand,
+    UpdateDependencyCommand,
+    UpdateTaskCommand,
+)
 
 
 class ConstellationEditor:

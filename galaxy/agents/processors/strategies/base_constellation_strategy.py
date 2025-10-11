@@ -14,6 +14,14 @@ from abc import abstractmethod
 from dataclasses import asdict
 from typing import TYPE_CHECKING, Any, Dict, List
 
+from galaxy.agents.processors.processor_context import ConstellationProcessorContext
+from galaxy.agents.schema import (
+    ConstellationAgentResponse,
+    ConstellationRequestLog,
+    WeavingMode,
+)
+from galaxy.client.components.types import DeviceInfo
+from galaxy.constellation.task_constellation import TaskConstellation
 from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.core.processor_framework import (
     ProcessingContext,
@@ -28,16 +36,8 @@ from ufo.agents.processors.schemas.actions import (
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.config import Config
 from ufo.contracts.contracts import Command, Result
-from galaxy.agents.processors.processor_context import ConstellationProcessorContext
-from galaxy.agents.schema import (
-    ConstellationAgentResponse,
-    ConstellationRequestLog,
-    WeavingMode,
-)
-from galaxy.client.components.types import DeviceInfo
-from galaxy.constellation.task_constellation import TaskConstellation
 from ufo.llm import AgentType
-from ufo.module.context import Context, ContextNames
+from ufo.module.context import Context
 from ufo.module.dispatcher import BasicCommandDispatcher
 
 # Load configuration
@@ -401,7 +401,6 @@ class BaseConstellationActionExecutionStrategy(BaseProcessingStrategy):
         :param context: Processing context to access and update constellation state
         """
         pass
-
 
     async def _execute_constellation_action(
         self,

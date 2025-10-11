@@ -10,12 +10,12 @@ from typing import TYPE_CHECKING, Callable, Dict, List, Optional, Tuple, Type, U
 
 from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
+from ufo.agents.processors.core.processor_framework import ProcessorTemplate
 from ufo.agents.states.basic import AgentState, AgentStatus
 from ufo.config import Config
 from ufo.llm import llm_call
 from ufo.module.context import Context
 from ufo.module.interactor import question_asker
-from ufo.agents.processors.core.processor_framework import ProcessorTemplate
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")

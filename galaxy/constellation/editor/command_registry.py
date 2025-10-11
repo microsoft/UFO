@@ -5,7 +5,8 @@ This module provides a registry system for registering and managing
 command classes using decorators.
 """
 
-from typing import Dict, Type, Any, Callable, Optional
+from typing import Any, Callable, Dict, Optional, Type
+
 from .command_interface import ICommand, IUndoableCommand
 
 

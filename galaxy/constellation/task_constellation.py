@@ -12,15 +12,15 @@ dynamic modification, and advanced dependency handling capabilities.
 import uuid
 from collections import defaultdict, deque
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List, Optional, Tuple
 
+from galaxy.constellation.enums import ConstellationState
 from galaxy.visualization.dag_visualizer import DAGVisualizer
 
-# Use the constellation-specific TaskStatus instead of contracts
-from .enums import TaskStatus, ConstellationState
-from galaxy.constellation.enums import ConstellationState
-
 from ..core.interfaces import IConstellation
+
+# Use the constellation-specific TaskStatus instead of contracts
+from .enums import ConstellationState, TaskStatus
 from .task_star import TaskStar
 from .task_star_line import TaskStarLine
 

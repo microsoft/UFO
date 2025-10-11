@@ -27,11 +27,11 @@ from typing import (
 # Import enums to resolve forward references
 try:
     from ..constellation.enums import (
-        TaskStatus,
         ConstellationState,
-        TaskPriority,
-        DeviceType,
         DependencyType,
+        DeviceType,
+        TaskPriority,
+        TaskStatus,
     )
 except ImportError:
     # Define placeholder enums if import fails

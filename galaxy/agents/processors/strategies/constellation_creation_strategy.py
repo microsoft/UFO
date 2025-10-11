@@ -10,19 +10,18 @@ implementing the abstract methods defined in the base strategies.
 
 from typing import TYPE_CHECKING, List
 
+from galaxy.agents.processors.strategies.base_constellation_strategy import (
+    BaseConstellationActionExecutionStrategy,
+)
+from galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
+from galaxy.constellation.task_constellation import TaskConstellation
 from ufo.agents.processors.context.processing_context import ProcessingContext
 from ufo.agents.processors.schemas.actions import (
     ActionCommandInfo,
     ListActionCommandInfo,
 )
 from ufo.contracts.contracts import Result
-from galaxy.agents.processors.strategies.base_constellation_strategy import (
-    BaseConstellationActionExecutionStrategy,
-)
-from galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
-from galaxy.constellation.task_constellation import TaskConstellation
 from ufo.module.context import ContextNames
-
 
 if TYPE_CHECKING:
     from galaxy.agents.constellation_agent import ConstellationAgent
@@ -85,7 +84,6 @@ class ConstellationCreationActionExecutionStrategy(
                     ),
                 )
             ]
-
 
     def print_actions(self, actions: ListActionCommandInfo) -> None:
         """

@@ -9,7 +9,7 @@ Single responsibility: Event coordination.
 """
 
 import logging
-from typing import List, Callable, Dict, Any
+from typing import Callable, List
 
 from galaxy.core.types import ExecutionResult
 

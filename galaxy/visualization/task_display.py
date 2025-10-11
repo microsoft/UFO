@@ -9,12 +9,12 @@ visualizations with rich console output, including status indicators,
 progress tracking, and detailed task information.
 """
 
-from typing import Optional, Any, Dict
-from rich.console import Console
+from typing import Any, Dict, Optional
+
+from rich.console import Console, Group
 from rich.panel import Panel
-from rich.text import Text
 from rich.table import Table
-from rich.console import Group
+from rich.text import Text
 
 from galaxy.core.types import ExecutionResult
 

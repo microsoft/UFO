@@ -12,13 +12,13 @@ Optimized for type safety, maintainability, and follows SOLID principles.
 import logging
 import uuid
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from galaxy.client.device_manager import ConstellationDeviceManager
 
 from ..core.interfaces import ITask
-from ..core.types import TaskId, ExecutionResult, TaskConfiguration
-from .enums import TaskStatus, TaskPriority, DeviceType
+from ..core.types import ExecutionResult, TaskConfiguration, TaskId
+from .enums import DeviceType, TaskPriority, TaskStatus
 
 if TYPE_CHECKING:
     from galaxy.agents.schema import TaskStarSchema

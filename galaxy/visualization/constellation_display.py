@@ -9,14 +9,13 @@ visualizations with rich console output, including structure changes,
 statistics, and state transitions.
 """
 
-from typing import Optional, Any, Dict, List, TYPE_CHECKING
-from datetime import datetime
-from rich.console import Console
-from rich.panel import Panel
-from rich.text import Text
-from rich.table import Table
-from rich.console import Group
+from typing import TYPE_CHECKING, Any, Dict, Optional
+
 from rich.columns import Columns
+from rich.console import Console, Group
+from rich.panel import Panel
+from rich.table import Table
+from rich.text import Text
 
 if TYPE_CHECKING:
     from ..constellation.task_constellation import TaskConstellation

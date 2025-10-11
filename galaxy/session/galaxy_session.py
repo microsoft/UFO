@@ -18,20 +18,20 @@ from typing import Any, Dict, Optional
 from ufo import utils
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.config import Config
-from ufo.module.basic import BaseSession, BaseRound
+from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import Context, ContextNames
 from ufo.module.dispatcher import LocalCommandDispatcher
 
 from ..agents.constellation_agent import ConstellationAgent
-from ..constellation import TaskConstellationOrchestrator, TaskConstellation
-from ..constellation.enums import ConstellationState
 from ..client.constellation_client import ConstellationClient
+from ..constellation import TaskConstellation, TaskConstellationOrchestrator
+from ..constellation.enums import ConstellationState
 from ..core.events import get_event_bus
 from .observers import (
-    ConstellationProgressObserver,
-    SessionMetricsObserver,
-    DAGVisualizationObserver,
     ConstellationModificationSynchronizer,
+    ConstellationProgressObserver,
+    DAGVisualizationObserver,
+    SessionMetricsObserver,
 )
 
 configs = Config.get_instance().config_data

@@ -10,6 +10,8 @@ component dependencies and improve testability.
 
 import inspect
 import logging
+from abc import ABC, abstractmethod
+from enum import Enum
 from typing import (
     Any,
     Callable,
@@ -18,11 +20,8 @@ from typing import (
     Optional,
     Type,
     TypeVar,
-    Union,
     get_type_hints,
 )
-from abc import ABC, abstractmethod
-from enum import Enum
 
 from ..core.types import GalaxyFrameworkError
 

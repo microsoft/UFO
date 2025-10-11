@@ -26,16 +26,16 @@ Example:
 
 import asyncio
 import logging
-from typing import Dict, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Optional
 
 from galaxy.constellation.task_constellation import TaskConstellation
 
 from ...core.events import (
+    ConstellationEvent,
     Event,
     EventType,
-    TaskEvent,
-    ConstellationEvent,
     IEventObserver,
+    TaskEvent,
 )
 
 if TYPE_CHECKING:

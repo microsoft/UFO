@@ -12,8 +12,9 @@ import asyncio
 import logging
 from datetime import datetime, timezone
 from typing import Dict, Optional
-from websockets import WebSocketClientProtocol
+
 import websockets
+from websockets import WebSocketClientProtocol
 
 from galaxy.core.types import ExecutionResult
 from ufo.contracts.contracts import (
@@ -23,6 +24,7 @@ from ufo.contracts.contracts import (
     ServerMessage,
     TaskStatus,
 )
+
 from .types import DeviceInfo, TaskRequest
 
 

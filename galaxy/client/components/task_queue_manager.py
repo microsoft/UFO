@@ -10,8 +10,8 @@ Ensures tasks are queued when devices are busy.
 
 import asyncio
 import logging
-from typing import Dict, List, Optional
 from collections import deque
+from typing import Dict, List, Optional
 
 from .types import TaskRequest
 

@@ -17,18 +17,17 @@ import logging
 import tracemalloc
 from datetime import datetime
 from pathlib import Path
-from typing import Dict, Optional, Any
+from typing import Any, Dict, Optional
 
 from rich.console import Console
 
-from ufo.config import Config
 from galaxy.client.config_loader import ConstellationConfig
+from ufo.config import Config
 from ufo.logging.setup import setup_logger
 
-from .session.galaxy_session import GalaxySession
 from .client.constellation_client import ConstellationClient
+from .session.galaxy_session import GalaxySession
 from .visualization.client_display import ClientDisplay
-
 
 tracemalloc.start()
 CONFIGS = Config.get_instance().config_data

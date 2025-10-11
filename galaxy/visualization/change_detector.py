@@ -8,7 +8,7 @@ This module provides comprehensive change detection for visualization observers,
 including task and dependency modifications, additions, and removals.
 """
 
-from typing import Any, Dict, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 if TYPE_CHECKING:
     from ..constellation.task_constellation import TaskConstellation

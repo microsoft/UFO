@@ -8,14 +8,14 @@ Base observer classes for constellation progress and session metrics.
 import logging
 from typing import Any, Dict, Optional
 
+from ...agents.constellation_agent import ConstellationAgent
 from ...core.events import (
+    ConstellationEvent,
     Event,
     EventType,
-    TaskEvent,
-    ConstellationEvent,
     IEventObserver,
+    TaskEvent,
 )
-from ...agents.constellation_agent import ConstellationAgent
 
 
 class ConstellationProgressObserver(IEventObserver):

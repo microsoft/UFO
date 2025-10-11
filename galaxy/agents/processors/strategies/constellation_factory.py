@@ -10,8 +10,6 @@ based on the weaving mode, following the Factory pattern for better modularity.
 
 from typing import Dict, Type
 
-from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
-
 from galaxy.agents.processors.strategies.base_constellation_strategy import (
     ConstellationLLMInteractionStrategy,
     ConstellationMemoryUpdateStrategy,
@@ -23,6 +21,7 @@ from galaxy.agents.processors.strategies.constellation_editing_strategy import (
     ConstellationEditingActionExecutionStrategy,
 )
 from galaxy.agents.schema import WeavingMode
+from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 
 
 class ConstellationStrategyFactory:

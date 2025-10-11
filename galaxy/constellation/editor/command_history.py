@@ -8,7 +8,8 @@ Manages command execution history with undo/redo capabilities.
 """
 
 from typing import List, Optional
-from .command_interface import IUndoableCommand, CommandUndoError
+
+from .command_interface import CommandUndoError, IUndoableCommand
 
 
 class CommandHistory:

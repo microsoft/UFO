@@ -10,8 +10,8 @@ from typing import Optional
 
 from galaxy.visualization.dag_visualizer import DAGVisualizer
 
-from ...core.events import ConstellationEvent, EventType
 from ...constellation import TaskConstellation
+from ...core.events import ConstellationEvent, EventType
 from ...visualization import ConstellationDisplay, VisualizationChangeDetector
 
 

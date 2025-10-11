@@ -8,24 +8,24 @@ This module provides DAG topology visualization capabilities for TaskConstellati
 with rich console output, focusing on structure, dependencies, and topology analysis.
 """
 
-from typing import Dict, List, Set, Optional, Tuple, Any, TYPE_CHECKING
-from collections import defaultdict, deque
+from collections import defaultdict
+from typing import TYPE_CHECKING, List, Optional
 
+from rich import box
+from rich.columns import Columns
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
+
 from rich.tree import Tree
-from rich.text import Text
-from rich.columns import Columns
-from rich import box
 
 if TYPE_CHECKING:
     from ..constellation.task_constellation import TaskConstellation
 
-from ..constellation.enums import TaskStatus, DependencyType
+from ..constellation.enums import DependencyType, TaskStatus
 from ..constellation.task_star import TaskStar
-from .task_display import TaskDisplay
 from .constellation_display import ConstellationDisplay
+from .task_display import TaskDisplay
 
 
 class DAGVisualizer:

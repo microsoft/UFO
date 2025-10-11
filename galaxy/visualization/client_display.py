@@ -10,16 +10,14 @@ including banners, status tables, result displays, and help information.
 
 from pathlib import Path
 from typing import Dict, Any, Optional
-from datetime import datetime
+
 
 from rich.console import Console
 from rich.panel import Panel
 from rich.table import Table
-from rich.text import Text
+
 from rich.progress import Progress, SpinnerColumn, TextColumn
 from rich.prompt import Prompt
-from rich import print as rprint
-from rich.markdown import Markdown
 
 
 class ClientDisplay:
