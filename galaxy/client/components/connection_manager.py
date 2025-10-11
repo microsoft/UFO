@@ -55,7 +55,13 @@ class WebSocketConnectionManager:
                 f"🔌 Connecting to device {device_info.device_id} at {device_info.server_url}"
             )
 
-            websocket = await websockets.connect(device_info.server_url)
+            websocket = await websockets.connect(
+                device_info.server_url,
+                ping_interval=60,
+                ping_timeout=60,
+                close_timeout=10,
+            )
+
             self._connections[device_info.device_id] = websocket
 
             # Register as constellation client

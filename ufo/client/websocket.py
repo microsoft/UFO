@@ -61,7 +61,12 @@ class UFOWebSocketClient:
                 self.logger.info(
                     f"[WS] Connecting to {self.ws_url} (attempt {self.retry_count + 1}/{self.max_retries})"
                 )
-                async with websockets.connect(self.ws_url) as ws:
+                async with websockets.connect(
+                    self.ws_url,
+                    ping_interval=60,
+                    ping_timeout=60,
+                    close_timeout=10,
+                ) as ws:
                     self._ws = ws
                     await self.register_client()
                     self.retry_count = 0
