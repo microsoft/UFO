@@ -277,9 +277,7 @@ class BasicAgent(ABC):
         _none_answer_message = "The answer for the question is not available, please proceed with your own knowledge or experience, or leave it as a placeholder. Do not ask the same question again."
 
         if self.processor:
-            question_list = self.processor.processing_context.local_context.get(
-                "questions", []
-            )
+            question_list = self.processor.processing_context.get_local("questions", [])
 
             if ask_user:
                 utils.print_with_color(

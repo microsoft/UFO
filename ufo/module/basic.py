@@ -19,7 +19,7 @@ import logging
 import os
 import time
 from abc import ABC, abstractmethod
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -481,7 +481,6 @@ class BaseSession(ABC):
             round_result = await round.run()
 
             self.results.append({"request": round.request, "result": round_result})
-            print(self.results)
 
         await self.capture_last_snapshot()
 
