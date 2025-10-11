@@ -10,6 +10,7 @@ This package contains the modular components that make up the Constellation Devi
 - HeartbeatManager: Device health monitoring
 - EventManager: Event handling and callbacks
 - MessageProcessor: Message handling and routing
+- TaskQueueManager: Task queuing and scheduling
 """
 
 from .types import DeviceStatus, DeviceInfo, TaskRequest, DeviceEventHandler
@@ -18,6 +19,7 @@ from .connection_manager import WebSocketConnectionManager
 from .heartbeat_manager import HeartbeatManager
 from .event_manager import EventManager
 from .message_processor import MessageProcessor
+from .task_queue_manager import TaskQueueManager
 
 __all__ = [
     "DeviceStatus",
@@ -29,4 +31,5 @@ __all__ = [
     "HeartbeatManager",
     "EventManager",
     "MessageProcessor",
+    "TaskQueueManager",
 ]

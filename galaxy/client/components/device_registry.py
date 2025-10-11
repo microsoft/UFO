@@ -84,6 +84,51 @@ class DeviceRegistry:
         if device_id in self._devices:
             self._devices[device_id].status = status
 
+    def set_device_busy(self, device_id: str, task_id: str) -> None:
+        """
+        Set device to BUSY status and track current task.
+
+        :param device_id: Device ID
+        :param task_id: Task ID being executed
+        """
+        if device_id in self._devices:
+            self._devices[device_id].status = DeviceStatus.BUSY
+            self._devices[device_id].current_task_id = task_id
+            self.logger.info(f"🔄 Device {device_id} set to BUSY (task: {task_id})")
+
+    def set_device_idle(self, device_id: str) -> None:
+        """
+        Set device to IDLE status and clear current task.
+
+        :param device_id: Device ID
+        """
+        if device_id in self._devices:
+            self._devices[device_id].status = DeviceStatus.IDLE
+            self._devices[device_id].current_task_id = None
+            self.logger.info(f"✅ Device {device_id} set to IDLE")
+
+    def is_device_busy(self, device_id: str) -> bool:
+        """
+        Check if device is currently busy.
+
+        :param device_id: Device ID
+        :return: True if device is busy
+        """
+        if device_id in self._devices:
+            return self._devices[device_id].status == DeviceStatus.BUSY
+        return False
+
+    def get_current_task(self, device_id: str) -> Optional[str]:
+        """
+        Get the current task ID being executed on device.
+
+        :param device_id: Device ID
+        :return: Current task ID or None
+        """
+        if device_id in self._devices:
+            return self._devices[device_id].current_task_id
+        return None
+
     def increment_connection_attempts(self, device_id: str) -> int:
         """Increment connection attempts counter"""
         if device_id in self._devices:

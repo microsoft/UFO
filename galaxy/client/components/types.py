@@ -22,6 +22,8 @@ class DeviceStatus(Enum):
     CONNECTED = "connected"
     FAILED = "failed"
     REGISTERING = "registering"
+    BUSY = "busy"  # Device is executing a task
+    IDLE = "idle"  # Device is connected and ready for tasks
 
 
 @dataclass
@@ -37,6 +39,7 @@ class DeviceInfo:
     last_heartbeat: Optional[datetime] = None
     connection_attempts: int = 0
     max_retries: int = 5
+    current_task_id: Optional[str] = None  # Track current executing task
 
 
 @dataclass

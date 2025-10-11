@@ -23,6 +23,7 @@ from .components import (
     HeartbeatManager,
     EventManager,
     MessageProcessor,
+    TaskQueueManager,
 )
 
 
@@ -36,6 +37,7 @@ class ConstellationDeviceManager:
     - HeartbeatManager: Health monitoring
     - EventManager: Event handling
     - MessageProcessor: Message routing
+    - TaskQueueManager: Task queuing and scheduling
     """
 
     def __init__(
@@ -67,6 +69,7 @@ class ConstellationDeviceManager:
             self.event_manager,
             self.connection_manager,
         )
+        self.task_queue_manager = TaskQueueManager()
 
         # Reconnection management
         self._reconnect_tasks: Dict[str, asyncio.Task] = {}
@@ -146,6 +149,9 @@ class ConstellationDeviceManager:
             # Request device capabilities
             await self.connection_manager.request_device_info(device_id)
 
+            # Set device to IDLE (ready to accept tasks)
+            self.device_registry.set_device_idle(device_id)
+
             # Notify connection handlers
             await self.event_manager.notify_device_connected(device_id, device_info)
 
@@ -205,19 +211,22 @@ class ConstellationDeviceManager:
     ) -> ExecutionResult:
         """
         Assign a task to a specific device.
+        If device is BUSY, the task will be queued and executed when device becomes IDLE.
 
         :param task_id: Unique task identifier
         :param device_id: Target device ID
-        :param target_client_id: Specific local client ID (optional)
         :param task_description: Task description
         :param task_data: Task data and metadata
         :param timeout: Task timeout in seconds
         :return: Task execution result
         """
-        # Check if device is connected
+        # Check if device is registered and connected
         device_info = self.device_registry.get_device(device_id)
-        if not device_info or device_info.status != DeviceStatus.CONNECTED:
-            raise ValueError(f"Device {device_id} is not connected")
+        if not device_info:
+            raise ValueError(f"Device {device_id} is not registered")
+        
+        if device_info.status not in [DeviceStatus.CONNECTED, DeviceStatus.IDLE, DeviceStatus.BUSY]:
+            raise ValueError(f"Device {device_id} is not connected (status: {device_info.status.value})")
 
         # Create task request
         task_request = TaskRequest(
@@ -229,19 +238,79 @@ class ConstellationDeviceManager:
             timeout=timeout,
         )
 
-        # Execute task through connection manager
+        # Check if device is busy
+        if self.device_registry.is_device_busy(device_id):
+            self.logger.info(
+                f"⏸️  Device {device_id} is BUSY. Task {task_id} will be queued."
+            )
+            # Enqueue task and get future
+            future = self.task_queue_manager.enqueue_task(device_id, task_request)
+            # Wait for task to complete
+            result = await future
+            return result
+        else:
+            # Device is IDLE, execute task immediately
+            return await self._execute_task_on_device(device_id, task_request)
+
+    async def _execute_task_on_device(
+        self, device_id: str, task_request: TaskRequest
+    ) -> ExecutionResult:
+        """
+        Execute a task on a device (internal method).
+        Sets device to BUSY before execution and IDLE after completion.
+
+        :param device_id: Device ID
+        :param task_request: Task to execute
+        :return: Task execution result
+        """
         try:
+            # Set device to BUSY
+            self.device_registry.set_device_busy(device_id, task_request.task_id)
+
+            # Execute task through connection manager
             result = await self.connection_manager.send_task_to_device(
                 device_id, task_request
             )
 
             # Notify task completion handlers
-            await self.event_manager.notify_task_completed(device_id, task_id, result)
+            await self.event_manager.notify_task_completed(
+                device_id, task_request.task_id, result
+            )
+
+            # Complete the task in queue manager if it was queued
+            self.task_queue_manager.complete_task(device_id, task_request.task_id, result)
 
             return result
+
         except Exception as e:
-            self.logger.error(f"❌ Task {task_id} failed on device {device_id}: {e}")
+            self.logger.error(
+                f"❌ Task {task_request.task_id} failed on device {device_id}: {e}"
+            )
+            # Fail the task in queue manager
+            self.task_queue_manager.fail_task(device_id, task_request.task_id, e)
             raise
+
+        finally:
+            # Set device back to IDLE
+            self.device_registry.set_device_idle(device_id)
+            
+            # Check if there are queued tasks and process next one
+            await self._process_next_queued_task(device_id)
+
+    async def _process_next_queued_task(self, device_id: str) -> None:
+        """
+        Process the next queued task for a device if available.
+
+        :param device_id: Device ID
+        """
+        if self.task_queue_manager.has_queued_tasks(device_id):
+            next_task = self.task_queue_manager.dequeue_task(device_id)
+            if next_task:
+                self.logger.info(
+                    f"🚀 Processing next queued task {next_task.task_id} for device {device_id}"
+                )
+                # Execute next task asynchronously (don't await here to avoid blocking)
+                asyncio.create_task(self._execute_task_on_device(device_id, next_task))
 
     # Event handler registration (delegate to EventManager)
     def add_connection_handler(self, handler: Callable) -> None:
@@ -296,11 +365,34 @@ class ConstellationDeviceManager:
             ),
             "connection_attempts": device_info.connection_attempts,
             "max_retries": device_info.max_retries,
+            "current_task_id": device_info.current_task_id,
+            "queued_tasks": self.task_queue_manager.get_queue_size(device_id),
+            "queued_task_ids": self.task_queue_manager.get_queued_task_ids(device_id),
+        }
+
+    def get_task_queue_status(self, device_id: str) -> Dict[str, Any]:
+        """
+        Get task queue status for a device.
+        
+        :param device_id: Device ID
+        :return: Queue status information
+        """
+        return {
+            "device_id": device_id,
+            "is_busy": self.device_registry.is_device_busy(device_id),
+            "current_task_id": self.device_registry.get_current_task(device_id),
+            "queue_size": self.task_queue_manager.get_queue_size(device_id),
+            "queued_task_ids": self.task_queue_manager.get_queued_task_ids(device_id),
+            "pending_task_ids": self.task_queue_manager.get_pending_task_ids(device_id),
         }
 
     async def shutdown(self) -> None:
         """Shutdown the device manager and disconnect all devices"""
         self.logger.info("🛑 Shutting down device manager")
+
+        # Cancel all queued tasks for all devices
+        for device_id in self.device_registry.get_all_devices():
+            self.task_queue_manager.cancel_all_tasks(device_id)
 
         # Stop all background services
         self.message_processor.stop_all_handlers()
