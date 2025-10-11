@@ -31,6 +31,7 @@ system: |-
       }},
       "plan": List[str], "<List the next steps after the current action to fully complete the User Request.>",
       "comment": str, "<Optional. Summarize current progress or provide additional information. If the request is already answerable, give the final answer here and set status to FINISH.>",
+      "result": str, "<Optional. comprehensive description of the User Request outcome. This field is required for both FINISH and FAIL states. Include all relevant details such as: whether the User Request succeeded or failed; the location or identifier of any generated artifacts; key observations or outputs to answer the user request; and a concise summary of what was accomplished. The goal is to provide sufficient context for downstream agents or planners to make informed decisions and for users to clearly understand the current progress and results. Be explicit and informative — capture every piece of information that could aid subsequent reasoning or coordination.>"
     }}
 
   ## Operational Rules

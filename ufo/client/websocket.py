@@ -252,7 +252,9 @@ class UFOWebSocketClient:
         """
 
         if server_response.status == TaskStatus.COMPLETED:
-            self.logger.info(f"[WS] Task {self.session_id} completed")
+            self.logger.info(
+                f"[WS] Task {self.session_id} completed, result: {server_response.result}"
+            )
         elif server_response.status == TaskStatus.FAILED:
             self.logger.info(
                 f"[WS] Task {self.session_id} failed, with error: {server_response.error}"

@@ -14,7 +14,10 @@ This module implements the architecture for Customized Agent processing, providi
 
 from typing import TYPE_CHECKING
 from ufo.agents.processors.app_agent_processor import AppAgentProcessor
-from ufo.agents.processors.context.processing_context import ProcessingPhase
+from ufo.agents.processors.context.processing_context import (
+    ProcessingContext,
+    ProcessingPhase,
+)
 from ufo.agents.processors.strategies.app_agent_processing_strategy import (
     AppActionExecutionStrategy,
     AppMemoryUpdateStrategy,
@@ -28,7 +31,7 @@ from ufo.agents.processors.strategies.linux_agent_strategy import (
     LinuxLLMInteractionStrategy,
     LinuxLoggingMiddleware,
 )
-from ufo.module.context import Context
+from ufo.module.context import Context, ContextNames
 
 
 if TYPE_CHECKING:
@@ -105,3 +108,23 @@ class LinuxAgentProcessor(CustomizedProcessor):
         """Setup middleware pipeline for App Agent."""
         # Core middleware (order matters)
         self.middleware_chain = [LinuxLoggingMiddleware()]
+
+    def _finalize_processing_context(
+        self, processing_context: ProcessingContext
+    ) -> None:
+        """
+        Finalize processing context by updating existing ContextNames fields.
+        Instead of promoting arbitrary keys, we update the predefined ContextNames
+        that the system actually uses.
+        :param processing_context: The processing context to finalize.
+        """
+
+        super()._finalize_processing_context(processing_context)
+        try:
+
+            result = processing_context.get_local("result")
+            if result:
+                self.global_context.set(ContextNames.ROUND_RESULT, result)
+
+        except Exception as e:
+            self.logger.warning(f"Failed to update ContextNames from results: {e}")
