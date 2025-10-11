@@ -9,14 +9,14 @@ Primary command-line interface for Galaxy Framework with comprehensive functiona
 This script provides both simple and advanced interfaces for Galaxy sessions.
 
 Simple Usage:
-    python galaxy.py "Create a machine learning pipeline"
-    python galaxy.py --interactive
-    python galaxy.py --demo
+    python -m galaxy "Create a machine learning pipeline"
+    python -m galaxy --interactive
+    python -m galaxy --demo
 
 Advanced Usage:
-    python galaxy.py --request "Task description" --session-name "my_session"
-    python galaxy.py --request "Task" --output-dir "./results" --log-level DEBUG
-    python galaxy.py --interactive --max-rounds 20
+    python -m galaxy --request "Task description" --session-name "my_session"
+    python -m galaxy --request "Task" --output-dir "./results" --log-level DEBUG
+    python -m galaxy --interactive --max-rounds 20
 """
 
 import argparse
@@ -27,7 +27,7 @@ import sys
 from pathlib import Path
 
 # Add UFO2 to path to enable imports
-UFO_ROOT = Path(__file__).parent.parent.parent
+UFO_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(UFO_ROOT))
 
 from rich.console import Console
@@ -42,14 +42,14 @@ def parse_args():
         epilog="""
 Examples:
   Simple Usage:
-    python galaxy.py "Create a data analysis pipeline"
-    python galaxy.py --demo
-    python galaxy.py --interactive
+    python -m galaxy "Create a data analysis pipeline"
+    python -m galaxy --demo
+    python -m galaxy --interactive
 
   Advanced Usage:
-    python galaxy.py --request "Build ML pipeline" --session-name "ml_session"
-    python galaxy.py --interactive --max-rounds 20 --log-level DEBUG
-    python galaxy.py --request "Task" --output-dir "./results" --mock
+    python -m galaxy --request "Build ML pipeline" --session-name "ml_session"
+    python -m galaxy --interactive --max-rounds 20 --log-level DEBUG
+    python -m galaxy --request "Task" --output-dir "./results" --mock
         """,
     )
 
