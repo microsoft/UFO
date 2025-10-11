@@ -30,7 +30,7 @@ if TYPE_CHECKING:
 class RichPresenter(BasePresenter):
     """
     Rich-based presenter for beautiful console output.
-    
+
     This presenter uses the Rich library to create visually appealing
     console output with colors, panels, and tables.
     """
@@ -45,12 +45,18 @@ class RichPresenter(BasePresenter):
         "next_plan": {"title": "📚 Next Plan", "style": "cyan"},
         "comment": {"title": "💬 Agent Comment", "style": "yellow"},
         "message": {"title": "📩 Messages to AppAgent", "style": "cyan"},
-        "results": {"title": "📊 Execution Results", "style": "magenta"},
-        "constellation_info": {"title": "🌌 Constellation Information", "style": "cyan"},
+        "results": {"title": "📊 Current Task Results", "style": "magenta"},
+        "constellation_info": {
+            "title": "🌌 Constellation Information",
+            "style": "cyan",
+        },
         "task_details": {"title": "📋 Task Details", "style": "yellow"},
         "dependencies": {"title": "🔗 Dependencies", "style": "blue"},
         "notice": {"title": "Notice", "style": "yellow"},
-        "next_application": {"title": "📲 Next Selected Application/Agent", "style": "yellow"},
+        "next_application": {
+            "title": "📲 Next Selected Application/Agent",
+            "style": "yellow",
+        },
         "status_default": {"title": "📊 Status", "style": "blue"},
         "status_processing": {"title": "📊 Processing Status", "style": "blue"},
         "final_status": {"title": "📊 Final Status", "style": "yellow"},
@@ -65,7 +71,7 @@ class RichPresenter(BasePresenter):
     def __init__(self, console: Optional[Console] = None):
         """
         Initialize the Rich presenter.
-        
+
         :param console: Optional Rich Console instance. If not provided, a new one is created.
         """
         self.console = console or Console()
@@ -74,7 +80,7 @@ class RichPresenter(BasePresenter):
         """
         Present the complete agent response.
         Delegates to specific methods based on response type.
-        
+
         :param response: The response object to present
         :param kwargs: Additional options like print_action, etc.
         """
@@ -85,7 +91,7 @@ class RichPresenter(BasePresenter):
     def present_thought(self, thought: str) -> None:
         """
         Present agent's thought/reasoning.
-        
+
         :param thought: The thought text to display
         """
         if thought:
@@ -100,7 +106,7 @@ class RichPresenter(BasePresenter):
     def present_observation(self, observation: str) -> None:
         """
         Present agent's observation.
-        
+
         :param observation: The observation text to display
         """
         if observation:
@@ -115,7 +121,7 @@ class RichPresenter(BasePresenter):
     def present_status(self, status: str, **kwargs) -> None:
         """
         Present agent's status.
-        
+
         :param status: The status string
         :param kwargs: Optional 'title_style' to choose between different title styles
         """
@@ -123,14 +129,16 @@ class RichPresenter(BasePresenter):
         style_config = self.STYLES["status"].get(status_upper, {})
         emoji = style_config.get("emoji", "📊")
         style = style_config.get("style", "blue")
-        
+
         title_style = kwargs.get("title_style", "processing")
         if title_style == "default":
             title = self.STYLES["status_default"]["title"]
         elif title_style == "final":
             title = self.STYLES["final_status"]["title"]
         else:
-            title = f"{emoji} {self.STYLES['status_processing']['title'].split(' ', 1)[-1]}"
+            title = (
+                f"{emoji} {self.STYLES['status_processing']['title'].split(' ', 1)[-1]}"
+            )
 
         self.console.print(
             Panel(
@@ -143,7 +151,7 @@ class RichPresenter(BasePresenter):
     def present_actions(self, actions: Any, **kwargs) -> None:
         """
         Present agent's planned actions.
-        
+
         :param actions: The actions to display
         :param kwargs: Display options like 'format' (table/list)
         """
@@ -153,7 +161,7 @@ class RichPresenter(BasePresenter):
     def present_plan(self, plan: List[str]) -> None:
         """
         Present agent's plan.
-        
+
         :param plan: List of plan items
         """
         if plan:
@@ -169,7 +177,7 @@ class RichPresenter(BasePresenter):
     def present_comment(self, comment: Optional[str]) -> None:
         """
         Present agent's comment/message.
-        
+
         :param comment: The comment text to display
         """
         if comment:
@@ -178,7 +186,7 @@ class RichPresenter(BasePresenter):
     def present_results(self, results: Any) -> None:
         """
         Present execution results.
-        
+
         :param results: The results to display
         """
         if results:
@@ -203,7 +211,7 @@ class RichPresenter(BasePresenter):
     ) -> None:
         """
         Present AppAgent response - matches original AppAgent.print_response logic.
-        
+
         :param response: AppAgentResponse object
         :param print_action: Whether to print actions
         """
@@ -217,6 +225,7 @@ class RichPresenter(BasePresenter):
         thought = response.thought
         plan = response.plan if isinstance(response.plan, list) else [response.plan]
         comment = response.comment
+        result = response.result
 
         # Observations
         self.present_observation(observation)
@@ -245,14 +254,19 @@ class RichPresenter(BasePresenter):
                     style=self.STYLES["notice"]["style"],
                 )
             )
+        # Results
+        if result:
+            self.present_results(result)
 
     def _present_actions_as_table(self, actions: List[Any]) -> None:
         """
         Present actions as a Rich table (AppAgent style).
-        
+
         :param actions: List of ActionCommandInfo objects
         """
-        table = Table(title=self.STYLES["action"]["title"], show_lines=True, style="blue")
+        table = Table(
+            title=self.STYLES["action"]["title"], show_lines=True, style="blue"
+        )
         table.add_column("Step", style="cyan", no_wrap=True)
         table.add_column("Function", style="yellow")
         table.add_column("Arguments", style="magenta")
@@ -283,7 +297,7 @@ class RichPresenter(BasePresenter):
     ) -> None:
         """
         Present HostAgent response - matches original HostAgent.print_response logic.
-        
+
         :param response: HostAgentResponse object
         :param action_str: Pre-formatted action string (optional)
         """
@@ -292,6 +306,7 @@ class RichPresenter(BasePresenter):
         observation = response.observation
         thought = response.thought
         subtask = response.current_subtask
+        result = response.result
         message = "\n".join(response.message) if response.message else ""
         plan = [subtask] + list(response.plan)
         plan_str = "\n".join([f"({i+1}) {str(item)}" for i, item in enumerate(plan)])
@@ -312,7 +327,7 @@ class RichPresenter(BasePresenter):
         if function:
             if not action_str:
                 action_str = self._format_action_string(function, arguments)
-            
+
             self.console.print(
                 Panel(
                     action_str,
@@ -362,10 +377,14 @@ class RichPresenter(BasePresenter):
         # Comment
         self.present_comment(comment)
 
+        # Results
+        if result:
+            self.present_results(result)
+
     def _format_action_string(self, function: str, arguments: Dict[str, Any]) -> str:
         """
         Format action string for display.
-        
+
         :param function: Function name
         :param arguments: Function arguments
         :return: Formatted action string
@@ -383,7 +402,7 @@ class RichPresenter(BasePresenter):
     ) -> None:
         """
         Present ConstellationAgent response - matches original ConstellationAgent.print_response logic.
-        
+
         :param response: ConstellationAgentResponse object
         :param print_action: Whether to print actions
         """
@@ -445,12 +464,11 @@ class RichPresenter(BasePresenter):
     def _present_constellation_info(self, constellation: Any) -> None:
         """
         Present constellation information.
-        
+
         :param constellation: TaskConstellation object
         """
         constellation_name = (
-            constellation.name
-            or f"Constellation {constellation.constellation_id}"
+            constellation.name or f"Constellation {constellation.constellation_id}"
         )
         task_count = len(constellation.tasks)
         dependency_count = len(constellation.dependencies)
@@ -458,9 +476,7 @@ class RichPresenter(BasePresenter):
 
         constellation_info = Text()
         constellation_info.append(f"🆔 ID: ", style="bold cyan")
-        constellation_info.append(
-            f"{constellation.constellation_id}\n", style="white"
-        )
+        constellation_info.append(f"{constellation.constellation_id}\n", style="white")
         constellation_info.append(f"🌟 Name: ", style="bold cyan")
         constellation_info.append(f"{constellation_name}\n", style="white")
         constellation_info.append(f"📊 State: ", style="bold cyan")
@@ -533,7 +549,7 @@ class RichPresenter(BasePresenter):
     def present_action_list(self, actions: Any, success_only: bool = False) -> None:
         """
         Present action list - matches ListActionCommandInfo.color_print logic.
-        
+
         :param actions: ListActionCommandInfo object
         :param success_only: Whether to print only successful actions
         """
@@ -565,7 +581,7 @@ class RichPresenter(BasePresenter):
     def present_constellation_editing_actions(self, actions: Any) -> None:
         """
         Present constellation editing actions - matches ConstellationEditingActionExecutionStrategy.print_actions logic.
-        
+
         :param actions: ListActionCommandInfo object
         """
         from ufo.contracts.contracts import ResultStatus
@@ -744,9 +760,7 @@ class RichPresenter(BasePresenter):
             summary.add_row("❌ Failed:", failed_text)
 
         # Final status
-        status_style = (
-            "green" if status in ["CONTINUE", "COMPLETED"] else "yellow"
-        )
+        status_style = "green" if status in ["CONTINUE", "COMPLETED"] else "yellow"
         status_text = Text(status, style=f"{status_style} bold")
         summary.add_row("📊 Status:", status_text)
 
@@ -762,7 +776,7 @@ class RichPresenter(BasePresenter):
     def _display_agent_comment(self, comment: str) -> None:
         """
         Display agent comment with enhanced formatting.
-        
+
         :param comment: Comment text to display
         """
         if comment:

@@ -11,7 +11,7 @@ Single responsibility: Connection management.
 import asyncio
 import logging
 from datetime import datetime, timezone
-from typing import Dict, Optional, Any
+from typing import Dict, Optional
 from websockets import WebSocketClientProtocol
 import websockets
 

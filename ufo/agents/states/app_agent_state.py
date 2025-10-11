@@ -6,6 +6,8 @@ from __future__ import annotations
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
+from pyparsing import Any
+
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.agents.states.host_agent_state import (
@@ -98,17 +100,20 @@ class AppAgentState(AgentState):
         state = AppAgentStateManager().get_state(status)
         return state
 
-    async def archive_subtask(self, context: "Context") -> None:
+    async def archive_subtask(
+        self, context: "Context", result: Optional[Any] = None
+    ) -> None:
         """
         Update the subtask of the agent.
         :param context: The context for the agent and session.
+        :param result: The result of the subtask.
         """
 
         subtask = context.get(ContextNames.SUBTASK)
         previous_subtasks = context.get(ContextNames.PREVIOUS_SUBTASKS)
 
         if subtask:
-            subtask_info = {"subtask": subtask, "status": self.name()}
+            subtask_info = {"subtask": subtask, "status": self.name(), "result": result}
             previous_subtasks.append(subtask_info)
             context.set(ContextNames.PREVIOUS_SUBTASKS, previous_subtasks)
 
@@ -133,8 +138,14 @@ class FinishAppAgentState(AppAgentState):
         :param agent: The agent for the current step.
         :param context: The context for the agent and session.
         """
+        if agent.processor:
 
-        await self.archive_subtask(context)
+            result = agent.processor.processing_context.get_local("result")
+
+        else:
+            result = None
+
+        await self.archive_subtask(context, result)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
@@ -373,7 +384,14 @@ class ErrorAppAgentState(AppAgentState):
         :param context: The context for the agent and session.
         """
 
-        await self.archive_subtask(context)
+        if agent.processor:
+
+            result = agent.processor.processing_context.get_local("result")
+
+        else:
+            result = None
+
+        await self.archive_subtask(context, result)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """
@@ -429,7 +447,14 @@ class FailAppAgentState(AppAgentState):
         :param context: The context for the agent and session.
         """
 
-        await self.archive_subtask(context)
+        if agent.processor:
+
+            result = agent.processor.processing_context.get_local("result")
+
+        else:
+            result = None
+
+        await self.archive_subtask(context, result)
 
     def next_agent(self, agent: "AppAgent") -> HostAgent:
         """

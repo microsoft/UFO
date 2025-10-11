@@ -85,6 +85,7 @@ class HostAgentProcessorContext(BasicProcessorContext):
             "application",  # Application
             "cost",  # Cost
             "results",  # Results
+            "result",
             "last_error",  # error (mapped to last_error)
             "execution_times",  # time_cost (mapped to execution_times)
             "total_time",

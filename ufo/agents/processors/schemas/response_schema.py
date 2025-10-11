@@ -20,6 +20,7 @@ class HostAgentResponse(BaseModel):
     comment: Optional[str] = None
     function: Optional[str] = None
     arguments: Optional[Dict[str, Any]] = None
+    result: Optional[Any] = None
 
 
 class AppAgentResponse(BaseModel):
@@ -33,3 +34,4 @@ class AppAgentResponse(BaseModel):
     comment: Optional[str] = None
     action: Union[List[ActionCommandInfo], ActionCommandInfo, None] = None
     save_screenshot: Optional[Dict[str, Any]] = {}
+    result: Optional[Any] = None

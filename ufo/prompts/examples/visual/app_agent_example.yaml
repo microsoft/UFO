@@ -26,6 +26,8 @@ example1:
       After I click the New Email button, the New Email window will be opened and available for composing the email.
     save_screenshot:
       {"save": false, "reason": ""}
+    result: |-
+      Successfully clicked the 'New Email' button in Outlook to initiate email composition. The action will open a new email editing window where the recipient (jack@outlook.com), subject line, and email body can be filled in. The subtask is in progress (CONTINUE status) as additional steps are required to complete the email composition: inputting the recipient's email address, adding the subject line 'Thanks for your contribution on the open source', composing the thank-you message body, and clicking the Send button. The new email window is now ready for the next input actions.
   Tips: 
     - Sending an email is a sensitive action that needs to be confirmed by the user before the execution.
     - You need to draft the content of the email and send it to the receiver. 
@@ -61,6 +63,8 @@ example2:
       I revised the previous plan base on the screenshot since I observe that New Email window has already opened and the title of email has already been inputted. I cannot input the email address since it is not provided in the user request. Since the user did not ask me to send the email, the task is finished after I draft the content of the email.
     save_screenshot:
       {"save": false, "reason": ""}
+    result: |-
+      Successfully completed drafting an email to Amy asking about her feelings on the new project. The email body has been filled in the 'Email Body' control (ID: 36) with a polite message requesting Amy's feedback on the new project. The subtask is marked as FINISH because: (1) the email content has been successfully drafted as requested, (2) the user did not request the email to be sent, only drafted, and (3) the recipient's email address was not provided in the original request. The email remains in draft state within the Outlook new email window, ready for the user to add Amy's email address and send manually if desired. Key observation: The email title was already pre-filled when the window opened.
   Tips: 
     - The user only asked me to draft an email to Amy to ask her how she feels about the new project. I do not need to send the email since the user did not ask me to send it.
     - You need to draft the content of the email and send it to the receiver. Use polite language when drafting the email.
@@ -88,6 +92,8 @@ example3:
       I searched for the word 'UFO' in the document successfully. The user should view the search result.
     save_screenshot:
       {"save": false, "reason": ""}
+    result: |-
+      Successfully completed the search for the word 'UFO' in the Word document. The search query 'UFO' was already inputted in the 'Find' control from a previous action, and the 'Find' button (ID: 59) has now been clicked to execute the search. The subtask is marked as FINISH because the search operation has been initiated and Word will highlight all instances of 'UFO' in the document. The user can now view the search results directly in the document, with all occurrences of 'UFO' highlighted or navigated to by Word's search functionality. No additional actions are required from the agent as the search request has been fully satisfied.
   Tips: 
     - If there are steps already taken (e.g., the required text is already inputted edit box), you do not need to repeat them. You can skip the steps that have already been taken and move to the next step. 
 
@@ -114,6 +120,8 @@ example4:
       The partial tasks on 'framework.docx' is completed once I take the current action. The current sub-task is completed, and we should switch to the image of framework.png to complete the next task.
     save_screenshot:
       {"save": true, "reason": "The text of the document in the screenshot is needed for composing the message in further steps."}
+    result: |-
+      Successfully completed the extraction of full text from 'framework.docx'. The 'texts' action was executed on the Document control (ID: 83, name: 'framework - Word') to retrieve all textual content from the Word document. The subtask is marked as FINISH because the text extraction portion of the user's request has been completed. Key artifacts: (1) The extracted text from framework.docx is now available for use in composing the Teams message to Tom, (2) A screenshot has been saved containing the visible document text for reference in subsequent steps. Next steps: The overall task requires switching focus to analyze the framework.png image to extract a detailed description of the workflow, which will be combined with this extracted text to compose the final message to Tom on Teams.
   Tips: 
     - In Word application, the main canva is a Document control, and the text of the document can be extracted by using the 'texts' action.
 
@@ -146,6 +154,8 @@ example5:
       I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
     save_screenshot:
       {"save": false, "reason": ""}
+    result: |-
+      Successfully initiated the process to quickly remove all notes from presentation.pptx using PowerPoint's built-in 'Remove All Presentation Notes' function. The 'File' button (ID: 59) has been clicked to access the backstage view. The subtask is in progress (CONTINUE status) as multiple additional steps are required: (1) navigate to the Info page, (2) access the 'Check for Issues' menu, (3) open the Document Inspector, (4) scroll down to locate the 'Remove All Presentation Notes' button, and (5) execute the removal (which requires user confirmation as it's a sensitive system action). This approach avoids the inefficient method of looping through individual slides, providing a much faster solution for bulk note removal. The File menu is now open and ready for the next navigation step.
   Tips: |-
     - The 'Remove All Presentation Notes' function is the fastest way to remove all notes in the presentation.pptx file. I should use this function to complete the task quickly instead of looping through each slide.
     - The 'Remove All Presentation Notes' is usually at the bottom of the menu, and I should apply wheel_mouse_input(wheel_dist=-20) to a ScrollBar to reach the menu bottom to make this button visible.
@@ -176,6 +186,8 @@ example6:
       I plan to use Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
     save_screenshot:
       {"save": false, "reason": ""}
+    result: |-
+      Successfully inputted the search query 'Imdiffusion GitHub' into the Google search box (ComboBox ID: 36, name: '搜索'). The subtask is in progress (CONTINUE status) as additional steps are needed to complete the user's request. Remaining steps include: (1) clicking the Google Search button to execute the search, (2) identifying and clicking the Imdiffusion repository hyperlink from the search results, (3) navigating to the GitHub repository page, and (4) visually observing and reporting the star count displayed on the repository page. The search query has been properly formatted to help find the official Imdiffusion GitHub repository. The Edge browser with Google search page is ready for the search execution.
   Tips: 
     - The search box is usually in a type of ComboBox.
     - The number of stars of a Github repo page can be found in the repo page visually.
@@ -211,6 +223,8 @@ example7:
       After creating the task, I need to set more details for the reminder, including adding steps and notes.
     save_screenshot:
       {"save": false, "reason": ""}
+    result: |-
+      Successfully inputted the task 'Get party dinner (5 people) preparation done before 5PM today.' into the Microsoft To Do application's task creation field (ID: 19, name: 'Add a task in "My Day"'). The subtask is in progress (CONTINUE status) as the task creation requires multiple additional steps to meet the user's full requirements. The task text has been entered but not yet committed. Remaining actions include: (1) pressing Enter to create the task, (2) clicking the newly created task to open its details view, (3) adding three specific steps: 'Menu Planning and Ingredient Acquisition', 'Meal Preparation Schedule', and 'Setting Up the Dining Area', (4) adding a note about considering guests' dietary preferences, restrictions, and allergies, and (5) closing the details view. The task will serve as a comprehensive reminder with detailed actionable steps and important considerations for the party dinner preparation.
   Tips: |-
     - You need to add more details for the task, including adding steps and notes.
     - You need to add each step one by one and add notes to the task.
@@ -242,6 +256,8 @@ example8:
       {"save": false, "reason": ""}
     comment: |-
       I need to use the Copilot Add-in to create a slide from the meeting_notes.docx.
+    result: |-
+      Successfully clicked the Copilot Add-in button (ID: 60) in Microsoft PowerPoint to initiate the process of creating a slide from meeting_notes.docx. The subtask is in progress (CONTINUE status) as several additional steps are required to complete the slide creation. The Copilot interface is now accessible and ready for interaction. Remaining steps include: (1) clicking the 'Create presentation from file' option, (2) selecting the 'meeting_notes' file from the file picker when it appears, and (3) clicking the 'Send' button to submit the creation request to Copilot. This approach leverages PowerPoint's AI capabilities to automatically generate slide content from the Word document, which is more efficient than manually copying and formatting content from meeting_notes.docx into presentation1.pptx.
   Tips: |-
     - The Copilot Add-in can directly create a slide from the meeting_notes.docx. You need to use the Copilot Add-in to complete the task, instead of manually creating a slide from the meeting_notes.docx.
 
@@ -269,6 +285,8 @@ example9:
       {"save": false, "reason": ""}
     comment: |-
       I need to estimate the relative fractional x and y coordinates of the point to click on and activate the title text box, so that I can input the title 'Project Update'.
+    result: |-
+      Successfully clicked on the estimated coordinates (x: 0.35, y: 0.4) to activate the title text box on the first slide of presentation.pptx in Microsoft PowerPoint. The subtask is in progress (CONTINUE status) as one final step remains: inputting the title text 'Project Update' into the now-active title text box. The click action was necessary because the title text box was not available as a clickable control item in the UI automation tree, requiring the use of coordinate-based clicking to activate it. Key observation: The title text box is located on the slide canvas at the top of the first slide, and the estimated coordinates should have successfully focused the text input cursor into this field. The next action will complete the user's request by entering the specified title text.
   Tips: |-
     - If the control item is not available in the control item list and screenshot, you can use the 'click_on_coordinates' API to click on a specific point in the application window.
 
@@ -300,5 +318,7 @@ example10:
       I need to first click the 'Event Type' field to open the dropdown list and select 'Restaurant Reservation' to change the default value of 'Wedding'.
     save_screenshot:
       {"save": false, "reason": ""}
+    result: |-
+      Successfully clicked the 'Event Type' dropdown field (ID: 70) on the Private Event Bookings web page to initiate changing the event type selection. The subtask is in progress (CONTINUE status) as this is the first of multiple form-filling steps for the top 3 events. The dropdown should now be open, revealing available event type options. The default value of 'Wedding' needs to be changed to 'Restaurant Reservation' for the first event. Remaining steps for this event include: (1) selecting 'Restaurant Reservation' from the now-visible dropdown list, (2) inputting 'Birthday Party' in the Event Name field, (3) entering '2022-12-25' as the Event Date, (4) setting '18:00' as the Event Time, and (5) submitting the form. After completing the first event's form, the process will need to be repeated for the second and third events as requested by the user.
   Tips: |-
     - If the field is already filled with a default value, you need to first click on the field to open the dropdown list and select the correct value.

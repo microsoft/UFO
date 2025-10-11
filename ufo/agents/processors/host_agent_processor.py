@@ -19,6 +19,7 @@ while providing enhanced modularity, error handling, and extensibility.
 
 import logging
 from typing import TYPE_CHECKING, Any, Dict, Type
+from unittest import result
 
 from rich.console import Console
 from rich.panel import Panel
@@ -145,6 +146,10 @@ class HostAgentProcessor(ProcessorTemplate):
             host_message = processing_context.get_local("host_message")
             if host_message:
                 self.global_context.set(ContextNames.HOST_MESSAGE, host_message)
+
+            result = processing_context.get_local("result")
+            if result:
+                self.global_context.set(ContextNames.ROUND_RESULT, result)
 
             # Update APPLICATION_ROOT_NAME if selected
             selected_app_root = processing_context.get_local(

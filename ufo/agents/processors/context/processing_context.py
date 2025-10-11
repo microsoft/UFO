@@ -108,6 +108,7 @@ class BasicProcessorContext(ProcessorContextProtocol):
     error_count: int = 0
     last_error: Optional[str] = None
     llm_cost: float = 0.0
+    result: Optional[Any] = None
 
     # Generic data storage for extensibility
     custom_data: Dict[str, Any] = field(default_factory=dict)

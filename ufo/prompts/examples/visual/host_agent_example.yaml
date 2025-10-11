@@ -23,6 +23,8 @@ example1:
     comment: |-
       It is time to open the outlook application!
     questions: []
+    result: |-
+      User request in ASSIGN state. Target window 'Mail - Outlook - Zac' (id:12) identified; will call select_application_window to focus Outlook and begin composing. No compose window opened yet; recipient (jack@outlook.com), subject, and body not entered. Next steps: (1) focus window; (2) open New Email; (3) populate recipient, professional detailed thank‑you content using sender name Zac; (4) review and send. No errors so far; no artifacts produced—only environment identification and action assignment.
 
 
 example2: 
@@ -48,6 +50,8 @@ example2:
     comment: |-
       After I get the text of the Document control named 'framework.docx', I need to switch to the image of framework.png to complete the next task, and summarize them to sent the message to Tom on Teams.
     questions: []
+    result: |-
+      User request in ASSIGN state. Goal: switch to image window 'framework.png | image' (id:21) to visually summarize the workflow. Prior step (text extraction from framework.docx) is done. Window switch and image analysis not yet executed. Remaining steps: (1) select image window; (2) observe and distill workflow stages; (3) merge with previously extracted document text; (4) compose and send Teams message to Tom. No artifacts yet—only intent and action assignment recorded.
 
 
 
@@ -74,6 +78,8 @@ example3:
     comment: |-
       I plan to use the 'Remove All Presentation Notes' function. This is the fastest way to remove all notes in the presentation.pptx file.
     questions: []
+    result: |-
+  Subtask in ASSIGN state. Confirmed target PowerPoint window 'presentation - PowerPoint' (id:21) must be focused to run bulk removal of notes. No focus action or removal invoked yet; no notes deleted. Planned sequence: (1) select window; (2) navigate (File > Info > Inspect Document or shortcut) to reach 'Remove All Presentation Notes'; (3) confirm any system prompt; (4) verify all notes cleared. No artifact yet—only strategy determination.
  
 
 
@@ -100,6 +106,8 @@ example4:
     comment: |-
       I plan to Google search for the Imdiffusion repo on github and summarize the number of stars the Imdiffusion repo page visually.
     questions: []
+    result: |-
+      User request in ASSIGN state. Plan: focus Edge window 'Google - Microsoft Edge' (id:7) and perform a Google search to locate the Imdiffusion GitHub repo and read its star count. Not yet focused, no query typed, repo page not opened. Remaining: (1) focus window; (2) enter query (e.g., "Imdiffusion GitHub"); (3) open repo result; (4) visually capture star count and report. No output yet—action assignment only.
 
 
 example5: 
@@ -125,6 +133,8 @@ example5:
     comment: |-
       I plan to use the Microsoft To Do application to set a reminder for the user, and add details and notes to the reminder.
     questions: []
+    result: |-
+      User request in ASSIGN state. Need to focus Microsoft To Do window (id:6) and create reminder task "Get party dinner (5 people) preparation done before 5PM today." with steps and notes. No focus, text entry, steps, or notes performed yet. Remaining: (1) select window; (2) create task; (3) add structured steps; (4) add notes and time reminder; (5) verify content. No artifact yet.
 
 example6: 
   Request: |- 
@@ -148,6 +158,8 @@ example6:
     comment: |-
       I plan to open the powerpoint application and use the Copilot Add-in to create a slide from the meeting_notes.docx.
     questions: []
+    result: |-
+      User request in ASSIGN state. Target PowerPoint window 'presentation1 - PowerPoint' (id:4) must be focused to use the Copilot add-in to generate a slide from meeting_notes.docx. No focus or Copilot interaction yet; no slide created. Remaining: (1) select window; (2) open Copilot pane; (3) choose create-from-file and pick meeting_notes.docx; (4) submit request; (5) validate generated slide (layout/theme/content). No artifact yet.
 
 
 
@@ -175,6 +187,8 @@ example7:
     questions:
       - Can you please provide me with your alias?
       - Can you please provide me with your address?
+    result: |-
+      User request in PENDING state. Awaiting user inputs for two missing data points (alias and address); clarification questions issued. Teams chat window (id:6) not yet selected; no message constructed. Blocker: missing user-provided alias and address. After receipt: (a) select chat window; (b) compose message containing only alias and address; (c) send; (d) mark FINISH. No artifacts yet.
 
 
 example8:
@@ -203,6 +217,8 @@ example8:
     comment: |-
       I plan to first summarize all to do items from the meeting notes email in Outlook.
     questions: []
+    result: |-
+      User request in ASSIGN state. Phase 1 defined: within Outlook window 'Mail - Outlook - Jim' (id:16) locate the meeting notes email and extract actionable to-do items. No search or extraction executed yet. Planned phases: (1) extract to-dos; (2) add each item to Microsoft To Do; (3) write overall summary into meeting_notes.docx. No extracted items or artifacts yet.
 
 example9:
   Request: |-
@@ -224,6 +240,8 @@ example9:
     comment: |-
       Since the PowerPoint application is not visible in the screenshot, I will use the bash command to open the PowerPoint application directly. Then modify the title to 'Apple is the best tech Company' in the test.pptx file.
     questions: []
+    result: |-
+      User request in CONTINUE state. Plan: use run_shell to launch PowerPoint with Desktop\test.pptx and change title to 'Apple is the best tech Company'. Execution outcome not yet confirmed; editability of title unknown. Remaining: (1) execute & verify file open; (2) locate title placeholder (control or coordinate); (3) replace text; (4) optionally save; (5) report completion. No file modification artifact yet.
   
 
 example10:
@@ -246,4 +264,6 @@ example10:
     comment: |-
       Since the file explorer application is not visible in the screenshot, I will use the bash command to open the file explorer application directly. Then find the label.txt file in the file explorer.
     questions: []
+    result: |-
+      User request in CONTINUE state. Plan: launch File Explorer via run_shell (start explorer) to locate label.txt. Explorer window not yet confirmed open; no navigation or search performed. Remaining: (1) confirm window active; (2) choose path (e.g., user folder/Desktop or global search); (3) enter 'label.txt' in search; (4) locate file and optionally return full path; (5) perform follow-up (open/read) if required. No evidence of file discovery yet.
   

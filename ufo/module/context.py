@@ -43,6 +43,7 @@ class ContextNames(Enum):
     APPLICATION_PROCESS_NAME = (
         "APPLICATION_PROCESS_NAME"  # The process name of the application
     )
+    ROUND_RESULT = "ROUND_RESULT"  # The result of the current round
     APPLICATION_ROOT_NAME = "APPLICATION_ROOT_NAME"  # The root name of the application
     CONTROL_REANNOTATION = "CONTROL_REANNOTATION"  # The re-annotation of the control provided by the AppAgent
     SESSION_COST = "SESSION_COST"  # The cost of the session
@@ -81,6 +82,7 @@ class ContextNames(Enum):
             or self == ContextNames.APPLICATION_ROOT_NAME
             or self == ContextNames.MODE
             or self == ContextNames.SUBTASK
+            or self == ContextNames.ROUND_RESULT
         ):
             return ""
         elif (
@@ -144,6 +146,7 @@ class ContextNames(Enum):
             or self == ContextNames.APPLICATION_ROOT_NAME
             or self == ContextNames.MODE
             or self == ContextNames.SUBTASK
+            or self == ContextNames.ROUND_RESULT
         ):
             return str
         elif (

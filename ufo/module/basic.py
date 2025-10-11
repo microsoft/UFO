@@ -19,7 +19,7 @@ import logging
 import os
 import time
 from abc import ABC, abstractmethod
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
@@ -169,6 +169,8 @@ class BaseRound(ABC):
 
         if self._should_evaluate:
             self.evaluation()
+
+        return self.context.get(ContextNames.ROUND_RESULT)
 
     def is_finished(self) -> bool:
         """
@@ -457,9 +459,8 @@ class BaseSession(ABC):
         self._context = Context()
         self._init_context()
         self._finish = False
-        self._results = {}
+        self._results = []
         self.logger = logging.getLogger(__name__)
-        self._results = None
 
         # Initialize platform-specific agents
         # Subclasses should override _init_agents() to set up their agents
@@ -476,7 +477,11 @@ class BaseSession(ABC):
             round = self.create_new_round()
             if round is None:
                 break
-            await round.run()
+
+            round_result = await round.run()
+
+            self.results.append({"request": round.request, "result": round_result})
+            print(self.results)
 
         await self.capture_last_snapshot()
 
@@ -686,7 +691,7 @@ class BaseSession(ABC):
             return self._rounds[self.total_rounds - 1]
 
     @property
-    def results(self) -> Dict[str, str]:
+    def results(self) -> List[Dict[str, str]]:
         """
         Get the evaluation results of the session.
         return: The evaluation results of the session.
