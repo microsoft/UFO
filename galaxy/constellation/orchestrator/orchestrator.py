@@ -513,7 +513,11 @@ class TaskConstellationOrchestrator:
             # Execute the task
             result = await task.execute(self._device_manager)
 
-            is_success = result.status == TaskStatus.COMPLETED
+            is_success = result.status == TaskStatus.COMPLETED.value
+
+            self._logger.info(
+                f"Task {task.task_id} execution result: {result}, is_success: {is_success}"
+            )
 
             # Mark task as completed in constellation
             newly_ready = constellation.mark_task_completed(

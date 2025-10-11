@@ -223,7 +223,7 @@ class WebSocketConnectionManager:
 
             task_result = ExecutionResult(
                 task_id=task_request.task_id,
-                status=response.status == TaskStatus.COMPLETED,
+                status=response.status,
                 metadata={"device_id": device_id},
                 error=response.error,
                 result=response.result,
