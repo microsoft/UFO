@@ -220,7 +220,9 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         # )
 
         panel_title = f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
-        panel_content = f"Analyzing user intent and decomposing request..."
+        panel_content = (
+            f"Analyzing user intent and decomposing request of `{request}`..."
+        )
 
         console.print(Panel(panel_content, title=panel_title, style="magenta"))
 

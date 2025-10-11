@@ -60,12 +60,12 @@ class ClientDisplay:
             "[bold cyan]🌌 Galaxy Framework[/bold cyan]\n\n"
             "[white]AI-powered DAG workflow orchestration system[/white]\n\n"
             "[bold yellow]Quick Start:[/bold yellow]\n"
-            "  [cyan]python galaxy.py 'Create a data pipeline'[/cyan]\n"
-            "  [cyan]python galaxy.py --interactive[/cyan]\n"
-            "  [cyan]python galaxy.py --demo[/cyan]\n\n"
+            "  [cyan]python -m galaxy 'Create a data pipeline'[/cyan]\n"
+            "  [cyan]python -m galaxy --interactive[/cyan]\n"
+            "  [cyan]python -m galaxy --demo[/cyan]\n\n"
             "[bold yellow]Advanced Usage:[/bold yellow]\n"
-            "  [cyan]python galaxy.py --request 'Task' --session-name 'my_session'[/cyan]\n"
-            "  [cyan]python galaxy.py --interactive --max-rounds 20[/cyan]\n\n"
+            "  [cyan]python -m galaxy --request 'Task' --session-name 'my_session'[/cyan]\n"
+            "  [cyan]python -m galaxy --interactive --max-rounds 20[/cyan]\n\n"
             "[dim]Use --help for all options[/dim]",
             border_style="blue",
         )
@@ -79,7 +79,7 @@ class ClientDisplay:
         """
         banner = Panel.fit(
             "[bold cyan]🌌 UFO3 Framework - Interactive Mode[/bold cyan]\n\n"
-            "[white]Enter your requests below. Galaxy will convert them into DAG workflows.[/white]\n"
+            "[white]Enter your requests below. UFO will convert them into Constellation workflows.[/white]\n"
             "[dim]Commands: [bold]help[/bold], [bold]status[/bold], [bold]clear[/bold], [bold]quit[/bold][/dim]",
             border_style="blue",
         )
@@ -243,7 +243,7 @@ class ClientDisplay:
         Show execution completion banner.
         """
         self.console.print("\n" + "=" * 60)
-        self.print_success("🎯 Galaxy Framework Execution Complete!")
+        self.print_success("🎯 UFO Framework Execution Complete!")
         self.console.print("=" * 60)
 
     def show_demo_banner(self) -> None:
@@ -251,7 +251,7 @@ class ClientDisplay:
         Show demo mode banner.
         """
         demo_panel = Panel(
-            "[bold cyan]🌟 Galaxy Framework Demo[/bold cyan]\n\n"
+            "[bold cyan]🌟 UFO3 Framework Demo[/bold cyan]\n\n"
             "[white]Showcasing AI-powered DAG workflow orchestration[/white]\n"
             "[dim]Watch complex requests transform into executable workflows![/dim]",
             border_style="cyan",

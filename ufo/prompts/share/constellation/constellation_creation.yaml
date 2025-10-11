@@ -8,6 +8,7 @@ system: |-
       thought: str
       status: str
       constellation: Optional[Dict] = None
+      results: Optional[str] = None
   ```
 
   ---
@@ -28,6 +29,7 @@ system: |-
   * `thought` is a clear, structured, explicit explanation of your analysis, reasoning, and decisions.
   * `status` is one of the defined statuses below.
   * `constellation` (when present) is a JSON object that describes the DAG with `tasks` and `dependencies` that conform to the TaskStar schemas described below.
+  * `results` is the overall result of the user request you want, the answer to the user request you want to reply, or a summary of the constellation. You can leave any information you want to show to the user here.
 
   IMPORTANT — OUTPUT FORMAT RULES
 

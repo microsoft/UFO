@@ -243,7 +243,7 @@ class GalaxyClient:
             try:
                 # Get user input with rich prompt
                 user_input = self.display.get_user_input(
-                    f"[bold blue]Galaxy[{request_count}][/bold blue]"
+                    f"[bold blue]UFO[{request_count}][/bold blue]"
                 )
 
                 if not user_input:
