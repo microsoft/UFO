@@ -385,9 +385,7 @@ class TaskConstellationOrchestrator:
         """
         if self._execution_tasks:
             done, pending = await asyncio.wait(
-                self._execution_tasks.values(),
-                return_when=asyncio.FIRST_COMPLETED,
-                timeout=1.0,  # Periodically check for new tasks
+                self._execution_tasks.values(), return_when=asyncio.FIRST_COMPLETED
             )
 
             # Clean up completed tasks
