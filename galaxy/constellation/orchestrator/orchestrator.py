@@ -12,7 +12,7 @@ Delegates device/state management to ConstellationManager.
 import asyncio
 import logging
 import time
-from typing import Any, Dict, List, Optional, TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 from galaxy.client.device_manager import ConstellationDeviceManager
 
@@ -21,18 +21,11 @@ if TYPE_CHECKING:
         ConstellationModificationSynchronizer,
     )
 
-from ...core.events import (
-    ConstellationEvent,
-    Event,
-    EventType,
-    TaskEvent,
-    get_event_bus,
-)
-from ...core.types import ProcessingContext
-from .constellation_manager import ConstellationManager
-from ..enums import DeviceType, TaskStatus
+from ...core.events import ConstellationEvent, EventType, TaskEvent, get_event_bus
+from ..enums import TaskStatus
 from ..task_constellation import TaskConstellation
 from ..task_star import TaskStar
+from .constellation_manager import ConstellationManager
 
 
 class TaskConstellationOrchestrator:
@@ -65,7 +58,6 @@ class TaskConstellationOrchestrator:
 
         # Initialize event bus for publishing events
         if event_bus is None:
-            from ...core.events import get_event_bus
 
             self._event_bus = get_event_bus()
         else:
