@@ -699,7 +699,7 @@ class BaseSession(ABC):
         return self._results
 
     @results.setter
-    def results(self, value: Dict[str, str]) -> None:
+    def results(self, value: List[Dict[str, str]]) -> None:
         """
         Set the evaluation results of the session.
         :param value: The evaluation results of the session.
@@ -823,10 +823,14 @@ class BaseSession(ABC):
             )
 
         # Add additional information to the evaluation result.
-        additional_info = {"level": "session", "request": requests, "id": 0}
+        additional_info = {
+            "level": "session",
+            "request": requests,
+            "type": "evaluation_result",
+        }
         result.update(additional_info)
 
-        self._results = result
+        self._results.append(result)
 
         self.cost += cost
 
@@ -839,7 +843,7 @@ class BaseSession(ABC):
         )
 
     @property
-    def results(self) -> Any:
+    def results(self) -> List[Dict[str, str]]:
         """
         Get the evaluation results of the session.
         return: The evaluation results of the session.
@@ -847,7 +851,7 @@ class BaseSession(ABC):
         return self._results
 
     @results.setter
-    def results(self, value: Any):
+    def results(self, value: List[Dict[str, str]]):
         """
         Set the evaluation results of the session.
         :param value: The evaluation results to set.
