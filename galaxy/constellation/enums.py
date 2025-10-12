@@ -29,10 +29,12 @@ class DependencyType(Enum):
     Types of dependencies between tasks.
     """
 
-    UNCONDITIONAL = "unconditional"  # 无条件依赖，前置任务完成即可
-    CONDITIONAL = "conditional"  # 条件依赖，需要满足特定条件
-    SUCCESS_ONLY = "success_only"  # 仅在前置任务成功时执行
-    COMPLETION_ONLY = "completion_only"  # 无论成功失败，前置任务完成即可
+    UNCONDITIONAL = "unconditional"  # Unconditional dependency, executes once prerequisite task completes
+    CONDITIONAL = (
+        "conditional"  # Conditional dependency, requires specific conditions to be met
+    )
+    SUCCESS_ONLY = "success_only"  # Executes only when prerequisite task succeeds
+    COMPLETION_ONLY = "completion_only"  # Executes when prerequisite task completes, regardless of success or failure
 
 
 class ConstellationState(Enum):
