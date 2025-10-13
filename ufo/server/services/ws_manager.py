@@ -1,7 +1,8 @@
 import threading
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Dict, List
+from pathlib import Path
+from typing import Any, Dict, List, Optional
 
 from fastapi import WebSocket
 
@@ -16,6 +17,7 @@ class ClientInfo:
     client_type: ClientType
     connected_at: datetime
     metadata: Dict = None
+    system_info: Dict = None  # Device system information (for device clients)
 
 
 class WSManager:
@@ -24,12 +26,19 @@ class WSManager:
     Supports both device clients and constellation clients.
     """
 
-    def __init__(self):
+    def __init__(self, device_config_path: Optional[str] = None):
         """
         Initialize the WSManager.
+        :param device_config_path: Optional path to device configuration file (YAML/JSON)
         """
         self.online_clients: Dict[str, ClientInfo] = {}
         self.lock = threading.Lock()
+        self.device_config_path = device_config_path
+        self._device_configs: Dict[str, Dict[str, Any]] = {}
+
+        # Load device configurations if path provided
+        if device_config_path:
+            self._load_device_configs(device_config_path)
 
     def add_client(
         self,
@@ -46,11 +55,31 @@ class WSManager:
         :param metadata: Additional metadata about the client.
         """
         with self.lock:
+            # Extract and merge system info with server config for device clients
+            system_info = None
+            if (
+                metadata
+                and "system_info" in metadata
+                and client_type == ClientType.DEVICE
+            ):
+                system_info = metadata.get("system_info")
+
+                # Merge with server-configured metadata if available
+                server_config = self._device_configs.get(client_id, {})
+                if server_config:
+                    system_info = self._merge_device_info(system_info, server_config)
+                    import logging
+
+                    logging.getLogger(__name__).info(
+                        f"[WSManager] Merged server config for device {client_id}"
+                    )
+
             self.online_clients[client_id] = ClientInfo(
                 websocket=ws,
                 client_type=client_type,
                 connected_at=datetime.now(),
                 metadata=metadata or {},
+                system_info=system_info,
             )
 
     def remove_client(self, client_id: str):
@@ -144,3 +173,128 @@ class WSManager:
                 "device_clients": device_count,
                 "constellation_clients": constellation_count,
             }
+
+    def get_device_system_info(self, device_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get device system information by device ID.
+
+        :param device_id: The device ID to retrieve information for.
+        :return: Device system information dictionary, or None if not found or not a device.
+        """
+        with self.lock:
+            client_info = self.online_clients.get(device_id)
+            if client_info and client_info.client_type == ClientType.DEVICE:
+                return client_info.system_info
+            return None
+
+    def get_all_devices_info(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Get system information for all connected devices.
+
+        :return: Dictionary mapping device_id to system_info.
+        """
+        with self.lock:
+            return {
+                device_id: client_info.system_info
+                for device_id, client_info in self.online_clients.items()
+                if client_info.client_type == ClientType.DEVICE
+                and client_info.system_info
+            }
+
+    def _load_device_configs(self, config_path: str) -> None:
+        """
+        Load device configurations from a YAML or JSON file.
+
+        Expected format:
+        devices:
+          device_id_1:
+            tags: ["production", "office"]
+            tier: "high_performance"
+            ...
+          device_id_2:
+            ...
+
+        :param config_path: Path to configuration file
+        """
+        import logging
+
+        logger = logging.getLogger(__name__)
+
+        try:
+            path = Path(config_path)
+            if not path.exists():
+                logger.warning(
+                    f"[WSManager] Device config file not found: {config_path}"
+                )
+                return
+
+            # Support both YAML and JSON
+            if config_path.endswith(".yaml") or config_path.endswith(".yml"):
+                import yaml
+
+                with open(config_path, "r", encoding="utf-8") as f:
+                    config = yaml.safe_load(f)
+            elif config_path.endswith(".json"):
+                import json
+
+                with open(config_path, "r", encoding="utf-8") as f:
+                    config = json.load(f)
+            else:
+                logger.warning(
+                    f"[WSManager] Unsupported config file format: {config_path}"
+                )
+                return
+
+            # Extract device-specific configurations
+            if config and "devices" in config:
+                self._device_configs = config["devices"]
+                logger.info(
+                    f"[WSManager] Loaded {len(self._device_configs)} device configurations"
+                )
+            else:
+                logger.warning("[WSManager] No 'devices' section found in config file")
+
+        except Exception as e:
+            logger.error(
+                f"[WSManager] Error loading device configs: {e}", exc_info=True
+            )
+
+    def _merge_device_info(
+        self, system_info: Dict[str, Any], server_config: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Merge device system information with server configuration.
+
+        Server config takes precedence for overlapping keys, except for
+        special cases like capabilities which are merged.
+
+        :param system_info: Auto-detected system information from device
+        :param server_config: Server-configured metadata
+        :return: Merged dictionary
+        """
+        merged = {**system_info}
+
+        # Add all server config to custom_metadata
+        if "custom_metadata" not in merged:
+            merged["custom_metadata"] = {}
+
+        # Merge server config into custom_metadata
+        merged["custom_metadata"].update(server_config)
+
+        # Special handling: merge capabilities if both exist
+        if (
+            "supported_features" in system_info
+            and "additional_features" in server_config
+        ):
+            merged["supported_features"] = list(
+                set(
+                    system_info["supported_features"]
+                    + server_config["additional_features"]
+                )
+            )
+
+        # Add server tags if provided
+        if "tags" in server_config:
+            merged["tags"] = server_config["tags"]
+
+        return merged

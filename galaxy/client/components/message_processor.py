@@ -129,6 +129,8 @@ class MessageProcessor:
                 self.heartbeat_manager.handle_heartbeat_response(device_id)
             elif server_msg.type == ServerMessageType.COMMAND:
                 await self._handle_command_message(device_id, server_msg)
+            elif server_msg.type == ServerMessageType.DEVICE_INFO_RESPONSE:
+                await self._handle_device_info_response(device_id, server_msg)
             else:
                 self.logger.debug(
                     f"📋 Unhandled message type {server_msg.type} from device {device_id}"
@@ -238,6 +240,56 @@ class MessageProcessor:
             )
         except Exception as e:
             self.logger.error(f"❌ Error handling command from device {device_id}: {e}")
+
+    async def _handle_device_info_response(
+        self, device_id: str, server_msg: ServerMessage
+    ) -> None:
+        """
+        Handle device info response messages from the server.
+
+        This method completes the pending device info request Future in ConnectionManager.
+
+        :param device_id: Device that sent the response
+        :param server_msg: ServerMessage containing device info
+        """
+        try:
+            # Extract response_id (ServerMessage uses response_id, not request_id)
+            request_id = server_msg.response_id
+
+            if not request_id:
+                self.logger.warning(
+                    f"⚠️ Device info response from {device_id} missing response_id"
+                )
+                return
+
+            # Extract device info from response
+            device_info = None
+            if server_msg.result and isinstance(server_msg.result, dict):
+                if "error" not in server_msg.result:
+                    device_info = server_msg.result
+                else:
+                    self.logger.warning(
+                        f"⚠️ Device info request failed: {server_msg.result.get('error')}"
+                    )
+
+            # Complete the pending request Future
+            if self.connection_manager:
+                self.connection_manager.complete_device_info_response(
+                    request_id, device_info
+                )
+                self.logger.debug(
+                    f"🔄 Completed device info response Future for request {request_id}"
+                )
+            else:
+                self.logger.warning(
+                    f"⚠️ ConnectionManager not set, cannot complete device info response"
+                )
+
+        except Exception as e:
+            self.logger.error(
+                f"❌ Error handling device info response from {device_id}: {e}",
+                exc_info=True,
+            )
 
     async def _process_device_info_response(self, device_id: str, results: Any) -> None:
         """Process device information response"""

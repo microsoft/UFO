@@ -86,14 +86,46 @@ class UFOWebSocketClient:
 
     async def register_client(self):
         """
-        Send client_id to server upon connection.
+        Send client_id and device system information to server upon connection.
+        This implements the Push model where device info is sent during registration.
         """
+        from ufo.client.device_info_provider import DeviceInfoProvider
+
+        # Collect device system information (no custom metadata from device side)
+        try:
+            system_info = DeviceInfoProvider.collect_system_info(
+                self.ufo_client.client_id,
+                custom_metadata=None,  # Server will add custom metadata if configured
+            )
+
+            # Prepare metadata with system info
+            metadata = {
+                "system_info": system_info.to_dict(),
+                "registration_time": datetime.datetime.now(
+                    datetime.timezone.utc
+                ).isoformat(),
+            }
+
+            self.logger.info(
+                f"[WS] Collected device info: platform={system_info.platform}, "
+                f"cpu={system_info.cpu_count}, memory={system_info.memory_total_gb}GB"
+            )
+
+        except Exception as e:
+            self.logger.error(f"[WS] Error collecting device info: {e}", exc_info=True)
+            # Continue with registration even if info collection fails
+            metadata = {
+                "registration_time": datetime.datetime.now(
+                    datetime.timezone.utc
+                ).isoformat()
+            }
 
         client_message = ClientMessage(
             type=ClientMessageType.REGISTER,
             client_id=self.ufo_client.client_id,
             status=TaskStatus.OK,
             timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            metadata=metadata,
         )
 
         await self._ws.send(client_message.model_dump_json())

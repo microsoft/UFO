@@ -11,7 +11,7 @@ Single responsibility: Connection management.
 import asyncio
 import logging
 from datetime import datetime, timezone
-from typing import Dict, Optional
+from typing import Any, Dict, Optional
 
 import websockets
 from websockets import WebSocketClientProtocol
@@ -22,6 +22,7 @@ from ufo.contracts.contracts import (
     ClientMessageType,
     ClientType,
     ServerMessage,
+    ServerMessageType,
     TaskStatus,
 )
 
@@ -40,6 +41,9 @@ class WebSocketConnectionManager:
         # Dictionary to track pending task responses using asyncio.Future
         # Key: task_id (request_id), Value: Future that will be resolved with ServerMessage
         self._pending_tasks: Dict[str, asyncio.Future] = {}
+        # Dictionary to track pending device info requests
+        # Key: request_id, Value: Future that will be resolved with device info dict
+        self._pending_device_info: Dict[str, asyncio.Future] = {}
         self.logger = logging.getLogger(f"{__name__}.WebSocketConnectionManager")
 
     async def connect_to_device(
@@ -367,3 +371,92 @@ class WebSocketConnectionManager:
         """Disconnect from all devices"""
         for device_id in list(self._connections.keys()):
             await self.disconnect_device(device_id)
+
+    async def request_device_info(self, device_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Request device system information via WebSocket.
+
+        This method sends a DEVICE_INFO_REQUEST message and waits for MessageProcessor
+        to receive and route the DEVICE_INFO_RESPONSE back via complete_device_info_response().
+        Uses the same Future pattern as send_task_to_device() to avoid recv() conflicts.
+
+        :param device_id: The device ID to get information for
+        :return: Device system information dictionary, or None if not available
+        """
+        websocket = self._connections.get(device_id)
+        if not websocket or websocket.closed:
+            self.logger.warning(
+                f"⚠️ Device {device_id} not connected, cannot request info"
+            )
+            return None
+
+        try:
+            # Create a unique request ID
+            request_id = (
+                f"device_info_{device_id}_{datetime.now(timezone.utc).timestamp()}"
+            )
+
+            # Create a Future to wait for response
+            info_future = asyncio.Future()
+            self._pending_device_info[request_id] = info_future
+
+            # Send device info request using dedicated message type
+            request_message = ClientMessage(
+                type=ClientMessageType.DEVICE_INFO_REQUEST,
+                client_type=ClientType.CONSTELLATION,
+                client_id=f"{self.constellation_id}@{device_id}",
+                target_id=device_id,
+                request_id=request_id,
+                timestamp=datetime.now(timezone.utc).isoformat(),
+                status=TaskStatus.OK,
+            )
+
+            await websocket.send(request_message.model_dump_json())
+            self.logger.debug(f"📤 Sent device info request for {device_id}")
+
+            # Wait for MessageProcessor to complete the Future (timeout: 10s)
+            try:
+                device_info = await asyncio.wait_for(info_future, timeout=10.0)
+                self.logger.info(f"📊 Retrieved device info for {device_id}")
+                return device_info
+            except asyncio.TimeoutError:
+                self.logger.error(f"⏰ Timeout requesting device info for {device_id}")
+                return None
+            finally:
+                # Clean up the pending future
+                self._pending_device_info.pop(request_id, None)
+
+        except Exception as e:
+            self.logger.error(f"❌ Error requesting device info for {device_id}: {e}")
+            self._pending_device_info.pop(request_id, None)
+            return None
+
+    def complete_device_info_response(
+        self, request_id: str, device_info: Optional[Dict[str, Any]]
+    ) -> None:
+        """
+        Complete a pending device info request with the response from the server.
+
+        This method is called by MessageProcessor when it receives a DEVICE_INFO_RESPONSE.
+        It resolves the asyncio.Future associated with the request_id.
+
+        :param request_id: Unique request identifier
+        :param device_info: Device system information dictionary, or None if error
+        """
+        info_future = self._pending_device_info.get(request_id)
+
+        if info_future is None:
+            self.logger.warning(
+                f"⚠️ Received device info response for unknown request: {request_id}"
+            )
+            return
+
+        if info_future.done():
+            self.logger.warning(
+                f"⚠️ Received duplicate device info response for: {request_id}"
+            )
+            return
+
+        # Resolve the Future with the device info
+        info_future.set_result(device_info)
+        self.logger.debug(f"✅ Completed device info response for {request_id}")

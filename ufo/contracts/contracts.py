@@ -166,6 +166,8 @@ class ClientMessageType(str, Enum):
     ERROR = "error"
     REGISTER = "register"
     TASK_END = "task_end"
+    DEVICE_INFO_REQUEST = "device_info_request"  # Constellation requests device info
+    DEVICE_INFO_RESPONSE = "device_info_response"  # Device responds with its info (reserved for Pull model)
 
 
 class ServerMessageType(str, Enum):
@@ -174,6 +176,10 @@ class ServerMessageType(str, Enum):
     TASK_END = "task_end"
     COMMAND = "command"
     ERROR = "error"
+    DEVICE_INFO_REQUEST = (
+        "device_info_request"  # Forward device info request to device (reserved)
+    )
+    DEVICE_INFO_RESPONSE = "device_info_response"  # Send device info to constellation
 
 
 class ClientType(str, Enum):

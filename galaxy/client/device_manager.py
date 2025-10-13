@@ -146,8 +146,12 @@ class ConstellationDeviceManager:
             self.message_processor.start_message_handler(device_id, websocket)
             self.heartbeat_manager.start_heartbeat(device_id)
 
-            # Request device capabilities
-            # await self.connection_manager.request_device_info(device_id)
+            # Request device system info and update DeviceInfo
+            # The device already pushed its info during registration, now we retrieve it
+            device_system_info = await self.connection_manager.request_device_info(device_id)
+            if device_system_info:
+                # Update DeviceInfo with system information (delegate to DeviceRegistry)
+                self.device_registry.update_device_system_info(device_id, device_system_info)
 
             # Set device to IDLE (ready to accept tasks)
             self.device_registry.set_device_idle(device_id)
@@ -345,6 +349,16 @@ class ConstellationDeviceManager:
     def get_device_capabilities(self, device_id: str) -> Dict[str, Any]:
         """Get device capabilities and information"""
         return self.device_registry.get_device_capabilities(device_id)
+
+    def get_device_system_info(self, device_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get device system information (hardware, OS, features).
+        Delegates to DeviceRegistry.
+        
+        :param device_id: Device ID
+        :return: System information dictionary or None if not available
+        """
+        return self.device_registry.get_device_system_info(device_id)
 
     def get_all_devices(self, connected=False) -> Dict[str, DeviceInfo]:
         """

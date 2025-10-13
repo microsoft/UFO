@@ -143,7 +143,17 @@ class UFOWebSocketHandler:
         if client_type == ClientType.CONSTELLATION:
             self.logger.info(f"[WS] 🌟 Constellation client {client_id} connected")
         else:
-            self.logger.info(f"[WS] 📱 Device client {client_id} connected")
+            # Log device connection with system info if available
+            system_info = self.ws_manager.get_device_system_info(client_id)
+            if system_info:
+                self.logger.info(
+                    f"[WS] 📱 Device client {client_id} connected - "
+                    f"Platform: {system_info.get('platform', 'unknown')}, "
+                    f"CPU: {system_info.get('cpu_count', 'N/A')}, "
+                    f"Memory: {system_info.get('memory_total_gb', 'N/A')}GB"
+                )
+            else:
+                self.logger.info(f"[WS] 📱 Device client {client_id} connected")
 
     async def disconnect(self, client_id: str) -> None:
         """
@@ -210,6 +220,12 @@ class UFOWebSocketHandler:
                 await self.handle_heartbeat(data, websocket)
             elif msg_type == ClientMessageType.ERROR:
                 await self.handle_error(data, websocket)
+            elif msg_type == ClientMessageType.DEVICE_INFO_REQUEST:
+                # Constellation requesting device info
+                await self.handle_device_info_request(data, websocket)
+            elif msg_type == ClientMessageType.DEVICE_INFO_RESPONSE:
+                # Reserved for future Pull model where device pushes info on request
+                await self.handle_device_info_response(data, websocket)
             else:
                 await self.handle_unknown(data, websocket)
         except Exception as e:
@@ -363,3 +379,67 @@ class UFOWebSocketHandler:
         )
 
         await command_dispatcher.set_result(response_id, data)
+
+    async def handle_device_info_response(
+        self, data: ClientMessage, websocket: WebSocket
+    ) -> None:
+        """
+        Handle device info response (reserved for future Pull model).
+        :param data: The data from the client.
+        :param websocket: The WebSocket connection.
+        """
+        self.logger.info(
+            f"[WS] Received device info response from {data.client_id} (not implemented)"
+        )
+
+    async def handle_device_info_request(
+        self, data: ClientMessage, websocket: WebSocket
+    ) -> None:
+        """
+        Handle device info request from constellation client.
+
+        :param data: The request data from constellation.
+        :param websocket: The WebSocket connection.
+        """
+        device_id = data.target_id
+        request_id = data.request_id  # Extract request_id from client message
+
+        self.logger.info(
+            f"[WS] 🌟 Constellation requesting device info for {device_id}"
+        )
+
+        # Get device info from WSManager
+        device_info = await self.get_device_info(device_id)
+
+        # Send response back to constellation
+        # Use client's request_id as response_id to match the request
+        response = ServerMessage(
+            type=ServerMessageType.DEVICE_INFO_RESPONSE,
+            status=TaskStatus.OK if "error" not in device_info else TaskStatus.ERROR,
+            result=device_info,
+            error=device_info.get("error"),
+            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            response_id=request_id,  # Match client's request_id
+        )
+
+        await websocket.send_text(response.model_dump_json())
+
+        self.logger.info(
+            f"[WS] 📤 Sent device info response for {device_id} to constellation"
+        )
+
+    async def get_device_info(self, device_id: str) -> dict:
+        """
+        Get device system information for a specific device.
+        This is called by constellation clients via WebSocket.
+
+        :param device_id: The device ID to get information for.
+        :return: Device system information dictionary.
+        """
+        device_info = self.ws_manager.get_device_system_info(device_id)
+        if device_info:
+            return device_info
+        else:
+            return {
+                "error": f"Device {device_id} not found or no system info available"
+            }

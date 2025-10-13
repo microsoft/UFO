@@ -179,3 +179,85 @@ class DeviceRegistry:
             self._device_capabilities.pop(device_id, None)
             return True
         return False
+
+    def update_device_system_info(
+        self, device_id: str, system_info: Dict[str, Any]
+    ) -> bool:
+        """
+        Update DeviceInfo with system information retrieved from server.
+
+        This method updates the device's OS, capabilities, and metadata with
+        the system information that was automatically collected by the device
+        and stored on the server.
+
+        :param device_id: Device ID
+        :param system_info: System information dictionary from server
+        :return: True if update successful, False if device not found
+        """
+        device_info = self.get_device(device_id)
+        if not device_info:
+            self.logger.warning(
+                f"Cannot update system info: device {device_id} not found"
+            )
+            return False
+
+        # Update OS information
+        if "platform" in system_info:
+            device_info.os = system_info["platform"]
+
+        # Update capabilities with supported features
+        if "supported_features" in system_info:
+            features = system_info["supported_features"]
+            # Merge with existing capabilities (avoid duplicates)
+            existing_caps = set(device_info.capabilities)
+            new_caps = existing_caps.union(set(features))
+            device_info.capabilities = list(new_caps)
+            self.logger.debug(
+                f"Updated capabilities for {device_id}: {device_info.capabilities}"
+            )
+
+        # Update metadata with system information
+        device_info.metadata.update(
+            {
+                "system_info": {
+                    "platform": system_info.get("platform"),
+                    "os_version": system_info.get("os_version"),
+                    "cpu_count": system_info.get("cpu_count"),
+                    "memory_total_gb": system_info.get("memory_total_gb"),
+                    "hostname": system_info.get("hostname"),
+                    "ip_address": system_info.get("ip_address"),
+                    "platform_type": system_info.get("platform_type"),
+                    "schema_version": system_info.get("schema_version"),
+                }
+            }
+        )
+
+        # Add custom metadata from server config if present
+        if "custom_metadata" in system_info:
+            device_info.metadata["custom_metadata"] = system_info["custom_metadata"]
+
+        # Add tags if present
+        if "tags" in system_info:
+            device_info.metadata["tags"] = system_info["tags"]
+
+        self.logger.info(
+            f"📊 Updated system info for {device_id}: "
+            f"platform={system_info.get('platform')}, "
+            f"cpu={system_info.get('cpu_count')}, "
+            f"memory={system_info.get('memory_total_gb')}GB"
+        )
+
+        return True
+
+    def get_device_system_info(self, device_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Get device system information (hardware, OS, features).
+
+        :param device_id: Device ID
+        :return: System information dictionary or None if not available
+        """
+        device_info = self.get_device(device_id)
+        if not device_info:
+            return None
+
+        return device_info.metadata.get("system_info")

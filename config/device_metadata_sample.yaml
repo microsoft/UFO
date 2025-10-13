@@ -1,0 +1,64 @@
+# Device Metadata Configuration Sample
+# 
+# This file allows server administrators to configure additional metadata
+# for devices that complements the auto-detected system information.
+# 
+# This metadata will be merged with the system-collected information
+# and sent to the server during device registration.
+
+# Device-specific metadata
+device_metadata:
+  # Tags for categorization and filtering
+  tags:
+    - "production"
+    - "office_automation"
+    - "windows_specialist"
+  
+  # Location information
+  location:
+    datacenter: "US-West"
+    rack: "A-12"
+    building: "Main Office"
+  
+  # Business context
+  department: "IT Operations"
+  cost_center: "CC-1234"
+  environment: "production"
+  
+  # Performance tier
+  tier: "high_performance"
+  
+  # Allowed capabilities (restricts what this device can do)
+  allowed_capabilities:
+    - "web_browsing"
+    - "office_automation"
+    - "file_operations"
+    - "email_processing"
+  
+  # Resource limits
+  resource_limits:
+    max_concurrent_tasks: 3
+    max_memory_usage_percent: 80
+    max_cpu_usage_percent: 90
+  
+  # Scheduling constraints
+  availability:
+    timezone: "UTC-8"
+    business_hours: "09:00-18:00"
+    maintenance_window: "Saturday 02:00-04:00"
+  
+  # Custom application versions
+  installed_software:
+    - name: "Microsoft Office"
+      version: "365"
+    - name: "Google Chrome"
+      version: "120.0"
+  
+  # Contact information
+  contact:
+    owner: "IT Team"
+    email: "it-ops@example.com"
+    slack_channel: "#device-alerts"
+  
+  # Notes
+  notes: "Primary device for automated office tasks"
