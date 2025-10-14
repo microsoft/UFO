@@ -15,7 +15,7 @@ from ufo.server.services.ws_manager import WSManager, ClientInfo
 from ufo.contracts.contracts import ClientType
 
 
-class TestWSManagerDeviceInfo:
+class TestWSManagerAgentProfile:
     """Test WSManager device info functionality"""
 
     def test_add_device_client_with_system_info(self):

@@ -31,7 +31,7 @@ Example Usage:
 
 from .constellation_client import ConstellationClient
 from .device_manager import ConstellationDeviceManager
-from .components import DeviceInfo, DeviceStatus, TaskRequest
+from .components import AgentProfile, DeviceStatus, TaskRequest
 from .config_loader import ConstellationConfig, DeviceConfig
 from .orchestration import (
     ClientEventHandler,
@@ -44,7 +44,7 @@ __all__ = [
     "ConstellationDeviceManager",
     "ConstellationConfig",
     "DeviceConfig",
-    "DeviceInfo",
+    "AgentProfile",
     "DeviceStatus",
     "TaskRequest",
     # Orchestration components

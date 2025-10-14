@@ -11,7 +11,7 @@ Single responsibility: Event handling coordination.
 import logging
 from typing import Dict, Any, Callable, List
 
-from ..components import DeviceInfo
+from ..components import AgentProfile
 
 
 class ClientEventHandler:
@@ -32,7 +32,7 @@ class ClientEventHandler:
         """
         Add a handler for device connection events.
 
-        :param handler: Async function(device_id: str, device_info: DeviceInfo) -> None
+        :param handler: Async function(device_id: str, device_info: AgentProfile) -> None
         """
         self._connection_handlers.append(handler)
         self.logger.debug(f"📝 Added connection handler: {handler.__name__}")
@@ -65,7 +65,7 @@ class ClientEventHandler:
         self.logger.debug(f"📝 Added error handler: {handler.__name__}")
 
     async def handle_device_connected(
-        self, device_id: str, device_info: DeviceInfo
+        self, device_id: str, device_info: AgentProfile
     ) -> None:
         """
         Handle device connection events.

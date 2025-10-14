@@ -1,7 +1,7 @@
 """
-Test for Device Manager DeviceInfo Update
+Test for Device Manager AgentProfile Update
 
-Tests that device system info is properly retrieved and stored in DeviceInfo.
+Tests that device system info is properly retrieved and stored in AgentProfile.
 """
 
 import pytest
@@ -17,7 +17,7 @@ class TestDeviceManagerInfoUpdate:
 
     @pytest.mark.asyncio
     async def test_connect_device_updates_device_info(self):
-        """Test that connecting to device retrieves and updates DeviceInfo"""
+        """Test that connecting to device retrieves and updates AgentProfile"""
         manager = ConstellationDeviceManager(constellation_id="test_constellation")
 
         # Register a device

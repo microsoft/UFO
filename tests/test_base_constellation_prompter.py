@@ -15,7 +15,7 @@ from unittest.mock import Mock, MagicMock, patch
 from galaxy.agents.prompters.base_constellation_prompter import (
     BaseConstellationPrompter,
 )
-from galaxy.client.components.types import DeviceInfo, DeviceStatus
+from galaxy.client.components.types import AgentProfile, DeviceStatus
 from galaxy.constellation.task_constellation import TaskConstellation
 from galaxy.constellation.task_star import TaskStar
 from galaxy.constellation.task_star_line import TaskStarLine
@@ -46,7 +46,7 @@ class TestBaseConstellationPrompter:
 
     def test_format_device_info_single_device(self):
         """Test formatting single device info."""
-        device_info = DeviceInfo(
+        device_info = AgentProfile(
             device_id="laptop_001",
             server_url="ws://192.168.1.100:5000/ws",
             capabilities=["web_browsing", "office_applications"],
@@ -67,7 +67,7 @@ class TestBaseConstellationPrompter:
 
     def test_format_device_info_multiple_devices(self):
         """Test formatting multiple devices."""
-        device1 = DeviceInfo(
+        device1 = AgentProfile(
             device_id="laptop_001",
             server_url="ws://192.168.1.100:5000/ws",
             capabilities=["web_browsing"],
@@ -75,7 +75,7 @@ class TestBaseConstellationPrompter:
             status=DeviceStatus.CONNECTED,
         )
 
-        device2 = DeviceInfo(
+        device2 = AgentProfile(
             device_id="server_002",
             server_url="ws://192.168.1.101:5000/ws",
             capabilities=["database_management"],

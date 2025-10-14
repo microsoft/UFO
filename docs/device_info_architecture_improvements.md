@@ -6,9 +6,9 @@
 
 ## 改进背景
 
-在初始实现中，`DeviceManager` 中包含了 `_update_device_info_with_system_info()` 方法，该方法直接操作 `DeviceInfo` 对象，更新其系统信息。这违反了单一职责原则（Single Responsibility Principle）：
+在初始实现中，`DeviceManager` 中包含了 `_update_device_info_with_system_info()` 方法，该方法直接操作 `AgentProfile` 对象，更新其系统信息。这违反了单一职责原则（Single Responsibility Principle）：
 
-- **问题**: `DeviceManager` 应该负责设备管理的**协调**工作，而不应该直接管理 `DeviceInfo` 的数据更新
+- **问题**: `DeviceManager` 应该负责设备管理的**协调**工作，而不应该直接管理 `AgentProfile` 的数据更新
 - **设计缺陷**: 数据管理逻辑分散在多个组件中，降低了可维护性
 
 ## 架构改进
@@ -31,7 +31,7 @@ DeviceRegistry
 
 | 组件 | 职责 | 关键方法 |
 |------|------|----------|
-| **DeviceRegistry** | 管理 `DeviceInfo` 对象的存储和更新 | `update_device_system_info()`, `get_device_system_info()` |
+| **DeviceRegistry** | 管理 `AgentProfile` 对象的存储和更新 | `update_device_system_info()`, `get_device_system_info()` |
 | **ConnectionManager** | 管理 WebSocket 连接和通信 | `request_device_info()` |
 | **DeviceManager** | 协调各组件，处理设备连接流程 | `connect_device()`, `get_device_system_info()` (委托) |
 
@@ -43,10 +43,10 @@ DeviceRegistry
 class DeviceRegistry:
     def update_device_system_info(self, device_id: str, system_info: Dict[str, Any]) -> bool:
         """
-        更新设备的系统信息到 DeviceInfo
+        更新设备的系统信息到 AgentProfile
         
         职责:
-        - 更新 DeviceInfo.os 字段
+        - 更新 AgentProfile.os 字段
         - 合并 features 到 capabilities
         - 存储 system_info, custom_metadata, tags 到 metadata
         
@@ -69,7 +69,7 @@ class DeviceRegistry:
 ```python
 class ConstellationDeviceManager:
     def _update_device_info_with_system_info(self, device_id: str, system_info: Dict) -> bool:
-        # ❌ 直接操作 DeviceInfo 对象
+        # ❌ 直接操作 AgentProfile 对象
         device_info = self.device_registry.get_device_info(device_id)
         if device_info:
             device_info.os = system_info.get("os")
@@ -95,7 +95,7 @@ class ConstellationDeviceManager:
 ### 1. 单一职责原则 (SRP)
 
 每个类只有一个改变的理由：
-- **DeviceRegistry**: 当 DeviceInfo 的存储和查询逻辑需要改变时
+- **DeviceRegistry**: 当 AgentProfile 的存储和查询逻辑需要改变时
 - **DeviceManager**: 当设备管理的协调流程需要改变时
 - **ConnectionManager**: 当 WebSocket 通信逻辑需要改变时
 
@@ -105,7 +105,7 @@ class ConstellationDeviceManager:
 
 ### 3. 开闭原则 (OCP)
 
-如果需要扩展 DeviceInfo 的更新逻辑（例如添加新字段），只需修改 `DeviceRegistry`，无需修改 `DeviceManager`。
+如果需要扩展 AgentProfile 的更新逻辑（例如添加新字段），只需修改 `DeviceRegistry`，无需修改 `DeviceManager`。
 
 ## 测试验证
 
@@ -140,7 +140,7 @@ Total: 30 tests passed
 ### 测试文件
 
 - **tests/galaxy/client/test_device_manager_info_update.py** (4 个测试)
-  - 验证 `connect_device()` 正确更新 DeviceInfo
+  - 验证 `connect_device()` 正确更新 AgentProfile
   - 验证 `get_device_system_info()` 正确检索信息
   - 验证多设备场景下的信息隔离
 

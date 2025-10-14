@@ -24,13 +24,13 @@ class DeviceStatus(Enum):
     IDLE = "idle"          # 设备已连接且空闲，可接受任务
 ```
 
-### 2. DeviceInfo 增强
+### 2. AgentProfile 增强
 
-在 `DeviceInfo` 中添加了当前任务追踪：
+在 `AgentProfile` 中添加了当前任务追踪：
 
 ```python
 @dataclass
-class DeviceInfo:
+class AgentProfile:
     # ... 其他字段 ...
     current_task_id: Optional[str] = None  # 追踪当前执行的任务
 ```

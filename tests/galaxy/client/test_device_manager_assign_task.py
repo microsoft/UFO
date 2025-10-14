@@ -21,7 +21,7 @@ from unittest.mock import Mock, AsyncMock, MagicMock, patch, call
 from typing import Dict, Any
 
 from galaxy.client.device_manager import ConstellationDeviceManager
-from galaxy.client.components import DeviceStatus, DeviceInfo, TaskRequest
+from galaxy.client.components import DeviceStatus, AgentProfile, TaskRequest
 from galaxy.core.types import ExecutionResult
 
 

@@ -32,7 +32,7 @@ class MockConstellationDeviceManager:
         return self._connected_devices.copy()
 
 
-class MockDeviceInfo:
+class MockAgentProfile:
     """Mock device info for testing."""
 
     def __init__(self, device_id: str):
@@ -52,7 +52,7 @@ class TestTaskConstellationOrchestrator:
 
         def get_device_info(device_id):
             if device_id in device_manager._connected_devices:
-                return MockDeviceInfo(device_id)
+                return MockAgentProfile(device_id)
             return None
 
         device_manager.device_registry.get_device_info.side_effect = get_device_info
@@ -490,7 +490,7 @@ class TestTaskConstellationOrchestratorIntegration:
 
         def get_device_info(device_id):
             if device_id in device_manager._connected_devices:
-                return MockDeviceInfo(device_id)
+                return MockAgentProfile(device_id)
             return None
 
         device_manager.device_registry.get_device_info.side_effect = get_device_info

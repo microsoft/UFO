@@ -2,9 +2,9 @@
 # Licensed under the MIT License.
 
 """
-Test GalaxyClient with Mock DeviceInfo for Log Collection Scenario
+Test GalaxyClient with Mock AgentProfile for Log Collection Scenario
 
-This test demonstrates using GalaxyClient with the mock DeviceInfo objects
+This test demonstrates using GalaxyClient with the mock AgentProfile objects
 to simulate a log collection and Excel generation workflow session.
 """
 
@@ -17,17 +17,17 @@ import tempfile
 import os
 
 from galaxy.galaxy_client import GalaxyClient
-from galaxy.client.components.types import DeviceInfo, DeviceStatus
+from galaxy.client.components.types import AgentProfile, DeviceStatus
 from galaxy.client.config_loader import ConstellationConfig, DeviceConfig
 
 
 class TestGalaxyClientLogCollectionSession:
-    """Test GalaxyClient with mock DeviceInfo for log collection scenario."""
+    """Test GalaxyClient with mock AgentProfile for log collection scenario."""
 
     @pytest.fixture
-    def mock_linux_server_1(self) -> DeviceInfo:
-        """Mock DeviceInfo for first Linux server."""
-        return DeviceInfo(
+    def mock_linux_server_1(self) -> AgentProfile:
+        """Mock AgentProfile for first Linux server."""
+        return AgentProfile(
             device_id="linux_server_001",
             server_url="ws://192.168.1.101:5000/ws",
             os="linux",
@@ -58,9 +58,9 @@ class TestGalaxyClientLogCollectionSession:
         )
 
     @pytest.fixture
-    def mock_linux_server_2(self) -> DeviceInfo:
-        """Mock DeviceInfo for second Linux server."""
-        return DeviceInfo(
+    def mock_linux_server_2(self) -> AgentProfile:
+        """Mock AgentProfile for second Linux server."""
+        return AgentProfile(
             device_id="linux_server_002",
             server_url="ws://192.168.1.102:5000/ws",
             os="linux",
@@ -92,9 +92,9 @@ class TestGalaxyClientLogCollectionSession:
         )
 
     @pytest.fixture
-    def mock_windows_workstation(self) -> DeviceInfo:
-        """Mock DeviceInfo for Windows workstation."""
-        return DeviceInfo(
+    def mock_windows_workstation(self) -> AgentProfile:
+        """Mock AgentProfile for Windows workstation."""
+        return AgentProfile(
             device_id="windows_workstation_001",
             server_url="ws://192.168.1.100:5000/ws",
             os="windows",
@@ -129,9 +129,9 @@ class TestGalaxyClientLogCollectionSession:
     @pytest.fixture
     def mock_constellation_config(
         self,
-        mock_linux_server_1: DeviceInfo,
-        mock_linux_server_2: DeviceInfo,
-        mock_windows_workstation: DeviceInfo,
+        mock_linux_server_1: AgentProfile,
+        mock_linux_server_2: AgentProfile,
+        mock_windows_workstation: AgentProfile,
     ) -> ConstellationConfig:
         """Create mock ConstellationConfig with our test devices."""
         device_configs = [
@@ -172,9 +172,9 @@ class TestGalaxyClientLogCollectionSession:
     @pytest.fixture
     def mock_constellation_client(
         self,
-        mock_linux_server_1: DeviceInfo,
-        mock_linux_server_2: DeviceInfo,
-        mock_windows_workstation: DeviceInfo,
+        mock_linux_server_1: AgentProfile,
+        mock_linux_server_2: AgentProfile,
+        mock_windows_workstation: AgentProfile,
     ):
         """Create mock ConstellationClient."""
         mock_client = AsyncMock()

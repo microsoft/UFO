@@ -16,7 +16,7 @@ from galaxy.core.types import ExecutionResult
 
 from .components import (
     DeviceStatus,
-    DeviceInfo,
+    AgentProfile,
     TaskRequest,
     DeviceRegistry,
     WebSocketConnectionManager,
@@ -146,12 +146,16 @@ class ConstellationDeviceManager:
             self.message_processor.start_message_handler(device_id, websocket)
             self.heartbeat_manager.start_heartbeat(device_id)
 
-            # Request device system info and update DeviceInfo
+            # Request device system info and update AgentProfile
             # The device already pushed its info during registration, now we retrieve it
-            device_system_info = await self.connection_manager.request_device_info(device_id)
+            device_system_info = await self.connection_manager.request_device_info(
+                device_id
+            )
             if device_system_info:
-                # Update DeviceInfo with system information (delegate to DeviceRegistry)
-                self.device_registry.update_device_system_info(device_id, device_system_info)
+                # Update AgentProfile with system information (delegate to DeviceRegistry)
+                self.device_registry.update_device_system_info(
+                    device_id, device_system_info
+                )
 
             # Set device to IDLE (ready to accept tasks)
             self.device_registry.set_device_idle(device_id)
@@ -338,7 +342,7 @@ class ConstellationDeviceManager:
         self.event_manager.add_task_completion_handler(handler)
 
     # Device information access (delegate to DeviceRegistry)
-    def get_device_info(self, device_id: str) -> Optional[DeviceInfo]:
+    def get_device_info(self, device_id: str) -> Optional[AgentProfile]:
         """Get device information"""
         return self.device_registry.get_device(device_id)
 
@@ -354,17 +358,17 @@ class ConstellationDeviceManager:
         """
         Get device system information (hardware, OS, features).
         Delegates to DeviceRegistry.
-        
+
         :param device_id: Device ID
         :return: System information dictionary or None if not available
         """
         return self.device_registry.get_device_system_info(device_id)
 
-    def get_all_devices(self, connected=False) -> Dict[str, DeviceInfo]:
+    def get_all_devices(self, connected=False) -> Dict[str, AgentProfile]:
         """
         Get all registered devices
         :param connected: If True, return only connected devices
-        :return: Dictionary of device_id to DeviceInfo
+        :return: Dictionary of device_id to AgentProfile
         """
         return self.device_registry.get_all_devices(connected=connected)
 

@@ -13,7 +13,7 @@ from typing import Callable, List
 
 from galaxy.core.types import ExecutionResult
 
-from .types import DeviceInfo
+from .types import AgentProfile
 
 
 class EventManager:
@@ -46,7 +46,7 @@ class EventManager:
         self._task_failure_handlers.append(handler)
 
     async def notify_device_connected(
-        self, device_id: str, device_info: DeviceInfo
+        self, device_id: str, device_info: AgentProfile
     ) -> None:
         """Notify all handlers of device connection"""
         for handler in self._connection_handlers:

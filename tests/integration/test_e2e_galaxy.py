@@ -112,7 +112,7 @@ class MockDeviceRegistry:
         if device_id in self.connected_devices:
             device_data = self.connected_devices[device_id]
             return type(
-                "DeviceInfo",
+                "AgentProfile",
                 (),
                 {
                     "device_type": device_data.get("device_type", "unknown"),

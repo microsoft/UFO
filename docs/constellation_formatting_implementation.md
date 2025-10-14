@@ -16,7 +16,7 @@
 
 ## 函数详情
 
-### 1. `_format_device_info(device_info: Dict[str, DeviceInfo]) -> str`
+### 1. `_format_device_info(device_info: Dict[str, AgentProfile]) -> str`
 
 **功能**: 将设备字典转换为格式化字符串，突出设备能力和元数据
 

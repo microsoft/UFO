@@ -12,7 +12,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from .types import DeviceInfo, DeviceStatus
+from .types import AgentProfile, DeviceStatus
 
 
 class DeviceRegistry:
@@ -22,7 +22,7 @@ class DeviceRegistry:
     """
 
     def __init__(self):
-        self._devices: Dict[str, DeviceInfo] = {}
+        self._devices: Dict[str, AgentProfile] = {}
         self._device_capabilities: Dict[str, Dict[str, Any]] = {}
         self.logger = logging.getLogger(f"{__name__}.DeviceRegistry")
 
@@ -34,7 +34,7 @@ class DeviceRegistry:
         capabilities: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         max_retries: int = 5,
-    ) -> DeviceInfo:
+    ) -> AgentProfile:
         """
         Register a new device.
 
@@ -43,9 +43,9 @@ class DeviceRegistry:
         :param capabilities: Device capabilities
         :param metadata: Additional metadata
         :param max_retries: Maximum connection retry attempts
-        :return: Created DeviceInfo object
+        :return: Created AgentProfile object
         """
-        device_info = DeviceInfo(
+        device_info = AgentProfile(
             device_id=device_id,
             server_url=server_url,
             os=os,
@@ -61,15 +61,15 @@ class DeviceRegistry:
         )
         return device_info
 
-    def get_device(self, device_id: str) -> Optional[DeviceInfo]:
+    def get_device(self, device_id: str) -> Optional[AgentProfile]:
         """Get device information by ID"""
         return self._devices.get(device_id)
 
-    def get_all_devices(self, connected: bool = False) -> Dict[str, DeviceInfo]:
+    def get_all_devices(self, connected: bool = False) -> Dict[str, AgentProfile]:
         """
         Get all registered devices
         :param connected: If True, return only connected devices
-        :return: Dictionary of device_id to DeviceInfo
+        :return: Dictionary of device_id to AgentProfile
         """
         if connected:
             return {
@@ -184,7 +184,7 @@ class DeviceRegistry:
         self, device_id: str, system_info: Dict[str, Any]
     ) -> bool:
         """
-        Update DeviceInfo with system information retrieved from server.
+        Update AgentProfile with system information retrieved from server.
 
         This method updates the device's OS, capabilities, and metadata with
         the system information that was automatically collected by the device

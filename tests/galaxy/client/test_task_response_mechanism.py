@@ -32,7 +32,7 @@ from galaxy.client.components.message_processor import MessageProcessor
 from galaxy.client.components.device_registry import DeviceRegistry
 from galaxy.client.components.heartbeat_manager import HeartbeatManager
 from galaxy.client.components.event_manager import EventManager
-from galaxy.client.components.types import DeviceInfo, TaskRequest
+from galaxy.client.components.types import AgentProfile, TaskRequest
 
 from ufo.contracts.contracts import (
     ServerMessage,
@@ -107,7 +107,7 @@ class TestTaskResponseMechanism:
     @pytest.fixture
     def device_info(self, device_id):
         """Create device info for testing"""
-        return DeviceInfo(
+        return AgentProfile(
             device_id=device_id,
             server_url="ws://localhost:8000/ws",
             capabilities={},

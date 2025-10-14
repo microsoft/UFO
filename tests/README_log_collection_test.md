@@ -42,7 +42,7 @@ This test module (`test_linux_log_collection_excel_generation.py`) demonstrates 
 ## Test Coverage
 
 ### Core Tests
-- ✅ **Mock Device Creation**: Validates proper creation of all three DeviceInfo objects
+- ✅ **Mock Device Creation**: Validates proper creation of all three AgentProfile objects
 - ✅ **Capability Verification**: Ensures devices have required capabilities for the scenario
 - ✅ **Log Collection Simulation**: Mocks log collection process from Linux servers
 - ✅ **Excel Generation**: Simulates Excel report creation on Windows
@@ -77,7 +77,7 @@ python -m pytest tests/test_linux_log_collection_excel_generation.py -v -s
 This test serves as a template for:
 1. **Cross-platform automation scenarios**
 2. **Log collection and analysis workflows**
-3. **DeviceInfo mock creation for testing**
+3. **AgentProfile mock creation for testing**
 4. **Constellation device management testing**
 5. **Multi-device task coordination validation**
 

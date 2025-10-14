@@ -1,7 +1,7 @@
 # Bug Report: Real GalaxySession Integration Test Results
 
 ## 测试概述
-使用真实的GalaxySession.run()方法和mock DeviceInfo对象测试日志收集场景，发现了多个关键bug。
+使用真实的GalaxySession.run()方法和mock AgentProfile对象测试日志收集场景，发现了多个关键bug。
 
 ## 发现的Bug
 

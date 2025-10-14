@@ -27,7 +27,7 @@ class DeviceStatus(Enum):
 
 
 @dataclass
-class DeviceInfo:
+class AgentProfile:
     """Device information and capabilities"""
 
     device_id: str
@@ -60,7 +60,7 @@ class DeviceEventHandler(ABC):
 
     @abstractmethod
     async def on_device_connected(
-        self, device_id: str, device_info: DeviceInfo
+        self, device_id: str, device_info: AgentProfile
     ) -> None:
         """Handle device connection event"""
         pass

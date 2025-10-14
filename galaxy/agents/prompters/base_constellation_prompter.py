@@ -14,7 +14,7 @@ from typing import Dict, List, Type
 from ufo.config import Config
 from ufo.contracts.contracts import MCPToolInfo
 from galaxy.agents.schema import WeavingMode
-from galaxy.client.components.types import DeviceInfo
+from galaxy.client.components.types import AgentProfile
 from galaxy.constellation.task_constellation import TaskConstellation
 from ufo.prompter.basic import BasicPrompter
 
@@ -40,7 +40,7 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
         # Initialize with empty templates to avoid file loading
         super().__init__(None, prompt_template, example_prompt_template)
 
-    def _format_device_info(self, device_info: Dict[str, DeviceInfo]) -> str:
+    def _format_agent_profile(self, device_info: Dict[str, AgentProfile]) -> str:
         """
         Format device information for prompt inclusion.
 
@@ -50,7 +50,7 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
         if not device_info:
             return "No devices available."
 
-        formatted_devices = []
+        formatted_agent_profiles = []
 
         for _, info in device_info.items():
             # Format capabilities as a comma-separated list
@@ -71,9 +71,11 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
                 f"{metadata_str}"
             )
 
-            formatted_devices.append(device_summary)
+            formatted_agent_profiles.append(device_summary)
 
-        return "Available Devices:\n\n" + "\n\n".join(formatted_devices)
+        return "Available Device Agent Profiles:\n\n" + "\n\n".join(
+            formatted_agent_profiles
+        )
 
     def _format_constellation(self, constellation: TaskConstellation) -> str:
         """
@@ -224,7 +226,7 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
     def user_content_construction(
         self,
         request: str,
-        device_info: Dict[str, DeviceInfo],
+        device_info: Dict[str, AgentProfile],
         constellation: TaskConstellation,
     ) -> List[Dict[str, str]]:
         """
@@ -255,7 +257,7 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
     def user_prompt_construction(
         self,
         request: str,
-        device_info: Dict[str, DeviceInfo],
+        device_info: Dict[str, AgentProfile],
         constellation: TaskConstellation,
     ) -> str:
         """
@@ -268,7 +270,7 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
 
         prompt = self.prompt_template["user"].format(
             request=request,
-            device_info=self._format_device_info(device_info),
+            device_info=self._format_agent_profile(device_info),
             constellation=self._format_constellation(constellation),
         )
 

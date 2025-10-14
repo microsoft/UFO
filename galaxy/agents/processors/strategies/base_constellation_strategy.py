@@ -20,7 +20,7 @@ from galaxy.agents.schema import (
     ConstellationRequestLog,
     WeavingMode,
 )
-from galaxy.client.components.types import DeviceInfo
+from galaxy.client.components.types import AgentProfile
 from galaxy.constellation.task_constellation import TaskConstellation
 from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.core.processor_framework import (
@@ -142,7 +142,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
     async def _build_comprehensive_prompt(
         self,
         agent: "ConstellationAgent",
-        device_info: Dict[str, DeviceInfo],
+        device_info: Dict[str, AgentProfile],
         constellation: TaskConstellation,
         request: str,
         session_step: int,
@@ -182,7 +182,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
     def _log_request_data(
         self,
         session_step: int,
-        device_info: Dict[str, DeviceInfo],
+        device_info: Dict[str, AgentProfile],
         constellation_json: str,
         request: str,
         weaving_mode: str,

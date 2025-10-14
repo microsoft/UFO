@@ -26,7 +26,7 @@ from ufo.contracts.contracts import (
     TaskStatus,
 )
 
-from .types import DeviceInfo, TaskRequest
+from .types import AgentProfile, TaskRequest
 
 
 class WebSocketConnectionManager:
@@ -47,7 +47,7 @@ class WebSocketConnectionManager:
         self.logger = logging.getLogger(f"{__name__}.WebSocketConnectionManager")
 
     async def connect_to_device(
-        self, device_info: DeviceInfo
+        self, device_info: AgentProfile
     ) -> WebSocketClientProtocol:
         """
         Establish WebSocket connection to a device.
@@ -86,7 +86,7 @@ class WebSocketConnectionManager:
             raise
 
     async def _register_constellation_client(
-        self, device_info: DeviceInfo, websocket: WebSocketClientProtocol
+        self, device_info: AgentProfile, websocket: WebSocketClientProtocol
     ) -> bool:
         """
         Register this constellation as a special client with the UFO server.

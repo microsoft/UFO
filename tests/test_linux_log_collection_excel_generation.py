@@ -5,7 +5,7 @@
 Test Linux Log Collection and Excel Generation
 
 This test module demonstrates collecting logs from two Linux servers and generating an Excel report on a Windows machine.
-It includes mock DeviceInfo objects for testing cross-platform operations in a constellation environment.
+It includes mock AgentProfile objects for testing cross-platform operations in a constellation environment.
 """
 
 import pytest
@@ -16,16 +16,16 @@ from unittest.mock import Mock, AsyncMock, patch
 import tempfile
 import os
 
-from galaxy.client.components.types import DeviceInfo, DeviceStatus
+from galaxy.client.components.types import AgentProfile, DeviceStatus
 
 
 class TestLinuxLogCollectionExcelGeneration:
     """Test cases for cross-platform log collection and Excel generation scenario."""
 
     @pytest.fixture
-    def mock_linux_server_1(self) -> DeviceInfo:
-        """Mock DeviceInfo for first Linux server."""
-        return DeviceInfo(
+    def mock_linux_server_1(self) -> AgentProfile:
+        """Mock AgentProfile for first Linux server."""
+        return AgentProfile(
             device_id="linux_server_001",
             server_url="ws://192.168.1.101:5000/ws",
             os="linux",
@@ -59,9 +59,9 @@ class TestLinuxLogCollectionExcelGeneration:
         )
 
     @pytest.fixture
-    def mock_linux_server_2(self) -> DeviceInfo:
-        """Mock DeviceInfo for second Linux server."""
-        return DeviceInfo(
+    def mock_linux_server_2(self) -> AgentProfile:
+        """Mock AgentProfile for second Linux server."""
+        return AgentProfile(
             device_id="linux_server_002",
             server_url="ws://192.168.1.102:5000/ws",
             os="linux",
@@ -96,9 +96,9 @@ class TestLinuxLogCollectionExcelGeneration:
         )
 
     @pytest.fixture
-    def mock_windows_workstation(self) -> DeviceInfo:
-        """Mock DeviceInfo for Windows workstation for Excel generation."""
-        return DeviceInfo(
+    def mock_windows_workstation(self) -> AgentProfile:
+        """Mock AgentProfile for Windows workstation for Excel generation."""
+        return AgentProfile(
             device_id="windows_workstation_001",
             server_url="ws://192.168.1.100:5000/ws",
             os="windows",
@@ -137,10 +137,10 @@ class TestLinuxLogCollectionExcelGeneration:
     @pytest.fixture
     def device_constellation(
         self,
-        mock_linux_server_1: DeviceInfo,
-        mock_linux_server_2: DeviceInfo,
-        mock_windows_workstation: DeviceInfo,
-    ) -> Dict[str, DeviceInfo]:
+        mock_linux_server_1: AgentProfile,
+        mock_linux_server_2: AgentProfile,
+        mock_windows_workstation: AgentProfile,
+    ) -> Dict[str, AgentProfile]:
         """Create a constellation of devices for testing."""
         return {
             "linux_server_001": mock_linux_server_1,
@@ -150,9 +150,9 @@ class TestLinuxLogCollectionExcelGeneration:
 
     def test_mock_device_creation(
         self,
-        mock_linux_server_1: DeviceInfo,
-        mock_linux_server_2: DeviceInfo,
-        mock_windows_workstation: DeviceInfo,
+        mock_linux_server_1: AgentProfile,
+        mock_linux_server_2: AgentProfile,
+        mock_windows_workstation: AgentProfile,
     ):
         """Test that mock devices are properly created with correct properties."""
         # Test Linux Server 1
@@ -177,7 +177,7 @@ class TestLinuxLogCollectionExcelGeneration:
         assert mock_windows_workstation.status == DeviceStatus.CONNECTED
 
     def test_device_capabilities_for_log_collection_scenario(
-        self, device_constellation: Dict[str, DeviceInfo]
+        self, device_constellation: Dict[str, AgentProfile]
     ):
         """Test that devices have the required capabilities for the log collection scenario."""
         linux_servers = [
@@ -208,7 +208,7 @@ class TestLinuxLogCollectionExcelGeneration:
 
     @pytest.mark.asyncio
     async def test_mock_log_collection_from_linux_servers(
-        self, device_constellation: Dict[str, DeviceInfo]
+        self, device_constellation: Dict[str, AgentProfile]
     ):
         """Test mock log collection process from Linux servers."""
         linux_servers = [
@@ -258,7 +258,7 @@ class TestLinuxLogCollectionExcelGeneration:
 
     @pytest.mark.asyncio
     async def test_mock_excel_generation_on_windows(
-        self, device_constellation: Dict[str, DeviceInfo]
+        self, device_constellation: Dict[str, AgentProfile]
     ):
         """Test mock Excel generation process on Windows workstation."""
         windows_device = next(
@@ -334,7 +334,7 @@ class TestLinuxLogCollectionExcelGeneration:
 
     @pytest.mark.asyncio
     async def test_complete_log_collection_and_excel_workflow(
-        self, device_constellation: Dict[str, DeviceInfo]
+        self, device_constellation: Dict[str, AgentProfile]
     ):
         """Test the complete workflow from log collection to Excel generation."""
         # Step 1: Identify available devices
@@ -404,7 +404,7 @@ class TestLinuxLogCollectionExcelGeneration:
         assert excel_generation_result["charts_generated"] > 0
 
     def test_device_metadata_validation(
-        self, device_constellation: Dict[str, DeviceInfo]
+        self, device_constellation: Dict[str, AgentProfile]
     ):
         """Test that all devices have proper metadata for the log collection scenario."""
         for device_id, device in device_constellation.items():
@@ -430,7 +430,7 @@ class TestLinuxLogCollectionExcelGeneration:
 
     @pytest.mark.asyncio
     async def test_error_handling_scenarios(
-        self, device_constellation: Dict[str, DeviceInfo]
+        self, device_constellation: Dict[str, AgentProfile]
     ):
         """Test error handling scenarios in the log collection workflow."""
         # Test scenario: One Linux server fails
@@ -480,7 +480,7 @@ class TestLinuxLogCollectionExcelGeneration:
         assert partial_report["status"] == "completed_with_warnings"
 
     def test_device_formatting_for_prompt(
-        self, device_constellation: Dict[str, DeviceInfo]
+        self, device_constellation: Dict[str, AgentProfile]
     ):
         """Test device formatting for LLM prompt usage."""
         # This simulates how devices would be formatted for constellation prompts
@@ -525,10 +525,10 @@ class TestLinuxLogCollectionExcelGeneration:
 
     def test_request_english_translation(self):
         """Test that the Chinese request translates to the expected English scenario."""
-        chinese_request = "帮我mock 三个DeviceInfo 做测试，两个linux，一个windows，然后在 tests 文件夹建立测试英文request是关于从两个linux服务器采集log 在windows上生成excel"
+        chinese_request = "帮我mock 三个AgentProfile 做测试，两个linux，一个windows，然后在 tests 文件夹建立测试英文request是关于从两个linux服务器采集log 在windows上生成excel"
 
         english_equivalent = (
-            "Help me mock three DeviceInfo objects for testing: two Linux servers and one Windows machine. "
+            "Help me mock three AgentProfile objects for testing: two Linux servers and one Windows machine. "
             "Create tests in the tests folder. The English request scenario is about collecting logs from "
             "two Linux servers and generating an Excel report on Windows."
         )

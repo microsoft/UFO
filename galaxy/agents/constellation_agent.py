@@ -22,7 +22,7 @@ from galaxy.agents.prompters.base_constellation_prompter import (
     ConstellationPrompterFactory,
 )
 from galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
-from galaxy.client.components.types import DeviceInfo
+from galaxy.client.components.types import AgentProfile
 from galaxy.constellation.orchestrator.orchestrator import TaskConstellationOrchestrator
 from galaxy.core.events import ConstellationEvent, EventType, TaskEvent, get_event_bus
 from ufo.contracts.contracts import Command, MCPToolInfo, ResultStatus
@@ -352,7 +352,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     def message_constructor(
         self,
         request: str,
-        device_info: Dict[str, DeviceInfo],
+        device_info: Dict[str, AgentProfile],
         constellation: TaskConstellation,
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """

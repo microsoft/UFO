@@ -31,7 +31,7 @@ Total:                                    30/30 passed
 ┌─────────────────┐
 │ Device Agent   │
 │                │
-│ [DeviceInfo    │
+│ [AgentProfile    │
 │  Provider]     │
 └────────┬────────┘
          │ 1. Auto-collect on registration
@@ -54,7 +54,7 @@ Total:                                    30/30 passed
 │  Manager]      │ 4. Retrieve info
 │                │
 │ [Device        │
-│  Registry]     │ 5. Update DeviceInfo
+│  Registry]     │ 5. Update AgentProfile
 │                │
 │ [Device        │
 │  Manager]      │ 6. Coordinate flow
@@ -69,7 +69,7 @@ Total:                                    30/30 passed
 | **WSManager** | 存储和提供设备信息 | `get_device_system_info()`, `_merge_device_info()` |
 | **Handler** | 处理设备信息请求 | `handle_device_info_request()` |
 | **ConnectionManager** | WebSocket 通信 | `request_device_info()` |
-| **DeviceRegistry** | 管理 DeviceInfo 对象 | `update_device_system_info()`, `get_device_system_info()` |
+| **DeviceRegistry** | 管理 AgentProfile 对象 | `update_device_system_info()`, `get_device_system_info()` |
 | **DeviceManager** | 协调设备管理流程 | `connect_device()` (delegates to registry) |
 
 ## 🔑 Key Features
@@ -91,7 +91,7 @@ Total:                                    30/30 passed
 
 ### 3. Constellation Client Integration
 - ✅ WebSocket-based querying
-- ✅ Automatic DeviceInfo updates on connection
+- ✅ Automatic AgentProfile updates on connection
 - ✅ Proper error handling
 - ✅ Multi-device support
 
@@ -157,7 +157,7 @@ ws_manager.add_client(
 )
 ```
 
-### Query Flow (Constellation → Server → DeviceInfo)
+### Query Flow (Constellation → Server → AgentProfile)
 
 ```python
 # 1. Constellation queries server
@@ -167,9 +167,9 @@ system_info = await connection_manager.request_device_info(device_id)
 info = ws_manager.get_device_system_info(device_id)
 # Includes: auto-detected info + server config
 
-# 3. Update DeviceInfo (proper architecture!)
+# 3. Update AgentProfile (proper architecture!)
 device_registry.update_device_system_info(device_id, system_info)
-# Updates: os, capabilities, metadata fields in DeviceInfo
+# Updates: os, capabilities, metadata fields in AgentProfile
 ```
 
 ## 🎨 Example Usage
@@ -243,7 +243,7 @@ best_device = max(
 - Server configuration integration
 
 ### DeviceManager Tests (4 tests)
-- DeviceInfo update on connection
+- AgentProfile update on connection
 - System info retrieval
 - Error handling
 - Multi-device isolation

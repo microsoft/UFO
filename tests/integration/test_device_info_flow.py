@@ -22,7 +22,7 @@ from ufo.server.ws.handler import UFOWebSocketHandler
 from ufo.server.services.session_manager import SessionManager
 
 
-class TestDeviceInfoIntegration:
+class TestAgentProfileIntegration:
     """Integration tests for device info flow"""
 
     @pytest.mark.asyncio

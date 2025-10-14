@@ -177,11 +177,11 @@ class ConstellationDeviceManager:
     def add_task_completion_handler(self, handler: Callable) -> None
     
     # Device Information
-    def get_device_info(self, device_id: str) -> Optional[DeviceInfo]
+    def get_device_info(self, device_id: str) -> Optional[AgentProfile]
     def get_connected_devices(self) -> List[str]
     def get_device_capabilities(self, device_id: str) -> Dict[str, Any]
     def get_device_status(self, device_id: str) -> Dict[str, Any]
-    def get_all_devices(self) -> Dict[str, DeviceInfo]
+    def get_all_devices(self) -> Dict[str, AgentProfile]
     
     # Lifecycle
     async def shutdown(self) -> None
@@ -361,7 +361,7 @@ The client module uses well-defined types for type safety and clear interfaces:
 ### Core Types
 
 ```python
-from galaxy.client.components import DeviceStatus, DeviceInfo, TaskRequest
+from galaxy.client.components import DeviceStatus, AgentProfile, TaskRequest
 
 # Device Status Enumeration
 class DeviceStatus(Enum):
@@ -373,7 +373,7 @@ class DeviceStatus(Enum):
 
 # Device Information
 @dataclass
-class DeviceInfo:
+class AgentProfile:
     device_id: str
     server_url: str
     status: DeviceStatus = DeviceStatus.OFFLINE
@@ -402,7 +402,7 @@ from typing import Protocol
 class DeviceEventHandler(Protocol):
     """Protocol for device event handlers"""
     
-    async def on_device_connected(self, device_id: str, device_info: DeviceInfo) -> None:
+    async def on_device_connected(self, device_id: str, device_info: AgentProfile) -> None:
         """Called when a device connects"""
         ...
     

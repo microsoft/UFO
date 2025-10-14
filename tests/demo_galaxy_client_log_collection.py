@@ -3,9 +3,9 @@
 # Licensed under the MIT License.
 
 """
-Demo Script: GalaxyClient with Mock DeviceInfo for Log Collection
+Demo Script: GalaxyClient with Mock AgentProfile for Log Collection
 
-This script demonstrates how to use GalaxyClient with mock DeviceInfo objects
+This script demonstrates how to use GalaxyClient with mock AgentProfile objects
 to simulate the log collection and Excel generation scenario.
 
 Usage:
@@ -20,7 +20,7 @@ import tempfile
 from unittest.mock import Mock, AsyncMock, patch
 
 from galaxy.galaxy_client import GalaxyClient
-from galaxy.client.components.types import DeviceInfo, DeviceStatus
+from galaxy.client.components.types import AgentProfile, DeviceStatus
 from galaxy.client.config_loader import ConstellationConfig, DeviceConfig
 
 # Suppress debug logs for cleaner demo output
@@ -28,10 +28,10 @@ logging.getLogger("ufo.galaxy.galaxy_client").setLevel(logging.WARNING)
 
 
 def create_mock_devices():
-    """Create mock DeviceInfo objects for demonstration."""
+    """Create mock AgentProfile objects for demonstration."""
 
     # Linux Server 1 - Web Server
-    linux_server_1 = DeviceInfo(
+    linux_server_1 = AgentProfile(
         device_id="linux_server_001",
         server_url="ws://192.168.1.101:5000/ws",
         os="linux",
@@ -64,7 +64,7 @@ def create_mock_devices():
     )
 
     # Linux Server 2 - API Server
-    linux_server_2 = DeviceInfo(
+    linux_server_2 = AgentProfile(
         device_id="linux_server_002",
         server_url="ws://192.168.1.102:5000/ws",
         os="linux",
@@ -98,7 +98,7 @@ def create_mock_devices():
     )
 
     # Windows Workstation - Analyst PC
-    windows_workstation = DeviceInfo(
+    windows_workstation = AgentProfile(
         device_id="windows_workstation_001",
         server_url="ws://192.168.1.100:5000/ws",
         os="windows",
@@ -369,7 +369,7 @@ async def demo_galaxy_client_log_collection():
 
     print("\n🎉 Demo completed successfully!")
     print("\nKey Behaviors Demonstrated:")
-    print("  ✅ Mock DeviceInfo creation and configuration")
+    print("  ✅ Mock AgentProfile creation and configuration")
     print("  ✅ ConstellationConfig setup with multiple devices")
     print("  ✅ GalaxyClient initialization and request processing")
     print("  ✅ Cross-platform task orchestration simulation")
@@ -378,7 +378,7 @@ async def demo_galaxy_client_log_collection():
 
 
 if __name__ == "__main__":
-    print("🌌 Starting Galaxy Client Demo with Mock DeviceInfo")
+    print("🌌 Starting Galaxy Client Demo with Mock AgentProfile")
     print(
         "🎯 Scenario: Log Collection from Linux Servers + Excel Generation on Windows"
     )

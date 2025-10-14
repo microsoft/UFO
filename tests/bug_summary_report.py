@@ -5,7 +5,7 @@
 """
 总结报告：真实GalaxySession测试结果与发现的Bug
 
-本脚本总结了使用真实GalaxySession和mock DeviceInfo进行的集成测试结果
+本脚本总结了使用真实GalaxySession和mock AgentProfile进行的集成测试结果
 """
 
 
@@ -16,7 +16,7 @@ def print_bug_summary():
     print("=" * 80)
 
     print("\n📊 测试概览:")
-    print("• 测试类型: 真实GalaxySession.run() + Mock DeviceInfo")
+    print("• 测试类型: 真实GalaxySession.run() + Mock AgentProfile")
     print("• 测试场景: Linux日志收集 + Windows Excel生成")
     print("• 执行方法: 3个测试方法，4种不同请求类型")
     print("• 发现bug数量: 8个 (修复后更新)")
@@ -152,7 +152,7 @@ def print_bug_summary():
     print("• 成功发现了7个真实的系统bug")
     print("• 确认了LLM集成存在格式化问题")
     print("• 识别了性能瓶颈和用户体验问题")
-    print("• 验证了mock DeviceInfo的可用性")
+    print("• 验证了mock AgentProfile的可用性")
     print("• 为后续开发提供了明确的修复目标")
 
     print(f"\n🚀 下一步行动:")

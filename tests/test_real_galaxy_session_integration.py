@@ -2,7 +2,7 @@
 # Licensed under the MIT License.
 
 """
-Real GalaxySession Integration Test with Mock DeviceInfo
+Real GalaxySession Integration Test with Mock AgentProfile
 
 This test uses REAL GalaxySession.run() (not mocked) to test the complete
 agent workflow and identify potential bugs in the system.
@@ -19,13 +19,14 @@ from unittest.mock import Mock, AsyncMock, patch
 
 from galaxy.galaxy_client import GalaxyClient
 from galaxy.session.galaxy_session import GalaxySession
-from galaxy.client.components.types import DeviceInfo, DeviceStatus
+from galaxy.client.components.types import AgentProfile, DeviceStatus
 from galaxy.client.config_loader import ConstellationConfig, DeviceConfig
 from galaxy.client.constellation_client import ConstellationClient
+from galaxy.core.types import ExecutionResult, TaskStatus
 
 
 class TestRealGalaxySessionWithMockDevices:
-    """Test real GalaxySession execution with mock DeviceInfo to find bugs."""
+    """Test real GalaxySession execution with mock AgentProfile to find bugs."""
 
     class NoComputerRunActionFilter(logging.Filter):
         """Filter to exclude Computer._run_action logs."""
@@ -95,9 +96,9 @@ class TestRealGalaxySessionWithMockDevices:
         logging.getLogger().setLevel(original_level)
 
     @pytest.fixture
-    def mock_linux_server_1(self) -> DeviceInfo:
-        """Mock DeviceInfo for first Linux server."""
-        return DeviceInfo(
+    def mock_linux_server_1(self) -> AgentProfile:
+        """Mock AgentProfile for first Linux server."""
+        return AgentProfile(
             device_id="linux_server_001",
             server_url="ws://192.168.1.101:5000/ws",
             os="linux",
@@ -128,9 +129,9 @@ class TestRealGalaxySessionWithMockDevices:
         )
 
     @pytest.fixture
-    def mock_linux_server_2(self) -> DeviceInfo:
-        """Mock DeviceInfo for second Linux server."""
-        return DeviceInfo(
+    def mock_linux_server_2(self) -> AgentProfile:
+        """Mock AgentProfile for second Linux server."""
+        return AgentProfile(
             device_id="linux_server_002",
             server_url="ws://192.168.1.102:5000/ws",
             os="linux",
@@ -162,9 +163,9 @@ class TestRealGalaxySessionWithMockDevices:
         )
 
     @pytest.fixture
-    def mock_windows_workstation(self) -> DeviceInfo:
-        """Mock DeviceInfo for Windows workstation."""
-        return DeviceInfo(
+    def mock_windows_workstation(self) -> AgentProfile:
+        """Mock AgentProfile for Windows workstation."""
+        return AgentProfile(
             device_id="windows_workstation_001",
             server_url="ws://192.168.1.100:5000/ws",
             os="windows",
@@ -205,9 +206,9 @@ class TestRealGalaxySessionWithMockDevices:
     @pytest.fixture
     def mock_constellation_client(
         self,
-        mock_linux_server_1: DeviceInfo,
-        mock_linux_server_2: DeviceInfo,
-        mock_windows_workstation: DeviceInfo,
+        mock_linux_server_1: AgentProfile,
+        mock_linux_server_2: AgentProfile,
+        mock_windows_workstation: AgentProfile,
     ):
         """Create real ConstellationClient with mocked device manager."""
         # Create a real ConstellationClient but mock its device manager
@@ -270,35 +271,49 @@ class TestRealGalaxySessionWithMockDevices:
             if not device:
                 raise ValueError(f"Device {device_id} not found")
 
+            start_time = datetime.now(timezone.utc)
+
             # Simulate different responses based on device type and task description
             if device.os == "linux" and "log_collection" in task_description.lower():
-                return {
-                    "status": "completed",
-                    "result": {
+                return ExecutionResult(
+                    task_id=task_id,
+                    status=TaskStatus.COMPLETED.value,
+                    result={
                         "logs_collected": len(device.metadata.get("log_paths", [])),
                         "total_size_mb": 25.6,
                         "files_processed": device.metadata.get("log_paths", []),
                         "execution_time": 12.3,
                     },
-                }
+                    start_time=start_time,
+                    end_time=datetime.now(timezone.utc),
+                    metadata={"device_id": device_id, "device_os": device.os},
+                )
             elif device.os == "windows" and "excel" in task_description.lower():
-                return {
-                    "status": "completed",
-                    "result": {
+                return ExecutionResult(
+                    task_id=task_id,
+                    status=TaskStatus.COMPLETED.value,
+                    result={
                         "report_generated": True,
                         "file_path": "C:\\Reports\\log_analysis_report.xlsx",
                         "sheets_created": 3,
                         "charts_generated": 5,
                         "execution_time": 8.7,
                     },
-                }
+                    start_time=start_time,
+                    end_time=datetime.now(timezone.utc),
+                    metadata={"device_id": device_id, "device_os": device.os},
+                )
             else:
-                return {
-                    "status": "completed",
-                    "result": {
+                return ExecutionResult(
+                    task_id=task_id,
+                    status=TaskStatus.COMPLETED.value,
+                    result={
                         "message": f"Task {task_description} completed on {device_id}"
                     },
-                }
+                    start_time=start_time,
+                    end_time=datetime.now(timezone.utc),
+                    metadata={"device_id": device_id, "device_os": device.os},
+                )
 
         mock_device_manager.assign_task_to_device = AsyncMock(
             side_effect=mock_assign_task_to_device
@@ -317,9 +332,9 @@ class TestRealGalaxySessionWithMockDevices:
     async def test_real_galaxy_session_execution_with_mock_devices(
         self,
         mock_constellation_client,
-        mock_linux_server_1: DeviceInfo,
-        mock_linux_server_2: DeviceInfo,
-        mock_windows_workstation: DeviceInfo,
+        mock_linux_server_1: AgentProfile,
+        mock_linux_server_2: AgentProfile,
+        mock_windows_workstation: AgentProfile,
         temp_output_dir: Path,
     ):
         """Test real GalaxySession.run() with mock devices to identify bugs."""
@@ -541,8 +556,8 @@ class TestRealGalaxySessionWithMockDevices:
     async def test_session_with_different_request_types(
         self,
         mock_constellation_client,
-        mock_linux_server_1: DeviceInfo,
-        mock_windows_workstation: DeviceInfo,
+        mock_linux_server_1: AgentProfile,
+        mock_windows_workstation: AgentProfile,
         temp_output_dir: Path,
     ):
         """Test different types of requests to find parsing/handling bugs."""
@@ -645,7 +660,15 @@ class TestRealGalaxySessionWithMockDevices:
                 timeout: float = 300.0,
             ):
                 if "fail_test" in task_description.lower():
-                    raise ConnectionError(f"Mock connection failure to {device_id}")
+                    error = ConnectionError(f"Mock connection failure to {device_id}")
+                    return ExecutionResult(
+                        task_id=task_id,
+                        status=TaskStatus.FAILED.value,
+                        error=str(error),
+                        start_time=datetime.now(timezone.utc),
+                        end_time=datetime.now(timezone.utc),
+                        metadata={"device_id": device_id},
+                    )
                 return await original_assign_task(
                     task_id, device_id, task_description, task_data, timeout
                 )
