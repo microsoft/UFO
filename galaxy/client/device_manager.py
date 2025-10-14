@@ -80,6 +80,7 @@ class ConstellationDeviceManager:
         self,
         device_id: str,
         server_url: str,
+        os: str,
         capabilities: Optional[List[str]] = None,
         metadata: Optional[Dict[str, Any]] = None,
         auto_connect: bool = True,
@@ -97,7 +98,7 @@ class ConstellationDeviceManager:
         try:
             # Register device in registry
             self.device_registry.register_device(
-                device_id, server_url, capabilities, metadata
+                device_id, server_url, os, capabilities, metadata
             )
 
             if auto_connect:

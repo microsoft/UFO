@@ -52,12 +52,22 @@ class UFOWebSocketHandler:
         # Determine and validate client type
         client_type = reg_info.client_type
 
+        platform = (
+            reg_info.metadata.get("platform", "windows")
+            if reg_info.metadata
+            else "windows"
+        )
+
+        print(reg_info)
+
         # Register client
         client_id = reg_info.client_id
         if client_type == ClientType.CONSTELLATION:
             await self._validate_constellation_client(reg_info, websocket)
 
-        self.ws_manager.add_client(client_id, websocket, client_type, reg_info.metadata)
+        self.ws_manager.add_client(
+            client_id, platform, websocket, client_type, reg_info.metadata
+        )
 
         # Send registration confirmation
         await self._send_registration_confirmation(websocket)
@@ -302,26 +312,23 @@ class UFOWebSocketHandler:
                 f"[WS] 🌟 Handling constellation task request: {data.request} from {data.target_id}"
             )
             target_ws = self.ws_manager.get_client(data.target_id)
+            platform = self.ws_manager.get_client_info(data.target_id).platform
         else:
             self.logger.info(
                 f"[WS] 📱 Handling device task request: {data.request} from {data.client_id}"
             )
             target_ws = websocket
+            platform = self.ws_manager.get_client_info(data.client_id).platform
 
         session_id = str(uuid.uuid4()) if not data.session_id else data.session_id
         task_name = data.task_name if data.task_name else str(uuid.uuid4())
-
-        # Extract platform information from metadata
-        platform_override = None
-        if data.metadata:
-            platform_override = data.metadata.get("platform")
 
         session = self.session_manager.get_or_create_session(
             session_id=session_id,
             task_name=task_name,
             request=data.request,
             websocket=target_ws,
-            platform_override=platform_override,
+            platform_override=platform,
         )
 
         error = None

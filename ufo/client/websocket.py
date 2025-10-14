@@ -117,7 +117,8 @@ class UFOWebSocketClient:
             metadata = {
                 "registration_time": datetime.datetime.now(
                     datetime.timezone.utc
-                ).isoformat()
+                ).isoformat(),
+                "platform": self.ufo_client.platform,
             }
 
         client_message = ClientMessage(

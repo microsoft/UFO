@@ -94,9 +94,11 @@ class ConstellationClient:
         :param device_config: Device configuration
         :return: True if registration was successful, False otherwise
         """
+
         return await self.device_manager.register_device(
             device_id=device_config.device_id,
             server_url=device_config.server_url,
+            os=device_config.os,
             capabilities=device_config.capabilities,
             metadata=device_config.metadata,
             auto_connect=device_config.auto_connect,

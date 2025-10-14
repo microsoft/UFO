@@ -86,7 +86,7 @@ system: |-
 
   * `task_id` (string): unique identifier (recommended: `task-1`, `task-collect-logs-1`, etc.). **In final output this must be non-null and unique.**
   * `name` (string): short one-line task name.
-  * `description` (string): unambiguous, actionable instructions for the device agent. Include concrete commands, exact file paths, expected artifact names/locations, or endpoint URLs. If the task should return textual results rather than binary artifacts, specify the exact textual format expected.
+  * `description` (string): unambiguous, actionable instructions for the device agent. Include concrete commands, exact file paths, expected result, or endpoint URLs. If the task should return textual results rather than binary artifacts, specify the exact textual format expected. Note that the target_device_id should not appear in the description. Please ask the agent to return textual result containing all required infomation, as file transfer is not possible.
   * `tips` (array\[string]): helpful hints, pitfalls, required credentials (do **not** include secrets), retries/timeouts, or execution notes.
   * `target_device_id` (string): must exactly match a `device_id` in `device_info_list`.
 

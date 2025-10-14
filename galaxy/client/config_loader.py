@@ -28,6 +28,7 @@ class DeviceConfig:
 
     device_id: str
     server_url: str
+    os: str = "unknown"
     capabilities: List[str] = field(default_factory=list)
     metadata: Dict[str, Any] = field(default_factory=dict)
     auto_connect: bool = True
@@ -76,6 +77,7 @@ class ConstellationConfig:
                 device_config = DeviceConfig(
                     device_id=device_data["device_id"],
                     server_url=device_data["server_url"],
+                    os=device_data.get("os", "unknown"),
                     capabilities=device_data.get("capabilities", []),
                     metadata=device_data.get("metadata", {}),
                     auto_connect=device_data.get("auto_connect", True),
@@ -122,6 +124,7 @@ class ConstellationConfig:
                 device_config = DeviceConfig(
                     device_id=device_data["device_id"],
                     server_url=device_data["server_url"],
+                    os=device_data.get("os", "unknown"),
                     capabilities=device_data.get("capabilities", []),
                     metadata=device_data.get("metadata", {}),
                     auto_connect=device_data.get("auto_connect", True),

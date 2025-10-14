@@ -76,6 +76,7 @@ class GalaxyClient:
         self._client: Optional[ConstellationClient] = None
         self._session: Optional[GalaxySession] = None
         self._device_config = ConstellationConfig.from_yaml(CONFIGS["DEVICE_INFO"])
+        print("11111111111111111111111111111111111", self._device_config)
 
         # Rich console and display manager
         self.console = Console()

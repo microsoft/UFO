@@ -17,6 +17,7 @@ class ClientInfo:
     client_type: ClientType
     connected_at: datetime
     metadata: Dict = None
+    platform: str = "windows"
     system_info: Dict = None  # Device system information (for device clients)
 
 
@@ -43,6 +44,7 @@ class WSManager:
     def add_client(
         self,
         client_id: str,
+        platform: str,
         ws: WebSocket,
         client_type: ClientType = ClientType.DEVICE,
         metadata: Dict = None,
@@ -76,6 +78,7 @@ class WSManager:
 
             self.online_clients[client_id] = ClientInfo(
                 websocket=ws,
+                platform=platform,
                 client_type=client_type,
                 connected_at=datetime.now(),
                 metadata=metadata or {},

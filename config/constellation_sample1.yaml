@@ -9,6 +9,48 @@ max_concurrent_tasks: 6
 devices:
   - device_id: "client_001"
     server_url: "ws://localhost:5000/ws"
+    os: "linux"
+    capabilities:
+      - "server"
+    metadata:
+      os: "linux"
+      performance: "medium"
+      logs_file_path: "/root/log/log1.txt"
+      warning_log_pattern: "WARNING"
+      error_log_pattern: "ERROR"
+    auto_connect: true
+    max_retries: 5
+
+  - device_id: "client_002"
+    server_url: "ws://localhost:5000/ws"
+    os: "linux"
+    capabilities:
+      - "server"
+    metadata:
+      os: "linux"
+      performance: "medium"
+      logs_file_path: "/root/log/log2.txt"
+      warning_log_pattern: "WARNING"
+      error_log_pattern: "ERROR"
+    auto_connect: true
+    max_retries: 5
+
+  - device_id: "client_003"
+    server_url: "ws://localhost:5000/ws"
+    os: "linux"
+    capabilities:
+      - "server"
+    metadata:
+      os: "linux"
+      performance: "medium"
+      logs_file_path: "/root/log/log3.txt"
+      warning_log_pattern: "WARNING"
+      error_log_pattern: "ERROR"
+    auto_connect: true
+    max_retries: 5
+
+  - device_id: "client_004"
+    server_url: "ws://localhost:5000/ws"
     os: "windows"
     capabilities:
       - "web_browsing"

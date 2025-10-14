@@ -19,8 +19,6 @@ example1:
       - (1) Execute the command to get system load and memory summary.
       - (2) Parse CPU and memory information from stdout.
       - (3) Summarize the result and mark the request as FINISH.
-    comment: |-
-      Next, I will execute 'top -b -n 1' to capture real-time CPU and memory usage information.
     result: |-
       Request in CONTINUE state. Successfully initiated command execution 'top -b -n 1 | head -n 10' to retrieve system CPU and memory usage statistics. The command has been submitted with a 30-second timeout and will run in batch mode (-b) to capture one snapshot (-n 1) of system resources. No output has been received yet. Remaining steps: (1) await command completion and capture stdout containing CPU percentages (user, system, idle) and memory statistics (total, used, free, buffers/cache), (2) parse the output to extract key metrics such as load average, CPU utilization breakdown, total/used/free memory, and swap usage, (3) summarize the findings in a human-readable format indicating current system resource consumption levels, and (4) mark task as FINISH with comprehensive resource usage summary. The 'top' command will provide real-time snapshot of system performance metrics needed to answer the user's request.
 
@@ -43,8 +41,6 @@ example2:
       - (1) Execute the 'ls -l /var/log' command.
       - (2) Display the results showing file names and permissions.
       - (3) Summarize completion and mark FINISH.
-    comment: |-
-      This command will return a detailed list of files and directories under /var/log with ownership and permission details.
     result: |-
       Request in CONTINUE state. Successfully initiated command execution 'ls -l /var/log' to list all files and directories in the /var/log directory with detailed permissions. The command has been submitted with a 30-second timeout. No output has been received yet. Remaining steps: (1) await command completion and capture stdout containing the long-format directory listing, (2) parse the output which will show file permissions (rwx format), number of links, owner, group, file size, modification date, and filename for each entry in /var/log, (3) present the complete listing to the user showing all log files with their respective permission settings (e.g., -rw-r--r-- for read/write owner, read-only group/others), and (4) mark task as FINISH with the full directory listing. The 'ls -l' command will provide comprehensive information about file access rights, ownership, and attributes for all items in the log directory.
 
@@ -67,8 +63,6 @@ example3:
       - (1) Execute grep to filter all error lines.
       - (2) Count the total occurrences.
       - (3) Output the number of errors and mark FINISH.
-    comment: |-
-      This step will determine how many log entries in /var/log/syslog contain the keyword 'error'.
     result: |-
       Request in CONTINUE state. Successfully initiated command execution 'grep -i 'error' /var/log/syslog | wc -l' to count all error entries in the system log file. The command has been submitted with a 30-second timeout and uses case-insensitive grep (-i flag) to match all variations of 'error' (ERROR, Error, error, etc.). No output has been received yet. Remaining steps: (1) await command completion and capture stdout which will contain a single integer representing the count of matching lines, (2) parse the numeric output to determine the total number of error occurrences in /var/log/syslog, (3) report the exact count to the user (e.g., "Found 42 error lines in /var/log/syslog"), and (4) mark task as FINISH with the error count summary. The piped command combines grep for pattern matching with wc -l for line counting to provide a precise numeric answer to the user's question about system log errors.
 
@@ -93,8 +87,6 @@ example4:
       - (2) If the output includes port 22, report it as open.
       - (3) If no output, conclude that port 22 is closed.
       - (4) Mark the task as FINISH with the result summary.
-    comment: |-
-      Checking port 22 will help determine if the SSH service is currently running and accessible.
     result: |-
       Request in CONTINUE state. Successfully initiated command execution 'ss -tuln | grep :22' to check if port 22 (SSH) is currently listening on the system. The command has been submitted with a 30-second timeout and uses 'ss' (socket statistics) with flags -t (TCP), -u (UDP), -l (listening), -n (numeric) to show all listening network sockets, then filters for port 22. No output has been received yet. Remaining steps: (1) await command completion and capture stdout, (2) parse the output to determine port status - if output contains lines with ':22', the port is open and listening; if output is empty, port 22 is closed or not listening, (3) identify the protocol (TCP/UDP), local address (0.0.0.0:22 for all interfaces or specific IP), and state (LISTEN), (4) report clear conclusion to user (e.g., "Port 22 is OPEN - SSH service is listening on 0.0.0.0:22" or "Port 22 is CLOSED - no service listening"), and (5) mark task as FINISH with definitive port status. This verification confirms SSH service availability for remote access.
 
@@ -119,7 +111,5 @@ example5:
       - (2) Execute 'kill -9 <pid>' to terminate it safely.
       - (3) Verify that the port is freed using 'ss -tuln | grep :8080'.
       - (4) Mark as FINISH if no process remains.
-    comment: |-
-      This step locates the target process. The next step will terminate it to fulfill the request.
     result: |-
       Request in CONTINUE state. Successfully initiated command execution 'lsof -t -i:8080' to identify the process ID (PID) of any process listening on port 8080. The command has been submitted with a 30-second timeout and uses 'lsof' (list open files) with flags -t (terse output showing only PID) and -i:8080 (internet connections on port 8080). No output has been received yet. Remaining steps: (1) await command completion and capture stdout containing the PID(s) of process(es) using port 8080, (2) if a PID is returned, execute 'kill -9 <pid>' to forcefully terminate the process (SIGKILL), (3) verify termination by running 'ss -tuln | grep :8080' to confirm port 8080 is no longer in use, (4) if no PID is found, report that port 8080 is not in use by any process, and (5) mark task as FINISH with outcome summary (either "Successfully killed process <pid> on port 8080" or "No process found on port 8080"). This multi-step process ensures safe identification and termination of the target service without affecting other processes.

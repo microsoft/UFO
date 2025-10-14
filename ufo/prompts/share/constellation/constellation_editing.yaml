@@ -156,10 +156,13 @@ system: |-
     * A completed task produced an artifact with an unanticipated next step (conversion, upload, verification).
     * A task failed but is recoverable with a remediation/retry; add a remediation task instead of editing the failed task.
     * A device lacks capability originally assumed; add a task on another device to perform the missing work.
+    * Note that the task must be clear, unambiguous, and actionable and have all required information to execute.
   * **Update a task** when:
 
     * The real artifact name/location discovered in `Result:` differs from the task's `description` and the task is modifiable and in PENDING/WAITING_DEPENDENCY.
     * You need to add deterministic execution details (exact file paths, expected textual outputs).
+    * You receive result from previous task, and the next task's `description` or `tips` needs to be updated, enriched to use that result (e.g., exact artifact name, URL, or textual content).
+    * Note that the task must be clear, unambiguous, and actionable and have all required information to execute.
   * **Remove a task** when:
 
     * The task is redundant or its work is already done by another successful task, and the task is modifiable and in a modifiable status.

@@ -1,7 +1,7 @@
 version: 1.0
 
 example1:
-  Request: "Collect /var/log/app.log from linux1 and linux2, compress them, transfer to merge1 and produce /tmp/merged.csv"
+  Request: "Collect error log from /var/log/app.log from linux1 and linux2, compress them, transfer to merge1 and produce /tmp/merged.csv"
   Device-Info:
     - device_id: linux1
       os: linux
@@ -12,17 +12,26 @@ example1:
     - device_id: merge1
       os: linux
       metadata: {capabilities: [ssh, python3, disk], network_access: true}
-  Current-Constellation: "Three tasks exist: compress on linux1, compress on linux2, merge on merge1. All tasks are either PENDING or waiting on dependencies."
+  Current-Constellation: "Three tasks exist: collect-logs-linux1 (COMPLETED), collect-logs-linux2 (COMPLETED), merge-csv (PENDING). Task-1 and Task-2 collected error logs successfully but Task-3 lacks critical error details to generate proper CSV."
   Response:
     thought: |
-      User request requires three sub-tasks: compress logs on linux1, compress logs on linux2, and merge results on merge1.
-      Current constellation shows that tasks are either PENDING or waiting for dependencies.
-      Devices have necessary capabilities: linux1/linux2 can compress via tar; merge1 has python3 and disk for merging CSV.
-      DAG is acyclic, task statuses allow modification, no changes needed to device assignment.
-      Therefore, no structural edits are required; tasks can proceed as-is.
+      Task-1 'collect-logs-linux1' completed and found 15 critical errors: DatabaseConnectionTimeout (5 occurrences), NullPointerException in UserService (3), OutOfMemoryError (2), FileNotFoundException in /data/config.xml (3), SocketException in API Gateway (2).
+      Task-2 'collect-logs-linux2' completed and found 12 critical errors: DatabaseConnectionTimeout (4 occurrences), SSLHandshakeException (3), DiskSpaceWarning at 95% (2), ThreadPoolExhausted in WorkerPool (2), ConfigurationMismatch in redis.conf (1).
+      Task-3 'merge-csv' is PENDING and modifiable, but currently lacks detailed error information to produce a meaningful CSV report.
+      The merge task needs to be enriched with specific error log details from both linux1 and linux2 to generate a comprehensive CSV with error types, counts, and severity.
+      Therefore, update task-3 with tips containing the collected error details to ensure proper CSV generation.
     status: "CONTINUE"
-    action: []
-    results: "Logs from linux1 and linux2 were successfully compressed and merged into /tmp/merged.csv on merge1."
+    action:
+      - function: "update_task"
+        arguments:
+          task_id: "task-3"
+          name: "merge-csv-with-error-details"
+          tips:
+            - "linux1 errors: DatabaseConnectionTimeout(5), NullPointerException-UserService(3), OutOfMemoryError(2), FileNotFoundException-config.xml(3), SocketException-APIGateway(2)"
+            - "linux2 errors: DatabaseConnectionTimeout(4), SSLHandshakeException(3), DiskSpaceWarning-95%(2), ThreadPoolExhausted-WorkerPool(2), ConfigurationMismatch-redis.conf(1)"
+            - "Generate CSV with columns: error_type, server, count, severity, first_occurrence_time"
+            - "Merge duplicate error types across servers and calculate total counts"
+    results: "Error logs from linux1 and linux2 were successfully collected, enriched merge task with detailed error information, and generated comprehensive CSV report at /tmp/merged.csv with error type breakdown and severity analysis."
 
 example2:
   Request: "Dump the Postgres database on db1, create a compressed backup, and upload it to s3 via uploader1"

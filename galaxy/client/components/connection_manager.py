@@ -63,9 +63,9 @@ class WebSocketConnectionManager:
 
             websocket = await websockets.connect(
                 device_info.server_url,
-                ping_interval=60,
-                ping_timeout=60,
-                close_timeout=10,
+                ping_interval=200,
+                ping_timeout=200,
+                close_timeout=600,
             )
 
             self._connections[device_info.device_id] = websocket
@@ -203,7 +203,10 @@ class WebSocketConnectionManager:
         """
         websocket = self._connections.get(device_id)
         if not websocket or websocket.closed:
-            raise ConnectionError(f"Device {device_id} is not connected")
+            if not websocket:
+                raise ConnectionError(f"Device {device_id} is not connected")
+            else:
+                raise ConnectionError(f"Device {device_id} connection is closed")
 
         try:
             # Create client message for task execution

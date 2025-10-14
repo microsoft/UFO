@@ -20,7 +20,7 @@ example1:
       tasks:
         - task_id: "t1"
           name: "Download report"
-          description: "Download today's sales report file from server-1 and save it into the default report directory."
+          description: "Download today's sales report file and save it into the default report directory."
           tips: ["Ensure correct file path", "Check permissions on server directory"]
           target_device_id: "server-1"
       dependencies: []
@@ -96,12 +96,12 @@ example3:
       tasks:
         - task_id: "t1"
           name: "Collect metrics server-a"
-          description: "Retrieve CPU usage metrics from server-a."
+          description: "Retrieve CPU usage metrics."
           tips: ["Use top or mpstat command", "Ensure timestamps are included"]
           target_device_id: "server-a"
         - task_id: "t2"
           name: "Collect metrics server-b"
-          description: "Retrieve CPU usage metrics from server-b."
+          description: "Retrieve CPU usage metrics."
           tips: ["Use top or mpstat command", "Ensure timestamps are included"]
           target_device_id: "server-b"
         - task_id: "t3"
@@ -113,11 +113,11 @@ example3:
         - line_id: "l1"
           from_task_id: "t1"
           to_task_id: "t3"
-          condition_description: "Metrics from server-a are collected."
+          condition_description: "Metrics are collected."
         - line_id: "l2"
           from_task_id: "t2"
           to_task_id: "t3"
-          condition_description: "Metrics from server-b are collected."
+          condition_description: "Metrics are collected."
 
 
 example4:
@@ -145,22 +145,22 @@ example4:
       tasks:
         - task_id: "t1"
           name: "Fetch logs srv1"
-          description: "Extract raw logs from /var/log on srv1."
+          description: "Extract raw logs from /var/log."
           tips: ["Check read permission", "Include timestamps"]
           target_device_id: "srv1"
         - task_id: "t2"
           name: "Fetch logs srv2"
-          description: "Extract raw logs from /var/log on srv2."
+          description: "Extract raw logs from /var/log."
           tips: ["Check read permission", "Include timestamps"]
           target_device_id: "srv2"
         - task_id: "t3"
           name: "Clean logs srv1"
-          description: "Filter and clean raw logs from srv1, removing debug-level entries."
+          description: "Filter and clean raw logs, removing debug-level entries."
           tips: ["Preserve error-level logs", "Ensure consistent format"]
           target_device_id: "srv1"
         - task_id: "t4"
           name: "Clean logs srv2"
-          description: "Filter and clean raw logs from srv2, removing debug-level entries."
+          description: "Filter and clean raw logs, removing debug-level entries."
           tips: ["Preserve error-level logs", "Ensure consistent format"]
           target_device_id: "srv2"
         - task_id: "t5"
@@ -177,19 +177,19 @@ example4:
         - line_id: "l1"
           from_task_id: "t1"
           to_task_id: "t3"
-          condition_description: "Raw logs from srv1 retrieved."
+          condition_description: "Raw logs retrieved."
         - line_id: "l2"
           from_task_id: "t2"
           to_task_id: "t4"
-          condition_description: "Raw logs from srv2 retrieved."
+          condition_description: "Raw logs retrieved."
         - line_id: "l3"
           from_task_id: "t3"
           to_task_id: "t5"
-          condition_description: "Cleaned logs from srv1 ready."
+          condition_description: "Cleaned logs ready."
         - line_id: "l4"
           from_task_id: "t4"
           to_task_id: "t5"
-          condition_description: "Cleaned logs from srv2 ready."
+          condition_description: "Cleaned logs ready."
         - line_id: "l5"
           from_task_id: "t5"
           to_task_id: "t6"
@@ -257,12 +257,12 @@ example6:
       tasks:
         - task_id: "t1"
           name: "Process logs srvA"
-          description: "Run log parser on srvA to extract error statistics."
+          description: "Run log parser to extract error statistics."
           tips: ["Filter only ERROR level logs", "Store intermediate JSON"]
           target_device_id: "srvA"
         - task_id: "t2"
           name: "Process logs srvB"
-          description: "Run log parser on srvB to extract error statistics."
+          description: "Run log parser to extract error statistics."
           tips: ["Filter only ERROR level logs", "Store intermediate JSON"]
           target_device_id: "srvB"
         - task_id: "t3"
