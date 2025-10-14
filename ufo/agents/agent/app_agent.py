@@ -24,7 +24,6 @@ from ufo.agents.processors.app_agent_processor import AppAgentProcessor
 
 # from ufo.agents.processors.operator_processor import OpenAIOperatorProcessor
 from ufo.agents.processors.core.processor_framework import ProcessorTemplate
-from ufo.agents.processors.schemas.actions import ActionCommandInfo
 from ufo.agents.processors.schemas.response_schema import AppAgentResponse
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
