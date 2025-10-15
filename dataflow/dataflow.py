@@ -1,10 +1,6 @@
 import argparse
 import os
-import smtplib
 import traceback
-from email.header import Header
-from email.mime.multipart import MIMEMultipart
-from email.mime.text import MIMEText
 
 from tqdm import tqdm
 
