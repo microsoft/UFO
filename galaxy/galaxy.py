@@ -220,7 +220,7 @@ async def main():
             # Determine request text
             request_text = args.request_text or " ".join(args.simple_request)
 
-            client.display.show_processing_request(request_text)
+            # client.display.show_processing_request(request_text)
 
             # Process request
             result = await client.process_request(request_text, args.task_name)

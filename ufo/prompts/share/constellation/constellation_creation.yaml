@@ -50,7 +50,7 @@ system: |-
 
   * A concise summary of `user_request` in your own words.
   * A numbered decomposition strategy you used.
-  * For **each task**: why the task exists, why you assigned it to the chosen `target_device_id` (match exact `device_id` from `device_info_list`), capability matches, network/location/permission constraints, expected artifact(s) or textual results, and preconditions (e.g., needs sudo, SSH key).
+  * For **each task**: why the task exists, why you assigned it to the chosen `target_device_id` (match exact `device_id` from `device_info_list`), capability matches, expected textual results (be specific about what complete data should be returned - full content vs summary with clear thresholds like <100 lines, <500 rows, etc.), and preconditions (e.g., needs sudo, SSH key).
   * Which tasks can run in parallel and why.
   * Any assumptions you made or missing information required to fully execute.
   * The validation steps you ran (unique ids, device existence checks, acyclic check, schema compliance).
@@ -86,8 +86,8 @@ system: |-
 
   * `task_id` (string): unique identifier (recommended: `task-1`, `task-collect-logs-1`, etc.). **In final output this must be non-null and unique.**
   * `name` (string): short one-line task name.
-  * `description` (string): unambiguous, actionable instructions for the device agent. Include concrete commands, exact file paths, expected result, or endpoint URLs. If the task should return textual results rather than binary artifacts, specify the exact textual format expected. Note that the target_device_id should not appear in the description. Please ask the agent to return textual result containing all required infomation, as file transfer is not possible.
-  * `tips` (array\[string]): helpful hints, pitfalls, required credentials (do **not** include secrets), retries/timeouts, or execution notes.
+  * `description` (string): unambiguous, actionable instructions for the device agent. Include concrete commands, exact file paths, expected result, or endpoint URLs. Note that the target_device_id should not appear in the description. Please ask the agent to return textual result containing all required infomation, as file transfer is not possible.
+  * `tips` (array\[string]): helpful hints, pitfalls, required credentials (do **not** include secrets), retries/timeouts, or execution notes. **CRITICAL: Always include a tip specifying the expected textual result that should be returned.** For tasks that read or process text/data (logs, CSV, metrics, file content), explicitly request the **complete content** be returned (not just a summary) unless the data is extremely large (>500 rows/lines). Use tips like: "Expected textual result: Return complete [data type] with all [N] entries/rows. Do not summarize. Example format: '...[all entries]...'" This ensures follow-up tasks have full data available for enrichment and processing.
   * `target_device_id` (string): must exactly match a `device_id` in `device_info_list`.
 
   Dependency objects **must** conform to `TaskStarLineSchema`:
@@ -110,6 +110,10 @@ system: |-
   Notes:
 
   * Prefer textual results where possible. If artifacts are required, state exact artifact paths/filenames and where they will be stored/available.
+  * **For tasks that produce or read textual data (logs, CSV, JSON, metrics, file contents):** Always include in `tips` a clear specification of the expected textual result format. Request **complete content** (all rows/lines/entries) for small to medium datasets (< 100-500 items depending on type). Only request summaries for very large datasets (> 500-1000 items), and in those cases, still request the full data with a size indicator. Examples:
+    * "Expected textual result: Return complete log entries (all 45 lines). Do not summarize."
+    * "Expected textual result: Return full CSV content with all rows. Format: 'column1,column2\nrow1data...\n[all rows]...'"
+    * "Expected textual result: If file < 200 lines, return complete content. If larger, return full content with line count header."
   * Do not include secrets in `description` or `tips`. If credentials are needed, indicate the requirement in `tips` and `thought`.
 
   ---

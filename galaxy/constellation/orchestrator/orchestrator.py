@@ -376,7 +376,7 @@ class TaskConstellationOrchestrator:
         Wait for at least one task to complete and clean up.
         """
         if self._execution_tasks:
-            done, pending = await asyncio.wait(
+            done, _ = await asyncio.wait(
                 self._execution_tasks.values(), return_when=asyncio.FIRST_COMPLETED
             )
 
@@ -524,12 +524,17 @@ class TaskConstellationOrchestrator:
                 data={
                     "constellation_id": constellation.constellation_id,
                     "newly_ready_tasks": [t.task_id for t in newly_ready],
+                    "constellation": constellation,
                 },
                 task_id=task.task_id,
                 status=TaskStatus.COMPLETED.value,
                 result=result,
             )
             await self._event_bus.publish_event(completed_event)
+
+            self._logger.debug(
+                f"Task {task.task_id} is marked as completed. Completed tasks ids: {[t.task_id for t in constellation.get_completed_tasks()]}"
+            )
 
             if self._logger:
                 self._logger.info(f"Task {task.task_id} completed successfully")

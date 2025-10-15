@@ -76,8 +76,6 @@ example3:
       - function: click_input
         arguments: {"button": "left", "double": false, id: "59", name: "Find"}
         status: FINISH
-    plan:
-      - <FINISH>
     comment: |-
       I searched for the word 'UFO' in the document successfully. The user should view the search result.
     save_screenshot:
@@ -102,8 +100,6 @@ example4:
       - function: texts
         arguments: {"id": "83", "name": "framework - Word"}
         status: FINISH
-    plan:
-      - <FINISH>
     comment: |-
       The partial tasks on 'framework.docx' is completed once I take the current action. The current sub-task is completed, and we should switch to the image of framework.png to complete the next task.
     save_screenshot:

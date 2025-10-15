@@ -145,7 +145,10 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
     # IResultProcessor implementation
     async def process_editing(
-        self, context: Context = None, task_id: str = ""
+        self,
+        context: Context = None,
+        task_id: str = "",
+        before_constellation: Optional[TaskConstellation] = None,
     ) -> TaskConstellation:
         """
         Process a task result and potentially update the constellation.
@@ -162,8 +165,15 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         await self.context_provision(context=context)
 
-        before_constellation: TaskConstellation = context.get(
-            ContextNames.CONSTELLATION
+        if not before_constellation:
+            before_constellation: TaskConstellation = context.get(
+                ContextNames.CONSTELLATION
+            )
+        else:
+            context.set(ContextNames.CONSTELLATION, before_constellation)
+
+        self.logger.debug(
+            f"Task {task_id} is marked as completed, Agent's constellation updated, completed tasks ids: {[t.task_id for t in before_constellation.get_completed_tasks()]}"
         )
 
         # Update the constellation on the MCP server side.

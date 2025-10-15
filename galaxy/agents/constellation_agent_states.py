@@ -137,8 +137,14 @@ class ContinueConstellationAgentState(ConstellationAgentState):
                 f"Received task completion: {task_event.task_id} -> {task_event.status}, start the editing."
             )
 
+            constellation = task_event.data.get("constellation")
+
             # Update constellation based on task completion
-            await agent.process_editing(context=context, task_id=task_event.task_id)
+            await agent.process_editing(
+                context=context,
+                task_id=task_event.task_id,
+                before_constellation=constellation,
+            )
 
             # Sleep for waiting
             await asyncio.sleep(0.5)

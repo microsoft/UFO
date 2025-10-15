@@ -223,7 +223,7 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
 
         result = "\n".join(lines)
 
-        print(result)
+        # print(result)
 
         return result
 

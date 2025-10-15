@@ -15,11 +15,26 @@ example1:
   Current-Constellation: "Three tasks exist: collect-logs-linux1 (COMPLETED), collect-logs-linux2 (COMPLETED), merge-csv (PENDING). Task-1 and Task-2 collected error logs successfully but Task-3 lacks critical error details to generate proper CSV."
   Response:
     thought: |
-      Task-1 'collect-logs-linux1' completed and found 15 critical errors: DatabaseConnectionTimeout (5 occurrences), NullPointerException in UserService (3), OutOfMemoryError (2), FileNotFoundException in /data/config.xml (3), SocketException in API Gateway (2).
-      Task-2 'collect-logs-linux2' completed and found 12 critical errors: DatabaseConnectionTimeout (4 occurrences), SSLHandshakeException (3), DiskSpaceWarning at 95% (2), ThreadPoolExhausted in WorkerPool (2), ConfigurationMismatch in redis.conf (1).
-      Task-3 'merge-csv' is PENDING and modifiable, but currently lacks detailed error information to produce a meaningful CSV report.
-      The merge task needs to be enriched with specific error log details from both linux1 and linux2 to generate a comprehensive CSV with error types, counts, and severity.
-      Therefore, update task-3 with tips containing the collected error details to ensure proper CSV generation.
+      TASK ENRICHMENT ANALYSIS (CRITICAL):
+      - Task-1 'collect-logs-linux1' status: COMPLETED with Result containing 15 critical errors with specific types and counts.
+      - Task-2 'collect-logs-linux2' status: COMPLETED with Result containing 12 critical errors with specific types and counts.
+      - Task-3 'merge-csv' status: PENDING (modifiable), depends on task-1 and task-2 results.
+      
+      ENRICHMENT NECESSITY CHECK:
+      Q: Can task-3 execute successfully with its current description "produce /tmp/merged.csv" alone?
+      A: NO. The merge task needs the ACTUAL ERROR DATA from task-1 and task-2 results to generate the CSV. Without this data in its description/tips, the downstream agent executing task-3 will have NO ACCESS to the collected errors (no global context).
+      
+      ENRICHMENT ACTION:
+      Task-1 completed with: DatabaseConnectionTimeout(5), NullPointerException-UserService(3), OutOfMemoryError(2), FileNotFoundException-config.xml(3), SocketException-APIGateway(2).
+      Task-2 completed with: DatabaseConnectionTimeout(4), SSLHandshakeException(3), DiskSpaceWarning-95%(2), ThreadPoolExhausted-WorkerPool(2), ConfigurationMismatch-redis.conf(1).
+      
+      Must use update_task to inject these results into task-3's tips field with:
+      1. Complete error details from linux1 (15 errors broken down by type)
+      2. Complete error details from linux2 (12 errors broken down by type)
+      3. Instruction to merge and generate CSV with specific columns
+      4. Expected textual result specification for complete CSV output
+      
+      This enrichment is MANDATORY - without it, task-3 cannot execute because the agent has no data to merge.
     status: "CONTINUE"
     action:
       - function: "update_task"
@@ -31,7 +46,8 @@ example1:
             - "linux2 errors: DatabaseConnectionTimeout(4), SSLHandshakeException(3), DiskSpaceWarning-95%(2), ThreadPoolExhausted-WorkerPool(2), ConfigurationMismatch-redis.conf(1)"
             - "Generate CSV with columns: error_type, server, count, severity, first_occurrence_time"
             - "Merge duplicate error types across servers and calculate total counts"
-    results: "Error logs from linux1 and linux2 were successfully collected, enriched merge task with detailed error information, and generated comprehensive CSV report at /tmp/merged.csv with error type breakdown and severity analysis."
+            - "Expected textual result: Return the complete CSV content with all 27 error rows (do not summarize). Example format: 'error_type,server,count,severity,first_occurrence_time\nDatabaseConnectionTimeout,combined,9,HIGH,2025-10-15 08:23:15\nNullPointerException-UserService,linux1,3,CRITICAL,2025-10-15 09:45:22\n...[all 27 rows]...'. Return full CSV data, not summary."
+    results: "Error logs from linux1 and linux2 were successfully collected, enriched merge task with detailed error information, and generated comprehensive CSV report at /tmp/merged.csv with error type breakdown and severity analysis showing 27 total errors: DatabaseConnectionTimeout(9), NullPointerException-UserService(3), OutOfMemoryError(2), FileNotFoundException-config.xml(3), SocketException-APIGateway(2), SSLHandshakeException(3), DiskSpaceWarning-95%(2), ThreadPoolExhausted-WorkerPool(2), ConfigurationMismatch-redis.conf(1)."
 
 example2:
   Request: "Dump the Postgres database on db1, create a compressed backup, and upload it to s3 via uploader1"
@@ -55,7 +71,7 @@ example2:
         arguments:
           dependency_id: "line-1"
           condition_description: "exit code == 0 and /backups/db_backup_2025-10-02.sql.gz exists on uploader1"
-    results: "Database dump completed and backup uploaded to S3 successfully after dependency path update."
+    results: "Database dump completed successfully with 245 MB compressed backup file db_backup_2025-10-02.sql.gz containing 15 database schemas and 1.2M rows, uploaded to S3 bucket s3://backups/postgres/ with checksum verification passed (MD5: a3f5b2c1...)."
 
 example3:
   Request: "Deploy microservice image to app1 and app2, then run health-check"
@@ -89,7 +105,9 @@ example3:
           name: "redeploy-app2-retry"
           description: "On builder1: pull registry/myapp:latest, transfer image to app2, run container, return 'DEPLOY_OK: app2'."
           target_device_id: "builder1"
-          tips: ["Use docker save|scp|docker load if app2 cannot pull from registry"]
+          tips: 
+            - "Use docker save|scp|docker load if app2 cannot pull from registry"
+            - "Expected textual result: Return deployment confirmation with container details, e.g., 'DEPLOY_OK: app2 | Container ID: f7a3b9e21c45 | Image: registry/myapp:latest (sha256:8e9a...) | Status: running | Health: 200 OK on /health endpoint | Port mapping: 8080->80 | Started: 2025-10-15 14:23:45'"
       - function: add_dependency
         arguments:
           from_task_id: "task-redeploy-app2"
@@ -98,7 +116,7 @@ example3:
       - function: remove_dependency
         arguments:
           dependency_id: "line-4"
-    results: "Deployment remediation task added; health-check and smoke-test will execute once app2 redeployment succeeds."
+    results: "Deployment remediation task added; health-check and smoke-test will execute once app2 redeployment succeeds. Container f7a3b9e21c45 running on app2 with health endpoint returning 200 OK."
 
 example4:
   Request: "Edge devices should download firmware update; if primary edge cannot fetch update, fallback to the mirror edge"
@@ -127,7 +145,9 @@ example4:
           target_device_id: "edge-mirror"
           name: "download-via-mirror"
           description: "On edge-mirror: download firmware and transfer to orchestrator:/tmp/firmware.bin. Return 'DOWNLOAD_OK' on success."
-    results: "Firmware downloaded via mirror edge and staged on orchestrator; verification can now proceed."
+          tips:
+            - "Expected textual result: Return firmware download details including file information, e.g., 'DOWNLOAD_OK | Firmware: device_fw_v2.3.1.bin | Size: 142 MB | Checksum: SHA256:7f4a9b2e... | Source: https://updates.example.com/firmware/ | Transfer: completed to orchestrator:/tmp/firmware.bin | Verification: checksum matched'"
+    results: "Firmware downloaded via mirror edge and staged on orchestrator; verification can now proceed. File device_fw_v2.3.1.bin (142 MB, SHA256:7f4a9b2e...) successfully transferred and checksum verified."
 
 example5:
   Request: "Merge telemetry summaries from two processors and produce a final report (CSV & PDF)"
@@ -157,7 +177,9 @@ example5:
           name: "convert-merged-json-to-csv"
           description: "Read /tmp/merged.json and write /tmp/merged.csv with header; return 'CONVERT_OK' on success."
           target_device_id: "reporting"
-          tips: ["Use python3 to produce consistent CSV"]
+          tips: 
+            - "Use python3 to produce consistent CSV"
+            - "Expected textual result: Return complete CSV content with all telemetry data rows (do not summarize). If dataset has < 500 rows, return all. For larger datasets, return full content with row count header. Example: 'timestamp,device_id,metric_name,value,status\n2025-10-15 10:00:00,proc-a,cpu_usage,67.5,normal\n2025-10-15 10:00:00,proc-a,memory_mb,2048,normal\n...[all rows]...' with complete merged data from both processors."
       - function: remove_dependency
         arguments: {dependency_id: "line-3"}
       - function: add_dependency
@@ -170,7 +192,7 @@ example5:
           from_task_id: "task-convert"
           to_task_id: "task-4"
           condition_description: "exit code == 0 and /tmp/merged.csv exists on reporting"
-    results: "Telemetry summaries merged and converted to CSV; final CSV and PDF reports generated successfully."
+    results: "Telemetry summaries merged and converted to CSV; final CSV and PDF reports generated successfully. CSV contains merged telemetry with 156 rows from proc-a (cpu_usage avg: 65.2%, memory avg: 2.1GB) and 143 rows from proc-b (cpu_usage avg: 43.7%, memory avg: 1.5GB), total 299 telemetry data points processed."
 
 example6:
   Request: "Provide inventory summary (no actions) — user asks only for current registered devices"
@@ -193,4 +215,48 @@ example6:
       Response can directly summarize current devices for user.
     status: "FINISH"
     action: []
-    results: "Current registered devices: admin-laptop (macOS), node1 (Linux), node2 (Linux)."
+    results: "Current registered devices: admin-laptop (macOS, capabilities: ssh, query), node1 (Linux, capabilities: agent), node2 (Linux, capabilities: agent). Total 3 devices registered, 2 Linux agents active, 1 admin interface available."
+
+example7:
+  Request: "Read configuration from /etc/app.conf on server1, then write it to /backup/app.conf on backup1"
+  Device-Info:
+    - device_id: server1
+      os: linux
+      metadata: {capabilities: [ssh, read], network_access: true}
+    - device_id: backup1
+      os: linux
+      metadata: {capabilities: [ssh, write], network_access: true}
+  Current-Constellation: "Two tasks exist: read-config (COMPLETED with full file content in Result), write-backup (PENDING). Task-2 description is generic 'write config to /backup/app.conf' without the actual config content."
+  Response:
+    thought: |
+      TASK ENRICHMENT ANALYSIS (CRITICAL):
+      - Task-1 'read-config' status: COMPLETED
+      - Task-1 Result field contains: "Successfully read /etc/app.conf. Content:\napp.name=MyApp\napp.version=2.3.1\ndb.host=192.168.1.100\ndb.port=5432\ndb.name=production\nlog.level=INFO\nlog.path=/var/log/app\n[complete 15-line config file]"
+      - Task-2 'write-backup' status: PENDING (modifiable), depends on task-1
+      
+      ENRICHMENT NECESSITY CHECK:
+      Q: Can task-2 execute with description "write config to /backup/app.conf" alone?
+      A: NO! The agent executing task-2 has NO ACCESS to the config content from task-1. Task-2's current description tells the agent to "write config" but doesn't provide WHAT to write. This will fail with "no data to write" error.
+      
+      CRITICAL ENRICHMENT REQUIRED:
+      Task-1 completed with Result containing the complete 15-line configuration file content. Task-2 is PENDING and needs this exact content to execute successfully. Without the file content in task-2's description or tips, the downstream agent literally has nothing to write to /backup/app.conf.
+      
+      ENRICHMENT ACTION:
+      Must use update_task to inject the complete configuration file content from task-1's Result into task-2's description. Change from generic "write config to /backup/app.conf" to specific "Write the following content to /backup/app.conf:\napp.name=MyApp\napp.version=2.3.1\n...[complete 15 lines]..."
+      
+      Alternative: Could add to tips instead of description, but description is better here since the content IS the core instruction.
+      
+      This is a textbook case of mandatory enrichment - the predecessor task collected textual data, and the successor task must process that data. Failure to enrich = guaranteed execution failure.
+    status: "CONTINUE"
+    action:
+      - function: "update_task"
+        arguments:
+          task_id: "task-2"
+          name: "write-backup-with-content"
+          description: "Write the following complete configuration content to /backup/app.conf:\napp.name=MyApp\napp.version=2.3.1\ndb.host=192.168.1.100\ndb.port=5432\ndb.name=production\nlog.level=INFO\nlog.path=/var/log/app\ncache.enabled=true\ncache.ttl=3600\napi.endpoint=https://api.example.com\napi.timeout=30\napi.retries=3\nworker.threads=8\nworker.queue_size=1000\nmetrics.enabled=true\nmetrics.port=9090\n[complete content from task-1]. Verify file is written successfully and return confirmation with file size."
+          tips:
+            - "Ensure /backup directory exists before writing"
+            - "Use proper file permissions (644 for config files)"
+            - "Expected textual result: Return confirmation with exact file path, size, and first few lines to verify content. E.g., 'Successfully wrote /backup/app.conf (312 bytes). Content verified: app.name=MyApp...'"
+    results: "Configuration file successfully read from server1 (15 lines, 312 bytes) and enriched into task-2. Task-2 now has complete config content in description and can execute without needing global context access."
+

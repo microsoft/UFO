@@ -57,8 +57,6 @@ example2:
           [Sender's Name]
       status: |-
         FINISH
-    plan:
-      - <FINISH>
     comment: |-
       I revised the previous plan base on the screenshot since I observe that New Email window has already opened and the title of email has already been inputted. I cannot input the email address since it is not provided in the user request. Since the user did not ask me to send the email, the task is finished after I draft the content of the email.
     save_screenshot:
@@ -86,8 +84,6 @@ example3:
       arguments: 
         {"id": "59", "name": "Find", "button": "left", "double": false}
       status: FINISH
-    plan:
-      - <FINISH>
     comment: |-
       I searched for the word 'UFO' in the document successfully. The user should view the search result.
     save_screenshot:
@@ -114,8 +110,6 @@ example4:
       arguments: {"id": "83", "name": "framework - Word"}
       status: |-
         FINISH
-    plan:
-      - <FINISH>
     comment: |-
       The partial tasks on 'framework.docx' is completed once I take the current action. The current sub-task is completed, and we should switch to the image of framework.png to complete the next task.
     save_screenshot:
