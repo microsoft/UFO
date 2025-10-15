@@ -131,19 +131,36 @@ class ContinueConstellationAgentState(ConstellationAgentState):
             agent.logger.info("Continue monitoring for task completion events...")
             context.set(ContextNames.WEAVING_MODE, WeavingMode.EDITING)
 
-            task_event = await agent.task_completion_queue.get()
+            # Collect all pending task completion events in queue
+            completed_task_events = []
 
+            # Wait for at least one event (blocking)
+            first_event = await agent.task_completion_queue.get()
+            completed_task_events.append(first_event)
+
+            # Collect any other pending events (non-blocking)
+            while not agent.task_completion_queue.empty():
+                try:
+                    event = agent.task_completion_queue.get_nowait()
+                    completed_task_events.append(event)
+                except asyncio.QueueEmpty:
+                    break
+
+            # Log collected events
+            task_ids = [event.task_id for event in completed_task_events]
             agent.logger.info(
-                f"Received task completion: {task_event.task_id} -> {task_event.status}, start the editing."
+                f"Collected {len(completed_task_events)} task completion event(s): {task_ids}"
             )
 
-            constellation = task_event.data.get("constellation")
+            # Get the latest constellation from the last event
+            # (orchestrator updates the same constellation object)
+            latest_constellation = completed_task_events[-1].data.get("constellation")
 
             # Update constellation based on task completion
             await agent.process_editing(
                 context=context,
-                task_id=task_event.task_id,
-                before_constellation=constellation,
+                task_ids=task_ids,  # Pass all collected task IDs
+                before_constellation=latest_constellation,
             )
 
             # Sleep for waiting

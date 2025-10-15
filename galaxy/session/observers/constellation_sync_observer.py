@@ -160,8 +160,8 @@ class ConstellationModificationSynchronizer(IEventObserver):
                 self._current_constellation = event.data.get("constellation")
                 return
 
-            task_id = event.data.get("on_task_id")
-            if not task_id:
+            task_ids = event.data.get("on_task_id")
+            if not task_ids:
                 self.logger.warning(
                     "CONSTELLATION_MODIFIED event missing 'on_task_id' field"
                 )
@@ -177,21 +177,22 @@ class ConstellationModificationSynchronizer(IEventObserver):
                 )
 
             # Mark the modification as complete
-            if task_id in self._pending_modifications:
-                future = self._pending_modifications[task_id]
-                if not future.done():
-                    future.set_result(True)
-                    self._stats["completed_modifications"] += 1
-                    self.logger.info(
-                        f"✅ Completed modification for task '{task_id}' "
-                        f"(constellation: {event.constellation_id})"
+            for task_id in task_ids:
+                if task_id in self._pending_modifications:
+                    future = self._pending_modifications[task_id]
+                    if not future.done():
+                        future.set_result(True)
+                        self._stats["completed_modifications"] += 1
+                        self.logger.info(
+                            f"✅ Completed modification for task '{task_id}' "
+                            f"(constellation: {event.constellation_id})"
+                        )
+                    del self._pending_modifications[task_id]
+                else:
+                    self.logger.debug(
+                        f"Received CONSTELLATION_MODIFIED for task '{task_id}' "
+                        f"but no pending modification was registered"
                     )
-                del self._pending_modifications[task_id]
-            else:
-                self.logger.debug(
-                    f"Received CONSTELLATION_MODIFIED for task '{task_id}' "
-                    f"but no pending modification was registered"
-                )
 
         except Exception as e:
             self.logger.error(

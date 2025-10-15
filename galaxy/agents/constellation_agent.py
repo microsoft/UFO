@@ -147,15 +147,15 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     async def process_editing(
         self,
         context: Context = None,
-        task_id: str = "",
+        task_ids: Optional[List[str]] = None,
         before_constellation: Optional[TaskConstellation] = None,
     ) -> TaskConstellation:
         """
-        Process a task result and potentially update the constellation.
+        Process task completion events and potentially update the constellation.
 
-        :param result: Task execution result
         :param context: Optional processing context
-        :param task_id: The ID of the task being processed
+        :param task_ids: List of task IDs that were just completed
+        :param before_constellation: The constellation before editing
         :return: Updated constellation
         :raises TaskExecutionError: If result processing fails
         """
@@ -172,8 +172,12 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         else:
             context.set(ContextNames.CONSTELLATION, before_constellation)
 
+        # Handle both single task_id and multiple task_ids
+        if task_ids is None:
+            task_ids = []
+
         self.logger.debug(
-            f"Task {task_id} is marked as completed, Agent's constellation updated, completed tasks ids: {[t.task_id for t in before_constellation.get_completed_tasks()]}"
+            f"Tasks {task_ids} marked as completed, Agent's constellation updated, completed tasks ids: {[t.task_id for t in before_constellation.get_completed_tasks()]}"
         )
 
         # Update the constellation on the MCP server side.
@@ -194,9 +198,12 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
             f"Task ID for constellation before editing: {before_constellation.tasks.keys()}"
         )
 
-        self.logger.info(
-            f"📊 Status for task before editing {task_id}: {before_constellation.get_task(task_id).status}"
-        )
+        # Log status for each completed task
+        for tid in task_ids:
+            if before_constellation.get_task(tid):
+                self.logger.info(
+                    f"📊 Status for task before editing {tid}: {before_constellation.get_task(tid).status}"
+                )
 
         self.logger.info(
             f"Dependency ID for constellation before editing: {before_constellation.dependencies.keys()}"
@@ -211,9 +218,12 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         after_constellation: TaskConstellation = context.get(ContextNames.CONSTELLATION)
 
-        self.logger.info(
-            f"📊 Status for task after editing {task_id}: {after_constellation.get_task(task_id).status}"
-        )
+        # Log status for each completed task after editing
+        for tid in task_ids:
+            if after_constellation.get_task(tid):
+                self.logger.info(
+                    f"📊 Status for task after editing {tid}: {after_constellation.get_task(tid).status}"
+                )
 
         try:
             await asyncio.wait_for(
@@ -276,7 +286,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
                     "old_constellation": before_constellation,
                     "new_constellation": after_constellation,
                     "modification_type": f"Edited by {self.name}",
-                    "on_task_id": task_id,
+                    "on_task_id": task_ids,  # Changed to plural to include all task IDs
                 },
                 constellation_id=after_constellation.constellation_id,
                 constellation_state=(
