@@ -126,18 +126,3 @@ TASK_STATUS: True  # Whether to record the status of the tasks in batch executio
 
 # Experience saving
 SAVE_EXPERIENCE: "always_not"  # Whether to save the experience, can be "always" for always save, "always_not" for always not save, "ask" for asking the user to save or not, "auto" for auto save when the evaluation is good. By default, it is "ask".
-
-# SMTP
-MONITOR: True
-MACHINE_ID: DEV
-SEND_POINT: 1,2,100,200
-FROM_EMAIL: 1921761583@qq.com
-TO_EMAIL: v-mujian@microsoft.com
-SENDER_PASSWORD:
-SMTP_SERVER: smtp.qq.com
-
-# Blob storage
-UPLOAD: True
-ACCOUNT_URL: "https://ufodata.blob.core.windows.net"
-CONTAINER_NAME: "ufodata"
-DATA_SOURCE: qabench
