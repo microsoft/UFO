@@ -258,6 +258,9 @@ The UFO² team is actively working on the following features and improvements:
 ## ⚠️ Disclaimer
 By choosing to run the provided code, you acknowledge and agree to the following terms and conditions regarding the functionality and data handling practices in [DISCLAIMER.md](./DISCLAIMER.md)
 
+This repository is intended solely for research purposes. The code provided herein is not designed, tested, or validated for third-party production use. Users are expected to exercise their own judgment and due diligence when utilizing any part of this codebase. Microsoft is committed to building Responsible and Trustworthy AI. To learn more about our principles and practices, please refer to our [principles and approach](https://www.microsoft.com/en-us/ai/principles-and-approach).
+
+
 
 ## <img src="./assets/ufo_blue.png" alt="logo" width="30"> Trademarks
 

@@ -18,7 +18,9 @@ from ufo.llm.base import BaseService
 
 
 class BaseOpenAIService(BaseService):
-    def __init__(self, config: Dict[str, Any], agent_type: str, api_provider: str, api_base: str) -> None:
+    def __init__(
+        self, config: Dict[str, Any], agent_type: str, api_provider: str, api_base: str
+    ) -> None:
         """
         Create an OpenAI service instance.
         :param config: The configuration for the OpenAI service.
@@ -437,6 +439,7 @@ class BaseOpenAIService(BaseService):
             print("failed to acquire token from AAD for OpenAI", e)
             raise e
 
+
 class OpenAIService(BaseOpenAIService):
     """
     The OpenAI service class to interact with the OpenAI API.
@@ -448,7 +451,12 @@ class OpenAIService(BaseOpenAIService):
         :param config: The configuration for the OpenAI service.
         :param agent_type: The type of the agent.
         """
-        super().__init__(config, agent_type, config[agent_type]["API_TYPE"].lower(), config[agent_type]["API_BASE"])
+        super().__init__(
+            config,
+            agent_type,
+            config[agent_type]["API_TYPE"].lower(),
+            config[agent_type]["API_BASE"],
+        )
 
     def chat_completion(
         self,
