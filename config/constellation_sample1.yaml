@@ -2,7 +2,7 @@
 # This configuration defines a constellation with two devices for testing
 
 constellation_id: "test_constellation"
-heartbeat_interval: 30.0
+heartbeat_interval: 10
 reconnect_delay: 5.0
 max_concurrent_tasks: 6
 

@@ -14,6 +14,7 @@ This module contains all the processing strategies for App Agent including:
 Each strategy is designed to be modular, testable, and follows the dependency injection pattern.
 """
 
+import asyncio
 import json
 import os
 import time
@@ -1054,9 +1055,15 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
 
             for retry_count in range(max_retries):
                 try:
-                    # Get response from LLM
-                    response_text, cost = agent.get_response(
-                        prompt_message, AgentType.APP, use_backup_engine=True
+                    # 🔧 FIX: Run synchronous LLM call in thread executor to avoid blocking event loop
+                    # This prevents WebSocket ping/pong timeout during long LLM responses
+                    loop = asyncio.get_event_loop()
+                    response_text, cost = await loop.run_in_executor(
+                        None,  # Use default ThreadPoolExecutor
+                        agent.get_response,
+                        prompt_message,
+                        AgentType.APP,
+                        True,  # use_backup_engine
                     )
 
                     # Validate response can be parsed

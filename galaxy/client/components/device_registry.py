@@ -55,8 +55,6 @@ class DeviceRegistry:
             max_retries=max_retries,
         )
 
-        print(device_info)
-
         self._devices[device_id] = device_info
         self.logger.info(
             f"📝 Registered device {device_id} with capabilities: {capabilities}"

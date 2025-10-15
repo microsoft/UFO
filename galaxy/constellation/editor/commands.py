@@ -715,10 +715,6 @@ class BuildConstellationCommand(BaseConstellationCommand):
         self._create_backup()
 
         try:
-            if self._clear_existing:
-                # Clear existing tasks and dependencies
-                for task_id in list(self._constellation.tasks.keys()):
-                    self._constellation.remove_task(task_id)
 
             self._constellation = TaskConstellation.from_basemodel(self._config)
 

@@ -136,30 +136,37 @@ class ConstellationDeviceManager:
             )
             self.device_registry.increment_connection_attempts(device_id)
 
-            # Establish connection
-            websocket = await self.connection_manager.connect_to_device(device_info)
+            # Establish connection with message processor
+            # ⚠️ Pass message_processor to ensure it starts BEFORE registration
+            # This prevents race conditions where server responses arrive before we start listening
+            await self.connection_manager.connect_to_device(
+                device_info, message_processor=self.message_processor
+            )
 
             # Update status to connected
             self.device_registry.update_device_status(device_id, DeviceStatus.CONNECTED)
             self.device_registry.update_heartbeat(device_id)
 
-            # Start background services
-            self.message_processor.start_message_handler(device_id, websocket)
+            # ⚠️ Message handler already started in connect_to_device()
+            # No need to start it again here to avoid race conditions
+            # self.message_processor.start_message_handler(device_id, websocket)
+
+            # Start heartbeat monitoring
             self.heartbeat_manager.start_heartbeat(device_id)
 
             # Request device system info and update AgentProfile
             # The device already pushed its info during registration, now we retrieve it
-            device_system_info = await self.connection_manager.request_device_info(
-                device_id
-            )
-            if device_system_info:
-                # Update AgentProfile with system information (delegate to DeviceRegistry)
-                self.device_registry.update_device_system_info(
-                    device_id, device_system_info
-                )
+            # device_system_info = await self.connection_manager.request_device_info(
+            #     device_id
+            # )
+            # if device_system_info:
+            #     # Update AgentProfile with system information (delegate to DeviceRegistry)
+            #     self.device_registry.update_device_system_info(
+            #         device_id, device_system_info
+            #     )
 
-            # Set device to IDLE (ready to accept tasks)
-            self.device_registry.set_device_idle(device_id)
+            # # Set device to IDLE (ready to accept tasks)
+            # self.device_registry.set_device_idle(device_id)
 
             # Notify connection handlers
             await self.event_manager.notify_device_connected(device_id, device_info)

@@ -62,9 +62,10 @@ class HeartbeatManager:
                 if not websocket:
                     break
 
+                constellation_id = self.connection_manager.constellation_id
                 heartbeat_msg = ClientMessage(
                     type=ClientMessageType.HEARTBEAT,
-                    client_id=f"constellation@{device_id}",
+                    client_id=f"{constellation_id}@{device_id}",
                     status=TaskStatus.OK,
                     timestamp=datetime.now(timezone.utc).isoformat(),
                     metadata={"device_id": device_id},

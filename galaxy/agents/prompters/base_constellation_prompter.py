@@ -221,7 +221,11 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
         )
         lines.append("   RUNNING, COMPLETED, or FAILED items are read-only.")
 
-        return "\n".join(lines)
+        result = "\n".join(lines)
+
+        print(result)
+
+        return result
 
     def user_content_construction(
         self,

@@ -16,6 +16,7 @@ The processor maintains backward compatibility with BaseProcessor interface
 while providing enhanced modularity, error handling, and extensibility.
 """
 
+import asyncio
 import json
 from dataclasses import asdict
 from typing import TYPE_CHECKING, Any, Dict, List, Optional
@@ -540,9 +541,15 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
 
         for retry_count in range(max_retries):
             try:
-                # Get response from LLM
-                response_text, cost = host_agent.get_response(
-                    prompt_message, AgentType.HOST, use_backup_engine=True
+                # 🔧 FIX: Run synchronous LLM call in thread executor to avoid blocking event loop
+                # This prevents WebSocket ping/pong timeout during long LLM responses
+                loop = asyncio.get_event_loop()
+                response_text, cost = await loop.run_in_executor(
+                    None,  # Use default ThreadPoolExecutor
+                    host_agent.get_response,
+                    prompt_message,
+                    AgentType.HOST,
+                    True,  # use_backup_engine
                 )
 
                 # Validate that response can be parsed as JSON

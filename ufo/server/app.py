@@ -98,4 +98,10 @@ if __name__ == "__main__":
     logger.info(f"Starting UFO Server on {cli_args.host}:{cli_args.port}")
     logger.info(f"Platform: {cli_args.platform or 'auto-detected'}")
     logger.info(f"Log level: {cli_args.log_level}")
-    uvicorn.run(app, host=cli_args.host, port=cli_args.port, reload=True)
+    uvicorn.run(
+        app,
+        host=cli_args.host,
+        port=cli_args.port,
+        reload=False,
+        timeout_keep_alive=120,
+    )

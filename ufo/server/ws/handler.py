@@ -58,8 +58,6 @@ class UFOWebSocketHandler:
             else "windows"
         )
 
-        print(reg_info)
-
         # Register client
         client_id = reg_info.client_id
         if client_type == ClientType.CONSTELLATION:
@@ -186,8 +184,10 @@ class UFOWebSocketHandler:
             while True:
                 msg = await websocket.receive_text()
                 asyncio.create_task(self.handle_message(msg, websocket))
-        except WebSocketDisconnect:
-            self.logger.info(f"[WS] {client_id} disconnected normally")
+        except WebSocketDisconnect as e:
+            self.logger.info(
+                f"[WS] {client_id} disconnected — code={e.code}, reason={e.reason}"
+            )
             if client_id:
                 await self.disconnect(client_id)
         except Exception as e:
@@ -303,11 +303,19 @@ class UFOWebSocketHandler:
     ) -> None:
         """
         Handle a task request message from the client.
+
+        This method now delegates session execution to SessionManager,
+        which runs tasks in background without blocking the event loop.
+        This allows WebSocket ping/pong and heartbeat messages to continue.
+
         :param data: The data from the client.
         :param websocket: The WebSocket connection.
         """
         client_type = data.client_type
+        target_device_id = None  # Track for debugging
+
         if client_type == ClientType.CONSTELLATION:
+            target_device_id = data.target_id
             self.logger.info(
                 f"[WS] 🌟 Handling constellation task request: {data.request} from {data.target_id}"
             )
@@ -323,51 +331,81 @@ class UFOWebSocketHandler:
         session_id = str(uuid.uuid4()) if not data.session_id else data.session_id
         task_name = data.task_name if data.task_name else str(uuid.uuid4())
 
-        session = self.session_manager.get_or_create_session(
+        self.logger.info(
+            f"[WS] 🎯 Prepared task: session_id={session_id}, task_name={task_name}, "
+            f"client_type={client_type}, target_device={target_device_id}"
+        )
+
+        # Define callback to send results when task completes
+        async def send_result(sid: str, result_msg: ServerMessage):
+            """Send task result to client when session completes."""
+            self.logger.info(
+                f"[WS] 📬 CALLBACK INVOKED! session={sid}, status={result_msg.status}, "
+                f"client_type={client_type}, target_device={target_device_id}"
+            )
+            try:
+                # Send to constellation client (the one who sent the request)
+                self.logger.info(f"[WS] 📤 Sending result to constellation client...")
+                await websocket.send_text(result_msg.model_dump_json())
+                self.logger.info(f"[WS] ✅ Sent to constellation client successfully")
+
+                # If constellation client, also notify the target device
+                if client_type == ClientType.CONSTELLATION:
+                    self.logger.info(
+                        f"[WS] 📤 Sending result to target device {target_device_id}..."
+                    )
+                    try:
+                        await target_ws.send_text(result_msg.model_dump_json())
+                        self.logger.info(
+                            f"[WS] ✅ Sent to target device {target_device_id} successfully"
+                        )
+                    except Exception as target_error:
+                        import traceback
+
+                        self.logger.error(
+                            f"[WS] ❌ Failed to send to target device {target_device_id}: "
+                            f"{target_error}\n{traceback.format_exc()}"
+                        )
+
+                self.logger.info(f"[WS] ✅ All results sent for session {sid}")
+            except Exception as e:
+                import traceback
+
+                self.logger.error(
+                    f"[WS] ❌ Failed to send result for {sid}: {e}\n{traceback.format_exc()}"
+                )
+
+        self.logger.info(
+            f"[WS] 🎯 About to call execute_task_async for session {session_id}"
+        )
+
+        # Start task in background (non-blocking)
+        await self.session_manager.execute_task_async(
             session_id=session_id,
             task_name=task_name,
             request=data.request,
             websocket=target_ws,
             platform_override=platform,
+            callback=send_result,
         )
 
-        error = None
+        self.logger.info(
+            f"[WS] 🎯 execute_task_async returned for session {session_id}"
+        )
 
-        try:
-            await session.run()
-            if session.is_error():
-                status = TaskStatus.FAILED
-                session.results = {"failure": "session ended with an error"}
-            elif session.is_finished():
-                status = TaskStatus.COMPLETED
+        # Send immediate acknowledgment that task was accepted
+        ack_message = ServerMessage(
+            type=ServerMessageType.HEARTBEAT,
+            status=TaskStatus.OK,
+            session_id=session_id,
+            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            response_id=str(uuid.uuid4()),
+        )
+        await websocket.send_text(ack_message.model_dump_json())
 
-            self.logger.info(f"[WS] Task {session_id} is ending with status: {status}")
-
-        except Exception as e:
-            import traceback
-
-            traceback.print_exc()
-            self.logger.error(f"[WS] Error running session {session_id}: {e}")
-            status = TaskStatus.FAILED
-            error = str(e)
-        finally:
-            server_message = ServerMessage(
-                type=ServerMessageType.TASK_END,
-                status=status,
-                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                session_id=session_id,
-                error=error,
-                result=session.results,
-                response_id=str(uuid.uuid4()),
-            )
-            await websocket.send_text(server_message.model_dump_json())
-
-            # If constellation client, also notify the target device
-            if client_type == ClientType.CONSTELLATION:
-                await target_ws.send_text(server_message.model_dump_json())
-
-            # Save results to session manager
-            self.session_manager.set_results(session_id)
+        self.logger.info(
+            f"[WS] 📝 Task {session_id} accepted and running in background"
+        )
 
     async def handle_command_result(self, data: ClientMessage) -> None:
         """

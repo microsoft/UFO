@@ -11,7 +11,7 @@ Single responsibility: Connection management.
 import asyncio
 import logging
 from datetime import datetime, timezone
-from typing import Any, Dict, Optional
+from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import websockets
 from websockets import WebSocketClientProtocol
@@ -22,11 +22,13 @@ from ufo.contracts.contracts import (
     ClientMessageType,
     ClientType,
     ServerMessage,
-    ServerMessageType,
     TaskStatus,
 )
 
 from .types import AgentProfile, TaskRequest
+
+if TYPE_CHECKING:
+    from galaxy.client.components.message_processor import MessageProcessor
 
 
 class WebSocketConnectionManager:
@@ -47,12 +49,15 @@ class WebSocketConnectionManager:
         self.logger = logging.getLogger(f"{__name__}.WebSocketConnectionManager")
 
     async def connect_to_device(
-        self, device_info: AgentProfile
+        self,
+        device_info: AgentProfile,
+        message_processor: "MessageProcessor",
     ) -> WebSocketClientProtocol:
         """
         Establish WebSocket connection to a device.
 
         :param device_info: Device information
+        :param message_processor: Optional MessageProcessor to start immediately before registration
         :return: WebSocket connection
         :raises: ConnectionError if connection fails
         """
@@ -63,12 +68,19 @@ class WebSocketConnectionManager:
 
             websocket = await websockets.connect(
                 device_info.server_url,
-                ping_interval=200,
-                ping_timeout=200,
+                ping_interval=30,
+                ping_timeout=30,
                 close_timeout=600,
             )
 
             self._connections[device_info.device_id] = websocket
+
+            # ⚠️ CRITICAL: Start message handler BEFORE sending registration
+            # This ensures we don't miss the server's registration response
+            message_processor.start_message_handler(device_info.device_id, websocket)
+            # Small delay to ensure handler is listening
+            await asyncio.sleep(0.05)
+            self.logger.debug(f"📨 Message handler started for {device_info.device_id}")
 
             # Register as constellation client
             success = await self._register_constellation_client(device_info, websocket)
@@ -123,12 +135,15 @@ class WebSocketConnectionManager:
                 f"📝 Sent registration for constellation client: {constellation_client_id}"
             )
 
-            # Wait for server response to validate registration
-            registration_success = await self._validate_registration_response(
-                websocket, constellation_client_id, device_info.device_id
+            # ⚠️ Don't wait for response here - MessageProcessor will handle it
+            # This avoids race conditions where the server's response arrives before
+            # MessageProcessor starts listening. If registration fails, the server
+            # will close the connection, which MessageProcessor will detect.
+            self.logger.debug(
+                f"📝 Registration sent, MessageProcessor will handle response for {constellation_client_id}"
             )
 
-            return registration_success
+            return True
 
         except Exception as e:
             self.logger.error(
@@ -209,10 +224,12 @@ class WebSocketConnectionManager:
                 raise ConnectionError(f"Device {device_id} connection is closed")
 
         try:
+            constellation_client_id = f"{self.constellation_id}@{device_id}"
             # Create client message for task execution
             task_message = ClientMessage(
                 type=ClientMessageType.TASK,
                 client_type=ClientType.CONSTELLATION,
+                client_id=constellation_client_id,
                 target_id=device_id,
                 task_name=task_request.task_name,
                 request=task_request.request,
@@ -368,7 +385,7 @@ class WebSocketConnectionManager:
             except:
                 pass
             del self._connections[device_id]
-            self.logger.info(f"🔌 Disconnected from device {device_id}")
+            self.logger.warning(f"🔌 Disconnected from device {device_id}")
 
     async def disconnect_all(self) -> None:
         """Disconnect from all devices"""

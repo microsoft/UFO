@@ -95,11 +95,19 @@ class MessageProcessor:
         self, device_id: str, websocket: WebSocketClientProtocol
     ) -> None:
         """Handle incoming messages from a device"""
+        message_count = 0
         try:
             async for message in websocket:
+                message_count += 1
+
+                self.logger.debug(
+                    f"DeviceID: {device_id}, message count: {message_count}, message: {message}"
+                )
                 try:
                     server_msg = ServerMessage.model_validate_json(message)
-                    await self._process_server_message(device_id, server_msg)
+                    asyncio.create_task(
+                        self._process_server_message(device_id, server_msg)
+                    )
                 except json.JSONDecodeError as e:
                     self.logger.error(f"❌ Invalid JSON from device {device_id}: {e}")
                 except Exception as e:
@@ -107,8 +115,14 @@ class MessageProcessor:
                         f"❌ Error processing message from device {device_id}: {e}"
                     )
 
-        except websockets.ConnectionClosed:
-            self.logger.warning(f"🔌 Connection to device {device_id} closed")
+        except websockets.ConnectionClosed as e:
+            self.logger.warning(
+                f"🔌 Connection to device {device_id} closed "
+                f"(code: {e.code}, reason: {e.reason}, messages received: {message_count})"
+            )
+        except asyncio.CancelledError:
+            self.logger.info(f"📨 Message handler for device {device_id} was cancelled")
+            raise
         except Exception as e:
             self.logger.error(f"❌ Message handler error for device {device_id}: {e}")
 
@@ -120,6 +134,7 @@ class MessageProcessor:
             self.logger.debug(
                 f"📨 Processing message type {server_msg.type} from device {device_id}"
             )
+            start_time = asyncio.get_event_loop().time()
 
             if server_msg.type == ServerMessageType.TASK_END:
                 await self._handle_task_completion(device_id, server_msg)
@@ -134,6 +149,12 @@ class MessageProcessor:
             else:
                 self.logger.debug(
                     f"📋 Unhandled message type {server_msg.type} from device {device_id}"
+                )
+
+            elapsed = asyncio.get_event_loop().time() - start_time
+            if elapsed > 0.5:  # 超过500ms就警告
+                self.logger.warning(
+                    f"⏱️ Slow message processing: {server_msg.type} took {elapsed:.2f}s"
                 )
 
         except Exception as e:

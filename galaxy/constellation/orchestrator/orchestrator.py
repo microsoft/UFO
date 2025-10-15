@@ -500,6 +500,8 @@ class TaskConstellationOrchestrator:
             )
             await self._event_bus.publish_event(start_event)
 
+            task.start_execution()
+
             # Execute the task
             result = await task.execute(self._device_manager)
 

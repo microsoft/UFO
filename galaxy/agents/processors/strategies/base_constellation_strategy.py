@@ -8,6 +8,7 @@ This module provides base classes for different types of constellation processin
 containing shared logic while allowing for mode-specific customization.
 """
 
+import asyncio
 import json
 import traceback
 from abc import abstractmethod
@@ -226,8 +227,13 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
         for retry_count in range(max_retries):
             try:
                 # Get response from LLM
-                response_text, cost = agent.get_response(
-                    prompt_message, AgentType.CONSTELLATION, use_backup_engine=True
+                loop = asyncio.get_event_loop()
+                response_text, cost = await loop.run_in_executor(
+                    None,  # Use default ThreadPoolExecutor
+                    agent.get_response,
+                    prompt_message,
+                    AgentType.CONSTELLATION,
+                    True,  # use_backup_engine
                 )
 
                 # Validate that response can be parsed as JSON

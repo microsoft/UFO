@@ -1,11 +1,15 @@
+import asyncio
+import datetime
 import logging
 import platform
 import threading
-from typing import Any, Dict, Optional
+import uuid
+from typing import Any, Callable, Dict, Optional
 
 from fastapi import WebSocket
 
 from ufo.config import Config
+from ufo.contracts.contracts import ServerMessage, ServerMessageType, TaskStatus
 from ufo.module.basic import BaseSession
 from ufo.module.session_pool import SessionFactory
 
@@ -32,6 +36,9 @@ class SessionManager:
         self.lock = threading.Lock()
         self.logger = logging.getLogger(__name__)
         self.results: Dict[str, Dict[str, Any]] = {}
+
+        # Track running background tasks
+        self._running_tasks: Dict[str, asyncio.Task] = {}
 
         # Platform configuration
         self.platform = platform_override or platform.system().lower()
@@ -124,3 +131,158 @@ class SessionManager:
         with self.lock:
             self.sessions.pop(session_id, None)
             self.logger.info(f"Removed session: {session_id}")
+
+    async def execute_task_async(
+        self,
+        session_id: str,
+        task_name: str,
+        request: str,
+        websocket: WebSocket,
+        platform_override: str,
+        callback: Optional[Callable[[str, ServerMessage], None]] = None,
+    ) -> str:
+        """
+        Execute a task in the background without blocking the event loop.
+
+        This method:
+        1. Creates or retrieves the session
+        2. Starts session execution in background task
+        3. Calls callback when complete with results
+
+        This allows the WebSocket handler to continue processing other messages
+        (heartbeats, ping/pong) while the session runs.
+
+        :param session_id: Session identifier
+        :param task_name: Task name
+        :param request: User request
+        :param websocket: WebSocket for command dispatcher
+        :param platform_override: Platform type ('windows' or 'linux')
+        :param callback: Optional async callback(session_id, ServerMessage) when task completes
+        :return: session_id
+        """
+        # Create session
+        session = self.get_or_create_session(
+            session_id=session_id,
+            task_name=task_name,
+            request=request,
+            websocket=websocket,
+            platform_override=platform_override,
+        )
+
+        # Start background task
+        task = asyncio.create_task(
+            self._run_session_background(session_id, session, callback)
+        )
+        self._running_tasks[session_id] = task
+
+        self.logger.info(f"[SessionManager] 🚀 Started background task {session_id}")
+        return session_id
+
+    async def _run_session_background(
+        self,
+        session_id: str,
+        session: BaseSession,
+        callback: Optional[Callable],
+    ) -> None:
+        """
+        Run session in background and notify callback when complete.
+
+        This method runs the session without blocking the event loop,
+        allowing WebSocket ping/pong and heartbeat messages to continue.
+
+        :param session_id: Session identifier
+        :param session: Session instance to run
+        :param callback: Optional async callback to notify when complete
+        """
+        error = None
+        status = TaskStatus.FAILED
+
+        try:
+            self.logger.info(f"[SessionManager] 🚀 Executing session {session_id}")
+            start_time = asyncio.get_event_loop().time()
+
+            # Run the session (this may contain sync LLM calls that need fixing)
+            await session.run()
+
+            elapsed = asyncio.get_event_loop().time() - start_time
+            self.logger.info(
+                f"[SessionManager] ⏱️ Session {session_id} execution took {elapsed:.2f}s"
+            )
+
+            # Determine final status
+            if session.is_error():
+                status = TaskStatus.FAILED
+                session.results = session.results or {
+                    "failure": "session ended with an error"
+                }
+                self.logger.info(
+                    f"[SessionManager] ⚠️ Session {session_id} ended with error"
+                )
+            elif session.is_finished():
+                status = TaskStatus.COMPLETED
+                self.logger.info(
+                    f"[SessionManager] ✅ Session {session_id} finished successfully"
+                )
+            else:
+                status = TaskStatus.FAILED
+                error = "Session ended in unknown state"
+                self.logger.warning(
+                    f"[SessionManager] ⚠️ Session {session_id} ended in unknown state"
+                )
+
+        except Exception as e:
+            import traceback
+
+            traceback.print_exc()
+            self.logger.error(f"[SessionManager] ❌ Error in session {session_id}: {e}")
+            status = TaskStatus.FAILED
+            error = str(e)
+
+        finally:
+            self.logger.info(
+                f"[SessionManager] 📦 Building result message for session {session_id} (status={status})"
+            )
+
+            # Build result message
+            result_message = ServerMessage(
+                type=ServerMessageType.TASK_END,
+                status=status,
+                session_id=session_id,
+                error=error,
+                result=session.results,
+                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                response_id=str(uuid.uuid4()),
+            )
+
+            # Save results
+            self.set_results(session_id)
+            self.logger.info(
+                f"[SessionManager] 💾 Saved results for session {session_id}"
+            )
+
+            # Notify callback
+            if callback:
+                self.logger.info(
+                    f"[SessionManager] 📞 Calling callback for session {session_id}"
+                )
+                try:
+                    await callback(session_id, result_message)
+                    self.logger.info(
+                        f"[SessionManager] ✅ Callback completed for session {session_id}"
+                    )
+                except Exception as e:
+                    import traceback
+
+                    self.logger.error(
+                        f"[SessionManager] ❌ Callback error for session {session_id}: {e}\n{traceback.format_exc()}"
+                    )
+            else:
+                self.logger.warning(
+                    f"[SessionManager] ⚠️ No callback registered for session {session_id}"
+                )
+
+            # Cleanup
+            self._running_tasks.pop(session_id, None)
+            self.logger.info(
+                f"[SessionManager] ✅ Session {session_id} completed with status {status}"
+            )
