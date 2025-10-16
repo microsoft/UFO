@@ -185,7 +185,7 @@ class UFOWebSocketHandler:
                 msg = await websocket.receive_text()
                 asyncio.create_task(self.handle_message(msg, websocket))
         except WebSocketDisconnect as e:
-            self.logger.info(
+            self.logger.warning(
                 f"[WS] {client_id} disconnected — code={e.code}, reason={e.reason}"
             )
             if client_id:
@@ -212,11 +212,11 @@ class UFOWebSocketHandler:
 
             # Log message with client type context
             if client_type == ClientType.CONSTELLATION:
-                self.logger.info(
+                self.logger.debug(
                     f"[WS] 🌟 Handling constellation message from {client_id}, type: {data.type}"
                 )
             else:
-                self.logger.info(
+                self.logger.debug(
                     f"[WS] 📱 Received device message from {client_id}, type: {data.type}"
                 )
 
@@ -257,7 +257,7 @@ class UFOWebSocketHandler:
         :param data: The data from the client.
         :param websocket: The WebSocket connection.
         """
-        self.logger.info(f"[WS] Heartbeat from {data.client_id}")
+        self.logger.debug(f"[WS] Heartbeat from {data.client_id}")
         server_message = ServerMessage(
             type=ServerMessageType.HEARTBEAT,
             status=TaskStatus.OK,
