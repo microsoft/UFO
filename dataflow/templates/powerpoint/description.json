@@ -1,8 +1,0 @@
-{
-    "template1.pptx":"A PowerPoint presentation with 8 slides, contains animations and transitions. This PowerPoint presentation has pictures.",
-    "template2.pptx":"A PowerPoint presentation with 7 slides, no animations or transitions. This PowerPoint presentation has pictures, tables (slide 3) and charts (slide 4). It even has SmartArt elements (slide 5 and 6).",
-    "template3.pptx":"A PowerPoint presentation with 9 slides, contains animations in some slides, no transitions.",
-    "template4.pptx":"A PowerPoint presentation with only one slide, no animations or transitions. This PowerPoint presentation contains a log of pictures and text boxes.",
-    "template5.pptx":"A PowerPoint presentation with 6 slides, contains animations and transitions. This PowerPoint presentation has pictures and math equations (slide 5).",
-    "template6.pptx":"A completely empty PowerPoint presentation with only one empty slide. Suitable for adding or inserting content."
-}
