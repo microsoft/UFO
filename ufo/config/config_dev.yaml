@@ -7,7 +7,7 @@ MAX_ROUND: 1  # The max round limit for completing the user request
 SLEEP_TIME: 1  # The sleep time between each step to wait for the window to be ready
 RECTANGLE_TIME: 1
 
-ACTION_SEQUENCE: True  # Whether to output the action sequence. If true, the agent may predict and execute multiple actions in one step.
+ACTION_SEQUENCE: False  # Whether to output the action sequence. If true, the agent may predict and execute multiple actions in one step.
 
 # Skip rendering visual outline on screen if not necessary
 SHOW_VISUAL_OUTLINE_ON_SCREEN: False
@@ -16,8 +16,8 @@ MAXIMIZE_WINDOW: False  # Whether to maximize the application window before the 
 
 JSON_PARSING_RETRY: 3  # The retry times for the json parsing
 
-SAFE_GUARD: True  # Whether to use the safe guard to prevent the model from doing sensitve operations.
-CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "Spinner", "CheckBox"]
+SAFE_GUARD: False  # Whether to use the safe guard to prevent the model from doing sensitve operations.
+CONTROL_LIST: ["Button", "Edit", "TabItem", "Document", "ListItem", "MenuItem", "ScrollBar", "TreeItem", "Hyperlink", "ComboBox", "RadioButton", "Spinner", "CheckBox", "Group"]
 # The list of widgets that allowed to be selected, in uia backend, it will be used for filter the control_type, while in win32 backend, it will be used for filter the class_name.
 HISTORY_KEYS: ["step", "subtask", "action_representation", "user_confirm"]  # The keys of the action history for the next step.
 

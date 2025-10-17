@@ -38,6 +38,13 @@ class WindowsBaseSession(BaseSession):
             configs["API_PROMPT"],
         )
 
+    def reset(self):
+        """
+        Reset the session state for a new session.
+        This includes resetting the host agent and any other session-specific state.
+        """
+        self._host_agent.set_state(self._host_agent.default_state)
+
 
 class LinuxBaseSession(BaseSession):
     """
@@ -79,3 +86,10 @@ class LinuxBaseSession(BaseSession):
         # Implement markdown logging specific to Linux sessions
         self.logger.warning("Markdown logging not yet implemented for Linux sessions.")
         pass
+
+    def reset(self) -> None:
+        """
+        Reset the session state for a new session.
+        This includes resetting any Linux-specific agents and session state.
+        """
+        self._agent.set_state(self._agent.default_state)

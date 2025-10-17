@@ -7,7 +7,7 @@ reconnect_delay: 5.0
 max_concurrent_tasks: 6
 
 devices:
-  - device_id: "client_001"
+  - device_id: "linux_agent_1"
     server_url: "ws://localhost:5001/ws"
     os: "linux"
     capabilities:
@@ -21,7 +21,7 @@ devices:
     auto_connect: true
     max_retries: 5
 
-  - device_id: "client_002"
+  - device_id: "linux_agent_2"
     server_url: "ws://localhost:5002/ws"
     os: "linux"
     capabilities:
@@ -35,7 +35,7 @@ devices:
     auto_connect: true
     max_retries: 5
 
-  - device_id: "client_003"
+  - device_id: "linux_agent_3"
     server_url: "ws://localhost:5003/ws"
     os: "linux"
     capabilities:
@@ -49,19 +49,23 @@ devices:
     auto_connect: true
     max_retries: 5
 
-  - device_id: "client_004"
+  - device_id: "windows_agent"
     server_url: "ws://localhost:5004/ws"
     os: "windows"
     capabilities:
       - "web_browsing"
       - "office_applications" 
       - "file_management"
-      - "text_editing"
+      - "send emails"
       - "any windows tasks"
     metadata:
       location: "home_office"
       os: "windows"
       performance: "medium"
       description: "Primary development laptop"
-    auto_connect: true
+      operation_engineer_email: "hidan.zhang@gmail.com"
+      sheet_name_for_writing_log_in_excel: "report"
+      sender_name: "Zac"
+      operation_engineer_name: "Hidan Zhang"
+      tips: "When sending emails, just input the email address in the To field and do not search for contacts."
     max_retries: 5

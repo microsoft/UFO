@@ -158,8 +158,6 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         panel_title = f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
         panel_content = self.starting_message(context)
 
-        print(panel_content)
-
         console.print(Panel(panel_content, title=panel_title, style="magenta"))
 
         # Additional context logging for debugging

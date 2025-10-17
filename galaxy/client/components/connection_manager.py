@@ -71,6 +71,7 @@ class WebSocketConnectionManager:
                 ping_interval=30,
                 ping_timeout=30,
                 close_timeout=600,
+                max_size=100 * 1024 * 1024,
             )
 
             self._connections[device_info.device_id] = websocket

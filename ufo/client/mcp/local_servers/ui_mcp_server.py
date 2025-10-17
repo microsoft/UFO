@@ -434,7 +434,7 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
         ] = False,
     ) -> Annotated[str, Field(description="The text to set in the control element.")]:
         """
-        Set text in a control element. Only works with Edit control items.
+        Type text in a control element.
         """
 
         control_verified = _verify_id(id, name, ui_state.control_dict)

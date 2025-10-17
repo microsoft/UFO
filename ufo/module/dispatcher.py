@@ -174,8 +174,8 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         from ufo.module.context import ContextNames
 
         agent_name = self.session.current_agent_class
-        process_name = self.session.context.get(ContextNames.APPLICATION_ROOT_NAME)
-        root_name = self.session.context.get(ContextNames.APPLICATION_PROCESS_NAME)
+        process_name = self.session.context.get(ContextNames.APPLICATION_PROCESS_NAME)
+        root_name = self.session.context.get(ContextNames.APPLICATION_ROOT_NAME)
         session_id = self.session.id
         response_id = str(uuid.uuid4())
         timestamp = datetime.datetime.now(datetime.timezone.utc).isoformat()

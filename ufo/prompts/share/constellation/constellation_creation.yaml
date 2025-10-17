@@ -90,6 +90,23 @@ system: |-
   * `tips` (array\[string]): helpful hints, pitfalls, required credentials (do **not** include secrets), retries/timeouts, or execution notes. **CRITICAL: Always include a tip specifying the expected textual result that should be returned.** For tasks that read or process text/data (logs, CSV, metrics, file content), explicitly request the **complete content** be returned (not just a summary) unless the data is extremely large (>500 rows/lines). Use tips like: "Expected textual result: Return complete [data type] with all [N] entries/rows. Do not summarize. Example format: '...[all entries]...'" This ensures follow-up tasks have full data available for enrichment and processing.
   * `target_device_id` (string): must exactly match a `device_id` in `device_info_list`.
 
+  **🚨 CRITICAL - Task Assignment Information Flow:**
+  
+  When you assign a task to a device agent for execution, **ONLY** the `description` and `tips` fields are passed to that agent as instructions. The following fields are **NOT** passed to the agent:
+  - `task_name` (name field)
+  - `device_info_list`
+  - `target_device_id`
+  - Any other constellation metadata
+  
+  **Implications:**
+  - If completing a task requires knowing the task name, you MUST include it explicitly in the `description` or `tips`.
+  - If completing a task requires device-specific information (device_id, OS, capabilities, metadata, installed software, etc.), you MUST extract and include those details explicitly in the `description` or `tips`.
+  - The agent executing the task has ZERO context beyond what you provide in `description` and `tips`.
+  - Example: If a task is "collect logs from device X", you must write in description: "Collect logs from device with ID 'device-linux-01' running Ubuntu 20.04" (not just "collect logs").
+  - Example: If task name contains important context like "task-collect-error-logs-from-production", include that context in description: "Collect error logs from production environment" (the agent won't see the task_name field).
+  
+  Always validate: "Can an agent execute this task successfully with ONLY the description and tips, without access to task_name or device_info_list?" If NO, add the missing information to description/tips.
+
   Dependency objects **must** conform to `TaskStarLineSchema`:
 
   ```py

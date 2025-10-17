@@ -53,6 +53,7 @@ class SessionManager:
         request: Optional[str] = None,
         websocket: Optional[WebSocket] = None,
         platform_override: Optional[str] = None,
+        local: bool = False,
     ) -> BaseSession:
         """
         Get an existing session or create a new one if it doesn't exist.
@@ -63,6 +64,7 @@ class SessionManager:
         :param request: Optional request text to initialize the session.
         :param websocket: Optional WebSocket connection to attach to the session.
         :param platform_override: Override platform detection ('windows' or 'linux').
+        :param local: Whether the session is running in local mode with the client.
         :return: The BaseSession object for the session (Windows or Linux).
         """
         with self.lock:
@@ -70,15 +72,25 @@ class SessionManager:
                 # Use platform override if provided, otherwise use instance platform
                 target_platform = platform_override or self.platform
 
-                # Create session using SessionFactory
-                session = self.session_factory.create_service_session(
-                    task=task_name,
-                    should_evaluate=configs.get("EVA_SESSION", False),
-                    id=session_id,
-                    request=request or "",
-                    websocket=websocket,
-                    platform_override=target_platform,
-                )
+                if local:
+                    session = self.session_factory.create_session(
+                        task=task_name,
+                        should_evaluate=configs.get("EVA_SESSION", False),
+                        mode="normal",
+                        request=request or "",
+                        id=session_id,
+                    )
+
+                else:
+                    # Create session using SessionFactory
+                    session = self.session_factory.create_service_session(
+                        task=task_name,
+                        should_evaluate=configs.get("EVA_SESSION", False),
+                        id=session_id,
+                        request=request or "",
+                        websocket=websocket,
+                        platform_override=target_platform,
+                    )
 
                 self.session_id_dict[task_name] = session_id
                 self.sessions[session_id] = session
@@ -229,6 +241,8 @@ class SessionManager:
                 self.logger.warning(
                     f"[SessionManager] ⚠️ Session {session_id} ended in unknown state"
                 )
+
+            session.reset()
 
         except Exception as e:
             import traceback

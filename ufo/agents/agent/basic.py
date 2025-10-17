@@ -264,8 +264,7 @@ class BasicAgent(ABC):
         """
         Resume the process.
         """
-        if self.processor:
-            await self.processor.resume()
+        pass
 
     def process_asker(self, ask_user: bool = True) -> None:
         """

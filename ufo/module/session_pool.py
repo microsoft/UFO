@@ -125,7 +125,7 @@ class SessionFactory:
                 Session(
                     task,
                     configs.get("EVA_SESSION", False),
-                    id=0,
+                    id=kwargs.get("id", 0),
                     request=request,
                     mode=mode,
                 )
@@ -136,7 +136,7 @@ class SessionFactory:
                 ServiceSession(
                     task=task,
                     should_evaluate=configs.get("EVA_SESSION", False),
-                    id=0,
+                    id=kwargs.get("id", 0),
                     request=request,
                     websocket=kwargs.get("websocket"),
                 )

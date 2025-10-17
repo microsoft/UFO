@@ -788,6 +788,13 @@ class BaseSession(ABC):
         """
         pass
 
+    @abstractmethod
+    def reset(self) -> None:
+        """
+        Reset the session to initial state.
+        """
+        pass
+
     def evaluation(self) -> None:
         """
         Evaluate the session.

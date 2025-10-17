@@ -24,6 +24,12 @@ def parse_args():
         default="INFO",
         help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL, OFF). Use OFF to disable logs (default: INFO)",
     )
+    parser.add_argument(
+        "--local",
+        dest="local",
+        action="store_true",
+        help="Run the server in local mode (default: False)",
+    )
     return parser.parse_args()
 
 
@@ -71,7 +77,7 @@ api_router = create_api_router(session_manager, ws_manager)
 app.include_router(api_router)
 
 # Initialize WebSocket handler
-ws_handler = UFOWebSocketHandler(ws_manager, session_manager)
+ws_handler = UFOWebSocketHandler(ws_manager, session_manager, cli_args.local)
 
 
 @app.websocket("/ws")
@@ -103,5 +109,5 @@ if __name__ == "__main__":
         host=cli_args.host,
         port=cli_args.port,
         reload=False,
-        timeout_keep_alive=120,
+        ws_max_size=100 * 1024 * 1024,
     )

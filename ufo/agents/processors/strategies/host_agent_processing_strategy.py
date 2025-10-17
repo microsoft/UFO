@@ -290,7 +290,7 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
             return 0  # Don't fail the entire process for third-party agent registration
 
 
-@depends_on("target_info_list", "desktop_screenshot_url", "request")
+@depends_on("target_info_list", "desktop_screenshot_url")
 @provides(
     "parsed_response",
     "response_text",
@@ -987,7 +987,7 @@ class HostActionExecutionStrategy(BaseProcessingStrategy):
             )
 
 
-@depends_on("session_step", "round_step", "round_num")
+@depends_on("session_step")
 @provides("additional_memory", "memory_item", "memory_keys_count")
 class HostMemoryUpdateStrategy(BaseProcessingStrategy):
     """

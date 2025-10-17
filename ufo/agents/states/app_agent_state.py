@@ -338,20 +338,12 @@ class ConfirmAppAgentState(AppAgentState):
         :return: The state for the next step.
         """
 
-        plan = agent.processor.plan
-
-        # If the plan is not empty and the plan contains the finish status, it means the task is finished.
-        # The next state should be FinishAppAgentState.
-        if len(plan) > 0 and AppAgentStatus.FINISH.value in plan[0]:
-            agent.status = AppAgentStatus.FINISH.value
-            return FinishAppAgentState()
-
         if self._confirm:
             agent.status = AppAgentStatus.CONTINUE.value
             return ContinueAppAgentState()
         else:
             agent.status = AppAgentStatus.FINISH.value
-            return FinishHostAgentState()
+            return FinishAppAgentState()
 
     def is_subtask_end(self) -> bool:
         """

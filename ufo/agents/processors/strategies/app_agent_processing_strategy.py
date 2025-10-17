@@ -628,7 +628,6 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
             return None
 
 
-@depends_on("target_registry", "clean_screenshot_path", "request")
 @provides(
     "parsed_response",
     "response_text",
@@ -1118,9 +1117,6 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
     "parsed_response",
     "log_path",
     "session_step",
-    "annotation_dict",
-    "application_window_info",
-    "clean_screenshot_path",
 )
 @provides(
     "execution_result",
@@ -1363,7 +1359,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
             return None
 
 
-@depends_on("session_step", "round_step", "round_num", "parsed_response")
+@depends_on("session_step", "parsed_response")
 @provides("additional_memory", "memory_item", "updated_blackboard")
 class AppMemoryUpdateStrategy(BaseProcessingStrategy):
     """

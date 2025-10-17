@@ -27,14 +27,17 @@ class UFOWebSocketHandler:
         self,
         ws_manager: WSManager,
         session_manager: SessionManager,
+        local: bool = False,
     ):
         """
         Initializes the WebSocket handler.
         :param ws_manager: The WebSocket manager.
         :param session_manager: The session manager.
+        :param local: Whether running in local mode with client auto-connect.
         """
         self.ws_manager = ws_manager
         self.session_manager = session_manager
+        self.local = local
         self.logger = logging.getLogger(self.__class__.__name__)
 
     async def connect(self, websocket: WebSocket) -> str:
@@ -417,7 +420,9 @@ class UFOWebSocketHandler:
 
         response_id = data.prev_response_id
         session_id = data.session_id
-        session = self.session_manager.get_or_create_session(session_id)
+        session = self.session_manager.get_or_create_session(
+            session_id, local=self.local
+        )
 
         command_dispatcher: WebSocketCommandDispatcher = (
             session.context.command_dispatcher

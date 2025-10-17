@@ -427,6 +427,14 @@ class GalaxySession(BaseSession):
         self._agent.status = "FINISH"
         self._session_results["finish_reason"] = reason
 
+    def reset(self) -> None:
+        """
+        Reset the session state for a new session.
+
+        This includes resetting the agent and any other session-specific state.
+        """
+        self._agent.set_state(self._agent.default_state)
+
     @property
     def current_constellation(self) -> Optional[TaskConstellation]:
         """

@@ -166,9 +166,7 @@ class GalaxyClient:
             start_time = datetime.now()
 
             with self.display.show_initialization_progress() as progress:
-                task_id = progress.add_task(
-                    "[cyan]Executing Galaxy session...\n", total=None
-                )
+                # progress.add_task("[cyan]Executing Galaxy session...", total=None)
                 await self._session.run()
 
             end_time = datetime.now()

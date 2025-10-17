@@ -66,6 +66,7 @@ class UFOWebSocketClient:
                     ping_interval=60,
                     ping_timeout=60,
                     close_timeout=10,
+                    max_size=100 * 1024 * 1024,
                 ) as ws:
                     self._ws = ws
                     await self.register_client()
