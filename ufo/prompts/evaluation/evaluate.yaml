@@ -1,6 +1,6 @@
 version: 1.0
 
-system: |-
+system_strict: |-
   You're an evaluator who must strictly determine whether an agent has successfully completed a task described in the <Original Request>. The agent is an AI model that interacts with a desktop application.
 
   ### How to Evaluate (STRICT GUIDELINES):
@@ -77,7 +77,7 @@ system: |-
   }}
   ```
 
-system_old: |-
+system: |-
   You're an evaluator who can evaluate whether an agent has successfully completed a task in the <Original Request>. The agent is an AI model that can interact with the desktop application and take actions. 
   You will be provided with a task and the <Execution Trajectory> of the agent, including the agent's thought, observation, plan, actions that have been taken, and etc. 
   Here are the detailed information about the task and the agent's execution trajectory:

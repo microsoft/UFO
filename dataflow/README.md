@@ -95,6 +95,8 @@ The tasks that need to be instantiated should be organized in a folder of JSON f
 
 #### 3.2. Templates and Descriptions
 
+You can get all template files from: [GUI-360](https://huggingface.co/datasets/vyokky/GUI-360/tree/main).
+
 You should place an app file as a reference for instantiation in a folder named after the app.
 
 For example, if you have `template1.docx` for Word, it should be located at `dataflow/templates/word/template1.docx`.
