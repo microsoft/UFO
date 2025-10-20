@@ -195,7 +195,7 @@ class MessageProcessor:
             # response_id corresponds to the request_id sent in ClientMessage
             # Fallback to session_id if response_id is not available
             session_id = server_msg.session_id
-            task_id = session_id
+            task_id = session_id.split("@")[-1] if session_id else "unknown_task"
 
             # Step 1: Complete the pending task response Future
             # This unblocks the corresponding send_task_to_device() call

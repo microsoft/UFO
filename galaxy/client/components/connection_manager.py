@@ -226,15 +226,17 @@ class WebSocketConnectionManager:
 
         try:
             constellation_client_id = f"{self.constellation_id}@{device_id}"
+            constellation_task_id = f"{self.constellation_id}@{task_request.task_id}"
+
             # Create client message for task execution
             task_message = ClientMessage(
                 type=ClientMessageType.TASK,
                 client_type=ClientType.CONSTELLATION,
                 client_id=constellation_client_id,
                 target_id=device_id,
-                task_name=task_request.task_name,
+                task_name=f"galaxy/{self.constellation_id}/{task_request.task_name}",
                 request=task_request.request,
-                session_id=task_request.task_id,
+                session_id=constellation_task_id,
                 timestamp=datetime.now(timezone.utc).isoformat(),
                 status=TaskStatus.CONTINUE,
             )
@@ -248,7 +250,7 @@ class WebSocketConnectionManager:
 
             # Wait for response with timeout
             response = await asyncio.wait_for(
-                self._wait_for_task_response(device_id, task_request.task_id),
+                self._wait_for_task_response(device_id, constellation_task_id),
                 timeout=task_request.timeout,
             )
 
@@ -266,14 +268,14 @@ class WebSocketConnectionManager:
 
         except asyncio.TimeoutError:
             # Clean up the pending future for this task
-            self._pending_tasks.pop(task_request.task_id, None)
+            self._pending_tasks.pop(constellation_task_id, None)
             self.logger.error(
                 f"⏰ Task {task_request.task_id} timed out on device {device_id}"
             )
             raise ConnectionError(f"Task {task_request.task_id} timed out")
         except Exception as e:
             # Clean up the pending future for this task
-            self._pending_tasks.pop(task_request.task_id, None)
+            self._pending_tasks.pop(constellation_task_id, None)
             self.logger.error(
                 f"❌ Failed to send task {task_request.task_id} to device {device_id}: {e}"
             )

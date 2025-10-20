@@ -309,6 +309,7 @@ class GalaxySession(BaseSession):
                 self.logger.info(f"GalaxySession completed in {total_time:.2f}s")
                 self._session_results["total_execution_time"] = total_time
 
+            self._current_constellation = self.context.get(ContextNames.CONSTELLATION)
             # Final constellation status
             if self._current_constellation:
                 self._session_results["final_constellation_stats"] = (

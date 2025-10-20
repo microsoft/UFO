@@ -191,18 +191,14 @@ class GalaxyClient:
             }
 
             # Add constellation info if available
-            if self._session._current_constellation:
-                constellation = self._session._current_constellation
+            if self._session.current_constellation:
+                constellation = self._session.current_constellation
                 result["constellation"] = {
                     "id": constellation.constellation_id,
                     "name": constellation.name,
                     "task_count": len(constellation.tasks),
                     "dependency_count": len(constellation.dependencies),
-                    "state": (
-                        constellation.state.value
-                        if hasattr(constellation.state, "value")
-                        else str(constellation.state)
-                    ),
+                    "state": (constellation.state.value),
                 }
 
             self.display.print_success(
