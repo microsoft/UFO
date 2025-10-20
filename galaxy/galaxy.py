@@ -95,8 +95,7 @@ Examples:
     # Output and logging
     parser.add_argument(
         "--output-dir",
-        default="./logs",
-        help="Output directory for logs and results (default: ./logs)",
+        help="Output directory for results (if not specified, saves to session log path)",
     )
 
     parser.add_argument(
@@ -220,28 +219,12 @@ async def main():
             # Determine request text
             request_text = args.request_text or " ".join(args.simple_request)
 
-            # client.display.show_processing_request(request_text)
-
             # Process request
             result = await client.process_request(request_text, args.task_name)
 
             # Display results
             client.display.show_execution_complete()
             client.display.display_result(result)
-
-            # Save results if output directory specified
-            if args.output_dir:
-                output_path = (
-                    Path(args.output_dir) / f"{client.session_name}_result.json"
-                )
-                output_path.parent.mkdir(parents=True, exist_ok=True)
-
-                with open(output_path, "w", encoding="utf-8") as f:
-                    json.dump(result, f, indent=2, ensure_ascii=False)
-
-                client.display.print_info(
-                    f"[bold cyan]📁 Result saved to:[/bold cyan] [green]{output_path}[/green]"
-                )
 
     except KeyboardInterrupt:
         if "client" in locals():

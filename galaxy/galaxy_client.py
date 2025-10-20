@@ -13,6 +13,7 @@ This module provides the GalaxyClient class for integration into other applicati
 For command-line usage, use galaxy.py as the main entry point.
 """
 
+import json
 import logging
 import tracemalloc
 from datetime import datetime
@@ -66,7 +67,7 @@ class GalaxyClient:
             session_name or f"galaxy_session_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         )
         self.max_rounds = max_rounds
-        self.output_dir = Path(output_dir) if output_dir else Path("./logs")
+        self.output_dir = Path(output_dir) if output_dir else None
 
         # Setup logging
         setup_logger(log_level)
@@ -210,6 +211,10 @@ class GalaxyClient:
             self.logger.info(
                 f"✅ Request processed successfully in {execution_time:.2f}s"
             )
+
+            # Save result to file
+            self._save_result(result)
+
             return result
 
         except Exception as e:
@@ -290,6 +295,42 @@ class GalaxyClient:
         self.display.show_status(
             self.session_name, self.max_rounds, self.output_dir, session_info
         )
+
+    def _save_result(self, result: Dict[str, Any]) -> None:
+        """
+        Save result to JSON file.
+
+        If output_dir is specified, saves to output_dir.
+        Otherwise, saves to the session's log_path.
+
+        :param result: Result dictionary to save
+        """
+        try:
+            # Determine output path
+            if self.output_dir:
+                output_path = self.output_dir / f"{self.session_name}_result.json"
+                output_path.parent.mkdir(parents=True, exist_ok=True)
+            else:
+                # Save to session log path
+                if self._session and self._session.log_path:
+                    output_path = Path(self._session.log_path) / "result.json"
+                else:
+                    # Fallback to default logs directory
+                    output_path = Path("./logs") / f"{self.session_name}_result.json"
+                    output_path.parent.mkdir(parents=True, exist_ok=True)
+
+            # Save result to file
+            with open(output_path, "w", encoding="utf-8") as f:
+                json.dump(result, f, indent=2, ensure_ascii=False)
+
+            self.display.print_info(
+                f"[bold cyan]📁 Result saved to:[/bold cyan] [green]{output_path}[/green]"
+            )
+            self.logger.info(f"📁 Result saved to: {output_path}")
+
+        except Exception as e:
+            self.logger.error(f"Failed to save result: {e}", exc_info=True)
+            self.display.print_warning(f"⚠️ Failed to save result: {e}")
 
     async def shutdown(self) -> None:
         """
