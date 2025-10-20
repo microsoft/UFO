@@ -144,7 +144,7 @@ class TaskVisualizationHandler:
                 )
 
             # Always show failure status regardless of constellation size
-            self._visualizer.display_execution_flow(constellation)
+            # self._visualizer.display_execution_flow(constellation)
 
         except Exception as e:
             self.logger.debug(f"Error displaying task failure: {e}")

@@ -431,6 +431,7 @@ class TaskConstellationOrchestrator:
                 "total_tasks": len(constellation.tasks),
                 "statistics": constellation.get_statistics(),
                 "execution_duration": time.time() - start_event.timestamp,
+                "constellation": constellation,
             },
             constellation_id=constellation.constellation_id,
             constellation_state="completed",
@@ -518,7 +519,9 @@ class TaskConstellationOrchestrator:
 
             # Publish task completed event
             completed_event = TaskEvent(
-                event_type=EventType.TASK_COMPLETED,
+                event_type=(
+                    EventType.TASK_COMPLETED if is_success else EventType.TASK_FAILED
+                ),
                 source_id=f"orchestrator_{id(self)}",
                 timestamp=time.time(),
                 data={
@@ -527,7 +530,7 @@ class TaskConstellationOrchestrator:
                     "constellation": constellation,
                 },
                 task_id=task.task_id,
-                status=TaskStatus.COMPLETED.value,
+                status=result.status,
                 result=result,
             )
             await self._event_bus.publish_event(completed_event)

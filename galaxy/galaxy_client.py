@@ -151,11 +151,14 @@ class GalaxyClient:
             )
             self.logger.info(f"📝 Processing request: {request[:100]}...")
 
+            # Generate unique task name if not provided
+            if not task_name:
+                task_name = f"request_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
+
             # Create a new session for this request
-            session_id = f"{self.session_name}_{task_name or 'request'}"
+            session_id = f"{self.session_name}_{task_name}"
             self._session = GalaxySession(
-                task=task_name
-                or f"request_{len(getattr(self, '_processed_requests', []))}",
+                task=task_name,
                 should_evaluate=False,
                 id=session_id,
                 client=self._client,
@@ -182,14 +185,12 @@ class GalaxyClient:
                 "rounds": len(self._session._rounds),
                 "start_time": start_time.isoformat(),
                 "end_time": end_time.isoformat(),
-                "trajectory_path": getattr(self._session, "log_path", None),
+                "trajectory_path": self._session.log_path,
+                "session_results": self._session.session_results,
             }
 
             # Add constellation info if available
-            if (
-                hasattr(self._session, "_current_constellation")
-                and self._session._current_constellation
-            ):
+            if self._session._current_constellation:
                 constellation = self._session._current_constellation
                 result["constellation"] = {
                     "id": constellation.constellation_id,

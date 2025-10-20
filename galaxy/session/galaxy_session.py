@@ -260,10 +260,10 @@ class GalaxySession(BaseSession):
         self._observers.append(progress_observer)
 
         # Metrics observer for performance tracking
-        metrics_observer = SessionMetricsObserver(
+        self._metrics_observer = SessionMetricsObserver(
             session_id=f"galaxy_session_{self._id}", logger=self.logger
         )
-        self._observers.append(metrics_observer)
+        self._observers.append(self._metrics_observer)
 
         # DAG visualization observer for constellation visualization
         visualization_observer = DAGVisualizationObserver(enable_visualization=True)
@@ -315,6 +315,8 @@ class GalaxySession(BaseSession):
                     self._current_constellation.get_statistics()
                 )
                 self._session_results["status"] = self._agent.status
+
+            self._session_results["metrics"] = self._metrics_observer.get_metrics()
 
         except Exception as e:
             self.logger.error(f"Error in GalaxySession: {e}")
