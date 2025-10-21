@@ -169,7 +169,7 @@ class SessionMetricsObserver(IEventObserver):
         :param event: TaskEvent instance
         """
         self.metrics["completed_tasks"] += 1
-        self.logger.error(f"Task {event.task_id} completed.")
+
         if event.task_id in self.metrics["task_timings"]:
             duration = (
                 event.timestamp - self.metrics["task_timings"][event.task_id]["start"]

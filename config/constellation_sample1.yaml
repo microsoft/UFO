@@ -15,9 +15,7 @@ devices:
     metadata:
       os: "linux"
       performance: "medium"
-      logs_file_path: "/root/log/log1.txt"
-      warning_log_pattern: "WARN"
-      error_log_pattern: "ERROR or FATAL"
+      logs_file_path: "/root/log/log_linux_1/"
     auto_connect: true
     max_retries: 5
 
@@ -29,9 +27,7 @@ devices:
     metadata:
       os: "linux"
       performance: "medium"
-      logs_file_path: "/root/log/log2.txt"
-      warning_log_pattern: "WARN"
-      error_log_pattern: "ERROR or FATAL"
+      logs_file_path: "/root/log/log_linux_2/"
     auto_connect: true
     max_retries: 5
 
@@ -43,9 +39,7 @@ devices:
     metadata:
       os: "linux"
       performance: "medium"
-      logs_file_path: "/root/log/log3.txt"
-      warning_log_pattern: "WARN"
-      error_log_pattern: "ERROR or FATAL"
+      logs_file_path: "/root/log/log_linux_3/"
     auto_connect: true
     max_retries: 5
 

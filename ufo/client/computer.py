@@ -709,7 +709,7 @@ class CommandRouter:
                 )
 
             # Sleep to avoid overwhelming the server with requests
-            time.sleep(0.1)
+            await asyncio.sleep(0.1)
 
         return results
 
