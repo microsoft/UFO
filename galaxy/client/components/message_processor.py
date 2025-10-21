@@ -200,7 +200,7 @@ class MessageProcessor:
             # Step 1: Complete the pending task response Future
             # This unblocks the corresponding send_task_to_device() call
             if self.connection_manager:
-                self.connection_manager.complete_task_response(task_id, server_msg)
+                self.connection_manager.complete_task_response(session_id, server_msg)
                 self.logger.debug(
                     f"🔄 Completed task response Future for task {task_id}"
                 )

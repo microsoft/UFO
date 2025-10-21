@@ -10,7 +10,7 @@ import urllib.error
 import urllib.request
 from typing import Any, Callable, Dict, List, Literal, Optional, Tuple
 
-import openai
+import openai, logging
 from openai import AzureOpenAI, OpenAI
 from openai.lib._parsing._completions import type_to_response_format_param
 from ufo.llm.base import BaseService
@@ -41,6 +41,7 @@ class BaseOpenAIService(BaseService):
         self.prices = self.config.get("PRICES", {})
         self.agent_type = agent_type
         self.json_schema_enabled = config[agent_type].get("JSON_SCHEMA", False)
+        self.logger = logging.getLogger(__name__)
         assert api_provider in ["openai", "aoai", "azure_ad"], "Invalid API Provider"
 
         self.client: OpenAI = OpenAIService.get_openai_client(
@@ -70,9 +71,8 @@ class BaseOpenAIService(BaseService):
                     "'response_format' of type 'json_schema' is not supported"
                     in e.message
                 ):
-                    print_with_color(
-                        f"[WARN] Model {self.model} does not support Structured JSON Output feature. Switching to text mode.",
-                        "yellow",
+                    self.logger.info(
+                        f"Model {self.model} does not support Structured JSON Output feature. Switching to text mode.",
                     )
                     self.config_llm["JSON_SCHEMA"] = False
                     self.json_schema_enabled = False

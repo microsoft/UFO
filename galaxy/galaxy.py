@@ -198,6 +198,7 @@ async def main():
     # Initialize client with provided configuration
     client = GalaxyClient(
         session_name=args.session_name,
+        task_name=args.task_name,
         max_rounds=args.max_rounds,
         log_level=args.log_level,
         output_dir=args.output_dir,
@@ -219,8 +220,8 @@ async def main():
             # Determine request text
             request_text = args.request_text or " ".join(args.simple_request)
 
-            # Process request
-            result = await client.process_request(request_text, args.task_name)
+            # Process request (task_name already passed during client initialization)
+            result = await client.process_request(request_text)
 
             # Display results
             client.display.show_execution_complete()
@@ -268,7 +269,14 @@ async def run_demo_with_client(client: GalaxyClient):
         client.display.show_demo_step(i, request)
 
         with client.display.console.status(f"[bold cyan]Processing demo {i}..."):
-            result = await client.process_request(request, f"demo_task_{i}")
+            # Temporarily set task_name for this demo request
+            original_task_name = client.task_name
+            client.task_name = f"demo_task_{i}"
+
+            result = await client.process_request(request)
+
+            # Restore original task_name
+            client.task_name = original_task_name
 
         client.display.display_result(result)
 

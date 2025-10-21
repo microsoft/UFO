@@ -38,6 +38,11 @@ class WebSocketConnectionManager:
     """
 
     def __init__(self, constellation_id: str):
+        """
+        Initialize WebSocketConnectionManager.
+        :param constellation_id: Unique identifier for the constellation
+        """
+
         self.constellation_id = constellation_id
         self._connections: Dict[str, WebSocketClientProtocol] = {}
         # Dictionary to track pending task responses using asyncio.Future
@@ -227,6 +232,8 @@ class WebSocketConnectionManager:
         try:
             constellation_client_id = f"{self.constellation_id}@{device_id}"
             constellation_task_id = f"{self.constellation_id}@{task_request.task_id}"
+
+            print(f"galaxy/{self.constellation_id}/{task_request.task_name}")
 
             # Create client message for task execution
             task_message = ClientMessage(

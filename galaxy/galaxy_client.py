@@ -51,6 +51,7 @@ class GalaxyClient:
     def __init__(
         self,
         session_name: Optional[str] = None,
+        task_name: Optional[str] = None,
         max_rounds: int = 10,
         log_level: str = "INFO",
         output_dir: Optional[str] = None,
@@ -59,12 +60,17 @@ class GalaxyClient:
         Initialize Galaxy client.
 
         :param session_name: Name for the Galaxy session (auto-generated if None)
+        :param task_name: Name for the task (auto-generated if None)
         :param max_rounds: Maximum number of rounds per session (default: 10)
         :param log_level: Logging level (default: "INFO")
-        :param output_dir: Output directory for logs and results (default: "./logs")
+        :param output_dir: Output directory for logs and results (default: None, uses session log path)
         """
         self.session_name = (
             session_name or f"galaxy_session_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+        )
+        # Generate task_name with timestamp if not provided
+        self.task_name = (
+            task_name or f"request_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
         )
         self.max_rounds = max_rounds
         self.output_dir = Path(output_dir) if output_dir else None
@@ -108,7 +114,9 @@ class GalaxyClient:
                 progress.update(
                     task, description="[cyan]Setting up Constellation Client..."
                 )
-                self._client = ConstellationClient(config=self._device_config)
+                self._client = ConstellationClient(
+                    config=self._device_config, constellation_id=self.task_name
+                )
                 await self._client.initialize()
                 self.display.print_success("✅ ConstellationClient initialized")
                 self.logger.info("✅ ConstellationClient initialized")
@@ -130,14 +138,11 @@ class GalaxyClient:
             )
             raise
 
-    async def process_request(
-        self, request: str, task_name: Optional[str] = None
-    ) -> Dict[str, Any]:
+    async def process_request(self, request: str) -> Dict[str, Any]:
         """
         Process a single user request.
 
         :param request: User request text to process
-        :param task_name: Optional task name for the request
         :return: Dictionary containing processing result with execution details
         :raises RuntimeError: If Galaxy client is not initialized
         """
@@ -152,9 +157,8 @@ class GalaxyClient:
             )
             self.logger.info(f"📝 Processing request: {request[:100]}...")
 
-            # Generate unique task name if not provided
-            if not task_name:
-                task_name = f"request_{datetime.now().strftime('%Y%m%d_%H%M%S_%f')}"
+            # Use the task_name set during initialization
+            task_name = self.task_name
 
             # Create a new session for this request
             session_id = f"{self.session_name}_{task_name}"
@@ -264,9 +268,15 @@ class GalaxyClient:
 
                 # Process the request
                 self.display.show_processing_status("🚀 Processing your request...")
-                result = await self.process_request(
-                    user_input, f"interactive_task_{request_count}"
-                )
+
+                # Temporarily set task_name for this request
+                original_task_name = self.task_name
+                self.task_name = f"interactive_task_{request_count}"
+
+                result = await self.process_request(user_input)
+
+                # Restore original task_name
+                self.task_name = original_task_name
 
                 # Display result
                 self.display.display_result(result)

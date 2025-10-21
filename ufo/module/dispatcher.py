@@ -32,7 +32,7 @@ class BasicCommandDispatcher(ABC):
 
     @abstractmethod
     async def execute_commands(
-        self, commands: List[Command], timeout: float = 10.0
+        self, commands: List[Command], timeout: float = 6000
     ) -> Optional[List[Result]]:
         """
         Publish commands to the command dispatcher and wait for the result.
@@ -201,7 +201,7 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         await self.send_queue.put(message)
 
     async def execute_commands(
-        self, commands: List[Command], timeout: float = 60
+        self, commands: List[Command], timeout: float = 6000
     ) -> Optional[List[Result]]:
         """
         Publish commands to the command dispatcher and wait for the result.
