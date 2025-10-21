@@ -546,6 +546,256 @@ class TaskConstellation(IConstellation):
 
         return result
 
+    def get_longest_path(self) -> Tuple[int, List[str]]:
+        """
+        Calculate the longest path in the DAG (critical path).
+
+        :return: Tuple of (path_length, list_of_task_ids_in_longest_path)
+        """
+        if not self._tasks:
+            return (0, [])
+
+        # Build adjacency list
+        adjacency = defaultdict(list)
+        in_degree = defaultdict(int)
+
+        for task_id in self._tasks:
+            in_degree[task_id] = 0
+
+        for dependency in self._dependencies.values():
+            adjacency[dependency.from_task_id].append(dependency.to_task_id)
+            in_degree[dependency.to_task_id] += 1
+
+        # Find all root nodes (nodes with no incoming edges)
+        queue = deque([task_id for task_id, degree in in_degree.items() if degree == 0])
+
+        # Track longest path to each node
+        longest_distance = {task_id: 0 for task_id in self._tasks}
+        parent = {task_id: None for task_id in self._tasks}
+
+        # Process nodes in topological order
+        while queue:
+            current = queue.popleft()
+            current_distance = longest_distance[current]
+
+            for neighbor in adjacency[current]:
+                # Update longest distance if we found a longer path
+                if longest_distance[neighbor] < current_distance + 1:
+                    longest_distance[neighbor] = current_distance + 1
+                    parent[neighbor] = current
+
+                in_degree[neighbor] -= 1
+                if in_degree[neighbor] == 0:
+                    queue.append(neighbor)
+
+        # Find the node with maximum distance (end of longest path)
+        max_distance = 0
+        end_node = None
+        for task_id, distance in longest_distance.items():
+            if distance > max_distance:
+                max_distance = distance
+                end_node = task_id
+
+        # Reconstruct the longest path
+        path = []
+        if end_node:
+            current = end_node
+            while current is not None:
+                path.append(current)
+                current = parent[current]
+            path.reverse()
+
+        return (max_distance + 1, path)
+
+    def get_max_width(self) -> int:
+        """
+        Calculate the maximum width of the DAG (maximum number of nodes at any level).
+
+        :return: Maximum width of the DAG
+        """
+        if not self._tasks:
+            return 0
+
+        # Build adjacency list and calculate in-degrees
+        adjacency = defaultdict(list)
+        in_degree = defaultdict(int)
+
+        for task_id in self._tasks:
+            in_degree[task_id] = 0
+
+        for dependency in self._dependencies.values():
+            adjacency[dependency.from_task_id].append(dependency.to_task_id)
+            in_degree[dependency.to_task_id] += 1
+
+        # BFS level-order traversal to find width at each level
+        queue = deque([task_id for task_id, degree in in_degree.items() if degree == 0])
+        max_width = len(queue)
+
+        level_in_degree = in_degree.copy()
+
+        while queue:
+            level_size = len(queue)
+            max_width = max(max_width, level_size)
+
+            # Process all nodes at current level
+            for _ in range(level_size):
+                current = queue.popleft()
+
+                for neighbor in adjacency[current]:
+                    level_in_degree[neighbor] -= 1
+                    if level_in_degree[neighbor] == 0:
+                        queue.append(neighbor)
+
+        return max_width
+
+    def get_critical_path_length_with_time(self) -> Tuple[float, List[str]]:
+        """
+        Calculate the critical path length using actual execution times.
+        Only valid when all tasks are completed or failed.
+
+        :return: Tuple of (critical_path_duration_seconds, list_of_task_ids_in_critical_path)
+        """
+        if not self._tasks:
+            return (0.0, [])
+
+        # Build adjacency list
+        adjacency = defaultdict(list)
+        in_degree = defaultdict(int)
+
+        for task_id in self._tasks:
+            in_degree[task_id] = 0
+
+        for dependency in self._dependencies.values():
+            adjacency[dependency.from_task_id].append(dependency.to_task_id)
+            in_degree[dependency.to_task_id] += 1
+
+        # Find all root nodes
+        queue = deque([task_id for task_id, degree in in_degree.items() if degree == 0])
+
+        # Track longest time path to each node
+        longest_time = {task_id: 0.0 for task_id in self._tasks}
+        parent = {task_id: None for task_id in self._tasks}
+
+        # Initialize root nodes with their execution durations
+        for task_id in queue:
+            task = self._tasks[task_id]
+            duration = task.execution_duration or 0.0
+            longest_time[task_id] = duration
+
+        # Process nodes in topological order
+        processing_queue = deque(queue)
+        while processing_queue:
+            current = processing_queue.popleft()
+            current_time = longest_time[current]
+
+            for neighbor in adjacency[current]:
+                neighbor_task = self._tasks[neighbor]
+                neighbor_duration = neighbor_task.execution_duration or 0.0
+
+                # Update longest time if we found a longer path
+                new_time = current_time + neighbor_duration
+                if longest_time[neighbor] < new_time:
+                    longest_time[neighbor] = new_time
+                    parent[neighbor] = current
+
+                in_degree[neighbor] -= 1
+                if in_degree[neighbor] == 0:
+                    processing_queue.append(neighbor)
+
+        # Find the node with maximum time (end of critical path)
+        max_time = 0.0
+        end_node = None
+        for task_id, time in longest_time.items():
+            if time > max_time:
+                max_time = time
+                end_node = task_id
+
+        # Reconstruct the critical path
+        path = []
+        if end_node:
+            current = end_node
+            while current is not None:
+                path.append(current)
+                current = parent[current]
+            path.reverse()
+
+        return (max_time, path)
+
+    def get_total_work(self) -> float:
+        """
+        Calculate total work (sum of all task execution durations).
+
+        :return: Total work in seconds
+        """
+        total = 0.0
+        for task in self._tasks.values():
+            duration = task.execution_duration
+            if duration is not None:
+                total += duration
+        return total
+
+    def get_parallelism_metrics(self) -> Dict[str, Any]:
+        """
+        Calculate parallelism metrics including:
+        - L: Critical Path Length (longest serial dependency chain)
+        - W: Total Work (sum of all task execution times)
+        - P: Parallelism Ratio (W / L)
+
+        Two calculation modes:
+        1. When tasks are incomplete: Use node counts and path lengths
+        2. When all tasks are complete/failed: Use actual execution times
+
+        :return: Dictionary with parallelism metrics
+        """
+        if not self._tasks:
+            return {
+                "critical_path_length": 0,
+                "total_work": 0,
+                "parallelism_ratio": 0.0,
+                "calculation_mode": "empty",
+                "critical_path_tasks": [],
+            }
+
+        # Check if all tasks are in terminal state (completed or failed)
+        all_terminal = all(task.is_terminal for task in self._tasks.values())
+
+        if all_terminal:
+            # Use actual execution times
+            critical_path_time, critical_path_tasks = (
+                self.get_critical_path_length_with_time()
+            )
+            total_work = self.get_total_work()
+
+            # Calculate parallelism ratio
+            parallelism_ratio = (
+                total_work / critical_path_time if critical_path_time > 0 else 0.0
+            )
+
+            return {
+                "critical_path_length": critical_path_time,
+                "total_work": total_work,
+                "parallelism_ratio": parallelism_ratio,
+                "calculation_mode": "actual_time",
+                "critical_path_tasks": critical_path_tasks,
+            }
+        else:
+            # Use node counts (each task counts as 1 unit)
+            longest_path_length, longest_path_tasks = self.get_longest_path()
+            total_nodes = len(self._tasks)
+
+            # Calculate parallelism ratio using node counts
+            parallelism_ratio = (
+                total_nodes / longest_path_length if longest_path_length > 0 else 0.0
+            )
+
+            return {
+                "critical_path_length": longest_path_length,
+                "total_work": total_nodes,
+                "parallelism_ratio": parallelism_ratio,
+                "calculation_mode": "node_count",
+                "critical_path_tasks": longest_path_tasks,
+            }
+
     def get_statistics(self) -> Dict[str, Any]:
         """
         Get statistics about the constellation.
@@ -556,6 +806,13 @@ class TaskConstellation(IConstellation):
         for task in self._tasks.values():
             status_counts[task.status.value] += 1
 
+        # Calculate longest path and max width
+        longest_path_length, longest_path_tasks = self.get_longest_path()
+        max_width = self.get_max_width()
+
+        # Calculate parallelism metrics (L, W, P)
+        parallelism_metrics = self.get_parallelism_metrics()
+
         return {
             "constellation_id": self._constellation_id,
             "name": self._name,
@@ -563,6 +820,14 @@ class TaskConstellation(IConstellation):
             "total_tasks": len(self._tasks),
             "total_dependencies": len(self._dependencies),
             "task_status_counts": dict(status_counts),
+            "longest_path_length": longest_path_length,
+            "longest_path_tasks": longest_path_tasks,
+            "max_width": max_width,
+            "critical_path_length": parallelism_metrics["critical_path_length"],
+            "total_work": parallelism_metrics["total_work"],
+            "parallelism_ratio": parallelism_metrics["parallelism_ratio"],
+            "parallelism_calculation_mode": parallelism_metrics["calculation_mode"],
+            "critical_path_tasks": parallelism_metrics["critical_path_tasks"],
             "execution_duration": self.execution_duration,
             "created_at": self._created_at.isoformat(),
             "updated_at": self._updated_at.isoformat(),
