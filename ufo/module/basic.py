@@ -467,9 +467,10 @@ class BaseSession(ABC):
         self._host_agent: Optional[HostAgent] = None
         self._init_agents()
 
-    async def run(self) -> None:
+    async def run(self) -> List[Dict[str, str]]:
         """
         Run the session.
+        :return: The result per session
         """
 
         while not self.is_finished():
@@ -492,6 +493,8 @@ class BaseSession(ABC):
             self.save_log_to_markdown()
 
         self.print_cost()
+
+        return self.results
 
     @abstractmethod
     def _init_agents(self) -> None:

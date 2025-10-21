@@ -97,6 +97,7 @@ class TaskConstellationOrchestrator:
         constellation: TaskConstellation,
         device_assignments: Optional[Dict[str, str]] = None,
         assignment_strategy: Optional[str] = None,
+        metadata: Optional[Dict] = None,
     ) -> Dict[str, Any]:
         """
         Orchestrate DAG execution using event-driven pattern.
@@ -106,6 +107,7 @@ class TaskConstellationOrchestrator:
         :param constellation: TaskConstellation to orchestrate
         :param device_assignments: Optional manual device assignments
         :param assignment_strategy: Device assignment strategy for auto-assignment
+        :param metadata: Optional metadata for orchestration
         :return: Orchestration results and statistics
         """
         # 1. Pre-execution validation and setup
@@ -115,7 +117,7 @@ class TaskConstellationOrchestrator:
 
         # 2. Start execution and publish event
         start_event = await self._start_constellation_execution(
-            constellation, device_assignments, assignment_strategy
+            constellation, device_assignments, assignment_strategy, metadata
         )
 
         try:
@@ -274,6 +276,7 @@ class TaskConstellationOrchestrator:
         constellation: TaskConstellation,
         device_assignments: Optional[Dict[str, str]],
         assignment_strategy: str,
+        metadata: Optional[Dict] = None,
     ) -> ConstellationEvent:
         """
         Start constellation execution and publish started event.
@@ -281,6 +284,7 @@ class TaskConstellationOrchestrator:
         :param constellation: TaskConstellation to start
         :param device_assignments: Device assignments used
         :param assignment_strategy: Assignment strategy used
+        :param metadata: Optional metadata for orchestration
         :return: The published constellation started event
         """
         constellation.start_execution()
@@ -295,6 +299,7 @@ class TaskConstellationOrchestrator:
                 "assignment_strategy": assignment_strategy,
                 "device_assignments": device_assignments or {},
                 "constellation": constellation,
+                **(metadata or {}),  # Unpack metadata into data
             },
             constellation_id=constellation.constellation_id,
             constellation_state="executing",

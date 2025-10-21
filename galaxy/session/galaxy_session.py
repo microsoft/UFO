@@ -61,7 +61,6 @@ class GalaxyRound(BaseRound):
         """
         super().__init__(request, agent, context, should_evaluate, id)
 
-        self._task_results: Dict[str, Any] = {}
         self._execution_start_time: Optional[float] = None
 
         self._agent = agent
@@ -107,6 +106,8 @@ class GalaxyRound(BaseRound):
                 f"GalaxyRound {self._id} completed with status: {self._agent._status}"
             )
 
+            return self.context.get(ContextNames.ROUND_RESULT)
+
         except Exception as e:
             self.logger.error(f"Error in GalaxyRound execution: {e}")
             import traceback
@@ -134,15 +135,6 @@ class GalaxyRound(BaseRound):
         :return: TaskConstellation instance if available, None otherwise
         """
         return self._constellation
-
-    @property
-    def task_results(self) -> Dict[str, Any]:
-        """
-        Get all task results.
-
-        :return: Dictionary mapping task IDs to their results
-        """
-        return self._task_results
 
 
 class GalaxySession(BaseSession):
@@ -301,7 +293,7 @@ class GalaxySession(BaseSession):
             self._session_start_time = time.time()
 
             # Run base session logic with constellation support
-            await super().run()
+            final_results = await super().run()
 
             # Calculate total session time
             if self._session_start_time:
@@ -315,8 +307,9 @@ class GalaxySession(BaseSession):
                 self._session_results["final_constellation_stats"] = (
                     self._current_constellation.get_statistics()
                 )
-                self._session_results["status"] = self._agent.status
 
+            self._session_results["status"] = self._agent.status
+            self._session_results["final_results"] = final_results
             self._session_results["metrics"] = self._metrics_observer.get_metrics()
 
         except Exception as e:

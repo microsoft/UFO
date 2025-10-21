@@ -233,8 +233,6 @@ class WebSocketConnectionManager:
             constellation_client_id = f"{self.constellation_id}@{device_id}"
             constellation_task_id = f"{self.constellation_id}@{task_request.task_id}"
 
-            print(f"galaxy/{self.constellation_id}/{task_request.task_name}")
-
             # Create client message for task execution
             task_message = ClientMessage(
                 type=ClientMessageType.TASK,

@@ -133,6 +133,22 @@ class ConstellationAgentProcessor(ProcessorTemplate):
             "constellation_before": constellation_before_json,
         }
 
+    def _finalize_processing_context(
+        self, processing_context: ProcessingContext
+    ) -> None:
+        """
+        Finalize processing context by updating existing ContextNames fields.
+        Instead of promoting arbitrary keys, we update the predefined ContextNames
+        that the system actually uses.
+        :param processing_context: The processing context to finalize.
+        """
+
+        super()._finalize_processing_context(processing_context)
+
+        results = processing_context.get_local("results")
+        if results:
+            self.global_context.set(ContextNames.ROUND_RESULT, results)
+
 
 class ConstellationLoggingMiddleware(EnhancedLoggingMiddleware):
     """

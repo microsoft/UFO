@@ -169,11 +169,13 @@ class SessionMetricsObserver(IEventObserver):
         :param event: TaskEvent instance
         """
         self.metrics["completed_tasks"] += 1
+        self.logger.error(f"Task {event.task_id} completed.")
         if event.task_id in self.metrics["task_timings"]:
             duration = (
                 event.timestamp - self.metrics["task_timings"][event.task_id]["start"]
             )
             self.metrics["task_timings"][event.task_id]["duration"] = duration
+            self.metrics["task_timings"][event.task_id]["end"] = event.timestamp
             self.metrics["total_execution_time"] += duration
 
     def _handle_task_failed(self, event: TaskEvent) -> None:
@@ -189,6 +191,7 @@ class SessionMetricsObserver(IEventObserver):
             )
             self.metrics["task_timings"][event.task_id]["duration"] = duration
             self.metrics["total_execution_time"] += duration
+            self.metrics["task_timings"][event.task_id]["end"] = event.timestamp
 
     def _handle_constellation_started(self, event: ConstellationEvent) -> None:
         """
@@ -208,6 +211,9 @@ class SessionMetricsObserver(IEventObserver):
             "initial_statistics": (
                 constellation.get_statistics() if constellation else {}
             ),
+            "processing_start_time": event.data.get("processing_start_time"),
+            "processing_end_time": event.data.get("processing_end_time"),
+            "processing_duration": event.data.get("processing_duration"),
         }
 
     def _handle_constellation_completed(self, event: ConstellationEvent) -> None:
@@ -275,6 +281,9 @@ class SessionMetricsObserver(IEventObserver):
                 "on_task_id": event.data.get("on_task_id", []),
                 "changes": changes,
                 "new_statistics": new_statistics,
+                "processing_start_time": event.data.get("processing_start_time"),
+                "processing_end_time": event.data.get("processing_end_time"),
+                "processing_duration": event.data.get("processing_duration"),
             }
 
             self.metrics["constellation_modifications"][constellation_id].append(

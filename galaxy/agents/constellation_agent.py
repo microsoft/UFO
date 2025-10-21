@@ -14,7 +14,7 @@ Optimized for type safety, maintainability, and follows SOLID principles.
 import asyncio
 import logging
 import time
-from typing import Dict, List, Optional, Union
+from typing import Dict, List, Optional, Tuple, Union
 
 from galaxy.agents.processors.processor import ConstellationAgentProcessor
 from galaxy.agents.prompters.base_constellation_prompter import (
@@ -101,13 +101,13 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     async def process_creation(
         self,
         context: Context,
-    ) -> TaskConstellation:
+    ) -> Tuple[TaskConstellation, Dict[str, float]]:
         """
         Process a user request and generate a constellation.
 
         :param request: User request string
         :param context: Optional processing context
-        :return: Generated constellation
+        :return: Tuple of (Generated constellation, processing timing info)
         :raises ConstellationError: If constellation generation fails
         """
 
@@ -120,7 +120,15 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
         self.processor = ConstellationAgentProcessor(agent=self, global_context=context)
 
+        # Record processing start time
+        processing_start_time = time.time()
+
         await self.processor.process()
+
+        # Record processing end time and calculate duration
+        processing_end_time = time.time()
+        processing_duration = processing_end_time - processing_start_time
+
         self.status = self.processor.processing_context.get_local("status").upper()
 
         created_constellation: TaskConstellation = context.get(
@@ -141,7 +149,14 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self.logger.info(f"Constellation agent status updated to: {self.status}")
         self._current_constellation = created_constellation
 
-        return self._current_constellation
+        # Prepare timing information
+        timing_info = {
+            "processing_start_time": processing_start_time,
+            "processing_end_time": processing_end_time,
+            "processing_duration": processing_duration,
+        }
+
+        return self._current_constellation, timing_info
 
     # IResultProcessor implementation
     async def process_editing(
@@ -210,7 +225,15 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         )
 
         self.processor = ConstellationAgentProcessor(agent=self, global_context=context)
+
+        # Record processing start time
+        processing_start_time = time.time()
+
         await self.processor.process()
+
+        # Record processing end time and calculate duration
+        processing_end_time = time.time()
+        processing_duration = processing_end_time - processing_start_time
 
         # Sync the status with the processor.
         self.status = self.processor.processing_context.get_local("status").upper()
@@ -287,6 +310,9 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
                     "new_constellation": after_constellation,
                     "modification_type": f"Edited by {self.name}",
                     "on_task_id": task_ids,  # Changed to plural to include all task IDs
+                    "processing_start_time": processing_start_time,
+                    "processing_end_time": processing_end_time,
+                    "processing_duration": processing_duration,
                 },
                 constellation_id=after_constellation.constellation_id,
                 constellation_state=(

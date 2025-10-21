@@ -79,15 +79,16 @@ class StartConstellationAgentState(ConstellationAgentState):
             if not agent.current_constellation:
                 context.set(ContextNames.WEAVING_MODE, WeavingMode.CREATION)
 
-                agent._current_constellation = await agent.process_creation(context)
-
+                agent._current_constellation, timing_info = (
+                    await agent.process_creation(context)
+                )
             # Start orchestration
             if agent.current_constellation:
                 # Start orchestration in background (non-blocking)
 
                 asyncio.create_task(
                     agent.orchestrator.orchestrate_constellation(
-                        agent.current_constellation
+                        agent.current_constellation, metadata=timing_info
                     )
                 )
 
