@@ -1,4 +1,5 @@
 import asyncio
+import concurrent.futures
 import copy
 import inspect
 import json
@@ -59,6 +60,14 @@ class Computer:
         self._meta_tools: Dict[str, Callable] = {}
 
         self.logger = logging.getLogger(self.__class__.__name__)
+
+        # Thread pool executor for isolating blocking MCP tool calls
+        self._executor = concurrent.futures.ThreadPoolExecutor(
+            max_workers=10, thread_name_prefix="mcp_tool_"
+        )
+
+        # Tool execution timeout (seconds)
+        self._tool_timeout = 6000  # 5 minutes
 
         # Register meta tools
         for attr in dir(self):
@@ -184,11 +193,75 @@ class Computer:
         tool_name = tool_info.tool_name
         params = tool_info.parameters or {}
 
-        async with Client(server) as client:
-            result: CallToolResult = await client.call_tool(
-                name=tool_name, arguments=params, raise_on_error=False
+        # Run MCP tool call in a separate thread to avoid blocking the event loop
+        # This prevents blocking operations (like time.sleep) in MCP tools from
+        # affecting the main event loop and causing WebSocket disconnections
+        def _call_tool_in_thread():
+            """
+            Execute MCP tool call in an isolated thread with its own event loop.
+            This prevents blocking operations in MCP tools from blocking the main event loop.
+            """
+            # Create a new event loop for this thread
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            try:
+
+                async def _do_call():
+                    async with Client(server) as client:
+                        return await client.call_tool(
+                            name=tool_name, arguments=params, raise_on_error=False
+                        )
+
+                return loop.run_until_complete(_do_call())
+            finally:
+                loop.close()
+
+        try:
+            # Execute in thread pool with timeout protection
+            loop = asyncio.get_event_loop()
+            result = await asyncio.wait_for(
+                loop.run_in_executor(self._executor, _call_tool_in_thread),
+                timeout=self._tool_timeout,
             )
+
+            self.logger.debug(f"Tool {tool_name} executed successfully")
             return result
+
+        except asyncio.TimeoutError:
+            # Tool execution timeout
+            error_msg = (
+                f"Tool {tool_name} execution timed out after {self._tool_timeout}s"
+            )
+            self.logger.error(error_msg)
+
+            # Return timeout error result
+            error_content = [
+                TextContent(
+                    type="text",
+                    text=error_msg,
+                    annotations=None,
+                    meta=None,
+                )
+            ]
+            return CallToolResult(
+                data=None, content=error_content, structured_content=None, is_error=True
+            )
+        except Exception as e:
+            # Other exceptions
+            error_msg = f"Tool {tool_name} execution failed: {str(e)}"
+            self.logger.error(error_msg, exc_info=True)
+
+            error_content = [
+                TextContent(
+                    type="text",
+                    text=error_msg,
+                    annotations=None,
+                    meta=None,
+                )
+            ]
+            return CallToolResult(
+                data=None, content=error_content, structured_content=None, is_error=True
+            )
 
     async def run_actions(self, tool_calls: List[MCPToolCall]) -> List[CallToolResult]:
         """

@@ -63,8 +63,8 @@ class UFOWebSocketClient:
                 )
                 async with websockets.connect(
                     self.ws_url,
-                    ping_interval=60,
-                    ping_timeout=60,
+                    ping_interval=20,  # Reduced to 20s for more frequent keepalive
+                    ping_timeout=180,  # Increased to 180s (3 minutes) to handle long-running operations
                     close_timeout=10,
                     max_size=100 * 1024 * 1024,
                 ) as ws:
