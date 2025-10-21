@@ -160,6 +160,9 @@ class ConstellationVisualizationHandler:
                     "old_constellation",
                     "new_constellation",
                     "updated_constellation",
+                    "processing_start_time",
+                    "processing_end_time",
+                    "processing_duration",
                 }
                 additional_info = {
                     k: v

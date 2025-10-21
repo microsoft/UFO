@@ -42,23 +42,23 @@ class ConstellationDeviceManager:
 
     def __init__(
         self,
-        constellation_id: str = "constellation_orchestrator",
+        task_name: str = "test_task",
         heartbeat_interval: float = 30.0,
         reconnect_delay: float = 5.0,
     ):
         """
         Initialize the device manager with modular components.
 
-        :param constellation_id: Unique identifier for this constellation instance
+        :param task_name: Unique identifier for tasks
         :param heartbeat_interval: Interval for heartbeat messages (seconds)
         :param reconnect_delay: Delay between reconnection attempts (seconds)
         """
-        self.constellation_id = constellation_id
+        self.task_name = task_name
         self.reconnect_delay = reconnect_delay
 
         # Initialize modular components
         self.device_registry = DeviceRegistry()
-        self.connection_manager = WebSocketConnectionManager(constellation_id)
+        self.connection_manager = WebSocketConnectionManager(task_name)
         self.heartbeat_manager = HeartbeatManager(
             self.connection_manager, self.device_registry, heartbeat_interval
         )

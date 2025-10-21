@@ -40,7 +40,7 @@ class ClientConfigManager:
         :return: Dictionary mapping device_id to registration success status
         """
         self.logger.info(
-            f"🚀 Initializing constellation from config: {config.constellation_id}"
+            f"🚀 Initializing constellation from config: {config.task_name}"
         )
 
         registration_results = {}
@@ -173,9 +173,9 @@ class ClientConfigManager:
             "device_validation": {},
         }
 
-        # Validate constellation ID
-        if not config.constellation_id or len(config.constellation_id.strip()) == 0:
-            validation_results["errors"].append("Constellation ID is required")
+        # Validate task name
+        if not config.task_name or len(config.task_name.strip()) == 0:
+            validation_results["errors"].append("Task name is required")
             validation_results["valid"] = False
 
         # Validate device configurations
@@ -278,7 +278,7 @@ class ClientConfigManager:
         :return: Configuration summary
         """
         return {
-            "constellation_id": config.constellation_id,
+            "task_name": config.task_name,
             "device_count": len(config.devices),
             "total_local_clients": sum(len(d.local_client_ids) for d in config.devices),
             "devices_with_capabilities": sum(

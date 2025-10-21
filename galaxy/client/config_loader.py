@@ -39,7 +39,7 @@ class DeviceConfig:
 class ConstellationConfig:
     """Configuration for the constellation system"""
 
-    constellation_id: str = "constellation_orchestrator"
+    task_name: str = "test_task"
     heartbeat_interval: float = 30.0
     reconnect_delay: float = 5.0
     max_concurrent_tasks: int = 10
@@ -86,9 +86,7 @@ class ConstellationConfig:
                 devices.append(device_config)
 
             return cls(
-                constellation_id=config_data.get(
-                    "constellation_id", "constellation_orchestrator"
-                ),
+                task_name=config_data.get("task_name", "test_task"),
                 heartbeat_interval=config_data.get("heartbeat_interval", 30.0),
                 reconnect_delay=config_data.get("reconnect_delay", 5.0),
                 max_concurrent_tasks=config_data.get("max_concurrent_tasks", 10),
@@ -133,9 +131,7 @@ class ConstellationConfig:
                 devices.append(device_config)
 
             return cls(
-                constellation_id=config_data.get(
-                    "constellation_id", "constellation_orchestrator"
-                ),
+                task_name=config_data.get("task_name", "test_task"),
                 heartbeat_interval=config_data.get("heartbeat_interval", 30.0),
                 reconnect_delay=config_data.get("reconnect_delay", 5.0),
                 max_concurrent_tasks=config_data.get("max_concurrent_tasks", 10),
@@ -158,8 +154,8 @@ class ConstellationConfig:
         """
         config = cls()
 
-        if hasattr(args, "constellation_id") and args.constellation_id:
-            config.constellation_id = args.constellation_id
+        if hasattr(args, "task_name") and args.task_name:
+            config.task_name = args.task_name
 
         if hasattr(args, "heartbeat_interval") and args.heartbeat_interval:
             config.heartbeat_interval = args.heartbeat_interval
@@ -200,7 +196,7 @@ class ConstellationConfig:
         config = cls()
 
         # Load basic configuration
-        config.constellation_id = os.getenv("CONSTELLATION_ID", config.constellation_id)
+        config.task_name = os.getenv("TASK_NAME", config.task_name)
         config.heartbeat_interval = float(
             os.getenv("CONSTELLATION_HEARTBEAT_INTERVAL", config.heartbeat_interval)
         )
@@ -250,7 +246,7 @@ class ConstellationConfig:
         """
         try:
             config_data = {
-                "constellation_id": self.constellation_id,
+                "task_name": self.task_name,
                 "heartbeat_interval": self.heartbeat_interval,
                 "reconnect_delay": self.reconnect_delay,
                 "max_concurrent_tasks": self.max_concurrent_tasks,
@@ -293,7 +289,7 @@ class ConstellationConfig:
 
         try:
             config_data = {
-                "constellation_id": self.constellation_id,
+                "task_name": self.task_name,
                 "heartbeat_interval": self.heartbeat_interval,
                 "reconnect_delay": self.reconnect_delay,
                 "max_concurrent_tasks": self.max_concurrent_tasks,
@@ -397,7 +393,7 @@ def create_sample_config(config_path: str) -> None:
     :param config_path: Path to create the sample config
     """
     sample_config = ConstellationConfig(
-        constellation_id="constellation_main",
+        task_name="test_task",
         heartbeat_interval=30.0,
         reconnect_delay=5.0,
         max_concurrent_tasks=8,

@@ -110,7 +110,7 @@ class StatusManager:
         all_devices = self.device_manager.get_all_devices()
 
         return {
-            "constellation_id": self.config.constellation_id,
+            "task_name": self.config.task_name,
             "total_devices": len(all_devices),
             "connected_devices": len(connected_devices),
             "device_list": connected_devices,

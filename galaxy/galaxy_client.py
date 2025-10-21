@@ -115,7 +115,7 @@ class GalaxyClient:
                     task, description="[cyan]Setting up Constellation Client..."
                 )
                 self._client = ConstellationClient(
-                    config=self._device_config, constellation_id=self.task_name
+                    config=self._device_config, task_name=self.task_name
                 )
                 await self._client.initialize()
                 self.display.print_success("✅ ConstellationClient initialized")

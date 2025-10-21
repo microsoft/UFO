@@ -37,13 +37,13 @@ class WebSocketConnectionManager:
     Single responsibility: Connection management.
     """
 
-    def __init__(self, constellation_id: str):
+    def __init__(self, task_name: str):
         """
         Initialize WebSocketConnectionManager.
-        :param constellation_id: Unique identifier for the constellation
+        :param task_name: Unique identifier for the task
         """
 
-        self.constellation_id = constellation_id
+        self.task_name = task_name
         self._connections: Dict[str, WebSocketClientProtocol] = {}
         # Dictionary to track pending task responses using asyncio.Future
         # Key: task_id (request_id), Value: Future that will be resolved with ServerMessage
@@ -114,7 +114,7 @@ class WebSocketConnectionManager:
         :return: True if registration successful, False otherwise
         """
         try:
-            constellation_client_id = f"{self.constellation_id}@{device_info.device_id}"
+            constellation_client_id = f"{self.task_name}@{device_info.device_id}"
 
             registration_message = ClientMessage(
                 type=ClientMessageType.REGISTER,
@@ -125,7 +125,7 @@ class WebSocketConnectionManager:
                 timestamp=datetime.now(timezone.utc).isoformat(),
                 metadata={
                     "type": "constellation_client",
-                    "constellation_id": self.constellation_id,
+                    "task_name": self.task_name,
                     "targeted_device_id": device_info.device_id,
                     "capabilities": [
                         "task_distribution",
@@ -230,16 +230,16 @@ class WebSocketConnectionManager:
                 raise ConnectionError(f"Device {device_id} connection is closed")
 
         try:
-            constellation_client_id = f"{self.constellation_id}@{device_id}"
-            constellation_task_id = f"{self.constellation_id}@{task_request.task_id}"
+            task_client_id = f"{self.task_name}@{device_id}"
+            constellation_task_id = f"{self.task_name}@{task_request.task_id}"
 
             # Create client message for task execution
             task_message = ClientMessage(
                 type=ClientMessageType.TASK,
                 client_type=ClientType.CONSTELLATION,
-                client_id=constellation_client_id,
+                client_id=task_client_id,
                 target_id=device_id,
-                task_name=f"galaxy/{self.constellation_id}/{task_request.task_name}",
+                task_name=f"galaxy/{self.task_name}/{task_request.task_name}",
                 request=task_request.request,
                 session_id=constellation_task_id,
                 timestamp=datetime.now(timezone.utc).isoformat(),
@@ -432,7 +432,7 @@ class WebSocketConnectionManager:
             request_message = ClientMessage(
                 type=ClientMessageType.DEVICE_INFO_REQUEST,
                 client_type=ClientType.CONSTELLATION,
-                client_id=f"{self.constellation_id}@{device_id}",
+                client_id=f"{self.task_name}@{device_id}",
                 target_id=device_id,
                 request_id=request_id,
                 timestamp=datetime.now(timezone.utc).isoformat(),

@@ -33,22 +33,22 @@ class ConstellationClient:
     def __init__(
         self,
         config: Optional[ConstellationConfig] = None,
-        constellation_id: Optional[str] = None,
+        task_name: Optional[str] = None,
     ):
         """
         Initialize the constellation client for device management.
 
         :param config: Constellation configuration
-        :param constellation_id: Override constellation ID
+        :param task_name: Override task name
         """
         self.config = config or ConstellationConfig()
 
-        if constellation_id:
-            self.config.constellation_id = constellation_id
+        if task_name:
+            self.config.task_name = task_name
 
         # Initialize device manager
         self.device_manager = ConstellationDeviceManager(
-            constellation_id=self.config.constellation_id,
+            task_name=self.config.task_name,
             heartbeat_interval=self.config.heartbeat_interval,
             reconnect_delay=self.config.reconnect_delay,
         )
@@ -63,7 +63,7 @@ class ConstellationClient:
         :return: Dictionary mapping device_id to registration success status
         """
         self.logger.info(
-            f"🚀 Initializing Constellation Client: {self.config.constellation_id}"
+            f"🚀 Initializing Constellation Client: {self.config.task_name}"
         )
         results = {}
 
@@ -156,7 +156,7 @@ class ConstellationClient:
     def get_constellation_info(self) -> Dict[str, Any]:
         """Get constellation information and status."""
         return {
-            "constellation_id": self.config.constellation_id,
+            "constellation_id": self.config.task_name,
             "connected_devices": len(self.device_manager.get_connected_devices()),
             "total_devices": len(self.config.devices),
             "configuration": {
@@ -180,9 +180,9 @@ class ConstellationClient:
         }
 
         # Basic validation
-        if not target_config.constellation_id:
+        if not target_config.task_name:
             validation_result["valid"] = False
-            validation_result["errors"].append("constellation_id is required")
+            validation_result["errors"].append("task_name is required")
 
         if not target_config.devices:
             validation_result["warnings"].append("No devices configured")
@@ -192,7 +192,7 @@ class ConstellationClient:
     def get_config_summary(self) -> Dict[str, Any]:
         """Get a summary of the current configuration."""
         return {
-            "constellation_id": self.config.constellation_id,
+            "task_name": self.config.task_name,
             "devices_count": len(self.config.devices),
             "devices": [
                 {
@@ -254,7 +254,7 @@ class ConstellationClient:
 
 async def create_constellation_client(
     config_file: Optional[str] = None,
-    constellation_id: Optional[str] = None,
+    task_name: Optional[str] = None,
     devices: Optional[List[Dict[str, Any]]] = None,
 ) -> ConstellationClient:
     """
@@ -282,7 +282,7 @@ async def create_constellation_client(
             )
 
     # Create and initialize client
-    client = ConstellationClient(config=config, constellation_id=constellation_id)
+    client = ConstellationClient(config=config, task_name=task_name)
     await client.initialize()
 
     return client
