@@ -14,7 +14,7 @@ from typing import Dict, List, Type
 from ufo.config import Config
 from ufo.contracts.contracts import MCPToolInfo
 from galaxy.agents.schema import WeavingMode
-from galaxy.client.components.types import AgentProfile
+from galaxy.client.components.types import AgentProfile, DeviceStatus
 from galaxy.constellation.task_constellation import TaskConstellation
 from ufo.prompter.basic import BasicPrompter
 
@@ -54,6 +54,11 @@ class BaseConstellationPrompter(BasicPrompter, ABC):
 
         for _, info in device_info.items():
             # Format capabilities as a comma-separated list
+
+            # Skip disconnected devices, as they cannot be used
+            if info.status == DeviceStatus.DISCONNECTED:
+                continue
+
             capabilities = ", ".join(info.capabilities) if info.capabilities else "None"
             os = info.os if info.os else "Unknown"
 
