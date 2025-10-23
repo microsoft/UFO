@@ -37,9 +37,44 @@ class WSManager:
         self.device_config_path = device_config_path
         self._device_configs: Dict[str, Dict[str, Any]] = {}
 
+        # Track constellation client -> session_ids mapping
+        self._constellation_sessions: Dict[str, List[str]] = {}
+
         # Load device configurations if path provided
         if device_config_path:
             self._load_device_configs(device_config_path)
+
+    def add_constellation_session(self, client_id: str, session_id: str):
+        """
+        Track a session started by a constellation client.
+
+        :param client_id: The constellation client ID.
+        :param session_id: The session ID.
+        """
+        with self.lock:
+            if client_id not in self._constellation_sessions:
+                self._constellation_sessions[client_id] = []
+            self._constellation_sessions[client_id].append(session_id)
+
+    def get_constellation_sessions(self, client_id: str) -> List[str]:
+        """
+        Get all session IDs associated with a constellation client.
+
+        :param client_id: The constellation client ID.
+        :return: List of session IDs.
+        """
+        with self.lock:
+            return self._constellation_sessions.get(client_id, []).copy()
+
+    def remove_constellation_sessions(self, client_id: str) -> List[str]:
+        """
+        Remove and return all sessions for a constellation client.
+
+        :param client_id: The constellation client ID.
+        :return: List of session IDs that were removed.
+        """
+        with self.lock:
+            return self._constellation_sessions.pop(client_id, [])
 
     def add_client(
         self,

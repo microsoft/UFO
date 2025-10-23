@@ -171,6 +171,30 @@ class UFOWebSocketHandler:
         Disconnects a client and removes it from the WS manager.
         :param client_id: The ID of the client.
         """
+        # Check if this is a constellation client with active sessions
+        client_info = self.ws_manager.get_client_info(client_id)
+
+        if client_info and client_info.client_type == ClientType.CONSTELLATION:
+            # Get all sessions associated with this constellation client
+            session_ids = self.ws_manager.get_constellation_sessions(client_id)
+
+            if session_ids:
+                self.logger.info(
+                    f"[WS] 🌟 Constellation {client_id} disconnected, "
+                    f"cancelling {len(session_ids)} active session(s)"
+                )
+
+                # Cancel all associated sessions
+                for session_id in session_ids:
+                    try:
+                        await self.session_manager.cancel_task(session_id)
+                    except Exception as e:
+                        self.logger.error(
+                            f"[WS] Error cancelling session {session_id}: {e}"
+                        )
+
+                # Clean up the mapping
+                self.ws_manager.remove_constellation_sessions(client_id)
 
         self.ws_manager.remove_client(client_id)
         self.logger.info(f"[WS] {client_id} disconnected")
@@ -339,6 +363,10 @@ class UFOWebSocketHandler:
             f"client_type={client_type}, target_device={target_device_id}"
         )
 
+        # Track constellation session mapping
+        if client_type == ClientType.CONSTELLATION:
+            self.ws_manager.add_constellation_session(data.client_id, session_id)
+
         # Define callback to send results when task completes
         async def send_result(sid: str, result_msg: ServerMessage):
             """Send task result to client when session completes."""
@@ -346,11 +374,37 @@ class UFOWebSocketHandler:
                 f"[WS] 📬 CALLBACK INVOKED! session={sid}, status={result_msg.status}, "
                 f"client_type={client_type}, target_device={target_device_id}"
             )
+
+            # Check if constellation client is still connected
+            constellation_connected = (
+                self.ws_manager.get_client(data.client_id) is not None
+            )
+
+            if not constellation_connected:
+                self.logger.warning(
+                    f"[WS] ⚠️ Constellation client {data.client_id} disconnected, "
+                    f"skipping result callback for session {sid}"
+                )
+                return
+
             try:
                 # Send to constellation client (the one who sent the request)
                 self.logger.info(f"[WS] 📤 Sending result to constellation client...")
-                await websocket.send_text(result_msg.model_dump_json())
-                self.logger.info(f"[WS] ✅ Sent to constellation client successfully")
+
+                # Check WebSocket state before sending
+                from starlette.websockets import WebSocketState
+
+                if websocket.client_state == WebSocketState.CONNECTED:
+                    await websocket.send_text(result_msg.model_dump_json())
+                    self.logger.info(
+                        f"[WS] ✅ Sent to constellation client successfully"
+                    )
+                else:
+                    self.logger.warning(
+                        f"[WS] ⚠️ Constellation WebSocket not connected (state={websocket.client_state}), "
+                        f"skipping send for session {sid}"
+                    )
+                    return
 
                 # If constellation client, also notify the target device
                 if client_type == ClientType.CONSTELLATION:
@@ -358,10 +412,20 @@ class UFOWebSocketHandler:
                         f"[WS] 📤 Sending result to target device {target_device_id}..."
                     )
                     try:
-                        await target_ws.send_text(result_msg.model_dump_json())
-                        self.logger.info(
-                            f"[WS] ✅ Sent to target device {target_device_id} successfully"
-                        )
+                        # Check target WebSocket state before sending
+                        if (
+                            target_ws
+                            and target_ws.client_state == WebSocketState.CONNECTED
+                        ):
+                            await target_ws.send_text(result_msg.model_dump_json())
+                            self.logger.info(
+                                f"[WS] ✅ Sent to target device {target_device_id} successfully"
+                            )
+                        else:
+                            self.logger.warning(
+                                f"[WS] ⚠️ Target device {target_device_id} WebSocket not connected, "
+                                f"skipping send"
+                            )
                     except Exception as target_error:
                         import traceback
 

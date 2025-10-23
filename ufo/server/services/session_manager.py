@@ -190,6 +190,34 @@ class SessionManager:
         self.logger.info(f"[SessionManager] 🚀 Started background task {session_id}")
         return session_id
 
+    async def cancel_task(self, session_id: str) -> bool:
+        """
+        Cancel a running background task.
+
+        :param session_id: The session ID to cancel.
+        :return: True if task was found and cancelled, False otherwise.
+        """
+        task = self._running_tasks.get(session_id)
+        if task and not task.done():
+            self.logger.info(f"[SessionManager] 🛑 Cancelling session {session_id}")
+            task.cancel()
+
+            # Wait a bit for graceful cancellation
+            try:
+                await asyncio.wait_for(task, timeout=2.0)
+            except (asyncio.CancelledError, asyncio.TimeoutError):
+                pass
+
+            self._running_tasks.pop(session_id, None)
+            self.remove_session(session_id)
+            self.logger.info(f"[SessionManager] ✅ Session {session_id} cancelled")
+            return True
+
+        self.logger.warning(
+            f"[SessionManager] ⚠️ No running task found for {session_id}"
+        )
+        return False
+
     async def _run_session_background(
         self,
         session_id: str,
@@ -208,6 +236,7 @@ class SessionManager:
         """
         error = None
         status = TaskStatus.FAILED
+        was_cancelled = False
 
         try:
             self.logger.info(f"[SessionManager] 🚀 Executing session {session_id}")
@@ -244,6 +273,16 @@ class SessionManager:
 
             session.reset()
 
+        except asyncio.CancelledError:
+            # Handle task cancellation (e.g., constellation client disconnected)
+            self.logger.warning(
+                f"[SessionManager] 🛑 Session {session_id} was cancelled"
+            )
+            status = TaskStatus.FAILED
+            error = "Task was cancelled due to client disconnection"
+            was_cancelled = True
+            # Don't re-raise, just handle gracefully
+
         except Exception as e:
             import traceback
 
@@ -253,6 +292,14 @@ class SessionManager:
             error = str(e)
 
         finally:
+            # Don't send callback if task was cancelled (client already disconnected)
+            if was_cancelled:
+                self.logger.info(
+                    f"[SessionManager] 🛑 Session {session_id} cancelled, skipping callback"
+                )
+                self._running_tasks.pop(session_id, None)
+                return
+
             self.logger.info(
                 f"[SessionManager] 📦 Building result message for session {session_id} (status={status})"
             )
