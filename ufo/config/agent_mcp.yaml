@@ -43,6 +43,10 @@ AppAgent:
         type: local
         start_args: []
         reset: false
+      - namespace: CommandLineExecutor
+        type: local
+        start_args: []
+        reset: false
   WINWORD.EXE:
     data_collection:
       - namespace: UICollector
