@@ -340,8 +340,11 @@ class TaskConstellationOrchestrator:
         """
         Synchronize pending constellation modifications.
 
-        :param constellation: Current constellation
-        :return: Updated constellation (may be the same or modified version)
+        Merges structural changes from agent while preserving orchestrator's
+        execution state (task statuses, results) to prevent race conditions.
+
+        :param constellation: Current orchestrator's constellation
+        :return: Updated constellation with merged state
         """
         if self._logger:
             old_ready = [t.task_id for t in constellation.get_ready_tasks()]
@@ -349,7 +352,12 @@ class TaskConstellationOrchestrator:
 
         if self._modification_synchronizer:
             await self._modification_synchronizer.wait_for_pending_modifications()
-            constellation = self._modification_synchronizer.get_current_constellation()
+
+            constellation = (
+                self._modification_synchronizer.merge_and_sync_constellation_states(
+                    orchestrator_constellation=constellation,
+                )
+            )
 
         if self._logger:
             self._logger.debug(

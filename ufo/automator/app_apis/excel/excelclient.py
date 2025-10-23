@@ -40,17 +40,40 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
         try:
             sheet = self.com_object.Sheets(sheet_name)
 
-            # Fetch the data from the sheet
-            data = sheet.UsedRange()
+            # Fetch the data from the sheet - use .Value property
+            data = sheet.UsedRange.Value
 
-            # Convert the data to a DataFrame
-            df = pd.DataFrame(data[1:], columns=data[0])
+            # Handle empty sheet
+            if data is None:
+                return "Empty sheet"
+
+            # Handle single cell
+            if not isinstance(data, tuple):
+                return f"| Value |\n|-------|\n| {self.format_value(data)} |"
+
+            # Handle single row
+            if not isinstance(data[0], tuple):
+                data = [data]
+
+            # Convert to list format
+            data_list = [list(row) for row in data]
+
+            # Check if there is data
+            if len(data_list) == 0:
+                return "Empty sheet"
+
+            # First row as header, rest as data
+            if len(data_list) == 1:
+                # Only header, no data rows
+                df = pd.DataFrame(columns=data_list[0])
+            else:
+                df = pd.DataFrame(data_list[1:], columns=data_list[0])
 
             # Drop the rows with all NaN values
             df = df.dropna(axis=0, how="all")
 
-            # Convert the values to strings
-            df = df.applymap(self.format_value)
+            # Convert the values to strings - use map instead of deprecated applymap
+            df = df.map(self.format_value)
 
             return df.to_markdown(index=False)
         except Exception as e:

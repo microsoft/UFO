@@ -233,6 +233,7 @@ class ConstellationModificationSynchronizer(IEventObserver):
         Wait for all pending modifications to complete.
 
         This method should be called by the orchestrator before getting ready tasks.
+        Handles dynamically added pending modifications during the wait.
 
         :param timeout: Optional timeout in seconds (uses default if None)
         :return: True if all modifications completed, False if timeout occurred
@@ -241,28 +242,51 @@ class ConstellationModificationSynchronizer(IEventObserver):
             return True
 
         timeout = timeout or self._modification_timeout
-        pending_tasks = list(self._pending_modifications.keys())
+        start_time = asyncio.get_event_loop().time()
 
         self.logger.info(
-            f"⏳ Waiting for {len(pending_tasks)} pending modification(s): {pending_tasks}"
+            f"⏳ Starting wait for pending modifications (timeout: {timeout}s)"
         )
 
         try:
-            # Wait for all pending modifications with timeout
-            await asyncio.wait_for(
-                asyncio.gather(
-                    *self._pending_modifications.values(), return_exceptions=True
-                ),
-                timeout=timeout,
-            )
+            while self._pending_modifications:
+                # Get current pending tasks (snapshot)
+                pending_tasks = list(self._pending_modifications.keys())
+                pending_futures = list(self._pending_modifications.values())
+
+                self.logger.info(
+                    f"⏳ Waiting for {len(pending_tasks)} pending modification(s): {pending_tasks}"
+                )
+
+                # Calculate remaining timeout
+                elapsed = asyncio.get_event_loop().time() - start_time
+                remaining_timeout = timeout - elapsed
+
+                if remaining_timeout <= 0:
+                    raise asyncio.TimeoutError()
+
+                # Wait for all current pending modifications
+                await asyncio.wait_for(
+                    asyncio.gather(*pending_futures, return_exceptions=True),
+                    timeout=remaining_timeout,
+                )
+
+                # Check if new modifications were added during the wait
+                # If yes, loop again; if no, we're done
+                if not self._pending_modifications:
+                    break
+
+                # Small delay to allow new registrations to settle
+                await asyncio.sleep(0.01)
 
             self.logger.info("✅ All pending modifications completed")
             return True
 
         except asyncio.TimeoutError:
+            pending = list(self._pending_modifications.keys())
             self.logger.warning(
                 f"⚠️ Timeout waiting for modifications after {timeout}s. "
-                f"Proceeding anyway. Pending: {list(self._pending_modifications.keys())}"
+                f"Proceeding anyway. Pending: {pending}"
             )
             # Clear all pending modifications to prevent permanent deadlock
             self._pending_modifications.clear()
@@ -338,3 +362,99 @@ class ConstellationModificationSynchronizer(IEventObserver):
             raise ValueError("Timeout must be positive")
         self._modification_timeout = timeout
         self.logger.info(f"Modification timeout set to {timeout}s")
+
+    def merge_and_sync_constellation_states(
+        self,
+        orchestrator_constellation: TaskConstellation,
+    ) -> TaskConstellation:
+        """
+        Merge constellation states: structural changes from agent + execution state from orchestrator.
+
+        This prevents race conditions where:
+        - Orchestrator marks Task A as COMPLETED
+        - Agent modifies constellation (Task A still RUNNING in agent's copy)
+        - Direct replacement would lose Task A's COMPLETED status
+
+        Uses self._current_constellation as the agent's constellation with structural changes.
+
+        :param orchestrator_constellation: Orchestrator's constellation with execution state
+        :return: Merged constellation
+        """
+        if not self._current_constellation:
+            if self.logger:
+                self.logger.warning(
+                    "⚠️ No agent constellation available, returning orchestrator constellation"
+                )
+            return orchestrator_constellation
+
+        if self.logger:
+            self.logger.info("🔄 Merging constellation states...")
+
+        # Use agent's constellation as base (has structural modifications)
+        merged = self._current_constellation
+
+        # Preserve execution state from orchestrator for existing tasks
+        for task_id, orchestrator_task in orchestrator_constellation.tasks.items():
+            if task_id in merged.tasks:
+                agent_task = merged.tasks[task_id]
+
+                # ✅ Key: If orchestrator's task state is more advanced, preserve it
+                # State priority: COMPLETED/FAILED > RUNNING > WAITING_DEPENDENCY > PENDING
+                if self._is_state_more_advanced(
+                    orchestrator_task.status, agent_task.status
+                ):
+                    if self.logger:
+                        self.logger.debug(
+                            f"  📌 Preserving advanced state for task '{task_id}': "
+                            f"{orchestrator_task.status} (orchestrator) vs "
+                            f"{agent_task.status} (agent)"
+                        )
+
+                    # Preserve orchestrator's state and results
+                    agent_task._status = orchestrator_task.status
+                    agent_task._result = orchestrator_task.result
+                    agent_task._error = orchestrator_task.error
+                    agent_task._execution_start_time = (
+                        orchestrator_task.execution_start_time
+                    )
+                    agent_task._execution_end_time = (
+                        orchestrator_task.execution_end_time
+                    )
+
+        # Update constellation state
+        merged.update_state()
+
+        # Sync the current constellation reference
+        self._current_constellation = merged
+
+        if self.logger:
+            self.logger.info("✅ Constellation states merged successfully")
+
+        return merged
+
+    def _is_state_more_advanced(self, state1, state2) -> bool:
+        """
+        Check if state1 is more advanced than state2 in execution progression.
+
+        Progression: PENDING -> WAITING_DEPENDENCY -> RUNNING -> COMPLETED/FAILED
+
+        :param state1: First task status (TaskStatus)
+        :param state2: Second task status (TaskStatus)
+        :return: True if state1 is more advanced
+        """
+        from ...constellation.enums import TaskStatus
+
+        # Define state advancement levels
+        state_levels = {
+            TaskStatus.PENDING: 0,
+            TaskStatus.WAITING_DEPENDENCY: 1,
+            TaskStatus.RUNNING: 2,
+            TaskStatus.COMPLETED: 3,
+            TaskStatus.FAILED: 3,  # Terminal states are equally advanced
+            TaskStatus.CANCELLED: 3,
+        }
+
+        level1 = state_levels.get(state1, 0)
+        level2 = state_levels.get(state2, 0)
+
+        return level1 > level2
