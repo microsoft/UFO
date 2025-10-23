@@ -569,6 +569,32 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
             true_name = ui_state.control_dict.get(id).element_info.name
             return f"Warning: The name of your chosen control id {id} is {true_name}, but the name argument is {name}. The action is performed on control {id}:{true_name}."
 
+    @action_mcp.tool(tags={"AppAgent"}, exclude_args=[])
+    async def wait(
+        seconds: Annotated[
+            float,
+            Field(
+                description="The number of seconds to wait. Can be a decimal value for sub-second precision (e.g., 0.5 for half a second)."
+            ),
+        ],
+    ) -> Annotated[str, Field(description="Confirmation message after waiting.")]:
+        """
+        Wait for a specified number of seconds before continuing execution.
+        This is useful when you need to wait for an application to load, an animation to complete, or any other time-based delay.
+        Unlike time.sleep(), this uses asyncio.sleep() to avoid blocking the event loop.
+        """
+        import asyncio
+
+        if seconds < 0:
+            raise ToolError("Wait time must be a positive number")
+
+        if seconds > 300:  # 5 minutes max
+            raise ToolError("Wait time cannot exceed 300 seconds (5 minutes)")
+
+        await asyncio.sleep(seconds)
+
+        return f"Successfully waited for {seconds} second(s)"
+
     @action_mcp.tool()
     def summary(
         text: Annotated[str, Field(description="The summary text to provide.")],
