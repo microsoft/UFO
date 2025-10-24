@@ -22,7 +22,6 @@ from .components import (
     DeviceRegistry,
     WebSocketConnectionManager,
     HeartbeatManager,
-    EventManager,
     MessageProcessor,
     TaskQueueManager,
 )
@@ -36,7 +35,6 @@ class ConstellationDeviceManager:
     - DeviceRegistry: Device registration and information
     - WebSocketConnectionManager: Connection management
     - HeartbeatManager: Health monitoring
-    - EventManager: Event handling
     - MessageProcessor: Message routing
     - TaskQueueManager: Task queuing and scheduling
     """
@@ -63,11 +61,9 @@ class ConstellationDeviceManager:
         self.heartbeat_manager = HeartbeatManager(
             self.connection_manager, self.device_registry, heartbeat_interval
         )
-        self.event_manager = EventManager()
         self.message_processor = MessageProcessor(
             self.device_registry,
             self.heartbeat_manager,
-            self.event_manager,
             self.connection_manager,
         )
         self.task_queue_manager = TaskQueueManager()
@@ -181,9 +177,6 @@ class ConstellationDeviceManager:
             # Set device to IDLE (ready to accept tasks)
             self.device_registry.set_device_idle(device_id)
 
-            # Notify connection handlers
-            await self.event_manager.notify_device_connected(device_id, device_info)
-
             self.logger.info(f"✅ Successfully connected to device {device_id}")
             return True
 
@@ -208,9 +201,6 @@ class ConstellationDeviceManager:
 
         # Update status
         self.device_registry.update_device_status(device_id, DeviceStatus.DISCONNECTED)
-
-        # Notify handlers
-        await self.event_manager.notify_device_disconnected(device_id)
 
     async def _handle_device_disconnection(self, device_id: str) -> None:
         """
@@ -256,9 +246,6 @@ class ConstellationDeviceManager:
                 self.task_queue_manager.fail_task(device_id, current_task_id, error)
                 # Clear current task
                 device_info.current_task_id = None
-
-            # Notify disconnection handlers
-            await self.event_manager.notify_device_disconnected(device_id)
 
             # Schedule reconnection (will retry internally until max_retries)
             # The reconnection loop manages its own retry counter
@@ -428,11 +415,6 @@ class ConstellationDeviceManager:
                 device_id, task_request
             )
 
-            # Notify task completion handlers
-            await self.event_manager.notify_task_completed(
-                device_id, task_request.task_id, result
-            )
-
             # Complete the task in queue manager if it was queued
             self.task_queue_manager.complete_task(
                 device_id, task_request.task_id, result
@@ -467,11 +449,6 @@ class ConstellationDeviceManager:
             # Fail the task in queue manager
             self.task_queue_manager.fail_task(device_id, task_request.task_id, e)
 
-            # Notify task completion handlers with failure
-            await self.event_manager.notify_task_completed(
-                device_id, task_request.task_id, result
-            )
-
             return result
 
         except asyncio.TimeoutError as e:
@@ -500,11 +477,6 @@ class ConstellationDeviceManager:
             # Fail the task in queue manager
             self.task_queue_manager.fail_task(device_id, task_request.task_id, e)
 
-            # Notify task completion handlers with failure
-            await self.event_manager.notify_task_completed(
-                device_id, task_request.task_id, result
-            )
-
             return result
 
         except Exception as e:
@@ -532,11 +504,6 @@ class ConstellationDeviceManager:
             # Fail the task in queue manager
             self.task_queue_manager.fail_task(device_id, task_request.task_id, e)
 
-            # Notify task completion handlers with failure
-            await self.event_manager.notify_task_completed(
-                device_id, task_request.task_id, result
-            )
-
             return result
 
         finally:
@@ -560,19 +527,6 @@ class ConstellationDeviceManager:
                 )
                 # Execute next task asynchronously (don't await here to avoid blocking)
                 asyncio.create_task(self._execute_task_on_device(device_id, next_task))
-
-    # Event handler registration (delegate to EventManager)
-    def add_connection_handler(self, handler: Callable) -> None:
-        """Add a handler for device connection events"""
-        self.event_manager.add_connection_handler(handler)
-
-    def add_disconnection_handler(self, handler: Callable) -> None:
-        """Add a handler for device disconnection events"""
-        self.event_manager.add_disconnection_handler(handler)
-
-    def add_task_completion_handler(self, handler: Callable) -> None:
-        """Add a handler for task completion events"""
-        self.event_manager.add_task_completion_handler(handler)
 
     # Device information access (delegate to DeviceRegistry)
     def get_device_info(self, device_id: str) -> Optional[AgentProfile]:

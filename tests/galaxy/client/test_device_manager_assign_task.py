@@ -87,9 +87,6 @@ class TestAssignTaskToDevice:
             return_value=mock_execution_result
         )
 
-        # Mock event manager
-        device_manager.event_manager.notify_task_completed = AsyncMock()
-
         # Assign task
         result = await device_manager.assign_task_to_device(
             task_id="task_001",
@@ -107,9 +104,6 @@ class TestAssignTaskToDevice:
         device_info = device_manager.device_registry.get_device(device_id)
         assert device_info.status == DeviceStatus.IDLE
         assert device_info.current_task_id is None
-
-        # Verify event notification was called
-        device_manager.event_manager.notify_task_completed.assert_called_once()
 
     # ========================================================================
     # Test 2: Device state transitions during task execution

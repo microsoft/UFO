@@ -18,7 +18,6 @@ import websockets
 from ufo.contracts.contracts import ServerMessage, ServerMessageType, TaskStatus
 from .device_registry import DeviceRegistry
 from .heartbeat_manager import HeartbeatManager
-from .event_manager import EventManager
 
 # Avoid circular import
 if TYPE_CHECKING:
@@ -39,7 +38,6 @@ class MessageProcessor:
         self,
         device_registry: DeviceRegistry,
         heartbeat_manager: HeartbeatManager,
-        event_manager: EventManager,
         connection_manager: Optional["WebSocketConnectionManager"] = None,
     ):
         """
@@ -47,13 +45,11 @@ class MessageProcessor:
 
         :param device_registry: Registry for tracking connected devices
         :param heartbeat_manager: Manager for device heartbeat monitoring
-        :param event_manager: Manager for event callbacks
         :param connection_manager: Optional ConnectionManager for completing task responses
                                   (set later via set_connection_manager to avoid circular dependency)
         """
         self.device_registry = device_registry
         self.heartbeat_manager = heartbeat_manager
-        self.event_manager = event_manager
         self.connection_manager = connection_manager
         self._message_handlers: Dict[str, asyncio.Task] = {}
         # Callback for handling disconnections (set by DeviceManager)
@@ -233,15 +229,13 @@ class MessageProcessor:
         """
         Handle task completion messages from UFO servers.
 
-        This method performs two critical operations when a TASK_END message is received:
-        1. Completes the pending task response Future in ConnectionManager (for synchronous waiting)
-        2. Notifies event handlers via EventManager (for asynchronous callbacks)
+        This method completes the pending task response Future in ConnectionManager
+        to unblock send_task_to_device() calls waiting for task results.
 
         Workflow:
         - Extract task_id from server_msg (uses request_id or falls back to session_id)
         - Call ConnectionManager.complete_task_response() to unblock send_task_to_device()
         - Prepare result dictionary with task execution details
-        - Notify EventManager to trigger registered callbacks
 
         :param device_id: Device that completed the task
         :param server_msg: ServerMessage containing task completion details
@@ -274,21 +268,6 @@ class MessageProcessor:
                     f"⚠️ ConnectionManager not set, cannot complete task response for {task_id}"
                 )
 
-            # Step 2: Prepare result data for event handlers
-            result = {
-                "success": server_msg.status == TaskStatus.COMPLETED,
-                "device_id": device_id,
-                "session_id": session_id,
-                "task_id": task_id,
-                "status": server_msg.status,
-                "error": server_msg.error,
-                "result": server_msg.result,
-                "timestamp": server_msg.timestamp,
-            }
-
-            # Step 3: Notify event handlers (asynchronous callbacks)
-            await self.event_manager.notify_task_completed(device_id, task_id, result)
-
             self.logger.info(
                 f"✅ Task {task_id} completed on device {device_id} "
                 f"(status: {server_msg.status})"
@@ -314,13 +293,6 @@ class MessageProcessor:
         """
         error_text = getattr(server_msg, "error", "Unknown error")
         self.logger.error(f"❌ Error from device {device_id}: {error_text}")
-
-        session_id = getattr(server_msg, "session_id", None)
-        if session_id:
-            # Notify event handlers about task failure
-            await self.event_manager.notify_task_failed(
-                device_id, session_id, error_text
-            )
 
     async def _handle_command_message(
         self, device_id: str, server_msg: ServerMessage

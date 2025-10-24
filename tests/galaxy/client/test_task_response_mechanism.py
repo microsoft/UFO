@@ -31,7 +31,6 @@ from galaxy.client.components.connection_manager import WebSocketConnectionManag
 from galaxy.client.components.message_processor import MessageProcessor
 from galaxy.client.components.device_registry import DeviceRegistry
 from galaxy.client.components.heartbeat_manager import HeartbeatManager
-from galaxy.client.components.event_manager import EventManager
 from galaxy.client.components.types import AgentProfile, TaskRequest
 
 from ufo.contracts.contracts import (
@@ -67,11 +66,6 @@ class TestTaskResponseMechanism:
         return WebSocketConnectionManager(constellation_id=constellation_id)
 
     @pytest.fixture
-    def event_manager(self):
-        """Create EventManager instance"""
-        return EventManager()
-
-    @pytest.fixture
     def device_registry(self):
         """Create DeviceRegistry instance"""
         return DeviceRegistry()
@@ -86,12 +80,11 @@ class TestTaskResponseMechanism:
         )
 
     @pytest.fixture
-    def message_processor(self, device_registry, heartbeat_manager, event_manager):
+    def message_processor(self, device_registry, heartbeat_manager):
         """Create MessageProcessor instance"""
         return MessageProcessor(
             device_registry=device_registry,
             heartbeat_manager=heartbeat_manager,
-            event_manager=event_manager,
         )
 
     @pytest.fixture
@@ -619,51 +612,6 @@ class TestTaskResponseMechanism:
                 "ConnectionManager not set" in caplog.text
                 or "cannot complete" in caplog.text
             )
-
-    @pytest.mark.asyncio
-    async def test_event_manager_notification(
-        self, connection_manager, message_processor, event_manager, device_id, task_id
-    ):
-        """
-        Test that EventManager receives task completion notifications.
-
-        Validates:
-        - Event handlers are called
-        - Correct parameters are passed
-        - Both Future completion and event notification work together
-        """
-        # Track event handler calls
-        completion_called = asyncio.Event()
-        received_result = {}
-
-        async def completion_handler(dev_id, t_id, result):
-            received_result.update(result)
-            completion_called.set()
-
-        event_manager.add_task_completion_handler(completion_handler)
-        message_processor.set_connection_manager(connection_manager)
-
-        # Create server message
-        server_msg = ServerMessage(
-            type=ServerMessageType.TASK_END,
-            response_id=task_id,
-            session_id="session_001",
-            status=TaskStatus.COMPLETED,
-            result={"data": "test"},
-            timestamp=datetime.now(timezone.utc).isoformat(),
-        )
-
-        # Process message
-        await message_processor._handle_task_completion(device_id, server_msg)
-
-        # Wait for event handler
-        await asyncio.wait_for(completion_called.wait(), timeout=1.0)
-
-        # Verify handler received correct data
-        assert received_result["task_id"] == task_id
-        assert received_result["device_id"] == device_id
-        assert received_result["result"] == {"data": "test"}
-        assert received_result["success"] is True
 
 
 if __name__ == "__main__":
