@@ -13,10 +13,9 @@ import asyncio
 from enum import Enum
 from typing import TYPE_CHECKING, Dict, Type
 
-from ufo.agents.states.basic import AgentState, AgentStateManager
 from galaxy.agents.schema import WeavingMode
+from ufo.agents.states.basic import AgentState, AgentStateManager
 from ufo.module.context import Context, ContextNames
-
 
 if TYPE_CHECKING:
     from galaxy.agents.constellation_agent import ConstellationAgent

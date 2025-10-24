@@ -10,20 +10,20 @@ Uses modular components for clean separation of concerns.
 
 import asyncio
 import logging
-from typing import Dict, List, Optional, Any, Callable
+from typing import Any, Dict, List, Optional
 
 from galaxy.core.types import ExecutionResult
 from ufo.contracts.contracts import TaskStatus
 
 from .components import (
-    DeviceStatus,
     AgentProfile,
-    TaskRequest,
     DeviceRegistry,
-    WebSocketConnectionManager,
+    DeviceStatus,
     HeartbeatManager,
     MessageProcessor,
     TaskQueueManager,
+    TaskRequest,
+    WebSocketConnectionManager,
 )
 
 

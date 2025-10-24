@@ -15,7 +15,7 @@ from typing import Dict, Any, Optional, TYPE_CHECKING
 from websockets import WebSocketClientProtocol
 import websockets
 
-from ufo.contracts.contracts import ServerMessage, ServerMessageType, TaskStatus
+from ufo.contracts.contracts import ServerMessage, ServerMessageType
 from .device_registry import DeviceRegistry
 from .heartbeat_manager import HeartbeatManager
 

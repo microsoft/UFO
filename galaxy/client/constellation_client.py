@@ -9,10 +9,10 @@ Serves as a support component for the main GalaxyClient system.
 """
 
 import logging
-from typing import Dict, List, Optional, Any
+from typing import Any, Dict, List, Optional
 
-from .device_manager import ConstellationDeviceManager
 from .config_loader import ConstellationConfig, DeviceConfig
+from .device_manager import ConstellationDeviceManager
 
 
 class ConstellationClient:
