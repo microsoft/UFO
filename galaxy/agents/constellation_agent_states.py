@@ -75,6 +75,9 @@ class StartConstellationAgentState(ConstellationAgentState):
             ]:
                 return
 
+            # Initialize timing_info to avoid UnboundLocalError
+            timing_info = {}
+
             # Create constellation if not exists
             if not agent.current_constellation:
                 context.set(ContextNames.WEAVING_MODE, WeavingMode.CREATION)
@@ -82,9 +85,9 @@ class StartConstellationAgentState(ConstellationAgentState):
                 agent._current_constellation, timing_info = (
                     await agent.process_creation(context)
                 )
-            # Start orchestration
+
+            # Start orchestration in background (non-blocking)
             if agent.current_constellation:
-                # Start orchestration in background (non-blocking)
 
                 asyncio.create_task(
                     agent.orchestrator.orchestrate_constellation(

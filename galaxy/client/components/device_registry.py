@@ -137,6 +137,12 @@ class DeviceRegistry:
             return self._devices[device_id].connection_attempts
         return 0
 
+    def reset_connection_attempts(self, device_id: str) -> None:
+        """Reset connection attempts counter to 0"""
+        if device_id in self._devices:
+            self._devices[device_id].connection_attempts = 0
+            self.logger.info(f"🔄 Reset connection attempts for device {device_id}")
+
     def update_heartbeat(self, device_id: str) -> None:
         """Update last heartbeat timestamp"""
         if device_id in self._devices:

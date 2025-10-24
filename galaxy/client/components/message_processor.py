@@ -56,6 +56,9 @@ class MessageProcessor:
         self.event_manager = event_manager
         self.connection_manager = connection_manager
         self._message_handlers: Dict[str, asyncio.Task] = {}
+        # Callback for handling disconnections (set by DeviceManager)
+
+        self._disconnection_handler: Optional[callable] = None
         self.logger = logging.getLogger(f"{__name__}.MessageProcessor")
 
     def set_connection_manager(
@@ -72,10 +75,31 @@ class MessageProcessor:
         self.connection_manager = connection_manager
         self.logger.debug("🔗 ConnectionManager reference set")
 
+    def set_disconnection_handler(self, handler: callable) -> None:
+        """
+        Set the disconnection handler callback.
+
+        This method allows DeviceManager to register a callback that will be
+        invoked when a device disconnects, enabling proper cleanup and reconnection.
+
+        :param handler: Async function to call on disconnection (device_id: str) -> None
+        """
+        self._disconnection_handler = handler
+        self.logger.debug("🔗 Disconnection handler set")
+
     def start_message_handler(
         self, device_id: str, websocket: WebSocketClientProtocol
     ) -> None:
-        """Start message handling for a device"""
+        """
+        Start message handling for a device.
+
+        Creates an asyncio task to listen for incoming messages from the device's
+        WebSocket connection. This task will run until the connection is closed
+        or the handler is explicitly stopped.
+
+        :param device_id: Unique device identifier
+        :param websocket: WebSocket connection to the device
+        """
         if device_id not in self._message_handlers:
             self._message_handlers[device_id] = asyncio.create_task(
                 self._handle_device_messages(device_id, websocket)
@@ -83,7 +107,14 @@ class MessageProcessor:
             self.logger.debug(f"📨 Started message handler for device {device_id}")
 
     def stop_message_handler(self, device_id: str) -> None:
-        """Stop message handling for a device"""
+        """
+        Stop message handling for a device.
+
+        Cancels the asyncio task that is listening for messages from the device.
+        This is called when manually disconnecting from a device or during cleanup.
+
+        :param device_id: Unique device identifier
+        """
         if device_id in self._message_handlers:
             task = self._message_handlers[device_id]
             if not task.done():
@@ -94,7 +125,23 @@ class MessageProcessor:
     async def _handle_device_messages(
         self, device_id: str, websocket: WebSocketClientProtocol
     ) -> None:
-        """Handle incoming messages from a device"""
+        """
+        Handle incoming messages from a device.
+
+        This is the main message processing loop that listens for WebSocket messages
+        from a device. It validates and routes each message to the appropriate handler
+        based on message type. The loop continues until the connection is closed or
+        an error occurs.
+
+        Handles the following scenarios:
+        - Normal message processing: Routes to _process_server_message()
+        - ConnectionClosed: Triggers disconnection cleanup and reconnection
+        - CancelledError: Gracefully stops when handler is explicitly stopped
+        - Other exceptions: Logs error and triggers disconnection cleanup
+
+        :param device_id: Unique device identifier
+        :param websocket: WebSocket connection to listen on
+        """
         message_count = 0
         try:
             async for message in websocket:
@@ -120,16 +167,34 @@ class MessageProcessor:
                 f"🔌 Connection to device {device_id} closed "
                 f"(code: {e.code}, reason: {e.reason}, messages received: {message_count})"
             )
+            # Trigger disconnection handler for cleanup and reconnection
+            await self._handle_disconnection(device_id)
         except asyncio.CancelledError:
             self.logger.info(f"📨 Message handler for device {device_id} was cancelled")
             raise
         except Exception as e:
             self.logger.error(f"❌ Message handler error for device {device_id}: {e}")
+            # Trigger disconnection handler for unexpected errors
+            await self._handle_disconnection(device_id)
 
     async def _process_server_message(
         self, device_id: str, server_msg: ServerMessage
     ) -> None:
-        """Process a message received from the UFO server"""
+        """
+        Process a message received from the UFO server.
+
+        Routes incoming ServerMessage to the appropriate handler based on message type:
+        - TASK_END: Task completion (delegates to _handle_task_completion)
+        - ERROR: Error messages (delegates to _handle_error_message)
+        - HEARTBEAT: Heartbeat responses (updates heartbeat manager)
+        - COMMAND: Command messages (delegates to _handle_command_message)
+        - DEVICE_INFO_RESPONSE: Device info responses (delegates to _handle_device_info_response)
+
+        Also tracks message processing time and logs warnings for slow processing.
+
+        :param device_id: Device that sent the message
+        :param server_msg: Parsed ServerMessage object
+        """
         try:
             self.logger.debug(
                 f"📨 Processing message type {server_msg.type} from device {device_id}"
@@ -238,7 +303,15 @@ class MessageProcessor:
     async def _handle_error_message(
         self, device_id: str, server_msg: ServerMessage
     ) -> None:
-        """Handle error messages from the server"""
+        """
+        Handle error messages from the server.
+
+        Processes ERROR type messages from the UFO server. Logs the error and
+        notifies event handlers about task failures if a session_id is present.
+
+        :param device_id: Device that sent the error
+        :param server_msg: ServerMessage containing error details
+        """
         error_text = getattr(server_msg, "error", "Unknown error")
         self.logger.error(f"❌ Error from device {device_id}: {error_text}")
 
@@ -252,7 +325,16 @@ class MessageProcessor:
     async def _handle_command_message(
         self, device_id: str, server_msg: ServerMessage
     ) -> None:
-        """Handle command messages from the server"""
+        """
+        Handle command messages from the server.
+
+        Processes COMMAND type messages from the UFO server. In constellation mode,
+        commands are typically handled by local clients rather than the constellation
+        itself, so this method primarily logs and acknowledges the command.
+
+        :param device_id: Device that sent the command
+        :param server_msg: ServerMessage containing command details
+        """
         # For constellation clients, acknowledge and continue processing
         try:
             # Commands are typically handled by local clients, not constellation
@@ -313,7 +395,17 @@ class MessageProcessor:
             )
 
     async def _process_device_info_response(self, device_id: str, results: Any) -> None:
-        """Process device information response"""
+        """
+        Process device information response.
+
+        Updates the device registry with capabilities and system information
+        received from the device. This is a legacy method that updates the
+        registry directly, while _handle_device_info_response completes the
+        async Future for request-response pattern.
+
+        :param device_id: Device that provided the information
+        :param results: Device information dictionary
+        """
         try:
             if isinstance(results, dict):
                 self.device_registry.set_device_capabilities(device_id, results)
@@ -321,7 +413,42 @@ class MessageProcessor:
         except Exception as e:
             self.logger.error(f"❌ Error processing device info for {device_id}: {e}")
 
+    async def _handle_disconnection(self, device_id: str) -> None:
+        """
+        Handle device disconnection cleanup and trigger reconnection.
+
+        This method is called when a device disconnects (either due to connection
+        closed or unexpected error). It performs cleanup and delegates to the
+        DeviceManager's disconnection handler for reconnection logic.
+
+        :param device_id: Device that disconnected
+        """
+        try:
+            self.logger.info(f"🔌 Handling disconnection for device {device_id}")
+
+            # Stop heartbeat monitoring
+            self.heartbeat_manager.stop_heartbeat(device_id)
+
+            # Trigger the DeviceManager's disconnection handler if set
+            if self._disconnection_handler:
+                await self._disconnection_handler(device_id)
+            else:
+                self.logger.warning(
+                    f"⚠️ No disconnection handler set for device {device_id}"
+                )
+
+        except Exception as e:
+            self.logger.error(
+                f"❌ Error handling disconnection for device {device_id}: {e}",
+                exc_info=True,
+            )
+
     def stop_all_handlers(self) -> None:
-        """Stop all message handlers"""
+        """
+        Stop all message handlers.
+
+        Cancels all active message processing tasks. This is typically called
+        during shutdown to ensure all background tasks are properly cleaned up.
+        """
         for device_id in list(self._message_handlers.keys()):
             self.stop_message_handler(device_id)

@@ -46,8 +46,8 @@ class WebSocketConnectionManager:
         self.task_name = task_name
         self._connections: Dict[str, WebSocketClientProtocol] = {}
         # Dictionary to track pending task responses using asyncio.Future
-        # Key: task_id (request_id), Value: Future that will be resolved with ServerMessage
-        self._pending_tasks: Dict[str, asyncio.Future] = {}
+        # Key: task_id (request_id), Value: (device_id, Future)
+        self._pending_tasks: Dict[str, tuple[str, asyncio.Future]] = {}
         # Dictionary to track pending device info requests
         # Key: request_id, Value: Future that will be resolved with device info dict
         self._pending_device_info: Dict[str, asyncio.Future] = {}
@@ -277,13 +277,25 @@ class WebSocketConnectionManager:
             self.logger.error(
                 f"⏰ Task {task_request.task_id} timed out on device {device_id}"
             )
-            raise ConnectionError(f"Task {task_request.task_id} timed out")
+            raise asyncio.TimeoutError(f"Task {task_request.task_id} timed out")
+        except websockets.ConnectionClosed as e:
+            # Clean up the pending future for this task
+            self._pending_tasks.pop(constellation_task_id, None)
+            self.logger.error(
+                f"🔌 Device {device_id} disconnected during task {task_request.task_id} execution"
+            )
+            raise ConnectionError(
+                f"Device {device_id} disconnected during task execution (code: {e.code}, reason: {e.reason})"
+            )
         except Exception as e:
             # Clean up the pending future for this task
             self._pending_tasks.pop(constellation_task_id, None)
             self.logger.error(
                 f"❌ Failed to send task {task_request.task_id} to device {device_id}: {e}"
             )
+            # Check if it's a connection-related error
+            if isinstance(e, (ConnectionError, ConnectionResetError)):
+                raise ConnectionError(f"Device {device_id} connection error: {e}")
             raise
 
     async def _wait_for_task_response(
@@ -314,7 +326,7 @@ class WebSocketConnectionManager:
         """
         # Create a Future to wait for task completion
         task_future = asyncio.Future()
-        self._pending_tasks[task_id] = task_future
+        self._pending_tasks[task_id] = (device_id, task_future)
 
         self.logger.debug(
             f"⏳ Waiting for response for task {task_id} from device {device_id}"
@@ -355,14 +367,16 @@ class WebSocketConnectionManager:
             >>> server_msg = ServerMessage(type=ServerMessageType.TASK_END, ...)
             >>> connection_manager.complete_task_response(server_msg.request_id, server_msg)
         """
-        task_future = self._pending_tasks.get(task_id)
+        task_entry = self._pending_tasks.get(task_id)
 
-        if task_future is None:
+        if task_entry is None:
             self.logger.warning(
                 f"⚠️ Received task completion for unknown task: {task_id} "
                 f"(task may have timed out or was already completed)"
             )
             return
+
+        device_id, task_future = task_entry
 
         if task_future.done():
             self.logger.warning(
@@ -386,14 +400,57 @@ class WebSocketConnectionManager:
         return websocket is not None and not websocket.closed
 
     async def disconnect_device(self, device_id: str) -> None:
-        """Disconnect from a specific device"""
+        """
+        Disconnect from a specific device and cancel all pending tasks.
+
+        :param device_id: Device ID to disconnect
+        """
         if device_id in self._connections:
+            # Cancel all pending tasks for this device BEFORE closing connection
+            self._cancel_pending_tasks_for_device(device_id)
+
             try:
                 await self._connections[device_id].close()
             except:
                 pass
             del self._connections[device_id]
             self.logger.warning(f"🔌 Disconnected from device {device_id}")
+
+    def _cancel_pending_tasks_for_device(self, device_id: str) -> None:
+        """
+        Cancel all pending task responses for a specific device.
+
+        This is called when a device disconnects to ensure all waiting
+        tasks receive a ConnectionError instead of hanging indefinitely.
+
+        :param device_id: Device ID whose tasks should be cancelled
+        """
+        # Find all pending tasks for this device
+        tasks_to_cancel = []
+        for task_id, (dev_id, task_future) in list(self._pending_tasks.items()):
+            if dev_id == device_id and not task_future.done():
+                tasks_to_cancel.append(task_id)
+
+        # Cancel all pending tasks with ConnectionError
+        error = ConnectionError(
+            f"Device {device_id} disconnected while waiting for task response"
+        )
+
+        for task_id in tasks_to_cancel:
+            task_entry = self._pending_tasks.get(task_id)
+            if task_entry:
+                _, task_future = task_entry
+                if not task_future.done():
+                    task_future.set_exception(error)
+                    self.logger.warning(
+                        f"⚠️ Cancelled pending task {task_id} due to device {device_id} disconnection"
+                    )
+            self._pending_tasks.pop(task_id, None)
+
+        if tasks_to_cancel:
+            self.logger.info(
+                f"🔄 Cancelled {len(tasks_to_cancel)} pending tasks for device {device_id}"
+            )
 
     async def disconnect_all(self) -> None:
         """Disconnect from all devices"""

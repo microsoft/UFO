@@ -13,6 +13,7 @@ import logging
 from typing import Dict, List, Optional, Any, Callable
 
 from galaxy.core.types import ExecutionResult
+from ufo.contracts.contracts import TaskStatus
 
 from .components import (
     DeviceStatus,
@@ -71,6 +72,11 @@ class ConstellationDeviceManager:
         )
         self.task_queue_manager = TaskQueueManager()
 
+        # Register disconnection handler with MessageProcessor
+        self.message_processor.set_disconnection_handler(
+            self._handle_device_disconnection
+        )
+
         # Reconnection management
         self._reconnect_tasks: Dict[str, asyncio.Task] = {}
 
@@ -110,11 +116,14 @@ class ConstellationDeviceManager:
             self.logger.error(f"❌ Failed to register device {device_id}: {e}")
             return False
 
-    async def connect_device(self, device_id: str) -> bool:
+    async def connect_device(
+        self, device_id: str, is_reconnection: bool = False
+    ) -> bool:
         """
         Connect to a registered device.
 
         :param device_id: Device to connect to
+        :param is_reconnection: True if this is a reconnection attempt (won't increment global attempts counter)
         :return: True if connection successful
         """
         if not self.device_registry.is_device_registered(device_id):
@@ -130,11 +139,15 @@ class ConstellationDeviceManager:
             return True
 
         try:
-            # Update status and increment attempts
+            # Update status to CONNECTING
             self.device_registry.update_device_status(
                 device_id, DeviceStatus.CONNECTING
             )
-            self.device_registry.increment_connection_attempts(device_id)
+
+            # Only increment attempts for initial connection, not reconnections
+            # Reconnections have their own retry counter in _reconnect_device()
+            if not is_reconnection:
+                self.device_registry.increment_connection_attempts(device_id)
 
             # Establish connection with message processor
             # ⚠️ Pass message_processor to ensure it starts BEFORE registration
@@ -156,17 +169,17 @@ class ConstellationDeviceManager:
 
             # Request device system info and update AgentProfile
             # The device already pushed its info during registration, now we retrieve it
-            # device_system_info = await self.connection_manager.request_device_info(
-            #     device_id
-            # )
-            # if device_system_info:
-            #     # Update AgentProfile with system information (delegate to DeviceRegistry)
-            #     self.device_registry.update_device_system_info(
-            #         device_id, device_system_info
-            #     )
+            device_system_info = await self.connection_manager.request_device_info(
+                device_id
+            )
+            if device_system_info:
+                # Update AgentProfile with system information (delegate to DeviceRegistry)
+                self.device_registry.update_device_system_info(
+                    device_id, device_system_info
+                )
 
-            # # Set device to IDLE (ready to accept tasks)
-            # self.device_registry.set_device_idle(device_id)
+            # Set device to IDLE (ready to accept tasks)
+            self.device_registry.set_device_idle(device_id)
 
             # Notify connection handlers
             await self.event_manager.notify_device_connected(device_id, device_info)
@@ -199,6 +212,68 @@ class ConstellationDeviceManager:
         # Notify handlers
         await self.event_manager.notify_device_disconnected(device_id)
 
+    async def _handle_device_disconnection(self, device_id: str) -> None:
+        """
+        Handle device disconnection cleanup and attempt reconnection.
+
+        This method is called by MessageProcessor when a device disconnects.
+        It performs cleanup, updates device status, and schedules reconnection.
+
+        :param device_id: Device that disconnected
+        """
+        try:
+            self.logger.warning(f"🔌 Device {device_id} disconnected, cleaning up...")
+
+            # Get device info for reconnection logic
+            device_info = self.device_registry.get_device(device_id)
+            if not device_info:
+                self.logger.error(
+                    f"❌ Cannot handle disconnection: device {device_id} not found in registry"
+                )
+                return
+
+            # Stop message handler (if not already stopped)
+            self.message_processor.stop_message_handler(device_id)
+
+            # Update device status to DISCONNECTED
+            self.device_registry.update_device_status(
+                device_id, DeviceStatus.DISCONNECTED
+            )
+
+            # Clean up connection
+            await self.connection_manager.disconnect_device(device_id)
+
+            # Cancel current task if device was executing one
+            current_task_id = device_info.current_task_id
+            if current_task_id:
+                self.logger.warning(
+                    f"⚠️ Device {device_id} was executing task {current_task_id}, marking as failed"
+                )
+                # Fail the task in queue manager
+                error = ConnectionError(
+                    f"Device {device_id} disconnected during task execution"
+                )
+                self.task_queue_manager.fail_task(device_id, current_task_id, error)
+                # Clear current task
+                device_info.current_task_id = None
+
+            # Notify disconnection handlers
+            await self.event_manager.notify_device_disconnected(device_id)
+
+            # Schedule reconnection (will retry internally until max_retries)
+            # The reconnection loop manages its own retry counter
+            self.logger.info(
+                f"🔄 Scheduling automatic reconnection for device {device_id} "
+                f"(max retries: {device_info.max_retries})"
+            )
+            self._schedule_reconnection(device_id)
+
+        except Exception as e:
+            self.logger.error(
+                f"❌ Error handling disconnection for device {device_id}: {e}",
+                exc_info=True,
+            )
+
     def _schedule_reconnection(self, device_id: str) -> None:
         """Schedule automatic reconnection for a device"""
         if device_id not in self._reconnect_tasks:
@@ -207,13 +282,69 @@ class ConstellationDeviceManager:
             )
 
     async def _reconnect_device(self, device_id: str) -> None:
-        """Attempt to reconnect to a device after a delay"""
+        """
+        Attempt to reconnect to a device with automatic retries.
+
+        This method will keep trying to reconnect until:
+        1. Successfully reconnected, OR
+        2. Reached max_retries attempts
+
+        Each retry waits reconnect_delay seconds before attempting.
+
+        :param device_id: Device ID to reconnect
+        """
         try:
-            await asyncio.sleep(self.reconnect_delay)
-            self.logger.info(f"🔄 Attempting to reconnect to device {device_id}")
-            await self.connect_device(device_id)
+            device_info = self.device_registry.get_device(device_id)
+            if not device_info:
+                self.logger.error(f"❌ Device {device_id} not found in registry")
+                return
+
+            retry_count = 0
+            max_retries = device_info.max_retries
+
+            while retry_count < max_retries:
+                # Wait before attempting reconnection
+                await asyncio.sleep(self.reconnect_delay)
+
+                retry_count += 1
+                self.logger.info(
+                    f"🔄 Reconnection attempt {retry_count}/{max_retries} for device {device_id}"
+                )
+
+                try:
+                    # Attempt reconnection (pass is_reconnection=True to avoid incrementing global counter)
+                    success = await self.connect_device(device_id, is_reconnection=True)
+
+                    if success:
+                        self.logger.info(
+                            f"✅ Successfully reconnected to device {device_id} "
+                            f"on attempt {retry_count}/{max_retries}"
+                        )
+                        # Reset connection attempts on successful reconnection
+                        self.device_registry.reset_connection_attempts(device_id)
+                        return  # Success, exit retry loop
+                    else:
+                        self.logger.warning(
+                            f"⚠️ Reconnection attempt {retry_count}/{max_retries} failed for device {device_id}"
+                        )
+
+                except Exception as e:
+                    self.logger.error(
+                        f"❌ Reconnection attempt {retry_count}/{max_retries} "
+                        f"failed for device {device_id}: {e}"
+                    )
+
+            # All retries exhausted
+            self.logger.error(
+                f"❌ Failed to reconnect to device {device_id} after {max_retries} attempts, giving up"
+            )
+            self.device_registry.update_device_status(device_id, DeviceStatus.FAILED)
+
         except Exception as e:
-            self.logger.error(f"❌ Reconnection failed for device {device_id}: {e}")
+            self.logger.error(
+                f"❌ Reconnection loop failed for device {device_id}: {e}",
+                exc_info=True,
+            )
         finally:
             self._reconnect_tasks.pop(device_id, None)
 
@@ -281,9 +412,12 @@ class ConstellationDeviceManager:
         Execute a task on a device (internal method).
         Sets device to BUSY before execution and IDLE after completion.
 
+        Returns ExecutionResult with FAILED status if device disconnects or
+        other errors occur, instead of raising exceptions.
+
         :param device_id: Device ID
         :param task_request: Task to execute
-        :return: Task execution result
+        :return: Task execution result (always returns, never raises)
         """
         try:
             # Set device to BUSY
@@ -306,13 +440,104 @@ class ConstellationDeviceManager:
 
             return result
 
+        except ConnectionError as e:
+            # Handle device disconnection during task execution
+            self.logger.error(
+                f"❌ Device {device_id} disconnected during task {task_request.task_id}: {e}"
+            )
+
+            # Create ExecutionResult with FAILED status and disconnection message
+            result = ExecutionResult(
+                task_id=task_request.task_id,
+                status=TaskStatus.FAILED,
+                error=str(e),
+                result={
+                    "error_type": "device_disconnection",
+                    "message": f"Device {device_id} disconnected during task execution",
+                    "device_id": device_id,
+                    "task_id": task_request.task_id,
+                },
+                metadata={
+                    "device_id": device_id,
+                    "disconnected": True,
+                    "error_category": "connection_error",
+                },
+            )
+
+            # Fail the task in queue manager
+            self.task_queue_manager.fail_task(device_id, task_request.task_id, e)
+
+            # Notify task completion handlers with failure
+            await self.event_manager.notify_task_completed(
+                device_id, task_request.task_id, result
+            )
+
+            return result
+
+        except asyncio.TimeoutError as e:
+            # Handle task timeout
+            self.logger.error(
+                f"❌ Task {task_request.task_id} timed out on device {device_id}"
+            )
+
+            result = ExecutionResult(
+                task_id=task_request.task_id,
+                status=TaskStatus.FAILED,
+                error=f"Task execution timed out after {task_request.timeout} seconds",
+                result={
+                    "error_type": "timeout",
+                    "message": f"Task timed out after {task_request.timeout} seconds",
+                    "device_id": device_id,
+                    "task_id": task_request.task_id,
+                },
+                metadata={
+                    "device_id": device_id,
+                    "timeout": task_request.timeout,
+                    "error_category": "timeout_error",
+                },
+            )
+
+            # Fail the task in queue manager
+            self.task_queue_manager.fail_task(device_id, task_request.task_id, e)
+
+            # Notify task completion handlers with failure
+            await self.event_manager.notify_task_completed(
+                device_id, task_request.task_id, result
+            )
+
+            return result
+
         except Exception as e:
+            # Handle other errors
             self.logger.error(
                 f"❌ Task {task_request.task_id} failed on device {device_id}: {e}"
             )
+
+            result = ExecutionResult(
+                task_id=task_request.task_id,
+                status=TaskStatus.FAILED,
+                error=str(e),
+                result={
+                    "error_type": "execution_error",
+                    "message": str(e),
+                    "device_id": device_id,
+                    "task_id": task_request.task_id,
+                },
+                metadata={
+                    "device_id": device_id,
+                    "error_category": "general_error",
+                },
+            )
+
             # Fail the task in queue manager
             self.task_queue_manager.fail_task(device_id, task_request.task_id, e)
-            raise
+
+            # Notify task completion handlers with failure
+            await self.event_manager.notify_task_completed(
+                device_id, task_request.task_id, result
+            )
+
+            return result
 
         finally:
             # Set device back to IDLE
