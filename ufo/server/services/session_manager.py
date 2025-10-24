@@ -40,6 +40,9 @@ class SessionManager:
         # Track running background tasks
         self._running_tasks: Dict[str, asyncio.Task] = {}
 
+        # Track cancellation reasons (session_id -> reason)
+        self._cancellation_reasons: Dict[str, str] = {}
+
         # Platform configuration
         self.platform = platform_override or platform.system().lower()
         self.session_factory = SessionFactory()
@@ -190,16 +193,27 @@ class SessionManager:
         self.logger.info(f"[SessionManager] 🚀 Started background task {session_id}")
         return session_id
 
-    async def cancel_task(self, session_id: str) -> bool:
+    async def cancel_task(
+        self, session_id: str, reason: str = "constellation_disconnected"
+    ) -> bool:
         """
         Cancel a running background task.
 
         :param session_id: The session ID to cancel.
+        :param reason: Reason for cancellation. Options:
+                      - "constellation_disconnected": Constellation client disconnected (don't send callback)
+                      - "device_disconnected": Target device disconnected (send callback to constellation)
         :return: True if task was found and cancelled, False otherwise.
         """
         task = self._running_tasks.get(session_id)
         if task and not task.done():
-            self.logger.info(f"[SessionManager] 🛑 Cancelling session {session_id}")
+            self.logger.info(
+                f"[SessionManager] 🛑 Cancelling session {session_id} (reason: {reason})"
+            )
+
+            # Store cancellation reason for use in _run_session_background
+            self._cancellation_reasons[session_id] = reason
+
             task.cancel()
 
             # Wait a bit for graceful cancellation
@@ -209,6 +223,7 @@ class SessionManager:
                 pass
 
             self._running_tasks.pop(session_id, None)
+            self._cancellation_reasons.pop(session_id, None)  # Clean up reason
             self.remove_session(session_id)
             self.logger.info(f"[SessionManager] ✅ Session {session_id} cancelled")
             return True
@@ -274,13 +289,24 @@ class SessionManager:
             session.reset()
 
         except asyncio.CancelledError:
-            # Handle task cancellation (e.g., constellation client disconnected)
+            # Handle task cancellation
+            cancellation_reason = self._cancellation_reasons.get(
+                session_id, "constellation_disconnected"
+            )
+
             self.logger.warning(
-                f"[SessionManager] 🛑 Session {session_id} was cancelled"
+                f"[SessionManager] 🛑 Session {session_id} was cancelled (reason: {cancellation_reason})"
             )
             status = TaskStatus.FAILED
-            error = "Task was cancelled due to client disconnection"
-            was_cancelled = True
+
+            # Set appropriate error message based on cancellation reason
+            if cancellation_reason == "device_disconnected":
+                error = "Task was cancelled because target device disconnected"
+                was_cancelled = False  # Still send callback to constellation
+            else:  # constellation_disconnected or other reasons
+                error = "Task was cancelled due to client disconnection"
+                was_cancelled = True  # Don't send callback
+
             # Don't re-raise, just handle gracefully
 
         except Exception as e:

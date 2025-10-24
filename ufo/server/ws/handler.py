@@ -184,17 +184,39 @@ class UFOWebSocketHandler:
                     f"cancelling {len(session_ids)} active session(s)"
                 )
 
-                # Cancel all associated sessions
-                for session_id in session_ids:
-                    try:
-                        await self.session_manager.cancel_task(session_id)
-                    except Exception as e:
-                        self.logger.error(
-                            f"[WS] Error cancelling session {session_id}: {e}"
-                        )
-
-                # Clean up the mapping
+            # Cancel all associated sessions
+            for session_id in session_ids:
+                try:
+                    await self.session_manager.cancel_task(
+                        session_id, reason="constellation_disconnected"
+                    )
+                except Exception as e:
+                    self.logger.error(
+                        f"[WS] Error cancelling session {session_id}: {e}"
+                    )  # Clean up the mapping
                 self.ws_manager.remove_constellation_sessions(client_id)
+
+        elif client_info and client_info.client_type == ClientType.DEVICE:
+            # Get all sessions running on this device
+            session_ids = self.ws_manager.get_device_sessions(client_id)
+
+            if session_ids:
+                self.logger.info(
+                    f"[WS] 📱 Device {client_id} disconnected, "
+                    f"cancelling {len(session_ids)} active session(s)"
+                )
+
+            # Cancel all sessions running on this device
+            for session_id in session_ids:
+                try:
+                    await self.session_manager.cancel_task(
+                        session_id, reason="device_disconnected"
+                    )
+                except Exception as e:
+                    self.logger.error(
+                        f"[WS] Error cancelling session {session_id}: {e}"
+                    )  # Clean up the mapping
+                self.ws_manager.remove_device_sessions(client_id)
 
         self.ws_manager.remove_client(client_id)
         self.logger.info(f"[WS] {client_id} disconnected")
@@ -366,6 +388,9 @@ class UFOWebSocketHandler:
         # Track constellation session mapping
         if client_type == ClientType.CONSTELLATION:
             self.ws_manager.add_constellation_session(data.client_id, session_id)
+            # Also track on target device
+            if target_device_id:
+                self.ws_manager.add_device_session(target_device_id, session_id)
 
         # Define callback to send results when task completes
         async def send_result(sid: str, result_msg: ServerMessage):
