@@ -108,7 +108,7 @@ class EvaluationAgentPrompter(BasicPrompter):
             first_screenshot_str = ufo.utils.encode_image(
                 trajectory.app_agent_log[0]
                 .get("ScreenshotImages")
-                .get("CleanScreenshot")
+                .get("clean_screenshot_path")
             )
         else:
             first_screenshot_str = ""
@@ -163,7 +163,7 @@ class EvaluationAgentPrompter(BasicPrompter):
 
         for log in trajectory.app_agent_log:
 
-            step = log.get("Step")
+            step = log.get("session_step")
 
             if step is None:
                 continue
@@ -171,7 +171,7 @@ class EvaluationAgentPrompter(BasicPrompter):
             if self.is_visual:
 
                 screenshot_image = log.get("ScreenshotImages").get(
-                    "SelectedControlScreenshot"
+                    "selected_control_screenshot_path"
                 )
                 screenshot_str = ufo.utils.encode_image(screenshot_image)
 
@@ -210,14 +210,14 @@ class EvaluationAgentPrompter(BasicPrompter):
         :param log: The log.
         """
         step_trajectory = {
-            "Subtask": log.get("Subtask"),
-            "Step": log.get("Step"),
+            "Subtask": log.get("subtask"),
+            "Step": log.get("session_step"),
             "Observation": log.get("observation"),
             "Thought": log.get("thought"),
             "Plan": log.get("plan"),
             "Comment": log.get("comment"),
-            "Action": log.get("Action"),
-            "Application": log.get("Application"),
+            "Action": log.get("action"),
+            "Application": log.get("application_process_name"),
             # "Results": log.get("Results"),
         }
 

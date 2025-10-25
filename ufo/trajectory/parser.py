@@ -466,6 +466,9 @@ if __name__ == "__main__":
     print("Searching for valid trajectory logs...\n")
 
     # Try to find the most recent log directory with valid data
-    log_dirs = "./logs/2025-09-15-15-24-09/"
+    log_dirs = "./logs/2025-10-25-16-04-28/"
+    log = Trajectory(log_dirs).app_agent_log
+    for step in log:
+        print(step["ScreenshotImages"].keys())
 
-    Trajectory(log_dirs).to_markdown(log_dirs + "output2.md")
+    # Trajectory(log_dirs).to_markdown(log_dirs + "output2.md")
