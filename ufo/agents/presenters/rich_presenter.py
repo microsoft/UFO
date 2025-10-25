@@ -23,6 +23,7 @@ if TYPE_CHECKING:
     from ufo.agents.processors.schemas.response_schema import (
         AppAgentResponse,
         HostAgentResponse,
+        EvaluationAgentResponse,
     )
     from galaxy.agents.schema import ConstellationAgentResponse
 
@@ -65,6 +66,12 @@ class RichPresenter(BasePresenter):
             "FAIL": {"style": "red", "emoji": "❌"},
             "CONTINUE": {"style": "yellow", "emoji": "🔄"},
             "START": {"style": "blue", "emoji": "🚀"},
+        },
+        # Evaluation-specific styles
+        "evaluation": {
+            "sub_scores": {"title": "📊 Sub-scores", "style": "green"},
+            "task_complete": {"title": "💯 Task is complete", "style": "cyan"},
+            "reason": {"title": "🤔 Reason", "style": "blue"},
         },
         # Response separator styles
         "separator": {
@@ -846,3 +853,67 @@ class RichPresenter(BasePresenter):
                     style=self.STYLES["comment"]["style"],
                 )
             )
+
+    # ============================================================================
+    # EvaluationAgent-specific presentation methods
+    # ============================================================================
+
+    def present_evaluation_agent_response(
+        self, response: "EvaluationAgentResponse"
+    ) -> None:
+        """
+        Present EvaluationAgent response - matches original EvaluationAgent.print_response logic.
+
+        :param response: EvaluationAgentResponse object
+        """
+        from rich.rule import Rule
+
+        # Print response header
+        self._print_response_header("EvaluationAgent")
+
+        emoji_map = {
+            "yes": "✅",
+            "no": "❌",
+            "unsure": "❓",
+        }
+
+        complete = emoji_map.get(response.complete, response.complete)
+        sub_scores = response.sub_scores or []
+        reason = response.reason
+
+        # Sub-scores table
+        if sub_scores:
+            table = Table(
+                title=self.STYLES["evaluation"]["sub_scores"]["title"],
+                show_lines=True,
+                style=self.STYLES["evaluation"]["sub_scores"]["style"],
+            )
+            table.add_column("Metric", style="cyan", no_wrap=True)
+            table.add_column("Evaluation", style="green")
+            for sub_score in sub_scores:
+                score = sub_score.get("name")
+                evaluation = sub_score.get("evaluation")
+                table.add_row(str(score), str(emoji_map.get(evaluation, evaluation)))
+            self.console.print(table)
+
+        # Task complete
+        self.console.print(
+            Panel(
+                f"{complete}",
+                title=self.STYLES["evaluation"]["task_complete"]["title"],
+                style=self.STYLES["evaluation"]["task_complete"]["style"],
+            )
+        )
+
+        # Reason
+        if reason:
+            self.console.print(
+                Panel(
+                    reason,
+                    title=self.STYLES["evaluation"]["reason"]["title"],
+                    style=self.STYLES["evaluation"]["reason"]["style"],
+                )
+            )
+
+        # Print response footer
+        self._print_response_footer()

@@ -4,19 +4,15 @@
 
 from typing import Any, Dict, List, Optional, Tuple
 
-from rich.console import Console
-from rich.panel import Panel
-from rich.table import Table
-
 from ufo.agents.agent.basic import BasicAgent
+from ufo.agents.presenters.rich_presenter import RichPresenter
+from ufo.agents.processors.schemas.response_schema import EvaluationAgentResponse
 from ufo.agents.states.evaluaton_agent_state import EvaluatonAgentStatus
 from ufo.config import Config
 from ufo.contracts.contracts import MCPToolInfo
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
-from ufo.utils import json_parser, print_with_color
-
-console = Console()
+from ufo.utils import json_parser
 
 configs = Config.get_instance().config_data
 
@@ -46,6 +42,9 @@ class EvaluationAgent(BasicAgent):
             main_prompt,
             example_prompt,
         )
+
+        # Initialize presenter for output formatting
+        self.presenter = RichPresenter()
 
     def get_prompter(
         self,
@@ -146,75 +145,14 @@ class EvaluationAgent(BasicAgent):
 
     def print_response(self, response_dict: Dict[str, str]) -> None:
         """
-        Pretty-print the evaluation response using Rich.
+        Pretty-print the evaluation response using RichPresenter.
         :param response_dict: The response dictionary.
         """
-        from rich.rule import Rule
+        # Convert dict to EvaluationAgentResponse object
+        response = EvaluationAgentResponse(**response_dict)
 
-        emoji_map = {
-            "yes": "✅",
-            "no": "❌",
-            "unsure": "❓",
-        }
-
-        complete = emoji_map.get(
-            response_dict.get("complete"), response_dict.get("complete")
-        )
-        sub_scores = response_dict.get("sub_scores", [])
-        reason = response_dict.get("reason", "")
-
-        # Evaluation result header
-        console.print()
-        console.print(
-            Rule(
-                "🧐 Evaluation Result",
-                style="bold magenta",
-                characters="═",
-            )
-        )
-
-        # Sub-scores table
-        if sub_scores:
-            table = Table(
-                title="[bold green]Sub-scores📊[/bold green]", show_lines=True
-            )
-            table.add_column("Metric", style="cyan", no_wrap=True)
-            table.add_column("Evaluation", style="green")
-            for sub_score in sub_scores:
-                score = sub_score.get("name")
-                evaluation = sub_score.get("evaluation")
-                table.add_row(str(score), str(emoji_map.get(evaluation, evaluation)))
-            console.print(table)
-
-        # Task complete
-        console.print(
-            Panel(
-                f"{complete}",
-                title="[bold cyan]Task is complete💯[/bold cyan]",
-                expand=False,
-                style="cyan",
-            )
-        )
-
-        # Reason
-        if reason:
-            console.print(
-                Panel(
-                    reason,
-                    title="[bold blue]Reason🤔[/bold blue]",
-                    expand=False,
-                    style="blue",
-                )
-            )
-
-        # End separator
-        console.print(
-            Rule(
-                style="dim",
-                characters="─",
-            )
-        )
-        console.print()
+        # Delegate to presenter
+        self.presenter.present_evaluation_agent_response(response)
 
 
 # The following code is used for testing the agent.

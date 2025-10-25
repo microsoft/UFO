@@ -35,3 +35,13 @@ class AppAgentResponse(BaseModel):
     action: Union[List[ActionCommandInfo], ActionCommandInfo, None] = None
     save_screenshot: Optional[Dict[str, Any]] = {}
     result: Optional[Any] = None
+
+
+class EvaluationAgentResponse(BaseModel):
+    """
+    The response data for the EvaluationAgent.
+    """
+
+    complete: str
+    sub_scores: Optional[List[Dict[str, str]]] = None
+    reason: Optional[str] = None
