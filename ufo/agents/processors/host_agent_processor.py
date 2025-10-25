@@ -24,7 +24,6 @@ from unittest import result
 from rich.console import Console
 from rich.panel import Panel
 
-from ufo import utils
 from ufo.agents.processors.context.host_agent_processing_context import (
     HostAgentProcessorContext,
 )
@@ -213,11 +212,7 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         )
 
         # Display colored progress message for user feedback (maintaining original UX)
-        # utils.print_with_color(
-        #     f"Round {round_num + 1}, Step {round_step + 1}, HostAgent: "
-        #     f"Analyzing user intent and decomposing request...",
-        #     "magenta",
-        # )
+        # This has been replaced with Rich Panel display below
 
         panel_title = f"🚀 Round {round_num + 1}, Step {round_step + 1}, Agent: {processor.agent.name}"
         panel_content = (
@@ -263,8 +258,12 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
             # Display user-friendly completion message (maintaining original UX)
             if selected_app or assigned_agent:
                 target_name = selected_app or assigned_agent
-                utils.print_with_color(
-                    f"HostAgent: Successfully selected target '{target_name}'", "green"
+                console.print(
+                    Panel(
+                        f"Successfully selected target '{target_name}'",
+                        title="✅ HostAgent",
+                        style="green",
+                    )
                 )
         else:
             # Enhanced error logging for Host Agent
@@ -274,8 +273,12 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
             )
 
             # Display user-friendly error message (maintaining original UX)
-            utils.print_with_color(
-                f"HostAgent: Processing failed - {result.error}", "red"
+            console.print(
+                Panel(
+                    f"Processing failed - {result.error}",
+                    title="❌ HostAgent",
+                    style="red",
+                )
             )
 
     async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
@@ -287,4 +290,10 @@ class HostAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         # Call parent implementation for standard error handling
         await super().on_error(processor, error)
 
-        utils.print_with_color(f"HostAgent: Encountered error - {str(error)}", "red")
+        console.print(
+            Panel(
+                f"Encountered error - {str(error)}",
+                title="❌ HostAgent",
+                style="red",
+            )
+        )

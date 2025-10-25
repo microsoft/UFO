@@ -3,6 +3,7 @@
 
 import base64
 import functools
+import logging
 import mimetypes
 import os
 from abc import ABC, abstractmethod
@@ -20,6 +21,7 @@ if TYPE_CHECKING:
     from ufo.agents.processors.schemas.target import TargetInfo
 
 configs = Config.get_instance().config_data
+logger = logging.getLogger(__name__)
 
 if configs is not None:
     DEFAULT_PNG_COMPRESS_LEVEL = int(configs.get("DEFAULT_PNG_COMPRESS_LEVEL", 0))
@@ -692,9 +694,7 @@ class TargetAnnotationDecorator(PhotographerDecorator):
                 save_path, compress_level=configs.get("DEFAULT_PNG_COMPRESS_LEVEL", 1)
             )
         if not screenshot_annotated:
-            utils.print_with_color(
-                f"Warning: screenshot annotated is not valid.", "yellow"
-            )
+            logger.warning("Screenshot annotated is not valid.")
 
         return screenshot_annotated
 
@@ -950,12 +950,12 @@ class PhotographerFacade:
         """
         # Open the images
         if not os.path.exists(image1_path):
-            utils.print_with_color(f"Warning: {image1_path} does not exist.", "yellow")
+            logger.warning(f"{image1_path} does not exist.")
 
             return Image.new("RGB", (0, 0))
 
         if not os.path.exists(image2_path):
-            utils.print_with_color(f"Warning: {image2_path} does not exist.", "yellow")
+            logger.warning(f"{image2_path} does not exist.")
 
             return Image.new("RGB", (0, 0))
 
@@ -1170,7 +1170,7 @@ class PhotographerFacade:
             return image_url
 
         except Exception as e:
-            utils.print_with_color(f"Error encoding image: {e}", "red")
+            logger.error(f"Error encoding image: {e}")
             # Fallback: try with a simple conversion
             try:
                 # Convert to RGB and try again
@@ -1180,9 +1180,7 @@ class PhotographerFacade:
                 encoded_image = base64.b64encode(buffered.getvalue()).decode("ascii")
                 return f"data:image/png;base64,{encoded_image}"
             except Exception as fallback_error:
-                utils.print_with_color(
-                    f"Fallback encoding also failed: {fallback_error}", "red"
-                )
+                logger.error(f"Fallback encoding also failed: {fallback_error}")
                 return cls._empty_image_string
 
     @classmethod
@@ -1198,7 +1196,7 @@ class PhotographerFacade:
 
         # If image path not exist, return an empty image string
         if not os.path.exists(image_path):
-            utils.print_with_color(f"Warning: {image_path} does not exist.", "yellow")
+            logger.warning(f"{image_path} does not exist.")
             return cls._empty_image_string
 
         try:
@@ -1212,9 +1210,7 @@ class PhotographerFacade:
             return cls.encode_image(image, mime_type)
 
         except Exception as image_error:
-            utils.print_with_color(
-                f"Error loading image {image_path}: {image_error}", "yellow"
-            )
+            logger.warning(f"Error loading image {image_path}: {image_error}")
 
             # Fallback: try direct file encoding (for valid image files that PIL can't handle)
             try:
@@ -1226,9 +1222,8 @@ class PhotographerFacade:
                     encoded_image = base64.b64encode(image_file.read()).decode("ascii")
 
                 if mime_type is None or not mime_type.startswith("image/"):
-                    utils.print_with_color(
-                        "Warning: mime_type is not specified or not an image mime type. Defaulting to png.",
-                        "yellow",
+                    logger.warning(
+                        "mime_type is not specified or not an image mime type. Defaulting to png."
                     )
                     mime_type = "image/png"
 
@@ -1236,9 +1231,8 @@ class PhotographerFacade:
                 return image_url
 
             except Exception as fallback_error:
-                utils.print_with_color(
-                    f"Fallback encoding failed for {image_path}: {fallback_error}",
-                    "red",
+                logger.error(
+                    f"Fallback encoding failed for {image_path}: {fallback_error}"
                 )
                 return cls._empty_image_string
 

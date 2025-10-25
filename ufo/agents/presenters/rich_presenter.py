@@ -614,35 +614,61 @@ class RichPresenter(BasePresenter):
 
     def present_action_list(self, actions: Any, success_only: bool = False) -> None:
         """
-        Present action list - matches ListActionCommandInfo.color_print logic.
+        Present action list with enhanced visual formatting.
 
         :param actions: ListActionCommandInfo object
         :param success_only: Whether to print only successful actions
         """
+        from rich.rule import Rule
         from ufo.contracts.contracts import ResultStatus
 
-        index = 1
+        if not actions or not actions.actions:
+            self.console.print("ℹ️  No actions to display", style="dim")
+            return
 
-        for action in actions.actions:
-            if success_only and action.result.status != ResultStatus.SUCCESS:
-                continue
+        # Filter actions based on success_only
+        filtered_actions = [
+            action
+            for action in actions.actions
+            if not success_only or action.result.status == ResultStatus.SUCCESS
+        ]
 
-            # Print action representation
-            action_repr = action.to_representation()
-            self.console.print(
-                Panel(action_repr, style="cyan", title=f"⚒️ Action {index}")
-            )
+        if not filtered_actions:
+            self.console.print("ℹ️  No actions to display", style="dim")
+            return
 
-            index += 1
+        # Count successful and failed actions
+        success_count = sum(
+            1 for a in actions.actions if a.result.status == ResultStatus.SUCCESS
+        )
+        failed_count = len(actions.actions) - success_count
 
-        # Print final status
+        # Print header
+        self.console.print()
+        header_text = f"⚒️  Action Execution Results ({len(filtered_actions)} action{'s' if len(filtered_actions) != 1 else ''})"
         self.console.print(
-            Panel(
-                str(actions.status),
-                title=self.STYLES["final_status"]["title"],
-                style=self.STYLES["final_status"]["style"],
+            Rule(
+                header_text,
+                style="bright_blue bold",
+                characters="═",
             )
         )
+
+        # Display each action with enhanced formatting
+        for idx, action in enumerate(filtered_actions, 1):
+            self._print_single_action(idx, action)
+
+        # Display summary
+        self._print_action_summary(success_count, failed_count, actions.status)
+
+        # Print footer
+        self.console.print(
+            Rule(
+                style="dim",
+                characters="─",
+            )
+        )
+        self.console.print()
 
     def present_constellation_editing_actions(self, actions: Any) -> None:
         """
@@ -853,6 +879,137 @@ class RichPresenter(BasePresenter):
                     style=self.STYLES["comment"]["style"],
                 )
             )
+
+    def _print_single_action(self, idx: int, action: Any) -> None:
+        """
+        Print a single action with detailed information and visual formatting.
+
+        :param idx: Action index number
+        :param action: ActionCommandInfo object
+        """
+        from rich.text import Text
+        from ufo.contracts.contracts import ResultStatus
+
+        # Determine status icon and color
+        if action.result.status == ResultStatus.SUCCESS:
+            status_icon = "✅"
+            status_color = "green"
+            border_style = "green"
+        elif action.result.status == ResultStatus.FAILURE:
+            status_icon = "❌"
+            status_color = "red"
+            border_style = "red"
+        else:
+            status_icon = "⏸️"
+            status_color = "yellow"
+            border_style = "yellow"
+
+        # Build content with proper formatting
+        content = Text()
+
+        # Function
+        content.append("Function: ", style="cyan bold")
+        content.append(
+            f"{action.function}\n" if action.function else "[dim]None[/dim]\n",
+            style="white",
+        )
+
+        # Arguments
+        if action.arguments:
+            args_str = ", ".join([f"{k}={v}" for k, v in action.arguments.items()])
+            if len(args_str) > 100:
+                args_str = args_str[:97] + "..."
+            content.append("Arguments: ", style="cyan bold")
+            content.append(f"{args_str}\n", style="white")
+
+        # Target information
+        if action.target:
+            target_name = action.target.name or action.target.id or "Unknown"
+            target_type = action.target.type or "Unknown"
+            content.append("Target: ", style="cyan bold")
+            content.append(f"{target_name} ", style="white")
+            content.append(f"({target_type})\n", style="dim")
+
+        # Status
+        status_text = (
+            action.result.status.value
+            if hasattr(action.result.status, "value")
+            else str(action.result.status)
+        )
+        content.append("Status: ", style="cyan bold")
+        content.append(f"{status_icon} {status_text.upper()}", style=status_color)
+
+        # Create panel for this action
+        panel_title = f"[bold]Action #{idx}[/bold]"
+        self.console.print(
+            Panel(
+                content,
+                title=panel_title,
+                border_style=border_style,
+                padding=(0, 1),
+            )
+        )
+
+        # Show result details if available
+        if action.result.result and str(action.result.result).strip():
+            result_text = Text()
+            result_text.append("    └─ Result: ", style="dim")
+            result_str = str(action.result.result)
+            if len(result_str) > 500:
+                result_str = result_str[:497] + "..."
+            result_text.append(result_str, style="bright_black")
+            self.console.print(result_text)
+
+        # Show error if failed
+        if action.result.status == ResultStatus.FAILURE and action.result.error:
+            error_text = Text()
+            error_text.append("    └─ Error: ", style="red dim")
+            error_str = str(action.result.error)
+            if len(error_str) > 100:
+                error_str = error_str[:97] + "..."
+            error_text.append(error_str, style="red")
+            self.console.print(error_text)
+
+    def _print_action_summary(
+        self, success_count: int, failed_count: int, status: str
+    ) -> None:
+        """
+        Print summary of action execution results.
+
+        :param success_count: Number of successful actions
+        :param failed_count: Number of failed actions
+        :param status: Overall execution status
+        """
+        from rich.panel import Panel
+
+        summary = Table(show_header=False, box=None, padding=(0, 2))
+        summary.add_column("Label", style="bold")
+        summary.add_column("Value")
+
+        # Success count
+        if success_count > 0:
+            success_text = Text()
+            success_text.append(str(success_count), style="green bold")
+            success_text.append(" succeeded", style="green")
+            summary.add_row("✅ Successful:", success_text)
+
+        # Failed count
+        if failed_count > 0:
+            failed_text = Text()
+            failed_text.append(str(failed_count), style="red bold")
+            failed_text.append(" failed", style="red")
+            summary.add_row("❌ Failed:", failed_text)
+
+        # Final status
+        status_style = "green" if status in ["FINISH", "COMPLETED"] else "yellow"
+        status_emoji = "🏁" if status == "FINISH" else "🔄"
+        status_text = Text(f"{status_emoji} {status}", style=f"{status_style} bold")
+        summary.add_row("📊 Status:", status_text)
+
+        self.console.print()
+        self.console.print(
+            Panel(summary, title="Summary", border_style="blue", padding=(0, 1))
+        )
 
     # ============================================================================
     # EvaluationAgent-specific presentation methods
