@@ -38,14 +38,14 @@ class RichPresenter(BasePresenter):
     # Style configuration - centralized for easy maintenance
     STYLES = {
         "thought": {"title": "💡 Thoughts", "style": "green"},
-        "observation": {"title": "👀 Observations", "style": "cyan"},
+        "observation": {"title": "👀 Observations", "style": "bright_cyan"},
         "action": {"title": "⚒️ Actions", "style": "blue"},
         "action_applied": {"title": "⚒️ Action applied", "style": "blue"},
         "plan": {"title": "📚 Plans", "style": "cyan"},
         "next_plan": {"title": "📚 Next Plan", "style": "cyan"},
         "comment": {"title": "💬 Agent Comment", "style": "yellow"},
         "message": {"title": "📩 Messages to AppAgent", "style": "cyan"},
-        "results": {"title": "📊 Current Task Results", "style": "magenta"},
+        "results": {"title": "📊 Current Task Results", "style": "bright_magenta"},
         "constellation_info": {
             "title": "🌌 Constellation Information",
             "style": "cyan",
@@ -65,6 +65,11 @@ class RichPresenter(BasePresenter):
             "FAIL": {"style": "red", "emoji": "❌"},
             "CONTINUE": {"style": "yellow", "emoji": "🔄"},
             "START": {"style": "blue", "emoji": "🚀"},
+        },
+        # Response separator styles
+        "separator": {
+            "start": {"char": "═", "style": "bright_blue bold"},
+            "end": {"char": "─", "style": "dim"},
         },
     }
 
@@ -203,6 +208,41 @@ class RichPresenter(BasePresenter):
             )
 
     # ============================================================================
+    # Helper methods for visual separation
+    # ============================================================================
+
+    def _print_response_header(self, agent_type: str) -> None:
+        """
+        Print response header separator.
+
+        :param agent_type: Agent type name (e.g., "AppAgent", "HostAgent")
+        """
+        from rich.rule import Rule
+
+        self.console.print()
+        self.console.print(
+            Rule(
+                f"🤖 {agent_type} Response",
+                style=self.STYLES["separator"]["start"]["style"],
+                characters=self.STYLES["separator"]["start"]["char"],
+            )
+        )
+
+    def _print_response_footer(self) -> None:
+        """
+        Print response footer separator.
+        """
+        from rich.rule import Rule
+
+        self.console.print(
+            Rule(
+                style=self.STYLES["separator"]["end"]["style"],
+                characters=self.STYLES["separator"]["end"]["char"],
+            )
+        )
+        self.console.print()
+
+    # ============================================================================
     # AppAgent-specific presentation methods
     # ============================================================================
 
@@ -216,6 +256,9 @@ class RichPresenter(BasePresenter):
         :param print_action: Whether to print actions
         """
         from ufo.agents.processors.schemas.actions import ActionCommandInfo
+
+        # Print response header
+        self._print_response_header("AppAgent")
 
         actions = response.action
         if isinstance(actions, ActionCommandInfo):
@@ -257,6 +300,9 @@ class RichPresenter(BasePresenter):
         # Results
         if result:
             self.present_results(result)
+
+        # Print response footer
+        self._print_response_footer()
 
     def _present_actions_as_table(self, actions: List[Any]) -> None:
         """
@@ -301,6 +347,9 @@ class RichPresenter(BasePresenter):
         :param response: HostAgentResponse object
         :param action_str: Pre-formatted action string (optional)
         """
+        # Print response header
+        self._print_response_header("HostAgent")
+
         function = response.function
         arguments = response.arguments
         observation = response.observation
@@ -381,6 +430,9 @@ class RichPresenter(BasePresenter):
         if result:
             self.present_results(result)
 
+        # Print response footer
+        self._print_response_footer()
+
     def _format_action_string(self, function: str, arguments: Dict[str, Any]) -> str:
         """
         Format action string for display.
@@ -406,6 +458,9 @@ class RichPresenter(BasePresenter):
         :param response: ConstellationAgentResponse object
         :param print_action: Whether to print actions
         """
+        # Print response header
+        self._print_response_header("ConstellationAgent")
+
         # Agent thoughts
         if response.thought:
             self.console.print(
@@ -459,7 +514,11 @@ class RichPresenter(BasePresenter):
                 )
 
         # Results (if available)
-        self.present_results(response.results)
+        if response.results:
+            self.present_results(response.results)
+
+        # Print response footer
+        self._print_response_footer()
 
     def _present_constellation_info(self, constellation: Any) -> None:
         """

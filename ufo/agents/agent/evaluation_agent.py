@@ -149,6 +149,8 @@ class EvaluationAgent(BasicAgent):
         Pretty-print the evaluation response using Rich.
         :param response_dict: The response dictionary.
         """
+        from rich.rule import Rule
+
         emoji_map = {
             "yes": "✅",
             "no": "❌",
@@ -161,12 +163,13 @@ class EvaluationAgent(BasicAgent):
         sub_scores = response_dict.get("sub_scores", [])
         reason = response_dict.get("reason", "")
 
-        # Evaluation result title
+        # Evaluation result header
+        console.print()
         console.print(
-            Panel(
-                "",
-                title="[bold magenta]Evaluation result🧐[/bold magenta]",
-                expand=False,
+            Rule(
+                "🧐 Evaluation Result",
+                style="bold magenta",
+                characters="═",
             )
         )
 
@@ -203,6 +206,15 @@ class EvaluationAgent(BasicAgent):
                     style="blue",
                 )
             )
+
+        # End separator
+        console.print(
+            Rule(
+                style="dim",
+                characters="─",
+            )
+        )
+        console.print()
 
 
 # The following code is used for testing the agent.
