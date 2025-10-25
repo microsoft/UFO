@@ -1308,7 +1308,7 @@ class AppActionExecutionStrategy(BaseProcessingStrategy):
                     control_id = action.arguments["id"]
                     target_control = annotation_dict.get(control_id)
                     action.target = target_control
-                    action.result = execution_results[i]
+                action.result = execution_results[i]
 
                 if not action.function:
                     action.function = "no_action"

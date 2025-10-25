@@ -817,7 +817,7 @@ def test_command_router():
         Command(
             tool_name="select_application_window",
             tool_type="action",
-            parameters={"id": "3"},
+            parameters={"id": "2"},
         ),
     ]
 
@@ -831,19 +831,24 @@ def test_command_router():
     )
 
     commands = [
+        # Command(
+        #     tool_name="list_tools",
+        #     parameters={"tool_type": "action"},
+        #     tool_type="data_collection",
+        # ),
         Command(
-            tool_name="list_tools",
-            parameters={"tool_type": "action"},
+            tool_name="table2markdown",
+            parameters={"sheet_name": "Sheet1"},
             tool_type="data_collection",
-        )
+        ),
     ]
 
-    print(results1)
+    # print(results1)
 
     results2 = asyncio.run(
         command_router.execute(
             agent_name="AppAgent",  # From server
-            process_name="Book1 - Excel",  # From server
+            process_name="schedule",  # From server
             root_name="EXCEL.EXE",  # From server
             commands=commands,
         )

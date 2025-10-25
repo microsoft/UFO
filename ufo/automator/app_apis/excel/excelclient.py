@@ -73,7 +73,7 @@ class ExcelWinCOMReceiver(WinCOMReceiverBasic):
             df = df.dropna(axis=0, how="all")
 
             # Convert the values to strings - use map instead of deprecated applymap
-            df = df.map(self.format_value)
+            df = df.applymap(self.format_value)
 
             return df.to_markdown(index=False)
         except Exception as e:

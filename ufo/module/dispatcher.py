@@ -103,6 +103,9 @@ class LocalCommandDispatcher(BasicCommandDispatcher):
         """
         from ufo.module.context import ContextNames
 
+        for command in commands:
+            command.call_id = str(uuid.uuid4())
+
         try:
             action_results = await asyncio.wait_for(
                 self.command_router.execute(

@@ -126,6 +126,41 @@ class StartConstellationAgentState(ConstellationAgentState):
 class ContinueConstellationAgentState(ConstellationAgentState):
     """Continue state - wait for task completion events"""
 
+    async def _get_merged_constellation(
+        self, agent: "ConstellationAgent", orchestrator_constellation
+    ):
+        """
+        Get real-time merged constellation from synchronizer.
+
+        This ensures that the agent always processes with the most up-to-date
+        constellation state, including any structural modifications from previous
+        editing sessions that may have completed while this task was running.
+
+        :param agent: The ConstellationAgent instance
+        :param orchestrator_constellation: The constellation from orchestrator's event
+        :return: Merged constellation with latest agent modifications + orchestrator state
+        """
+        synchronizer = agent.orchestrator._modification_synchronizer
+
+        if not synchronizer:
+            agent.logger.debug(
+                "No modification synchronizer available, using orchestrator constellation"
+            )
+            return orchestrator_constellation
+
+        # Get real-time merged constellation from synchronizer
+        merged_constellation = synchronizer.merge_and_sync_constellation_states(
+            orchestrator_constellation=orchestrator_constellation
+        )
+
+        agent.logger.info(
+            f"🔄 Real-time merged constellation for editing. "
+            f"Tasks before: {len(orchestrator_constellation.tasks)}, "
+            f"Tasks after merge: {len(merged_constellation.tasks)}"
+        )
+
+        return merged_constellation
+
     async def handle(self, agent: "ConstellationAgent", context=None) -> None:
         try:
 
@@ -159,11 +194,18 @@ class ContinueConstellationAgentState(ConstellationAgentState):
             # (orchestrator updates the same constellation object)
             latest_constellation = completed_task_events[-1].data.get("constellation")
 
+            # ⭐ NEW: Get real-time merged constellation before processing
+            # This ensures task_2 editing sees task_1's modifications even if
+            # task_1 editing completed while task_2 was running
+            merged_constellation = await self._get_merged_constellation(
+                agent, latest_constellation
+            )
+
             # Update constellation based on task completion
             await agent.process_editing(
                 context=context,
                 task_ids=task_ids,  # Pass all collected task IDs
-                before_constellation=latest_constellation,
+                before_constellation=merged_constellation,  # Use merged version
             )
 
             # Sleep for waiting
