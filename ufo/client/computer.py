@@ -839,11 +839,11 @@ def test_command_router():
         Command(
             tool_name="table2markdown",
             parameters={"sheet_name": "Sheet1"},
-            tool_type="data_collection",
+            tool_type="action",
         ),
     ]
 
-    # print(results1)
+    print(results1)
 
     results2 = asyncio.run(
         command_router.execute(
@@ -857,8 +857,8 @@ def test_command_router():
     print(results1)
     print(tool_list)
 
-    for tool in tool_list:
-        print(tool.get("tool_name"))
+    # for tool in tool_list:
+    #     print(tool.get("tool_name"))
 
 
 if __name__ == "__main__":
