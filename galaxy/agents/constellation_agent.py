@@ -93,18 +93,30 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
 
     @property
     def current_constellation(self) -> Optional[TaskConstellation]:
-        """Get the current constellation being managed."""
+        """
+        Get the current constellation being managed.
+
+        :return: Current constellation instance or None
+        """
         return self._current_constellation
 
     # ==================== Private Helper Methods ====================
 
     async def _initialize_prompter(self, context: Context) -> None:
-        """Initialize prompter based on weaving mode."""
+        """
+        Initialize prompter based on weaving mode.
+
+        :param context: Processing context containing weaving mode
+        """
         weaving_mode = context.get(ContextNames.WEAVING_MODE)
         self.prompter = self.get_prompter(weaving_mode)
 
     async def _ensure_context_provision(self, context: Context) -> None:
-        """Ensure context provision is executed once for creation."""
+        """
+        Ensure context provision is executed once for creation.
+
+        :param context: Processing context
+        """
         if not self._context_provision_executed:
             await self.context_provision(context=context)
             self._context_provision_executed = True
@@ -113,8 +125,8 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         """
         Create processor and execute processing.
 
-        Returns:
-            Tuple of (start_time, end_time, duration)
+        :param context: Processing context
+        :return: Tuple of (start_time, end_time, duration)
         """
         self.processor = ConstellationAgentProcessor(agent=self, global_context=context)
 
@@ -125,7 +137,9 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         return start_time, end_time, end_time - start_time
 
     def _update_agent_status(self) -> None:
-        """Update agent status from processor context."""
+        """
+        Update agent status from processor context.
+        """
         self.status = self.processor.processing_context.get_local("status").upper()
         self.logger.info(f"Constellation agent status updated to: {self.status}")
 
@@ -135,8 +149,8 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         """
         Validate constellation DAG structure and update status if invalid.
 
-        Returns:
-            The validated constellation
+        :param constellation: The constellation to validate
+        :return: The validated constellation
         """
         is_dag, errors = constellation.validate_dag()
 
@@ -150,7 +164,14 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     def _create_timing_info(
         self, start_time: float, end_time: float, duration: float
     ) -> Dict[str, float]:
-        """Create timing information dictionary."""
+        """
+        Create timing information dictionary.
+
+        :param start_time: Processing start time
+        :param end_time: Processing end time
+        :param duration: Processing duration
+        :return: Dictionary containing timing information
+        """
         return {
             "processing_start_time": start_time,
             "processing_end_time": end_time,
@@ -160,7 +181,12 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     async def _sync_constellation_to_mcp(
         self, constellation: TaskConstellation, context: Context
     ) -> None:
-        """Sync constellation to MCP server."""
+        """
+        Sync constellation to MCP server.
+
+        :param constellation: The constellation to sync
+        :param context: Processing context
+        """
         await context.command_dispatcher.execute_commands(
             commands=[
                 Command(
@@ -177,14 +203,25 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     def _log_constellation_state(
         self, constellation: TaskConstellation, prefix: str = ""
     ) -> None:
-        """Log constellation state information."""
+        """
+        Log constellation state information.
+
+        :param constellation: The constellation to log
+        :param prefix: Prefix for log messages
+        """
         self.logger.info(f"{prefix}Task ID: {constellation.tasks.keys()}")
         self.logger.info(f"{prefix}Dependency ID: {constellation.dependencies.keys()}")
 
     def _log_task_statuses(
         self, constellation: TaskConstellation, task_ids: List[str], stage: str
     ) -> None:
-        """Log status for specific tasks."""
+        """
+        Log status for specific tasks.
+
+        :param constellation: The constellation containing the tasks
+        :param task_ids: List of task IDs to log
+        :param stage: Stage description (e.g., 'before editing', 'after editing')
+        """
         for tid in task_ids:
             task = constellation.get_task(tid)
             if task:
@@ -197,7 +234,14 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         task_ids: List[str],
         timing_info: Dict[str, float],
     ) -> None:
-        """Publish constellation modified event."""
+        """
+        Publish constellation modified event.
+
+        :param before_constellation: The constellation before modification
+        :param after_constellation: The constellation after modification
+        :param task_ids: List of task IDs that were modified
+        :param timing_info: Timing information for the modification
+        """
         await self._event_bus.publish_event(
             ConstellationEvent(
                 event_type=EventType.CONSTELLATION_MODIFIED,
@@ -224,7 +268,12 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         before_constellation: TaskConstellation,
         after_constellation: TaskConstellation,
     ) -> None:
-        """Handle constellation completion logic."""
+        """
+        Handle constellation completion logic.
+
+        :param before_constellation: The constellation before completion
+        :param after_constellation: The constellation after completion
+        """
         try:
             await asyncio.wait_for(
                 self.constellation_completion_queue.get(), timeout=1.0
@@ -364,8 +413,9 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     ) -> None:
         """
         Provide the context for the agent.
-        :param context: The context for the agent.
-        :param mask_creation: Whether to mask the tool for creation of constellation.
+
+        :param context: The context for the agent
+        :param mask_creation: Whether to mask the tool for creation of constellation
         """
         await self._load_mcp_context(context, mask_creation)
 
@@ -374,8 +424,9 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     ) -> None:
         """
         Load MCP context information for the current application.
-        :param context: The context for the agent.
-        :param mask_creation: Whether to mask the tool for creation of constellation.
+
+        :param context: The context for the agent
+        :param mask_creation: Whether to mask the tool for creation of constellation
         """
 
         self.logger.info("Loading MCP tool information...")
@@ -423,8 +474,9 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     def get_prompter(self, weaving_mode: WeavingMode) -> BaseConstellationPrompter:
         """
         Get the prompter for the agent using factory pattern.
-        :param weaving_mode: The weaving mode for the agent.
-        :return: The prompter for the agent.
+
+        :param weaving_mode: The weaving mode for the agent
+        :return: The prompter for the agent
         """
         self.logger.info(f"Creating prompter for {weaving_mode}")
         return ConstellationPrompterFactory.create_prompter(weaving_mode=weaving_mode)
@@ -437,10 +489,11 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
     ) -> List[Dict[str, Union[str, List[Dict[str, str]]]]]:
         """
         Construct the message for LLM interaction.
-        :param request: The user request.
-        :param device_info: Information about the user's device.
-        :param constellation: The current task constellation.
-        :return: A list of message dictionaries for LLM interaction.
+
+        :param request: The user request
+        :param device_info: Information about the user's device
+        :param constellation: The current task constellation
+        :return: A list of message dictionaries for LLM interaction
         """
 
         if not self.prompter:
