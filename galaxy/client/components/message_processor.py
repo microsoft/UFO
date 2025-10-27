@@ -15,7 +15,7 @@ from typing import Dict, Any, Optional, TYPE_CHECKING
 from websockets import WebSocketClientProtocol
 import websockets
 
-from ufo.contracts.contracts import ServerMessage, ServerMessageType
+from ufo.contracts.contracts import ServerMessage, ServerMessageType, TaskStatus
 from .device_registry import DeviceRegistry
 from .heartbeat_manager import HeartbeatManager
 
@@ -200,8 +200,18 @@ class MessageProcessor:
             if server_msg.type == ServerMessageType.TASK_END:
                 await self._handle_task_completion(device_id, server_msg)
             elif server_msg.type == ServerMessageType.ERROR:
+                # Check if this is a registration error response
+                self.connection_manager.complete_registration_response(
+                    device_id, success=False, error_message=server_msg.error
+                )
                 await self._handle_error_message(device_id, server_msg)
             elif server_msg.type == ServerMessageType.HEARTBEAT:
+                # Check if this is a registration success response
+                # (server sends HEARTBEAT with status=OK to confirm registration)
+                if server_msg.status == TaskStatus.OK:
+                    self.connection_manager.complete_registration_response(
+                        device_id, success=True
+                    )
                 self.heartbeat_manager.handle_heartbeat_response(device_id)
             elif server_msg.type == ServerMessageType.COMMAND:
                 await self._handle_command_message(device_id, server_msg)

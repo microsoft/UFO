@@ -51,6 +51,9 @@ class WebSocketConnectionManager:
         # Dictionary to track pending device info requests
         # Key: request_id, Value: Future that will be resolved with device info dict
         self._pending_device_info: Dict[str, asyncio.Future] = {}
+        # Dictionary to track pending registration responses
+        # Key: device_id, Value: Future that will be resolved with registration result (bool)
+        self._pending_registration: Dict[str, asyncio.Future] = {}
         self.logger = logging.getLogger(f"{__name__}.WebSocketConnectionManager")
 
     async def connect_to_device(
@@ -90,6 +93,7 @@ class WebSocketConnectionManager:
 
             # Register as constellation client
             success = await self._register_constellation_client(device_info, websocket)
+
             if not success:
                 await websocket.close()
                 raise ConnectionError("Failed to register constellation client")
@@ -141,15 +145,34 @@ class WebSocketConnectionManager:
                 f"📝 Sent registration for constellation client: {constellation_client_id}"
             )
 
-            # ⚠️ Don't wait for response here - MessageProcessor will handle it
-            # This avoids race conditions where the server's response arrives before
-            # MessageProcessor starts listening. If registration fails, the server
-            # will close the connection, which MessageProcessor will detect.
-            self.logger.debug(
-                f"📝 Registration sent, MessageProcessor will handle response for {constellation_client_id}"
-            )
+            # ✅ Wait for server response via MessageProcessor
+            # Create a Future that MessageProcessor will complete when it receives the response
+            registration_future = asyncio.Future()
+            self._pending_registration[device_info.device_id] = registration_future
 
-            return True
+            try:
+                # Wait for MessageProcessor to resolve the registration result
+                success = await asyncio.wait_for(registration_future, timeout=10.0)
+
+                if success:
+                    self.logger.debug(
+                        f"✅ Registration validated for {constellation_client_id} on device {device_info.device_id}"
+                    )
+                else:
+                    self.logger.error(
+                        f"❌ Registration validation failed for {constellation_client_id} on device {device_info.device_id}"
+                    )
+
+                return success
+
+            except asyncio.TimeoutError:
+                self.logger.error(
+                    f"⏰ Timeout waiting for registration response for {constellation_client_id}"
+                )
+                return False
+            finally:
+                # Clean up the pending registration entry
+                self._pending_registration.pop(device_info.device_id, None)
 
         except Exception as e:
             self.logger.error(
@@ -545,3 +568,39 @@ class WebSocketConnectionManager:
         # Resolve the Future with the device info
         info_future.set_result(device_info)
         self.logger.debug(f"✅ Completed device info response for {request_id}")
+
+    def complete_registration_response(
+        self, device_id: str, success: bool, error_message: Optional[str] = None
+    ) -> None:
+        """
+        Complete a pending registration request with the response from the server.
+
+        This method is called by MessageProcessor when it receives the first HEARTBEAT
+        or ERROR message after registration (which is the server's response to registration).
+        It resolves the asyncio.Future associated with the device_id.
+
+        :param device_id: Device identifier
+        :param success: True if registration was accepted, False if rejected
+        :param error_message: Optional error message if registration failed
+        """
+        registration_future = self._pending_registration.get(device_id)
+
+        if registration_future is None:
+            # No pending registration - this is a regular heartbeat/error, not a registration response
+            return
+
+        if registration_future.done():
+            self.logger.warning(
+                f"⚠️ Received duplicate registration response for device: {device_id}"
+            )
+            return
+
+        # Resolve the Future with the registration result
+        registration_future.set_result(success)
+
+        if success:
+            self.logger.debug(f"✅ Registration accepted for device {device_id}")
+        else:
+            self.logger.warning(
+                f"⚠️ Registration rejected for device {device_id}: {error_message}"
+            )
