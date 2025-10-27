@@ -964,8 +964,14 @@ class TaskConstellation(IConstellation):
             try:
                 with open(save_path, "w", encoding="utf-8") as f:
                     f.write(json_str)
+            except FileNotFoundError as e:
+                raise IOError(f"Directory not found for save path {save_path}: {e}") from e
+            except PermissionError as e:
+                raise IOError(f"Permission denied writing to {save_path}: {e}") from e
+            except OSError as e:
+                raise IOError(f"OS error saving TaskConstellation to {save_path}: {e}") from e
             except Exception as e:
-                raise IOError(f"Failed to save TaskConstellation to {save_path}: {e}")
+                raise IOError(f"Unexpected error saving TaskConstellation to {save_path}: {e}") from e
 
         return json_str
 

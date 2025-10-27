@@ -56,8 +56,18 @@ class BaseConstellationCommand(IUndoableCommand):
         """Create a backup of the constellation state."""
         try:
             self._backup_data = self._constellation.to_dict()
+        except AttributeError as e:
+            raise CommandExecutionError(
+                self, f"Constellation missing required attribute: {e}"
+            ) from e
+        except TypeError as e:
+            raise CommandExecutionError(
+                self, f"Type error creating backup: {e}"
+            ) from e
         except Exception as e:
-            raise CommandExecutionError(self, f"Failed to create backup: {e}")
+            raise CommandExecutionError(
+                self, f"Unexpected error creating backup: {e}"
+            ) from e
 
     def _restore_backup(self) -> None:
         """Restore the constellation from backup."""
@@ -75,8 +85,18 @@ class BaseConstellationCommand(IUndoableCommand):
             self._constellation._metadata = restored._metadata
             self._constellation._updated_at = restored._updated_at
 
+        except KeyError as e:
+            raise CommandUndoError(
+                self, f"Missing required data in backup: {e}"
+            ) from e
+        except AttributeError as e:
+            raise CommandUndoError(
+                self, f"Attribute error restoring backup: {e}"
+            ) from e
         except Exception as e:
-            raise CommandUndoError(self, f"Failed to restore backup: {e}")
+            raise CommandUndoError(
+                self, f"Unexpected error restoring backup: {e}"
+            ) from e
 
 
 @register_command(

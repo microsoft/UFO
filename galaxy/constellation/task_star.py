@@ -9,6 +9,7 @@ with comprehensive metadata, execution tracking, and device targeting.
 Optimized for type safety, maintainability, and follows SOLID principles.
 """
 
+import asyncio
 import logging
 import uuid
 from datetime import datetime, timezone
@@ -223,9 +224,28 @@ class TaskStar(ITask):
 
             return result
 
+        except asyncio.TimeoutError as e:
+            end_time = datetime.now(timezone.utc)
+            return ExecutionResult(
+                task_id=self.task_id,
+                status=TaskStatus.FAILED,
+                error=TimeoutError(f"Task execution timeout: {e}"),
+                start_time=start_time,
+                end_time=end_time,
+                metadata={"device_id": self.target_device_id},
+            )
+        except AttributeError as e:
+            end_time = datetime.now(timezone.utc)
+            return ExecutionResult(
+                task_id=self.task_id,
+                status=TaskStatus.FAILED,
+                error=AttributeError(f"Configuration error: {e}"),
+                start_time=start_time,
+                end_time=end_time,
+                metadata={"device_id": self.target_device_id},
+            )
         except Exception as e:
             end_time = datetime.now(timezone.utc)
-
             return ExecutionResult(
                 task_id=self.task_id,
                 status=TaskStatus.FAILED,

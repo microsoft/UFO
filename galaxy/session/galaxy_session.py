@@ -108,10 +108,26 @@ class GalaxyRound(BaseRound):
 
             return self.context.get(ContextNames.ROUND_RESULT)
 
-        except Exception as e:
-            self.logger.error(f"Error in GalaxyRound execution: {e}")
+        except AttributeError as e:
+            self.logger.error(
+                f"Attribute error in GalaxyRound execution: {e}",
+                exc_info=True
+            )
             import traceback
-
+            traceback.print_exc()
+        except KeyError as e:
+            self.logger.error(
+                f"Missing context key in GalaxyRound execution: {e}",
+                exc_info=True
+            )
+            import traceback
+            traceback.print_exc()
+        except Exception as e:
+            self.logger.error(
+                f"Unexpected error in GalaxyRound execution: {e}",
+                exc_info=True
+            )
+            import traceback
             traceback.print_exc()
 
     def is_finished(self):
@@ -312,10 +328,33 @@ class GalaxySession(BaseSession):
             self._session_results["final_results"] = final_results
             self._session_results["metrics"] = self._metrics_observer.get_metrics()
 
-        except Exception as e:
-            self.logger.error(f"Error in GalaxySession: {e}")
+        except AttributeError as e:
+            self.logger.error(
+                f"Attribute error in GalaxySession: {e}",
+                exc_info=True
+            )
             import traceback
-
+            traceback.print_exc()
+        except KeyError as e:
+            self.logger.error(
+                f"Missing key in GalaxySession context: {e}",
+                exc_info=True
+            )
+            import traceback
+            traceback.print_exc()
+        except TypeError as e:
+            self.logger.error(
+                f"Type error in GalaxySession: {e}",
+                exc_info=True
+            )
+            import traceback
+            traceback.print_exc()
+        except Exception as e:
+            self.logger.error(
+                f"Unexpected error in GalaxySession: {e}",
+                exc_info=True
+            )
+            import traceback
             traceback.print_exc()
 
     def is_error(self) -> bool:

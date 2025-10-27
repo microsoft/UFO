@@ -138,9 +138,31 @@ class ConstellationConfig:
                 devices=devices,
             )
 
+        except FileNotFoundError as e:
+            logging.getLogger(__name__).error(
+                f"YAML config file not found: {config_path} - {e}", exc_info=True
+            )
+            return cls()
+        except yaml.YAMLError as e:
+            logging.getLogger(__name__).error(
+                f"Invalid YAML syntax in config file {config_path}: {e}", exc_info=True
+            )
+            return cls()
+        except KeyError as e:
+            logging.getLogger(__name__).error(
+                f"Missing required field in YAML config {config_path}: {e}",
+                exc_info=True,
+            )
+            return cls()
+        except ValueError as e:
+            logging.getLogger(__name__).error(
+                f"Invalid value in YAML config {config_path}: {e}", exc_info=True
+            )
+            return cls()
         except Exception as e:
             logging.getLogger(__name__).error(
-                f"Failed to load config from {config_path}: {e}"
+                f"Unexpected error loading YAML config from {config_path}: {e}",
+                exc_info=True,
             )
             return cls()
 
@@ -179,9 +201,20 @@ class ConstellationConfig:
                         )
                         config.devices.append(device_config)
 
+                except IndexError as e:
+                    logging.getLogger(__name__).error(
+                        f"Invalid device config format: {device_str} - expected 'device_id:server_url' - {e}",
+                        exc_info=True,
+                    )
+                except ValueError as e:
+                    logging.getLogger(__name__).error(
+                        f"Invalid device config value: {device_str} - {e}",
+                        exc_info=True,
+                    )
                 except Exception as e:
                     logging.getLogger(__name__).error(
-                        f"Failed to parse device config: {device_str} - {e}"
+                        f"Unexpected error parsing device config: {device_str} - {e}",
+                        exc_info=True,
                     )
 
         return config

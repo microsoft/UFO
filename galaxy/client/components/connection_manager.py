@@ -9,6 +9,7 @@ Single responsibility: Connection management.
 """
 
 import asyncio
+import json
 import logging
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Dict, Optional
@@ -100,9 +101,38 @@ class WebSocketConnectionManager:
 
             return websocket
 
+        except websockets.InvalidURI as e:
+            self.logger.error(
+                f"❌ Invalid WebSocket URI for device {device_info.device_id}: {e}",
+                exc_info=True,
+            )
+            self._connections.pop(device_info.device_id, None)
+            raise ConnectionError(f"Invalid WebSocket URI: {e}") from e
+        except websockets.WebSocketException as e:
+            self.logger.error(
+                f"❌ WebSocket error connecting to device {device_info.device_id}: {e}",
+                exc_info=True,
+            )
+            self._connections.pop(device_info.device_id, None)
+            raise
+        except OSError as e:
+            self.logger.error(
+                f"❌ Network error connecting to device {device_info.device_id}: {e}",
+                exc_info=True,
+            )
+            self._connections.pop(device_info.device_id, None)
+            raise ConnectionError(f"Network error: {e}") from e
+        except asyncio.TimeoutError as e:
+            self.logger.error(
+                f"❌ Connection timeout for device {device_info.device_id}: {e}",
+                exc_info=True,
+            )
+            self._connections.pop(device_info.device_id, None)
+            raise
         except Exception as e:
             self.logger.error(
-                f"❌ Failed to connect to device {device_info.device_id}: {e}"
+                f"❌ Unexpected error connecting to device {device_info.device_id}: {e}",
+                exc_info=True,
             )
             self._connections.pop(device_info.device_id, None)
             raise
@@ -174,9 +204,28 @@ class WebSocketConnectionManager:
                 # Clean up the pending registration entry
                 self._pending_registration.pop(device_info.device_id, None)
 
+        except websockets.ConnectionClosed as e:
+            self.logger.error(
+                f"❌ Connection closed during registration for device {device_info.device_id}: {e}",
+                exc_info=True,
+            )
+            return False
+        except asyncio.TimeoutError as e:
+            self.logger.error(
+                f"❌ Registration timeout for device {device_info.device_id}: {e}",
+                exc_info=True,
+            )
+            return False
+        except json.JSONEncodeError as e:
+            self.logger.error(
+                f"❌ JSON encoding error during registration for device {device_info.device_id}: {e}",
+                exc_info=True,
+            )
+            return False
         except Exception as e:
             self.logger.error(
-                f"❌ Registration failed for device {device_info.device_id}: {e}"
+                f"❌ Unexpected error during registration for device {device_info.device_id}: {e}",
+                exc_info=True,
             )
             return False
 

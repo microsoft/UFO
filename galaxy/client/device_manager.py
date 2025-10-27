@@ -11,6 +11,7 @@ Uses modular components for clean separation of concerns.
 import asyncio
 import logging
 from typing import Any, Dict, List, Optional
+import websockets
 
 from galaxy.core.types import ExecutionResult
 from ufo.contracts.contracts import TaskStatus
@@ -108,8 +109,21 @@ class ConstellationDeviceManager:
 
             return True
 
+        except ValueError as e:
+            self.logger.error(
+                f"❌ Invalid device configuration for {device_id}: {e}", exc_info=True
+            )
+            return False
+        except TypeError as e:
+            self.logger.error(
+                f"❌ Type error registering device {device_id}: {e}", exc_info=True
+            )
+            return False
         except Exception as e:
-            self.logger.error(f"❌ Failed to register device {device_id}: {e}")
+            self.logger.error(
+                f"❌ Unexpected error registering device {device_id}: {e}",
+                exc_info=True,
+            )
             return False
 
     async def connect_device(
@@ -180,14 +194,49 @@ class ConstellationDeviceManager:
             self.logger.info(f"✅ Successfully connected to device {device_id}")
             return True
 
-        except Exception as e:
+        except websockets.InvalidURI as e:
             self.device_registry.update_device_status(device_id, DeviceStatus.FAILED)
-            self.logger.error(f"❌ Failed to connect to device {device_id}: {e}")
-
+            self.logger.error(
+                f"❌ Invalid WebSocket URI for device {device_id}: {e}", exc_info=True
+            )
+            return False
+        except websockets.WebSocketException as e:
+            self.device_registry.update_device_status(device_id, DeviceStatus.FAILED)
+            self.logger.error(
+                f"❌ WebSocket error connecting to device {device_id}: {e}",
+                exc_info=True,
+            )
             # Schedule reconnection if under retry limit
             if device_info.connection_attempts < device_info.max_retries:
                 self._schedule_reconnection(device_id)
-
+            return False
+        except OSError as e:
+            self.device_registry.update_device_status(device_id, DeviceStatus.FAILED)
+            self.logger.error(
+                f"❌ Network error connecting to device {device_id}: {e}", exc_info=True
+            )
+            # Schedule reconnection if under retry limit
+            if device_info.connection_attempts < device_info.max_retries:
+                self._schedule_reconnection(device_id)
+            return False
+        except asyncio.TimeoutError as e:
+            self.device_registry.update_device_status(device_id, DeviceStatus.FAILED)
+            self.logger.error(
+                f"❌ Timeout connecting to device {device_id}: {e}", exc_info=True
+            )
+            # Schedule reconnection if under retry limit
+            if device_info.connection_attempts < device_info.max_retries:
+                self._schedule_reconnection(device_id)
+            return False
+        except Exception as e:
+            self.device_registry.update_device_status(device_id, DeviceStatus.FAILED)
+            self.logger.error(
+                f"❌ Unexpected error connecting to device {device_id}: {e}",
+                exc_info=True,
+            )
+            # Schedule reconnection if under retry limit
+            if device_info.connection_attempts < device_info.max_retries:
+                self._schedule_reconnection(device_id)
             return False
 
     async def disconnect_device(self, device_id: str) -> None:
@@ -255,9 +304,19 @@ class ConstellationDeviceManager:
             )
             self._schedule_reconnection(device_id)
 
+        except KeyError as e:
+            self.logger.error(
+                f"❌ Device {device_id} not found during disconnection handling: {e}",
+                exc_info=True,
+            )
+        except AttributeError as e:
+            self.logger.error(
+                f"❌ Invalid device state during disconnection for {device_id}: {e}",
+                exc_info=True,
+            )
         except Exception as e:
             self.logger.error(
-                f"❌ Error handling disconnection for device {device_id}: {e}",
+                f"❌ Unexpected error handling disconnection for device {device_id}: {e}",
                 exc_info=True,
             )
 
@@ -315,10 +374,29 @@ class ConstellationDeviceManager:
                             f"⚠️ Reconnection attempt {retry_count}/{max_retries} failed for device {device_id}"
                         )
 
+                except websockets.WebSocketException as e:
+                    self.logger.error(
+                        f"❌ WebSocket error on reconnection attempt {retry_count}/{max_retries} "
+                        f"for device {device_id}: {e}",
+                        exc_info=True,
+                    )
+                except OSError as e:
+                    self.logger.error(
+                        f"❌ Network error on reconnection attempt {retry_count}/{max_retries} "
+                        f"for device {device_id}: {e}",
+                        exc_info=True,
+                    )
+                except asyncio.TimeoutError as e:
+                    self.logger.error(
+                        f"❌ Timeout on reconnection attempt {retry_count}/{max_retries} "
+                        f"for device {device_id}: {e}",
+                        exc_info=True,
+                    )
                 except Exception as e:
                     self.logger.error(
-                        f"❌ Reconnection attempt {retry_count}/{max_retries} "
-                        f"failed for device {device_id}: {e}"
+                        f"❌ Unexpected error on reconnection attempt {retry_count}/{max_retries} "
+                        f"for device {device_id}: {e}",
+                        exc_info=True,
                     )
 
             # All retries exhausted

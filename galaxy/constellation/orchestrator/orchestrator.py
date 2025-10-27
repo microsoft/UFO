@@ -129,6 +129,18 @@ class TaskConstellationOrchestrator:
                 constellation, start_event
             )
 
+        except ValueError as e:
+            await self._handle_orchestration_failure(constellation, e)
+            raise
+        except RuntimeError as e:
+            await self._handle_orchestration_failure(constellation, e)
+            raise
+        except asyncio.CancelledError:
+            if self._logger:
+                self._logger.warning(
+                    f"Orchestration cancelled for constellation {constellation.constellation_id}"
+                )
+            raise
         except Exception as e:
             await self._handle_orchestration_failure(constellation, e)
             raise

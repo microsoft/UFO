@@ -71,8 +71,21 @@ class ConstellationProgressObserver(IEventObserver):
             if event.event_type in [EventType.TASK_COMPLETED, EventType.TASK_FAILED]:
                 await self.agent.add_task_completion_event(event)
 
+        except AttributeError as e:
+            self.logger.error(
+                f"Attribute error handling task event: {e}",
+                exc_info=True
+            )
+        except KeyError as e:
+            self.logger.error(
+                f"Missing key in task event: {e}",
+                exc_info=True
+            )
         except Exception as e:
-            self.logger.error(f"Error handling task event: {e}")
+            self.logger.error(
+                f"Unexpected error handling task event: {e}",
+                exc_info=True
+            )
 
     async def _handle_constellation_event(self, event: ConstellationEvent) -> None:
         """
@@ -84,8 +97,16 @@ class ConstellationProgressObserver(IEventObserver):
             if event.event_type == EventType.CONSTELLATION_COMPLETED:
                 await self.agent.add_constellation_completion_event(event)
 
+        except AttributeError as e:
+            self.logger.error(
+                f"Attribute error handling constellation event: {e}",
+                exc_info=True
+            )
         except Exception as e:
-            self.logger.error(f"Error handling constellation event: {e}")
+            self.logger.error(
+                f"Unexpected error handling constellation event: {e}",
+                exc_info=True
+            )
 
 
 class SessionMetricsObserver(IEventObserver):

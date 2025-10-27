@@ -136,9 +136,20 @@ class ConstellationModificationSynchronizer(IEventObserver):
                     self._auto_complete_on_timeout(event.task_id, modification_future)
                 )
 
+        except AttributeError as e:
+            self.logger.error(
+                f"Attribute error handling task event in synchronizer: {e}",
+                exc_info=True
+            )
+        except KeyError as e:
+            self.logger.error(
+                f"Missing key in task event: {e}",
+                exc_info=True
+            )
         except Exception as e:
             self.logger.error(
-                f"Error handling task event in synchronizer: {e}", exc_info=True
+                f"Unexpected error handling task event in synchronizer: {e}",
+                exc_info=True
             )
 
     async def _handle_constellation_event(self, event: ConstellationEvent) -> None:
@@ -194,10 +205,20 @@ class ConstellationModificationSynchronizer(IEventObserver):
                         f"but no pending modification was registered"
                     )
 
+        except AttributeError as e:
+            self.logger.error(
+                f"Attribute error handling constellation event in synchronizer: {e}",
+                exc_info=True
+            )
+        except KeyError as e:
+            self.logger.error(
+                f"Missing key in constellation event: {e}",
+                exc_info=True
+            )
         except Exception as e:
             self.logger.error(
-                f"Error handling constellation event in synchronizer: {e}",
-                exc_info=True,
+                f"Unexpected error handling constellation event in synchronizer: {e}",
+                exc_info=True
             )
 
     async def _auto_complete_on_timeout(
@@ -221,9 +242,13 @@ class ConstellationModificationSynchronizer(IEventObserver):
                 future.set_result(False)
                 if task_id in self._pending_modifications:
                     del self._pending_modifications[task_id]
+        except asyncio.CancelledError:
+            self.logger.debug(f"Auto-complete timeout cancelled for task '{task_id}'")
+            raise
         except Exception as e:
             self.logger.error(
-                f"Error in auto-complete timeout handler: {e}", exc_info=True
+                f"Unexpected error in auto-complete timeout handler: {e}",
+                exc_info=True
             )
 
     async def wait_for_pending_modifications(

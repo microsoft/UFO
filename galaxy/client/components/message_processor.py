@@ -152,10 +152,23 @@ class MessageProcessor:
                         self._process_server_message(device_id, server_msg)
                     )
                 except json.JSONDecodeError as e:
-                    self.logger.error(f"❌ Invalid JSON from device {device_id}: {e}")
+                    self.logger.error(
+                        f"❌ Invalid JSON from device {device_id}: {e}", exc_info=True
+                    )
+                except ValueError as e:
+                    self.logger.error(
+                        f"❌ Invalid message format from device {device_id}: {e}",
+                        exc_info=True,
+                    )
+                except TypeError as e:
+                    self.logger.error(
+                        f"❌ Type error processing message from device {device_id}: {e}",
+                        exc_info=True,
+                    )
                 except Exception as e:
                     self.logger.error(
-                        f"❌ Error processing message from device {device_id}: {e}"
+                        f"❌ Unexpected error processing message from device {device_id}: {e}",
+                        exc_info=True,
                     )
 
         except websockets.ConnectionClosed as e:
@@ -168,8 +181,21 @@ class MessageProcessor:
         except asyncio.CancelledError:
             self.logger.info(f"📨 Message handler for device {device_id} was cancelled")
             raise
+        except websockets.WebSocketException as e:
+            self.logger.error(
+                f"❌ WebSocket error for device {device_id}: {e}", exc_info=True
+            )
+            await self._handle_disconnection(device_id)
+        except OSError as e:
+            self.logger.error(
+                f"❌ Network error for device {device_id}: {e}", exc_info=True
+            )
+            await self._handle_disconnection(device_id)
         except Exception as e:
-            self.logger.error(f"❌ Message handler error for device {device_id}: {e}")
+            self.logger.error(
+                f"❌ Unexpected message handler error for device {device_id}: {e}",
+                exc_info=True,
+            )
             # Trigger disconnection handler for unexpected errors
             await self._handle_disconnection(device_id)
 
@@ -223,14 +249,25 @@ class MessageProcessor:
                 )
 
             elapsed = asyncio.get_event_loop().time() - start_time
-            if elapsed > 0.5:  # 超过500ms就警告
+            if elapsed > 0.5:  # Warn if processing takes more than 500ms
                 self.logger.warning(
                     f"⏱️ Slow message processing: {server_msg.type} took {elapsed:.2f}s"
                 )
 
+        except KeyError as e:
+            self.logger.error(
+                f"❌ Missing required field in message from device {device_id}: {e}",
+                exc_info=True,
+            )
+        except AttributeError as e:
+            self.logger.error(
+                f"❌ Invalid message structure from device {device_id}: {e}",
+                exc_info=True,
+            )
         except Exception as e:
             self.logger.error(
-                f"❌ Error processing server message from device {device_id}: {e}"
+                f"❌ Unexpected error processing server message from device {device_id}: {e}",
+                exc_info=True,
             )
 
     async def _handle_task_completion(
@@ -323,8 +360,15 @@ class MessageProcessor:
             self.logger.debug(
                 f"🔄 Received command from device {device_id}, delegating to local clients"
             )
+        except KeyError as e:
+            self.logger.error(
+                f"❌ Missing command field from device {device_id}: {e}", exc_info=True
+            )
         except Exception as e:
-            self.logger.error(f"❌ Error handling command from device {device_id}: {e}")
+            self.logger.error(
+                f"❌ Unexpected error handling command from device {device_id}: {e}",
+                exc_info=True,
+            )
 
     async def _handle_device_info_response(
         self, device_id: str, server_msg: ServerMessage
@@ -392,8 +436,20 @@ class MessageProcessor:
             if isinstance(results, dict):
                 self.device_registry.set_device_capabilities(device_id, results)
                 self.logger.info(f"📊 Updated device info for {device_id}")
+        except KeyError as e:
+            self.logger.error(
+                f"❌ Missing required device info field for {device_id}: {e}",
+                exc_info=True,
+            )
+        except TypeError as e:
+            self.logger.error(
+                f"❌ Invalid device info data type for {device_id}: {e}", exc_info=True
+            )
         except Exception as e:
-            self.logger.error(f"❌ Error processing device info for {device_id}: {e}")
+            self.logger.error(
+                f"❌ Unexpected error processing device info for {device_id}: {e}",
+                exc_info=True,
+            )
 
     async def _handle_disconnection(self, device_id: str) -> None:
         """
