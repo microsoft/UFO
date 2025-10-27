@@ -16,6 +16,7 @@ import logging
 import time
 from typing import Dict, List, Optional, Tuple, Union
 
+from galaxy.agents.constellation_agent_states import ConstellationAgentStatus
 from galaxy.agents.processors.processor import ConstellationAgentProcessor
 from galaxy.agents.prompters.base_constellation_prompter import (
     BaseConstellationPrompter,
@@ -25,16 +26,14 @@ from galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
 from galaxy.client.components.types import AgentProfile
 from galaxy.constellation.orchestrator.orchestrator import TaskConstellationOrchestrator
 from galaxy.core.events import ConstellationEvent, EventType, TaskEvent, get_event_bus
+
+# Import BasicAgent and ConstellationAgentStatus here to avoid circular import at module level
+from ufo.agents.agent.basic import BasicAgent
 from ufo.contracts.contracts import Command, MCPToolInfo, ResultStatus
 from ufo.module.context import Context, ContextNames
 
 from ..constellation import TaskConstellation
 from ..core.interfaces import IRequestProcessor, IResultProcessor
-
-from galaxy.agents.constellation_agent_states import ConstellationAgentStatus
-
-# Import BasicAgent and ConstellationAgentStatus here to avoid circular import at module level
-from ufo.agents.agent.basic import BasicAgent
 
 
 class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
@@ -97,111 +96,77 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         """Get the current constellation being managed."""
         return self._current_constellation
 
-    # IRequestProcessor implementation
-    async def process_creation(
-        self,
-        context: Context,
-    ) -> Tuple[TaskConstellation, Dict[str, float]]:
-        """
-        Process a user request and generate a constellation.
+    # ==================== Private Helper Methods ====================
 
-        :param request: User request string
-        :param context: Optional processing context
-        :return: Tuple of (Generated constellation, processing timing info)
-        :raises ConstellationError: If constellation generation fails
-        """
-
+    async def _initialize_prompter(self, context: Context) -> None:
+        """Initialize prompter based on weaving mode."""
         weaving_mode = context.get(ContextNames.WEAVING_MODE)
         self.prompter = self.get_prompter(weaving_mode)
 
+    async def _ensure_context_provision(self, context: Context) -> None:
+        """Ensure context provision is executed once for creation."""
         if not self._context_provision_executed:
             await self.context_provision(context=context)
             self._context_provision_executed = True
 
+    async def _create_and_process(self, context: Context) -> Tuple[float, float, float]:
+        """
+        Create processor and execute processing.
+
+        Returns:
+            Tuple of (start_time, end_time, duration)
+        """
         self.processor = ConstellationAgentProcessor(agent=self, global_context=context)
 
-        # Record processing start time
-        processing_start_time = time.time()
-
+        start_time = time.time()
         await self.processor.process()
+        end_time = time.time()
 
-        # Record processing end time and calculate duration
-        processing_end_time = time.time()
-        processing_duration = processing_end_time - processing_start_time
+        return start_time, end_time, end_time - start_time
 
+    def _update_agent_status(self) -> None:
+        """Update agent status from processor context."""
         self.status = self.processor.processing_context.get_local("status").upper()
-
-        created_constellation: TaskConstellation = context.get(
-            ContextNames.CONSTELLATION
-        )
-
-        if created_constellation:
-            is_dag, errors = created_constellation.validate_dag()
-
-            if not is_dag:
-                self.logger.error(
-                    f"The created constellation is not a valid DAG: {errors}"
-                )
-                self.status = ConstellationAgentStatus.FAIL.value
-
-        # Sync the status with the processor.
-
         self.logger.info(f"Constellation agent status updated to: {self.status}")
-        self._current_constellation = created_constellation
 
-        # Prepare timing information
-        timing_info = {
-            "processing_start_time": processing_start_time,
-            "processing_end_time": processing_end_time,
-            "processing_duration": processing_duration,
-        }
-
-        return self._current_constellation, timing_info
-
-    # IResultProcessor implementation
-    async def process_editing(
-        self,
-        context: Context = None,
-        task_ids: Optional[List[str]] = None,
-        before_constellation: Optional[TaskConstellation] = None,
+    async def _validate_and_update_constellation(
+        self, constellation: TaskConstellation
     ) -> TaskConstellation:
         """
-        Process task completion events and potentially update the constellation.
+        Validate constellation DAG structure and update status if invalid.
 
-        :param context: Optional processing context
-        :param task_ids: List of task IDs that were just completed
-        :param before_constellation: The constellation before editing
-        :return: Updated constellation
-        :raises TaskExecutionError: If result processing fails
+        Returns:
+            The validated constellation
         """
+        is_dag, errors = constellation.validate_dag()
 
-        weaving_mode = context.get(ContextNames.WEAVING_MODE)
-        self.prompter = self.get_prompter(weaving_mode)
+        if not is_dag:
+            self.logger.error(f"The created constellation is not a valid DAG: {errors}")
+            self.status = ConstellationAgentStatus.FAIL.value
 
-        await self.context_provision(context=context)
+        self._current_constellation = constellation
+        return constellation
 
-        if not before_constellation:
-            before_constellation: TaskConstellation = context.get(
-                ContextNames.CONSTELLATION
-            )
-        else:
-            context.set(ContextNames.CONSTELLATION, before_constellation)
+    def _create_timing_info(
+        self, start_time: float, end_time: float, duration: float
+    ) -> Dict[str, float]:
+        """Create timing information dictionary."""
+        return {
+            "processing_start_time": start_time,
+            "processing_end_time": end_time,
+            "processing_duration": duration,
+        }
 
-        # Handle both single task_id and multiple task_ids
-        if task_ids is None:
-            task_ids = []
-
-        self.logger.debug(
-            f"Tasks {task_ids} marked as completed, Agent's constellation updated, completed tasks ids: {[t.task_id for t in before_constellation.get_completed_tasks()]}"
-        )
-
-        # Update the constellation on the MCP server side.
+    async def _sync_constellation_to_mcp(
+        self, constellation: TaskConstellation, context: Context
+    ) -> None:
+        """Sync constellation to MCP server."""
         await context.command_dispatcher.execute_commands(
             commands=[
                 Command(
                     tool_name="build_constellation",
                     parameters={
-                        "config": before_constellation.to_basemodel(),
+                        "config": constellation.to_basemodel(),
                         "clear_existing": True,
                     },
                     tool_type="action",
@@ -209,45 +174,57 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
             ]
         )
 
-        self.logger.info(
-            f"Task ID for constellation before editing: {before_constellation.tasks.keys()}"
+    def _log_constellation_state(
+        self, constellation: TaskConstellation, prefix: str = ""
+    ) -> None:
+        """Log constellation state information."""
+        self.logger.info(f"{prefix}Task ID: {constellation.tasks.keys()}")
+        self.logger.info(f"{prefix}Dependency ID: {constellation.dependencies.keys()}")
+
+    def _log_task_statuses(
+        self, constellation: TaskConstellation, task_ids: List[str], stage: str
+    ) -> None:
+        """Log status for specific tasks."""
+        for tid in task_ids:
+            task = constellation.get_task(tid)
+            if task:
+                self.logger.info(f"📊 Status for task {stage} {tid}: {task.status}")
+
+    async def _publish_constellation_modified_event(
+        self,
+        before_constellation: TaskConstellation,
+        after_constellation: TaskConstellation,
+        task_ids: List[str],
+        timing_info: Dict[str, float],
+    ) -> None:
+        """Publish constellation modified event."""
+        await self._event_bus.publish_event(
+            ConstellationEvent(
+                event_type=EventType.CONSTELLATION_MODIFIED,
+                source_id=self.name,
+                timestamp=time.time(),
+                data={
+                    "old_constellation": before_constellation,
+                    "new_constellation": after_constellation,
+                    "modification_type": f"Edited by {self.name}",
+                    "on_task_id": task_ids,
+                    **timing_info,
+                },
+                constellation_id=after_constellation.constellation_id,
+                constellation_state=(
+                    after_constellation.state.value
+                    if after_constellation.state
+                    else "unknown"
+                ),
+            )
         )
 
-        # Log status for each completed task
-        for tid in task_ids:
-            if before_constellation.get_task(tid):
-                self.logger.info(
-                    f"📊 Status for task before editing {tid}: {before_constellation.get_task(tid).status}"
-                )
-
-        self.logger.info(
-            f"Dependency ID for constellation before editing: {before_constellation.dependencies.keys()}"
-        )
-
-        self.processor = ConstellationAgentProcessor(agent=self, global_context=context)
-
-        # Record processing start time
-        processing_start_time = time.time()
-
-        await self.processor.process()
-
-        # Record processing end time and calculate duration
-        processing_end_time = time.time()
-        processing_duration = processing_end_time - processing_start_time
-
-        # Sync the status with the processor.
-        self.status = self.processor.processing_context.get_local("status").upper()
-        self.logger.info(f"Constellation agent status updated to: {self.status}")
-
-        after_constellation: TaskConstellation = context.get(ContextNames.CONSTELLATION)
-
-        # Log status for each completed task after editing
-        for tid in task_ids:
-            if after_constellation.get_task(tid):
-                self.logger.info(
-                    f"📊 Status for task after editing {tid}: {after_constellation.get_task(tid).status}"
-                )
-
+    async def _handle_constellation_completion(
+        self,
+        before_constellation: TaskConstellation,
+        after_constellation: TaskConstellation,
+    ) -> None:
+        """Handle constellation completion logic."""
         try:
             await asyncio.wait_for(
                 self.constellation_completion_queue.get(), timeout=1.0
@@ -269,58 +246,115 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         except asyncio.TimeoutError:
             pass
 
-        is_dag, errors = after_constellation.validate_dag()
+    # ==================== Public Interface Methods ====================
 
-        if not is_dag:
-            self.logger.error(f"The created constellation is not a valid DAG: {errors}")
-            self.status = "FAIL"
+    # IRequestProcessor implementation
+    async def process_creation(
+        self,
+        context: Context,
+    ) -> Tuple[TaskConstellation, Dict[str, float]]:
+        """
+        Process a user request and generate a constellation.
 
-        self._current_constellation = after_constellation
+        :param request: User request string
+        :param context: Optional processing context
+        :return: Tuple of (Generated constellation, processing timing info)
+        :raises ConstellationError: If constellation generation fails
+        """
+        # Initialize
+        await self._initialize_prompter(context)
+        await self._ensure_context_provision(context)
 
-        # Update the constellation on the MCP server side.
-        await context.command_dispatcher.execute_commands(
-            commands=[
-                Command(
-                    tool_name="build_constellation",
-                    parameters={
-                        "config": after_constellation.to_basemodel(),
-                        "clear_existing": True,
-                    },
-                    tool_type="action",
-                )
-            ]
+        # Process
+        start_time, end_time, duration = await self._create_and_process(context)
+
+        # Update status and get constellation
+        self._update_agent_status()
+        created_constellation = context.get(ContextNames.CONSTELLATION)
+
+        # Validate
+        if created_constellation:
+            await self._validate_and_update_constellation(created_constellation)
+
+        # Return result with timing
+        return self._current_constellation, self._create_timing_info(
+            start_time, end_time, duration
         )
 
-        self.logger.info(
-            f"Task ID for constellation after editing: {after_constellation.tasks.keys()}"
+    # IResultProcessor implementation
+    async def process_editing(
+        self,
+        context: Context = None,
+        task_ids: Optional[List[str]] = None,
+        before_constellation: Optional[TaskConstellation] = None,
+    ) -> TaskConstellation:
+        """
+        Process task completion events and potentially update the constellation.
+
+        :param context: Optional processing context
+        :param task_ids: List of task IDs that were just completed
+        :param before_constellation: The constellation before editing
+        :return: Updated constellation
+        :raises TaskExecutionError: If result processing fails
+        """
+        # Initialize
+        await self._initialize_prompter(context)
+        await self.context_provision(context=context)
+
+        # Prepare constellation
+        if not before_constellation:
+            before_constellation = context.get(ContextNames.CONSTELLATION)
+        else:
+            context.set(ContextNames.CONSTELLATION, before_constellation)
+
+        task_ids = task_ids or []
+
+        # Log and sync before state
+        self.logger.debug(
+            f"Tasks {task_ids} marked as completed, Agent's constellation updated, completed tasks ids: "
+            f"{[t.task_id for t in before_constellation.get_completed_tasks()]}"
+        )
+        await self._sync_constellation_to_mcp(before_constellation, context)
+        self._log_constellation_state(
+            before_constellation, "Task ID for constellation before editing: "
+        )
+        self._log_task_statuses(before_constellation, task_ids, "before editing")
+        self._log_constellation_state(
+            before_constellation, "Dependency ID for constellation before editing: "
         )
 
-        self.logger.info(
-            f"Dependency ID for constellation after editing: {after_constellation.dependencies.keys()}"
+        # Process
+        start_time, end_time, duration = await self._create_and_process(context)
+
+        # Update status and get constellation
+        self._update_agent_status()
+        after_constellation = context.get(ContextNames.CONSTELLATION)
+
+        # Log after state
+        self._log_task_statuses(after_constellation, task_ids, "after editing")
+
+        # Handle completion
+        await self._handle_constellation_completion(
+            before_constellation, after_constellation
         )
 
-        # Publish DAG Modified Event
-        await self._event_bus.publish_event(
-            ConstellationEvent(
-                event_type=EventType.CONSTELLATION_MODIFIED,
-                source_id=self.name,
-                timestamp=time.time(),
-                data={
-                    "old_constellation": before_constellation,
-                    "new_constellation": after_constellation,
-                    "modification_type": f"Edited by {self.name}",
-                    "on_task_id": task_ids,  # Changed to plural to include all task IDs
-                    "processing_start_time": processing_start_time,
-                    "processing_end_time": processing_end_time,
-                    "processing_duration": processing_duration,
-                },
-                constellation_id=after_constellation.constellation_id,
-                constellation_state=(
-                    after_constellation.state.value
-                    if after_constellation.state
-                    else "unknown"
-                ),
-            )
+        # Validate
+        await self._validate_and_update_constellation(after_constellation)
+
+        # Sync and publish event
+        await self._sync_constellation_to_mcp(after_constellation, context)
+        self._log_constellation_state(
+            after_constellation, "Task ID for constellation after editing: "
+        )
+        self._log_constellation_state(
+            after_constellation, "Dependency ID for constellation after editing: "
+        )
+
+        await self._publish_constellation_modified_event(
+            before_constellation,
+            after_constellation,
+            task_ids,
+            self._create_timing_info(start_time, end_time, duration),
         )
 
         return after_constellation
