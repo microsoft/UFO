@@ -63,7 +63,6 @@ class Config:
                 with open(path + "agent_mcp.yaml", "r") as file:
                     yaml_agent_mcp_data = yaml.safe_load(file)
                 configs["mcp"] = yaml_agent_mcp_data
-                print(yaml_agent_mcp_data)
         except FileNotFoundError as e:
 
             print_with_color(
