@@ -503,15 +503,11 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
                 f"Added task event for task '{event.task_id}' with status '{event.status}' to completion queue"
             )
         except asyncio.QueueFull as e:
-            self.logger.error(
-                f"Task completion queue is full: {str(e)}",
-                exc_info=True
-            )
+            self.logger.error(f"Task completion queue is full: {str(e)}", exc_info=True)
             raise RuntimeError(f"Task completion queue is full: {str(e)}") from e
         except Exception as e:
             self.logger.error(
-                f"Unexpected error adding task event to queue: {str(e)}",
-                exc_info=True
+                f"Unexpected error adding task event to queue: {str(e)}", exc_info=True
             )
             raise RuntimeError(f"Failed to add task event to queue: {str(e)}") from e
 
@@ -545,8 +541,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
             )
         except asyncio.QueueFull as e:
             self.logger.error(
-                f"Constellation completion queue is full: {str(e)}",
-                exc_info=True
+                f"Constellation completion queue is full: {str(e)}", exc_info=True
             )
             raise RuntimeError(
                 f"Constellation completion queue is full: {str(e)}"
@@ -554,7 +549,7 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         except Exception as e:
             self.logger.error(
                 f"Unexpected error adding constellation event to queue: {str(e)}",
-                exc_info=True
+                exc_info=True,
             )
             raise RuntimeError(
                 f"Failed to add constellation event to queue: {str(e)}"

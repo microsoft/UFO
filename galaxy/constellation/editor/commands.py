@@ -61,9 +61,7 @@ class BaseConstellationCommand(IUndoableCommand):
                 self, f"Constellation missing required attribute: {e}"
             ) from e
         except TypeError as e:
-            raise CommandExecutionError(
-                self, f"Type error creating backup: {e}"
-            ) from e
+            raise CommandExecutionError(self, f"Type error creating backup: {e}") from e
         except Exception as e:
             raise CommandExecutionError(
                 self, f"Unexpected error creating backup: {e}"
@@ -86,9 +84,7 @@ class BaseConstellationCommand(IUndoableCommand):
             self._constellation._updated_at = restored._updated_at
 
         except KeyError as e:
-            raise CommandUndoError(
-                self, f"Missing required data in backup: {e}"
-            ) from e
+            raise CommandUndoError(self, f"Missing required data in backup: {e}") from e
         except AttributeError as e:
             raise CommandUndoError(
                 self, f"Attribute error restoring backup: {e}"

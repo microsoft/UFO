@@ -104,23 +104,25 @@ class StartConstellationAgentState(ConstellationAgentState):
 
         except AttributeError as e:
             import traceback
+
             agent.logger.error(
                 f"Attribute error in start state: {traceback.format_exc()}",
-                exc_info=True
+                exc_info=True,
             )
             agent.status = ConstellationAgentStatus.FAIL.value
         except KeyError as e:
             import traceback
+
             agent.logger.error(
-                f"Missing key in start state: {traceback.format_exc()}",
-                exc_info=True
+                f"Missing key in start state: {traceback.format_exc()}", exc_info=True
             )
             agent.status = ConstellationAgentStatus.FAIL.value
         except Exception as e:
             import traceback
+
             agent.logger.error(
                 f"Unexpected error in start state: {traceback.format_exc()}",
-                exc_info=True
+                exc_info=True,
             )
             agent.status = ConstellationAgentStatus.FAIL.value
 

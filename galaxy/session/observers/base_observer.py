@@ -73,18 +73,13 @@ class ConstellationProgressObserver(IEventObserver):
 
         except AttributeError as e:
             self.logger.error(
-                f"Attribute error handling task event: {e}",
-                exc_info=True
+                f"Attribute error handling task event: {e}", exc_info=True
             )
         except KeyError as e:
-            self.logger.error(
-                f"Missing key in task event: {e}",
-                exc_info=True
-            )
+            self.logger.error(f"Missing key in task event: {e}", exc_info=True)
         except Exception as e:
             self.logger.error(
-                f"Unexpected error handling task event: {e}",
-                exc_info=True
+                f"Unexpected error handling task event: {e}", exc_info=True
             )
 
     async def _handle_constellation_event(self, event: ConstellationEvent) -> None:
@@ -99,13 +94,11 @@ class ConstellationProgressObserver(IEventObserver):
 
         except AttributeError as e:
             self.logger.error(
-                f"Attribute error handling constellation event: {e}",
-                exc_info=True
+                f"Attribute error handling constellation event: {e}", exc_info=True
             )
         except Exception as e:
             self.logger.error(
-                f"Unexpected error handling constellation event: {e}",
-                exc_info=True
+                f"Unexpected error handling constellation event: {e}", exc_info=True
             )
 
 
