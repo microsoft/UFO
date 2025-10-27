@@ -9,11 +9,14 @@ import sys
 from typing import Any, Dict, List, Optional
 
 from PIL import Image
+from rich.console import Console
 
 sys.path.append(os.path.join(os.path.dirname(__file__), "../.."))
 
 import ufo.utils
-from ufo.utils import print_with_color
+
+logger = logging.getLogger(__name__)
+console = Console()
 
 
 class Trajectory:
@@ -121,10 +124,7 @@ class Trajectory:
                 screenshot = self.load_screenshot(screenshot_file_path)
                 return screenshot
             else:
-                print_with_color(
-                    f"Warning: Screenshot file not found at {screenshot_file_path}.",
-                    "yellow",
-                )
+                logger.warning(f"Screenshot file not found at {screenshot_file_path}.")
 
         return None
 
@@ -159,9 +159,7 @@ class Trajectory:
                     evaluation_data = {}
 
         else:
-            print_with_color(
-                f"Warning: Evaluation log not found at {evaluation_log_path}.", "yellow"
-            )
+            logger.warning(f"Evaluation log not found at {evaluation_log_path}.")
             evaluation_data = {}
 
         return evaluation_data
@@ -385,9 +383,8 @@ class Trajectory:
         """
 
         if len(self.step_log) == 0:
-            print_with_color(
-                "Warning: No step data to export to markdown. The trajectory appears to be empty.",
-                "yellow",
+            logger.warning(
+                "No step data to export to markdown. The trajectory appears to be empty."
             )
             with open(output_path, "w", encoding="utf-8") as file:
                 file.write("# Trajectory Data\n\n")
@@ -457,12 +454,12 @@ class Trajectory:
                     f"</div>\n\n"
                 )
 
-        print_with_color(f"Markdown file saved to {output_path}.", "green")
+        console.print(f"✅ Markdown file saved to {output_path}.", style="green")
 
 
 if __name__ == "__main__":
 
-    print_with_color("🔍 UFO Trajectory Parser", "blue")
+    console.print("🔍 UFO Trajectory Parser", style="blue bold")
     print("Searching for valid trajectory logs...\n")
 
     # Try to find the most recent log directory with valid data

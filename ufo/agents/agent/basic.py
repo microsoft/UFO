@@ -16,6 +16,7 @@ from ufo.config import Config
 from ufo.llm import llm_call
 from ufo.module.context import Context
 from ufo.module.interactor import question_asker
+from rich.console import Console
 
 # Lazy import the retriever factory to aviod long loading time.
 retriever = utils.LazyImport("..rag.retriever")
@@ -27,6 +28,7 @@ if TYPE_CHECKING:
 
 
 configs = Config.get_instance().config_data
+console = Console()
 
 
 class BasicAgent(ABC):
@@ -279,9 +281,9 @@ class BasicAgent(ABC):
             question_list = self.processor.processing_context.get_local("questions", [])
 
             if ask_user:
-                utils.print_with_color(
-                    _ask_message,
-                    "yellow",
+                console.print(
+                    f"❓ {_ask_message}",
+                    style="yellow",
                 )
 
             for index, question in enumerate(question_list):

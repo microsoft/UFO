@@ -9,7 +9,8 @@ from typing import Any, Dict, List
 import yaml
 
 from ufo.contracts.contracts import MCPToolInfo
-from ufo.utils import print_with_color
+
+logger = logging.getLogger(__name__)
 
 
 class BasicPrompter(ABC):
@@ -61,7 +62,7 @@ class BasicPrompter(ABC):
             try:
                 prompt = yaml.safe_load(open(path, "r", encoding="utf-8"))
             except yaml.YAMLError as exc:
-                print_with_color(f"Error loading prompt template: {exc}", "yellow")
+                logger.warning(f"Error loading prompt template: {exc}")
         else:
             raise FileNotFoundError(f"Prompt template not found at {path}")
 

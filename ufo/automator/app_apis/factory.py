@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import logging
 from typing import Type, Dict, Any
 
 from ufo.automator.app_apis.basic import WinCOMReceiverBasic
@@ -11,7 +12,8 @@ from ufo.automator.app_apis.web.webclient import WebReceiver
 from ufo.automator.app_apis.word.wordclient import WordWinCOMReceiver
 from ufo.automator.basic import ReceiverBasic, ReceiverFactory
 from ufo.automator.puppeteer import ReceiverManager
-from ufo.utils import print_with_color
+
+logger = logging.getLogger(__name__)
 
 
 class APIReceiverFactory(ReceiverFactory):
@@ -109,7 +111,7 @@ class WebReceiverFactory(APIReceiverFactory):
             return None
 
         web_receiver = WebReceiver()
-        print_with_color(f"Web receiver created for {app_root_name}.", "green")
+        logger.info(f"Web receiver created for {app_root_name}.")
 
         return web_receiver
 

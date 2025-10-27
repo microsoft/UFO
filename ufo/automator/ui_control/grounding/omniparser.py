@@ -2,6 +2,7 @@
 # Licensed under the MIT License.
 
 import json
+import logging
 import os
 import ast
 from typing import Any, Dict, List
@@ -11,7 +12,8 @@ from pywinauto.win32structures import RECT
 
 from ufo.agents.processors.schemas.target import TargetInfo, TargetKind
 from ufo.automator.ui_control.grounding.basic import BasicGrounding
-from ufo.utils import print_with_color
+
+logger = logging.getLogger(__name__)
 
 
 class OmniparserGrounding(BasicGrounding):
@@ -44,9 +46,7 @@ class OmniparserGrounding(BasicGrounding):
         list_of_grounding_results = []
 
         if not os.path.exists(image_path):
-            print_with_color(
-                f"Warning: The image path {image_path} does not exist.", "yellow"
-            )
+            logger.warning(f"The image path {image_path} does not exist.")
             return list_of_grounding_results
 
         try:
@@ -56,9 +56,8 @@ class OmniparserGrounding(BasicGrounding):
             grounding_results = results[1].splitlines()
 
         except Exception as e:
-            print_with_color(
-                f"Warning: Failed to get grounding results for Omniparser. Error: {e}",
-                "yellow",
+            logger.warning(
+                f"Failed to get grounding results for Omniparser. Error: {e}"
             )
 
             return list_of_grounding_results

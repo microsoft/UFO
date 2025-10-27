@@ -1,6 +1,7 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import logging
 import time
 import warnings
 from abc import abstractmethod
@@ -15,9 +16,9 @@ from pywinauto.win32structures import RECT
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
 from ufo.automator.puppeteer import ReceiverManager
 from ufo.config import Config
-from ufo.utils import print_with_color
 
 configs = Config.get_instance().config_data
+logger = logging.getLogger(__name__)
 
 if configs is not None and configs.get("AFTER_CLICK_WAIT", None) is not None:
     pywinauto.timings.Timings.after_clickinput_wait = configs["AFTER_CLICK_WAIT"]
@@ -70,12 +71,12 @@ class ControlReceiver(ReceiverBasic):
             result = method(**params)
         except AttributeError:
             message = f"{self.control} doesn't have a method named {method_name}"
-            print_with_color(f"Warning: {message}", "yellow")
+            logger.warning(message)
             result = message
         except Exception as e:
             full_traceback = traceback.format_exc()
             message = f"An error occurred: {full_traceback}"
-            print_with_color(f"Warning: {message}", "yellow")
+            logger.warning(message)
             result = message
         return result
 
@@ -200,9 +201,8 @@ class ControlReceiver(ReceiverBasic):
             return result
         except Exception as e:
             if method_name == "set_text":
-                print_with_color(
-                    f"{self.control} doesn't have a method named {method_name}, trying default input method",
-                    "yellow",
+                logger.warning(
+                    f"{self.control} doesn't have a method named {method_name}, trying default input method"
                 )
                 method_name = "type_keys"
                 clear_text_keys = "^a{BACKSPACE}"

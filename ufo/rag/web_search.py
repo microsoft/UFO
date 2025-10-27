@@ -1,15 +1,17 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import logging
 import requests
 from langchain.docstore.document import Document
 from langchain.text_splitter import HTMLHeaderTextSplitter
 from langchain_community.vectorstores import FAISS
 
 from ufo.config import Config
-from ufo.utils import get_hugginface_embedding, print_with_color
+from ufo.utils import get_hugginface_embedding
 
 configs = Config.get_instance().config_data
+logger = logging.getLogger(__name__)
 
 
 class BingSearchWeb:
@@ -37,9 +39,7 @@ class BingSearchWeb:
                 url, headers={"Ocp-Apim-Subscription-Key": self.api_key}
             )
         except requests.RequestException as e:
-            print_with_color(
-                f"Warning: Error when searching: {e}".format(e=e), "yellow"
-            )
+            logger.warning(f"Error when searching: {e}")
             return None
         result_list = []
 
@@ -67,20 +67,12 @@ class BingSearchWeb:
                 document = html_splitter.split_text(response.text)
                 return document
             else:
-                print_with_color(
-                    "Warning: Error in  getting search result for {url}, error code: {status_code}.".format(
-                        url=url, status_code=response.status_code
-                    ),
-                    "yellow",
+                logger.warning(
+                    f"Error in getting search result for {url}, error code: {response.status_code}."
                 )
                 return [Document(page_content="", metadata={"url": url})]
         except requests.exceptions.RequestException as e:
-            print_with_color(
-                "Warning: Error in getting search result for {url}: {e}.".format(
-                    url=url, e=e
-                ),
-                "yellow",
-            )
+            logger.warning(f"Error in getting search result for {url}: {e}.")
             return [Document(page_content="", metadata={"url": url})]
 
     def create_documents(self, result_list: list):

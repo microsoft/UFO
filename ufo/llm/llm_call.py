@@ -1,12 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
+import logging
 from ufo.llm import AgentType
 from typing import Tuple
 
-from ufo.utils import print_with_color
-
 from .base import BaseService
+
+logger = logging.getLogger(__name__)
 
 
 def get_completion(
@@ -79,8 +80,8 @@ def get_completions(
             raise ValueError(f"API_TYPE {api_type} not supported")
     except Exception as e:
         if use_backup_engine:
-            print_with_color(f"The API request of {agent_type} failed: {e}.", "red")
-            print_with_color(f"Switching to use the backup engine...", "yellow")
+            logger.error(f"The API request of {agent_type} failed: {e}.")
+            logger.warning(f"Switching to use the backup engine...")
             return get_completions(
                 messages, agent=AgentType.BACKUP, use_backup_engine=False, n=n
             )

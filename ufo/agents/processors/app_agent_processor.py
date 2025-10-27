@@ -219,10 +219,10 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
 
             # Display user-friendly completion message (maintaining original UX)
             if subtask and application_process_name:
-                utils.print_with_color(
-                    f"AppAgent: Successfully completed subtask '{subtask}' "
+                console.print(
+                    f"✅ AppAgent: Successfully completed subtask '{subtask}' "
                     f"on application '{application_process_name}'",
-                    "green",
+                    style="green",
                 )
         else:
             # Enhanced error logging for App Agent
@@ -232,8 +232,8 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
             )
 
             # Display user-friendly error message (maintaining original UX)
-            utils.print_with_color(
-                f"AppAgent: Processing failed - {result.error}", "red"
+            console.print(
+                f"❌ AppAgent: Processing failed - {result.error}", style="red"
             )
 
     async def on_error(self, processor: ProcessorTemplate, error: Exception) -> None:
@@ -250,4 +250,4 @@ class AppAgentLoggingMiddleware(EnhancedLoggingMiddleware):
         await super().on_error(processor, error)
 
         # Display user-friendly error message (maintaining original UX)
-        utils.print_with_color(f"AppAgent: Encountered error - {str(error)}", "red")
+        console.print(f"❌ AppAgent: Encountered error - {str(error)}", style="red")

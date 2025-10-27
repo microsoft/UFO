@@ -3,14 +3,15 @@
 
 import functools
 import json
+import logging
 import os
+import openai
 import shutil
 import sys
 import urllib.error
 import urllib.request
 from typing import Any, Callable, Dict, List, Literal, Optional, Tuple
 
-import openai, logging
 from openai import AzureOpenAI, OpenAI
 from openai.lib._parsing._completions import type_to_response_format_param
 from ufo.llm.base import BaseService
@@ -19,8 +20,9 @@ from ufo.llm.response_schema import (
     EvaluationResponse,
     HostAgentResponse,
 )
-from ufo.utils import print_with_color
 from ufo.llm import AgentType
+
+logger = logging.getLogger(__name__)
 
 
 class BaseOpenAIService(BaseService):

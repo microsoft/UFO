@@ -4,19 +4,22 @@
 from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
+import logging
 from typing import Any, Dict, List, Optional, Type, Union, TYPE_CHECKING
 
 
 from pywinauto.controls.uiawrapper import UIAWrapper
 
 from ufo.module.dispatcher import BasicCommandDispatcher
-from ufo.utils import is_json_serializable, print_with_color
+from ufo.utils import is_json_serializable
 
 if TYPE_CHECKING:
     from ufo.module.basic import FileWriter
     from galaxy.client.components.types import AgentProfile
     from galaxy.constellation.task_constellation import TaskConstellation
     from galaxy.agents.schema import WeavingMode
+
+logger = logging.getLogger(__name__)
 
 
 class ContextNames(Enum):
@@ -365,9 +368,8 @@ class Context:
 
             for key in ContextNames:
                 if key.name in context_dict:
-                    print_with_color(
-                        f"Warn: The value of Context.{key.name} is not serializable.",
-                        "yellow",
+                    logger.warning(
+                        f"The value of Context.{key.name} is not serializable."
                     )
                     if not is_json_serializable(context_dict[key.name]):
 

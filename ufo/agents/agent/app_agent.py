@@ -396,7 +396,7 @@ class AppAgent(BasicAgent):
         decision = interactor.sensitive_step_asker(action, control_text)
 
         if not decision:
-            utils.print_with_color("The user has canceled the action.", "red")
+            console.print("❌ The user has canceled the action.", style="red")
 
         return decision
 
@@ -462,32 +462,30 @@ class AppAgent(BasicAgent):
 
         # Load the offline document indexer for the app agent if available.
         if configs["RAG_OFFLINE_DOCS"]:
-            utils.print_with_color(
-                "Loading offline help document indexer for {app}...".format(
-                    app=self._process_name
-                ),
-                "magenta",
+            console.print(
+                f"📚 Loading offline help document indexer for {self._process_name}...",
+                style="magenta",
             )
             self.build_offline_docs_retriever()
 
         # Load the online search indexer for the app agent if available.
 
         if configs["RAG_ONLINE_SEARCH"] and request:
-            utils.print_with_color("Creating a Bing search indexer...", "magenta")
+            console.print("🔍 Creating a Bing search indexer...", style="magenta")
             self.build_online_search_retriever(
                 request, configs["RAG_ONLINE_SEARCH_TOPK"]
             )
 
         # Load the experience indexer for the app agent if available.
         if configs["RAG_EXPERIENCE"]:
-            utils.print_with_color("Creating an experience indexer...", "magenta")
+            console.print("📖 Creating an experience indexer...", style="magenta")
             experience_path = configs["EXPERIENCE_SAVED_PATH"]
             db_path = os.path.join(experience_path, "experience_db")
             self.build_experience_retriever(db_path)
 
         # Load the demonstration indexer for the app agent if available.
         if configs["RAG_DEMONSTRATION"]:
-            utils.print_with_color("Creating an demonstration indexer...", "magenta")
+            console.print("🎬 Creating an demonstration indexer...", style="magenta")
             demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
             db_path = os.path.join(demonstration_path, "demonstration_db")
             self.build_human_demonstration_retriever(db_path)
@@ -684,23 +682,17 @@ class OpenAIOperatorAgent(AppAgent):
         thought = response_dict.get("thought", "")
 
         if message:
-            utils.print_with_color(
-                "Agent message📝: {message}".format(message=message), "yellow"
-            )
+            console.print(f"📝 Agent message: {message}", style="yellow")
 
         if thought:
-            utils.print_with_color(
-                "Thoughts💡: {thought}".format(thought=thought), "green"
-            )
+            console.print(f"💡 Thoughts: {thought}", style="green")
 
         function_call = response_dict.get("operation", "")
         args = response_dict.get("args", {})
 
         # Generate the function call string
         action = AppAgent.get_command_string(function_call, args)
-        utils.print_with_color(
-            "Action applied⚒️: {action}".format(action=action), "blue"
-        )
+        console.print(f"⚒️  Action applied: {action}", style="blue")
 
     @property
     def default_state(self) -> ContinueOpenAIOperatorState:

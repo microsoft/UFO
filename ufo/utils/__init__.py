@@ -6,6 +6,7 @@ import importlib
 import functools
 from io import BytesIO
 import json
+import logging
 import mimetypes
 import os
 from typing import Optional, Any, Dict, Tuple
@@ -18,6 +19,8 @@ from pywinauto.win32structures import RECT
 
 # init colorama
 init()
+
+logger = logging.getLogger(__name__)
 
 
 def print_with_color(text: str, color: str = "", end: str = "\n") -> None:
@@ -257,7 +260,7 @@ def encode_image_from_path(image_path: str, mime_type: Optional[str] = None) -> 
 
     # If image path not exist, return an empty image string
     if not os.path.exists(image_path):
-        print_with_color(f"Warning: {image_path} does not exist.", "yellow")
+        logger.warning(f"{image_path} does not exist.")
         return _empty_image_string
 
     file_name = os.path.basename(image_path)
@@ -268,9 +271,8 @@ def encode_image_from_path(image_path: str, mime_type: Optional[str] = None) -> 
         encoded_image = base64.b64encode(image_file.read()).decode("ascii")
 
     if mime_type is None or not mime_type.startswith("image/"):
-        print_with_color(
-            "Warning: mime_type is not specified or not an image mime type. Defaulting to png.",
-            "yellow",
+        logger.warning(
+            "mime_type is not specified or not an image mime type. Defaulting to png."
         )
         mime_type = "image/png"
 
@@ -311,9 +313,7 @@ def load_image(image_path: str) -> Image.Image:
     """
     try:
         if not os.path.exists(image_path):
-            print_with_color(
-                f"Warning: Image file {image_path} does not exist.", "yellow"
-            )
+            logger.warning(f"Image file {image_path} does not exist.")
             return Image.new("RGB", (1, 1), color="white")
 
         image = Image.open(image_path)
@@ -326,17 +326,13 @@ def load_image(image_path: str) -> Image.Image:
             image.load()
             return image
         except Exception as e:
-            print_with_color(
-                f"Warning: Image {image_path} appears to be corrupted: {e}", "yellow"
-            )
+            logger.warning(f"Image {image_path} appears to be corrupted: {e}")
             return Image.new("RGB", (1, 1), color="white")
 
     except Exception as e:
         import traceback
 
-        print_with_color(
-            f"Error loading image from {image_path}: {traceback.format_exc()}", "red"
-        )
+        logger.error(f"Error loading image from {image_path}: {traceback.format_exc()}")
         return Image.new("RGB", (1, 1), color="white")
 
 
@@ -370,10 +366,7 @@ def save_image_string(image_string: str, save_path: str) -> Image.Image:
             _ = saved_image.format
             return saved_image
         except Exception as e:
-            print_with_color(
-                f"Warning: Saved image at {save_path} appears to be corrupted: {e}",
-                "yellow",
-            )
+            logger.warning(f"Saved image at {save_path} appears to be corrupted: {e}")
 
             # Try alternative approach: decode through PIL directly
             try:
@@ -397,9 +390,8 @@ def save_image_string(image_string: str, save_path: str) -> Image.Image:
                 return load_image(save_path)
 
             except Exception as fallback_error:
-                print_with_color(
-                    f"Error: Failed to save image using fallback method: {fallback_error}",
-                    "red",
+                logger.error(
+                    f"Failed to save image using fallback method: {fallback_error}"
                 )
 
                 # As last resort, save empty image
@@ -409,9 +401,7 @@ def save_image_string(image_string: str, save_path: str) -> Image.Image:
                 return load_image(save_path)
 
     except Exception as e:
-        print_with_color(
-            f"Error: Failed to save image string to {save_path}: {e}", "red"
-        )
+        logger.error(f"Failed to save image string to {save_path}: {e}")
 
         # Ensure we always return a valid image
         try:

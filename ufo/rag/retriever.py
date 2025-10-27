@@ -2,12 +2,15 @@
 # Licensed under the MIT License.
 
 from abc import ABC, abstractmethod
+import logging
 
 from langchain_community.vectorstores import FAISS
 
 from ufo.config import get_offline_learner_indexer_config
 from ufo.rag import web_search
-from ufo.utils import print_with_color, get_hugginface_embedding
+from ufo.utils import get_hugginface_embedding
+
+logger = logging.getLogger(__name__)
 
 
 class RetrieverFactory:
@@ -109,9 +112,7 @@ class OfflineDocRetriever(Retriever):
         """
 
         if path:
-            print_with_color(
-                "Loading offline indexer from {path}...".format(path=path), "cyan"
-            )
+            logger.info(f"Loading offline indexer from {path}...")
         else:
             return None
 
@@ -121,11 +122,8 @@ class OfflineDocRetriever(Retriever):
             )
             return db
         except Exception as e:
-            print_with_color(
-                "Warning: Failed to load experience indexer from {path}, error: {error}.".format(
-                    path=path, error=e
-                ),
-                "yellow",
+            logger.warning(
+                f"Failed to load experience indexer from {path}, error: {e}."
             )
             return None
 
@@ -156,11 +154,8 @@ class ExperienceRetriever(Retriever):
             )
             return db
         except Exception as e:
-            print_with_color(
-                "Warning: Failed to load experience indexer from {path}, error: {error}.".format(
-                    path=db_path, error=e
-                ),
-                "yellow",
+            logger.warning(
+                f"Failed to load experience indexer from {db_path}, error: {e}."
             )
             return None
 
@@ -193,19 +188,11 @@ class OnlineDocRetriever(Retriever):
             return None
         try:
             indexer = bing_retriever.create_indexer(documents)
-            print_with_color(
-                "Online indexer created successfully for {num} searched results.".format(
-                    num=len(documents)
-                ),
-                "cyan",
+            logger.info(
+                f"Online indexer created successfully for {len(documents)} searched results."
             )
         except Exception as e:
-            print_with_color(
-                "Warning: Failed to create online indexer, error: {error}.".format(
-                    error=e
-                ),
-                "yellow",
-            )
+            logger.warning(f"Failed to create online indexer, error: {e}.")
             return None
 
         return indexer
@@ -237,10 +224,7 @@ class DemonstrationRetriever(Retriever):
             )
             return db
         except Exception as e:
-            print_with_color(
-                "Warning: Failed to load experience indexer from {path}, error: {error}.".format(
-                    path=db_path, error=e
-                ),
-                "yellow",
+            logger.warning(
+                f"Failed to load experience indexer from {db_path}, error: {e}."
             )
             return None

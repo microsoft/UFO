@@ -1,5 +1,6 @@
 import functools
 import base64
+import logging
 import re
 import time
 import random
@@ -9,10 +10,15 @@ from google import genai
 from google.genai.types import GenerateContentConfig, Part, GenerateContentResponse
 
 from ufo.llm.base import BaseService
-from ufo.utils import print_with_color
 
-from ufo.llm.response_schema import AppAgentResponse, EvaluationResponse, HostAgentResponse
+from ufo.llm.response_schema import (
+    AppAgentResponse,
+    EvaluationResponse,
+    HostAgentResponse,
+)
 from ufo.llm import AgentType
+
+logger = logging.getLogger(__name__)
 
 
 class GeminiService(BaseService):
@@ -113,10 +119,9 @@ class GeminiService(BaseService):
                 delay = min(initial_delay * (2**attempt), max_delay)
                 jitter = random.uniform(-jitter_factor * delay, 0)
                 sleep_time = delay + jitter
-                print_with_color(
+                logger.warning(
                     f"Error during Gemini API request, attempt {attempt+1}/{self.max_retry}: {e}. "
-                    f"Retrying in {sleep_time:.2f}s...",
-                    "yellow",
+                    f"Retrying in {sleep_time:.2f}s..."
                 )
                 time.sleep(sleep_time)
 

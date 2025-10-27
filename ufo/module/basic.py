@@ -22,6 +22,7 @@ from abc import ABC, abstractmethod
 from typing import Dict, List, Optional
 
 from pywinauto.controls.uiawrapper import UIAWrapper
+from rich.console import Console
 
 from ufo import utils
 from ufo.agents.agent.basic import BasicAgent
@@ -35,6 +36,7 @@ from ufo.module.context import Context, ContextNames
 from ufo.trajectory.parser import Trajectory
 
 configs = Config.get_instance().config_data
+console = Console()
 
 
 class FileWriter:
@@ -278,8 +280,9 @@ class BaseRound(ABC):
         total_cost = self.cost
         if isinstance(total_cost, float):
             formatted_cost = "${:.2f}".format(total_cost)
-            utils.print_with_color(
-                f"Request total cost for current round is {formatted_cost}", "yellow"
+            console.print(
+                f"💰 Request total cost for current round is {formatted_cost}",
+                style="yellow",
             )
 
     @property
@@ -330,9 +333,8 @@ class BaseRound(ABC):
                 )
 
             except Exception as e:
-                utils.print_with_color(
-                    f"Warning: The last snapshot capture failed, due to the error: {e}",
-                    "yellow",
+                self.logger.warning(
+                    f"The last snapshot capture failed, due to the error: {e}"
                 )
             if configs.get("SAVE_UI_TREE", False):
                 # Get session data manager from context
@@ -712,8 +714,9 @@ class BaseSession(ABC):
         """
         Save the current trajectory as agent experience.
         """
-        utils.print_with_color(
-            "Summarizing and saving the execution flow as experience...", "yellow"
+        console.print(
+            "📚 Summarizing and saving the execution flow as experience...",
+            style="yellow",
         )
 
         summarizer = ExperienceSummarizer(
@@ -744,16 +747,14 @@ class BaseSession(ABC):
 
         if isinstance(self.cost, float) and self.cost > 0:
             formatted_cost = "${:.2f}".format(self.cost)
-            utils.print_with_color(
-                f"Total request cost of the session: {formatted_cost}$", "yellow"
+            console.print(
+                f"💰 Total request cost of the session: {formatted_cost}",
+                style="yellow",
             )
         else:
-            utils.print_with_color(
-                "Cost is not available for the model {host_model} or {app_model}.".format(
-                    host_model=configs["HOST_AGENT"]["API_MODEL"],
-                    app_model=configs["APP_AGENT"]["API_MODEL"],
-                ),
-                "yellow",
+            console.print(
+                f"ℹ️  Cost is not available for the model {configs['HOST_AGENT']['API_MODEL']} or {configs['APP_AGENT']['API_MODEL']}.",
+                style="yellow",
             )
             self.logger.warning("Cost information is not available.")
 
@@ -802,7 +803,7 @@ class BaseSession(ABC):
         """
         Evaluate the session.
         """
-        utils.print_with_color("Evaluating the session...", "yellow")
+        console.print("📊 Evaluating the session...", style="yellow")
 
         is_visual = configs.get("EVALUATION_AGENT", {}).get("VISUAL_MODE", True)
 
@@ -940,9 +941,8 @@ class BaseSession(ABC):
                 utils.save_image_string(image, save_path)
 
         except Exception as e:
-            utils.print_with_color(
-                f"Warning: The last snapshot capture failed, due to the error: {e}",
-                "yellow",
+            self.logger.warning(
+                f"The last snapshot capture failed, due to the error: {e}"
             )
 
     async def capture_last_ui_tree(self, save_path: str) -> None:

@@ -2,12 +2,13 @@
 # Licensed under the MIT License.
 
 import json
+import logging
 import os
 from typing import Any, Dict, Optional
 
 import yaml
 
-from ufo.utils import print_with_color
+logger = logging.getLogger(__name__)
 
 
 class Config:
@@ -65,9 +66,8 @@ class Config:
                 configs["mcp"] = yaml_agent_mcp_data
         except FileNotFoundError as e:
 
-            print_with_color(
-                f"Warning: Config file not found at {path}. Using only environment variables. Error: {e}",
-                "yellow",
+            logger.warning(
+                f"Config file not found at {path}. Using only environment variables. Error: {e}"
             )
 
         return self.optimize_configs(configs)

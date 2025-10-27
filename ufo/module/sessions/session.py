@@ -9,6 +9,7 @@ from typing import Optional
 
 import psutil
 import win32com.client
+from rich.console import Console
 
 from ufo import utils
 from ufo.agents.agent.app_agent import OpenAIOperatorAgent
@@ -27,6 +28,7 @@ from ufo.module.sessions.platform_session import WindowsBaseSession
 from ufo.trajectory.parser import Trajectory
 
 configs = Config.get_instance().config_data
+console = Console()
 
 
 class Session(WindowsBaseSession):
@@ -194,8 +196,8 @@ class FollowerSession(WindowsBaseSession):
             return None
 
         if self.total_rounds == 0:
-            utils.print_with_color("Complete the following request:", "yellow")
-            utils.print_with_color(self.plan_reader.get_initial_request(), "cyan")
+            console.print("Complete the following request:", style="yellow")
+            console.print(self.plan_reader.get_initial_request(), style="cyan")
             agent: HostAgent = self._host_agent
         else:
             host_agent: HostAgent = self._host_agent
@@ -310,7 +312,7 @@ class FromFileSession(WindowsBaseSession):
         """
 
         if self.total_rounds == 0:
-            utils.print_with_color(self.plan_reader.get_host_request(), "cyan")
+            console.print(self.plan_reader.get_host_request(), style="cyan")
             return self.plan_reader.get_host_request()
         else:
             self._finish = True
@@ -505,7 +507,7 @@ class OpenAIOperatorSession(Session):
 
             file_path = self.log_path
             trajectory = Trajectory(file_path)
-            trajectory.to_markdown(file_path + "/output.md")
+            trajectory.to_markdown(file_path + "output.md")
 
         self.print_cost()
 
@@ -541,7 +543,6 @@ class OpenAIOperatorSession(Session):
                 utils.save_image_string(image, save_path)
 
         except Exception as e:
-            utils.print_with_color(
-                f"Warning: The last snapshot capture failed, due to the error: {e}",
-                "yellow",
+            self.logger.warning(
+                f"The last snapshot capture failed, due to the error: {e}"
             )
