@@ -559,11 +559,12 @@ def create_app_action_mcp_server(*args, **kwargs) -> FastMCP:
 
         control_verified = _verify_id(id, name, ui_state.control_dict)
 
-        action = ActionCommandInfo(function="texts", arguments={"id": id, "name": name})
-
-        result = _execute_action(action)
+        action = ActionCommandInfo(
+            function="texts", target=TargetInfo(id=id, name=name, kind="control")
+        )
 
         if control_verified:
+            result = _execute_action(action)
             return result
         else:
             true_name = ui_state.control_dict.get(id).element_info.name
