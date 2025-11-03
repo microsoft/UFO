@@ -105,14 +105,85 @@ pip install -r requirements.txt
 ```
 
 ### ⚙️ Step 2: Configure the LLMs
-Before running UFO, you need to provide your LLM configurations **individually for HostAgent and AppAgent**. You can create your own config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` and editing config for **HOST_AGENT** and **APP_AGENT** as follows: 
+
+> **📢 New Configuration System (Recommended)**  
+> UFO² now uses a **new modular config system** located in `config/ufo/` with auto-discovery and type validation. While the legacy `ufo/config/config.yaml` is still supported for backward compatibility, we strongly recommend migrating to the new system for better maintainability.
+
+#### **Option 1: New Config System (Recommended)**
+
+The new config files are organized in `config/ufo/` with separate YAML files for different components:
+
+```powershell
+# Copy template to create your agent config file (contains API keys)
+copy config\ufo\agents.yaml.template config\ufo\agents.yaml
+notepad config\ufo\agents.yaml   # Edit your LLM API credentials
+```
+
+**Directory Structure:**
+```
+config/ufo/
+├── agents.yaml.template     # Template: Agent configs (HOST_AGENT, APP_AGENT) - COPY & EDIT THIS
+├── agents.yaml              # Your agent configs with API keys (DO NOT commit to git)
+├── rag.yaml                 # RAG and knowledge settings (default values, edit if needed)
+├── system.yaml              # System settings (default values, edit if needed)
+├── mcp.yaml                 # MCP integration settings (default values, edit if needed)
+└── ...                      # Other modular configs with defaults
+```
+
+> 📝 **Note**: Only `agents.yaml` contains sensitive information (API keys). Other config files have default values and only need editing if you want to customize settings.
+
+**Migration Benefits:**
+- ✅ **Type Safety**: Automatic validation with Pydantic schemas
+- ✅ **Auto-Discovery**: No manual config loading needed
+- ✅ **Modular**: Separate concerns into individual files
+- ✅ **IDE Support**: Better autocomplete and error detection
+
+**Using the New Config in Code:**
+```python
+from config.config_loader import get_ufo_config
+
+# Modern approach (type-safe, validated)
+config = get_ufo_config()
+api_type = config.get("HOST_AGENT", "API_TYPE")
+
+# Legacy approach still works (for backward compatibility)
+# from ufo.config import Config
+# configs = Config.get_instance().config_data
+```
+
+#### **Option 2: Legacy Config (Backward Compatible)**
+
+For existing users, the old config path still works:
 
 ```powershell
 copy ufo\config\config.yaml.template ufo\config\config.yaml
 notepad ufo\config\config.yaml   # paste your key & endpoint
 ```
 
-#### OpenAI
+> ⚠️ **Note**: If both old and new configs exist, the new config in `config/ufo/` takes precedence. A warning will be displayed during startup.
+
+#### OpenAI Configuration
+
+**New Config (`config/ufo/agents.yaml`):**
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: true
+  API_TYPE: "openai"
+  API_BASE: "https://api.openai.com/v1/chat/completions"
+  API_KEY: "sk-YOUR_KEY_HERE"  # Replace with your actual API key
+  API_VERSION: "2025-02-01-preview"
+  API_MODEL: "gpt-4o"
+
+APP_AGENT:
+  VISUAL_MODE: true
+  API_TYPE: "openai"
+  API_BASE: "https://api.openai.com/v1/chat/completions"
+  API_KEY: "sk-YOUR_KEY_HERE"  # Replace with your actual API key
+  API_VERSION: "2025-02-01-preview"
+  API_MODEL: "gpt-4o"
+```
+
+**Legacy Config (`ufo/config/config.yaml`):**
 ```yaml
 VISUAL_MODE: True, # Whether to use the visual mode
 API_TYPE: "openai" , # The API type, "openai" for the OpenAI API.  
@@ -122,7 +193,30 @@ API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
 API_MODEL: "gpt-4o",  # The only OpenAI model
 ```
 
-#### Azure OpenAI (AOAI)
+#### Azure OpenAI (AOAI) Configuration
+
+**New Config (`config/ufo/agents.yaml`):**
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: true
+  API_TYPE: "aoai"
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
+  API_KEY: "YOUR_AOAI_KEY"
+  API_VERSION: "2024-02-15-preview"
+  API_MODEL: "gpt-4o"
+  API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
+
+APP_AGENT:
+  VISUAL_MODE: true
+  API_TYPE: "aoai"
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
+  API_KEY: "YOUR_AOAI_KEY"
+  API_VERSION: "2024-02-15-preview"
+  API_MODEL: "gpt-4o"
+  API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
+```
+
+**Legacy Config (`ufo/config/config.yaml`):**
 ```yaml
 VISUAL_MODE: True, # Whether to use the visual mode
 API_TYPE: "aoai" , # The API type, "aoai" for the Azure OpenAI.  
@@ -136,13 +230,27 @@ API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
 > Need Qwen, Gemini, non‑visual GPT‑4, or even **OpenAI CUA Operator** as a AppAgent? See the [model guide](https://microsoft.github.io/UFO/supported_models/overview/).
 
 ### 📔 Step 3: Additional Setting for RAG (optional).
-If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file. 
+
+If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG).
+
+**For New Config System**: Edit `config/ufo/rag.yaml` (already exists with default values)  
+**For Legacy Config**: Edit `ufo/config/config.yaml`
 
 We provide the following options for RAG to enhance UFO's capabilities:
 - [Offline Help Document](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_help_document/) Enable UFO to retrieve information from offline help documents.
 - [Online Bing Search Engine](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_bing_search/): Enhance UFO's capabilities by utilizing the most up-to-date online search results.
 - [Self-Experience](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/experience_learning/): Save task completion trajectories into UFO's memory for future reference.
 - [User-Demonstration](https://microsoft.github.io/UFO/advanced_usage/reinforce_appagent/learning_from_demonstration/): Boost UFO's capabilities through user demonstration.
+
+**Example RAG config (`config/ufo/rag.yaml`):**
+```yaml
+# Enable Bing search
+RAG_ONLINE_SEARCH: True
+BING_API_KEY: "YOUR_BING_API_KEY"  # Get from https://www.microsoft.com/en-us/bing/apis
+
+# Enable experience learning
+RAG_EXPERIENCE: True
+```
 
 Consult their respective documentation for more information on how to configure these settings.
 
@@ -189,6 +297,143 @@ You may use them to debug, replay, or analyze the agent output.
 * Please first check our our documentation [here](https://microsoft.github.io/UFO/).
 * ❔GitHub Issues (prefered)
 * For other communications, please contact [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com).
+
+---
+
+## 🔄 Migrating to the New Config System
+
+If you're upgrading from an older version of UFO that used `ufo/config/config.yaml`, we provide an **automated migration tool** to help you transition to the new modular config system.
+
+### ⚡ Automatic Migration (Recommended)
+
+**One-command migration with safety features:**
+
+```powershell
+# Interactive migration with automatic backup
+python -m ufo.tools.migrate_config
+
+# Preview changes first (dry run)
+python -m ufo.tools.migrate_config --dry-run
+
+# Force migration without confirmation
+python -m ufo.tools.migrate_config --force
+```
+
+**What the migration tool does:**
+- ✅ Automatically copies your YAML files from `ufo/config/` to `config/ufo/`
+- ✅ Creates timestamped backup of your legacy config
+- ✅ Shows detailed migration report
+- ✅ Provides rollback instructions if needed
+
+**Example output:**
+```
+🔧 Config Migration
+Found 3 configuration file(s):
+  • config.yaml
+  • action.yaml
+  • rag.yaml
+
+Creating backup: ufo/config.backup_20251103_143052
+✓ Backup created successfully
+✓ Copied: config.yaml → config/ufo/config.yaml
+✓ Copied: action.yaml → config/ufo/action.yaml
+✓ Copied: rag.yaml → config/ufo/rag.yaml
+```
+
+### 🛠️ Manual Migration Steps
+
+If you prefer manual migration:
+
+1. **Copy the template file** to create your agent config:
+   ```powershell
+   copy config\ufo\agents.yaml.template config\ufo\agents.yaml
+   ```
+
+2. **Edit the agent config** with your API credentials:
+   ```powershell
+   notepad config\ufo\agents.yaml
+   ```
+   
+   Replace placeholders in `agents.yaml`:
+   - `API_KEY: "sk-YOUR_KEY_HERE"` → Your actual OpenAI API key
+   - `API_BASE`, `API_DEPLOYMENT_ID` if using Azure OpenAI
+
+3. **Other configs use defaults** - Files like `rag.yaml`, `system.yaml`, `mcp.yaml` already exist with sensible defaults. Only edit them if you want to customize settings (e.g., enable Bing search, change RAG settings).
+
+4. **Verify the migration** works:
+   ```powershell
+   python -m ufo --task test_migration
+   ```
+
+### 💻 Code Migration Examples
+
+**Old Code (Still Works):**
+```python
+from ufo.config import Config
+
+configs = Config.get_instance().config_data
+api_type = configs["HOST_AGENT"]["API_TYPE"]
+```
+
+**New Code (Recommended):**
+```python
+from config.config_loader import get_ufo_config
+
+config = get_ufo_config()
+api_type = config.get("HOST_AGENT", "API_TYPE")
+```
+
+### 📋 Configuration File Mapping
+
+| Old Location | New Location | Description |
+|--------------|--------------|-------------|
+| `ufo/config/config.yaml` (all-in-one) | `config/ufo/agents.yaml` | Agent LLM settings (HOST_AGENT, APP_AGENT, etc.) - **needs template** |
+| RAG section in config.yaml | `config/ufo/rag.yaml` | RAG and knowledge base settings - uses defaults |
+| Action/System sections | `config/ufo/system.yaml` | System and action settings - uses defaults |
+| MCP section | `config/ufo/mcp.yaml` | MCP integration settings - uses defaults |
+
+**Key difference**: Only `agents.yaml` requires copying from template (contains API keys). Other files already have working defaults.
+
+### ⚙️ Backward Compatibility
+
+- ✅ Old config path `ufo/config/config.yaml` **still works**
+- ✅ Old code using `Config.get_instance().config_data` **still works**
+- ⚠️ If both configs exist, new config in `config/ufo/` takes precedence
+- ⚠️ A warning `CONFIG CONFLICT DETECTED` will show if both exist
+- 📝 We recommend completing migration to avoid confusion
+
+### 🧪 Testing Your Migration
+
+```powershell
+# Test that UFO starts without errors
+python -m ufo --task test_migration
+
+# You should NOT see this warning if migration is complete:
+# ⚠️ CONFIG CONFLICT DETECTED: UFO
+
+# If migration successful, you can safely remove legacy config:
+rm ufo\config\*.yaml
+```
+
+### 🆘 Rollback Instructions
+
+If you need to rollback after migration:
+
+```powershell
+# Restore from automatic backup
+copy ufo\config.backup_TIMESTAMP\* ufo\config\
+
+# Or manually delete new config
+rm config\ufo\*.yaml
+```
+
+### 📚 Additional Resources
+
+- Migration tool source: `ufo/tools/migrate_config.py`
+- Migration tests: `tests/test_*_config_migration.py`
+- [Full documentation](https://microsoft.github.io/UFO/) for config schemas
+- [GitHub Issues](https://github.com/microsoft/UFO/issues) for help
+
 ---
 
 

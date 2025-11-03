@@ -1,0 +1,76 @@
+# API Pricing Configuration
+# Source: https://openai.com/pricing
+# Prices in $ per 1000 tokens
+# Last updated: 2024-05-13
+
+PRICES:
+  # OpenAI Models
+  "openai/gpt-4-0613": {"input": 0.03, "output": 0.06}
+  "openai/gpt-3.5-turbo-0613": {"input": 0.0015, "output": 0.002}
+  "openai/gpt-4-0125-preview": {"input": 0.01, "output": 0.03}
+  "openai/gpt-4-1106-preview": {"input": 0.01, "output": 0.03}
+  "openai/gpt-4-1106-vision-preview": {"input": 0.01, "output": 0.03}
+  "openai/gpt-4": {"input": 0.03, "output": 0.06}
+  "openai/gpt-4-32k": {"input": 0.06, "output": 0.12}
+  "openai/gpt-4-turbo": {"input": 0.01, "output": 0.03}
+  "openai/gpt-4o": {"input": 0.005, "output": 0.015}
+  "openai/gpt-4o-2024-05-13": {"input": 0.005, "output": 0.015}
+  "openai/gpt-4o-20240513": {"input": 0.0025, "output": 0.01}
+  "openai/gpt-4o-20240806": {"input": 0.0025, "output": 0.01}
+  "openai/gpt-4o-20241120": {"input": 0.0025, "output": 0.01}
+  "openai/gpt-4o-mini-20240718": {"input": 0.00015, "output": 0.0006}
+  "openai/gpt-4.1-2025-04-14": {"input": 0.002, "output": 0.008}
+  "openai/gpt-3.5-turbo-0125": {"input": 0.0005, "output": 0.0015}
+  "openai/gpt-3.5-turbo-1106": {"input": 0.001, "output": 0.002}
+  "openai/gpt-3.5-turbo-instruct": {"input": 0.0015, "output": 0.002}
+  "openai/gpt-3.5-turbo-16k-0613": {"input": 0.003, "output": 0.004}
+  "openai/o1": {"input": 0.015, "output": 0.060}
+  "openai/o1-mini": {"input": 0.0011, "output": 0.0044}
+  "openai/o1-mini-2024-09-12": {"input": 0.0011, "output": 0.0044}
+  "openai/o1-pro": {"input": 0.150, "output": 0.600}
+  "openai/o1-pro-2025-03-19": {"input": 0.150, "output": 0.600}
+  "openai/o4-mini": {"input": 0.0011, "output": 0.0044}
+  "openai/o4-mini-2025-04-16": {"input": 0.0011, "output": 0.0044}
+  "openai/whisper-1": {"input": 0.006, "output": 0.006}
+  "openai/tts-1": {"input": 0.015, "output": 0.015}
+  "openai/tts-hd-1": {"input": 0.03, "output": 0.03}
+  "openai/text-embedding-ada-002-v2": {"input": 0.0001, "output": 0.0001}
+  "openai/text-davinci:003": {"input": 0.02, "output": 0.02}
+  "openai/text-ada-001": {"input": 0.0004, "output": 0.0004}
+  
+  # Azure Models
+  "azure/gpt-35-turbo-20220309": {"input": 0.0015, "output": 0.002}
+  "azure/gpt-35-turbo-20230613": {"input": 0.0015, "output": 0.002}
+  "azure/gpt-35-turbo-16k-20230613": {"input": 0.003, "output": 0.004}
+  "azure/gpt-35-turbo-1106": {"input": 0.001, "output": 0.002}
+  "azure/gpt-4-20230321": {"input": 0.03, "output": 0.06}
+  "azure/gpt-4-32k-20230321": {"input": 0.06, "output": 0.12}
+  "azure/gpt-4-1106-preview": {"input": 0.01, "output": 0.03}
+  "azure/gpt-4-0125-preview": {"input": 0.01, "output": 0.03}
+  "azure/gpt-4-visual-preview": {"input": 0.01, "output": 0.03}
+  "azure/gpt-4-turbo-20240409": {"input": 0.01, "output": 0.03}
+  "azure/gpt-4o": {"input": 0.005, "output": 0.015}
+  "azure/gpt-4o-20240513": {"input": 0.0025, "output": 0.01}
+  "azure/gpt-4o-20240806": {"input": 0.0025, "output": 0.01}
+  "azure/gpt-4o-20241120": {"input": 0.0025, "output": 0.01}
+  "azure/gpt-4o-mini-20240718": {"input": 0.00015, "output": 0.0006}
+  "azure/gpt-4.1-20250414": {"input": 0.002, "output": 0.008}
+  "azure/o1-20241217": {"input": 0.015, "output": 0.060}
+  "azure/o1-mini-20240912": {"input": 0.0011, "output": 0.0044}
+  "azure/o3-20250416": {"input": 0.010, "output": 0.040}
+  "azure/o3-mini-20250416": {"input": 0.0011, "output": 0.0044}
+  "azure/o4-mini-20250416": {"input": 0.0011, "output": 0.0044}
+  
+  # Other Providers
+  "qwen/qwen-vl-plus": {"input": 0.008, "output": 0.008}
+  "qwen/qwen-vl-max": {"input": 0.02, "output": 0.02}
+  "qwen/qwen-omni-turbo": {"input": 0.0002, "output": 0.0006}
+  "gemini/gemini-1.5-flash": {"input": 0.00035, "output": 0.00105}
+  "gemini/gemini-1.5-pro": {"input": 0.0035, "output": 0.0105}
+  "gemini/gemini-1.0-pro": {"input": 0.0005, "output": 0.0015}
+  "gemini/gemini-2.5-flash-preview-04-17": {"input": 0.00015, "output": 0.0035}
+  "gemini/gemini-2.5-pro-preview-03-25": {"input": 0.000125, "output": 0.01}
+  "gemini/gemini-2.5-pro-exp-03-25": {"input": 0.0, "output": 0.0}
+  "claude/claude-3-5-sonnet-20241022": {"input": 0.0003, "output": 0.0015}
+  "claude/claude-3-5-sonnet": {"input": 0.0003, "output": 0.0015}
+  "claude/claude-3-5-opus": {"input": 0.0015, "output": 0.0075}

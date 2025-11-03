@@ -1,0 +1,26 @@
+# RAG (Retrieval Augmented Generation) Configuration
+
+# Offline Documentation RAG
+RAG_OFFLINE_DOCS: False  # Whether to use the offline RAG
+RAG_OFFLINE_DOCS_RETRIEVED_TOPK: 1  # The topk for the offline retrieved documents
+
+# Online Search RAG
+BING_API_KEY: "a5f1dec156334648a2354fabb221ffff"  # The Bing search API key
+RAG_ONLINE_SEARCH: False  # Whether to use the online search for the RAG
+RAG_ONLINE_SEARCH_TOPK: 5  # The topk for the online search
+RAG_ONLINE_RETRIEVED_TOPK: 1  # The topk for the online retrieved documents
+
+# Experience RAG
+RAG_EXPERIENCE: False  # Whether to use the experience RAG
+RAG_EXPERIENCE_RETRIEVED_TOPK: 5  # The topk for the experience retrieved documents
+EXPERIENCE_SAVED_PATH: "vectordb/experience/"  # The path to save experience
+
+# Demonstration RAG
+RAG_DEMONSTRATION: False  # Whether to use the RAG from user demonstration
+RAG_DEMONSTRATION_RETRIEVED_TOPK: 5  # The topk for the demonstration retrieved documents
+RAG_DEMONSTRATION_COMPLETION_N: 3  # The number of completion choices for the demonstration result
+DEMONSTRATION_SAVED_PATH: "vectordb/demonstration/"  # The path to save demonstration
+
+# Prompts for RAG
+EXPERIENCE_PROMPT: "ufo/prompts/experience/experience_summary.yaml"
+DEMONSTRATION_PROMPT: "ufo/prompts/demonstration/demonstration_summary.yaml"
