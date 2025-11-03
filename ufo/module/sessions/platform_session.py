@@ -11,10 +11,10 @@ from typing import Optional
 
 from ufo.agents.agent.customized_agent import LinuxAgent
 from ufo.agents.agent.host_agent import AgentFactory, HostAgent
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.module.basic import BaseRound, BaseSession
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class WindowsBaseSession(BaseSession):
@@ -32,10 +32,10 @@ class WindowsBaseSession(BaseSession):
         self._host_agent: HostAgent = AgentFactory.create_agent(
             "host",
             "HostAgent",
-            configs["HOST_AGENT"]["VISUAL_MODE"],
-            configs["HOSTAGENT_PROMPT"],
-            configs["HOSTAGENT_EXAMPLE_PROMPT"],
-            configs["API_PROMPT"],
+            ufo_config.host_agent.visual_mode,
+            ufo_config.system.HOSTAGENT_PROMPT,
+            ufo_config.system.HOSTAGENT_EXAMPLE_PROMPT,
+            ufo_config.system.API_PROMPT,
         )
 
     def reset(self):
@@ -65,8 +65,8 @@ class LinuxBaseSession(BaseSession):
         self._agent: LinuxAgent = AgentFactory.create_agent(
             "LinuxAgent",
             "LinuxAgent",
-            configs["THIRD_PARTY_AGENT_CONFIG"]["LinuxAgent"]["APPAGENT_PROMPT"],
-            configs["THIRD_PARTY_AGENT_CONFIG"]["LinuxAgent"][
+            ufo_config.system.THIRD_PARTY_AGENT_CONFIG["LinuxAgent"]["APPAGENT_PROMPT"],
+            ufo_config.system.THIRD_PARTY_AGENT_CONFIG["LinuxAgent"][
                 "APPAGENT_EXAMPLE_PROMPT"
             ],
         )

@@ -5,9 +5,9 @@ import json
 import os
 from typing import List, Optional
 
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class PlanReader:

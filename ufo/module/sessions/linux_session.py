@@ -13,14 +13,14 @@ from fastapi import WebSocket
 
 from ufo.agents.agent.host_agent import AgentFactory
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.module import interactor
 from ufo.module.basic import BaseRound
 from ufo.module.context import ContextNames
 from ufo.module.dispatcher import LocalCommandDispatcher, WebSocketCommandDispatcher
 from ufo.module.sessions.platform_session import LinuxBaseSession
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class LinuxSession(LinuxBaseSession):
@@ -79,7 +79,7 @@ class LinuxSession(LinuxBaseSession):
             request=request,
             agent=self._agent,
             context=self.context,
-            should_evaluate=configs.get("EVA_ROUND", False),
+            should_evaluate=ufo_config.system.eva_round,
             id=self.total_rounds,
         )
 

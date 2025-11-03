@@ -10,7 +10,7 @@ from typing import List, Optional
 
 from fastapi import WebSocket
 
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.module.basic import BaseSession
 from ufo.module.sessions.session import (
     FollowerSession,
@@ -21,7 +21,7 @@ from ufo.module.sessions.session import (
 from ufo.module.sessions.service_session import ServiceSession
 from ufo.module.sessions.linux_session import LinuxSession, LinuxServiceSession
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class SessionPool:
@@ -124,7 +124,7 @@ class SessionFactory:
             return [
                 Session(
                     task,
-                    configs.get("EVA_SESSION", False),
+                    ufo_config.system.eva_session,
                     id=kwargs.get("id", 0),
                     request=request,
                     mode=mode,
@@ -135,7 +135,7 @@ class SessionFactory:
             return [
                 ServiceSession(
                     task=task,
-                    should_evaluate=configs.get("EVA_SESSION", False),
+                    should_evaluate=ufo_config.system.eva_session,
                     id=kwargs.get("id", 0),
                     request=request,
                     websocket=kwargs.get("websocket"),
@@ -150,7 +150,7 @@ class SessionFactory:
                 return self.create_follower_session_in_batch(task, plan)
             else:
                 return [
-                    FollowerSession(task, plan, configs.get("EVA_SESSION", False), id=0)
+                    FollowerSession(task, plan, ufo_config.system.eva_session, id=0)
                 ]
         elif mode == "batch_normal":
             self.logger.info(
@@ -161,13 +161,13 @@ class SessionFactory:
                 return self.create_sessions_in_batch(task, plan)
             else:
                 return [
-                    FromFileSession(task, plan, configs.get("EVA_SESSION", False), id=0)
+                    FromFileSession(task, plan, ufo_config.system.eva_session, id=0)
                 ]
         elif mode == "operator":
             self.logger.info(f"Creating a Windows operator session for mode: {mode}")
             return [
                 OpenAIOperatorSession(
-                    task, configs.get("EVA_SESSION", False), id=0, request=request
+                    task, ufo_config.system.eva_session, id=0, request=request
                 )
             ]
         else:
@@ -192,7 +192,7 @@ class SessionFactory:
             return [
                 LinuxSession(
                     task=task,
-                    should_evaluate=configs.get("EVA_SESSION", False),
+                    should_evaluate=ufo_config.system.eva_session,
                     id=0,
                     request=request,
                     mode=mode,
@@ -204,7 +204,7 @@ class SessionFactory:
             return [
                 LinuxServiceSession(
                     task=task,
-                    should_evaluate=configs.get("EVA_SESSION", False),
+                    should_evaluate=ufo_config.system.eva_session,
                     id=0,
                     request=request,
                     websocket=kwargs.get("websocket"),
@@ -278,7 +278,7 @@ class SessionFactory:
             FollowerSession(
                 f"{task}/{file_name}",
                 plan_file,
-                configs.get("EVA_SESSION", False),
+                ufo_config.system.eva_session,
                 id=i,
             )
             for i, (file_name, plan_file) in enumerate(zip(file_names, plan_files))
@@ -293,14 +293,13 @@ class SessionFactory:
         :param plan: The path folder of all plan files.
         :return: The list of created follower sessions.
         """
-        is_record = configs.get("TASK_STATUS", True)
+        is_record = ufo_config.system.task_status
         plan_files = self.get_plan_files(plan)
         file_names = [self.get_file_name_without_extension(f) for f in plan_files]
         is_done_files = []
         if is_record:
-            file_path = configs.get(
-                "TASK_STATUS_FILE",
-                os.path.join(os.path.dirname(plan), "tasks_status.json"),
+            file_path = ufo_config.system.task_status_file or os.path.join(
+                os.path.dirname(plan), "tasks_status.json"
             )
             if not os.path.exists(file_path):
                 self.task_done = {f: False for f in file_names}
@@ -317,7 +316,7 @@ class SessionFactory:
             FromFileSession(
                 f"{task}/{file_name}",
                 plan_file,
-                configs.get("EVA_SESSION", False),
+                ufo_config.system.eva_session,
                 id=i,
             )
             for i, (file_name, plan_file) in enumerate(zip(file_names, plan_files))

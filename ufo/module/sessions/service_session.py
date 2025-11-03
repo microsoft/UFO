@@ -2,14 +2,14 @@ from typing import Optional
 
 from fastapi import WebSocket
 
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.module.sessions.platform_session import WindowsBaseSession
 from ufo.module.context import ContextNames
 from ufo.module.dispatcher import WebSocketCommandDispatcher
 from ufo.module.sessions.session import Session
 
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class ServiceSession(Session):

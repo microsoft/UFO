@@ -29,13 +29,13 @@ from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.agents.agent.host_agent import HostAgent
 from ufo.agents.states.basic import AgentState, AgentStatus
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.contracts.contracts import Command
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.module.context import Context, ContextNames
 from ufo.trajectory.parser import Trajectory
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 console = Console()
 
 
@@ -159,7 +159,7 @@ class BaseRound(ABC):
 
             # If the subtask ends, capture the last snapshot of the application.
             if self.state.is_subtask_end():
-                time.sleep(configs["SLEEP_TIME"])
+                time.sleep(ufo_config.system.sleep_time)
                 await self.capture_last_snapshot(sub_round_id=self.subtask_amount)
                 self.subtask_amount += 1
 
@@ -181,7 +181,7 @@ class BaseRound(ABC):
         """
         return (
             self.state.is_round_end()
-            or self.context.get(ContextNames.SESSION_STEP) >= configs["MAX_STEP"]
+            or self.context.get(ContextNames.SESSION_STEP) >= ufo_config.system.max_step
         )
 
     @property
@@ -336,7 +336,7 @@ class BaseRound(ABC):
                 self.logger.warning(
                     f"The last snapshot capture failed, due to the error: {e}"
                 )
-            if configs.get("SAVE_UI_TREE", False):
+            if ufo_config.system.save_ui_tree:
                 # Get session data manager from context
 
                 ui_tree_path = os.path.join(self.log_path, "ui_trees")
@@ -349,7 +349,7 @@ class BaseRound(ABC):
 
                 await self.save_ui_tree(ui_tree_save_path)
 
-            if configs.get("SAVE_FULL_SCREEN", False):
+            if ufo_config.system.save_full_screen:
 
                 desktop_save_path = (
                     self.log_path
@@ -490,7 +490,7 @@ class BaseSession(ABC):
         if self._should_evaluate and not self.is_error():
             self.evaluation()
 
-        if configs.get("LOG_TO_MARKDOWN", True):
+        if ufo_config.system.log_to_markdown:
 
             self.save_log_to_markdown()
 
@@ -720,15 +720,15 @@ class BaseSession(ABC):
         )
 
         summarizer = ExperienceSummarizer(
-            configs["APP_AGENT"]["VISUAL_MODE"],
-            configs["EXPERIENCE_PROMPT"],
-            configs["APPAGENT_EXAMPLE_PROMPT"],
-            configs["API_PROMPT"],
+            ufo_config.app_agent.visual_mode,
+            ufo_config.system.EXPERIENCE_PROMPT,
+            ufo_config.system.APPAGENT_EXAMPLE_PROMPT,
+            ufo_config.system.API_PROMPT,
         )
         experience = summarizer.read_logs(self.log_path)
         summaries, cost = summarizer.get_summary_list(experience)
 
-        experience_path = configs["EXPERIENCE_SAVED_PATH"]
+        experience_path = ufo_config.system.EXPERIENCE_SAVED_PATH
         utils.create_folder(experience_path)
         summarizer.create_or_update_yaml(
             summaries, os.path.join(experience_path, "experience.yaml")
@@ -753,7 +753,7 @@ class BaseSession(ABC):
             )
         else:
             console.print(
-                f"ℹ️  Cost is not available for the model {configs['HOST_AGENT']['API_MODEL']} or {configs['APP_AGENT']['API_MODEL']}.",
+                f"ℹ️  Cost is not available for the model {ufo_config.host_agent.api_model} or {ufo_config.app_agent.api_model}.",
                 style="yellow",
             )
             self.logger.warning("Cost information is not available.")
@@ -774,8 +774,8 @@ class BaseSession(ABC):
         """
         if (
             self._finish
-            or self.step >= configs["MAX_STEP"]
-            or self.total_rounds >= configs["MAX_ROUND"]
+            or self.step >= ufo_config.system.max_step
+            or self.total_rounds >= ufo_config.system.max_round
         ):
             return True
 
@@ -805,12 +805,12 @@ class BaseSession(ABC):
         """
         console.print("📊 Evaluating the session...", style="yellow")
 
-        is_visual = configs.get("EVALUATION_AGENT", {}).get("VISUAL_MODE", True)
+        is_visual = ufo_config.evaluation_agent.visual_mode
 
         evaluator = EvaluationAgent(
             name="eva_agent",
             is_visual=is_visual,
-            main_prompt=configs["EVALUATION_PROMPT"],
+            main_prompt=ufo_config.system.EVALUATION_PROMPT,
             example_prompt="",
         )
 
@@ -821,7 +821,7 @@ class BaseSession(ABC):
             result, cost = evaluator.evaluate(
                 request=requests,
                 log_path=self.log_path,
-                eva_all_screenshots=configs.get("EVA_ALL_SCREENSHOTS", True),
+                eva_all_screenshots=ufo_config.system.eva_all_screenshots,
                 context=self.context,
             )
         except Exception as e:
@@ -897,13 +897,13 @@ class BaseSession(ABC):
 
             await self.capture_last_screenshot(screenshot_save_path)
 
-            if configs.get("SAVE_UI_TREE", False):
+            if ufo_config.system.save_ui_tree:
                 ui_tree_path = os.path.join(self.log_path, "ui_trees")
                 ui_tree_file_name = "ui_tree_final.json"
                 ui_tree_save_path = os.path.join(ui_tree_path, ui_tree_file_name)
                 await self.capture_last_ui_tree(ui_tree_save_path)
 
-            if configs.get("SAVE_FULL_SCREEN", False):
+            if ufo_config.system.save_full_screen:
 
                 desktop_save_path = self.log_path + "desktop_final.png"
 
@@ -966,9 +966,7 @@ class BaseSession(ABC):
                 json.dump(result[0].result, file, indent=4)
 
     @staticmethod
-    def initialize_logger(
-        log_path: str, log_filename: str, mode="a", configs=configs
-    ) -> logging.Logger:
+    def initialize_logger(log_path: str, log_filename: str, mode="a") -> logging.Logger:
         """
         Initialize logging.
         log_path: The path of the log file.
@@ -978,7 +976,7 @@ class BaseSession(ABC):
         # Code for initializing logging
         logger = logging.Logger(log_filename)
 
-        if not configs["PRINT_LOG"]:
+        if not ufo_config.system.print_log:
             # Remove existing handlers if PRINT_LOG is False
             logger.handlers = []
 
@@ -987,6 +985,6 @@ class BaseSession(ABC):
         formatter = logging.Formatter("%(message)s")
         file_handler.setFormatter(formatter)
         logger.addHandler(file_handler)
-        logger.setLevel(configs["LOG_LEVEL"])
+        logger.setLevel(ufo_config.system.log_level)
 
         return logger

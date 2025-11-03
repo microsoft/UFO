@@ -17,7 +17,7 @@ from ufo.agents.agent.host_agent import AgentFactory
 from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.contracts.contracts import Command
 from ufo.module import interactor
 from ufo.module.basic import BaseRound
@@ -27,7 +27,7 @@ from ufo.module.sessions.plan_reader import PlanReader
 from ufo.module.sessions.platform_session import WindowsBaseSession
 from ufo.trajectory.parser import Trajectory
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 console = Console()
 
 
@@ -66,7 +66,7 @@ class Session(WindowsBaseSession):
         await super().run()
         # Save the experience if the user asks so.
 
-        save_experience = configs.get("SAVE_EXPERIENCE", "always_not")
+        save_experience = ufo_config.system.save_experience
 
         self.logger.info(f"Save experience setting: {save_experience}")
 
@@ -114,7 +114,7 @@ class Session(WindowsBaseSession):
             request=request,
             agent=self._host_agent,
             context=self.context,
-            should_evaluate=configs.get("EVA_ROUND", False),
+            should_evaluate=ufo_config.system.eva_round,
             id=self.total_rounds,
         )
 
@@ -214,7 +214,7 @@ class FollowerSession(WindowsBaseSession):
             request=request,
             agent=agent,
             context=self.context,
-            should_evaluate=configs.get("EVA_ROUND", False),
+            should_evaluate=ufo_config.system.eva_round,
             id=self.total_rounds,
         )
 
@@ -297,7 +297,7 @@ class FromFileSession(WindowsBaseSession):
             request=request,
             agent=self._host_agent,
             context=self.context,
-            should_evaluate=configs.get("EVA_ROUND", False),
+            should_evaluate=ufo_config.system.eva_round,
             id=self.total_rounds,
         )
 
@@ -421,9 +421,9 @@ class FromFileSession(WindowsBaseSession):
         """
         Record the task done.
         """
-        is_record = configs.get("TASK_STATUS", True)
+        is_record = ufo_config.system.task_status
         if is_record:
-            file_path = configs.get(
+            file_path = ufo_config.system.get(
                 "TASK_STATUS_FILE",
                 os.path.join(self.plan_file, "../..", "tasks_status.json"),
             )
@@ -503,7 +503,7 @@ class OpenAIOperatorSession(Session):
         if self._should_evaluate and not self.is_error():
             self.evaluation()
 
-        if configs.get("LOG_TO_MARKDOWN", True):
+        if ufo_config.system.log_to_markdown:
 
             file_path = self.log_path
             trajectory = Trajectory(file_path)
