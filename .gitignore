@@ -52,13 +52,12 @@ config/*/agents.yaml
 ufo/config/config.yaml
 ufo/config/config_llm.yaml
 
-# But keep config templates and default configs (except agents.yaml)
+# But keep config templates and default configs (except agents.yaml and agent.yaml)
 !config/*/*.template
 !config/*/rag.yaml
 !config/*/system.yaml
 !config/*/mcp.yaml
 !config/*/prices.yaml
 !config/*/third_party.yaml
-!config/*/agent.yaml
 !config/*/device.yaml
 !config/*/network.yaml
