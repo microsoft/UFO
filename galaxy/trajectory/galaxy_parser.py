@@ -259,13 +259,17 @@ class GalaxyTrajectory:
         :param constellation_id: Constellation ID for unique filename
         :param step_number: Step number for unique filename
         :param state: 'before' or 'after'
-        :return: Relative path to the generated image, or None if no dependencies
+        :return: Relative path to the generated image, or None if no tasks
         """
-        if not dependencies:
+        if not tasks:
             return None
 
         # Create directed graph
         G = nx.DiGraph()
+
+        # Add all tasks as nodes first (even if no dependencies)
+        for task_id in tasks.keys():
+            G.add_node(task_id)
 
         # Add edges with attributes
         satisfied_edges = []
@@ -539,12 +543,12 @@ class GalaxyTrajectory:
         :param state: 'before' or 'after'
         :return: Markdown with embedded image
         """
-        if not dependencies:
-            return "_No dependencies_\n\n"
+        if not tasks:
+            return "_No tasks_\n\n"
 
         md = ""
 
-        # Generate topology image
+        # Generate topology image (even if no dependencies, show task nodes)
         image_path = self._generate_topology_image(
             dependencies, tasks, constellation_id, step_number, state
         )
@@ -864,8 +868,8 @@ class GalaxyTrajectory:
                                 tasks = constellation_before.get("tasks", {})
                                 deps = constellation_before.get("dependencies", {})
 
-                                # Show topology graph first (at the top)
-                                if deps and tasks and isinstance(tasks, dict):
+                                # Show topology graph first (at the top) - show even if no dependencies
+                                if tasks and isinstance(tasks, dict):
                                     file.write("##### Dependency Graph (Topology)\n\n")
                                     file.write(
                                         self._format_dependency_graph(
@@ -937,8 +941,8 @@ class GalaxyTrajectory:
                                 tasks = constellation_after.get("tasks", {})
                                 deps = constellation_after.get("dependencies", {})
 
-                                # Show topology graph first (at the top)
-                                if deps and tasks and isinstance(tasks, dict):
+                                # Show topology graph first (at the top) - show even if no dependencies
+                                if tasks and isinstance(tasks, dict):
                                     file.write("##### Dependency Graph (Topology)\n\n")
                                     file.write(
                                         self._format_dependency_graph(
@@ -1018,20 +1022,18 @@ class GalaxyTrajectory:
                         file.write("### Task Summary Table\n\n")
                         file.write(self._format_task_table(tasks))
 
+                        # Show final topology graph - even if no dependencies
                         deps = final_constellation.get("dependencies", {})
-                        if deps:
-                            file.write("### Final Dependency Graph\n\n")
-                            file.write(
-                                self._format_dependency_graph(
-                                    deps,
-                                    tasks,
-                                    final_constellation.get(
-                                        "constellation_id", "final"
-                                    ),
-                                    999,  # Use 999 for final summary
-                                    "final",
-                                )
+                        file.write("### Final Dependency Graph\n\n")
+                        file.write(
+                            self._format_dependency_graph(
+                                deps,
+                                tasks,
+                                final_constellation.get("constellation_id", "final"),
+                                999,  # Use 999 for final summary
+                                "final",
                             )
+                        )
 
         console.print(f"[OK] Markdown report saved to {output_path}", style="green")
 
