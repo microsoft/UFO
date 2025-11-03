@@ -9,11 +9,10 @@ from ufo.client.computer import ComputerManager
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.client.ufo_client import UFOClient
 from ufo.client.websocket import UFOWebSocketClient
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.logging.setup import setup_logger
 
 tracemalloc.start()
-CONFIGS = Config.get_instance().config_data
 
 parser = argparse.ArgumentParser(description="UFO Web Client")
 parser.add_argument(
@@ -82,9 +81,12 @@ logger.info(f"Platform detected/specified: {args.platform}")
 async def main():
     # Parse command line arguments
 
+    # Get UFO config
+    ufo_config = get_ufo_config()
+
     # Initialize the MCP server manager and computer manager
     mcp_server_manager = MCPServerManager()
-    computer_manager = ComputerManager(CONFIGS, mcp_server_manager)
+    computer_manager = ComputerManager(ufo_config.to_dict(), mcp_server_manager)
 
     # Create UFO client with platform information
     client = UFOClient(

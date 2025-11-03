@@ -8,12 +8,12 @@ from typing import Any, Callable, Dict, Optional
 
 from fastapi import WebSocket
 
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.contracts.contracts import ServerMessage, ServerMessageType, TaskStatus
 from ufo.module.basic import BaseSession
 from ufo.module.session_pool import SessionFactory
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class SessionManager:
@@ -78,7 +78,7 @@ class SessionManager:
                 if local:
                     session = self.session_factory.create_session(
                         task=task_name,
-                        should_evaluate=configs.get("EVA_SESSION", False),
+                        should_evaluate=ufo_config.system.eva_session,
                         mode="normal",
                         request=request or "",
                         id=session_id,
@@ -88,7 +88,7 @@ class SessionManager:
                     # Create session using SessionFactory
                     session = self.session_factory.create_service_session(
                         task=task_name,
-                        should_evaluate=configs.get("EVA_SESSION", False),
+                        should_evaluate=ufo_config.system.eva_session,
                         id=session_id,
                         request=request or "",
                         websocket=websocket,

@@ -20,7 +20,10 @@ from ufo.automator.puppeteer import ReceiverManager
 ufo_config = get_ufo_config()
 logger = logging.getLogger(__name__)
 
-if hasattr(ufo_config.system, 'after_click_wait') and ufo_config.system.after_click_wait is not None:
+if (
+    hasattr(ufo_config.system, "after_click_wait")
+    and ufo_config.system.after_click_wait is not None
+):
     pywinauto.timings.Timings.after_clickinput_wait = ufo_config.system.after_click_wait
     pywinauto.timings.Timings.after_click_wait = ufo_config.system.after_click_wait
 
@@ -195,7 +198,10 @@ class ControlReceiver(ReceiverBasic):
                 and args["text"] not in self.control.window_text()
             ):
                 raise Exception(f"Failed to use set_text: {args['text']}")
-            if ufo_config.system.input_text_enter and method_name in ["type_keys", "set_text"]:
+            if ufo_config.system.input_text_enter and method_name in [
+                "type_keys",
+                "set_text",
+            ]:
 
                 self.atomic_execution("type_keys", params={"keys": "{ENTER}"})
             return result

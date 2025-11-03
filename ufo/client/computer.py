@@ -792,17 +792,17 @@ def test_command_router():
     Test function for the CommandRouter.
     This function creates a ComputerManager and a CommandRouter, then executes a sample command.
     """
-    from ufo.config import Config
+    from config.config_loader import get_ufo_config
 
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     )
 
-    configs = Config.get_instance().config_data
+    ufo_config = get_ufo_config()
 
     mcp_server_manager = MCPServerManager()
-    computer_manager = ComputerManager(configs, mcp_server_manager)
+    computer_manager = ComputerManager(ufo_config.to_dict(), mcp_server_manager)
     command_router = CommandRouter(computer_manager)
 
     print("Starting CommandRouter test...")
