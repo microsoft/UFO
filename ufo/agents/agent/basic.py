@@ -12,7 +12,7 @@ from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
 from ufo.agents.processors.core.processor_framework import ProcessorTemplate
 from ufo.agents.states.basic import AgentState, AgentStatus
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.llm import llm_call
 from ufo.module.context import Context
 from ufo.module.interactor import question_asker
@@ -27,7 +27,7 @@ if TYPE_CHECKING:
     from ufo.agents.memory.blackboard import Blackboard
 
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 console = Console()
 
 
@@ -56,7 +56,8 @@ class BasicAgent(ABC):
         # Initialize presenter for output formatting
         from ufo.agents.presenters import PresenterFactory
 
-        presenter_type = configs.get("OUTPUT_PRESENTER", "rich")
+        ufo_config = get_ufo_config()
+        presenter_type = ufo_config.system.output_presenter
         self.presenter = PresenterFactory.create_presenter(presenter_type)
 
     @property
@@ -160,18 +161,16 @@ class BasicAgent(ABC):
         message: List[dict],
         namescope: str,
         use_backup_engine: bool,
-        configs=configs,
     ) -> Tuple[str, float]:
         """
         Get the response for the prompt.
         :param message: The message for LLMs.
         :param namescope: The namescope for the LLMs.
         :param use_backup_engine: Whether to use the backup engine.
-        :param configs: The configurations.
         :return: The response.
         """
         response_string, cost = llm_call.get_completion(
-            message, namescope, use_backup_engine=use_backup_engine, configs=configs
+            message, namescope, use_backup_engine=use_backup_engine
         )
         return response_string, cost
 
@@ -293,8 +292,9 @@ class BasicAgent(ABC):
                         continue
                     qa_pair = {"question": question, "answer": answer}
 
+                    ufo_config = get_ufo_config()
                     utils.append_string_to_file(
-                        configs["QA_PAIR_FILE"], json.dumps(qa_pair)
+                        ufo_config.system.qa_pair_file, json.dumps(qa_pair)
                     )
 
                 else:
@@ -436,7 +436,8 @@ class AgentRegistry:
             )
 
             if third_party:
-                enabled = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
+                ufo_config = get_ufo_config()
+                enabled = ufo_config.system.enabled_third_party_agents
                 if agent_name not in enabled:
                     cls.logger.warning(
                         f"[AgentRegistry] Skipping third-party agent '{agent_name}' (not in config)."

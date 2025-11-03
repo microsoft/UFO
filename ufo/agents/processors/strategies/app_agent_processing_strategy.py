@@ -47,7 +47,7 @@ from ufo.agents.processors.schemas.target import TargetInfo, TargetKind, TargetR
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.automator.ui_control.grounding.omniparser import OmniparserGrounding
 from ufo.automator.ui_control.screenshot import PhotographerFacade
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.contracts.contracts import Command, Result, ResultStatus
 from ufo.llm import AgentType
 from ufo.llm.grounding_model.omniparser_service import OmniParser
@@ -55,15 +55,14 @@ from ufo.module.context import ContextNames
 from ufo.module.dispatcher import BasicCommandDispatcher
 
 # Load configuration
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
     from ufo.module.basic import FileWriter
 
-if configs is not None:
-    CONTROL_BACKEND = configs.get("CONTROL_BACKEND", ["uia"])
-    BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
+CONTROL_BACKEND = ufo_config.system.control_backend
+BACKEND = "win32" if "win32" in CONTROL_BACKEND else "uia"
 
 
 @depends_on("app_root", "log_path", "session_step")
@@ -134,7 +133,7 @@ class AppScreenshotCaptureStrategy(BaseProcessingStrategy):
             # Step 2: Capture desktop screenshot if needed
             desktop_screenshot_path = f"{log_path}desktop_step{session_step}.png"
 
-            if configs.get("SAVE_FULL_SCREEN", False):
+            if ufo_config.system.save_full_screen:
                 self.logger.info("Capturing desktop screenshot")
                 desktop_screenshot_url = await self._capture_desktop_screenshot(
                     desktop_screenshot_path, command_dispatcher
@@ -146,7 +145,7 @@ class AppScreenshotCaptureStrategy(BaseProcessingStrategy):
             ui_tree_path = os.path.join(
                 log_path, "ui_trees", f"ui_tree_step{session_step}.json"
             )
-            if configs.get("SAVE_UI_TREE", False):
+            if ufo_config.system.save_ui_tree:
                 self.logger.info("Capturing UI tree")
                 await self._capture_ui_tree(ui_tree_path, command_dispatcher)
 
@@ -370,7 +369,7 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
         """
         super().__init__(name="app_control_info", fail_fast=fail_fast)
         self.photographer = PhotographerFacade()
-        self.control_detection_backend = configs.get("CONTROL_BACKEND", ["uia"])
+        self.control_detection_backend = ufo_config.system.control_backend
         self.control_recorder = ControlInfoRecorder()
 
         if "omniparser" in self.control_detection_backend:
@@ -382,7 +381,10 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
         """
         Initialized for the OmniParser service.
         """
-        omniparser_endpoint = configs.get("OMNIPARSER", {}).get("ENDPOINT", "")
+        omniparser_config = ufo_config.system.omniparser
+        omniparser_endpoint = (
+            omniparser_config.get("ENDPOINT", "") if omniparser_config else ""
+        )
         if omniparser_endpoint:
             omniparser_service = OmniParser(endpoint=omniparser_endpoint)
             return OmniparserGrounding(service=omniparser_service)
@@ -584,7 +586,7 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
             merged_control_list = self.photographer.merge_target_info_list(
                 api_control_list,
                 grounding_control_list,
-                iou_overlap_threshold=configs.get("IOU_THRESHOLD_FOR_MERGE", 0.1),
+                iou_overlap_threshold=ufo_config.system.iou_threshold_for_merge,
             )
             return merged_control_list
 
@@ -792,7 +794,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         photographer = PhotographerFacade()
         image_string_list = []
 
-        if configs.get("INCLUDE_LAST_SCREENSHOT", True):
+        if ufo_config.system.include_last_screenshot:
 
             image_string_list += [
                 photographer.encode_image_from_path(last_control_screenshot_path)
@@ -804,7 +806,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
             concat_screenshot_save_path,
         )
 
-        if configs.get("CONCAT_SCREENSHOT", False):
+        if ufo_config.system.concat_screenshot:
             image_string_list += [
                 photographer.encode_image_from_path(concat_screenshot_save_path)
             ]
@@ -852,8 +854,8 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
 
         offline_docs, online_docs = agent.external_knowledge_prompt_helper(
             subtask,
-            configs.get("RAG_OFFLINE_DOCS_RETRIEVED_TOPK", 0),
-            configs.get("RAG_ONLINE_RETRIEVED_TOPK", 0),
+            ufo_config.rag.offline_docs_retrieved_topk,
+            ufo_config.rag.online_retrieved_topk,
         )
 
         return {
@@ -924,7 +926,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
                 host_message=host_message,
                 blackboard_prompt=blackboard_prompt,
                 last_success_actions=last_success_actions,
-                include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", True),
+                include_last_screenshot=ufo_config.system.include_last_screenshot,
             )
 
             # Log request data for debugging
@@ -939,7 +941,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
                 host_message=host_message,
                 application_process_name=application_process_name,
                 last_success_actions=last_success_actions,
-                include_last_screenshot=configs.get("INCLUDE_LAST_SCREENSHOT", False),
+                include_last_screenshot=ufo_config.system.include_last_screenshot,
                 prompt_message=prompt_message,
                 request_logger=request_logger,
             )
@@ -1049,7 +1051,7 @@ class AppLLMInteractionStrategy(BaseProcessingStrategy):
         :return: Tuple of (response_text, cost)
         """
         try:
-            max_retries = configs.get("JSON_PARSING_RETRY", 3)
+            max_retries = ufo_config.system.json_parsing_retry
             last_exception = None
 
             for retry_count in range(max_retries):
@@ -1569,7 +1571,7 @@ class AppMemoryUpdateStrategy(BaseProcessingStrategy):
         """
         try:
             # Add action trajectories to blackboard
-            history_keys = configs.get("HISTORY_KEYS", [])
+            history_keys = ufo_config.system.history_keys
             if history_keys:
                 memory_dict = memory_item.to_dict()
                 memorized_action = {

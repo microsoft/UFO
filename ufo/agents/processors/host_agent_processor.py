@@ -41,13 +41,13 @@ from ufo.agents.processors.strategies.host_agent_processing_strategy import (
     HostLLMInteractionStrategy,
     HostMemoryUpdateStrategy,
 )
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.module.context import Context, ContextNames
 
 console = Console()
 
 # Load configuration
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent

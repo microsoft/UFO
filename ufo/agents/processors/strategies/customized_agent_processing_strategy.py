@@ -27,12 +27,12 @@ from ufo.agents.processors.strategies.app_agent_processing_strategy import (
 )
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.automator.ui_control.screenshot import PhotographerFacade
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.contracts.contracts import Command, ResultStatus
 from ufo.module.dispatcher import BasicCommandDispatcher
 
 # Load configuration
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 if TYPE_CHECKING:
     from ufo.agents.agent.customized_agent import CustomizedAgent

@@ -7,7 +7,7 @@ from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.module.context import Context
 
 # Avoid circular import
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     from ufo.agents.agent.customized_agent import LinuxAgent
 
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class LinuxAgentStatus(Enum):

@@ -8,13 +8,13 @@ from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.presenters.rich_presenter import RichPresenter
 from ufo.agents.processors.schemas.response_schema import EvaluationAgentResponse
 from ufo.agents.states.evaluaton_agent_state import EvaluatonAgentStatus
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.contracts.contracts import MCPToolInfo
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 from ufo.utils import json_parser
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class EvaluationAgent(BasicAgent):
@@ -157,11 +157,12 @@ class EvaluationAgent(BasicAgent):
 
 # The following code is used for testing the agent.
 if __name__ == "__main__":
+    ufo_config = get_ufo_config()
 
     eva_agent = EvaluationAgent(
         name="eva_agent",
         is_visual=True,
-        main_prompt=configs["EVALUATION_PROMPT"],
+        main_prompt=ufo_config.system.evaluation_prompt,
         example_prompt="",
     )
 

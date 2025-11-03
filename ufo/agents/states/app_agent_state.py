@@ -15,7 +15,7 @@ from ufo.agents.states.host_agent_state import (
     FinishHostAgentState,
     NoneHostAgentState,
 )
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.module.context import Context, ContextNames
 
 # Avoid circular import
@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from ufo.agents.states.host_agent_state import HostAgentState
 
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class AppAgentStatus(Enum):
@@ -271,7 +271,7 @@ class PendingAppAgentState(AppAgentState):
         """
 
         # Ask the user questions to help the agent to proceed.
-        agent.process_asker(ask_user=configs.get("ASK_QUESTION", False))
+        agent.process_asker(ask_user=ufo_config.system.ask_question)
 
     def next_state(self, agent: AppAgent) -> AppAgentState:
         """
@@ -320,7 +320,7 @@ class ConfirmAppAgentState(AppAgentState):
         """
 
         # If the safe guard is not enabled, the agent should resume the task.
-        if not configs["SAFE_GUARD"]:
+        if not ufo_config.system.safe_guard:
             await agent.process_resume()
             self._confirm = True
 

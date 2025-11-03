@@ -27,7 +27,7 @@ from ufo.agents.processors.core.processor_framework import ProcessorTemplate
 from ufo.agents.processors.schemas.response_schema import AppAgentResponse
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.contracts.contracts import Command, MCPToolInfo
 from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
@@ -36,7 +36,7 @@ from ufo.prompter.agent_prompter import AppAgentPrompter
 console = Console()
 
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 @AgentRegistry.register(agent_name="appagent", processor_cls=AppAgentProcessor)
@@ -227,17 +227,19 @@ class AppAgent(BasicAgent):
         :return: The examples and tips for the AppAgent.
         """
 
+        ufo_config = get_ufo_config()
+
         # Get the examples and tips for the AppAgent using the experience and demonstration retrievers.
-        if configs["RAG_EXPERIENCE"]:
+        if ufo_config.rag.experience:
             experience_results = self.rag_experience_retrieve(
-                request, configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
+                request, ufo_config.rag.experience_retrieved_topk
             )
         else:
             experience_results = []
 
-        if configs["RAG_DEMONSTRATION"]:
+        if ufo_config.rag.demonstration:
             demonstration_results = self.rag_demonstration_retrieve(
-                request, configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
+                request, ufo_config.rag.demonstration_retrieved_topk
             )
         else:
             demonstration_results = []
@@ -460,8 +462,10 @@ class AppAgent(BasicAgent):
         :param request: The request sent to the Bing search retriever.
         """
 
+        ufo_config = get_ufo_config()
+
         # Load the offline document indexer for the app agent if available.
-        if configs["RAG_OFFLINE_DOCS"]:
+        if ufo_config.rag.offline_docs:
             console.print(
                 f"📚 Loading offline help document indexer for {self._process_name}...",
                 style="magenta",
@@ -470,23 +474,23 @@ class AppAgent(BasicAgent):
 
         # Load the online search indexer for the app agent if available.
 
-        if configs["RAG_ONLINE_SEARCH"] and request:
+        if ufo_config.rag.online_search and request:
             console.print("🔍 Creating a Bing search indexer...", style="magenta")
             self.build_online_search_retriever(
-                request, configs["RAG_ONLINE_SEARCH_TOPK"]
+                request, ufo_config.rag.online_search_topk
             )
 
         # Load the experience indexer for the app agent if available.
-        if configs["RAG_EXPERIENCE"]:
+        if ufo_config.rag.experience:
             console.print("📖 Creating an experience indexer...", style="magenta")
-            experience_path = configs["EXPERIENCE_SAVED_PATH"]
+            experience_path = ufo_config.rag.experience_saved_path
             db_path = os.path.join(experience_path, "experience_db")
             self.build_experience_retriever(db_path)
 
         # Load the demonstration indexer for the app agent if available.
-        if configs["RAG_DEMONSTRATION"]:
+        if ufo_config.rag.demonstration:
             console.print("🎬 Creating an demonstration indexer...", style="magenta")
-            demonstration_path = configs["DEMONSTRATION_SAVED_PATH"]
+            demonstration_path = ufo_config.rag.demonstration_saved_path
             db_path = os.path.join(demonstration_path, "demonstration_db")
             self.build_human_demonstration_retriever(db_path)
 

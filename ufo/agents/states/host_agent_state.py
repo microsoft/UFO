@@ -7,10 +7,10 @@ from enum import Enum
 from typing import TYPE_CHECKING, Dict, Optional, Type
 
 from ufo.agents.states.basic import AgentState, AgentStateManager
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.module.context import Context
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 if TYPE_CHECKING:
     from ufo.agents.agent.app_agent import AppAgent
@@ -253,7 +253,7 @@ class PendingHostAgentState(HostAgentState):
         """
 
         # Ask the user questions to help the agent to proceed.
-        agent.process_asker(ask_user=configs.get("ASK_QUESTION", False))
+        agent.process_asker(ask_user=ufo_config.system.ask_question)
 
     def is_round_end(self) -> bool:
         """

@@ -20,7 +20,7 @@ from ufo.agents.memory.blackboard import Blackboard
 from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.processors.schemas.response_schema import HostAgentResponse
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.contracts.contracts import Command, MCPToolInfo
 from ufo.llm import AgentType
 from ufo.module.context import Context, ContextNames
@@ -28,8 +28,7 @@ from ufo.prompter.agent_prompter import HostAgentPrompter
 
 console = Console()
 
-
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 class RunningMode(str, Enum):
@@ -49,10 +48,12 @@ class AgentConfigResolver:
     ) -> Dict[str, Any]:
         """Return configuration dict for standard app agents."""
 
+        ufo_config = get_ufo_config()
+
         example_prompt = (
-            configs["APPAGENT_EXAMPLE_PROMPT_AS"]
-            if configs.get("ACTION_SEQUENCE")
-            else configs["APPAGENT_EXAMPLE_PROMPT"]
+            ufo_config.system.appagent_example_prompt_as
+            if ufo_config.system.action_sequence
+            else ufo_config.system.appagent_example_prompt
         )
 
         if mode == RunningMode.NORMAL:
@@ -67,8 +68,8 @@ class AgentConfigResolver:
             name=agent_name,
             process_name=process,
             app_root_name=root,
-            is_visual=configs[AgentType.APP]["VISUAL_MODE"],
-            main_prompt=configs["APPAGENT_PROMPT"],
+            is_visual=ufo_config.app_agent.visual_mode,
+            main_prompt=ufo_config.system.appagent_prompt,
             example_prompt=example_prompt,
             mode=mode.value,
         )
@@ -97,7 +98,8 @@ class AgentConfigResolver:
         agent_name: str, mode: RunningMode
     ) -> Dict[str, Any]:
         """Return configuration dict for third-party agents."""
-        cfg = configs.get("THIRD_PARTY_AGENT_CONFIG", {}).get(agent_name, {})
+        ufo_config = get_ufo_config()
+        cfg = ufo_config.system.third_party_agent_config.get(agent_name, {})
         return dict(
             agent_type=agent_name,
             name=agent_name,
@@ -419,11 +421,11 @@ class HostAgent(BasicAgent):
         # Format the action string using get_command_string and pass to presenter
         function = response.function
         arguments = response.arguments
-        
+
         action_str = None
         if function:
             action_str = self.get_command_string(function, arguments)
-        
+
         # Pass formatted action string as parameter instead of modifying response
         self.presenter.present_host_agent_response(response, action_str=action_str)
 

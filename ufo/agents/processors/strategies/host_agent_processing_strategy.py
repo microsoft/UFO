@@ -37,14 +37,14 @@ from ufo.agents.processors.schemas.log_schema import HostAgentRequestLog
 from ufo.agents.processors.schemas.response_schema import HostAgentResponse
 from ufo.agents.processors.schemas.target import TargetInfo, TargetKind, TargetRegistry
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.contracts.contracts import Command, Result, ResultStatus
 from ufo.llm import AgentType
 from ufo.module.context import ContextNames
 from ufo.module.dispatcher import BasicCommandDispatcher
 
 # Load configuration
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 if TYPE_CHECKING:
     from ufo.agents.agent.host_agent import HostAgent
@@ -261,7 +261,7 @@ class DesktopDataCollectionStrategy(BaseProcessingStrategy):
         """
         try:
             # Get enabled third-party agent names from configuration
-            third_party_agent_names = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
+            third_party_agent_names = ufo_config.system.enabled_third_party_agents
 
             if not third_party_agent_names:
                 self.logger.info("No third-party agents configured")
@@ -536,7 +536,7 @@ class HostLLMInteractionStrategy(BaseProcessingStrategy):
         :return: Tuple of (response_text, cost)
         :raises: Exception if all retry attempts fail
         """
-        max_retries = configs.get("JSON_PARSING_RETRY", 3)
+        max_retries = ufo_config.system.json_parsing_retry
         last_exception = None
 
         for retry_count in range(max_retries):
@@ -1215,7 +1215,7 @@ class HostMemoryUpdateStrategy(BaseProcessingStrategy):
         """
         try:
             # Get history keys from configuration
-            history_keys = configs.get("HISTORY_KEYS", [])
+            history_keys = ufo_config.system.history_keys
             if not history_keys:
                 self.logger.debug("No history keys configured for blackboard")
                 return

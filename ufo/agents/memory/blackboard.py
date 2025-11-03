@@ -8,9 +8,9 @@ from typing import Dict, List, Optional, Union
 
 from ufo import utils
 from ufo.agents.memory.memory import Memory, MemoryItem
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 
 @dataclass
@@ -47,9 +47,9 @@ class Blackboard:
         self._trajectories: Memory = Memory()
         self._screenshots: Memory = Memory()
 
-        if configs.get("USE_CUSTOMIZATION", False):
+        if ufo_config.system.use_customization:
             self.load_questions(
-                configs.get("QA_PAIR_FILE", ""), configs.get("QA_PAIR_NUM", -1)
+                ufo_config.system.qa_pair_file, ufo_config.system.qa_pair_num
             )
 
     @property
@@ -143,9 +143,7 @@ class Blackboard:
 
         if os.path.exists(screenshot_path):
 
-            screenshot_str = utils.encode_image_from_path(
-                screenshot_path
-            )
+            screenshot_str = utils.encode_image_from_path(screenshot_path)
         else:
             print(f"Screenshot path {screenshot_path} does not exist.")
             screenshot_str = ""
