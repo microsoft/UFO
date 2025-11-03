@@ -14,7 +14,7 @@ CONSTELLATION_AGENT:
   AAD_API_SCOPE_BASE: "feb7b661-cac7-44a8-8dc1-163b63c23df2"
   
   # Prompt configurations for constellation agent
-  CONSTELLATION_CREATION_PROMPT: "ufo/prompts/share/constellation/constellation_creation.yaml"
-  CONSTELLATION_EDITING_PROMPT: "ufo/prompts/share/constellation/constellation_editing.yaml"
-  CONSTELLATION_CREATION_EXAMPLE_PROMPT: "ufo/prompts/examples/constellation/constellation_creation_example.yaml"
-  CONSTELLATION_EDITING_EXAMPLE_PROMPT: "ufo/prompts/examples/constellation/constellation_editing_example.yaml"
+  CONSTELLATION_CREATION_PROMPT: "galaxy/prompts/constellation/share/constellation_creation.yaml"
+  CONSTELLATION_EDITING_PROMPT: "galaxy/prompts/constellation/share/constellation_editing.yaml"
+  CONSTELLATION_CREATION_EXAMPLE_PROMPT: "galaxy/prompts/constellation/examples/constellation_creation_example.yaml"
+  CONSTELLATION_EDITING_EXAMPLE_PROMPT: "galaxy/prompts/constellation/examples/constellation_editing_example.yaml"

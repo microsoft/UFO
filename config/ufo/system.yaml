@@ -102,9 +102,6 @@ CONTROL_FILTER_TOP_K_ICON: 15  # Control filter top k for icon similarity
 CONTROL_FILTER_MODEL_SEMANTIC_NAME: "all-MiniLM-L6-v2"  # Semantic similarity model
 CONTROL_FILTER_MODEL_ICON_NAME: "clip-ViT-B-32"  # Icon similarity model
 
-# API Usage Configuration
-USE_APIS: True  # Whether to use the API
-API_PROMPT: "ufo/prompts/share/base/api.yaml"  # The prompt for the API
 
 # MCP (Model Context Protocol) Integration
 USE_MCP: True  # Whether to enable MCP integration for tool execution
@@ -115,34 +112,7 @@ MCP_INSTRUCTIONS_PATH: "ufo/config/mcp_instructions"  # Path to MCP instructions
 MCP_TOOL_TIMEOUT: 30  # Timeout in seconds for MCP tool execution
 MCP_LOG_EXECUTION: False  # Whether to log MCP tool execution details
 
-# Device Configuration (for Galaxy integration)
-DEVICE_INFO: "config/device_config.yaml"  # The device information file path
 
-# Prompt Paths (backward compatibility)
-HOSTAGENT_PROMPT: "ufo/prompts/share/base/host_agent.yaml"
-APPAGENT_PROMPT: "ufo/prompts/share/base/app_agent.yaml"
-FOLLOWERAGENT_PROMPT: "ufo/prompts/share/base/app_agent.yaml"
-EVALUATION_PROMPT: "ufo/prompts/evaluation/evaluate.yaml"
-HOSTAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/host_agent_example.yaml"
-APPAGENT_EXAMPLE_PROMPT: "ufo/prompts/examples/{mode}/app_agent_example.yaml"
-APPAGENT_EXAMPLE_PROMPT_AS: "ufo/prompts/examples/{mode}/app_agent_example_as.yaml"
-
-# API and App-specific Prompts
-APP_API_PROMPT_ADDRESS:
-  "WINWORD.EXE": "ufo/prompts/apps/word/api.yaml"
-  "EXCEL.EXE": "ufo/prompts/apps/excel/api.yaml"
-  "POWERPNT.EXE": "ufo/prompts/apps/powepoint/api.yaml"
-  "msedge.exe": "ufo/prompts/apps/web/api.yaml"
-  "chrome.exe": "ufo/prompts/apps/web/api.yaml"
-
-WORD_API_PROMPT: "ufo/prompts/apps/word/api.yaml"
-EXCEL_API_PROMPT: "ufo/prompts/apps/excel/api.yaml"
-
-# Constellation Prompts (for backward compatibility, actual constellation is in Galaxy)
-CONSTELLATION_CREATION_PROMPT: "ufo/prompts/share/constellation/constellation_creation.yaml"
-CONSTELLATION_EDITING_PROMPT: "ufo/prompts/share/constellation/constellation_editing.yaml"
-CONSTELLATION_CREATION_EXAMPLE_PROMPT: "ufo/prompts/examples/constellation/constellation_creation_example.yaml"
-CONSTELLATION_EDITING_EXAMPLE_PROMPT: "ufo/prompts/examples/constellation/constellation_editing_example.yaml"
 
 # Enabled Third-Party Agents
 ENABLED_THIRD_PARTY_AGENTS: ["HardwareAgent", "LinuxAgent"]

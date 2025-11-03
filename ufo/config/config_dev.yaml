@@ -163,12 +163,12 @@ THIRD_PARTY_AGENT_CONFIG: {
 }
 
 # Constellation
-CONSTELLATION_CREATION_PROMPT: "ufo/prompts/share/constellation/constellation_creation.yaml"  # The prompt for the app selection
+CONSTELLATION_CREATION_PROMPT: "galaxy/prompts/constellation/share/constellation_creation.yaml"  # The prompt for the app selection
 
-CONSTELLATION_EDITING_PROMPT: "ufo/prompts/share/constellation/constellation_editing.yaml"  # The prompt for the action selection
+CONSTELLATION_EDITING_PROMPT: "galaxy/prompts/constellation/share/constellation_editing.yaml"  # The prompt for the action selection
 
-CONSTELLATION_CREATION_EXAMPLE_PROMPT: "ufo/prompts/examples/constellation/constellation_creation_example.yaml"  # The prompt for the evaluation
+CONSTELLATION_CREATION_EXAMPLE_PROMPT: "galaxy/prompts/constellation/examples/constellation_creation_example.yaml"  # The prompt for the evaluation
 
-CONSTELLATION_EDITING_EXAMPLE_PROMPT: "ufo/prompts/examples/constellation/constellation_editing_example.yaml"  # The prompt for the app selection
+CONSTELLATION_EDITING_EXAMPLE_PROMPT: "galaxy/prompts/constellation/examples/constellation_editing_example.yaml"  # The prompt for the app selection
 
 DEVICE_INFO: config/device_config.yaml  # The device information file path

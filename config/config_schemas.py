@@ -384,16 +384,16 @@ class SystemConfig:
 
     # ========== Constellation Prompts ==========
     constellation_creation_prompt: str = (
-        "ufo/prompts/share/constellation/constellation_creation.yaml"
+        "galaxy/prompts/constellation/share/constellation_creation.yaml"
     )
     constellation_editing_prompt: str = (
-        "ufo/prompts/share/constellation/constellation_editing.yaml"
+        "galaxy/prompts/constellation/share/constellation_editing.yaml"
     )
     constellation_creation_example_prompt: str = (
-        "ufo/prompts/examples/constellation/constellation_creation_example.yaml"
+        "galaxy/prompts/constellation/examples/constellation_creation_example.yaml"
     )
     constellation_editing_example_prompt: str = (
-        "ufo/prompts/examples/constellation/constellation_editing_example.yaml"
+        "galaxy/prompts/constellation/examples/constellation_editing_example.yaml"
     )
 
     # ========== Third-Party Agents ==========
