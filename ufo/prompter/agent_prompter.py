@@ -4,11 +4,9 @@
 import json
 from typing import Any, Dict, List, Optional
 
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.contracts.contracts import MCPToolInfo
 from ufo.prompter.basic import BasicPrompter
-
-configs = Config.get_instance().config_data
 
 
 class HostAgentPrompter(BasicPrompter):
@@ -92,8 +90,9 @@ class HostAgentPrompter(BasicPrompter):
         Construct the prompt for third party agent instruction.
         :return: The prompt for third party agent instruction.
         """
-        enabled_third_party_agents = configs.get("ENABLED_THIRD_PARTY_AGENTS", [])
-        third_party_agents_configs = configs.get("THIRD_PARTY_AGENT_CONFIG", {})
+        ufo_config = get_ufo_config()
+        enabled_third_party_agents = ufo_config.system.enabled_third_party_agents
+        third_party_agents_configs = ufo_config.system.third_party_agent_config
 
         instructions = []
         for agent_name in enabled_third_party_agents:
@@ -228,7 +227,8 @@ class AppAgentPrompter(BasicPrompter):
         apis = self.api_prompt_helper(verbose=1)
         examples = self.examples_prompt_helper(additional_examples=additional_examples)
 
-        if configs.get("ACTION_SEQUENCE", False):
+        ufo_config = get_ufo_config()
+        if ufo_config.system.action_sequence:
             system_key = "system_as"
         else:
             system_key = "system"
@@ -363,7 +363,8 @@ class AppAgentPrompter(BasicPrompter):
         [Response]:
             {response}"""
 
-        if configs.get("ACTION_SEQUENCE", False):
+        ufo_config = get_ufo_config()
+        if ufo_config.system.action_sequence:
             for example in additional_examples:
                 example["Response"] = self.action2action_sequence(
                     example.get("Response", {})

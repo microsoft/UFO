@@ -15,18 +15,15 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.win32structures import RECT
 
 from ufo import utils
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 
 if TYPE_CHECKING:
     from ufo.agents.processors.schemas.target import TargetInfo
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 logger = logging.getLogger(__name__)
 
-if configs is not None:
-    DEFAULT_PNG_COMPRESS_LEVEL = int(configs.get("DEFAULT_PNG_COMPRESS_LEVEL", 0))
-else:
-    DEFAULT_PNG_COMPRESS_LEVEL = 6
+DEFAULT_PNG_COMPRESS_LEVEL = int(ufo_config.system.default_png_compress_level)
 
 
 class Photographer(ABC):
@@ -466,7 +463,7 @@ class AnnotationDecorator(PhotographerDecorator):
         else:
             screenshot_annotated = self.photographer.capture()
 
-        color_dict = configs.get("ANNOTATION_COLORS", {})
+        color_dict = ufo_config.system.annotation_colors
 
         # First pass: Draw bounding box highlights if requested
         if highlight_bbox:
@@ -518,7 +515,7 @@ class AnnotationDecorator(PhotographerDecorator):
                 screenshot_annotated,
                 adjusted_coordinate,
                 label_text,
-                font_size=configs.get("ANNOTATION_FONT_SIZE", 25),
+                font_size=ufo_config.system.annotation_font_size,
                 button_color=(
                     color_dict.get(
                         control.element_info.control_type, self.color_default
@@ -623,8 +620,7 @@ class TargetAnnotationDecorator(PhotographerDecorator):
         else:
             raise ValueError("Background screenshot path is required and must exist")
 
-        configs = Config.get_instance().config_data
-        color_dict = configs.get("ANNOTATION_COLORS", {})
+        color_dict = ufo_config.system.annotation_colors
 
         # First pass: Draw bounding box highlights if requested
         if highlight_bbox:
@@ -681,7 +677,7 @@ class TargetAnnotationDecorator(PhotographerDecorator):
                 screenshot_annotated,
                 adjusted_coordinate,
                 label_text,
-                font_size=configs.get("ANNOTATION_FONT_SIZE", 25),
+                font_size=ufo_config.system.annotation_font_size,
                 button_color=(
                     color_dict.get(target.type, self.color_default)
                     if self.color_diff
@@ -691,7 +687,7 @@ class TargetAnnotationDecorator(PhotographerDecorator):
 
         if save_path is not None and screenshot_annotated is not None:
             screenshot_annotated.save(
-                save_path, compress_level=configs.get("DEFAULT_PNG_COMPRESS_LEVEL", 1)
+                save_path, compress_level=ufo_config.system.default_png_compress_level
             )
         if not screenshot_annotated:
             logger.warning("Screenshot annotated is not valid.")

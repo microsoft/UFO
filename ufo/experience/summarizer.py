@@ -193,17 +193,17 @@ class ExperienceSummarizer:
 
 if __name__ == "__main__":
 
-    from ufo.config import Config
+    from config.config_loader import get_ufo_config
 
-    configs = Config.get_instance().config_data
+    ufo_config = get_ufo_config()
 
     # Initialize the ExperienceSummarizer
 
     summarizer = ExperienceSummarizer(
-        configs["APP_AGENT"]["VISUAL_MODE"],
-        configs["EXPERIENCE_PROMPT"],
-        configs["APPAGENT_EXAMPLE_PROMPT"],
-        configs["API_PROMPT"],
+        ufo_config.app_agent.visual_mode,
+        ufo_config.system.experience_prompt,
+        ufo_config.system.appagent_example_prompt,
+        ufo_config.system.api_prompt,
     )
 
     log_path = "logs/test_exp"

@@ -6,12 +6,10 @@ import json
 import os
 from typing import Any, Dict, List
 
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.prompter.basic import BasicPrompter
 from ufo.trajectory import parser
 import ufo.utils
-
-configs = Config.get_instance().config_data
 
 
 class EvaluationAgentPrompter(BasicPrompter):
@@ -44,10 +42,11 @@ class EvaluationAgentPrompter(BasicPrompter):
         examples = self.examples_prompt_helper()
         apis = self.api_prompt_helper()
 
+        ufo_config = get_ufo_config()
         system_key = "system"
         screenshot_key = (
             "screenshots_all"
-            if configs.get("EVA_ALL_SCREENSHOTS", True)
+            if ufo_config.system.eva_all_screenshots
             else "screenshots_head_tail"
         )
 
@@ -316,8 +315,9 @@ class EvaluationAgentPrompter(BasicPrompter):
 
 if __name__ == "__main__":
 
+    ufo_config = get_ufo_config()
     eva_prompter = EvaluationAgentPrompter(
         is_visual=True,
-        prompt_template=configs.get("EVALUATION_PROMPT", ""),
+        prompt_template=ufo_config.system.evaluation_prompt,
         example_prompt_template="",
     )

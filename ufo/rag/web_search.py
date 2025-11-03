@@ -7,10 +7,10 @@ from langchain.docstore.document import Document
 from langchain.text_splitter import HTMLHeaderTextSplitter
 from langchain_community.vectorstores import FAISS
 
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.utils import get_hugginface_embedding
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 logger = logging.getLogger(__name__)
 
 
@@ -23,7 +23,7 @@ class BingSearchWeb:
         """
         Create a new WebRetriever.
         """
-        self.api_key = configs["BING_API_KEY"]
+        self.api_key = ufo_config.rag.bing_api_key
 
     def search(self, query: str, top_k: int = 1):
         """

@@ -4,10 +4,8 @@
 import json
 from typing import Any, Dict, List
 
-from ufo.config import Config
+from config.config_loader import get_ufo_config
 from ufo.prompter.agent_prompter import AppAgentPrompter
-
-configs = Config.get_instance().config_data
 
 
 class LinuxAgentPrompter(AppAgentPrompter):

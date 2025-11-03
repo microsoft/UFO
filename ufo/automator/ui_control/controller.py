@@ -13,16 +13,16 @@ from pywinauto import keyboard
 from pywinauto.controls.uiawrapper import UIAWrapper
 from pywinauto.win32structures import RECT
 
+from config.config_loader import get_ufo_config
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
 from ufo.automator.puppeteer import ReceiverManager
-from ufo.config import Config
 
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 logger = logging.getLogger(__name__)
 
-if configs is not None and configs.get("AFTER_CLICK_WAIT", None) is not None:
-    pywinauto.timings.Timings.after_clickinput_wait = configs["AFTER_CLICK_WAIT"]
-    pywinauto.timings.Timings.after_click_wait = configs["AFTER_CLICK_WAIT"]
+if hasattr(ufo_config.system, 'after_click_wait') and ufo_config.system.after_click_wait is not None:
+    pywinauto.timings.Timings.after_clickinput_wait = ufo_config.system.after_click_wait
+    pywinauto.timings.Timings.after_click_wait = ufo_config.system.after_click_wait
 
 pyautogui.FAILSAFE = False
 
@@ -87,7 +87,7 @@ class ControlReceiver(ReceiverBasic):
         :return: The result of the click action.
         """
 
-        api_name = configs.get("CLICK_API", "click_input")
+        api_name = ufo_config.system.click_api
 
         if api_name == "click":
             self.atomic_execution("click", params)
@@ -172,13 +172,13 @@ class ControlReceiver(ReceiverBasic):
         """
 
         text = params.get("text", "")
-        inter_key_pause = configs.get("INPUT_TEXT_INTER_KEY_PAUSE", 0.1)
+        inter_key_pause = ufo_config.system.input_text_inter_key_pause
 
         if params.get("clear_current_text", False):
             self.control.type_keys("^a", pause=inter_key_pause)
             self.control.type_keys("{DELETE}", pause=inter_key_pause)
 
-        if configs["INPUT_TEXT_API"] == "set_text":
+        if ufo_config.system.input_text_api == "set_text":
             method_name = "set_edit_text"
             args = {"text": text}
         else:
@@ -195,7 +195,7 @@ class ControlReceiver(ReceiverBasic):
                 and args["text"] not in self.control.window_text()
             ):
                 raise Exception(f"Failed to use set_text: {args['text']}")
-            if configs["INPUT_TEXT_ENTER"] and method_name in ["type_keys", "set_text"]:
+            if ufo_config.system.input_text_enter and method_name in ["type_keys", "set_text"]:
 
                 self.atomic_execution("type_keys", params={"keys": "{ENTER}"})
             return result
