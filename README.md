@@ -302,67 +302,102 @@ You may use them to debug, replay, or analyze the agent output.
 
 ## 🔄 Migrating to the New Config System
 
-If you're upgrading from an older version of UFO that used `ufo/config/config.yaml`, we provide an **automated migration tool** to help you transition to the new modular config system.
+If you're upgrading from an older version of UFO that used `ufo/config/config.yaml`, we provide an **automated conversion tool** that intelligently transforms your legacy monolithic config into the new modular structure.
 
-### ⚡ Automatic Migration (Recommended)
+### ⚡ Automatic Conversion (Recommended)
 
-**One-command migration with safety features:**
+**One-command conversion with format transformation:**
 
 ```powershell
-# Interactive migration with automatic backup
-python -m ufo.tools.migrate_config
+# Interactive conversion with automatic backup
+python -m ufo.tools.convert_config
 
 # Preview changes first (dry run)
-python -m ufo.tools.migrate_config --dry-run
+python -m ufo.tools.convert_config --dry-run
 
-# Force migration without confirmation
-python -m ufo.tools.migrate_config --force
+# Force conversion without confirmation
+python -m ufo.tools.convert_config --force
 ```
 
-**What the migration tool does:**
-- ✅ Automatically copies your YAML files from `ufo/config/` to `config/ufo/`
-- ✅ Creates timestamped backup of your legacy config
-- ✅ Shows detailed migration report
-- ✅ Provides rollback instructions if needed
+**What the conversion tool does:**
+- ✅ **Splits** monolithic `config.yaml` into modular files (agents.yaml, rag.yaml, system.yaml)
+- ✅ **Converts** flow-style YAML (with braces `{}`) to standard block-style YAML
+- ✅ **Maps** legacy file names (e.g., `agent_mcp.yaml` → `mcp.yaml`, `config_prices.yaml` → `prices.yaml`)
+- ✅ **Preserves** all configuration values (verified by unit tests)
+- ✅ **Creates** timestamped backup before conversion
+- ✅ **Validates** output files are parseable YAML
+- ✅ **Provides** rollback instructions if needed
 
 **Example output:**
 ```
-🔧 Config Migration
-Found 3 configuration file(s):
-  • config.yaml
-  • action.yaml
-  • rag.yaml
+🔧 Config Conversion
 
-Creating backup: ufo/config.backup_20251103_143052
-✓ Backup created successfully
-✓ Copied: config.yaml → config/ufo/config.yaml
-✓ Copied: action.yaml → config/ufo/action.yaml
-✓ Copied: rag.yaml → config/ufo/rag.yaml
+Converting configurations...
+Processing: ufo\config\config.yaml
+Processing: ufo\config\agent_mcp.yaml
+Processing: ufo\config\config_prices.yaml
+Skipping: ufo\config\config_dev.yaml (environment-specific, use --env=dev)
+
+✓ Wrote: config\ufo\agents.yaml (6 keys)
+✓ Wrote: config\ufo\rag.yaml (11 keys)
+✓ Wrote: config\ufo\system.yaml (6 keys)
+✓ Wrote: config\ufo\mcp.yaml (5 keys)
+✓ Wrote: config\ufo\prices.yaml (1 keys)
+
+✨ Conversion Complete!
+```
+
+**Conversion Details:**
+
+| Legacy File | → | New File(s) | Transformation |
+|-------------|---|-------------|----------------|
+| `config.yaml` (monolithic) | → | `agents.yaml` + `rag.yaml` + `system.yaml` | Smart field splitting |
+| `agent_mcp.yaml` | → | `mcp.yaml` | Rename + format conversion |
+| `config_prices.yaml` | → | `prices.yaml` | Rename + format conversion |
+| `config_dev.yaml` | → | (kept separate, use `--env=dev`) | Environment-specific |
+
+**Format Conversion:**
+```yaml
+# Old format (flow-style with braces)
+HOST_AGENT: { API_TYPE: "azure_ad", API_KEY: "...", VISUAL_MODE: True }
+
+# New format (block-style with indentation)
+HOST_AGENT:
+  API_TYPE: azure_ad
+  API_KEY: YOUR_KEY
+  VISUAL_MODE: true
 ```
 
 ### 🛠️ Manual Migration Steps
 
-If you prefer manual migration:
+If you prefer manual migration or want to understand what the conversion tool does:
 
 1. **Copy the template file** to create your agent config:
    ```powershell
    copy config\ufo\agents.yaml.template config\ufo\agents.yaml
    ```
 
-2. **Edit the agent config** with your API credentials:
-   ```powershell
-   notepad config\ufo\agents.yaml
+2. **Transfer your API credentials** from old config to new:
+   
+   **From** `ufo/config/config.yaml`:
+   ```yaml
+   HOST_AGENT: { API_TYPE: "azure_ad", API_KEY: "YOUR_KEY", ... }
    ```
    
-   Replace placeholders in `agents.yaml`:
-   - `API_KEY: "sk-YOUR_KEY_HERE"` → Your actual OpenAI API key
-   - `API_BASE`, `API_DEPLOYMENT_ID` if using Azure OpenAI
+   **To** `config/ufo/agents.yaml`:
+   ```yaml
+   HOST_AGENT:
+     API_TYPE: azure_ad
+     API_KEY: YOUR_KEY
+     # ... copy other fields
+   ```
 
 3. **Other configs use defaults** - Files like `rag.yaml`, `system.yaml`, `mcp.yaml` already exist with sensible defaults. Only edit them if you want to customize settings (e.g., enable Bing search, change RAG settings).
 
-4. **Verify the migration** works:
+4. **Verify the conversion** works:
    ```powershell
-   python -m ufo --task test_migration
+   # Test that new config loads correctly
+   python -c "from config.config_loader import get_ufo_config; print('Config loaded:', len(get_ufo_config()), 'keys')"
    ```
 
 ### 💻 Code Migration Examples
@@ -385,57 +420,81 @@ api_type = config.get("HOST_AGENT", "API_TYPE")
 
 ### 📋 Configuration File Mapping
 
-| Old Location | New Location | Description |
-|--------------|--------------|-------------|
-| `ufo/config/config.yaml` (all-in-one) | `config/ufo/agents.yaml` | Agent LLM settings (HOST_AGENT, APP_AGENT, etc.) - **needs template** |
-| RAG section in config.yaml | `config/ufo/rag.yaml` | RAG and knowledge base settings - uses defaults |
-| Action/System sections | `config/ufo/system.yaml` | System and action settings - uses defaults |
-| MCP section | `config/ufo/mcp.yaml` | MCP integration settings - uses defaults |
+The conversion tool intelligently splits and transforms your legacy config:
 
-**Key difference**: Only `agents.yaml` requires copying from template (contains API keys). Other files already have working defaults.
+| Old Location | New Location | Transformation | Contains |
+|--------------|--------------|----------------|----------|
+| `ufo/config/config.yaml` (monolithic 15KB) | `config/ufo/agents.yaml` | Field extraction + format conversion | Agent LLM settings (HOST_AGENT, APP_AGENT, etc.) |
+| RAG section in config.yaml | `config/ufo/rag.yaml` | Field extraction + format conversion | RAG and knowledge base settings |
+| System/Action sections | `config/ufo/system.yaml` | Field extraction + format conversion | System and execution settings |
+| `ufo/config/agent_mcp.yaml` | `config/ufo/mcp.yaml` | Rename + format conversion | MCP integration settings |
+| `ufo/config/config_prices.yaml` | `config/ufo/prices.yaml` | Rename + format conversion | API pricing data |
+
+**Conversion Features:**
+- 🔄 **Format**: Flow-style (`{...}`) → Block-style (indented YAML)
+- ✂️ **Splitting**: 23 keys from monolithic file → 5 modular files
+- ✅ **Validation**: All values preserved (verified by unit tests)
+- 📝 **Comments**: Automatic headers added to each file
+
+**Only `agents.yaml` requires manual setup** (contains sensitive API keys). Other files are auto-generated with correct values.
 
 ### ⚙️ Backward Compatibility
 
 - ✅ Old config path `ufo/config/config.yaml` **still works**
 - ✅ Old code using `Config.get_instance().config_data` **still works**
-- ⚠️ If both configs exist, new config in `config/ufo/` takes precedence
-- ⚠️ A warning `CONFIG CONFLICT DETECTED` will show if both exist
-- 📝 We recommend completing migration to avoid confusion
+- ✅ Gradual migration supported - both systems can coexist temporarily
+- ⚠️ **Recommended**: After conversion, keep legacy config as backup until verified
 
-### 🧪 Testing Your Migration
+### 🧪 Testing the Conversion
 
-```powershell
-# Test that UFO starts without errors
-python -m ufo --task test_migration
-
-# You should NOT see this warning if migration is complete:
-# ⚠️ CONFIG CONFLICT DETECTED: UFO
-
-# If migration successful, you can safely remove legacy config:
-rm ufo\config\*.yaml
-```
-
-### 🆘 Rollback Instructions
-
-If you need to rollback after migration:
+After running the conversion tool, verify everything works:
 
 ```powershell
-# Restore from automatic backup
-copy ufo\config.backup_TIMESTAMP\* ufo\config\
+# 1. Run unit tests (includes conversion tests)
+python tests\test_convert_config.py
 
-# Or manually delete new config
-rm config\ufo\*.yaml
+# 2. Load and inspect converted config
+python -c "from config.config_loader import get_ufo_config; cfg = get_ufo_config(); print(f'Loaded {len(cfg)} config keys'); print('HOST_AGENT API_TYPE:', cfg.get('HOST_AGENT', {}).get('API_TYPE'))"
+
+# 3. Compare old vs new config values
+python -c "from ufo.tools.convert_config import ConfigConverter; from pathlib import Path; c = ConfigConverter(); old = c.load_yaml(Path('ufo/config/config.yaml')); new_merged = {}; [new_merged.update(c.load_yaml(f)) for f in Path('config/ufo').glob('*.yaml')]; print('Match:', old == {k:v for k,v in new_merged.items() if k in old})"
 ```
+
+### 🔙 Rollback Instructions
+
+If you need to rollback after conversion:
+
+```powershell
+# The tool creates automatic backups: ufo/config.backup_YYYYMMDD_HHMMSS
+
+# 1. Find your backup
+dir ufo\config.backup_*
+
+# 2. Restore from backup (example)
+xcopy ufo\config.backup_20251103_143052\*.yaml ufo\config\ /Y
+
+# 3. Remove converted files (optional)
+del config\ufo\agents.yaml
+del config\ufo\rag.yaml
+del config\ufo\system.yaml
+```
+
+**Backup Location:** The tool automatically creates timestamped backups unless you use `--no-backup` flag.
 
 ### 📚 Additional Resources
 
-- Migration tool source: `ufo/tools/migrate_config.py`
-- Migration tests: `tests/test_*_config_migration.py`
-- [Full documentation](https://microsoft.github.io/UFO/) for config schemas
-- [GitHub Issues](https://github.com/microsoft/UFO/issues) for help
+- **Conversion tool source**: `ufo/tools/convert_config.py`
+- **Unit tests**: `tests/test_convert_config.py` (run: `python tests/test_convert_config.py`)
+- **Field mapping**: See `FIELD_MAPPING` dict in `convert_config.py` for complete mapping
+- **Help & Support**: [GitHub Issues](https://github.com/microsoft/UFO/issues)
+
+**Tool Features:**
+- ✅ **10 unit tests** covering field mapping, format conversion, value preservation
+- ✅ **Dry-run mode** for safe preview before conversion
+- ✅ **Automatic backup** with timestamp for easy rollback
+- ✅ **Validation** ensures all output files are valid, parseable YAML
 
 ---
-
 
 ## 📊 Evaluation
 
