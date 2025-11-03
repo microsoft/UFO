@@ -15,6 +15,7 @@ __pycache__/
 *.ipynb
 /.VSCodeCounter
 /analysis/*
+/tla/*
 
 # Ignore the config file
 ufo/config/config.yaml

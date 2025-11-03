@@ -1,4 +1,5 @@
 from dataclasses import dataclass, field
+import json
 from typing import Any, Dict, List, Optional
 
 from ufo.agents.processors.context.processing_context import BasicProcessorContext
@@ -72,3 +73,43 @@ class ConstellationProcessorContext(BasicProcessorContext):
             "constellation_after",
             "weaving_mode",
         ]
+
+    def to_dict(self, selective: bool = True) -> Dict[str, Any]:
+        """
+        Convert context to dictionary, properly handling JSON string fields.
+
+        This method extends BasicProcessorContext.to_dict() to parse
+        constellation_before and constellation_after from JSON strings
+        back to dictionaries to avoid double serialization.
+
+        :param selective: Whether to include only selected keys
+        :return: Dictionary representation of context data
+        """
+        # Get base dictionary from parent class
+        result = super().to_dict(selective)
+
+        # Parse JSON string fields back to dictionaries to avoid double serialization
+        # when json.dumps() is called on the result
+        if "constellation_before" in result and isinstance(
+            result["constellation_before"], str
+        ):
+            try:
+                result["constellation_before"] = json.loads(
+                    result["constellation_before"]
+                )
+            except (json.JSONDecodeError, TypeError):
+                # Keep as string if parsing fails
+                pass
+
+        if "constellation_after" in result and isinstance(
+            result["constellation_after"], str
+        ):
+            try:
+                result["constellation_after"] = json.loads(
+                    result["constellation_after"]
+                )
+            except (json.JSONDecodeError, TypeError):
+                # Keep as string if parsing fails
+                pass
+
+        return result
