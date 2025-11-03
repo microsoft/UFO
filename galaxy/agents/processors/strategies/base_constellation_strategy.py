@@ -35,14 +35,14 @@ from ufo.agents.processors.schemas.actions import (
     ListActionCommandInfo,
 )
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
-from ufo.config import Config
 from ufo.contracts.contracts import Command, Result
 from ufo.llm import AgentType
 from ufo.module.context import Context
 from ufo.module.dispatcher import BasicCommandDispatcher
+from config.config_loader import get_ufo_config
 
 # Load configuration
-configs = Config.get_instance().config_data
+ufo_config = get_ufo_config()
 
 if TYPE_CHECKING:
     from galaxy.agents.constellation_agent import ConstellationAgent
@@ -221,7 +221,7 @@ class ConstellationLLMInteractionStrategy(BaseProcessingStrategy):
         """
         Get LLM response with retry logic for JSON parsing failures.
         """
-        max_retries = configs.get("JSON_PARSING_RETRY", 3)
+        max_retries = ufo_config.system.JSON_PARSING_RETRY
         last_exception = None
 
         for retry_count in range(max_retries):

@@ -22,8 +22,8 @@ from typing import Any, Dict, Optional
 
 from rich.console import Console
 
+from config.config_loader import get_galaxy_config
 from galaxy.client.config_loader import ConstellationConfig
-from ufo.config import Config
 from ufo.logging.setup import setup_logger
 
 from .client.constellation_client import ConstellationClient
@@ -31,7 +31,6 @@ from .session.galaxy_session import GalaxySession
 from .visualization.client_display import ClientDisplay
 
 tracemalloc.start()
-CONFIGS = Config.get_instance().config_data
 
 # Initialize rich console
 console = Console()
@@ -82,7 +81,11 @@ class GalaxyClient:
         # Initialize components
         self._client: Optional[ConstellationClient] = None
         self._session: Optional[GalaxySession] = None
-        self._device_config = ConstellationConfig.from_yaml(CONFIGS["DEVICE_INFO"])
+
+        # Load device configuration from new config system
+        galaxy_config = get_galaxy_config()
+        device_info_path = galaxy_config.constellation.DEVICE_INFO
+        self._device_config = ConstellationConfig.from_yaml(device_info_path)
 
         # Rich console and display manager
         self.console = Console()

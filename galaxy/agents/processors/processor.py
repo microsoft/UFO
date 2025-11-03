@@ -18,14 +18,12 @@ from galaxy.agents.processors.strategies.constellation_factory import (
     ConstellationStrategyFactory,
 )
 from galaxy.constellation.task_constellation import TaskConstellation
-from ufo import utils
 from ufo.agents.processors.core.processing_middleware import EnhancedLoggingMiddleware
 from ufo.agents.processors.core.processor_framework import (
     ProcessingContext,
     ProcessingPhase,
     ProcessorTemplate,
 )
-from ufo.config import Config
 from ufo.module.context import Context, ContextNames
 
 if TYPE_CHECKING:
@@ -33,9 +31,6 @@ if TYPE_CHECKING:
 
 
 console = Console()
-
-# Load configuration
-configs = Config.get_instance().config_data
 
 
 class ConstellationAgentProcessor(ProcessorTemplate):

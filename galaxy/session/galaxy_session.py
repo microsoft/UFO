@@ -15,9 +15,9 @@ import logging
 import time
 from typing import Any, Dict, Optional
 
+from config.config_loader import get_galaxy_config
 from ufo import utils
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
-from ufo.config import Config
 from ufo.module.basic import BaseRound, BaseSession
 from ufo.module.context import Context, ContextNames
 from ufo.module.dispatcher import LocalCommandDispatcher
@@ -27,6 +27,7 @@ from ..client.constellation_client import ConstellationClient
 from ..constellation import TaskConstellation, TaskConstellationOrchestrator
 from ..constellation.enums import ConstellationState
 from ..core.events import get_event_bus
+from ..trajectory.galaxy_parser import GalaxyTrajectory
 from .observers import (
     ConstellationModificationSynchronizer,
     ConstellationProgressObserver,
@@ -34,7 +35,8 @@ from .observers import (
     SessionMetricsObserver,
 )
 
-configs = Config.get_instance().config_data
+# Load Galaxy configuration
+galaxy_config = get_galaxy_config()
 
 
 class GalaxyRound(BaseRound):
@@ -137,7 +139,8 @@ class GalaxyRound(BaseRound):
 
         if (
             self.state.is_round_end()
-            or self.context.get(ContextNames.SESSION_STEP) >= configs["MAX_STEP"]
+            or self.context.get(ContextNames.SESSION_STEP)
+            >= galaxy_config.constellation.MAX_STEP
         ):
             return True
 
@@ -202,11 +205,6 @@ class GalaxySession(BaseSession):
         self._init_context()
         self._finish = False
         self._results = []
-
-        # Import config
-        from ufo.config import Config
-
-        self._config = Config.get_instance().config_data
 
         # Set up client and orchestrator
 
@@ -328,6 +326,12 @@ class GalaxySession(BaseSession):
             self._session_results["final_results"] = final_results
             self._session_results["metrics"] = self._metrics_observer.get_metrics()
 
+            if galaxy_config.constellation.LOG_TO_MARKDOWN:
+
+                file_path = self.log_path
+                trajectory = GalaxyTrajectory(file_path)
+                trajectory.to_markdown(file_path + "output.md")
+
         except AttributeError as e:
             self.logger.error(f"Attribute error in GalaxySession: {e}", exc_info=True)
             import traceback
@@ -388,8 +392,8 @@ class GalaxySession(BaseSession):
         # Check standard completion conditions
         if (
             self._finish
-            or self.step >= self._config.get("MAX_STEP", 100)
-            or self.total_rounds >= self._config.get("MAX_ROUND", 10)
+            or self.step >= galaxy_config.constellation.MAX_STEP
+            or self.total_rounds >= galaxy_config.constellation.MAX_STEP
         ):
             return True
 

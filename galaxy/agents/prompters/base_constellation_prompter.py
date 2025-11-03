@@ -11,7 +11,7 @@ shared functionality between different weaving modes.
 from abc import ABC
 import json
 from typing import Dict, List, Type
-from ufo.config import Config
+from config.config_loader import get_galaxy_config
 from ufo.contracts.contracts import MCPToolInfo
 from galaxy.agents.schema import WeavingMode
 from galaxy.client.components.types import AgentProfile, DeviceStatus
@@ -19,7 +19,8 @@ from galaxy.constellation.task_constellation import TaskConstellation
 from ufo.prompter.basic import BasicPrompter
 
 
-configs = Config.get_instance().config_data
+# Load Galaxy configuration
+galaxy_config = get_galaxy_config()
 
 
 class BaseConstellationPrompter(BasicPrompter, ABC):
@@ -382,13 +383,14 @@ class ConstellationPrompterFactory:
         if weaving_mode not in cls._prompter_classes:
             raise ValueError(f"Unsupported weaving mode for prompter: {weaving_mode}")
 
-        # TODO
+        # Load prompt templates from new config system
+        agent_config = galaxy_config.agent.CONSTELLATION_AGENT
         if weaving_mode == WeavingMode.CREATION:
-            prompt_template = configs["CONSTELLATION_CREATION_PROMPT"]
-            example_prompt_template = configs["CONSTELLATION_CREATION_EXAMPLE_PROMPT"]
+            prompt_template = agent_config.CONSTELLATION_CREATION_PROMPT
+            example_prompt_template = agent_config.CONSTELLATION_CREATION_EXAMPLE_PROMPT
         elif weaving_mode == WeavingMode.EDITING:
-            prompt_template = configs["CONSTELLATION_EDITING_PROMPT"]
-            example_prompt_template = configs["CONSTELLATION_EDITING_EXAMPLE_PROMPT"]
+            prompt_template = agent_config.CONSTELLATION_EDITING_PROMPT
+            example_prompt_template = agent_config.CONSTELLATION_EDITING_EXAMPLE_PROMPT
 
         prompter_class = cls._prompter_classes[weaving_mode]
 

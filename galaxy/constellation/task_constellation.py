@@ -981,41 +981,68 @@ class TaskConstellation(IConstellation):
 
         return json_str
 
-    def _ensure_json_serializable(self, data: Dict[str, Any]) -> Dict[str, Any]:
+    def _ensure_json_serializable(self, data: Any) -> Any:
         """
-        Ensure all values in the dictionary are JSON serializable.
+        Recursively ensure all values are JSON serializable.
 
-        :param data: Dictionary to make serializable
-        :return: JSON serializable dictionary
+        :param data: Data to make serializable (can be dict, list, or primitive)
+        :return: JSON serializable data
         """
         import json
+        from enum import Enum
+        from datetime import datetime
 
-        serializable_data = {}
+        # Handle None
+        if data is None:
+            return None
 
-        for key, value in data.items():
+        # Handle primitives that are already JSON serializable
+        if isinstance(data, (str, int, float, bool)):
+            return data
+
+        # Handle datetime
+        if isinstance(data, datetime):
+            return data.isoformat()
+
+        # Handle Enum
+        if isinstance(data, Enum):
+            return data.value
+
+        # Handle dictionaries recursively
+        if isinstance(data, dict):
+            serializable_dict = {}
+            for key, value in data.items():
+                try:
+                    # Try to serialize the value to test it
+                    json.dumps(value)
+                    serializable_dict[key] = value
+                except (TypeError, ValueError):
+                    # Recursively handle non-serializable values
+                    serializable_dict[key] = self._ensure_json_serializable(value)
+            return serializable_dict
+
+        # Handle lists recursively
+        if isinstance(data, (list, tuple)):
+            return [self._ensure_json_serializable(item) for item in data]
+
+        # Handle sets
+        if isinstance(data, set):
+            return [self._ensure_json_serializable(item) for item in data]
+
+        # Handle objects with __dict__
+        if hasattr(data, "__dict__"):
             try:
-                # Test if the value is JSON serializable
-                json.dumps(value)
-                serializable_data[key] = value
-            except (TypeError, ValueError):
-                # Handle non-serializable values
-                if hasattr(value, "__dict__"):
-                    # For complex objects, try to convert to dict
-                    try:
-                        serializable_data[key] = vars(value)
-                    except:
-                        serializable_data[key] = str(value)
-                elif isinstance(value, set):
-                    # Convert sets to lists
-                    serializable_data[key] = list(value)
-                elif callable(value):
-                    # Skip callable objects
-                    serializable_data[key] = f"<callable: {value.__name__}>"
-                else:
-                    # Convert to string as fallback
-                    serializable_data[key] = str(value)
+                obj_dict = vars(data)
+                return self._ensure_json_serializable(obj_dict)
+            except:
+                return str(data)
 
-        return serializable_data
+        # Handle callables
+        if callable(data):
+            return f"<callable: {getattr(data, '__name__', 'unknown')}>"
+
+        # Fallback to string representation
+        return str(data)
 
     @classmethod
     def from_json(

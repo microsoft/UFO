@@ -601,32 +601,59 @@ class TaskStar(ITask):
 
     def _serialize_result(self, result: Any) -> Any:
         """
-        Serialize the task result for JSON compatibility.
+        Recursively serialize the task result for JSON compatibility.
 
         :param result: The result to serialize
         :return: JSON-compatible result
         """
+        import json
+        from enum import Enum
+        from datetime import datetime
+
         if result is None:
             return None
 
-        try:
-            import json
-
-            json.dumps(result)
+        # Handle primitives
+        if isinstance(result, (str, int, float, bool)):
             return result
-        except (TypeError, ValueError):
-            # If result is not JSON serializable, convert to string
-            if hasattr(result, "__dict__"):
-                try:
-                    return vars(result)
-                except:
-                    return str(result)
-            else:
+
+        # Handle datetime
+        if isinstance(result, datetime):
+            return result.isoformat()
+
+        # Handle Enum
+        if isinstance(result, Enum):
+            return result.value
+
+        # Handle dictionaries recursively
+        if isinstance(result, dict):
+            serialized_dict = {}
+            for key, value in result.items():
+                serialized_dict[key] = self._serialize_result(value)
+            return serialized_dict
+
+        # Handle lists/tuples recursively
+        if isinstance(result, (list, tuple)):
+            return [self._serialize_result(item) for item in result]
+
+        # Handle sets
+        if isinstance(result, set):
+            return [self._serialize_result(item) for item in result]
+
+        # Handle objects with __dict__
+        if hasattr(result, "__dict__"):
+            try:
+                obj_dict = vars(result)
+                return self._serialize_result(obj_dict)
+            except:
                 return str(result)
+
+        # Fallback to string
+        return str(result)
 
     def _serialize_task_data(self, task_data: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Serialize task data for JSON compatibility.
+        Recursively serialize task data for JSON compatibility.
 
         :param task_data: The task data to serialize
         :return: JSON-compatible task data
@@ -636,21 +663,8 @@ class TaskStar(ITask):
 
         serialized = {}
         for key, value in task_data.items():
-            try:
-                import json
-
-                json.dumps(value)
-                serialized[key] = value
-            except (TypeError, ValueError):
-                if hasattr(value, "__dict__"):
-                    try:
-                        serialized[key] = vars(value)
-                    except:
-                        serialized[key] = str(value)
-                elif isinstance(value, set):
-                    serialized[key] = list(value)
-                else:
-                    serialized[key] = str(value)
+            # Reuse _serialize_result for consistent recursive serialization
+            serialized[key] = self._serialize_result(value)
 
         return serialized
 
