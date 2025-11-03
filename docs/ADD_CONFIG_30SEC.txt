@@ -1,0 +1,193 @@
+"""
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  新配置系统：添加配置项 - 30 秒速成
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+🎯 核心答案：直接在 YAML 中加，无需改代码！
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+⚡ 3 步完成
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    1️⃣  编辑 YAML 文件
+        
+        # config/ufo/custom.yaml（任意文件）
+        NEW_FEATURE_ENABLED: true
+        TIMEOUT: 30
+        
+        MY_SETTINGS:
+          retry_count: 3
+          cache: true
+
+
+    2️⃣  代码中直接用
+    
+        from config.config_loader import get_ufo_config
+        
+        config = get_ufo_config()
+        
+        enabled = config.NEW_FEATURE_ENABLED
+        timeout = config.TIMEOUT
+        retry = config.MY_SETTINGS.retry_count
+
+
+    3️⃣  完成！🎉
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  实际例子：添加新的 Agent 配置
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+
+📝 YAML 配置
+────────────────────────────────────────────────────────────────────
+
+    # config/ufo/agents.yaml（编辑现有文件或新建）
+    
+    EVALUATOR_AGENT:
+      API_TYPE: "openai"
+      API_MODEL: "gpt-4"
+      API_KEY: "YOUR_KEY"
+      MAX_TOKENS: 2000
+      TEMPERATURE: 0.7
+
+
+💻 Python 代码
+────────────────────────────────────────────────────────────────────
+
+    config = get_ufo_config()
+    
+    # ✅ 立即可用！无需修改任何其他代码
+    model = config.EVALUATOR_AGENT.API_MODEL
+    tokens = config.EVALUATOR_AGENT.MAX_TOKENS
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  文件位置
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    添加配置到这些位置（任选其一）：
+    
+    ✅ config/ufo/agents.yaml      - Agent 配置
+    ✅ config/ufo/system.yaml      - 系统配置
+    ✅ config/ufo/rag.yaml         - RAG 配置
+    ✅ config/ufo/custom.yaml      - 自定义配置（任意文件名）
+    
+    ⚡ 系统会自动加载所有 .yaml 文件并合并！
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  访问方式对比
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    YAML 配置：
+    ──────────────────────────────────────
+    NEW_SETTING: 123
+    
+    NESTED:
+      value: "abc"
+    
+    
+    Python 访问：
+    ──────────────────────────────────────
+    # 方式 1: 属性访问（推荐，有 IDE 补全）
+    config.NEW_SETTING          → 123
+    config.NESTED.value         → "abc"
+    
+    # 方式 2: 字典访问（兼容旧代码）
+    config["NEW_SETTING"]       → 123
+    config["NESTED"]["value"]   → "abc"
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  常见场景速查
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    ❶ 添加功能开关
+    ──────────────────────────────────────
+    YAML:   ENABLE_NEW_FEATURE: true
+    代码:   if config.ENABLE_NEW_FEATURE: ...
+    
+    
+    ❷ 添加数值配置
+    ──────────────────────────────────────
+    YAML:   MAX_RETRIES: 5
+    代码:   for i in range(config.MAX_RETRIES): ...
+    
+    
+    ❸ 添加列表配置
+    ──────────────────────────────────────
+    YAML:   MODELS: [gpt-4, gpt-3.5]
+    代码:   for model in config.MODELS: ...
+    
+    
+    ❹ 添加嵌套配置
+    ──────────────────────────────────────
+    YAML:   DB:
+              host: localhost
+              port: 5432
+    
+    代码:   host = config.DB.host
+           port = config.DB.port
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  高级技巧
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    💡 使用环境变量覆盖
+    ──────────────────────────────────────
+    # 覆盖顶层字段
+    export NEW_SETTING=999
+    
+    # 覆盖嵌套字段（双下划线分隔）
+    export NESTED__value="xyz"
+    
+    
+    💡 安全访问（防止字段不存在）
+    ──────────────────────────────────────
+    # 带默认值
+    value = config.get('OPTIONAL_FIELD', default_value)
+    value = getattr(config, 'OPTIONAL_FIELD', default_value)
+    
+    # 检查是否存在
+    if hasattr(config, 'OPTIONAL_FIELD'):
+        ...
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  验证配置
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    # 验证配置文件正确性
+    python -m ufo.tools.validate_config
+    
+    ✓ Configuration valid
+    ✓ Found: NEW_FEATURE_ENABLED = true
+    ✓ Found: EVALUATOR_AGENT.API_MODEL = gpt-4
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  注意事项
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    ✅ 推荐命名：大写 + 下划线（NEW_SETTING）
+    ✅ 嵌套配置：小写 + 下划线（nested.sub_config）
+    ✅ 添加注释：说明字段用途
+    ✅ 提供默认值：避免未配置时报错
+    
+    ❌ 避免短横线：cannot-use-dot-access
+    ❌ 避免驼峰：newFeatureEnabled（不符合规范）
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+  完整文档
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    详细教程：     docs/how_to_add_config_fields.md
+    使用示例：     docs/config_usage_examples.md
+    配置结构：     docs/configuration_guide.md
+
+"""

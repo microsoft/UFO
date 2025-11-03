@@ -1,0 +1,147 @@
+"""
+配置读取快速参考 - 一图看懂新旧对比
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📦 导入方式
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    ❌ 旧方式                          ✅ 新方式
+    ───────────────────────────────────────────────────────────────
+    from ufo.config import Config      from config.config_loader import get_ufo_config
+    
+    configs = Config.get_instance()    config = get_ufo_config()
+                  .config_data
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🎯 读取配置
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    配置项              旧方式                              新方式（推荐）
+    ─────────────────────────────────────────────────────────────────────────────
+    
+    API 模型            configs["APP_AGENT"]                config.app_agent.api_model
+                              ["API_MODEL"]                       ↑
+                                                            类型安全 + IDE 自动补全
+    
+    最大步数            configs["MAX_STEP"]                 config.system.max_step
+    
+    RAG 经验            configs["RAG_EXPERIENCE"]           config.rag.experience
+    
+    日志级别            configs["LOG_LEVEL"]                config.system.log_level
+    
+    温度参数            configs["APP_AGENT"]                config.app_agent.temperature
+                              ["TEMPERATURE"]
+    
+    控制后端            configs["CONTROL_BACKEND"]          config.system.control_backend
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 实际代码对比
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    ❌ 旧代码（冗长、易错）
+    ───────────────────────────────────────────────────────────────
+    from ufo.config import Config
+    
+    configs = Config.get_instance().config_data
+    
+    if configs["RAG_EXPERIENCE"]:
+        results = retrieve(
+            request, 
+            configs["RAG_EXPERIENCE_RETRIEVED_TOPK"]
+        )
+    
+    if configs["RAG_DEMONSTRATION"]:
+        demos = retrieve(
+            request,
+            configs["RAG_DEMONSTRATION_RETRIEVED_TOPK"]
+        )
+
+
+    ✅ 新代码（简洁、类型安全）
+    ───────────────────────────────────────────────────────────────
+    from config.config_loader import get_ufo_config
+    
+    config = get_ufo_config()
+    rag = config.rag  # 一次性获取 RAG 配置对象
+    
+    if rag.experience:
+        results = retrieve(request, rag.experience_retrieved_topk)
+        #                            ↑ IDE 会自动补全！
+    
+    if rag.demonstration:
+        demos = retrieve(request, rag.demonstration_retrieved_topk)
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🌟 新系统优势
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    ✅ IDE 自动补全          输入 config. 后自动显示所有选项
+    ✅ 类型检查              IDE 会提示类型错误
+    ✅ 重构友好              重命名字段时 IDE 能自动更新所有引用
+    ✅ 向后兼容              旧代码继续工作，无破坏性变更
+    ✅ 性能更好              配置缓存机制
+    ✅ 模块化清晰            config.rag / config.system / config.app_agent
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+📁 配置文件位置
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    旧路径（仍支持）              新路径（推荐）              说明
+    ─────────────────────────────────────────────────────────────────
+    ufo/config/config.yaml   →   config/ufo/agents.yaml    Agent 配置
+                                 config/ufo/system.yaml    系统配置
+                                 config/ufo/rag.yaml       RAG 配置
+                                 config/ufo/prices.yaml    价格配置
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🚀 快速上手 3 步
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    1️⃣  修改导入
+        from config.config_loader import get_ufo_config
+    
+    2️⃣  获取配置对象
+        config = get_ufo_config()
+    
+    3️⃣  使用属性访问
+        api_model = config.app_agent.api_model
+        max_step = config.system.max_step
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+🛠️ 迁移工具
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    # 查看迁移预览（不修改文件）
+    python -m ufo.tools.migrate_config --dry-run
+    
+    # 执行迁移（自动备份）
+    python -m ufo.tools.migrate_config
+    
+    # 验证配置
+    python -m ufo.tools.validate_config
+
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+💡 提示
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+    • 旧代码无需立即修改，新旧可以共存
+    • 修改代码时顺便迁移到新方式即可
+    • 新配置支持所有旧字段（100% 向后兼容）
+    • 详细文档：docs/config_usage_examples.md
+
+"""
