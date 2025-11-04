@@ -135,19 +135,19 @@ APP_AGENT:
 ### Access Patterns
 
 ```python
-    from config.config_loader import get_ufo_config
+from config.config_loader import get_ufo_config
 
-    config = get_ufo_config()
+config = get_ufo_config()
 
-    # Type-safe access (recommended)
-    host_model = config.host_agent.api_model
-    app_visual = config.app_agent.visual_mode
-    backup_key = config.backup_agent.api_key
+# Type-safe access (recommended)
+host_model = config.host_agent.api_model
+app_visual = config.app_agent.visual_mode
+backup_key = config.backup_agent.api_key
 
-    # Dict-style access (legacy)
-    host_model_old = config.HOST_AGENT.API_MODEL
-    app_visual_old = config.APP_AGENT.VISUAL_MODE
-    ```
+# Dict-style access (legacy)
+host_model_old = config.HOST_AGENT.API_MODEL
+app_visual_old = config.APP_AGENT.VISUAL_MODE
+```
 
 ---
 
@@ -437,6 +437,136 @@ bing_key = config.rag.BING_API_KEY  # Dynamic field
 # Dict-style access (legacy)
 offline_old = config["RAG_OFFLINE_DOCS"]
 experience_old = config["RAG_EXPERIENCE"]
+```
+
+---
+
+## MCP Configurations
+
+**File**: `config/ufo/mcp.yaml`
+
+MCP (Model Context Protocol) configurations define the external tool servers that agents can use for data collection and action execution.
+
+!!!info "MCP Server Configuration"
+    MCP servers provide tools that extend agent capabilities. See the [MCP Configuration Reference](./mcp_reference.md) for complete documentation.
+
+### Basic Structure
+
+```yaml
+HostAgent:
+  default:
+    data_collection:
+      - namespace: UICollector
+        type: local
+    action:
+      - namespace: HostUIExecutor
+        type: local
+      - namespace: CommandLineExecutor
+        type: local
+
+AppAgent:
+  WINWORD.EXE:
+    action:
+      - namespace: WordCOMExecutor
+        type: local
+        reset: true
+```
+
+### Common MCP Server Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `namespace` | String | ✅ Yes | Unique server identifier |
+| `type` | String | ✅ Yes | Server type: `"local"`, `"http"`, `"stdio"` |
+| `reset` | Boolean | No | Reset server state on context switch (default: `false`) |
+
+### HTTP Server Additional Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `host` | String | ✅ Yes | Server hostname or IP |
+| `port` | Integer | ✅ Yes | Server port number |
+| `path` | String | ✅ Yes | HTTP endpoint path |
+
+### Stdio Server Additional Fields
+
+| Field | Type | Required | Description |
+|-------|------|----------|-------------|
+| `command` | String | ✅ Yes | Executable command |
+| `start_args` | List[String] | No | Command-line arguments |
+| `env` | Dict | No | Environment variables |
+| `cwd` | String | No | Working directory |
+
+For complete MCP configuration documentation, see:
+
+- [MCP Configuration Reference](./mcp_reference.md) - Detailed MCP server configuration
+- [MCP Overview](../mcp/overview.md) - MCP architecture and concepts
+
+---
+
+## Pricing Configurations
+
+**File**: `config/ufo/prices.yaml`
+
+Pricing configurations define the cost per 1K tokens for different LLM models, used for cost tracking and reporting.
+
+### Structure
+
+```yaml
+gpt-4o:
+  prompt: 0.0025
+  completion: 0.01
+  
+gpt-4o-mini:
+  prompt: 0.00015
+  completion: 0.0006
+  
+gpt-4-vision-preview:
+  prompt: 0.01
+  completion: 0.03
+```
+
+### Fields
+
+| Field | Type | Description |
+|-------|------|-------------|
+| `prompt` | Float | Cost per 1K prompt tokens (USD) |
+| `completion` | Float | Cost per 1K completion tokens (USD) |
+
+### Common Models
+
+| Model | Prompt ($/1K) | Completion ($/1K) |
+|-------|---------------|-------------------|
+| `gpt-4o` | $0.0025 | $0.01 |
+| `gpt-4o-mini` | $0.00015 | $0.0006 |
+| `gpt-4-turbo` | $0.01 | $0.03 |
+| `gpt-4-vision-preview` | $0.01 | $0.03 |
+| `gpt-3.5-turbo` | $0.0005 | $0.0015 |
+
+### Access Patterns
+
+```python
+from config.config_loader import get_ufo_config
+
+config = get_ufo_config()
+
+# Get pricing for a specific model
+model_name = "gpt-4o"
+if model_name in config.prices:
+    prompt_cost = config.prices[model_name]["prompt"]
+    completion_cost = config.prices[model_name]["completion"]
+    print(f"{model_name}: ${prompt_cost}/1K prompt, ${completion_cost}/1K completion")
+```
+
+### Cost Tracking
+
+UFO² automatically tracks costs during execution when pricing information is available:
+
+```python
+# Costs are tracked in session logs
+total_cost = session.total_cost
+prompt_tokens = session.total_prompt_tokens
+completion_tokens = session.total_completion_tokens
 ```
 
 ---

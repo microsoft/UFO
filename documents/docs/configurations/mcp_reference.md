@@ -1,408 +1,167 @@
 # MCP Configuration Reference
 
-This document describes the Model Context Protocol (MCP) server configuration system in UFO2.
+This document provides a quick reference for MCP (Model Context Protocol) server configuration in UFO².
 
-!!!info "What is MCP?"
-    The Model Context Protocol (MCP) provides a standardized way for agents to interact with external tools and services. MCP servers handle data collection and action execution for different agents and applications.
+!!!info "Complete MCP Documentation"
+    For comprehensive MCP configuration guide with examples, best practices, and detailed explanations, see:
+    
+    **[MCP Configuration Guide](../mcp/configuration.md)** - Complete configuration documentation
+    
+    Other MCP resources:
+    - [MCP Overview](../mcp/overview.md) - Architecture and concepts
+    - [Data Collection Servers](../mcp/data_collection.md) - Observation tools
+    - [Action Servers](../mcp/action.md) - Execution tools
 
-## Overview
+## Quick Reference
 
-**File**: `config/ufo/mcp.yaml`
+**Configuration File**: `config/ufo/mcp.yaml`
 
-MCP configuration defines which servers are available to each agent for data collection and action execution. Servers can be either:
-- **Local (stdio)** - Run as local processes with stdio communication
-- **HTTP** - Accessed over HTTP protocol
-
-## Configuration Structure
-
-!!!note "Agent-Based Organization"
-    MCP servers are organized by agent type and application, allowing fine-grained control over which tools are available in different contexts.
+### Structure
 
 ```yaml
-AgentName:              # e.g., "HostAgent", "AppAgent", "HardwareAgent"
-  sub_type:             # "default" or specific app (e.g., "WINWORD.EXE")
-    data_collection:    # Servers for collecting data/observations
+AgentName:              # e.g., "HostAgent", "AppAgent"
+  SubType:              # "default" or app name (e.g., "WINWORD.EXE")
+    data_collection:    # Data collection servers (read-only)
+      - namespace: ...
+        type: ...       # "local", "http", or "stdio"
+    action:             # Action servers (state-changing)
       - namespace: ...
         type: ...
-        # ... server config
-    action:             # Servers for executing actions
-      - namespace: ...
-        type: ...
-        # ... server config
 ```
 
-## Server Configuration Fields
+### Server Types
+
+| Type | Description | Use Case |
+|------|-------------|----------|
+| `local` | In-process server | Fast, built-in tools |
+| `http` | Remote HTTP server | Cross-machine, language-agnostic |
+| `stdio` | Child process via stdin/stdout | Process isolation |
 
 ### Common Fields
 
 | Field | Type | Required | Description |
 |-------|------|----------|-------------|
-| `namespace` | String | ? Yes | Unique identifier for the MCP server |
-| `type` | String | ? Yes | Server type: `"local"` or `"http"` |
-| `reset` | Boolean | No | Whether to reset server when switching contexts (default: `false`) |
+| `namespace` | String | ✅ Yes | Unique server identifier |
+| `type` | String | ✅ Yes | Server type: `local`, `http`, or `stdio` |
+| `reset` | Boolean | ❌ No | Reset on context switch (default: `false`) |
 
-### Local Server Fields
-
-```yaml
-    - namespace: UICollector
-      type: local
-      start_args: []
-      reset: false
-    ```
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `start_args` | List[String] | Command-line arguments to pass when starting the server process |
-
-### HTTP Server Fields
+### Local Server Example
 
 ```yaml
-    - namespace: HardwareCollector
-      type: http
-      host: "localhost"
-      port: 8006
-      path: "/mcp"
-      reset: false
-    ```
-
-| Field | Type | Description |
-|-------|------|-------------|
-| `host` | String | Server hostname or IP address |
-| `port` | Integer | Server port number |
-| `path` | String | HTTP endpoint path |
-
-## Agent Types
-
-### HostAgent
-
-Controls desktop-level operations and application coordination.
-
-```yaml
-    HostAgent:
-      default:
-        data_collection:
-          - namespace: UICollector
-            type: local
-            start_args: []
-            reset: false
-        action:
-          - namespace: HostUIExecutor
-            type: local
-            start_args: []
-            reset: false
-          - namespace: CommandLineExecutor
-            type: local
-            start_args: []
-            reset: false
-    ```
-
-**Available Servers**:
-- **UICollector** - Collects UI element information from desktop
-- **HostUIExecutor** - Executes desktop-level UI actions
-- **CommandLineExecutor** - Executes command-line commands
-
-### AppAgent
-
-Controls application-specific operations.
-
-#### Default Configuration
-
-```yaml
-    AppAgent:
-      default:
-        data_collection:
-          - namespace: UICollector
-            type: local
-            start_args: []
-            reset: false
-        action:
-          - namespace: AppUIExecutor
-            type: local
-            start_args: []
-            reset: false
-          - namespace: CommandLineExecutor
-            type: local
-            start_args: []
-            reset: false
-    ```
-
-**Available Servers**:
-- **UICollector** - Collects UI element information from applications
-- **AppUIExecutor** - Executes application-level UI actions
-- **CommandLineExecutor** - Executes command-line commands
-
-#### Application-Specific Configurations
-
-!!!tip "Custom App Configurations"
-    Override the default configuration for specific applications by using the app's process name as the sub_type.
-
-##### Microsoft Word (WINWORD.EXE)
-
-```yaml
-WINWORD.EXE:
-  data_collection:
-    - namespace: UICollector
-      type: local
-      start_args: []
-      reset: false
-  action:
-    - namespace: AppUIExecutor
-      type: local
-      start_args: []
-      reset: false
-    - namespace: WordCOMExecutor
-      type: local
-      start_args: []
-      reset: true  # Reset when switching documents
+HostAgent:
+  default:
+    data_collection:
+      - namespace: UICollector
+        type: local
+        start_args: []
+        reset: false
+    action:
+      - namespace: HostUIExecutor
+        type: local
+        reset: false
 ```
 
-**Additional Server**: **WordCOMExecutor** - Word COM API automation
-
-##### Microsoft Excel (EXCEL.EXE)
+### HTTP Server Example
 
 ```yaml
-EXCEL.EXE:
-  data_collection:
-    - namespace: UICollector
-      type: local
-      start_args: []
-      reset: false
-  action:
-    - namespace: AppUIExecutor
-      type: local
-      start_args: []
-      reset: false
-    - namespace: ExcelCOMExecutor
-      type: local
-      start_args: []
-      reset: true
+HardwareAgent:
+  default:
+    data_collection:
+      - namespace: HardwareCollector
+        type: http
+        host: "localhost"
+        port: 8006
+        path: "/mcp"
+        reset: false
 ```
 
-**Additional Server**: **ExcelCOMExecutor** - Excel COM API automation
-
-##### Microsoft PowerPoint (POWERPNT.EXE)
+### Stdio Server Example
 
 ```yaml
-POWERPNT.EXE:
-  data_collection:
-    - namespace: UICollector
-      type: local
-      start_args: []
-      reset: false
-  action:
-    - namespace: AppUIExecutor
-      type: local
-      start_args: []
-      reset: false
-    - namespace: PowerPointCOMExecutor
-      type: local
-      start_args: []
-      reset: true
+CustomAgent:
+  default:
+    action:
+      - namespace: CustomProcessor
+        type: stdio
+        command: "python"
+        start_args: ["-m", "custom_mcp_server"]
+        env: {"API_KEY": "secret"}
+        cwd: "/path/to/server"
 ```
 
-**Additional Server**: **PowerPointCOMExecutor** - PowerPoint COM API automation
+## Built-in Agent Configurations
 
-##### Windows Explorer (explorer.exe)
+### HostAgent (System-Level)
 
-```yaml
-explorer.exe:
-  data_collection:
-    - namespace: UICollector
-      type: local
-      start_args: []
-      reset: false
-  action:
-    - namespace: AppUIExecutor
-      type: local
-      start_args: []
-      reset: false
-    - namespace: PDFReaderExecutor
-      type: local
-      start_args: []
-      reset: true
-```
+- **Data Collection**: UICollector
+- **Actions**: HostUIExecutor, CommandLineExecutor
 
-**Additional Server**: **PDFReaderExecutor** - PDF file operations
+### AppAgent (Application-Level)
+
+**Default**: UICollector, AppUIExecutor, CommandLineExecutor
+
+**App-Specific**:
+- **WINWORD.EXE**: + WordCOMExecutor
+- **EXCEL.EXE**: + ExcelCOMExecutor
+- **POWERPNT.EXE**: + PowerPointCOMExecutor
+- **explorer.exe**: + PDFReaderExecutor
 
 ### ConstellationAgent
 
-Manages multi-device coordination and constellation editing.
-
-```yaml
-    ConstellationAgent:
-      default:
-        action:
-          - namespace: ConstellationEditor
-            type: local
-            start_args: []
-            reset: false
-    ```
-
-**Available Servers**:
-- **ConstellationEditor** - Edits device constellations and task assignments
+- **Actions**: ConstellationEditor
 
 ### HardwareAgent
 
-Controls hardware devices via HTTP MCP servers.
-
-```yaml
-    HardwareAgent:
-      default:
-        data_collection:
-          - namespace: HardwareCollector
-            type: http
-            host: "localhost"
-            port: 8006
-            path: "/mcp"
-            reset: false
-        action:
-          - namespace: HardwareExecutor
-            type: http
-            host: "localhost"
-            port: 8006
-            path: "/mcp"
-            reset: false
-    ```
-
-**Available Servers**:
-- **HardwareCollector** - Collects hardware device status and information
-- **HardwareExecutor** - Executes actions on hardware devices
-
-!!!warning "HTTP Server Required"
-    HardwareAgent requires a running MCP HTTP server on the specified host and port.
+- **Data Collection**: HardwareCollector (HTTP)
+- **Actions**: HardwareExecutor (HTTP)
 
 ### LinuxAgent
 
-Controls Linux systems via HTTP MCP servers.
+- **Actions**: BashExecutor (HTTP)
 
-```yaml
-    LinuxAgent:
-      default:
-        action:
-          - namespace: BashExecutor
-            type: http
-            host: "localhost"
-            port: 8010
-            path: "/mcp"
-            reset: false
-    ```
+## Reset Behavior
 
-**Available Servers**:
-- **BashExecutor** - Executes bash commands on Linux systems
+!!!tip "When to Use `reset: true`"
+    - **COM executors** (Word, Excel, PowerPoint) - Prevents state leakage between documents
+    - **Stateful tools** - Requires clean state per task
+    
+    **Default: `false`** - Server persists across context switches
 
-!!!warning "Cross-Platform Remote Execution"
-    LinuxAgent enables Windows-based UFO2 to control remote Linux systems through HTTP MCP servers.
-
-## Server Reset Behavior
-
-!!!note "Reset Field Behavior"
-    The `reset` field determines whether an MCP server should be reset when the agent switches contexts (e.g., switching between different documents or applications).
-
-- **`reset: false`** - Server persists across context switches (default)
-- **`reset: true`** - Server is restarted when switching contexts
-
-!!!tip "When to Use Reset"
-    Set `reset: true` for servers that maintain application-specific state:
-    - COM executors (Word, Excel, PowerPoint) that track open documents
-    - Application-specific tools that need clean state per task
-
-## Adding Custom MCP Servers
-
-```yaml
-    AppAgent:
-      MyApp.exe:  # Your application's process name
-        data_collection:
-          - namespace: UICollector
-            type: local
-            start_args: []
-            reset: false
-        action:
-          - namespace: AppUIExecutor
-            type: local
-            start_args: []
-            reset: false
-          # Your custom server
-          - namespace: MyCustomExecutor
-            type: local
-            start_args: ["--config", "path/to/config.json"]
-            reset: true
-    ```
-
-### For Local Servers
-
-1. Implement the MCP server protocol
-2. Add server configuration to `mcp.yaml`
-3. Ensure server executable is in PATH or provide full path in `start_args`
-
-### For HTTP Servers
-
-1. Run your MCP HTTP server
-2. Add server configuration with correct `host`, `port`, and `path`
-3. Ensure server is accessible from UFO2
-
-## Access Patterns
+## Access in Code
 
 ```python
-    from config.config_loader import get_ufo_config
+from config.config_loader import get_ufo_config
 
-    config = get_ufo_config()
+config = get_ufo_config()
+mcp_config = config.MCP
 
-    # Access MCP configuration
-    mcp_config = config.MCP  # or config["MCP"]
-    
-    # Get agent-specific MCP config
-    host_agent_mcp = mcp_config.get("HostAgent", {})
-    app_agent_mcp = mcp_config.get("AppAgent", {})
-    
-    # Get app-specific config
-    word_config = app_agent_mcp.get("WINWORD.EXE", app_agent_mcp.get("default", {}))
-    ```
+# Get agent-specific config
+host_agent = mcp_config.get("HostAgent", {})
+app_agent = mcp_config.get("AppAgent", {})
 
-## Best Practices
+# Get sub-type config
+word_config = app_agent.get("WINWORD.EXE", app_agent.get("default", {}))
+```
 
-!!!tip "DO - Recommended Practices"
-    - ? **Use `reset: true`** for stateful COM executors
-    - ? **Keep default configuration** for common cases
-    - ? **Group related servers** by agent type
-    - ? **Document custom servers** with comments in YAML
-    - ? **Test server connectivity** before deploying
+## Complete Documentation
 
-!!!danger "DON'T - Anti-Patterns"
-    - ? **Don't hardcode credentials** - use environment variables
-    - ? **Don't expose MCP HTTP servers** to public networks without authentication
-    - ? **Don't forget to start HTTP servers** before using them
-    - ? **Don't use `reset: true`** for shared infrastructure servers
+For detailed configuration guide including:
+- Complete field reference for all server types
+- Agent-specific configuration examples
+- Best practices and anti-patterns
+- Configuration validation
+- Debugging and troubleshooting
+- Migration guide
 
-## Troubleshooting
+See **[MCP Configuration Guide](../mcp/configuration.md)**
 
-### Server Connection Issues
+## Related Documentation
 
-!!!bug "Cannot Connect to Local Server"
-    **Symptoms**: "Failed to start MCP server" errors
-    
-    **Solutions**:
-    - Verify server executable is in PATH
-    - Check `start_args` are correct
-    - Review server logs for startup errors
+- [MCP Overview](../mcp/overview.md) - MCP architecture
+- [Data Collection Servers](../mcp/data_collection.md) - Read-only tools
+- [Action Servers](../mcp/action.md) - State-changing tools
+- [Local Servers](../mcp/local_servers.md) - Built-in servers
+- [Remote Servers](../mcp/remote_servers.md) - HTTP/Stdio deployment
+- [Configuration Overview](./overview.md) - General configuration system
+- [Field Reference](./field_reference.md) - All configuration fields
 
-!!!bug "HTTP Server Not Responding"
-    **Symptoms**: Connection timeout or refused errors
-    
-    **Solutions**:
-    - Verify HTTP server is running: `curl http://localhost:PORT/PATH`
-    - Check firewall rules allow the connection
-    - Verify `host`, `port`, and `path` are correct
-
-### Reset Issues
-
-!!!bug "Server State Persists Unexpectedly"
-    **Symptoms**: Server uses data from previous contexts
-    
-    **Solution**: Set `reset: true` for the affected server
-
-## Next Steps
-
-!!!note "Learn More"
-    - **[Field Reference](./field_reference.md)** - Complete configuration field documentation
-    - **[Extending Configuration](./extending.md)** - Add custom MCP servers
-    - **[Configuration Overview](./overview.md)** - Understanding the config system

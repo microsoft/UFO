@@ -96,6 +96,50 @@ nav:
       - Execution: dataflow/execution.md
       - Windows App Environment: dataflow/windows_app_env.md
       - Result: dataflow/result.md
+  - Agent Interaction Protocol (AIP):
+      - Overview: aip/overview.md
+      - Message Reference: aip/messages.md
+      - Protocol Guide: aip/protocols.md
+      - Transport Layer: aip/transport.md
+      - Endpoints: aip/endpoints.md
+      - Resilience: aip/resilience.md
+  - Agent Server:
+      - Overview: server/overview.md
+      - Quick Start: server/quick_start.md
+      - Session Manager: server/session_manager.md
+      - WebSocket Handler: server/websocket_handler.md
+      - WebSocket Manager: server/websocket_manager.md
+      - HTTP API: server/api.md
+      - Monitoring: server/monitoring.md
+  - Agent Client:
+      - Overview: client/overview.md
+      - Quick Start: client/quick_start.md
+      - WebSocket Client: client/websocket_client.md
+      - UFO Client: client/ufo_client.md
+      - Computer Manager: client/computer_manager.md
+      - Computer: client/computer.md
+      - Device Info Provider: client/device_info.md
+      - MCP Integration: client/mcp_integration.md
+  - MCP (Model Context Protocol):
+      - Overview: mcp/overview.md
+      - Data Collection Servers: mcp/data_collection.md
+      - Action Servers: mcp/action.md
+      - Configuration Guide: mcp/configuration.md
+      - Local Servers: mcp/local_servers.md
+      - Remote Servers: mcp/remote_servers.md
+      - Custom Servers: mcp/custom_servers.md
+      - Server Reference:
+          - UICollector: mcp/servers/ui_collector.md
+          - HostUIExecutor: mcp/servers/host_ui_executor.md
+          - AppUIExecutor: mcp/servers/app_ui_executor.md
+          - CommandLineExecutor: mcp/servers/command_line_executor.md
+          - WordCOMExecutor: mcp/servers/word_com_executor.md
+          - ExcelCOMExecutor: mcp/servers/excel_com_executor.md
+          - PowerPointCOMExecutor: mcp/servers/ppt_com_executor.md
+          - PDFReaderExecutor: mcp/servers/pdf_reader_executor.md
+          - ConstellationEditor: mcp/servers/constellation_editor.md
+          - HardwareExecutor: mcp/servers/hardware_executor.md
+          - BashExecutor: mcp/servers/bash_executor.md
   - About:
       - Contributing: about/CONTRIBUTING.md
       - License: about/LICENSE.md
@@ -129,7 +173,7 @@ plugins:
     - mkdocstrings:
         handlers:
             python:
-                paths: ["../ufo", "../record_processor", "../dataflow", "../config"]
+                paths: ["../ufo", "../record_processor", "../dataflow", "../config", "../aip"]
                 options:
                     docstring_style: sphinx
                     docstring_section_style: list
