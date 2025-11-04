@@ -166,6 +166,28 @@ theme:
   analytics:
     - gtag: G-FX17ZGJYGC
   favicon: ./assets/ufo_blue.png
+  features:
+  - content.code.annotate
+  - content.code.copy
+  - content.code.select
+  - content.tooltips
+  - content.tabs.link
+
+extra_javascript:
+  - https://unpkg.com/mermaid@10.6.1/dist/mermaid.min.js
+  - javascripts/mermaid-init.js
+
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_div_format
+
 
 
 plugins:

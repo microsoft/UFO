@@ -1,48 +1,72 @@
 # AIP Endpoints
 
-Endpoints combine protocol, transport, and resilience components to provide complete client/server implementations for AIP communication.
+!!!quote "Complete Client/Server Implementations"
+    Endpoints combine protocol, transport, and resilience components to provide production-ready AIP communication for servers, clients, and orchestrators.
+
+## Endpoint Types at a Glance
+
+| Endpoint Type | Role | Used By | Key Features |
+|---------------|------|---------|--------------|
+| **DeviceServerEndpoint** | Server | Device Agent Service | • Multiplexed connections<br>• Session management<br>• Task dispatching<br>• Result aggregation |
+| **DeviceClientEndpoint** | Client | Device Agent Client | • Auto-reconnection<br>• Heartbeat management<br>• Command execution<br>• Telemetry reporting |
+| **ConstellationEndpoint** | Orchestrator | ConstellationClient | • Multi-device coordination<br>• Task distribution<br>• Device info querying<br>• Connection pooling |
+
+---
 
 ## Endpoint Architecture
 
+**Endpoint Inheritance Hierarchy:**
+
+AIP provides three specialized endpoint implementations that all inherit common functionality from a shared base class:
+
+```mermaid
+graph TB
+    Base[AIPEndpoint Base]
+    Base --> Server[DeviceServerEndpoint<br/>Server-Side]
+    Base --> Client[DeviceClientEndpoint<br/>Client-Side]
+    Base --> Constellation[ConstellationEndpoint<br/>Orchestrator]
+    
+    Base -.->|Protocol| P[Message Handling]
+    Base -.->|Resilience| R[Reconnection + Heartbeat]
+    Base -.->|Sessions| S[State Tracking]
+    
+    style Base fill:#e1f5ff
+    style Server fill:#fff4e1
+    style Client fill:#f0ffe1
+    style Constellation fill:#ffe1f5
 ```
-┌──────────────────────────────────────┐
-│         AIPEndpoint (Base)           │
-│  - Protocol management               │
-│  - Session tracking                  │
-│  - Resilience (reconnection,         │
-│    heartbeat, timeout)               │
-└──────────────┬───────────────────────┘
-               │
-       ┌───────┴──────┬────────────────┐
-       │              │                │
-┌──────▼─────┐ ┌──────▼──────┐ ┌──────▼────────┐
-│ Device     │ │ Device      │ │Constellation  │
-│ Server     │ │ Client      │ │ Endpoint      │
-│ Endpoint   │ │ Endpoint    │ │               │
-└────────────┘ └─────────────┘ └───────────────┘
-```
+
+The dashed arrows indicate capabilities that the base class provides to all subclasses. This inheritance design ensures consistent behavior across all endpoint types while allowing specialization for server, client, and orchestrator roles.
+
+!!!info "Base Endpoint Components"
+    All endpoints inherit from `AIPEndpoint`, which provides:
+    
+    - **Protocol**: Message serialization and handling
+    - **Reconnection Strategy**: Automatic reconnection with backoff
+    - **Timeout Manager**: Operation timeout management
+    - **Session Handlers**: Per-session state tracking
+
+---
 
 ## Base Endpoint: AIPEndpoint
 
-All endpoints inherit from `AIPEndpoint`, which provides core functionality:
-
-### Core Components
-
-**Protocol**: Message handling and serialization
-**Reconnection Strategy**: Automatic reconnection with backoff
-**Timeout Manager**: Operation timeout management
-**Session Handlers**: Per-session state tracking
-
 ### Common Methods
+
+| Method | Purpose | Example Usage |
+|--------|---------|---------------|
+| `start()` | Start endpoint | `await endpoint.start()` |
+| `stop()` | Stop endpoint | `await endpoint.stop()` |
+| `is_connected()` | Check connection | `if endpoint.is_connected(): ...` |
+| `send_with_timeout()` | Send with timeout | `await endpoint.send_with_timeout(msg, 30.0)` |
+| `receive_with_timeout()` | Receive with timeout | `msg = await endpoint.receive_with_timeout(ServerMessage, 60.0)` |
+
+**Basic Usage Pattern:**
 
 ```python
 from aip.endpoints.base import AIPEndpoint
 
 # Start endpoint
 await endpoint.start()
-
-# Stop endpoint
-await endpoint.stop()
 
 # Check connection
 if endpoint.is_connected():
@@ -51,27 +75,30 @@ if endpoint.is_connected():
 # Send with timeout
 await endpoint.send_with_timeout(msg, timeout=30.0)
 
-# Receive with timeout
-msg = await endpoint.receive_with_timeout(ServerMessage, timeout=30.0)
+# Clean shutdown
+await endpoint.stop()
 ```
 
-## Device Server Endpoint
+---
 
-The `DeviceServerEndpoint` wraps UFO's server-side WebSocket handler with AIP protocol support.
+## DeviceServerEndpoint
 
-### Initialization
+!!!tip "Server-Side Device Management"
+    Wraps UFO's server-side WebSocket handler with AIP protocol support for managing multiple device connections simultaneously.
+
+### Configuration
 
 ```python
 from aip.endpoints import DeviceServerEndpoint
 
 endpoint = DeviceServerEndpoint(
-    ws_manager=ws_manager,           # WebSocket manager
-    session_manager=session_manager, # Session manager
-    local=False                       # Local vs remote mode
+    ws_manager=ws_manager,           # WebSocket connection manager
+    session_manager=session_manager, # Session state manager
+    local=False                      # Local vs remote deployment
 )
 ```
 
-### Usage with FastAPI
+### Integration with FastAPI
 
 ```python
 from fastapi import FastAPI, WebSocket
@@ -85,44 +112,37 @@ async def websocket_route(websocket: WebSocket):
     await endpoint.handle_websocket(websocket)
 ```
 
-### Features
+### Key Features
 
-**Multiplexed Connections**
+| Feature | Description | Benefit |
+|---------|-------------|---------|
+| **Multiplexed Connections** | Handle multiple clients simultaneously | Scale to many devices |
+| **Session Management** | Track active sessions per device | Maintain conversation context |
+| **Task Dispatching** | Route tasks to appropriate clients | Targeted execution |
+| **Result Aggregation** | Collect and format execution results | Unified response handling |
+| **Auto Task Cancellation** | Cancel tasks on disconnect | Prevent orphaned tasks |
 
-Handles multiple client connections simultaneously.
+!!!success "Backward Compatibility"
+    The Device Server Endpoint maintains full compatibility with UFO's existing WebSocket handler.
 
-**Session Management**
-
-Tracks active sessions per device.
-
-**Task Dispatching**
-
-Routes tasks to appropriate device clients.
-
-**Result Aggregation**
-
-Collects and formats execution results.
-
-!!!info
-    The Device Server Endpoint maintains backward compatibility with UFO's existing WebSocket handler.
-
-### Task Cancellation
-
-When a device disconnects, the server cancels all pending tasks:
+### Task Cancellation on Disconnection
 
 ```python
-# Automatically called on disconnection
+# Automatically called when device disconnects
 await endpoint.cancel_device_tasks(
     device_id="device_001",
     reason="device_disconnected"
 )
 ```
 
-## Device Client Endpoint
+---
 
-The `DeviceClientEndpoint` wraps UFO's client-side WebSocket client with AIP protocol support.
+## DeviceClientEndpoint
 
-### Initialization
+!!!tip "Client-Side Device Operations"
+    Wraps UFO's client-side WebSocket client with AIP protocol support, automatic reconnection, and heartbeat management.
+
+### Configuration
 
 ```python
 from aip.endpoints import DeviceClientEndpoint
@@ -135,73 +155,79 @@ endpoint = DeviceClientEndpoint(
 )
 ```
 
-### Starting the Client
+### Automatic Features
+
+| Feature | Default Behavior | Configuration |
+|---------|------------------|---------------|
+| **Heartbeat** | Starts on connection | 20s interval (configurable) |
+| **Reconnection** | Exponential backoff | `max_retries=3`, `initial_backoff=2.0` |
+| **Message Routing** | Auto-routes to UFO client | Handled internally |
+| **Connection Management** | Auto-connect on start | Transparent to user |
+
+**Lifecycle Management Example:**
 
 ```python
 # Start and connect
 await endpoint.start()
 
-# Wait for connection
-# (automatically handled internally)
-```
+# Handle messages automatically
+# (routed to underlying UFO client)
 
-### Stopping the Client
-
-```python
-# Stop heartbeat and close connection
+# Stop heartbeat and close
 await endpoint.stop()
 ```
 
-### Automatic Heartbeat
-
-Device clients automatically send heartbeat messages:
+### Reconnection Strategy
 
 ```python
-# Heartbeat started automatically on connection
-# Interval: 20 seconds (configurable)
-```
+from aip.resilience import ReconnectionStrategy
 
-### Message Handling
-
-Messages are handled by the underlying UFO client:
-
-```python
-# Automatically routes to appropriate handler
-await endpoint.handle_message(server_msg)
-```
-
-### Reconnection
-
-Automatic reconnection on disconnection:
-
-```python
-# Configured during initialization
 reconnection_strategy = ReconnectionStrategy(
     max_retries=3,
     initial_backoff=2.0,
     max_backoff=60.0
 )
+
+endpoint = DeviceClientEndpoint(
+    ws_url=url,
+    ufo_client=client,
+    reconnection_strategy=reconnection_strategy
+)
 ```
 
-## Constellation Endpoint
+---
 
-The `ConstellationEndpoint` enables orchestrator-side communication with multiple devices.
+## ConstellationEndpoint
 
-### Initialization
+!!!tip "Orchestrator-Side Multi-Device Coordination"
+    Enables the ConstellationClient to communicate with multiple devices simultaneously, managing connections, tasks, and queries.
+
+### Configuration
 
 ```python
 from aip.endpoints import ConstellationEndpoint
 
 endpoint = ConstellationEndpoint(
     task_name="multi_device_task",
-    message_processor=processor  # Optional message processor
+    message_processor=processor  # Optional custom processor
 )
 ```
+
+### Multi-Device Operations
+
+| Operation | Method | Description |
+|-----------|--------|-------------|
+| **Connect** | `connect_to_device()` | Establish connection to device |
+| **Send Task** | `send_task_to_device()` | Dispatch task to specific device |
+| **Query Info** | `request_device_info()` | Get device telemetry |
+| **Check Status** | `is_device_connected()` | Verify connection health |
+| **Disconnect** | `disconnect_device()` | Close device connection |
+| **Disconnect All** | `stop()` | Shutdown all connections |
 
 ### Connecting to Devices
 
 ```python
-# Connect to a device
+# Connect using AgentProfile
 connection = await endpoint.connect_to_device(
     device_info=agent_profile,  # AgentProfile object
     message_processor=processor
@@ -211,7 +237,7 @@ connection = await endpoint.connect_to_device(
 ### Sending Tasks
 
 ```python
-# Send task to device
+# Dispatch task to specific device
 result = await endpoint.send_task_to_device(
     device_id="device_001",
     task_request={
@@ -225,41 +251,35 @@ result = await endpoint.send_task_to_device(
 ### Querying Device Info
 
 ```python
-# Request device information
+# Request telemetry update
 device_info = await endpoint.request_device_info("device_001")
 
 if device_info:
     print(f"OS: {device_info['os']}")
     print(f"CPU: {device_info['cpu']}")
+    print(f"GPU: {device_info.get('gpu', 'N/A')}")
 ```
 
-### Managing Connections
+### Connection Management
 
-**Check connection status:**
+**Managing Multiple Devices:**
 
 ```python
+# Check connection before sending
 if endpoint.is_device_connected("device_001"):
     await endpoint.send_task_to_device(...)
-```
 
-**Disconnect device:**
-
-```python
+# Disconnect specific device
 await endpoint.disconnect_device("device_001")
+
+# Disconnect all devices
+await endpoint.stop()
 ```
 
-**Disconnect all:**
+### Disconnection Handling
 
 ```python
-await endpoint.stop()  # Disconnects all devices
-```
-
-### Device Disconnection Handling
-
-When a device disconnects:
-
-```python
-# Automatically triggered
+# Automatically triggered on device disconnect
 await endpoint.on_device_disconnected("device_001")
 
 # Cancels pending tasks
@@ -272,9 +292,30 @@ await endpoint.cancel_device_tasks(
 success = await endpoint.reconnect_device("device_001")
 ```
 
-## Endpoint Lifecycle
+---
 
-### Typical Server Lifecycle
+## Endpoint Lifecycle Patterns
+
+### Server Lifecycle
+
+**Server Endpoint State Transitions:**
+
+This state diagram shows the lifecycle of a server endpoint from initialization through connection handling to shutdown:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Initialize: Create endpoint
+    Initialize --> Started: start()
+    Started --> Listening: Accept connections
+    Listening --> Handling: Handle WebSocket
+    Handling --> Listening: Connection closed
+    Listening --> Stopped: stop()
+    Stopped --> [*]
+```
+
+The `Listening → Handling` loop represents the server accepting multiple client connections. Each connection is handled independently while the server remains in the listening state.
+
+**Server Lifecycle Code:**
 
 ```python
 # 1. Initialize
@@ -292,7 +333,30 @@ async def handle_ws(websocket: WebSocket):
 await endpoint.stop()
 ```
 
-### Typical Client Lifecycle
+### Client Lifecycle
+
+**Client Endpoint State Transitions with Auto-Reconnection:**
+
+This diagram shows the client lifecycle including automatic reconnection attempts when the connection is lost:
+
+```mermaid
+stateDiagram-v2
+    [*] --> Initialize: Create endpoint
+    Initialize --> Connecting: start()
+    Connecting --> Connected: Connection established
+    Connected --> Heartbeat: Auto-start heartbeat
+    Heartbeat --> Handling: Handle messages
+    Handling --> Heartbeat: Continue
+    Heartbeat --> Reconnecting: Connection lost
+    Reconnecting --> Connected: Reconnect successful
+    Reconnecting --> Stopped: Max retries
+    Connected --> Stopped: stop()
+    Stopped --> [*]
+```
+
+The `Heartbeat ↔ Handling` loop represents normal operation with periodic heartbeats. The `Reconnecting → Connected` transition shows automatic recovery from network failures.
+
+**Client Lifecycle Code:**
 
 ```python
 # 1. Initialize
@@ -301,14 +365,16 @@ endpoint = DeviceClientEndpoint(ws_url, ufo_client)
 # 2. Connect
 await endpoint.start()
 
-# 3. Handle messages
-# (automatically handled by UFO client)
+# 3. Handle messages (automatic)
+# UFO client receives and processes messages
 
 # 4. Disconnect
 await endpoint.stop()
 ```
 
-### Typical Constellation Lifecycle
+### Constellation Lifecycle
+
+**Constellation Lifecycle Code:**
 
 ```python
 # 1. Initialize
@@ -324,15 +390,26 @@ await endpoint.connect_to_device(device_info2)
 # 4. Send tasks
 await endpoint.send_task_to_device(device_id, task_request)
 
-# 5. Cleanup
-await endpoint.stop()  # Disconnects all devices
+# 5. Cleanup (disconnects all devices)
+await endpoint.stop()
 ```
+
+---
 
 ## Resilience Features
 
-All endpoints include built-in resilience:
+!!!success "Built-In Resilience"
+    All endpoints include automatic reconnection, timeout management, and heartbeat monitoring.
 
-### Reconnection Strategy
+### Resilience Configuration
+
+| Component | Configuration | Purpose |
+|-----------|---------------|---------|
+| **Reconnection** | `ReconnectionStrategy` | Auto-reconnect with backoff |
+| **Timeout** | `TimeoutManager` | Enforce operation timeouts |
+| **Heartbeat** | `HeartbeatManager` | Monitor connection health |
+
+**Configuring Resilience:**
 
 ```python
 from aip.resilience import ReconnectionStrategy, ReconnectionPolicy
@@ -352,7 +429,7 @@ endpoint = DeviceClientEndpoint(
 )
 ```
 
-### Timeout Management
+### Timeout Operations
 
 ```python
 # Send with custom timeout
@@ -362,16 +439,11 @@ await endpoint.send_with_timeout(msg, timeout=30.0)
 msg = await endpoint.receive_with_timeout(ServerMessage, timeout=60.0)
 ```
 
-### Heartbeat Management
+[→ See detailed resilience documentation](./resilience.md)
 
-Heartbeats are automatically managed for device clients:
+---
 
-```python
-# Configured via HeartbeatManager (internal)
-# Default interval: 20-30 seconds
-```
-
-## Error Handling
+## Error Handling Patterns
 
 ### Connection Errors
 
@@ -394,52 +466,50 @@ except Exception as e:
     logger.error(f"Task failed: {e}")
 ```
 
-### Disconnection Handling
+### Custom Disconnection Handling
 
 ```python
-# Override for custom behavior
 class CustomEndpoint(DeviceClientEndpoint):
     async def on_device_disconnected(self, device_id: str) -> None:
         logger.warning(f"Device {device_id} disconnected")
+        
         # Custom cleanup logic
         await self.custom_cleanup(device_id)
+        
         # Call parent implementation
         await super().on_device_disconnected(device_id)
 ```
 
+---
+
 ## Best Practices
 
-**Use Appropriate Endpoint Type**
+!!!tip "Endpoint Selection"
+    | Use Case | Endpoint Type |
+    |----------|---------------|
+    | Device agent server | `DeviceServerEndpoint` |
+    | Device agent client | `DeviceClientEndpoint` |
+    | Multi-device orchestrator | `ConstellationEndpoint` |
 
-- Server-side: `DeviceServerEndpoint`
-- Client-side: `DeviceClientEndpoint`
-- Orchestrator-side: `ConstellationEndpoint`
+!!!warning "Configuration Guidelines"
+    - **Set appropriate timeouts** based on deployment environment
+    - **Configure reconnection** based on network reliability
+    - **Monitor connection health** with `is_connected()` checks
+    - **Implement custom handlers** for application-specific cleanup
 
-**Configure Resilience**
+!!!success "Resource Management"
+    - **Always call `stop()`** during shutdown to prevent leaks
+    - **Use message processors** for custom message handling
+    - **Handle disconnections** with `on_device_disconnected` overrides
 
-Always set appropriate reconnection and timeout parameters based on your deployment environment.
-
-**Handle Disconnections**
-
-Implement custom `on_device_disconnected` handlers for application-specific cleanup.
-
-**Monitor Connection Health**
-
-Regularly check `is_connected()` before critical operations.
-
-**Clean Up Resources**
-
-Always call `stop()` during shutdown to prevent resource leaks.
-
-**Use Message Processors**
-
-Provide message processors for custom message handling:
+**Custom Message Processor:**
 
 ```python
 class MyProcessor:
     async def process_message(self, msg):
         # Custom processing
-        pass
+        logger.info(f"Processing: {msg.type}")
+        # ...
 
 endpoint = ConstellationEndpoint(
     task_name="task",
@@ -447,7 +517,11 @@ endpoint = ConstellationEndpoint(
 )
 ```
 
-## API Reference
+---
+
+## Quick Reference
+
+### Import Endpoints
 
 ```python
 from aip.endpoints import (
@@ -458,9 +532,10 @@ from aip.endpoints import (
 )
 ```
 
-For more information:
+### Related Documentation
 
 - [Protocol Reference](./protocols.md) - Protocol implementations used by endpoints
-- [Transport Layer](./transport.md) - Transport configuration
+- [Transport Layer](./transport.md) - Transport configuration and options
 - [Resilience](./resilience.md) - Reconnection and heartbeat management
-- [Overview](./overview.md) - System architecture
+- [Messages](./messages.md) - Message types and validation
+- [Overview](./overview.md) - System architecture and design

@@ -1,346 +1,377 @@
-# Agent Interaction Protocol (AIP) - Overview
+# Agent Interaction Protocol (AIP)
 
-The **Agent Interaction Protocol (AIP)** is the communication backbone of UFO², enabling seamless coordination between distributed agents across devices. AIP provides a lightweight, persistent, and extensible messaging layer optimized for multi-agent orchestration in dynamic, heterogeneous environments.
+!!!quote "The Nervous System of UFO²"
+    AIP is the communication backbone that enables seamless coordination between distributed agents across devices, functioning as UFO²'s **nervous system** by unifying registration, task dispatch, command execution, and result reporting into a single, persistent protocol.
 
-## Why AIP?
+## Why AIP Matters
 
-Traditional HTTP-based coordination protocols (e.g., A2A, ACP) assume short-lived, stateless interactions, making them unsuitable for persistent, bidirectional control over evolving workflows. UFO²'s orchestration model demands a communication layer capable of:
+Traditional HTTP-based coordination (e.g., A2A, ACP) uses short-lived, stateless interactions—unsuitable for UFO²'s dynamic orchestration needs.
 
-- **Tolerating continuous DAG evolution**: Task graphs are dynamically modified during execution
-- **Supporting dynamic agent participation**: Agents join, leave, and reconnect unpredictably
-- **Enabling fine-grained event propagation**: Real-time updates on task status, command results, and system state
+| Legacy HTTP Coordination | AIP WebSocket-Based Design |
+|--------------------------|----------------------------|
+| ❌ Short-lived requests | ✅ Long-lived sessions |
+| ❌ Stateless interactions | ✅ Session-aware task management |
+| ❌ High latency overhead | ✅ Low-latency event streaming |
+| ❌ Poor reconnection support | ✅ Seamless recovery from disconnections |
+| ❌ Manual state synchronization | ✅ Automatic DAG state propagation |
 
-AIP addresses these requirements by adopting **WebSocket** as its transport layer, providing long-lived, low-latency communication channels that support continuous event streaming, session-aware task management, and seamless recovery from transient disconnections.
+!!!success "Key Design Goals"
+    - **Continuous DAG Evolution**: Task graphs dynamically modified during execution
+    - **Dynamic Agent Participation**: Agents join, leave, and reconnect unpredictably  
+    - **Fine-Grained Event Propagation**: Real-time updates on tasks, commands, and system state
 
-## Design Philosophy
+## Core Design Principles
 
-AIP functions as the **nervous system** of UFO², unifying registration, task dispatch, command execution, and result reporting into a single protocol that is both human-readable and machine-verifiable.
+| Principle | Description |
+|-----------|-------------|
+| **🎯 Minimalism with Extensibility** | Stable protocol core + custom extensions via capability descriptors |
+| **🔌 Transport Agnostic** | WebSocket primary, supports future HTTP/3, gRPC, etc. |
+| **💾 Session-Aware** | Long-lived sessions span multiple task executions |
+| **🛡️ Resilient by Design** | Auto-reconnection, heartbeat monitoring, timeout management |
+| **👨‍💻 Developer Friendly** | Strongly-typed Pydantic messages, clear errors, comprehensive logging |
 
-### Core Principles
+!!!info "Protocol Characteristics"
+    AIP is both **human-readable** (JSON-based messages) and **machine-verifiable** (Pydantic schema validation), making debugging intuitive while maintaining type safety.
 
-**Minimalism with Extensibility**
-
-AIP provides a stable protocol core while allowing custom extensions through capability descriptors and dynamic message handlers.
-
-**Transport Agnostic**
-
-While WebSocket is the primary transport, AIP's layered architecture supports future extensions (HTTP/3, gRPC, etc.).
-
-**Session-Aware Communication**
-
-Long-lived sessions span multiple task executions, maintaining context and reducing overhead.
-
-**Resilient by Design**
-
-Built-in reconnection strategies, heartbeat monitoring, and timeout management ensure reliability.
-
-**Developer Friendly**
-
-Strongly-typed messages using Pydantic, clear error propagation, and comprehensive logging.
 
 ## Three-Layer Architecture
 
-AIP's logical architecture consists of three interconnected layers that work together to enable distributed agent orchestration:
+!!!tip "High-Level View"
+    AIP connects three layers: **ConstellationClient** (orchestrator) → **Device Agent Service** (server) → **Device Agent Client** (executor). Each layer has clear responsibilities.
 
-```
-┌─────────────────────────────────────────────────────────┐
-│           ConstellationClient (Orchestrator)            │
-│  - Global agent registry (AgentProfile management)      │
-│  - Task assignment and DAG coordination                 │
-│  - Multi-device scheduling                              │
-└────────────────┬────────────────────────────────────────┘
-                 │
-                 │ WebSocket (AIP Protocol)
-                 │
-┌────────────────▼────────────────────────────────────────┐
-│         Device Agent Service (Server-Side)              │
-│  - WebSocket connection management                      │
-│  - Task dispatch to device clients                      │
-│  - Command execution coordination                       │
-│  - Result aggregation and reporting                     │
-└────────────────┬────────────────────────────────────────┘
-                 │
-                 │ WebSocket (AIP Protocol)
-                 │
-┌────────────────▼────────────────────────────────────────┐
-│         Device Agent Client (Client-Side)               │
-│  - Local task execution                                 │
-│  - MCP tool/action execution                            │
-│  - System telemetry reporting                           │
-│  - Result streaming                                     │
-└─────────────────────────────────────────────────────────┘
+| Layer | Role | Key Responsibilities |
+|-------|------|---------------------|
+| **🌟 ConstellationClient** | Orchestrator | • Global agent registry (`AgentProfile` management)<br>• Task assignment & DAG coordination<br>• Multi-device scheduling decisions |
+| **🖥️ Device Agent Service** | Server | • WebSocket connection management<br>• Task dispatch to device clients<br>• Command execution coordination<br>• Result aggregation & reporting |
+| **📱 Device Agent Client** | Executor | • Local task execution<br>• MCP tool/action invocation<br>• System telemetry reporting<br>• Result streaming |
+
+**Architecture Diagram:**
+
+The following diagram illustrates the three-layer architecture and bidirectional communication flows between components:
+
+```mermaid
+graph TB
+    CC[ConstellationClient Orchestrator]
+    DAS[Device Agent Service Server]
+    DAC[Device Agent Client Executor]
+    
+    CC -->|WebSocket TASK| DAS
+    DAS -->|TASK_END Results| CC
+    DAS -->|WebSocket COMMAND| DAC
+    DAC -->|COMMAND_RESULTS| DAS
+    
+    style CC fill:#e1f5ff
+    style DAS fill:#fff4e1
+    style DAC fill:#f0ffe1
 ```
 
-### Layer Responsibilities
+This architecture enables persistent WebSocket connections that span multiple task executions, reducing connection overhead while maintaining bidirectional communication for task dispatch (top-down) and result reporting (bottom-up).
 
-**ConstellationClient (Orchestrator)**
+!!!example "Communication Flow Example"
+    1. ConstellationClient assigns `TASK` to GPU agent  
+    2. Device Service receives task, routes to connected GPU client  
+    3. GPU Client executes commands via MCP tools  
+    4. Results stream back through Service to ConstellationClient  
+    5. ConstellationClient updates DAG, may spawn new subtasks
 
-The ConstellationClient maintains a global registry of active agents and coordinates task distribution across the constellation. It merges information from multiple sources to create comprehensive AgentProfiles for intelligent scheduling.
-
-**Device Agent Service (Server-Side)**
-
-Each device agent service exposes a WebSocket endpoint implementing the AIP protocol. It manages connections to one or more device clients, dispatches tasks, and aggregates execution results.
-
-**Device Agent Client (Client-Side)**
-
-Device clients execute tasks locally, invoke MCP tools/actions, collect system telemetry, and stream results back to the service layer.
+---
 
 ## Core Capabilities
 
-AIP provides three fundamental capabilities that power UFO²'s distributed orchestration:
+### 1️⃣ Agent Registration & Profiling
 
-### 1. Agent Registration and Profiling
+!!!info "Multi-Source Agent Profiles"
+    Each agent is represented by an **AgentProfile** combining data from three sources for comprehensive capability discovery.
 
-Every agent in the constellation is represented by an **AgentProfile** that consolidates information from three sources:
+| Source | Provider | Information |
+|--------|----------|-------------|
+| **User Config** | ConstellationClient | Endpoint URLs, user preferences, device identity |
+| **Service Manifest** | Device Agent Service | Supported tools, capabilities, operational metadata |
+| **Client Telemetry** | Device Agent Client | OS, hardware specs, GPU status, runtime metrics |
 
-**User-Specified Registration (ConstellationClient)**
+**Benefits of Multi-Level Profiling:**
 
-Administrators provide endpoint identities and user preferences through configuration files.
+- ✅ Accurate task allocation based on real-time capabilities  
+- ✅ Transparent adaptation to environmental changes (e.g., GPU availability)  
+- ✅ No manual updates needed when device state changes  
+- ✅ Informed scheduling decisions at scale
 
-**Service-Level Manifest (Device Agent Service)**
+!!!tip "Dynamic Profile Updates"
+    Client telemetry continuously refreshes, so the orchestrator always sees current device state—critical for GPU-aware scheduling or cross-device load balancing.
 
-Each agent advertises its supported tools, capabilities, and operational metadata, declaring what it can contribute to the constellation.
+[→ See detailed registration flow](./protocols.md)
 
-**Client-Side Telemetry (Device Agent Client)**
+---
 
-Local clients continuously report runtime metrics including OS information, hardware specifications, GPU availability, and environment status.
+### 2️⃣ Task Dispatch & Result Delivery
 
-The ConstellationClient merges these inputs into a unified, dynamically refreshed AgentProfile. This multi-level profiling pipeline:
+!!!success "Persistent Sessions"
+    AIP uses **long-lived WebSocket sessions** that span multiple task executions, eliminating connection overhead and preserving context.
 
-- Improves task allocation accuracy through comprehensive capability discovery
-- Enables transparent adaptation to environmental drift without administrator intervention
-- Maintains fresh and consistent metadata across all distributed agents
-- Supports informed scheduling decisions even as the system scales
+**Task Execution Sequence:**
 
-### 2. Task Dispatch and Result Delivery
+The following sequence diagram shows the complete lifecycle of a task from assignment to completion, including intermediate execution steps and state updates:
 
-AIP orchestrates task execution through persistent **sessions** that connect the orchestrator to device agents.
+```mermaid
+sequenceDiagram
+    participant CC as ConstellationClient
+    participant DAS as Device Service
+    participant DAC as Device Client
+    
+    CC->>DAS: TASK message (Task★)
+    DAS->>DAC: Stream task payload
+    DAC->>DAC: Execute using MCP tools
+    DAC->>DAS: Stream execution logs
+    DAS->>CC: TASK_END (status, logs, results)
+    CC->>CC: Update TaskConstellation
+    CC->>CC: Notify ConstellationAgent
+```
 
-**Task Assignment Flow**
+Each arrow represents a message exchange, with vertical lifelines showing the temporal ordering of events. Note how logs stream back during execution, enabling real-time monitoring.
 
-1. ConstellationClient assigns a Task★ to target device
-2. Sends serialized `TASK` message to device agent service
-3. Service resolves logical device ID and establishes/reuses session
-4. Task payload streams to target client
-5. Client executes task using local resources and MCP tools
+| Stage | Message Type | Content |
+|-------|-------------|---------|
+| Assignment | `TASK` | Task★ definition, target device, commands |
+| Execution | (internal) | MCP tool invocations, local computation |
+| Reporting | `TASK_END` | Status, logs, evaluator outputs, results |
 
-**Result Reporting Flow**
+!!!warning "Asynchronous Execution"
+    Tasks execute asynchronously. The orchestrator may assign multiple tasks to different devices simultaneously, with results arriving in non-deterministic order.
 
-1. Device agent service aggregates execution outcomes
-2. Emits structured `TASK_END` message with status, logs, and evaluator outputs
-3. ConstellationClient updates TaskConstellation state
-4. Notifies ConstellationAgent for potential DAG revision
+[→ See message format details](./messages.md)
 
-This unified approach enables asynchronous computation, dynamic planning, and result propagation through a single protocol.
+---
 
-### 3. Command Execution
+### 3️⃣ Command Execution
 
-At a finer granularity, AIP provides a unified **command execution model**.
+!!!info "Fine-Grained Control"
+    Within each task, AIP executes **individual commands** deterministically, enabling precise control and error handling.
 
-**Command Structure**
+**Command Structure:**
 
-Each `COMMAND` message carries:
+| Field | Purpose | Example |
+|-------|---------|---------|
+| `id` | Unique identifier | `"cmd_001"` |
+| `function` | Tool/action name | `"click_input"` |
+| `args` | Typed arguments | `["Save Button", "left"]` |
+| `tool_type` | Category | `"action"` or `"data_collection"` |
 
-- Unique identifier for correlation
-- Target function or tool name
-- Ordered list of typed arguments
-- Tool type (data_collection or action)
+**Execution Guarantees:**
 
-**Execution Guarantees**
+- ✅ **Sequential execution** within a session (deterministic order)  
+- ✅ **Command batching** supported (reduces network overhead)  
+- ✅ **Structured results** with status codes and error details  
+- ✅ **Timeout propagation** for precise recovery strategies
 
-Within a session, device agents execute commands sequentially to ensure determinism. Commands can be batched in a single request to reduce network overhead and support multi-action workflows.
+**Command Batching Example:**
 
-**Result Handling**
+```json
+{
+  "commands": [
+    {"id": "1", "function": "click", "args": ["File"]},
+    {"id": "2", "function": "click", "args": ["Save As"]},
+    {"id": "3", "function": "type", "args": ["document.pdf"]}
+  ]
+}
+```
 
-Each command returns a structured `Result` object containing:
+All three commands sent in one message, executed sequentially.
 
-- Status code (SUCCESS, FAILURE, SKIPPED, NONE)
-- Return value with actual data
-- Error metadata when applicable
-- Namespace and call_id for correlation
+[→ See command execution protocol](./protocols.md)
 
-Timeouts and exceptions are explicitly propagated through the same channel, allowing precise recovery or reassignment strategies.
+---
 
-## Message Protocol
+## Message Protocol Overview
 
-AIP uses strongly-typed messages (Pydantic models) that flow bidirectionally between clients and servers.
+!!!tip "Strongly-Typed Messages"
+    All AIP messages use **Pydantic models** for automatic validation, serialization, and type safety.
 
-### Message Types
+### Bidirectional Message Types
 
-**Client → Server**
+| Direction | Message Type | Purpose |
+|-----------|--------------|---------|
+| **Client → Server** | `REGISTER` | Initial capability advertisement |
+| | `COMMAND_RESULTS` | Return command execution results |
+| | `TASK_END` | Notify task completion |
+| | `HEARTBEAT` | Keepalive signal |
+| | `DEVICE_INFO_RESPONSE` | Device telemetry update |
+| **Server → Client** | `TASK` | Task assignment |
+| | `COMMAND` | Command execution request |
+| | `DEVICE_INFO_REQUEST` | Request telemetry refresh |
+| | `HEARTBEAT` | Keepalive acknowledgment |
+| **Bidirectional** | `ERROR` | Error condition reporting |
 
-- `REGISTER`: Initial registration with capability advertisement
-- `TASK`: Request to execute a task
-- `COMMAND_RESULTS`: Return results of executed commands
-- `TASK_END`: Notify task completion
-- `HEARTBEAT`: Periodic keepalive signal
-- `DEVICE_INFO_REQUEST/RESPONSE`: Device information exchange
-- `ERROR`: Report error conditions
+!!!info "Message Correlation"
+    Every message includes:
+    
+    - `timestamp`: ISO 8601 formatted  
+    - `request_id` / `response_id`: Unique identifier  
+    - `prev_response_id`: Links responses to requests  
+    - `session_id`: Session context
 
-**Server → Client**
+[→ Complete message reference](./messages.md)
 
-- `TASK`: Task assignment to device
-- `COMMAND`: Command(s) to execute
-- `TASK_END`: Task completion notification
-- `HEARTBEAT`: Keepalive acknowledgment
-- `DEVICE_INFO_REQUEST/RESPONSE`: Device information exchange
-- `ERROR`: Error notification
-
-### Session Management
-
-Sessions are identified by unique `session_id` values and maintain context across multiple message exchanges. Each message includes:
-
-- `timestamp`: ISO 8601 formatted timestamp
-- `request_id` or `response_id`: Unique message identifier
-- `prev_response_id`: For correlating request-response chains
+---
 
 ## Resilient Connection Protocol
 
-AIP defines a comprehensive **Resilient Connection Protocol** to ensure stable communication and consistent orchestration across the distributed agent constellation.
+!!!warning "Network Instability Handling"
+    AIP ensures **continuous orchestration** even under transient network failures or device disconnections.
 
-### Connection State Management
+### Device Disconnection Flow
 
-**Device Disconnection Handling**
+**Connection State Transitions:**
 
-When a Device Agent becomes unreachable:
+This state diagram illustrates how devices transition between connection states and the actions triggered at each transition:
 
-1. Orchestrator immediately marks agent as `DISCONNECTED`
-2. Agent becomes invisible to ConstellationAgent scheduler
-3. Excluded from new task assignments
-4. Automatic reconnection routine triggered in background
+```mermaid
+stateDiagram-v2
+    [*] --> CONNECTED
+    CONNECTED --> DISCONNECTED: Connection lost
+    DISCONNECTED --> CONNECTED: Reconnection succeeds
+    DISCONNECTED --> [*]: Timeout / Manual removal
+    
+    note right of DISCONNECTED
+        • Excluded from scheduling
+        • Tasks marked FAILED
+        • Auto-reconnect triggered
+    end note
+```
 
-**Successful Reconnection**
+The `DISCONNECTED` state acts as a quarantine zone where the device is temporarily removed from the scheduling pool while auto-reconnection attempts are made. If reconnection fails after timeout, the device is permanently removed.
 
-- Agent transitions back to `CONNECTED` state
-- Resumes participation in scheduling
-- Previous context restored where possible
+| Event | Orchestrator Action | Device Action |
+|-------|---------------------|---------------|
+| **Device disconnects** | Mark as `DISCONNECTED`<br>Exclude from scheduling<br>Trigger auto-reconnect | N/A |
+| **Reconnection succeeds** | Mark as `CONNECTED`<br>Resume scheduling | Session restored |
+| **Disconnect during task** | Mark tasks as `TASK_FAILED`<br>Propagate to ConstellationAgent<br>Trigger DAG edit | N/A |
 
-**Disconnection During Task Execution**
+### ConstellationClient Disconnection
 
-- All tasks running on affected device marked as `TASK_FAILED`
-- Failure events propagated to ConstellationAgent
-- Initiates constellation edit cycle
-- Global task graph synchronized with runtime state
+!!!danger "Bidirectional Fault Handling"
+    When the **ConstellationClient** disconnects, all Device Agent Services:
+    
+    1. Receive termination signal  
+    2. **Abort all ongoing tasks** tied to that client  
+    3. Prevent resource leakage and zombie processes  
+    4. Maintain end-to-end consistency
 
-### Bidirectional Fault Handling
+**Guarantees:**
 
-**ConstellationClient Disconnection**
+- ✅ No orphaned tasks  
+- ✅ Synchronized state across client-server boundary  
+- ✅ Rapid recovery when connection restored  
+- ✅ Consistent TaskConstellation state
 
-When the ConstellationClient disconnects:
+[→ See resilience implementation](./resilience.md)
 
-1. Device Agent Server receives termination signal
-2. Proactively aborts all ongoing tasks tied to that client
-3. Prevents resource leakage and inconsistent states
-4. Maintains end-to-end consistency across client-server boundary
+---
 
-This symmetric approach ensures:
+## Extensibility Mechanisms
 
-- Continuous coordination under network instability
-- Rapid recovery from transient failures
-- Synchronized task state reflection across all layers
-- No orphaned tasks or zombie processes
+!!!tip "Customization Points"
+    AIP provides multiple extension points for domain-specific needs without modifying the core protocol.
 
-## Extensibility
+### 1. Protocol Middleware
 
-AIP's design emphasizes extensibility at multiple levels:
-
-### Protocol Middleware
-
-Developers can add custom middleware to the protocol pipeline for cross-cutting concerns:
+Add custom processing to message pipeline:
 
 ```python
 from aip.protocol.base import ProtocolMiddleware
 
-class CustomLoggingMiddleware(ProtocolMiddleware):
+class AuditMiddleware(ProtocolMiddleware):
     async def process_outgoing(self, msg):
-        # Log or modify outgoing messages
+        log_to_audit_trail(msg)
         return msg
-    
-    async def process_incoming(self, msg):
-        # Log or modify incoming messages
-        return msg
-
-protocol.add_middleware(CustomLoggingMiddleware())
 ```
 
-### Custom Message Handlers
+### 2. Custom Message Handlers
 
-Register handlers for specific message types:
+Register handlers for new message types:
 
 ```python
-async def handle_custom_message(msg):
-    # Process custom message type
-    pass
-
 protocol.register_handler("custom_type", handle_custom_message)
 ```
 
-### Transport Abstraction
+### 3. Transport Layer
 
-While WebSocket is the default, AIP's transport layer is pluggable. Future implementations can add HTTP/3, gRPC, or custom transports by implementing the `Transport` interface.
+Pluggable transport (default: WebSocket):
+
+```python
+from aip.transport import CustomTransport
+protocol.set_transport(CustomTransport(config))
+```
+
+[→ See extensibility guide](./protocols.md)
+
+---
 
 ## Integration with UFO² Ecosystem
 
-AIP seamlessly integrates with other UFO² components:
+| Component | Integration Point | Benefit |
+|-----------|-------------------|---------|
+| **MCP Servers** | Command execution model aligns with MCP message formats | Unified interface for system actions and LLM tool calls |
+| **TaskConstellation** | Real-time state synchronization via AIP messages | Planning DAG always reflects distributed execution state |
+| **Configuration System** | Agent endpoints, capabilities managed via UFO² config | Centralized management, type-safe validation |
+| **Logging & Monitoring** | Comprehensive logging at all protocol layers | Debugging, performance monitoring, audit trails |
 
-**MCP (Model Context Protocol)**
+!!!success "Seamless Ecosystem Integration"
+    AIP abstracts network/device heterogeneity, allowing the orchestrator to treat all agents as **first-class citizens** in a single event-driven control plane.
 
-AIP's command execution model aligns directly with MCP server message formats, unifying system-level actions and model-generated tool calls under a consistent interface.
+---
 
-**TaskConstellation**
+## Quick Start
 
-The orchestrator uses AIP to maintain real-time synchronization between the planning DAG and distributed execution state.
+!!!example "Getting Started with AIP"
+    
+    **1. Device Server Setup**
+    ```python
+    from aip.endpoints import DeviceServerEndpoint
+    
+    server = DeviceServerEndpoint(host="0.0.0.0", port=8080)
+    await server.start()
+    ```
+    
+    **2. Device Client Connection**
+    ```python
+    from aip.endpoints import DeviceClientEndpoint
+    
+    client = DeviceClientEndpoint(server_url="ws://localhost:8080")
+    await client.connect()
+    ```
+    
+    **3. Constellation Orchestration**
+    ```python
+    from aip.endpoints import ConstellationEndpoint
+    
+    orchestrator = ConstellationEndpoint(config)
+    await orchestrator.register_device("gpu-agent-1", "ws://gpu-server:8080")
+    ```
 
-**Configuration System**
+**Next Steps:**
 
-Agent endpoints, capabilities, and connection parameters are managed through UFO²'s modular configuration system.
+- 📖 [Message Reference](./messages.md) - Complete message type documentation  
+- 🔧 [Protocol Guide](./protocols.md) - Implementation details and best practices  
+- 🌐 [Transport Layer](./transport.md) - WebSocket configuration and optimization  
+- 🔌 [Endpoints](./endpoints.md) - Endpoint setup and usage patterns  
+- 🛡️ [Resilience](./resilience.md) - Connection management and fault tolerance
 
-**Logging and Monitoring**
-
-Comprehensive logging at all protocol layers enables debugging, performance monitoring, and audit trails.
-
-## Key Benefits
-
-**Persistence**
-
-Long-lived connections reduce overhead and maintain context across multiple interactions.
-
-**Low Latency**
-
-WebSocket's full-duplex communication enables real-time event propagation aligned with orchestrator's scheduling loop.
-
-**Standardization**
-
-Any device agent service implementing the TASK-TASK_END protocol can seamlessly integrate into UFO².
-
-**Reliability**
-
-Built-in resilience mechanisms ensure graceful handling of network failures and device disconnections.
-
-**Scalability**
-
-Multiplexed connections and efficient message batching support large-scale multi-agent deployments.
-
-**Developer Experience**
-
-Strongly-typed messages, clear error handling, and comprehensive documentation reduce integration effort.
-
-## Getting Started
-
-To use AIP in your UFO² deployment:
-
-1. **Device Server Setup**: Use `DeviceServerEndpoint` to expose WebSocket endpoints
-2. **Device Client Connection**: Use `DeviceClientEndpoint` to connect clients to services
-3. **Constellation Orchestration**: Use `ConstellationEndpoint` for multi-device coordination
-
-For detailed implementation guides, see:
-
-- [Message Reference](./messages.md) - Complete message type documentation
-- [Protocol Guide](./protocols.md) - Protocol implementation details
-- [Transport Layer](./transport.md) - WebSocket transport configuration
-- [Endpoints](./endpoints.md) - Endpoint setup and usage
-- [Resilience](./resilience.md) - Connection management and recovery
+---
 
 ## Summary
 
-AIP transforms distributed workflow execution into a coherent, safe, and adaptive system where reasoning and execution converge seamlessly across diverse agents and environments. By abstracting away network and device heterogeneity, AIP enables the orchestrator to treat all agents as first-class citizens in a single, event-driven control plane.
+!!!quote "AIP's Value Proposition"
+    AIP transforms distributed workflow execution into a **coherent, safe, and adaptive system** where reasoning and execution converge seamlessly across diverse agents and environments.
+
+**Key Takeaways:**
+
+| Aspect | Impact |
+|--------|--------|
+| **Persistence** | Long-lived connections reduce overhead, maintain context |
+| **Low Latency** | WebSocket enables real-time event propagation |
+| **Standardization** | Any service implementing TASK/TASK_END can join constellation |
+| **Reliability** | Auto-reconnection and fault handling ensure graceful degradation |
+| **Scalability** | Multiplexed connections support large multi-agent deployments |
+| **Developer UX** | Strongly-typed messages, clear errors reduce integration effort |
+
+By abstracting network complexity and providing a stable protocol core with flexible extensions, AIP enables UFO² to orchestrate heterogeneous agents as a **unified, event-driven control plane**.

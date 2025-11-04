@@ -1,80 +1,113 @@
 # AIP Resilience
 
-AIP's resilience layer ensures stable communication and consistent orchestration across distributed agent constellations. This document covers connection management, reconnection strategies, heartbeat monitoring, and timeout handling.
+!!!quote "Fault-Tolerant Communication"
+    AIP's resilience layer ensures stable communication and consistent orchestration across distributed agent constellations through automatic reconnection, heartbeat monitoring, and timeout management.
+
+## Resilience Components
+
+| Component | Purpose | Key Features |
+|-----------|---------|--------------|
+| **ReconnectionStrategy** | Auto-reconnect on disconnect | Exponential backoff, max retries, policies |
+| **HeartbeatManager** | Connection health monitoring | Periodic keepalive, failure detection |
+| **TimeoutManager** | Operation timeout enforcement | Configurable timeouts, async cancellation |
+| **ConnectionProtocol** | State management | Bidirectional fault handling, task cleanup |
+
+---
 
 ## Resilient Connection Protocol
 
-The **Resilient Connection Protocol** governs how connection disruptions are detected, handled, and recovered between ConstellationClient and Device Agents.
+!!!warning "Connection State Management"
+    The Resilient Connection Protocol governs how connection disruptions are detected, handled, and recovered between ConstellationClient and Device Agents.
 
-### Connection State Management
+### Connection State Diagram
 
-#### Device Disconnection Workflow
+**Device Connection Lifecycle with Failure Handling:**
 
-When a Device Agent becomes unreachable:
+This state diagram shows how devices transition between connection states and the internal sub-states during disconnection recovery:
 
-**1. Detection**
-
-Connection failure detected via:
-- WebSocket close event
-- Heartbeat timeout
-- Network error during send/receive
-
-**2. State Transition**
-
-```
-CONNECTED → DISCONNECTED
-```
-
-Agent becomes invisible to ConstellationAgent scheduler and is excluded from new task assignments.
-
-**3. Task Failure Propagation**
-
-All tasks running on the affected device are immediately marked as `TASK_FAILED`. Failure events propagate to ConstellationAgent.
-
-**4. Automatic Reconnection**
-
-Background reconnection routine triggered with exponential backoff.
-
-**5. Recovery**
-
-On successful reconnection:
-
-```
-DISCONNECTED → CONNECTED
+```mermaid
+stateDiagram-v2
+    [*] --> CONNECTED: Initial connection
+    CONNECTED --> DISCONNECTED: Connection lost
+    DISCONNECTED --> CONNECTED: Reconnect succeeds
+    DISCONNECTED --> [*]: Max retries / Manual removal
+    
+    state DISCONNECTED {
+        [*] --> DetectFailure
+        DetectFailure --> CancelTasks
+        CancelTasks --> NotifyOrchestrator
+        NotifyOrchestrator --> AttemptReconnect
+        AttemptReconnect --> [*]: Success
+    }
+    
+    note right of DISCONNECTED
+        • Invisible to scheduler
+        • Tasks marked FAILED
+        • Auto-reconnect triggered
+    end note
 ```
 
-Agent resumes participation in scheduling.
+The nested states within `DISCONNECTED` show the cleanup and recovery sequence: detect the failure, cancel running tasks, notify the orchestrator, then attempt reconnection with exponential backoff.
 
-!!!warning
-    During disconnection, no new tasks are assigned to the affected agent. Existing tasks fail immediately.
+### Device Disconnection Workflow
 
-#### ConstellationClient Disconnection
+!!!danger "Impact on Running Tasks"
+    All tasks running on a disconnected device are **immediately marked as FAILED** to maintain TaskConstellation consistency.
 
-When the ConstellationClient disconnects:
+| Phase | Action | Trigger |
+|-------|--------|---------|
+| **1. Detection** | Connection failure detected | WebSocket close, heartbeat timeout, network error |
+| **2. State Transition** | `CONNECTED` → `DISCONNECTED` | Agent excluded from scheduler |
+| **3. Task Failure** | Mark tasks as `TASK_FAILED` | Propagate to ConstellationAgent |
+| **4. Auto-Reconnect** | Background routine triggered | Exponential backoff |
+| **5. Recovery** | `DISCONNECTED` → `CONNECTED` | Resume scheduling |
 
-**1. Detection**
-
-Device Agent Server receives termination signal (WebSocket close).
-
-**2. Task Abortion**
-
-Server proactively aborts all ongoing tasks tied to that client:
+**Task Cancellation:**
 
 ```python
-# Server-side automatic cleanup
+# Automatically called on disconnection
 await device_server.cancel_all_tasks_for_client(client_id)
 ```
 
-**3. Resource Cleanup**
+### ConstellationClient Disconnection
 
-Prevents resource leakage and inconsistent states.
+!!!success "Bidirectional Fault Handling"
+    When ConstellationClient disconnects, Device Agent Servers proactively clean up to prevent orphaned tasks.
 
-!!!success
-    Bidirectional fault handling ensures end-to-end consistency across the client-server boundary.
+**Orphaned Task Prevention:**
 
-## Reconnection Strategy
+This sequence diagram shows the proactive cleanup sequence when the orchestrator disconnects, ensuring all running tasks are properly aborted:
 
-The `ReconnectionStrategy` manages automatic reconnection with configurable backoff policies.
+```mermaid
+sequenceDiagram
+    participant CC as ConstellationClient
+    participant DAS as Device Agent Server
+    participant Tasks as Running Tasks
+    
+    CC-xDAS: Connection lost
+    DAS->>DAS: Detect termination signal
+    DAS->>Tasks: Abort all tasks for client
+    Tasks->>Tasks: Cleanup resources
+    DAS->>DAS: Maintain consistency
+    
+    Note over DAS: Prevents:<br/>• Resource leaks<br/>• Orphaned tasks<br/>• Inconsistent states
+```
+
+The `x` marker on the connection arrow indicates an abnormal termination. The server immediately detects this and cascades the cleanup signal to all associated tasks, preventing resource leaks.
+
+**Guarantees:**
+
+- ✅ No orphaned tasks or zombie processes
+- ✅ End-to-end consistency across client-server boundary  
+- ✅ Automatic resource cleanup
+- ✅ Synchronized task state reflection
+
+---
+
+## ReconnectionStrategy
+
+!!!info "Automatic Reconnection"
+    Manages reconnection attempts with configurable backoff policies to handle transient network failures.
 
 ### Configuration
 
@@ -82,62 +115,58 @@ The `ReconnectionStrategy` manages automatic reconnection with configurable back
 from aip.resilience import ReconnectionStrategy, ReconnectionPolicy
 
 strategy = ReconnectionStrategy(
-    max_retries=5,                    # Maximum reconnection attempts
-    initial_backoff=1.0,              # Initial backoff (seconds)
-    max_backoff=60.0,                 # Maximum backoff (seconds)
+    max_retries=5,                    # Maximum attempts
+    initial_backoff=1.0,              # Initial delay (seconds)
+    max_backoff=60.0,                 # Maximum delay (seconds)
     backoff_multiplier=2.0,           # Exponential multiplier
     policy=ReconnectionPolicy.EXPONENTIAL_BACKOFF
 )
 ```
 
-### Reconnection Policies
+### Backoff Policies
 
-**EXPONENTIAL_BACKOFF (Default)**
+!!!tip "Choose Based on Network Conditions"
+    Select the policy that matches your deployment environment's network characteristics.
 
-Backoff time doubles after each failed attempt:
+| Policy | Backoff Pattern | Best For | Example Sequence |
+|--------|----------------|----------|------------------|
+| **EXPONENTIAL_BACKOFF** | Doubles each attempt | Internet, unreliable networks | 1s → 2s → 4s → 8s → 16s |
+| **LINEAR_BACKOFF** | Linear increase | Local networks, testing | 1s → 2s → 3s → 4s → 5s |
+| **IMMEDIATE** | No delay | ⚠️ Testing only | 0s → 0s → 0s → 0s → 0s |
+| **NONE** | No reconnection | Manual control | Disabled |
 
-```
-Attempt 1: 1.0s
-Attempt 2: 2.0s
-Attempt 3: 4.0s
-Attempt 4: 8.0s
-Attempt 5: 16.0s
-```
-
-Capped at `max_backoff`.
-
-**LINEAR_BACKOFF**
-
-Backoff time increases linearly:
-
-```
-Attempt 1: 1.0s
-Attempt 2: 2.0s
-Attempt 3: 3.0s
-Attempt 4: 4.0s
-Attempt 5: 5.0s
-```
-
-**IMMEDIATE**
-
-No backoff, immediate retry:
-
-```
-All attempts: 0s delay
-```
-
-!!!danger
-    `IMMEDIATE` policy can overwhelm servers. Use only for testing.
-
-**NONE**
-
-No automatic reconnection:
-
-```
-Reconnection disabled
-```
+!!!danger "IMMEDIATE Policy Warning"
+    `IMMEDIATE` policy can overwhelm servers with rapid retry attempts. **Use only for testing.**
 
 ### Reconnection Workflow
+
+**Automated Reconnection Decision Tree:**
+
+This flowchart shows the complete reconnection logic from failure detection through recovery or permanent failure:
+
+```mermaid
+graph TD
+    A[Connection Lost] --> B[Cancel Pending Tasks]
+    B --> C[Notify Upper Layers]
+    C --> D{Retry Count < Max?}
+    D -->|Yes| E[Calculate Backoff]
+    E --> F[Wait Backoff Duration]
+    F --> G[Attempt Reconnect]
+    G --> H{Success?}
+    H -->|Yes| I[Restore Session]
+    H -->|No| J[Increment Retry Count]
+    J --> D
+    D -->|No| K[Max Retries Reached]
+    K --> L[Permanent Failure]
+    I --> M[Resume Operations]
+    
+    style I fill:#d4edda
+    style L fill:#f8d7da
+```
+
+The loop between "Attempt Reconnect" and "Increment Retry Count" continues until either reconnection succeeds (green path) or max retries are exhausted (red path). Backoff duration increases with each failed attempt.
+
+### Reconnection Example
 
 ```python
 async def handle_disconnection(
@@ -159,41 +188,13 @@ async def handle_disconnection(
         await on_reconnect()
 ```
 
-### Attempt Reconnection
-
-```python
-async def attempt_reconnection(
-    endpoint: AIPEndpoint,
-    device_id: str
-) -> bool:
-    retry_count = 0
-    
-    while retry_count < max_retries:
-        # Calculate backoff
-        backoff = calculate_backoff(retry_count)
-        
-        # Wait
-        await asyncio.sleep(backoff)
-        
-        # Try to reconnect
-        success = await endpoint.reconnect_device(device_id)
-        
-        if success:
-            return True
-        
-        retry_count += 1
-    
-    # Max retries reached
-    return False
-```
-
 ### Custom Reconnection Callback
 
 ```python
 async def on_reconnected():
-    print("Device reconnected, resuming tasks")
-    # Resume pending operations
-    await resume_task_queue()
+    logger.info("Device reconnected, resuming tasks")
+    await restore_task_queue()
+    await sync_device_state()
 
 await strategy.handle_disconnection(
     endpoint=endpoint,
@@ -202,11 +203,14 @@ await strategy.handle_disconnection(
 )
 ```
 
-## Heartbeat Manager
+---
 
-The `HeartbeatManager` sends periodic keepalive messages to monitor connection health.
+## HeartbeatManager {#heartbeat-manager}
 
-### Initialization
+!!!success "Connection Health Monitoring"
+    Sends periodic keepalive messages to detect broken connections before they cause failures.
+
+### Configuration
 
 ```python
 from aip.resilience import HeartbeatManager
@@ -219,7 +223,17 @@ heartbeat_manager = HeartbeatManager(
 )
 ```
 
-### Starting Heartbeat
+### Lifecycle Management
+
+| Operation | Method | Description |
+|-----------|--------|-------------|
+| **Start** | `start_heartbeat(client_id, interval)` | Begin periodic heartbeat for client |
+| **Stop** | `stop_heartbeat(client_id)` | Stop heartbeat for specific client |
+| **Stop All** | `stop_all()` | Stop all active heartbeats |
+| **Check Status** | `is_running(client_id)` | Verify if heartbeat is active |
+| **Get Interval** | `get_interval(client_id)` | Retrieve current interval |
+
+### Usage Example
 
 ```python
 # Start heartbeat for a client
@@ -227,58 +241,83 @@ await heartbeat_manager.start_heartbeat(
     client_id="device_001",
     interval=20.0  # Override default
 )
-```
 
-### Stopping Heartbeat
+# Check if running
+if heartbeat_manager.is_running("device_001"):
+    logger.info("Heartbeat active")
 
-```python
 # Stop for specific client
 await heartbeat_manager.stop_heartbeat("device_001")
 
-# Stop all heartbeats
+# Stop all heartbeats (cleanup)
 await heartbeat_manager.stop_all()
 ```
 
-### Checking Status
-
-```python
-# Check if heartbeat running
-if heartbeat_manager.is_running("device_001"):
-    print("Heartbeat active")
-
-# Get interval
-interval = heartbeat_manager.get_interval("device_001")
-print(f"Heartbeat interval: {interval}s")
-```
-
-### Heartbeat Loop
-
-Internally, the manager runs an async loop per client:
+### Heartbeat Loop Internals
 
 ```python
 async def _heartbeat_loop(client_id: str, interval: float):
+    """Internal heartbeat loop (automatic)"""
     while True:
         await asyncio.sleep(interval)
         
         if protocol.is_connected():
             await protocol.send_heartbeat(client_id)
         else:
-            # Connection lost
+            # Connection lost, exit loop
             break
 ```
 
 ### Failure Detection
 
-If heartbeat fails to send (e.g., connection closed), the loop exits and triggers disconnection handling.
+!!!warning "Automatic Disconnection Trigger"
+    If heartbeat fails to send (connection closed), the loop exits and triggers disconnection handling.
 
-!!!tip
-    Set shorter intervals (10-20s) for quick failure detection, longer intervals (30-60s) to reduce network overhead.
+**Heartbeat Failure Detection:**
 
-## Timeout Manager
+This sequence diagram shows how the heartbeat loop detects connection failures and triggers disconnection handling:
 
-The `TimeoutManager` enforces timeouts on protocol operations.
+```mermaid
+sequenceDiagram
+    participant HM as HeartbeatManager
+    participant P as Protocol
+    participant T as Transport
+    
+    loop Every interval
+        HM->>P: send_heartbeat()
+        P->>T: Send via WebSocket
+        alt Connection alive
+            T-->>P: Success
+            P-->>HM: Continue
+        else Connection dead
+            T-xP: ConnectionError
+            P-xHM: Error
+            HM->>HM: Exit loop
+            HM->>HM: Trigger disconnection
+        end
+    end
+```
 
-### Initialization
+The `x` markers indicate error paths. When the transport layer fails to send a heartbeat, the error propagates back to the manager, which exits the loop and initiates disconnection handling.
+
+### Interval Guidelines
+
+!!!tip "Interval Selection"
+    | Environment | Recommended Interval | Rationale |
+    |-------------|---------------------|-----------|
+    | **Local network** | 10-20s | Quick failure detection, low latency |
+    | **Internet** | 30-60s | Balance overhead vs detection speed |
+    | **Mobile/Unreliable** | 60-120s | Reduce battery/bandwidth usage |
+    | **Critical systems** | 5-10s | Fastest failure detection |
+
+---
+
+## TimeoutManager
+
+!!!info "Operation Timeout Enforcement"
+    Prevents operations from hanging indefinitely by enforcing configurable timeouts with automatic cancellation.
+
+### Configuration
 
 ```python
 from aip.resilience import TimeoutManager
@@ -288,9 +327,9 @@ timeout_manager = TimeoutManager(
 )
 ```
 
-### Using Timeouts
+### Usage Patterns
 
-**With default timeout:**
+**Default Timeout:**
 
 ```python
 result = await timeout_manager.with_timeout(
@@ -299,7 +338,7 @@ result = await timeout_manager.with_timeout(
 )
 ```
 
-**With custom timeout:**
+**Custom Timeout:**
 
 ```python
 result = await timeout_manager.with_timeout(
@@ -309,7 +348,7 @@ result = await timeout_manager.with_timeout(
 )
 ```
 
-### Timeout Handling
+### Error Handling
 
 ```python
 from asyncio import TimeoutError
@@ -321,26 +360,34 @@ try:
     )
 except TimeoutError:
     logger.error("Operation timed out after 30 seconds")
-    # Handle timeout
+    # Handle timeout: retry, fail task, notify user
 ```
 
 ### Recommended Timeouts
 
-**Registration**: 10-30 seconds
-**Task dispatch**: 30-60 seconds
-**Command execution**: 60-300 seconds (depends on complexity)
-**Heartbeat**: 5-10 seconds
-**Disconnection**: 5-15 seconds
+!!!success "Timeout Guidelines by Operation"
+    | Operation | Timeout | Rationale |
+    |-----------|---------|-----------|
+    | **Registration** | 10-30s | Simple message exchange |
+    | **Task Dispatch** | 30-60s | May involve scheduling logic |
+    | **Command Execution** | 60-300s | Depends on command complexity |
+    | **Heartbeat** | 5-10s | Fast failure detection needed |
+    | **Disconnection** | 5-15s | Clean shutdown |
+    | **Device Info Query** | 15-30s | Telemetry collection |
+
+---
 
 ## Integration with Endpoints
 
-Endpoints automatically integrate resilience components:
+!!!tip "Automatic Resilience"
+    Endpoints automatically integrate all resilience components—no manual wiring needed.
+
+### Example: DeviceClientEndpoint
 
 ```python
 from aip.endpoints import DeviceClientEndpoint
 from aip.resilience import ReconnectionStrategy
 
-# Create endpoint with reconnection
 endpoint = DeviceClientEndpoint(
     ws_url="ws://localhost:8000/ws",
     ufo_client=client,
@@ -351,33 +398,26 @@ endpoint = DeviceClientEndpoint(
     )
 )
 
-# Resilience handled automatically
+# Resilience handled automatically on start
 await endpoint.start()
 ```
 
-### Automatic Features
+### Built-In Features
 
-**Reconnection on Disconnect**
+| Feature | Behavior | Configuration |
+|---------|----------|---------------|
+| **Auto-Reconnection** | Triggered on disconnect | Via `ReconnectionStrategy` |
+| **Heartbeat** | Starts on connection | Managed by `HeartbeatManager` |
+| **Timeout Enforcement** | Applied to all operations | Via `TimeoutManager` |
+| **Task Cancellation** | Auto-cancel on disconnect | Built-in to endpoint |
 
-Triggered automatically when connection fails.
+[→ See endpoint documentation](./endpoints.md)
 
-**Heartbeat Management**
+---
 
-Device clients automatically start heartbeat on connection.
+## Best Practices by Environment
 
-**Timeout Enforcement**
-
-All protocol operations subject to configurable timeouts.
-
-**Task Cancellation**
-
-Pending tasks canceled automatically on disconnection.
-
-## Best Practices
-
-### Configure for Network Environment
-
-**Local Network (Low Latency, High Reliability)**
+### Local Network (Low Latency, High Reliability)
 
 ```python
 strategy = ReconnectionStrategy(
@@ -387,9 +427,10 @@ strategy = ReconnectionStrategy(
     policy=ReconnectionPolicy.LINEAR_BACKOFF
 )
 heartbeat_interval = 20.0  # Quick detection
+timeout_default = 60.0
 ```
 
-**Internet (Variable Latency, Moderate Reliability)**
+### Internet (Variable Latency, Moderate Reliability)
 
 ```python
 strategy = ReconnectionStrategy(
@@ -399,9 +440,10 @@ strategy = ReconnectionStrategy(
     policy=ReconnectionPolicy.EXPONENTIAL_BACKOFF
 )
 heartbeat_interval = 30.0  # Balance overhead and detection
+timeout_default = 120.0
 ```
 
-**Unreliable Network (High Latency, Low Reliability)**
+### Unreliable Network (High Latency, Low Reliability)
 
 ```python
 strategy = ReconnectionStrategy(
@@ -411,31 +453,85 @@ strategy = ReconnectionStrategy(
     policy=ReconnectionPolicy.EXPONENTIAL_BACKOFF
 )
 heartbeat_interval = 60.0  # Reduce overhead
+timeout_default = 180.0
 ```
 
-### Monitor Connection Health
+---
+
+## Error Scenarios
+
+### Scenario 1: Transient Network Failure
+
+!!!example "Brief Network Glitch"
+    **Problem**: Network glitch disconnects client for 3 seconds.
+    
+    **Resolution**:
+    1. ✅ Disconnection detected via heartbeat timeout
+    2. ✅ Automatic reconnection triggered (1st attempt after 2s)
+    3. ✅ Connection restored successfully
+    4. ✅ Heartbeat resumes
+    5. ✅ Tasks continue
+
+### Scenario 2: Prolonged Outage
+
+!!!failure "Extended Disconnection"
+    **Problem**: Device offline for 10 minutes.
+    
+    **Resolution**:
+    1. ❌ Initial disconnection detected
+    2. ⏳ Multiple reconnection attempts (exponential backoff: 2s, 4s, 8s, 16s, 32s)
+    3. ❌ All attempts fail (max retries reached)
+    4. ⚠️ Tasks marked as FAILED
+    5. 📢 ConstellationAgent notified
+    6. ♻️ Tasks reassigned to other devices
+
+### Scenario 3: Server Restart
+
+!!!warning "All Clients Disconnect Simultaneously"
+    **Problem**: Server restarts, causing all clients to disconnect at once.
+    
+    **Resolution**:
+    1. ⚠️ All clients detect disconnection
+    2. ⏳ Each client begins reconnection (with jitter to avoid thundering herd)
+    3. ✅ Server restarts and accepts connections
+    4. ✅ Clients reconnect and re-register
+    5. ✅ Task execution resumes
+
+### Scenario 4: Heartbeat Timeout
+
+!!!danger "Missing Heartbeat Response"
+    **Problem**: Heartbeat not received within timeout period.
+    
+    **Resolution**:
+    1. ⏰ HeartbeatManager detects missing pong
+    2. ⚠️ Connection marked as potentially dead
+    3. 🔄 Disconnection handling triggered
+    4. ⏳ Reconnection attempted
+    5. ✅ If successful, heartbeat resumes
+
+---
+
+## Monitoring and Observability
+
+### Enable Resilience Logging
 
 ```python
 import logging
 
-# Enable resilience logging
+# Enable detailed resilience logs
 logging.getLogger("aip.resilience").setLevel(logging.INFO)
-
-# Log reconnection events
-logger.info(f"Device {device_id} reconnected after {retry_count} attempts")
 ```
 
-### Handle Reconnection Events
-
-Override endpoint methods for custom behavior:
+### Custom Event Handlers
 
 ```python
 class CustomEndpoint(DeviceClientEndpoint):
     async def on_device_disconnected(self, device_id: str) -> None:
         # Custom cleanup
         await self.cleanup_resources(device_id)
+        logger.warning(f"Device {device_id} disconnected")
         
-        # Call parent
+        # Call parent implementation
         await super().on_device_disconnected(device_id)
     
     async def reconnect_device(self, device_id: str) -> bool:
@@ -444,13 +540,12 @@ class CustomEndpoint(DeviceClientEndpoint):
         
         if success:
             await self.restore_state(device_id)
+            logger.info(f"Device {device_id} reconnected")
         
         return success
 ```
 
 ### Graceful Degradation
-
-When reconnection fails after max retries:
 
 ```python
 if not await strategy.attempt_reconnection(endpoint, device_id):
@@ -459,11 +554,15 @@ if not await strategy.attempt_reconnection(endpoint, device_id):
     # Graceful degradation
     await notify_operator(f"Device {device_id} offline")
     await reassign_tasks_to_other_devices(device_id)
+    await update_monitoring_dashboard(device_id, "offline")
 ```
 
-### Test Resilience
+---
 
-Simulate failures to test resilience:
+## Testing Resilience
+
+!!!tip "Simulate Failures"
+    Test resilience by simulating network failures and verifying recovery.
 
 ```python
 # Simulate disconnection
@@ -473,61 +572,18 @@ await transport.close()
 assert await endpoint.reconnect_device(device_id)
 
 # Verify heartbeat resumes
+await asyncio.sleep(1)
 assert heartbeat_manager.is_running(device_id)
+
+# Verify task state
+assert all(task.status == TaskStatus.FAILED for task in orphaned_tasks)
 ```
 
-## Error Scenarios
+---
 
-### Scenario 1: Transient Network Failure
+## Quick Reference
 
-**Problem**: Network glitch disconnects client briefly.
-
-**Resolution**:
-
-1. Disconnection detected via heartbeat timeout
-2. Automatic reconnection triggered (1st attempt after 2s)
-3. Connection restored successfully
-4. Heartbeat resumes
-5. Tasks continue
-
-### Scenario 2: Prolonged Outage
-
-**Problem**: Device offline for extended period.
-
-**Resolution**:
-
-1. Initial disconnection detected
-2. Multiple reconnection attempts (exponential backoff)
-3. All attempts fail (max retries reached)
-4. Tasks marked as FAILED
-5. ConstellationAgent notified
-6. Tasks reassigned to other devices
-
-### Scenario 3: Server Restart
-
-**Problem**: Server restarts, all clients disconnect.
-
-**Resolution**:
-
-1. All clients detect disconnection simultaneously
-2. Each client begins reconnection (with jitter to avoid thundering herd)
-3. Server restarts and accepts new connections
-4. Clients reconnect and re-register
-5. Task execution resumes
-
-### Scenario 4: Heartbeat Timeout
-
-**Problem**: Heartbeat not received within timeout.
-
-**Resolution**:
-
-1. HeartbeatManager detects missing pong
-2. Connection marked as potentially dead
-3. Disconnection handling triggered
-4. Reconnection attempted
-5. If successful, heartbeat resumes
-
-## API Reference
+### Import Resilience Components
 
 ```python
 from aip.resilience import (
@@ -538,9 +594,9 @@ from aip.resilience import (
 )
 ```
 
-For more information:
+### Related Documentation
 
 - [Endpoints](./endpoints.md) - How endpoints use resilience
-- [Transport Layer](./transport.md) - Transport-level connection management
+- [Transport Layer](./transport.md) - Transport-level connection management  
 - [Protocol Reference](./protocols.md) - Protocol-level error handling
-- [Overview](./overview.md) - System architecture
+- [Overview](./overview.md) - System architecture and design
