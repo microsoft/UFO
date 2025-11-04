@@ -49,6 +49,7 @@ datasUFO
 
 # Ignore config files with sensitive data (API keys)
 config/*/agents.yaml
+config/*/agent.yaml
 ufo/config/config.yaml
 ufo/config/config_llm.yaml
 
