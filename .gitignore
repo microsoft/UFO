@@ -47,6 +47,9 @@ datasUFO
 
 .venv/*
 
+# Ignore mkdocs build output
+documents/site/
+
 # Ignore config files with sensitive data (API keys)
 config/*/agents.yaml
 config/*/agent.yaml

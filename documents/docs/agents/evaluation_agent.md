@@ -1,6 +1,6 @@
 # EvaluationAgent 🧐
 
-The objective of the `EvaluationAgent` is to evaluate whether a `Session` or `Round` has been successfully completed. The `EvaluationAgent` assesses the performance of the `HostAgent` and `AppAgent` in fulfilling the request. You can configure whether to enable the `EvaluationAgent` in the `config_dev.yaml` file and the detailed documentation can be found [here](../configurations/developer_configuration.md).
+The objective of the `EvaluationAgent` is to evaluate whether a `Session` or `Round` has been successfully completed. The `EvaluationAgent` assesses the performance of the `HostAgent` and `AppAgent` in fulfilling the request. You can configure whether to enable the `EvaluationAgent` in the configuration files and the detailed documentation can be found [here](../configurations/field_reference.md).
 !!! note
     The `EvaluationAgent` is fully LLM-driven and conducts evaluations based on the action trajectories and screenshots. It may not by 100% accurate since LLM may make mistakes.
 

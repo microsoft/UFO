@@ -17,6 +17,8 @@ ACTION_SEQUENCE: True
 
 
 # References
-The implementation of the speculative multi-action execution is located in the `ufo/agents/processors/actions.py` file. The following classes are used for the speculative multi-action execution:
+The implementation of the speculative multi-action execution is located in the `ufo/agents/processors/schemas/actions.py` file. The following classes are used for the speculative multi-action execution:
 
-:::agents.processors.actions.OneStepAction
+:::agents.processors.schemas.actions.ActionCommandInfo
+
+:::agents.processors.schemas.actions.ListActionCommandInfo

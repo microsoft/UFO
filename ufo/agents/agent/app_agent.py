@@ -58,13 +58,12 @@ class AppAgent(BasicAgent):
     ) -> None:
         """
         Initialize the AppAgent.
-        :name: The name of the agent.
+        :param name: The name of the agent.
         :param process_name: The process name of the app.
         :param app_root_name: The root name of the app.
         :param is_visual: The flag indicating whether the agent is visual or not.
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
-        :param api_prompt: The API prompt file path.
         :param skip_prompter: The flag indicating whether to skip the prompter initialization.
         :param mode: The mode of the agent.
         """
@@ -98,8 +97,6 @@ class AppAgent(BasicAgent):
         :param is_visual: The flag indicating whether the agent is visual or not.
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
-        :param api_prompt: The API prompt file path.
-        :param app_root_name: The root name of the app.
         :return: The prompter instance.
         """
         return AppAgentPrompter(is_visual, main_prompt, example_prompt)

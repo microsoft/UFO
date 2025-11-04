@@ -25,4 +25,4 @@ The process may be paused. It can be resumed, based on the agent's logic and the
 
 ## Reference
 Below is the basic structure of the `Processor` class:
-:::agents.processors.basic.BaseProcessor
+:::agents.processors.core.processor_framework.ProcessorTemplate

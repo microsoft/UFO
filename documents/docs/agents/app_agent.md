@@ -114,7 +114,7 @@ The `AppAgent` is enhanced by Retrieval Augmented Generation (RAG) from heteroge
 User can provide help documents to the `AppAgent` to enhance its comprehension of the application and improve its performance in the `config.yaml` file. 
 
 !!! tip
-    Please find details configuration in the [documentation](../configurations/user_configuration.md). 
+    Please find details configuration in the [documentation](../configurations/field_reference.md). 
 !!! tip
     You may also refer to the [here]() for how to provide help documents to the `AppAgent`.
 
@@ -127,7 +127,7 @@ In the `AppAgent`, it calls the `build_offline_docs_retriever` to build a help d
 Since help documents may not cover all the information or the information may be outdated, the `AppAgent` can also leverage Bing search to retrieve the latest information. You can activate Bing search and configure the search engine in the `config.yaml` file.
 
 !!! tip
-    Please find details configuration in the [documentation](../configurations/user_configuration.md).
+    Please find details configuration in the [documentation](../configurations/field_reference.md).
 !!! tip
     You may also refer to the [here]() for the implementation of Bing search in the `AppAgent`.
 
@@ -138,7 +138,7 @@ In the `AppAgent`, it calls the `build_online_search_retriever` to build a Bing 
 You may save successful action trajectories in the `AppAgent` to learn from self-demonstrations and improve its performance. After the completion of a `session`, the `AppAgent` will ask the user whether to save the action trajectories for future reference. You may configure the use of self-demonstrations in the `config.yaml` file.
 
 !!! tip
-     You can find details of the configuration in the [documentation](../configurations/user_configuration.md).
+     You can find details of the configuration in the [documentation](../configurations/field_reference.md).
 
 !!! tip
     You may also refer to the [here]() for the implementation of self-demonstrations in the `AppAgent`.
@@ -149,7 +149,7 @@ In the `AppAgent`, it calls the `build_experience_retriever` to build a self-dem
 In addition to self-demonstrations, you can also provide human demonstrations to the `AppAgent` to enhance its performance by using the [Step Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47) tool built in the Windows OS. The `AppAgent` will learn from the human demonstrations to improve its performance and achieve better personalization. The use of human demonstrations can be configured in the `config.yaml` file.
 
 !!! tip
-    You can find details of the configuration in the [documentation](../configurations/user_configuration.md).
+    You can find details of the configuration in the [documentation](../configurations/field_reference.md).
 !!! tip
     You may also refer to the [here]() for the implementation of human demonstrations in the `AppAgent`.
 

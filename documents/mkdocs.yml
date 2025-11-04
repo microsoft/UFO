@@ -12,9 +12,11 @@ nav:
       - Round: modules/round.md
       - Context: modules/context.md
   - Configurations: 
-      - User Configuration: configurations/user_configuration.md
-      - Developer Configuration: configurations/developer_configuration.md
-      - Model Pricing: configurations/pricing_configuration.md
+      - Overview: configurations/overview.md
+      - Field Reference: configurations/field_reference.md
+      - MCP Reference: configurations/mcp_reference.md
+      - Migration Guide: configurations/migration.md
+      - Extending Configuration: configurations/extending.md
   - Supported Models: 
       - Overview: supported_models/overview.md
       - OpenAI: supported_models/openai.md
@@ -119,6 +121,7 @@ theme:
   name: readthedocs
   analytics:
     - gtag: G-FX17ZGJYGC
+  favicon: ./assets/ufo_blue.png
 
 
 plugins:
@@ -126,7 +129,7 @@ plugins:
     - mkdocstrings:
         handlers:
             python:
-                paths: ["../ufo", "../record_processor", "../dataflow"]
+                paths: ["../ufo", "../record_processor", "../dataflow", "../config"]
                 options:
                     docstring_style: sphinx
                     docstring_section_style: list
@@ -137,4 +140,3 @@ plugins:
 
 
   # logo: ./assets/ufo_blue.png
-favicon: ./assets/ufo_blue.png

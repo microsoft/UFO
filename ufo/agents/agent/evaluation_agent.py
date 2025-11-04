@@ -70,7 +70,6 @@ class EvaluationAgent(BasicAgent):
         :param log_path: The path to the log file.
         :param request: The request.
         :param eva_all_screenshots: The flag indicating whether to evaluate all screenshots.
-        :param context: The context.
         :return: The message.
         """
 

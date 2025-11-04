@@ -1,5 +1,5 @@
 <h1 align="center">
-    <b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="40">: A <b>U</b>I-<b>Fo</b>cused Agent for Windows OS Interaction
+    <b>UFO</b> <img src="../assets/ufo_blue.png" alt="UFO Image" width="40">: A <b>U</b>I-<b>Fo</b>cused Agent for Windows OS Interaction
 </h1>
 
 
@@ -18,19 +18,19 @@
 **UFO** is a **UI-Focused** multi-agent framework to fulfill user requests on **Windows OS** by seamlessly navigating and operating within individual or spanning multiple applications.
 
 <h1 align="center">
-    <img src="./assets/overview_n.png"/> 
+    <img src="../assets/overview_n.png"/> 
 </h1>
 
 
 ## 🕌 Framework
-<b>UFO</b> <img src="./assets/ufo_blue.png" alt="UFO Image" width="24"> operates as a multi-agent framework, encompassing:
+<b>UFO</b> <img src="../assets/ufo_blue.png" alt="UFO Image" width="24"> operates as a multi-agent framework, encompassing:
 - <b>HostAgent 🤖</b>, tasked with choosing an application for fulfilling user requests. This agent may also switch to a different application when a request spans multiple applications, and the task is partially completed in the preceding application. 
 - <b>AppAgent 👾</b>, responsible for iteratively executing actions on the selected applications until the task is successfully concluded within a specific application. 
 - <b>Application Automator 🎮</b>, is tasked with translating actions from HostAgent and AppAgent into interactions with the application and through UI controls, native APIs or AI tools. Check out more details [here](https://microsoft.github.io/UFO/automator/overview/).
 
 Both agents leverage the multi-modal capabilities of GPT-4V(o) to comprehend the application UI and fulfill the user's request. For more details, please consult our [technical report](https://arxiv.org/abs/2402.07939) and [documentation](https://microsoft.github.io/UFO/).
 <h1 align="center">
-    <img src="./assets/framework_v2.png"/> 
+    <img src="../assets/framework_v2.png"/> 
 </h1>
 
 
@@ -311,7 +311,7 @@ If you use UFO in your research, please cite our paper:
 By choosing to run the provided code, you acknowledge and agree to the following terms and conditions regarding the functionality and data handling practices in [DISCLAIMER.md](./DISCLAIMER.md)
 
 
-## <img src="./assets/ufo_blue.png" alt="logo" width="30"> Trademarks
+## <img src="../assets/ufo_blue.png" alt="logo" width="30"> Trademarks
 
 This project may contain trademarks or logos for projects, products, or services. Authorized use of Microsoft 
 trademarks or logos is subject to and must follow 

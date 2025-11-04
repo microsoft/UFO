@@ -8,7 +8,7 @@ The API prompts provide the description and usage of the APIs used in UFO. Share
 | `ufo/prompts/{app_name}` | APIs specific to an application |
 
 !!! info
-    You can configure the API prompt used in the `config.yaml` file. You can find more information about the configuration file [here](../configurations/developer_configuration.md).
+    You can configure the API prompt used in the configuration files. You can find more information about the configuration file [here](../configurations/field_reference.md).
 !!! tip
     You may customize the API prompt for a specific application by adding the API prompt in the application's directory.
 

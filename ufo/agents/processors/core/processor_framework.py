@@ -57,7 +57,7 @@ class ProcessorTemplate(ABC):
         """
         Initialize the processor template.
         :param agent: The agent instance which this processor serves.
-        :param context: The global context.
+        :param global_context: The global context.
         """
         self.agent = agent
         self.global_context = global_context  # Shared global context

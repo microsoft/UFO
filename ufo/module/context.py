@@ -1,4 +1,4 @@
-﻿# Copyright (c) Microsoft Corporation.
+# Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
 from collections import defaultdict
@@ -393,7 +393,7 @@ class Context:
         self, command_dispatcher: BasicCommandDispatcher
     ) -> None:
         """
-        Attach a WebSocket to the command dispatcher.
-        :param ws: The WebSocket connection to attach.
+        Attach a command dispatcher to the context.
+        :param command_dispatcher: The command dispatcher to attach.
         """
         self.command_dispatcher = command_dispatcher
