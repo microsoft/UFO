@@ -146,8 +146,17 @@ class WebSocketTransport(Transport):
             self.logger.debug(f"✅ Sent {len(text_data)} chars successfully")
         except ConnectionClosed as e:
             self._state = TransportState.DISCONNECTED
-            self.logger.error(f"Connection closed during send: {e}")
+            self.logger.debug(f"Connection closed during send: {e}")
             raise ConnectionError(f"Connection closed: {e}") from e
+        except (ConnectionError, OSError) as e:
+            self._state = TransportState.ERROR
+            # Check if this is a normal disconnection scenario
+            error_msg = str(e).lower()
+            if "closed" in error_msg or "not connected" in error_msg:
+                self.logger.debug(f"Cannot send (connection closed): {e}")
+            else:
+                self.logger.warning(f"Connection error sending data: {e}")
+            raise IOError(f"Failed to send data: {e}") from e
         except Exception as e:
             self._state = TransportState.ERROR
             self.logger.error(f"Error sending data: {e}")
@@ -178,8 +187,17 @@ class WebSocketTransport(Transport):
             return data
         except ConnectionClosed as e:
             self._state = TransportState.DISCONNECTED
-            self.logger.error(f"Connection closed during receive: {e}")
+            self.logger.debug(f"Connection closed during receive: {e}")
             raise ConnectionError(f"Connection closed: {e}") from e
+        except (ConnectionError, OSError) as e:
+            self._state = TransportState.ERROR
+            # Check if this is a normal disconnection scenario
+            error_msg = str(e).lower()
+            if "closed" in error_msg or "not connected" in error_msg:
+                self.logger.debug(f"Cannot receive (connection closed): {e}")
+            else:
+                self.logger.warning(f"Connection error receiving data: {e}")
+            raise IOError(f"Failed to receive data: {e}") from e
         except Exception as e:
             self._state = TransportState.ERROR
             self.logger.error(f"Error receiving data: {e}")

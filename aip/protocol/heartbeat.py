@@ -10,7 +10,7 @@ Handles periodic keepalive messages to maintain connection health.
 import asyncio
 import datetime
 import logging
-from typing import Optional
+from typing import Optional, Dict, Any
 from uuid import uuid4
 
 from aip.messages import (
@@ -40,17 +40,21 @@ class HeartbeatProtocol(AIPProtocol):
         self._heartbeat_task: Optional[asyncio.Task] = None
         self._heartbeat_interval: float = 30.0  # Default: 30 seconds
 
-    async def send_heartbeat(self, client_id: str) -> None:
+    async def send_heartbeat(
+        self, client_id: str, metadata: Optional[dict] = None
+    ) -> None:
         """
         Send a single heartbeat message (client-side).
 
         :param client_id: Client ID
+        :param metadata: Optional metadata dictionary
         """
         heartbeat_msg = ClientMessage(
             type=ClientMessageType.HEARTBEAT,
             client_id=client_id,
             status=TaskStatus.OK,
             timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            metadata=metadata,
         )
         await self.send_message(heartbeat_msg)
         self.logger.debug(f"Sent heartbeat from {client_id}")

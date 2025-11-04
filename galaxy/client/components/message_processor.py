@@ -12,7 +12,6 @@ import asyncio
 import json
 import logging
 from typing import Dict, Any, Optional, TYPE_CHECKING
-from websockets import WebSocketClientProtocol
 import websockets
 
 from aip.messages import ServerMessage, ServerMessageType, TaskStatus
@@ -22,6 +21,7 @@ from .heartbeat_manager import HeartbeatManager
 # Avoid circular import
 if TYPE_CHECKING:
     from .connection_manager import WebSocketConnectionManager
+    from aip.transport.websocket import WebSocketTransport
 
 
 class MessageProcessor:
@@ -84,21 +84,21 @@ class MessageProcessor:
         self.logger.debug("🔗 Disconnection handler set")
 
     def start_message_handler(
-        self, device_id: str, websocket: WebSocketClientProtocol
+        self, device_id: str, transport: "WebSocketTransport"
     ) -> None:
         """
         Start message handling for a device.
 
         Creates an asyncio task to listen for incoming messages from the device's
-        WebSocket connection. This task will run until the connection is closed
+        AIP Transport connection. This task will run until the connection is closed
         or the handler is explicitly stopped.
 
         :param device_id: Unique device identifier
-        :param websocket: WebSocket connection to the device
+        :param transport: AIP Transport for the device connection
         """
         if device_id not in self._message_handlers:
             self._message_handlers[device_id] = asyncio.create_task(
-                self._handle_device_messages(device_id, websocket)
+                self._handle_device_messages(device_id, transport)
             )
             self.logger.debug(f"📨 Started message handler for device {device_id}")
 
@@ -119,15 +119,15 @@ class MessageProcessor:
             self.logger.debug(f"📨 Stopped message handler for device {device_id}")
 
     async def _handle_device_messages(
-        self, device_id: str, websocket: WebSocketClientProtocol
+        self, device_id: str, transport: "WebSocketTransport"
     ) -> None:
         """
         Handle incoming messages from a device.
 
-        This is the main message processing loop that listens for WebSocket messages
-        from a device. It validates and routes each message to the appropriate handler
-        based on message type. The loop continues until the connection is closed or
-        an error occurs.
+        This is the main message processing loop that listens for messages
+        from a device via AIP Transport. It validates and routes each message to
+        the appropriate handler based on message type. The loop continues until
+        the connection is closed or an error occurs.
 
         Handles the following scenarios:
         - Normal message processing: Routes to _process_server_message()
@@ -136,17 +136,21 @@ class MessageProcessor:
         - Other exceptions: Logs error and triggers disconnection cleanup
 
         :param device_id: Unique device identifier
-        :param websocket: WebSocket connection to listen on
+        :param transport: AIP Transport to listen on
         """
         message_count = 0
         try:
-            async for message in websocket:
-                message_count += 1
-
-                self.logger.debug(
-                    f"DeviceID: {device_id}, message count: {message_count}, message: {message}"
-                )
+            # Use Transport.receive() instead of async for websocket
+            while transport.is_connected:
                 try:
+                    message_bytes = await transport.receive()
+                    message = message_bytes.decode("utf-8")
+                    message_count += 1
+
+                    self.logger.debug(
+                        f"DeviceID: {device_id}, message count: {message_count}, message: {message}"
+                    )
+
                     server_msg = ServerMessage.model_validate_json(message)
                     asyncio.create_task(
                         self._process_server_message(device_id, server_msg)

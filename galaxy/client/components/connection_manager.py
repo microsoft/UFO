@@ -4,8 +4,8 @@
 """
 WebSocket Connection Manager
 
-Manages WebSocket connections to UFO servers.
-Single responsibility: Connection management.
+Manages WebSocket connections to UFO servers using AIP protocols.
+Single responsibility: Connection management with AIP abstraction.
 """
 
 import asyncio
@@ -15,9 +15,7 @@ from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Dict, Optional
 
 import websockets
-from websockets import WebSocketClientProtocol
 
-from galaxy.core.types import ExecutionResult
 from aip.messages import (
     ClientMessage,
     ClientMessageType,
@@ -25,6 +23,11 @@ from aip.messages import (
     ServerMessage,
     TaskStatus,
 )
+from aip.protocol.device_info import DeviceInfoProtocol
+from aip.protocol.registration import RegistrationProtocol
+from aip.protocol.task_execution import TaskExecutionProtocol
+from aip.transport.websocket import WebSocketTransport
+from galaxy.core.types import ExecutionResult
 
 from .types import AgentProfile, TaskRequest
 
@@ -34,8 +37,8 @@ if TYPE_CHECKING:
 
 class WebSocketConnectionManager:
     """
-    Manages WebSocket connections to UFO servers.
-    Single responsibility: Connection management.
+    Manages WebSocket connections to UFO servers using AIP protocols.
+    Single responsibility: Connection management with AIP abstraction.
     """
 
     def __init__(self, task_name: str):
@@ -45,7 +48,12 @@ class WebSocketConnectionManager:
         """
 
         self.task_name = task_name
-        self._connections: Dict[str, WebSocketClientProtocol] = {}
+        # AIP Protocol instances for each device
+        self._transports: Dict[str, WebSocketTransport] = {}
+        self._registration_protocols: Dict[str, RegistrationProtocol] = {}
+        self._task_protocols: Dict[str, TaskExecutionProtocol] = {}
+        self._device_info_protocols: Dict[str, DeviceInfoProtocol] = {}
+
         # Dictionary to track pending task responses using asyncio.Future
         # Key: task_id (request_id), Value: (device_id, Future)
         self._pending_tasks: Dict[str, tuple[str, asyncio.Future]] = {}
@@ -61,13 +69,12 @@ class WebSocketConnectionManager:
         self,
         device_info: AgentProfile,
         message_processor: "MessageProcessor",
-    ) -> WebSocketClientProtocol:
+    ) -> None:
         """
-        Establish WebSocket connection to a device.
+        Establish WebSocket connection to a device using AIP protocols.
 
         :param device_info: Device information
-        :param message_processor: Optional MessageProcessor to start immediately before registration
-        :return: WebSocket connection
+        :param message_processor: MessageProcessor to start message handling
         :raises: ConnectionError if connection fails
         """
         try:
@@ -75,150 +82,179 @@ class WebSocketConnectionManager:
                 f"🔌 Connecting to device {device_info.device_id} at {device_info.server_url}"
             )
 
-            websocket = await websockets.connect(
-                device_info.server_url,
-                ping_interval=30,
-                ping_timeout=30,
-                close_timeout=600,
+            # Create AIP WebSocket transport and connect
+            transport = WebSocketTransport(
+                ping_interval=30.0,
+                ping_timeout=180.0,
+                close_timeout=10.0,
                 max_size=100 * 1024 * 1024,
             )
 
-            self._connections[device_info.device_id] = websocket
+            await transport.connect(device_info.server_url)
+
+            # Store transport
+            self._transports[device_info.device_id] = transport
+
+            # Initialize AIP protocols for this connection
+            self._registration_protocols[device_info.device_id] = RegistrationProtocol(
+                transport
+            )
+            self._task_protocols[device_info.device_id] = TaskExecutionProtocol(
+                transport
+            )
+            self._device_info_protocols[device_info.device_id] = DeviceInfoProtocol(
+                transport
+            )
 
             # ⚠️ CRITICAL: Start message handler BEFORE sending registration
             # This ensures we don't miss the server's registration response
-            message_processor.start_message_handler(device_info.device_id, websocket)
+            # Pass the transport instead of raw websocket
+            message_processor.start_message_handler(device_info.device_id, transport)
             # Small delay to ensure handler is listening
             await asyncio.sleep(0.05)
             self.logger.debug(f"📨 Message handler started for {device_info.device_id}")
 
-            # Register as constellation client
-            success = await self._register_constellation_client(device_info, websocket)
+            # Register as constellation client using AIP RegistrationProtocol
+            success = await self._register_constellation_client(device_info)
 
             if not success:
-                await websocket.close()
+                await transport.close()
                 raise ConnectionError("Failed to register constellation client")
-
-            return websocket
 
         except websockets.InvalidURI as e:
             self.logger.error(
                 f"❌ Invalid WebSocket URI for device {device_info.device_id}: {e}",
                 exc_info=True,
             )
-            self._connections.pop(device_info.device_id, None)
+            self._cleanup_device_protocols(device_info.device_id)
             raise ConnectionError(f"Invalid WebSocket URI: {e}") from e
         except websockets.WebSocketException as e:
             self.logger.error(
                 f"❌ WebSocket error connecting to device {device_info.device_id}: {e}",
                 exc_info=True,
             )
-            self._connections.pop(device_info.device_id, None)
+            self._cleanup_device_protocols(device_info.device_id)
             raise
         except OSError as e:
             self.logger.error(
                 f"❌ Network error connecting to device {device_info.device_id}: {e}",
                 exc_info=True,
             )
-            self._connections.pop(device_info.device_id, None)
+            self._cleanup_device_protocols(device_info.device_id)
             raise ConnectionError(f"Network error: {e}") from e
         except asyncio.TimeoutError as e:
             self.logger.error(
                 f"❌ Connection timeout for device {device_info.device_id}: {e}",
                 exc_info=True,
             )
-            self._connections.pop(device_info.device_id, None)
+            self._cleanup_device_protocols(device_info.device_id)
             raise
         except Exception as e:
             self.logger.error(
                 f"❌ Unexpected error connecting to device {device_info.device_id}: {e}",
                 exc_info=True,
             )
-            self._connections.pop(device_info.device_id, None)
+            self._cleanup_device_protocols(device_info.device_id)
             raise
 
-    async def _register_constellation_client(
-        self, device_info: AgentProfile, websocket: WebSocketClientProtocol
-    ) -> bool:
+    def _cleanup_device_protocols(self, device_id: str) -> None:
+        """Clean up all AIP protocol instances and connections for a device."""
+        self._transports.pop(device_id, None)
+        self._registration_protocols.pop(device_id, None)
+        self._task_protocols.pop(device_id, None)
+        self._device_info_protocols.pop(device_id, None)
+
+    async def _register_constellation_client(self, device_info: AgentProfile) -> bool:
         """
-        Register this constellation as a special client with the UFO server.
+        Register this constellation as a client using AIP RegistrationProtocol.
 
         :param device_info: Device information to register with
-        :param websocket: WebSocket connection to the server
         :return: True if registration successful, False otherwise
         """
         try:
             constellation_client_id = f"{self.task_name}@{device_info.device_id}"
+            transport = self._transports.get(device_info.device_id)
 
-            registration_message = ClientMessage(
+            if not transport:
+                self.logger.error(f"❌ No transport for device {device_info.device_id}")
+                return False
+
+            # Prepare metadata for constellation registration
+            metadata = {
+                "type": "constellation_client",
+                "task_name": self.task_name,
+                "targeted_device_id": device_info.device_id,
+                "capabilities": [
+                    "task_distribution",
+                    "session_management",
+                    "device_coordination",
+                ],
+                "version": "2.0",
+            }
+
+            self.logger.info(
+                f"📝 Registering constellation client: {constellation_client_id}"
+            )
+
+            # Create a Future to wait for registration response
+            registration_future = asyncio.Future()
+            self._pending_registration[device_info.device_id] = registration_future
+
+            # Manually create and send registration message
+            # (don't use register_as_constellation which calls receive_message)
+            from aip.messages import (
+                ClientMessage,
+                ClientMessageType,
+                ClientType,
+                TaskStatus,
+            )
+            import datetime
+
+            reg_msg = ClientMessage(
                 type=ClientMessageType.REGISTER,
                 client_id=constellation_client_id,
                 client_type=ClientType.CONSTELLATION,
                 target_id=device_info.device_id,
                 status=TaskStatus.OK,
-                timestamp=datetime.now(timezone.utc).isoformat(),
-                metadata={
-                    "type": "constellation_client",
-                    "task_name": self.task_name,
-                    "targeted_device_id": device_info.device_id,
-                    "capabilities": [
-                        "task_distribution",
-                        "session_management",
-                        "device_coordination",
-                    ],
-                    "version": "2.0",
-                },
+                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+                metadata=metadata,
             )
 
-            await websocket.send(registration_message.model_dump_json())
+            # Send registration message via transport
+            await transport.send(reg_msg.model_dump_json().encode())
             self.logger.info(
-                f"📝 Sent registration for constellation client: {constellation_client_id}"
+                f"📤 Sent constellation registration for {constellation_client_id} → {device_info.device_id}"
             )
 
-            # ✅ Wait for server response via MessageProcessor
-            # Create a Future that MessageProcessor will complete when it receives the response
-            registration_future = asyncio.Future()
-            self._pending_registration[device_info.device_id] = registration_future
-
+            # Wait for MessageProcessor to complete the registration via Future
+            # (with timeout)
             try:
-                # Wait for MessageProcessor to resolve the registration result
-                success = await asyncio.wait_for(registration_future, timeout=10.0)
-
-                if success:
-                    self.logger.debug(
-                        f"✅ Registration validated for {constellation_client_id} on device {device_info.device_id}"
-                    )
-                else:
-                    self.logger.error(
-                        f"❌ Registration validation failed for {constellation_client_id} on device {device_info.device_id}"
-                    )
-
-                return success
-
+                success = await asyncio.wait_for(registration_future, timeout=30.0)
             except asyncio.TimeoutError:
+                self.logger.error("❌ Registration timeout")
+                self._pending_registration.pop(device_info.device_id, None)
+                return False
+
+            if not success:
                 self.logger.error(
-                    f"⏰ Timeout waiting for registration response for {constellation_client_id}"
+                    f"❌ Registration failed for {constellation_client_id}"
                 )
                 return False
-            finally:
-                # Clean up the pending registration entry
-                self._pending_registration.pop(device_info.device_id, None)
 
-        except websockets.ConnectionClosed as e:
+            self.logger.info(
+                f"✅ Registration successful for {constellation_client_id}"
+            )
+            return True
+
+        except (ConnectionError, IOError) as e:
             self.logger.error(
-                f"❌ Connection closed during registration for device {device_info.device_id}: {e}",
+                f"❌ Connection error during registration for device {device_info.device_id}: {e}",
                 exc_info=True,
             )
             return False
         except asyncio.TimeoutError as e:
             self.logger.error(
                 f"❌ Registration timeout for device {device_info.device_id}: {e}",
-                exc_info=True,
-            )
-            return False
-        except json.JSONEncodeError as e:
-            self.logger.error(
-                f"❌ JSON encoding error during registration for device {device_info.device_id}: {e}",
                 exc_info=True,
             )
             return False
@@ -229,83 +265,30 @@ class WebSocketConnectionManager:
             )
             return False
 
-    async def _validate_registration_response(
-        self,
-        websocket: WebSocketClientProtocol,
-        constellation_client_id: str,
-        device_id: str,
-    ) -> bool:
-        """
-        Validate the server's response to constellation client registration.
-
-        :param websocket: WebSocket connection to the server
-        :param constellation_client_id: The constellation client ID that was registered
-        :param device_id: The target device ID
-        :return: True if registration was accepted, False otherwise
-        """
-        try:
-            # Wait for server response with timeout
-            response_text = await asyncio.wait_for(websocket.recv(), timeout=10.0)
-
-            # Parse server response
-            from aip.messages import ServerMessage
-
-            response = ServerMessage.model_validate_json(response_text)
-
-            if response.status == TaskStatus.ERROR:
-                self.logger.error(
-                    f"❌ Server rejected constellation registration for {constellation_client_id}: {response.error}"
-                )
-                if "not connected" in (response.error or "").lower():
-                    self.logger.warning(
-                        f"⚠️ Target device '{device_id}' is not connected to the server"
-                    )
-                return False
-            elif response.status == TaskStatus.OK:
-                self.logger.info(
-                    f"✅ Server accepted constellation registration for {constellation_client_id}"
-                )
-                return True
-            else:
-                self.logger.warning(
-                    f"⚠️ Unexpected server response status: {response.status}"
-                )
-                return False
-
-        except asyncio.TimeoutError:
-            self.logger.error(
-                f"⏰ Timeout waiting for registration response for {constellation_client_id}"
-            )
-            return False
-        except Exception as e:
-            self.logger.error(
-                f"❌ Error validating registration response for {constellation_client_id}: {e}"
-            )
-            return False
-
     async def send_task_to_device(
         self, device_id: str, task_request: TaskRequest
     ) -> ExecutionResult:
         """
-        Send a task to a specific device and wait for response.
+        Send a task to a specific device and wait for response using AIP.
 
         :param device_id: Target device ID
         :param task_request: Task request details
         :return: Task execution result
         :raises: ConnectionError if device not connected or task fails
         """
-        websocket = self._connections.get(device_id)
-        if not websocket or websocket.closed:
-            if not websocket:
-                raise ConnectionError(f"Device {device_id} is not connected")
-            else:
-                raise ConnectionError(f"Device {device_id} connection is closed")
+        transport = self._transports.get(device_id)
+        task_protocol = self._task_protocols.get(device_id)
+
+        if not transport or not task_protocol or not transport.is_connected:
+            raise ConnectionError(f"Device {device_id} is not connected")
 
         try:
             task_client_id = f"{self.task_name}@{device_id}"
             constellation_task_id = f"{self.task_name}@{task_request.task_id}"
 
             # Create client message for task execution
+            # Note: Constellation sends ClientMessage.TASK to server, which is different
+            # from server sending ServerMessage.TASK to device
             task_message = ClientMessage(
                 type=ClientMessageType.TASK,
                 client_type=ClientType.CONSTELLATION,
@@ -318,12 +301,12 @@ class WebSocketConnectionManager:
                 status=TaskStatus.CONTINUE,
             )
 
-            # Send task message
             self.logger.info(
-                f"📤 Sent task {task_request.task_id} to device {device_id}"
+                f"📤 Sending task {task_request.task_id} to device {device_id}"
             )
 
-            await websocket.send(task_message.model_dump_json())
+            # Send via AIP transport instead of raw WebSocket
+            await transport.send(task_message.model_dump_json().encode("utf-8"))
 
             # Wait for response with timeout
             response = await asyncio.wait_for(
@@ -331,7 +314,7 @@ class WebSocketConnectionManager:
                 timeout=task_request.timeout,
             )
 
-            self.logger.info(f"📤📤 Received response: {response}")
+            self.logger.info(f"✅ Received task response: status={response.status}")
 
             task_result = ExecutionResult(
                 task_id=task_request.task_id,
@@ -350,14 +333,14 @@ class WebSocketConnectionManager:
                 f"⏰ Task {task_request.task_id} timed out on device {device_id}"
             )
             raise asyncio.TimeoutError(f"Task {task_request.task_id} timed out")
-        except websockets.ConnectionClosed as e:
+        except (ConnectionError, IOError) as e:
             # Clean up the pending future for this task
             self._pending_tasks.pop(constellation_task_id, None)
             self.logger.error(
-                f"🔌 Device {device_id} disconnected during task {task_request.task_id} execution"
+                f"🔌 Device {device_id} connection error during task {task_request.task_id}: {e}"
             )
             raise ConnectionError(
-                f"Device {device_id} disconnected during task execution (code: {e.code}, reason: {e.reason})"
+                f"Device {device_id} connection error during task execution: {e}"
             )
         except Exception as e:
             # Clean up the pending future for this task
@@ -462,30 +445,32 @@ class WebSocketConnectionManager:
             f"✅ Completed task response for {task_id} (status: {response.status})"
         )
 
-    def get_connection(self, device_id: str) -> Optional[WebSocketClientProtocol]:
-        """Get WebSocket connection for a device"""
-        return self._connections.get(device_id)
-
     def is_connected(self, device_id: str) -> bool:
-        """Check if device has active connection"""
-        websocket = self._connections.get(device_id)
-        return websocket is not None and not websocket.closed
+        """Check if device has active AIP connection"""
+        transport = self._transports.get(device_id)
+        return transport is not None and transport.is_connected
 
     async def disconnect_device(self, device_id: str) -> None:
         """
         Disconnect from a specific device and cancel all pending tasks.
+        Cleans up all AIP protocol instances and connections.
 
         :param device_id: Device ID to disconnect
         """
-        if device_id in self._connections:
+        transport = self._transports.get(device_id)
+        if transport:
             # Cancel all pending tasks for this device BEFORE closing connection
             self._cancel_pending_tasks_for_device(device_id)
 
+            # Close AIP transport (which closes the underlying WebSocket)
             try:
-                await self._connections[device_id].close()
-            except:
-                pass
-            del self._connections[device_id]
+                await transport.close()
+            except Exception as e:
+                self.logger.debug(f"Error closing transport for {device_id}: {e}")
+
+            # Clean up all protocol instances and connections
+            self._cleanup_device_protocols(device_id)
+
             self.logger.warning(f"🔌 Disconnected from device {device_id}")
 
     def _cancel_pending_tasks_for_device(self, device_id: str) -> None:
@@ -526,12 +511,12 @@ class WebSocketConnectionManager:
 
     async def disconnect_all(self) -> None:
         """Disconnect from all devices"""
-        for device_id in list(self._connections.keys()):
+        for device_id in list(self._transports.keys()):
             await self.disconnect_device(device_id)
 
     async def request_device_info(self, device_id: str) -> Optional[Dict[str, Any]]:
         """
-        Request device system information via WebSocket.
+        Request device system information using AIP DeviceInfoProtocol.
 
         This method sends a DEVICE_INFO_REQUEST message and waits for MessageProcessor
         to receive and route the DEVICE_INFO_RESPONSE back via complete_device_info_response().
@@ -540,8 +525,10 @@ class WebSocketConnectionManager:
         :param device_id: The device ID to get information for
         :return: Device system information dictionary, or None if not available
         """
-        websocket = self._connections.get(device_id)
-        if not websocket or websocket.closed:
+        device_info_protocol = self._device_info_protocols.get(device_id)
+        transport = self._transports.get(device_id)
+
+        if not device_info_protocol or not transport or not transport.is_connected:
             self.logger.warning(
                 f"⚠️ Device {device_id} not connected, cannot request info"
             )
@@ -557,7 +544,9 @@ class WebSocketConnectionManager:
             info_future = asyncio.Future()
             self._pending_device_info[request_id] = info_future
 
-            # Send device info request using dedicated message type
+            # Use AIP DeviceInfoProtocol to request device info
+            # Note: We still use manual ClientMessage construction because constellation
+            # needs to specify client_id and target_id differently than a regular device
             request_message = ClientMessage(
                 type=ClientMessageType.DEVICE_INFO_REQUEST,
                 client_type=ClientType.CONSTELLATION,
@@ -568,7 +557,7 @@ class WebSocketConnectionManager:
                 status=TaskStatus.OK,
             )
 
-            await websocket.send(request_message.model_dump_json())
+            await transport.send(request_message.model_dump_json().encode("utf-8"))
             self.logger.debug(f"📤 Sent device info request for {device_id}")
 
             # Wait for MessageProcessor to complete the Future (timeout: 10s)
@@ -583,6 +572,12 @@ class WebSocketConnectionManager:
                 # Clean up the pending future
                 self._pending_device_info.pop(request_id, None)
 
+        except (ConnectionError, IOError) as e:
+            self.logger.error(
+                f"❌ Connection error requesting device info for {device_id}: {e}"
+            )
+            self._pending_device_info.pop(request_id, None)
+            return None
         except Exception as e:
             self.logger.error(f"❌ Error requesting device info for {device_id}: {e}")
             self._pending_device_info.pop(request_id, None)
@@ -646,6 +641,9 @@ class WebSocketConnectionManager:
 
         # Resolve the Future with the registration result
         registration_future.set_result(success)
+
+        # Clean up the pending registration
+        self._pending_registration.pop(device_id, None)
 
         if success:
             self.logger.debug(f"✅ Registration accepted for device {device_id}")

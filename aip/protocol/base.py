@@ -81,6 +81,15 @@ class AIPProtocol:
             await self.transport.send(serialized)
             self.logger.debug(f"Sent message: {msg.__class__.__name__}")
 
+        except (ConnectionError, IOError, OSError) as e:
+            # Connection closed or I/O error - this is common during disconnection
+            # Log at DEBUG level to avoid alarming ERROR logs during normal shutdown
+            error_msg = str(e).lower()
+            if "closed" in error_msg or "not connected" in error_msg:
+                self.logger.debug(f"Cannot send message (connection closed): {e}")
+            else:
+                self.logger.warning(f"Connection error sending message: {e}")
+            raise
         except Exception as e:
             self.logger.error(f"Error sending message: {e}")
             raise
@@ -117,6 +126,14 @@ class AIPProtocol:
             self.logger.debug(f"Received message: {msg.__class__.__name__}")
             return msg
 
+        except (ConnectionError, IOError, OSError) as e:
+            # Connection closed or I/O error - this is common during disconnection
+            error_msg = str(e).lower()
+            if "closed" in error_msg or "not connected" in error_msg:
+                self.logger.debug(f"Cannot receive message (connection closed): {e}")
+            else:
+                self.logger.warning(f"Connection error receiving message: {e}")
+            raise
         except Exception as e:
             self.logger.error(f"Error receiving message: {e}")
             raise
