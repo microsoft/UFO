@@ -21,7 +21,7 @@ from ufo.agents.processors.host_agent_processor import HostAgentProcessor
 from ufo.agents.processors.schemas.response_schema import HostAgentResponse
 from ufo.agents.states.host_agent_state import ContinueHostAgentState, HostAgentStatus
 from config.config_loader import get_ufo_config
-from ufo.contracts.contracts import Command, MCPToolInfo
+from aip.messages import Command, MCPToolInfo
 from ufo.llm import AgentType
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import HostAgentPrompter

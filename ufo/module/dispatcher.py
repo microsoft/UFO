@@ -7,9 +7,11 @@ from typing import TYPE_CHECKING, Callable, Coroutine, Any, Dict, List, Optional
 
 from fastapi import WebSocket
 
+from aip.protocol.task_execution import TaskExecutionProtocol
+from aip.transport.websocket import WebSocketTransport
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.config import get_config
-from ufo.contracts.contracts import (
+from aip.messages import (
     ClientMessage,
     Command,
     Result,
@@ -21,7 +23,6 @@ from ufo.contracts.contracts import (
 
 if TYPE_CHECKING:
     from ufo.module.basic import BaseSession
-    from ufo.client.computer import CommandRouter, ComputerManager
 
 
 class BasicCommandDispatcher(ABC):
@@ -135,8 +136,9 @@ class LocalCommandDispatcher(BasicCommandDispatcher):
 
 class WebSocketCommandDispatcher(BasicCommandDispatcher):
     """
-    command dispatcher for communication between components.
-    Handles sending commands and receiving results via WebSocket using observers.
+    Command dispatcher for communication between components.
+    Handles sending commands and receiving results via WebSocket using AIP protocol.
+    Uses AIP's TaskExecutionProtocol for structured message handling.
     """
 
     def __init__(self, session: "BaseSession", ws: WebSocket) -> None:
@@ -152,17 +154,21 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         self.observers: List[asyncio.Task] = []
         self.logger = logging.getLogger(__name__)
 
-        if ws:
-            self.register_observer(self._send_loop)
+        # Initialize AIP components
+        self.transport = WebSocketTransport(ws)
+        self.protocol = TaskExecutionProtocol(self.transport)
+
+        # Note: No longer need _send_loop observer - AIP transport handles sending
 
     def register_observer(
         self, observer: Callable[[], Coroutine[Any, Any, None]]
     ) -> None:
         """
-        Register an observer (_send_loop task) to watch the send_queue.
+        Register an observer task (deprecated - kept for compatibility).
+        AIP protocol handles message sending internally.
         """
-        task = asyncio.create_task(observer())
-        self.observers.append(task)
+        # Keep for backward compatibility but no longer needed
+        pass
 
     def make_server_response(self, commands: List[Command]) -> ServerMessage:
         """
@@ -196,18 +202,12 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
             response_id=response_id,
         )
 
-    async def notify_observers(self, message: str) -> None:
-        """
-        Notify observers that a new message is ready to send.
-        :param message: The message to send.
-        """
-        await self.send_queue.put(message)
-
     async def execute_commands(
         self, commands: List[Command], timeout: float = 6000
     ) -> Optional[List[Result]]:
         """
         Publish commands to the command dispatcher and wait for the result.
+        Uses AIP's TaskExecutionProtocol for message handling.
         :param commands: The list of commands to publish.
         :param timeout: The timeout for waiting for the result.
         :return: The list of results from the commands, or None if timed out.
@@ -217,8 +217,16 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         if server_message.response_id:
             self.pending[server_message.response_id] = fut
 
-        # Push to send_queue to notify observer (_send_loop)
-        await self.notify_observers(server_message.model_dump_json())
+        # Use AIP protocol to send commands
+        try:
+            await self.protocol.send_command(server_message)
+            self.logger.info(
+                f"[AIP] Sent commands via TaskExecutionProtocol: {server_message.response_id}"
+            )
+        except Exception as e:
+            self.logger.error(f"[AIP] Error sending commands: {e}")
+            self.pending.pop(server_message.response_id, None)
+            return self.generate_error_results(commands, e)
 
         try:
             result = await asyncio.wait_for(fut, timeout)
@@ -231,18 +239,6 @@ class WebSocketCommandDispatcher(BasicCommandDispatcher):
         finally:
             if server_message.response_id:
                 self.pending.pop(server_message.response_id, None)
-
-    async def _send_loop(self) -> None:
-        """
-        Observer task: constantly watch send_queue and send messages via websocket.
-        """
-        while True:
-            message = await self.send_queue.get()
-            try:
-                await self.ws.send_text(message)
-                self.logger.info(f"Sent message: {message}")
-            except Exception as e:
-                self.logger.error(f"Error sending message: {e}")
 
     async def set_result(self, response_id: str, result: ClientMessage) -> None:
         """

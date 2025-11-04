@@ -12,7 +12,7 @@ from unittest.mock import Mock, patch, MagicMock
 from fastapi import WebSocket
 
 from ufo.server.services.ws_manager import WSManager, ClientInfo
-from ufo.contracts.contracts import ClientType
+from aip.messages import ClientType
 
 
 class TestWSManagerAgentProfile:

@@ -38,7 +38,7 @@ from ufo.agents.processors.schemas.response_schema import HostAgentResponse
 from ufo.agents.processors.schemas.target import TargetInfo, TargetKind, TargetRegistry
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 from config.config_loader import get_ufo_config
-from ufo.contracts.contracts import Command, Result, ResultStatus
+from aip.messages import Command, Result, ResultStatus
 from ufo.llm import AgentType
 from ufo.module.context import ContextNames
 from ufo.module.dispatcher import BasicCommandDispatcher

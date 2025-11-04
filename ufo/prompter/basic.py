@@ -8,7 +8,7 @@ from typing import Any, Dict, List
 
 import yaml
 
-from ufo.contracts.contracts import MCPToolInfo
+from aip.messages import MCPToolInfo
 
 logger = logging.getLogger(__name__)
 

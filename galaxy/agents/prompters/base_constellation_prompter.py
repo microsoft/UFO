@@ -12,7 +12,7 @@ from abc import ABC
 import json
 from typing import Dict, List, Type
 from config.config_loader import get_galaxy_config
-from ufo.contracts.contracts import MCPToolInfo
+from aip.messages import MCPToolInfo
 from galaxy.agents.schema import WeavingMode
 from galaxy.client.components.types import AgentProfile, DeviceStatus
 from galaxy.constellation.task_constellation import TaskConstellation

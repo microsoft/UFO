@@ -6,7 +6,7 @@ from typing import List, Optional
 
 from ufo.client.computer import CommandRouter, ComputerManager
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
-from ufo.contracts.contracts import Command, Result, ServerMessage
+from aip.messages import Command, Result, ServerMessage
 
 tracemalloc.start()
 

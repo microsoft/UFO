@@ -2,10 +2,16 @@ import asyncio
 import datetime
 import logging
 import uuid
+from typing import Optional
 
 from fastapi import WebSocket, WebSocketDisconnect
 
-from ufo.contracts.contracts import (
+from aip.protocol.registration import RegistrationProtocol
+from aip.protocol.heartbeat import HeartbeatProtocol
+from aip.protocol.device_info import DeviceInfoProtocol
+from aip.protocol.task_execution import TaskExecutionProtocol
+from aip.transport.websocket import WebSocketTransport
+from aip.messages import (
     ClientMessage,
     ClientMessageType,
     ClientType,
@@ -21,6 +27,7 @@ from ufo.server.services.ws_manager import WSManager
 class UFOWebSocketHandler:
     """
     Handles WebSocket connections for the UFO server.
+    Uses AIP (Agent Interaction Protocol) for structured message handling.
     """
 
     def __init__(
@@ -40,16 +47,31 @@ class UFOWebSocketHandler:
         self.local = local
         self.logger = logging.getLogger(self.__class__.__name__)
 
+        # AIP protocol instances (will be initialized per connection)
+        self.transport: Optional[WebSocketTransport] = None
+        self.registration_protocol: Optional[RegistrationProtocol] = None
+        self.heartbeat_protocol: Optional[HeartbeatProtocol] = None
+        self.device_info_protocol: Optional[DeviceInfoProtocol] = None
+        self.task_protocol: Optional[TaskExecutionProtocol] = None
+
     async def connect(self, websocket: WebSocket) -> str:
         """
         Connects a client and registers it in the WS manager.
+        Uses AIP RegistrationProtocol for structured registration.
         Expects the first message to contain {"client_id": ...}.
         :param websocket: The WebSocket connection.
         :return: The client_id.
         """
         await websocket.accept()
 
-        # Parse registration message
+        # Initialize AIP protocols for this connection
+        self.transport = WebSocketTransport(websocket)
+        self.registration_protocol = RegistrationProtocol(self.transport)
+        self.heartbeat_protocol = HeartbeatProtocol(self.transport)
+        self.device_info_protocol = DeviceInfoProtocol(self.transport)
+        self.task_protocol = TaskExecutionProtocol(self.transport)
+
+        # Parse registration message using AIP protocol
         reg_info = await self._parse_registration_message(websocket)
 
         # Determine and validate client type
@@ -70,7 +92,7 @@ class UFOWebSocketHandler:
             client_id, platform, websocket, client_type, reg_info.metadata
         )
 
-        # Send registration confirmation
+        # Send registration confirmation using AIP protocol
         await self._send_registration_confirmation(websocket)
 
         # Log successful connection
@@ -80,13 +102,21 @@ class UFOWebSocketHandler:
 
     async def _parse_registration_message(self, websocket: WebSocket) -> ClientMessage:
         """
-        Parse and validate the registration message from client.
+        Parse and validate the registration message from client using AIP Transport.
         :param websocket: The WebSocket connection.
         :return: Parsed registration message.
         :raises: ValueError if message is invalid.
         """
-        reg_msg = await websocket.receive_text()
-        reg_info = ClientMessage.model_validate_json(reg_msg)
+        self.logger.info("[WS] [AIP] Waiting for registration message...")
+        # Receive registration message through AIP Transport
+        reg_data = await self.transport.receive()
+        if isinstance(reg_data, bytes):
+            reg_data = reg_data.decode("utf-8")
+
+        reg_info = ClientMessage.model_validate_json(reg_data)
+        self.logger.info(
+            f"[WS] [AIP] Received registration from {reg_info.client_id}, type={reg_info.client_type}"
+        )
 
         if not reg_info.client_id:
             raise ValueError("Client ID is required for WebSocket registration")
@@ -119,31 +149,20 @@ class UFOWebSocketHandler:
 
     async def _send_registration_confirmation(self, websocket: WebSocket) -> None:
         """
-        Send successful registration confirmation to client.
+        Send successful registration confirmation to client using AIP RegistrationProtocol.
         :param websocket: The WebSocket connection.
         """
-        success_response = ServerMessage(
-            type=ServerMessageType.HEARTBEAT,  # Using HEARTBEAT as confirmation
-            status=TaskStatus.OK,
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            response_id=str(uuid.uuid4()),
-        )
-        await websocket.send_text(success_response.model_dump_json())
+        self.logger.info("[WS] [AIP] Sending registration confirmation...")
+        await self.registration_protocol.send_registration_confirmation()
+        self.logger.info("[WS] [AIP] Registration confirmation sent")
 
     async def _send_error_response(self, websocket: WebSocket, error_msg: str) -> None:
         """
-        Send error response to client.
+        Send error response to client using AIP RegistrationProtocol.
         :param websocket: The WebSocket connection.
         :param error_msg: Error message to send.
         """
-        error_response = ServerMessage(
-            type=ServerMessageType.ERROR,
-            status=TaskStatus.ERROR,
-            error=error_msg,
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            response_id=str(uuid.uuid4()),
-        )
-        await websocket.send_text(error_response.model_dump_json())
+        await self.registration_protocol.send_registration_error(error_msg)
 
     def _log_client_connection(self, client_id: str, client_type: ClientType) -> None:
         """
@@ -291,29 +310,29 @@ class UFOWebSocketHandler:
             traceback.print_exc()
             self.logger.error(f"[WS] Error handling message from {client_id}: {e}")
 
-            server_message = ServerMessage(
-                status=TaskStatus.ERROR,
-                type=ServerMessageType.ERROR,
-                error=str(e),
-                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-                response_id=str(uuid.uuid4()),
-            )
-            await websocket.send_text(server_message.model_dump_json())
+            # Try to send error, but don't fail if connection is closed
+            try:
+                await self.task_protocol.send_error(str(e))
+            except (ConnectionError, IOError) as send_error:
+                self.logger.debug(
+                    f"[WS] Could not send error response (connection closed): {send_error}"
+                )
 
     async def handle_heartbeat(self, data: ClientMessage, websocket: WebSocket) -> None:
         """
-        Handle heartbeat messages from the client.
+        Handle heartbeat messages from the client using AIP HeartbeatProtocol.
         :param data: The data from the client.
         :param websocket: The WebSocket connection.
         """
-        self.logger.debug(f"[WS] Heartbeat from {data.client_id}")
-        server_message = ServerMessage(
-            type=ServerMessageType.HEARTBEAT,
-            status=TaskStatus.OK,
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            response_id=str(uuid.uuid4()),
-        )
-        await websocket.send_text(server_message.model_dump_json())
+        self.logger.debug(f"[WS] [AIP] Heartbeat from {data.client_id}")
+        # Use AIP heartbeat protocol to send acknowledgment (server-side)
+        try:
+            await self.heartbeat_protocol.send_heartbeat_ack()
+            self.logger.debug(f"[WS] [AIP] Heartbeat response sent to {data.client_id}")
+        except (ConnectionError, IOError) as e:
+            self.logger.debug(
+                f"[WS] [AIP] Could not send heartbeat ack (connection closed): {e}"
+            )
 
     async def handle_error(self, data: ClientMessage, websocket: WebSocket) -> None:
         """
@@ -321,14 +340,9 @@ class UFOWebSocketHandler:
         :param data: The data from the client.
         :param websocket: The WebSocket connection.
         """
-        self.logger.error(f"[WS] Error from {data.client_id}: {data.error}")
-        server_message = ServerMessage(
-            type=ServerMessageType.ERROR,
-            error=data.error,
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            response_id=str(uuid.uuid4()),
-        )
-        await websocket.send_text(server_message.model_dump_json())
+        self.logger.error(f"[WS] [AIP] Error from {data.client_id}: {data.error}")
+        # Send error acknowledgment
+        await self.task_protocol.send_error(data.error or "Unknown error")
 
     async def handle_unknown(self, data: ClientMessage, websocket: WebSocket) -> None:
         """
@@ -336,16 +350,8 @@ class UFOWebSocketHandler:
         :param data: The data from the client.
         :param websocket: The WebSocket connection.
         """
-        self.logger.warning(f"[WS] Unknown message type: {data.type}")
-
-        server_message = ServerMessage(
-            type=ServerMessageType.ERROR,
-            error=f"Unknown message type: {data.type}",
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            response_id=str(uuid.uuid4()),
-        )
-
-        await websocket.send_text(server_message.model_dump_json())
+        self.logger.warning(f"[WS] [AIP] Unknown message type: {data.type}")
+        await self.task_protocol.send_error(f"Unknown message type: {data.type}")
 
     async def handle_task_request(
         self, data: ClientMessage, websocket: WebSocket
@@ -486,14 +492,7 @@ class UFOWebSocketHandler:
         )
 
         # Send immediate acknowledgment that task was accepted
-        ack_message = ServerMessage(
-            type=ServerMessageType.HEARTBEAT,
-            status=TaskStatus.OK,
-            session_id=session_id,
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            response_id=str(uuid.uuid4()),
-        )
-        await websocket.send_text(ack_message.model_dump_json())
+        await self.task_protocol.send_ack(session_id=session_id)
 
         self.logger.info(
             f"[WS] 📝 Task {session_id} accepted and running in background"
@@ -535,36 +534,28 @@ class UFOWebSocketHandler:
         self, data: ClientMessage, websocket: WebSocket
     ) -> None:
         """
-        Handle device info request from constellation client.
+        Handle device info request from constellation client using AIP DeviceInfoProtocol.
 
         :param data: The request data from constellation.
         :param websocket: The WebSocket connection.
         """
         device_id = data.target_id
-        request_id = data.request_id  # Extract request_id from client message
+        request_id = data.request_id
 
         self.logger.info(
-            f"[WS] 🌟 Constellation requesting device info for {device_id}"
+            f"[WS] [AIP] 🌟 Constellation requesting device info for {device_id}"
         )
 
         # Get device info from WSManager
         device_info = await self.get_device_info(device_id)
 
-        # Send response back to constellation
-        # Use client's request_id as response_id to match the request
-        response = ServerMessage(
-            type=ServerMessageType.DEVICE_INFO_RESPONSE,
-            status=TaskStatus.OK if "error" not in device_info else TaskStatus.ERROR,
-            result=device_info,
-            error=device_info.get("error"),
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            response_id=request_id,  # Match client's request_id
+        # Use AIP DeviceInfoProtocol to send response
+        await self.device_info_protocol.send_device_info_response(
+            device_info=device_info, request_id=request_id
         )
 
-        await websocket.send_text(response.model_dump_json())
-
         self.logger.info(
-            f"[WS] 📤 Sent device info response for {device_id} to constellation"
+            f"[WS] [AIP] 📤 Sent device info response for {device_id} to constellation"
         )
 
     async def get_device_info(self, device_id: str) -> dict:

@@ -167,6 +167,50 @@ class AIPProtocol:
         """Check if protocol transport is connected."""
         return self.transport.is_connected
 
+    async def send_error(
+        self, error_msg: str, response_id: Optional[str] = None
+    ) -> None:
+        """
+        Send a generic error message (server-side).
+
+        :param error_msg: Error message
+        :param response_id: Optional response ID for correlation
+        """
+        import datetime
+        import uuid
+        from aip.messages import ServerMessage, ServerMessageType, TaskStatus
+
+        error_message = ServerMessage(
+            type=ServerMessageType.ERROR,
+            status=TaskStatus.ERROR,
+            error=error_msg,
+            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            response_id=response_id or str(uuid.uuid4()),
+        )
+        await self.send_message(error_message)
+
+    async def send_ack(
+        self, session_id: Optional[str] = None, response_id: Optional[str] = None
+    ) -> None:
+        """
+        Send a generic acknowledgment message (server-side).
+
+        :param session_id: Optional session ID
+        :param response_id: Optional response ID for correlation
+        """
+        import datetime
+        import uuid
+        from aip.messages import ServerMessage, ServerMessageType, TaskStatus
+
+        ack_message = ServerMessage(
+            type=ServerMessageType.HEARTBEAT,
+            status=TaskStatus.OK,
+            session_id=session_id,
+            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            response_id=response_id or str(uuid.uuid4()),
+        )
+        await self.send_message(ack_message)
+
     async def close(self) -> None:
         """Close protocol and transport."""
         await self.transport.close()

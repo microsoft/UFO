@@ -28,7 +28,7 @@ from ufo.agents.processors.schemas.response_schema import AppAgentResponse
 from ufo.agents.states.app_agent_state import AppAgentStatus, ContinueAppAgentState
 from ufo.agents.states.operator_state import ContinueOpenAIOperatorState
 from config.config_loader import get_ufo_config
-from ufo.contracts.contracts import Command, MCPToolInfo
+from aip.messages import Command, MCPToolInfo
 from ufo.module import interactor
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.agent_prompter import AppAgentPrompter

@@ -20,7 +20,7 @@ from ufo.agents.processors.schemas.actions import (
     ActionCommandInfo,
     ListActionCommandInfo,
 )
-from ufo.contracts.contracts import Result
+from aip.messages import Result
 from ufo.module.context import ContextNames
 
 if TYPE_CHECKING:

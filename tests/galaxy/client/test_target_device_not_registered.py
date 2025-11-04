@@ -34,7 +34,7 @@ import websockets
 
 from galaxy.client.device_manager import ConstellationDeviceManager
 from galaxy.client.components import DeviceStatus, AgentProfile
-from ufo.contracts.contracts import ServerMessage, ServerMessageType, TaskStatus
+from aip.messages import ServerMessage, ServerMessageType, TaskStatus
 
 
 class TestTargetDeviceNotRegistered:

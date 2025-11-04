@@ -48,7 +48,7 @@ from ufo.agents.processors.strategies.processing_strategy import BaseProcessingS
 from ufo.automator.ui_control.grounding.omniparser import OmniparserGrounding
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from config.config_loader import get_ufo_config
-from ufo.contracts.contracts import Command, Result, ResultStatus
+from aip.messages import Command, Result, ResultStatus
 from ufo.llm import AgentType
 from ufo.llm.grounding_model.omniparser_service import OmniParser
 from ufo.module.context import ContextNames

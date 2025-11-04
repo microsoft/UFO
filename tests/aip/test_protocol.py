@@ -198,7 +198,8 @@ class TestTaskExecutionProtocol:
             Command(tool_name="click", tool_type="action"),
         ]
 
-        await protocol.send_command(
+        # Use send_commands instead of send_command
+        await protocol.send_commands(
             actions=commands,
             session_id="session_123",
             response_id="resp_123",

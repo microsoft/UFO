@@ -10,7 +10,7 @@ from pywinauto.controls.uiawrapper import UIAWrapper
 
 from dataflow.config.config import Config
 from ufo.config import Config as UFOConfig
-from ufo.contracts.contracts import ControlInfo
+from aip.messages import ControlInfo
 
 # Load configuration settings
 _configs = Config.get_instance().config_data

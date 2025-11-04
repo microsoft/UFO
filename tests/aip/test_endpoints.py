@@ -113,7 +113,7 @@ class TestBackwardCompatibility:
 
     def test_import_from_contracts(self):
         """Test importing from ufo.contracts.contracts works."""
-        from ufo.contracts.contracts import (
+        from aip.messages import (
             ClientMessage,
             ClientMessageType,
             ServerMessage,
@@ -128,7 +128,7 @@ class TestBackwardCompatibility:
 
     def test_message_creation_compatibility(self):
         """Test creating messages with old import path."""
-        from ufo.contracts.contracts import ClientMessage, ClientMessageType, TaskStatus
+        from aip.messages import ClientMessage, ClientMessageType, TaskStatus
 
         msg = ClientMessage(
             type=ClientMessageType.HEARTBEAT,

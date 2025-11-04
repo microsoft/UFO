@@ -18,7 +18,7 @@ import websockets
 from websockets import WebSocketClientProtocol
 
 from galaxy.core.types import ExecutionResult
-from ufo.contracts.contracts import (
+from aip.messages import (
     ClientMessage,
     ClientMessageType,
     ClientType,
@@ -248,7 +248,7 @@ class WebSocketConnectionManager:
             response_text = await asyncio.wait_for(websocket.recv(), timeout=10.0)
 
             # Parse server response
-            from ufo.contracts.contracts import ServerMessage
+            from aip.messages import ServerMessage
 
             response = ServerMessage.model_validate_json(response_text)
 

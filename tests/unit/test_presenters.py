@@ -18,7 +18,7 @@ import sys
 
 from ufo.agents.presenters import BasePresenter, RichPresenter, PresenterFactory
 from ufo.agents.processors.schemas.actions import ActionCommandInfo, ListActionCommandInfo
-from ufo.contracts.contracts import Result, ResultStatus
+from aip.messages import Result, ResultStatus
 
 
 class TestPresenterFactory(unittest.TestCase):

@@ -33,7 +33,7 @@ from galaxy.client.components.device_registry import DeviceRegistry
 from galaxy.client.components.heartbeat_manager import HeartbeatManager
 from galaxy.client.components.types import AgentProfile, TaskRequest
 
-from ufo.contracts.contracts import (
+from aip.messages import (
     ServerMessage,
     ServerMessageType,
     TaskStatus,

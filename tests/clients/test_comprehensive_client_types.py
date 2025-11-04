@@ -9,7 +9,7 @@ import logging
 import sys
 import websockets
 from datetime import datetime, timezone
-from ufo.contracts.contracts import ClientMessage, ClientMessageType, TaskStatus
+from aip.messages import ClientMessage, ClientMessageType, TaskStatus
 from ufo.server.services.ws_manager import WSManager
 
 # 设置日志

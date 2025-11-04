@@ -28,7 +28,7 @@ from ufo.agents.processors.strategies.app_agent_processing_strategy import (
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from config.config_loader import get_ufo_config
-from ufo.contracts.contracts import Command, ResultStatus
+from aip.messages import Command, ResultStatus
 from ufo.module.dispatcher import BasicCommandDispatcher
 
 # Load configuration

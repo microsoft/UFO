@@ -17,7 +17,7 @@ from unittest.mock import AsyncMock, MagicMock, patch, call
 from galaxy.client.device_manager import ConstellationDeviceManager
 from galaxy.client.components import DeviceStatus
 from galaxy.core.types import ExecutionResult
-from ufo.contracts.contracts import TaskStatus
+from aip.messages import TaskStatus
 
 
 @pytest.fixture

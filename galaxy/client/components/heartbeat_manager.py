@@ -13,7 +13,7 @@ import logging
 from datetime import datetime, timezone
 from typing import Dict
 
-from ufo.contracts.contracts import ClientMessage, ClientMessageType, TaskStatus
+from aip.messages import ClientMessage, ClientMessageType, TaskStatus
 
 from .connection_manager import WebSocketConnectionManager
 from .device_registry import DeviceRegistry

@@ -620,7 +620,7 @@ class RichPresenter(BasePresenter):
         :param success_only: Whether to print only successful actions
         """
         from rich.rule import Rule
-        from ufo.contracts.contracts import ResultStatus
+        from aip.messages import ResultStatus
 
         if not actions or not actions.actions:
             self.console.print("ℹ️  No actions to display", style="dim")
@@ -676,7 +676,7 @@ class RichPresenter(BasePresenter):
 
         :param actions: ListActionCommandInfo object
         """
-        from ufo.contracts.contracts import ResultStatus
+        from aip.messages import ResultStatus
 
         if not actions or not actions.actions:
             self.console.print("ℹ️  No actions to display", style="dim")
@@ -711,7 +711,7 @@ class RichPresenter(BasePresenter):
         """Print a single constellation editing action in compact format."""
         from rich.table import Table
         from rich.text import Text
-        from ufo.contracts.contracts import ResultStatus
+        from aip.messages import ResultStatus
 
         # Determine status icon and color
         if action.result.status == ResultStatus.SUCCESS:
@@ -888,7 +888,7 @@ class RichPresenter(BasePresenter):
         :param action: ActionCommandInfo object
         """
         from rich.text import Text
-        from ufo.contracts.contracts import ResultStatus
+        from aip.messages import ResultStatus
 
         # Determine status icon and color
         if action.result.status == ResultStatus.SUCCESS:

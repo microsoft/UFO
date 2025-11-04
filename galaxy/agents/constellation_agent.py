@@ -29,7 +29,7 @@ from galaxy.core.events import ConstellationEvent, EventType, TaskEvent, get_eve
 
 # Import BasicAgent and ConstellationAgentStatus here to avoid circular import at module level
 from ufo.agents.agent.basic import BasicAgent
-from ufo.contracts.contracts import Command, MCPToolInfo, ResultStatus
+from aip.messages import Command, MCPToolInfo, ResultStatus
 from ufo.module.context import Context, ContextNames
 
 from ..constellation import TaskConstellation

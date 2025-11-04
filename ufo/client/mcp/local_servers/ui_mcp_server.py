@@ -28,7 +28,7 @@ from ufo.automator.ui_control.inspector import ControlInspectorFacade
 from ufo.automator.ui_control.screenshot import PhotographerFacade
 from ufo.client.mcp.mcp_registry import MCPRegistry
 from ufo.config import get_config
-from ufo.contracts.contracts import ControlInfo, Rect, WindowInfo
+from aip.messages import ControlInfo, Rect, WindowInfo
 
 # Get config
 configs = get_config()

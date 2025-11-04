@@ -30,7 +30,7 @@ from ufo.agents.agent.evaluation_agent import EvaluationAgent
 from ufo.agents.agent.host_agent import HostAgent
 from ufo.agents.states.basic import AgentState, AgentStatus
 from config.config_loader import get_ufo_config
-from ufo.contracts.contracts import Command
+from aip.messages import Command
 from ufo.experience.summarizer import ExperienceSummarizer
 from ufo.module.context import Context, ContextNames
 from ufo.trajectory.parser import Trajectory

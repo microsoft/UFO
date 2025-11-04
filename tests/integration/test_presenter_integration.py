@@ -160,7 +160,7 @@ class TestAgentPresenterIntegration(unittest.TestCase):
             ActionCommandInfo,
             ListActionCommandInfo
         )
-        from ufo.contracts.contracts import Result, ResultStatus
+        from aip.messages import Result, ResultStatus
         
         mock_console = MagicMock()
         mock_console_class.return_value = mock_console

@@ -12,7 +12,7 @@ from fastmcp.client.client import CallToolResult
 from mcp.types import TextContent
 
 from ufo.client.mcp.mcp_server_manager import BaseMCPServer, MCPServerManager
-from ufo.contracts.contracts import Command, Result, MCPToolCall, ResultStatus
+from aip.messages import Command, Result, MCPToolCall, ResultStatus
 import ufo.client.mcp.local_servers
 
 # Load all local MCP servers

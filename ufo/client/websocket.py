@@ -7,7 +7,11 @@ from uuid import uuid4
 import websockets
 from websockets import WebSocketClientProtocol
 
-from ufo.contracts.contracts import (
+from aip.protocol.registration import RegistrationProtocol
+from aip.protocol.heartbeat import HeartbeatProtocol
+from aip.protocol.task_execution import TaskExecutionProtocol
+from aip.transport.websocket import WebSocketTransport
+from aip.messages import (
     ClientMessage,
     ClientMessageType,
     ServerMessage,
@@ -22,6 +26,7 @@ if TYPE_CHECKING:
 class UFOWebSocketClient:
     """
     WebSocket client compatible with FastAPI UFO server.
+    Uses AIP (Agent Interaction Protocol) for structured message handling.
     Handles task_request, heartbeat, result_ack, notify_ack.
     """
 
@@ -51,6 +56,12 @@ class UFOWebSocketClient:
 
         self.connected_event = asyncio.Event()
 
+        # AIP protocol instances (will be initialized on connection)
+        self.transport: Optional[WebSocketTransport] = None
+        self.registration_protocol: Optional[RegistrationProtocol] = None
+        self.heartbeat_protocol: Optional[HeartbeatProtocol] = None
+        self.task_protocol: Optional[TaskExecutionProtocol] = None
+
     async def connect_and_listen(self):
         """
         Connect to the FastAPI WebSocket server and listen for incoming messages.
@@ -69,6 +80,13 @@ class UFOWebSocketClient:
                     max_size=100 * 1024 * 1024,
                 ) as ws:
                     self._ws = ws
+
+                    # Initialize AIP protocols for this connection
+                    self.transport = WebSocketTransport(ws)
+                    self.registration_protocol = RegistrationProtocol(self.transport)
+                    self.heartbeat_protocol = HeartbeatProtocol(self.transport)
+                    self.task_protocol = TaskExecutionProtocol(self.transport)
+
                     await self.register_client()
                     self.retry_count = 0
                     await self.handle_messages()
@@ -88,6 +106,7 @@ class UFOWebSocketClient:
     async def register_client(self):
         """
         Send client_id and device system information to server upon connection.
+        Uses AIP RegistrationProtocol for structured registration.
         This implements the Push model where device info is sent during registration.
         """
         from ufo.client.device_info_provider import DeviceInfoProvider
@@ -108,33 +127,41 @@ class UFOWebSocketClient:
             }
 
             self.logger.info(
-                f"[WS] Collected device info: platform={system_info.platform}, "
+                f"[WS] [AIP] Collected device info: platform={system_info.platform}, "
                 f"cpu={system_info.cpu_count}, memory={system_info.memory_total_gb}GB"
             )
 
         except Exception as e:
-            self.logger.error(f"[WS] Error collecting device info: {e}", exc_info=True)
+            self.logger.error(
+                f"[WS] [AIP] Error collecting device info: {e}", exc_info=True
+            )
             # Continue with registration even if info collection fails
             metadata = {
                 "registration_time": datetime.datetime.now(
                     datetime.timezone.utc
                 ).isoformat(),
-                "platform": self.ufo_client.platform,
             }
 
-        client_message = ClientMessage(
-            type=ClientMessageType.REGISTER,
-            client_id=self.ufo_client.client_id,
-            status=TaskStatus.OK,
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        # Use AIP RegistrationProtocol to register
+        self.logger.info(
+            f"[WS] [AIP] Attempting to register as {self.ufo_client.client_id}"
+        )
+        success = await self.registration_protocol.register_as_device(
+            device_id=self.ufo_client.client_id,
             metadata=metadata,
+            platform=self.ufo_client.platform,
         )
 
-        await self._ws.send(client_message.model_dump_json())
-
-        self.connected_event.set()
-
-        self.logger.info(f"[WS] Registered as {self.ufo_client.client_id}")
+        if success:
+            self.connected_event.set()
+            self.logger.info(
+                f"[WS] [AIP] ✅ Successfully registered as {self.ufo_client.client_id}"
+            )
+        else:
+            self.logger.error(
+                f"[WS] [AIP] ❌ Failed to register as {self.ufo_client.client_id}"
+            )
+            raise RuntimeError(f"Registration failed for {self.ufo_client.client_id}")
 
     async def handle_messages(self):
         """
@@ -152,19 +179,20 @@ class UFOWebSocketClient:
 
     async def heartbeat_loop(self, interval: float = 30) -> None:
         """
-        Send periodic heartbeat messages to the server.
+        Send periodic heartbeat messages to the server using AIP HeartbeatProtocol.
         :param interval: The interval between heartbeat messages in seconds.
         """
         while True:
             await asyncio.sleep(interval)
-            client_message = ClientMessage(
-                type=ClientMessageType.HEARTBEAT,
-                client_id=self.ufo_client.client_id,
-                status=TaskStatus.OK,
-                timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
-            )
-            await self._ws.send(client_message.model_dump_json())
-            self.logger.debug("[WS] Heartbeat sent")
+            try:
+                # Use AIP HeartbeatProtocol to send heartbeat
+                await self.heartbeat_protocol.send_heartbeat(self.ufo_client.client_id)
+                self.logger.debug("[WS] [AIP] Heartbeat sent")
+            except (ConnectionError, IOError) as e:
+                self.logger.debug(
+                    f"[WS] [AIP] Heartbeat failed (connection closed): {e}"
+                )
+                break  # Exit loop if connection is closed
 
     async def handle_message(self, msg: str):
         """
@@ -217,46 +245,39 @@ class UFOWebSocketClient:
                     if self.ufo_client.platform:
                         metadata["platform"] = self.ufo_client.platform
 
-                    client_message = ClientMessage(
-                        type=ClientMessageType.TASK,
+                    # Use AIP TaskExecutionProtocol to send task request
+                    await self.task_protocol.send_task_request(
                         request=request_text,
                         task_name=task_name if task_name else str(uuid4()),
                         session_id=self.ufo_client.session_id,
                         client_id=self.ufo_client.client_id,
-                        request_id=str(uuid4()),
-                        timestamp=datetime.datetime.now(
-                            datetime.timezone.utc
-                        ).isoformat(),
-                        status=TaskStatus.CONTINUE,
                         metadata=metadata if metadata else None,
                     )
 
                     self.logger.info(
-                        f"[WS] Sending task with platform: {self.ufo_client.platform}"
+                        f"[WS] [AIP] Sent task request with platform: {self.ufo_client.platform}"
                     )
-                    await self._ws.send(client_message.model_dump_json())
             except Exception as e:
                 self.logger.error(
-                    f"[WS] Error sending task request: {e}", exc_info=True
+                    f"[WS] [AIP] Error sending task request: {e}", exc_info=True
                 )
-                client_message = ClientMessage(
+                # Send error message via AIP
+                error_msg = ClientMessage(
                     type=ClientMessageType.ERROR,
                     error=str(e),
                     client_id=self.ufo_client.client_id,
                     timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
                 )
-                await self._ws.send(client_message.model_dump_json())
+                # Use transport directly for error messages
+                await self.transport.send(error_msg.model_dump_json().encode())
 
         self.current_task = asyncio.create_task(task_loop())
 
     async def handle_commands(self, server_response: ServerMessage):
         """
         Handle commands received from the server.
+        Uses AIP TaskExecutionProtocol to send results back.
         """
-
-        # if not self.current_task:
-        #     self.logger.error("[WS] Received command without an active task")
-        #     return
 
         response_id = server_response.response_id
         task_status = server_response.status
@@ -264,22 +285,18 @@ class UFOWebSocketClient:
 
         action_results = await self.ufo_client.execute_step(server_response)
 
-        client_message = ClientMessage(
-            type=ClientMessageType.COMMAND_RESULTS,
+        # Use AIP TaskExecutionProtocol to send results
+        await self.task_protocol.send_task_result(
             session_id=self.session_id,
-            request_id=str(uuid4()),
-            action_results=action_results,
-            client_id=self.ufo_client.client_id,
             prev_response_id=response_id,
+            action_results=action_results,
             status=task_status,
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+            client_id=self.ufo_client.client_id,
         )
 
-        # self.logger.info(f"[WS] Sending client message: {client_message}")
         self.logger.info(
-            f"Sending client message for prev_response_id: {client_message.prev_response_id}"
+            f"[WS] [AIP] Sent client result for prev_response_id: {response_id}"
         )
-        await self._ws.send(client_message.model_dump_json())
 
         if task_status in [TaskStatus.COMPLETED, TaskStatus.FAILED]:
             await self.handle_task_end(server_response)

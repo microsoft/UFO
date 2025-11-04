@@ -35,7 +35,7 @@ from ufo.agents.processors.schemas.actions import (
     ListActionCommandInfo,
 )
 from ufo.agents.processors.strategies.processing_strategy import BaseProcessingStrategy
-from ufo.contracts.contracts import Command, Result
+from aip.messages import Command, Result
 from ufo.llm import AgentType
 from ufo.module.context import Context
 from ufo.module.dispatcher import BasicCommandDispatcher

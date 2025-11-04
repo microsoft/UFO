@@ -5,7 +5,7 @@ import json
 from typing import Any, Dict, List, Optional
 
 from config.config_loader import get_ufo_config
-from ufo.contracts.contracts import MCPToolInfo
+from aip.messages import MCPToolInfo
 from ufo.prompter.basic import BasicPrompter
 
 

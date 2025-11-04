@@ -28,7 +28,7 @@ from galaxy.client.components import (
     MessageProcessor,
 )
 from galaxy.core.types import ExecutionResult
-from ufo.contracts.contracts import ServerMessage, ServerMessageType, TaskStatus
+from aip.messages import ServerMessage, ServerMessageType, TaskStatus
 
 
 class TestDeviceDisconnectionReconnection:

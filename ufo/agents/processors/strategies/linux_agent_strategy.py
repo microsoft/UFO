@@ -17,7 +17,7 @@ from ufo.agents.processors.strategies.app_agent_processing_strategy import (
     AppActionExecutionStrategy,
     AppLLMInteractionStrategy,
 )
-from ufo.contracts.contracts import Result
+from aip.messages import Result
 from ufo.llm.response_schema import AppAgentResponse
 
 if TYPE_CHECKING:

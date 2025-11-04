@@ -9,7 +9,7 @@ import asyncio
 from unittest.mock import Mock, AsyncMock, patch, MagicMock
 from datetime import datetime, timezone
 
-from ufo.contracts.contracts import (
+from aip.messages import (
     ClientMessage,
     ClientMessageType,
     ClientType,

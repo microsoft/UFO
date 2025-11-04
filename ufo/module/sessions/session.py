@@ -18,7 +18,7 @@ from ufo.agents.states.app_agent_state import ContinueAppAgentState
 from ufo.agents.states.host_agent_state import ContinueHostAgentState
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from config.config_loader import get_ufo_config
-from ufo.contracts.contracts import Command
+from aip.messages import Command
 from ufo.module import interactor
 from ufo.module.basic import BaseRound
 from ufo.module.context import ContextNames

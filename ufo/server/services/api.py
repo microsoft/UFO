@@ -1,11 +1,11 @@
-import datetime
 import logging
 from typing import Any, Dict
 from uuid import uuid4
 
 from fastapi import APIRouter, HTTPException
 
-from ufo.contracts.contracts import ServerMessage, ServerMessageType, TaskStatus
+from aip.protocol.task_execution import TaskExecutionProtocol
+from aip.transport.websocket import WebSocketTransport
 from ufo.server.services.session_manager import SessionManager
 from ufo.server.services.ws_manager import WSManager
 
@@ -56,17 +56,31 @@ def create_api_router(
             logger.error(f"Client {client_id} not online.")
             raise HTTPException(status_code=404, detail="Client not online")
 
-        server_message = ServerMessage(
-            type=ServerMessageType.TASK,
-            status=TaskStatus.CONTINUE,
-            user_request=user_request,
-            task_name=task_name,
-            timestamp=datetime.datetime.now(datetime.timezone.utc).isoformat(),
+        # Use AIP protocol to send task assignment
+        transport = WebSocketTransport(ws)
+        task_protocol = TaskExecutionProtocol(transport)
+
+        session_id = str(uuid4())
+        response_id = str(uuid4())
+
+        logger.info(
+            f"[AIP] Sending task assignment via API: task_name={task_name}, "
+            f"session_id={session_id}, client_id={client_id}"
         )
 
-        await ws.send_text(server_message.model_dump_json())
+        await task_protocol.send_task_assignment(
+            user_request=user_request,
+            task_name=task_name,
+            session_id=session_id,
+            response_id=response_id,
+        )
 
-        return {"status": "dispatched", "task_name": task_name, "client_id": client_id}
+        return {
+            "status": "dispatched",
+            "task_name": task_name,
+            "client_id": client_id,
+            "session_id": session_id,
+        }
 
     @router.get("/api/task_result/{task_name}")
     async def get_task_result(task_name: str):

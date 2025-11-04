@@ -9,7 +9,7 @@ from ufo.agents.presenters.rich_presenter import RichPresenter
 from ufo.agents.processors.schemas.response_schema import EvaluationAgentResponse
 from ufo.agents.states.evaluaton_agent_state import EvaluatonAgentStatus
 from config.config_loader import get_ufo_config
-from ufo.contracts.contracts import MCPToolInfo
+from aip.messages import MCPToolInfo
 from ufo.module.context import Context, ContextNames
 from ufo.prompter.eva_prompter import EvaluationAgentPrompter
 from ufo.utils import json_parser

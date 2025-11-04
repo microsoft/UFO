@@ -9,7 +9,7 @@ from typing import Any, Callable, Dict, Optional
 from fastapi import WebSocket
 
 from config.config_loader import get_ufo_config
-from ufo.contracts.contracts import ServerMessage, ServerMessageType, TaskStatus
+from aip.messages import ServerMessage, ServerMessageType, TaskStatus
 from ufo.module.basic import BaseSession
 from ufo.module.session_pool import SessionFactory
 

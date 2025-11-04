@@ -16,6 +16,7 @@ import websockets
 from websockets import WebSocketClientProtocol
 from websockets.exceptions import ConnectionClosed, WebSocketException
 
+from .adapters import WebSocketAdapter, create_adapter
 from .base import Transport, TransportState
 
 
@@ -39,6 +40,7 @@ class WebSocketTransport(Transport):
 
     def __init__(
         self,
+        websocket=None,  # Accept existing WebSocket (FastAPI server-side)
         ping_interval: float = 30.0,
         ping_timeout: float = 180.0,
         close_timeout: float = 10.0,
@@ -47,6 +49,7 @@ class WebSocketTransport(Transport):
         """
         Initialize WebSocket transport.
 
+        :param websocket: Optional existing WebSocket connection (for server-side use)
         :param ping_interval: Interval between ping messages (seconds)
         :param ping_timeout: Timeout for ping response (seconds)
         :param close_timeout: Timeout for graceful close (seconds)
@@ -58,7 +61,18 @@ class WebSocketTransport(Transport):
         self.close_timeout = close_timeout
         self.max_size = max_size
         self._ws: Optional[WebSocketClientProtocol] = None
+        self._adapter: Optional[WebSocketAdapter] = None
         self.logger = logging.getLogger(f"{__name__}.WebSocketTransport")
+
+        # If websocket provided (server-side), create adapter and mark as connected
+        if websocket is not None:
+            self._ws = websocket
+            self._adapter = create_adapter(websocket)
+            self._state = TransportState.CONNECTED
+            adapter_type = type(self._adapter).__name__
+            self.logger.info(
+                f"WebSocket transport initialized with existing connection ({adapter_type})"
+            )
 
     async def connect(self, url: str, **kwargs) -> None:
         """
@@ -86,6 +100,7 @@ class WebSocketTransport(Transport):
             connect_params.update(kwargs)
 
             self._ws = await websockets.connect(url, **connect_params)
+            self._adapter = create_adapter(self._ws)
             self._state = TransportState.CONNECTED
             self.logger.info(f"Connected to {url}")
 
@@ -110,12 +125,25 @@ class WebSocketTransport(Transport):
         :raises: ConnectionError if not connected
         :raises: IOError if send fails
         """
-        if not self.is_connected or self._ws is None:
+        if not self.is_connected or self._adapter is None:
             raise ConnectionError("Transport not connected")
 
+        # Check if WebSocket is still open using adapter
+        if not self._adapter.is_open():
+            self._state = TransportState.DISCONNECTED
+            raise ConnectionError("WebSocket connection is closed")
+
         try:
-            await self._ws.send(data)
-            self.logger.debug(f"Sent {len(data)} bytes")
+            # Convert bytes to text for consistent transport (JSON messages are text-based)
+            text_data = data.decode("utf-8") if isinstance(data, bytes) else data
+
+            adapter_type = type(self._adapter).__name__
+            self.logger.debug(f"Sending {len(text_data)} chars via {adapter_type}")
+
+            # Use adapter to send (abstracts away FastAPI vs websockets library)
+            await self._adapter.send(text_data)
+
+            self.logger.debug(f"✅ Sent {len(text_data)} chars successfully")
         except ConnectionClosed as e:
             self._state = TransportState.DISCONNECTED
             self.logger.error(f"Connection closed during send: {e}")
@@ -135,15 +163,18 @@ class WebSocketTransport(Transport):
         :raises: ConnectionError if connection closed
         :raises: IOError if receive fails
         """
-        if not self.is_connected or self._ws is None:
+        if not self.is_connected or self._adapter is None:
             raise ConnectionError("Transport not connected")
 
         try:
-            data = await self._ws.recv()
-            if isinstance(data, str):
-                # Convert string to bytes
-                data = data.encode("utf-8")
-            self.logger.debug(f"Received {len(data)} bytes")
+            adapter_type = type(self._adapter).__name__
+            self.logger.info(f"🔍 Attempting to receive data via {adapter_type}...")
+
+            # Use adapter to receive (abstracts away FastAPI vs websockets library)
+            text_data = await self._adapter.receive()
+            data = text_data.encode("utf-8")
+
+            self.logger.debug(f"✅ Received {len(data)} bytes successfully")
             return data
         except ConnectionClosed as e:
             self._state = TransportState.DISCONNECTED
@@ -165,14 +196,15 @@ class WebSocketTransport(Transport):
 
         try:
             self._state = TransportState.DISCONNECTING
-            if self._ws is not None:
-                await self._ws.close()
+            if self._adapter is not None:
+                await self._adapter.close()
                 self.logger.info("WebSocket closed")
         except Exception as e:
             self.logger.warning(f"Error during close: {e}")
         finally:
             self._state = TransportState.DISCONNECTED
             self._ws = None
+            self._adapter = None
 
     async def wait_closed(self) -> None:
         """

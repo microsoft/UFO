@@ -6,7 +6,7 @@
 import asyncio
 import logging
 from unittest.mock import AsyncMock, MagicMock
-from ufo.contracts.contracts import ClientMessage, ClientMessageType, TaskStatus
+from aip.messages import ClientMessage, ClientMessageType, TaskStatus
 from ufo.server.ws.handler import UFOWebSocketHandler
 from ufo.server.services.ws_manager import WSManager
 from ufo.server.services.session_manager import SessionManager

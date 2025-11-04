@@ -10,7 +10,7 @@ import logging
 import sys
 import websockets
 from datetime import datetime, timezone
-from ufo.contracts.contracts import ClientMessage, ClientMessageType, TaskStatus
+from aip.messages import ClientMessage, ClientMessageType, TaskStatus
 
 # 设置日志
 logging.basicConfig(

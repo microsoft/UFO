@@ -8,7 +8,7 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 
 from ufo.agents.processors.schemas.target import TargetInfo
-from ufo.contracts.contracts import Result, ResultStatus
+from aip.messages import Result, ResultStatus
 from rich.console import Console
 from rich.panel import Panel
 

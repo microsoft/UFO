@@ -14,7 +14,7 @@ from typing import Any, Dict, List, Optional
 import websockets
 
 from galaxy.core.types import ExecutionResult
-from ufo.contracts.contracts import TaskStatus
+from aip.messages import TaskStatus
 
 from .components import (
     AgentProfile,
