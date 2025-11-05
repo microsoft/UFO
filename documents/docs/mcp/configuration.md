@@ -9,7 +9,7 @@ config/ufo/mcp.yaml
 ```
 
 !!!info "Configuration Reference"
-    For complete field documentation, see [MCP Reference](../configurations/mcp_reference.md).
+    For complete field documentation, see [MCP Reference](../configuration/system/mcp_reference.md).
 
 ## Configuration Structure
 
@@ -625,7 +625,7 @@ HostAgent:
 ```
 
 !!!info "Configuration Migration"
-    See [Configuration Migration Guide](../configurations/migration.md) for detailed migration instructions.
+    See [Configuration Migration Guide](../configuration/system/migration.md) for detailed migration instructions.
 
 ## Related Documentation
 
@@ -634,8 +634,8 @@ HostAgent:
 - [Action Servers](action.md) - Action server configuration
 - [Local Servers](local_servers.md) - Built-in local MCP servers
 - [Remote Servers](remote_servers.md) - HTTP and Stdio deployment
-- [MCP Reference](../configurations/mcp_reference.md) - Complete field reference
-- [Configuration Guide](../configurations/overview.md) - General configuration guide
+- [MCP Reference](../configuration/system/mcp_reference.md) - Complete field reference
+- [Configuration Guide](../configuration/system/overview.md) - General configuration guide
 
 !!!quote "Configuration Philosophy"
     MCP configuration follows the **convention over configuration** principle:

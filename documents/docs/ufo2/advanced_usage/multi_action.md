@@ -5,7 +5,7 @@ UFO² introduces a new feature called **Speculative Multi-Action Execution**. Th
 
 
 <h1 align="center">
-    <img src="../../img/multiaction.png" alt="Speculative Multi-Action Execution" />
+    <img src="/img/multiaction.png" alt="Speculative Multi-Action Execution" />
 </h1>
 
 ## Configuration

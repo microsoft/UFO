@@ -1109,4 +1109,4 @@ See [MCP Integration](./mcp_integration.md) for MCP details.
 - [UFO Client](./ufo_client.md) - Execution orchestration
 - [MCP Integration](./mcp_integration.md) - MCP server management
 - [Quick Start](./quick_start.md) - Get started with client
-- [Configuration](../configurations/overview.md) - UFO configuration
+- [Configuration](../configuration/system/overview.md) - UFO configuration

@@ -430,7 +430,7 @@ offline_docs_prompt = self.prompter.retrieved_documents_prompt_helper(
 ```
 
 !!! tip
-    Please find details configuration in the [documentation](../configurations/field_reference.md). 
+    Please find details configuration in the [documentation](../configuration/system/field_reference.md). 
 
 ### Learning from Bing Search
 
@@ -460,7 +460,7 @@ online_docs_prompt = self.prompter.retrieved_documents_prompt_helper(
 ```
 
 !!! tip
-    Please find details configuration in the [documentation](../configurations/field_reference.md).
+    Please find details configuration in the [documentation](../configuration/system/field_reference.md).
 
 ### Learning from Self-Demonstrations
 
@@ -498,7 +498,7 @@ def rag_experience_retrieve(self, request: str, experience_top_k: int) -> List[D
 ```
 
 !!! tip
-     You can find details of the configuration in the [documentation](../configurations/field_reference.md).
+     You can find details of the configuration in the [documentation](../configuration/system/field_reference.md).
 
 ### Learning from Human Demonstrations
 
@@ -532,7 +532,7 @@ def rag_demonstration_retrieve(self, request: str, demonstration_top_k: int) -> 
 ```
 
 !!! tip
-    You can find details of the configuration in the [documentation](../configurations/field_reference.md).
+    You can find details of the configuration in the [documentation](../configuration/system/field_reference.md).
 
 ---
 
@@ -675,7 +675,7 @@ class ConfirmAppAgentState(AppAgentState):
     - **[Strategy Layer](../agents/design/processor.md)**: Processor framework
 
 !!!info "System Integration"
-    - **[Configuration Guide](../configurations/overview.md)**: System configuration
+    - **[Configuration Guide](../configuration/system/overview.md)**: System configuration
     - **[Blackboard](../agents/design/blackboard.md)**: Inter-agent communication
     - **[Memory System](../agents/design/memory.md)**: Execution history
 
@@ -709,4 +709,4 @@ class ConfirmAppAgentState(AppAgentState):
 1. **Study Processing**: Read [Strategy Layer](../agents/design/processor.md) for processing details
 2. **Explore Architecture**: Review [Device Agent Overview](../agents/overview.md) for system design
 3. **Learn Commands**: Check [Command Layer](../agents/design/command.md) for available operations
-4. **Configuration**: See [Field Reference](../configurations/field_reference.md) for settings
+4. **Configuration**: See [Field Reference](../configuration/system/field_reference.md) for settings

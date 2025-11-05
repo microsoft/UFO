@@ -1128,4 +1128,4 @@ Deep dive into message types, flow control, and error handling:
 
 Best practices for running clients in production environments:
 
-👉 [Configuration Guide](../configurations/overview.md)
+👉 [Configuration Guide](../configuration/system/overview.md)

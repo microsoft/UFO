@@ -3,14 +3,14 @@
 UFO² supports **wrapping any third-party agent as an AppAgent**, allowing it to be invoked by the HostAgent within a multi-agent workflow. This section demonstrates how to run **Operator**, an OpenAI-based Conversational UI Agent (CUA), as an AppAgent inside the UFO² ecosystem.
 
 <div align="center">
-    <img src="../../img/everything.png" alt="Speculative Multi-Action Execution" />
+    <img src="/img/everything.png" alt="Speculative Multi-Action Execution" />
 </div>
 
 <br><br>
 
 ## 📦 Prerequisites
 
-Before proceeding, please ensure that the Operator has been properly configured. You can follow the setup instructions in the [OpenAI CUA (Operator) guide](../../supported_models/operator.md).
+Before proceeding, please ensure that the Operator has been properly configured. You can follow the setup instructions in the [OpenAI CUA (Operator) guide](../../configuration/models/operator.md).
 
 ## 🚀 Running the Operator
 

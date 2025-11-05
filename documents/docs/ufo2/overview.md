@@ -252,9 +252,9 @@ app_agent:
 !!!tip "Complete Configuration Guide"
     For detailed configuration options, model setup, and advanced customization:
     
-    📖 **[Configuration & Setup](../configurations/overview.md)** — Complete system configuration reference  
-    📖 **[Model Setup](../supported_models/overview.md)** — LLM provider configuration (OpenAI, Azure, Gemini, Claude, etc.)  
-    📖 **[MCP Configuration](../configurations/mcp_reference.md)** — MCP server and extension configuration
+    📖 **[Configuration & Setup](../configuration/system/overview.md)** — Complete system configuration reference  
+    📖 **[Model Setup](../configuration/models/overview.md)** — LLM provider configuration (OpenAI, Azure, Gemini, Claude, etc.)  
+    📖 **[MCP Configuration](../configuration/system/mcp_reference.md)** — MCP server and extension configuration
 
 ---
 
@@ -292,7 +292,7 @@ else:
 7. **HostAgent** verifies task, returns success to **Session**
 
 !!!tip "Next Steps"
-    📖 [Getting Started Guide](../getting_started/quick_start.md)  
+    📖 [Getting Started Guide](../getting_started/quick_start_ufo2.md)  
     📖 [Creating Your AppAgent](creating_app_agent/overview.md)
 
 ---
@@ -326,7 +326,7 @@ else:
 
 - [**Creating AppAgent**](creating_app_agent/overview.md) — Custom agent development  
 - [**MCP Servers**](../mcp/overview.md) — Building custom MCP servers  
-- [**Configuration**](../configurations/overview.md) — System configuration reference  
+- [**Configuration**](../configuration/system/overview.md) — System configuration reference  
 - [**Prompts**](prompts/overview.md) — Prompt engineering guide
 
 ### Benchmarking & Logs
@@ -357,7 +357,7 @@ UFO² demonstrates that **system-level integration** and **architectural design*
 Ready to explore UFO²? Choose your path:
 
 !!!info "Learning Paths"
-    **🚀 New Users:** Start with [Quick Start Guide](../getting_started/quick_start.md)  
+    **🚀 New Users:** Start with [Quick Start Guide](../getting_started/quick_start_ufo2.md)  
     **🔧 Developers:** Read [Creating AppAgent](creating_app_agent/overview.md)  
     **🏗️ System Architects:** Study [Device Agent Architecture](../agents/overview.md)  
     **📊 Researchers:** Check [Benchmark Results](benchmark/overview.md)

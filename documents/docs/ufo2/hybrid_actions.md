@@ -312,7 +312,7 @@ When an agent is initialized for a specific application, the system:
 
 !!!info "MCP Server Documentation"
     📖 **[MCP Overview](../mcp/overview.md)** — Model Context Protocol architecture and design  
-    📖 **[MCP Configuration](../configurations/mcp_reference.md)** — Complete MCP server configuration reference  
+    📖 **[MCP Configuration](../configuration/system/mcp_reference.md)** — Complete MCP server configuration reference  
     
     **Available MCP Servers:**
     - [UICollector](../mcp/servers/ui_collector.md) — UI data collection
@@ -365,8 +365,8 @@ When an agent is initialized for a specific application, the system:
 
 ### Configuration
 
-- [**MCP Configuration Reference**](../configurations/mcp_reference.md) — Complete MCP server configuration options  
-- [**Configuration Guide**](../configurations/overview.md) — System configuration overview
+- [**MCP Configuration Reference**](../configuration/system/mcp_reference.md) — Complete MCP server configuration options  
+- [**Configuration Guide**](../configuration/system/overview.md) — System configuration overview
 
 ### MCP Servers
 
@@ -382,11 +382,11 @@ When an agent is initialized for a specific application, the system:
 ## Next Steps
 
 1. **Explore MCP Architecture**: Read [MCP Overview](../mcp/overview.md) to understand the protocol design  
-2. **Configure MCP Servers**: Review [MCP Configuration](../configurations/mcp_reference.md) for setup options  
+2. **Configure MCP Servers**: Review [MCP Configuration](../configuration/system/mcp_reference.md) for setup options  
 3. **Study MCP Servers**: Check built-in implementations like [ExcelCOMExecutor](../mcp/servers/excel_com_executor.md)  
 4. **Build Custom Agents**: Follow [Creating AppAgent](creating_app_agent/overview.md) to use hybrid actions
 
 !!!tip "Quick Start"
     Want to see hybrid actions in practice?  
-    📖 [Quick Start Guide](../getting_started/quick_start.md) — Run UFO² with default MCP servers  
+    📖 [Quick Start Guide](../getting_started/quick_start_ufo2.md) — Run UFO² with default MCP servers  
     📖 [Creating AppAgent](creating_app_agent/overview.md) — Build custom agents with hybrid actions

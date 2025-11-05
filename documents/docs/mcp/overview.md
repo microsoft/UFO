@@ -497,8 +497,8 @@ config/ufo/mcp.yaml
     For detailed configuration options, see:
     
     - [MCP Configuration Guide](configuration.md) - Complete configuration reference
-    - [Configuration Field Reference](../configurations/field_reference.md) - All available fields
-    - [MCP Reference](../configurations/mcp_reference.md) - MCP-specific settings
+    - [Configuration Field Reference](../configuration/system/field_reference.md) - All available fields
+    - [MCP Reference](../configuration/system/mcp_reference.md) - MCP-specific settings
 
 ## Use Cases
 

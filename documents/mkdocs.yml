@@ -1,115 +1,137 @@
-site_name: UFO Documentation
+site_name: UFO³ Documentation
 
 
 nav:
   - Home: index.md
+  - Choose Your Path: choose_path.md
   - Project Directory Structure: project_directory_structure.md
-  - Getting Started: 
-    - Quick Start: getting_started/quick_start.md
-    - More Guidance: getting_started/more_guidance.md
+  - Getting Started:
+      - Quick Start (Galaxy): getting_started/quick_start_galaxy.md
+      - Quick Start (UFO²): getting_started/quick_start_ufo2.md
+      - Quick Start (Linux Agent): getting_started/quick_start_linux.md
+      - Migration UFO² → Galaxy: getting_started/migration_ufo2_to_galaxy.md
+      - More Guidance: getting_started/more_guidance.md
+      - FAQ: getting_started/faq.md
   - Configuration & Setup:
       - Configuration System:
-          - Overview: configurations/overview.md
-          - Field Reference: configurations/field_reference.md
-          - MCP Reference: configurations/mcp_reference.md
-          - Migration Guide: configurations/migration.md
-          - Extending Configuration: configurations/extending.md
+          - Overview: configuration/system/overview.md
+          - Field Reference: configuration/system/field_reference.md
+          - MCP Reference: configuration/system/mcp_reference.md
+          - Migration Guide: configuration/system/migration.md
+          - Extending Configuration: configuration/system/extending.md
       - Model Setup:
-          - Overview: supported_models/overview.md
-          - OpenAI: supported_models/openai.md
-          - Azure OpenAI: supported_models/azure_openai.md
-          - OpenAI CUA (Operator): supported_models/operator.md
-          - Gemini: supported_models/gemini.md
-          - Claude: supported_models/claude.md
-          - Qwen: supported_models/qwen.md
-          - DeepSeek: supported_models/deepseek.md
-          - Ollama: supported_models/ollama.md
-          - Custom Model: supported_models/custom_model.md
-  - Basic Modules:
-      - Overview: modules/overview.md
-      - Session: modules/session.md
-      - Round: modules/round.md
-      - Context: modules/context.md
-      - Dispatcher: modules/dispatcher.md
-      - Session Factory & Pool: modules/session_pool.md
-      - Platform Sessions: modules/platform_sessions.md
-  - Device Agents:
-      - Overview: agents/overview.md
-      - Architecture Layers:
-          - State Layer (Level-1): agents/design/state.md
-          - Strategy Layer (Level-2): agents/design/processor.md
-          - Strategy Components: agents/design/strategy.md
-          - Command Layer (Level-3): agents/design/command.md
-      - Supporting Systems:
-          - Memory System: agents/design/memory.md
-          - Blackboard: agents/design/blackboard.md
-          - Prompter: agents/design/prompter.md
+          - Overview: configuration/models/overview.md
+          - OpenAI: configuration/models/openai.md
+          - Azure OpenAI: configuration/models/azure_openai.md
+          - OpenAI CUA (Operator): configuration/models/operator.md
+          - Gemini: configuration/models/gemini.md
+          - Claude: configuration/models/claude.md
+          - Qwen: configuration/models/qwen.md
+          - DeepSeek: configuration/models/deepseek.md
+          - Ollama: configuration/models/ollama.md
+          - Custom Model: configuration/models/custom_model.md
+  - Galaxy Framework:
+      - Overview: galaxy/overview.md
+      - Quick Start: galaxy/quick_start.md
+      - Architecture:
+          - Constellation (DAG): galaxy/constellation.md
+          - ConstellationAgent: galaxy/constellation_agent.md
+          - Device Pool: galaxy/device_pool.md
+          - Task Orchestrator: galaxy/task_orchestrator.md
+      - Features:
+          - Task Planning: galaxy/planning.md
+          - Task Assignment: galaxy/task_assignment.md
+          - Dynamic Editing: galaxy/dynamic_editing.md
+          - Parallel Execution: galaxy/parallel_execution.md
+          - Data Transfer: galaxy/data_transfer.md
+      - Operations:
+          - Monitoring & Visualization: galaxy/monitoring_visualization.md
+          - Fault Tolerance: galaxy/fault_tolerance.md
+      - API Reference: galaxy/api_reference.md
   - UFO² Desktop AgentOS:
       - Overview: ufo2/overview.md
-      - Agent Types: ufo2/agent_types.md
-      - HostAgent: ufo2/host_agent.md
-      - AppAgent: ufo2/app_agent.md
-      - EvaluationAgent: ufo2/evaluation_agent.md
-      - Hybrid GUI–API Actions: ufo2/hybrid_actions.md
-      - Control Detection:
-          - Overview: ufo2/control_detection/overview.md
-          - UIA Detection: ufo2/control_detection/uia.md
-          - Visual Detection: ufo2/control_detection/visual.md
-          - Hybrid Detection: ufo2/control_detection/hybrid.md
-          - Control Filtering:
-              - Overview: ufo2/control_detection/filtering/overview.md
-              - Text Filtering: ufo2/control_detection/filtering/text_filtering.md
-              - Semantic Filtering: ufo2/control_detection/filtering/semantic_filtering.md
-              - Icon Filtering: ufo2/control_detection/filtering/icon_filtering.md
-      - Knowledge Substrate:
-          - Overview: ufo2/advanced_usage/knowledge_substrate/overview.md
-          - Help Documents: ufo2/advanced_usage/knowledge_substrate/learning_from_help_document.md
-          - Bing Search: ufo2/advanced_usage/knowledge_substrate/learning_from_bing_search.md
-          - Experience Learning: ufo2/advanced_usage/knowledge_substrate/experience_learning.md
-          - Demos: ufo2/advanced_usage/knowledge_substrate/learning_from_demonstration.md
-      - Prompts:
-          - Overview: ufo2/prompts/overview.md
-          - Basic Template: ufo2/prompts/basic_template.md
-          - Examples: ufo2/prompts/examples_prompts.md
-      - Performance Logs:
-          - Overview: ufo2/logs/overview.md
-          - Evaluation Logs: ufo2/logs/evaluation_logs.md
-          - Markdown Log Viewer: ufo2/logs/markdown_log_viewer.md
-          - Request Logs: ufo2/logs/request_logs.md
-          - Screenshots Logs: ufo2/logs/screenshots_logs.md
-          - Step Logs: ufo2/logs/step_logs.md
-          - UI Tree Logs: ufo2/logs/ui_tree_logs.md
-  - Advanced Usage: 
-      - Follower Mode: ufo2/advanced_usage/follower_mode.md
-      - Batch Mode: ufo2/advanced_usage/batch_mode.md
-      - Speculative Multi-Action Execution: ufo2/advanced_usage/multi_action.md
-      - Operator-as-a-AppAgent: ufo2/advanced_usage/operator_as_app_agent.md
-      - Control Filtering: 
-        - Overview: ufo2/advanced_usage/control_filtering/overview.md
-        - Text Filtering: ufo2/advanced_usage/control_filtering/text_filtering.md
-        - Semantic Filtering: ufo2/advanced_usage/control_filtering/semantic_filtering.md
-        - Icon Filtering: ufo2/advanced_usage/control_filtering/icon_filtering.md
-      - Control Detection: 
-        - Overview: ufo2/advanced_usage/control_detection/overview.md
-        - UIA Detection: ufo2/advanced_usage/control_detection/uia_detection.md
-        - Visual Detection: ufo2/advanced_usage/control_detection/visual_detection.md
-        - Hybrid Detection: ufo2/advanced_usage/control_detection/hybrid_detection.md
-      - Customization: ufo2/advanced_usage/customization.md
-  - Creating Your AppAgent: 
-      - Overview: ufo2/creating_app_agent/overview.md
-      - Help Document Provision: ufo2/creating_app_agent/help_document_provision.md
-      - Demonstration Provision: ufo2/creating_app_agent/demonstration_provision.md
-      - Warpping App-Native API: ufo2/creating_app_agent/warpping_app_native_api.md
-  - Benchmark:
-      - Overview: ufo2/benchmark/overview.md
-      - Windows Agent Arena: ufo2/benchmark/windows_agent_arena.md
-      - OSWorld (Windows): ufo2/benchmark/osworld.md
-  - Dataflow:
-      - Overview: ufo2/dataflow/overview.md
-      - Instantiation: ufo2/dataflow/instantiation.md
-      - Execution: ufo2/dataflow/execution.md
-      - Windows App Environment: ufo2/dataflow/windows_app_env.md
-      - Result: ufo2/dataflow/result.md
+      - Quick Start: ufo2/quick_start.md
+      - Using as Galaxy Device: ufo2/as_galaxy_device.md
+      - Windows Agents:
+          - Agent Types: ufo2/agent_types.md
+          - HostAgent: ufo2/host_agent.md
+          - AppAgent: ufo2/app_agent.md
+          - EvaluationAgent: ufo2/evaluation_agent.md
+      - Core Features:
+          - Hybrid GUI–API Actions: ufo2/hybrid_actions.md
+          - Control Detection:
+              - Overview: ufo2/advanced_usage/control_detection/overview.md
+              - UIA Detection: ufo2/advanced_usage/control_detection/uia_detection.md
+              - Visual Detection: ufo2/advanced_usage/control_detection/visual_detection.md
+              - Hybrid Detection: ufo2/advanced_usage/control_detection/hybrid_detection.md
+          - Knowledge Substrate:
+              - Overview: ufo2/advanced_usage/knowledge_substrate/overview.md
+              - Help Documents: ufo2/advanced_usage/knowledge_substrate/learning_from_help_document.md
+              - Bing Search: ufo2/advanced_usage/knowledge_substrate/learning_from_bing_search.md
+              - Experience Learning: ufo2/advanced_usage/knowledge_substrate/experience_learning.md              
+              - Demos: ufo2/advanced_usage/knowledge_substrate/learning_from_demonstration.md
+          - Speculative Multi-Action: ufo2/advanced_usage/multi_action.md
+      - Advanced Usage:
+          - Follower Mode: ufo2/advanced_usage/follower_mode.md
+          - Batch Mode: ufo2/advanced_usage/batch_mode.md
+          - Operator Integration: ufo2/advanced_usage/operator_as_app_agent.md
+          - Customization: ufo2/advanced_usage/customization.md
+      - Development:
+          - Creating Your AppAgent:
+              - Overview: ufo2/creating_app_agent/overview.md
+              - Help Document Provision: ufo2/creating_app_agent/help_document_provision.md
+              - Demonstration Provision: ufo2/creating_app_agent/demonstration_provision.md
+              - Wrapping App-Native API: ufo2/creating_app_agent/warpping_app_native_api.md
+          - Prompts:
+              - Overview: ufo2/prompts/overview.md
+              - Basic Template: ufo2/prompts/basic_template.md
+              - Examples: ufo2/prompts/examples_prompts.md
+      - Evaluation:
+          - Benchmark Overview: ufo2/benchmark/overview.md
+          - Windows Agent Arena: ufo2/benchmark/windows_agent_arena.md
+          - OSWorld (Windows): ufo2/benchmark/osworld.md
+          - Performance Logs:
+              - Overview: ufo2/logs/overview.md
+              - Evaluation Logs: ufo2/logs/evaluation_logs.md
+              - Markdown Log Viewer: ufo2/logs/markdown_log_viewer.md
+              - Request Logs: ufo2/logs/request_logs.md
+              - Screenshots Logs: ufo2/logs/screenshots_logs.md
+              - Step Logs: ufo2/logs/step_logs.md
+              - UI Tree Logs: ufo2/logs/ui_tree_logs.md
+      - Dataflow:
+          - Overview: ufo2/dataflow/overview.md
+          - Instantiation: ufo2/dataflow/instantiation.md
+          - Execution: ufo2/dataflow/execution.md
+          - Windows App Environment: ufo2/dataflow/windows_app_env.md
+          - Result: ufo2/dataflow/result.md
+      - LTS Support Policy: ufo2/lts_support_policy.md
+  - Linux Agent:
+      - Overview: linux/overview.md
+      - Quick Start: linux/quick_start.md
+      - Using as Galaxy Device: linux/as_galaxy_device.md
+      - Bash Executor: linux/bash_executor.md
+      - Configuration: linux/configuration.md
+      - Examples: linux/examples.md
+  - Infrastructure:
+      - Basic Modules:
+          - Overview: modules/overview.md
+          - Session: modules/session.md
+          - Round: modules/round.md
+          - Context: modules/context.md
+          - Dispatcher: modules/dispatcher.md
+          - Session Factory & Pool: modules/session_pool.md
+          - Platform Sessions: modules/platform_sessions.md
+      - Device Agent Architecture:
+          - Overview: agents/overview.md
+          - Architecture Layers:
+              - State Layer (Level-1): agents/design/state.md
+              - Strategy Layer (Level-2): agents/design/processor.md
+              - Strategy Components: agents/design/strategy.md
+              - Command Layer (Level-3): agents/design/command.md
+          - Supporting Systems:
+              - Memory System: agents/design/memory.md
+              - Blackboard: agents/design/blackboard.md
+              - Prompter: agents/design/prompter.md
   - Agent Interaction Protocol (AIP):
       - Overview: aip/overview.md
       - Message Reference: aip/messages.md
@@ -136,6 +158,7 @@ nav:
       - MCP Integration: client/mcp_integration.md
   - MCP (Model Context Protocol):
       - Overview: mcp/overview.md
+      - Positioning in UFO³: mcp/positioning.md
       - Data Collection Servers: mcp/data_collection.md
       - Action Servers: mcp/action.md
       - Configuration Guide: mcp/configuration.md
@@ -165,15 +188,6 @@ nav:
 markdown_extensions:
   - pymdownx.tasklist
   - admonition
-
-# theme:
-#   name: material
-#   palette:
-#     primary: blue
-#     accent: light-blue
-#   font:
-#     text: Roboto
-#     code: Roboto Mono
 
 theme:
   name: readthedocs
@@ -215,8 +229,3 @@ plugins:
                     docstring_section_style: list
                     merge_init_into_class: true
                     show_docstring_returns: true
-
-
-
-
-  # logo: ./assets/ufo_blue.png

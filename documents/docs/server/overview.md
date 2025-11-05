@@ -461,7 +461,7 @@ The server uses UFO's central configuration from `config_dev.yaml`:
 | **Logging** | Log file paths, rotation, format |
 | **Prompts** | Agent system prompts, example templates |
 
-See [Configuration Guide](../configurations/overview.md) for comprehensive config documentation.
+See [Configuration Guide](../configuration/system/overview.md) for comprehensive config documentation.
 
 ---
 
@@ -796,7 +796,7 @@ curl -X POST http://localhost:5000/api/dispatch \
 | Document | Purpose |
 |----------|---------|
 | [AIP Protocol](../aip/overview.md) | Communication protocol specification |
-| [Configuration](../configurations/overview.md) | UFO configuration system |
+| [Configuration](../configuration/system/overview.md) | UFO configuration system |
 | [Agents](../agents/overview.md) | Agent architecture and design |
 | [Client Overview](../client/overview.md) | Device client architecture |
 

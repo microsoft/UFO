@@ -602,7 +602,7 @@ The client inherits settings from `config_dev.yaml`:
       file: "logs/client.log"
     ```
 
-See [Configuration Guide](../configurations/overview.md) for comprehensive documentation.
+See [Configuration Guide](../configuration/system/overview.md) for comprehensive documentation.
 
 ---
 
@@ -813,7 +813,7 @@ stateDiagram-v2
 |----------|-------|-----------|
 | [Server Overview](../server/overview.md) | Server architecture | Understand the other half |
 | [AIP Protocol](../aip/overview.md) | Communication protocol | Deep dive into messaging |
-| [Configuration](../configurations/overview.md) | UFO configuration | Customize behavior |
+| [Configuration](../configuration/system/overview.md) | UFO configuration | Customize behavior |
 
 ---
 
@@ -914,7 +914,7 @@ graph TB
     - Adjust timeouts and retries
     - Platform-specific settings
     
-    👉 [Configuration Guide](../configurations/overview.md)
+    👉 [Configuration Guide](../configuration/system/overview.md)
     
     **5. Master the Protocol**
     - Deep dive into AIP messages

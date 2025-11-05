@@ -50,7 +50,7 @@ For a deep dive see our [technical report](https://arxiv.org/abs/2504.14603).
 ---
 
 ## 🚀 Quick Start
-Please follow the [Quick Start Guide](./getting_started/quick_start.md) to get started with UFO.
+Please follow the [Quick Start Guide](./getting_started/quick_start_ufo2.md) to get started with UFO.
 
 
 ## 🌐 Media Coverage 

@@ -3,7 +3,7 @@
 We also support hybrid control detection using both UIA and OmniParser-v2. This method is useful for detecting standard controls in the application using the UI Automation (UIA) framework, and for detecting custom controls in the application that may not be recognized by standard UIA methods. The visually detected controls are merged with the UIA controls by removing the duplicate controls based on IOU. We illustrate the hybrid control detection in the figure below:
 
 <h1 align="center">
-    <img src="../../../img/controls.png" alt="Hybrid Control Detection" />
+    <img src="/img/controls.png" alt="Hybrid Control Detection" />
 </h1>
 
 
