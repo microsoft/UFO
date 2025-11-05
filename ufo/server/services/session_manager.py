@@ -4,14 +4,15 @@ import logging
 import platform
 import threading
 import uuid
-from typing import Any, Callable, Dict, Optional
-
-from fastapi import WebSocket
+from typing import Any, Callable, Dict, Optional, TYPE_CHECKING
 
 from config.config_loader import get_ufo_config
 from aip.messages import ServerMessage, ServerMessageType, TaskStatus
 from ufo.module.basic import BaseSession
 from ufo.module.session_pool import SessionFactory
+
+if TYPE_CHECKING:
+    from aip.protocol.task_execution import TaskExecutionProtocol
 
 ufo_config = get_ufo_config()
 
@@ -54,7 +55,7 @@ class SessionManager:
         session_id: str,
         task_name: Optional[str] = "test_task",
         request: Optional[str] = None,
-        websocket: Optional[WebSocket] = None,
+        task_protocol: Optional["TaskExecutionProtocol"] = None,
         platform_override: Optional[str] = None,
         local: bool = False,
     ) -> BaseSession:
@@ -65,7 +66,7 @@ class SessionManager:
         :param session_id: The ID of the session to retrieve or create.
         :param task_name: The name of the task.
         :param request: Optional request text to initialize the session.
-        :param websocket: Optional WebSocket connection to attach to the session.
+        :param task_protocol: Optional AIP TaskExecutionProtocol instance.
         :param platform_override: Override platform detection ('windows' or 'linux').
         :param local: Whether the session is running in local mode with the client.
         :return: The BaseSession object for the session (Windows or Linux).
@@ -91,7 +92,7 @@ class SessionManager:
                         should_evaluate=ufo_config.system.eva_session,
                         id=session_id,
                         request=request or "",
-                        websocket=websocket,
+                        task_protocol=task_protocol,
                         platform_override=target_platform,
                     )
 
@@ -152,8 +153,8 @@ class SessionManager:
         session_id: str,
         task_name: str,
         request: str,
-        websocket: WebSocket,
-        platform_override: str,
+        task_protocol: Optional["TaskExecutionProtocol"] = None,
+        platform_override: str = None,
         callback: Optional[Callable[[str, ServerMessage], None]] = None,
     ) -> str:
         """
@@ -170,7 +171,7 @@ class SessionManager:
         :param session_id: Session identifier
         :param task_name: Task name
         :param request: User request
-        :param websocket: WebSocket for command dispatcher
+        :param task_protocol: AIP TaskExecutionProtocol instance
         :param platform_override: Platform type ('windows' or 'linux')
         :param callback: Optional async callback(session_id, ServerMessage) when task completes
         :return: session_id
@@ -180,7 +181,7 @@ class SessionManager:
             session_id=session_id,
             task_name=task_name,
             request=request,
-            websocket=websocket,
+            task_protocol=task_protocol,
             platform_override=platform_override,
         )
 

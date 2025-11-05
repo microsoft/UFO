@@ -5,10 +5,7 @@ import uuid
 from abc import ABC, abstractmethod
 from typing import TYPE_CHECKING, Callable, Coroutine, Any, Dict, List, Optional
 
-from fastapi import WebSocket
-
 from aip.protocol.task_execution import TaskExecutionProtocol
-from aip.transport.websocket import WebSocketTransport
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from ufo.config import get_config
 from aip.messages import (
@@ -137,26 +134,30 @@ class LocalCommandDispatcher(BasicCommandDispatcher):
 class WebSocketCommandDispatcher(BasicCommandDispatcher):
     """
     Command dispatcher for communication between components.
-    Handles sending commands and receiving results via WebSocket using AIP protocol.
+    Handles sending commands and receiving results using AIP protocol.
     Uses AIP's TaskExecutionProtocol for structured message handling.
     """
 
-    def __init__(self, session: "BaseSession", ws: WebSocket) -> None:
+    def __init__(
+        self,
+        session: "BaseSession",
+        protocol: Optional[TaskExecutionProtocol] = None,
+    ) -> None:
         """
         Initializes the CommandDispatcher.
         :param session: The session associated with the command dispatcher.
-        :param ws: The WebSocket connection (optional).
+        :param protocol: AIP TaskExecutionProtocol instance.
         """
-        self.ws = ws
         self.session = session
         self.pending: Dict[str, asyncio.Future] = {}
         self.send_queue: asyncio.Queue = asyncio.Queue(maxsize=100)
         self.observers: List[asyncio.Task] = []
         self.logger = logging.getLogger(__name__)
 
-        # Initialize AIP components
-        self.transport = WebSocketTransport(ws)
-        self.protocol = TaskExecutionProtocol(self.transport)
+        if not protocol:
+            raise ValueError("protocol parameter is required")
+
+        self.protocol = protocol
 
         # Note: No longer need _send_loop observer - AIP transport handles sending
 

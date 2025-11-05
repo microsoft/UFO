@@ -7,9 +7,7 @@ This module provides session types for Linux platform that don't require a HostA
 """
 
 import logging
-from typing import Optional
-
-from fastapi import WebSocket
+from typing import Optional, TYPE_CHECKING
 
 from ufo.agents.agent.host_agent import AgentFactory
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
@@ -19,6 +17,9 @@ from ufo.module.basic import BaseRound
 from ufo.module.context import ContextNames
 from ufo.module.dispatcher import LocalCommandDispatcher, WebSocketCommandDispatcher
 from ufo.module.sessions.platform_session import LinuxBaseSession
+
+if TYPE_CHECKING:
+    from aip.protocol.task_execution import TaskExecutionProtocol
 
 ufo_config = get_ufo_config()
 
@@ -118,7 +119,7 @@ class LinuxServiceSession(LinuxSession):
     """
     A session for UFO service on Linux platform.
     Similar to Windows ServiceSession but without HostAgent - works directly with application agents.
-    Communicates via WebSocket for remote control and monitoring.
+    Communicates via AIP protocols for remote control and monitoring.
     """
 
     def __init__(
@@ -127,7 +128,7 @@ class LinuxServiceSession(LinuxSession):
         should_evaluate: bool,
         id: str = None,
         request: str = "",
-        websocket: Optional[WebSocket] = None,
+        task_protocol: Optional["TaskExecutionProtocol"] = None,
     ):
         """
         Initialize the Linux service session.
@@ -135,9 +136,9 @@ class LinuxServiceSession(LinuxSession):
         :param should_evaluate: Whether to evaluate the session.
         :param id: The ID of the session.
         :param request: The user request for the session.
-        :param websocket: WebSocket connection for service communication.
+        :param task_protocol: AIP TaskExecutionProtocol instance.
         """
-        self.websocket = websocket
+        self.task_protocol = task_protocol
         super().__init__(
             task=task, should_evaluate=should_evaluate, id=id, request=request
         )
@@ -148,6 +149,7 @@ class LinuxServiceSession(LinuxSession):
         """
         super()._init_context()
 
-        # Use WebSocket command dispatcher for service mode
-        command_dispatcher = WebSocketCommandDispatcher(self, self.websocket)
+        command_dispatcher = WebSocketCommandDispatcher(
+            self, protocol=self.task_protocol
+        )
         self.context.attach_command_dispatcher(command_dispatcher)

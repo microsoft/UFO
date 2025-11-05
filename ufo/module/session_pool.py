@@ -6,9 +6,7 @@ import json
 import logging
 import os
 import platform
-from typing import List, Optional
-
-from fastapi import WebSocket
+from typing import List, Optional, TYPE_CHECKING
 
 from config.config_loader import get_ufo_config
 from ufo.module.basic import BaseSession
@@ -19,6 +17,9 @@ from ufo.module.sessions.session import (
     Session,
 )
 from ufo.module.sessions.service_session import ServiceSession
+
+if TYPE_CHECKING:
+    from aip.protocol.task_execution import TaskExecutionProtocol
 from ufo.module.sessions.linux_session import LinuxSession, LinuxServiceSession
 
 ufo_config = get_ufo_config()
@@ -138,7 +139,7 @@ class SessionFactory:
                     should_evaluate=ufo_config.system.eva_session,
                     id=kwargs.get("id", 0),
                     request=request,
-                    websocket=kwargs.get("websocket"),
+                    task_protocol=kwargs.get("task_protocol"),
                 )
             ]
         elif mode == "follower":
@@ -184,7 +185,7 @@ class SessionFactory:
         :param request: The user request.
         :param kwargs: Additional parameters:
             - application_name: Target application name
-            - websocket: WebSocket connection (for service mode)
+            - task_protocol: AIP TaskExecutionProtocol instance (for service mode)
         :return: The created Linux session list.
         """
         if mode in ["normal", "normal_operator"]:
@@ -207,7 +208,7 @@ class SessionFactory:
                     should_evaluate=ufo_config.system.eva_session,
                     id=0,
                     request=request,
-                    websocket=kwargs.get("websocket"),
+                    task_protocol=kwargs.get("task_protocol"),
                 )
             ]
         # TODO: Add Linux follower and batch modes if needed
@@ -225,7 +226,7 @@ class SessionFactory:
         should_evaluate: bool,
         id: str,
         request: str,
-        websocket: Optional[WebSocket] = None,
+        task_protocol: Optional["TaskExecutionProtocol"] = None,
         platform_override: Optional[str] = None,
     ) -> BaseSession:
         """
@@ -234,7 +235,7 @@ class SessionFactory:
         :param should_evaluate: Whether to evaluate.
         :param id: Session ID.
         :param request: User request.
-        :param websocket: WebSocket connection.
+        :param task_protocol: AIP TaskExecutionProtocol instance.
         :param platform_override: Override platform detection ('windows' or 'linux').
         :return: Platform-specific service session.
         """
@@ -247,7 +248,7 @@ class SessionFactory:
                 should_evaluate=should_evaluate,
                 id=id,
                 request=request,
-                websocket=websocket,
+                task_protocol=task_protocol,
             )
         elif current_platform == "linux":
             self.logger.info("Creating Linux service session")
@@ -256,7 +257,7 @@ class SessionFactory:
                 should_evaluate=should_evaluate,
                 id=id,
                 request=request,
-                websocket=websocket,
+                task_protocol=task_protocol,
             )
         else:
             raise NotImplementedError(

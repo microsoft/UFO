@@ -365,13 +365,11 @@ class UFOWebSocketHandler:
             self.logger.info(
                 f"[WS] 🌟 Handling constellation task request: {data.request} from {data.target_id}"
             )
-            target_ws = self.ws_manager.get_client(data.target_id)
             platform = self.ws_manager.get_client_info(data.target_id).platform
         else:
             self.logger.info(
                 f"[WS] 📱 Handling device task request: {data.request} from {data.client_id}"
             )
-            target_ws = self.ws_manager.get_client(data.client_id)
             platform = self.ws_manager.get_client_info(data.client_id).platform
 
         session_id = str(uuid.uuid4()) if not data.session_id else data.session_id
@@ -469,12 +467,17 @@ class UFOWebSocketHandler:
             f"[WS] 🎯 About to call execute_task_async for session {session_id}"
         )
 
+        # Get task protocol for target device
+        target_protocol = self.ws_manager.get_task_protocol(
+            target_device_id if client_type == ClientType.CONSTELLATION else client_id
+        )
+
         # Start task in background (non-blocking)
         await self.session_manager.execute_task_async(
             session_id=session_id,
             task_name=task_name,
             request=data.request,
-            websocket=target_ws,
+            task_protocol=target_protocol,
             platform_override=platform,
             callback=send_result,
         )
