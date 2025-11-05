@@ -7,30 +7,28 @@ from fastapi import APIRouter, HTTPException
 from aip.protocol.task_execution import TaskExecutionProtocol
 from aip.transport.websocket import WebSocketTransport
 from ufo.server.services.session_manager import SessionManager
-from ufo.server.services.ws_manager import WSManager
+from ufo.server.services.client_connection_manager import ClientConnectionManager
 
 logger = logging.getLogger(__name__)
 
 
 def create_api_router(
-    session_manager: SessionManager, ws_manager: WSManager
+    session_manager: SessionManager, client_manager: ClientConnectionManager
 ) -> APIRouter:
     """
     Create the API router for the UFO server.
     :param session_manager: The session manager instance.
-    :param ws_manager: The WebSocket manager instance.
+    :param client_manager: The client connection manager instance.
     :return: The FastAPI APIRouter instance.
     """
     router = APIRouter()
 
     @router.get("/api/clients")
     async def list_clients():
-        return {"online_clients": ws_manager.list_clients()}
+        return {"online_clients": client_manager.list_clients()}
 
     @router.post("/api/dispatch")
     async def dispatch_task_api(data: Dict[str, Any]):
-        import asyncio
-        import json
 
         client_id = data.get("client_id")
         user_request = data.get("request", "")
@@ -51,7 +49,7 @@ def create_api_router(
 
         logger.info(f"Dispatching task '{user_request}' to client '{client_id}'")
 
-        ws = ws_manager.get_client(client_id)
+        ws = client_manager.get_client(client_id)
         if not ws:
             logger.error(f"Client {client_id} not online.")
             raise HTTPException(status_code=404, detail="Client not online")
@@ -91,6 +89,6 @@ def create_api_router(
 
     @router.get("/api/health")
     async def health_check():
-        return {"status": "healthy", "online_clients": ws_manager.list_clients()}
+        return {"status": "healthy", "online_clients": client_manager.list_clients()}
 
     return router

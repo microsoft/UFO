@@ -13,7 +13,7 @@ from aip.transport.websocket import WebSocketTransport
 from aip.messages import ClientMessage, ClientMessageType, ClientType, ServerMessage
 from ufo.module.dispatcher import WebSocketCommandDispatcher
 from ufo.server.services.session_manager import SessionManager
-from ufo.server.services.ws_manager import WSManager
+from ufo.server.services.client_connection_manager import ClientConnectionManager
 
 
 class UFOWebSocketHandler:
@@ -24,17 +24,17 @@ class UFOWebSocketHandler:
 
     def __init__(
         self,
-        ws_manager: WSManager,
+        client_manager: ClientConnectionManager,
         session_manager: SessionManager,
         local: bool = False,
     ):
         """
         Initializes the WebSocket handler.
-        :param ws_manager: The WebSocket manager.
+        :param client_manager: The client connection manager.
         :param session_manager: The session manager.
         :param local: Whether running in local mode with client auto-connect.
         """
-        self.ws_manager = ws_manager
+        self.client_manager = client_manager
         self.session_manager = session_manager
         self.local = local
         self.logger = logging.getLogger(self.__class__.__name__)
@@ -48,7 +48,7 @@ class UFOWebSocketHandler:
 
     async def connect(self, websocket: WebSocket) -> str:
         """
-        Connects a client and registers it in the WS manager.
+        Connects a client and registers it in the client manager.
         Uses AIP RegistrationProtocol for structured registration.
         Expects the first message to contain {"client_id": ...}.
         :param websocket: The WebSocket connection.
@@ -80,7 +80,7 @@ class UFOWebSocketHandler:
         if client_type == ClientType.CONSTELLATION:
             await self._validate_constellation_client(reg_info)
 
-        self.ws_manager.add_client(
+        self.client_manager.add_client(
             client_id,
             platform,
             websocket,
@@ -135,7 +135,7 @@ class UFOWebSocketHandler:
         if not claimed_device_id:
             return  # No device_id to validate
 
-        if not self.ws_manager.is_device_connected(claimed_device_id):
+        if not self.client_manager.is_device_connected(claimed_device_id):
             error_msg = f"Target device '{claimed_device_id}' is not connected"
             self.logger.warning(f"[WS] Constellation registration failed: {error_msg}")
 
@@ -169,7 +169,7 @@ class UFOWebSocketHandler:
             self.logger.info(f"[WS] 🌟 Constellation client {client_id} connected")
         else:
             # Log device connection with system info if available
-            system_info = self.ws_manager.get_device_system_info(client_id)
+            system_info = self.client_manager.get_device_system_info(client_id)
             if system_info:
                 self.logger.info(
                     f"[WS] 📱 Device client {client_id} connected - "
@@ -186,11 +186,11 @@ class UFOWebSocketHandler:
         :param client_id: The ID of the client.
         """
         # Check if this is a constellation client with active sessions
-        client_info = self.ws_manager.get_client_info(client_id)
+        client_info = self.client_manager.get_client_info(client_id)
 
         if client_info and client_info.client_type == ClientType.CONSTELLATION:
             # Get all sessions associated with this constellation client
-            session_ids = self.ws_manager.get_constellation_sessions(client_id)
+            session_ids = self.client_manager.get_constellation_sessions(client_id)
 
             if session_ids:
                 self.logger.info(
@@ -208,11 +208,11 @@ class UFOWebSocketHandler:
                     self.logger.error(
                         f"[WS] Error cancelling session {session_id}: {e}"
                     )  # Clean up the mapping
-                self.ws_manager.remove_constellation_sessions(client_id)
+                self.client_manager.remove_constellation_sessions(client_id)
 
         elif client_info and client_info.client_type == ClientType.DEVICE:
             # Get all sessions running on this device
-            session_ids = self.ws_manager.get_device_sessions(client_id)
+            session_ids = self.client_manager.get_device_sessions(client_id)
 
             if session_ids:
                 self.logger.info(
@@ -230,9 +230,9 @@ class UFOWebSocketHandler:
                     self.logger.error(
                         f"[WS] Error cancelling session {session_id}: {e}"
                     )  # Clean up the mapping
-                self.ws_manager.remove_device_sessions(client_id)
+                self.client_manager.remove_device_sessions(client_id)
 
-        self.ws_manager.remove_client(client_id)
+        self.client_manager.remove_client(client_id)
         self.logger.info(f"[WS] {client_id} disconnected")
 
     async def handler(self, websocket: WebSocket) -> None:
@@ -249,7 +249,7 @@ class UFOWebSocketHandler:
                 asyncio.create_task(self.handle_message(msg))
         except WebSocketDisconnect as e:
             self.logger.warning(
-                f"[WS] {client_id} disconnected — code={e.code}, reason={e.reason}"
+                f"[WS] {client_id} disconnected �?code={e.code}, reason={e.reason}"
             )
             if client_id:
                 await self.disconnect(client_id)
@@ -365,12 +365,12 @@ class UFOWebSocketHandler:
             self.logger.info(
                 f"[WS] 🌟 Handling constellation task request: {data.request} from {data.target_id}"
             )
-            platform = self.ws_manager.get_client_info(data.target_id).platform
+            platform = self.client_manager.get_client_info(data.target_id).platform
         else:
             self.logger.info(
                 f"[WS] 📱 Handling device task request: {data.request} from {data.client_id}"
             )
-            platform = self.ws_manager.get_client_info(data.client_id).platform
+            platform = self.client_manager.get_client_info(data.client_id).platform
 
         session_id = str(uuid.uuid4()) if not data.session_id else data.session_id
         task_name = data.task_name if data.task_name else str(uuid.uuid4())
@@ -382,10 +382,10 @@ class UFOWebSocketHandler:
 
         # Track constellation session mapping
         if client_type == ClientType.CONSTELLATION:
-            self.ws_manager.add_constellation_session(data.client_id, session_id)
+            self.client_manager.add_constellation_session(data.client_id, session_id)
             # Also track on target device
             if target_device_id:
-                self.ws_manager.add_device_session(target_device_id, session_id)
+                self.client_manager.add_device_session(target_device_id, session_id)
 
         # Define callback to send results when task completes
         async def send_result(sid: str, result_msg: ServerMessage):
@@ -396,7 +396,7 @@ class UFOWebSocketHandler:
             )
 
             # Get task protocol for the requesting client
-            requester_protocol = self.ws_manager.get_task_protocol(client_id)
+            requester_protocol = self.client_manager.get_task_protocol(client_id)
 
             if not requester_protocol:
                 self.logger.warning(
@@ -419,11 +419,11 @@ class UFOWebSocketHandler:
                     error=result_msg.error,
                     response_id=result_msg.response_id,
                 )
-                self.logger.info(f"[WS] ✅ Sent to client {client_id} successfully")
+                self.logger.info(f"[WS] �?Sent to client {client_id} successfully")
 
                 # If constellation client, also notify the target device
                 if client_type == ClientType.CONSTELLATION and target_device_id:
-                    target_protocol = self.ws_manager.get_task_protocol(
+                    target_protocol = self.client_manager.get_task_protocol(
                         target_device_id
                     )
 
@@ -440,7 +440,7 @@ class UFOWebSocketHandler:
                                 response_id=result_msg.response_id,
                             )
                             self.logger.info(
-                                f"[WS] ✅ Sent to target device {target_device_id} successfully"
+                                f"[WS] �?Sent to target device {target_device_id} successfully"
                             )
                         except (ConnectionError, IOError) as target_error:
                             self.logger.warning(
@@ -451,7 +451,7 @@ class UFOWebSocketHandler:
                             f"[WS] ⚠️ Target device {target_device_id} disconnected, skipping send"
                         )
 
-                self.logger.info(f"[WS] ✅ All results sent for session {sid}")
+                self.logger.info(f"[WS] �?All results sent for session {sid}")
             except (ConnectionError, IOError) as e:
                 self.logger.warning(
                     f"[WS] ⚠️ Connection error sending result for {sid}: {e}"
@@ -460,7 +460,7 @@ class UFOWebSocketHandler:
                 import traceback
 
                 self.logger.error(
-                    f"[WS] ❌ Failed to send result for {sid}: {e}\n{traceback.format_exc()}"
+                    f"[WS] �?Failed to send result for {sid}: {e}\n{traceback.format_exc()}"
                 )
 
         self.logger.info(
@@ -468,7 +468,7 @@ class UFOWebSocketHandler:
         )
 
         # Get task protocol for target device
-        target_protocol = self.ws_manager.get_task_protocol(
+        target_protocol = self.client_manager.get_task_protocol(
             target_device_id if client_type == ClientType.CONSTELLATION else client_id
         )
 
@@ -555,7 +555,7 @@ class UFOWebSocketHandler:
         :param device_id: The device ID to get information for.
         :return: Device system information dictionary.
         """
-        device_info = self.ws_manager.get_device_system_info(device_id)
+        device_info = self.client_manager.get_device_system_info(device_id)
         if device_info:
             return device_info
         else:

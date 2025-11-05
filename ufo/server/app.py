@@ -57,7 +57,7 @@ from fastapi import FastAPI, WebSocket
 
 from ufo.server.services.api import create_api_router
 from ufo.server.services.session_manager import SessionManager
-from ufo.server.services.ws_manager import WSManager
+from ufo.server.services.client_connection_manager import ClientConnectionManager
 from ufo.server.ws.handler import UFOWebSocketHandler
 
 
@@ -69,15 +69,15 @@ app = FastAPI()
 
 # Initialize managers with default platform (will be overridden if run directly)
 session_manager = SessionManager(platform_override=None)
-ws_manager = WSManager()
+client_manager = ClientConnectionManager()
 
 
 # Create API router for http requests
-api_router = create_api_router(session_manager, ws_manager)
+api_router = create_api_router(session_manager, client_manager)
 app.include_router(api_router)
 
 # Initialize WebSocket handler
-ws_handler = UFOWebSocketHandler(ws_manager, session_manager, cli_args.local)
+ws_handler = UFOWebSocketHandler(client_manager, session_manager, cli_args.local)
 
 
 @app.websocket("/ws")

@@ -2,13 +2,13 @@ import threading
 from dataclasses import dataclass
 from datetime import datetime
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 from fastapi import WebSocket
 
 from aip.messages import ClientType
-from aip.transport.websocket import WebSocketTransport
 from aip.protocol.task_execution import TaskExecutionProtocol
+from aip.transport.websocket import WebSocketTransport
 
 
 @dataclass
@@ -27,15 +27,22 @@ class ClientInfo:
     task_protocol: Optional[TaskExecutionProtocol] = None
 
 
-class WSManager:
+class ClientConnectionManager:
     """
-    WSManager is responsible for managing WebSocket connections and clients.
+    ClientConnectionManager manages client connections and their associated resources.
+
+    Responsibilities:
+    - Track connected clients (devices and constellations) with their AIP protocol instances
+    - Manage session-to-client mappings for both constellation and device sessions
+    - Store and retrieve device system information and configurations
+    - Provide client registry and lookup services
+
     Supports both device clients and constellation clients.
     """
 
     def __init__(self, device_config_path: Optional[str] = None):
         """
-        Initialize the WSManager.
+        Initialize the ClientConnectionManager.
         :param device_config_path: Optional path to device configuration file (YAML/JSON)
         """
         self.online_clients: Dict[str, ClientInfo] = {}
@@ -153,7 +160,7 @@ class WSManager:
                     import logging
 
                     logging.getLogger(__name__).info(
-                        f"[WSManager] Merged server config for device {client_id}"
+                        f"[ClientConnectionManager] Merged server config for device {client_id}"
                     )
 
             self.online_clients[client_id] = ClientInfo(
@@ -319,7 +326,7 @@ class WSManager:
             path = Path(config_path)
             if not path.exists():
                 logger.warning(
-                    f"[WSManager] Device config file not found: {config_path}"
+                    f"[ClientConnectionManager] Device config file not found: {config_path}"
                 )
                 return
 
@@ -336,7 +343,7 @@ class WSManager:
                     config = json.load(f)
             else:
                 logger.warning(
-                    f"[WSManager] Unsupported config file format: {config_path}"
+                    f"[ClientConnectionManager] Unsupported config file format: {config_path}"
                 )
                 return
 
@@ -344,14 +351,17 @@ class WSManager:
             if config and "devices" in config:
                 self._device_configs = config["devices"]
                 logger.info(
-                    f"[WSManager] Loaded {len(self._device_configs)} device configurations"
+                    f"[ClientConnectionManager] Loaded {len(self._device_configs)} device configurations"
                 )
             else:
-                logger.warning("[WSManager] No 'devices' section found in config file")
+                logger.warning(
+                    "[ClientConnectionManager] No 'devices' section found in config file"
+                )
 
         except Exception as e:
             logger.error(
-                f"[WSManager] Error loading device configs: {e}", exc_info=True
+                f"[ClientConnectionManager] Error loading device configs: {e}",
+                exc_info=True,
             )
 
     def _merge_device_info(
