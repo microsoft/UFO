@@ -1,88 +1,227 @@
 nav:
+  # ==================== 入口与导航 ====================
   - Home: index.md
+  - Choose Your Path: choose_path.md
+  - Project Directory Structure: project_directory_structure.md
+  
+  # ==================== 快速开始（分流）====================
   - Getting Started:
-      - Choose Your Path: getting_started/choose_path.md
       - Quick Start (Galaxy): getting_started/quick_start_galaxy.md
-      - Quick Start (Windows / UFO²): getting_started/quick_start_windows.md
-      - Hybrid Quick Start: getting_started/hybrid_quick_start.md
+      - Quick Start (UFO²): getting_started/quick_start_ufo2.md
+      - Quick Start (Linux Agent): getting_started/quick_start_linux.md
       - Migration UFO² → Galaxy: getting_started/migration_ufo2_to_galaxy.md
+      - More Guidance: getting_started/more_guidance.md
       - FAQ: getting_started/faq.md
-  - Core Concepts:
-      - Architecture Overview: concepts/architecture_overview.md
-      - Constellation: concepts/constellation.md
-      - Device Agents Overview: concepts/device_agents/overview.md
-      - Device Agent Layers: concepts/device_agents/architecture_layers.md
-      - Knowledge Substrate: concepts/knowledge_substrate.md
-      - Control Detection: concepts/control_detection_overview.md
-      - Speculative Multi-Action: concepts/speculative_multi_action.md
-  - AIP Protocol:
-      - Overview: aip/overview.md
-      - Lifecycle: aip/lifecycle.md
-      - Messages: aip/messages.md
-      - Schema Reference: aip/schema_reference.md
-      - Endpoints: aip/endpoints.md
-      - Transport: aip/transport.md
-      - Resilience: aip/resilience.md
-      - Versioning: aip/versioning.md
-      - Examples: aip/examples.md
+  
+  # ==================== 配置（通用）====================
+  - Configuration & Setup:
+      - Configuration System:
+          - Overview: configurations/overview.md
+          - Field Reference: configurations/field_reference.md
+          - MCP Reference: configurations/mcp_reference.md
+          - Migration Guide: configurations/migration.md
+          - Extending Configuration: configurations/extending.md
+      - Model Setup:
+          - Overview: supported_models/overview.md
+          - OpenAI: supported_models/openai.md
+          - Azure OpenAI: supported_models/azure_openai.md
+          - OpenAI CUA (Operator): supported_models/operator.md
+          - Gemini: supported_models/gemini.md
+          - Claude: supported_models/claude.md
+          - Qwen: supported_models/qwen.md
+          - DeepSeek: supported_models/deepseek.md
+          - Ollama: supported_models/ollama.md
+          - Custom Model: supported_models/custom_model.md
+  
+  # ==================== Galaxy 框架（多设备编排）====================
   - Galaxy Framework:
       - Overview: galaxy/overview.md
-      - Planning: galaxy/planning.md
-      - Task Constellation API: galaxy/task_constellation_api.md
-      - Device Pool: galaxy/device_pool.md
-      - Task Assignment: galaxy/task_assignment.md
-      - Dynamic Editing: galaxy/dynamic_editing.md
-      - Parallel Execution: galaxy/parallel_execution.md
-      - Data Transfer: galaxy/data_transfer.md
-      - Monitoring & Visualization: galaxy/monitoring_visualization.md
-      - Fault Tolerance: galaxy/fault_tolerance.md
-  - UFO² (Windows AgentOS LTS):
+      - Quick Start: galaxy/quick_start.md
+      - Architecture:
+          - Constellation (DAG): galaxy/constellation.md
+          - ConstellationAgent: galaxy/constellation_agent.md
+          - Device Pool: galaxy/device_pool.md
+          - Task Orchestrator: galaxy/task_orchestrator.md
+      - Features:
+          - Task Planning: galaxy/planning.md
+          - Task Assignment: galaxy/task_assignment.md
+          - Dynamic Editing: galaxy/dynamic_editing.md
+          - Parallel Execution: galaxy/parallel_execution.md
+          - Data Transfer: galaxy/data_transfer.md
+      - Operations:
+          - Monitoring & Visualization: galaxy/monitoring_visualization.md
+          - Fault Tolerance: galaxy/fault_tolerance.md
+      - API Reference: galaxy/api_reference.md
+  
+  # ==================== UFO² Desktop AgentOS（Windows 设备代理）====================
+  - UFO² Desktop AgentOS:
       - Overview: ufo2/overview.md
-      - HostAgent: ufo2/host_agent.md
-      - AppAgent: ufo2/app_agent.md
-      - FSM Architecture: ufo2/architecture_fsm.md
-      - Hybrid Actions: ufo2/hybrid_actions.md
-      - Control Detection:
-          - UIA: ufo2/control_detection/uia.md
-          - Visual: ufo2/control_detection/visual.md
-          - Hybrid: ufo2/control_detection/hybrid.md
-      - Knowledge Substrate:
-          - Overview: ufo2/knowledge_substrate/overview.md
-          - Demos: ufo2/knowledge_substrate/demos.md
-          - Bing Search: ufo2/knowledge_substrate/bing_search.md
-          - Experience Learning: ufo2/knowledge_substrate/experience_learning.md
-      - Prompts: ufo2/prompts/overview.md
-      - Customization: ufo2/customization.md
-      - Performance & Benchmarks: ufo2/performance_evaluation.md
+      - Quick Start: ufo2/quick_start.md
+      - Using as Galaxy Device: ufo2/as_galaxy_device.md
+      
+      # Windows Agents（基于 Device Agent Architecture）
+      - Windows Agents:
+          - Agent Types: ufo2/agent_types.md
+          - HostAgent: ufo2/host_agent.md
+          - AppAgent: ufo2/app_agent.md
+          - EvaluationAgent: ufo2/evaluation_agent.md
+      
+      # UFO² 核心功能
+      - Core Features:
+          - Hybrid GUI–API Actions: ufo2/hybrid_actions.md
+          - Control Detection:
+              - Overview: ufo2/control_detection/overview.md
+              - UIA Detection: ufo2/control_detection/uia.md
+              - Visual Detection: ufo2/control_detection/visual.md
+              - Hybrid Detection: ufo2/control_detection/hybrid.md
+              - Control Filtering:
+                  - Overview: ufo2/control_detection/filtering/overview.md
+                  - Text Filtering: ufo2/control_detection/filtering/text_filtering.md
+                  - Semantic Filtering: ufo2/control_detection/filtering/semantic_filtering.md
+                  - Icon Filtering: ufo2/control_detection/filtering/icon_filtering.md
+          - Knowledge Substrate:
+              - Overview: ufo2/advanced_usage/knowledge_substrate/overview.md
+              - Help Documents: ufo2/advanced_usage/knowledge_substrate/learning_from_help_document.md
+              - Bing Search: ufo2/advanced_usage/knowledge_substrate/learning_from_bing_search.md
+              - Experience Learning: ufo2/advanced_usage/knowledge_substrate/experience_learning.md
+              - Demos: ufo2/advanced_usage/knowledge_substrate/learning_from_demonstration.md
+          - Speculative Multi-Action: ufo2/advanced_usage/multi_action.md
+      
+      # 高级用法
+      - Advanced Usage:
+          - Follower Mode: ufo2/advanced_usage/follower_mode.md
+          - Batch Mode: ufo2/advanced_usage/batch_mode.md
+          - Operator Integration: ufo2/advanced_usage/operator_as_app_agent.md
+          - Customization: ufo2/advanced_usage/customization.md
+      
+      # 开发指南
+      - Development:
+          - Creating Your AppAgent:
+              - Overview: ufo2/creating_app_agent/overview.md
+              - Help Document Provision: ufo2/creating_app_agent/help_document_provision.md
+              - Demonstration Provision: ufo2/creating_app_agent/demonstration_provision.md
+              - Wrapping App-Native API: ufo2/creating_app_agent/warpping_app_native_api.md
+          - Prompts:
+              - Overview: ufo2/prompts/overview.md
+              - Basic Template: ufo2/prompts/basic_template.md
+              - Examples: ufo2/prompts/examples_prompts.md
+      
+      # 评估与基准测试
+      - Evaluation:
+          - Benchmark Overview: ufo2/benchmark/overview.md
+          - Windows Agent Arena: ufo2/benchmark/windows_agent_arena.md
+          - OSWorld (Windows): ufo2/benchmark/osworld.md
+          - Performance Logs:
+              - Overview: ufo2/logs/overview.md
+              - Evaluation Logs: ufo2/logs/evaluation_logs.md
+              - Markdown Log Viewer: ufo2/logs/markdown_log_viewer.md
+              - Request Logs: ufo2/logs/request_logs.md
+              - Screenshots Logs: ufo2/logs/screenshots_logs.md
+              - Step Logs: ufo2/logs/step_logs.md
+              - UI Tree Logs: ufo2/logs/ui_tree_logs.md
+      
+      # Dataflow
+      - Dataflow:
+          - Overview: ufo2/dataflow/overview.md
+          - Instantiation: ufo2/dataflow/instantiation.md
+          - Execution: ufo2/dataflow/execution.md
+          - Windows App Environment: ufo2/dataflow/windows_app_env.md
+          - Result: ufo2/dataflow/result.md
+      
+      # LTS 支持策略
       - LTS Support Policy: ufo2/lts_support_policy.md
-  - Device Agents:
-      - (Alias) Overview: concepts/device_agents/overview.md
-      - (Alias) Layers: concepts/device_agents/architecture_layers.md
-  - Runtime:
-      - Server: ...
-      - Client: ...
-      - Protocol Internals: ...
-  - Extensions & MCP:
-      - MCP Overview: extensions/mcp/overview.md
-      - Positioning: extensions/mcp/positioning.md
-      - Architecture: extensions/mcp/architecture.md
-      - Quick Start: extensions/mcp/quick_start.md
-      - Configuration: extensions/mcp/configuration.md
-      - AIP Bridge: extensions/mcp/aip_bridge.md
-      - Data Collection: extensions/mcp/data_collection.md
-      - Action Execution: extensions/mcp/action.md
-      - Local Deployment: extensions/mcp/local_servers.md
-      - Remote Deployment: extensions/mcp/remote_servers.md
-      - Custom Server: extensions/mcp/custom_servers.md
-      - Security & Permissions: extensions/mcp/security.md
-      - Versioning: extensions/mcp/versioning.md
-      - FAQ: extensions/mcp/faq.md
-      - Servers:
-          - UICollector: extensions/mcp/servers/ui_collector.md
-          # ... 其余服务器
-  - Tutorials: ...
-  - Reference: ...
-  - Versioning: ...
-  - Legacy: ...
-  - About: ...
+  
+  # ==================== Linux Agent（Linux 设备代理）====================
+  - Linux Agent:
+      - Overview: linux/overview.md
+      - Quick Start: linux/quick_start.md
+      - Using as Galaxy Device: linux/as_galaxy_device.md
+      - Bash Executor: linux/bash_executor.md
+      - Configuration: linux/configuration.md
+      - Examples: linux/examples.md
+  
+  # ==================== 通用基础设施 ====================
+  - Infrastructure:
+      # 基础模块（Galaxy 和所有 Device Agents 都使用）
+      - Basic Modules:
+          - Overview: modules/overview.md
+          - Session: modules/session.md
+          - Round: modules/round.md
+          - Context: modules/context.md
+          - Dispatcher: modules/dispatcher.md
+          - Session Factory & Pool: modules/session_pool.md
+          - Platform Sessions: modules/platform_sessions.md
+      
+      # Device Agent 通用架构（所有 Agent 遵循的设计模式）
+      - Device Agent Architecture:
+          - Overview: agents/overview.md
+          - Architecture Layers:
+              - State Layer (Level-1): agents/design/state.md
+              - Strategy Layer (Level-2): agents/design/processor.md
+              - Strategy Components: agents/design/strategy.md
+              - Command Layer (Level-3): agents/design/command.md
+          - Supporting Systems:
+              - Memory System: agents/design/memory.md
+              - Blackboard: agents/design/blackboard.md
+              - Prompter: agents/design/prompter.md
+  
+  # ==================== 通信协议（跨设备、跨 Agent）====================
+  - Agent Interaction Protocol (AIP):
+      - Overview: aip/overview.md
+      - Message Reference: aip/messages.md
+      - Protocol Guide: aip/protocols.md
+      - Transport Layer: aip/transport.md
+      - Endpoints: aip/endpoints.md
+      - Resilience: aip/resilience.md
+  
+  # ==================== 服务端与客户端 ====================
+  - Agent Server:
+      - Overview: server/overview.md
+      - Quick Start: server/quick_start.md
+      - Session Manager: server/session_manager.md
+      - WebSocket Handler: server/websocket_handler.md
+      - Client Connection Manager: server/client_connection_manager.md
+      - HTTP API: server/api.md
+      - Monitoring: server/monitoring.md
+  
+  - Agent Client:
+      - Overview: client/overview.md
+      - Quick Start: client/quick_start.md
+      - WebSocket Client: client/websocket_client.md
+      - UFO Client: client/ufo_client.md
+      - Computer Manager: client/computer_manager.md
+      - Computer: client/computer.md
+      - Device Info Provider: client/device_info.md
+      - MCP Integration: client/mcp_integration.md
+  
+  # ==================== 扩展机制（MCP）====================
+  - MCP (Model Context Protocol):
+      - Overview: mcp/overview.md
+      - Positioning in UFO³: mcp/positioning.md
+      - Data Collection Servers: mcp/data_collection.md
+      - Action Servers: mcp/action.md
+      - Configuration Guide: mcp/configuration.md
+      - Local Servers: mcp/local_servers.md
+      - Remote Servers: mcp/remote_servers.md
+      - Custom Servers: mcp/custom_servers.md
+      - Server Reference:
+          - UICollector: mcp/servers/ui_collector.md
+          - HostUIExecutor: mcp/servers/host_ui_executor.md
+          - AppUIExecutor: mcp/servers/app_ui_executor.md
+          - CommandLineExecutor: mcp/servers/command_line_executor.md
+          - WordCOMExecutor: mcp/servers/word_com_executor.md
+          - ExcelCOMExecutor: mcp/servers/excel_com_executor.md
+          - PowerPointCOMExecutor: mcp/servers/ppt_com_executor.md
+          - PDFReaderExecutor: mcp/servers/pdf_reader_executor.md
+          - ConstellationEditor: mcp/servers/constellation_editor.md
+          - HardwareExecutor: mcp/servers/hardware_executor.md
+          - BashExecutor: mcp/servers/bash_executor.md
+  
+  # ==================== 关于与社区 ====================
+  - About:
+      - Contributing: about/CONTRIBUTING.md
+      - License: about/LICENSE.md
+      - Code of Conduct: about/CODE_OF_CONDUCT.md
+      - Disclaimer: about/DISCLAIMER.md
+      - Support: about/SUPPORT.md
   - FAQ: faq.md
