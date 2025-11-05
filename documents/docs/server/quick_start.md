@@ -10,10 +10,10 @@
 !!!info "Requirements Checklist"
     Before you begin, ensure you have:
     
-    - ✅ **Python 3.10+** installed
-    - ✅ **UFO² dependencies** installed (`pip install -r requirements.txt`)
-    - ✅ **Network connectivity** for WebSocket connections
-    - ✅ **Terminal access** (PowerShell, bash, or equivalent)
+    - **Python 3.10+** installed
+    - **UFO² dependencies** installed (`pip install -r requirements.txt`)
+    - **Network connectivity** for WebSocket connections
+    - **Terminal access** (PowerShell, bash, or equivalent)
 
 | Component | Minimum Version | Recommended |
 |-----------|----------------|-------------|
@@ -97,7 +97,7 @@ INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
 
 ---
 
-## 🖥️ Connecting Device Clients
+## 🖥Connecting Device Clients
 
 !!!info "What is a Device Client?"
     A Device Client is an agent running on a physical or virtual machine that can execute tasks. Each device connects via WebSocket and registers with a unique `client_id`.
@@ -120,16 +120,16 @@ Once the server is running, connect device agents using the command line:
 !!!success "Registration Success Indicator"
     When a client connects successfully, the server logs will display:
     ```console
-    INFO: [WS] ✅ Registered device client: my_windows_device
+    INFO: [WS] Registered device client: my_windows_device
     ```
 
 ### Client Connection Parameters
 
 | Parameter | Required | Type | Description | Example |
 |-----------|----------|------|-------------|---------|
-| `--ws` | ✅ Yes | flag | Enable WebSocket mode (vs. local mode) | `--ws` |
-| `--ws-server` | ✅ Yes | URL | Server WebSocket endpoint | `ws://127.0.0.1:5000/ws` |
-| `--client-id` | ✅ Yes | string | Unique device identifier (must be unique across all clients) | `device_win_001` |
+| `--ws` | Yes | flag | Enable WebSocket mode (vs. local mode) | `--ws` |
+| `--ws-server` | Yes | URL | Server WebSocket endpoint | `ws://127.0.0.1:5000/ws` |
+| `--client-id` | Yes | string | Unique device identifier (must be unique across all clients) | `device_win_001` |
 | `--platform` | ⚠️ Optional | string | Platform type: `windows`, `linux` | `--platform windows` |
 
 !!!warning "Client ID Uniqueness"
@@ -144,7 +144,7 @@ Once the server is running, connect device agents using the command line:
 sequenceDiagram
     participant C as Device Client
     participant S as Agent Server
-    participant M as WSManager
+    participant M as ClientConnectionManager
     
     Note over C,S: 1️⃣ WebSocket Connection
     C->>+S: WebSocket CONNECT to /ws
@@ -153,12 +153,12 @@ sequenceDiagram
     Note over C,S: 2️⃣ AIP Registration Protocol
     C->>S: REGISTER message<br/>{client_id, client_type, platform}
     S->>S: Validate client_id uniqueness
-    S->>M: Register client in WSManager
+    S->>M: Register client in ClientConnectionManager
     
     Note over C,S: 3️⃣ Confirmation
     S-->>-C: REGISTER_CONFIRM<br/>{status: "success"}
     
-    Note over C: ✅ Client Ready
+    Note over C: Client Ready
     C->>C: Start task listening loop
 ```
 
@@ -182,8 +182,8 @@ python -m galaxy.constellation.constellation --ws --ws-server ws://127.0.0.1:500
 
 | Parameter | Required | Description | Example |
 |-----------|----------|-------------|---------|
-| `--ws` | ✅ Yes | Enable WebSocket mode | `--ws` |
-| `--ws-server` | ✅ Yes | Server WebSocket URL | `ws://127.0.0.1:5000/ws` |
+| `--ws` | Yes | Enable WebSocket mode | `--ws` |
+| `--ws-server` | Yes | Server WebSocket URL | `ws://127.0.0.1:5000/ws` |
 | `--target-id` | ⚠️ Optional | Initial target device ID for tasks | `my_windows_device` |
 
 !!!danger "Target Device Must Be Online"
@@ -197,7 +197,7 @@ python -m galaxy.constellation.constellation --ws --ws-server ws://127.0.0.1:500
 
 ---
 
-## ✅ Verifying the Setup
+## Verifying the Setup
 
 ### Method 1: Check Connected Clients
 
@@ -278,8 +278,8 @@ python -m galaxy.constellation.constellation --ws --ws-server ws://127.0.0.1:500
 
 | Field | Required | Type | Description | Example |
 |-------|----------|------|-------------|---------|
-| `client_id` | ✅ Yes | string | Target device identifier | `"my_windows_device"` |
-| `request` | ✅ Yes | string | Natural language task description | `"Open Notepad"` |
+| `client_id` | Yes | string | Target device identifier | `"my_windows_device"` |
+| `request` | Yes | string | Natural language task description | `"Open Notepad"` |
 | `task_name` | ⚠️ Optional | string | Unique task identifier (auto-generated if omitted) | `"task_001"` |
 
 **Successful Response:**
@@ -324,7 +324,7 @@ sequenceDiagram
     D->>U: Start UFO round execution
     
     Note over D,U: 3️⃣ Task Execution
-    U->>U: Parse request → Select actions → Execute
+    U->>U: Parse request Select actions Execute
     U-->>D: Execution result
     
     Note over D,S: 4️⃣ Result Reporting
@@ -504,7 +504,7 @@ sequenceDiagram
     **Solutions:**
     
     - Verify the device client is running and successfully registered
-    - Check server logs for `✅ Registered device client: <client_id>`
+    - Check server logs for `Registered device client: <client_id>`
     - Ensure no typos in `client_id` when dispatching
     - If the device disconnected, restart the client connection
 
@@ -522,12 +522,12 @@ sequenceDiagram
     
     **Solution:**
     ```bash
-    # ❌ Wrong (missing request)
+    # Wrong (missing request)
     curl -X POST http://localhost:5000/api/dispatch \
       -H "Content-Type: application/json" \
       -d '{"client_id": "my_device"}'
     
-    # ✅ Correct
+    # Correct
     curl -X POST http://localhost:5000/api/dispatch \
       -H "Content-Type: application/json" \
       -d '{
@@ -801,12 +801,12 @@ sequenceDiagram
 !!!success "Congratulations!"
     You've successfully:
     
-    - ✅ Started the UFO Agent Server with custom configurations
-    - ✅ Connected device and constellation clients via WebSocket
-    - ✅ Dispatched tasks using the HTTP API
-    - ✅ Verified connections and monitored health
-    - ✅ Troubleshot common issues
-    - ✅ Learned production deployment best practices
+    - Started the UFO Agent Server with custom configurations
+    - Connected device and constellation clients via WebSocket
+    - Dispatched tasks using the HTTP API
+    - Verified connections and monitored health
+    - Troubleshot common issues
+    - Learned production deployment best practices
 
 !!!info "Ready for More?"
     Continue your journey with:
@@ -815,3 +815,4 @@ sequenceDiagram
     - **API Exploration**: [HTTP API Reference](./api.md)
     - **Client Development**: [Client Documentation](../client/overview.md)
     - **Multi-Device Coordination**: Coming Soon
+

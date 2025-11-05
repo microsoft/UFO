@@ -21,7 +21,7 @@ graph LR
     end
     
     subgraph "Server Core"
-        WSM[WebSocket Manager]
+        WSM[Client Connection Manager]
         SM[Session Manager]
         WH[WebSocket Handler]
     end
@@ -89,15 +89,15 @@ graph LR
 |-------|------|----------|---------|-------------|
 | `client_id` | `string` | ✅ **Yes** | - | Target client identifier (device or constellation) |
 | `request` | `string` | ✅ **Yes** | - | Natural language task description (user request) |
-| `task_name` | `string` | ❌ No | Auto-generated UUID | Human-readable task identifier |
+| `task_name` | `string` | ⚠️ No | Auto-generated UUID | Human-readable task identifier |
 
 !!!warning "Parameter Names Changed"
     **Old documentation** used `device_id` and `task` - these are **incorrect**.
     
     **Actual parameters** (verified from source code):
-    - ✅ `client_id` (not `device_id`)
-    - ✅ `request` (not `task`)
-    - ✅ `task_name` (optional identifier)
+    - `client_id` (not `device_id`)
+    - `request` (not `task`)
+    - `task_name` (optional identifier)
 
 #### Success Response (200)
 
@@ -184,7 +184,7 @@ graph LR
         logger.info(f"Dispatching task '{user_request}' to client '{client_id}'")
         
         # Get client WebSocket
-        ws = ws_manager.get_client(client_id)
+        ws = client_manager.get_client(client_id)
         if not ws:
             logger.error(f"Client {client_id} not online.")
             raise HTTPException(status_code=404, detail="Client not online")
@@ -226,7 +226,7 @@ graph LR
 sequenceDiagram
     participant Client as External Client
     participant API as HTTP API
-    participant WSM as WebSocket Manager
+    participant WSM as Client Connection Manager
     participant WS as Client WebSocket
     
     Client->>API: POST /api/dispatch<br/>{client_id, request, task_name}
@@ -289,7 +289,7 @@ GET /api/clients
     ```python
     @router.get("/api/clients")
     async def list_clients():
-        return {"online_clients": ws_manager.list_clients()}
+        return {"online_clients": client_manager.list_clients()}
     ```
 
 #### Usage Patterns
@@ -517,7 +517,7 @@ GET /api/health
     async def health_check():
         return {
             "status": "healthy",
-            "online_clients": ws_manager.list_clients()
+            "online_clients": client_manager.list_clients()
         }
     ```
 
@@ -647,7 +647,7 @@ GET /api/health
     task_name = dispatch_data["task_name"]
     session_id = dispatch_data["session_id"]
     
-    print(f"✅ Task dispatched: {task_name} (session: {session_id})")
+    print(f"Task dispatched: {task_name} (session: {session_id})")
     
     # Step 3: Poll for result
     print("⏳ Waiting for result...")
@@ -801,7 +801,7 @@ GET /api/health
       );
       console.log('Result:', result);
     } catch (error) {
-      console.error('❌', error.message);
+      console.error(', error.message);
     }
     ```
 
@@ -863,32 +863,32 @@ All API errors follow FastAPI's standard format:
         except requests.HTTPError as e:
             if e.response.status_code == 400:
                 detail = e.response.json().get("detail", "Unknown error")
-                print(f"❌ Bad request: {detail}")
+                print(f"Bad request: {detail}")
                 
                 if "Empty client ID" in detail:
-                    print("   → Ensure 'client_id' is provided and not empty")
+                    print("   Ensure 'client_id' is provided and not empty")
                 elif "Empty task content" in detail:
-                    print("   → Ensure 'request' is provided and not empty")
+                    print("   Ensure 'request' is provided and not empty")
                     
             elif e.response.status_code == 404:
-                print(f"❌ Client '{client_id}' is not online")
-                print("   → Check /api/clients for available devices")
+                print(f"Client '{client_id}' is not online")
+                print("   Check /api/clients for available devices")
                 
             elif e.response.status_code == 422:
-                print(f"❌ Invalid request format")
-                print("   → Verify JSON structure matches API schema")
+                print(f"Invalid request format")
+                print("   Verify JSON structure matches API schema")
                 
             else:
-                print(f"❌ HTTP {e.response.status_code}: {e.response.text}")
+                print(f"HTTP {e.response.status_code}: {e.response.text}")
             
             return None
             
         except requests.Timeout:
-            print("❌ Request timeout (server not responding)")
+            print("Request timeout (server not responding)")
             return None
             
         except RequestException as e:
-            print(f"❌ Network error: {e}")
+            print(f"Network error: {e}")
             return None
     
     # Usage
@@ -906,7 +906,7 @@ All API errors follow FastAPI's standard format:
 
 ---
 
-## ✅ Best Practices
+## Best Practices
 
 ### 1. Validate Client Availability
 
@@ -954,7 +954,7 @@ def poll_with_backoff(task_name: str, max_wait: int = 300):
         time.sleep(interval)
         waited += interval
         
-        # Exponential backoff: 1s → 2s → 4s → 8s → 16s → 30s (capped)
+        # Exponential backoff: 1s 2s 4s 8s 16s 30s (capped)
         interval = min(interval * 2, max_interval)
     
     raise TimeoutError(f"Task did not complete in {max_wait}s")
@@ -1145,7 +1145,7 @@ graph TB
     end
     
     subgraph "Service Layer"
-        WSM[WebSocket Manager]
+        WSM[Client Connection Manager]
         SM[Session Manager]
     end
     
@@ -1174,9 +1174,9 @@ graph TB
     style Health fill:#ffcdd2
 ```
 
-### With WebSocket Manager
+### With Client Connection Manager
 
-**API → WSManager:**
+**API ClientConnectionManager:**
 
 - `get_client(client_id)`: Get WebSocket connection for task dispatch
 - `list_clients()`: List all online clients
@@ -1185,18 +1185,18 @@ graph TB
 
 ```python
 # In POST /api/dispatch
-ws = ws_manager.get_client(client_id)
+ws = client_manager.get_client(client_id)
 if not ws:
     raise HTTPException(status_code=404, detail="Client not online")
 
 # In GET /api/clients
-clients = ws_manager.list_clients()
+clients = client_manager.list_clients()
 return {"online_clients": clients}
 ```
 
 ### With Session Manager
 
-**API → SessionManager:**
+**API SessionManager:**
 
 - `get_result_by_task(task_name)`: Retrieve task result by task name
 
@@ -1320,7 +1320,7 @@ await task_protocol.send_task_assignment(
 | **Protocol** | HTTP/1.1, REST, JSON |
 | **Port** | 5000 (default, configurable) |
 | **Authentication** | None (add for production) |
-| **State** | Stateless (uses WebSocket Manager for client state) |
+| **State** | Stateless (uses Client Connection Manager for client state) |
 | **Task Dispatch** | Via AIP TaskExecutionProtocol |
 | **Result Retrieval** | Polling-based (no push notifications) |
 
@@ -1343,7 +1343,7 @@ graph TD
     
     subgraph "UFO Server"
         API[HTTP API]
-        WSM[WebSocket Manager]
+        WSM[Client Connection Manager]
         SM[Session Manager]
         WH[WebSocket Handler]
     end
@@ -1376,7 +1376,7 @@ graph TD
 **For More Information:**
 
 - [Server Overview](./overview.md) - UFO server architecture and components
-- [WebSocket Manager](./websocket_manager.md) - Client registry and connection management
+- [Client Connection Manager](./client_connection_manager.md) - Client registry and connection management
 - [Session Manager](./session_manager.md) - Task execution and result tracking
 - [Quick Start](./quick_start.md) - Get started with UFO server
 
@@ -1447,7 +1447,7 @@ async def dispatch_task(request: DispatchRequest):
     """Dispatch a task to a device."""
     
     # Validate device connection
-    if not ws_manager.is_device_connected(request.device_id):
+    if not client_manager.is_device_connected(request.device_id):
         raise HTTPException(
             status_code=400,
             detail=f"Device {request.device_id} is not connected"
@@ -1457,10 +1457,10 @@ async def dispatch_task(request: DispatchRequest):
     session_id = generate_session_id()
     
     # Get device WebSocket
-    device_ws = ws_manager.get_client(request.device_id)
+    device_ws = client_manager.get_client(request.device_id)
     
     # Get platform
-    platform = ws_manager.get_client_info(request.device_id).platform
+    platform = client_manager.get_client_info(request.device_id).platform
     
     # Execute task asynchronously
     await session_manager.execute_task_async(
@@ -1528,7 +1528,7 @@ Get information about all connected clients.
 async def get_clients():
     """Get information about all connected clients."""
     
-    clients_info = ws_manager.get_all_clients()
+    clients_info = client_manager.get_all_clients()
     current_time = time.time()
     
     clients = [
@@ -1656,7 +1656,7 @@ async def health_check():
     return {
         "status": "healthy",
         "uptime_seconds": time.time() - server_start_time,
-        "connected_clients": ws_manager.get_online_count(),
+        "connected_clients": client_manager.get_online_count(),
         "active_sessions": session_manager.get_active_session_count()
     }
 ```
@@ -1883,7 +1883,7 @@ API endpoints coordinate with WebSocket handler for task dispatch:
 
 ```python
 # API dispatches via WebSocket handler
-device_ws = ws_manager.get_client(device_id)
+device_ws = client_manager.get_client(device_id)
 await session_manager.execute_task_async(
     session_id=session_id,
     task_name=task,
@@ -1903,16 +1903,16 @@ session = session_manager.get_session(session_id)
 result = session.get_result()
 ```
 
-### WebSocket Manager
+### Client Connection Manager
 
-API queries client status from WebSocket manager:
+API queries client status from Client Connection Manager:
 
 ```python
 # Check device availability
-is_connected = ws_manager.is_device_connected(device_id)
+is_connected = client_manager.is_device_connected(device_id)
 
 # Get all clients
-clients = ws_manager.get_all_clients()
+clients = client_manager.get_all_clients()
 ```
 
 ## API Reference
@@ -1941,4 +1941,5 @@ For more information:
 - [Overview](./overview.md) - Server architecture
 - [WebSocket Handler](./websocket_handler.md) - WebSocket communication
 - [Session Manager](./session_manager.md) - Session lifecycle
-- [WebSocket Manager](./websocket_manager.md) - Connection management
+- [Client Connection Manager](./client_connection_manager.md) - Connection management
+

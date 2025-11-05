@@ -108,7 +108,7 @@ nav:
       - Quick Start: server/quick_start.md
       - Session Manager: server/session_manager.md
       - WebSocket Handler: server/websocket_handler.md
-      - WebSocket Manager: server/websocket_manager.md
+      - Client Connection Manager: server/client_connection_manager.md
       - HTTP API: server/api.md
       - Monitoring: server/monitoring.md
   - Agent Client:

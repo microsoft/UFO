@@ -14,7 +14,7 @@
 |------------|-------------|---------|
 | **Platform-Agnostic Creation** | Automatically creates Windows/Linux sessions | No manual platform handling needed |
 | **Background Execution** | Tasks run without blocking WebSocket event loop | Maintains connection health during long tasks |
-| **State Tracking** | Monitors session lifecycle (created → running → completed/failed) | Enables task monitoring & result retrieval |
+| **State Tracking** | Monitors session lifecycle (created running completed/failed) | Enables task monitoring & result retrieval |
 | **Graceful Cancellation** | Handles disconnections with context-aware cleanup | Prevents orphaned tasks & resource leaks |
 | **Concurrent Management** | Multiple sessions can run simultaneously | Supports multi-device orchestration |
 
@@ -63,7 +63,7 @@ graph TB
 
 ---
 
-## 🏗️ Core Functionality
+## 🏗Core Functionality
 
 ### Session Creation
 
@@ -92,9 +92,9 @@ graph TB
 !!!tip "Automatic Platform Detection"
     If `platform_override=None`, the SessionManager uses Python's `platform.system()` to auto-detect:
     
-    - `"Windows"` → WindowsServiceSession
-    - `"Linux"` → LinuxServiceSession
-    - `"Darwin"` (macOS) → Currently treated as Linux session
+    - `"Windows"` WindowsServiceSession
+    - `"Linux"` LinuxServiceSession
+    - `"Darwin"` (macOS) Currently treated as Linux session
 
 **Session Factory Logic Flow:**
 
@@ -165,7 +165,7 @@ sequenceDiagram
     
     Note over BT,S: 2️⃣ Background Execution
     BT->>S: await session.run()
-    S->>S: LLM reasoning → Action selection → Execution
+    S->>S: LLM reasoning Action selection Execution
     Note over S: Long-running task (30s - 5min)
     S-->>BT: Execution complete
     
@@ -285,9 +285,9 @@ result_message = ServerMessage(
 
 | Reason | Scenario | Callback Behavior | Use Case |
 |--------|----------|-------------------|----------|
-| `constellation_disconnected` | Constellation client lost connection | ❌ **No callback** (client is gone) | Task requester disconnected, no one to notify |
-| `device_disconnected` | Target device lost connection | ✅ **Send callback** to constellation | Notify orchestrator to reassign task |
-| `user_requested` | Manual cancellation via API | ✅ **Send callback** to requester | Explicit cancellation command |
+| `constellation_disconnected` | Constellation client lost connection | **No callback** (client is gone) | Task requester disconnected, no one to notify |
+| `device_disconnected` | Target device lost connection | **Send callback** to constellation | Notify orchestrator to reassign task |
+| `user_requested` | Manual cancellation via API | **Send callback** to requester | Explicit cancellation command |
 
 **Cancellation Flow:**
 
@@ -305,13 +305,13 @@ sequenceDiagram
     SM->>BT: Background task running
     BT->>D: Executing actions
     
-    Note over D: ❌ Device disconnects
+    Note over D: Device disconnects
     D--xWH: WebSocket closed
     WH->>SM: cancel_task(session_id, reason="device_disconnected")
     SM->>BT: task.cancel()
     BT->>BT: Catch asyncio.CancelledError
     BT->>BT: Build failure message
-    BT->>WH: ✅ callback(session_id, failure_msg)
+    BT->>WH: callback(session_id, failure_msg)
     WH->>C: TASK_END (status=FAILED, error="Device disconnected")
     
     Note over C,SM: Scenario 2: Constellation Disconnects During Task
@@ -319,12 +319,12 @@ sequenceDiagram
     WH->>SM: execute_task_async()
     SM->>BT: Background task running
     
-    Note over C: ❌ Constellation disconnects
+    Note over C: Constellation disconnects
     C--xWH: WebSocket closed
     WH->>SM: cancel_task(session_id, reason="constellation_disconnected")
     SM->>BT: task.cancel()
     BT->>BT: Catch asyncio.CancelledError
-    BT->>BT: ❌ Skip callback (client gone)
+    BT->>BT: Skip callback (client gone)
     BT->>SM: Remove session
 ```
 
@@ -367,7 +367,7 @@ async def cancel_task(self, session_id: str, reason: str) -> bool:
     
     1. Identify all active sessions for that client
     2. Call `cancel_task()` with the appropriate `reason`
-    3. Clean up client registration in WSManager
+    3. Clean up client registration in ClientConnectionManager
     
     This prevents orphaned sessions from consuming resources.
 
@@ -496,9 +496,9 @@ self.sessions: Dict[str, BaseSession] = {}
 
 **Benefits:**
 
-- ✅ Fast O(1) lookup by session ID
-- ✅ Thread-safe with lock
-- ✅ Supports session reuse (future reconnections)
+- Fast O(1) lookup by session ID
+- Thread-safe with lock
+- Supports session reuse (future reconnections)
 
 **Considerations:**
 
@@ -670,7 +670,7 @@ self._cancellation_reasons: Dict[str, str] = {}
 
 ---
 
-## 🖥️ Platform Support
+## 🖥Platform Support
 
 !!!info "Cross-Platform Session Factory"
     The SessionManager supports both Windows and Linux platforms through the **SessionFactory** abstraction layer. Platform-specific implementations handle OS-specific UI automation and tool execution.
@@ -714,8 +714,8 @@ def __init__(self, platform_override: Optional[str] = None):
 
 | Platform | Session Class | UI Automation | MCP Tools | Status |
 |----------|---------------|---------------|-----------|--------|
-| **Windows** | `WindowsServiceSession` | Win32 API, UI Automation | Windows MCP servers (filesystem, browser, etc.) | ✅ Fully Supported |
-| **Linux** | `LinuxServiceSession` | X11/Wayland, AT-SPI | Linux MCP servers | ✅ Fully Supported |
+| **Windows** | `WindowsServiceSession` | Win32 API, UI Automation | Windows MCP servers (filesystem, browser, etc.) | Fully Supported |
+| **Linux** | `LinuxServiceSession` | X11/Wayland, AT-SPI | Linux MCP servers | Fully Supported |
 | **macOS (Darwin)** | `LinuxServiceSession` | Currently treated as Linux | Linux MCP servers | ⚠️ Experimental |
 
 !!!example "Windows Session Creation"
@@ -760,8 +760,8 @@ def __init__(self, platform_override: Optional[str] = None):
 !!!warning "macOS Limitations"
     macOS (Darwin) is currently treated as Linux, which may result in:
     
-    - ❌ Incorrect UI automation commands
-    - ❌ Missing macOS-specific tool integrations
+    - Incorrect UI automation commands
+    - Missing macOS-specific tool integrations
     - ⚠️ Limited functionality
     
     **Recommendation:** Use explicit `platform_override="linux"` for Linux-like behavior, or wait for dedicated macOS session implementation.
@@ -838,17 +838,17 @@ except Exception as e:
     self.logger.error(
         f"Callback error for session {session_id}: {e}\n{traceback.format_exc()}"
     )
-    # ✅ Session results are STILL persisted!
-    # ❌ Client may not receive notification
+    # Session results are STILL persisted!
+    # Client may not receive notification
 ```
 
 !!!warning "Callback Failures Don't Fail Sessions"
     If the callback raises an exception (e.g., WebSocket already closed), the SessionManager:
     
-    - ✅ **Logs the error** for debugging
-    - ✅ **Persists the results** in `self.results`
-    - ✅ **Completes cleanup** (removes from `_running_tasks`)
-    - ❌ **Does NOT re-raise** the exception
+    - **Logs the error** for debugging
+    - **Persists the results** in `self.results`
+    - **Completes cleanup** (removes from `_running_tasks`)
+    - **Does NOT re-raise** the exception
     
     **Implication:** Results can be retrieved via `/api/task_result/{task_name}` even if WebSocket notification failed.
 
@@ -877,7 +877,7 @@ else:
 
 ---
 
-## ✅ Best Practices
+## Best Practices
 
 !!!tip "Production-Ready SessionManager Usage"
     Follow these best practices to ensure reliable, scalable session management:
@@ -972,12 +972,12 @@ else:
     Different cancellation reasons require different responses:
     
     ```python
-    async def handle_client_disconnect(client_id, client_type, session_manager, ws_manager):
+    async def handle_client_disconnect(client_id, client_type, session_manager, client_manager):
         """Handle disconnection based on client type."""
         
         if client_type == ClientType.CONSTELLATION:
             # Constellation disconnected - cancel all its tasks
-            session_ids = ws_manager.get_constellation_sessions(client_id)
+            session_ids = client_manager.get_constellation_sessions(client_id)
             for session_id in session_ids:
                 await session_manager.cancel_task(
                     session_id,
@@ -986,7 +986,7 @@ else:
         
         elif client_type == ClientType.DEVICE:
             # Device disconnected - notify constellations to reassign
-            session_ids = ws_manager.get_device_sessions(client_id)
+            session_ids = client_manager.get_device_sessions(client_id)
             for session_id in session_ids:
                 await session_manager.cancel_task(
                     session_id,
@@ -994,7 +994,7 @@ else:
                 )
         
         # Clean up client registration
-        ws_manager.remove_client(client_id)
+        client_manager.remove_client(client_id)
     ```
 
 ### 5. Log Session Lifecycle Events
@@ -1014,14 +1014,14 @@ else:
     self.logger.info(f"⏱️ Session {session_id} execution took {elapsed:.2f}s")
     
     # Status determination
-    self.logger.info(f"✅ Session {session_id} finished successfully")
+    self.logger.info(f"Session {session_id} finished successfully")
     self.logger.warning(f"⚠️ Session {session_id} ended with error")
     
     # Cancellation
     self.logger.warning(f"🛑 Session {session_id} was cancelled (reason: {reason})")
     
     # Cleanup
-    self.logger.info(f"✅ Session {session_id} completed with status {status}")
+    self.logger.info(f"Session {session_id} completed with status {status}")
     ```
 
 ### 6. Implement Result Expiration
@@ -1105,7 +1105,7 @@ graph TB
     subgraph "Server Components"
         API[API Router<br/>/api/dispatch]
         WH[WebSocket Handler]
-        WSM[WebSocket Manager]
+        WSM[Client Connection Manager]
         SM[Session Manager]
         SF[Session Factory]
     end
@@ -1160,26 +1160,26 @@ graph TB
         )
     ```
 
-### 2. WebSocket Manager Integration
+### 2. Client Connection Manager Integration
 
 !!!info "Session-to-Client Mapping"
-    The WebSocket Manager tracks which clients own which sessions:
+    The Client Connection Manager tracks which clients own which sessions:
     
     ```python
     # Track constellation sessions
-    ws_manager.add_constellation_session(
+    client_manager.add_constellation_session(
         constellation_id="constellation_001",
         session_id="session_abc123"
     )
     
     # Track device sessions
-    ws_manager.add_device_session(
+    client_manager.add_device_session(
         device_id="device_windows_001",
         session_id="session_abc123"
     )
     
     # Retrieve all sessions for a client
-    session_ids = ws_manager.get_constellation_sessions("constellation_001")
+    session_ids = client_manager.get_constellation_sessions("constellation_001")
     
     # On disconnect, cancel all client sessions
     for session_id in session_ids:
@@ -1198,7 +1198,7 @@ graph TB
         task_name = data.get("task_name", str(uuid4()))
         
         # Get client WebSocket
-        ws = ws_manager.get_client(client_id)
+        ws = client_manager.get_client(client_id)
         if not ws:
             raise HTTPException(status_code=404, detail="Client not online")
         
@@ -1267,7 +1267,7 @@ session = manager.get_or_create_session(
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `session_id` | `str` | ✅ Yes | - | Unique session identifier |
+| `session_id` | `str` | Yes | - | Unique session identifier |
 | `task_name` | `Optional[str]` | No | `"test_task"` | Human-readable task name |
 | `request` | `Optional[str]` | No | `None` | User request text |
 | `websocket` | `Optional[WebSocket]` | No | `None` | WebSocket for device communication |
@@ -1295,11 +1295,11 @@ session_id = await manager.execute_task_async(
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `session_id` | `str` | ✅ Yes | Session identifier |
-| `task_name` | `str` | ✅ Yes | Task name |
-| `request` | `str` | ✅ Yes | User request text |
-| `websocket` | `WebSocket` | ✅ Yes | WebSocket for device commands |
-| `platform_override` | `str` | ✅ Yes | Platform type |
+| `session_id` | `str` | Yes | Session identifier |
+| `task_name` | `str` | Yes | Task name |
+| `request` | `str` | Yes | User request text |
+| `websocket` | `WebSocket` | Yes | WebSocket for device commands |
+| `platform_override` | `str` | Yes | Platform type |
 | `callback` | `Optional[Callable]` | No | Async function called on completion |
 
 **Callback Signature:**
@@ -1326,7 +1326,7 @@ success = await manager.cancel_task(
 
 | Parameter | Type | Required | Default | Description |
 |-----------|------|----------|---------|-------------|
-| `session_id` | `str` | ✅ Yes | - | Session to cancel |
+| `session_id` | `str` | Yes | - | Session to cancel |
 | `reason` | `str` | No | `"constellation_disconnected"` | Cancellation reason |
 
 **Valid Reasons:**
@@ -1417,7 +1417,7 @@ manager.remove_session("abc123")
 | **Server Overview** | High-level architecture and capabilities | [Overview](./overview.md) |
 | **Quick Start** | Start server and dispatch first task | [Quick Start](./quick_start.md) |
 | **WebSocket Handler** | Message handling and protocol implementation | [WebSocket Handler](./websocket_handler.md) |
-| **WebSocket Manager** | Connection management and client tracking | [WebSocket Manager](./websocket_manager.md) |
+| **Client Connection Manager** | Connection management and client tracking | [Client Connection Manager](./client_connection_manager.md) |
 | **HTTP API** | RESTful API endpoints | [API Reference](./api.md) |
 | **Session Factory** | Session creation patterns | Internal Module |
 | **AIP Protocol** | Agent Interaction Protocol details | [AIP Overview](../aip/overview.md) |
@@ -1429,15 +1429,16 @@ manager.remove_session("abc123")
 !!!success "Key Takeaways"
     After reading this guide, you should understand:
     
-    - ✅ **Background execution** prevents WebSocket blocking during long tasks
-    - ✅ **SessionFactory** creates platform-specific sessions (Windows/Linux)
-    - ✅ **Callbacks** decouple task execution from result delivery
-    - ✅ **Cancellation reasons** enable context-aware disconnection handling
-    - ✅ **Thread safety** protects shared state in concurrent environments
-    - ✅ **State management** uses three separate dicts (sessions, results, task_names)
-    - ✅ **Best practices** prevent resource exhaustion and memory leaks
+    - **Background execution** prevents WebSocket blocking during long tasks
+    - **SessionFactory** creates platform-specific sessions (Windows/Linux)
+    - **Callbacks** decouple task execution from result delivery
+    - **Cancellation reasons** enable context-aware disconnection handling
+    - **Thread safety** protects shared state in concurrent environments
+    - **State management** uses three separate dicts (sessions, results, task_names)
+    - **Best practices** prevent resource exhaustion and memory leaks
 
 !!!tip "Next Steps"
     - Explore [WebSocket Handler](./websocket_handler.md) to see how sessions are triggered
     - Learn about [AIP Protocol](../aip/overview.md) for task assignment message format
     - Review [Monitoring](./monitoring.md) for production session tracking
+

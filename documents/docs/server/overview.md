@@ -48,7 +48,7 @@ graph TB
     end
     
     subgraph "Service Layer"
-        WSM[WebSocket Manager<br/>Connection Registry]
+        WSM[Client Connection Manager<br/>Connection Registry]
         SM[Session Manager<br/>Execution Lifecycle]
         WSH[WebSocket Handler<br/>AIP Protocol]
     end
@@ -86,14 +86,14 @@ This layered design ensures each component has a single, well-defined responsibi
 
 | Component | Responsibility | Key Operations |
 |-----------|---------------|----------------|
-| **FastAPI Application** | Web service layer | • HTTP endpoint routing<br>• WebSocket connection acceptance<br>• Request/response handling<br>• CORS and middleware |
-| **WebSocket Manager** | Connection registry | • Client identity tracking<br>• Session ↔ client mapping<br>• Device info caching<br>• Connection lifecycle hooks |
-| **Session Manager** | Execution lifecycle | • Platform-specific session creation<br>• Background async task execution<br>• Result callback delivery<br>• Session cancellation |
-| **WebSocket Handler** | Protocol implementation | • AIP message parsing/routing<br>• Client registration<br>• Heartbeat monitoring<br>• Task/command dispatch |
+| **FastAPI Application** | Web service layer | ✅ HTTP endpoint routing<br>✅ WebSocket connection acceptance<br>✅ Request/response handling<br>✅ CORS and middleware |
+| **Client Connection Manager** | Connection registry | ✅ Client identity tracking<br>✅ Session ↔ client mapping<br>✅ Device info caching<br>✅ Connection lifecycle hooks |
+| **Session Manager** | Execution lifecycle | ✅ Platform-specific session creation<br>✅ Background async task execution<br>✅ Result callback delivery<br>✅ Session cancellation |
+| **WebSocket Handler** | Protocol implementation | ✅ AIP message parsing/routing<br>✅ Client registration<br>✅ Heartbeat monitoring<br>✅ Task/command dispatch |
 
 !!!note "Component Documentation"
     - [Session Manager](./session_manager.md) - Session lifecycle and background execution
-    - [WebSocket Manager](./websocket_manager.md) - Connection registry and client tracking
+    - [Client Connection Manager](./client_connection_manager.md) - Connection registry and client tracking
     - [WebSocket Handler](./websocket_handler.md) - AIP protocol message handling
     - [HTTP API](./api.md) - REST endpoint specifications
 
@@ -183,8 +183,8 @@ stateDiagram-v2
 - ✅ **Platform abstraction**: Hides Windows/Linux differences
 - ✅ **Background execution**: Non-blocking async task execution
 - ✅ **Callback routing**: Delivers results via WebSocket
-- ✅ **Resource cleanup**: Cancels tasks on disconnect
-- ✅ **Result caching**: Stores results for HTTP retrieval
+- **Resource cleanup**: Cancels tasks on disconnect
+- **Result caching**: Stores results for HTTP retrieval
 
 ---
 
@@ -200,7 +200,7 @@ stateDiagram-v2
 | **Structured Messages** | Pydantic models with validation | Type safety, automatic serialization |
 | **Connection Health** | Heartbeat every 20-30s | Early failure detection |
 | **Error Recovery** | Exponential backoff reconnection | Transient fault tolerance |
-| **State Tracking** | Session ↔ client mapping | Proper cleanup on disconnect |
+| **State Tracking** | Session client mapping | Proper cleanup on disconnect |
 | **Message Correlation** | `request_id`, `prev_response_id` chains | Request-response tracing |
 
 **Disconnection Handling Flow:**
@@ -241,10 +241,10 @@ Purpose: Real-time bidirectional communication with agent clients
 
 | Message Type | Direction | Purpose |
 |--------------|-----------|---------|
-| `REGISTER` | Client → Server | Initial capability advertisement |
-| `TASK` | Server → Client | Task assignment with commands |
-| `COMMAND` | Server → Client | Individual command execution |
-| `COMMAND_RESULTS` | Client → Server | Execution results |
+| `REGISTER` | Client Server | Initial capability advertisement |
+| `TASK` | Server Client | Task assignment with commands |
+| `COMMAND` | Server Client | Individual command execution |
+| `COMMAND_RESULTS` | Client Server | Execution results |
 | `TASK_END` | Bidirectional | Task completion notification |
 | `HEARTBEAT` | Bidirectional | Connection keepalive |
 | `DEVICE_INFO_REQUEST/RESPONSE` | Bidirectional | Telemetry exchange |
@@ -299,7 +299,7 @@ See [HTTP API Reference](./api.md) for complete endpoint documentation.
 
 ### Complete Task Dispatch Flow
 
-**End-to-End HTTP → WebSocket → Device Execution:**
+**End-to-End HTTP WebSocket Device Execution:**
 
 ```mermaid
 sequenceDiagram
@@ -393,9 +393,9 @@ The server acts as a message router, forwarding tasks to target devices and rout
 
 | Platform | Session Type | Capabilities | Status |
 |----------|--------------|--------------|--------|
-| **Windows** | `WindowsSession` | • UI automation (UIA)<br>• COM API integration<br>• Native app control<br>• Screenshot capture | ✅ Full support |
-| **Linux** | `LinuxSession` | • Bash automation<br>• GUI tools (xdotool)<br>• Package management<br>• Process control | ✅ Full support |
-| **macOS** | (Planned) | • AppleScript<br>• UI automation<br>• Native app control | 🚧 In development |
+| **Windows** | `WindowsSession` | UI automation (UIA)<br>COM API integration<br>Native app control<br>Screenshot capture | Full support |
+| **Linux** | `LinuxSession` | Bash automation<br>GUI tools (xdotool)<br>Package management<br>Process control | Full support |
+| **macOS** | (Planned) | AppleScript<br>UI automation<br>Native app control | 🚧 In development |
 
 **Platform Auto-Detection:**
 
@@ -550,12 +550,12 @@ python -m ufo.server.app \
 
 **Development Checklist:**
 
-- ✅ Use `--local` flag to prevent external access
-- ✅ Enable `DEBUG` logging for detailed traces
-- ✅ Monitor logs in separate terminal: `tail -f logs/ufo_server.log`
-- ✅ Test with single device before adding multiple clients
-- ✅ Use HTTP API for quick task dispatch testing
-- ✅ Verify heartbeat monitoring with client disconnection
+- Use `--local` flag to prevent external access
+- Enable `DEBUG` logging for detailed traces
+- Monitor logs in separate terminal: `tail -f logs/ufo_server.log`
+- Test with single device before adding multiple clients
+- Use HTTP API for quick task dispatch testing
+- Verify heartbeat monitoring with client disconnection
 
 !!!example "Development Testing Pattern"
     ```bash
@@ -781,7 +781,7 @@ curl -X POST http://localhost:5000/api/dispatch \
 | Document | Purpose |
 |----------|---------|
 | [Session Manager](./session_manager.md) | Task execution lifecycle deep-dive |
-| [WebSocket Manager](./websocket_manager.md) | Connection registry internals |
+| [Client Connection Manager](./client_connection_manager.md) | Connection registry internals |
 | [WebSocket Handler](./websocket_handler.md) | AIP protocol message handling |
 | [HTTP API](./api.md) | REST endpoint specifications |
 
@@ -831,3 +831,4 @@ curl -X POST http://localhost:5000/api/dispatch \
 - Configure SSL/TLS
 - Implement monitoring
 - Test failover scenarios
+

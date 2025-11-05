@@ -18,7 +18,7 @@
 | **Device Info Exchange** | Query and share device capabilities | AIP Device Info Protocol |
 | **Command Results** | Relay execution results from devices to requesters | AIP Message Transport |
 | **Error Handling** | Gracefully handle communication failures | AIP Error Protocol |
-| **Connection Lifecycle** | Manage registration → active → cleanup flow | WebSocket + AIP |
+| **Connection Lifecycle** | Manage registration active cleanup flow | WebSocket + AIP |
 
 ### Architecture Position
 
@@ -45,7 +45,7 @@ graph TB
     end
     
     subgraph "Server Components"
-        WSM[WebSocket Manager]
+        WSM[Client Connection Manager]
         SM[Session Manager]
     end
     
@@ -80,7 +80,7 @@ graph TB
     The handler uses **four specialized AIP protocols**, each handling a specific aspect of communication. This separation of concerns makes the code maintainable and testable.
 
 ```python
-def __init__(self, ws_manager, session_manager, local=False):
+def __init__(self, client_manager, session_manager, local=False):
     # Initialize per-connection protocols
     self.transport = None
     self.registration_protocol = None
@@ -129,7 +129,7 @@ sequenceDiagram
     participant C as Client<br/>(Device/Constellation)
     participant WS as WebSocket Handler
     participant RP as Registration Protocol
-    participant WSM as WebSocket Manager
+    participant WSM as Client Connection Manager
     
     Note over C,WS: 1️⃣ Connection Establishment
     C->>WS: WebSocket CONNECT /ws
@@ -165,7 +165,7 @@ sequenceDiagram
     WS->>RP: send_registration_confirmation()
     RP->>C: REGISTER_CONFIRM<br/>{status: "success"}
     
-    Note over C: ✅ Client registered, ready for tasks
+    Note over C: Client registered, ready for tasks
     C->>C: Start message listening loop
 ```
 
@@ -249,7 +249,7 @@ async def _validate_constellation_client(
         return  # No device_id to validate
     
     # Check if target device is connected
-    if not self.ws_manager.is_device_connected(claimed_device_id):
+    if not self.client_manager.is_device_connected(claimed_device_id):
         error_msg = f"Target device '{claimed_device_id}' is not connected"
         self.logger.warning(f"[WS] Constellation registration failed: {error_msg}")
         
@@ -259,13 +259,13 @@ async def _validate_constellation_client(
         raise ValueError(error_msg)
 ```
 
-!!!example "Step 4: Register Client in WSManager"
+!!!example "Step 4: Register Client in ClientConnectionManager"
     ```python
     client_type = reg_info.client_type
     platform = reg_info.metadata.get("platform", "windows") if reg_info.metadata else "windows"
     
-    # Register in WebSocket Manager
-    self.ws_manager.add_client(
+    # Register in Client Connection Manager
+    self.client_manager.add_client(
         client_id=reg_info.client_id,
         platform=platform,
         websocket=websocket,
@@ -299,7 +299,7 @@ async def _validate_constellation_client(
     def _log_client_connection(self, client_id: str, client_type: ClientType) -> None:
         """Log successful client connection with appropriate emoji."""
         if client_type == ClientType.DEVICE:
-            self.logger.info(f"[WS] ✅ Registered device client: {client_id}")
+            self.logger.info(f"[WS] Registered device client: {client_id}")
         elif client_type == ClientType.CONSTELLATION:
             self.logger.info(f"[WS] 🌟 Registered constellation client: {client_id}")
     ```
@@ -311,7 +311,7 @@ async def _validate_constellation_client(
 | **Client ID Presence** | `client_id` field exists and not empty | `"Client ID is required"` | Reject connection |
 | **Message Type** | First message type == `REGISTER` | `"First message must be a registration message"` | Reject connection |
 | **Target Device (Constellation)** | If `target_id` specified, device must be online | `"Target device '<id>' is not connected"` | Send error + close |
-| **Client ID Uniqueness** | No existing client with same ID | Handled by WSManager | Disconnect old connection |
+| **Client ID Uniqueness** | No existing client with same ID | Handled by ClientConnectionManager | Disconnect old connection |
 
 !!!warning "Constellation Dependency"
     Constellations **must** specify a valid `target_id` that refers to an already-connected device. If the device is offline or doesn't exist, registration fails immediately.
@@ -400,12 +400,12 @@ async def handle_message(self, msg: str, websocket: WebSocket) -> None:
 
 | Handler | Triggered By | Purpose | Response |
 |---------|-------------|---------|----------|
-| `handle_task_request` | `TASK` | Client requests task execution | `TASK_ASSIGNMENT` → device |
+| `handle_task_request` | `TASK` | Client requests task execution | `TASK_ASSIGNMENT` device |
 | `handle_command_result` | `COMMAND_RESULTS` | Device reports command execution result | Unblock command dispatcher |
 | `handle_heartbeat` | `HEARTBEAT` | Connection health ping | `HEARTBEAT_ACK` |
 | `handle_error` | `ERROR` | Client reports error | Log + send error acknowledgment |
 | `handle_device_info_request` | `DEVICE_INFO_REQUEST` | Constellation queries device capabilities | `DEVICE_INFO_RESPONSE` |
-| `handle_device_info_response` | `DEVICE_INFO_RESPONSE` | Device provides info (pull model) | Store in WSManager |
+| `handle_device_info_response` | `DEVICE_INFO_RESPONSE` | Device provides info (pull model) | Store in ClientConnectionManager |
 | `handle_unknown` | Any other type | Unknown/unsupported message | Log warning + send error |
 
 ---
@@ -421,7 +421,7 @@ async def handle_message(self, msg: str, websocket: WebSocket) -> None:
 sequenceDiagram
     participant C as Constellation
     participant WH as WebSocket Handler
-    participant WSM as WebSocket Manager
+    participant WSM as Client Connection Manager
     participant SM as Session Manager
     participant D as Device
     
@@ -463,7 +463,7 @@ sequenceDiagram
         if client_type == ClientType.DEVICE:
             # Device executing task on itself
             target_ws = websocket  # Use requesting client's WebSocket
-            platform = self.ws_manager.get_client_info(client_id).platform
+            platform = self.client_manager.get_client_info(client_id).platform
             target_device_id = client_id
         # ...
     ```
@@ -479,8 +479,8 @@ sequenceDiagram
         if client_type == ClientType.CONSTELLATION:
             # Constellation dispatching to target device
             target_device_id = data.target_id
-            target_ws = self.ws_manager.get_client(target_device_id)
-            platform = self.ws_manager.get_client_info(target_device_id).platform
+            target_ws = self.client_manager.get_client(target_device_id)
+            platform = self.client_manager.get_client_info(target_device_id).platform
             
             # Validate target device exists
             if not target_ws:
@@ -488,8 +488,8 @@ sequenceDiagram
             
             # Track session mappings
             session_id = data.session_id or str(uuid.uuid4())
-            self.ws_manager.add_constellation_session(client_id, session_id)
-            self.ws_manager.add_device_session(target_device_id, session_id)
+            self.client_manager.add_constellation_session(client_id, session_id)
+            self.client_manager.add_device_session(target_device_id, session_id)
         # ...
     ```
 
@@ -529,9 +529,9 @@ await self.task_protocol.send_ack(session_id=session_id)
 !!!info "Why Immediate ACK?"
     The handler sends an **immediate ACK** after dispatching the task to the SessionManager. This confirms:
     
-    - ✅ Task was received and validated
-    - ✅ Session was created successfully
-    - ✅ Task is now executing in background
+    - Task was received and validated
+    - Session was created successfully
+    - Task is now executing in background
     
     The actual task result is delivered later via the `send_result` callback.
 
@@ -539,15 +539,15 @@ await self.task_protocol.send_ack(session_id=session_id)
 
 | Client Type | Session Tracking | Purpose |
 |-------------|------------------|---------|
-| **Device** | `ws_manager.add_device_session(device_id, session_id)` | Track which device is executing the session |
-| **Constellation** | `ws_manager.add_constellation_session(constellation_id, session_id)` | Track which constellation requested the session |
-| Both | Session Manager stores session → `BaseSession` object | Execute and manage task lifecycle |
+| **Device** | `client_manager.add_device_session(device_id, session_id)` | Track which device is executing the session |
+| **Constellation** | `client_manager.add_constellation_session(constellation_id, session_id)` | Track which constellation requested the session |
+| Both | Session Manager stores session `BaseSession` object | Execute and manage task lifecycle |
 
 ---
 
 ### Command Result Handling
 
-!!!info "Device → Server Communication"
+!!!info "Device Server Communication"
     When a device executes a command (e.g., "click button", "type text"), it sends results back to the server for processing by the session's command dispatcher.
 
 **Command Result Flow:**
@@ -669,7 +669,7 @@ async def handle_heartbeat(self, data: ClientMessage, websocket: WebSocket) -> N
 sequenceDiagram
     participant C as Constellation
     participant WH as WebSocket Handler
-    participant WSM as WebSocket Manager
+    participant WSM as Client Connection Manager
     participant DIP as Device Info Protocol
     participant D as Device
     
@@ -758,7 +758,7 @@ async def handler(self, websocket: WebSocket) -> None:
     except WebSocketDisconnect as e:
         # Normal disconnection
         self.logger.warning(
-            f"[WS] {client_id} disconnected — code={e.code}, reason={e.reason}"
+            f"[WS] {client_id} disconnected code={e.code}, reason={e.reason}"
         )
         if client_id:
             await self.disconnect(client_id)
@@ -786,7 +786,7 @@ graph TD
     F --> H[Remove Device Session Mappings]
     G --> I[Remove Constellation Session Mappings]
     
-    H --> J[Remove Client from WSManager]
+    H --> J[Remove Client from ClientConnectionManager]
     I --> J
     
     J --> K[Log Disconnection]
@@ -801,11 +801,11 @@ graph TD
     ```python
     async def disconnect(self, client_id: str) -> None:
         """Handle client disconnection and cleanup."""
-        client_info = self.ws_manager.get_client_info(client_id)
+        client_info = self.client_manager.get_client_info(client_id)
         
         if client_info and client_info.client_type == ClientType.DEVICE:
             # Get all sessions running on this device
-            session_ids = self.ws_manager.get_device_sessions(client_id)
+            session_ids = self.client_manager.get_device_sessions(client_id)
             
             if session_ids:
                 self.logger.info(
@@ -818,20 +818,20 @@ graph TD
                 try:
                     await self.session_manager.cancel_task(
                         session_id,
-                        reason="device_disconnected"  # ✅ Send callback to constellation
+                        reason="device_disconnected"  # Send callback to constellation
                     )
                 except Exception as e:
                     self.logger.error(f"Error cancelling session {session_id}: {e}")
             
             # Clean up mappings
-            self.ws_manager.remove_device_sessions(client_id)
+            self.client_manager.remove_device_sessions(client_id)
     ```
 
 !!!example "Constellation Client Cleanup"
     ```python
     if client_info and client_info.client_type == ClientType.CONSTELLATION:
         # Get all sessions initiated by constellation
-        session_ids = self.ws_manager.get_constellation_sessions(client_id)
+        session_ids = self.client_manager.get_constellation_sessions(client_id)
         
         if session_ids:
             self.logger.info(
@@ -844,20 +844,20 @@ graph TD
             try:
                 await self.session_manager.cancel_task(
                     session_id,
-                    reason="constellation_disconnected"  # ❌ Don't send callback
+                    reason="constellation_disconnected"  # Don't send callback
                 )
             except Exception as e:
                 self.logger.error(f"Error cancelling session {session_id}: {e}")
         
         # Clean up mappings
-        self.ws_manager.remove_constellation_sessions(client_id)
+        self.client_manager.remove_constellation_sessions(client_id)
     ```
 
 **Final Registry Cleanup:**
 
 ```python
 # Remove client from registry
-self.ws_manager.remove_client(client_id)
+self.client_manager.remove_client(client_id)
 self.logger.info(f"[WS] {client_id} disconnected")
 ```
 
@@ -865,16 +865,16 @@ self.logger.info(f"[WS] {client_id} disconnected")
 
 | Scenario | Cancellation Reason | Callback Sent? | Why? |
 |----------|---------------------|----------------|------|
-| **Device Disconnects** | `device_disconnected` | ✅ Yes → Constellation | Notify orchestrator to reassign task |
-| **Constellation Disconnects** | `constellation_disconnected` | ❌ No | Requester is gone, no one to notify |
+| **Device Disconnects** | `device_disconnected` | Yes Constellation | Notify orchestrator to reassign task |
+| **Constellation Disconnects** | `constellation_disconnected` | No | Requester is gone, no one to notify |
 
 !!!warning "Proper Cleanup is Critical"
     Failing to clean up disconnected clients leads to:
     
-    - ❌ **Orphaned sessions** consuming server memory
-    - ❌ **Stale WebSocket references** causing errors
-    - ❌ **Registry pollution** with non-existent clients
-    - ❌ **Resource leaks** (file handles, memory)
+    - **Orphaned sessions** consuming server memory
+    - **Stale WebSocket references** causing errors
+    - **Registry pollution** with non-existent clients
+    - **Resource leaks** (file handles, memory)
 
 ---
 
@@ -946,7 +946,7 @@ async def handle_task_request(self, data: ClientMessage, websocket: WebSocket):
     try:
         # Validate target device
         if client_type == ClientType.CONSTELLATION:
-            target_ws = self.ws_manager.get_client(target_device_id)
+            target_ws = self.client_manager.get_client(target_device_id)
             if not target_ws:
                 raise ValueError(f"Target device '{target_device_id}' not connected")
         
@@ -965,7 +965,7 @@ async def _validate_constellation_client(self, reg_info, websocket):
     """Validate constellation's target device."""
     claimed_device_id = reg_info.target_id
     
-    if not self.ws_manager.is_device_connected(claimed_device_id):
+    if not self.client_manager.is_device_connected(claimed_device_id):
         error_msg = f"Target device '{claimed_device_id}' is not connected"
         self.logger.warning(f"Constellation registration failed: {error_msg}")
         
@@ -982,22 +982,22 @@ async def _validate_constellation_client(self, reg_info, websocket):
 !!!danger "When to Close Connections"
     Close connections immediately for:
     
-    - ❌ **Invalid registration** (missing client_id, wrong message type)
-    - ❌ **Authorization failures** (target device not connected for constellations)
-    - ❌ **Protocol violations** (sending TASK before REGISTER)
+    - **Invalid registration** (missing client_id, wrong message type)
+    - **Authorization failures** (target device not connected for constellations)
+    - **Protocol violations** (sending TASK before REGISTER)
     
     For other errors, log and send error messages but **keep connection alive**.
 
 ---
 
-## ✅ Best Practices
+## Best Practices
 
 !!!tip "Production-Ready WebSocket Handling"
 
 ### 1. Validate Early and Thoroughly
 
 ```python
-# ✅ Good: Validate immediately after parsing
+# Good: Validate immediately after parsing
 async def handle_task_request(self, data: ClientMessage, websocket: WebSocket):
     if not data.request:
         raise ValueError("Task request cannot be empty")
@@ -1013,7 +1013,7 @@ async def handle_task_request(self, data: ClientMessage, websocket: WebSocket):
 ```python
 from starlette.websockets import WebSocketState
 
-# ✅ Good: Check state before sending
+# Good: Check state before sending
 async def send_result(sid: str, result_msg: ServerMessage):
     if websocket.client_state == WebSocketState.CONNECTED:
         await websocket.send_text(result_msg.model_dump_json())
@@ -1025,16 +1025,16 @@ async def send_result(sid: str, result_msg: ServerMessage):
 
 | State | Description | Can Send? |
 |-------|-------------|-----------|
-| `CONNECTING` | Handshake in progress | ❌ No |
-| `CONNECTED` | Active connection | ✅ Yes |
-| `DISCONNECTED` | Connection closed | ❌ No |
+| `CONNECTING` | Handshake in progress | No |
+| `CONNECTED` | Active connection | Yes |
+| `DISCONNECTED` | Connection closed | No |
 
 ### 3. Handle Cancellation Gracefully with Context
 
 ```python
-# ✅ Good: Different reasons need different handling
+# Good: Different reasons need different handling
 async def disconnect(self, client_id: str):
-    client_info = self.ws_manager.get_client_info(client_id)
+    client_info = self.client_manager.get_client_info(client_id)
     
     if client_info.client_type == ClientType.CONSTELLATION:
         reason = "constellation_disconnected"  # Don't send callback
@@ -1048,7 +1048,7 @@ async def disconnect(self, client_id: str):
 ### 4. Use Structured Logging with Context
 
 ```python
-# ✅ Good: Include client type and context
+# Good: Include client type and context
 if client_type == ClientType.CONSTELLATION:
     self.logger.info(
         f"[WS] 🌟 Constellation {client_id} requesting task on {target_id}"
@@ -1069,7 +1069,7 @@ else:
 ### 5. Implement Async Message Handling
 
 ```python
-# ✅ Good: Process messages in background tasks
+# Good: Process messages in background tasks
 async def handler(self, websocket: WebSocket):
     while True:
         msg = await websocket.receive_text()
@@ -1098,7 +1098,7 @@ async def handler(self, websocket: WebSocket):
 | **Server Overview** | High-level architecture and capabilities | [Overview](./overview.md) |
 | **Quick Start** | Start server and dispatch first task | [Quick Start](./quick_start.md) |
 | **Session Manager** | Session lifecycle and background execution | [Session Manager](./session_manager.md) |
-| **WebSocket Manager** | Connection registry and session tracking | [WebSocket Manager](./websocket_manager.md) |
+| **Client Connection Manager** | Connection registry and session tracking | [Client Connection Manager](./client_connection_manager.md) |
 | **HTTP API** | RESTful API endpoints | [API Reference](./api.md) |
 | **AIP Protocol** | Agent Interaction Protocol details | [AIP Overview](../aip/overview.md) |
 
@@ -1109,17 +1109,18 @@ async def handler(self, websocket: WebSocket):
 !!!success "Key Takeaways"
     After reading this guide, you should understand:
     
-    - ✅ **AIP Protocol Integration** - Four specialized protocols handle different communication aspects
-    - ✅ **Registration Flow** - Validation → Registration → Confirmation
-    - ✅ **Message Routing** - Central dispatcher routes messages to specialized handlers
-    - ✅ **Dual Client Support** - Devices (self-execution) vs. Constellations (orchestration)
-    - ✅ **Background Task Dispatch** - Immediate ACK + async execution
-    - ✅ **Command Result Handling** - Unblocks command dispatcher waiting for device responses
-    - ✅ **Heartbeat Monitoring** - Lightweight connection health checks
-    - ✅ **Disconnection Cleanup** - Context-aware session cancellation and registry cleanup
-    - ✅ **Error Handling** - Graceful degradation without cascading failures
+    - **AIP Protocol Integration** - Four specialized protocols handle different communication aspects
+    - **Registration Flow** - Validation Registration Confirmation
+    - **Message Routing** - Central dispatcher routes messages to specialized handlers
+    - **Dual Client Support** - Devices (self-execution) vs. Constellations (orchestration)
+    - **Background Task Dispatch** - Immediate ACK + async execution
+    - **Command Result Handling** - Unblocks command dispatcher waiting for device responses
+    - **Heartbeat Monitoring** - Lightweight connection health checks
+    - **Disconnection Cleanup** - Context-aware session cancellation and registry cleanup
+    - **Error Handling** - Graceful degradation without cascading failures
 
 !!!tip "Next Steps"
     - Explore [Session Manager](./session_manager.md) to understand background execution internals
-    - Learn about [WebSocket Manager](./websocket_manager.md) for client registry management
+    - Learn about [Client Connection Manager](./client_connection_manager.md) for client registry management
     - Review [AIP Protocol Documentation](../aip/overview.md) for message format specifications
+

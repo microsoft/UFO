@@ -18,7 +18,7 @@ graph TB
         API[HTTP API]
         WS[WebSocket Handler]
         SM[Session Manager]
-        WSM[WebSocket Manager]
+        WSM[Client Connection Manager]
     end
     
     subgraph "Monitoring Tools"
@@ -741,7 +741,7 @@ print(f"Flaky clients: {stats['flaky_clients']}")
         for module, count in module_counts.most_common(10):
             print(f"  {module:20s}: {count:6d}")
         
-        print("\n❌ Top Errors/Warnings:")
+        print("\n⚠️ Top Errors/Warnings:")
         for message, count in error_types.most_common(5):
             print(f"  [{count:3d}] {message}")
         
@@ -1218,7 +1218,7 @@ send_alert(
                 <!-- Server Status -->
                 <div class="metric-card">
                     <h2>Server Status</h2>
-                    <div class="metric-value status-healthy" id="server-status">●</div>
+                    <div class="metric-value status-healthy" id="server-status">✅</div>
                     <div class="metric-label" id="status-text">Healthy</div>
                 </div>
                 
@@ -1272,7 +1272,7 @@ send_alert(
                     const clientsData = await clientsResponse.json();
                     
                     // Update server status
-                    document.getElementById('server-status').textContent = '●';
+                    document.getElementById('server-status').textContent = ';
                     document.getElementById('server-status').className = 'metric-value status-healthy';
                     document.getElementById('status-text').textContent = 'Healthy';
                     
@@ -1312,7 +1312,7 @@ send_alert(
                     
                 } catch (error) {
                     // Server unreachable
-                    document.getElementById('server-status').textContent = '●';
+                    document.getElementById('server-status').textContent = ';
                     document.getElementById('server-status').className = 'metric-value status-error';
                     document.getElementById('status-text').textContent = 'Offline';
                     
@@ -1332,7 +1332,7 @@ send_alert(
 
 ---
 
-## ✅ Best Practices
+## Best Practices
 
 ### 1. Monitoring Strategy
 
@@ -1461,7 +1461,7 @@ graph TB
 **For More Information:**
 
 - [HTTP API](./api.md) - Health endpoint details
-- [WebSocket Manager](./websocket_manager.md) - Client statistics
+- [Client Connection Manager](./client_connection_manager.md) - Client statistics
 - [Session Manager](./session_manager.md) - Task tracking
 - [Quick Start](./quick_start.md) - Get started with UFO server
 
@@ -1518,13 +1518,13 @@ def check_health():
         response = requests.get("http://localhost:8000/api/health", timeout=5)
         if response.status_code == 200:
             data = response.json()
-            print(f"✅ Healthy - {data['connected_clients']} clients, {data['active_sessions']} sessions")
+            print(f"Healthy - {data['connected_clients']} clients, {data['active_sessions']} sessions")
             return True
         else:
-            print(f"❌ Unhealthy - HTTP {response.status_code}")
+            print(f"Unhealthy - HTTP {response.status_code}")
             return False
     except Exception as e:
-        print(f"❌ Error: {e}")
+        print(f"Error: {e}")
         return False
 
 # Check every 30 seconds
@@ -1625,7 +1625,7 @@ logging.basicConfig(level=logging.DEBUG)
 **Connection Events**
 
 ```
-INFO: [WS] ✅ Registered device client: device_windows_001
+INFO: [WS] Registered device client: device_windows_001
 INFO: [WS] 🌟 Constellation constellation_orchestrator requesting task on device_windows_001
 INFO: [WS] 🔌 Removed client: device_windows_001
 ```
@@ -1641,7 +1641,7 @@ INFO: [Session] Task completed: session_20251104_143022_abc123
 **Error Events**
 
 ```
-ERROR: [WS] ❌ Failed to send result for session_20251104_143022_abc123: Connection closed
+ERROR: [WS] Failed to send result for session_20251104_143022_abc123: Connection closed
 WARNING: [Session] Task cancelled: session_20251104_143022_abc123 (reason: device_disconnected)
 ```
 
@@ -1966,3 +1966,4 @@ Rotate and archive logs regularly:
 - [HTTP API](./api.md) - API endpoint reference
 - [WebSocket Handler](./websocket_handler.md) - Connection management
 - [Session Manager](./session_manager.md) - Task execution tracking
+

@@ -7,9 +7,9 @@
 
 | Endpoint Type | Role | Used By | Key Features |
 |---------------|------|---------|--------------|
-| **DeviceServerEndpoint** | Server | Device Agent Service | • Multiplexed connections<br>• Session management<br>• Task dispatching<br>• Result aggregation |
-| **DeviceClientEndpoint** | Client | Device Agent Client | • Auto-reconnection<br>• Heartbeat management<br>• Command execution<br>• Telemetry reporting |
-| **ConstellationEndpoint** | Orchestrator | ConstellationClient | • Multi-device coordination<br>• Task distribution<br>• Device info querying<br>• Connection pooling |
+| **DeviceServerEndpoint** | Server | Device Agent Service | ✅ Multiplexed connections<br>✅ Session management<br>✅ Task dispatching<br>✅ Result aggregation |
+| **DeviceClientEndpoint** | Client | Device Agent Client | ✅ Auto-reconnection<br>✅ Heartbeat management<br>✅ Command execution<br>✅ Telemetry reporting |
+| **ConstellationEndpoint** | Orchestrator | ConstellationClient | ✅ Multi-device coordination<br>✅ Task distribution<br>✅ Device info querying<br>✅ Connection pooling |
 
 ---
 
@@ -92,7 +92,7 @@ await endpoint.stop()
 from aip.endpoints import DeviceServerEndpoint
 
 endpoint = DeviceServerEndpoint(
-    ws_manager=ws_manager,           # WebSocket connection manager
+    client_manager=client_manager,           # WebSocket connection manager
     session_manager=session_manager, # Session state manager
     local=False                      # Local vs remote deployment
 )
@@ -105,7 +105,7 @@ from fastapi import FastAPI, WebSocket
 from aip.endpoints import DeviceServerEndpoint
 
 app = FastAPI()
-endpoint = DeviceServerEndpoint(ws_manager, session_manager)
+endpoint = DeviceServerEndpoint(client_manager, session_manager)
 
 @app.websocket("/ws")
 async def websocket_route(websocket: WebSocket):
@@ -319,7 +319,7 @@ The `Listening → Handling` loop represents the server accepting multiple clien
 
 ```python
 # 1. Initialize
-endpoint = DeviceServerEndpoint(ws_manager, session_manager)
+endpoint = DeviceServerEndpoint(client_manager, session_manager)
 
 # 2. Start
 await endpoint.start()
@@ -354,7 +354,7 @@ stateDiagram-v2
     Stopped --> [*]
 ```
 
-The `Heartbeat ↔ Handling` loop represents normal operation with periodic heartbeats. The `Reconnecting → Connected` transition shows automatic recovery from network failures.
+The `Heartbeat → Handling` loop represents normal operation with periodic heartbeats. The `Reconnecting → Connected` transition shows automatic recovery from network failures.
 
 **Client Lifecycle Code:**
 
@@ -539,3 +539,4 @@ from aip.endpoints import (
 - [Resilience](./resilience.md) - Reconnection and heartbeat management
 - [Messages](./messages.md) - Message types and validation
 - [Overview](./overview.md) - System architecture and design
+
