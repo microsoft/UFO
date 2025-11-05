@@ -85,7 +85,7 @@ class UFOWebSocketHandler:
         )
 
         # Send registration confirmation using AIP protocol
-        await self._send_registration_confirmation(websocket)
+        await self._send_registration_confirmation()
 
         # Log successful connection
         self._log_client_connection(client_id, client_type)
@@ -135,23 +135,21 @@ class UFOWebSocketHandler:
             error_msg = f"Target device '{claimed_device_id}' is not connected"
             self.logger.warning(f"[WS] Constellation registration failed: {error_msg}")
 
-            await self._send_error_response(websocket, error_msg)
+            await self._send_error_response(error_msg)
             await websocket.close()
             raise ValueError(error_msg)
 
-    async def _send_registration_confirmation(self, websocket: WebSocket) -> None:
+    async def _send_registration_confirmation(self) -> None:
         """
         Send successful registration confirmation to client using AIP RegistrationProtocol.
-        :param websocket: The WebSocket connection.
         """
         self.logger.info("[WS] [AIP] Sending registration confirmation...")
         await self.registration_protocol.send_registration_confirmation()
         self.logger.info("[WS] [AIP] Registration confirmation sent")
 
-    async def _send_error_response(self, websocket: WebSocket, error_msg: str) -> None:
+    async def _send_error_response(self, error_msg: str) -> None:
         """
         Send error response to client using AIP RegistrationProtocol.
-        :param websocket: The WebSocket connection.
         :param error_msg: Error message to send.
         """
         await self.registration_protocol.send_registration_error(error_msg)
@@ -287,17 +285,17 @@ class UFOWebSocketHandler:
             elif msg_type == ClientMessageType.COMMAND_RESULTS:
                 await self.handle_command_result(data)
             elif msg_type == ClientMessageType.HEARTBEAT:
-                await self.handle_heartbeat(data, websocket)
+                await self.handle_heartbeat(data)
             elif msg_type == ClientMessageType.ERROR:
-                await self.handle_error(data, websocket)
+                await self.handle_error(data)
             elif msg_type == ClientMessageType.DEVICE_INFO_REQUEST:
                 # Constellation requesting device info
-                await self.handle_device_info_request(data, websocket)
+                await self.handle_device_info_request(data)
             elif msg_type == ClientMessageType.DEVICE_INFO_RESPONSE:
                 # Reserved for future Pull model where device pushes info on request
-                await self.handle_device_info_response(data, websocket)
+                await self.handle_device_info_response(data)
             else:
-                await self.handle_unknown(data, websocket)
+                await self.handle_unknown(data)
         except Exception as e:
             traceback.print_exc()
             self.logger.error(f"[WS] Error handling message from {client_id}: {e}")
@@ -310,11 +308,10 @@ class UFOWebSocketHandler:
                     f"[WS] Could not send error response (connection closed): {send_error}"
                 )
 
-    async def handle_heartbeat(self, data: ClientMessage, websocket: WebSocket) -> None:
+    async def handle_heartbeat(self, data: ClientMessage) -> None:
         """
         Handle heartbeat messages from the client using AIP HeartbeatProtocol.
         :param data: The data from the client.
-        :param websocket: The WebSocket connection.
         """
         self.logger.debug(f"[WS] [AIP] Heartbeat from {data.client_id}")
         # Use AIP heartbeat protocol to send acknowledgment (server-side)
@@ -326,21 +323,19 @@ class UFOWebSocketHandler:
                 f"[WS] [AIP] Could not send heartbeat ack (connection closed): {e}"
             )
 
-    async def handle_error(self, data: ClientMessage, websocket: WebSocket) -> None:
+    async def handle_error(self, data: ClientMessage) -> None:
         """
         Handle error messages from the client.
         :param data: The data from the client.
-        :param websocket: The WebSocket connection.
         """
         self.logger.error(f"[WS] [AIP] Error from {data.client_id}: {data.error}")
         # Send error acknowledgment
         await self.task_protocol.send_error(data.error or "Unknown error")
 
-    async def handle_unknown(self, data: ClientMessage, websocket: WebSocket) -> None:
+    async def handle_unknown(self, data: ClientMessage) -> None:
         """
         Handle unknown message types.
         :param data: The data from the client.
-        :param websocket: The WebSocket connection.
         """
         self.logger.warning(f"[WS] [AIP] Unknown message type: {data.type}")
         await self.task_protocol.send_error(f"Unknown message type: {data.type}")
@@ -510,26 +505,20 @@ class UFOWebSocketHandler:
 
         await command_dispatcher.set_result(response_id, data)
 
-    async def handle_device_info_response(
-        self, data: ClientMessage, websocket: WebSocket
-    ) -> None:
+    async def handle_device_info_response(self, data: ClientMessage) -> None:
         """
         Handle device info response (reserved for future Pull model).
         :param data: The data from the client.
-        :param websocket: The WebSocket connection.
         """
         self.logger.info(
             f"[WS] Received device info response from {data.client_id} (not implemented)"
         )
 
-    async def handle_device_info_request(
-        self, data: ClientMessage, websocket: WebSocket
-    ) -> None:
+    async def handle_device_info_request(self, data: ClientMessage) -> None:
         """
         Handle device info request from constellation client using AIP DeviceInfoProtocol.
 
         :param data: The request data from constellation.
-        :param websocket: The WebSocket connection.
         """
         device_id = data.target_id
         request_id = data.request_id
