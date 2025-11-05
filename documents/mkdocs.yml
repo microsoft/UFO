@@ -8,9 +8,13 @@ nav:
     - Quick Start: getting_started/quick_start.md
     - More Guidance: getting_started/more_guidance.md
   - Basic Modules:
+      - Overview: modules/overview.md
       - Session: modules/session.md
       - Round: modules/round.md
       - Context: modules/context.md
+      - Dispatcher: modules/dispatcher.md
+      - Session Factory & Pool: modules/session_pool.md
+      - Platform Sessions: modules/platform_sessions.md
   - Configurations: 
       - Overview: configurations/overview.md
       - Field Reference: configurations/field_reference.md
