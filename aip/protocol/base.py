@@ -7,14 +7,12 @@ Base Protocol Implementation
 Provides the core AIP protocol abstractions and message handling infrastructure.
 """
 
-import asyncio
 import logging
 from abc import ABC, abstractmethod
 from typing import Any, Awaitable, Callable, Dict, List, Optional
 
-from aip.messages import ClientMessage, ServerMessage
+from aip.messages import ServerMessage
 from aip.transport import Transport
-
 
 # Type aliases for clarity
 MessageHandler = Callable[[Any], Awaitable[None]]
@@ -195,6 +193,7 @@ class AIPProtocol:
         """
         import datetime
         import uuid
+
         from aip.messages import ServerMessage, ServerMessageType, TaskStatus
 
         error_message = ServerMessage(
@@ -217,6 +216,7 @@ class AIPProtocol:
         """
         import datetime
         import uuid
+
         from aip.messages import ServerMessage, ServerMessageType, TaskStatus
 
         ack_message = ServerMessage(

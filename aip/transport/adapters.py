@@ -11,9 +11,7 @@ Uses the Adapter pattern to abstract away differences between:
 """
 
 from abc import ABC, abstractmethod
-from typing import Union
 
-import websockets
 from websockets import WebSocketClientProtocol
 
 

@@ -196,44 +196,64 @@ class ConstellationDeviceManager:
 
         except websockets.InvalidURI as e:
             self.device_registry.update_device_status(device_id, DeviceStatus.FAILED)
-            self.logger.error(
-                f"❌ Invalid WebSocket URI for device {device_id}: {e}", exc_info=True
-            )
+            # Use different log level for reconnection vs initial connection
+            if is_reconnection:
+                self.logger.debug(f"Invalid WebSocket URI for device {device_id}: {e}")
+            else:
+                self.logger.error(
+                    f"❌ Invalid WebSocket URI for device {device_id}: {e}"
+                )
             return False
         except websockets.WebSocketException as e:
             self.device_registry.update_device_status(device_id, DeviceStatus.FAILED)
-            self.logger.error(
-                f"❌ WebSocket error connecting to device {device_id}: {e}",
-                exc_info=True,
-            )
+            # Use different log level for reconnection vs initial connection
+            if is_reconnection:
+                self.logger.debug(
+                    f"WebSocket error connecting to device {device_id}: {e}"
+                )
+            else:
+                self.logger.error(
+                    f"❌ WebSocket error connecting to device {device_id}: {e}"
+                )
             # Schedule reconnection if under retry limit
             if device_info.connection_attempts < device_info.max_retries:
                 self._schedule_reconnection(device_id)
             return False
         except OSError as e:
             self.device_registry.update_device_status(device_id, DeviceStatus.FAILED)
-            self.logger.error(
-                f"❌ Network error connecting to device {device_id}: {e}", exc_info=True
-            )
+            # Use different log level for reconnection vs initial connection
+            if is_reconnection:
+                self.logger.debug(
+                    f"Network error connecting to device {device_id}: {e}"
+                )
+            else:
+                self.logger.error(
+                    f"❌ Network error connecting to device {device_id}: {e}"
+                )
             # Schedule reconnection if under retry limit
             if device_info.connection_attempts < device_info.max_retries:
                 self._schedule_reconnection(device_id)
             return False
         except asyncio.TimeoutError as e:
             self.device_registry.update_device_status(device_id, DeviceStatus.FAILED)
-            self.logger.error(
-                f"❌ Timeout connecting to device {device_id}: {e}", exc_info=True
-            )
+            # Use different log level for reconnection vs initial connection
+            if is_reconnection:
+                self.logger.debug(f"Timeout connecting to device {device_id}: {e}")
+            else:
+                self.logger.error(f"❌ Timeout connecting to device {device_id}: {e}")
             # Schedule reconnection if under retry limit
             if device_info.connection_attempts < device_info.max_retries:
                 self._schedule_reconnection(device_id)
             return False
         except Exception as e:
             self.device_registry.update_device_status(device_id, DeviceStatus.FAILED)
-            self.logger.error(
-                f"❌ Unexpected error connecting to device {device_id}: {e}",
-                exc_info=True,
-            )
+            # Use different log level for reconnection vs initial connection
+            if is_reconnection:
+                self.logger.debug(f"Error connecting to device {device_id}: {e}")
+            else:
+                self.logger.error(
+                    f"❌ Unexpected error connecting to device {device_id}: {e}"
+                )
             # Schedule reconnection if under retry limit
             if device_info.connection_attempts < device_info.max_retries:
                 self._schedule_reconnection(device_id)
@@ -370,33 +390,29 @@ class ConstellationDeviceManager:
                         self.device_registry.reset_connection_attempts(device_id)
                         return  # Success, exit retry loop
                     else:
-                        self.logger.warning(
-                            f"⚠️ Reconnection attempt {retry_count}/{max_retries} failed for device {device_id}"
+                        self.logger.info(
+                            f"🔄 Reconnection attempt {retry_count}/{max_retries} failed for device {device_id}, will retry..."
                         )
 
                 except websockets.WebSocketException as e:
-                    self.logger.error(
-                        f"❌ WebSocket error on reconnection attempt {retry_count}/{max_retries} "
-                        f"for device {device_id}: {e}",
-                        exc_info=True,
+                    self.logger.debug(
+                        f"WebSocket error on reconnection attempt {retry_count}/{max_retries} "
+                        f"for device {device_id}: {e}"
                     )
                 except OSError as e:
-                    self.logger.error(
-                        f"❌ Network error on reconnection attempt {retry_count}/{max_retries} "
-                        f"for device {device_id}: {e}",
-                        exc_info=True,
+                    self.logger.debug(
+                        f"Network error on reconnection attempt {retry_count}/{max_retries} "
+                        f"for device {device_id}: {e}"
                     )
                 except asyncio.TimeoutError as e:
-                    self.logger.error(
-                        f"❌ Timeout on reconnection attempt {retry_count}/{max_retries} "
-                        f"for device {device_id}: {e}",
-                        exc_info=True,
+                    self.logger.debug(
+                        f"Timeout on reconnection attempt {retry_count}/{max_retries} "
+                        f"for device {device_id}: {e}"
                     )
                 except Exception as e:
-                    self.logger.error(
-                        f"❌ Unexpected error on reconnection attempt {retry_count}/{max_retries} "
-                        f"for device {device_id}: {e}",
-                        exc_info=True,
+                    self.logger.warning(
+                        f"⚠️ Error on reconnection attempt {retry_count}/{max_retries} "
+                        f"for device {device_id}: {e}"
                     )
 
             # All retries exhausted

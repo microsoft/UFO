@@ -49,21 +49,7 @@ Traditional HTTP-based coordination (e.g., A2A, ACP) uses short-lived, stateless
 
 The following diagram illustrates the three-layer architecture and bidirectional communication flows between components:
 
-```mermaid
-graph TB
-    CC[ConstellationClient Orchestrator]
-    DAS[Device Agent Service Server]
-    DAC[Device Agent Client Executor]
-    
-    CC -->|WebSocket TASK| DAS
-    DAS -->|TASK_END Results| CC
-    DAS -->|WebSocket COMMAND| DAC
-    DAC -->|COMMAND_RESULTS| DAS
-    
-    style CC fill:#e1f5ff
-    style DAS fill:#fff4e1
-    style DAC fill:#f0ffe1
-```
+![AIP Architecture](../img/aip.png)
 
 This architecture enables persistent WebSocket connections that span multiple task executions, reducing connection overhead while maintaining bidirectional communication for task dispatch (top-down) and result reporting (bottom-up).
 

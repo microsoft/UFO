@@ -177,7 +177,7 @@ class WebSocketTransport(Transport):
 
         try:
             adapter_type = type(self._adapter).__name__
-            self.logger.info(f"🔍 Attempting to receive data via {adapter_type}...")
+            self.logger.debug(f"🔍 Attempting to receive data via {adapter_type}...")
 
             # Use adapter to receive (abstracts away FastAPI vs websockets library)
             text_data = await self._adapter.receive()

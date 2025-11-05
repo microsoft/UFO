@@ -8,7 +8,7 @@ Wraps the existing UFO WebSocket client with AIP protocol abstractions.
 """
 
 import logging
-from typing import Any, Optional
+from typing import Any
 
 from aip.endpoints.base import AIPEndpoint
 from aip.protocol import AIPProtocol, HeartbeatProtocol, RegistrationProtocol

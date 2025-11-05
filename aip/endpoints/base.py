@@ -12,7 +12,7 @@ from abc import ABC, abstractmethod
 from typing import Any, Dict, Optional
 
 from aip.protocol import AIPProtocol
-from aip.resilience import HeartbeatManager, ReconnectionStrategy, TimeoutManager
+from aip.resilience import ReconnectionStrategy, TimeoutManager
 
 
 class AIPEndpoint(ABC):

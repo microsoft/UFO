@@ -65,8 +65,8 @@ class LinuxBaseSession(BaseSession):
         self._agent: LinuxAgent = AgentFactory.create_agent(
             "LinuxAgent",
             "LinuxAgent",
-            ufo_config.system.THIRD_PARTY_AGENT_CONFIG["LinuxAgent"]["APPAGENT_PROMPT"],
-            ufo_config.system.THIRD_PARTY_AGENT_CONFIG["LinuxAgent"][
+            ufo_config.system.third_party_agent_config["LinuxAgent"]["APPAGENT_PROMPT"],
+            ufo_config.system.third_party_agent_config["LinuxAgent"][
                 "APPAGENT_EXAMPLE_PROMPT"
             ],
         )

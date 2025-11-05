@@ -155,6 +155,14 @@ class MessageProcessor:
                     asyncio.create_task(
                         self._process_server_message(device_id, server_msg)
                     )
+                except (
+                    ConnectionError,
+                    websockets.ConnectionClosed,
+                    websockets.WebSocketException,
+                    OSError,
+                ):
+                    # Re-raise connection-related exceptions to outer handler
+                    raise
                 except json.JSONDecodeError as e:
                     self.logger.error(
                         f"❌ Invalid JSON from device {device_id}: {e}", exc_info=True
@@ -175,6 +183,13 @@ class MessageProcessor:
                         exc_info=True,
                     )
 
+        except ConnectionError as e:
+            # Handle ConnectionError raised by transport layer
+            self.logger.warning(
+                f"🔌 Connection to device {device_id} closed: {e} (messages received: {message_count})"
+            )
+            # Trigger disconnection handler for cleanup and reconnection
+            await self._handle_disconnection(device_id)
         except websockets.ConnectionClosed as e:
             self.logger.warning(
                 f"🔌 Connection to device {device_id} closed "
@@ -186,19 +201,14 @@ class MessageProcessor:
             self.logger.info(f"📨 Message handler for device {device_id} was cancelled")
             raise
         except websockets.WebSocketException as e:
-            self.logger.error(
-                f"❌ WebSocket error for device {device_id}: {e}", exc_info=True
-            )
+            self.logger.warning(f"⚠️ WebSocket error for device {device_id}: {e}")
             await self._handle_disconnection(device_id)
         except OSError as e:
-            self.logger.error(
-                f"❌ Network error for device {device_id}: {e}", exc_info=True
-            )
+            self.logger.warning(f"⚠️ Network error for device {device_id}: {e}")
             await self._handle_disconnection(device_id)
         except Exception as e:
             self.logger.error(
-                f"❌ Unexpected message handler error for device {device_id}: {e}",
-                exc_info=True,
+                f"❌ Unexpected message handler error for device {device_id}: {e}"
             )
             # Trigger disconnection handler for unexpected errors
             await self._handle_disconnection(device_id)

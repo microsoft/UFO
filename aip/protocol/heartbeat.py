@@ -10,7 +10,7 @@ Handles periodic keepalive messages to maintain connection health.
 import asyncio
 import datetime
 import logging
-from typing import Optional, Dict, Any
+from typing import Optional
 from uuid import uuid4
 
 from aip.messages import (

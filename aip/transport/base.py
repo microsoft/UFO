@@ -11,7 +11,6 @@ while maintaining a consistent protocol layer.
 
 from abc import ABC, abstractmethod
 from enum import Enum
-from typing import Optional
 
 
 class TransportState(str, Enum):

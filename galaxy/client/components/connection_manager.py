@@ -123,36 +123,31 @@ class WebSocketConnectionManager:
 
         except websockets.InvalidURI as e:
             self.logger.error(
-                f"❌ Invalid WebSocket URI for device {device_info.device_id}: {e}",
-                exc_info=True,
+                f"❌ Invalid WebSocket URI for device {device_info.device_id}: {e}"
             )
             self._cleanup_device_protocols(device_info.device_id)
             raise ConnectionError(f"Invalid WebSocket URI: {e}") from e
         except websockets.WebSocketException as e:
-            self.logger.error(
-                f"❌ WebSocket error connecting to device {device_info.device_id}: {e}",
-                exc_info=True,
+            self.logger.warning(
+                f"⚠️ WebSocket error connecting to device {device_info.device_id}: {e}"
             )
             self._cleanup_device_protocols(device_info.device_id)
             raise
         except OSError as e:
-            self.logger.error(
-                f"❌ Network error connecting to device {device_info.device_id}: {e}",
-                exc_info=True,
+            self.logger.warning(
+                f"⚠️ Network error connecting to device {device_info.device_id}: {e}"
             )
             self._cleanup_device_protocols(device_info.device_id)
             raise ConnectionError(f"Network error: {e}") from e
         except asyncio.TimeoutError as e:
-            self.logger.error(
-                f"❌ Connection timeout for device {device_info.device_id}: {e}",
-                exc_info=True,
+            self.logger.warning(
+                f"⚠️ Connection timeout for device {device_info.device_id}: {e}"
             )
             self._cleanup_device_protocols(device_info.device_id)
             raise
         except Exception as e:
             self.logger.error(
-                f"❌ Unexpected error connecting to device {device_info.device_id}: {e}",
-                exc_info=True,
+                f"❌ Unexpected error connecting to device {device_info.device_id}: {e}"
             )
             self._cleanup_device_protocols(device_info.device_id)
             raise
@@ -247,21 +242,18 @@ class WebSocketConnectionManager:
             return True
 
         except (ConnectionError, IOError) as e:
-            self.logger.error(
-                f"❌ Connection error during registration for device {device_info.device_id}: {e}",
-                exc_info=True,
+            self.logger.warning(
+                f"⚠️ Connection error during registration for device {device_info.device_id}: {e}"
             )
             return False
         except asyncio.TimeoutError as e:
-            self.logger.error(
-                f"❌ Registration timeout for device {device_info.device_id}: {e}",
-                exc_info=True,
+            self.logger.warning(
+                f"⚠️ Registration timeout for device {device_info.device_id}: {e}"
             )
             return False
         except Exception as e:
             self.logger.error(
-                f"❌ Unexpected error during registration for device {device_info.device_id}: {e}",
-                exc_info=True,
+                f"❌ Unexpected error during registration for device {device_info.device_id}: {e}"
             )
             return False
 

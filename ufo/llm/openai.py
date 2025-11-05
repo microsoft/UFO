@@ -42,7 +42,7 @@ class BaseOpenAIService(BaseService):
         self.max_retry = self.config["MAX_RETRY"]
         self.prices = self.config.get("PRICES", {})
         self.agent_type = agent_type
-        self.json_schema_enabled = config[agent_type].get("JSON_SCHEMA", False)
+        self.json_schema_enabled = False
         self.logger = logging.getLogger(__name__)
         assert api_provider in ["openai", "aoai", "azure_ad"], "Invalid API Provider"
 
