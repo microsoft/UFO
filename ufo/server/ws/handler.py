@@ -64,7 +64,7 @@ class UFOWebSocketHandler:
         self.task_protocol = TaskExecutionProtocol(self.transport)
 
         # Parse registration message using AIP protocol
-        reg_info = await self._parse_registration_message(websocket)
+        reg_info = await self._parse_registration_message()
 
         # Determine and validate client type
         client_type = reg_info.client_type
@@ -78,10 +78,16 @@ class UFOWebSocketHandler:
         # Register client
         client_id = reg_info.client_id
         if client_type == ClientType.CONSTELLATION:
-            await self._validate_constellation_client(reg_info, websocket)
+            await self._validate_constellation_client(reg_info)
 
         self.ws_manager.add_client(
-            client_id, platform, websocket, client_type, reg_info.metadata
+            client_id,
+            platform,
+            websocket,
+            client_type,
+            reg_info.metadata,
+            transport=self.transport,
+            task_protocol=self.task_protocol,
         )
 
         # Send registration confirmation using AIP protocol
@@ -92,10 +98,9 @@ class UFOWebSocketHandler:
 
         return client_id
 
-    async def _parse_registration_message(self, websocket: WebSocket) -> ClientMessage:
+    async def _parse_registration_message(self) -> ClientMessage:
         """
         Parse and validate the registration message from client using AIP Transport.
-        :param websocket: The WebSocket connection.
         :return: Parsed registration message.
         :raises: ValueError if message is invalid.
         """
@@ -117,13 +122,12 @@ class UFOWebSocketHandler:
 
         return reg_info
 
-    async def _validate_constellation_client(
-        self, reg_info: ClientMessage, websocket: WebSocket
-    ) -> None:
+    async def _validate_constellation_client(self, reg_info: ClientMessage) -> None:
         """
         Validate constellation client's claimed device_id.
+        Uses AIP to send error response and close transport if validation fails.
+
         :param reg_info: Registration message information.
-        :param websocket: The WebSocket connection.
         :raises: ValueError if validation fails.
         """
         claimed_device_id = reg_info.target_id
@@ -135,8 +139,9 @@ class UFOWebSocketHandler:
             error_msg = f"Target device '{claimed_device_id}' is not connected"
             self.logger.warning(f"[WS] Constellation registration failed: {error_msg}")
 
+            # Send error via AIP and close connection
             await self._send_error_response(error_msg)
-            await websocket.close()
+            await self.transport.close()
             raise ValueError(error_msg)
 
     async def _send_registration_confirmation(self) -> None:
@@ -241,7 +246,7 @@ class UFOWebSocketHandler:
             client_id = await self.connect(websocket)
             while True:
                 msg = await websocket.receive_text()
-                asyncio.create_task(self.handle_message(msg, websocket))
+                asyncio.create_task(self.handle_message(msg))
         except WebSocketDisconnect as e:
             self.logger.warning(
                 f"[WS] {client_id} disconnected — code={e.code}, reason={e.reason}"
@@ -253,11 +258,10 @@ class UFOWebSocketHandler:
             if client_id:
                 await self.disconnect(client_id)
 
-    async def handle_message(self, msg: str, websocket: WebSocket) -> None:
+    async def handle_message(self, msg: str) -> None:
         """
         Dispatch incoming WS messages to specific handlers.
         :param msg: The message received from the client.
-        :param websocket: The WebSocket connection.
         :param client_type: The type of client ("device" or "constellation").
         """
         import traceback
@@ -281,7 +285,7 @@ class UFOWebSocketHandler:
             msg_type = data.type
 
             if msg_type == ClientMessageType.TASK:
-                await self.handle_task_request(data, websocket)
+                await self.handle_task_request(data)
             elif msg_type == ClientMessageType.COMMAND_RESULTS:
                 await self.handle_command_result(data)
             elif msg_type == ClientMessageType.HEARTBEAT:
@@ -340,9 +344,7 @@ class UFOWebSocketHandler:
         self.logger.warning(f"[WS] [AIP] Unknown message type: {data.type}")
         await self.task_protocol.send_error(f"Unknown message type: {data.type}")
 
-    async def handle_task_request(
-        self, data: ClientMessage, websocket: WebSocket
-    ) -> None:
+    async def handle_task_request(self, data: ClientMessage) -> None:
         """
         Handle a task request message from the client.
 
@@ -350,10 +352,12 @@ class UFOWebSocketHandler:
         which runs tasks in background without blocking the event loop.
         This allows WebSocket ping/pong and heartbeat messages to continue.
 
+        Uses AIP protocols for all communication, no direct WebSocket access needed.
+
         :param data: The data from the client.
-        :param websocket: The WebSocket connection.
         """
         client_type = data.client_type
+        client_id = data.client_id
         target_device_id = None  # Track for debugging
 
         if client_type == ClientType.CONSTELLATION:
@@ -367,7 +371,7 @@ class UFOWebSocketHandler:
             self.logger.info(
                 f"[WS] 📱 Handling device task request: {data.request} from {data.client_id}"
             )
-            target_ws = websocket
+            target_ws = self.ws_manager.get_client(data.client_id)
             platform = self.ws_manager.get_client_info(data.client_id).platform
 
         session_id = str(uuid.uuid4()) if not data.session_id else data.session_id
@@ -387,72 +391,73 @@ class UFOWebSocketHandler:
 
         # Define callback to send results when task completes
         async def send_result(sid: str, result_msg: ServerMessage):
-            """Send task result to client when session completes."""
+            """Send task result to client when session completes using AIP."""
             self.logger.info(
                 f"[WS] 📬 CALLBACK INVOKED! session={sid}, status={result_msg.status}, "
                 f"client_type={client_type}, target_device={target_device_id}"
             )
 
-            # Check if constellation client is still connected
-            constellation_connected = (
-                self.ws_manager.get_client(data.client_id) is not None
-            )
+            # Get task protocol for the requesting client
+            requester_protocol = self.ws_manager.get_task_protocol(client_id)
 
-            if not constellation_connected:
+            if not requester_protocol:
                 self.logger.warning(
-                    f"[WS] ⚠️ Constellation client {data.client_id} disconnected, "
+                    f"[WS] ⚠️ Client {client_id} disconnected, "
                     f"skipping result callback for session {sid}"
                 )
                 return
 
             try:
-                # Send to constellation client (the one who sent the request)
-                self.logger.info(f"[WS] 📤 Sending result to constellation client...")
+                # Send to requesting client (constellation or device) using AIP
+                self.logger.info(
+                    f"[WS] 📤 Sending result to client {client_id} via AIP..."
+                )
 
-                # Check WebSocket state before sending
-                from starlette.websockets import WebSocketState
-
-                if websocket.client_state == WebSocketState.CONNECTED:
-                    await websocket.send_text(result_msg.model_dump_json())
-                    self.logger.info(
-                        f"[WS] ✅ Sent to constellation client successfully"
-                    )
-                else:
-                    self.logger.warning(
-                        f"[WS] ⚠️ Constellation WebSocket not connected (state={websocket.client_state}), "
-                        f"skipping send for session {sid}"
-                    )
-                    return
+                # Use AIP TaskExecutionProtocol.send_task_end()
+                await requester_protocol.send_task_end(
+                    session_id=sid,
+                    status=result_msg.status,
+                    result=result_msg.result,
+                    error=result_msg.error,
+                    response_id=result_msg.response_id,
+                )
+                self.logger.info(f"[WS] ✅ Sent to client {client_id} successfully")
 
                 # If constellation client, also notify the target device
-                if client_type == ClientType.CONSTELLATION:
-                    self.logger.info(
-                        f"[WS] 📤 Sending result to target device {target_device_id}..."
+                if client_type == ClientType.CONSTELLATION and target_device_id:
+                    target_protocol = self.ws_manager.get_task_protocol(
+                        target_device_id
                     )
-                    try:
-                        # Check target WebSocket state before sending
-                        if (
-                            target_ws
-                            and target_ws.client_state == WebSocketState.CONNECTED
-                        ):
-                            await target_ws.send_text(result_msg.model_dump_json())
+
+                    if target_protocol:
+                        self.logger.info(
+                            f"[WS] 📤 Sending result to target device {target_device_id} via AIP..."
+                        )
+                        try:
+                            await target_protocol.send_task_end(
+                                session_id=sid,
+                                status=result_msg.status,
+                                result=result_msg.result,
+                                error=result_msg.error,
+                                response_id=result_msg.response_id,
+                            )
                             self.logger.info(
                                 f"[WS] ✅ Sent to target device {target_device_id} successfully"
                             )
-                        else:
+                        except (ConnectionError, IOError) as target_error:
                             self.logger.warning(
-                                f"[WS] ⚠️ Target device {target_device_id} WebSocket not connected, "
-                                f"skipping send"
+                                f"[WS] ⚠️ Target device {target_device_id} disconnected: {target_error}"
                             )
-                    except Exception as target_error:
-                        import traceback
-
-                        self.logger.error(
-                            f"[WS] ❌ Failed to send to target device {target_device_id}: "
-                            f"{target_error}\n{traceback.format_exc()}"
+                    else:
+                        self.logger.warning(
+                            f"[WS] ⚠️ Target device {target_device_id} disconnected, skipping send"
                         )
 
                 self.logger.info(f"[WS] ✅ All results sent for session {sid}")
+            except (ConnectionError, IOError) as e:
+                self.logger.warning(
+                    f"[WS] ⚠️ Connection error sending result for {sid}: {e}"
+                )
             except Exception as e:
                 import traceback
 

@@ -7,6 +7,8 @@ from typing import Any, Dict, List, Optional, Set
 from fastapi import WebSocket
 
 from aip.messages import ClientType
+from aip.transport.websocket import WebSocketTransport
+from aip.protocol.task_execution import TaskExecutionProtocol
 
 
 @dataclass
@@ -19,6 +21,10 @@ class ClientInfo:
     metadata: Dict = None
     platform: str = "windows"
     system_info: Dict = None  # Device system information (for device clients)
+
+    # AIP protocol instances for this client
+    transport: Optional[WebSocketTransport] = None
+    task_protocol: Optional[TaskExecutionProtocol] = None
 
 
 class WSManager:
@@ -118,6 +124,8 @@ class WSManager:
         ws: WebSocket,
         client_type: ClientType = ClientType.DEVICE,
         metadata: Dict = None,
+        transport: Optional[WebSocketTransport] = None,
+        task_protocol: Optional[TaskExecutionProtocol] = None,
     ):
         """
         Add a new client to the online clients list.
@@ -125,6 +133,8 @@ class WSManager:
         :param ws: The WebSocket connection for the client.
         :param client_type: The type of client ("device" or "constellation").
         :param metadata: Additional metadata about the client.
+        :param transport: Optional AIP WebSocketTransport instance for this client.
+        :param task_protocol: Optional AIP TaskExecutionProtocol instance for this client.
         """
         with self.lock:
             # Extract and merge system info with server config for device clients
@@ -153,6 +163,8 @@ class WSManager:
                 connected_at=datetime.now(),
                 metadata=metadata or {},
                 system_info=system_info,
+                transport=transport,
+                task_protocol=task_protocol,
             )
 
     def remove_client(self, client_id: str):
@@ -181,6 +193,16 @@ class WSManager:
         """
         with self.lock:
             return self.online_clients.get(client_id)
+
+    def get_task_protocol(self, client_id: str) -> Optional[TaskExecutionProtocol]:
+        """
+        Get the AIP TaskExecutionProtocol for a client.
+        :param client_id: The ID of the client.
+        :return: The TaskExecutionProtocol instance if it exists, None otherwise.
+        """
+        with self.lock:
+            client_info = self.online_clients.get(client_id)
+            return client_info.task_protocol if client_info else None
 
     def get_client_type(self, client_id: str) -> str:
         """
