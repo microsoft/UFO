@@ -761,7 +761,7 @@ Different agent types implement platform-specific processors:
 | **Windows HostAgent** | `HostAgentProcessor` | Desktop screenshot + app list | Application selection | Launch app, create AppAgent | App selection history |
 | **Linux** | `LinuxAgentProcessor` | Screenshot + shell output | Shell command generation | Shell command execution | Command history |
 
-**See [Agent Types Documentation](../WindowsAgent/agent_types.md) for platform-specific processor implementations.**
+**See [Agent Types Documentation](../../ufo2/agent_types.md) for platform-specific processor implementations.**
 
 ---
 

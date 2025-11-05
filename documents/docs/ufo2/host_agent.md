@@ -497,22 +497,17 @@ sequenceDiagram
 
 ## Related Documentation
 
-!!!info "Deep Dive"
-    - **[HostAgent States](states/host_agent_states.md)**: Detailed state machine documentation
-    - **[HostAgent Strategies](strategies/host_agent_strategies.md)**: Processing strategy implementations
-    - **[Desktop Commands](commands/desktop_commands.md)**: MCP command reference
-
 !!!info "Architecture"
     - **[Windows Agent Overview](overview.md)**: Module architecture and hierarchy
     - **[AppAgent](app_agent.md)**: Application automation agent
-    - **[State Layer](../design/state.md)**: FSM design principles
-    - **[Strategy Layer](../design/processor.md)**: Processor framework
+    - **[State Layer](../agents/design/state.md)**: FSM design principles
+    - **[Strategy Layer](../agents/design/processor.md)**: Processor framework
 
 !!!info "System Integration"
-    - **[Session Management](../../modules/session.md)**: Session lifecycle
-    - **[Round Management](../../modules/round.md)**: Execution rounds
-    - **[Blackboard](../design/blackboard.md)**: Inter-agent communication
-    - **[Memory System](../design/memory.md)**: Execution history
+    - **[Session Management](../modules/session.md)**: Session lifecycle
+    - **[Round Management](../modules/round.md)**: Execution rounds
+    - **[Blackboard](../agents/design/blackboard.md)**: Inter-agent communication
+    - **[Memory System](../agents/design/memory.md)**: Execution history
 
 ---
 
@@ -542,6 +537,6 @@ sequenceDiagram
 **Next Steps:**
 
 1. **Study AppAgent**: Read [AppAgent documentation](app_agent.md) to understand execution layer
-2. **Explore States**: Review [HostAgent States](states/host_agent_states.md) for state machine details
-3. **Learn Strategies**: Check [HostAgent Strategies](strategies/host_agent_strategies.md) for processing logic
-4. **Command Reference**: See [Desktop Commands](commands/desktop_commands.md) for available operations
+2. **Explore Architecture**: Review [Device Agent Overview](../agents/overview.md) for system design
+3. **Learn Processing**: Check [Strategy Layer](../agents/design/processor.md) for processing logic
+4. **Command System**: See [Command Layer](../agents/design/command.md) for available operations

@@ -1,0 +1,88 @@
+nav:
+  - Home: index.md
+  - Getting Started:
+      - Choose Your Path: getting_started/choose_path.md
+      - Quick Start (Galaxy): getting_started/quick_start_galaxy.md
+      - Quick Start (Windows / UFO²): getting_started/quick_start_windows.md
+      - Hybrid Quick Start: getting_started/hybrid_quick_start.md
+      - Migration UFO² → Galaxy: getting_started/migration_ufo2_to_galaxy.md
+      - FAQ: getting_started/faq.md
+  - Core Concepts:
+      - Architecture Overview: concepts/architecture_overview.md
+      - Constellation: concepts/constellation.md
+      - Device Agents Overview: concepts/device_agents/overview.md
+      - Device Agent Layers: concepts/device_agents/architecture_layers.md
+      - Knowledge Substrate: concepts/knowledge_substrate.md
+      - Control Detection: concepts/control_detection_overview.md
+      - Speculative Multi-Action: concepts/speculative_multi_action.md
+  - AIP Protocol:
+      - Overview: aip/overview.md
+      - Lifecycle: aip/lifecycle.md
+      - Messages: aip/messages.md
+      - Schema Reference: aip/schema_reference.md
+      - Endpoints: aip/endpoints.md
+      - Transport: aip/transport.md
+      - Resilience: aip/resilience.md
+      - Versioning: aip/versioning.md
+      - Examples: aip/examples.md
+  - Galaxy Framework:
+      - Overview: galaxy/overview.md
+      - Planning: galaxy/planning.md
+      - Task Constellation API: galaxy/task_constellation_api.md
+      - Device Pool: galaxy/device_pool.md
+      - Task Assignment: galaxy/task_assignment.md
+      - Dynamic Editing: galaxy/dynamic_editing.md
+      - Parallel Execution: galaxy/parallel_execution.md
+      - Data Transfer: galaxy/data_transfer.md
+      - Monitoring & Visualization: galaxy/monitoring_visualization.md
+      - Fault Tolerance: galaxy/fault_tolerance.md
+  - UFO² (Windows AgentOS LTS):
+      - Overview: ufo2/overview.md
+      - HostAgent: ufo2/host_agent.md
+      - AppAgent: ufo2/app_agent.md
+      - FSM Architecture: ufo2/architecture_fsm.md
+      - Hybrid Actions: ufo2/hybrid_actions.md
+      - Control Detection:
+          - UIA: ufo2/control_detection/uia.md
+          - Visual: ufo2/control_detection/visual.md
+          - Hybrid: ufo2/control_detection/hybrid.md
+      - Knowledge Substrate:
+          - Overview: ufo2/knowledge_substrate/overview.md
+          - Demos: ufo2/knowledge_substrate/demos.md
+          - Bing Search: ufo2/knowledge_substrate/bing_search.md
+          - Experience Learning: ufo2/knowledge_substrate/experience_learning.md
+      - Prompts: ufo2/prompts/overview.md
+      - Customization: ufo2/customization.md
+      - Performance & Benchmarks: ufo2/performance_evaluation.md
+      - LTS Support Policy: ufo2/lts_support_policy.md
+  - Device Agents:
+      - (Alias) Overview: concepts/device_agents/overview.md
+      - (Alias) Layers: concepts/device_agents/architecture_layers.md
+  - Runtime:
+      - Server: ...
+      - Client: ...
+      - Protocol Internals: ...
+  - Extensions & MCP:
+      - MCP Overview: extensions/mcp/overview.md
+      - Positioning: extensions/mcp/positioning.md
+      - Architecture: extensions/mcp/architecture.md
+      - Quick Start: extensions/mcp/quick_start.md
+      - Configuration: extensions/mcp/configuration.md
+      - AIP Bridge: extensions/mcp/aip_bridge.md
+      - Data Collection: extensions/mcp/data_collection.md
+      - Action Execution: extensions/mcp/action.md
+      - Local Deployment: extensions/mcp/local_servers.md
+      - Remote Deployment: extensions/mcp/remote_servers.md
+      - Custom Server: extensions/mcp/custom_servers.md
+      - Security & Permissions: extensions/mcp/security.md
+      - Versioning: extensions/mcp/versioning.md
+      - FAQ: extensions/mcp/faq.md
+      - Servers:
+          - UICollector: extensions/mcp/servers/ui_collector.md
+          # ... 其余服务器
+  - Tutorials: ...
+  - Reference: ...
+  - Versioning: ...
+  - Legacy: ...
+  - About: ...
+  - FAQ: faq.md

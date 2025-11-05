@@ -1,4 +1,4 @@
-# AppAgent: Application Automation Agent
+﻿# AppAgent: Application Automation Agent
 
 !!!quote "The UI Automation and Control Interaction Agent"
     **AppAgent** is the application-level automation agent in the Windows Agent Module. It executes subtasks within specific applications through UI automation, interacts with application controls, and returns results to HostAgent via the Blackboard. AppAgent operates with a 6-state finite state machine and 4-phase processing pipeline optimized for UI interaction.
@@ -60,7 +60,7 @@ graph TB
     - Returns control to HostAgent when done
 
 !!! tip
-    You can find how to enhance the `AppAgent` with external knowledge bases and demonstration libraries in the [Reinforcing AppAgent](../../advanced_usage/reinforce_appagent/overview.md) documentation.
+    You can enhance the `AppAgent` with external knowledge bases and demonstration libraries through the RAG system.
 
 We show the framework of the `AppAgent` in the following diagram:
 
@@ -430,7 +430,7 @@ offline_docs_prompt = self.prompter.retrieved_documents_prompt_helper(
 ```
 
 !!! tip
-    Please find details configuration in the [documentation](../../configurations/field_reference.md). 
+    Please find details configuration in the [documentation](../configurations/field_reference.md). 
 
 ### Learning from Bing Search
 
@@ -460,7 +460,7 @@ online_docs_prompt = self.prompter.retrieved_documents_prompt_helper(
 ```
 
 !!! tip
-    Please find details configuration in the [documentation](../../configurations/field_reference.md).
+    Please find details configuration in the [documentation](../configurations/field_reference.md).
 
 ### Learning from Self-Demonstrations
 
@@ -498,7 +498,7 @@ def rag_experience_retrieve(self, request: str, experience_top_k: int) -> List[D
 ```
 
 !!! tip
-     You can find details of the configuration in the [documentation](../../configurations/field_reference.md).
+     You can find details of the configuration in the [documentation](../configurations/field_reference.md).
 
 ### Learning from Human Demonstrations
 
@@ -532,7 +532,7 @@ def rag_demonstration_retrieve(self, request: str, demonstration_top_k: int) -> 
 ```
 
 !!! tip
-    You can find details of the configuration in the [documentation](../../configurations/field_reference.md).
+    You can find details of the configuration in the [documentation](../configurations/field_reference.md).
 
 ---
 
@@ -546,7 +546,7 @@ The `AppAgent` is equipped with a versatile skill set to support comprehensive a
 | **Native API** | Accessing the application's native API to execute specific functions | COM Automation, Application APIs |
 | **In-App Agent** | Leveraging the in-app agent (e.g., Copilot) to interact with internal features | Microsoft Copilot integration |
 
-By utilizing these skills, the `AppAgent` can efficiently interact with the application and fulfill the user's request. You can find more details in the [Automator](../../automator/overview.md) documentation and the code in the `ufo/automator` module.
+By utilizing these skills, the `AppAgent` can efficiently interact with the application and fulfill the user's request. The implementation can be found in the `ufo/automator` module.
 
 ---
 
@@ -668,22 +668,16 @@ class ConfirmAppAgentState(AppAgentState):
 
 ## Related Documentation
 
-!!!info "Deep Dive"
-    - **[AppAgent States](states/app_agent_states.md)**: Detailed state machine documentation
-    - **[AppAgent Strategies](strategies/app_agent_strategies.md)**: Processing strategy implementations
-    - **[UI Commands](commands/ui_commands.md)**: MCP command reference for UI automation
-
 !!!info "Architecture"
     - **[Windows Agent Overview](overview.md)**: Module architecture and hierarchy
     - **[HostAgent](host_agent.md)**: Task orchestration agent
-    - **[State Layer](../design/state.md)**: FSM design principles
-    - **[Strategy Layer](../design/processor.md)**: Processor framework
+    - **[State Layer](../agents/design/state.md)**: FSM design principles
+    - **[Strategy Layer](../agents/design/processor.md)**: Processor framework
 
 !!!info "System Integration"
-    - **[Automator Module](../../automator/overview.md)**: UI automation implementation
-    - **[RAG System](../../advanced_usage/reinforce_appagent/overview.md)**: Knowledge enhancement
-    - **[Blackboard](../design/blackboard.md)**: Inter-agent communication
-    - **[Memory System](../design/memory.md)**: Execution history
+    - **[Configuration Guide](../configurations/overview.md)**: System configuration
+    - **[Blackboard](../agents/design/blackboard.md)**: Inter-agent communication
+    - **[Memory System](../agents/design/memory.md)**: Execution history
 
 ---
 
@@ -712,7 +706,7 @@ class ConfirmAppAgentState(AppAgentState):
 
 **Next Steps:**
 
-1. **Study Strategies**: Read [AppAgent Strategies](strategies/app_agent_strategies.md) for processing details
-2. **Explore States**: Review [AppAgent States](states/app_agent_states.md) for state machine details
-3. **Learn Commands**: Check [UI Commands](commands/ui_commands.md) for available operations
-4. **RAG Enhancement**: See [Reinforcing AppAgent](../../advanced_usage/reinforce_appagent/overview.md) for knowledge integration
+1. **Study Processing**: Read [Strategy Layer](../agents/design/processor.md) for processing details
+2. **Explore Architecture**: Review [Device Agent Overview](../agents/overview.md) for system design
+3. **Learn Commands**: Check [Command Layer](../agents/design/command.md) for available operations
+4. **Configuration**: See [Field Reference](../configurations/field_reference.md) for settings

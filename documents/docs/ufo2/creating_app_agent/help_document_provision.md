@@ -54,4 +54,4 @@ This command will create an offline indexer for all documents in the `path_of_th
 
 ### How to Use Help Documents to Enhance the AppAgent?
 
-After creating the offline indexer, you can find the guidance on how to use the help documents to enhance the `AppAgent` in the [Learning from Help Documents](../advanced_usage/reinforce_appagent/learning_from_help_document.md) section.
+After creating the offline indexer, you can find the guidance on how to use the help documents to enhance the `AppAgent` in the [Learning from Help Documents](../advanced_usage/knowledge_substrate/learning_from_help_document.md) section.

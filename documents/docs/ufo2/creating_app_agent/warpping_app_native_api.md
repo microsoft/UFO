@@ -4,7 +4,7 @@ UFO takes actions on applications based on UI controls, but providing native API
 
 ## How to Wrap Your App's Native API?
 
-Before developing the native API wrappers, we strongly recommend that you read the design of the [Automator](../automator/overview.md).
+Before developing the native API wrappers, we strongly recommend that you read the design of the Automator Module (located in `ufo/automator`).
 
 ### Step 1: Create a Receiver for the Native API
 

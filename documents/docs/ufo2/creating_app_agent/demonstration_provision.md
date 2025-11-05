@@ -65,6 +65,6 @@ You can view a demonstration video below:
 
 ### How to Use Human Demonstrations to Enhance the AppAgent?
 
-After creating the offline indexer, refer to the [Learning from User Demonstrations](../advanced_usage/reinforce_appagent/learning_from_demonstration.md) section for guidance on how to use human demonstrations to enhance the AppAgent.
+After creating the offline indexer, refer to the [Learning from User Demonstrations](../advanced_usage/knowledge_substrate/learning_from_demonstration.md) section for guidance on how to use human demonstrations to enhance the AppAgent.
 
 ---

@@ -442,7 +442,7 @@ graph TB
     
     No changes to core State layer, Processor framework, or AIP protocol required.
 
-**See [Agent Types Documentation](WindowsAgent/agent_types.md) for complete implementation details.**
+**See [Agent Types Documentation](../ufo2/agent_types.md) for complete implementation details.**
 
 ---
 
@@ -756,7 +756,7 @@ class Blackboard:
 
 !!! info "Supporting Systems"
     - **[Memory System Documentation](design/memory.md)**: Memory, MemoryItem, Blackboard patterns
-    - **[Agent Types Documentation](WindowsAgent/agent_types.md)**: Windows agents, Linux agent, platform-specific implementations
+    - **[Agent Types Documentation](../ufo2/agent_types.md)**: Windows agents, Linux agent, platform-specific implementations
 
 !!! info "Integration Points"
     - **[Module System Overview](../modules/overview.md)**: Session, Round, Context, Dispatcher integration

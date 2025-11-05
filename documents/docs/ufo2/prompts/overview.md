@@ -43,6 +43,6 @@ You can find these prompts `share` directory. The prompts for specific applicati
 
 
 !!! tip
-    All information is constructed using the agent's `Prompter` class. You can find more details about the `Prompter` class in the documentation [here](../agents/design/prompter.md).
+    All information is constructed using the agent's `Prompter` class. You can find more details about the `Prompter` class in the documentation [here](../../agents/design/prompter.md).
 
 

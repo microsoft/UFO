@@ -9,7 +9,7 @@ The example prompts are used to generate textual demonstration examples for in-c
 | `visual` | Examples for visual LLMs |
 
 !!!info
-  You can configure the example prompt used in the configuration files. You can find more information about the configuration file [here](../configurations/field_reference.md).
+  You can configure the example prompt used in the configuration files. You can find more information about the configuration file [here](../../configurations/field_reference.md).
 
 
 ## Example Prompts

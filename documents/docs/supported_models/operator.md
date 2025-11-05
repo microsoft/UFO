@@ -30,7 +30,7 @@ If you want to use AAD for authentication, you should additionally set the follo
 
 ## Step 3
 
-Now UFO only support to run Operator as a single agent, or as a separate `AppAgent` that can be called by the `HostAgent`. Please refer to the [documents](../advanced_usage/operator_as_app_agent.md) for how to run Operator within UFO. 
+Now UFO only support to run Operator as a single agent, or as a separate `AppAgent` that can be called by the `HostAgent`. Please refer to the [documents](../ufo2/advanced_usage/operator_as_app_agent.md) for how to run Operator within UFO. 
 
 !!!note
     The Opeartor is a visual-only model and use different workflow from the other models. Currently, it does not support reuse the `AppAgent` workflow. Please refer to the documents for how to run Operator within UFO.

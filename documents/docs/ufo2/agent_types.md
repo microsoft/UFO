@@ -58,12 +58,12 @@ graph TB
 
 | Feature | Windows (Two-Tier) | Linux (Single-Tier) | Future (macOS, Mobile) |
 |---------|-------------------|---------------------|------------------------|
-| **Agent Hierarchy** | HostAgent → AppAgent delegation | LinuxAgent (flat) | Platform-specific (TBD) |
+| **Agent Hierarchy** | HostAgent ?AppAgent delegation | LinuxAgent (flat) | Platform-specific (TBD) |
 | **Observation Method** | UI Automation API (COM) | Shell output, accessibility tree | Platform APIs (Accessibility, Screen) |
 | **Action Mechanism** | UI element manipulation (click, type) | Shell command execution | Platform-specific controls |
 | **Application Model** | Windowed applications | Command-line tools, X11 apps | Application frameworks |
 | **State Complexity** | 7 states (CONTINUE, FINISH, CONFIRM, etc.) | Simplified state set | Platform-dependent |
-| **Multi-Agent Coordination** | HostAgent ↔ AppAgent via Blackboard | N/A (single agent per device) | Cross-device via Blackboard |
+| **Multi-Agent Coordination** | HostAgent ?AppAgent via Blackboard | N/A (single agent per device) | Cross-device via Blackboard |
 | **Primary Use Cases** | Office automation, GUI apps | Server management, DevOps | Mobile apps, embedded systems |
 
 !!! info "Platform Selection Strategy"
@@ -128,7 +128,7 @@ graph TB
     **User Request**: "Extract data from sales.docx and create a bar chart in Excel"
     
     **HostAgent**:
-    1. Analyzes request → Identifies need for Word + Excel
+    1. Analyzes request ?Identifies need for Word + Excel
     2. Creates subtask 1: "Extract sales data from Word document"
     3. Delegates to AppAgent (Word) via `next_agent()`
     
@@ -145,7 +145,7 @@ graph TB
     
     **AppAgent (Excel)**:
     1. Reads data from Blackboard: `data = blackboard.get_value("extracted_data")`
-    2. Executes actions: `paste_data` → `select_data_range` → `insert_chart`
+    2. Executes actions: `paste_data` ?`select_data_range` ?`insert_chart`
     3. Returns to HostAgent with `AgentStatus.FINISH`
 
 ---
@@ -185,12 +185,12 @@ class HostAgent(BasicAgent):
 
 | Responsibility | Implementation | Example |
 |----------------|----------------|---------|
-| **Task Decomposition** | LLM analyzes user request, breaks into subtasks | "Create report" → ["Extract data", "Generate chart", "Format document"] |
-| **Application Selection** | Identifies required applications for each subtask | Subtask "Extract data" → Microsoft Word |
+| **Task Decomposition** | LLM analyzes user request, breaks into subtasks | "Create report" ?["Extract data", "Generate chart", "Format document"] |
+| **Application Selection** | Identifies required applications for each subtask | Subtask "Extract data" ?Microsoft Word |
 | **AppAgent Creation** | Factory pattern creates AppAgent instances on-demand | `agent_factory.create_agent("app", process="WINWORD.EXE")` |
-| **Subtask Delegation** | Routes subtasks to appropriate AppAgent | `next_agent() → AppAgent(Word)` |
+| **Subtask Delegation** | Routes subtasks to appropriate AppAgent | `next_agent() ?AppAgent(Word)` |
 | **Result Aggregation** | Collects results from AppAgents via Blackboard | `blackboard.get_value("appagent/word/result")` |
-| **Multi-App Coordination** | Sequences actions across multiple applications | Word → Excel → PowerPoint workflow |
+| **Multi-App Coordination** | Sequences actions across multiple applications | Word ?Excel ?PowerPoint workflow |
 
 ### HostAgent Processor
 
@@ -555,7 +555,7 @@ class LinuxAgent(CustomizedAgent):
 | **Observation** | Screenshot + UI Automation tree | Shell command output (stdout/stderr) |
 | **Action Mechanism** | UI element manipulation | Shell command execution |
 | **Context Tracking** | Application windows, UI state | Command history, working directory |
-| **Error Detection** | UI element not found, timeout | Exit code ≠ 0, stderr output |
+| **Error Detection** | UI element not found, timeout | Exit code ?0, stderr output |
 | **Coordination** | Via Blackboard between HostAgent and AppAgent | Via Blackboard with other devices (cross-device) |
 
 ### LinuxAgent Processor
@@ -1031,14 +1031,14 @@ sequenceDiagram
 
 ## Related Documentation
 
-- **[Device Agent Overview](../overview.md)**: Three-layer architecture and design principles
-- **[State Layer](../design/state.md)**: AgentState interface and state machine
-- **[Strategy Layer](../design/processor.md)**: ProcessorTemplate and strategy implementations
-- **[Command Layer](../design/command.md)**: CommandDispatcher and MCP integration
-- **[Memory System](../design/memory.md)**: Memory and Blackboard for agent coordination
-- **[Server Architecture](../../server/overview.md)**: Server-side orchestration
-- **[Client Architecture](../../client/overview.md)**: Device client MCP execution
-- **[AIP Protocol](../../aip/overview.md)**: Agent Interaction Protocol for communication
+- **[Device Agent Overview](../agents/overview.md)**: Three-layer architecture and design principles
+- **[State Layer](../agents/design/state.md)**: AgentState interface and state machine
+- **[Strategy Layer](../agents/design/processor.md)**: ProcessorTemplate and strategy implementations
+- **[Command Layer](../agents/design/command.md)**: CommandDispatcher and MCP integration
+- **[Memory System](../agents/design/memory.md)**: Memory and Blackboard for agent coordination
+- **[Server Architecture](../server/overview.md)**: Server-side orchestration
+- **[Client Architecture](../client/overview.md)**: Device client MCP execution
+- **[AIP Protocol](../aip/overview.md)**: Agent Interaction Protocol for communication
 
 ---
 
@@ -1058,7 +1058,7 @@ For complete API documentation, see:
     - **Windows Two-Tier Hierarchy**: HostAgent (orchestration) + AppAgent (application control) for GUI workflows
     - **Linux Single-Tier System**: LinuxAgent executes shell commands directly for command-line tasks
     - **Unified Framework**: Both platforms leverage same three-layer architecture (State, Processor, Command)
-    - **Multi-Agent Coordination**: Blackboard enables seamless coordination across HostAgent ↔ AppAgent and cross-device communication
+    - **Multi-Agent Coordination**: Blackboard enables seamless coordination across HostAgent ?AppAgent and cross-device communication
     - **Platform Extensibility**: Clear extension path for macOS, Android, iOS, embedded systems
     - **HostAgent Responsibilities**: Task decomposition, application selection, AppAgent creation, subtask delegation
     - **AppAgent Capabilities**: UI observation (screenshot + UI Automation), element identification, UI action execution

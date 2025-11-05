@@ -10,7 +10,7 @@ UFO² supports **wrapping any third-party agent as an AppAgent**, allowing it to
 
 ## 📦 Prerequisites
 
-Before proceeding, please ensure that the Operator has been properly configured. You can follow the setup instructions in the [OpenAI CUA (Operator) guide](../supported_models/operator.md).
+Before proceeding, please ensure that the Operator has been properly configured. You can follow the setup instructions in the [OpenAI CUA (Operator) guide](../../supported_models/operator.md).
 
 ## 🚀 Running the Operator
 
