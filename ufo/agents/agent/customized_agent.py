@@ -52,11 +52,10 @@ class LinuxAgent(CustomizedAgent):
         example_prompt: str,
     ) -> None:
         """
-        Initialize the AppAgent.
-        :name: The name of the agent.
+        Initialize the LinuxAgent.
+        :param name: The name of the agent.
         :param main_prompt: The main prompt file path.
         :param example_prompt: The example prompt file path.
-        :param mode: The mode of the agent.
         """
         super().__init__(
             name=name,

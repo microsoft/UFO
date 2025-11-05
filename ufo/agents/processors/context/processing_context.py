@@ -451,7 +451,7 @@ class ProcessingContext:
         :param key: Key to retrieve
         :param expected_type: Expected type for validation
         :return: Value from local context
-        :raises: ProcessingException if field not found or wrong type
+        :raises ProcessingException: If field not found or wrong type
         """
         value = self.get_local(key)
         if value is None:

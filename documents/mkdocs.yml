@@ -32,17 +32,23 @@ nav:
       - DeepSeek: supported_models/deepseek.md
       - Ollama: supported_models/ollama.md
       - Custom Model: supported_models/custom_model.md
-  - Agents:
+  - Device Agents:
       - Overview: agents/overview.md
-      - Agent Design:
-          - Memory: agents/design/memory.md
+      - Architecture Layers:
+          - State Layer (Level-1): agents/design/state.md
+          - Strategy Layer (Level-2): agents/design/processor.md
+          - Strategy Components: agents/design/strategy.md
+          - Command Layer (Level-3): agents/design/command.md
+      - Supporting Systems:
+          - Memory System: agents/design/memory.md
           - Blackboard: agents/design/blackboard.md
-          - State: agents/design/state.md
           - Prompter: agents/design/prompter.md
-          - Processor: agents/design/processor.md
-      - HostAgent: agents/host_agent.md
-      - AppAgent: agents/app_agent.md
-      - EvaluationAgent: agents/evaluation_agent.md
+      - WindowsAgent (UFO²):
+          - Agent Types Overview: agents/WindowsAgent/agent_types.md
+          - HostAgent: agents/WindowsAgent/host_agent.md
+          - AppAgent: agents/WindowsAgent/app_agent.md
+      - Platform Implementations:
+          - EvaluationAgent: agents/evaluation_agent.md
   - Prompts:
       - Overview: prompts/overview.md
       - Basic Prompts: prompts/basic_template.md
@@ -199,7 +205,7 @@ plugins:
     - mkdocstrings:
         handlers:
             python:
-                paths: ["../ufo", "../record_processor", "../dataflow", "../config", "../aip"]
+                paths: ["../ufo", "../record_processor", "../dataflow", "../config", "../aip", ".."]
                 options:
                     docstring_style: sphinx
                     docstring_section_style: list

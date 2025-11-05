@@ -242,4 +242,4 @@ class LinuxLoggingMiddleware(AppAgentLoggingMiddleware):
 
         request = context.get_local("request")
 
-        return f"Completing the user request \[{request}] on Linux."
+        return f"Completing the user request [{request}] on Linux."

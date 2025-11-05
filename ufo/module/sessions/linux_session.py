@@ -46,7 +46,6 @@ class LinuxSession(LinuxBaseSession):
         :param id: The id of the session.
         :param request: The user request of the session.
         :param mode: The mode of the task.
-        :param application_name: The target application name for Linux.
         """
         self._mode = mode
         self._init_request = request

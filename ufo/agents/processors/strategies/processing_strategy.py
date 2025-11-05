@@ -89,7 +89,7 @@ class BaseProcessingStrategy(ABC):
         :param field_name: Name of the field to retrieve
         :param expected_type: Expected type for validation
         :return: The required value
-        :raises: ProcessingException if dependency not found or wrong type
+        :raises ProcessingException: If dependency not found or wrong type
         """
         return context.require_local(field_name, expected_type)
 
