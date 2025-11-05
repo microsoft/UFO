@@ -1074,9 +1074,11 @@ Ensure correct dispatcher initialization in session `_init_context()`.
 
 ---
 
+
 ## See Also
 
 - [Context](./context.md) - State management and dispatcher attachment
 - [Session](./session.md) - Session lifecycle and dispatcher initialization
-- [AIP Protocol](../aip/overview.md) - WebSocket message protocol
-- [MCP Integration](../mcp/overview.md) - Local tool execution
+- [AIP Protocol](../../aip/overview.md) - WebSocket message protocol
+- [MCP Integration](../../mcp/overview.md) - Local tool execution
+

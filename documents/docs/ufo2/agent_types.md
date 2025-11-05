@@ -1031,11 +1031,11 @@ sequenceDiagram
 
 ## Related Documentation
 
-- **[Device Agent Overview](../agents/overview.md)**: Three-layer architecture and design principles
-- **[State Layer](../agents/design/state.md)**: AgentState interface and state machine
-- **[Strategy Layer](../agents/design/processor.md)**: ProcessorTemplate and strategy implementations
-- **[Command Layer](../agents/design/command.md)**: CommandDispatcher and MCP integration
-- **[Memory System](../agents/design/memory.md)**: Memory and Blackboard for agent coordination
+- **[Device Agent Overview](../infrastructure/agents/overview.md)**: Three-layer architecture and design principles
+- **[State Layer](../infrastructure/agents/design/state.md)**: AgentState interface and state machine
+- **[Strategy Layer](../infrastructure/agents/design/processor.md)**: ProcessorTemplate and strategy implementations
+- **[Command Layer](../infrastructure/agents/design/command.md)**: CommandDispatcher and MCP integration
+- **[Memory System](../infrastructure/agents/design/memory.md)**: Memory and Blackboard for agent coordination
 - **[Server Architecture](../server/overview.md)**: Server-side orchestration
 - **[Client Architecture](../client/overview.md)**: Device client MCP execution
 - **[AIP Protocol](../aip/overview.md)**: Agent Interaction Protocol for communication

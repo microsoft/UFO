@@ -671,13 +671,13 @@ class ConfirmAppAgentState(AppAgentState):
 !!!info "Architecture"
     - **[Windows Agent Overview](overview.md)**: Module architecture and hierarchy
     - **[HostAgent](host_agent.md)**: Task orchestration agent
-    - **[State Layer](../agents/design/state.md)**: FSM design principles
-    - **[Strategy Layer](../agents/design/processor.md)**: Processor framework
+    - **[State Layer](../infrastructure/agents/design/state.md)**: FSM design principles
+    - **[Strategy Layer](../infrastructure/agents/design/processor.md)**: Processor framework
 
 !!!info "System Integration"
     - **[Configuration Guide](../configuration/system/overview.md)**: System configuration
-    - **[Blackboard](../agents/design/blackboard.md)**: Inter-agent communication
-    - **[Memory System](../agents/design/memory.md)**: Execution history
+    - **[Blackboard](../infrastructure/agents/design/blackboard.md)**: Inter-agent communication
+    - **[Memory System](../infrastructure/agents/design/memory.md)**: Execution history
 
 ---
 
@@ -706,7 +706,7 @@ class ConfirmAppAgentState(AppAgentState):
 
 **Next Steps:**
 
-1. **Study Processing**: Read [Strategy Layer](../agents/design/processor.md) for processing details
-2. **Explore Architecture**: Review [Device Agent Overview](../agents/overview.md) for system design
-3. **Learn Commands**: Check [Command Layer](../agents/design/command.md) for available operations
+1. **Study Processing**: Read [Strategy Layer](../infrastructure/agents/design/processor.md) for processing details
+2. **Explore Architecture**: Review [Device Agent Overview](../infrastructure/agents/overview.md) for system design
+3. **Learn Commands**: Check [Command Layer](../infrastructure/agents/design/command.md) for available operations
 4. **Configuration**: See [Field Reference](../configuration/system/field_reference.md) for settings

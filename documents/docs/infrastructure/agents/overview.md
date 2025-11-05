@@ -338,7 +338,7 @@ graph TB
     
     **Flexibility**: Device clients can run on resource-constrained devices (embedded systems, mobile) while heavy reasoning occurs on server.
 
-**See [Server Architecture](../server/overview.md), [Client Architecture](../client/overview.md), [AIP Protocol](../aip/overview.md) for complete details.**
+**See [Server Architecture](../../server/overview.md), [Client Architecture](../../client/overview.md), [AIP Protocol](../../aip/overview.md) for complete details.**
 
 ---
 
@@ -442,7 +442,7 @@ graph TB
     
     No changes to core State layer, Processor framework, or AIP protocol required.
 
-**See [Agent Types Documentation](../ufo2/agent_types.md) for complete implementation details.**
+**See [Agent Types Documentation](../../ufo2/agent_types.md) for complete implementation details.**
 
 ---
 
@@ -756,14 +756,14 @@ class Blackboard:
 
 !!! info "Supporting Systems"
     - **[Memory System Documentation](design/memory.md)**: Memory, MemoryItem, Blackboard patterns
-    - **[Agent Types Documentation](../ufo2/agent_types.md)**: Windows agents, Linux agent, platform-specific implementations
+    - **[Agent Types Documentation](../../ufo2/agent_types.md)**: Windows agents, Linux agent, platform-specific implementations
 
 !!! info "Integration Points"
     - **[Module System Overview](../modules/overview.md)**: Session, Round, Context, Dispatcher integration
-    - **[Server Architecture](../server/overview.md)**: Agent server, WebSocket manager, orchestration
-    - **[Client Architecture](../client/overview.md)**: Device client, MCP servers, command execution
-    - **[AIP Protocol](../aip/overview.md)**: Agent Interaction Protocol for server-client communication
-    - **[MCP Integration](../mcp/overview.md)**: Model Context Protocol for tool execution
+    - **[Server Architecture](../../server/overview.md)**: Agent server, WebSocket manager, orchestration
+    - **[Client Architecture](../../client/overview.md)**: Device client, MCP servers, command execution
+    - **[AIP Protocol](../../aip/overview.md)**: Agent Interaction Protocol for server-client communication
+    - **[MCP Integration](../../mcp/overview.md)**: Model Context Protocol for tool execution
 
 ---
 

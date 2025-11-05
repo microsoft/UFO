@@ -518,7 +518,7 @@ available_tools = results[0].result  # List[MCPToolInfo]
     
     This enables **adaptive behavior** without hardcoded command sequences.
 
-**See [MCP Documentation](../../mcp/overview.md) for complete MCP integration details.**
+**See [MCP Documentation](../../../mcp/overview.md) for complete MCP integration details.**
 
 ---
 
@@ -886,7 +886,7 @@ graph TB
 | **MCP Servers** | Tool Registry | MCP servers execute tool functions, return results |
 | **Global Context** | Module System | Command dispatcher accessed via processing context |
 
-**See [Strategy Layer](processor.md), [AIP Protocol](../../aip/overview.md), [MCP Integration](../../mcp/overview.md) for integration details.**
+**See [Strategy Layer](processor.md), [AIP Protocol](../../../aip/overview.md), [MCP Integration](../../../mcp/overview.md) for integration details.**
 
 ---
 

@@ -59,7 +59,7 @@ UFO² implements a **hierarchical multi-agent system** optimized for Windows des
 !!!info "Learn More"
     - [**HostAgent Documentation**](host_agent.md) — 7-state FSM, desktop orchestration, AppAgent lifecycle  
     - [**AppAgent Documentation**](app_agent.md) — 6-state FSM, UI automation, hybrid action execution  
-    - [**Agent Architecture**](../agents/overview.md) — Three-layer design principles
+    - [**Agent Architecture**](../infrastructure/agents/overview.md) — Three-layer design principles
 
 ---
 
@@ -179,8 +179,8 @@ Both HostAgent and AppAgent execute a **4-phase processing cycle**:
 | **4. Memory Update** | Record execution | Save orchestration step | Save interaction step, update blackboard |
 
 !!!info "Processing Details"
-    📖 [Strategy Layer](../agents/design/processor.md) — Processing framework and dependency chain  
-    📖 [State Layer](../agents/design/state.md) — FSM design principles
+    📖 [Strategy Layer](../infrastructure/agents/design/processor.md) — Processing framework and dependency chain  
+    📖 [State Layer](../infrastructure/agents/design/state.md) — FSM design principles
 
 ### Command System
 
@@ -198,7 +198,7 @@ Commands are dispatched through **MCP (Model Context Protocol)** servers:
     - **Control Selection:** `select_control_by_index`, `select_control_by_name`
 
 !!!info "Command Architecture"
-    📖 [Command Layer](../agents/design/command.md) — MCP integration and command dispatch  
+    📖 [Command Layer](../infrastructure/agents/design/command.md) — MCP integration and command dispatch  
     📖 [MCP Servers](../mcp/overview.md) — Server architecture and custom server creation
 
 ---
@@ -317,10 +317,10 @@ else:
 
 ### System Architecture
 
-- [**Device Agent Overview**](../agents/overview.md) — Three-layer architecture  
-- [**State Layer**](../agents/design/state.md) — FSM design principles  
-- [**Strategy Layer**](../agents/design/processor.md) — Processing framework  
-- [**Command Layer**](../agents/design/command.md) — MCP integration  
+- [**Device Agent Overview**](../infrastructure/agents/overview.md) — Three-layer architecture  
+- [**State Layer**](../infrastructure/agents/design/state.md) — FSM design principles  
+- [**Strategy Layer**](../infrastructure/agents/design/processor.md) — Processing framework  
+- [**Command Layer**](../infrastructure/agents/design/command.md) — MCP integration  
 
 ### Development
 
@@ -359,7 +359,7 @@ Ready to explore UFO²? Choose your path:
 !!!info "Learning Paths"
     **🚀 New Users:** Start with [Quick Start Guide](../getting_started/quick_start_ufo2.md)  
     **🔧 Developers:** Read [Creating AppAgent](creating_app_agent/overview.md)  
-    **🏗️ System Architects:** Study [Device Agent Architecture](../agents/overview.md)  
+    **🏗️ System Architects:** Study [Device Agent Architecture](../infrastructure/agents/overview.md)  
     **📊 Researchers:** Check [Benchmark Results](benchmark/overview.md)
 
 **Next:** [HostAgent Deep Dive](host_agent.md) → Understand desktop orchestration

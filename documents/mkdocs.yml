@@ -114,24 +114,24 @@ nav:
       - Examples: linux/examples.md
   - Infrastructure:
       - Basic Modules:
-          - Overview: modules/overview.md
-          - Session: modules/session.md
-          - Round: modules/round.md
-          - Context: modules/context.md
-          - Dispatcher: modules/dispatcher.md
-          - Session Factory & Pool: modules/session_pool.md
-          - Platform Sessions: modules/platform_sessions.md
+          - Overview: infrastructure/modules/overview.md
+          - Session: infrastructure/modules/session.md
+          - Round: infrastructure/modules/round.md
+          - Context: infrastructure/modules/context.md
+          - Dispatcher: infrastructure/modules/dispatcher.md
+          - Session Factory & Pool: infrastructure/modules/session_pool.md
+          - Platform Sessions: infrastructure/modules/platform_sessions.md
       - Device Agent Architecture:
-          - Overview: agents/overview.md
+          - Overview: infrastructure/agents/overview.md
           - Architecture Layers:
-              - State Layer (Level-1): agents/design/state.md
-              - Strategy Layer (Level-2): agents/design/processor.md
-              - Strategy Components: agents/design/strategy.md
-              - Command Layer (Level-3): agents/design/command.md
+              - State Layer (Level-1): infrastructure/agents/design/state.md
+              - Strategy Layer (Level-2): infrastructure/agents/design/processor.md
+              - Strategy Components: infrastructure/agents/design/strategy.md
+              - Command Layer (Level-3): infrastructure/agents/design/command.md
           - Supporting Systems:
-              - Memory System: agents/design/memory.md
-              - Blackboard: agents/design/blackboard.md
-              - Prompter: agents/design/prompter.md
+              - Memory System: infrastructure/agents/design/memory.md
+              - Blackboard: infrastructure/agents/design/blackboard.md
+              - Prompter: infrastructure/agents/design/prompter.md
   - Agent Interaction Protocol (AIP):
       - Overview: aip/overview.md
       - Message Reference: aip/messages.md

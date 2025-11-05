@@ -1151,4 +1151,5 @@ session = factory.create_service_session(
 - [Session](./session.md) - Session lifecycle and execution
 - [Platform Sessions](./platform_sessions.md) - Windows vs Linux differences
 - [Overview](./overview.md) - Module system architecture
-- [AIP Protocol](../aip/overview.md) - Service session WebSocket protocol
+- [AIP Protocol](../../aip/overview.md) - Service session WebSocket protocol
+

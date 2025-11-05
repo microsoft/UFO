@@ -500,14 +500,14 @@ sequenceDiagram
 !!!info "Architecture"
     - **[Windows Agent Overview](overview.md)**: Module architecture and hierarchy
     - **[AppAgent](app_agent.md)**: Application automation agent
-    - **[State Layer](../agents/design/state.md)**: FSM design principles
-    - **[Strategy Layer](../agents/design/processor.md)**: Processor framework
+    - **[State Layer](../infrastructure/agents/design/state.md)**: FSM design principles
+    - **[Strategy Layer](../infrastructure/agents/design/processor.md)**: Processor framework
 
 !!!info "System Integration"
-    - **[Session Management](../modules/session.md)**: Session lifecycle
-    - **[Round Management](../modules/round.md)**: Execution rounds
-    - **[Blackboard](../agents/design/blackboard.md)**: Inter-agent communication
-    - **[Memory System](../agents/design/memory.md)**: Execution history
+    - **[Session Management](../infrastructure/modules/session.md)**: Session lifecycle
+    - **[Round Management](../infrastructure/modules/round.md)**: Execution rounds
+    - **[Blackboard](../infrastructure/agents/design/blackboard.md)**: Inter-agent communication
+    - **[Memory System](../infrastructure/agents/design/memory.md)**: Execution history
 
 ---
 
@@ -537,6 +537,6 @@ sequenceDiagram
 **Next Steps:**
 
 1. **Study AppAgent**: Read [AppAgent documentation](app_agent.md) to understand execution layer
-2. **Explore Architecture**: Review [Device Agent Overview](../agents/overview.md) for system design
-3. **Learn Processing**: Check [Strategy Layer](../agents/design/processor.md) for processing logic
-4. **Command System**: See [Command Layer](../agents/design/command.md) for available operations
+2. **Explore Architecture**: Review [Device Agent Overview](../infrastructure/agents/overview.md) for system design
+3. **Learn Processing**: Check [Strategy Layer](../infrastructure/agents/design/processor.md) for processing logic
+4. **Command System**: See [Command Layer](../infrastructure/agents/design/command.md) for available operations

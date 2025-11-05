@@ -977,7 +977,7 @@ Different platforms implement platform-specific strategies while following the s
 - **[Command Layer](command.md)**: How ACTION_EXECUTION strategies dispatch commands
 - **[Memory System](memory.md)**: How MEMORY_UPDATE strategies use Memory and Blackboard
 - **[State Layer](state.md)**: How AgentState delegates to Processor
-- **[Agent Types](../../ufo2/agent_types.md)**: Platform-specific strategy implementations
+- **[Agent Types](../../../ufo2/agent_types.md)**: Platform-specific strategy implementations
 
 ---
 

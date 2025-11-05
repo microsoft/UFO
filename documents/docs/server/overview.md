@@ -797,7 +797,7 @@ curl -X POST http://localhost:5000/api/dispatch \
 |----------|---------|
 | [AIP Protocol](../aip/overview.md) | Communication protocol specification |
 | [Configuration](../configuration/system/overview.md) | UFO configuration system |
-| [Agents](../agents/overview.md) | Agent architecture and design |
+| [Agents](../infrastructure/agents/overview.md) | Agent architecture and design |
 | [Client Overview](../client/overview.md) | Device client architecture |
 
 ---
