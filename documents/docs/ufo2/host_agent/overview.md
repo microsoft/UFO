@@ -1,200 +1,109 @@
-﻿# HostAgent: Desktop Orchestrator
+# HostAgent: Desktop Orchestrator
 
-!!!quote "The Task Decomposition and Orchestration Agent"
-    **HostAgent** is the top-level orchestrator agent in the Windows Agent Module. It decomposes user requests into subtasks, selects appropriate applications, manages AppAgent lifecycles, and coordinates multi-application workflows through the Blackboard pattern. HostAgent operates at the desktop level with a 7-state finite state machine and 4-phase processing pipeline.
+!!!quote "The Centralized Control Plane"
+    **HostAgent** serves as the centralized control plane of UFO². It interprets user-specified goals, decomposes them into structured subtasks, instantiates and dispatches AppAgent modules, and coordinates their progress across the system. HostAgent provides system-level services for introspection, planning, application lifecycle management, and multi-agent synchronization.
 
 ---
 
-## Overview
+## Architecture Overview
 
-### Role and Responsibilities
+Operating atop the native Windows substrate, HostAgent monitors active applications, issues shell commands to spawn new processes as needed, and manages the creation and teardown of application-specific AppAgent instances. All coordination occurs through a persistent state machine, which governs the transitions across execution phases.
+
+<figure markdown>
+  ![HostAgent Architecture](/img/hostagent2.png)
+  <figcaption><b>Figure:</b> HostAgent architecture showing the finite state machine, processing pipeline, and interactions with AppAgents through the Blackboard pattern.</figcaption>
+</figure>
+
+---
+
+## Core Responsibilities
+
+HostAgent exposes the following system services:
+
+### Task Decomposition
+
+Given a user's natural language input, HostAgent identifies the underlying task goal and decomposes it into a dependency-ordered subtask graph.
+
+**Example:** User request "Extract data from Word and create an Excel chart" becomes:
+
+1. Extract table from Word document
+2. Create chart in Excel with extracted data
+
+<figure markdown>
+  ![Task Decomposition](/img/decomposition.png)
+  <figcaption><b>Figure:</b> HostAgent decomposes user requests into sequential subtasks, assigns each to the appropriate application, and orchestrates AppAgents to complete them in dependency order.</figcaption>
+</figure>
+
+### Application Lifecycle Management
+
+For each subtask, HostAgent inspects system process metadata (via UIA APIs) to determine whether the target application is running. If not, it launches the program and registers it with the runtime.
+
+### AppAgent Instantiation
+
+HostAgent spawns the corresponding AppAgent for each active application, providing it with task context, memory references, and relevant toolchains (e.g., APIs, documentation).
+
+### Task Scheduling and Control
+
+The global execution plan is serialized into a finite state machine (FSM), allowing HostAgent to enforce execution order, detect failures, and resolve dependencies across agents.
+
+See **[State Machine Details](state.md)** for the 7-state FSM architecture.
+
+### Shared State Communication
+
+HostAgent reads from and writes to a global blackboard, enabling inter-agent communication and system-level observability for debugging and replay.
+
+---
+
+## Key Characteristics
+
+!!!info "HostAgent Properties"
+    - **Scope**: Desktop-level orchestrator (system-wide, not application-specific)
+    - **Lifecycle**: Single instance per session, persists throughout task execution
+    - **Hierarchy**: Parent agent that manages multiple child AppAgents
+    - **Communication**: Owns and coordinates the shared Blackboard
+    - **Control**: 7-state finite state machine with 4-phase processing pipeline
+
+---
+
+## Execution Workflow
 
 ```mermaid
-graph TB
-    subgraph "HostAgent Responsibilities"
-        TR[Task Reception<br/>Natural Language Request]
-        TD[Task Decomposition<br/>Break into Subtasks]
-        AS[Application Selection<br/>Choose Right App]
-        AL[AppAgent Lifecycle<br/>Create/Manage/Destroy]
-        CO[Cross-App Coordination<br/>Via Blackboard]
-        TC[Task Completion<br/>Verify Results]
-    end
+sequenceDiagram
+    participant User
+    participant HostAgent
+    participant Blackboard
+    participant AppAgent1
+    participant AppAgent2
     
-    TR --> TD
-    TD --> AS
-    AS --> AL
-    AL --> CO
-    CO --> TC
+    User->>HostAgent: "Extract Word table, create Excel chart"
+    HostAgent->>HostAgent: Decompose into subtasks
+    HostAgent->>Blackboard: Write subtask 1
+    HostAgent->>AppAgent1: Create/Get Word AppAgent
+    AppAgent1->>AppAgent1: Execute Word task
+    AppAgent1->>Blackboard: Write result 1
+    AppAgent1-->>HostAgent: Return FINISH
     
-    style TR fill:#e3f2fd
-    style TD fill:#fff3e0
-    style AS fill:#f1f8e9
-    style AL fill:#fce4ec
-    style CO fill:#f3e5f5
-    style TC fill:#e8f5e9
+    HostAgent->>Blackboard: Read result 1
+    HostAgent->>Blackboard: Write subtask 2
+    HostAgent->>AppAgent2: Create/Get Excel AppAgent
+    AppAgent2->>Blackboard: Read result 1
+    AppAgent2->>AppAgent2: Execute Excel task
+    AppAgent2->>Blackboard: Write result 2
+    AppAgent2-->>HostAgent: Return FINISH
+    
+    HostAgent->>HostAgent: Verify completion
+    HostAgent-->>User: Task completed
 ```
-
-| Responsibility | Description | Example |
-|---------------|-------------|---------|
-| **Task Reception** | Receive and understand user's natural language request | "Extract data from Word and create an Excel chart" |
-| **Task Decomposition** | Break complex request into sequential subtasks | 1. Extract table from Word<br/>2. Create chart in Excel |
-| **Application Selection** | Identify which application can fulfill each subtask | Subtask 1 鈫?Microsoft Word<br/>Subtask 2 鈫?Microsoft Excel |
-| **AppAgent Lifecycle** | Create, manage, and destroy AppAgent instances | Create AppAgent for Word, reuse or create for Excel |
-| **Cross-App Coordination** | Share data between AppAgents via Blackboard | Word result 鈫?Blackboard 鈫?Excel input |
-| **Task Completion** | Verify all subtasks completed successfully | Check Blackboard for all subtask results |
-
-!!!info "Hierarchical Position"
-    **HostAgent** is the **parent** agent that:
-    
-    - Lives for the entire session duration
-    - Maintains a single instance per session
-    - Delegates subtasks to **AppAgent** children
-    - Returns to control after each AppAgent completes
-    - Owns the shared Blackboard for all agents
-
-Below is a diagram illustrating the `HostAgent` architecture and its interactions with other components:
-
-<h1 align="center">
-    <img src="../../img/hostagent2.png" alt="HostAgent Architecture">
-</h1>
 
 ---
 
-## Architecture Components
+## Deep Dive Topics
 
-### 1. State Machine (7 States)
+For detailed technical information, see:
 
-HostAgent uses a finite state machine with 7 possible states:
-
-```mermaid
-stateDiagram-v2
-    [*] --> CONTINUE: Session Start
-    
-    CONTINUE --> CONTINUE: Process, More Subtasks
-    CONTINUE --> ASSIGN: Select Application
-    CONTINUE --> FINISH: All Subtasks Done
-    CONTINUE --> CONFIRM: Need User Input
-    CONTINUE --> ERROR: Critical Failure
-    
-    ASSIGN --> AppAgent_CONTINUE: Create/Get AppAgent
-    
-    CONFIRM --> CONTINUE: User Confirmed
-    CONFIRM --> FAIL: User Rejected
-    
-    PENDING --> CONTINUE: Event Received
-    PENDING --> FAIL: Timeout
-    
-    AppAgent_CONTINUE --> CONTINUE: AppAgent Returns
-    
-    FINISH --> [*]: Terminate
-    FAIL --> [*]: Terminate
-    ERROR --> [*]: Terminate
-    
-    note right of ASSIGN: Transition to AppAgent
-    note right of AppAgent_CONTINUE: AppAgent execution
-    note left of CONTINUE: Main processing state
-```
-
-#### State Details
-
-| State | Purpose | Processor Executed | Duration | Transitions |
-|-------|---------|-------------------|----------|-------------|
-| **CONTINUE** | Active processing state - execute orchestration logic | 鉁?Yes (4 phases) | Single round | CONTINUE / ASSIGN / FINISH / ERROR |
-| **ASSIGN** | Create or retrieve AppAgent for selected application | 鉂?No | Immediate | AppAgent.CONTINUE |
-| **FINISH** | Task completed successfully | 鉂?No | Permanent | None (terminal) |
-| **FAIL** | Task failed, cannot proceed | 鉂?No | Permanent | None (terminal) |
-| **ERROR** | Unhandled exception or system error | 鉂?No | Permanent | FINISH (shutdown) |
-| **PENDING** | Await external event or user input | 鉂?No | Until event/timeout | CONTINUE / FAIL |
-| **CONFIRM** | Request user approval before proceeding | 鉁?Yes | Until user responds | CONTINUE / FAIL |
-
-The state machine diagram for the `HostAgent` is also shown below:
-<h1 align="center">
-    <img src="../../img/host_state.png"/> 
-</h1>
-
-!!!tip "State Transition Control"
-    The **LLM** controls most state transitions by setting `agent.status` in the **LLM_INTERACTION** phase:
-    
-    ```json
-    {
-      "Observation": "Desktop shows Word and Excel. Task requires data extraction.",
-      "Thought": "I should first extract data from Word before creating Excel chart.",
-      "ControlLabel": "0",
-      "ControlText": "Microsoft Word - Document1",
-      "Function": "select_application",
-      "Args": {...},
-      "Status": "ASSIGN",
-      "Comment": "Delegating data extraction to Word AppAgent"
-    }
-    ```
-
----
-
-### 2. Processing Pipeline (4 Phases)
-
-HostAgent executes a 4-phase pipeline in **CONTINUE** and **CONFIRM** states:
-
-```mermaid
-graph LR
-    DC[Phase 1:<br/>DATA_COLLECTION<br/>Desktop Context] --> LLM[Phase 2:<br/>LLM_INTERACTION<br/>Application Selection]
-    LLM --> AE[Phase 3:<br/>ACTION_EXECUTION<br/>Status Update]
-    AE --> MU[Phase 4:<br/>MEMORY_UPDATE<br/>Record Step]
-    
-    style DC fill:#e1f5ff
-    style LLM fill:#fff4e6
-    style AE fill:#e8f5e9
-    style MU fill:#fce4ec
-```
-
-| Phase | Strategy | Purpose | Key Outputs |
-|-------|----------|---------|-------------|
-| **Phase 1** | `DesktopDataCollectionStrategy` | Gather desktop environment context | Desktop screenshot, application list, target registry |
-| **Phase 2** | `HostLLMInteractionStrategy` | LLM analyzes and decides application | Selected application, subtask description, status |
-| **Phase 3** | `HostActionExecutionStrategy` | Execute LLM decision (launch app, update context) | Execution result, application launched |
-| **Phase 4** | `HostMemoryUpdateStrategy` | Record orchestration step in memory | Memory item, blackboard updated |
-
-!!!info "Processing Flow"
-    ```mermaid
-    sequenceDiagram
-        participant Agent
-        participant P1 as DATA_COLLECTION
-        participant P2 as LLM_INTERACTION
-        participant P3 as ACTION_EXECUTION
-        participant P4 as MEMORY_UPDATE
-        
-        Agent->>P1: Execute
-        P1-->>Agent: Desktop context
-        Agent->>P2: Execute
-        P2-->>Agent: Application selection
-        Agent->>P3: Execute
-        P3-->>Agent: Status update
-        Agent->>P4: Execute
-        P4-->>Agent: Memory recorded
-    ```
-
----
-
-### 3. Command System
-
-HostAgent uses desktop-level MCP commands:
-
-| Command Category | Commands | Purpose |
-|-----------------|----------|---------|
-| **Screenshot** | `capture_desktop_screenshot` | Capture full desktop view |
-| **Window Management** | `get_desktop_app_info`, `get_app_window` | Get application window information |
-| **Process Control** | `launch_application`, `close_application` | Start/terminate applications |
-| **MCP Tools** | `list_tools` | Get available MCP tools |
-
-!!!example "Command Usage Example"
-    ```python
-    # Capture desktop screenshot
-    command = Command(
-        tool_name="capture_desktop_screenshot",
-        parameters={"save_path": "C:/logs/desktop_step1.png"},
-        tool_type="action",
-    )
-    result = await dispatcher.execute_commands([command])
-    ```
+- **[State Machine](state.md)**: 7-state FSM architecture and transitions
+- **[Processing Strategy](strategy.md)**: 4-phase processing pipeline
+- **[Command System](commands.md)**: Desktop-level MCP commands
 
 ---
 
@@ -202,37 +111,32 @@ HostAgent uses desktop-level MCP commands:
 
 ### HostAgent Input
 
-The `HostAgent` receives the following inputs:
-
 | Input | Description | Type |
-| --- | --- | --- |
-| User Request | The user's request in natural language | String |
-| Application Information | Information about existing active applications | List of Dicts |
-| Desktop Screenshots | Screenshots of the desktop to provide context | Image |
-| Previous Sub-Tasks | The previous sub-tasks and their completion status | List of Dicts |
-| Previous Plan | The previous plan for following sub-tasks | List of Strings |
-| Blackboard | Shared memory space for storing and sharing information | Dictionary |
+|-------|-------------|------|
+| User Request | Natural language task description | String |
+| Application Information | Active application metadata | List of Dicts |
+| Desktop Screenshots | Visual context of desktop state | Image |
+| Previous Sub-Tasks | Completed subtask history | List of Dicts |
+| Previous Plan | Planned future subtasks | List of Strings |
+| Blackboard | Shared memory space | Dictionary |
 
 ### HostAgent Output
 
-With the inputs provided, the `HostAgent` generates the following outputs:
-
 | Output | Description | Type |
-| --- | --- | --- |
-| Observation | The observation of current desktop screenshots | String |
-| Thought | The logical reasoning process of the `HostAgent` | String |
-| Current Sub-Task | The current sub-task to be executed by the `AppAgent` | String |
-| Message | The message to be sent to the `AppAgent` for completion | String |
-| ControlLabel | The index of the selected application | String |
-| ControlText | The name of the selected application | String |
-| Plan | The plan for following sub-tasks | List of Strings |
-| Status | The status of the agent, mapped to `AgentState` | String |
-| Comment | Additional comments or information for the user | String |
-| Questions | Questions to ask the user for additional information | List of Strings |
-| Bash | Bash command to be executed (open apps, system commands) | String |
+|--------|-------------|------|
+| Observation | Desktop screenshot analysis | String |
+| Thought | Reasoning process | String |
+| Current Sub-Task | Active subtask description | String |
+| Message | Information for AppAgent | String |
+| ControlLabel | Selected application index | String |
+| ControlText | Selected application name | String |
+| Plan | Future subtask sequence | List of Strings |
+| Status | Agent state (CONTINUE/ASSIGN/FINISH/etc.) | String |
+| Comment | User-facing information | String |
+| Questions | Clarification requests | List of Strings |
+| Bash | System command to execute | String |
 
-Below is an example of the `HostAgent` output:
-
+**Example Output:**
 ```json
 {
     "Observation": "Desktop shows Microsoft Word with document open containing a table",
@@ -249,265 +153,24 @@ Below is an example of the `HostAgent` output:
 }
 ```
 
-!!! info
-    The `HostAgent` output is formatted as a JSON object by LLMs and can be parsed by the `json.loads` method in Python.
-
----
-
-## Task Decomposition
-
-Upon receiving the user's request, the `HostAgent` decomposes it into sub-tasks and assigns each sub-task to an `AppAgent` for execution. The `HostAgent` determines the appropriate application to fulfill the user's request based on the application information and the user's request. It then orchestrates the `AppAgents` to execute the necessary actions to complete the sub-tasks. We show the task decomposition process in the following figure:
-
-<h1 align="center">
-    <img src="../../img/desomposition.png" alt="Task Decomposition" width="100%">
-</h1>
-
----
-
-## AppAgent Lifecycle Management
-
-### Creation and Reuse
-
-```python
-class HostAgent:
-    def __init__(self):
-        self.appagent_dict = {}  # Cache of created AppAgents
-        self._active_appagent = None
-    
-    def create_subagent(self, context: Context):
-        """Create or reuse AppAgent for selected application"""
-        app_root = context.get(ContextNames.APPLICATION_ROOT_NAME)
-        process_name = context.get(ContextNames.APPLICATION_PROCESS_NAME)
-        
-        # Generate unique key
-        agent_key = f"{app_root}/{process_name}"
-        
-        # Check cache
-        if agent_key in self.appagent_dict:
-            # Reuse existing AppAgent
-            self._active_appagent = self.appagent_dict[agent_key]
-            self.logger.info(f"Reusing AppAgent: {agent_key}")
-        else:
-            # Create new AppAgent
-            config = AgentConfigResolver.resolve_app_agent_config(
-                root=app_root,
-                process=process_name,
-                mode=self.mode
-            )
-            
-            app_agent = AgentFactory.create_agent(**config)
-            
-            # Set relationships
-            app_agent.host = self  # Parent reference
-            app_agent.blackboard = self.blackboard  # Shared memory
-            
-            # Cache for future use
-            self.appagent_dict[agent_key] = app_agent
-            self._active_appagent = app_agent
-            
-            self.logger.info(f"Created new AppAgent: {agent_key}")
-        
-        return self._active_appagent
-```
-
-### Lifecycle Diagram
-
-```mermaid
-stateDiagram-v2
-    [*] --> NotCreated: HostAgent initialized
-    
-    NotCreated --> Created: First ASSIGN to app
-    Created --> Active: Set as _active_appagent
-    Active --> Cached: AppAgent returns
-    Cached --> Active: ASSIGN to same app (reuse)
-    Cached --> Cached: ASSIGN to different app
-    Active --> [*]: Session ends
-    
-    note right of Created: new AppAgent instance
-    note right of Cached: Stored in appagent_dict
-    note left of Active: Executing subtask
-```
-
-!!!tip "AppAgent Caching Benefits"
-    - **Performance**: Avoid repeated initialization overhead
-    - **Context Preservation**: AppAgent maintains memory across calls
-    - **Resource Efficiency**: Single AppAgent instance per application
-    - **State Continuity**: AppAgent remembers previous interactions
-
----
-
-## Blackboard Pattern
-
-### Shared Memory Interface
-
-```python
-class HostAgent:
-    def __init__(self):
-        self._blackboard = Blackboard()  # Shared across all agents
-    
-    @property
-    def blackboard(self) -> Blackboard:
-        """All agents access same Blackboard instance"""
-        return self._blackboard
-
-# When creating AppAgent
-app_agent.blackboard = self.blackboard  # Share reference
-```
-
-### Data Flow Examples
-
-**Writing Subtask:**
-```python
-# HostAgent writes subtask for AppAgent
-agent.blackboard["current_subtask"] = {
-    "application": "Microsoft Word",
-    "task": "Extract table data from document",
-    "context": {
-        "document_name": "report.docx",
-        "table_location": "first page"
-    },
-    "timestamp": time.time()
-}
-```
-
-**Reading Result:**
-```python
-# HostAgent reads AppAgent result
-result = agent.blackboard.get("subtask_result_1")
-if result and result["status"] == "FINISH":
-    extracted_data = result["data"]
-    # Use data for next subtask
-```
-
-### Blackboard Visualization
-
-```mermaid
-graph TB
-    subgraph "Blackboard (Shared Memory)"
-        CS[current_subtask]
-        SR1[subtask_result_1]
-        SR2[subtask_result_2]
-        TP[task_progress]
-        HS[host_last_step]
-    end
-    
-    subgraph "HostAgent"
-        HA[HostAgent]
-    end
-    
-    subgraph "AppAgents"
-        AA1[AppAgent: Word]
-        AA2[AppAgent: Excel]
-    end
-    
-    HA -->|Write| CS
-    HA -->|Read| SR1
-    HA -->|Read| SR2
-    HA -->|Write| TP
-    HA -->|Write| HS
-    
-    AA1 -->|Read| CS
-    AA1 -->|Write| SR1
-    
-    AA2 -->|Read| CS
-    AA2 -->|Read| SR1
-    AA2 -->|Write| SR2
-    
-    style CS fill:#e3f2fd
-    style SR1 fill:#fff3e0
-    style SR2 fill:#f1f8e9
-    style TP fill:#fce4ec
-    style HS fill:#f3e5f5
-```
-
----
-
-## Complete Workflow Example
-
-### Multi-Application Task
-
-**User Request:** "Extract the sales table from the Word document and create a bar chart in Excel"
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Session
-    participant HostAgent
-    participant Blackboard
-    participant AppAgentWord
-    participant AppAgentExcel
-    
-    User->>Session: "Extract Word table, create Excel chart"
-    Session->>HostAgent: Initialize
-    HostAgent->>HostAgent: State: CONTINUE
-    
-    rect rgb(230, 240, 255)
-    Note over HostAgent: Round 1: Analyze Desktop
-    HostAgent->>HostAgent: Phase 1: Capture desktop<br/>Phase 2: LLM analyzes request
-    HostAgent->>HostAgent: Decision: Start with Word<br/>Set status = ASSIGN
-    end
-    
-    HostAgent->>HostAgent: State: ASSIGN
-    HostAgent->>AppAgentWord: create_subagent("Word")
-    HostAgent->>Blackboard: current_subtask = "Extract table"
-    HostAgent->>AppAgentWord: Delegate
-    
-    rect rgb(255, 250, 230)
-    Note over AppAgentWord: AppAgent Execution
-    AppAgentWord->>AppAgentWord: Capture Word UI<br/>Select table control<br/>Execute copy action
-    AppAgentWord->>Blackboard: subtask_result_1 = {data: [...]}
-    end
-    
-    AppAgentWord->>HostAgent: Return (FINISH)
-    HostAgent->>HostAgent: State: CONTINUE
-    
-    rect rgb(230, 240, 255)
-    Note over HostAgent: Round 2: Process Word Result
-    HostAgent->>Blackboard: Read subtask_result_1
-    HostAgent->>HostAgent: Phase 2: LLM decides Excel next<br/>Set status = ASSIGN
-    end
-    
-    HostAgent->>HostAgent: State: ASSIGN
-    HostAgent->>AppAgentExcel: create_subagent("Excel")
-    HostAgent->>Blackboard: current_subtask = "Create chart"
-    HostAgent->>AppAgentExcel: Delegate
-    
-    rect rgb(255, 250, 230)
-    Note over AppAgentExcel: AppAgent Execution
-    AppAgentExcel->>Blackboard: Read subtask_result_1
-    AppAgentExcel->>AppAgentExcel: Paste data<br/>Insert chart<br/>Format chart
-    AppAgentExcel->>Blackboard: subtask_result_2 = {chart_created: true}
-    end
-    
-    AppAgentExcel->>HostAgent: Return (FINISH)
-    HostAgent->>HostAgent: State: CONTINUE
-    
-    rect rgb(230, 240, 255)
-    Note over HostAgent: Round 3: Verify Completion
-    HostAgent->>Blackboard: Read all results
-    HostAgent->>HostAgent: Phase 2: LLM confirms complete<br/>Set status = FINISH
-    end
-    
-    HostAgent->>HostAgent: State: FINISH
-    HostAgent->>Session: Task completed
-    Session->>User: Success!
-```
-
 ---
 
 ## Related Documentation
 
-!!!info "Architecture"
+!!!info "Architecture & Design"
     - **[Windows Agent Overview](../overview.md)**: Module architecture and hierarchy
     - **[AppAgent](../app_agent/overview.md)**: Application automation agent
-    - **[State Layer](../../infrastructure/agents/design/state.md)**: FSM design principles
-    - **[Strategy Layer](../../infrastructure/agents/design/processor.md)**: Processor framework
+    - **[Blackboard](../../infrastructure/agents/design/blackboard.md)**: Inter-agent communication
+    - **[Memory System](../../infrastructure/agents/design/memory.md)**: Execution history
+
+!!!info "Configuration"
+    - **[Configuration System Overview](../../configuration/system/overview.md)**: System configuration structure
+    - **[Field Reference](../../configuration/system/field_reference.md)**: All configuration fields
+    - **[MCP Reference](../../configuration/system/mcp_reference.md)**: MCP server configuration
 
 !!!info "System Integration"
     - **[Session Management](../../infrastructure/modules/session.md)**: Session lifecycle
     - **[Round Management](../../infrastructure/modules/round.md)**: Execution rounds
-    - **[Blackboard](../../infrastructure/agents/design/blackboard.md)**: Inter-agent communication
-    - **[Memory System](../../infrastructure/agents/design/memory.md)**: Execution history
 
 ---
 
@@ -519,26 +182,24 @@ sequenceDiagram
 
 ## Summary
 
-!!!success "HostAgent Key Characteristics"
-    鉁?**Orchestrator**: Decomposes tasks and coordinates AppAgents
+!!!success "HostAgent in a Nutshell"
+    ✓ **Orchestrator**: Decomposes tasks and coordinates AppAgents
     
-    鉁?**Desktop-Scoped**: Operates at system level, not application level
+    ✓ **Desktop-Scoped**: Operates at system level, not application level
     
-    鉁?**7-State FSM**: CONTINUE 鈫?ASSIGN 鈫?AppAgent 鈫?CONTINUE 鈫?FINISH
+    ✓ **7-State FSM**: CONTINUE → ASSIGN → AppAgent → CONTINUE → FINISH
     
-    鉁?**4-Phase Pipeline**: DATA_COLLECTION 鈫?LLM 鈫?ACTION 鈫?MEMORY
+    ✓ **4-Phase Pipeline**: DATA_COLLECTION → LLM → ACTION → MEMORY
     
-    鉁?**AppAgent Manager**: Creates, caches, and reuses AppAgent instances
+    ✓ **AppAgent Manager**: Creates, caches, and reuses AppAgent instances
     
-    鉁?**Blackboard Owner**: Provides shared memory for all agents
+    ✓ **Blackboard Owner**: Provides shared memory for all agents
     
-    鉁?**Single Instance**: One HostAgent per session, manages many AppAgents
+    ✓ **Single Instance**: One HostAgent per session, manages many AppAgents
 
 **Next Steps:**
 
-1. **Study AppAgent**: Read [AppAgent documentation](../app_agent/overview.md) to understand execution layer
-2. **Explore Architecture**: Review [Device Agent Overview](../../infrastructure/agents/overview.md) for system design
-3. **Learn Processing**: Check [Strategy Layer](../../infrastructure/agents/design/processor.md) for processing logic
-4. **Command System**: See [Command Layer](../../infrastructure/agents/design/command.md) for available operations
-
-
+1. Read [State Machine](state.md) for FSM details
+2. Read [Processing Strategy](strategy.md) for pipeline architecture  
+3. Read [Command System](commands.md) for available desktop operations
+4. Read [AppAgent](../app_agent/overview.md) for application-level execution

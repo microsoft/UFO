@@ -54,8 +54,14 @@ nav:
       - Using as Galaxy Device: ufo2/as_galaxy_device.md
       - HostAgent:
           - Overview: ufo2/host_agent/overview.md
+          - State Machine: ufo2/host_agent/state.md
+          - Processing Strategy: ufo2/host_agent/strategy.md
+          - Command System: ufo2/host_agent/commands.md
       - AppAgent:
           - Overview: ufo2/app_agent/overview.md
+          - State Machine: ufo2/app_agent/state.md
+          - Processing Strategy: ufo2/app_agent/strategy.md
+          - Command System: ufo2/app_agent/commands.md
       - Core Features:
           - Hybrid GUI–API Actions: ufo2/core_features/hybrid_actions.md
           - Control Detection:
