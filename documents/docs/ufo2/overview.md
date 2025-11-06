@@ -77,7 +77,7 @@ UFO² embeds directly into Windows OS infrastructure:
 !!!tip "Hybrid Control Detection"
     Combines Windows UIA APIs with vision models ([OmniParser](https://arxiv.org/abs/2408.00203)) to detect both standard and custom UI controls—bridging structured accessibility trees and pixel-level perception.
     
-    📖 [Control Detection Guide](advanced_usage/control_detection/overview.md)
+    📖 [Control Detection Guide](core_features/control_detection/overview.md)
 
 ### 2. Unified GUI–API Action Layer ⚡
 
@@ -107,7 +107,7 @@ Extensible framework for adding application-specific APIs without modifying agen
     agent.type("100")
     ```
     
-    📖 [Hybrid Actions Guide](hybrid_actions.md) • [MCP Integration](../mcp/overview.md)
+    📖 [Hybrid Actions Guide](core_features/hybrid_actions.md) • [MCP Integration](../mcp/overview.md)
 
 ### 3. Continuous Knowledge Substrate 📚
 
@@ -122,9 +122,9 @@ UFO² learns from three knowledge sources without model retraining:
 **Result:** Agents improve autonomously by retrieving relevant context at execution time.
 
 !!!info "Knowledge Integration"
-    📖 [Knowledge Substrate Overview](advanced_usage/knowledge_substrate/overview.md)  
-    📖 [Learning from Help Documents](advanced_usage/knowledge_substrate/learning_from_help_document.md)  
-    📖 [Experience Learning](advanced_usage/knowledge_substrate/experience_learning.md)
+    📖 [Knowledge Substrate Overview](core_features/knowledge_substrate/overview.md)  
+    📖 [Learning from Help Documents](core_features/knowledge_substrate/learning_from_help_document.md)  
+    📖 [Experience Learning](core_features/knowledge_substrate/experience_learning.md)
 
 ### 4. Speculative Multi-Action Execution 🚀
 
@@ -145,7 +145,7 @@ Lightweight control-state checks ensure predicted actions remain valid before ex
     - **Traditional CUA:** 10 LLM calls (1 per field) → ~30 seconds  
     - **UFO² Speculative:** 1 LLM call predicts all 10 actions → ~8 seconds
     
-    📖 [Multi-Action Execution Guide](advanced_usage/multi_action.md)
+    📖 [Multi-Action Execution Guide](core_features/multi_action.md)
 
 ### 5. Picture-in-Picture Desktop 🖼️
 
@@ -225,7 +225,7 @@ UFO² has been evaluated on **20+ real-world Windows applications**:
 !!!success "Evaluation Results"
     **10%+ higher success rate** than state-of-the-art CUAs (Claude, Operator) across WindowsAgentArena and OSWorld benchmarks.
     
-    📖 [Benchmark Results](benchmark/overview.md)
+    📖 [Benchmark Results](evaluation/benchmark/overview.md)
 
 ---
 
@@ -304,14 +304,14 @@ else:
 - [**HostAgent**](host_agent/overview.md) — Desktop orchestrator with 7-state FSM  
 - [**AppAgent**](app_agent/overview.md) — Application executor with 6-state FSM  
 - [**Agent Types**](../infrastructure/agents/agent_types.md) — Platform-specific implementations  
-- [**Evaluation Agent**](evaluation_agent.md) — Automated testing and benchmarking
+- [**Evaluation Agent**](evaluation/evaluation_agent.md) — Automated testing and benchmarking
 
 ### Advanced Features
 
-- [**Hybrid Actions**](hybrid_actions.md) — GUI–API execution layer  
-- [**Control Detection**](advanced_usage/control_detection/overview.md) — UIA + visual grounding  
-- [**Knowledge Substrate**](advanced_usage/knowledge_substrate/overview.md) — RAG-enhanced learning  
-- [**Multi-Action Execution**](advanced_usage/multi_action.md) — Speculative action planning  
+- [**Hybrid Actions**](core_features/hybrid_actions.md) — GUI–API execution layer  
+- [**Control Detection**](core_features/control_detection/overview.md) — UIA + visual grounding  
+- [**Knowledge Substrate**](core_features/knowledge_substrate/overview.md) — RAG-enhanced learning  
+- [**Multi-Action Execution**](core_features/multi_action.md) — Speculative action planning  
 - [**Follower Mode**](advanced_usage/follower_mode.md) — Human-in-the-loop execution  
 - [**Batch Mode**](advanced_usage/batch_mode.md) — Bulk task processing
 
@@ -331,8 +331,8 @@ else:
 
 ### Benchmarking & Logs
 
-- [**Benchmark Overview**](benchmark/overview.md) — WindowsAgentArena, OSWorld  
-- [**Performance Logs**](logs/overview.md) — Execution logs and debugging  
+- [**Benchmark Overview**](evaluation/benchmark/overview.md) — WindowsAgentArena, OSWorld  
+- [**Performance Logs**](evaluation/logs/overview.md) — Execution logs and debugging  
 
 ---
 
@@ -360,7 +360,7 @@ Ready to explore UFO²? Choose your path:
     **🚀 New Users:** Start with [Quick Start Guide](../getting_started/quick_start_ufo2.md)  
     **🔧 Developers:** Read [Creating AppAgent](../tutorials/creating_app_agent/overview.md)  
     **🏗️ System Architects:** Study [Device Agent Architecture](../infrastructure/agents/overview.md)  
-    **📊 Researchers:** Check [Benchmark Results](benchmark/overview.md)
+    **📊 Researchers:** Check [Benchmark Results](evaluation/benchmark/overview.md)
 
 **Next:** [HostAgent Deep Dive](host_agent/overview.md) → Understand desktop orchestration
 

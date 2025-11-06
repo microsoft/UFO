@@ -53,7 +53,7 @@ UFO² addresses this dilemma through a **unified action layer** that:
 4. **Leverages MCP servers** for extensible, modular integration of application-specific APIs
 
 <figure markdown>
-  ![Hybrid Action Architecture via MCP](../img/mcp.png)
+  ![Hybrid Action Architecture via MCP](../../img/mcp.png)
   <figcaption><b>Figure:</b> UFO²'s hybrid action architecture powered by Model Context Protocol (MCP) servers. Agents dynamically select between GUI automation (via UI Automation/Win32 APIs) and native application APIs (via MCP servers like Excel COM, Outlook API, PowerPoint), enabling optimal execution strategies for each task.</figcaption>
 </figure>
 
@@ -311,15 +311,15 @@ When an agent is initialized for a specific application, the system:
     - `get_ui_tree` — Get UI element tree
 
 !!!info "MCP Server Documentation"
-    📖 **[MCP Overview](../mcp/overview.md)** — Model Context Protocol architecture and design  
-    📖 **[MCP Configuration](../configuration/system/mcp_reference.md)** — Complete MCP server configuration reference  
+    📖 **[MCP Overview](../../mcp/overview.md)** — Model Context Protocol architecture and design  
+    📖 **[MCP Configuration](../../configuration/system/mcp_reference.md)** — Complete MCP server configuration reference  
     
     **Available MCP Servers:**
-    - [UICollector](../mcp/servers/ui_collector.md) — UI data collection
-    - [AppUIExecutor](../mcp/servers/app_ui_executor.md) — GUI automation
-    - [ExcelCOMExecutor](../mcp/servers/excel_com_executor.md) — Excel API
-    - [WordCOMExecutor](../mcp/servers/word_com_executor.md) — Word API
-    - [PowerPointCOMExecutor](../mcp/servers/ppt_com_executor.md) — PowerPoint API
+    - [UICollector](../../mcp/servers/ui_collector.md) — UI data collection
+    - [AppUIExecutor](../../mcp/servers/app_ui_executor.md) — GUI automation
+    - [ExcelCOMExecutor](../../mcp/servers/excel_com_executor.md) — Excel API
+    - [WordCOMExecutor](../../mcp/servers/word_com_executor.md) — Word API
+    - [PowerPointCOMExecutor](../../mcp/servers/ppt_com_executor.md) — PowerPoint API
 
 
 ---
@@ -359,34 +359,34 @@ When an agent is initialized for a specific application, the system:
 
 ### Core Concepts
 
-- [**MCP Overview**](../mcp/overview.md) — Model Context Protocol architecture  
-- [**AppAgent**](app_agent/overview.md) — Application-level agent implementation  
-- [**HostAgent**](host_agent/overview.md) — Desktop-level agent implementation
+- [**MCP Overview**](../../mcp/overview.md) — Model Context Protocol architecture  
+- [**AppAgent**](../app_agent/overview.md) — Application-level agent implementation  
+- [**HostAgent**](../host_agent/overview.md) — Desktop-level agent implementation
 
 ### Configuration
 
-- [**MCP Configuration Reference**](../configuration/system/mcp_reference.md) — Complete MCP server configuration options  
-- [**Configuration Guide**](../configuration/system/overview.md) — System configuration overview
+- [**MCP Configuration Reference**](../../configuration/system/mcp_reference.md) — Complete MCP server configuration options  
+- [**Configuration Guide**](../../configuration/system/overview.md) — System configuration overview
 
 ### MCP Servers
 
-- [**UICollector**](../mcp/servers/ui_collector.md) — Screenshot and UI tree capture  
-- [**AppUIExecutor**](../mcp/servers/app_ui_executor.md) — GUI automation server  
-- [**ExcelCOMExecutor**](../mcp/servers/excel_com_executor.md) — Excel COM API integration  
-- [**WordCOMExecutor**](../mcp/servers/word_com_executor.md) — Word COM API integration  
-- [**PowerPointCOMExecutor**](../mcp/servers/ppt_com_executor.md) — PowerPoint COM API integration  
-- [**CommandLineExecutor**](../mcp/servers/command_line_executor.md) — Command-line execution
+- [**UICollector**](../../mcp/servers/ui_collector.md) — Screenshot and UI tree capture  
+- [**AppUIExecutor**](../../mcp/servers/app_ui_executor.md) — GUI automation server  
+- [**ExcelCOMExecutor**](../../mcp/servers/excel_com_executor.md) — Excel COM API integration  
+- [**WordCOMExecutor**](../../mcp/servers/word_com_executor.md) — Word COM API integration  
+- [**PowerPointCOMExecutor**](../../mcp/servers/ppt_com_executor.md) — PowerPoint COM API integration  
+- [**CommandLineExecutor**](../../mcp/servers/command_line_executor.md) — Command-line execution
 
 ---
 
 ## Next Steps
 
-1. **Explore MCP Architecture**: Read [MCP Overview](../mcp/overview.md) to understand the protocol design  
-2. **Configure MCP Servers**: Review [MCP Configuration](../configuration/system/mcp_reference.md) for setup options  
-3. **Study MCP Servers**: Check built-in implementations like [ExcelCOMExecutor](../mcp/servers/excel_com_executor.md)  
-4. **Build Custom Agents**: Follow [Creating AppAgent](../tutorials/creating_app_agent/overview.md) to use hybrid actions
+1. **Explore MCP Architecture**: Read [MCP Overview](../../mcp/overview.md) to understand the protocol design  
+2. **Configure MCP Servers**: Review [MCP Configuration](../../configuration/system/mcp_reference.md) for setup options  
+3. **Study MCP Servers**: Check built-in implementations like [ExcelCOMExecutor](../../mcp/servers/excel_com_executor.md)  
+4. **Build Custom Agents**: Follow [Creating AppAgent](../../tutorials/creating_app_agent/overview.md) to use hybrid actions
 
 !!!tip "Quick Start"
     Want to see hybrid actions in practice?  
-    📖 [Quick Start Guide](../getting_started/quick_start_ufo2.md) — Run UFO² with default MCP servers  
-    📖 [Creating AppAgent](../tutorials/creating_app_agent/overview.md) — Build custom agents with hybrid actions
+    📖 [Quick Start Guide](../../getting_started/quick_start_ufo2.md) — Run UFO² with default MCP servers  
+    📖 [Creating AppAgent](../../tutorials/creating_app_agent/overview.md) — Build custom agents with hybrid actions

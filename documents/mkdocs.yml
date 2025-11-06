@@ -57,19 +57,19 @@ nav:
       - AppAgent:
           - Overview: ufo2/app_agent/overview.md
       - Core Features:
-          - Hybrid GUI–API Actions: ufo2/hybrid_actions.md
+          - Hybrid GUI–API Actions: ufo2/core_features/hybrid_actions.md
           - Control Detection:
-              - Overview: ufo2/advanced_usage/control_detection/overview.md
-              - UIA Detection: ufo2/advanced_usage/control_detection/uia_detection.md
-              - Visual Detection: ufo2/advanced_usage/control_detection/visual_detection.md
-              - Hybrid Detection: ufo2/advanced_usage/control_detection/hybrid_detection.md
+              - Overview: ufo2/core_features/control_detection/overview.md
+              - UIA Detection: ufo2/core_features/control_detection/uia_detection.md
+              - Visual Detection: ufo2/core_features/control_detection/visual_detection.md
+              - Hybrid Detection: ufo2/core_features/control_detection/hybrid_detection.md
           - Knowledge Substrate:
-              - Overview: ufo2/advanced_usage/knowledge_substrate/overview.md
-              - Help Documents: ufo2/advanced_usage/knowledge_substrate/learning_from_help_document.md
-              - Bing Search: ufo2/advanced_usage/knowledge_substrate/learning_from_bing_search.md
-              - Experience Learning: ufo2/advanced_usage/knowledge_substrate/experience_learning.md              
-              - Demos: ufo2/advanced_usage/knowledge_substrate/learning_from_demonstration.md
-          - Speculative Multi-Action: ufo2/advanced_usage/multi_action.md
+              - Overview: ufo2/core_features/knowledge_substrate/overview.md
+              - Help Documents: ufo2/core_features/knowledge_substrate/learning_from_help_document.md
+              - Bing Search: ufo2/core_features/knowledge_substrate/learning_from_bing_search.md
+              - Experience Learning: ufo2/core_features/knowledge_substrate/experience_learning.md              
+              - Demos: ufo2/core_features/knowledge_substrate/learning_from_demonstration.md
+          - Speculative Multi-Action: ufo2/core_features/multi_action.md
       - Advanced Usage:
           - Follower Mode: ufo2/advanced_usage/follower_mode.md
           - Batch Mode: ufo2/advanced_usage/batch_mode.md
@@ -80,18 +80,18 @@ nav:
           - Basic Template: ufo2/prompts/basic_template.md
           - Examples: ufo2/prompts/examples_prompts.md
       - Evaluation:
-          - EvaluationAgent: ufo2/evaluation_agent.md
-          - Benchmark Overview: ufo2/benchmark/overview.md
-          - Windows Agent Arena: ufo2/benchmark/windows_agent_arena.md
-          - OSWorld (Windows): ufo2/benchmark/osworld.md
+          - EvaluationAgent: ufo2/evaluation/evaluation_agent.md
+          - Benchmark Overview: ufo2/evaluation/benchmark/overview.md
+          - Windows Agent Arena: ufo2/evaluation/benchmark/windows_agent_arena.md
+          - OSWorld (Windows): ufo2/evaluation/benchmark/osworld.md
           - Performance Logs:
-              - Overview: ufo2/logs/overview.md
-              - Evaluation Logs: ufo2/logs/evaluation_logs.md
-              - Markdown Log Viewer: ufo2/logs/markdown_log_viewer.md
-              - Request Logs: ufo2/logs/request_logs.md
-              - Screenshots Logs: ufo2/logs/screenshots_logs.md
-              - Step Logs: ufo2/logs/step_logs.md
-              - UI Tree Logs: ufo2/logs/ui_tree_logs.md
+              - Overview: ufo2/evaluation/logs/overview.md
+              - Evaluation Logs: ufo2/evaluation/logs/evaluation_logs.md
+              - Markdown Log Viewer: ufo2/evaluation/logs/markdown_log_viewer.md
+              - Request Logs: ufo2/evaluation/logs/request_logs.md
+              - Screenshots Logs: ufo2/evaluation/logs/screenshots_logs.md
+              - Step Logs: ufo2/evaluation/logs/step_logs.md
+              - UI Tree Logs: ufo2/evaluation/logs/ui_tree_logs.md
       - Dataflow:
           - Overview: ufo2/dataflow/overview.md
           - Instantiation: ufo2/dataflow/instantiation.md

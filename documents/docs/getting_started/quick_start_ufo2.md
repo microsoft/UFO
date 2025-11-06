@@ -65,13 +65,13 @@ If you want to enhance UFO's ability with external knowledge, you can optionally
 
 We provide the following options for RAG to enhance UFO's capabilities:
 
-- **[Offline Help Document](../ufo2/advanced_usage/knowledge_substrate/learning_from_help_document.md)**: Enable UFO to retrieve information from offline help documents.
+- **[Offline Help Document](../ufo2/core_features/knowledge_substrate/learning_from_help_document.md)**: Enable UFO to retrieve information from offline help documents.
 
-- **[Online Bing Search Engine](../ufo2/advanced_usage/knowledge_substrate/learning_from_bing_search.md)**: Enhance UFO's capabilities by utilizing the most up-to-date online search results.
+- **[Online Bing Search Engine](../ufo2/core_features/knowledge_substrate/learning_from_bing_search.md)**: Enhance UFO's capabilities by utilizing the most up-to-date online search results.
 
-- **[Self-Experience](../ufo2/advanced_usage/knowledge_substrate/experience_learning.md)**: Save task completion trajectories into UFO's memory for future reference.
+- **[Self-Experience](../ufo2/core_features/knowledge_substrate/experience_learning.md)**: Save task completion trajectories into UFO's memory for future reference.
 
-- **[User-Demonstration](../ufo2/advanced_usage/knowledge_substrate/learning_from_demonstration.md)**: Boost UFO's capabilities through user demonstration.
+- **[User-Demonstration](../ufo2/core_features/knowledge_substrate/learning_from_demonstration.md)**: Boost UFO's capabilities through user demonstration.
 
 !!!tip
     Consult their respective documentation for more information on how to configure these settings.
