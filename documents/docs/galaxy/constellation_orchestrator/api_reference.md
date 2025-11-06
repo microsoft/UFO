@@ -794,11 +794,11 @@ results = await orchestrator.orchestrate_constellation(
 
 ### TaskConstellation
 
-See [TaskConstellation documentation](../task_constellation/api_reference.md)
+See [TaskConstellation documentation](../constellation/task_constellation.md)
 
 ### TaskStar
 
-See [TaskStar documentation](../task_star/api_reference.md)
+See [TaskStar documentation](../constellation/task_star.md)
 
 ### Event Types
 
@@ -860,6 +860,5 @@ finally:
 ---
 
 !!!tip "Getting Help"
-    - Check the [examples directory](../../../../examples/) for complete code samples
-    - Review the [troubleshooting guide](../troubleshooting.md) for common issues
+    - Check the examples directory for complete code samples
     - See [GitHub issues](https://github.com/microsoft/UFO/issues) for known problems

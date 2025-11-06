@@ -6,7 +6,6 @@ GalaxyClient is an optional session management wrapper on top of ConstellationCl
 
 - [Overview](./overview.md) - Overall architecture and workflow
 - [ConstellationClient](./constellation_client.md) - Device coordination layer
-- [Session](../../galaxy/session/galaxy_session.md) - Multi-round interaction management
 
 ---
 
@@ -755,5 +754,4 @@ For most applications, GalaxyClient provides the right level of abstraction. Use
 **Next Steps:**
 
 - See [ConstellationClient](./constellation_client.md) for device management details
-- See [Session Documentation](../../galaxy/session/galaxy_session.md) for session management
 - See [Overview](./overview.md) for overall architecture

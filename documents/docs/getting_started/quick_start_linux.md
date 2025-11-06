@@ -804,8 +804,8 @@ python -m galaxy --config config/galaxy/devices.yaml
     For detailed Galaxy configuration and usage, see:
     
     - [Galaxy Overview](../galaxy/overview.md)
-    - [Galaxy Quick Start](../galaxy/quick_start.md)
-    - [Device Pool Management](../galaxy/device_pool.md)
+    - [Galaxy Quick Start](quick_start_galaxy.md)
+    - [Constellation Orchestrator](../galaxy/constellation_orchestrator/overview.md)
 
 ---
 

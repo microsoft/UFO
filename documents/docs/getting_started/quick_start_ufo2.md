@@ -309,7 +309,8 @@ python -m ufo.tools.convert_config --force
 
 !!!info "Configuration Guides"
     - **[Configuration Overview](../configuration/system/overview.md)** - Configuration system architecture
-    - **[Field Reference](../configuration/system/field_reference.md)** - Complete field documentation
+    - **[Agents Configuration](../configuration/system/agents_config.md)** - LLM and agent settings
+    - **[System Configuration](../configuration/system/system_config.md)** - Runtime and execution settings
     - **[MCP Configuration](../configuration/system/mcp_reference.md)** - MCP server settings
     - **[Model Configuration](../configuration/models/overview.md)** - Supported LLM providers
 

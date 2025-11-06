@@ -234,10 +234,9 @@ event_bus.subscribe(synchronizer)
 
 ## Further Reading
 
-- [TaskConstellation Documentation](../task_constellation/overview.md) - Understand the DAG structure
-- [Constellation Agent](../../agents/constellation_agent.md) - LLM-based reasoning
-- [Event System](../../core/events.md) - Core event infrastructure
-- [Device Manager](../../client/device_manager.md) - Device communication layer
+- [TaskConstellation Documentation](../constellation/overview.md) - Understand the DAG structure
+- [Constellation Agent](../constellation_agent/overview.md) - LLM-based reasoning
+- [Device Manager](../client/device_manager.md) - Device communication layer
 
 ---
 

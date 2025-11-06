@@ -163,5 +163,5 @@ See **[MCP Configuration Guide](../../mcp/configuration.md)**
 - [Local Servers](../../mcp/local_servers.md) - Built-in servers
 - [Remote Servers](../../mcp/remote_servers.md) - HTTP/Stdio deployment
 - [Configuration Overview](./overview.md) - General configuration system
-- [Field Reference](./field_reference.md) - All configuration fields
+- [System Configuration](./system_config.md) - MCP-related system settings
 

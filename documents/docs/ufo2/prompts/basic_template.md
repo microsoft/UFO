@@ -11,7 +11,7 @@ Below is the default file path for the basic prompt template:
 | EvaluationAgent | [ufo/prompts/evaluation/evaluate.yaml](https://github.com/microsoft/UFO/blob/main/ufo/prompts/evaluation/evaluate.yaml) |
 
 !!! info
-    You can configure the prompt template used in the configuration files. You can find more information about the configuration file [here](../../configuration/system/field_reference.md).
+    You can configure the prompt template used in the configuration files. You can find more information about the configuration in the [System Configuration Guide](../../configuration/system/system_config.md).
 
 ## Template Structure
 

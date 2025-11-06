@@ -220,7 +220,7 @@ system:
 ```
 
 !!!tip "Configuration Details"
-    See **[Configuration Overview](../../configuration/system/overview.md)** and **[Field Reference](../../configuration/system/field_reference.md)** for complete configuration options.
+    See **[Configuration Overview](../../configuration/system/overview.md)** and **[System Configuration](../../configuration/system/system_config.md)** for complete configuration options.
 
 ---
 

@@ -428,7 +428,7 @@ rm -rf config/ufo/*.yaml
 If you encounter issues during migration:
 
 1. **Check the logs** for detailed error messages
-2. **Review [Field Reference](./field_reference.md)** for correct field names
+2. **Review configuration guides** ([Agents Config](./agents_config.md), [System Config](./system_config.md), [RAG Config](./rag_config.md)) for correct field names
 3. **Consult [Configuration Overview](./overview.md)** for system design
 4. **Open an issue** on GitHub with:
    - Your legacy config (redacted sensitive data)
@@ -439,6 +439,7 @@ If you encounter issues during migration:
 
 After successful migration:
 
-- **[Field Reference](./field_reference.md)** - Explore all available configuration options
+- **[Agents Configuration](./agents_config.md)** - Configure LLM and agent settings
+- **[System Configuration](./system_config.md)** - Configure runtime and execution settings
+- **[RAG Configuration](./rag_config.md)** - Configure knowledge retrieval
 - **[Extending Configuration](./extending.md)** - Learn how to add custom settings
-- **[Field Reference](./field_reference.md)** - Complete configuration field reference

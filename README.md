@@ -756,8 +756,6 @@ According to the [UFO³ technical paper](https://arxiv.org/abs/[TBD]):
 - 🔄 **Performance optimization** - Parallel execution efficiency **[IN PROGRESS]**
 - 🔜 **Fault tolerance enhancement** - Advanced recovery strategies
 - 🔜 **Cross-device data flow** - Optimized inter-device communication
-- 🔜 **AgentOS-as-a-Service** - Cloud-based orchestration
-- 🔜 **MCP integration** - Model Context Protocol support
 - 🔜 Auto-debugging toolkit
 
 **Legend:** ✅ Done | 🔄 In Progress | 🔜 Planned

@@ -328,6 +328,8 @@ For production features requiring type safety and validation, define typed schem
 ## Next Steps
 
 !!!note "Learn More"
-    - **[Field Reference](./field_reference.md)** - Complete configuration field documentation
+    - **[Agents Configuration](./agents_config.md)** - LLM and agent settings
+    - **[System Configuration](./system_config.md)** - Runtime and execution settings
+    - **[RAG Configuration](./rag_config.md)** - Knowledge retrieval settings
     - **[Migration Guide](./migration.md)** - Migrate from legacy configuration
     - **[Configuration Overview](./overview.md)** - Understand configuration system design

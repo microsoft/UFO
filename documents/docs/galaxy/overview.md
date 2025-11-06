@@ -448,13 +448,13 @@ Over time, multiple constellations can interconnect, weaving together agents, de
 
 ## 🤝 Contributing
 
-We welcome contributions! Whether you're building new device agents, improving orchestration algorithms, or enhancing the protocol, check out our [Contributing Guide](../../CONTRIBUTING.md).
+We welcome contributions! Whether you're building new device agents, improving orchestration algorithms, or enhancing the protocol, check out our Contributing Guide on GitHub.
 
 ---
 
 ## 📄 License
 
-UFO³ Galaxy is released under the [MIT License](../../LICENSE).
+UFO³ Galaxy is released under the MIT License.
 
 ---
 

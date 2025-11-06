@@ -6,16 +6,20 @@ nav:
   - Choose Your Path: choose_path.md
   - Project Directory Structure: project_directory_structure.md
   - Getting Started:
-      - Quick Start (Galaxy): getting_started/quick_start_galaxy.md
+      - Quick Start (UFO³ Agent Galaxy): getting_started/quick_start_galaxy.md
       - Quick Start (UFO²): getting_started/quick_start_ufo2.md
       - Quick Start (Linux Agent): getting_started/quick_start_linux.md
-      - Migration UFO² → Galaxy: getting_started/migration_ufo2_to_galaxy.md
+      - Migration UFO² → UFO³: getting_started/migration_ufo2_to_galaxy.md
       - More Guidance: getting_started/more_guidance.md
       - FAQ: getting_started/faq.md
   - Configuration & Setup:
       - Configuration System:
           - Overview: configuration/system/overview.md
-          - Field Reference: configuration/system/field_reference.md
+          - Agent Configuration: configuration/system/agents_config.md
+          - System Configuration: configuration/system/system_config.md
+          - RAG Configuration: configuration/system/rag_config.md
+          - Pricing Configuration: configuration/system/prices_config.md
+          - Third-Party Configuration: configuration/system/third_party_config.md
           - MCP Reference: configuration/system/mcp_reference.md
           - Migration Guide: configuration/system/migration.md
           - Extending Configuration: configuration/system/extending.md
@@ -70,7 +74,6 @@ nav:
           - API Reference: galaxy/constellation_orchestrator/api_reference.md
   - UFO² Desktop AgentOS:
       - Overview: ufo2/overview.md
-      - Quick Start: ufo2/quick_start.md
       - Using as Galaxy Device: ufo2/as_galaxy_device.md
       - HostAgent:
           - Overview: ufo2/host_agent/overview.md

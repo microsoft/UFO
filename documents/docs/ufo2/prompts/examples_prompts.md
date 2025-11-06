@@ -8,7 +8,7 @@ The example prompts are used to generate textual demonstration examples for in-c
 | `visual` | Examples for visual LLMs |
 
 !!!info
-  You can configure the example prompt used in the configuration files. You can find more information about the configuration file [here](../../configuration/system/field_reference.md).
+  You can configure the example prompt used in the configuration files. You can find more information about the configuration in the [System Configuration Guide](../../configuration/system/system_config.md).
 
 ## How Examples Are Used
 
@@ -98,4 +98,4 @@ These examples regulate the output format of the agent's response and provide a 
 
 - **[Prompter Design](../../infrastructure/agents/design/prompter.md)** - Learn how examples are loaded and formatted
 - **[Basic Template](./basic_template.md)** - Understand the YAML template structure
-- **[Configuration Reference](../../configuration/system/field_reference.md)** - Configure which examples to use 
+- **[System Configuration](../../configuration/system/system_config.md)** - Configure which examples to use 

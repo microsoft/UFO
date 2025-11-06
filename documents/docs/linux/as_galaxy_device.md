@@ -353,12 +353,18 @@ python -m ufo.client.mcp.http_servers.linux_mcp_server
 **Step 4: Launch Galaxy**
 
 ```bash
-# On your control machine
-python -m galaxy --config config/galaxy/devices.yaml
+# On your control machine (interactive mode)
+python -m galaxy --interactive
+```
+
+**Or launch with a specific request:**
+
+```bash
+python -m galaxy "Your task description here"
 ```
 
 !!!success "Galaxy Launched"
-    Galaxy will automatically connect to all configured devices and display the orchestration interface.
+    Galaxy will automatically connect to all configured devices (based on `config/galaxy/devices.yaml`) and display the orchestration interface.
 
 ---
 
@@ -577,9 +583,8 @@ INFO - [Galaxy] Subtask 3 → windows_desktop_1 (capability match: email)
     - **[Linux Agent Overview](overview.md)** - Architecture and design principles
     - **[Quick Start Guide](../getting_started/quick_start_linux.md)** - Step-by-step setup
     - **[Galaxy Overview](../galaxy/overview.md)** - Multi-device orchestration framework
-    - **[Galaxy Quick Start](../galaxy/quick_start.md)** - Galaxy deployment guide
-    - **[Device Pool Management](../galaxy/device_pool.md)** - Managing multiple devices
-    - **[Task Orchestrator](../galaxy/task_orchestrator.md)** - Task decomposition and routing
+    - **[Galaxy Quick Start](../getting_started/quick_start_galaxy.md)** - Galaxy deployment guide
+    - **[Constellation Orchestrator](../galaxy/constellation_orchestrator/overview.md)** - Task orchestration
 
 ---
 

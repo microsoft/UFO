@@ -7,7 +7,7 @@ The Agent Interaction Protocol (AIP) is the communication protocol used througho
 - [Overview](./overview.md) - Overall architecture
 - [DeviceManager](./device_manager.md) - Connection management
 - [Components](./components.md) - Component details  
-- [AIP Protocol Specification](../../protocols/aip.md) - Complete protocol reference
+- [AIP Protocol Specification](../../aip/overview.md) - Complete protocol reference
 
 ---
 
@@ -729,8 +729,7 @@ Device Agent Client
 
 **Related Documentation:**
 
-- [Agent Server WebSocket Handler](../../ufo/server/websocket_handler.md) - Server-side message routing
-- [Device Agent](../../ufo/agents/device_agent.md) - Device-side task execution
+- [AIP Overview](../../aip/overview.md) - Protocol specification
 
 ### Task Execution End-to-End Flow
 
@@ -1089,5 +1088,4 @@ AIP provides a robust, extensible protocol for agent communication with strong t
 - See [DeviceManager](./device_manager.md) for connection management details
 - See [Components](./components.md) for MessageProcessor implementation
 - See [ConstellationClient](./constellation_client.md) for device coordination API
-- See [Agent Server Documentation](../../ufo/server/websocket_handler.md) for server-side routing
-- See [AIP Protocol Specification](../../protocols/aip.md) for complete protocol reference
+- See [AIP Protocol Specification](../../aip/overview.md) for complete protocol reference

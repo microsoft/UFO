@@ -11,11 +11,12 @@ The new configuration system follows professional software engineering best prac
 
 ### ✅ **Separation of Concerns**
 Configuration files are organized by domain rather than monolithic structure:
-- **Agent configurations** (`agents.yaml`) - LLM settings for different agents
-- **System configurations** (`system.yaml`) - Execution and runtime settings  
-- **RAG configurations** (`rag.yaml`) - Knowledge retrieval settings
-- **MCP configurations** (`mcp.yaml`) - Model Context Protocol servers
-- **Pricing configurations** (`prices.yaml`) - Cost tracking for different models
+- **Agent configurations** (`agents.yaml`) - LLM settings for different agents → [Agent Config Guide](./agents_config.md)
+- **System configurations** (`system.yaml`) - Execution and runtime settings → [System Config Guide](./system_config.md)
+- **RAG configurations** (`rag.yaml`) - Knowledge retrieval settings → [RAG Config Guide](./rag_config.md)
+- **MCP configurations** (`mcp.yaml`) - Model Context Protocol servers → [MCP Config Guide](./mcp_reference.md)
+- **Pricing configurations** (`prices.yaml`) - Cost tracking for different models → [Pricing Config Guide](./prices_config.md)
+- **Third-party configurations** (`third_party.yaml`) - External agent integration (LinuxAgent, HardwareAgent) → [Third-Party Config Guide](./third_party_config.md)
 
 ### ✅ **Type Safety + Flexibility**
 Hybrid approach combining:
@@ -65,7 +66,7 @@ UFO2/
 │   │   ├── rag.yaml                # RAG knowledge settings
 │   │   ├── mcp.yaml                # MCP server configurations
 │   │   ├── prices.yaml             # Model pricing
-│   │   └── third_party.yaml        # Third-party integrations
+│   │   └── third_party.yaml        # Third-party agents (advanced, optional)
 │   │
 │   ├── galaxy/                     ← Galaxy Configurations
 │   │   ├── agent.yaml              # Constellation agent settings
@@ -220,7 +221,8 @@ config/ufo/
 ├── agents.yaml      # All agent LLM configs
 ├── system.yaml      # All system settings
 ├── rag.yaml         # All RAG settings
-└── mcp.yaml         # All MCP servers
+├── mcp.yaml         # All MCP servers
+└── prices.yaml      # Model pricing
 ```
 
 **Advantages**:
@@ -388,12 +390,17 @@ graph LR
 
 ## Next Steps
 
-### UFO Configuration
-- **[Field Reference](./field_reference.md)** - Complete list of all configuration fields
+### UFO Configuration Guides
+- **[Agent Configuration](./agents_config.md)** - LLM and API settings for all agents
+- **[System Configuration](./system_config.md)** - Runtime and execution settings
+- **[RAG Configuration](./rag_config.md)** - Knowledge retrieval and learning settings
+- **[MCP Configuration](./mcp_reference.md)** - Model Context Protocol servers
+- **[Pricing Configuration](./prices_config.md)** - LLM cost tracking
+- **[Third-Party Configuration](./third_party_config.md)** - External agent integration (LinuxAgent, HardwareAgent)
 - **[Migration Guide](./migration.md)** - How to migrate from old to new config
 - **[Extending Configuration](./extending.md)** - How to add new configuration options
 
-### Galaxy Configuration
+### Galaxy Configuration Guides
 - **[Galaxy Constellation Configuration](./galaxy_constellation.md)** - Runtime settings for constellation orchestrator
 - **[Galaxy Devices Configuration](./galaxy_devices.md)** - Device definitions and capabilities
 - **[Galaxy Agent Configuration](./galaxy_agent.md)** - LLM configuration for constellation agent

@@ -165,7 +165,8 @@ For detailed technical information, see:
 
 !!!info "Configuration"
     - **[Configuration System Overview](../../configuration/system/overview.md)**: System configuration structure
-    - **[Field Reference](../../configuration/system/field_reference.md)**: All configuration fields
+    - **[Agents Configuration](../../configuration/system/agents_config.md)**: LLM and agent settings
+    - **[System Configuration](../../configuration/system/system_config.md)**: Runtime and execution settings
     - **[MCP Reference](../../configuration/system/mcp_reference.md)**: MCP server configuration
 
 !!!info "System Integration"
