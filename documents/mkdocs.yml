@@ -38,6 +38,11 @@ nav:
           - TaskStarLine: galaxy/constellation/task_star_line.md
           - TaskConstellation: galaxy/constellation/task_constellation.md
           - ConstellationEditor: galaxy/constellation/constellation_editor.md
+      - Constellation Agent:
+          - Overview: galaxy/constellation_agent/overview.md
+          - State Machine: galaxy/constellation_agent/state.md
+          - Strategy Pattern: galaxy/constellation_agent/strategy.md
+          - MCP Commands: galaxy/constellation_agent/command.md
   - UFO² Desktop AgentOS:
       - Overview: ufo2/overview.md
       - Quick Start: ufo2/quick_start.md
