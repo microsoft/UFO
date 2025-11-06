@@ -49,7 +49,7 @@ Traditional HTTP-based coordination (e.g., A2A, ACP) uses short-lived, stateless
 
 The following diagram illustrates the three-layer architecture and bidirectional communication flows between components:
 
-![AIP Architecture](../img/aip.png)
+![AIP Architecture](/img/aip.png)
 
 This architecture enables persistent WebSocket connections that span multiple task executions, reducing connection overhead while maintaining bidirectional communication for task dispatch (top-down) and result reporting (bottom-up).
 

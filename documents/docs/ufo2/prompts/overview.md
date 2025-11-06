@@ -4,45 +4,52 @@ All prompts used in UFO are stored in the `ufo/prompts` directory. The folder st
 
 ```bash
 📦prompts
- ┣ 📂apps                # Stores API prompts for specific applications
-   ┣ 📂excel            # Stores API prompts for Excel
-   ┣ 📂word             # Stores API prompts for Word
-   ┗ ...
  ┣ 📂demonstration       # Stores prompts for summarizing demonstrations from humans using Step Recorder
- ┣ 📂experience          # Stores prompts for summarizing the agent's self-experience
  ┣ 📂evaluation          # Stores prompts for the EvaluationAgent
  ┣ 📂examples            # Stores demonstration examples for in-context learning
-   ┣ 📂lite             # Lite version of demonstration examples
-   ┣ 📂non-visual       # Examples for non-visual LLMs
+   ┣ 📂nonvisual        # Examples for non-visual LLMs
    ┗ 📂visual           # Examples for visual LLMs
- ┗ 📂share               # Stores shared prompts
-   ┣ 📂lite             # Lite version of shared prompts
+ ┣ 📂experience          # Stores prompts for summarizing the agent's self-experience
+ ┣ 📂share               # Stores shared prompts
    ┗ 📂base             # Basic version of shared prompts
      ┣ 📜api.yaml       # Basic API prompt
      ┣ 📜app_agent.yaml # Basic AppAgent prompt template
      ┗ 📜host_agent.yaml # Basic HostAgent prompt template
+ ┗ 📂third_party         # Stores prompts for third-party integrations (e.g., Linux agents)
 ```
 
 !!! note
-    The `lite` version of prompts is a simplified version of the full prompts, which is used for LLMs that have a limited token budget. However, the `lite` version is not fully optimized and may lead to **suboptimal** performance.
-
-!!! note
-    The `non-visual` and `visual` folders contain examples for non-visual and visual LLMs, respectively.
+    The `nonvisual` and `visual` folders contain examples for non-visual and visual LLMs, respectively. Visual LLMs can process screenshots while non-visual LLMs rely on text-only control information.
 
 ## Agent Prompts
 
-Prompts used an agent usually contain the following information:
+Prompts used by an agent usually contain the following information:
 
-| Prompt | Description |
-| --- | --- |
-| `Basic template` | A basic template for the agent prompt. |
-| `API` | A prompt for all skills and APIs used by the agent. |
-| `Examples` | Demonstration examples for the agent for in-context learning. |
+| Prompt Component | Description | Source |
+| --- | --- | --- |
+| `Basic template` | A basic template for the agent prompt with system and user roles | YAML files in `share/base/` |
+| `API` | Documentation for all skills and APIs available to the agent | Dynamically generated from MCP tools |
+| `Examples` | Demonstration examples for in-context learning | YAML files in `examples/visual/` or `examples/nonvisual/` |
 
-You can find these prompts `share` directory. The prompts for specific applications are stored in the `apps` directory.
+You can find these prompts in the `share` directory.
 
+## How Prompts Are Constructed
+
+The agent's **Prompter** class is responsible for:
+
+1. **Loading** YAML templates from the file system
+2. **Formatting** API documentation from available tools
+3. **Selecting** appropriate examples based on model type (visual/nonvisual)
+4. **Combining** all components into a structured message list for the LLM
+5. **Injecting** runtime context (observations, screenshots, retrieved knowledge)
+
+Each agent type has its own specialized Prompter:
+
+- **HostAgentPrompter**: Desktop-level orchestration with third-party agent support
+- **AppAgentPrompter**: Application-level interactions with multi-action capabilities
+- **EvaluationAgentPrompter**: Task evaluation and success assessment
 
 !!! tip
-    All information is constructed using the agent's `Prompter` class. You can find more details about the `Prompter` class in the documentation [here](../../infrastructure/agents/design/prompter.md).
+    All information is constructed using the agent's `Prompter` class. You can find more details about the `Prompter` class architecture, template loading, and prompt construction workflow in the [Prompter documentation](../../infrastructure/agents/design/prompter.md).
 
 

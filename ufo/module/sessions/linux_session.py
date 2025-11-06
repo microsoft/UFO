@@ -9,7 +9,6 @@ This module provides session types for Linux platform that don't require a HostA
 import logging
 from typing import Optional, TYPE_CHECKING
 
-from ufo.agents.agent.host_agent import AgentFactory
 from ufo.client.mcp.mcp_server_manager import MCPServerManager
 from config.config_loader import get_ufo_config
 from ufo.module import interactor
