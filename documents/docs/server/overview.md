@@ -26,6 +26,9 @@ The Agent Server is a **FastAPI-based asynchronous WebSocket server** that serve
     - **Async by Design**: Non-blocking execution enables high concurrency
     - **Platform Agnostic**: Supports Windows, Linux, macOS (in development)
 
+!!!info "Server-Client Architecture"
+    The Agent Server is part of UFO's distributed **server-client architecture**, where it handles orchestration and state management while [Agent Clients](../client/overview.md) handle command execution. See [Server-Client Architecture](../infrastructure/agents/server_client_architecture.md) for the complete design rationale and communication patterns.
+
 ---
 
 ## Architecture
@@ -123,6 +126,8 @@ This layered design ensures each component has a single, well-defined responsibi
 - Respond to commands via MCP tool servers
 - Stream execution logs back to server
 
+See [Agent Client Overview](../client/overview.md) for detailed client architecture.
+
 **Constellation Clients**  
 - Orchestrate multi-device workflows from a central point
 - Dispatch tasks to specific target devices via `target_id`
@@ -131,6 +136,8 @@ This layered design ensures each component has a single, well-defined responsibi
 
 !!!tip "Connection Flow"
     Both client types connect to `/ws` and register using the `REGISTER` message. The server differentiates behavior based on `client_type` field.
+    
+    For the complete server-client architecture and design rationale, see [Server-Client Architecture](../infrastructure/agents/server_client_architecture.md).
 
 See [Quick Start](./quick_start.md) for registration examples.
 

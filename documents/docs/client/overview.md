@@ -64,6 +64,9 @@ graph LR
     - ✅ Server can orchestrate multiple clients intelligently
     - ✅ Clients can be lightweight and resource-efficient
 
+!!!tip "Server-Client Architecture"
+    The Agent Client is part of UFO's distributed **server-client architecture**, where it handles command execution and resource access while the [Agent Server](../server/overview.md) handles orchestration and decision-making. See [Server-Client Architecture](../infrastructure/agents/server_client_architecture.md) for the complete design rationale, communication protocols, and deployment patterns.
+
 ---
 
 ## 🏗️ Architecture
@@ -191,7 +194,7 @@ sequenceDiagram
 ### 2. MCP Server Management
 
 !!!tip "Extensible Tool Ecosystem"
-    The client manages a collection of **MCP (Model Context Protocol) servers** to provide diverse tool access for automation tasks.
+    The client manages a collection of **MCP (Model Context Protocol) servers** to provide diverse tool access for automation tasks. The client is responsible for registering, managing, and executing these tools, while the [Agent Server](../server/overview.md) handles command orchestration. See [Server-Client Architecture](../infrastructure/agents/server_client_architecture.md#client-command-execution-and-resource-access) for how MCP integration fits into the overall architecture.
 
 **MCP Server Categories:**
 

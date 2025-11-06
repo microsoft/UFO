@@ -30,7 +30,7 @@ nav:
           - DeepSeek: configuration/models/deepseek.md
           - Ollama: configuration/models/ollama.md
           - Custom Model: configuration/models/custom_model.md
-  - Galaxy Framework:
+  - UFO³ Agent Galaxy:
       - Overview: galaxy/overview.md
       - Task Constellation (DAG):
           - Overview: galaxy/constellation/overview.md
@@ -124,6 +124,7 @@ nav:
       - Device Agent Architecture:
           - Overview: infrastructure/agents/overview.md
           - Agent Types & Implementation: infrastructure/agents/agent_types.md
+          - Server-Client Architecture: infrastructure/agents/server_client_architecture.md
           - Architecture Layers:
               - State Layer (Level-1): infrastructure/agents/design/state.md
               - Strategy Layer (Level-2): infrastructure/agents/design/processor.md
