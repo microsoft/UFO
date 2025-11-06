@@ -1,94 +1,205 @@
-# Quick Start
+# Quick Start Guide
 
-### 🛠️ Step 1: Installation
-UFO requires **Python >= 3.10** running on **Windows OS >= 10**. It can be installed by running the following command:
+Welcome to **UFO²** – the Desktop AgentOS! This guide will help you get started with UFO² in just a few minutes.
+
+!!!abstract "What is UFO²?"
+    UFO² is a **Desktop AgentOS** that turns natural-language requests into automatic, reliable, multi-application workflows on Windows. It goes beyond UI-focused automation by combining GUI actions with native API calls for faster and more robust execution.
+
+---
+
+## 🛠️ Step 1: Installation
+
+### Requirements
+
+- **Python** >= 3.10
+- **Windows OS** >= 10
+- **Git** (for cloning the repository)
+
+### Installation Steps
+
 ```powershell
-# [optional to create conda environment]
-# conda create -n ufo python=3.10
-# conda activate ufo
+# [Optional] Create conda environment
+conda create -n ufo python=3.10
+conda activate ufo
 
-# clone the repository
+# Clone the repository
 git clone https://github.com/microsoft/UFO.git
 cd UFO
-# install the requirements
+
+# Install dependencies
 pip install -r requirements.txt
-# If you want to use the Qwen as your LLMs, uncomment the related libs.
 ```
 
-### ⚙️ Step 2: Configure the LLMs
-Before running UFO, you need to provide your LLM configurations **individually for HostAgent and AppAgent**. You can create your own config file `ufo/config/config.yaml`, by copying the `ufo/config/config.yaml.template` and editing config for **HOST_AGENT** and **APP_AGENT** as follows: 
+!!!tip "Using Qwen Models"
+    If you want to use Qwen as your LLM, uncomment the related libraries in `requirements.txt` before installing.
+
+---
+
+---
+
+## ⚙️ Step 2: Configure LLMs
+
+> **📢 New Configuration System (Recommended)**  
+> UFO² now uses a **new modular config system** located in `config/ufo/` with auto-discovery and type validation. While the legacy `ufo/config/config.yaml` is still supported for backward compatibility, we strongly recommend migrating to the new system for better maintainability.
+
+### Option 1: New Config System (Recommended)
+
+The new config files are organized in `config/ufo/` with separate YAML files for different components:
+
+```powershell
+# Copy template to create your agent config file (contains API keys)
+copy config\ufo\agents.yaml.template config\ufo\agents.yaml
+notepad config\ufo\agents.yaml   # Edit your LLM API credentials
+```
+
+**Directory Structure:**
+```
+config/ufo/
+├── agents.yaml.template     # Template: Agent configs (HOST_AGENT, APP_AGENT) - COPY & EDIT THIS
+├── agents.yaml              # Your agent configs with API keys (DO NOT commit to git)
+├── rag.yaml                 # RAG and knowledge settings (default values, edit if needed)
+├── system.yaml              # System settings (default values, edit if needed)
+├── mcp.yaml                 # MCP integration settings (default values, edit if needed)
+└── ...                      # Other modular configs with defaults
+```
+
+!!!note "Configuration Files"
+    - **`agents.yaml`**: Contains sensitive information (API keys) - **MUST be configured**
+    - Other config files have default values and only need editing for customization
+
+**Migration Benefits:**
+
+- ✅ **Type Safety**: Automatic validation with Pydantic schemas
+- ✅ **Auto-Discovery**: No manual config loading needed
+- ✅ **Modular**: Separate concerns into individual files
+- ✅ **IDE Support**: Better autocomplete and error detection
+
+### Option 2: Legacy Config (Backward Compatible)
+
+For existing users, the old config path still works:
 
 ```powershell
 copy ufo\config\config.yaml.template ufo\config\config.yaml
-notepad ufo\config\config.yaml   # paste your key & endpoint
+notepad ufo\config\config.yaml   # Paste your key & endpoint
 ```
 
-#### OpenAI
-```bash
-VISUAL_MODE: True, # Whether to use the visual mode
-API_TYPE: "openai" , # The API type, "openai" for the OpenAI API.  
-API_BASE: "https://api.openai.com/v1/chat/completions", # The the OpenAI API endpoint.
-API_KEY: "sk-",  # The OpenAI API key, begin with sk-
-API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The OpenAI model
+!!!warning "Config Precedence"
+    If both old and new configs exist, the new config in `config/ufo/` takes precedence. A warning will be displayed during startup.
+
+---
+
+### LLM Configuration Examples
+
+#### OpenAI Configuration
+
+**New Config (`config/ufo/agents.yaml`):**
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: true
+  API_TYPE: "openai"
+  API_BASE: "https://api.openai.com/v1/chat/completions"
+  API_KEY: "sk-YOUR_KEY_HERE"  # Replace with your actual API key
+  API_VERSION: "2025-02-01-preview"
+  API_MODEL: "gpt-4o"
+
+APP_AGENT:
+  VISUAL_MODE: true
+  API_TYPE: "openai"
+  API_BASE: "https://api.openai.com/v1/chat/completions"
+  API_KEY: "sk-YOUR_KEY_HERE"  # Replace with your actual API key
+  API_VERSION: "2025-02-01-preview"
+  API_MODEL: "gpt-4o"
 ```
 
-
-#### Azure OpenAI (AOAI)
-```bash
-VISUAL_MODE: True, # Whether to use the visual mode
-API_TYPE: "aoai" , # The API type, "aoai" for the Azure OpenAI.  
-API_BASE: "YOUR_ENDPOINT", #  The AOAI API address. Format: https://{your-resource-name}.openai.azure.com
-API_KEY: "YOUR_KEY",  # The aoai API key
-API_VERSION: "2024-02-15-preview", # "2024-02-15-preview" by default
-API_MODEL: "gpt-4-vision-preview",  # The OpenAI model
-API_DEPLOYMENT_ID: "YOUR_AOAI_DEPLOYMENT", # The deployment id for the AOAI API
+**Legacy Config (`ufo/config/config.yaml`):**
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: True
+  API_TYPE: "openai"
+  API_BASE: "https://api.openai.com/v1/chat/completions"
+  API_KEY: "sk-YOUR_KEY_HERE"
+  API_VERSION: "2024-02-15-preview"
+  API_MODEL: "gpt-4o"
 ```
-You can also non-visial model (e.g., GPT-4) for each agent, by setting `VISUAL_MODE: False` and proper `API_MODEL` (openai) and `API_DEPLOYMENT_ID` (aoai). You can also optionally set an backup LLM engine in the field of `BACKUP_AGENT` if the above engines failed during the inference. The `API_MODEL` can be any GPT models that can accept images as input.
 
+#### Azure OpenAI (AOAI) Configuration
 
+**New Config (`config/ufo/agents.yaml`):**
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: true
+  API_TYPE: "aoai"
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
+  API_KEY: "YOUR_AOAI_KEY"
+  API_VERSION: "2024-02-15-preview"
+  API_MODEL: "gpt-4o"
+  API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
 
-####  Non-Visual Model Configuration
-You can utilize non-visual models (e.g., GPT-4) for each agent by configuring the following settings in the `config.yaml` file:
+APP_AGENT:
+  VISUAL_MODE: true
+  API_TYPE: "aoai"
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
+  API_KEY: "YOUR_AOAI_KEY"
+  API_VERSION: "2024-02-15-preview"
+  API_MODEL: "gpt-4o"
+  API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
+```
 
-!!! info
-    - ```VISUAL_MODE: False```
-    - Specify the appropriate `API_MODEL` (OpenAI) and `API_DEPLOYMENT_ID` (AOAI) for each agent.
+!!!info "More LLM Options"
+    UFO² supports various LLM providers including **Qwen**, **Gemini**, **Claude**, **DeepSeek**, and more. See the **[Model Configuration Guide](../configuration/models/overview.md)** for complete details.
 
-Optionally, you can set a backup language model (LLM) engine in the `BACKUP_AGENT` field to handle cases where the primary engines fail during inference. Ensure you configure these settings accurately to leverage non-visual models effectively.
+---
 
-!!! note
-    UFO also supports other LLMs and advanced configurations, such as customize your own model, please check the [documents](../configuration/models/overview.md) for more details. Because of the limitations of model input, a lite version of the prompt is provided to allow users to experience it, which is configured in `config_dev.yaml`.
+---
 
-### 📔 Step 3: Additional Setting for RAG (optional).
-If you want to enhance UFO's ability with external knowledge, you can optionally configure it with an external database for retrieval augmented generation (RAG) in the `ufo/config/config.yaml` file. 
+## 📔 Step 3: Additional Settings (Optional)
 
-We provide the following options for RAG to enhance UFO's capabilities:
+### RAG Configuration
 
-- **[Offline Help Document](../ufo2/core_features/knowledge_substrate/learning_from_help_document.md)**: Enable UFO to retrieve information from offline help documents.
+Enhance UFO's capabilities with external knowledge through Retrieval Augmented Generation (RAG):
 
-- **[Online Bing Search Engine](../ufo2/core_features/knowledge_substrate/learning_from_bing_search.md)**: Enhance UFO's capabilities by utilizing the most up-to-date online search results.
+**For New Config**: Edit `config/ufo/rag.yaml` (already exists with default values)  
+**For Legacy Config**: Edit `ufo/config/config.yaml`
 
-- **[Self-Experience](../ufo2/core_features/knowledge_substrate/experience_learning.md)**: Save task completion trajectories into UFO's memory for future reference.
+**Available RAG Options:**
 
-- **[User-Demonstration](../ufo2/core_features/knowledge_substrate/learning_from_demonstration.md)**: Boost UFO's capabilities through user demonstration.
+| Feature | Documentation | Description |
+|---------|--------------|-------------|
+| **Offline Help Documents** | [Learning from Help Documents](../ufo2/core_features/knowledge_substrate/learning_from_help_document.md) | Retrieve information from offline help documentation |
+| **Online Bing Search** | [Learning from Bing Search](../ufo2/core_features/knowledge_substrate/learning_from_bing_search.md) | Utilize up-to-date online search results |
+| **Self-Experience** | [Experience Learning](../ufo2/core_features/knowledge_substrate/experience_learning.md) | Save task trajectories into memory for future reference |
+| **User Demonstrations** | [Learning from Demonstrations](../ufo2/core_features/knowledge_substrate/learning_from_demonstration.md) | Learn from user-provided demonstrations |
 
-!!!tip
-    Consult their respective documentation for more information on how to configure these settings.
+**Example RAG Config (`config/ufo/rag.yaml`):**
+```yaml
+# Enable Bing search
+RAG_ONLINE_SEARCH: true
+BING_API_KEY: "YOUR_BING_API_KEY"  # Get from https://www.microsoft.com/en-us/bing/apis
 
-### 🎉 Step 4: Start UFO
+# Enable experience learning
+RAG_EXPERIENCE: true
+```
 
-#### ⌨️ You can execute the following on your Windows command Line (CLI):
+!!!tip "RAG Resources"
+    See **[Knowledge Substrate Overview](../ufo2/core_features/knowledge_substrate/overview.md)** for complete RAG configuration and best practices.
 
-```bash
-# assume you are in the cloned UFO folder
+---
+
+---
+
+## 🎉 Step 4: Start UFO²
+
+### Interactive Mode
+
+Start UFO² in interactive mode where you can enter requests dynamically:
+
+```powershell
+# Assume you are in the cloned UFO folder
 python -m ufo --task <your_task_name>
 ```
 
-This will start the UFO process and you can interact with it through the command line interface. 
-If everything goes well, you will see the following message:
-
-```bash
+**Expected Output:**
+```
 Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction. 
  _   _  _____   ___
 | | | ||  ___| / _ \
@@ -98,21 +209,142 @@ Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction.
 Please enter your request to be completed🛸:
 ```
 
-Alternatively, you can also directly invoke UFO with a specific task and request by using the following command:
+### Direct Request Mode
+
+Invoke UFO² with a specific task and request directly:
 
 ```powershell
 python -m ufo --task <your_task_name> -r "<your_request>"
 ```
 
-
-###  Step 5 🎥: Execution Logs 
-
-You can find the screenshots taken and request & response logs in the following folder:
+**Example:**
+```powershell
+python -m ufo --task email_demo -r "Send an email to john@example.com with subject 'Meeting Reminder'"
 ```
-./ufo/logs/<your_task_name>/
+
+---
+
+
+---
+
+## 🎥 Step 5: Execution Logs
+
+UFO² automatically saves execution logs, screenshots, and traces for debugging and analysis.
+
+**Log Location:**
 ```
-You may use them to debug, replay, or analyze the agent output.
+./logs/<your_task_name>/
+```
 
+**Log Contents:**
 
-!!! note
-    The LLM accepts screenshots of your desktop and application GUI as input. Please ensure that no sensitive or confidential information is visible or captured during the execution process. For further information, refer to [DISCLAIMER.md](https://github.com/microsoft/UFO/blob/vyokky/dev/DISCLAIMER.md).
+| File/Folder | Description |
+|-------------|-------------|
+| `screenshots/` | Screenshots captured during execution |
+| `action_*.json` | Agent actions and responses |
+| `ui_trees/` | UI control tree snapshots (if enabled) |
+| `request_response.log` | Complete LLM request/response logs |
+
+!!!tip "Analyzing Logs"
+    Use the logs to:
+    
+    - **Debug**: Understand agent behavior and identify errors
+    - **Replay**: Reconstruct the execution flow
+    - **Analyze**: Study agent decision-making patterns
+
+!!!warning "Privacy Notice"
+    Screenshots may contain sensitive or confidential information. Ensure no private data is visible during execution. See **[DISCLAIMER.md](https://github.com/microsoft/UFO/blob/main/DISCLAIMER.md)** for details.
+
+---
+
+## 🔄 Migrating from Legacy Config
+
+If you're upgrading from an older version that used `ufo/config/config.yaml`, UFO² provides an **automated conversion tool**.
+
+### Automatic Conversion (Recommended)
+
+```powershell
+# Interactive conversion with automatic backup
+python -m ufo.tools.convert_config
+
+# Preview changes first (dry run)
+python -m ufo.tools.convert_config --dry-run
+
+# Force conversion without confirmation
+python -m ufo.tools.convert_config --force
+```
+
+**What the tool does:**
+
+- ✅ Splits monolithic `config.yaml` into modular files
+- ✅ Converts flow-style YAML (with braces) to block-style YAML
+- ✅ Maps legacy file names to new structure
+- ✅ Preserves all configuration values
+- ✅ Creates timestamped backup for rollback
+- ✅ Validates output files
+
+**Conversion Mapping:**
+
+| Legacy File | → | New File(s) | Transformation |
+|-------------|---|-------------|----------------|
+| `config.yaml` (monolithic) | → | `agents.yaml` + `rag.yaml` + `system.yaml` | Smart field splitting |
+| `agent_mcp.yaml` | → | `mcp.yaml` | Rename + format conversion |
+| `config_prices.yaml` | → | `prices.yaml` | Rename + format conversion |
+
+!!!info "Migration Guide"
+    For detailed migration instructions, rollback procedures, and troubleshooting, see the **[Configuration Migration Guide](../configuration/system/migration.md)**.
+
+---
+
+## 📚 Additional Resources
+
+### Core Documentation
+
+!!!info "Architecture & Concepts"
+    - **[UFO² Overview](../ufo2/overview.md)** - System architecture and design principles
+    - **[HostAgent](../ufo2/host_agent/overview.md)** - Desktop-level coordination agent
+    - **[AppAgent](../ufo2/app_agent/overview.md)** - Application-level execution agent
+
+### Configuration
+
+!!!info "Configuration Guides"
+    - **[Configuration Overview](../configuration/system/overview.md)** - Configuration system architecture
+    - **[Field Reference](../configuration/system/field_reference.md)** - Complete field documentation
+    - **[MCP Configuration](../configuration/system/mcp_reference.md)** - MCP server settings
+    - **[Model Configuration](../configuration/models/overview.md)** - Supported LLM providers
+
+### Advanced Features
+
+!!!info "Advanced Topics"
+    - **[Hybrid Actions](../ufo2/core_features/hybrid_actions.md)** - GUI + API automation
+    - **[Control Detection](../ufo2/core_features/control_detection/overview.md)** - UIA + Vision detection
+    - **[Knowledge Substrate](../ufo2/core_features/knowledge_substrate/overview.md)** - RAG and learning
+    - **[Multi-Action Execution](../ufo2/core_features/multi_action.md)** - Speculative action batching
+
+### Evaluation & Benchmarks
+
+!!!info "Benchmarking"
+    - **[Benchmark Overview](../ufo2/evaluation/benchmark/overview.md)** - Evaluation framework and datasets
+    - **[Windows Agent Arena](../ufo2/evaluation/benchmark/windows_agent_arena.md)** - 154 real Windows tasks
+    - **[OSWorld](../ufo2/evaluation/benchmark/osworld.md)** - Cross-application benchmarks
+
+---
+
+## ❓ Getting Help
+
+- 📖 **Documentation**: [https://microsoft.github.io/UFO/](https://microsoft.github.io/UFO/)
+- 🐛 **GitHub Issues**: [https://github.com/microsoft/UFO/issues](https://github.com/microsoft/UFO/issues) (preferred)
+- 📧 **Email**: [ufo-agent@microsoft.com](mailto:ufo-agent@microsoft.com)
+
+---
+
+## 🎯 Next Steps
+
+Now that UFO² is set up, explore these guides to unlock its full potential:
+
+1. **[Configuration Customization](../configuration/system/overview.md)** - Fine-tune UFO² behavior
+2. **[Knowledge Substrate Setup](../ufo2/core_features/knowledge_substrate/overview.md)** - Enable RAG capabilities
+3. **[Creating Custom Agents](../tutorials/creating_app_agent/overview.md)** - Build specialized agents
+4. **[MCP Integration](../mcp/overview.md)** - Extend with custom MCP servers
+
+Happy automating with UFO²! 🛸

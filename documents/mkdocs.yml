@@ -107,11 +107,10 @@ nav:
       - LTS Support Policy: ufo2/lts_support_policy.md
   - Linux Agent:
       - Overview: linux/overview.md
-      - Quick Start: linux/quick_start.md
       - Using as Galaxy Device: linux/as_galaxy_device.md
-      - Bash Executor: linux/bash_executor.md
-      - Configuration: linux/configuration.md
-      - Examples: linux/examples.md
+      - State Machine: linux/state.md
+      - Processing Strategy: linux/strategy.md
+      - MCP Commands: linux/commands.md
   - Tutorials & Development:
       - Creating Your AppAgent:
           - Overview: tutorials/creating_app_agent/overview.md

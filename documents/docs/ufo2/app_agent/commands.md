@@ -260,7 +260,7 @@ system:
 ```
 
 !!!tip "Configuration Details"
-    See **[AppAgent Configuration](../../configuration/agents/app_agent.md)** for complete configuration options.
+    See **[Configuration Overview](../../configuration/system/overview.md)** and **[Field Reference](../../configuration/system/field_reference.md)** for complete configuration options.
 
 ---
 
