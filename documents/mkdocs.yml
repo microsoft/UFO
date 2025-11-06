@@ -32,22 +32,12 @@ nav:
           - Custom Model: configuration/models/custom_model.md
   - Galaxy Framework:
       - Overview: galaxy/overview.md
-      - Quick Start: galaxy/quick_start.md
-      - Architecture:
-          - Constellation (DAG): galaxy/constellation.md
-          - ConstellationAgent: galaxy/constellation_agent.md
-          - Device Pool: galaxy/device_pool.md
-          - Task Orchestrator: galaxy/task_orchestrator.md
-      - Features:
-          - Task Planning: galaxy/planning.md
-          - Task Assignment: galaxy/task_assignment.md
-          - Dynamic Editing: galaxy/dynamic_editing.md
-          - Parallel Execution: galaxy/parallel_execution.md
-          - Data Transfer: galaxy/data_transfer.md
-      - Operations:
-          - Monitoring & Visualization: galaxy/monitoring_visualization.md
-          - Fault Tolerance: galaxy/fault_tolerance.md
-      - API Reference: galaxy/api_reference.md
+      - Task Constellation (DAG):
+          - Overview: galaxy/constellation/overview.md
+          - TaskStar: galaxy/constellation/task_star.md
+          - TaskStarLine: galaxy/constellation/task_star_line.md
+          - TaskConstellation: galaxy/constellation/task_constellation.md
+          - ConstellationEditor: galaxy/constellation/constellation_editor.md
   - UFO² Desktop AgentOS:
       - Overview: ufo2/overview.md
       - Quick Start: ufo2/quick_start.md
