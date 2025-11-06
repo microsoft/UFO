@@ -59,6 +59,15 @@ nav:
           - State Machine: galaxy/constellation_agent/state.md
           - Strategy Pattern: galaxy/constellation_agent/strategy.md
           - MCP Commands: galaxy/constellation_agent/command.md
+      - Constellation Orchestrator:
+          - Overview: galaxy/constellation_orchestrator/overview.md
+          - Event-Driven Coordination: galaxy/constellation_orchestrator/event_driven_coordination.md
+          - Asynchronous Scheduling: galaxy/constellation_orchestrator/asynchronous_scheduling.md
+          - Safe Assignment Locking: galaxy/constellation_orchestrator/safe_assignment_locking.md
+          - Consistency Guarantees: galaxy/constellation_orchestrator/consistency_guarantees.md
+          - Batched Editing: galaxy/constellation_orchestrator/batched_editing.md
+          - Constellation Manager: galaxy/constellation_orchestrator/constellation_manager.md
+          - API Reference: galaxy/constellation_orchestrator/api_reference.md
   - UFO² Desktop AgentOS:
       - Overview: ufo2/overview.md
       - Quick Start: ufo2/quick_start.md
