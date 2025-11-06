@@ -6,8 +6,8 @@
 [![github](https://img.shields.io/github/stars/microsoft/UFO)](https://github.com/microsoft/UFO)&ensp;
 [![YouTube](https://img.shields.io/badge/YouTube-white?logo=youtube&logoColor=%23FF0000)](https://www.youtube.com/watch?v=QT_OhygMVXU)&ensp;
 
-!!!quote "Deep OS Integration for Desktop Automation"
-    **UFO²** is a Windows AgentOS that reimagines desktop automation as a first-class operating system abstraction. Unlike traditional Computer-Using Agents (CUAs) that rely on screenshots and simulated inputs, UFO² deeply integrates with Windows OS through UI Automation APIs, application-specific introspection, and hybrid GUI–API execution—enabling robust, efficient, and non-disruptive automation across 20+ real-world applications.
+
+**UFO²** is a Windows AgentOS that reimagines desktop automation as a first-class operating system abstraction. Unlike traditional Computer-Using Agents (CUAs) that rely on screenshots and simulated inputs, UFO² deeply integrates with Windows OS through UI Automation APIs, application-specific introspection, and hybrid GUI–API execution—enabling robust, efficient, and non-disruptive automation across 20+ real-world applications.
 
 ---
 
@@ -101,18 +101,7 @@ Traditional CUAs simulate mouse/keyboard only. UFO² chooses the best execution 
 **Model Context Protocol (MCP) Servers:**  
 Extensible framework for adding application-specific APIs without modifying agent code.
 
-!!!example "Hybrid Execution Example"
-    ```python
-    # UFO² intelligently selects execution method:
-    
-    # Native API (fast, reliable)
-    excel_app.cells["A1"].value = 100  # Direct API call
-    
-    # GUI Fallback (when API unavailable)
-    agent.click(control="A1")          # UI Automation fallback
-    agent.type("100")
-    ```
-    
+!!!info "Learn More"
     📖 [Hybrid Actions Guide](core_features/hybrid_actions.md) • [MCP Integration](../mcp/overview.md)
 
 ### 3. Continuous Knowledge Substrate 📚
@@ -192,16 +181,18 @@ Both HostAgent and AppAgent execute a **4-phase processing cycle**:
 
 Commands are dispatched through **MCP (Model Context Protocol)** servers:
 
-=== "HostAgent Commands"
-    - **Desktop Capture:** `capture_desktop_screenshot`  
-    - **Window Management:** `get_desktop_app_info`, `get_app_window`  
-    - **Process Control:** `launch_application`, `close_application`
+**HostAgent Commands:**
 
-=== "AppAgent Commands"
-    - **Screenshot:** `capture_screenshot`, `annotate_screenshot`  
-    - **UI Inspection:** `get_control_info`, `get_ui_tree`  
-    - **UI Interaction:** `click`, `set_edit_text`, `wheel_mouse_input`  
-    - **Control Selection:** `select_control_by_index`, `select_control_by_name`
+- **Desktop Capture:** `capture_desktop_screenshot`  
+- **Window Management:** `get_desktop_app_info`, `get_app_window`  
+- **Process Control:** `launch_application`, `close_application`
+
+**AppAgent Commands:**
+
+- **Screenshot:** `capture_screenshot`, `annotate_screenshot`  
+- **UI Inspection:** `get_control_info`, `get_ui_tree`  
+- **UI Interaction:** `click`, `set_edit_text`, `wheel_mouse_input`  
+- **Control Selection:** `select_control_by_index`, `select_control_by_name`
 
 !!!info "Command Architecture"
     📖 [Command Layer](../infrastructure/agents/design/command.md) — MCP integration and command dispatch  
@@ -268,24 +259,38 @@ app_agent:
 
 ### Basic Usage
 
-```python
-from ufo.module.sessions.session import Session
+UFO² is designed to be run from the command line:
 
-# Create session with user request
-session = Session(
-    task="Open Excel, create a chart from Sheet1 data",
-    mode="normal"
-)
-
-# Execute automation
-result = await session.run()
-
-# Check result
-if result.status == "FINISH":
-    print(f"✅ Task completed! Steps: {len(session.host_agent.memory.memory_items)}")
-else:
-    print(f"❌ Task failed: {result.message}")
+**Interactive Mode:**
+```powershell
+# Start UFO² in interactive mode
+python -m ufo --task <your_task_name>
 ```
+
+**Example:**
+```powershell
+python -m ufo --task excel_demo
+```
+
+This will prompt you to enter your request interactively:
+```
+Welcome to use UFO🛸, A UI-focused Agent for Windows OS Interaction.
+Please enter your request to be completed🛸: Create a chart from Sheet1 data in Excel
+```
+
+**Direct Request Mode:**
+```powershell
+# Execute with a specific request directly
+python -m ufo --task <your_task_name> -r "<your_request>"
+```
+
+**Example:**
+```powershell
+python -m ufo --task excel_demo -r "Open Excel and create a chart from Sheet1 data"
+```
+
+!!!tip "Complete Setup Guide"
+    For detailed installation, configuration, and advanced usage options, see the **[Quick Start Guide](../getting_started/quick_start_ufo2.md)**.
 
 ### What Happens Under the Hood
 
