@@ -57,8 +57,8 @@ UFO² implements a **hierarchical multi-agent system** optimized for Windows des
 - **State Machines** ensure deterministic execution flow and error recovery
 
 !!!info "Learn More"
-    - [**HostAgent Documentation**](host_agent.md) — 7-state FSM, desktop orchestration, AppAgent lifecycle  
-    - [**AppAgent Documentation**](app_agent.md) — 6-state FSM, UI automation, hybrid action execution  
+    - [**HostAgent Documentation**](host_agent/overview.md) — 7-state FSM, desktop orchestration, AppAgent lifecycle  
+    - [**AppAgent Documentation**](app_agent/overview.md) — 6-state FSM, UI automation, hybrid action execution  
     - [**Agent Architecture**](../infrastructure/agents/overview.md) — Three-layer design principles
 
 ---
@@ -293,7 +293,7 @@ else:
 
 !!!tip "Next Steps"
     📖 [Getting Started Guide](../getting_started/quick_start_ufo2.md)  
-    📖 [Creating Your AppAgent](creating_app_agent/overview.md)
+    📖 [Creating Your AppAgent](../tutorials/creating_app_agent/overview.md)
 
 ---
 
@@ -301,9 +301,9 @@ else:
 
 ### Core Concepts
 
-- [**HostAgent**](host_agent.md) — Desktop orchestrator with 7-state FSM  
-- [**AppAgent**](app_agent.md) — Application executor with 6-state FSM  
-- [**Agent Types**](agent_types.md) — Platform-specific implementations  
+- [**HostAgent**](host_agent/overview.md) — Desktop orchestrator with 7-state FSM  
+- [**AppAgent**](app_agent/overview.md) — Application executor with 6-state FSM  
+- [**Agent Types**](../infrastructure/agents/agent_types.md) — Platform-specific implementations  
 - [**Evaluation Agent**](evaluation_agent.md) — Automated testing and benchmarking
 
 ### Advanced Features
@@ -324,7 +324,7 @@ else:
 
 ### Development
 
-- [**Creating AppAgent**](creating_app_agent/overview.md) — Custom agent development  
+- [**Creating AppAgent**](../tutorials/creating_app_agent/overview.md) — Custom agent development  
 - [**MCP Servers**](../mcp/overview.md) — Building custom MCP servers  
 - [**Configuration**](../configuration/system/overview.md) — System configuration reference  
 - [**Prompts**](prompts/overview.md) — Prompt engineering guide
@@ -358,9 +358,9 @@ Ready to explore UFO²? Choose your path:
 
 !!!info "Learning Paths"
     **🚀 New Users:** Start with [Quick Start Guide](../getting_started/quick_start_ufo2.md)  
-    **🔧 Developers:** Read [Creating AppAgent](creating_app_agent/overview.md)  
+    **🔧 Developers:** Read [Creating AppAgent](../tutorials/creating_app_agent/overview.md)  
     **🏗️ System Architects:** Study [Device Agent Architecture](../infrastructure/agents/overview.md)  
     **📊 Researchers:** Check [Benchmark Results](benchmark/overview.md)
 
-**Next:** [HostAgent Deep Dive](host_agent.md) → Understand desktop orchestration
+**Next:** [HostAgent Deep Dive](host_agent/overview.md) → Understand desktop orchestration
 

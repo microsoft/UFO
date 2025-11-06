@@ -410,7 +410,9 @@ app_click = await computer.run_actions([
 
 ## Related Documentation
 
+
 - [UICollector](./ui_collector.md) - Window discovery server
 - [AppUIExecutor](./app_ui_executor.md) - Window interaction server
 - [Action Servers](../action.md) - Action server concepts
-- [HostAgent](../../ufo2/host_agent.md) - HostAgent architecture
+- [HostAgent](../../ufo2/host_agent/overview.md) - HostAgent architecture
+

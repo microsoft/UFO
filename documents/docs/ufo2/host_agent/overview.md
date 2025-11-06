@@ -1,4 +1,4 @@
-# HostAgent: Desktop Orchestrator
+﻿# HostAgent: Desktop Orchestrator
 
 !!!quote "The Task Decomposition and Orchestration Agent"
     **HostAgent** is the top-level orchestrator agent in the Windows Agent Module. It decomposes user requests into subtasks, selects appropriate applications, manages AppAgent lifecycles, and coordinates multi-application workflows through the Blackboard pattern. HostAgent operates at the desktop level with a 7-state finite state machine and 4-phase processing pipeline.
@@ -38,9 +38,9 @@ graph TB
 |---------------|-------------|---------|
 | **Task Reception** | Receive and understand user's natural language request | "Extract data from Word and create an Excel chart" |
 | **Task Decomposition** | Break complex request into sequential subtasks | 1. Extract table from Word<br/>2. Create chart in Excel |
-| **Application Selection** | Identify which application can fulfill each subtask | Subtask 1 → Microsoft Word<br/>Subtask 2 → Microsoft Excel |
+| **Application Selection** | Identify which application can fulfill each subtask | Subtask 1 鈫?Microsoft Word<br/>Subtask 2 鈫?Microsoft Excel |
 | **AppAgent Lifecycle** | Create, manage, and destroy AppAgent instances | Create AppAgent for Word, reuse or create for Excel |
-| **Cross-App Coordination** | Share data between AppAgents via Blackboard | Word result → Blackboard → Excel input |
+| **Cross-App Coordination** | Share data between AppAgents via Blackboard | Word result 鈫?Blackboard 鈫?Excel input |
 | **Task Completion** | Verify all subtasks completed successfully | Check Blackboard for all subtask results |
 
 !!!info "Hierarchical Position"
@@ -99,13 +99,13 @@ stateDiagram-v2
 
 | State | Purpose | Processor Executed | Duration | Transitions |
 |-------|---------|-------------------|----------|-------------|
-| **CONTINUE** | Active processing state - execute orchestration logic | ✅ Yes (4 phases) | Single round | CONTINUE / ASSIGN / FINISH / ERROR |
-| **ASSIGN** | Create or retrieve AppAgent for selected application | ❌ No | Immediate | AppAgent.CONTINUE |
-| **FINISH** | Task completed successfully | ❌ No | Permanent | None (terminal) |
-| **FAIL** | Task failed, cannot proceed | ❌ No | Permanent | None (terminal) |
-| **ERROR** | Unhandled exception or system error | ❌ No | Permanent | FINISH (shutdown) |
-| **PENDING** | Await external event or user input | ❌ No | Until event/timeout | CONTINUE / FAIL |
-| **CONFIRM** | Request user approval before proceeding | ✅ Yes | Until user responds | CONTINUE / FAIL |
+| **CONTINUE** | Active processing state - execute orchestration logic | 鉁?Yes (4 phases) | Single round | CONTINUE / ASSIGN / FINISH / ERROR |
+| **ASSIGN** | Create or retrieve AppAgent for selected application | 鉂?No | Immediate | AppAgent.CONTINUE |
+| **FINISH** | Task completed successfully | 鉂?No | Permanent | None (terminal) |
+| **FAIL** | Task failed, cannot proceed | 鉂?No | Permanent | None (terminal) |
+| **ERROR** | Unhandled exception or system error | 鉂?No | Permanent | FINISH (shutdown) |
+| **PENDING** | Await external event or user input | 鉂?No | Until event/timeout | CONTINUE / FAIL |
+| **CONFIRM** | Request user approval before proceeding | 鉁?Yes | Until user responds | CONTINUE / FAIL |
 
 The state machine diagram for the `HostAgent` is also shown below:
 <h1 align="center">
@@ -498,16 +498,16 @@ sequenceDiagram
 ## Related Documentation
 
 !!!info "Architecture"
-    - **[Windows Agent Overview](overview.md)**: Module architecture and hierarchy
-    - **[AppAgent](app_agent.md)**: Application automation agent
-    - **[State Layer](../infrastructure/agents/design/state.md)**: FSM design principles
-    - **[Strategy Layer](../infrastructure/agents/design/processor.md)**: Processor framework
+    - **[Windows Agent Overview](../overview.md)**: Module architecture and hierarchy
+    - **[AppAgent](../app_agent/overview.md)**: Application automation agent
+    - **[State Layer](../../infrastructure/agents/design/state.md)**: FSM design principles
+    - **[Strategy Layer](../../infrastructure/agents/design/processor.md)**: Processor framework
 
 !!!info "System Integration"
-    - **[Session Management](../infrastructure/modules/session.md)**: Session lifecycle
-    - **[Round Management](../infrastructure/modules/round.md)**: Execution rounds
-    - **[Blackboard](../infrastructure/agents/design/blackboard.md)**: Inter-agent communication
-    - **[Memory System](../infrastructure/agents/design/memory.md)**: Execution history
+    - **[Session Management](../../infrastructure/modules/session.md)**: Session lifecycle
+    - **[Round Management](../../infrastructure/modules/round.md)**: Execution rounds
+    - **[Blackboard](../../infrastructure/agents/design/blackboard.md)**: Inter-agent communication
+    - **[Memory System](../../infrastructure/agents/design/memory.md)**: Execution history
 
 ---
 
@@ -520,23 +520,25 @@ sequenceDiagram
 ## Summary
 
 !!!success "HostAgent Key Characteristics"
-    ✅ **Orchestrator**: Decomposes tasks and coordinates AppAgents
+    鉁?**Orchestrator**: Decomposes tasks and coordinates AppAgents
     
-    ✅ **Desktop-Scoped**: Operates at system level, not application level
+    鉁?**Desktop-Scoped**: Operates at system level, not application level
     
-    ✅ **7-State FSM**: CONTINUE → ASSIGN → AppAgent → CONTINUE → FINISH
+    鉁?**7-State FSM**: CONTINUE 鈫?ASSIGN 鈫?AppAgent 鈫?CONTINUE 鈫?FINISH
     
-    ✅ **4-Phase Pipeline**: DATA_COLLECTION → LLM → ACTION → MEMORY
+    鉁?**4-Phase Pipeline**: DATA_COLLECTION 鈫?LLM 鈫?ACTION 鈫?MEMORY
     
-    ✅ **AppAgent Manager**: Creates, caches, and reuses AppAgent instances
+    鉁?**AppAgent Manager**: Creates, caches, and reuses AppAgent instances
     
-    ✅ **Blackboard Owner**: Provides shared memory for all agents
+    鉁?**Blackboard Owner**: Provides shared memory for all agents
     
-    ✅ **Single Instance**: One HostAgent per session, manages many AppAgents
+    鉁?**Single Instance**: One HostAgent per session, manages many AppAgents
 
 **Next Steps:**
 
-1. **Study AppAgent**: Read [AppAgent documentation](app_agent.md) to understand execution layer
-2. **Explore Architecture**: Review [Device Agent Overview](../infrastructure/agents/overview.md) for system design
-3. **Learn Processing**: Check [Strategy Layer](../infrastructure/agents/design/processor.md) for processing logic
-4. **Command System**: See [Command Layer](../infrastructure/agents/design/command.md) for available operations
+1. **Study AppAgent**: Read [AppAgent documentation](../app_agent/overview.md) to understand execution layer
+2. **Explore Architecture**: Review [Device Agent Overview](../../infrastructure/agents/overview.md) for system design
+3. **Learn Processing**: Check [Strategy Layer](../../infrastructure/agents/design/processor.md) for processing logic
+4. **Command System**: See [Command Layer](../../infrastructure/agents/design/command.md) for available operations
+
+

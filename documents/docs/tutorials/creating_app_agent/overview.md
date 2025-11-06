@@ -6,6 +6,6 @@ To create an `AppAgent`, you can provide the following components:
 
 | Component | Description | Usage Documentation |
 | --- | --- | --- |
-| [Help Documents](./help_document_provision.md) | The help documents for the application to guide the `AppAgent` in executing tasks. | [Learning from Help Documents](../advanced_usage/knowledge_substrate/learning_from_help_document.md) |
-| [User Demonstrations](./demonstration_provision.md) | The user demonstrations for the application to guide the `AppAgent` in executing tasks. | [Learning from User Demonstrations](../advanced_usage/knowledge_substrate/learning_from_demonstration.md) |
+| [Help Documents](./help_document_provision.md) | The help documents for the application to guide the `AppAgent` in executing tasks. | [Learning from Help Documents](../../ufo2/advanced_usage/knowledge_substrate/learning_from_help_document.md) |
+| [User Demonstrations](./demonstration_provision.md) | The user demonstrations for the application to guide the `AppAgent` in executing tasks. | [Learning from User Demonstrations](../../ufo2/advanced_usage/knowledge_substrate/learning_from_demonstration.md) |
 | [Native API Wrappers](./warpping_app_native_api.md) | The native API wrappers for the application to interact with the application. | Automator Module (ufo/automator) |

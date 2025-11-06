@@ -11,7 +11,7 @@ For complex tasks, users can demonstrate the task using [Step Recorder](https://
 UFO use the [Step Recorder](https://support.microsoft.com/en-us/windows/record-steps-to-reproduce-a-problem-46582a9b-620f-2e36-00c9-04e25d784e47) tool to record the task and action trajectories. The recorded demonstration is saved as a zip file. The `DemonstrationSummarizer` class extracts and summarizes the demonstration. The summarized demonstration is saved in the `DEMONSTRATION_SAVED_PATH` as specified in the `config_dev.yaml` file. When the AppAgent encounters a similar task, the `DemonstrationRetriever` class retrieves the saved demonstration from the demonstration database and generates a plan based on the retrieved demonstration.
 
 !!! info
-    You can find how to record the task and action trajectories using the Step Recorder tool in the [User Demonstration Provision](../../creating_app_agent/demonstration_provision.md) document.
+    You can find how to record the task and action trajectories using the Step Recorder tool in the [User Demonstration Provision](../../../tutorials/creating_app_agent/demonstration_provision.md) document.
 
 
 You can find a demo video of learning from user demonstrations:
@@ -24,7 +24,7 @@ You can find a demo video of learning from user demonstrations:
 ## Activating Learning from User Demonstrations
 
 ### Step 1: User Demonstration
-Please follow the steps in the [User Demonstration Provision](../../creating_app_agent/demonstration_provision.md) document to provide user demonstrations.
+Please follow the steps in the [User Demonstration Provision](../../../tutorials/creating_app_agent/demonstration_provision.md) document to provide user demonstrations.
 
 ### Step 2: Configure the AppAgent
 Configure the following parameters to allow UFO to use RAG from user demonstrations:

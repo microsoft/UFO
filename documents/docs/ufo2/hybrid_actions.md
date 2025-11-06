@@ -360,8 +360,8 @@ When an agent is initialized for a specific application, the system:
 ### Core Concepts
 
 - [**MCP Overview**](../mcp/overview.md) — Model Context Protocol architecture  
-- [**AppAgent**](app_agent.md) — Application-level agent implementation  
-- [**HostAgent**](host_agent.md) — Desktop-level agent implementation
+- [**AppAgent**](app_agent/overview.md) — Application-level agent implementation  
+- [**HostAgent**](host_agent/overview.md) — Desktop-level agent implementation
 
 ### Configuration
 
@@ -384,9 +384,9 @@ When an agent is initialized for a specific application, the system:
 1. **Explore MCP Architecture**: Read [MCP Overview](../mcp/overview.md) to understand the protocol design  
 2. **Configure MCP Servers**: Review [MCP Configuration](../configuration/system/mcp_reference.md) for setup options  
 3. **Study MCP Servers**: Check built-in implementations like [ExcelCOMExecutor](../mcp/servers/excel_com_executor.md)  
-4. **Build Custom Agents**: Follow [Creating AppAgent](creating_app_agent/overview.md) to use hybrid actions
+4. **Build Custom Agents**: Follow [Creating AppAgent](../tutorials/creating_app_agent/overview.md) to use hybrid actions
 
 !!!tip "Quick Start"
     Want to see hybrid actions in practice?  
     📖 [Quick Start Guide](../getting_started/quick_start_ufo2.md) — Run UFO² with default MCP servers  
-    📖 [Creating AppAgent](creating_app_agent/overview.md) — Build custom agents with hybrid actions
+    📖 [Creating AppAgent](../tutorials/creating_app_agent/overview.md) — Build custom agents with hybrid actions

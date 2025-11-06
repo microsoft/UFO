@@ -1,6 +1,6 @@
 # Learning from Help Documents
 
-User or applications can provide help documents to the AppAgent to reinforce its capabilities. The AppAgent can retrieve knowledge from these documents to improve its understanding of the task, generate high-quality plans, and interact more efficiently with the application. You can find how to provide help documents to the AppAgent in the [Help Document Provision](../../creating_app_agent/help_document_provision.md) section.
+User or applications can provide help documents to the AppAgent to reinforce its capabilities. The AppAgent can retrieve knowledge from these documents to improve its understanding of the task, generate high-quality plans, and interact more efficiently with the application. You can find how to provide help documents to the AppAgent in the [Help Document Provision](../../../tutorials/creating_app_agent/help_document_provision.md) section.
 
 
 ## Mechanism
@@ -14,7 +14,7 @@ The help documents are provided in a format of **task-solution pairs**. Upon rec
 Follow the steps below to activate the learning from help documents:
 
 ### Step 1: Provide Help Documents
-Please follow the steps in the [Help Document Provision](../../creating_app_agent/help_document_provision.md) document to provide help documents to the AppAgent.
+Please follow the steps in the [Help Document Provision](../../../tutorials/creating_app_agent/help_document_provision.md) document to provide help documents to the AppAgent.
 
 ### Step 2: Configure the AppAgent
 

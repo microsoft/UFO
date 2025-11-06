@@ -52,11 +52,10 @@ nav:
       - Overview: ufo2/overview.md
       - Quick Start: ufo2/quick_start.md
       - Using as Galaxy Device: ufo2/as_galaxy_device.md
-      - Windows Agents:
-          - Agent Types: ufo2/agent_types.md
-          - HostAgent: ufo2/host_agent.md
-          - AppAgent: ufo2/app_agent.md
-          - EvaluationAgent: ufo2/evaluation_agent.md
+      - HostAgent:
+          - Overview: ufo2/host_agent/overview.md
+      - AppAgent:
+          - Overview: ufo2/app_agent/overview.md
       - Core Features:
           - Hybrid GUI–API Actions: ufo2/hybrid_actions.md
           - Control Detection:
@@ -76,17 +75,12 @@ nav:
           - Batch Mode: ufo2/advanced_usage/batch_mode.md
           - Operator Integration: ufo2/advanced_usage/operator_as_app_agent.md
           - Customization: ufo2/advanced_usage/customization.md
-      - Development:
-          - Creating Your AppAgent:
-              - Overview: ufo2/creating_app_agent/overview.md
-              - Help Document Provision: ufo2/creating_app_agent/help_document_provision.md
-              - Demonstration Provision: ufo2/creating_app_agent/demonstration_provision.md
-              - Wrapping App-Native API: ufo2/creating_app_agent/warpping_app_native_api.md
-          - Prompts:
-              - Overview: ufo2/prompts/overview.md
-              - Basic Template: ufo2/prompts/basic_template.md
-              - Examples: ufo2/prompts/examples_prompts.md
+      - Prompts:
+          - Overview: ufo2/prompts/overview.md
+          - Basic Template: ufo2/prompts/basic_template.md
+          - Examples: ufo2/prompts/examples_prompts.md
       - Evaluation:
+          - EvaluationAgent: ufo2/evaluation_agent.md
           - Benchmark Overview: ufo2/benchmark/overview.md
           - Windows Agent Arena: ufo2/benchmark/windows_agent_arena.md
           - OSWorld (Windows): ufo2/benchmark/osworld.md
@@ -112,6 +106,12 @@ nav:
       - Bash Executor: linux/bash_executor.md
       - Configuration: linux/configuration.md
       - Examples: linux/examples.md
+  - Tutorials & Development:
+      - Creating Your AppAgent:
+          - Overview: tutorials/creating_app_agent/overview.md
+          - Help Document Provision: tutorials/creating_app_agent/help_document_provision.md
+          - Demonstration Provision: tutorials/creating_app_agent/demonstration_provision.md
+          - Wrapping App-Native API: tutorials/creating_app_agent/warpping_app_native_api.md
   - Infrastructure:
       - Basic Modules:
           - Overview: infrastructure/modules/overview.md
@@ -123,6 +123,7 @@ nav:
           - Platform Sessions: infrastructure/modules/platform_sessions.md
       - Device Agent Architecture:
           - Overview: infrastructure/agents/overview.md
+          - Agent Types & Implementation: infrastructure/agents/agent_types.md
           - Architecture Layers:
               - State Layer (Level-1): infrastructure/agents/design/state.md
               - Strategy Layer (Level-2): infrastructure/agents/design/processor.md

@@ -1,11 +1,11 @@
-# Agent Types and Platform Implementations
+# Platform-Specific Agent Implementations
 
-!!! quote "Platform-Specific Agent Implementations"
-    UFO3 supports multiple platforms through concrete agent implementations that leverage the unified three-layer architecture. While the core framework (State, Processor, Command layers) remains consistent, each platform implements specialized agents optimized for their native control mechanisms and hierarchies. This document explores the **Windows two-tier agent system** (HostAgent + AppAgent) and the **Linux single-tier system** (LinuxAgent), providing a foundation for extending UFO3 to additional platforms.
+!!! quote "Architecture Implementation Guide"
+    This document describes how the unified three-layer Device Agent architecture is implemented across different platforms. While the core framework (State, Processor, Command layers) remains consistent, each platform implements specialized agents optimized for their native control mechanisms and hierarchies. Understanding these implementations is essential for extending UFO3 to new platforms or customizing existing agents.
 
 ## Overview
 
-UFO3's Device Agent architecture enables cross-platform task automation through **platform-specific agent implementations** that share a common framework:
+UFO3's Device Agent architecture achieves cross-platform compatibility through **platform-specific agent implementations** that inherit from a common abstract framework. Each platform's agents implement the same `BasicAgent` interface while adapting the three-layer architecture to their unique execution environments:
 
 ```mermaid
 graph TB
@@ -1031,14 +1031,14 @@ sequenceDiagram
 
 ## Related Documentation
 
-- **[Device Agent Overview](../infrastructure/agents/overview.md)**: Three-layer architecture and design principles
-- **[State Layer](../infrastructure/agents/design/state.md)**: AgentState interface and state machine
-- **[Strategy Layer](../infrastructure/agents/design/processor.md)**: ProcessorTemplate and strategy implementations
-- **[Command Layer](../infrastructure/agents/design/command.md)**: CommandDispatcher and MCP integration
-- **[Memory System](../infrastructure/agents/design/memory.md)**: Memory and Blackboard for agent coordination
-- **[Server Architecture](../server/overview.md)**: Server-side orchestration
-- **[Client Architecture](../client/overview.md)**: Device client MCP execution
-- **[AIP Protocol](../aip/overview.md)**: Agent Interaction Protocol for communication
+- **[Device Agent Overview](overview.md)**: Three-layer architecture and design principles
+- **[State Layer](design/state.md)**: AgentState interface and state machine
+- **[Strategy Layer](design/processor.md)**: ProcessorTemplate and strategy implementations
+- **[Command Layer](design/command.md)**: CommandDispatcher and MCP integration
+- **[Memory System](design/memory.md)**: Memory and Blackboard for agent coordination
+- **[Server Architecture](../../server/overview.md)**: Server-side orchestration
+- **[Client Architecture](../../client/overview.md)**: Device client MCP execution
+- **[AIP Protocol](../../aip/overview.md)**: Agent Interaction Protocol for communication
 
 ---
 

@@ -299,4 +299,5 @@ await computer.run_actions([
 
 - [BashExecutor](./bash_executor.md) - Linux command execution with output
 - [Action Servers](../action.md) - Action server concepts
-- [HostAgent](../../ufo2/host_agent.md) - HostAgent architecture
+- [HostAgent](../../ufo2/host_agent/overview.md) - HostAgent architecture
+
