@@ -36,6 +36,13 @@ nav:
           - Custom Model: configuration/models/custom_model.md
   - UFO³ Agent Galaxy:
       - Overview: galaxy/overview.md
+      - Galaxy Client:
+          - Overview: galaxy/client/overview.md
+          - ConstellationClient: galaxy/client/constellation_client.md
+          - DeviceManager: galaxy/client/device_manager.md
+          - Components: galaxy/client/components.md
+          - AIP Integration: galaxy/client/aip_integration.md
+          - GalaxyClient: galaxy/client/galaxy_client.md
       - Agent Registration:
           - Overview: galaxy/agent_registration/overview.md
           - Agent Profile: galaxy/agent_registration/agent_profile.md
