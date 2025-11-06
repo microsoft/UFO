@@ -487,6 +487,12 @@ all_deps = constellation.get_all_dependencies()
 
 ### Simple Linear Pipeline
 
+```mermaid
+graph LR
+    A[Task A] --> B[Task B]
+    B --> C[Task C]
+```
+
 ```python
 # Create: A → B → C
 constellation = TaskConstellation(name="linear_pipeline")
@@ -516,6 +522,13 @@ assert metrics['parallelism_ratio'] == 1.0  # Completely serial
 
 ### Parallel Fan-Out
 
+```mermaid
+graph LR
+    A[Task A] --> B[Task B]
+    A --> C[Task C]
+    A --> D[Task D]
+```
+
 ```python
 # Create: A → [B, C, D]
 constellation = TaskConstellation(name="fan_out")
@@ -539,6 +552,14 @@ assert metrics['max_width'] >= 3  # Can run 3 tasks in parallel
 ```
 
 ### Complex Diamond Pattern
+
+```mermaid
+graph LR
+    A[Task A] --> B[Task B]
+    A --> C[Task C]
+    B --> D[Task D]
+    C --> D
+```
 
 ```python
 # Create: A → [B, C] → D
@@ -629,20 +650,31 @@ except ValueError as e:
 
 !!!example "Optimization Patterns"
     **Before (Serial):**
-    ```
-    A → B → C → D → E → F
-    Parallelism Ratio: 1.0
+    
+    ```mermaid
+    graph LR
+        A[A] --> B[B]
+        B --> C[C]
+        C --> D[D]
+        D --> E[E]
+        E --> F[F]
     ```
     
+    Parallelism Ratio: 1.0
+    
     **After (Optimized):**
+    
+    ```mermaid
+    graph LR
+        A[A] --> B[B]
+        A --> C[C]
+        A --> D[D]
+        B --> F[F]
+        C --> F
+        D --> E[E]
     ```
-        ┌→ B ─┐
-    A ──┼→ C ─┼→ F
-        └→ D ─┘
-           ↓
-           E
+    
     Parallelism Ratio: 1.67
-    ```
 
 !!!warning "Common Pitfalls"
     - **Over-parallelization**: Too many parallel tasks can overwhelm resources

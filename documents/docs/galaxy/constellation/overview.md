@@ -1,7 +1,7 @@
 # Task Constellation — Overview
 
 <div align="center">
-  <img src="../../img/task_constellation.png" alt="Task Constellation DAG Structure" style="max-width: 90%; height: auto; margin: 20px 0;">
+  <img src="/img/task_constellation.png" alt="Task Constellation DAG Structure" style="max-width: 90%; height: auto; margin: 20px 0;">
   <p><em>Example of a Task Constellation illustrating both sequential and parallel dependencies</em></p>
 </div>
 
@@ -47,7 +47,7 @@ where:
 Each TaskStar $t_i \in \mathcal{T}$ is defined as:
 
 $$
-t_i = (\text{name}_i, \text{description}_i, \text{device}_i, \text{tips}_i, \text{status}_i, \text{dependencies}_i)
+t_i = (\text{name}_ i, \text{description}_ i, \text{device}_ i, \text{tips}_ i, \text{status}_ i, \text{dependencies}_ i)
 $$
 
 **Components:**
@@ -60,11 +60,7 @@ $$
 
 ### TaskStarLine Representation
 
-Each TaskStarLine $e_{i \rightarrow j} \in \mathcal{E}$ represents a dependency from task $t_i$ to task $t_j$:
-
-$$
-e_{i \rightarrow j} = (\text{from\_task}_i, \text{to\_task}_j, \text{type}, \text{description})
-$$
+Each TaskStarLine $e_{i \rightarrow j} \in \mathcal{E}$ represents a dependency from task $t_i$ to task $t_j$.
 
 **Dependency Types:**
 
@@ -291,8 +287,10 @@ modifiable_deps = constellation.get_modifiable_dependencies()
 
 ### Sequential Workflow
 
-```
-A → B → C
+```mermaid
+graph LR
+    A[Task A] --> B[Task B]
+    B --> C[Task C]
 ```
 
 - **Parallelism Ratio**: 1.0 (completely serial)
@@ -300,10 +298,12 @@ A → B → C
 
 ### Parallel Workflow
 
-```
-    ┌─ B ─┐
-A ──┤     ├─ D
-    └─ C ─┘
+```mermaid
+graph LR
+    A[Task A] --> B[Task B]
+    A --> C[Task C]
+    B --> D[Task D]
+    C --> D
 ```
 
 - **Parallelism Ratio**: 2.0 (B and C can run in parallel)
@@ -311,10 +311,14 @@ A ──┤     ├─ D
 
 ### Complex Workflow
 
-```
-A ──┬─ B ─┬─ D ─┐
-    │     │     ├─ F
-    └─ C ─┴─ E ─┘
+```mermaid
+graph LR
+    A[Task A] --> B[Task B]
+    A --> C[Task C]
+    B --> D[Task D]
+    C --> E[Task E]
+    D --> F[Task F]
+    E --> F
 ```
 
 - **Parallelism Ratio**: ~1.67
@@ -349,33 +353,17 @@ constellation.display_dag(mode="overview")  # or "topology", "details", "executi
 
 Explore detailed documentation for each component:
 
-<div class="grid cards" markdown>
+### [TaskStar](task_star.md)
+Atomic execution units representing individual tasks in the constellation
 
--   :material-star: **[TaskStar](task_star.md)**
+### [TaskStarLine](task_star_line.md)
+Dependency relationships connecting tasks with conditional logic
 
-    ---
-    
-    Atomic execution units representing individual tasks in the constellation
+### [TaskConstellation](task_constellation.md)
+Complete DAG orchestrator managing workflow execution and coordination
 
--   :material-connection: **[TaskStarLine](task_star_line.md)**
-
-    ---
-    
-    Dependency relationships connecting tasks with conditional logic
-
--   :material-graph: **[TaskConstellation](task_constellation.md)**
-
-    ---
-    
-    Complete DAG orchestrator managing workflow execution and coordination
-
--   :material-pencil: **[ConstellationEditor](constellation_editor.md)**
-
-    ---
-    
-    Interactive editor with command pattern and undo/redo capabilities
-
-</div>
+### [ConstellationEditor](constellation_editor.md)
+Interactive editor with command pattern and undo/redo capabilities
 
 ---
 

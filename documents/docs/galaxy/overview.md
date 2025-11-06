@@ -1,7 +1,7 @@
 # UFO³ — Weaving the Digital Agent Galaxy
 
 <div align="center">
-  <img src="../img/poster.png" alt="UFO³ Galaxy Concept" style="max-width: 90%; height: auto; margin: 20px 0;">
+  <img src="/img/poster.png" alt="UFO³ Galaxy Concept" style="max-width: 90%; height: auto; margin: 20px 0;">
   <p><em>From isolated device agents to interconnected constellations — Building the Digital Agent Galaxy</em></p>
 </div>
 
@@ -44,7 +44,7 @@ UFO³ Galaxy addresses these challenges through a sophisticated orchestration fr
 ## 🏗️ Architecture
 
 <div align="center">
-  <img src="../img/overview2.png" alt="UFO³ Galaxy Layered Architecture" style="max-width: 100%; height: auto; margin: 20px 0;">
+  <img src="/img/overview2.png" alt="UFO³ Galaxy Layered Architecture" style="max-width: 100%; height: auto; margin: 20px 0;">
   <p><em>UFO³ Galaxy Layered Architecture — From natural language to distributed execution</em></p>
 </div>
 
