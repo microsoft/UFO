@@ -259,20 +259,39 @@ pip install -r requirements.txt
 ```
 
 ### 2. Configure Device Pool
-Create `config/galaxy/devices.yaml` to define your device constellation:
+
+Create configuration files in `config/galaxy/`:
+
+**`config/galaxy/devices.yaml`** - Define your devices:
 
 ```yaml
+# Device Configuration
 devices:
-  - name: "windows-desktop"
-    type: "windows"
+  - device_id: "windows-desktop"
+    server_url: "ws://localhost:5005/ws"
+    os: "windows"
     capabilities: ["ui", "office", "browser"]
     
-  - name: "linux-gpu-server"
-    type: "linux"
+  - device_id: "linux-gpu-server"
+    server_url: "ws://10.0.1.50:5001/ws"
+    os: "linux"
     capabilities: ["python", "cuda", "docker"]
-    hardware: 
-      gpu: "A100"
+    metadata:
+      hardware: 
+        gpu: "A100"
 ```
+
+**`config/galaxy/constellation.yaml`** - Configure runtime settings:
+
+```yaml
+# Constellation Runtime Settings
+CONSTELLATION_ID: "my_constellation"
+HEARTBEAT_INTERVAL: 30.0
+MAX_CONCURRENT_TASKS: 6
+DEVICE_INFO: "config/galaxy/devices.yaml"
+```
+
+See [Galaxy Configuration](../configuration/system/galaxy_devices.md) for complete documentation.
 
 ### 3. Start Device Agents
 On each device, launch the appropriate agent:

@@ -1,7 +1,6 @@
 # Galaxy Constellation Agent Configuration
 
 CONSTELLATION_AGENT:
-  VISUAL_MODE: True
   REASONING_MODEL: False
   API_TYPE: "azure_ad"
   API_BASE: "https://cloudgpt-openai.azure-api.net/"

@@ -80,6 +80,81 @@ UFO2/
     └── config.yaml                 # Old monolithic config
 ```
 
+---
+
+## Galaxy Configuration Files
+
+The Galaxy constellation system has its own set of configuration files in `config/galaxy/`:
+
+| File | Purpose | Template | Documentation |
+|------|---------|----------|---------------|
+| **constellation.yaml** | Constellation runtime settings (heartbeat, concurrency, step limits) | No | [Galaxy Constellation Config](./galaxy_constellation.md) |
+| **devices.yaml** | Device agent definitions (device_id, server_url, capabilities, metadata) | No | [Galaxy Devices Config](./galaxy_devices.md) |
+| **agent.yaml** | Constellation agent LLM configuration (API settings, prompts) | **Yes** (.template) | [Galaxy Agent Config](./galaxy_agent.md) |
+
+### Galaxy Configuration Structure
+
+```
+config/galaxy/
+├── constellation.yaml          # Runtime settings for orchestrator
+│   ├── CONSTELLATION_ID       # Constellation identifier
+│   ├── HEARTBEAT_INTERVAL     # Health check frequency
+│   ├── RECONNECT_DELAY        # Reconnection delay
+│   ├── MAX_CONCURRENT_TASKS   # Task concurrency limit
+│   ├── MAX_STEP               # Step limit per session
+│   ├── DEVICE_INFO            # Path to devices.yaml
+│   └── LOG_TO_MARKDOWN        # Markdown logging flag
+│
+├── devices.yaml                # Device definitions
+│   └── devices: []            # Array of device configurations
+│       ├── device_id          # Unique device identifier
+│       ├── server_url         # WebSocket endpoint
+│       ├── os                 # Operating system
+│       ├── capabilities       # Device capabilities
+│       ├── metadata           # Custom metadata
+│       ├── max_retries        # Connection retry limit
+│       └── auto_connect       # Auto-connect flag
+│
+└── agent.yaml                  # Constellation agent LLM config
+    └── CONSTELLATION_AGENT:
+        ├── REASONING_MODEL    # Enable reasoning mode
+        ├── API_TYPE           # API provider (openai, azure, azure_ad)
+        ├── API_BASE           # API base URL
+        ├── API_KEY            # API authentication key
+        ├── API_VERSION        # API version
+        ├── API_MODEL          # Model name/deployment
+        ├── AAD_*              # Azure AD auth settings
+        └── *_PROMPT           # Prompt template paths
+```
+
+### Galaxy Configuration Loading
+
+```python
+# Load Galaxy configurations
+from config.config_loader import get_galaxy_config
+import yaml
+
+# 1. Load agent configuration (LLM settings)
+galaxy_config = get_galaxy_config()
+agent_config = galaxy_config.constellation_agent
+
+# 2. Load constellation runtime settings
+with open("config/galaxy/constellation.yaml", "r") as f:
+    constellation_config = yaml.safe_load(f)
+
+# 3. Load device definitions from path specified in constellation.yaml
+device_config_path = constellation_config["DEVICE_INFO"]
+with open(device_config_path, "r") as f:
+    devices_config = yaml.safe_load(f)
+```
+
+!!!info "Galaxy vs UFO Configuration"
+    - **UFO Configurations** (`config/ufo/`) - Single-agent automation settings
+    - **Galaxy Configurations** (`config/galaxy/`) - Multi-device constellation settings
+    - Both systems can coexist in the same project
+
+---
+
 ## Configuration Loading Process
 
 ### Priority Chain
@@ -313,9 +388,15 @@ graph LR
 
 ## Next Steps
 
+### UFO Configuration
 - **[Field Reference](./field_reference.md)** - Complete list of all configuration fields
 - **[Migration Guide](./migration.md)** - How to migrate from old to new config
 - **[Extending Configuration](./extending.md)** - How to add new configuration options
+
+### Galaxy Configuration
+- **[Galaxy Constellation Configuration](./galaxy_constellation.md)** - Runtime settings for constellation orchestrator
+- **[Galaxy Devices Configuration](./galaxy_devices.md)** - Device definitions and capabilities
+- **[Galaxy Agent Configuration](./galaxy_agent.md)** - LLM configuration for constellation agent
 
 ## API Reference
 

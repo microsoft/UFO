@@ -1,10 +1,6 @@
-# Constellation Configuration - YAML Format
-# This configuration defines a constellation with two devices for testing
-
-constellation_id: "test_constellation"
-heartbeat_interval: 10
-reconnect_delay: 5.0
-max_concurrent_tasks: 6
+# Device Configuration - YAML Format
+# This configuration defines devices for the constellation
+# Runtime settings (constellation_id, heartbeat_interval, etc.) are configured in constellation.yaml
 
 devices:
   - device_id: "windowsagent"
