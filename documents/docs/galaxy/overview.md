@@ -7,37 +7,28 @@
 
 ---
 
-## 🌌 Vision
-
-Imagine a future where you could simply say: *"Prepare a production-ready demo of Project X and deliver a one-page executive summary with screenshots and performance numbers."* 
-
-Today, this requires tedious, error-prone coordination across devices—checking out code on a laptop, triggering GPU builds on a server, deploying to a cloud instance, recording UI interactions on a phone, and stitching results into a report. Despite recent advances in intelligent agents, most systems remain **confined within a single device or platform**, leaving vast computational resources underutilized.
-
-**UFO³ Galaxy** dissolves these boundaries, transforming your distributed digital estate—desktops, servers, mobile devices, and edge nodes—into a **coherent execution fabric** where agents collaborate seamlessly to execute complex, multi-device workflows.
-
----
-
 ## 🚀 What is UFO³ Galaxy?
 
 **UFO³ Galaxy** is a **cross-device orchestration system** that turns isolated device agents into a unified digital collective. It models each request as a **Task Constellation**—a dynamic distributed DAG (Directed Acyclic Graph) whose nodes represent executable subtasks and whose edges capture data and control dependencies.
 
 ### The Challenge
 
-Building truly ubiquitous intelligent agents requires overcoming three interlocking challenges:
+Building truly ubiquitous intelligent agents requires overcoming four interlocking challenges:
 
-1. **Asynchronous Parallelism**: Many subtasks can and should run concurrently across devices with varying capabilities
-2. **Distributed Coordination**: Agents need reliable, low-latency communication for task dispatch and result streaming despite network variability
-3. **Heterogeneous Extensibility**: The system should make it easy to develop and integrate new device agents while preserving safety and global consistency
+1. **Asynchronous Parallelism**: Many subtasks can and should run concurrently across devices, but traditional orchestrators struggle to maintain correctness during parallel execution
+2. **Dynamic Adaptation**: Workflows need to evolve based on runtime feedback, requiring safe concurrent modifications to executing DAGs
+3. **Distributed Coordination**: Agents need reliable, low-latency communication for task dispatch and result streaming despite network variability
+4. **Safety Guarantees**: Concurrent DAG modifications and parallel execution must preserve formal invariants to prevent race conditions and invalid states
 
 ### The Solution
 
-UFO³ Galaxy addresses these challenges through a sophisticated orchestration framework that:
+UFO³ Galaxy addresses these challenges through a sophisticated orchestration framework with four key innovations:
 
-- **Decomposes** complex tasks into distributed workflows
-- **Schedules** subtasks across heterogeneous devices
-- **Executes** tasks asynchronously and in parallel
-- **Adapts** dynamically to failures and intermediate results
-- **Coordinates** seamlessly across OS boundaries
+- **Event-Driven Orchestration**: Asynchronous execution engine with observer pattern enables maximum parallelism while maintaining coordination
+- **Dual-Mode Agent Control**: Separate creation and editing modes with finite state machine for controlled, safe DAG evolution
+- **Safe Assignment Protocol**: Synchronization mechanisms prevent race conditions when LLM edits overlap with task execution
+- **Formal Invariant Enforcement**: Three runtime invariants (I1-I3) guarantee correctness even under partial or invalid updates
+- **Persistent WebSocket Protocol**: Reliable communication layer (AIP) with heartbeat monitoring and automatic reconnection
 
 ---
 
@@ -48,27 +39,53 @@ UFO³ Galaxy addresses these challenges through a sophisticated orchestration fr
   <p><em>UFO³ Galaxy Layered Architecture — From natural language to distributed execution</em></p>
 </div>
 
+
 ### Layered Design
 
-UFO³ Galaxy is built on a **three-tier architecture**:
+UFO³ Galaxy follows a **hierarchical orchestration model** that separates global coordination from local execution. This architecture enables scalable cross-device orchestration while maintaining consistent control and responsiveness across diverse operating systems and network environments.
 
-#### 1️⃣ **Orchestration Layer** (Constellation Agent)
-- Decomposes user intents into Task Constellations (DAGs)
-- Manages global workflow state and dependencies
-- Schedules tasks across device agents
-- Handles dynamic graph evolution and fault recovery
+#### 🎛️ Hierarchical Control Plane
 
-#### 2️⃣ **Communication Layer** (Agent Interaction Protocol)
-- Persistent WebSocket channels for low-latency messaging
-- Agent registry and discovery
-- Session management and security
-- Event-driven task dispatch and result streaming
+**ConstellationClient** serves as the **global control plane**, maintaining a live registry of all connected device agents with their:
+- Capability profiles and system specifications
+- Runtime health metrics and availability status
+- Current load and resource utilization
 
-#### 3️⃣ **Execution Layer** (Device Agents)
-- OS-specific agents (Windows, Linux, Android, etc.)
-- MCP (Model Context Protocol) server integration
-- Local environment access and tool execution
-- Capability-based task matching
+This registry enables intelligent task placement based on device capabilities, avoiding mismatches between task requirements and device capacity.
+
+Each device hosts a **device agent server** that manages local orchestration through persistent WebSocket sessions with ConstellationClient. The server:
+- Maintains execution contexts on the host
+- Provides unified interface to underlying tools via MCP servers
+- Handles task execution, telemetry streaming, and resource monitoring
+
+**Clean separation**: Global orchestration policies are decoupled from device-specific heterogeneity, providing consistent abstraction across endpoints with different OS, hardware, or network conditions.
+
+#### 🔄 Orchestration Flow
+
+1. **DAG Synthesis**: ConstellationClient invokes the **Constellation Agent** to construct a TaskConstellation—a dynamic DAG encoding task decomposition, dependencies, and device mappings
+2. **Device Assignment**: Each TaskStar (DAG node) is assigned to suitable device agents based on capability profiles and system load
+3. **Asynchronous Execution**: The **Constellation Orchestrator** executes the DAG in an event-driven manner:
+   - Task completions trigger dependent nodes
+   - Failures prompt retry, migration, or partial DAG rewrites
+   - Workflows adapt to real-time system dynamics (device churn, network variability)
+
+**Result**: Highly parallel and resilient execution that sustains workflow completion even as subsets of devices fail or reconnect.
+
+#### 🔌 Cross-Agent Communication
+
+The **Agent Interaction Protocol (AIP)** handles all cross-agent interactions:
+- Agent registration and capability synchronization
+- Task dispatch and progress reporting  
+- Result aggregation and telemetry streaming
+
+Built on persistent WebSocket channels, AIP provides:
+- **Lightweight**: Minimal overhead for control messages
+- **Bidirectional**: Full-duplex communication between client and agents
+- **Multiplexed**: Concurrent message streams over single connection
+- **Low-latency**: Fast propagation of control signals and state updates
+- **Resilient**: Maintains global consistency despite intermittent connectivity
+
+Together, these design elements form a cohesive foundation for orchestrating large-scale, heterogeneous, and adaptive workflows across a resilient multi-device execution fabric.
 
 ---
 
@@ -78,52 +95,69 @@ UFO³ Galaxy is built around **five tightly integrated design principles**:
 
 ### 1. 🌟 Declarative Decomposition into Dynamic DAG (Task Constellation)
 
-Natural-language or programmatic requests are decomposed by the **Constellation Agent** into a structured DAG of **Task Stars** (nodes) and **Star Lines** (edges) that encode workflow logic and dependencies. This declarative structure enables automated scheduling, introspection, and rewriting throughout execution.
+Natural-language or programmatic requests are decomposed by the **Constellation Agent** into a structured DAG of **TaskStars** (nodes) and **TaskStarLines** (edges) that encode workflow logic and dependencies. This declarative structure enables automated scheduling, introspection, and dynamic modification throughout execution.
 
 ```
 User Intent → Constellation Agent → Task Constellation (DAG)
-                                    ├─ Task Star 1 (Windows)
-                                    ├─ Task Star 2 (Linux GPU) ─┐
-                                    ├─ Task Star 3 (Linux CPU) ─┼─ Task Star 5
-                                    └─ Task Star 4 (Mobile)    ─┘
+                                    ├─ TaskStar 1 (Windows)
+                                    ├─ TaskStar 2 (Linux GPU) ─┐
+                                    ├─ TaskStar 3 (Linux CPU) ─┼─ TaskStar 5
+                                    └─ TaskStar 4 (Mobile)    ─┘
 ```
+
+[Learn more →](constellation/overview.md)
 
 ### 2. 🔄 Continuous, Result-Driven Graph Evolution
 
-The Task Constellation is a **living data structure**. Intermediate outputs, transient failures, and new observations trigger controlled rewrites—adding diagnostic Task Stars, creating fallbacks, rewiring dependencies, or pruning completed nodes—so the system adapts dynamically instead of aborting on errors.
+The Task Constellation is a **living data structure**. Intermediate outputs, transient failures, and new observations trigger controlled rewrites—adding diagnostic TaskStars, creating fallbacks, rewiring dependencies, or pruning completed nodes—so the system adapts dynamically instead of aborting on errors.
+
+The **Constellation Agent** operates in two modes:
+- **Creation Mode**: Synthesizes initial DAG from user request
+- **Editing Mode**: Incrementally refines constellation based on task completion events
+
+[Learn more →](constellation_agent/overview.md)
 
 ### 3. 🎯 Heterogeneous, Asynchronous, and Safe Orchestration
 
-Each Task Star is matched to the most suitable device agent via rich **Agent Profiles** reflecting OS, hardware, and capabilities. The Constellation Orchestrator:
+Each Task Star is matched to the most suitable device agent via rich **Agent Profiles** reflecting OS, hardware, and capabilities. The **Constellation Orchestrator**:
 
 - Executes tasks **asynchronously**, allowing multiple Task Stars to progress in parallel
-- Maintains **safe assignment locking** to prevent race conditions
-- Performs **DAG consistency checks** to ensure correctness
-- Uses **event-driven scheduling** for efficient resource utilization
+- Maintains **safe assignment locking** to prevent race conditions during DAG modifications
+- Performs **DAG consistency checks** to ensure correctness (acyclicity, valid assignments)
+- Uses **event-driven coordination** with observer pattern for efficient resource utilization
+- Enforces three formal invariants: **I1** (single assignment), **I2** (acyclic consistency), **I3** (valid update)
 
-**Result**: High efficiency without compromising reliability, with formal verification guarantees.
+**Result**: High efficiency without compromising reliability, with formal safety guarantees.
+
+[Learn more →](constellation_orchestrator/overview.md)
 
 ### 4. 🔌 Unified Agent Interaction Protocol (AIP)
 
-Built atop persistent **WebSocket channels**, UFO³ establishes a unified, secure, and extensible layer for:
+Built atop persistent **WebSocket channels**, UFO³ establishes a unified, secure, and extensible communication layer:
 
-- Agent registry and discovery
-- Session management and authentication
-- Task dispatch and result streaming
-- Inter-agent coordination
+- **Device Registration**: `REGISTER` messages establish device identity with Agent Server
+- **Heartbeat Monitoring**: Periodic health checks ensure device availability
+- **Task Dispatch**: `TASK` messages assign work to appropriate devices
+- **Result Streaming**: `TASK_END` and `COMMAND_RESULTS` messages return execution outcomes
+- **Connection Resilience**: Automatic reconnection with exponential backoff
 
 This protocol **abstracts OS and network heterogeneity**, enabling seamless collaboration among agents across desktops, servers, and edge devices.
 
-### 5. 🛠️ Template-Driven Framework for MCP-Empowered Device Agents
+[Learn more →](../aip/overview.md)
+
+### 5. 🛠️ Template-Driven Framework for Device Agents
 
 To **democratize agent creation**, UFO³ provides:
 
-- Lightweight development templates
-- Toolkit for rapidly building new device agents
-- Declarative capability profiles
+- **Lightweight development templates** for rapid device agent creation
+- **Agent Profile system** with declarative capability declarations
+- **Device Registry** for centralized device management and discovery
 - **MCP (Model Context Protocol)** server integration for tool augmentation
+- **Infrastructure modules** (Session, Round, Context) for consistent agent behavior
 
 This modular design accelerates integration while maintaining consistency across the constellation.
+
+[Learn more →](agent_registration/overview.md) | [MCP Integration →](../mcp/overview.md)
 
 ---
 
@@ -133,39 +167,32 @@ This modular design accelerates integration while maintaining consistency across
 Execute workflows that span Windows desktops, Linux servers, GPU clusters, mobile devices, and edge nodes—all from a single natural language request.
 
 ### ⚡ Asynchronous Parallelism
-Automatically identify parallelizable subtasks and execute them concurrently across devices, dramatically reducing end-to-end latency (up to **31% faster** than sequential execution).
+Automatically identify parallelizable subtasks and execute them concurrently across devices through:
+- **Event-driven scheduling** that continuously monitors DAG topology for ready tasks
+- **Non-blocking execution** with Python `asyncio` for maximum concurrency
+- **Dynamic adaptation** that integrates new tasks without interrupting running execution
 
-### 🛡️ Fault Tolerance & Recovery
-- **Automatic retries** for transient failures
-- **Task migration** when devices become unavailable
-- **Graceful degradation** under partial failures
-- **Conservative recovery** under global failures
+Result: Dramatically reduced end-to-end latency compared to sequential execution.
 
-### 📊 Rich Observability
-- Real-time constellation visualization
-- Execution width metrics (average **1.72×**, peaking at **~3.5×** parallelism)
-- Subtask completion tracking
-- Dependency graph inspection
+### 🛡️ Safety & Consistency
+- **Three formal invariants** (I1-I3) enforced at runtime for DAG correctness
+- **Safe assignment locking** prevents race conditions during concurrent modifications
+- **Acyclicity validation** ensures no circular dependencies
+- **State merging** algorithm preserves execution progress during dynamic edits
+- **Timeout protection** prevents deadlocks from agent failures
 
-### 🔐 Security & Isolation
-- Agent authentication and authorization
-- Secure WebSocket communication
-- Resource access control
-- Capability-based permissions
+### 🔄 Dynamic Workflow Evolution
+- **Dual-mode operation**: Separate creation and editing phases with controlled transitions
+- **Feedback-driven adaptation**: Task completion events trigger intelligent constellation refinement
+- **LLM-powered reasoning**: ReAct architecture for context-aware DAG modifications
+- **Undo/redo support**: ConstellationEditor with command pattern for safe interactive editing
 
----
-
-## 📈 Performance Highlights
-
-Evaluated on **GalaxyBench**—a benchmark of **55** cross-device tasks spanning **10** categories across **5** machines:
-
-| Metric | Value |
-|--------|-------|
-| **Subtask Completion Rate (SCR)** | 83.3% |
-| **Task Success Rate (TSR)** | 70.9% |
-| **Average Execution Width** | 1.72× (peak ~3.5×) |
-| **Latency Reduction** | 31% vs. sequential baseline |
-| **Devices Tested** | Windows 11, 3× Ubuntu CPU, 1× Ubuntu A100 GPU |
+### 👁️ Rich Observability
+- Real-time constellation visualization with DAG topology updates
+- Event bus with publish-subscribe pattern for monitoring task progress
+- Detailed execution logs with markdown trajectory support
+- Task status tracking (pending, running, completed, failed, cancelled)
+- Dependency graph inspection and validation tools
 
 ---
 
@@ -174,73 +201,74 @@ Evaluated on **GalaxyBench**—a benchmark of **55** cross-device tasks spanning
 ### 🖥️ Software Development & Deployment
 *"Clone the repo on my laptop, build the Docker image on the GPU server, deploy to staging, and run the test suite on the CI cluster."*
 
+**Workflow DAG:**
+```
+Clone (Windows) → Build (Linux GPU) → Deploy (Linux Server) → Test (Linux CI)
+```
+
 ### 📊 Data Science Workflows
-*"Fetch the dataset from S3, preprocess on the Linux workstation, train the model on the A100 node, and generate a visualization dashboard on my Windows machine."*
+*"Fetch the dataset from cloud storage, preprocess on the Linux workstation, train the model on the A100 node, and generate a visualization dashboard on my Windows machine."*
 
-### 📱 Multi-Device Content Creation
-*"Record a screen demo on my phone, transfer to my laptop, edit in Premiere Pro, render on the GPU server, and upload to YouTube."*
+**Workflow DAG:**
+```
+Fetch (Any) → Preprocess (Linux) → Train (Linux GPU) → Visualize (Windows)
+```
 
-### 🔬 Distributed Research
-*"Run hyperparameter sweeps across all available GPU nodes, collect results, generate comparison plots, and compile a summary report."*
+### 📝 Cross-Platform Document Processing
+*"Extract data from Excel on Windows, process with Python scripts on Linux, generate PDF reports, and send summary emails."*
+
+**Workflow DAG:**
+```
+Extract (Windows) → Process (Linux) ┬→ Generate PDF (Windows)
+                                      └→ Send Email (Windows)
+```
+
+### 🔬 Distributed System Monitoring
+*"Collect server logs from all Linux machines, analyze for errors, generate alerts, and create a consolidated report."*
+
+**Workflow DAG:**
+```
+┌→ Collect Logs (Linux 1) ┐
+├→ Collect Logs (Linux 2) ├→ Analyze Errors (Any) → Generate Report (Windows)
+└→ Collect Logs (Linux 3) ┘
+```
 
 ### 🏢 Enterprise Automation
-*"Extract data from the CRM on Windows, process with Python on Linux, generate charts in Excel, and email the report to stakeholders."*
+*"Query the database on the server, process the results, update Excel spreadsheets on Windows, and generate PowerPoint presentations."*
+
+**Workflow DAG:**
+```
+Query DB (Linux) → Process Data (Any) ┬→ Update Excel (Windows)
+                                        └→ Create PPT (Windows)
+```
 
 ---
 
 ## 🗺️ Documentation Structure
 
-<div class="grid cards" markdown>
+### 🚀 [Quick Start](../getting_started/quick_start_galaxy.md)
+Get UFO³ Galaxy up and running in minutes with our step-by-step guide
 
--   :material-rocket-launch: **[Quick Start](../getting_started/quick_start_galaxy.md)**
+### 👥 [Galaxy Client](client/overview.md)
+Device coordination, connection management, and ConstellationClient API
 
-    ---
-    
-    Get UFO³ Galaxy up and running in minutes with our step-by-step guide
+### 🧠 [Constellation Agent](constellation_agent/overview.md)
+LLM-driven task decomposition, DAG creation, and dynamic workflow evolution
 
--   :material-star-settings: **[Constellation Agent](constellation_agent.md)**
+### ⚙️ [Constellation Orchestrator](constellation_orchestrator/overview.md)
+Asynchronous execution engine, event-driven coordination, and safety guarantees
 
-    ---
-    
-    Learn how the Constellation Agent decomposes tasks and orchestrates workflows
+### 📊 [Task Constellation](constellation/overview.md)
+DAG structure, TaskStar nodes, TaskStarLine edges, and constellation editor
 
--   :material-devices: **[Device Agents](device_agent.md)**
+### 🆔 [Agent Registration](agent_registration/overview.md)
+Device registry, agent profiles, and registration flow
 
-    ---
-    
-    Understand device agent architecture and create your own agents
+### 🌐 [Agent Interaction Protocol](../aip/overview.md)
+WebSocket messaging, protocol specification, and communication patterns
 
--   :material-network: **[Agent Interaction Protocol](../aip/overview.md)**
-
-    ---
-    
-    Deep dive into the communication layer and messaging protocol
-
--   :material-graph: **[Task Constellation](task_constellation.md)**
-
-    ---
-    
-    Explore the DAG structure, evolution, and scheduling algorithms
-
--   :material-cog: **[Configuration](../getting_started/configuration_galaxy.md)**
-
-    ---
-    
-    Configure device pools, capabilities, and orchestration policies
-
--   :material-shield-check: **[Safety & Verification](safety.md)**
-
-    ---
-    
-    Learn about consistency guarantees, locking, and formal verification
-
--   :material-api: **[MCP Integration](../mcp/overview.md)**
-
-    ---
-    
-    Extend device agents with Model Context Protocol servers
-
-</div>
+### ⚙️ [Configuration](../configuration/system/galaxy_devices.md)
+Device pools, capabilities, and orchestration policies
 
 ---
 
@@ -265,20 +293,33 @@ Create configuration files in `config/galaxy/`:
 **`config/galaxy/devices.yaml`** - Define your devices:
 
 ```yaml
-# Device Configuration
 devices:
-  - device_id: "windows-desktop"
+  - device_id: "windowsagent"
     server_url: "ws://localhost:5005/ws"
     os: "windows"
-    capabilities: ["ui", "office", "browser"]
-    
-  - device_id: "linux-gpu-server"
-    server_url: "ws://10.0.1.50:5001/ws"
-    os: "linux"
-    capabilities: ["python", "cuda", "docker"]
+    capabilities:
+      - "web_browsing"
+      - "office_applications"
+      - "file_management"
     metadata:
-      hardware: 
-        gpu: "A100"
+      location: "home_office"
+      os: "windows"
+      performance: "medium"
+    max_retries: 5
+    
+  - device_id: "linux_agent_1"
+    server_url: "ws://localhost:5001/ws"
+    os: "linux"
+    capabilities:
+      - "server"
+      - "python"
+      - "docker"
+    metadata:
+      os: "linux"
+      performance: "high"
+      logs_file_path: "/root/log/log1.txt"
+    auto_connect: true
+    max_retries: 5
 ```
 
 **`config/galaxy/constellation.yaml`** - Configure runtime settings:
@@ -286,30 +327,102 @@ devices:
 ```yaml
 # Constellation Runtime Settings
 CONSTELLATION_ID: "my_constellation"
-HEARTBEAT_INTERVAL: 30.0
-MAX_CONCURRENT_TASKS: 6
+HEARTBEAT_INTERVAL: 30.0  # Heartbeat interval in seconds
+RECONNECT_DELAY: 5.0  # Delay before reconnecting in seconds
+MAX_CONCURRENT_TASKS: 6  # Maximum concurrent tasks
+MAX_STEP: 15  # Maximum steps per session
+
+# Device Configuration
 DEVICE_INFO: "config/galaxy/devices.yaml"
+
+# Logging Configuration
+LOG_TO_MARKDOWN: true
 ```
 
 See [Galaxy Configuration](../configuration/system/galaxy_devices.md) for complete documentation.
 
 ### 3. Start Device Agents
-On each device, launch the appropriate agent:
 
-```bash
-# On Windows
-python -m ufo --mode galaxy-device --device windows-desktop
+On each device, launch the Agent Server:
 
-# On Linux
-python -m ufo --mode galaxy-device --device linux-gpu-server
+**On Windows:**
+```powershell
+# Start Agent Server on port 5005
+python -m ufo --mode agent-server --port 5005
 ```
 
-### 4. Launch Constellation Agent
+**On Linux:**
 ```bash
-python -m galaxy --task "Your cross-device task here"
+# Start Agent Server on port 5001
+python -m ufo --mode agent-server --port 5001
+```
+
+### 4. Launch Galaxy Client
+
+**Interactive Mode:**
+```bash
+python -m galaxy --interactive
+```
+
+**Direct Request:**
+```bash
+python -m galaxy "Your cross-device task here"
+```
+
+**Programmatic API:**
+```python
+from galaxy.galaxy_client import GalaxyClient
+
+async def main():
+    client = GalaxyClient(session_name="my_session")
+    await client.initialize()
+    result = await client.process_request("Your task request")
+    await client.shutdown()
 ```
 
 For detailed instructions, see the [Quick Start Guide](../getting_started/quick_start_galaxy.md).
+
+---
+
+## 🔧 System Components
+
+UFO³ Galaxy consists of several integrated components working together:
+
+### Core Components
+
+| Component | Location | Responsibility |
+|-----------|----------|----------------|
+| **GalaxyClient** | `galaxy/galaxy_client.py` | Session management, user interaction, orchestration coordination |
+| **ConstellationClient** | `galaxy/client/constellation_client.py` | Device management, connection lifecycle, task assignment |
+| **ConstellationAgent** | `galaxy/agents/constellation_agent.py` | LLM-driven DAG synthesis and evolution, state machine control |
+| **TaskConstellationOrchestrator** | `galaxy/constellation/orchestrator/` | Asynchronous execution, event coordination, safety enforcement |
+| **TaskConstellation** | `galaxy/constellation/task_constellation.py` | DAG data structure, validation, and modification APIs |
+| **DeviceManager** | `galaxy/client/device_manager.py` | WebSocket connections, heartbeat monitoring, message routing |
+| **Agent Server** | `ufo/mode/agent_server.py` | Device-side WebSocket server, AIP protocol handler |
+
+### Supporting Infrastructure
+
+| Component | Purpose |
+|-----------|---------|
+| **Event Bus** | Publish-subscribe system for constellation events |
+| **Observer Pattern** | Event listeners for visualization and synchronization |
+| **Device Registry** | Centralized device information and capability tracking |
+| **Agent Profile** | Device metadata and capability declarations |
+| **MCP Servers** | Tool augmentation via Model Context Protocol |
+
+For detailed component documentation, see the respective sections in [Documentation Structure](#-documentation-structure).
+
+### Technology Stack
+
+| Layer | Technologies |
+|-------|-------------|
+| **Programming** | Python 3.10+, asyncio, dataclasses |
+| **Communication** | WebSockets, JSON-RPC |
+| **LLM Integration** | OpenAI API, Azure OpenAI, Gemini, Claude, Custom Models |
+| **Tool Augmentation** | Model Context Protocol (MCP) |
+| **Configuration** | YAML, Pydantic models |
+| **Logging** | Python logging, Rich console, Markdown trajectory |
+| **Testing** | pytest, mock agents |
 
 ---
 

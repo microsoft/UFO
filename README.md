@@ -63,7 +63,7 @@ python -m ufo.galaxy \
 ```
 
 **📖 [Galaxy Documentation →](./galaxy/README.md)**  
-**📖 [UFO³ Detailed Guide →](./galaxy/README_UFO3.md)** ⭐ **NEW**
+**📖 [Galaxy Quick Start →](https://microsoft.github.io/UFO/getting_started/quick_start_galaxy/)** ⭐ **Online Docs**
 
 </td>
 <td width="50%" valign="top">
@@ -121,11 +121,11 @@ python -m ufo \
 ### Evolution Timeline
 
 ```
-2024.02  →  2025.04  →  2025.11
-   ↓           ↓          ↓
-  UFO       UFO²      UFO³ Galaxy
-Single    Desktop    Multi-Device
-Agent     AgentOS    Orchestration
+2024.02    →    2025.04    →    2025.11
+   ↓              ↓              ↓
+  UFO           UFO²         UFO³ Galaxy
+  GUI         Desktop        Multi-Device
+Agent         AgentOS       Orchestration
 ```
 
 ### 🚀 UFO³ = **Galaxy** (Multi-Device Orchestration) + **UFO²** (Device Agent)
@@ -168,7 +168,7 @@ UFO³ introduces **Galaxy**, a novel multi-device orchestration framework that c
 <tr>
 <td width="33%" valign="top">
 
-#### � Constellation Planning
+#### 🌟 Constellation Planning
 ```
 User: "Collect sales data from 
 Excel on Windows, analyze on 
@@ -260,34 +260,71 @@ UFO² serves dual roles: **standalone Windows automation** and **Galaxy device a
 
 ## 🚀 Quick Start Guide
 
-### 📦 Installation (Common for Both)
+Choose your path and follow the detailed setup guide:
+
+<table align="center">
+<tr>
+<td width="50%" valign="top">
+
+### 🌌 Galaxy Quick Start
+
+**For cross-device orchestration**
 
 ```powershell
-# Clone the repository
-git clone https://github.com/microsoft/UFO.git
-cd UFO
-
-# Create conda environment (recommended)
-conda create -n ufo3 python=3.10
-conda activate ufo3
-
-# Install dependencies
+# 1. Install
 pip install -r requirements.txt
+
+# 2. Configure
+copy config\galaxy\agents.yaml.template config\galaxy\agents.yaml
+# Edit and add your API keys
+
+# 3. Start device agents
+python -m ufo --mode agent-server --port 5005
+
+# 4. Launch Galaxy
+python -m galaxy --interactive
 ```
 
-### ⚙️ Configuration
+**📖 Complete Guide:**
+- [Galaxy README](./galaxy/README.md) – Architecture & concepts
+- [Online Quick Start](https://microsoft.github.io/UFO/getting_started/quick_start_galaxy/) – Step-by-step tutorial
+- [Configuration](https://microsoft.github.io/UFO/configuration/system/galaxy_devices/) – Device setup
 
-Both Galaxy and UFO² require LLM configuration:
+</td>
+<td width="50%" valign="top">
+
+### 🪟 UFO² Quick Start
+
+**For Windows automation**
 
 ```powershell
-# Copy configuration template
-copy ufo\config\config.yaml.template ufo\config\config.yaml
+# 1. Install
+pip install -r requirements.txt
 
-# Edit configuration
-notepad ufo\config\config.yaml
+# 2. Configure
+copy config\ufo\agents.yaml.template config\ufo\agents.yaml
+# Edit and add your API keys
+
+# 3. Run
+python -m ufo --task <task_name>
 ```
 
-**Quick Config (OpenAI):**
+**📖 Complete Guide:**
+- [UFO² README](./ufo/README.md) – Full documentation
+- [Configuration Guide](./ufo/README.md#️-step-2-configure-the-llms) – LLM setup
+- [Advanced Features](https://microsoft.github.io/UFO/advanced_usage/overview/) – Multi-action, RAG
+
+</td>
+</tr>
+</table>
+
+### 📋 Common Configuration
+
+Both frameworks require LLM API configuration. Choose your provider:
+
+<details>
+<summary><strong>OpenAI Configuration</strong></summary>
+
 ```yaml
 VISUAL_MODE: True
 API_TYPE: "openai"
@@ -296,7 +333,11 @@ API_KEY: "sk-your-key-here"
 API_MODEL: "gpt-4o"
 ```
 
-**Quick Config (Azure OpenAI):**
+</details>
+
+<details>
+<summary><strong>Azure OpenAI Configuration</strong></summary>
+
 ```yaml
 VISUAL_MODE: True
 API_TYPE: "aoai"
@@ -306,128 +347,9 @@ API_MODEL: "gpt-4o"
 API_DEPLOYMENT_ID: "your-deployment-id"
 ```
 
-> 💡 **Tip:** See [Model Configuration Guide](https://microsoft.github.io/UFO/supported_models/overview/) for Qwen, Gemini, and more.
+</details>
 
----
-
-### 🌌 Option 1: Start with Galaxy (Multi-Device Orchestration)
-
-Galaxy requires device agents to be running before orchestration. **See [Complete Setup Guide](./galaxy/README_UFO3.md) for detailed instructions.**
-
-#### Quick Start (5 Steps)
-
-**1. Configure Agents**
-```powershell
-# Configure Constellation Agent (orchestrator)
-copy config\galaxy\agents.yaml.template config\galaxy\agents.yaml
-notepad config\galaxy\agents.yaml  # Add your LLM API keys
-
-# Configure Windows Device Agent (UFO²)
-copy config\ufo\agents.yaml.template config\ufo\agents.yaml
-notepad config\ufo\agents.yaml  # Add your LLM API keys
-```
-
-**2. Configure Device Pool**
-```powershell
-# Define available devices
-copy config\galaxy\devices.yaml.template config\galaxy\devices.yaml
-notepad config\galaxy\devices.yaml  # Configure Windows/Linux devices
-```
-
-**3. Start Device Agent Servers**
-```powershell
-# Terminal 1: Windows Device Agent
-python -m galaxy.device_agent.windows_server --port 8001
-
-# Terminal 2: Linux Device Agent (on Linux machine)
-python -m galaxy.device_agent.linux_server --port 8002
-```
-
-**4. Connect Device Clients**
-```powershell
-# Terminal 3: Windows Device Client
-python -m galaxy.device_agent.client --device-id windows-01
-
-# Terminal 4: Linux Device Client
-python -m galaxy.device_agent.client --device-id linux-01
-```
-
-**5. Launch Galaxy Orchestrator**
-```powershell
-# Execute your multi-device request
-python -m galaxy --request "Extract data from Excel on Windows, process on Linux, generate report"
-```
-
-#### Example Multi-Device Workflow
-```powershell
-python -m galaxy --request "
-  Download sales data from SharePoint on Windows,
-  process it with Python on Linux server,
-  and create a visualization dashboard
-"
-```
-
-#### Interactive Mode
-```powershell
-# Start interactive session for iterative requests
-python -m galaxy --interactive
-```
-
-#### Programmatic Usage
-```python
-from galaxy import GalaxyClient
-
-# Initialize Galaxy client
-client = GalaxyClient(
-    session_name="cross_platform_workflow",
-    use_mock_agent=False,
-    max_rounds=10
-)
-
-# Execute multi-device request
-result = await client.execute_request(
-    "Your complex cross-platform task"
-)
-
-# Access constellation details
-constellation = client.session.constellation
-print(f"Tasks: {len(constellation.tasks)}")
-print(f"Devices: {[task.device_type for task in constellation.tasks]}")
-```
-
-**📖 [UFO³ Complete Setup Guide →](./galaxy/README_UFO3.md)** ⭐ **Full Configuration & Examples**  
-**📖 [Galaxy Framework Overview →](./galaxy/README.md)** – Technical Architecture
-
----
-
-### 🪟 Option 2: Start with UFO² (Windows Single Agent)
-
-```powershell
-# Install dependencies
-pip install -r requirements.txt
-
-# Configure (copy template and add your API key)
-copy config\ufo\agents.yaml.template config\ufo\agents.yaml
-
-# Run
-python -m ufo --task <your_task_name>
-```
-
-**Example Tasks:**
-```powershell
-# Office automation
-python -m ufo --task "excel_report" -r "Create a pivot table from sales data"
-
-# Multi-application workflow
-python -m ufo --task "research" -r "Search in Edge, summarize in Word"
-
-# System operation
-python -m ufo --task "file_mgmt" -r "Organize downloads by file type"
-```
-
-**📖 [Complete UFO² Documentation →](./ufo/README.md)**  
-**📖 [Configuration Guide →](./ufo/README.md#️-step-2-configure-the-llms)**  
-**📖 [Advanced Features →](https://microsoft.github.io/UFO/advanced_usage/overview/)**
+> 💡 **More LLM Options:** See [Model Configuration Guide](https://microsoft.github.io/UFO/supported_models/overview/) for Qwen, Gemini, Claude, and more.
 
 ---
 
@@ -439,23 +361,20 @@ python -m ufo --task "file_mgmt" -r "Organize downloads by file type"
 
 ### 🌌 Galaxy Documentation
 
-- **[UFO³ Complete Guide](./galaxy/README_UFO3.md)** ⭐ **Start Here** – Full setup, configuration, and examples
-- **[Galaxy Framework Overview](./galaxy/README.md)** – Architecture & technical concepts
-- **[Quick Start Tutorial](./galaxy/README_UFO3.md#-getting-started)** – Get running in 10 minutes
-- **[Configuration Guide](./galaxy/README_UFO3.md#️-configuration)** – Step-by-step setup for all components
-- **[Device Agent Setup](./galaxy/README_UFO3.md#-starting-ufo³-galaxy)** – Windows & Linux agents
-- **[Example Workflows](./galaxy/README_UFO3.md#-example-workflows)** – Real-world use cases
-- **[Advanced Features](./galaxy/README_UFO3.md#-advanced-features)** – Dynamic editing, fault tolerance, load balancing
-- **[API Reference](./galaxy/README_UFO3.md#-api-reference)** – Python & CLI APIs
-- **[Troubleshooting](./galaxy/README_UFO3.md#-troubleshooting)** – Common issues and solutions
+- **[Galaxy Framework Overview](./galaxy/README.md)** ⭐ **Start Here** – Architecture & technical concepts
+- **[Quick Start Tutorial](https://microsoft.github.io/UFO/getting_started/quick_start_galaxy/)** – Get running in minutes
+- **[Galaxy Client](https://microsoft.github.io/UFO/galaxy/client/overview/)** – Device coordination and API
+- **[Constellation Agent](https://microsoft.github.io/UFO/galaxy/constellation_agent/overview/)** – Task decomposition and planning
+- **[Task Orchestrator](https://microsoft.github.io/UFO/galaxy/constellation_orchestrator/overview/)** – Execution engine
+- **[Task Constellation](https://microsoft.github.io/UFO/galaxy/constellation/overview/)** – DAG structure
+- **[Agent Registration](https://microsoft.github.io/UFO/galaxy/agent_registration/overview/)** – Device registry
+- **[Configuration Guide](https://microsoft.github.io/UFO/configuration/system/galaxy_devices/)** – Setup and device pools
 
-**📖 Detailed Technical Modules:**
-- [Agents](./galaxy/agents/README.md) – ConstellationAgent implementation
-- [Constellation](./galaxy/constellation/README.md) – DAG management system
-- [Session Management](./galaxy/session/README.md) – Session lifecycle
-- [Device Management](./galaxy/client/README.md) – Multi-device coordination
-- [Visualization](./galaxy/visualization/README.md) – Real-time monitoring
-- [Events & Observers](./galaxy/core/README.md) – Event system
+**📖 Technical Documentation:**
+- [AIP Protocol](https://microsoft.github.io/UFO/aip/overview/) – WebSocket messaging
+- [Session Management](https://microsoft.github.io/UFO/galaxy/session/overview/) – Session lifecycle
+- [Visualization](https://microsoft.github.io/UFO/galaxy/visualization/overview/) – Real-time monitoring
+- [Events & Observers](https://microsoft.github.io/UFO/galaxy/core/overview/) – Event system
 
 </td>
 <td width="50%" valign="top">
@@ -528,70 +447,29 @@ python -m ufo --task "file_mgmt" -r "Organize downloads by file type"
 
 ### UFO² – Desktop AgentOS
 
-```
-User Request
-    ↓
-HostAgent (FSM Coordinator)
-    ↓
-┌─────────┬─────────┬─────────┐
-│AppAgent│AppAgent │AppAgent │ (per app)
-│   1     │    2    │    3    │
-└─────────┴─────────┴─────────┘
-    ↓         ↓         ↓
-┌─────────┬─────────┬─────────┐
-│ Excel   │  Word   │  Edge   │ (Windows apps)
-└─────────┴─────────┴─────────┘
-```
+<div align="center">
+  <img src="./assets/framework2.png" alt="UFO² Architecture" width="80%"/>
+  <p><em>UFO² Desktop AgentOS Architecture</em></p>
+</div>
 
 **Key Characteristics:**
-- Sequential task execution
+- Sequential task execution with ReAct loop
 - Single-device focus (Windows)
-- ReAct loop per application
-- Deep Windows integration
+- HostAgent coordinates AppAgents per application
+- Deep Windows integration (UIA, Win32, WinCOM)
 
 ---
 
 ### UFO³ Galaxy – Multi-Device Orchestration Framework
 
-```
-                    User Request
-                         ↓
-              ┌──────────────────────┐
-              │  ConstellationAgent  │ (Task Decomposition & Planning)
-              └──────────────────────┘
-                         ↓
-              ┌──────────────────────┐
-              │   Constellation      │ (DAG Workflow)
-              │   (Task Graph)       │
-              └──────────────────────┘
-                    /    |    \
-                   /     |     \
-            ┌─────┐  ┌─────┐  ┌─────┐
-            │Task1│  │Task2│  │Task3│ (TaskStar nodes)
-            └─────┘  └─────┘  └─────┘
-              ↓        ↓        ↓
-         ┌────────────────────────────┐
-         │   Device Pool Manager      │ (Dynamic Assignment)
-         └────────────────────────────┘
-              ↓        ↓        ↓
-         ┌────────┬────────┬────────┐
-         │Windows │ Linux  │  macOS │ (Device Agents)
-         │ (UFO²) │(Shell) │(Shell) │
-         └────────┴────────┴────────┘
-                     ↓
-         ┌────────────────────────────┐
-         │    TaskOrchestrator        │ (Execution Coordinator)
-         └────────────────────────────┘
-                     ↓
-         ┌────────────────────────────┐
-         │     Event System           │ (Real-time Monitoring)
-         │  (Observer Pattern)        │
-         └────────────────────────────┘
-```
+<div align="center">
+  <img src="./documents/docs/img/overview2.png" alt="UFO³ Galaxy Architecture" width="90%"/>
+  <p><em>UFO³ Galaxy Layered Architecture — Cross-device orchestration</em></p>
+</div>
 
 **Key Components (from UFO³ Paper):**
 1. **ConstellationAgent**: Plans and decomposes tasks into DAG workflows
-2. **Constellation (星座)**: DAG representation with TaskStar nodes and dependencies
+2. **TaskConstellation (星座)**: DAG representation with TaskStar nodes and dependencies
 3. **Device Pool Manager**: Matches tasks to capable devices dynamically
 4. **TaskOrchestrator**: Coordinates parallel execution and handles data flow
 5. **Event System**: Real-time monitoring with observer pattern for adaptation
@@ -682,31 +560,6 @@ HostAgent (FSM Coordinator)
 **UFO² as Galaxy Device Agent:**
 Galaxy can leverage UFO² as a specialized Windows device agent, combining Galaxy's orchestration power with UFO²'s proven Windows automation capabilities.
 
-```python
-# Use Galaxy for orchestration
-# Use UFO² agents on Windows devices
-
-from galaxy import TaskConstellation
-from ufo import UFOAgent
-
-constellation = TaskConstellation("Hybrid Workflow")
-
-# Windows task → UFO² as device agent
-windows_task = TaskStar(
-    task_id="excel_processing",
-    device_type=DeviceType.WINDOWS,
-    agent_type="UFO2"  # Use stable UFO² as device agent
-)
-
-# Linux task → Galaxy agent
-linux_task = TaskStar(
-    task_id="data_processing",
-    device_type=DeviceType.LINUX,
-    agent_type="Galaxy"
-)
-
-constellation.add_tasks([windows_task, linux_task])
-```
 
 ---
 
