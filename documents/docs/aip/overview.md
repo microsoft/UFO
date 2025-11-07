@@ -1,64 +1,138 @@
 # Agent Interaction Protocol (AIP)
 
-!!!quote "The Nervous System of UFO²"
-    AIP is the communication backbone that enables seamless coordination between distributed agents across devices, functioning as UFO²'s **nervous system** by unifying registration, task dispatch, command execution, and result reporting into a single, persistent protocol.
+The orchestration model requires a communication substrate that remains **correct under continuous DAG evolution**, **dynamic agent participation**, and **fine-grained event propagation**. Legacy HTTP-based coordination approaches (e.g., A2A, ACP) assume short-lived, stateless interactions, incurring handshake overhead, stale capability views, and fragile recovery when partial failures occur mid-task. These assumptions make them unsuitable for the continuously evolving workflows and long-running reasoning loops characteristic of UFO².
 
-## Why AIP Matters
+## Design Overview
 
-Traditional HTTP-based coordination (e.g., A2A, ACP) uses short-lived, stateless interactions—unsuitable for UFO²'s dynamic orchestration needs.
+AIP serves as the **nervous system** of UFO², connecting the ConstellationClient, device agent services, and device clients under a unified, event-driven control plane. It is designed as a lightweight yet evolution-tolerant protocol to satisfy six goals:
+
+!!!success "Design Goals"
+    - **(G1)** Maintain persistent bidirectional sessions to eliminate per-request overhead
+    - **(G2)** Unify heterogeneous capability discovery via multi-source profiling
+    - **(G3)** Ensure fine-grained reliability through heartbeats and timeout managers for disconnection and failure detection
+    - **(G4)** Preserve deterministic command ordering within sessions
+    - **(G5)** Support composable extensibility for new message types and resilience strategies
+    - **(G6)** Provide transparent reconnection and task continuity under transient failures
 
 | Legacy HTTP Coordination | AIP WebSocket-Based Design |
 |--------------------------|----------------------------|
-| ❌ Short-lived requests | ✅ Long-lived sessions |
+| ❌ Short-lived requests | ✅ Persistent sessions (G1) |
 | ❌ Stateless interactions | ✅ Session-aware task management |
 | ❌ High latency overhead | ✅ Low-latency event streaming |
-| ❌ Poor reconnection support | ✅ Seamless recovery from disconnections |
+| ❌ Poor reconnection support | ✅ Seamless recovery from disconnections (G6) |
 | ❌ Manual state synchronization | ✅ Automatic DAG state propagation |
+| ❌ Fragile partial failures | ✅ Fine-grained reliability (G3) |
 
-!!!success "Key Design Goals"
-    - **Continuous DAG Evolution**: Task graphs dynamically modified during execution
-    - **Dynamic Agent Participation**: Agents join, leave, and reconnect unpredictably  
-    - **Fine-Grained Event Propagation**: Real-time updates on tasks, commands, and system state
+## Five-Layer Architecture
 
-## Core Design Principles
+To meet these requirements, AIP adopts a persistent, bidirectional WebSocket transport and decomposes the orchestration substrate into **five** logical strata, each responsible for a distinct aspect of reliability and adaptability:
 
-| Principle | Description |
-|-----------|-------------|
-| **🎯 Minimalism with Extensibility** | Stable protocol core + custom extensions via capability descriptors |
-| **🔌 Transport Agnostic** | WebSocket primary, supports future HTTP/3, gRPC, etc. |
-| **💾 Session-Aware** | Long-lived sessions span multiple task executions |
-| **🛡️ Resilient by Design** | Auto-reconnection, heartbeat monitoring, timeout management |
-| **👨‍💻 Developer Friendly** | Strongly-typed Pydantic messages, clear errors, comprehensive logging |
-
-!!!info "Protocol Characteristics"
-    AIP is both **human-readable** (JSON-based messages) and **machine-verifiable** (Pydantic schema validation), making debugging intuitive while maintaining type safety.
-
-
-## Three-Layer Architecture
-
-!!!tip "High-Level View"
-    AIP connects three layers: **ConstellationClient** (orchestrator) → **Device Agent Service** (server) → **Device Agent Client** (executor). Each layer has clear responsibilities.
-
-| Layer | Role | Key Responsibilities |
-|-------|------|---------------------|
-| **🌟 ConstellationClient** | Orchestrator | • Global agent registry (`AgentProfile` management)<br>• Task assignment & DAG coordination<br>• Multi-device scheduling decisions |
-| **🖥️ Device Agent Service** | Server | • WebSocket connection management<br>• Task dispatch to device clients<br>• Command execution coordination<br>• Result aggregation & reporting |
-| **📱 Device Agent Client** | Executor | • Local task execution<br>• MCP tool/action invocation<br>• System telemetry reporting<br>• Result streaming |
+!!!tip "Vertically Integrated Stack"
+    AIP's architecture establishes a complete substrate where **L1** defines semantic contracts, **L2** provides transport flexibility, **L3** implements protocol logic, **L4** ensures operational resilience, and **L5** delivers deployment-ready orchestration primitives.
 
 **Architecture Diagram:**
 
-The following diagram illustrates the three-layer architecture and bidirectional communication flows between components:
+The following diagram illustrates the five-layer architecture and the roles of each component:
 
-![AIP Architecture](/img/aip.png)
+![AIP Architecture](/img/aip_new.png)
 
-This architecture enables persistent WebSocket connections that span multiple task executions, reducing connection overhead while maintaining bidirectional communication for task dispatch (top-down) and result reporting (bottom-up).
+### Layer 1: Message Schema Layer
 
-!!!example "Communication Flow Example"
-    1. ConstellationClient assigns `TASK` to GPU agent  
-    2. Device Service receives task, routes to connected GPU client  
-    3. GPU Client executes commands via MCP tools  
-    4. Results stream back through Service to ConstellationClient  
-    5. ConstellationClient updates DAG, may spawn new subtasks
+**Defines strongly-typed, Pydantic-validated contracts** (`ClientMessage`, `ServerMessage`) for message direction, purpose, and task transitions.
+
+| Responsibility | Implementation | Supports |
+|----------------|----------------|----------|
+| Message contracts | Pydantic models with validation | Human-readable + machine-verifiable |
+| Structured metadata | System info, capabilities | Unified capability discovery (G2) |
+| ID correlation | Explicit request/response linking | Deterministic ordering (G4) |
+
+!!!info "Type Safety & Validation"
+    All messages are validated at schema level, preventing malformed messages from entering the protocol pipeline. This enables early error detection and simplifies debugging.
+
+### Layer 2: Transport Abstraction Layer
+
+**Provides protocol-agnostic `Transport` interface** with production-grade WebSocket implementation.
+
+| Feature | Benefit | Goals |
+|---------|---------|-------|
+| Configurable pings/timeouts | Connection health monitoring | G3 |
+| Large payload support | Handles complex task definitions | G1 |
+| Decoupled transport logic | Future extensibility (HTTP/3, gRPC) | G5 |
+| Low-latency persistent sessions | Eliminates per-request overhead | G1 |
+
+!!!tip "Transport Flexibility"
+    The abstraction layer allows swapping transports without changing protocol logic, supporting future protocol evolution.
+
+### Layer 3: Protocol Orchestration Layer
+
+**Implements modular handlers** for registration, task execution, heartbeat, and command dispatch.
+
+| Component | Purpose | Design |
+|-----------|---------|--------|
+| `AIPProtocol` base | Common handler infrastructure | Extensible base class |
+| Handler modules | Registration, tasks, heartbeat, commands | Pluggable handlers |
+| Middleware hooks | Logging, metrics, authentication | Composable extensions (G5) |
+| State transitions | Ordered message processing | Deterministic ordering (G4) |
+
+!!!success "Modular Design"
+    Each handler is independently testable and replaceable, supporting composable extensibility (G5) while maintaining ordered state transitions (G4).
+
+[→ Complete message reference](./messages.md)
+
+### Layer 4: Resilience and Health Management Layer
+
+**Encapsulates reliability mechanisms** ensuring operational continuity under failures.
+
+| Component | Mechanism | Goals |
+|-----------|-----------|-------|
+| `HeartbeatManager` | Periodic keepalive signals | G3 |
+| `TimeoutManager` | Configurable timeout policies | G3 |
+| `ReconnectionStrategy` | Exponential backoff with jitter | G6 |
+| Session recovery | Automatic state restoration | G6 |
+
+!!!warning "Fault Tolerance"
+    This layer guarantees fine-grained reliability (G3) and seamless task continuity under transient disconnections (G6), preventing cascade failures.
+
+[→ Resilience implementation details](./resilience.md)
+
+### Layer 5: Endpoint Orchestration Layer
+
+**Provides role-specific facades** integrating lower layers into deployable components.
+
+| Endpoint | Role | Responsibilities |
+|----------|------|------------------|
+| `ConstellationEndpoint` | Orchestrator | Global agent registry, task assignment, DAG coordination |
+| `DeviceServerEndpoint` | Server | WebSocket connection management, task dispatch, result aggregation |
+| `DeviceClientEndpoint` | Executor | Local task execution, MCP tool invocation, telemetry reporting |
+
+!!!example "Unified Orchestration"
+    These endpoints unify connection lifecycle, task routing, and health monitoring across roles, reinforcing G1–G6 through consistent implementation of lower-layer capabilities.
+
+**Endpoint Integration Benefits:**
+
+- ✅ Connection lifecycle management (G1, G6)
+- ✅ Role-specific protocol variants (G5)
+- ✅ Health monitoring integration (G3)
+- ✅ Task routing and session management (G4)
+
+[→ Endpoint setup guide](./endpoints.md)
+
+---
+
+## Architecture Benefits
+
+Together, these layers form a vertically integrated stack that enables UFO² to maintain **correctness and availability** under challenging conditions:
+
+| Challenge | How AIP Addresses It | Layers Involved |
+|-----------|----------------------|-----------------|
+| **DAG Evolution** | Deterministic ordering, extensible message types | L1, L3, L4, L5 (G4, G5) |
+| **Agent Churn** | Heartbeats, reconnection, session recovery | L4, L5 (G3, G6) |
+| **Heterogeneous Environments** | Persistent sessions, multi-source profiling | L1, L2, L5 (G1, G2) |
+| **Transient Failures** | Timeout management, automatic recovery | L4 (G3, G6) |
+| **Protocol Evolution** | Transport abstraction, middleware hooks | L2, L3 (G5) |
+
+!!!quote "Design Philosophy"
+    AIP transforms distributed workflow execution into a **coherent, safe, and adaptive system** where reasoning and execution converge seamlessly across diverse agents and environments.
 
 ---
 
@@ -66,8 +140,8 @@ This architecture enables persistent WebSocket connections that span multiple ta
 
 ### 1️⃣ Agent Registration & Profiling
 
-!!!info "Multi-Source Agent Profiles"
-    Each agent is represented by an **AgentProfile** combining data from three sources for comprehensive capability discovery.
+!!!info "Multi-Source Agent Profiles (G2)"
+    Each agent is represented by an **AgentProfile** combining data from three sources for comprehensive capability discovery, supporting heterogeneous capability unification.
 
 | Source | Provider | Information |
 |--------|----------|-------------|
@@ -77,13 +151,13 @@ This architecture enables persistent WebSocket connections that span multiple ta
 
 **Benefits of Multi-Level Profiling:**
 
-- ✅ Accurate task allocation based on real-time capabilities  
+- ✅ Accurate task allocation based on real-time capabilities (G2)
 - ✅ Transparent adaptation to environmental changes (e.g., GPU availability)  
 - ✅ No manual updates needed when device state changes  
 - ✅ Informed scheduling decisions at scale
 
 !!!tip "Dynamic Profile Updates"
-    Client telemetry continuously refreshes, so the orchestrator always sees current device state—critical for GPU-aware scheduling or cross-device load balancing.
+    Client telemetry continuously refreshes, so the orchestrator always sees current device state—critical for GPU-aware scheduling or cross-device load balancing (G2).
 
 [→ See detailed registration flow](./protocols.md)
 
@@ -91,8 +165,8 @@ This architecture enables persistent WebSocket connections that span multiple ta
 
 ### 2️⃣ Task Dispatch & Result Delivery
 
-!!!success "Persistent Sessions"
-    AIP uses **long-lived WebSocket sessions** that span multiple task executions, eliminating connection overhead and preserving context.
+!!!success "Persistent Sessions (G1)"
+    AIP uses **long-lived WebSocket sessions** that span multiple task executions, eliminating per-request connection overhead and preserving context.
 
 **Task Execution Sequence:**
 
@@ -130,8 +204,8 @@ Each arrow represents a message exchange, with vertical lifelines showing the te
 
 ### 3️⃣ Command Execution
 
-!!!info "Fine-Grained Control"
-    Within each task, AIP executes **individual commands** deterministically, enabling precise control and error handling.
+!!!info "Fine-Grained Control (G4)"
+    Within each task, AIP executes **individual commands** deterministically with preserved ordering, enabling precise control and error handling.
 
 **Command Structure:**
 
@@ -144,10 +218,10 @@ Each arrow represents a message exchange, with vertical lifelines showing the te
 
 **Execution Guarantees:**
 
-- ✅ **Sequential execution** within a session (deterministic order)  
+- ✅ **Sequential execution** within a session (deterministic order) (G4)
 - ✅ **Command batching** supported (reduces network overhead)  
 - ✅ **Structured results** with status codes and error details  
-- ✅ **Timeout propagation** for precise recovery strategies
+- ✅ **Timeout propagation** for precise recovery strategies (G3)
 
 **Command Batching Example:**
 
@@ -201,8 +275,8 @@ All three commands sent in one message, executed sequentially.
 
 ## Resilient Connection Protocol
 
-!!!warning "Network Instability Handling"
-    AIP ensures **continuous orchestration** even under transient network failures or device disconnections.
+!!!warning "Network Instability Handling (G3, G6)"
+    AIP ensures **continuous orchestration** even under transient network failures or device disconnections through fine-grained reliability mechanisms and transparent reconnection.
 
 ### Device Disconnection Flow
 
@@ -228,8 +302,8 @@ The `DISCONNECTED` state acts as a quarantine zone where the device is temporari
 
 | Event | Orchestrator Action | Device Action |
 |-------|---------------------|---------------|
-| **Device disconnects** | Mark as `DISCONNECTED`<br>Exclude from scheduling<br>Trigger auto-reconnect | N/A |
-| **Reconnection succeeds** | Mark as `CONNECTED`<br>Resume scheduling | Session restored |
+| **Device disconnects** | Mark as `DISCONNECTED`<br>Exclude from scheduling<br>Trigger auto-reconnect (G6) | N/A |
+| **Reconnection succeeds** | Mark as `CONNECTED`<br>Resume scheduling | Session restored (G6) |
 | **Disconnect during task** | Mark tasks as `TASK_FAILED`<br>Propagate to ConstellationAgent<br>Trigger DAG edit | N/A |
 
 ### ConstellationClient Disconnection
@@ -246,8 +320,8 @@ The `DISCONNECTED` state acts as a quarantine zone where the device is temporari
 
 - ✅ No orphaned tasks  
 - ✅ Synchronized state across client-server boundary  
-- ✅ Rapid recovery when connection restored  
-- ✅ Consistent TaskConstellation state
+- ✅ Rapid recovery when connection restored (G6)
+- ✅ Consistent TaskConstellation state (G4)
 
 [→ See resilience implementation](./resilience.md)
 
@@ -255,8 +329,8 @@ The `DISCONNECTED` state acts as a quarantine zone where the device is temporari
 
 ## Extensibility Mechanisms
 
-!!!tip "Customization Points"
-    AIP provides multiple extension points for domain-specific needs without modifying the core protocol.
+!!!tip "Customization Points (G5)"
+    AIP provides multiple extension points for domain-specific needs without modifying the core protocol, supporting composable extensibility.
 
 ### 1. Protocol Middleware
 
@@ -281,7 +355,7 @@ protocol.register_handler("custom_type", handle_custom_message)
 
 ### 3. Transport Layer
 
-Pluggable transport (default: WebSocket):
+Pluggable transport (default: WebSocket) (G5):
 
 ```python
 from aip.transport import CustomTransport
@@ -306,33 +380,6 @@ protocol.set_transport(CustomTransport(config))
 
 ---
 
-## Quick Start
-
-!!!example "Getting Started with AIP"
-    
-    **1. Device Server Setup**
-    ```python
-    from aip.endpoints import DeviceServerEndpoint
-    
-    server = DeviceServerEndpoint(host="0.0.0.0", port=8080)
-    await server.start()
-    ```
-    
-    **2. Device Client Connection**
-    ```python
-    from aip.endpoints import DeviceClientEndpoint
-    
-    client = DeviceClientEndpoint(server_url="ws://localhost:8080")
-    await client.connect()
-    ```
-    
-    **3. Constellation Orchestration**
-    ```python
-    from aip.endpoints import ConstellationEndpoint
-    
-    orchestrator = ConstellationEndpoint(config)
-    await orchestrator.register_device("gpu-agent-1", "ws://gpu-server:8080")
-    ```
 
 **Next Steps:**
 
@@ -351,13 +398,14 @@ protocol.set_transport(CustomTransport(config))
 
 **Key Takeaways:**
 
-| Aspect | Impact |
-|--------|--------|
-| **Persistence** | Long-lived connections reduce overhead, maintain context |
-| **Low Latency** | WebSocket enables real-time event propagation |
-| **Standardization** | Any service implementing TASK/TASK_END can join constellation |
-| **Reliability** | Auto-reconnection and fault handling ensure graceful degradation |
-| **Scalability** | Multiplexed connections support large multi-agent deployments |
-| **Developer UX** | Strongly-typed messages, clear errors reduce integration effort |
+| Aspect | Impact | Goals |
+|--------|--------|-------|
+| **Persistence** | Long-lived connections reduce overhead, maintain context | G1 |
+| **Low Latency** | WebSocket enables real-time event propagation | G1 |
+| **Capability Discovery** | Multi-source profiling unifies heterogeneous agents | G2 |
+| **Reliability** | Heartbeats, timeouts, auto-reconnection ensure graceful degradation | G3, G6 |
+| **Determinism** | Sequential command execution, explicit ID correlation | G4 |
+| **Extensibility** | Middleware hooks, pluggable transports, custom handlers | G5 |
+| **Developer UX** | Strongly-typed messages, clear errors reduce integration effort | G5 |
 
-By abstracting network complexity and providing a stable protocol core with flexible extensions, AIP enables UFO² to orchestrate heterogeneous agents as a **unified, event-driven control plane**.
+By decomposing orchestration into five logical layers—each addressing specific reliability and adaptability concerns—AIP enables UFO² to maintain **correctness and availability** under DAG evolution (G4, G5), agent churn (G3, G6), and heterogeneous execution environments (G1, G2).

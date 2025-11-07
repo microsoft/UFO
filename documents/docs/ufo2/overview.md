@@ -200,31 +200,6 @@ Commands are dispatched through **MCP (Model Context Protocol)** servers:
 
 ---
 
-## Platform Support
-
-### Windows Compatibility
-
-| Windows Version | UI Automation | Win32 API | Support Status |
-|----------------|---------------|-----------|----------------|
-| Windows 11 | ✅ Full | ✅ Full | ✅ Fully Supported |
-| Windows 10 (1909+) | ✅ Full | ✅ Full | ✅ Fully Supported |
-| Windows Server 2019+ | ✅ Full | ✅ Full | ✅ Fully Supported |
-
-### Application Coverage
-
-UFO² has been evaluated on **20+ real-world Windows applications**:
-
-- **Microsoft Office:** Word, Excel, PowerPoint, Outlook  
-- **Web Browsers:** Chrome, Edge, Firefox  
-- **Native Apps:** File Explorer, Notepad, Paint, Calculator  
-- **Third-Party:** VS Code, Slack, Discord, Zoom
-
-!!!success "Evaluation Results"
-    **10%+ higher success rate** than state-of-the-art CUAs (Claude, Operator) across WindowsAgentArena and OSWorld benchmarks.
-    
-    📖 [Benchmark Results](evaluation/benchmark/overview.md)
-
----
 
 ## Configuration
 

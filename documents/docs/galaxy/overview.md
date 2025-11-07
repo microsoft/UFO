@@ -97,12 +97,17 @@ UFO³ Galaxy is built around **five tightly integrated design principles**:
 
 Natural-language or programmatic requests are decomposed by the **Constellation Agent** into a structured DAG of **TaskStars** (nodes) and **TaskStarLines** (edges) that encode workflow logic and dependencies. This declarative structure enables automated scheduling, introspection, and dynamic modification throughout execution.
 
-```
-User Intent → Constellation Agent → Task Constellation (DAG)
-                                    ├─ TaskStar 1 (Windows)
-                                    ├─ TaskStar 2 (Linux GPU) ─┐
-                                    ├─ TaskStar 3 (Linux CPU) ─┼─ TaskStar 5
-                                    └─ TaskStar 4 (Mobile)    ─┘
+```mermaid
+graph LR
+    A[User Intent] --> B[Constellation Agent]
+    B --> C[Task Constellation DAG]
+    C --> D[TaskStar 1<br/>Windows]
+    C --> E[TaskStar 2<br/>Linux GPU]
+    C --> F[TaskStar 3<br/>Linux CPU]
+    C --> G[TaskStar 4<br/>Mobile]
+    E --> H[TaskStar 5]
+    F --> H
+    G --> H
 ```
 
 [Learn more →](constellation/overview.md)
@@ -202,44 +207,56 @@ Result: Dramatically reduced end-to-end latency compared to sequential execution
 *"Clone the repo on my laptop, build the Docker image on the GPU server, deploy to staging, and run the test suite on the CI cluster."*
 
 **Workflow DAG:**
-```
-Clone (Windows) → Build (Linux GPU) → Deploy (Linux Server) → Test (Linux CI)
+```mermaid
+graph LR
+    A[Clone<br/>Windows] --> B[Build<br/>Linux GPU]
+    B --> C[Deploy<br/>Linux Server]
+    C --> D[Test<br/>Linux CI]
 ```
 
 ### 📊 Data Science Workflows
 *"Fetch the dataset from cloud storage, preprocess on the Linux workstation, train the model on the A100 node, and generate a visualization dashboard on my Windows machine."*
 
 **Workflow DAG:**
-```
-Fetch (Any) → Preprocess (Linux) → Train (Linux GPU) → Visualize (Windows)
+```mermaid
+graph LR
+    A[Fetch<br/>Any] --> B[Preprocess<br/>Linux]
+    B --> C[Train<br/>Linux GPU]
+    C --> D[Visualize<br/>Windows]
 ```
 
 ### 📝 Cross-Platform Document Processing
 *"Extract data from Excel on Windows, process with Python scripts on Linux, generate PDF reports, and send summary emails."*
 
 **Workflow DAG:**
-```
-Extract (Windows) → Process (Linux) ┬→ Generate PDF (Windows)
-                                      └→ Send Email (Windows)
+```mermaid
+graph LR
+    A[Extract<br/>Windows] --> B[Process<br/>Linux]
+    B --> C[Generate PDF<br/>Windows]
+    B --> D[Send Email<br/>Windows]
 ```
 
 ### 🔬 Distributed System Monitoring
 *"Collect server logs from all Linux machines, analyze for errors, generate alerts, and create a consolidated report."*
 
 **Workflow DAG:**
-```
-┌→ Collect Logs (Linux 1) ┐
-├→ Collect Logs (Linux 2) ├→ Analyze Errors (Any) → Generate Report (Windows)
-└→ Collect Logs (Linux 3) ┘
+```mermaid
+graph LR
+    A[Collect Logs<br/>Linux 1] --> D[Analyze Errors<br/>Any]
+    B[Collect Logs<br/>Linux 2] --> D
+    C[Collect Logs<br/>Linux 3] --> D
+    D --> E[Generate Report<br/>Windows]
 ```
 
 ### 🏢 Enterprise Automation
 *"Query the database on the server, process the results, update Excel spreadsheets on Windows, and generate PowerPoint presentations."*
 
 **Workflow DAG:**
-```
-Query DB (Linux) → Process Data (Any) ┬→ Update Excel (Windows)
-                                        └→ Create PPT (Windows)
+```mermaid
+graph LR
+    A[Query DB<br/>Linux] --> B[Process Data<br/>Any]
+    B --> C[Update Excel<br/>Windows]
+    B --> D[Create PPT<br/>Windows]
 ```
 
 ---
