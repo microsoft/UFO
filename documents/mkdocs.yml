@@ -72,6 +72,10 @@ nav:
           - Batched Editing: galaxy/constellation_orchestrator/batched_editing.md
           - Constellation Manager: galaxy/constellation_orchestrator/constellation_manager.md
           - API Reference: galaxy/constellation_orchestrator/api_reference.md
+      - Evaluation & Logging:
+          - Trajectory Report: galaxy/evaluation/trajectory_report.md
+          - Performance Metrics: galaxy/evaluation/performance_metrics.md
+          - Result JSON Reference: galaxy/evaluation/result_json.md
   - UFO² Desktop AgentOS:
       - Overview: ufo2/overview.md
       - Using as Galaxy Device: ufo2/as_galaxy_device.md

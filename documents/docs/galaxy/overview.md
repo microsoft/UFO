@@ -455,7 +455,90 @@ Over time, multiple constellations can interconnect, weaving together agents, de
 
 ---
 
-## 📚 Learn More
+## 📊 Performance Monitoring & Evaluation
+
+UFO³ Galaxy provides comprehensive performance monitoring and evaluation tools to analyze multi-device workflow execution:
+
+### Automated Metrics Collection
+
+Galaxy automatically collects detailed performance metrics during execution through an event-driven observer pattern:
+
+- **Task Metrics**: Execution times, success rates, bottleneck identification
+- **Constellation Metrics**: DAG statistics, parallelism analysis, critical path computation
+- **Modification Metrics**: Dynamic editing patterns and adaptation frequency
+- **Device Metrics**: Per-device performance and resource utilization
+
+All metrics are captured in real-time without impacting execution performance and saved to structured JSON files for programmatic analysis.
+
+### Trajectory Report
+
+Galaxy automatically generates a comprehensive Markdown trajectory report (`output.md`) documenting the complete execution lifecycle:
+
+```
+logs/galaxy/<task_name>/output.md
+```
+
+This human-readable report includes:
+- Step-by-step execution timeline with agent actions
+- Interactive DAG topology visualizations showing constellation evolution
+- Detailed task execution logs with results and errors
+- Device connection status and coordination events
+- Complete before/after constellation states at each step
+
+The trajectory report provides visual debugging and workflow understanding, complementing the quantitative `result.json` metrics.
+
+### Result JSON Format
+
+After each session, Galaxy also generates a comprehensive `result.json` file containing:
+
+```
+logs/galaxy/<task_name>/result.json
+```
+
+This file includes:
+- Complete session metadata and execution timeline
+- Task-by-task performance breakdown
+- Constellation statistics (parallelism ratio, critical path, max concurrency)
+- Modification history showing DAG evolution
+- Final results and outcomes
+
+**Example Key Metrics:**
+
+| Metric | Description | Use Case |
+|--------|-------------|----------|
+| `parallelism_ratio` | Efficiency of parallel execution (total_work / critical_path) | Optimization target |
+| `critical_path_length` | Minimum possible execution time | Theoretical performance limit |
+| `average_task_duration` | Mean task execution time | Baseline performance |
+| `modification_count` | Number of dynamic DAG edits | Adaptability analysis |
+
+### Performance Analysis Tools
+
+```python
+import json
+
+# Load session results
+with open("logs/galaxy/task_32/result.json", 'r') as f:
+    result = json.load(f)
+
+# Extract key metrics
+metrics = result["session_results"]["metrics"]
+task_stats = metrics["task_statistics"]
+const_stats = result["session_results"]["final_constellation_stats"]
+
+print(f"✅ Success Rate: {task_stats['success_rate'] * 100:.1f}%")
+print(f"⏱️  Avg Task Duration: {task_stats['average_task_duration']:.2f}s")
+print(f"🔀 Parallelism Ratio: {const_stats['parallelism_ratio']:.2f}")
+```
+
+**Documentation:**
+
+- **[Trajectory Report Guide](./evaluation/trajectory_report.md)** - Complete guide to the human-readable execution log with DAG visualizations
+- **[Performance Metrics Guide](./evaluation/performance_metrics.md)** - Comprehensive metrics documentation with analysis examples
+- **[Result JSON Reference](./evaluation/result_json.md)** - Complete schema reference and programmatic access guide
+
+---
+
+## �📚 Learn More
 
 - **Research Paper**: [UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/) *(Coming Soon)*
 - **UFO² (Desktop AgentOS)**: [Documentation](../ufo2/overview.md)
