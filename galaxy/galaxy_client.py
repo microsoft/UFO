@@ -52,7 +52,7 @@ class GalaxyClient:
         session_name: Optional[str] = None,
         task_name: Optional[str] = None,
         max_rounds: int = 10,
-        log_level: str = "INFO",
+        log_level: str = "WARNING",
         output_dir: Optional[str] = None,
     ):
         """
@@ -61,7 +61,7 @@ class GalaxyClient:
         :param session_name: Name for the Galaxy session (auto-generated if None)
         :param task_name: Name for the task (auto-generated if None)
         :param max_rounds: Maximum number of rounds per session (default: 10)
-        :param log_level: Logging level (default: "INFO")
+        :param log_level: Logging level (default: "WARNING")
         :param output_dir: Output directory for logs and results (default: None, uses session log path)
         """
         self.session_name = (
@@ -74,8 +74,11 @@ class GalaxyClient:
         self.max_rounds = max_rounds
         self.output_dir = Path(output_dir) if output_dir else None
 
-        # Setup logging
-        setup_logger(log_level)
+        # Setup logging only if not already configured
+        # (galaxy.py already calls setup_logger before importing GalaxyClient)
+        root_logger = logging.getLogger()
+        if not root_logger.handlers:
+            setup_logger(log_level)
         self.logger = logging.getLogger(__name__)
 
         # Initialize components

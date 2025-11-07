@@ -146,6 +146,22 @@ class TaskConstellationOrchestrator:
             raise
 
         finally:
+            # Cancel all pending tasks before cleanup
+            if self._execution_tasks:
+                for task_id, task in list(self._execution_tasks.items()):
+                    if not task.done():
+                        task.cancel()
+
+                # Wait for all cancellations to complete
+                try:
+                    await asyncio.gather(
+                        *self._execution_tasks.values(), return_exceptions=True
+                    )
+                except asyncio.CancelledError:
+                    pass  # Expected during cancellation
+
+                self._execution_tasks.clear()
+
             await self._cleanup_constellation(constellation)
 
     # ========================================
@@ -430,10 +446,18 @@ class TaskConstellationOrchestrator:
     async def _wait_for_all_tasks(self) -> None:
         """Wait for all remaining tasks to complete."""
         if self._execution_tasks:
-            await asyncio.gather(
-                *self._execution_tasks.values(), return_exceptions=True
-            )
-            self._execution_tasks.clear()
+            try:
+                await asyncio.gather(
+                    *self._execution_tasks.values(), return_exceptions=True
+                )
+            except asyncio.CancelledError:
+                # Gracefully handle cancellation during shutdown
+                if self._logger:
+                    self._logger.debug("Task gathering cancelled during shutdown")
+                # Re-raise to propagate cancellation
+                raise
+            finally:
+                self._execution_tasks.clear()
 
     async def _finalize_constellation_execution(
         self, constellation: TaskConstellation, start_event: ConstellationEvent

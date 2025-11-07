@@ -21,8 +21,8 @@ def parse_args():
     parser.add_argument(
         "--log-level",
         dest="log_level",
-        default="INFO",
-        help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL, OFF). Use OFF to disable logs (default: INFO)",
+        default="WARNING",
+        help="Logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL, OFF). Use OFF to disable logs (default: WARNING)",
     )
     parser.add_argument(
         "--local",

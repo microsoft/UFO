@@ -38,7 +38,7 @@ args.add_argument(
     "--log-level",
     help="Set logging level (DEBUG, INFO, WARNING, ERROR, CRITICAL). Use OFF to disable logs.",
     type=str,
-    default="INFO",
+    default="WARNING",
 )
 
 

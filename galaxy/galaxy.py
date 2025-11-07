@@ -21,7 +21,6 @@ Advanced Usage:
 
 import argparse
 import asyncio
-import json
 import logging
 import sys
 from pathlib import Path
@@ -30,8 +29,9 @@ from pathlib import Path
 UFO_ROOT = Path(__file__).parent.parent
 sys.path.insert(0, str(UFO_ROOT))
 
-from rich.console import Console
+# Import setup_logger early, before other project imports
 from ufo.logging.setup import setup_logger
+from rich.console import Console
 
 
 def parse_args():
@@ -100,9 +100,9 @@ Examples:
 
     parser.add_argument(
         "--log-level",
-        default="INFO",
+        default="WARNING",
         choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-        help="Logging level (default: INFO)",
+        help="Logging level (default: WARNING)",
     )
 
     # Testing and development
@@ -115,9 +115,12 @@ Examples:
     return parser.parse_args()
 
 
+# Parse args and setup logger BEFORE importing GalaxyClient
+# This ensures config warnings are displayed with correct color
 args = parse_args()
 setup_logger(args.log_level)
 
+# Now import GalaxyClient after logger is configured
 from galaxy.galaxy_client import GalaxyClient
 
 # Initialize rich console
@@ -130,7 +133,7 @@ console = Console()
 async def galaxy_quick_start(
     request: str,
     session_name: str = "galaxy_quick",
-    log_level: str = "INFO",
+    log_level: str = "WARNING",
     output_dir: str = "./logs",
 ):
     """
@@ -138,7 +141,7 @@ async def galaxy_quick_start(
 
     :param request: User request text to process
     :param session_name: Name for the Galaxy session (default: "galaxy_quick")
-    :param log_level: Logging level (default: "INFO")
+    :param log_level: Logging level (default: "WARNING")
     :param output_dir: Output directory for results (default: "./logs")
     :return: Processing result dictionary
     """
@@ -155,7 +158,7 @@ async def galaxy_quick_start(
 
 async def galaxy_interactive(
     session_name: str = "galaxy_interactive",
-    log_level: str = "INFO",
+    log_level: str = "WARNING",
     max_rounds: int = 10,
     output_dir: str = "./logs",
 ):
@@ -163,7 +166,7 @@ async def galaxy_interactive(
     Interactive function for programmatic use.
 
     :param session_name: Name for the Galaxy session (default: "galaxy_interactive")
-    :param log_level: Logging level (default: "INFO")
+    :param log_level: Logging level (default: "WARNING")
     :param max_rounds: Maximum rounds per session (default: 10)
     :param output_dir: Output directory for results (default: "./logs")
     """
