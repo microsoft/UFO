@@ -9,7 +9,6 @@ Single responsibility: Connection management with AIP abstraction.
 """
 
 import asyncio
-import json
 import logging
 from datetime import datetime, timezone
 from typing import TYPE_CHECKING, Any, Dict, Optional
@@ -153,7 +152,14 @@ class WebSocketConnectionManager:
             raise
 
     def _cleanup_device_protocols(self, device_id: str) -> None:
-        """Clean up all AIP protocol instances and connections for a device."""
+        """
+        Clean up all AIP protocol instances and connections for a device.
+        
+        Removes the device's transport, registration protocol, task protocol,
+        and device info protocol from internal dictionaries.
+        
+        :param device_id: Device identifier whose protocols should be cleaned up
+        """
         self._transports.pop(device_id, None)
         self._registration_protocols.pop(device_id, None)
         self._task_protocols.pop(device_id, None)

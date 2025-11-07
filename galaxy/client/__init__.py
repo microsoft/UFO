@@ -33,8 +33,7 @@ from .constellation_client import ConstellationClient
 from .device_manager import ConstellationDeviceManager
 from .components import AgentProfile, DeviceStatus, TaskRequest
 from .config_loader import ConstellationConfig, DeviceConfig
-from .orchestration import (
-    ClientEventHandler,
+from .support import (
     StatusManager,
     ClientConfigManager,
 )
@@ -47,8 +46,7 @@ __all__ = [
     "AgentProfile",
     "DeviceStatus",
     "TaskRequest",
-    # Orchestration components
-    "ClientEventHandler",
+    # Support components
     "StatusManager",
     "ClientConfigManager",
 ]

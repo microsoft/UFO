@@ -70,29 +70,66 @@ class ConstellationDisplay:
         additional_info: Optional[Dict[str, Any]] = None,
     ) -> None:
         """
-        Display constellation completion notification.
+        Display constellation completion notification with enhanced formatting.
 
         :param constellation: TaskConstellation that completed
         :param execution_time: Total execution time in seconds
         :param additional_info: Optional additional information
         """
-        # Enhance additional info with execution time
-        enhanced_info = additional_info.copy() if additional_info else {}
-        if execution_time is not None:
-            enhanced_info["execution_time"] = f"{execution_time:.2f}s"
+        from .constellation_formatter import ConstellationFormatter
 
-        # Create completion info
-        info_panel = self._create_basic_info_panel(
-            constellation, "✅ Constellation Completed", enhanced_info
+        # Prepare data for the formatter
+        stats = (
+            constellation.get_statistics()
+            if hasattr(constellation, "get_statistics")
+            else {}
         )
 
-        # Create final stats
-        stats_panel = self._create_basic_stats_panel(constellation)
+        constellation_data = {
+            "id": constellation.constellation_id,
+            "name": constellation.name or constellation.constellation_id,
+            "state": (
+                constellation.state.value
+                if hasattr(constellation.state, "value")
+                else str(constellation.state)
+            ),
+            "total_tasks": (
+                len(constellation.tasks) if hasattr(constellation, "tasks") else 0
+            ),
+            "execution_duration": execution_time or 0,
+            "statistics": stats,
+            "constellation": str(constellation),
+        }
 
-        # Display with success styling
-        self.console.print()
-        self.console.rule("[bold green]✅ Constellation Completed[/bold green]")
-        self.console.print(Columns([info_panel, stats_panel], equal=True))
+        # Add timing information if available
+        if hasattr(constellation, "created_at") and constellation.created_at:
+            constellation_data["created"] = constellation.created_at.strftime(
+                "%H:%M:%S"
+            )
+
+        if (
+            hasattr(constellation, "execution_start_time")
+            and constellation.execution_start_time
+        ):
+            constellation_data["started"] = constellation.execution_start_time.strftime(
+                "%H:%M:%S"
+            )
+
+        if (
+            hasattr(constellation, "execution_end_time")
+            and constellation.execution_end_time
+        ):
+            constellation_data["ended"] = constellation.execution_end_time.strftime(
+                "%H:%M:%S"
+            )
+
+        # Merge additional info
+        if additional_info:
+            constellation_data.update(additional_info)
+
+        # Use the new formatter to display
+        formatter = ConstellationFormatter()
+        formatter.display_constellation_result(constellation_data)
 
     def display_constellation_failed(
         self,

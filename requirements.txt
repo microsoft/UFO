@@ -20,6 +20,7 @@ beautifulsoup4==4.12.3
 sentence-transformers==2.6.0
 langchain_huggingface==0.3.1
 pandas==1.4.3
+rich==14.1.0
 html2text==2024.2.26
 pyautogui==0.9.54; sys_platform == 'win32'
 uiautomation==2.0.18; sys_platform == 'win32'

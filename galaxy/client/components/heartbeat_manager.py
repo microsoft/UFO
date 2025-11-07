@@ -10,7 +10,6 @@ Single responsibility: Health monitoring with AIP abstraction.
 
 import asyncio
 import logging
-from datetime import datetime, timezone
 from typing import Dict
 
 from aip.protocol.heartbeat import HeartbeatProtocol

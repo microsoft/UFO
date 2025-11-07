@@ -12,7 +12,7 @@ Galaxy Client is built from focused, single-responsibility components that work 
 
 ## Component Architecture Overview
 
-Galaxy Client uses 8 modular components divided into three categories: **Device Management**, **Display & UI**, and **Orchestration Support**. Understanding how these components work together is key to understanding Galaxy Client's design.
+Galaxy Client uses 8 modular components divided into three categories: **Device Management**, **Display & UI**, and **Support Components**. Understanding how these components work together is key to understanding Galaxy Client's design.
 
 ### The Big Picture: How Components Collaborate
 
@@ -365,9 +365,9 @@ user_input = display.get_user_input("UFO[0]")
 
 ---
 
-## Orchestration Components
+## Support Components
 
-These components support higher-level orchestration by providing status aggregation and event handling capabilities.
+These components support higher-level client operations by providing status aggregation and configuration management capabilities.
 
 ### StatusManager: System-Wide Status Aggregation
 
@@ -419,52 +419,6 @@ stats = status_manager.get_task_statistics()
 ```
 
 **Why This Matters**: In production, you need to monitor system health. StatusManager provides the data needed for dashboards, alerts, and capacity planning. For example, if connection_rate drops below 80%, you might trigger an alert.
-
-### ClientEventHandler: Custom Event Callbacks
-
-**Purpose**: Allows applications to register custom handlers for client-level events like device connection, disconnection, and task completion.
-
-**Event Types**:
-
-**Connection Events**: Fired when a device successfully connects:
-
-```python
-async def on_device_connected(device_id, device_info):
-    logger.info(f"Device {device_id} connected with capabilities: {device_info.capabilities}")
-    # Send notification to monitoring system
-    await monitoring.report_device_online(device_id)
-
-event_handler.add_connection_handler(on_device_connected)
-```
-
-**Disconnection Events**: Fired when a device disconnects (whether gracefully or due to error):
-
-```python
-async def on_device_disconnected(device_id):
-    logger.warning(f"Device {device_id} disconnected")
-    # Trigger alert if critical device
-    if device_id in CRITICAL_DEVICES:
-        await alert_system.send_alert(f"Critical device {device_id} offline")
-
-event_handler.add_disconnection_handler(on_device_disconnected)
-```
-
-**Task Completion Events**: Fired when any task completes (success or failure):
-
-```python
-async def on_task_completed(device_id, task_id, result):
-    # Log to metrics system
-    await metrics.record_task(
-        device_id=device_id,
-        task_id=task_id,
-        status=result.status,
-        duration=result.metadata.get("execution_time")
-    )
-
-event_handler.add_task_completion_handler(on_task_completed)
-```
-
-**Why Extensibility Matters**: Different applications have different monitoring and notification needs. By providing event callbacks, Galaxy Client allows applications to integrate with their existing infrastructure (logging systems, metrics collection, alerting platforms) without modifying Galaxy Client's code.
 
 ---
 
@@ -644,7 +598,7 @@ Galaxy Client's component architecture demonstrates several important design pri
 
 **Dependency Injection**: DeviceManager creates components and injects dependencies, making the system flexible and testable. Want to replace WebSocketConnectionManager with a different implementation? Just swap it out while keeping the interface.
 
-**Separation of Concerns**: Business logic (in DeviceManager) is separate from display logic (in ClientDisplay) and orchestration support (in StatusManager and ClientEventHandler). Each layer can evolve independently.
+**Separation of Concerns**: Business logic (in DeviceManager) is separate from display logic (in ClientDisplay) and orchestration support (in StatusManager). Each layer can evolve independently.
 
 **Asynchronous Background Services**: HeartbeatManager and MessageProcessor run as independent asyncio tasks, enabling concurrent operations without blocking the main execution flow.
 

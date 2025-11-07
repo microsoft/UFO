@@ -60,7 +60,15 @@ class Config:
                 with open(path + "config_prices.yaml", "r") as file:
                     yaml_prices_data = yaml.safe_load(file)
                 configs.update(yaml_prices_data)
-            if os.path.exists(path + "agent_mcp.yaml"):
+
+            # Load MCP config from new location: config/ufo/mcp.yaml (preferred)
+            new_mcp_path = os.path.join(current_path, "config/ufo/mcp.yaml")
+            if os.path.exists(new_mcp_path):
+                with open(new_mcp_path, "r") as file:
+                    yaml_mcp_data = yaml.safe_load(file)
+                configs["mcp"] = yaml_mcp_data
+            # Fallback to legacy location: ufo/config/agent_mcp.yaml
+            elif os.path.exists(path + "agent_mcp.yaml"):
                 with open(path + "agent_mcp.yaml", "r") as file:
                     yaml_agent_mcp_data = yaml.safe_load(file)
                 configs["mcp"] = yaml_agent_mcp_data
@@ -143,7 +151,16 @@ def get_offline_learner_indexer_config():
 def get_config() -> Optional[Dict[str, Any]]:
     """
     Get the configuration data from the Config singleton instance.
+
+    NOTE: This function now uses the new ConfigLoader for consistency.
+    The old Config class is kept for backward compatibility but delegates
+    to the new loader.
+
     :return: The configuration data dictionary.
     """
-    config_instance = Config.get_instance()
-    return config_instance.config_data
+    # Use new ConfigLoader instead of old Config class
+    from config.config_loader import get_ufo_config
+
+    config = get_ufo_config()
+    # Convert to dict for backward compatibility
+    return config.to_dict() if hasattr(config, "to_dict") else config._data
