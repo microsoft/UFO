@@ -590,15 +590,15 @@ BING_API_KEY: "${BING_API_KEY}"
 
 **Set environment variable**:
 
-=== "Windows PowerShell"
-    ```powershell
-    $env:BING_API_KEY = "your-key-here"
-    ```
+**Windows PowerShell:**
+```powershell
+$env:BING_API_KEY = "your-key-here"
+```
 
-=== "Windows (Persistent)"
-    ```powershell
-    [System.Environment]::SetEnvironmentVariable('BING_API_KEY', 'your-key', 'User')
-    ```
+**Windows (Persistent):**
+```powershell
+[System.Environment]::SetEnvironmentVariable('BING_API_KEY', 'your-key', 'User')
+```
 
 ---
 

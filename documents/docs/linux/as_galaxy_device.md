@@ -116,86 +116,86 @@ Galaxy uses the `capabilities` field to intelligently route subtasks to appropri
 
 **Example capability configurations:**
 
-=== "Web Server"
-    ```yaml
-    capabilities:
-      - "web_server"
-      - "nginx"
-      - "ssl_management"
-      - "log_analysis"
-    ```
+**Web Server:**
+```yaml
+capabilities:
+  - "web_server"
+  - "nginx"
+  - "ssl_management"
+  - "log_analysis"
+```
 
-=== "Database Server"
-    ```yaml
-    capabilities:
-      - "database_server"
-      - "postgresql"
-      - "backup_management"
-      - "query_optimization"
-    ```
+**Database Server:**
+```yaml
+capabilities:
+  - "database_server"
+  - "postgresql"
+  - "backup_management"
+  - "query_optimization"
+```
 
-=== "CI/CD Server"
-    ```yaml
-    capabilities:
-      - "ci_cd"
-      - "docker"
-      - "kubernetes"
-      - "deployment"
-    ```
+**CI/CD Server:**
+```yaml
+capabilities:
+  - "ci_cd"
+  - "docker"
+  - "kubernetes"
+  - "deployment"
+```
 
-=== "Monitoring Server"
-    ```yaml
-    capabilities:
-      - "monitoring"
-      - "prometheus"
-      - "grafana"
-      - "alerting"
-    ```
+**Monitoring Server:**
+```yaml
+capabilities:
+  - "monitoring"
+  - "prometheus"
+  - "grafana"
+  - "alerting"
+```
 
 ### Step 4: Metadata for Contextual Execution
 
 The `metadata` field provides **contextual information** that the LLM can use when generating commands for the Linux agent.
 
 !!!example "Metadata Examples"
-    === "Web Server Metadata"
-        ```yaml
-        metadata:
-          os: "linux"
-          logs_file_path: "/var/log/nginx/access.log"
-          error_log_path: "/var/log/nginx/error.log"
-          web_root: "/var/www/html"
-          ssl_cert_path: "/etc/letsencrypt/live/example.com/"
-          warning_log_pattern: "WARN"
-          error_log_pattern: "ERROR|FATAL"
-          performance: "high"
-          description: "Production nginx web server"
-        ```
+    **Web Server Metadata:**
+    ```yaml
+    metadata:
+      os: "linux"
+      logs_file_path: "/var/log/nginx/access.log"
+      error_log_path: "/var/log/nginx/error.log"
+      web_root: "/var/www/html"
+      ssl_cert_path: "/etc/letsencrypt/live/example.com/"
+      warning_log_pattern: "WARN"
+      error_log_pattern: "ERROR|FATAL"
+      performance: "high"
+      description: "Production nginx web server"
+    ```
     
-    === "Database Server Metadata"
-        ```yaml
-        metadata:
-          os: "linux"
-          logs_file_path: "/var/log/postgresql/postgresql.log"
-          data_path: "/var/lib/postgresql/14/main"
-          backup_path: "/mnt/backups/postgresql"
-          warning_log_pattern: "WARNING"
-          error_log_pattern: "ERROR|FATAL|PANIC"
-          performance: "high"
-          description: "Production PostgreSQL 14 database"
-        ```
+    **Database Server Metadata:**
+    ```yaml
+    metadata:
+      os: "linux"
+      logs_file_path: "/var/log/postgresql/postgresql.log"
+      data_path: "/var/lib/postgresql/14/main"
+      backup_path: "/mnt/backups/postgresql"
+      warning_log_pattern: "WARNING"
+      error_log_pattern: "ERROR|FATAL|PANIC"
+      performance: "high"
+      description: "Production PostgreSQL 14 database"
+    ```
     
-    === "Development Server Metadata"
-        ```yaml
-        metadata:
-          os: "linux"
-          dev_path: "/home/developer/projects"
-          logs_file_path: "/var/log/app/dev.log"
-          git_repo_path: "/home/developer/repos"
-          warning_log_pattern: "WARN"
-          error_log_pattern: "ERROR"
-          performance: "medium"
-          description: "Development and testing environment"
-        ```
+    **Development Server Metadata:**
+    ```yaml
+    metadata:
+      os: "linux"
+      dev_path: "/home/developer/projects"
+      logs_file_path: "/var/log/app/dev.log"
+      git_repo_path: "/home/developer/repos"
+      warning_log_pattern: "WARN"
+      error_log_pattern: "ERROR"
+      performance: "medium"
+      description: "Development and testing environment"
+    ```
 
 **How Metadata is Used:**
 

@@ -534,6 +534,12 @@ Extract (Windows) → Process (Linux) ┬→ Generate PDF (Windows)
 </tr>
 </table>
 
+### 🔌 Extensibility & Custom Device Agents
+
+UFO³ is designed as a **universal framework** that supports developing new device agents for different platforms (mobile, web, IoT, embedded systems, etc.) and applications. Through the **Agent Interaction Protocol (AIP)**, custom device agents can seamlessly integrate into UFO³ Galaxy for coordinated multi-device automation. 
+
+**📖 Want to build your own device agent?** See our [Creating Custom Device Agents tutorial](../documents/docs/tutorials/creating_device_agent/overview.md) to learn how to extend UFO³ to new platforms.
+
 ---
 
 ## 📚 Documentation
@@ -547,6 +553,7 @@ Extract (Windows) → Process (Linux) ┬→ Generate PDF (Windows)
 | **Agent Registration** | Device registry and agent profiles | [Learn More](../documents/docs/galaxy/agent_registration/overview.md) |
 | **AIP Protocol** | WebSocket messaging and communication patterns | [Learn More](../documents/docs/aip/overview.md) |
 | **Configuration** | Device pools and orchestration policies | [Learn More](../documents/docs/configuration/system/galaxy_devices.md) |
+| **Creating Device Agents** | Tutorial for building custom device agents | [Learn More](../documents/docs/tutorials/creating_device_agent/overview.md) |
 
 ---
 

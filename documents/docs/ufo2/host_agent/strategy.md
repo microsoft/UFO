@@ -1165,3 +1165,4 @@ target_registry = self._register_applications_and_agents(
 - Read [Command System](commands.md) for available desktop operations
 - Read [State Machine](state.md) to understand when processing occurs
 - Read [Blackboard](../../infrastructure/agents/design/blackboard.md) for inter-agent communication
+- Learn [Creating Third-Party Agents](../../tutorials/creating_third_party_agents.md) to build custom agents

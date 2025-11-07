@@ -1,7 +1,7 @@
 # ⚡ Quick Start: Linux Agent
 
 !!!quote "Get Linux Device Running in 5 Minutes"
-    Connect your Linux machine as a UFO³ device agent and start executing CLI tasks. This guide walks you through branch setup, server/client configuration, and MCP service initialization.
+    Connect your Linux machine as a UFO³ device agent and start executing CLI tasks. This guide walks you through server/client configuration and MCP service initialization.
 
 ---
 
@@ -35,40 +35,7 @@
 
 ---
 
-## 🌿 Step 1: Switch to Linux Client Branch
-
-!!!warning "Important: Use Correct Branch"
-    The Linux Agent functionality is currently on the `linux-client` branch. Make sure to switch before proceeding.
-
-```bash
-cd /path/to/UFO
-git checkout linux-client
-git pull origin linux-client
-```
-
-**Verify branch:**
-
-```bash
-git branch
-# Expected output:
-# * linux-client
-```
-
-!!!success "Branch Switched"
-    You're now on the correct branch with Linux Agent support.
-
-!!!info "LLM Configuration"
-    The Linux Agent uses the **same LLM configuration** as the AppAgent. Both are configured in:
-    
-    ```
-    config/ufo/agents.yaml
-    ```
-    
-    Make sure your LLM is properly configured before running the Linux Agent. See [Model Setup](../configuration/models/overview.md) for details.
-
----
-
-## 📦 Step 2: Install Dependencies
+## 📦 Step 1: Install Dependencies
 
 !!!example "Install Required Packages"
     Install all dependencies from the requirements file:
@@ -94,7 +61,7 @@ python3 -c "import ufo; print('✅ UFO² installed successfully')"
 
 ---
 
-## 🖥️ Step 3: Start Device Agent Server
+## 🖥️ Step 2: Start Device Agent Server
 
 !!!info "Server Component"
     The **Device Agent Server** is the central hub that manages connections from client devices and dispatches tasks. It can run on **any machine** (Linux, Windows, or remote server).
@@ -138,20 +105,21 @@ INFO:     Uvicorn running on http://0.0.0.0:5001 (Press CTRL+C to quit)
 | `--log-level` | `INFO` | Logging verbosity | `--log-level DEBUG` |
 
 !!!example "Custom Server Configuration"
-    === "Custom Port"
-        ```bash
-        python -m ufo.server.app --port 8080
-        ```
     
-    === "Specific IP Binding"
-        ```bash
-        python -m ufo.server.app --host 192.168.1.100 --port 5001
-        ```
+    **Custom Port:**
+    ```bash
+    python -m ufo.server.app --port 8080
+    ```
     
-    === "Debug Mode"
-        ```bash
-        python -m ufo.server.app --port 5001 --log-level DEBUG
-        ```
+    **Specific IP Binding:**
+    ```bash
+    python -m ufo.server.app --host 192.168.1.100 --port 5001
+    ```
+    
+    **Debug Mode:**
+    ```bash
+    python -m ufo.server.app --port 5001 --log-level DEBUG
+    ```
 
 ### Verify Server is Running
 
@@ -174,7 +142,7 @@ curl http://localhost:5001/api/health
 
 ---
 
-## 🐧 Step 4: Start Device Agent Client (Linux Machine)
+## 🐧 Step 3: Start Device Agent Client (Linux Machine)
 
 !!!info "Client Component"
     The **Device Agent Client** runs on the Linux machine where you want to execute tasks. It connects to the server via WebSocket and receives task commands.
@@ -273,7 +241,7 @@ curl http://172.23.48.1:5001/api/clients
 
 ---
 
-## 🔌 Step 5: Start MCP Service (Linux Machine)
+## 🔌 Step 4: Start MCP Service (Linux Machine)
 
 !!!info "MCP Service Component"
     The **MCP (Model Context Protocol) Service** provides the execution layer for CLI commands. It must be running on the **same Linux machine** as the client to handle command execution requests.
@@ -341,7 +309,7 @@ The MCP server typically runs on `localhost:8010` by default. The client automat
 
 ---
 
-## 🎯 Step 6: Dispatch Tasks via HTTP API
+## 🎯 Step 5: Dispatch Tasks via HTTP API
 
 !!!info "Task Dispatch"
     Once the server, client, and MCP service are all running, you can dispatch tasks to the Linux agent through the server's HTTP API.
@@ -365,39 +333,40 @@ POST http://<server-ip>:<server-port>/api/dispatch
 ### Example: Simple File Listing
 
 !!!example "List Files in Directory"
-    === "cURL"
-        ```bash
-        curl -X POST http://172.23.48.1:5001/api/dispatch \
-          -H "Content-Type: application/json" \
-          -d '{
+    
+    **Using cURL:**
+    ```bash
+    curl -X POST http://172.23.48.1:5001/api/dispatch \
+      -H "Content-Type: application/json" \
+      -d '{
+        "client_id": "linux_agent_1",
+        "request": "List all files in the /tmp directory",
+        "task_name": "list_tmp_files"
+      }'
+    ```
+    
+    **Using Python:**
+    ```python
+    import requests
+    
+    response = requests.post(
+        "http://172.23.48.1:5001/api/dispatch",
+        json={
             "client_id": "linux_agent_1",
             "request": "List all files in the /tmp directory",
             "task_name": "list_tmp_files"
-          }'
-        ```
+        }
+    )
+    print(response.json())
+    ```
     
-    === "Python"
-        ```python
-        import requests
-        
-        response = requests.post(
-            "http://172.23.48.1:5001/api/dispatch",
-            json={
-                "client_id": "linux_agent_1",
-                "request": "List all files in the /tmp directory",
-                "task_name": "list_tmp_files"
-            }
-        )
-        print(response.json())
-        ```
-    
-    === "HTTPie"
-        ```bash
-        http POST http://172.23.48.1:5001/api/dispatch \
-          client_id=linux_agent_1 \
-          request="List all files in the /tmp directory" \
-          task_name=list_tmp_files
-        ```
+    **Using HTTPie:**
+    ```bash
+    http POST http://172.23.48.1:5001/api/dispatch \
+      client_id=linux_agent_1 \
+      request="List all files in the /tmp directory" \
+      task_name=list_tmp_files
+    ```
 
 **Successful Response:**
 
@@ -655,7 +624,7 @@ python -m ufo.client.client \
 
 ---
 
-## 🌌 Step 7: Configure as UFO³ Galaxy Device
+## 🌌 Step 6: Configure as UFO³ Galaxy Device
 
 !!!info "Galaxy Integration"
     To use the Linux Agent as a managed device within the **UFO³ Galaxy** multi-tier framework, you need to register it in the `devices.yaml` configuration file.
@@ -830,36 +799,36 @@ python -m galaxy --config config/galaxy/devices.yaml
     
     **Solutions:**
     
-    === "Verify Server"
-        ```bash
-        # On server machine
-        curl http://localhost:5001/api/health
-        
-        # From client machine
-        curl http://172.23.48.1:5001/api/health
-        ```
+    **Verify Server:**
+    ```bash
+    # On server machine
+    curl http://localhost:5001/api/health
     
-    === "Check Network"
-        ```bash
-        # Test connectivity
-        ping 172.23.48.1
-        
-        # Test port accessibility
-        nc -zv 172.23.48.1 5001
-        telnet 172.23.48.1 5001
-        ```
+    # From client machine
+    curl http://172.23.48.1:5001/api/health
+    ```
     
-    === "Check Firewall"
-        ```bash
-        # On server machine (Ubuntu/Debian)
-        sudo ufw status
-        sudo ufw allow 5001/tcp
-        
-        # On server machine (RHEL/CentOS)
-        sudo firewall-cmd --list-ports
-        sudo firewall-cmd --add-port=5001/tcp --permanent
-        sudo firewall-cmd --reload
-        ```
+    **Check Network:**
+    ```bash
+    # Test connectivity
+    ping 172.23.48.1
+    
+    # Test port accessibility
+    nc -zv 172.23.48.1 5001
+    telnet 172.23.48.1 5001
+    ```
+    
+    **Check Firewall:**
+    ```bash
+    # On server machine (Ubuntu/Debian)
+    sudo ufw status
+    sudo ufw allow 5001/tcp
+    
+    # On server machine (RHEL/CentOS)
+    sudo firewall-cmd --list-ports
+    sudo firewall-cmd --add-port=5001/tcp --permanent
+    sudo firewall-cmd --reload
+    ```
 
 ### Issue 2: MCP Service Not Responding
 
@@ -878,33 +847,33 @@ python -m galaxy --config config/galaxy/devices.yaml
     
     **Solutions:**
     
-    === "Verify MCP Service"
-        ```bash
-        # Check if MCP service is running
-        curl http://localhost:8010/health
-        
-        # Or check process
-        ps aux | grep linux_mcp_server
-        ```
+    **Verify MCP Service:**
+    ```bash
+    # Check if MCP service is running
+    curl http://localhost:8010/health
     
-    === "Restart MCP Service"
-        ```bash
-        # Kill existing process (if hung)
-        pkill -f linux_mcp_server
-        
-        # Start fresh
-        python -m ufo.client.mcp.http_servers.linux_mcp_server
-        ```
+    # Or check process
+    ps aux | grep linux_mcp_server
+    ```
     
-    === "Check Port Conflict"
-        ```bash
-        # See if something else is using port 8010
-        lsof -i :8010
-        netstat -tuln | grep 8010
-        
-        # If port is taken, start MCP on different port
-        python -m ufo.client.mcp.http_servers.linux_mcp_server --port 8011
-        ```
+    **Restart MCP Service:**
+    ```bash
+    # Kill existing process (if hung)
+    pkill -f linux_mcp_server
+    
+    # Start fresh
+    python -m ufo.client.mcp.http_servers.linux_mcp_server
+    ```
+    
+    **Check Port Conflict:**
+    ```bash
+    # See if something else is using port 8010
+    lsof -i :8010
+    netstat -tuln | grep 8010
+    
+    # If port is taken, start MCP on different port
+    python -m ufo.client.mcp.http_servers.linux_mcp_server --port 8011
+    ```
 
 ### Issue 3: Missing `--platform linux` Flag
 
@@ -997,35 +966,35 @@ python -m galaxy --config config/galaxy/devices.yaml
     
     **Solutions:**
     
-    === "Use ServerAliveInterval"
-        ```bash
-        ssh -N \
-          -L 5001:server:5001 \
-          -o ServerAliveInterval=60 \
-          -o ServerAliveCountMax=3 \
-          user@gateway
-        ```
+    **Use ServerAliveInterval:**
+    ```bash
+    ssh -N \
+      -L 5001:server:5001 \
+      -o ServerAliveInterval=60 \
+      -o ServerAliveCountMax=3 \
+      user@gateway
+    ```
     
-    === "Use Autossh"
-        ```bash
-        autossh -M 0 \
-          -N \
-          -L 5001:server:5001 \
-          -o ServerAliveInterval=60 \
-          user@gateway
-        ```
+    **Use Autossh:**
+    ```bash
+    autossh -M 0 \
+      -N \
+      -L 5001:server:5001 \
+      -o ServerAliveInterval=60 \
+      user@gateway
+    ```
     
-    === "Run in Screen/Tmux"
-        ```bash
-        # Start screen session
-        screen -S ssh-tunnel
-        
-        # Run SSH tunnel
-        ssh -N -L 5001:server:5001 user@gateway
-        
-        # Detach: Ctrl+A, then D
-        # Reattach: screen -r ssh-tunnel
-        ```
+    **Run in Screen/Tmux:**
+    ```bash
+    # Start screen session
+    screen -S ssh-tunnel
+    
+    # Run SSH tunnel
+    ssh -N -L 5001:server:5001 user@gateway
+    
+    # Detach: Ctrl+A, then D
+    # Reattach: screen -r ssh-tunnel
+    ```
 
 ---
 

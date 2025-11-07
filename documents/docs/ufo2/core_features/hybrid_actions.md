@@ -107,64 +107,64 @@ graph TB
 
 **Scenario:** Create a column chart from data in cells A1:B10
 
-=== "API-First Execution"
+**API-First Execution:**
 
-    ```python
-    # Agent decision: Use Excel API (fast, precise)
-    command = ExcelCreateChartCommand(
-        data_range="A1:B10",
-        chart_type="column",
-        chart_title="Sales Data"
-    )
+```python
+# Agent decision: Use Excel API (fast, precise)
+command = ExcelCreateChartCommand(
+    data_range="A1:B10",
+    chart_type="column",
+    chart_title="Sales Data"
+)
     
-    # MCP Server: Excel COM
-    result = mcp_server.execute(command)
-    # → Direct API call: workbook.charts.add(...)
-    # → Execution time: ~0.5s
-    ```
+# MCP Server: Excel COM
+result = mcp_server.execute(command)
+# → Direct API call: workbook.charts.add(...)
+# → Execution time: ~0.5s
+```
 
-=== "GUI Fallback Execution"
+**GUI Fallback Execution:**
 
-    ```python
-    # Agent decision: API unavailable, use GUI
-    commands = [
-        SelectControlCommand(control="A1:B10"),
-        ClickCommand(control="Insert > Chart"),
-        SelectChartTypeCommand(type="Column"),
-        SetTextCommand(control="Chart Title", text="Sales Data"),
-        ClickCommand(control="OK")
-    ]
+```python
+# Agent decision: API unavailable, use GUI
+commands = [
+    SelectControlCommand(control="A1:B10"),
+    ClickCommand(control="Insert > Chart"),
+    SelectChartTypeCommand(type="Column"),
+    SetTextCommand(control="Chart Title", text="Sales Data"),
+    ClickCommand(control="OK")
+]
     
-    # MCP Server: UICollector
-    for cmd in commands:
-        result = mcp_server.execute(cmd)
-    # → UI Automation: capture, annotate, click sequence
-    # → Execution time: ~8s
-    ```
+# MCP Server: UICollector
+for cmd in commands:
+    result = mcp_server.execute(cmd)
+# → UI Automation: capture, annotate, click sequence
+# → Execution time: ~8s
+```
 
-=== "Hybrid Execution"
+**Hybrid Execution:**
 
-    ```python
-    # Agent decision: Mix API + GUI for optimal workflow
+```python
+# Agent decision: Mix API + GUI for optimal workflow
     
-    # Step 1: API for data manipulation (fast)
-    api_command = ExcelSetRangeCommand(
-        range="A1:B10",
-        values=processed_data
-    )
-    mcp_api_server.execute(api_command)
+# Step 1: API for data manipulation (fast)
+api_command = ExcelSetRangeCommand(
+    range="A1:B10",
+    values=processed_data
+)
+mcp_api_server.execute(api_command)
     
-    # Step 2: GUI for chart insertion (visual verification)
-    gui_commands = [
-        SelectControlCommand(control="A1:B10"),
-        ClickCommand(control="Insert > Recommended Charts"),
-        # Visual confirmation before finalizing
-        ScreenshotCommand(),
-        ClickCommand(control="OK")
-    ]
-    for cmd in gui_commands:
-        mcp_gui_server.execute(cmd)
-    ```
+# Step 2: GUI for chart insertion (visual verification)
+gui_commands = [
+    SelectControlCommand(control="A1:B10"),
+    ClickCommand(control="Insert > Recommended Charts"),
+    # Visual confirmation before finalizing
+    ScreenshotCommand(),
+    ClickCommand(control="OK")
+]
+for cmd in gui_commands:
+    mcp_gui_server.execute(cmd)
+```
 
 ---
 

@@ -174,7 +174,7 @@ app_info = results[0].result
     - **[MCP Configuration Guide](../../mcp/configuration.md)** - Complete configuration documentation
     - **[Local Servers](../../mcp/local_servers.md)** - Built-in MCP servers
     - **[Remote Servers](../../mcp/remote_servers.md)** - HTTP and stdio servers
-    - **[Custom Servers](../../mcp/custom_servers.md)** - Creating custom MCP servers
+    - **[Creating MCP Servers](../../tutorials/creating_mcp_servers.md)** - Creating custom MCP servers
     
     **Server Type Documentation:**
     

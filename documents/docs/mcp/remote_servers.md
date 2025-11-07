@@ -174,5 +174,6 @@ CustomAgent:
 - [Local Servers](./local_servers.md) - In-process servers
 - [MCP Configuration](./configuration.md) - Complete configuration reference
 - [Action Servers](./action.md) - Action execution overview
+- **[Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md)** - Step-by-step guide for HTTP/Stdio servers
 - [HardwareExecutor](servers/hardware_executor.md) - Complete hardware control reference
 - [BashExecutor](servers/bash_executor.md) - Complete Linux command reference

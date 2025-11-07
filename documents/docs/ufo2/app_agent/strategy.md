@@ -298,57 +298,57 @@ sequenceDiagram
 
 **Control Detection Backends**:
 
-=== "UIA (UI Automation)"
+**UIA (UI Automation):**
 
-    ```python
-    async def _collect_uia_controls(self, command_dispatcher) -> List[TargetInfo]:
-        """Collect UIA controls from the application window."""
-        result = await command_dispatcher.execute_commands([
-            Command(
-                tool_name="get_app_window_controls_target_info",
-                parameters={"field_list": ["id", "name", "type", "rect", ...]},
-            )
-        ])
+```python
+async def _collect_uia_controls(self, command_dispatcher) -> List[TargetInfo]:
+    """Collect UIA controls from the application window."""
+    result = await command_dispatcher.execute_commands([
+        Command(
+            tool_name="get_app_window_controls_target_info",
+            parameters={"field_list": ["id", "name", "type", "rect", ...]},
+        )
+    ])
         
-        target_info_list = [TargetInfo(**control) for control in result[0].result]
-        return target_info_list
-    ```
+    target_info_list = [TargetInfo(**control) for control in result[0].result]
+    return target_info_list
+```
     
-    **Advantages**: Fast, accurate, native Windows controls
-    **Limitations**: May miss custom controls, web content, icons
+**Advantages**: Fast, accurate, native Windows controls
+**Limitations**: May miss custom controls, web content, icons
 
-=== "OmniParser (Visual)"
+**OmniParser (Visual):**
 
-    ```python
-    async def _collect_grounding_controls(
-        self, clean_screenshot_path, application_window_info
-    ) -> List[TargetInfo]:
-        """Collect controls using grounding service."""
-        grounding_controls = self.grounding_service.screen_parsing(
-            clean_screenshot_path, application_window_info
-        )
-        return grounding_controls
-    ```
+```python
+async def _collect_grounding_controls(
+    self, clean_screenshot_path, application_window_info
+) -> List[TargetInfo]:
+    """Collect controls using grounding service."""
+    grounding_controls = self.grounding_service.screen_parsing(
+        clean_screenshot_path, application_window_info
+    )
+    return grounding_controls
+```
     
-    **Advantages**: Detects visual elements (icons, images, custom controls)
-    **Limitations**: Slower, requires external service
+**Advantages**: Detects visual elements (icons, images, custom controls)
+**Limitations**: Slower, requires external service
 
-=== "Hybrid (UIA + OmniParser)"
+**Hybrid (UIA + OmniParser):**
 
-    ```python
-    def _collect_merged_control_list(
-        self, api_control_list, grounding_control_list
-    ) -> List[TargetInfo]:
-        """Merge UIA and grounding sources with IoU deduplication."""
-        merged_controls = self.photographer.merge_target_info_list(
-            api_control_list,
-            grounding_control_list,
-            iou_overlap_threshold=ufo_config.system.iou_threshold_for_merge,
-        )
-        return merged_controls
-    ```
+```python
+def _collect_merged_control_list(
+    self, api_control_list, grounding_control_list
+) -> List[TargetInfo]:
+    """Merge UIA and grounding sources with IoU deduplication."""
+    merged_controls = self.photographer.merge_target_info_list(
+        api_control_list,
+        grounding_control_list,
+        iou_overlap_threshold=ufo_config.system.iou_threshold_for_merge,
+    )
+    return merged_controls
+```
     
-    **Advantage**: Maximum coverage - native + visual elements
+**Advantage**: Maximum coverage - native + visual elements
 
 **Annotation Process**:
 

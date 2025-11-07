@@ -198,37 +198,37 @@ sequenceDiagram
 
 **MCP Server Categories:**
 
-=== "Data Collection Servers"
-    **Purpose**: Gather information from the device
+**Data Collection Servers:**
+**Purpose**: Gather information from the device
     
-    | Server Type | Tools Provided | Use Cases |
-    |-------------|---------------|-----------|
-    | **System Info** | CPU, memory, disk stats | Resource monitoring |
-    | **Application State** | Running apps, windows | Context awareness |
-    | **Screenshot** | Screen capture | Visual verification |
-    | **UI Element Detection** | Control trees, accessibility | UI automation |
+| Server Type | Tools Provided | Use Cases |
+|-------------|---------------|-----------|
+| **System Info** | CPU, memory, disk stats | Resource monitoring |
+| **Application State** | Running apps, windows | Context awareness |
+| **Screenshot** | Screen capture | Visual verification |
+| **UI Element Detection** | Control trees, accessibility | UI automation |
     
-    **Example Tools:**
-    - `get_system_info()` - System specifications
-    - `list_running_apps()` - Active applications
-    - `capture_screenshot()` - Screen snapshot
-    - `get_ui_tree()` - UI element hierarchy
+**Example Tools:**
+- `get_system_info()` - System specifications
+- `list_running_apps()` - Active applications
+- `capture_screenshot()` - Screen snapshot
+- `get_ui_tree()` - UI element hierarchy
 
-=== "Action Servers"
-    **Purpose**: Perform actions on the device
+**Action Servers:**
+**Purpose**: Perform actions on the device
     
-    | Server Type | Tools Provided | Use Cases |
-    |-------------|---------------|-----------|
-    | **GUI Automation** | Keyboard, mouse, clicks | UI interaction |
-    | **Application Control** | Launch, close, focus | App management |
-    | **File System** | Read, write, delete | File operations |
-    | **Command Execution** | Shell commands | System automation |
+| Server Type | Tools Provided | Use Cases |
+|-------------|---------------|-----------|
+| **GUI Automation** | Keyboard, mouse, clicks | UI interaction |
+| **Application Control** | Launch, close, focus | App management |
+| **File System** | Read, write, delete | File operations |
+| **Command Execution** | Shell commands | System automation |
     
-    **Example Tools:**
-    - `click_button(label)` - UI interaction
-    - `type_text(text)` - Keyboard input
-    - `open_application(name)` - Launch app
-    - `execute_command(cmd)` - Shell execution
+**Example Tools:**
+- `click_button(label)` - UI interaction
+- `type_text(text)` - Keyboard input
+- `open_application(name)` - Launch app
+- `execute_command(cmd)` - Shell execution
 
 **Server Types:**
 
@@ -511,25 +511,25 @@ sequenceDiagram
 - **Validation**: Server validates platform matches task requirements
 
 !!!example "Platform-Specific Example"
-    === "Windows"
-        ```python
-        # Windows-specific tools
-        tools = [
-            "open_windows_app(name='Excel')",
-            "execute_powershell(script='Get-Process')",
-            "read_registry(key='HKLM\\Software')"
-        ]
-        ```
+    **Windows:**
+    ```python
+    # Windows-specific tools
+    tools = [
+        "open_windows_app(name='Excel')",
+        "execute_powershell(script='Get-Process')",
+        "read_registry(key='HKLM\\Software')"
+    ]
+    ```
     
-    === "Linux"
-        ```python
-        # Linux-specific tools
-        tools = [
-            "execute_bash(command='ls -la')",
-            "install_package(name='vim')",
-            "control_systemd(service='nginx', action='restart')"
-        ]
-        ```
+    **Linux:**
+    ```python
+    # Linux-specific tools
+    tools = [
+        "execute_bash(command='ls -la')",
+        "install_package(name='vim')",
+        "control_systemd(service='nginx', action='restart')"
+    ]
+    ```
 
 ---
 
@@ -728,47 +728,47 @@ stateDiagram-v2
     
     **2. Configure Automatic Restart**
     
-    === "systemd (Linux)"
-        ```ini
-        [Unit]
-        Description=UFO Agent Client
-        After=network.target
+    **systemd (Linux):**
+    ```ini
+    [Unit]
+    Description=UFO Agent Client
+    After=network.target
         
-        [Service]
-        Type=simple
-        User=ufo
-        WorkingDirectory=/opt/ufo
-        ExecStart=/usr/bin/python3 -m ufo.client.client \
-          --ws \
-          --client-id device_linux_prod_01 \
-          --ws-server ws://ufo-server.internal:5000/ws \
-          --log-level INFO
-        Restart=always
-        RestartSec=10
+    [Service]
+    Type=simple
+    User=ufo
+    WorkingDirectory=/opt/ufo
+    ExecStart=/usr/bin/python3 -m ufo.client.client \
+      --ws \
+      --client-id device_linux_prod_01 \
+      --ws-server ws://ufo-server.internal:5000/ws \
+      --log-level INFO
+    Restart=always
+    RestartSec=10
         
-        [Install]
-        WantedBy=multi-user.target
-        ```
+    [Install]
+    WantedBy=multi-user.target
+    ```
     
-    === "PM2 (Cross-platform)"
-        ```json
-        {
-          "apps": [{
-            "name": "ufo-client",
-            "script": "python",
-            "args": [
-              "-m", "ufo.client.client",
-              "--ws",
-              "--client-id", "device_win_prod_01",
-              "--ws-server", "ws://ufo-server.internal:5000/ws",
-              "--log-level", "INFO"
-            ],
-            "cwd": "C:\\ufo",
-            "restart_delay": 5000,
-            "max_restarts": 10
-          }]
-        }
-        ```
+    **PM2 (Cross-platform):**
+    ```json
+    {
+      "apps": [{
+        "name": "ufo-client",
+        "script": "python",
+        "args": [
+          "-m", "ufo.client.client",
+          "--ws",
+          "--client-id", "device_win_prod_01",
+          "--ws-server", "ws://ufo-server.internal:5000/ws",
+          "--log-level", "INFO"
+        ],
+        "cwd": "C:\\ufo",
+        "restart_delay": 5000,
+        "max_restarts": 10
+      }]
+    }
+    ```
     
     **3. Monitor Connection Health**
     ```python

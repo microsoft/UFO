@@ -38,67 +38,67 @@ Copy-Item config\ufo\agents.yaml.template config\ufo\agents.yaml
 
 Choose your LLM provider and edit `config/ufo/agents.yaml`:
 
-=== "OpenAI"
-    ```yaml
-    HOST_AGENT:
-      VISUAL_MODE: True
-      API_TYPE: "openai"
-      API_BASE: "https://api.openai.com/v1/chat/completions"
-      API_KEY: "sk-YOUR_OPENAI_KEY_HERE"
-      API_MODEL: "gpt-4o"
-      API_VERSION: "2025-02-01-preview"
+**OpenAI:**
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: True
+  API_TYPE: "openai"
+  API_BASE: "https://api.openai.com/v1/chat/completions"
+  API_KEY: "sk-YOUR_OPENAI_KEY_HERE"
+  API_MODEL: "gpt-4o"
+  API_VERSION: "2025-02-01-preview"
     
-    APP_AGENT:
-      VISUAL_MODE: True
-      API_TYPE: "openai"
-      API_BASE: "https://api.openai.com/v1/chat/completions"
-      API_KEY: "sk-YOUR_OPENAI_KEY_HERE"
-      API_MODEL: "gpt-4o-mini"
-      API_VERSION: "2025-02-01-preview"
-    ```
+APP_AGENT:
+  VISUAL_MODE: True
+  API_TYPE: "openai"
+  API_BASE: "https://api.openai.com/v1/chat/completions"
+  API_KEY: "sk-YOUR_OPENAI_KEY_HERE"
+  API_MODEL: "gpt-4o-mini"
+  API_VERSION: "2025-02-01-preview"
+```
 
-=== "Azure OpenAI"
-    ```yaml
-    HOST_AGENT:
-      VISUAL_MODE: True
-      API_TYPE: "aoai"
-      API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
-      API_KEY: "YOUR_AOAI_KEY"
-      API_MODEL: "gpt-4o"
-      API_VERSION: "2024-02-15-preview"
-      API_DEPLOYMENT_ID: "gpt-4o-deployment"
+**Azure OpenAI:**
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: True
+  API_TYPE: "aoai"
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
+  API_KEY: "YOUR_AOAI_KEY"
+  API_MODEL: "gpt-4o"
+  API_VERSION: "2024-02-15-preview"
+  API_DEPLOYMENT_ID: "gpt-4o-deployment"
     
-    APP_AGENT:
-      VISUAL_MODE: True
-      API_TYPE: "aoai"
-      API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
-      API_KEY: "YOUR_AOAI_KEY"
-      API_MODEL: "gpt-4o-mini"
-      API_VERSION: "2024-02-15-preview"
-      API_DEPLOYMENT_ID: "gpt-4o-mini-deployment"
-    ```
+APP_AGENT:
+  VISUAL_MODE: True
+  API_TYPE: "aoai"
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
+  API_KEY: "YOUR_AOAI_KEY"
+  API_MODEL: "gpt-4o-mini"
+  API_VERSION: "2024-02-15-preview"
+  API_DEPLOYMENT_ID: "gpt-4o-mini-deployment"
+```
 
-=== "Google Gemini"
-    ```yaml
-    HOST_AGENT:
-      VISUAL_MODE: True
-      API_TYPE: "gemini"
-      API_BASE: "https://generativelanguage.googleapis.com"
-      API_KEY: "YOUR_GEMINI_API_KEY"
-      API_MODEL: "gemini-2.0-flash-exp"
-      API_VERSION: "v1beta"
-    ```
+**Google Gemini:**
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: True
+  API_TYPE: "gemini"
+  API_BASE: "https://generativelanguage.googleapis.com"
+  API_KEY: "YOUR_GEMINI_API_KEY"
+  API_MODEL: "gemini-2.0-flash-exp"
+  API_VERSION: "v1beta"
+```
 
-=== "Anthropic Claude"
-    ```yaml
-    HOST_AGENT:
-      VISUAL_MODE: True
-      API_TYPE: "claude"
-      API_BASE: "https://api.anthropic.com"
-      API_KEY: "YOUR_CLAUDE_API_KEY"
-      API_MODEL: "claude-3-5-sonnet-20241022"
-      API_VERSION: "2023-06-01"
-    ```
+**Anthropic Claude:**
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: True
+  API_TYPE: "claude"
+  API_BASE: "https://api.anthropic.com"
+  API_KEY: "YOUR_CLAUDE_API_KEY"
+  API_MODEL: "claude-3-5-sonnet-20241022"
+  API_VERSION: "2023-06-01"
+```
 
 ### Step 3: Verify Configuration
 
@@ -380,22 +380,22 @@ APP_AGENT:
 
 **Setting environment variables**:
 
-=== "Windows (PowerShell)"
-    ```powershell
-    $env:OPENAI_API_KEY = "sk-your-key"
-    $env:AZURE_OPENAI_KEY = "your-azure-key"
-    ```
+**Windows (PowerShell):**
+```powershell
+$env:OPENAI_API_KEY = "sk-your-key"
+$env:AZURE_OPENAI_KEY = "your-azure-key"
+```
 
-=== "Windows (Persistent)"
-    ```powershell
-    [System.Environment]::SetEnvironmentVariable('OPENAI_API_KEY', 'sk-your-key', 'User')
-    ```
+**Windows (Persistent):**
+```powershell
+[System.Environment]::SetEnvironmentVariable('OPENAI_API_KEY', 'sk-your-key', 'User')
+```
 
-=== "Linux/macOS"
-    ```bash
-    export OPENAI_API_KEY="sk-your-key"
-    export AZURE_OPENAI_KEY="your-azure-key"
-    ```
+**Linux/macOS:**
+```bash
+export OPENAI_API_KEY="sk-your-key"
+export AZURE_OPENAI_KEY="your-azure-key"
+```
 
 ---
 
@@ -499,6 +499,8 @@ else:
 
 ## Related Documentation
 
+- **[Third-Party Agent Configuration](third_party_config.md)** - Configure external agents like LinuxAgent and HardwareAgent
+- **[Creating Custom Third-Party Agents](../../tutorials/creating_third_party_agents.md)** - Build your own specialized agents
 - **[System Configuration](system_config.md)** - Runtime and execution settings
 - **[MCP Configuration](mcp_reference.md)** - Tool server configuration
 - **[RAG Configuration](rag_config.md)** - Knowledge retrieval settings

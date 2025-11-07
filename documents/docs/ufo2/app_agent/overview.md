@@ -177,25 +177,25 @@ AppAgent executes actions through the **MCP (Model-Context Protocol)** command s
 
 AppAgent supports multiple control detection backends for comprehensive UI understanding:
 
-=== "UIA (UI Automation)"
-    Native Windows UI Automation API for standard controls
+**UIA (UI Automation):**
+Native Windows UI Automation API for standard controls
     
-    - ✅ Fast and accurate
-    - ✅ Works with most Windows applications
-    - ❌ May miss custom controls
+- ✅ Fast and accurate
+- ✅ Works with most Windows applications
+- ❌ May miss custom controls
 
-=== "OmniParser (Visual Detection)"
-    Vision-based grounding model for visual elements
+**OmniParser (Visual Detection):**
+Vision-based grounding model for visual elements
     
-    - ✅ Detects icons, images, custom controls
-    - ✅ Works with web content
-    - ❌ Requires external service
+- ✅ Detects icons, images, custom controls
+- ✅ Works with web content
+- ❌ Requires external service
 
-=== "Hybrid (UIA + OmniParser)"
-    Best of both worlds - maximum coverage
+**Hybrid (UIA + OmniParser):**
+Best of both worlds - maximum coverage
     
-    - ✅ Native controls + visual elements
-    - ✅ Comprehensive UI understanding
+- ✅ Native controls + visual elements
+- ✅ Comprehensive UI understanding
 
 **Control Detection Details**: See [Control Detection Overview](../core_features/control_detection/overview.md).
 

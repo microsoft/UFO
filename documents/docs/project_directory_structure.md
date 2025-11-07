@@ -401,7 +401,7 @@ python -m ufo --task <task_name> --config_path config/ufo/
 ### MCP System
 - [MCP Overview](mcp/overview.md)
 - [Local Servers](mcp/local_servers.md)
-- [Custom Servers](mcp/custom_servers.md)
+- [Creating MCP Servers](tutorials/creating_mcp_servers.md)
 
 ### Agent Integration Protocol
 - [AIP Overview](aip/overview.md)

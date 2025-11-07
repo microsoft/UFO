@@ -17,7 +17,7 @@
     **🚀 Deployment:**
     - [Local Servers](../mcp/local_servers.md) - Built-in in-process servers
     - [Remote Servers](../mcp/remote_servers.md) - HTTP/Stdio deployment
-    - [Custom Servers](../mcp/custom_servers.md) - Build your own tools
+    - [Creating MCP Servers](../tutorials/creating_mcp_servers.md) - Build your own tools
 
 ---
 
@@ -320,7 +320,7 @@ async def custom_action(param: str) -> str:
 ```
 
 !!!example "🛠️ Build Custom Servers"
-    See [Custom Servers](../mcp/custom_servers.md) for step-by-step guide to creating your own MCP servers.
+    See [Creating MCP Servers](../tutorials/creating_mcp_servers.md) for step-by-step guide to creating your own MCP servers.
 
 ---
 
@@ -366,7 +366,7 @@ See [UFO Client](./ufo_client.md) and [Computer Manager](./computer_manager.md) 
 | **Configuration** | YAML configuration guide | [Configuration](../mcp/configuration.md) |
 | **Local Servers** | Built-in in-process servers | [Local Servers](../mcp/local_servers.md) |
 | **Remote Servers** | HTTP/Stdio deployment | [Remote Servers](../mcp/remote_servers.md) |
-| **Custom Servers** | Build your own tools | [Custom Servers](../mcp/custom_servers.md) |
+| **Creating MCP Servers** | Build your own tools | [Creating MCP Servers](../tutorials/creating_mcp_servers.md) |
 
 ---
 
@@ -401,4 +401,4 @@ See [UFO Client](./ufo_client.md) and [Computer Manager](./computer_manager.md) 
 
 👉 [MCP Overview](../mcp/overview.md) - Understand MCP architecture in depth  
 👉 [Computer Manager](./computer_manager.md) - See how MCP servers are managed  
-👉 [Custom Servers](../mcp/custom_servers.md) - Build your own MCP tools
+👉 [Creating MCP Servers](../tutorials/creating_mcp_servers.md) - Build your own MCP tools

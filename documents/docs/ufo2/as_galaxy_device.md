@@ -163,20 +163,20 @@ INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
 | `--log-level` | `INFO` | Logging verbosity | `--log-level DEBUG` |
 
 !!!example "Custom Server Configuration"
-    === "Specific Port"
-        ```powershell
-        python -m ufo.server.app --port 5000
-        ```
+    **Specific Port:**
+    ```powershell
+    python -m ufo.server.app --port 5000
+    ```
     
-    === "Specific IP Binding"
-        ```powershell
-        python -m ufo.server.app --host 192.168.1.100 --port 5000
-        ```
+    **Specific IP Binding:**
+    ```powershell
+    python -m ufo.server.app --host 192.168.1.100 --port 5000
+    ```
     
-    === "Debug Mode"
-        ```powershell
-        python -m ufo.server.app --port 5000 --log-level DEBUG
-        ```
+    **Debug Mode:**
+    ```powershell
+    python -m ufo.server.app --port 5000 --log-level DEBUG
+    ```
 
 ### Verify Server Health
 
@@ -419,109 +419,109 @@ Galaxy uses the `capabilities` field to intelligently route subtasks to appropri
 
 **Example capability configurations:**
 
-=== "Office Workstation"
-    ```yaml
-    capabilities:
-      - "desktop_automation"
-      - "office_applications"
-      - "excel"
-      - "word"
-      - "powerpoint"
-      - "outlook"
-      - "email"
-      - "reporting"
-    ```
+**Office Workstation:**
+```yaml
+capabilities:
+  - "desktop_automation"
+  - "office_applications"
+  - "excel"
+  - "word"
+  - "powerpoint"
+  - "outlook"
+  - "email"
+  - "reporting"
+```
 
-=== "Web Development Machine"
-    ```yaml
-    capabilities:
-      - "desktop_automation"
-      - "web_browsing"
-      - "chrome"
-      - "visual_studio_code"
-      - "git"
-      - "development"
-    ```
+**Web Development Machine:**
+```yaml
+capabilities:
+  - "desktop_automation"
+  - "web_browsing"
+  - "chrome"
+  - "visual_studio_code"
+  - "git"
+  - "development"
+```
 
-=== "Testing Workstation"
-    ```yaml
-    capabilities:
-      - "desktop_automation"
-      - "ui_testing"
-      - "web_browsing"
-      - "screenshot_comparison"
-      - "quality_assurance"
-    ```
+**Testing Workstation:**
+```yaml
+capabilities:
+  - "desktop_automation"
+  - "ui_testing"
+  - "web_browsing"
+  - "screenshot_comparison"
+  - "quality_assurance"
+```
 
-=== "Media Production"
-    ```yaml
-    capabilities:
-      - "desktop_automation"
-      - "media_editing"
-      - "photoshop"
-      - "premiere"
-      - "video_processing"
-      - "image_manipulation"
-    ```
+**Media Production:**
+```yaml
+capabilities:
+  - "desktop_automation"
+  - "media_editing"
+  - "photoshop"
+  - "premiere"
+  - "video_processing"
+  - "image_manipulation"
+```
 
 ### Metadata for Contextual Execution
 
 The `metadata` field provides **contextual information** that the LLM can use when generating automation commands.
 
 !!!example "Metadata Examples"
-    === "Office Workstation Metadata"
-        ```yaml
-        metadata:
-          os: "windows"
-          version: "11"
-          performance: "high"
-          installed_apps:
-            - "Microsoft Excel"
-            - "Microsoft Word"
-            - "Microsoft Outlook"
-            - "Adobe Acrobat Reader"
-          default_paths:
-            documents: "C:\\Users\\user\\Documents"
-            downloads: "C:\\Users\\user\\Downloads"
-            desktop: "C:\\Users\\user\\Desktop"
-          email_account: "user@company.com"
-          description: "Primary office workstation"
-        ```
+    **Office Workstation Metadata:**
+    ```yaml
+    metadata:
+      os: "windows"
+      version: "11"
+      performance: "high"
+      installed_apps:
+        - "Microsoft Excel"
+        - "Microsoft Word"
+        - "Microsoft Outlook"
+        - "Adobe Acrobat Reader"
+      default_paths:
+        documents: "C:\\Users\\user\\Documents"
+        downloads: "C:\\Users\\user\\Downloads"
+        desktop: "C:\\Users\\user\\Desktop"
+      email_account: "user@company.com"
+      description: "Primary office workstation"
+    ```
     
-    === "Development Workstation Metadata"
-        ```yaml
-        metadata:
-          os: "windows"
-          version: "11"
-          performance: "high"
-          installed_apps:
-            - "Visual Studio Code"
-            - "Google Chrome"
-            - "Git"
-            - "Node.js"
-            - "Python"
-          default_paths:
-            projects: "C:\\Users\\dev\\Projects"
-            repos: "C:\\Users\\dev\\Repos"
-          git_username: "developer"
-          description: "Development environment"
-        ```
+    **Development Workstation Metadata:**
+    ```yaml
+    metadata:
+      os: "windows"
+      version: "11"
+      performance: "high"
+      installed_apps:
+        - "Visual Studio Code"
+        - "Google Chrome"
+        - "Git"
+        - "Node.js"
+        - "Python"
+      default_paths:
+        projects: "C:\\Users\\dev\\Projects"
+        repos: "C:\\Users\\dev\\Repos"
+      git_username: "developer"
+      description: "Development environment"
+    ```
     
-    === "Testing Workstation Metadata"
-        ```yaml
-        metadata:
-          os: "windows"
-          version: "10"
-          performance: "medium"
-          installed_apps:
-            - "Google Chrome"
-            - "Microsoft Edge"
-            - "Firefox"
-            - "Selenium"
-          test_data_path: "C:\\TestData"
-          screenshot_path: "C:\\Screenshots"
-          description: "Automated testing environment"
-        ```
+    **Testing Workstation Metadata:**
+    ```yaml
+    metadata:
+      os: "windows"
+      version: "10"
+      performance: "medium"
+      installed_apps:
+        - "Google Chrome"
+        - "Microsoft Edge"
+        - "Firefox"
+        - "Selenium"
+      test_data_path: "C:\\TestData"
+      screenshot_path: "C:\\Screenshots"
+      description: "Automated testing environment"
+    ```
 
 **How Metadata is Used:**
 
@@ -935,33 +935,33 @@ INFO - [Galaxy] Subtask 3 → ufo2_office_1 (capability match: email)
     
     **Solutions:**
     
-    === "Verify Server"
-        ```powershell
-        # On server machine
-        curl http://localhost:5000/api/health
+    **Verify Server:**
+    ```powershell
+    # On server machine
+    curl http://localhost:5000/api/health
         
-        # From client machine
-        curl http://192.168.1.100:5000/api/health
-        ```
+    # From client machine
+    curl http://192.168.1.100:5000/api/health
+    ```
     
-    === "Check Network"
-        ```powershell
-        # Test connectivity
-        ping 192.168.1.100
+    **Check Network:**
+    ```powershell
+    # Test connectivity
+    ping 192.168.1.100
         
-        # Test port accessibility (requires telnet client)
-        Test-NetConnection -ComputerName 192.168.1.100 -Port 5000
-        ```
+    # Test port accessibility (requires telnet client)
+    Test-NetConnection -ComputerName 192.168.1.100 -Port 5000
+    ```
     
-    === "Check Windows Firewall"
-        ```powershell
-        # Allow port through firewall
-        New-NetFirewallRule -DisplayName "UFO Server" `
-          -Direction Inbound `
-          -LocalPort 5000 `
-          -Protocol TCP `
-          -Action Allow
-        ```
+    **Check Windows Firewall:**
+    ```powershell
+    # Allow port through firewall
+    New-NetFirewallRule -DisplayName "UFO Server" `
+      -Direction Inbound `
+      -LocalPort 5000 `
+      -Protocol TCP `
+      -Action Allow
+    ```
 
 ### Issue 2: Missing `--platform windows` Flag
 

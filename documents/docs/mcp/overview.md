@@ -556,7 +556,7 @@ To start using MCP in UFO²:
 1. **Understand the two server types** - [Data Collection](data_collection.md) and [Action](action.md)
 2. **Configure your agents** - See [Configuration Guide](configuration.md)
 3. **Use built-in servers** - Explore [Local Servers](local_servers.md)
-4. **Create custom servers** - Follow [Custom Servers Guide](custom_servers.md)
+4. **Create custom servers** - Follow [Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md)
 5. **Deploy remotely** - Set up [Remote Servers](remote_servers.md)
 
 ## Related Documentation
@@ -566,7 +566,7 @@ To start using MCP in UFO²:
 - [Configuration Guide](configuration.md) - How to configure MCP for agents
 - [Local Servers](local_servers.md) - Built-in MCP servers
 - [Remote Servers](remote_servers.md) - HTTP and Stdio deployment
-- [Custom Servers](custom_servers.md) - Creating your own MCP servers
+- **[Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md)** - Step-by-step guide to building custom servers
 - [Computer](../client/computer.md) - MCP tool execution layer
 - [Agent Client](../client/overview.md) - Client architecture overview
 

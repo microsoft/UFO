@@ -139,11 +139,22 @@ nav:
       - Processing Strategy: linux/strategy.md
       - MCP Commands: linux/commands.md
   - Tutorials & Development:
-      - Creating Your AppAgent:
+      - Creating Custom MCP Servers: tutorials/creating_mcp_servers.md
+      - Creating Custom Third-Party Agents: tutorials/creating_third_party_agents.md
+      - Creating Custom Device Agents:
+          - Overview: tutorials/creating_device_agent/overview.md
+          - Index: tutorials/creating_device_agent/index.md
+          - Client Setup: tutorials/creating_device_agent/client_setup.md
+          - Core Components: tutorials/creating_device_agent/core_components.md
+          - MCP Server: tutorials/creating_device_agent/mcp_server.md
+          - Configuration: tutorials/creating_device_agent/configuration.md
+          - Testing: tutorials/creating_device_agent/testing.md
+          - Example Mobile Agent: tutorials/creating_device_agent/example_mobile_agent.md
+      - Enhancing AppAgent Capabilities:
           - Overview: tutorials/creating_app_agent/overview.md
           - Help Document Provision: tutorials/creating_app_agent/help_document_provision.md
           - Demonstration Provision: tutorials/creating_app_agent/demonstration_provision.md
-          - Wrapping App-Native API: tutorials/creating_app_agent/warpping_app_native_api.md
+          - Wrapping App-Native APIs: tutorials/creating_app_agent/warpping_app_native_api.md
   - Infrastructure:
       - Basic Modules:
           - Overview: infrastructure/modules/overview.md
@@ -192,13 +203,11 @@ nav:
       - MCP Integration: client/mcp_integration.md
   - MCP (Model Context Protocol):
       - Overview: mcp/overview.md
-      - Positioning in UFO³: mcp/positioning.md
       - Data Collection Servers: mcp/data_collection.md
       - Action Servers: mcp/action.md
       - Configuration Guide: mcp/configuration.md
       - Local Servers: mcp/local_servers.md
       - Remote Servers: mcp/remote_servers.md
-      - Custom Servers: mcp/custom_servers.md
       - Server Reference:
           - UICollector: mcp/servers/ui_collector.md
           - HostUIExecutor: mcp/servers/host_ui_executor.md

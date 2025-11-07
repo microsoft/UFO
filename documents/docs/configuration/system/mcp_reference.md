@@ -155,6 +155,9 @@ For detailed configuration guide including:
 
 See **[MCP Configuration Guide](../../mcp/configuration.md)**
 
+!!!tip "Creating Custom MCP Servers"
+    Want to create your own MCP servers? See the **[Creating Custom MCP Servers Tutorial](../../tutorials/creating_mcp_servers.md)** for step-by-step instructions on building local, HTTP, and stdio servers.
+
 ## Related Documentation
 
 - [MCP Overview](../../mcp/overview.md) - MCP architecture
@@ -162,6 +165,7 @@ See **[MCP Configuration Guide](../../mcp/configuration.md)**
 - [Action Servers](../../mcp/action.md) - State-changing tools
 - [Local Servers](../../mcp/local_servers.md) - Built-in servers
 - [Remote Servers](../../mcp/remote_servers.md) - HTTP/Stdio deployment
+- **[Creating Custom MCP Servers Tutorial](../../tutorials/creating_mcp_servers.md)** - Build your own servers
 - [Configuration Overview](./overview.md) - General configuration system
 - [System Configuration](./system_config.md) - MCP-related system settings
 

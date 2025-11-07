@@ -896,144 +896,144 @@ print(f"Flaky clients: {stats['flaky_clients']}")
 
 ### Alert Delivery Methods
 
-=== "Email Alerts"
-    ```python
-    import smtplib
-    from email.message import EmailMessage
+**Email Alerts:**
+```python
+import smtplib
+from email.message import EmailMessage
     
-    def send_email_alert(title, message, severity="info"):
-        """Send email alert via SMTP."""
+def send_email_alert(title, message, severity="info"):
+    """Send email alert via SMTP."""
         
-        # Email configuration
-        smtp_host = "smtp.gmail.com"
-        smtp_port = 587
-        sender = "alerts@example.com"
-        receiver = "admin@example.com"
-        password = "your_app_password"
+    # Email configuration
+    smtp_host = "smtp.gmail.com"
+    smtp_port = 587
+    sender = "alerts@example.com"
+    receiver = "admin@example.com"
+    password = "your_app_password"
         
-        # Create message
-        msg = EmailMessage()
-        msg['Subject'] = f"[{severity.upper()}] UFO Server - {title}"
-        msg['From'] = sender
-        msg['To'] = receiver
+    # Create message
+    msg = EmailMessage()
+    msg['Subject'] = f"[{severity.upper()}] UFO Server - {title}"
+    msg['From'] = sender
+    msg['To'] = receiver
         
-        # Email body
-        body = f"""
-        UFO Server Alert
+    # Email body
+    body = f"""
+    UFO Server Alert
         
-        Severity: {severity.upper()}
-        Title: {title}
+    Severity: {severity.upper()}
+    Title: {title}
         
-        Message:
-        {message}
+    Message:
+    {message}
         
-        Timestamp: {datetime.now().isoformat()}
+    Timestamp: {datetime.now().isoformat()}
         
-        --
-        UFO Server Monitoring System
-        """
-        msg.set_content(body)
+    --
+    UFO Server Monitoring System
+    """
+    msg.set_content(body)
         
-        try:
-            with smtplib.SMTP(smtp_host, smtp_port) as server:
-                server.starttls()
-                server.login(sender, password)
-                server.send_message(msg)
+    try:
+        with smtplib.SMTP(smtp_host, smtp_port) as server:
+            server.starttls()
+            server.login(sender, password)
+            server.send_message(msg)
             
-            logging.info(f"Email alert sent: {title}")
-        except Exception as e:
-            logging.error(f"Failed to send email alert: {e}")
-    ```
+        logging.info(f"Email alert sent: {title}")
+    except Exception as e:
+        logging.error(f"Failed to send email alert: {e}")
+```
 
-=== "Slack Alerts"
-    ```python
-    import requests
+**Slack Alerts:**
+```python
+import requests
     
-    def send_slack_alert(title, message, severity="info"):
-        """Send alert to Slack via webhook."""
+def send_slack_alert(title, message, severity="info"):
+    """Send alert to Slack via webhook."""
         
-        webhook_url = "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
+    webhook_url = "https://hooks.slack.com/services/YOUR/WEBHOOK/URL"
         
-        # Color coding by severity
-        colors = {
-            "critical": "#ff0000",
-            "error": "#ff6600",
-            "warning": "#ffcc00",
-            "info": "#00ccff"
-        }
+    # Color coding by severity
+    colors = {
+        "critical": "#ff0000",
+        "error": "#ff6600",
+        "warning": "#ffcc00",
+        "info": "#00ccff"
+    }
         
-        # Slack message payload
-        payload = {
-            "attachments": [{
-                "color": colors.get(severity, "#cccccc"),
-                "title": f"🚨 UFO Server Alert - {title}",
-                "text": message,
-                "fields": [
-                    {
-                        "title": "Severity",
-                        "value": severity.upper(),
-                        "short": True
-                    },
-                    {
-                        "title": "Timestamp",
-                        "value": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                        "short": True
-                    }
-                ],
-                "footer": "UFO Server Monitoring"
-            }]
-        }
-        
-        try:
-            response = requests.post(webhook_url, json=payload, timeout=5)
-            response.raise_for_status()
-            logging.info(f"Slack alert sent: {title}")
-        except Exception as e:
-            logging.error(f"Failed to send Slack alert: {e}")
-    ```
-
-=== "PagerDuty Integration"
-    ```python
-    import requests
-    
-    def send_pagerduty_alert(title, message, severity="error"):
-        """Send alert to PagerDuty."""
-        
-        routing_key = "YOUR_PAGERDUTY_ROUTING_KEY"
-        
-        # Map severity to PagerDuty severity
-        pd_severity_map = {
-            "critical": "critical",
-            "error": "error",
-            "warning": "warning",
-            "info": "info"
-        }
-        
-        payload = {
-            "routing_key": routing_key,
-            "event_action": "trigger",
-            "payload": {
-                "summary": title,
-                "source": "ufo-server",
-                "severity": pd_severity_map.get(severity, "error"),
-                "custom_details": {
-                    "message": message,
-                    "timestamp": datetime.now().isoformat()
+    # Slack message payload
+    payload = {
+        "attachments": [{
+            "color": colors.get(severity, "#cccccc"),
+            "title": f"🚨 UFO Server Alert - {title}",
+            "text": message,
+            "fields": [
+                {
+                    "title": "Severity",
+                    "value": severity.upper(),
+                    "short": True
+                },
+                {
+                    "title": "Timestamp",
+                    "value": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                    "short": True
                 }
+            ],
+            "footer": "UFO Server Monitoring"
+        }]
+    }
+        
+    try:
+        response = requests.post(webhook_url, json=payload, timeout=5)
+        response.raise_for_status()
+        logging.info(f"Slack alert sent: {title}")
+    except Exception as e:
+        logging.error(f"Failed to send Slack alert: {e}")
+```
+
+**PagerDuty Integration:**
+```python
+import requests
+    
+def send_pagerduty_alert(title, message, severity="error"):
+    """Send alert to PagerDuty."""
+        
+    routing_key = "YOUR_PAGERDUTY_ROUTING_KEY"
+        
+    # Map severity to PagerDuty severity
+    pd_severity_map = {
+        "critical": "critical",
+        "error": "error",
+        "warning": "warning",
+        "info": "info"
+    }
+        
+    payload = {
+        "routing_key": routing_key,
+        "event_action": "trigger",
+        "payload": {
+            "summary": title,
+            "source": "ufo-server",
+            "severity": pd_severity_map.get(severity, "error"),
+            "custom_details": {
+                "message": message,
+                "timestamp": datetime.now().isoformat()
             }
         }
+    }
         
-        try:
-            response = requests.post(
-                "https://events.pagerduty.com/v2/enqueue",
-                json=payload,
-                timeout=5
-            )
-            response.raise_for_status()
-            logging.info(f"PagerDuty alert sent: {title}")
-        except Exception as e:
-            logging.error(f"Failed to send PagerDuty alert: {e}")
-    ```
+    try:
+        response = requests.post(
+            "https://events.pagerduty.com/v2/enqueue",
+            json=payload,
+            timeout=5
+        )
+        response.raise_for_status()
+        logging.info(f"PagerDuty alert sent: {title}")
+    except Exception as e:
+        logging.error(f"Failed to send PagerDuty alert: {e}")
+```
 
 ### Unified Alert Function
 

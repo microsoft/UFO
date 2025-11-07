@@ -121,38 +121,38 @@ graph LR
 
 #### Error Responses
 
-=== "Client Not Online (404)"
-    ```json
-    {
-      "detail": "Client not online"
-    }
-    ```
+**Client Not Online (404):**
+```json
+{
+  "detail": "Client not online"
+}
+```
     
-    **Cause:** Target client is not connected to the server.
+**Cause:** Target client is not connected to the server.
     
-    **Solution:** Check `/api/clients` to see available clients.
+**Solution:** Check `/api/clients` to see available clients.
 
-=== "Empty Client ID (400)"
-    ```json
-    {
-      "detail": "Empty client ID"
-    }
-    ```
+**Empty Client ID (400):**
+```json
+{
+  "detail": "Empty client ID"
+}
+```
     
-    **Cause:** `client_id` field is missing or empty.
+**Cause:** `client_id` field is missing or empty.
     
-    **Solution:** Provide a valid `client_id` in the request body.
+**Solution:** Provide a valid `client_id` in the request body.
 
-=== "Empty Task Content (400)"
-    ```json
-    {
-      "detail": "Empty task content"
-    }
-    ```
+**Empty Task Content (400):**
+```json
+{
+  "detail": "Empty task content"
+}
+```
     
-    **Cause:** `request` field is missing or empty.
+**Cause:** `request` field is missing or empty.
     
-    **Solution:** Provide a non-empty task description in the `request` field.
+**Solution:** Provide a non-empty task description in the `request` field.
 
 #### Implementation Details
 
@@ -294,49 +294,49 @@ GET /api/clients
 
 #### Usage Patterns
 
-=== "Check Device Availability"
-    ```python
-    import requests
+**Check Device Availability:**
+```python
+import requests
     
+response = requests.get("http://localhost:5000/api/clients")
+clients = response.json()["online_clients"]
+    
+target_device = "device_windows_001"
+    
+if target_device in clients:
+    print(f"✅ {target_device} is online")
+    # Dispatch task
+else:
+    print(f"❌ {target_device} is offline")
+```
+
+**Filter by Client Type:**
+```python
+# Note: Current API doesn't return client types
+# You must know your client naming convention
+# Example: devices start with "device_", constellations with "constellation_"
+    
+clients = response.json()["online_clients"]
+    
+devices = [c for c in clients if c.startswith("device_")]
+constellations = [c for c in clients if c.startswith("constellation_")]
+    
+print(f"Devices online: {len(devices)}")
+print(f"Constellations online: {len(constellations)}")
+```
+
+**Monitor Client Count:**
+```python
+import time
+    
+while True:
     response = requests.get("http://localhost:5000/api/clients")
     clients = response.json()["online_clients"]
-    
-    target_device = "device_windows_001"
-    
-    if target_device in clients:
-        print(f"✅ {target_device} is online")
-        # Dispatch task
-    else:
-        print(f"❌ {target_device} is offline")
-    ```
-
-=== "Filter by Client Type"
-    ```python
-    # Note: Current API doesn't return client types
-    # You must know your client naming convention
-    # Example: devices start with "device_", constellations with "constellation_"
-    
-    clients = response.json()["online_clients"]
-    
-    devices = [c for c in clients if c.startswith("device_")]
-    constellations = [c for c in clients if c.startswith("constellation_")]
-    
-    print(f"Devices online: {len(devices)}")
-    print(f"Constellations online: {len(constellations)}")
-    ```
-
-=== "Monitor Client Count"
-    ```python
-    import time
-    
-    while True:
-        response = requests.get("http://localhost:5000/api/clients")
-        clients = response.json()["online_clients"]
         
-        print(f"[{time.strftime('%H:%M:%S')}] Clients online: {len(clients)}")
+    print(f"[{time.strftime('%H:%M:%S')}] Clients online: {len(clients)}")
         
-        time.sleep(10)  # Check every 10 seconds
-    ```
+    time.sleep(10)  # Check every 10 seconds
+```
 
 ---
 
@@ -359,44 +359,44 @@ GET /api/task_result/github_navigation_task
 
 #### Response States
 
-=== "Pending (200)"
-    Task is still running:
+**Pending (200):**
+Task is still running:
     
-    ```json
-    {
-      "status": "pending"
-    }
-    ```
+```json
+{
+  "status": "pending"
+}
+```
     
-    **Action:** Continue polling until status changes to `"done"`.
+**Action:** Continue polling until status changes to `"done"`.
 
-=== "Completed (200)"
-    Task has finished:
+**Completed (200):**
+Task has finished:
     
-    ```json
-    {
-      "status": "done",
-      "result": {
-        "action": "Opened Chrome and navigated to github.com",
-        "screenshot": "base64_encoded_image_data",
-        "control_label": "Address bar",
-        "control_text": "github.com"
-      }
-    }
-    ```
+```json
+{
+  "status": "done",
+  "result": {
+    "action": "Opened Chrome and navigated to github.com",
+    "screenshot": "base64_encoded_image_data",
+    "control_label": "Address bar",
+    "control_text": "github.com"
+  }
+}
+```
     
-    **Action:** Process the result. The `result` structure depends on the task type and device implementation.
+**Action:** Process the result. The `result` structure depends on the task type and device implementation.
 
-=== "Not Found (Implicit)"
-    If `task_name` doesn't exist in session manager:
+**Not Found (Implicit):**
+If `task_name` doesn't exist in session manager:
     
-    ```json
-    {
-      "status": "pending"
-    }
-    ```
+```json
+{
+  "status": "pending"
+}
+```
     
-    **Note:** Current implementation returns `{"status": "pending"}` for non-existent tasks (not a 404 error).
+**Note:** Current implementation returns `{"status": "pending"}` for non-existent tasks (not a 404 error).
 
 #### Implementation Details
 
@@ -523,86 +523,86 @@ GET /api/health
 
 #### Integration Examples
 
-=== "Kubernetes Liveness Probe"
-    ```yaml
-    apiVersion: v1
-    kind: Pod
-    metadata:
-      name: ufo-server
-    spec:
-      containers:
-      - name: ufo-server
-        image: ufo-server:latest
-        ports:
-        - containerPort: 5000
-        livenessProbe:
-          httpGet:
-            path: /api/health
-            port: 5000
-          initialDelaySeconds: 10
-          periodSeconds: 30
-          timeoutSeconds: 5
-          failureThreshold: 3
-        readinessProbe:
-          httpGet:
-            path: /api/health
-            port: 5000
-          initialDelaySeconds: 5
-          periodSeconds: 10
-    ```
+**Kubernetes Liveness Probe:**
+```yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ufo-server
+spec:
+  containers:
+  - name: ufo-server
+    image: ufo-server:latest
+    ports:
+    - containerPort: 5000
+    livenessProbe:
+      httpGet:
+        path: /api/health
+        port: 5000
+      initialDelaySeconds: 10
+      periodSeconds: 30
+      timeoutSeconds: 5
+      failureThreshold: 3
+    readinessProbe:
+      httpGet:
+        path: /api/health
+        port: 5000
+      initialDelaySeconds: 5
+      periodSeconds: 10
+```
 
-=== "Monitoring Script"
-    ```python
-    import requests
-    import time
+**Monitoring Script:**
+```python
+import requests
+import time
     
-    def monitor_server_health(url="http://localhost:5000/api/health"):
-        """Continuous health monitoring."""
-        consecutive_failures = 0
+def monitor_server_health(url="http://localhost:5000/api/health"):
+    """Continuous health monitoring."""
+    consecutive_failures = 0
         
-        while True:
-            try:
-                response = requests.get(url, timeout=5)
+    while True:
+        try:
+            response = requests.get(url, timeout=5)
                 
-                if response.status_code == 200:
-                    data = response.json()
-                    client_count = len(data.get("online_clients", []))
+            if response.status_code == 200:
+                data = response.json()
+                client_count = len(data.get("online_clients", []))
                     
-                    print(
-                        f"✅ Server healthy - {client_count} clients connected"
-                    )
-                    consecutive_failures = 0
-                else:
-                    consecutive_failures += 1
-                    print(
-                        f"⚠️  Server returned {response.status_code} "
-                        f"(failures: {consecutive_failures})"
-                    )
-            except requests.RequestException as e:
+                print(
+                    f"✅ Server healthy - {client_count} clients connected"
+                )
+                consecutive_failures = 0
+            else:
                 consecutive_failures += 1
                 print(
-                    f"❌ Server unreachable: {e} "
+                    f"⚠️  Server returned {response.status_code} "
                     f"(failures: {consecutive_failures})"
                 )
+        except requests.RequestException as e:
+            consecutive_failures += 1
+            print(
+                f"❌ Server unreachable: {e} "
+                f"(failures: {consecutive_failures})"
+            )
             
-            if consecutive_failures >= 3:
-                # Trigger alert (email, Slack, PagerDuty, etc.)
-                send_alert(f"Server down for {consecutive_failures} checks")
+        if consecutive_failures >= 3:
+            # Trigger alert (email, Slack, PagerDuty, etc.)
+            send_alert(f"Server down for {consecutive_failures} checks")
             
-            time.sleep(30)
-    ```
+        time.sleep(30)
+```
 
-=== "nginx Health Check"
-    ```nginx
-    upstream ufo_backend {
-        server localhost:5000;
+**nginx Health Check:**
+```nginx
+upstream ufo_backend {
+    server localhost:5000;
         
-        # Health check (requires nginx plus or third-party module)
-        check interval=10000 rise=2 fall=3 timeout=5000 type=http;
-        check_http_send "GET /api/health HTTP/1.0\r\n\r\n";
-        check_http_expect_alive http_2xx http_3xx;
-    }
-    ```
+    # Health check (requires nginx plus or third-party module)
+    check interval=10000 rise=2 fall=3 timeout=5000 type=http;
+    check_http_send "GET /api/health HTTP/1.0\r\n\r\n";
+    check_http_expect_alive http_2xx http_3xx;
+}
+```
 
 ---
 
@@ -677,62 +677,62 @@ GET /api/health
 ### cURL
 
 !!!example "Command-Line HTTP Requests"
-    === "Dispatch Task"
-        ```bash
-        curl -X POST http://localhost:5000/api/dispatch \
-          -H "Content-Type: application/json" \
-          -d '{
-            "client_id": "device_windows_001",
-            "request": "Open Calculator",
-            "task_name": "open_calculator"
-          }'
+    **Dispatch Task:**
+    ```bash
+    curl -X POST http://localhost:5000/api/dispatch \
+      -H "Content-Type: application/json" \
+      -d '{
+        "client_id": "device_windows_001",
+        "request": "Open Calculator",
+        "task_name": "open_calculator"
+      }'
         
-        # Response:
-        # {
-        #   "status": "dispatched",
-        #   "task_name": "open_calculator",
-        #   "client_id": "device_windows_001",
-        #   "session_id": "a1b2c3d4-..."
-        # }
-        ```
+    # Response:
+    # {
+    #   "status": "dispatched",
+    #   "task_name": "open_calculator",
+    #   "client_id": "device_windows_001",
+    #   "session_id": "a1b2c3d4-..."
+    # }
+    ```
     
-    === "Get Clients"
-        ```bash
-        curl http://localhost:5000/api/clients
+    **Get Clients:**
+    ```bash
+    curl http://localhost:5000/api/clients
         
-        # Response:
-        # {
-        #   "online_clients": [
-        #     "device_windows_001",
-        #     "device_linux_002"
-        #   ]
-        # }
-        ```
+    # Response:
+    # {
+    #   "online_clients": [
+    #     "device_windows_001",
+    #     "device_linux_002"
+    #   ]
+    # }
+    ```
     
-    === "Get Task Result"
-        ```bash
-        curl http://localhost:5000/api/task_result/open_calculator
+    **Get Task Result:**
+    ```bash
+    curl http://localhost:5000/api/task_result/open_calculator
         
-        # Response (pending):
-        # {"status": "pending"}
+    # Response (pending):
+    # {"status": "pending"}
         
-        # Response (complete):
-        # {
-        #   "status": "done",
-        #   "result": {"action": "Opened Calculator", ...}
-        # }
-        ```
+    # Response (complete):
+    # {
+    #   "status": "done",
+    #   "result": {"action": "Opened Calculator", ...}
+    # }
+    ```
     
-    === "Health Check"
-        ```bash
-        curl http://localhost:5000/api/health
+    **Health Check:**
+    ```bash
+    curl http://localhost:5000/api/health
         
-        # Response:
-        # {
-        #   "status": "healthy",
-        #   "online_clients": ["device_windows_001", ...]
-        # }
-        ```
+    # Response:
+    # {
+    #   "status": "healthy",
+    #   "online_clients": ["device_windows_001", ...]
+    # }
+    ```
 
 ### JavaScript (fetch)
 

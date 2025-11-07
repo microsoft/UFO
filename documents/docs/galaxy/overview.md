@@ -162,6 +162,8 @@ To **democratize agent creation**, UFO³ provides:
 
 This modular design accelerates integration while maintaining consistency across the constellation.
 
+**🔌 Extensibility:** UFO³ is designed as a **universal framework** that supports developing new device agents for different platforms (mobile, web, IoT, embedded systems, etc.) and applications. Through the **Agent Interaction Protocol (AIP)**, custom device agents can seamlessly integrate into UFO³ Galaxy for coordinated multi-device automation. **Want to build your own device agent?** See our [Creating Custom Device Agents tutorial](../tutorials/creating_device_agent/overview.md) to learn how to extend UFO³ to new platforms.
+
 [Learn more →](agent_registration/overview.md) | [MCP Integration →](../mcp/overview.md)
 
 ---

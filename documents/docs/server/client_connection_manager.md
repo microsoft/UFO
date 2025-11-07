@@ -207,91 +207,91 @@ with self.lock:  # threading.Lock ensures atomic operations
 !!!info "Multiple Retrieval Methods"
     The ClientConnectionManager provides several methods to lookup clients based on different criteria:
 
-=== "Get WebSocket Connection"
-    ```python
-    def get_client(self, client_id: str) -> WebSocket | None:
-        """Get WebSocket connection for a client."""
-        with self.lock:
-            client_info = self.online_clients.get(client_id)
-            return client_info.websocket if client_info else None
-    ```
+**Get WebSocket Connection:**
+```python
+def get_client(self, client_id: str) -> WebSocket | None:
+    """Get WebSocket connection for a client."""
+    with self.lock:
+        client_info = self.online_clients.get(client_id)
+        return client_info.websocket if client_info else None
+```
     
-    **Usage:**
-    ```python
-    target_ws = client_manager.get_client("device_windows_001")
-    if target_ws:
-        await target_ws.send_text(message)
-    ```
+**Usage:**
+```python
+target_ws = client_manager.get_client("device_windows_001")
+if target_ws:
+    await target_ws.send_text(message)
+```
 
-=== "Get Full Client Info"
-    ```python
-    def get_client_info(self, client_id: str) -> ClientInfo | None:
-        """Get complete information about a client."""
-        with self.lock:
-            return self.online_clients.get(client_id)
-    ```
+**Get Full Client Info:**
+```python
+def get_client_info(self, client_id: str) -> ClientInfo | None:
+    """Get complete information about a client."""
+    with self.lock:
+        return self.online_clients.get(client_id)
+```
     
-    **Usage:**
-    ```python
-    client_info = client_manager.get_client_info("device_windows_001")
-    if client_info:
-        print(f"Platform: {client_info.platform}")
-        print(f"Connected at: {client_info.connected_at}")
-        print(f"Type: {client_info.client_type}")
-    ```
+**Usage:**
+```python
+client_info = client_manager.get_client_info("device_windows_001")
+if client_info:
+    print(f"Platform: {client_info.platform}")
+    print(f"Connected at: {client_info.connected_at}")
+    print(f"Type: {client_info.client_type}")
+```
 
-=== "Get Client Type"
-    ```python
-    def get_client_type(self, client_id: str) -> ClientType | None:
-        """Get the type of a client."""
-        with self.lock:
-            client_info = self.online_clients.get(client_id)
-            return client_info.client_type if client_info else None
-    ```
+**Get Client Type:**
+```python
+def get_client_type(self, client_id: str) -> ClientType | None:
+    """Get the type of a client."""
+    with self.lock:
+        client_info = self.online_clients.get(client_id)
+        return client_info.client_type if client_info else None
+```
     
-    **Usage:**
-    ```python
-    client_type = client_manager.get_client_type("client_001")
-    if client_type == ClientType.DEVICE:
-        # Handle device-specific logic
-    elif client_type == ClientType.CONSTELLATION:
-        # Handle constellation-specific logic
-    ```
+**Usage:**
+```python
+client_type = client_manager.get_client_type("client_001")
+if client_type == ClientType.DEVICE:
+    # Handle device-specific logic
+elif client_type == ClientType.CONSTELLATION:
+    # Handle constellation-specific logic
+```
 
-=== "List All Clients"
-    ```python
-    def list_clients(self) -> List[str]:
-        """List all online client IDs."""
-        with self.lock:
-            return list(self.online_clients.keys())
-    ```
+**List All Clients:**
+```python
+def list_clients(self) -> List[str]:
+    """List all online client IDs."""
+    with self.lock:
+        return list(self.online_clients.keys())
+```
     
-    **Usage:**
-    ```python
-    online_ids = client_manager.list_clients()
-    print(f"Currently online: {len(online_ids)} clients")
-    ```
+**Usage:**
+```python
+online_ids = client_manager.list_clients()
+print(f"Currently online: {len(online_ids)} clients")
+```
 
-=== "List by Type"
-    ```python
-    def list_clients_by_type(self, client_type: ClientType) -> List[str]:
-        """List all online clients of a specific type."""
-        with self.lock:
-            return [
-                client_id
-                for client_id, client_info in self.online_clients.items()
-                if client_info.client_type == client_type
-            ]
-    ```
+**List by Type:**
+```python
+def list_clients_by_type(self, client_type: ClientType) -> List[str]:
+    """List all online clients of a specific type."""
+    with self.lock:
+        return [
+            client_id
+            for client_id, client_info in self.online_clients.items()
+            if client_info.client_type == client_type
+        ]
+```
     
-    **Usage:**
-    ```python
-    devices = client_manager.list_clients_by_type(ClientType.DEVICE)
-    constellations = client_manager.list_clients_by_type(ClientType.CONSTELLATION)
+**Usage:**
+```python
+devices = client_manager.list_clients_by_type(ClientType.DEVICE)
+constellations = client_manager.list_clients_by_type(ClientType.CONSTELLATION)
     
-    print(f"Devices online: {len(devices)}")
-    print(f"Constellations online: {len(constellations)}")
-    ```
+print(f"Devices online: {len(devices)}")
+print(f"Constellations online: {len(constellations)}")
+```
 
 ### Removing Clients
 
@@ -645,55 +645,55 @@ def add_client(self, client_id, platform, ws, client_type, metadata):
 
 ### Retrieving System Information
 
-=== "Get Single Device Info"
-    ```python
-    def get_device_system_info(self, device_id: str) -> Optional[Dict[str, Any]]:
-        """Get device system information by device ID."""
+**Get Single Device Info:**
+```python
+def get_device_system_info(self, device_id: str) -> Optional[Dict[str, Any]]:
+    """Get device system information by device ID."""
         
-        with self.lock:
-            client_info = self.online_clients.get(device_id)
-            if client_info and client_info.client_type == ClientType.DEVICE:
-                return client_info.system_info
-            return None
-    ```
+    with self.lock:
+        client_info = self.online_clients.get(device_id)
+        if client_info and client_info.client_type == ClientType.DEVICE:
+            return client_info.system_info
+        return None
+```
     
-    **Usage:**
-    ```python
-    device_info = client_manager.get_device_system_info("device_windows_001")
+**Usage:**
+```python
+device_info = client_manager.get_device_system_info("device_windows_001")
     
-    if device_info:
-        screen_res = device_info.get("screen_resolution")
-        apps = device_info.get("installed_applications", [])
+if device_info:
+    screen_res = device_info.get("screen_resolution")
+    apps = device_info.get("installed_applications", [])
         
-        print(f"Screen: {screen_res}")
-        print(f"Apps: {len(apps)} installed")
-    ```
+    print(f"Screen: {screen_res}")
+    print(f"Apps: {len(apps)} installed")
+```
 
-=== "Get All Devices Info"
-    ```python
-    def get_all_devices_info(self) -> Dict[str, Dict[str, Any]]:
-        """Get system information for all connected devices."""
+**Get All Devices Info:**
+```python
+def get_all_devices_info(self) -> Dict[str, Dict[str, Any]]:
+    """Get system information for all connected devices."""
         
-        with self.lock:
-            return {
-                device_id: client_info.system_info
-                for device_id, client_info in self.online_clients.items()
-                if client_info.client_type == ClientType.DEVICE
-                and client_info.system_info
-            }
-    ```
+    with self.lock:
+        return {
+            device_id: client_info.system_info
+            for device_id, client_info in self.online_clients.items()
+            if client_info.client_type == ClientType.DEVICE
+            and client_info.system_info
+        }
+```
     
-    **Usage:**
-    ```python
-    all_devices = client_manager.get_all_devices_info()
+**Usage:**
+```python
+all_devices = client_manager.get_all_devices_info()
     
-    for device_id, info in all_devices.items():
-        print(f"{device_id}: {info.get('os')} - {info.get('screen_resolution')}")
+for device_id, info in all_devices.items():
+    print(f"{device_id}: {info.get('os')} - {info.get('screen_resolution')}")
     
-    # Example output:
-    # device_windows_001: Windows - 1920x1080
-    # device_linux_001: Linux - 2560x1440
-    ```
+# Example output:
+# device_windows_001: Windows - 1920x1080
+# device_linux_001: Linux - 2560x1440
+```
 
 ### Server Configuration Merging
 
@@ -864,68 +864,68 @@ def _count_platforms(self, clients: List[ClientInfo]) -> Dict[str, int]:
 
 ### Filtering and Querying
 
-=== "Filter by Platform"
-    ```python
-    def get_devices_by_platform(self, platform: str) -> List[str]:
-        """Get all device IDs for a specific platform."""
+**Filter by Platform:**
+```python
+def get_devices_by_platform(self, platform: str) -> List[str]:
+    """Get all device IDs for a specific platform."""
         
-        with self.lock:
-            return [
-                device_id
-                for device_id, client_info in self.online_clients.items()
-                if client_info.client_type == ClientType.DEVICE
-                and client_info.platform == platform
-            ]
+    with self.lock:
+        return [
+            device_id
+            for device_id, client_info in self.online_clients.items()
+            if client_info.client_type == ClientType.DEVICE
+            and client_info.platform == platform
+        ]
     
-    # Usage
-    windows_devices = client_manager.get_devices_by_platform("Windows")
-    linux_devices = client_manager.get_devices_by_platform("Linux")
-    ```
+# Usage
+windows_devices = client_manager.get_devices_by_platform("Windows")
+linux_devices = client_manager.get_devices_by_platform("Linux")
+```
 
-=== "Filter by Connection Time"
-    ```python
-    from datetime import datetime, timedelta
+**Filter by Connection Time:**
+```python
+from datetime import datetime, timedelta
     
-    def get_recently_connected(self, minutes: int = 5) -> List[str]:
-        """Get clients connected in the last N minutes."""
+def get_recently_connected(self, minutes: int = 5) -> List[str]:
+    """Get clients connected in the last N minutes."""
         
-        cutoff_time = datetime.now() - timedelta(minutes=minutes)
+    cutoff_time = datetime.now() - timedelta(minutes=minutes)
         
-        with self.lock:
-            return [
-                client_id
-                for client_id, client_info in self.online_clients.items()
-                if client_info.connected_at >= cutoff_time
-            ]
+    with self.lock:
+        return [
+            client_id
+            for client_id, client_info in self.online_clients.items()
+            if client_info.connected_at >= cutoff_time
+        ]
     
-    # Usage
-    recent_clients = client_manager.get_recently_connected(minutes=10)
-    ```
+# Usage
+recent_clients = client_manager.get_recently_connected(minutes=10)
+```
 
-=== "Filter by Capability"
-    ```python
-    def find_devices_with_capability(self, capability: str) -> List[str]:
-        """Find devices that support a specific capability."""
+**Filter by Capability:**
+```python
+def find_devices_with_capability(self, capability: str) -> List[str]:
+    """Find devices that support a specific capability."""
         
-        with self.lock:
-            matches = []
-            for device_id, client_info in self.online_clients.items():
-                if client_info.client_type != ClientType.DEVICE:
-                    continue
+    with self.lock:
+        matches = []
+        for device_id, client_info in self.online_clients.items():
+            if client_info.client_type != ClientType.DEVICE:
+                continue
                 
-                if not client_info.system_info:
-                    continue
+            if not client_info.system_info:
+                continue
                 
-                features = client_info.system_info.get("supported_features", [])
-                if capability in features:
-                    matches.append(device_id)
+            features = client_info.system_info.get("supported_features", [])
+            if capability in features:
+                matches.append(device_id)
             
-            return matches
+        return matches
     
-    # Usage
-    excel_devices = client_manager.find_devices_with_capability("excel_automation")
-    docker_devices = client_manager.find_devices_with_capability("docker_support")
-    ```
+# Usage
+excel_devices = client_manager.find_devices_with_capability("excel_automation")
+docker_devices = client_manager.find_devices_with_capability("docker_support")
+```
 
 ---
 
@@ -1222,39 +1222,39 @@ device_info = client_manager.get_device_system_info(device_id)
 
 **Mitigation strategies:**
 
-=== "Periodic Cleanup"
-    ```python
-    async def cleanup_completed_sessions(client_manager, session_manager):
-        """Remove mappings for completed sessions."""
+**Periodic Cleanup:**
+```python
+async def cleanup_completed_sessions(client_manager, session_manager):
+    """Remove mappings for completed sessions."""
         
-        all_sessions = set()
-        all_sessions.update(
-            session_id
-            for sessions in client_manager._constellation_sessions.values()
-            for session_id in sessions
-        )
-        all_sessions.update(
-            session_id
-            for sessions in client_manager._device_sessions.values()
-            for session_id in sessions
-        )
+    all_sessions = set()
+    all_sessions.update(
+        session_id
+        for sessions in client_manager._constellation_sessions.values()
+        for session_id in sessions
+    )
+    all_sessions.update(
+        session_id
+        for sessions in client_manager._device_sessions.values()
+        for session_id in sessions
+    )
         
-        for session_id in all_sessions:
-            session = session_manager.get_session(session_id)
-            if session and session.state in [SessionState.COMPLETED, SessionState.FAILED]:
-                # Remove from ClientConnectionManager
-                # (Requires implementing remove_session method)
-                pass
-    ```
+    for session_id in all_sessions:
+        session = session_manager.get_session(session_id)
+        if session and session.state in [SessionState.COMPLETED, SessionState.FAILED]:
+            # Remove from ClientConnectionManager
+            # (Requires implementing remove_session method)
+            pass
+```
 
-=== "Cleanup on Completion"
-    ```python
-    # In task completion handler
-    async def on_task_complete(session_id, constellation_id, device_id):
-        # Remove specific session from mappings
-        client_manager.remove_session_from_constellation(constellation_id, session_id)
-        client_manager.remove_session_from_device(device_id, session_id)
-    ```
+**Cleanup on Completion:**
+```python
+# In task completion handler
+async def on_task_complete(session_id, constellation_id, device_id):
+    # Remove specific session from mappings
+    client_manager.remove_session_from_constellation(constellation_id, session_id)
+    client_manager.remove_session_from_device(device_id, session_id)
+```
 
 ---
 

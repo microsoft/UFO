@@ -34,7 +34,7 @@ To meet these requirements, AIP adopts a persistent, bidirectional WebSocket tra
 
 The following diagram illustrates the five-layer architecture and the roles of each component:
 
-![AIP Architecture](/img/aip_new.png)
+![AIP Architecture](../img/aip_new.png)
 
 ### Layer 1: Message Schema Layer
 

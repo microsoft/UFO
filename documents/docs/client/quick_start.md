@@ -26,23 +26,23 @@ Get your device connected to the UFO² Agent Server and executing tasks in minut
 
 **Verify Server Status:**
 
-=== "Windows"
-    ```powershell
-    # Test HTTP API
-    Invoke-WebRequest -Uri http://localhost:5000/api/health
+**Windows:**
+```powershell
+# Test HTTP API
+Invoke-WebRequest -Uri http://localhost:5000/api/health
     
-    # Test WebSocket (requires wscat)
-    wscat -c ws://localhost:5000/ws
-    ```
+# Test WebSocket (requires wscat)
+wscat -c ws://localhost:5000/ws
+```
 
-=== "Linux/macOS"
-    ```bash
-    # Test HTTP API
-    curl http://localhost:5000/api/health
+**Linux/macOS:**
+```bash
+# Test HTTP API
+curl http://localhost:5000/api/health
     
-    # Test WebSocket (requires wscat)
-    wscat -c ws://localhost:5000/ws
-    ```
+# Test WebSocket (requires wscat)
+wscat -c ws://localhost:5000/ws
+```
 
 ---
 
@@ -241,22 +241,22 @@ INFO - [WS] Device device_windows_001 capabilities: {
 
 From the server machine or any network-accessible machine:
 
-=== "cURL"
-    ```bash
-    curl http://localhost:5000/api/clients
-    ```
+**cURL:**
+```bash
+curl http://localhost:5000/api/clients
+```
 
-=== "PowerShell"
-    ```powershell
-    Invoke-RestMethod -Uri http://localhost:5000/api/clients | ConvertTo-Json
-    ```
+**PowerShell:**
+```powershell
+Invoke-RestMethod -Uri http://localhost:5000/api/clients | ConvertTo-Json
+```
 
-=== "Python"
-    ```python
-    import requests
-    response = requests.get("http://localhost:5000/api/clients")
-    print(response.json())
-    ```
+**Python:**
+```python
+import requests
+response = requests.get("http://localhost:5000/api/clients")
+print(response.json())
+```
 
 **Expected Response:**
 
@@ -319,42 +319,42 @@ DEBUG - [WS] Heartbeat acknowledged for device_windows_001
 
 ### Dispatch Task via HTTP API
 
-=== "cURL"
-    ```bash
-    curl -X POST http://localhost:5000/api/dispatch \
-      -H "Content-Type: application/json" \
-      -d '{
+**cURL:**
+```bash
+curl -X POST http://localhost:5000/api/dispatch \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client_id": "device_windows_001",
+    "request": "Open Notepad and type Hello from UFO"
+  }'
+```
+
+**PowerShell:**
+```powershell
+$body = @{
+    client_id = "device_windows_001"
+    request   = "Open Notepad and type Hello from UFO"
+} | ConvertTo-Json
+    
+Invoke-RestMethod -Uri http://localhost:5000/api/dispatch `
+  -Method POST `
+  -ContentType "application/json" `
+  -Body $body
+```
+
+**Python:**
+```python
+import requests
+    
+response = requests.post(
+    "http://localhost:5000/api/dispatch",
+    json={
         "client_id": "device_windows_001",
         "request": "Open Notepad and type Hello from UFO"
-      }'
-    ```
-
-=== "PowerShell"
-    ```powershell
-    $body = @{
-        client_id = "device_windows_001"
-        request   = "Open Notepad and type Hello from UFO"
-    } | ConvertTo-Json
-    
-    Invoke-RestMethod -Uri http://localhost:5000/api/dispatch `
-      -Method POST `
-      -ContentType "application/json" `
-      -Body $body
-    ```
-
-=== "Python"
-    ```python
-    import requests
-    
-    response = requests.post(
-        "http://localhost:5000/api/dispatch",
-        json={
-            "client_id": "device_windows_001",
-            "request": "Open Notepad and type Hello from UFO"
-        }
-    )
-    print(response.json())
-    ```
+    }
+)
+print(response.json())
+```
 
 ### Server Response
 
@@ -435,30 +435,30 @@ sequenceDiagram
 
 **Solutions:**
 
-=== "Verify Server"
-    ```bash
-    # Check if server is running
-    curl http://localhost:5000/api/health
+**Verify Server:**
+```bash
+# Check if server is running
+curl http://localhost:5000/api/health
     
-    # Expected response:
-    # {"status": "healthy", "uptime_seconds": 123}
-    ```
+# Expected response:
+# {"status": "healthy", "uptime_seconds": 123}
+```
 
-=== "Check Firewall"
-    ```bash
-    # Windows: Check if port is listening
-    netstat -an | findstr ":5000"
+**Check Firewall:**
+```bash
+# Windows: Check if port is listening
+netstat -an | findstr ":5000"
     
-    # Linux: Check if port is listening
-    netstat -tuln | grep :5000
-    ```
+# Linux: Check if port is listening
+netstat -tuln | grep :5000
+```
 
-=== "Fix Connection"
-    ```bash
-    # Ensure server and client match:
-    # Server: --port 5000
-    # Client: --ws-server ws://localhost:5000/ws
-    ```
+**Fix Connection:**
+```bash
+# Ensure server and client match:
+# Server: --port 5000
+# Client: --ws-server ws://localhost:5000/ws
+```
 
 ### 2. Registration Failed
 
@@ -479,21 +479,21 @@ sequenceDiagram
 
 **Solutions:**
 
-=== "Check Duplicate IDs"
-    ```bash
-    # List all connected clients
-    curl http://localhost:5000/api/clients | grep client_id
+**Check Duplicate IDs:**
+```bash
+# List all connected clients
+curl http://localhost:5000/api/clients | grep client_id
     
-    # If your ID appears, choose a different one
-    python -m ufo.client.client --ws --client-id NEW_UNIQUE_ID
-    ```
+# If your ID appears, choose a different one
+python -m ufo.client.client --ws --client-id NEW_UNIQUE_ID
+```
 
-=== "Check Server Logs"
-    ```bash
-    # Server logs show detailed rejection reasons
-    # Example: "Client ID already exists"
-    # Example: "Platform mismatch"
-    ```
+**Check Server Logs:**
+```bash
+# Server logs show detailed rejection reasons
+# Example: "Client ID already exists"
+# Example: "Platform mismatch"
+```
 
 ### 3. Platform Detection Issues
 
@@ -541,28 +541,28 @@ python -m ufo.client.client \
 
 **Solutions:**
 
-=== "Increase Retries"
-    ```bash
-    # For unreliable networks
-    python -m ufo.client.client \
-      --ws \
-      --ws-server ws://server:5000/ws \
-      --client-id my_device \
-      --max-retries 20
-    ```
+**Increase Retries:**
+```bash
+# For unreliable networks
+python -m ufo.client.client \
+  --ws \
+  --ws-server ws://server:5000/ws \
+  --client-id my_device \
+  --max-retries 20
+```
 
-=== "Check Network"
-    ```bash
-    # Test sustained connection
-    ping -t server  # Windows
-    ping server     # Linux (Ctrl+C to stop)
-    ```
+**Check Network:**
+```bash
+# Test sustained connection
+ping -t server  # Windows
+ping server     # Linux (Ctrl+C to stop)
+```
 
-=== "Verify Server"
-    ```bash
-    # Check if server is still running
-    curl http://server:5000/api/health
-    ```
+**Verify Server:**
+```bash
+# Check if server is still running
+curl http://server:5000/api/health
+```
 
 ---
 
@@ -904,34 +904,34 @@ pm2 logs ufo-client
 
 ### 2. Structured Logging
 
-=== "File Logging"
-    ```bash
-    # Redirect to log file with rotation
-    python -m ufo.client.client \
-      --ws \
-      --ws-server ws://server:5000/ws \
-      --client-id device_prod_01 \
-      --log-level INFO \
-      > /var/log/ufo-client.log 2>&1
-    ```
+**File Logging:**
+```bash
+# Redirect to log file with rotation
+python -m ufo.client.client \
+  --ws \
+  --ws-server ws://server:5000/ws \
+  --client-id device_prod_01 \
+  --log-level INFO \
+  > /var/log/ufo-client.log 2>&1
+```
 
-=== "Systemd Journal"
-    ```bash
-    # Already configured in systemd service
-    # View logs:
-    journalctl -u ufo-client -f --since "1 hour ago"
-    ```
+**Systemd Journal:**
+```bash
+# Already configured in systemd service
+# View logs:
+journalctl -u ufo-client -f --since "1 hour ago"
+```
 
-=== "Syslog"
-    ```bash
-    # Configure Python logging to send to syslog
-    # Add to config_dev.yaml:
-    # logging:
-    #   handlers:
-    #     syslog:
-    #       class: logging.handlers.SysLogHandler
-    #       address: /dev/log
-    ```
+**Syslog:**
+```bash
+# Configure Python logging to send to syslog
+# Add to config_dev.yaml:
+# logging:
+#   handlers:
+#     syslog:
+#       class: logging.handlers.SysLogHandler
+#       address: /dev/log
+```
 
 ### 3. Automatic Restart on Failure
 
@@ -1015,35 +1015,35 @@ python -m ufo.server.app \
 
 ### Test Server Connectivity
 
-=== "HTTP Health Check"
-    ```bash
-    curl http://localhost:5000/api/health
+**HTTP Health Check:**
+```bash
+curl http://localhost:5000/api/health
     
-    # Expected response:
-    # {"status": "healthy", "uptime_seconds": 3456}
-    ```
+# Expected response:
+# {"status": "healthy", "uptime_seconds": 3456}
+```
 
-=== "WebSocket Test"
-    ```bash
-    # Install wscat
-    npm install -g wscat
+**WebSocket Test:**
+```bash
+# Install wscat
+npm install -g wscat
     
-    # Test WebSocket connection
-    wscat -c ws://localhost:5000/ws
+# Test WebSocket connection
+wscat -c ws://localhost:5000/ws
     
-    # You should see connection established
-    # Send a test message (will likely be rejected, but connection works)
-    ```
+# You should see connection established
+# Send a test message (will likely be rejected, but connection works)
+```
 
-=== "Network Connectivity"
-    ```bash
-    # Test if server is reachable
-    ping 192.168.1.100
+**Network Connectivity:**
+```bash
+# Test if server is reachable
+ping 192.168.1.100
     
-    # Test if port is open
-    telnet 192.168.1.100 5000  # Windows/Linux
-    nc -zv 192.168.1.100 5000  # Linux/macOS
-    ```
+# Test if port is open
+telnet 192.168.1.100 5000  # Windows/Linux
+nc -zv 192.168.1.100 5000  # Linux/macOS
+```
 
 ### Check Connected Clients
 
@@ -1057,23 +1057,23 @@ curl http://localhost:5000/api/clients | grep "device_windows_001"
 
 ### Monitor Client Logs
 
-=== "Increase Verbosity"
-    ```bash
-    # Enable DEBUG logging
-    python -m ufo.client.client \
-      --ws \
-      --client-id my_device \
-      --log-level DEBUG
-    ```
+**Increase Verbosity:**
+```bash
+# Enable DEBUG logging
+python -m ufo.client.client \
+  --ws \
+  --client-id my_device \
+  --log-level DEBUG
+```
 
-=== "Filter Logs"
-    ```bash
-    # Only show errors
-    python -m ufo.client.client --ws --client-id my_device 2>&1 | grep ERROR
+**Filter Logs:**
+```bash
+# Only show errors
+python -m ufo.client.client --ws --client-id my_device 2>&1 | grep ERROR
     
-    # Only show connection events
-    python -m ufo.client.client --ws --client-id my_device 2>&1 | grep -E "Connect|Register"
-    ```
+# Only show connection events
+python -m ufo.client.client --ws --client-id my_device 2>&1 | grep -E "Connect|Register"
+```
 
 ### Test Task Dispatch
 

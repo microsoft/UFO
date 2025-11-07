@@ -634,6 +634,7 @@ HostAgent:
 - [Action Servers](action.md) - Action server configuration
 - [Local Servers](local_servers.md) - Built-in local MCP servers
 - [Remote Servers](remote_servers.md) - HTTP and Stdio deployment
+- **[Creating Custom MCP Servers Tutorial](../tutorials/creating_mcp_servers.md)** - Build your own servers
 - [MCP Reference](../configuration/system/mcp_reference.md) - Complete field reference
 - [Configuration Guide](../configuration/system/overview.md) - General configuration guide
 

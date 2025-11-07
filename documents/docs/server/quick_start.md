@@ -65,35 +65,35 @@ INFO:     Uvicorn running on http://0.0.0.0:5000 (Press CTRL+C to quit)
 
 !!!example "Common Startup Configurations"
 
-    === "Development (Local Only)"
-        ```bash
-        python -m ufo.server.app --local --log-level DEBUG
-        ```
-        - Accepts connections only from `localhost`
-        - Verbose debug logging
-        - Default port 5000
+    **Development (Local Only):**
+    ```bash
+    python -m ufo.server.app --local --log-level DEBUG
+    ```
+    - Accepts connections only from `localhost`
+    - Verbose debug logging
+    - Default port 5000
     
-    === "Custom Port"
-        ```bash
-        python -m ufo.server.app --port 8080
-        ```
-        - Useful if port 5000 is already in use
-        - Accessible from network
+    **Custom Port:**
+    ```bash
+    python -m ufo.server.app --port 8080
+    ```
+    - Useful if port 5000 is already in use
+    - Accessible from network
     
-    === "Production (Linux)"
-        ```bash
-        python -m ufo.server.app --port 5000 --platform linux --log-level WARNING
-        ```
-        - Explicit platform specification
-        - Reduced logging for performance
-        - Production-ready configuration
+    **Production (Linux):**
+    ```bash
+    python -m ufo.server.app --port 5000 --platform linux --log-level WARNING
+    ```
+    - Explicit platform specification
+    - Reduced logging for performance
+    - Production-ready configuration
     
-    === "Multi-Interface Binding"
-        ```bash
-        python -m ufo.server.app --host 192.168.1.100 --port 5000
-        ```
-        - Binds to specific network interface
-        - Useful for multi-homed servers
+    **Multi-Interface Binding:**
+    ```bash
+    python -m ufo.server.app --host 192.168.1.100 --port 5000
+    ```
+    - Binds to specific network interface
+    - Useful for multi-homed servers
 
 ---
 
@@ -106,15 +106,15 @@ Once the server is running, connect device agents using the command line:
 
 ### Platform-Specific Commands
 
-=== "Windows Device"
-    ```bash
-    python -m ufo.client.client --ws --ws-server ws://127.0.0.1:5000/ws --client-id my_windows_device
-    ```
+**Windows Device:**
+```bash
+python -m ufo.client.client --ws --ws-server ws://127.0.0.1:5000/ws --client-id my_windows_device
+```
 
-=== "Linux Device"
-    ```bash
-    python -m ufo.client.client --ws --ws-server ws://127.0.0.1:5000/ws --client-id my_linux_device --platform linux
-    ```
+**Linux Device:**
+```bash
+python -m ufo.client.client --ws --ws-server ws://127.0.0.1:5000/ws --client-id my_linux_device --platform linux
+```
 
 
 !!!success "Registration Success Indicator"
@@ -370,38 +370,38 @@ sequenceDiagram
 
 ### Advanced Task Dispatch
 
-=== "Complex Multi-Step Task"
-    ```bash
-    curl -X POST http://localhost:5000/api/dispatch \
-      -H "Content-Type: application/json" \
-      -d '{
-        "client_id": "my_windows_device",
-        "request": "Open Excel, create a new worksheet, and enter sales data for Q4 2024",
-        "task_name": "excel_q4_report"
-      }'
-    ```
+**Complex Multi-Step Task:**
+```bash
+curl -X POST http://localhost:5000/api/dispatch \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client_id": "my_windows_device",
+    "request": "Open Excel, create a new worksheet, and enter sales data for Q4 2024",
+    "task_name": "excel_q4_report"
+  }'
+```
 
-=== "Web Automation Task"
-    ```bash
-    curl -X POST http://localhost:5000/api/dispatch \
-      -H "Content-Type: application/json" \
-      -d '{
-        "client_id": "my_windows_device",
-        "request": "Open Chrome, navigate to GitHub.com, and search for UFO framework",
-        "task_name": "github_search"
-      }'
-    ```
+**Web Automation Task:**
+```bash
+curl -X POST http://localhost:5000/api/dispatch \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client_id": "my_windows_device",
+    "request": "Open Chrome, navigate to GitHub.com, and search for UFO framework",
+    "task_name": "github_search"
+  }'
+```
 
-=== "File Management Task"
-    ```bash
-    curl -X POST http://localhost:5000/api/dispatch \
-      -H "Content-Type: application/json" \
-      -d '{
-        "client_id": "my_linux_device",
-        "request": "Create a folder named test_data and copy all .txt files from Documents",
-        "task_name": "file_organization"
-      }'
-    ```
+**File Management Task:**
+```bash
+curl -X POST http://localhost:5000/api/dispatch \
+  -H "Content-Type: application/json" \
+  -d '{
+    "client_id": "my_linux_device",
+    "request": "Create a folder named test_data and copy all .txt files from Documents",
+    "task_name": "file_organization"
+  }'
+```
 
 ---
 
@@ -419,28 +419,28 @@ sequenceDiagram
     
     **Solutions:**
     
-    === "Use Different Port"
-        ```bash
-        python -m ufo.server.app --port 8080
-        ```
+    **Use Different Port:**
+    ```bash
+    python -m ufo.server.app --port 8080
+    ```
     
-    === "Find & Kill Process (Linux/Mac)"
-        ```bash
-        # Find process using port 5000
-        lsof -i :5000
+    **Find & Kill Process (Linux/Mac):**
+    ```bash
+    # Find process using port 5000
+    lsof -i :5000
         
-        # Kill the process
-        kill -9 <PID>
-        ```
+    # Kill the process
+    kill -9 <PID>
+    ```
     
-    === "Find & Kill Process (Windows)"
-        ```powershell
-        # Find process using port 5000
-        netstat -ano | findstr :5000
+    **Find & Kill Process (Windows):**
+    ```powershell
+    # Find process using port 5000
+    netstat -ano | findstr :5000
         
-        # Kill the process
-        taskkill /PID <PID> /F
-        ```
+    # Kill the process
+    taskkill /PID <PID> /F
+    ```
 
 ### Issue 2: Connection Refused
 
@@ -556,27 +556,27 @@ sequenceDiagram
     
     **Solutions:**
     
-    === "Windows Firewall"
-        ```powershell
-        # Allow incoming connections on port 5000
-        New-NetFirewallRule -DisplayName "UFO Server" `
-          -Direction Inbound `
-          -Protocol TCP `
-          -LocalPort 5000 `
-          -Action Allow
-        ```
+    **Windows Firewall:**
+    ```powershell
+    # Allow incoming connections on port 5000
+    New-NetFirewallRule -DisplayName "UFO Server" `
+      -Direction Inbound `
+      -Protocol TCP `
+      -LocalPort 5000 `
+      -Action Allow
+    ```
     
-    === "Linux (ufw)"
-        ```bash
-        sudo ufw allow 5000/tcp
-        sudo ufw reload
-        ```
+    **Linux (ufw):**
+    ```bash
+    sudo ufw allow 5000/tcp
+    sudo ufw reload
+    ```
     
-    === "Linux (firewalld)"
-        ```bash
-        sudo firewall-cmd --zone=public --add-port=5000/tcp --permanent
-        sudo firewall-cmd --reload
-        ```
+    **Linux (firewalld):**
+    ```bash
+    sudo firewall-cmd --zone=public --add-port=5000/tcp --permanent
+    sudo firewall-cmd --reload
+    ```
 
 ### Issue 6: Target Device Not Connected (Constellation)
 

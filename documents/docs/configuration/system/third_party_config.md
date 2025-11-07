@@ -14,6 +14,9 @@ The `third_party.yaml` file configures external agents that integrate with UFO²
 !!!info "Advanced Feature"
     Third-party agent configuration is an **advanced optional feature**. Most users only need the core agents (HostAgent, AppAgent). Configure third-party agents only when you need specialized capabilities.
 
+!!!tip "Creating Custom Third-Party Agents"
+    Want to build your own third-party agent? See the **[Creating Custom Third-Party Agents Tutorial](../../tutorials/creating_third_party_agents.md)** for a complete step-by-step guide using HardwareAgent as an example.
+
 ---
 
 ## Quick Start
@@ -116,6 +119,9 @@ THIRD_PARTY_AGENT_CONFIG:
 - ✅ Automated USB device management
 - ✅ Physical hardware testing/automation
 - ✅ Research projects with hardware control
+
+**Related Documentation**:
+- [Creating Custom Third-Party Agents](../../tutorials/creating_third_party_agents.md) - Tutorial using HardwareAgent as example
 
 ---
 
@@ -270,7 +276,9 @@ print(f"LinuxAgent enabled: {linux_enabled}")
 
 ## Adding Custom Third-Party Agents
 
-You can add your own third-party agents by following this pattern:
+You can add your own third-party agents by following the patterns described below. For a complete tutorial, see **[Creating Custom Third-Party Agents](../../tutorials/creating_third_party_agents.md)**.
+
+### Quick Overview
 
 ### Step 1: Create Agent Implementation
 
@@ -363,6 +371,7 @@ Add your agent to the third-party agent registry in UFO²'s agent loader.
 
 ## Related Documentation
 
+- **[Creating Custom Third-Party Agents](../../tutorials/creating_third_party_agents.md)** - Complete tutorial for building third-party agents
 - **[Linux Agent as Galaxy Device](../../linux/as_galaxy_device.md)** - Using LinuxAgent in UFO³
 - **[Linux Agent Quick Start](../../getting_started/quick_start_linux.md)** - Setting up Linux Agent
 - **[Agent Configuration](./agents_config.md)** - Core agent LLM settings
