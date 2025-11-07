@@ -62,9 +62,13 @@ Formal invariants (I1-I3) ensure DAG consistency during concurrent modifications
 
 ## ✨ Key Innovations
 
-### 1. 🌟 Task Constellation Framework
+<table>
+<tr>
+<td width="50%" valign="top">
 
-Natural language requests are decomposed into **Task Constellations** — structured DAG workflows with **TaskStars** (nodes) and **TaskStarLines** (edges) encoding task logic, dependencies, and device assignments.
+### 🌟 Task Constellation Framework
+
+Natural language requests are decomposed into **Task Constellations** — structured DAG workflows with **TaskStars** (nodes) and **TaskStarLines** (edges) encoding task logic, dependencies, and device assignments. This enables **declarative workflow representation** for automated scheduling, **runtime introspection** and dynamic modification, **parallel execution** of independent subtasks, and **cross-device data flow** management.
 
 ```
 User Intent → ConstellationAgent → Task Constellation (DAG)
@@ -74,13 +78,22 @@ User Intent → ConstellationAgent → Task Constellation (DAG)
                                     └─ TaskStar 4 (Mobile)    ─┘
 ```
 
-**Key Benefits:**
-- Declarative workflow representation for automated scheduling
-- Runtime introspection and dynamic modification
-- Parallel execution of independent subtasks
-- Cross-device data flow management
+---
 
-### 2. 🎯 Intelligent Constellation Agent
+### ⚡ Event-Driven Orchestration
+
+**Constellation Orchestrator** executes DAGs asynchronously with:
+
+- 👁️ **Observer pattern** for real-time task status monitoring
+- 🔒 **Safe assignment locking** to prevent race conditions
+- ✅ **Three formal invariants** ensuring DAG correctness:
+- 📅 **Dynamic task scheduling** based on dependency completion
+- 🔄 **Automatic retry and migration** on failures
+
+</td>
+<td width="50%" valign="top">
+
+### 🎯 Intelligent Constellation Agent
 
 LLM-powered agent that operates in two modes:
 
@@ -88,33 +101,26 @@ LLM-powered agent that operates in two modes:
 - **Editing Mode**: Incrementally refines constellation based on task completion events and runtime feedback
 
 **Features:**
-- ReAct architecture for context-aware planning
-- Capability-based device assignment
-- Automatic error recovery and workflow adaptation
-- State machine control with safe transitions
+- 🧠 ReAct architecture for context-aware planning
+- 🎯 Capability-based device assignment
+- 🛡️ Automatic error recovery and workflow adaptation
+- 🔄 State machine control with safe transitions
 
-### 3. ⚡ Event-Driven Orchestration
+---
 
-**Constellation Orchestrator** executes DAGs asynchronously with:
-
-- **Observer pattern** for real-time task status monitoring
-- **Safe assignment locking** to prevent race conditions
-- **Three formal invariants** ensuring DAG correctness:
-  - **I1**: Single assignment per TaskStar
-  - **I2**: Acyclic DAG consistency
-  - **I3**: Valid device assignment
-- **Dynamic task scheduling** based on dependency completion
-- **Automatic retry and migration** on failures
-
-### 4. 🔌 Agent Interaction Protocol (AIP)
+### 🔌 Agent Interaction Protocol (AIP)
 
 Unified WebSocket-based communication layer providing:
 
-- **Device registration** with capability profiles
-- **Heartbeat monitoring** for availability tracking
-- **Task dispatch** with dynamic routing
-- **Result streaming** with real-time progress updates
-- **Connection resilience** with automatic reconnection
+- 📝 **Device registration** with capability profiles
+- 💓 **Heartbeat monitoring** for availability tracking
+- 📤 **Task dispatch** with dynamic routing
+- 📊 **Result streaming** with real-time progress updates
+- 🔌 **Connection resilience** with automatic reconnection
+
+</td>
+</tr>
+</table>
 
 ---
 
@@ -127,16 +133,63 @@ Unified WebSocket-based communication layer providing:
 
 ### Hierarchical Design
 
-**Control Plane:**
-- **ConstellationClient**: Global device registry with capability profiles, health metrics, and load balancing
-- **Device Agents**: Local orchestration on each device with unified MCP-based tool interfaces
-- **Clean separation**: Global policies decoupled from device-specific heterogeneity
+<table>
+<tr>
+<td width="50%" valign="top">
 
-**Execution Flow:**
-1. **DAG Synthesis**: ConstellationAgent constructs TaskConstellation from user request
-2. **Device Assignment**: Tasks matched to capable devices based on profiles and availability
-3. **Asynchronous Execution**: Orchestrator executes DAG with event-driven coordination
-4. **Dynamic Adaptation**: Workflow evolves based on task completions, failures, and system dynamics
+#### 🎛️ Control Plane
+
+| Component | Role | Key Features |
+|-----------|------|--------------|
+| **🌐 ConstellationClient** | Global device registry | • Capability profiles<br>• Health metrics<br>• Load balancing |
+| **🖥️ Device Agents** | Local orchestration | • Unified MCP tools<br>• Platform-specific execution |
+| **🔒 Clean Separation** | Architecture principle | • Global policies<br>• Device independence |
+
+</td>
+<td width="50%" valign="top">
+
+#### 🔄 Execution Flow
+
+```mermaid
+graph TD
+    A[1️⃣ DAG Synthesis] --> B[2️⃣ Device Assignment]
+    B --> C[3️⃣ Asynchronous Execution]
+    C --> D[4️⃣ Dynamic Adaptation]
+    
+    A1[ConstellationAgent constructs<br/>TaskConstellation] -.-> A
+    B1[Match to capable devices<br/>based on profiles] -.-> B
+    C1[Event-driven coordination<br/>parallel execution] -.-> C
+    D1[Workflow evolution<br/>based on feedback] -.-> D
+```
+
+</td>
+</tr>
+</table>
+
+---
+
+## 🎥 Demo Video
+
+See UFO³ Galaxy in action with this comprehensive demonstration of cross-device orchestration:
+
+<div align="center">
+  <a href="YOUR_YOUTUBE_VIDEO_URL_HERE">
+    <img src="https://img.youtube.com/vi/VIDEO_ID_HERE/maxresdefault.jpg" alt="UFO³ Galaxy Demo Video" width="90%">
+  </a>
+  <p><em>🎬 Watch the full demo: Multi-device workflow orchestration with UFO³ Galaxy</em></p>
+</div>
+
+**Demo Highlights:**
+
+| Feature | Demonstration |
+|---------|---------------|
+| 🌟 **Constellation Planning** | Natural language → DAG workflow decomposition |
+| 🎯 **Device Assignment** | Capability-based task routing to Windows/Linux devices |
+| ⚡ **Parallel Execution** | Concurrent task execution with dependency management |
+| 📊 **Real-Time Monitoring** | Live constellation visualization and status updates |
+| 🔄 **Dynamic Adaptation** | Automatic error recovery and workflow refinement |
+| 🌐 **Cross-Platform** | Seamless coordination across heterogeneous devices |
+
 
 ---
 
@@ -157,17 +210,76 @@ conda activate ufo3
 pip install -r requirements.txt
 ```
 
-### ⚙️ Step 2: Configure LLM Services
+### ⚙️ Step 2: Configure ConstellationAgent LLM
+
+UFO³ Galaxy uses a **ConstellationAgent** that orchestrates all device agents. Configure its LLM settings:
 
 ```powershell
 # Create configuration from template
-copy config\galaxy\agents.yaml.template config\galaxy\agents.yaml
-notepad config\galaxy\agents.yaml
+copy config\galaxy\agent.yaml.template config\galaxy\agent.yaml
+notepad config\galaxy\agent.yaml
+```
+
+**Configuration File Location:**
+```
+config/galaxy/
+├── agent.yaml.template    # Template - COPY THIS
+├── agent.yaml             # Your config with API keys (DO NOT commit)
+└── devices.yaml           # Device pool configuration (Step 4)
 ```
 
 **OpenAI Configuration:**
 ```yaml
 CONSTELLATION_AGENT:
+  REASONING_MODEL: false
+  API_TYPE: "openai"
+  API_BASE: "https://api.openai.com/v1/chat/completions"
+  API_KEY: "sk-YOUR_KEY_HERE"
+  API_VERSION: "2025-02-01-preview"
+  API_MODEL: "gpt-5-chat-20251003"
+  # ... (prompt configurations use defaults)
+```
+
+**Azure OpenAI Configuration:**
+```yaml
+CONSTELLATION_AGENT:
+  REASONING_MODEL: false
+  API_TYPE: "aoai"
+  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
+  API_KEY: "YOUR_AOAI_KEY"
+  API_VERSION: "2024-02-15-preview"
+  API_MODEL: "gpt-5-chat-20251003"
+  API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
+  # ... (prompt configurations use defaults)
+```
+
+### 🖥️ Step 3: Configure Device Agents
+
+Each device agent (Windows/Linux) needs its own LLM configuration to execute tasks.
+
+```powershell
+# Configure device agent LLMs
+copy config\ufo\agents.yaml.template config\ufo\agents.yaml
+notepad config\ufo\agents.yaml
+```
+
+**Configuration File Location:**
+```
+config/ufo/
+├── agents.yaml.template    # Template - COPY THIS
+└── agents.yaml             # Device agent LLM config (DO NOT commit)
+```
+
+**Example Configuration:**
+```yaml
+HOST_AGENT:
+  VISUAL_MODE: true
+  API_TYPE: "openai"  # or "aoai" for Azure OpenAI
+  API_BASE: "https://api.openai.com/v1/chat/completions"
+  API_KEY: "sk-YOUR_KEY_HERE"
+  API_MODEL: "gpt-4o"
+
+APP_AGENT:
   VISUAL_MODE: true
   API_TYPE: "openai"
   API_BASE: "https://api.openai.com/v1/chat/completions"
@@ -175,19 +287,9 @@ CONSTELLATION_AGENT:
   API_MODEL: "gpt-4o"
 ```
 
-**Azure OpenAI Configuration:**
-```yaml
-CONSTELLATION_AGENT:
-  VISUAL_MODE: true
-  API_TYPE: "aoai"
-  API_BASE: "https://YOUR_RESOURCE.openai.azure.com"
-  API_KEY: "YOUR_AOAI_KEY"
-  API_VERSION: "2024-02-15-preview"
-  API_MODEL: "gpt-4o"
-  API_DEPLOYMENT_ID: "YOUR_DEPLOYMENT_ID"
-```
+> **💡 Tip:** You can use the same API key and model for both ConstellationAgent (Step 2) and device agents (Step 3).
 
-### 🌐 Step 3: Configure Device Pool
+### 🌐 Step 4: Configure Device Pool
 
 ```powershell
 # Configure available devices
@@ -198,48 +300,104 @@ notepad config\galaxy\devices.yaml
 **Example Device Configuration:**
 ```yaml
 devices:
-  - device_id: "windows_desktop"
-    server_url: "ws://localhost:5005/ws"
+  # Windows Device (UFO²)
+  - device_id: "windows_device_1"              # Must match --client-id
+    server_url: "ws://localhost:5000/ws"       # Must match server WebSocket URL
     os: "windows"
     capabilities:
+      - "desktop_automation"
       - "office_applications"
+      - "excel"
+      - "word"
+      - "outlook"
+      - "email"
       - "web_browsing"
-      - "file_management"
     metadata:
+      os: "windows"
+      version: "11"
       performance: "high"
-      location: "office"
+      installed_apps:
+        - "Microsoft Excel"
+        - "Microsoft Word"
+        - "Microsoft Outlook"
+        - "Google Chrome"
+      description: "Primary Windows desktop for office automation"
+    auto_connect: true
     max_retries: 5
-    
-  - device_id: "linux_server"
-    server_url: "ws://192.168.1.100:5001/ws"
+
+  # Linux Device
+  - device_id: "linux_device_1"                # Must match --client-id
+    server_url: "ws://localhost:5001/ws"       # Must match server WebSocket URL
     os: "linux"
     capabilities:
-      - "python_execution"
-      - "data_processing"
-      - "gpu_compute"
+      - "server_management"
+      - "log_analysis"
+      - "file_operations"
+      - "database_operations"
     metadata:
-      gpu: "NVIDIA A100"
-      performance: "very_high"
+      os: "linux"
+      performance: "medium"
+      logs_file_path: "/var/log/myapp/app.log"
+      dev_path: "/home/user/projects/"
+      warning_log_pattern: "WARN"
+      error_log_pattern: "ERROR|FATAL"
+      description: "Development server for backend operations"
     auto_connect: true
+    max_retries: 5
 ```
 
-### 🖥️ Step 4: Start Device Agents
+> **⚠️ Critical: IDs and URLs Must Match**
+> - `device_id` **must exactly match** the `--client-id` flag
+> - `server_url` **must exactly match** the server WebSocket URL
+> - Otherwise, Galaxy cannot control the device!
 
-On each device, launch the Agent Server:
+### 🖥️ Step 5: Start Device Agents
 
-**Windows Device:**
+Galaxy orchestrates **device agents** that execute tasks on individual machines. You need to start the appropriate device agents based on your needs.
+
+#### Example: Quick Windows Device Setup
+
+**On your Windows machine:**
+
 ```powershell
-# Start UFO² Agent Server
-python -m ufo --mode agent-server --port 5005
+# Terminal 1: Start UFO² Server
+python -m ufo.server.app --port 5000
+
+# Terminal 2: Start UFO² Client (connect to server)
+python -m ufo.client.client `
+  --ws `
+  --ws-server ws://localhost:5000/ws `
+  --client-id windows_device_1 `
+  --platform windows
 ```
 
-**Linux Device:**
+> **⚠️ Important: Platform Flag Required**
+> Always include `--platform windows` for Windows devices and `--platform linux` for Linux devices!
+
+#### Example: Quick Linux Device Setup
+
+**On your Linux machine:**
+
 ```bash
-# Start Agent Server
-python -m ufo --mode agent-server --port 5001
+# Terminal 1: Start Device Agent Server
+python -m ufo.server.app --port 5001
+
+# Terminal 2: Start Linux Client (connect to server)
+python -m ufo.client.client \
+  --ws \
+  --ws-server ws://localhost:5001/ws \
+  --client-id linux_device_1 \
+  --platform linux
+
+# Terminal 3: Start HTTP MCP Server (for Linux tools)
+python -m ufo.client.mcp.http_servers.linux_mcp_server
 ```
 
-### 🌌 Step 5: Launch Galaxy Client
+**📖 Detailed Setup Instructions:**
+- **For Windows devices (UFO²):** See [UFO² as Galaxy Device](../documents/docs/ufo2/as_galaxy_device.md)
+- **For Linux devices:** See [Linux as Galaxy Device](../documents/docs/linux/as_galaxy_device.md)
+
+### 🌌 Step 6: Launch Galaxy Client
 
 **Interactive Mode:**
 ```powershell
@@ -456,6 +614,16 @@ If you use UFO³ Galaxy in your research, please cite:
   author  = {Zhang, Chaoyun and Huang, He and Ni, Chiming and Mu, Jian and Qin, Si and He, Shilin and Wang, Lu and Yang, Fangkai and Zhao, Pu and Du, Chao and Li, Liqun and Kang, Yu and Jiang, Zhao and Zheng, Suzhen and Wang, Rujia and Qian, Jiaxu and Ma, Minghua and Lou, Jian-Guang and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei},
   journal = {arXiv preprint arXiv:2504.14603},
   year    = {2025}
+}
+```
+
+**First UFO:**
+```bibtex
+@article{zhang2024ufo,
+  title   = {{UFO: A UI-Focused Agent for Windows OS Interaction}},
+  author  = {Zhang, Chaoyun and Li, Liqun and He, Shilin and Zhang, Xu and Qiao, Bo and Qin, Si and Ma, Minghua and Kang, Yu and Lin, Qingwei and Rajmohan, Saravan and Zhang, Dongmei and Zhang, Qi},
+  journal = {arXiv preprint arXiv:2402.07939},
+  year    = {2024}
 }
 ```
 

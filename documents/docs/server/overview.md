@@ -1,7 +1,7 @@
 # Agent Server Overview
 
-!!!quote "The Control Tower of UFO²"
-    The **Agent Server** is the central orchestration engine that transforms UFO² into a distributed multi-agent system, enabling seamless task coordination across heterogeneous devices through persistent WebSocket connections and robust state management.
+
+The **Agent Server** is the central orchestration engine that transforms UFO² into a distributed multi-agent system, enabling seamless task coordination across heterogeneous devices through persistent WebSocket connections and robust state management.
 
 !!!tip "Quick Start"
     New to the Agent Server? Start with the [Quick Start Guide](./quick_start.md) to get up and running in minutes.

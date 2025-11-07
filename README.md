@@ -40,7 +40,7 @@
 <tr>
 <td width="50%" valign="top">
 
-### 🌌 **Galaxy** – Multi-Device Orchestration
+### <img src="assets/logo3.png" alt="Galaxy logo" width="40" style="vertical-align: -10px;"> **Galaxy** – Multi-Device Orchestration
 <sub>**✨ NEW & RECOMMENDED**</sub>
 
 **Perfect for:**
@@ -58,7 +58,7 @@
 
 **Get Started:**
 ```bash
-python -m ufo.galaxy \
+python -m galaxy \
   --request "Your complex task"
 ```
 
@@ -68,7 +68,7 @@ python -m ufo.galaxy \
 </td>
 <td width="50%" valign="top">
 
-### 🪟 **UFO² Desktop AgentOS** – Windows Agent
+### <img src="assets/ufo_blue.png" alt="UFO² logo" width="30" style="vertical-align: -5px;"> **UFO² Desktop AgentOS** – Windows AgentOS
 <sub>**STABLE & BATTLE-TESTED**</sub>
 
 **Perfect for:**
@@ -109,6 +109,25 @@ python -m ufo \
 | Production-ready stability? | 🚧 Active Dev | ✅ LTS |
 
 </div>
+
+---
+
+## 🎬 See UFO³ Galaxy in Action
+
+Watch how UFO³ Galaxy orchestrates complex workflows across multiple devices:
+
+<div align="center">
+  <a href="YOUR_YOUTUBE_VIDEO_URL_HERE">
+    <img src="https://img.youtube.com/vi/VIDEO_ID_HERE/maxresdefault.jpg" alt="UFO³ Galaxy Demo" width="80%">
+  </a>
+  <p><em>🎥 Click to watch: Cross-device task orchestration with UFO³ Galaxy</em></p>
+</div>
+
+**What you'll see in the demo:**
+- 🌟 Task constellation creation from natural language requests
+- 🎯 Intelligent device assignment based on capabilities
+- ⚡ Parallel execution across Windows and Linux devices
+- 📊 Real-time monitoring and dynamic workflow adaptation
 
 ---
 
@@ -156,7 +175,7 @@ UFO³ introduces **Galaxy**, a novel multi-device orchestration framework that c
 1. ✅ **Keep using UFO²** – Fully supported, actively maintained
 2. 🔄 **Gradual adoption** – Galaxy can use UFO² as Windows device agent
 3. 📈 **Scale up** – Move to Galaxy when you need multi-device capabilities
-4. 📚 **Learning resources** – [Migration Guide](./docs/migration_guide.md)
+4. 📚 **Learning resources** – [Migration Guide](./documents/docs/getting_started/migration_ufo2_to_galaxy.md)
 
 ---
 
@@ -227,11 +246,18 @@ Task Execution Monitor:
 </table>
 
 **Key Innovations from [UFO³ Paper](https://arxiv.org/abs/[TBD]):**
-- **Constellation-based Planning**: Decomposes complex requests into executable DAG workflows
-- **Heterogeneous Device Integration**: Seamlessly orchestrates Windows, Linux, macOS, Android, and Web
-- **Event-Driven Architecture**: Real-time monitoring and adaptive execution with observer pattern
-- **Intelligent Device Assignment**: Capability matching and dynamic resource allocation
-- **Fault Tolerance**: Automatic error detection, recovery, and task rescheduling
+
+<div align="center">
+
+| 🎯 Innovation | 💡 Description | 🚀 Impact |
+|---------------|----------------|-----------|
+| **🌟 Constellation Planning** | Decomposes complex requests into executable DAG workflows with task dependencies | Enables automated parallel execution and intelligent scheduling |
+| **🌐 Heterogeneous Integration** | Seamless orchestration across Windows, Linux, macOS, Android, and Web platforms | Break free from single-platform limitations |
+| **⚡ Event-Driven Architecture** | Real-time monitoring and adaptive execution with observer pattern | Dynamic workflow adjustments based on runtime feedback |
+| **🎯 Intelligent Assignment** | Capability-based matching and dynamic resource allocation to optimal devices | Maximizes efficiency through smart device selection |
+| **🛡️ Fault Tolerance** | Automatic error detection, recovery, and task rescheduling mechanisms | Ensures workflow completion despite device failures |
+
+</div>
 
 ### 🪟 UFO² Desktop AgentOS – Core Strengths
 
@@ -274,12 +300,18 @@ Choose your path and follow the detailed setup guide:
 # 1. Install
 pip install -r requirements.txt
 
-# 2. Configure
-copy config\galaxy\agents.yaml.template config\galaxy\agents.yaml
+# 2. Configure ConstellationAgent
+copy config\galaxy\agent.yaml.template config\galaxy\agent.yaml
 # Edit and add your API keys
 
-# 3. Start device agents
-python -m ufo --mode agent-server --port 5005
+# 3. Start device agents (with platform flags)
+# Windows:
+python -m ufo.server.app --port 5000
+python -m ufo.client.client --ws --ws-server ws://localhost:5000/ws --client-id windows_device_1 --platform windows
+
+# Linux:
+python -m ufo.server.app --port 5001
+python -m ufo.client.client --ws --ws-server ws://localhost:5001/ws --client-id linux_device_1 --platform linux
 
 # 4. Launch Galaxy
 python -m galaxy --interactive
@@ -325,6 +357,17 @@ Both frameworks require LLM API configuration. Choose your provider:
 <details>
 <summary><strong>OpenAI Configuration</strong></summary>
 
+**For Galaxy (`config/galaxy/agent.yaml`):**
+```yaml
+CONSTELLATION_AGENT:
+  REASONING_MODEL: false
+  API_TYPE: "openai"
+  API_BASE: "https://api.openai.com/v1/chat/completions"
+  API_KEY: "sk-your-key-here"
+  API_MODEL: "gpt-4o"
+```
+
+**For UFO² (`config/ufo/agents.yaml`):**
 ```yaml
 VISUAL_MODE: True
 API_TYPE: "openai"
@@ -338,6 +381,18 @@ API_MODEL: "gpt-4o"
 <details>
 <summary><strong>Azure OpenAI Configuration</strong></summary>
 
+**For Galaxy (`config/galaxy/agent.yaml`):**
+```yaml
+CONSTELLATION_AGENT:
+  REASONING_MODEL: false
+  API_TYPE: "aoai"
+  API_BASE: "https://YOUR-RESOURCE.openai.azure.com"
+  API_KEY: "your-azure-key"
+  API_MODEL: "gpt-4o"
+  API_DEPLOYMENT_ID: "your-deployment-id"
+```
+
+**For UFO² (`config/ufo/agents.yaml`):**
 ```yaml
 VISUAL_MODE: True
 API_TYPE: "aoai"
@@ -426,7 +481,7 @@ API_DEPLOYMENT_ID: "your-deployment-id"
    └─ Use Galaxy for complex tasks, UFO² for simple ones
    
 4. 📖 Follow migration guide when ready
-   └─ [docs/migration_guide.md](./docs/migration_guide.md)
+   └─ [Migration Guide](./documents/docs/getting_started/migration_ufo2_to_galaxy.md)
 ```
 
 ### For Advanced Users
@@ -613,7 +668,7 @@ Migration is **gradual and optional**:
 
 **No forced migration!** Continue using UFO² as long as it meets your needs.
 
-See [Migration Guide](./docs/migration_guide.md) for details.
+See [Migration Guide](./documents/docs/getting_started/migration_ufo2_to_galaxy.md) for details.
 
 </details>
 

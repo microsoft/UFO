@@ -28,7 +28,7 @@ UFO³ offers two complementary frameworks for intelligent automation:
 <td width="50%" valign="top">
 
 ### 🌌 **Galaxy** – Multi-Device Orchestration
-<sub>**✨ NEW & CUTTING-EDGE**</sub>
+<sub>**✨ NEW & RECOMMENDED**</sub>
 
 **Perfect for:**
 - 🔗 Cross-device collaboration workflows
@@ -54,7 +54,7 @@ python -m galaxy --interactive
 </td>
 <td width="50%" valign="top">
 
-### 🪟 **UFO² Desktop AgentOS** – Windows Agent
+### 🪟 **UFO² Desktop AgentOS** – Windows AgentOS
 <sub>**STABLE & BATTLE-TESTED**</sub>
 
 **Perfect for:**
@@ -293,14 +293,24 @@ Choose your path and follow the detailed setup guide:
 # 1. Install
 pip install -r requirements.txt
 
-# 2. Configure
-copy config\galaxy\agents.yaml.template config\galaxy\agents.yaml
+# 2. Configure ConstellationAgent
+copy config\galaxy\agent.yaml.template config\galaxy\agent.yaml
 # Edit and add your API keys
 
-# 3. Start device agents
-python -m ufo --mode agent-server --port 5005
+# 3. Configure Device Agents
+copy config\ufo\agents.yaml.template config\ufo\agents.yaml
+# Edit and add your device agent LLM API keys
 
-# 4. Launch Galaxy
+# 4. Start device agents (with platform flags)
+# Windows:
+python -m ufo.server.app --port 5000
+python -m ufo.client.client --ws --ws-server ws://localhost:5000/ws --client-id windows_device_1 --platform windows
+
+# Linux:
+python -m ufo.server.app --port 5001
+python -m ufo.client.client --ws --ws-server ws://localhost:5001/ws --client-id linux_device_1 --platform linux
+
+# 5. Launch Galaxy
 python -m galaxy --interactive
 ```
 
@@ -332,54 +342,6 @@ python -m ufo --task <task_name>
 - [UFO² Quick Start](getting_started/quick_start_ufo2.md) – Step-by-step tutorial
 - [UFO² Overview](ufo2/overview.md) – Full documentation
 - [Advanced Features](ufo2/core_features/overview.md) – Multi-action, RAG
-
-</td>
-</tr>
-</table>
-
----
-
-## 📚 Documentation Structure
-
-<table>
-<tr>
-<td width="50%" valign="top">
-
-### 🌌 Galaxy Documentation
-
-- **[Galaxy Framework Overview](galaxy/overview.md)** ⭐ **Start Here** – Architecture & technical concepts
-- **[Quick Start Tutorial](getting_started/quick_start_galaxy.md)** – Get running in minutes
-- **[Galaxy Client](galaxy/client/overview.md)** – Device coordination and API
-- **[Constellation Agent](galaxy/constellation_agent/overview.md)** – Task decomposition and planning
-- **[Task Orchestrator](galaxy/constellation_orchestrator/overview.md)** – Execution engine
-- **[Task Constellation](galaxy/constellation/overview.md)** – DAG structure
-- **[Agent Registration](galaxy/agent_registration/overview.md)** – Device registry
-- **[Configuration Guide](configuration/system/galaxy_devices.md)** – Setup and device pools
-
-**📖 Technical Documentation:**
-- [AIP Protocol](aip/overview.md) – WebSocket messaging
-- [Session Management](galaxy/session/overview.md) – Session lifecycle
-- [Visualization](galaxy/visualization/overview.md) – Real-time monitoring
-- [Events & Observers](galaxy/core/overview.md) – Event system
-
-</td>
-<td width="50%" valign="top">
-
-### 🪟 UFO² Documentation
-
-- **[UFO² Overview](ufo2/overview.md)** – Desktop AgentOS architecture
-- **[Quick Start](getting_started/quick_start_ufo2.md)** – Setup & basic usage
-- **[HostAgent](ufo2/host_agent/overview.md)** – Desktop orchestrator
-- **[AppAgent](ufo2/app_agent/overview.md)** – Application executor
-- **[Hybrid Actions](ufo2/core_features/hybrid_actions.md)** – GUI–API execution
-- **[Control Detection](ufo2/core_features/control_detection/overview.md)** – UIA + visual grounding
-- **[Knowledge Substrate](ufo2/core_features/knowledge_substrate/overview.md)** – RAG-enhanced learning
-- **[Multi-Action](ufo2/core_features/multi_action.md)** – Speculative execution
-
-**📖 Advanced Topics:**
-- [Agent Architecture](infrastructure/agents/overview.md) – Three-layer design
-- [MCP Integration](mcp/overview.md) – Model Context Protocol
-- [Benchmarks](ufo2/evaluation/benchmark/overview.md) – WAA & OSWorld results
 
 </td>
 </tr>
@@ -633,9 +595,56 @@ If you use UFO³ Galaxy or UFO² in your research, please cite the relevant pape
 
 ---
 
-<sub>© Microsoft 2025 | UFO³ is an open-source research project</sub>
+## 📖 Where to Go Next?
 
-<sub>⭐ Star us on GitHub | 🤝 Contribute | 📖 Read the docs | 💬 Join discussions</sub>
+### 🆕 New to UFO³?
+
+**Start here based on your needs:**
+
+<div align="center">
+
+| If you want to... | Go to... |
+|-------------------|----------|
+| 🌌 **Orchestrate multi-device workflows** | [Galaxy Quick Start →](getting_started/quick_start_galaxy.md) |
+| 🪟 **Automate Windows tasks** | [UFO² Quick Start →](getting_started/quick_start_ufo2.md) |
+| 📚 **Understand Galaxy architecture** | [Galaxy Overview →](galaxy/overview.md) |
+| 📚 **Understand UFO² architecture** | [UFO² Overview →](ufo2/overview.md) |
+| 🤔 **Decide which framework to use** | [Comparison Guide →](#-choose-your-path) *(above)* |
+| 🔧 **Configure LLM providers** | [Model Configuration →](configuration/models/overview.md) |
+| 🎯 **See example workflows** | [Gallery →](gallery/overview.md) |
+
+</div>
+
+### 📘 Essential Guides
+
+**Galaxy Framework:**
+- [Quick Start Guide](getting_started/quick_start_galaxy.md) - Get started in 10 minutes
+- [Galaxy Overview](galaxy/overview.md) - Core concepts and architecture
+- [Device Setup](configuration/system/galaxy_devices.md) - Configure your device pool
+- [Constellation Agent](galaxy/constellation_agent/overview.md) - Task planning and decomposition
+
+**UFO² Desktop AgentOS:**
+- [Quick Start Guide](getting_started/quick_start_ufo2.md) - Windows automation basics
+- [UFO² Overview](ufo2/overview.md) - Architecture and capabilities
+- [Hybrid Actions](ufo2/core_features/hybrid_actions.md) - GUI + API automation
+- [Knowledge Substrate](ufo2/core_features/knowledge_substrate/overview.md) - RAG enhancement
+
+### 🔧 Configuration & Setup
+
+- [Galaxy Devices Configuration](configuration/system/galaxy_devices.md) - Device pool and capabilities
+- [Agent Configuration](configuration/system/agents_config.md) - LLM settings for all agents
+- [Model Configuration](configuration/models/overview.md) - Supported LLM providers
+- [UFO² as Galaxy Device](ufo2/as_galaxy_device.md) - Windows device agent setup
+- [Linux as Galaxy Device](linux/as_galaxy_device.md) - Linux device agent setup
+
+### 🎓 Advanced Topics
+
+- [Task Constellation](galaxy/constellation/task_constellation.md) - DAG-based workflows
+- [Constellation Orchestrator](galaxy/constellation_orchestrator/overview.md) - Execution engine
+- [Agent Interaction Protocol (AIP)](aip/overview.md) - WebSocket communication
+- [Multi-Action Execution](ufo2/core_features/multi_action.md) - Batch predictions
+
+---
 
 </div>
 

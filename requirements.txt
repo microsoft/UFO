@@ -5,6 +5,7 @@ langchain_community==0.3.29
 msal==1.31.0
 openai==1.66.2
 Pillow==11.3.0
+PyPDF2==3.0.1
 protobuf==3.20.3
 pywin32>=310
 pywinauto==0.6.8

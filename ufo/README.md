@@ -560,7 +560,7 @@ The UFO² team is actively working on the following features and improvements:
 
 
 ## ⚠️ Disclaimer
-By choosing to run the provided code, you acknowledge and agree to the following terms and conditions regarding the functionality and data handling practices in [DISCLAIMER.md](./DISCLAIMER.md)
+By choosing to run the provided code, you acknowledge and agree to the following terms and conditions regarding the functionality and data handling practices in [DISCLAIMER.md](../DISCLAIMER.md)
 
 
 ## <img src="../assets/ufo_blue.png" alt="logo" width="30"> Trademarks
