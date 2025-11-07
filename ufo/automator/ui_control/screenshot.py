@@ -6,13 +6,20 @@ import functools
 import logging
 import mimetypes
 import os
+import platform
 from abc import ABC, abstractmethod
 from io import BytesIO
-from typing import Dict, List, Optional, Tuple, TYPE_CHECKING
+from typing import Dict, List, Optional, Tuple, TYPE_CHECKING, Any
 
 from PIL import Image, ImageDraw, ImageFont, ImageGrab
-from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto.win32structures import RECT
+
+# Conditional imports for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+    from pywinauto.win32structures import RECT
+else:
+    UIAWrapper = Any
+    RECT = Any
 
 from ufo import utils
 from config.config_loader import get_ufo_config

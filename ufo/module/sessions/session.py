@@ -4,11 +4,18 @@
 import json
 import logging
 import os
+import platform
 import time
-from typing import Optional
+from typing import Optional, TYPE_CHECKING
 
 import psutil
-import win32com.client
+
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    import win32com.client
+else:
+    win32com = None
+
 from rich.console import Console
 
 from ufo import utils

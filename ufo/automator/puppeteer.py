@@ -2,10 +2,15 @@
 # Licensed under the MIT License.
 
 import os
+import platform
 from collections import deque
 from typing import TYPE_CHECKING, Any, Deque, Dict, List, Optional, Type, Union
 
-from pywinauto.controls.uiawrapper import UIAWrapper
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+else:
+    UIAWrapper = Any
 
 from ufo.automator.app_apis.basic import WinCOMReceiverBasic
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory

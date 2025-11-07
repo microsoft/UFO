@@ -5,10 +5,14 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from enum import Enum
 import logging
+import platform
 from typing import Any, Dict, List, Optional, Type, Union, TYPE_CHECKING
 
-
-from pywinauto.controls.uiawrapper import UIAWrapper
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+else:
+    UIAWrapper = None
 
 from ufo.module.dispatcher import BasicCommandDispatcher
 from ufo.utils import is_json_serializable

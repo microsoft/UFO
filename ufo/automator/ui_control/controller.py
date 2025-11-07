@@ -2,16 +2,25 @@
 # Licensed under the MIT License.
 
 import logging
+import platform
 import time
 import warnings
 from abc import abstractmethod
-from typing import Any, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union, TYPE_CHECKING
 
-import pyautogui
-import pywinauto
-from pywinauto import keyboard
-from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto.win32structures import RECT
+# Conditional imports for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    import pyautogui
+    import pywinauto
+    from pywinauto import keyboard
+    from pywinauto.controls.uiawrapper import UIAWrapper
+    from pywinauto.win32structures import RECT
+else:
+    pyautogui = None
+    pywinauto = None
+    keyboard = None
+    UIAWrapper = Any
+    RECT = Any
 
 from config.config_loader import get_ufo_config
 from ufo.automator.basic import CommandBasic, ReceiverBasic, ReceiverFactory
@@ -20,14 +29,17 @@ from ufo.automator.puppeteer import ReceiverManager
 ufo_config = get_ufo_config()
 logger = logging.getLogger(__name__)
 
-if (
-    hasattr(ufo_config.system, "after_click_wait")
-    and ufo_config.system.after_click_wait is not None
-):
-    pywinauto.timings.Timings.after_clickinput_wait = ufo_config.system.after_click_wait
-    pywinauto.timings.Timings.after_click_wait = ufo_config.system.after_click_wait
+if platform.system() == "Windows" and pywinauto:
+    if (
+        hasattr(ufo_config.system, "after_click_wait")
+        and ufo_config.system.after_click_wait is not None
+    ):
+        pywinauto.timings.Timings.after_clickinput_wait = (
+            ufo_config.system.after_click_wait
+        )
+        pywinauto.timings.Timings.after_click_wait = ufo_config.system.after_click_wait
 
-pyautogui.FAILSAFE = False
+    pyautogui.FAILSAFE = False
 
 
 class ControlReceiver(ReceiverBasic):

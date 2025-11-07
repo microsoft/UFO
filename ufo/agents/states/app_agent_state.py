@@ -4,9 +4,8 @@
 from __future__ import annotations
 
 from enum import Enum
-from typing import TYPE_CHECKING, Dict, Optional, Type
+from typing import TYPE_CHECKING, Dict, Optional, Type, Any
 
-from pyparsing import Any
 
 from ufo.agents.agent.basic import BasicAgent
 from ufo.agents.states.basic import AgentState, AgentStateManager

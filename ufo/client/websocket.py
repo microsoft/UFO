@@ -67,11 +67,23 @@ class UFOWebSocketClient:
         Connect to the FastAPI WebSocket server and listen for incoming messages.
         Automatically retries on failure.
         """
-        while self.retry_count < self.max_retries:
+        while True:  # Infinite loop - retry logic is in _maybe_retry
             try:
+                # Check retry limit before attempting connection
+                if self.retry_count >= self.max_retries:
+                    self.logger.error(
+                        f"[WS] ❌ Max retries ({self.max_retries}) reached. Exiting."
+                    )
+                    break
+
                 self.logger.info(
                     f"[WS] Connecting to {self.ws_url} (attempt {self.retry_count + 1}/{self.max_retries})"
                 )
+
+                # Reset connection state before attempting to connect
+                self.connected_event.clear()
+                self._ws = None
+
                 async with websockets.connect(
                     self.ws_url,
                     ping_interval=20,  # Reduced to 20s for more frequent keepalive
@@ -88,20 +100,37 @@ class UFOWebSocketClient:
                     self.task_protocol = TaskExecutionProtocol(self.transport)
 
                     await self.register_client()
-                    self.retry_count = 0
+                    self.retry_count = 0  # Reset retry count on successful connection
                     await self.handle_messages()
+
             except (
+                websockets.ConnectionClosed,  # Base class for all connection closed exceptions
                 websockets.ConnectionClosedError,
                 websockets.ConnectionClosedOK,
             ) as e:
-                self.logger.error(f"[WS] Connection closed: {e}")
+                self.logger.warning(f"[WS] Connection closed: {e}. Will retry.")
+                self.connected_event.clear()
                 self.retry_count += 1
                 await self._maybe_retry()
+                # Loop continues automatically
+
+            except (asyncio.TimeoutError, asyncio.CancelledError) as e:
+                self.logger.warning(
+                    f"[WS] Connection timeout/cancelled: {e}. Will retry."
+                )
+                self.connected_event.clear()
+                self.retry_count += 1
+                await self._maybe_retry()
+                # Loop continues automatically
+
             except Exception as e:
-                self.logger.error(f"[WS] Unexpected error: {e}", exc_info=True)
+                self.logger.error(
+                    f"[WS] Unexpected error: {e}. Will retry.", exc_info=True
+                )
+                self.connected_event.clear()
                 self.retry_count += 1
                 await self._maybe_retry()
-        self.logger.error("[WS] Max retries reached. Exiting.")
+                # Loop continues automatically
 
     async def register_client(self):
         """
@@ -154,7 +183,7 @@ class UFOWebSocketClient:
 
         if success:
             self.connected_event.set()
-            self.logger.info(
+            self.logger.warning(
                 f"[WS] [AIP] ✅ Successfully registered as {self.ufo_client.client_id}"
             )
         else:
@@ -166,16 +195,55 @@ class UFOWebSocketClient:
     async def handle_messages(self):
         """
         Listen for messages from server and dispatch them.
+        When either recv_loop or heartbeat_loop fails, both will be cancelled.
         """
-        await asyncio.gather(self.recv_loop(), self.heartbeat_loop(self.timeout))
+        recv_task = asyncio.create_task(self.recv_loop(), name="recv_loop")
+        heartbeat_task = asyncio.create_task(
+            self.heartbeat_loop(self.timeout), name="heartbeat_loop"
+        )
+
+        try:
+            # Wait for the first task to complete (which means it failed)
+            done, pending = await asyncio.wait(
+                [recv_task, heartbeat_task], return_when=asyncio.FIRST_COMPLETED
+            )
+
+            # Cancel remaining tasks
+            for task in pending:
+                task.cancel()
+                try:
+                    await task
+                except asyncio.CancelledError:
+                    pass
+
+            # Check if any completed task raised an exception
+            for task in done:
+                if task.exception() is not None:
+                    exc = task.exception()
+                    self.logger.warning(f"[WS] {task.get_name()} failed with: {exc}")
+                    raise exc
+
+        except Exception as e:
+            self.logger.warning(f"[WS] Message handling stopped: {e}")
+            # Clean up connection state
+            self.connected_event.clear()
+            # Re-raise to trigger reconnection in connect_and_listen
+            raise
 
     async def recv_loop(self):
         """
         Listen for incoming messages from the WebSocket.
         """
-        while True:
-            msg = await self._ws.recv()
-            await self.handle_message(msg)
+        try:
+            while True:
+                msg = await self._ws.recv()
+                await self.handle_message(msg)
+        except websockets.ConnectionClosed as e:
+            self.logger.warning(f"[WS] recv_loop: Connection closed: {e}")
+            raise
+        except Exception as e:
+            self.logger.error(f"[WS] recv_loop error: {e}", exc_info=True)
+            raise
 
     async def heartbeat_loop(self, interval: float = 30) -> None:
         """
@@ -323,11 +391,19 @@ class UFOWebSocketClient:
     async def _maybe_retry(self):
         """
         Exponential backoff before retrying connection.
+        Only waits if we haven't exceeded max retries.
         """
         if self.retry_count < self.max_retries:
             wait_time = 2**self.retry_count
-            self.logger.info(f"[WS] Retrying in {wait_time}s...")
+            self.logger.info(
+                f"[WS] 🔄 Reconnecting in {wait_time}s... "
+                f"(attempt {self.retry_count}/{self.max_retries})"
+            )
             await asyncio.sleep(wait_time)
+        else:
+            self.logger.warning(
+                f"[WS] ⚠️ Retry limit reached ({self.retry_count}/{self.max_retries})"
+            )
 
     def is_connected(self) -> bool:
         """

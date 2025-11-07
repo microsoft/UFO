@@ -10,6 +10,19 @@ Provides two MCP servers:
 Both servers share the same UI state for coordinated operations.
 """
 
+import platform
+import sys
+
+# Platform check - this module requires Windows
+if platform.system() != "Windows":
+    import logging
+
+    logging.warning(
+        f"word_wincom_mcp_server.py requires Windows platform. Current: {platform.system()}. Skipping module initialization."
+    )
+    # Exit module loading gracefully
+    sys.exit(0)
+
 from typing import Annotated, Any, Dict, Optional
 
 from fastmcp import FastMCP

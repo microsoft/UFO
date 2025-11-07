@@ -17,11 +17,17 @@ For more details definition of the state pattern, please refer to the state.py m
 import json
 import logging
 import os
+import platform
 import time
 from abc import ABC, abstractmethod
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, TYPE_CHECKING, Any
 
-from pywinauto.controls.uiawrapper import UIAWrapper
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+else:
+    UIAWrapper = Any
+
 from rich.console import Console
 
 from ufo import utils

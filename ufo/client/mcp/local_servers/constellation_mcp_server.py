@@ -12,7 +12,7 @@ Provides comprehensive MCP server for TaskConstellation operations:
 """
 
 from pydantic import Field
-from typing import Annotated, Dict, List, Optional
+from typing import Annotated, List, Optional
 
 from fastmcp import FastMCP
 from fastmcp.exceptions import ToolError

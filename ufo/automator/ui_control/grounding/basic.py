@@ -2,17 +2,26 @@
 # Licensed under the MIT License.
 
 from abc import ABC, abstractmethod
+import platform
 from typing import TYPE_CHECKING, Any, Dict, List
 
-from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto.uia_element_info import UIAElementInfo
-from pywinauto.win32structures import RECT
+# Conditional imports for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+    from pywinauto.uia_element_info import UIAElementInfo
+    from pywinauto.win32structures import RECT
+else:
+    UIAWrapper = Any
+    UIAElementInfo = Any
+    RECT = Any
 
 from ufo.agents.processors.schemas.target import TargetInfo
 from ufo.llm.base import BaseService
 
 
-class VirtualUIAElementInfo(UIAElementInfo):
+class VirtualUIAElementInfo(
+    UIAElementInfo if platform.system() == "Windows" else object
+):
     """
     A virtual UIA element that can be used for testing purposes.
     This class is a subclass of UIAElementInfo, which is used to represent UIA elements in pywinauto.

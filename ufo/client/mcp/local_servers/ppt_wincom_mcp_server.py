@@ -7,6 +7,19 @@ PowerPoint MCP Server
 Provides MCP server for PowerPoint automation operations.
 """
 
+import platform
+import sys
+
+# Platform check - this module requires Windows
+if platform.system() != "Windows":
+    import logging
+
+    logging.warning(
+        f"ppt_wincom_mcp_server.py requires Windows platform. Current: {platform.system()}. Skipping module initialization."
+    )
+    # Exit module loading gracefully
+    sys.exit(0)
+
 from typing import Annotated, Any, Dict, List, Optional
 
 from fastmcp import FastMCP

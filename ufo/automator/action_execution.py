@@ -2,9 +2,14 @@
 # Licensed under the MIT License.
 
 import logging
-from typing import Any, Dict, Optional
+import platform
+from typing import Any, Dict, Optional, TYPE_CHECKING
 
-from pywinauto.controls.uiawrapper import UIAWrapper
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+else:
+    UIAWrapper = Any
 
 from ufo import utils
 from ufo.agents.processors.schemas.actions import ActionCommandInfo, BaseControlLog

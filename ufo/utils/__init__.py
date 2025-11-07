@@ -9,12 +9,17 @@ import json
 import logging
 import mimetypes
 import os
-from typing import Optional, Any, Dict, Tuple
+import platform
+from typing import Optional, Any, Dict, Tuple, TYPE_CHECKING
 from PIL import Image
 
 from colorama import Fore, Style, init
 
-from pywinauto.win32structures import RECT
+# Conditional import for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.win32structures import RECT
+else:
+    RECT = Any
 
 
 # init colorama

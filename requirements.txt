@@ -1,14 +1,15 @@
 art==6.1
 colorama==0.4.6
+matplotlib==3.10.7
 langchain==0.3.27
 langchain_community==0.3.29
 msal==1.31.0
 openai==1.66.2
 Pillow==11.3.0
-PyPDF2==3.0.1
+PyPDF2==3.0.1; sys_platform == 'win32'
 protobuf==3.20.3
-pywin32>=310
-pywinauto==0.6.8
+pywin32>=310; sys_platform == 'win32'
+pywinauto==0.6.8; sys_platform == 'win32'
 PyYAML==6.0.1
 requests==2.32.5
 faiss-cpu==1.8.0
@@ -20,8 +21,8 @@ sentence-transformers==2.6.0
 langchain_huggingface==0.3.1
 pandas==1.4.3
 html2text==2024.2.26
-pyautogui==0.9.54
-uiautomation==2.0.18
+pyautogui==0.9.54; sys_platform == 'win32'
+uiautomation==2.0.18; sys_platform == 'win32'
 ##For removing stopwords
 #nltk==3.8.1
 ##For Gemini
@@ -39,7 +40,7 @@ fastapi==0.116.1
 fastmcp==2.11.3
 uvicorn==0.35.0
 websockets==12.0
-comtypes==1.2.0
+comtypes==1.2.0; sys_platform == 'win32'
 anthropic==0.64.0
 gradio_client==1.12.1
 jsonschema==4.25.1

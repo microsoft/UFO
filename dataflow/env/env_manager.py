@@ -1,12 +1,19 @@
 import logging
+import platform
 import re
 from time import sleep
-from typing import Optional, Tuple, Dict
+from typing import Optional, Tuple, Dict, TYPE_CHECKING, Any
 import psutil
 
 from fuzzywuzzy import fuzz
-from pywinauto import Desktop
-from pywinauto.controls.uiawrapper import UIAWrapper
+
+# Conditional imports for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto import Desktop
+    from pywinauto.controls.uiawrapper import UIAWrapper
+else:
+    Desktop = None
+    UIAWrapper = Any
 
 from dataflow.config.config import Config
 from ufo.config import Config as UFOConfig

@@ -4,18 +4,29 @@
 from __future__ import annotations
 
 import functools
+import platform
 import time
 from abc import ABC, abstractmethod
-from typing import Callable, Dict, List, Optional, cast
+from typing import Callable, Dict, List, Optional, cast, TYPE_CHECKING, Any
 
-import comtypes.gen.UIAutomationClient as UIAutomationClient_dll
 import psutil
-import pywinauto
-import pywinauto.uia_defines
-import uiautomation as auto
-from pywinauto import Desktop
-from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto.uia_element_info import UIAElementInfo
+
+# Conditional imports for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    import comtypes.gen.UIAutomationClient as UIAutomationClient_dll
+    import pywinauto
+    import pywinauto.uia_defines
+    import uiautomation as auto
+    from pywinauto import Desktop
+    from pywinauto.controls.uiawrapper import UIAWrapper
+    from pywinauto.uia_element_info import UIAElementInfo
+else:
+    UIAutomationClient_dll = None
+    pywinauto = None
+    auto = None
+    Desktop = None
+    UIAWrapper = Any
+    UIAElementInfo = Any
 
 
 class BackendFactory:

@@ -5,10 +5,16 @@ import json
 import logging
 import os
 import ast
-from typing import Any, Dict, List
+import platform
+from typing import Any, Dict, List, TYPE_CHECKING
 
-from pywinauto.controls.uiawrapper import UIAWrapper
-from pywinauto.win32structures import RECT
+# Conditional imports for Windows-specific packages
+if TYPE_CHECKING or platform.system() == "Windows":
+    from pywinauto.controls.uiawrapper import UIAWrapper
+    from pywinauto.win32structures import RECT
+else:
+    UIAWrapper = Any
+    RECT = Any
 
 from ufo.agents.processors.schemas.target import TargetInfo, TargetKind
 from ufo.automator.ui_control.grounding.basic import BasicGrounding

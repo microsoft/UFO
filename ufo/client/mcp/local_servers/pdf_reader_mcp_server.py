@@ -7,6 +7,19 @@ PDF Reader MCP Server
 Provides MCP server for PDF text extraction operations.
 """
 
+import platform
+import sys
+
+# Platform check - this module requires Windows (uses PyPDF2 which is Windows-only)
+if platform.system() != "Windows":
+    import logging
+
+    logging.warning(
+        f"pdf_reader_mcp_server.py requires Windows platform. Current: {platform.system()}. Skipping module initialization."
+    )
+    # Exit module loading gracefully
+    sys.exit(0)
+
 import os
 import subprocess
 import time

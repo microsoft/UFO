@@ -7,6 +7,19 @@ Excel MCP Server
 Provides MCP server for Excel automation operations.
 """
 
+import platform
+import sys
+
+# Platform check - this module requires Windows
+if platform.system() != "Windows":
+    import logging
+
+    logging.warning(
+        f"excel_wincom_mcp_server.py requires Windows platform. Current: {platform.system()}. Skipping module initialization."
+    )
+    # Exit module loading gracefully
+    sys.exit(0)
+
 from typing import Annotated, Any, Dict, List, Optional, Union
 
 from fastmcp import FastMCP
