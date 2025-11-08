@@ -47,23 +47,32 @@ const App: React.FC = () => {
       <div className="pointer-events-none absolute inset-0 noise-overlay" aria-hidden />
 
       <header className="relative z-20 border-b border-white/5 bg-transparent backdrop-blur-xl">
-        <div className="mx-auto flex max-w-[2000px] items-center justify-between gap-6 px-6 py-4">
-          <div className="flex items-center gap-4">
-            <img
-              src="/logo3.png"
-              alt="UFO3 logo"
-              className="h-16 w-16"
-            />
+        <div className="mx-auto flex max-w-[2000px] items-center justify-between gap-6 px-6 py-3">
+          <div className="flex items-center gap-2">
+            <div className="relative">
+              <div className="absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 blur-xl"></div>
+              <img
+                src="/logo3.png"
+                alt="UFO3 logo"
+                className="relative h-20 w-20 drop-shadow-2xl"
+              />
+            </div>
             <div>
-              <h1 className="font-heading text-2xl font-semibold tracking-tight text-white drop-shadow">
-                UFO<sup className="ml-1 text-lg">3</sup> Galaxy Agent
+              <h1 className="font-heading text-3xl font-bold tracking-tighter drop-shadow-lg">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300">
+                  UFO
+                </span>
+                <sup className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300 ml-0.5">3</sup>
+                {/* <span className="text-transparent bg-clip-text bg-gradient-to-r from-cyan-300 via-white to-purple-300 ml-1.5">
+                    :
+                </span> */}
+                <span className="ml-3 text-xl font-normal tracking-wide text-transparent bg-clip-text bg-gradient-to-r from-cyan-200 via-purple-200 to-cyan-200">
+                  Weaving the Digital Agent Galaxy
+                </span>
               </h1>
-              <p className="text-sm text-slate-300/80">
-                Weaving the Digital Agent Galaxy
-              </p>
             </div>
           </div>
-          <div className="flex items-center gap-4 rounded-full border border-white/10 bg-galaxy-midnight/70 px-5 py-2 backdrop-blur">
+          <div className="flex items-center gap-4 rounded-full border border-white/10 bg-gradient-to-br from-galaxy-midnight/80 to-black/60 px-5 py-2.5 backdrop-blur shadow-lg">
             <span
               className={`h-2.5 w-2.5 rounded-full shadow-neon ${
                 connectionStatus === 'connected'
@@ -85,7 +94,7 @@ const App: React.FC = () => {
         </div>
       </header>
 
-      <main className="relative z-10 mx-auto flex h-[calc(100vh-88px)] max-w-[2000px] gap-4 px-6 pb-6 pt-4">
+      <main className="relative z-10 mx-auto flex h-[calc(100vh-94px)] max-w-[2000px] gap-4 px-6 pb-6 pt-1">
         <div className="hidden xl:flex xl:w-72 2xl:w-80">
           <LeftSidebar />
         </div>

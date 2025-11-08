@@ -1,5 +1,5 @@
 import React from 'react';
-import { RefreshCcw, Rocket } from 'lucide-react';
+import { RefreshCcw, Rocket, Sparkles } from 'lucide-react';
 import { getWebSocketClient } from '../../services/websocket';
 import { useGalaxyStore } from '../../store/galaxyStore';
 
@@ -25,7 +25,8 @@ const SessionControlBar: React.FC = () => {
   return (
     <div className="glass-card flex flex-col gap-4 rounded-3xl p-5 text-sm text-slate-100">
       <div className="flex items-start justify-start">
-        <div>
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-cyan-400" aria-hidden />
           <div className="font-heading text-xl font-semibold tracking-tight text-white">{session.displayName}</div>
         </div>
       </div>

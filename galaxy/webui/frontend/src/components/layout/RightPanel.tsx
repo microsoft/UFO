@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo } from 'react';
 import { shallow } from 'zustand/shallow';
 import clsx from 'clsx';
+import { Network, Star } from 'lucide-react';
 import ConstellationBlock from '../constellation/ConstellationBlock';
 import TaskList from '../tasks/TaskList';
 import TaskDetailPanel from '../tasks/TaskDetailPanel';
@@ -70,6 +71,7 @@ const RightPanel: React.FC = () => {
       <div className="glass-card flex flex-1 min-h-0 flex-col gap-3 rounded-3xl p-4 overflow-hidden">
         <div className="flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
+            <Network className="h-5 w-5 text-purple-400" aria-hidden />
             <div className="font-heading text-xl font-semibold tracking-tight text-white">Constellation Overview</div>
             {activeConstellation && (
               <span className={clsx(
@@ -113,7 +115,10 @@ const RightPanel: React.FC = () => {
         ) : (
           <>
             <div className="flex items-center justify-between flex-shrink-0">
-              <div className="font-heading text-xl font-semibold tracking-tight text-white">TaskStar List</div>
+              <div className="flex items-center gap-2">
+                <Star className="h-5 w-5 text-cyan-400" aria-hidden />
+                <div className="font-heading text-xl font-semibold tracking-tight text-white">TaskStar List</div>
+              </div>
             </div>
             <div className="flex-1 min-h-0 overflow-hidden">
               <TaskList
