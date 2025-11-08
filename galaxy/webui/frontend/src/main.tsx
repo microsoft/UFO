@@ -49,7 +49,7 @@ const stringifyPayload = (payload: any) => {
     
     // Truncate thought field if it exists and is too long
     if (payloadCopy.thought && typeof payloadCopy.thought === 'string') {
-      const maxLength = 150;
+      const maxLength = 100;
       if (payloadCopy.thought.length > maxLength) {
         // Find a good break point (end of sentence or word)
         let truncateAt = maxLength;
@@ -84,7 +84,7 @@ const buildAgentMarkdown = (output: any) => {
 
   // If output is a string, treat it as thought and truncate if needed
   if (typeof output === 'string') {
-    const maxLength = 150;
+    const maxLength = 100;
     if (output.length > maxLength) {
       let truncateAt = maxLength;
       const breakChars = ['. ', '.\n', '! ', '!\n', '? ', '?\n'];
@@ -106,7 +106,7 @@ const buildAgentMarkdown = (output: any) => {
   if (output.thought) {
     // Truncate long thoughts
     const thought = String(output.thought);
-    const maxLength = 150;  // Reduce to 150 characters for better UX
+    const maxLength = 100;  // Aggressive truncation for better UX
     if (thought.length > maxLength) {
       // Find a good break point (end of sentence or word)
       let truncateAt = maxLength;

@@ -77,13 +77,13 @@ const nodeTypes: NodeTypes = {
           }}
         >
           <div 
-            className="text-sm font-semibold uppercase tracking-wider mb-2"
+            className="text-base font-semibold uppercase tracking-wider mb-2"
             style={{ color: colors.text, opacity: 0.85 }}
           >
             {data.taskId}
           </div>
           <div 
-            className="text-lg font-bold leading-snug"
+            className="text-xl font-bold leading-snug"
             style={{ color: colors.text }}
           >
             {data.label}
@@ -237,7 +237,7 @@ const DagPreviewInner: React.FC<DagPreviewProps> = ({ nodes, edges, onSelectNode
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       fitView
-      fitViewOptions={{ padding: 0.15, minZoom: 0.4, maxZoom: 1.5 }}
+      fitViewOptions={{ padding: 0.15, minZoom: 0.6, maxZoom: 1.5 }}
       onNodeClick={(_, node) => onSelectNode?.(node.id)}
       panOnScroll
       zoomOnScroll={true}

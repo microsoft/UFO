@@ -52,40 +52,28 @@ const ConstellationBlock: React.FC<ConstellationBlockProps> = ({ constellation, 
 
   return (
     <div className={containerClasses}>
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <div className="text-xs uppercase tracking-[0.25em] text-slate-400">Constellation</div>
-          <div className="text-lg font-semibold text-white">
-            {constellation.metadata?.display_name || constellation.description || 'Task Workflow'}
-          </div>
-          <div className={clsx('text-[11px] uppercase tracking-[0.2em]', statusClass)}>
-            {constellation.status}
-          </div>
+      <div className="flex items-center justify-between gap-4">
+        <div className="flex items-center gap-2 text-xs text-slate-400">
+          <Timer className="h-3 w-3" aria-hidden />
+          <span>{constellation.taskIds.length} tasks</span>
+          <span className="mx-1">•</span>
+          <span className={statusClass}>{constellation.status}</span>
         </div>
-        <div className="flex items-center gap-2">
-          {canShowStats && (
-            <button
-              onClick={() => setShowStats(!showStats)}
-              className={clsx(
-                'flex items-center gap-2 rounded-full border border-white/10 px-3 py-1.5 text-xs transition',
-                showStats 
-                  ? 'bg-emerald-500/20 border-emerald-400/40 text-emerald-300' 
-                  : 'bg-black/30 text-slate-300 hover:border-white/30 hover:bg-black/40'
-              )}
-              title="View execution summary"
-            >
-              <BarChart3 className="h-3.5 w-3.5" aria-hidden />
-              Stats
-            </button>
-          )}
-          <div className="flex flex-col items-end text-xs text-slate-400">
-            <div className="flex items-center gap-1">
-              <Timer className="h-3 w-3" aria-hidden />
-              Updated {constellation.updatedAt ? new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit' }).format(constellation.updatedAt) : 'recently'}
-            </div>
-            <div>{constellation.taskIds.length} tasks</div>
-          </div>
-        </div>
+        {canShowStats && (
+          <button
+            onClick={() => setShowStats(!showStats)}
+            className={clsx(
+              'flex items-center gap-2 rounded-full border border-white/10 px-3 py-1.5 text-xs transition',
+              showStats 
+                ? 'bg-emerald-500/20 border-emerald-400/40 text-emerald-300' 
+                : 'bg-black/30 text-slate-300 hover:border-white/30 hover:bg-black/40'
+            )}
+            title="View execution summary"
+          >
+            <BarChart3 className="h-3.5 w-3.5" aria-hidden />
+            Stats
+          </button>
+        )}
       </div>
 
       <div className={previewClasses}>

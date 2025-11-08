@@ -54,12 +54,12 @@ const statusAccent = (status?: string) => {
 const SectionCard: React.FC<{ title: string; icon: ReactNode; children: ReactNode }> = ({ title, icon, children }) => (
     <div className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-slate-200">
       <div className="mb-2 flex items-center gap-2 text-[12px] uppercase tracking-[0.18em] text-slate-400">
-        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-slate-100 shadow-glow">
+        <span className="inline-flex h-7 w-7 items-center justify-center rounded-full bg-white/10 text-slate-200 shadow-glow">
           {icon}
         </span>
         {title}
       </div>
-      <div className="space-y-2 whitespace-pre-wrap text-sm leading-relaxed text-slate-100">
+      <div className="space-y-2 whitespace-pre-wrap text-sm leading-relaxed text-slate-200">
         {children}
       </div>
     </div>
@@ -111,7 +111,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           'max-w-[88%] rounded-3xl border px-6 py-5 shadow-xl backdrop-blur-lg sm:max-w-[74%]',
           isUser
             ? 'rounded-br-xl border-galaxy-blue/40 bg-gradient-to-br from-galaxy-blue/25 via-galaxy-purple/25 to-galaxy-blue/15 text-slate-50'
-            : 'rounded-bl-xl border-white/10 bg-black/35 text-slate-100',
+            : 'rounded-bl-xl border-white/10 bg-black/40 text-slate-200',
         )}
       >
         <div className="mb-3 flex items-center justify-between gap-3 text-xs text-slate-300">
@@ -208,7 +208,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
               responsePayload.response ||
               responsePayload.final_response
             ) && (
-              <div className="prose prose-invert max-w-none text-sm leading-relaxed prose-headings:text-slate-50 prose-p:mb-3 prose-pre:bg-slate-900/80 prose-strong:text-white">
+              <div className="prose prose-invert max-w-none text-sm leading-relaxed prose-headings:text-slate-100 prose-p:mb-3 prose-p:text-slate-200 prose-pre:bg-slate-900/80 prose-strong:text-slate-100">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
               </div>
             )}
@@ -251,7 +251,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
             )}
           </div>
         ) : (
-          <div className="prose prose-invert max-w-none text-sm leading-relaxed prose-headings:text-slate-50 prose-p:mb-3 prose-pre:bg-slate-900/80 prose-strong:text-white">
+          <div className="prose prose-invert max-w-none text-sm leading-relaxed prose-headings:text-slate-100 prose-p:mb-3 prose-p:text-slate-200 prose-pre:bg-slate-900/80 prose-strong:text-slate-100">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
           </div>
         )}
