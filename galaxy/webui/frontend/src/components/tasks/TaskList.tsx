@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import clsx from 'clsx';
-import { CheckCircle, CircleDot, CircleEllipsis, XCircle } from 'lucide-react';
+import { CheckCircle, XCircle, Loader2, Clock, CircleDashed } from 'lucide-react';
 import { Task } from '../../store/galaxyStore';
 
 interface TaskListProps {
@@ -9,12 +9,33 @@ interface TaskListProps {
   onSelectTask: (taskId: string) => void;
 }
 
-const statusIcons: Record<string, React.ReactNode> = {
-  pending: <CircleEllipsis className="h-3.5 w-3.5 text-slate-300" aria-hidden />,
-  running: <CircleDot className="h-3.5 w-3.5 text-cyan-300" aria-hidden />,
-  completed: <CheckCircle className="h-3.5 w-3.5 text-emerald-300" aria-hidden />,
-  failed: <XCircle className="h-3.5 w-3.5 text-rose-400" aria-hidden />,
-  skipped: <CircleDot className="h-3.5 w-3.5 text-amber-300" aria-hidden />,
+/**
+ * Get animated status icon for task
+ */
+const getStatusIcon = (status: string): React.ReactNode => {
+  const normalized = status.toLowerCase();
+  
+  if (normalized === 'running' || normalized === 'in_progress') {
+    return <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan-300" aria-hidden />;
+  }
+  
+  if (normalized === 'completed' || normalized === 'success' || normalized === 'finish') {
+    return <CheckCircle className="h-3.5 w-3.5 text-emerald-300" aria-hidden />;
+  }
+  
+  if (normalized === 'failed' || normalized === 'error') {
+    return <XCircle className="h-3.5 w-3.5 text-rose-400" aria-hidden />;
+  }
+  
+  if (normalized === 'pending' || normalized === 'waiting') {
+    return <Clock className="h-3.5 w-3.5 animate-pulse text-slate-300" aria-hidden />;
+  }
+  
+  if (normalized === 'skipped') {
+    return <CircleDashed className="h-3.5 w-3.5 text-amber-300" aria-hidden />;
+  }
+  
+  return <CircleDashed className="h-3.5 w-3.5 text-slate-300" aria-hidden />;
 };
 
 const statusFilters = ['all', 'pending', 'running', 'completed', 'failed'] as const;
@@ -78,7 +99,7 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, activeTaskId, onSelectTask }
           </div>
         ) : (
           filteredTasks.map((task) => {
-            const icon = statusIcons[task.status] ?? statusIcons.pending;
+            const icon = getStatusIcon(task.status);
             return (
               <button
                 key={task.id}

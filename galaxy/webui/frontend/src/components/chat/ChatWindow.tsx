@@ -62,7 +62,13 @@ const ChatWindow: React.FC = () => {
               </p>
             </div>
           ) : (
-            filteredMessages.map((message) => <MessageBubble key={message.id} message={message} />)
+            filteredMessages.map((message, index) => (
+              <MessageBubble 
+                key={message.id} 
+                message={message}
+                nextMessage={filteredMessages[index + 1]}
+              />
+            ))
           )}
         </div>
       </div>

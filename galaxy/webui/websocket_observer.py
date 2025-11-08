@@ -41,11 +41,8 @@ class WebSocketObserver(IEventObserver):
             # Convert event to JSON-serializable format
             event_data = self._event_to_dict(event)
 
-            self.logger.info(
-                f"🌟 WebSocketObserver: Broadcasting event #{self._event_count}: {event.event_type.value} to {len(self._connections)} clients"
-            )
-            print(
-                f"🌟 WebSocketObserver: Broadcasting {event.event_type.value} to {len(self._connections)} clients"
+            self.logger.debug(
+                f"Broadcasting event #{self._event_count}: {event.event_type.value} to {len(self._connections)} clients"
             )
 
             # Broadcast to all connected clients
@@ -53,15 +50,11 @@ class WebSocketObserver(IEventObserver):
             for connection in self._connections:
                 try:
                     await connection.send_json(event_data)
-                    self.logger.info(f"✅ Successfully sent event to client")
-                    print(
-                        f"✅ Successfully sent event {event.event_type.value} to client"
-                    )
+                    self.logger.debug(f"Successfully sent event to client")
                 except Exception as e:
                     self.logger.warning(
                         f"Failed to send event to client: {e}, marking for removal"
                     )
-                    print(f"❌ Failed to send event to client: {e}")
                     disconnected.add(connection)
 
             # Remove disconnected clients
@@ -69,7 +62,6 @@ class WebSocketObserver(IEventObserver):
 
         except Exception as e:
             self.logger.error(f"Error broadcasting event: {e}")
-            print(f"❌ Error broadcasting event: {e}")
 
     def add_connection(self, websocket) -> None:
         """

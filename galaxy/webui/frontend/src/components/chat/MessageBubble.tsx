@@ -14,12 +14,15 @@ import {
   RefreshCcw,
   Rocket,
   Sparkles,
+  XCircle,
+  Loader,
 } from 'lucide-react';
 import { Message } from '../../store/galaxyStore';
 import { getWebSocketClient } from '../../services/websocket';
 
 interface MessageBubbleProps {
   message: Message;
+  nextMessage?: Message; // 用于检查下一条消息是否是 action
 }
 
 type PayloadRecord = Record<string, any>;
@@ -65,8 +68,221 @@ const SectionCard: React.FC<{ title: string; icon: ReactNode; children: ReactNod
     </div>
   );
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
+/**
+ * Format constellation operation into human-readable text.
+ * Mirrors the backend's _format_constellation_operation logic.
+ */
+const formatConstellationOperation = (action: any): string => {
+  const func = action?.function;
+  const args = action?.arguments || {};
+
+  if (!func) {
+    return action?.action || action?.command || 'Unknown Action';
+  }
+
+  // Format different types of operations
+  switch (func) {
+    case 'add_task': {
+      const taskId = args.task_id || '?';
+      const name = args.name || '';
+      return name ? `Add Task: '${taskId}' (${name})` : `Add Task: '${taskId}'`;
+    }
+
+    case 'remove_task': {
+      const taskId = args.task_id || '?';
+      return `Remove Task: '${taskId}'`;
+    }
+
+    case 'update_task': {
+      const taskId = args.task_id || '?';
+      // Show which fields are being updated
+      const updateFields = Object.keys(args).filter(
+        (k) => k !== 'task_id' && args[k] !== null && args[k] !== undefined
+      );
+      const fieldsStr = updateFields.length > 0 ? updateFields.join(', ') : 'fields';
+      return `Update Task: '${taskId}' (${fieldsStr})`;
+    }
+
+    case 'add_dependency': {
+      const depId = args.dependency_id || '?';
+      const fromTask = args.from_task_id || '?';
+      const toTask = args.to_task_id || '?';
+      return `Add Dependency (ID ${depId}): ${fromTask} → ${toTask}`;
+    }
+
+    case 'remove_dependency': {
+      const depId = args.dependency_id || '?';
+      return `Remove Dependency: '${depId}'`;
+    }
+
+    case 'update_dependency': {
+      const depId = args.dependency_id || '?';
+      return `Update Dependency: '${depId}'`;
+    }
+
+    case 'build_constellation': {
+      const config = args.config || {};
+      if (typeof config === 'object' && config !== null) {
+        const taskCount = Array.isArray(config.tasks) ? config.tasks.length : 0;
+        const depCount = Array.isArray(config.dependencies) ? config.dependencies.length : 0;
+        return `Build Constellation (${taskCount} tasks, ${depCount} dependencies)`;
+      }
+      return 'Build Constellation';
+    }
+
+    case 'clear_constellation':
+      return 'Clear Constellation (remove all tasks)';
+
+    case 'load_constellation': {
+      const filePath = args.file_path || '?';
+      // Extract filename from path
+      const filename = filePath.split(/[/\\]/).pop() || filePath;
+      return `Load Constellation from '${filename}'`;
+    }
+
+    case 'save_constellation': {
+      const filePath = args.file_path || '?';
+      // Extract filename from path
+      const filename = filePath.split(/[/\\]/).pop() || filePath;
+      return `Save Constellation to '${filename}'`;
+    }
+
+    default: {
+      // Fallback for unknown operations - show function name with first 2 arguments
+      const argEntries = Object.entries(args).slice(0, 2);
+      if (argEntries.length > 0) {
+        const argsStr = argEntries.map(([k, v]) => `${k}=${v}`).join(', ');
+        return `${func}(${argsStr})`;
+      }
+      return func;
+    }
+  }
+};
+
+/**
+ * Get status icon for action result
+ */
+const getStatusIcon = (status?: string) => {
+  if (!status) return <Loader className="h-3.5 w-3.5" />;
+  const normalized = status.toLowerCase();
+  if (['finish', 'completed', 'success', 'ready'].some((key) => normalized.includes(key))) {
+    return <CheckCircle2 className="h-3.5 w-3.5" />;
+  }
+  if (['fail', 'error'].some((key) => normalized.includes(key))) {
+    return <XCircle className="h-3.5 w-3.5" />;
+  }
+  if (['continue', 'running', 'in_progress'].some((key) => normalized.includes(key))) {
+    return <Loader className="h-3.5 w-3.5" />;
+  }
+  return <Loader className="h-3.5 w-3.5" />;
+};
+
+/**
+ * Render action as a tree node attached to response
+ */
+const ActionTreeNode: React.FC<{
+  action: any;
+  index: number;
+  isLast: boolean;
+  isExpanded: boolean;
+  onToggle: () => void;
+}> = ({ action, isLast, isExpanded, onToggle }) => {
+  const status = action?.result?.status || action?.status;
+  const resultError = action?.result?.error || action?.result?.message;
+  const isContinue = status && String(status).toLowerCase() === 'continue';
+  const operation = formatConstellationOperation(action);
+
+  // 获取状态颜色
+  const getStatusColor = () => {
+    if (!status) return 'text-slate-400';
+    const normalized = status.toLowerCase();
+    if (['finish', 'completed', 'success', 'ready'].some((key) => normalized.includes(key))) {
+      return 'text-emerald-400';
+    }
+    if (['fail', 'error'].some((key) => normalized.includes(key))) {
+      return 'text-rose-400';
+    }
+    if (['continue', 'running', 'in_progress'].some((key) => normalized.includes(key))) {
+      return 'text-amber-400';
+    }
+    return 'text-slate-400';
+  };
+
+  return (
+    <div className="relative">
+      {/* 连接线 */}
+      <div className="absolute left-0 top-0 flex h-full w-6">
+        <div className="w-px bg-white/10" />
+        {!isLast && <div className="absolute left-0 top-7 h-[calc(100%-1.75rem)] w-px bg-white/10" />}
+      </div>
+      
+      {/* Action 内容 */}
+      <div className="ml-6 pb-3">
+        <div className="flex items-start gap-2">
+          {/* 横向连接线 */}
+          <div className="mt-3 h-px w-3 flex-shrink-0 bg-white/10" />
+          
+          {/* Action 主内容 */}
+          <div className="flex-1 min-w-0">
+            <button
+              onClick={onToggle}
+              className="group flex w-full items-center gap-2 rounded-lg border border-white/5 bg-white/5 px-3 py-2 text-left text-sm transition hover:border-white/20 hover:bg-white/10"
+            >
+              {/* 状态图标 */}
+              <span className={clsx('flex-shrink-0', getStatusColor())}>
+                {getStatusIcon(status)}
+              </span>
+              
+              {/* 操作描述 */}
+              <span className="flex-1 truncate font-medium text-slate-200">
+                {operation}
+              </span>
+              
+              {/* 展开/收起图标 */}
+              {!isContinue && (action.arguments || resultError) && (
+                <ChevronDown
+                  className={clsx(
+                    'h-3.5 w-3.5 flex-shrink-0 text-slate-400 transition-transform',
+                    isExpanded && 'rotate-180'
+                  )}
+                />
+              )}
+            </button>
+
+            {/* 展开的详细信息 */}
+            {isExpanded && !isContinue && (
+              <div className="mt-2 space-y-2 rounded-lg border border-white/5 bg-black/20 p-3">
+                {action.arguments && (
+                  <div>
+                    <div className="mb-1 text-[10px] uppercase tracking-wider text-slate-400">
+                      Arguments
+                    </div>
+                    <pre className="whitespace-pre-wrap rounded-lg border border-white/5 bg-black/30 p-2 text-xs text-slate-300">
+                      {JSON.stringify(action.arguments, null, 2)}
+                    </pre>
+                  </div>
+                )}
+                {resultError && (
+                  <div className="rounded-lg border border-rose-400/30 bg-rose-500/10 p-2">
+                    <div className="mb-1 text-[10px] uppercase tracking-wider text-rose-300">
+                      Error
+                    </div>
+                    <div className="text-xs text-rose-100">{String(resultError)}</div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage }) => {
   const [isExpanded, setExpanded] = useState(false);
+  const [isThoughtExpanded, setThoughtExpanded] = useState(false);
+  const [expandedActions, setExpandedActions] = useState<Set<number>>(new Set());
   const isUser = message.role === 'user';
   const isAction = message.kind === 'action';
   const responsePayload: PayloadRecord | undefined =
@@ -87,6 +303,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   }, [isUser, message.agentName]);
 
   const responseStatus = responsePayload?.status;
+
+  // 检查下一条消息是否是 action，如果是则附加到当前 response
+  const hasAttachedActions = message.kind === 'response' && nextMessage?.kind === 'action';
+  const attachedActionPayload = hasAttachedActions ? (nextMessage?.payload as PayloadRecord | undefined) : undefined;
 
   const handleReplay = () => {
     if (!message.payload) {
@@ -146,7 +366,50 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           <div className="space-y-4">
             {responsePayload.thought && (
               <SectionCard title="Thought" icon={<Brain className="h-3.5 w-3.5" aria-hidden />}>
-                <p>{responsePayload.thought}</p>
+                {(() => {
+                  const thought = String(responsePayload.thought);
+                  const maxLength = 100;
+                  const isTooLong = thought.length > maxLength;
+                  
+                  if (!isTooLong) {
+                    return <p>{thought}</p>;
+                  }
+
+                  // Find a good break point
+                  let truncateAt = maxLength;
+                  const breakChars = ['. ', '.\n', '! ', '!\n', '? ', '?\n'];
+                  for (const breakChar of breakChars) {
+                    const idx = thought.lastIndexOf(breakChar, maxLength);
+                    if (idx > maxLength * 0.7) {
+                      truncateAt = idx + breakChar.length;
+                      break;
+                    }
+                  }
+
+                  return (
+                    <div>
+                      <p>
+                        {isThoughtExpanded ? thought : thought.substring(0, truncateAt).trim() + '...'}
+                      </p>
+                      <button
+                        onClick={() => setThoughtExpanded(!isThoughtExpanded)}
+                        className="mt-2 inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-xs text-slate-300 transition hover:border-white/30 hover:bg-white/10"
+                      >
+                        {isThoughtExpanded ? (
+                          <>
+                            <ChevronUp className="h-3 w-3" aria-hidden />
+                            Show less
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="h-3 w-3" aria-hidden />
+                            Show more ({thought.length} chars)
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  );
+                })()}
               </SectionCard>
             )}
             {responsePayload.plan && (
@@ -194,7 +457,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
                 </pre>
               </SectionCard>
             )}
-            {responsePayload.results && (
+            {responsePayload.results && responseStatus && String(responseStatus).toLowerCase() !== 'continue' && (
               <SectionCard title="Results" icon={<CheckCircle2 className="h-3.5 w-3.5" aria-hidden />}>
                 <pre className="whitespace-pre-wrap text-xs text-slate-200/90">
                   {JSON.stringify(responsePayload.results, null, 2)}
@@ -214,42 +477,8 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
             )}
           </div>
         ) : message.kind === 'action' && actionPayload ? (
-          <div className="space-y-3">
-            {Array.isArray(actionPayload.actions) ? (
-              actionPayload.actions.map((action: any, index: number) => {
-                const status = action?.result?.status || action?.status;
-                const statusClass = statusAccent(status);
-                const resultError = action?.result?.error || action?.result?.message;
-                return (
-                  <div key={index} className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm">
-                    <div className="mb-2 flex flex-wrap items-center justify-between gap-2 text-xs uppercase tracking-[0.18em] text-slate-300">
-                      <span className="flex items-center gap-2 text-slate-200">
-                        <Command className="h-3.5 w-3.5" aria-hidden />
-                        {action.function || action.action || action.command || `Action ${index + 1}`}
-                      </span>
-                      {status && <span className={clsx('inline-flex items-center gap-2 rounded-full px-3 py-1', statusClass)}>{String(status).toUpperCase()}</span>}
-                    </div>
-                    {action.arguments && (
-                      <pre className="whitespace-pre-wrap text-xs text-slate-200/90">
-                        {JSON.stringify(action.arguments, null, 2)}
-                      </pre>
-                    )}
-                    {resultError && (
-                      <div className="mt-2 rounded-xl border border-rose-400/30 bg-rose-500/10 px-3 py-2 text-xs text-rose-100">
-                        {String(resultError)}
-                      </div>
-                    )}
-                  </div>
-                );
-              })
-            ) : (
-              <SectionCard title="Action" icon={<Command className="h-3.5 w-3.5" aria-hidden />}>
-                <pre className="whitespace-pre-wrap text-xs text-slate-200/90">
-                  {JSON.stringify(actionPayload, null, 2)}
-                </pre>
-              </SectionCard>
-            )}
-          </div>
+          // 独立的 action 消息 - 不显示，因为已经附加到 response 中
+          null
         ) : (
           <div className="prose prose-invert max-w-none text-sm leading-relaxed prose-headings:text-slate-100 prose-p:mb-3 prose-p:text-slate-200 prose-pre:bg-slate-900/80 prose-strong:text-slate-100">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
@@ -299,6 +528,30 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           )}
         </AnimatePresence>
       </div>
+
+      {/* 附加的 Actions 树形展示 */}
+      {hasAttachedActions && attachedActionPayload && Array.isArray(attachedActionPayload.actions) && attachedActionPayload.actions.length > 0 && (
+        <div className="ml-12 w-[calc(100%-3rem)] max-w-[calc(88%-3rem)] sm:max-w-[calc(74%-3rem)]">
+          {attachedActionPayload.actions.map((action: any, index: number) => (
+            <ActionTreeNode
+              key={index}
+              action={action}
+              index={index}
+              isLast={index === attachedActionPayload.actions.length - 1}
+              isExpanded={expandedActions.has(index)}
+              onToggle={() => {
+                const newExpanded = new Set(expandedActions);
+                if (newExpanded.has(index)) {
+                  newExpanded.delete(index);
+                } else {
+                  newExpanded.add(index);
+                }
+                setExpandedActions(newExpanded);
+              }}
+            />
+          ))}
+        </div>
+      )}
     </div>
   );
 };
