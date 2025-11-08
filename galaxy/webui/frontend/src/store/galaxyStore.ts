@@ -1,5 +1,10 @@
 import { create } from 'zustand';
 import { GalaxyEvent } from '../services/websocket';
+import { loadMockData } from './mockData';
+
+// Check if we're in development mode
+const isDev = import.meta.env.DEV;
+const mockData = isDev ? loadMockData() : null;
 
 export type ConnectionStatus = 'idle' | 'connecting' | 'connected' | 'reconnecting' | 'disconnected';
 
@@ -369,7 +374,7 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       },
     })),
 
-  messages: [],
+  messages: mockData?.messages || [],
   addMessage: (message) =>
     set((state) => ({
       messages: [...state.messages, message].slice(-MAX_MESSAGES),
@@ -394,7 +399,7 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
     })),
   clearEventLog: () => set({ eventLog: [] }),
 
-  constellations: {},
+  constellations: mockData ? { [mockData.constellation.id]: mockData.constellation } : {},
   upsertConstellation: (constellation) => {
     set((state) => {
       const existing = state.constellations[constellation.id];
@@ -443,7 +448,7 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       },
     })),
 
-  tasks: {},
+  tasks: mockData ? Object.fromEntries(mockData.tasks.map(t => [t.id, t])) : {},
   bulkUpsertTasks: (constellationId, tasks, dependencies = {}) => {
     set((state) => {
       const nextTasks = { ...state.tasks };
@@ -591,7 +596,7 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       };
     }),
 
-  devices: {},
+  devices: mockData ? Object.fromEntries(mockData.devices.map(d => [d.id, d])) : {},
   setDevicesFromSnapshot: (snapshot) => {
     set((state) => {
       const nextDevices: Record<string, Device> = { ...state.devices };
@@ -701,7 +706,10 @@ export const useGalaxyStore = create<GalaxyStore>()((set, get) => ({
       })),
     })),
 
-  ui: defaultUIState(),
+  ui: {
+    ...defaultUIState(),
+    activeConstellationId: mockData?.constellation.id || null,
+  },
   setSearchQuery: (query) =>
     set((state) => ({
       ui: {

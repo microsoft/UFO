@@ -43,15 +43,15 @@ const NotificationCenter: React.FC = () => {
                 <X className="h-3 w-3" aria-hidden />
               </button>
               <div className="flex items-start gap-3 pr-6">
-                <div className="mt-1">{style.icon}</div>
-                <div className="flex-1 text-xs">
-                  <div className="font-semibold text-white">{notification.title}</div>
+                <div className="mt-1 flex-shrink-0">{style.icon}</div>
+                <div className="flex-1 min-w-0 text-xs">
+                  <div className="font-semibold text-white break-words">{notification.title}</div>
                   {notification.description && (
-                    <div className="mt-1 text-[11px] text-slate-200/80">{notification.description}</div>
+                    <div className="mt-1 text-[11px] text-slate-200/80 break-words">{notification.description}</div>
                   )}
                   <div className="mt-2 flex items-center justify-between text-[10px] uppercase tracking-[0.18em] text-slate-300/70">
-                    <span>{notification.source || 'system'}</span>
-                    <span>{new Date(notification.timestamp).toLocaleTimeString()}</span>
+                    <span className="truncate">{notification.source || 'system'}</span>
+                    <span className="flex-shrink-0 ml-2">{new Date(notification.timestamp).toLocaleTimeString()}</span>
                   </div>
                 </div>
               </div>

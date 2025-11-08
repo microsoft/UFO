@@ -8,6 +8,8 @@ This module provides specific strategies for constellation creation mode,
 implementing the abstract methods defined in the base strategies.
 """
 
+import asyncio
+import time
 from typing import TYPE_CHECKING, List
 
 from galaxy.agents.processors.strategies.base_constellation_strategy import (
@@ -15,6 +17,7 @@ from galaxy.agents.processors.strategies.base_constellation_strategy import (
 )
 from galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
 from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.core.events import AgentEvent, EventType, get_event_bus
 from ufo.agents.processors.context.processing_context import ProcessingContext
 from ufo.agents.processors.schemas.actions import (
     ActionCommandInfo,
@@ -90,13 +93,65 @@ class ConstellationCreationActionExecutionStrategy(
     ) -> None:
         """
         Publish constellation creation actions as events.
-        For creation mode, we don't publish actions (no-op).
+        For creation mode, publish a simplified action event for WebUI display.
 
         :param agent: The constellation agent
         :param actions: List of action command information
         """
-        # Do nothing for creation mode (same as original print_actions logic)
-        pass
+        if not actions or not actions.actions:
+            return
+
+        # Extract task and dependency counts from the build_constellation action
+        task_count = 0
+        dep_count = 0
+        for action in actions.actions:
+            if action.function == agent._constellation_creation_tool_name:
+                config = action.arguments.get("config")
+                if config and hasattr(config, "tasks"):
+                    task_count = len(config.tasks)
+                    dep_count = (
+                        len(config.dependencies)
+                        if hasattr(config, "dependencies")
+                        else 0
+                    )
+                elif isinstance(config, dict):
+                    task_count = len(config.get("tasks", []))
+                    dep_count = len(config.get("dependencies", []))
+
+        # Determine status - if actions.status is empty or CONTINUE, default to FINISH for build_constellation
+        status = actions.status
+        if not status or status == "CONTINUE":
+            status = "FINISH"
+
+        # Publish simplified action event for WebUI
+        event = AgentEvent(
+            event_type=EventType.AGENT_ACTION,
+            source_id=agent.name,
+            timestamp=time.time(),
+            data={},
+            agent_name=agent.name,
+            agent_type="constellation",
+            output_type="action",
+            output_data={
+                "actions": [
+                    {
+                        "function": "build_constellation",
+                        "arguments": {
+                            "task_count": task_count,
+                            "dependency_count": dep_count,
+                        },
+                        "status": "success",
+                        "result": {
+                            "status": "success",
+                        },
+                    }
+                ],
+                "status": status,
+            },
+        )
+
+        # Publish event asynchronously (non-blocking)
+        asyncio.create_task(get_event_bus().publish_event(event))
 
     def sync_constellation(
         self, results: List[Result], context: ProcessingContext

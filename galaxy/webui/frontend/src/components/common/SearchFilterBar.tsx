@@ -7,8 +7,6 @@ import { shallow } from 'zustand/shallow';
 const MESSAGE_FILTERS: Array<{ label: string; value: MessageKind | 'all' }> = [
   { label: 'All', value: 'all' },
   { label: 'Responses', value: 'response' },
-  { label: 'Actions', value: 'action' },
-  { label: 'System', value: 'system' },
   { label: 'User', value: 'user' },
 ];
 

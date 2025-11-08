@@ -324,7 +324,14 @@ const DagPreviewInner: React.FC<DagPreviewProps> = ({ nodes, edges, onSelectNode
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
       fitView
-      fitViewOptions={{ padding: 0.2, minZoom: 0.5, maxZoom: 1.5 }}
+      fitViewOptions={{ 
+        padding: 0.15,
+        minZoom: 0.5, 
+        maxZoom: 1.5,
+        // 初始位置偏左
+        includeHiddenNodes: false,
+      }}
+      defaultViewport={{ x: 20, y: 0, zoom: 0.8 }}
       onNodeClick={(_, node) => onSelectNode?.(node.id)}
       panOnScroll
       zoomOnScroll={true}

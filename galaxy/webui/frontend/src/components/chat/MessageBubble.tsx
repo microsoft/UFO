@@ -14,8 +14,10 @@ import {
   RefreshCcw,
   Rocket,
   Sparkles,
+  User,
   XCircle,
   Loader,
+  Zap,
 } from 'lucide-react';
 import { Message } from '../../store/galaxyStore';
 import { getWebSocketClient } from '../../services/websocket';
@@ -23,6 +25,7 @@ import { getWebSocketClient } from '../../services/websocket';
 interface MessageBubbleProps {
   message: Message;
   nextMessage?: Message; // 用于检查下一条消息是否是 action
+  stepNumber?: number; // 步骤编号
 }
 
 type PayloadRecord = Record<string, any>;
@@ -122,11 +125,21 @@ const formatConstellationOperation = (action: any): string => {
 
     case 'build_constellation': {
       const config = args.config || {};
+      
+      // 首先检查是否有简化格式（task_count 和 dependency_count）
+      if (args.task_count !== undefined || args.dependency_count !== undefined) {
+        const taskCount = args.task_count || 0;
+        const depCount = args.dependency_count || 0;
+        return `Build Constellation (${taskCount} tasks, ${depCount} dependencies)`;
+      }
+      
+      // 回退到完整 config 格式
       if (typeof config === 'object' && config !== null) {
         const taskCount = Array.isArray(config.tasks) ? config.tasks.length : 0;
         const depCount = Array.isArray(config.dependencies) ? config.dependencies.length : 0;
         return `Build Constellation (${taskCount} tasks, ${depCount} dependencies)`;
       }
+      
       return 'Build Constellation';
     }
 
@@ -187,7 +200,8 @@ const ActionTreeNode: React.FC<{
   isExpanded: boolean;
   onToggle: () => void;
 }> = ({ action, isLast, isExpanded, onToggle }) => {
-  const status = action?.result?.status || action?.status;
+  // 获取状态：优先从 result.status，然后 status，最后从 arguments.status
+  const status = action?.result?.status || action?.status || action?.arguments?.status;
   const resultError = action?.result?.error || action?.result?.message;
   const isContinue = status && String(status).toLowerCase() === 'continue';
   const operation = formatConstellationOperation(action);
@@ -252,6 +266,17 @@ const ActionTreeNode: React.FC<{
             {/* 展开的详细信息 */}
             {isExpanded && !isContinue && (
               <div className="mt-2 space-y-2 rounded-lg border border-white/5 bg-black/20 p-3">
+                {/* Status display */}
+                {status && (
+                  <div>
+                    <div className="mb-1 text-[10px] uppercase tracking-wider text-slate-400">
+                      Status
+                    </div>
+                    <div className={clsx('text-sm font-medium', getStatusColor())}>
+                      {String(status).toUpperCase()}
+                    </div>
+                  </div>
+                )}
                 {action.arguments && (
                   <div>
                     <div className="mb-1 text-[10px] uppercase tracking-wider text-slate-400">
@@ -262,6 +287,15 @@ const ActionTreeNode: React.FC<{
                     </pre>
                   </div>
                 )}
+                {/* Debug: Show full action object */}
+                <div>
+                  <div className="mb-1 text-[10px] uppercase tracking-wider text-slate-400">
+                    Full Action Object (Debug)
+                  </div>
+                  <pre className="whitespace-pre-wrap rounded-lg border border-white/5 bg-black/30 p-2 text-xs text-slate-300">
+                    {JSON.stringify(action, null, 2)}
+                  </pre>
+                </div>
                 {resultError && (
                   <div className="rounded-lg border border-rose-400/30 bg-rose-500/10 p-2">
                     <div className="mb-1 text-[10px] uppercase tracking-wider text-rose-300">
@@ -279,7 +313,7 @@ const ActionTreeNode: React.FC<{
   );
 };
 
-const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage }) => {
+const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage, stepNumber }) => {
   const [isExpanded, setExpanded] = useState(false);
   const [isThoughtExpanded, setThoughtExpanded] = useState(false);
   const [expandedActions, setExpandedActions] = useState<Set<number>>(new Set());
@@ -287,8 +321,6 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage }) =
   const isAction = message.kind === 'action';
   const responsePayload: PayloadRecord | undefined =
     message.kind === 'response' ? (message.payload as PayloadRecord | undefined) : undefined;
-  const actionPayload: PayloadRecord | undefined =
-    isAction ? (message.payload as PayloadRecord | undefined) : undefined;
   const showPayloadToggle = Boolean(message.payload) && (isAction || message.kind === 'system');
 
   const timestamp = useMemo(() => formatTimestamp(message.timestamp), [message.timestamp]);
@@ -307,6 +339,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage }) =
   // 检查下一条消息是否是 action，如果是则附加到当前 response
   const hasAttachedActions = message.kind === 'response' && nextMessage?.kind === 'action';
   const attachedActionPayload = hasAttachedActions ? (nextMessage?.payload as PayloadRecord | undefined) : undefined;
+
+  // 如果是 action 消息，直接返回 null，不渲染任何内容（因为已经附加到 response 中）
+  if (isAction) {
+    return null;
+  }
 
   const handleReplay = () => {
     if (!message.payload) {
@@ -328,37 +365,66 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage }) =
     >
       <div
         className={clsx(
-          'max-w-[88%] rounded-3xl border px-6 py-5 shadow-xl backdrop-blur-lg sm:max-w-[74%]',
+          'w-[88%] rounded-3xl border px-6 py-5 shadow-xl backdrop-blur-lg sm:w-[74%]',
           isUser
             ? 'rounded-br-xl border-galaxy-blue/40 bg-gradient-to-br from-galaxy-blue/25 via-galaxy-purple/25 to-galaxy-blue/15 text-slate-50'
             : 'rounded-bl-xl border-white/10 bg-black/40 text-slate-200',
         )}
       >
-        <div className="mb-3 flex items-center justify-between gap-3 text-xs text-slate-300">
-          <span className="truncate font-semibold uppercase tracking-[0.24em] text-slate-200">
-            {displayName}
-          </span>
-          <span>{timestamp}</span>
-        </div>
-
+        {/* Agent 消息头部 */}
         {!isUser && (
-          <div className="mb-4 flex flex-wrap items-center gap-2 text-[11px]">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 uppercase tracking-[0.18em] text-slate-200">
-              <Sparkles className="h-3 w-3" aria-hidden />
-              {message.kind}
-            </span>
-            {responseStatus && (
-              <span className={clsx('inline-flex items-center gap-2 rounded-full px-3 py-1 uppercase tracking-[0.18em]', statusAccent(responseStatus))}>
-                <CheckCircle2 className="h-3 w-3" aria-hidden />
-                {String(responseStatus).toUpperCase()}
+          <div className="mb-4 flex items-center justify-between gap-3">
+            {/* 左侧：Agent 名称和图标 */}
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 shadow-lg">
+                <Zap className="h-5 w-5 text-cyan-300" aria-hidden />
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <div className="flex items-center gap-2">
+                  <span className="font-bold text-base text-slate-100">
+                    {displayName}
+                  </span>
+                  {stepNumber !== undefined && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-gradient-to-r from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 px-2 py-0.5 text-[10px] font-semibold text-cyan-300">
+                      <span className="opacity-70">STEP</span>
+                      <span>{stepNumber}</span>
+                    </span>
+                  )}
+                </div>
+                <span className="text-[10px] text-slate-400">{timestamp}</span>
+              </div>
+            </div>
+
+            {/* 右侧：状态标签 */}
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-slate-300">
+                <Sparkles className="h-3 w-3" aria-hidden />
+                {message.kind}
               </span>
-            )}
-            {actionPayload?.status && (
-              <span className={clsx('inline-flex items-center gap-2 rounded-full px-3 py-1 uppercase tracking-[0.18em]', statusAccent(actionPayload.status))}>
-                <CheckCircle2 className="h-3 w-3" aria-hidden />
-                {String(actionPayload.status).toUpperCase()}
-              </span>
-            )}
+              {responseStatus && (
+                <span className={clsx('inline-flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider', statusAccent(responseStatus))}>
+                  <CheckCircle2 className="h-3 w-3" aria-hidden />
+                  {String(responseStatus).toUpperCase()}
+                </span>
+              )}
+            </div>
+          </div>
+        )}
+
+        {/* User 消息头部 */}
+        {isUser && (
+          <div className="mb-4 flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-purple-500/20 to-pink-500/20 border border-purple-400/30 shadow-lg">
+                <User className="h-5 w-5 text-purple-300" aria-hidden />
+              </div>
+              <div className="flex flex-col gap-0.5">
+                <span className="font-bold text-base text-slate-100">
+                  {displayName}
+                </span>
+                <span className="text-[10px] text-slate-400">{timestamp}</span>
+              </div>
+            </div>
           </div>
         )}
 
@@ -457,13 +523,6 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage }) =
                 </pre>
               </SectionCard>
             )}
-            {responsePayload.results && responseStatus && String(responseStatus).toLowerCase() !== 'continue' && (
-              <SectionCard title="Results" icon={<CheckCircle2 className="h-3.5 w-3.5" aria-hidden />}>
-                <pre className="whitespace-pre-wrap text-xs text-slate-200/90">
-                  {JSON.stringify(responsePayload.results, null, 2)}
-                </pre>
-              </SectionCard>
-            )}
             {!(
               responsePayload.thought ||
               responsePayload.plan ||
@@ -475,10 +534,71 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage }) =
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
               </div>
             )}
+            
+            {/* Final Results - Prominently displayed at the end */}
+            {responsePayload.results && responseStatus && String(responseStatus).toLowerCase() !== 'continue' && (
+              <div className={clsx(
+                'mt-6 rounded-2xl border-2 p-6 shadow-xl backdrop-blur-sm',
+                String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error')
+                  ? 'border-rose-500/50 bg-gradient-to-br from-rose-500/10 to-rose-600/5'
+                  : 'border-emerald-500/50 bg-gradient-to-br from-emerald-500/10 to-emerald-600/5'
+              )}>
+                <div className="mb-4 flex items-center gap-3">
+                  <div className={clsx(
+                    'flex h-10 w-10 items-center justify-center rounded-xl shadow-lg',
+                    String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error')
+                      ? 'bg-gradient-to-br from-rose-500/30 to-rose-600/20 border border-rose-400/40'
+                      : 'bg-gradient-to-br from-emerald-500/30 to-emerald-600/20 border border-emerald-400/40'
+                  )}>
+                    {String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error') ? (
+                      <XCircle className="h-5 w-5 text-rose-300" aria-hidden />
+                    ) : (
+                      <CheckCircle2 className="h-5 w-5 text-emerald-300" aria-hidden />
+                    )}
+                  </div>
+                  <div>
+                    <h3 className={clsx(
+                      'text-base font-bold uppercase tracking-wider',
+                      String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error')
+                        ? 'text-rose-200'
+                        : 'text-emerald-200'
+                    )}>
+                      Final Results
+                    </h3>
+                    <p className="text-xs text-slate-400 mt-0.5">
+                      Status: {String(responseStatus).toUpperCase()}
+                    </p>
+                  </div>
+                </div>
+                <div className={clsx(
+                  'rounded-xl border p-4',
+                  String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error')
+                    ? 'border-rose-400/20 bg-rose-950/20'
+                    : 'border-emerald-400/20 bg-emerald-950/20'
+                )}>
+                  {typeof responsePayload.results === 'string' ? (
+                    <div className={clsx(
+                      'whitespace-pre-wrap text-sm leading-relaxed',
+                      String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error')
+                        ? 'text-rose-100/90'
+                        : 'text-emerald-100/90'
+                    )}>
+                      {responsePayload.results}
+                    </div>
+                  ) : (
+                    <pre className={clsx(
+                      'whitespace-pre-wrap text-sm leading-relaxed',
+                      String(responseStatus).toLowerCase().includes('fail') || String(responseStatus).toLowerCase().includes('error')
+                        ? 'text-rose-100/90'
+                        : 'text-emerald-100/90'
+                    )}>
+                      {JSON.stringify(responsePayload.results, null, 2)}
+                    </pre>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-        ) : message.kind === 'action' && actionPayload ? (
-          // 独立的 action 消息 - 不显示，因为已经附加到 response 中
-          null
         ) : (
           <div className="prose prose-invert max-w-none text-sm leading-relaxed prose-headings:text-slate-100 prose-p:mb-3 prose-p:text-slate-200 prose-pre:bg-slate-900/80 prose-strong:text-slate-100">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>{message.content}</ReactMarkdown>
@@ -531,7 +651,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage }) =
 
       {/* 附加的 Actions 树形展示 */}
       {hasAttachedActions && attachedActionPayload && Array.isArray(attachedActionPayload.actions) && attachedActionPayload.actions.length > 0 && (
-        <div className="ml-12 w-[calc(100%-3rem)] max-w-[calc(88%-3rem)] sm:max-w-[calc(74%-3rem)]">
+        <div className="ml-12 w-[calc(88%-3rem)] sm:w-[calc(74%-3rem)]">
           {attachedActionPayload.actions.map((action: any, index: number) => (
             <ActionTreeNode
               key={index}
