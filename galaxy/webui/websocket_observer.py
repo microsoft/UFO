@@ -192,7 +192,7 @@ class WebSocketObserver(IEventObserver):
 
             if isinstance(value, TaskConstellation):
                 # Serialize constellation to dictionary
-                return {
+                constellation_dict = {
                     "constellation_id": value.constellation_id,
                     "name": value.name,
                     "state": (
@@ -232,6 +232,17 @@ class WebSocketObserver(IEventObserver):
                         else None
                     ),
                 }
+
+                # Add statistics if available
+                if hasattr(value, "get_statistics"):
+                    try:
+                        constellation_dict["statistics"] = value.get_statistics()
+                    except Exception as e:
+                        self.logger.warning(
+                            f"Failed to get constellation statistics: {e}"
+                        )
+
+                return constellation_dict
         except ImportError:
             pass
 

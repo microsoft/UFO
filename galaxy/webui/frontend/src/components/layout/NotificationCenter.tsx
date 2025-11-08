@@ -32,22 +32,20 @@ const NotificationCenter: React.FC = () => {
               animate={{ y: 0, opacity: 1 }}
               exit={{ y: 10, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className={clsx('pointer-events-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-lg', style.className)}
+              className={clsx('pointer-events-auto relative rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-lg', style.className)}
               onMouseEnter={() => markNotificationRead(notification.id)}
             >
-              <div className="flex items-start gap-3">
+              <button
+                type="button"
+                className="absolute right-2 top-2 rounded-full border border-white/20 p-1 text-slate-200 transition hover:bg-white/10"
+                onClick={() => dismissNotification(notification.id)}
+              >
+                <X className="h-3 w-3" aria-hidden />
+              </button>
+              <div className="flex items-start gap-3 pr-6">
                 <div className="mt-1">{style.icon}</div>
                 <div className="flex-1 text-xs">
-                  <div className="flex items-center justify-between">
-                    <div className="font-semibold text-white">{notification.title}</div>
-                    <button
-                      type="button"
-                      className="rounded-full border border-white/20 p-1 text-[10px] text-slate-200"
-                      onClick={() => dismissNotification(notification.id)}
-                    >
-                      <X className="h-3 w-3" aria-hidden />
-                    </button>
-                  </div>
+                  <div className="font-semibold text-white">{notification.title}</div>
                   {notification.description && (
                     <div className="mt-1 text-[11px] text-slate-200/80">{notification.description}</div>
                   )}

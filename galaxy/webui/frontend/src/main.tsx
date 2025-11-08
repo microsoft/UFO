@@ -44,7 +44,28 @@ const parseIsoOrUndefined = (value?: string | null) => {
 
 const stringifyPayload = (payload: any) => {
   try {
-    return JSON.stringify(payload, null, 2);
+    // Create a copy to avoid mutating the original
+    const payloadCopy = { ...payload };
+    
+    // Truncate thought field if it exists and is too long
+    if (payloadCopy.thought && typeof payloadCopy.thought === 'string') {
+      const maxLength = 150;
+      if (payloadCopy.thought.length > maxLength) {
+        // Find a good break point (end of sentence or word)
+        let truncateAt = maxLength;
+        const breakChars = ['. ', '.\n', '! ', '!\n', '? ', '?\n'];
+        for (const breakChar of breakChars) {
+          const idx = payloadCopy.thought.lastIndexOf(breakChar, maxLength);
+          if (idx > maxLength * 0.7) {
+            truncateAt = idx + breakChar.length;
+            break;
+          }
+        }
+        payloadCopy.thought = payloadCopy.thought.substring(0, truncateAt).trim() + `... [Truncated: ${payloadCopy.thought.length} chars total]`;
+      }
+    }
+    
+    return JSON.stringify(payloadCopy, null, 2);
   } catch (error) {
     console.error('Failed to stringify payload', error);
     return String(payload);
@@ -61,18 +82,44 @@ const buildAgentMarkdown = (output: any) => {
     return 'Agent responded.';
   }
 
+  // If output is a string, treat it as thought and truncate if needed
   if (typeof output === 'string') {
+    const maxLength = 150;
+    if (output.length > maxLength) {
+      let truncateAt = maxLength;
+      const breakChars = ['. ', '.\n', '! ', '!\n', '? ', '?\n'];
+      for (const breakChar of breakChars) {
+        const idx = output.lastIndexOf(breakChar, maxLength);
+        if (idx > maxLength * 0.7) {
+          truncateAt = idx + breakChar.length;
+          break;
+        }
+      }
+      const truncated = output.substring(0, truncateAt).trim();
+      return `${truncated}...\n\n_[Truncated: ${output.length} chars total]_`;
+    }
     return output;
   }
 
   const sections: string[] = [];
 
   if (output.thought) {
-    // Truncate long thoughts and add expandable details
+    // Truncate long thoughts
     const thought = String(output.thought);
-    if (thought.length > 200) {
-      const preview = thought.substring(0, 200).trim();
-      sections.push(`**💭 Thought**\n${preview}... <details><summary><i>See full thought</i></summary>\n\n${thought}\n\n</details>`);
+    const maxLength = 150;  // Reduce to 150 characters for better UX
+    if (thought.length > maxLength) {
+      // Find a good break point (end of sentence or word)
+      let truncateAt = maxLength;
+      const breakChars = ['. ', '.\n', '! ', '!\n', '? ', '?\n'];
+      for (const breakChar of breakChars) {
+        const idx = thought.lastIndexOf(breakChar, maxLength);
+        if (idx > maxLength * 0.7) {  // If we find a break point in last 30%
+          truncateAt = idx + breakChar.length;
+          break;
+        }
+      }
+      const truncated = thought.substring(0, truncateAt).trim();
+      sections.push(`**💭 Thought**\n${truncated}...\n\n_[Truncated: ${thought.length} chars total]_`);
     } else {
       sections.push(`**💭 Thought**\n${thought}`);
     }
@@ -210,7 +257,12 @@ const updateConstellationFromPayload = (event: GalaxyEvent) => {
     name: constellation.name || constellationId,
     status: constellation.state || event.constellation_state || 'running',
     description: constellation.description,
-    metadata: constellation.metadata,
+    metadata: {
+      ...(constellation.metadata || {}),
+      statistics: constellation.statistics,  // Include statistics at top level of metadata
+      execution_start_time: constellation.metadata?.execution_start_time,
+      execution_end_time: constellation.metadata?.execution_end_time,
+    },
     createdAt: parseIsoOrUndefined(constellation.created_at),
     taskIds: tasks.map((task) => task.id),
     dag: {

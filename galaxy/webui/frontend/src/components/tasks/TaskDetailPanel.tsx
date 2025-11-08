@@ -6,6 +6,7 @@ import { getWebSocketClient } from '../../services/websocket';
 
 interface TaskDetailPanelProps {
   task?: Task | null;
+  onBack?: () => void;
 }
 
 const renderJson = (value: any) => {
@@ -38,12 +39,12 @@ const renderLogs = (logs: TaskLogEntry[]) => {
   );
 };
 
-const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ task }) => {
+const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ task, onBack }) => {
   const setActiveTask = useGalaxyStore((state) => state.setActiveTask);
 
   if (!task) {
     return (
-      <div className="glass-card flex h-full flex-col items-center justify-center gap-3 rounded-3xl p-6 text-center text-sm text-slate-300">
+      <div className="flex h-full flex-col items-center justify-center gap-3 text-center text-sm text-slate-300">
         Select a task to inspect details.
       </div>
     );
@@ -67,13 +68,21 @@ const TaskDetailPanel: React.FC<TaskDetailPanelProps> = ({ task }) => {
     });
   };
 
+  const handleBack = () => {
+    if (onBack) {
+      onBack();
+    } else {
+      setActiveTask(null);
+    }
+  };
+
   return (
-    <div className="glass-card flex h-full flex-col gap-4 rounded-3xl p-5 text-xs text-slate-200">
+    <div className="flex h-full flex-col gap-4 text-xs text-slate-200">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
           <button
             type="button"
-            onClick={() => setActiveTask(null)}
+            onClick={handleBack}
             className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-white/5 px-3 py-2 text-xs text-slate-100 transition hover:border-white/30 hover:bg-white/10"
             title="Back to task list"
           >

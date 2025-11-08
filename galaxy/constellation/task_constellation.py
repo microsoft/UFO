@@ -831,6 +831,16 @@ class TaskConstellation(IConstellation):
             "execution_duration": self.execution_duration,
             "created_at": self._created_at.isoformat(),
             "updated_at": self._updated_at.isoformat(),
+            "execution_start_time": (
+                self._execution_start_time.isoformat()
+                if self._execution_start_time
+                else None
+            ),
+            "execution_end_time": (
+                self._execution_end_time.isoformat()
+                if self._execution_end_time
+                else None
+            ),
         }
 
     def to_dict(self) -> Dict[str, Any]:

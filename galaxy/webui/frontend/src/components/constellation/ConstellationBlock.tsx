@@ -1,7 +1,8 @@
-import React from 'react';
-import { ShieldAlert, Timer } from 'lucide-react';
+import React, { useState } from 'react';
+import { ShieldAlert, Timer, BarChart3 } from 'lucide-react';
 import clsx from 'clsx';
 import DagPreview from './DagPreview';
+import ConstellationStats from './ConstellationStats';
 import { ConstellationSummary } from '../../store/galaxyStore';
 
 interface ConstellationBlockProps {
@@ -18,6 +19,8 @@ const statusAccent: Record<string, string> = {
 };
 
 const ConstellationBlock: React.FC<ConstellationBlockProps> = ({ constellation, onSelectTask, variant = 'standalone' }) => {
+  const [showStats, setShowStats] = useState(false);
+
   if (!constellation) {
     return (
       <div
@@ -44,6 +47,9 @@ const ConstellationBlock: React.FC<ConstellationBlockProps> = ({ constellation, 
     variant === 'embedded' ? 'h-[260px]' : 'h-[320px]'
   );
 
+  // Show stats button only when constellation is completed or failed
+  const canShowStats = constellation.status === 'completed' || constellation.status === 'failed';
+
   return (
     <div className={containerClasses}>
       <div className="flex items-start justify-between gap-4">
@@ -56,40 +62,45 @@ const ConstellationBlock: React.FC<ConstellationBlockProps> = ({ constellation, 
             {constellation.status}
           </div>
         </div>
-        <div className="flex flex-col items-end text-xs text-slate-400">
-          <div className="flex items-center gap-1">
-            <Timer className="h-3 w-3" aria-hidden />
-            Updated {constellation.updatedAt ? new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit' }).format(constellation.updatedAt) : 'recently'}
+        <div className="flex items-center gap-2">
+          {canShowStats && (
+            <button
+              onClick={() => setShowStats(!showStats)}
+              className={clsx(
+                'flex items-center gap-2 rounded-full border border-white/10 px-3 py-1.5 text-xs transition',
+                showStats 
+                  ? 'bg-emerald-500/20 border-emerald-400/40 text-emerald-300' 
+                  : 'bg-black/30 text-slate-300 hover:border-white/30 hover:bg-black/40'
+              )}
+              title="View execution summary"
+            >
+              <BarChart3 className="h-3.5 w-3.5" aria-hidden />
+              Stats
+            </button>
+          )}
+          <div className="flex flex-col items-end text-xs text-slate-400">
+            <div className="flex items-center gap-1">
+              <Timer className="h-3 w-3" aria-hidden />
+              Updated {constellation.updatedAt ? new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit' }).format(constellation.updatedAt) : 'recently'}
+            </div>
+            <div>{constellation.taskIds.length} tasks</div>
           </div>
-          <div>{constellation.taskIds.length} tasks</div>
-        </div>
-      </div>
-
-      <div className="grid grid-cols-4 gap-2 text-center text-xs text-slate-300">
-        <div className="rounded-2xl border border-white/5 bg-white/5 px-2 py-3">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-slate-400">Total</div>
-          <div className="text-base font-semibold text-white">{constellation.statistics.total}</div>
-        </div>
-        <div className="rounded-2xl border border-white/5 bg-white/5 px-2 py-3">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-slate-400">Pending</div>
-          <div className="text-base font-semibold text-slate-200">{constellation.statistics.pending}</div>
-        </div>
-        <div className="rounded-2xl border border-white/5 bg-white/5 px-2 py-3">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-slate-400">Running</div>
-          <div className="text-base font-semibold text-cyan-200">{constellation.statistics.running}</div>
-        </div>
-        <div className="rounded-2xl border border-white/5 bg-white/5 px-2 py-3">
-          <div className="text-[10px] uppercase tracking-[0.2em] text-slate-400">Done</div>
-          <div className="text-base font-semibold text-emerald-200">{constellation.statistics.completed}</div>
         </div>
       </div>
 
       <div className={previewClasses}>
-        <DagPreview
-          nodes={constellation.dag.nodes}
-          edges={constellation.dag.edges}
-          onSelectNode={onSelectTask}
-        />
+        {showStats ? (
+          <ConstellationStats 
+            constellation={constellation} 
+            onBack={() => setShowStats(false)} 
+          />
+        ) : (
+          <DagPreview
+            nodes={constellation.dag.nodes}
+            edges={constellation.dag.edges}
+            onSelectNode={onSelectTask}
+          />
+        )}
       </div>
     </div>
   );

@@ -50,9 +50,8 @@ const TaskList: React.FC<TaskListProps> = ({ tasks, activeTaskId, onSelectTask }
   }, [filter, tasks]);
 
   return (
-    <div className="glass-card flex h-full flex-col gap-3 rounded-3xl p-5 text-xs text-slate-200">
+    <div className="flex h-full flex-col gap-3 text-xs text-slate-200">
       <div className="flex items-center justify-between">
-        <div className="text-sm font-semibold text-white">Tasks</div>
         <div className="flex items-center gap-1 rounded-full border border-white/10 bg-black/30 px-2 py-1">
           {statusFilters.map((status) => (
             <button

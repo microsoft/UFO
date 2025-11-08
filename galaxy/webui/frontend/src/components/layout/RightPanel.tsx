@@ -57,11 +57,12 @@ const RightPanel: React.FC = () => {
 
   return (
     <div className="flex h-full w-full flex-col gap-4 overflow-hidden">
-      <div className="glass-card flex flex-shrink-0 flex-col gap-4 rounded-3xl p-5">
+      {/* Constellation Overview - Top half */}
+      <div className="glass-card flex h-1/2 flex-shrink-0 flex-col gap-4 rounded-3xl p-5">
         <div className="flex items-center justify-between">
           <div>
             <div className="text-xs uppercase tracking-[0.25em] text-slate-400">Insights</div>
-            <div className="text-lg font-semibold text-white">Workflow Overview</div>
+            <div className="text-lg font-semibold text-white">Constellation Overview</div>
           </div>
           <select
             value={activeConstellation?.id || ''}
@@ -84,17 +85,28 @@ const RightPanel: React.FC = () => {
         />
       </div>
 
-      <div className="flex min-h-0 flex-1 flex-col gap-4">
-        <div className="min-h-0 flex-1">
-          <TaskList
-            tasks={taskList}
-            activeTaskId={ui.activeTaskId}
-            onSelectTask={(taskId) => setActiveTask(taskId)}
+      {/* TaskStar List or Task Detail - Bottom half */}
+      <div className="glass-card flex h-1/2 flex-shrink-0 flex-col gap-4 rounded-3xl p-5">
+        {activeTask ? (
+          <TaskDetailPanel 
+            task={activeTask} 
+            onBack={() => setActiveTask(null)}
           />
-        </div>
-        <div className="min-h-[220px]">
-          <TaskDetailPanel task={activeTask} />
-        </div>
+        ) : (
+          <>
+            <div className="flex items-center justify-between">
+              <div>
+                <div className="text-xs uppercase tracking-[0.25em] text-slate-400">Tasks</div>
+                <div className="text-lg font-semibold text-white">TaskStar List</div>
+              </div>
+            </div>
+            <TaskList
+              tasks={taskList}
+              activeTaskId={ui.activeTaskId}
+              onSelectTask={(taskId) => setActiveTask(taskId)}
+            />
+          </>
+        )}
       </div>
     </div>
   );
