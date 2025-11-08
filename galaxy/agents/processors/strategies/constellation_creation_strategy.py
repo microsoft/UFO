@@ -85,11 +85,17 @@ class ConstellationCreationActionExecutionStrategy(
                 )
             ]
 
-    def print_actions(self, actions: ListActionCommandInfo) -> None:
+    async def publish_actions(
+        self, agent: "ConstellationAgent", actions: ListActionCommandInfo
+    ) -> None:
         """
-        Printing the action result.
-        :param actions: List of action command information. Do nothing for creation mode
+        Publish constellation creation actions as events.
+        For creation mode, we don't publish actions (no-op).
+
+        :param agent: The constellation agent
+        :param actions: List of action command information
         """
+        # Do nothing for creation mode (same as original print_actions logic)
         pass
 
     def sync_constellation(

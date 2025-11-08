@@ -34,6 +34,10 @@ class EventType(Enum):
     # Structure modification events (for dynamic constellation changes)
     CONSTELLATION_MODIFIED = "constellation_modified"
 
+    # Agent output events (for real-time agent interaction display)
+    AGENT_RESPONSE = "agent_response"  # Agent LLM response (thought, plan, etc.)
+    AGENT_ACTION = "agent_action"  # Agent action execution details
+
 
 @dataclass
 class Event:
@@ -77,6 +81,21 @@ class ConstellationEvent(Event):
     constellation_id: str
     constellation_state: str
     new_ready_tasks: List[str] = None
+
+
+@dataclass
+class AgentEvent(Event):
+    """
+    Agent output event.
+
+    Extends base Event class with agent-specific information including
+    agent name, output type, and the actual output content.
+    """
+
+    agent_name: str
+    agent_type: str  # "constellation", "app", "host", etc.
+    output_type: str  # "response", "action", "thought", "plan"
+    output_data: Dict[str, Any]  # The actual output content
 
 
 class IEventObserver(ABC):

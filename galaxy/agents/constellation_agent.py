@@ -25,7 +25,13 @@ from galaxy.agents.prompters.base_constellation_prompter import (
 from galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
 from galaxy.client.components.types import AgentProfile
 from galaxy.constellation.orchestrator.orchestrator import TaskConstellationOrchestrator
-from galaxy.core.events import ConstellationEvent, EventType, TaskEvent, get_event_bus
+from galaxy.core.events import (
+    AgentEvent,
+    ConstellationEvent,
+    EventType,
+    TaskEvent,
+    get_event_bus,
+)
 
 # Import BasicAgent and ConstellationAgentStatus here to avoid circular import at module level
 from ufo.agents.agent.basic import BasicAgent
@@ -523,13 +529,27 @@ class ConstellationAgent(BasicAgent, IRequestProcessor, IResultProcessor):
         self, response: ConstellationAgentResponse, print_action: bool = False
     ) -> None:
         """
-        Print the response using the presenter.
+        Publish agent response as an event instead of directly printing.
         :param response: The ConstellationAgentResponse object to display
         :param print_action: Flag to indicate if action details should be printed
         """
-        self.presenter.present_constellation_agent_response(
-            response, print_action=print_action
+        # Publish agent response event
+        event = AgentEvent(
+            event_type=EventType.AGENT_RESPONSE,
+            source_id=self.name,
+            timestamp=time.time(),
+            data={},
+            agent_name=self.name,
+            agent_type="constellation",
+            output_type="response",
+            output_data={
+                **response.model_dump(),
+                "print_action": print_action,
+            },
         )
+
+        # Publish event asynchronously (non-blocking)
+        asyncio.create_task(get_event_bus().publish_event(event))
 
     @property
     def status_manager(self):

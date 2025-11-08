@@ -8,6 +8,7 @@ This module provides specific strategies for constellation editing mode,
 implementing the abstract methods defined in the base strategies.
 """
 
+import time
 from typing import TYPE_CHECKING, List
 
 from galaxy.agents.processors.strategies.base_constellation_strategy import (
@@ -15,6 +16,7 @@ from galaxy.agents.processors.strategies.base_constellation_strategy import (
 )
 from galaxy.agents.schema import ConstellationAgentResponse, WeavingMode
 from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.core.events import AgentEvent, EventType, get_event_bus
 from galaxy.core.types import ProcessingContext
 from ufo.agents.processors.schemas.actions import (
     ActionCommandInfo,
@@ -73,16 +75,32 @@ class ConstellationEditingActionExecutionStrategy(
                 )
             ]
 
-    def print_actions(self, actions: ListActionCommandInfo) -> None:
+    async def publish_actions(
+        self, agent: "ConstellationAgent", actions: ListActionCommandInfo
+    ) -> None:
         """
-        Print constellation editing actions using the presenter.
+        Publish constellation editing actions as events.
 
+        :param agent: The constellation agent
         :param actions: List of action command information
         """
-        from ufo.agents.presenters import PresenterFactory
+        # Publish agent action event
+        event = AgentEvent(
+            event_type=EventType.AGENT_ACTION,
+            source_id=agent.name,
+            timestamp=time.time(),
+            data={},
+            agent_name=agent.name,
+            agent_type="constellation",
+            output_type="action",
+            output_data={
+                "action_type": "constellation_editing",
+                "actions": [action.model_dump() for action in actions.actions],
+            },
+        )
 
-        presenter = PresenterFactory.create_presenter("rich")
-        presenter.present_constellation_editing_actions(actions)
+        # Publish event asynchronously
+        await get_event_bus().publish_event(event)
 
     def sync_constellation(
         self, results: List[Result], context: ProcessingContext

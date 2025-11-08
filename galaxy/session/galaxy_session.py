@@ -29,6 +29,7 @@ from ..constellation.enums import ConstellationState
 from ..core.events import get_event_bus
 from ..trajectory.galaxy_parser import GalaxyTrajectory
 from .observers import (
+    AgentOutputObserver,
     ConstellationModificationSynchronizer,
     ConstellationProgressObserver,
     DAGVisualizationObserver,
@@ -258,7 +259,7 @@ class GalaxySession(BaseSession):
         """
         Set up event observers for this round.
 
-        Initializes progress, metrics, and visualization observers
+        Initializes progress, metrics, visualization, and agent output observers
         and subscribes them to the event bus.
         """
         # Progress observer for task updates
@@ -274,6 +275,10 @@ class GalaxySession(BaseSession):
         # DAG visualization observer for constellation visualization
         visualization_observer = DAGVisualizationObserver(enable_visualization=True)
         self._observers.append(visualization_observer)
+
+        # Agent output observer for handling agent responses and actions
+        agent_output_observer = AgentOutputObserver(presenter_type="rich")
+        self._observers.append(agent_output_observer)
 
         # Modification synchronizer for coordinating constellation updates
         self._modification_synchronizer = ConstellationModificationSynchronizer(

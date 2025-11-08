@@ -10,6 +10,7 @@ containing shared logic while allowing for mode-specific customization.
 
 import asyncio
 import json
+import time
 import traceback
 from abc import abstractmethod
 from dataclasses import asdict
@@ -23,6 +24,7 @@ from galaxy.agents.schema import (
 )
 from galaxy.client.components.types import AgentProfile
 from galaxy.constellation.task_constellation import TaskConstellation
+from galaxy.core.events import AgentEvent, EventType, get_event_bus
 from ufo.agents.memory.memory import MemoryItem
 from ufo.agents.processors.core.processor_framework import (
     ProcessingContext,
@@ -361,7 +363,7 @@ class BaseConstellationActionExecutionStrategy(BaseProcessingStrategy):
 
             # Step 5: Print action info
             action_list_info = ListActionCommandInfo(actions)
-            self.print_actions(action_list_info)
+            await self.publish_actions(agent, action_list_info)
 
             # Step 6: Determine status
             status = parsed_response.status
@@ -391,9 +393,14 @@ class BaseConstellationActionExecutionStrategy(BaseProcessingStrategy):
         pass
 
     @abstractmethod
-    def print_actions(self, actions: ListActionCommandInfo) -> None:
+    async def publish_actions(
+        self, agent: "ConstellationAgent", actions: ListActionCommandInfo
+    ) -> None:
         """
-        Printing the action result.
+        Publish agent actions as events. Must be implemented by subclasses.
+
+        :param agent: The constellation agent
+        :param actions: List of action command information
         """
         pass
 
