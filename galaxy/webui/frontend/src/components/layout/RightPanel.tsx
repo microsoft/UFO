@@ -65,15 +65,12 @@ const RightPanel: React.FC = () => {
   };
 
   return (
-    <div className="flex h-full w-full flex-col gap-4 overflow-hidden">
+    <div className="flex h-full w-full flex-col gap-3">
       {/* Constellation Overview - Top half */}
-      <div className="glass-card flex h-1/2 flex-shrink-0 flex-col gap-4 rounded-3xl p-5">
-        <div className="flex items-center justify-between">
+      <div className="glass-card flex flex-1 min-h-0 flex-col gap-3 rounded-3xl p-4 overflow-hidden">
+        <div className="flex items-center justify-between flex-shrink-0">
           <div className="flex items-center gap-3">
-            <div>
-              <div className="text-xs uppercase tracking-[0.25em] text-slate-400">Insights</div>
-              <div className="text-lg font-semibold text-white">Constellation Overview</div>
-            </div>
+            <div className="font-heading text-xl font-semibold tracking-tight text-white">Constellation Overview</div>
             {activeConstellation && (
               <span className={clsx(
                 'rounded-full border px-3 py-1 text-xs font-semibold uppercase tracking-wider',
@@ -86,7 +83,7 @@ const RightPanel: React.FC = () => {
           <select
             value={activeConstellation?.id || ''}
             onChange={handleConstellationChange}
-            className="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-xs text-slate-200 focus:outline-none"
+            className="rounded-full border border-white/10 bg-black/40 px-3 py-1.5 text-xs text-slate-200 focus:outline-none"
           >
             {constellationList.map((constellation, index) => (
               <option key={constellation.id} value={constellation.id}>
@@ -97,15 +94,17 @@ const RightPanel: React.FC = () => {
           </select>
         </div>
 
-        <ConstellationBlock
-          constellation={activeConstellation}
-          onSelectTask={(taskId) => setActiveTask(taskId)}
-          variant="embedded"
-        />
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <ConstellationBlock
+            constellation={activeConstellation}
+            onSelectTask={(taskId) => setActiveTask(taskId)}
+            variant="embedded"
+          />
+        </div>
       </div>
 
       {/* TaskStar List or Task Detail - Bottom half */}
-      <div className="glass-card flex h-1/2 flex-shrink-0 flex-col gap-4 rounded-3xl p-5">
+      <div className="glass-card flex flex-1 min-h-0 flex-col gap-3 rounded-3xl p-4 overflow-hidden">
         {activeTask ? (
           <TaskDetailPanel 
             task={activeTask} 
@@ -113,17 +112,16 @@ const RightPanel: React.FC = () => {
           />
         ) : (
           <>
-            <div className="flex items-center justify-between">
-              <div>
-                <div className="text-xs uppercase tracking-[0.25em] text-slate-400">Tasks</div>
-                <div className="text-lg font-semibold text-white">TaskStar List</div>
-              </div>
+            <div className="flex items-center justify-between flex-shrink-0">
+              <div className="font-heading text-xl font-semibold tracking-tight text-white">TaskStar List</div>
             </div>
-            <TaskList
-              tasks={taskList}
-              activeTaskId={ui.activeTaskId}
-              onSelectTask={(taskId) => setActiveTask(taskId)}
-            />
+            <div className="flex-1 min-h-0 overflow-hidden">
+              <TaskList
+                tasks={taskList}
+                activeTaskId={ui.activeTaskId}
+                onSelectTask={(taskId) => setActiveTask(taskId)}
+              />
+            </div>
           </>
         )}
       </div>

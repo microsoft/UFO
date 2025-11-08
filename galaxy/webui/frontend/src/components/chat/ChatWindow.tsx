@@ -73,12 +73,15 @@ const ChatWindow: React.FC = () => {
       return true;
     }
     
-    // If last message is agent response but status is pending/running, still waiting
+    // If last message is agent but it's an action (not final response), we're still waiting
+    if (lastMessage.role === 'assistant' && lastMessage.kind === 'action') {
+      return true;
+    }
+    
+    // If last message is agent response but status is pending/running/continue, still waiting
     if (lastMessage.role === 'assistant' && lastMessage.kind === 'response') {
-      const status = lastMessage.payload?.status || lastMessage.payload?.result?.status;
-      if (status && !['finish', 'completed', 'success', 'failed', 'error'].some(s => 
-        status.toLowerCase().includes(s.toLowerCase())
-      )) {
+      const status = String(lastMessage.payload?.status || lastMessage.payload?.result?.status || '').toLowerCase();
+      if (status === 'continue' || status === 'running' || status === 'pending' || status === '') {
         return true;
       }
     }
@@ -120,18 +123,11 @@ const ChatWindow: React.FC = () => {
               
               {/* Loading indicator when waiting for agent response */}
               {isWaitingForResponse && (
-                <div className="flex items-center gap-3 rounded-2xl border border-white/10 bg-black/40 p-4 backdrop-blur-sm">
-                  <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 shadow-lg">
-                    <Loader2 className="h-5 w-5 animate-spin text-cyan-300" />
-                  </div>
-                  <div className="flex flex-col gap-0.5">
-                    <span className="font-medium text-sm text-slate-200">
-                      UFO is thinking...
-                    </span>
-                    <span className="text-[10px] text-slate-400">
-                      Processing your request
-                    </span>
-                  </div>
+                <div className="ml-14 flex items-center gap-2 rounded-xl border border-white/5 bg-black/20 px-3 py-2 backdrop-blur-sm">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-cyan-400/60" />
+                  <span className="text-xs text-slate-400/80">
+                    UFO is thinking...
+                  </span>
                 </div>
               )}
             </>

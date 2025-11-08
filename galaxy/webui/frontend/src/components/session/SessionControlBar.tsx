@@ -24,41 +24,34 @@ const SessionControlBar: React.FC = () => {
 
   return (
     <div className="glass-card flex flex-col gap-4 rounded-3xl p-5 text-sm text-slate-100">
-      <div className="flex items-start justify-between">
+      <div className="flex items-start justify-start">
         <div>
-          <div className="text-xs uppercase tracking-[0.25em] text-slate-400">
-            Session
-          </div>
-          <div className="mt-1 text-lg font-semibold text-white">{session.displayName}</div>
+          <div className="font-heading text-xl font-semibold tracking-tight text-white">{session.displayName}</div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-2">
+      <div className="grid grid-cols-1 gap-3">
         <button
           type="button"
           onClick={handleReset}
-          className="flex items-center justify-between rounded-2xl border border-white/10 bg-white/5 px-4 py-3 transition hover:border-white/30 hover:bg-white/10"
+          className="flex items-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-3 transition hover:border-white/30 hover:bg-white/10"
         >
-          <div className="flex items-center gap-3">
-            <RefreshCcw className="h-4 w-4 text-cyan-300" aria-hidden />
-            <div>
-              <div className="text-sm font-medium text-white">Reset session</div>
-              <div className="text-xs text-slate-400">Clear chat, tasks, and devices</div>
-            </div>
+          <RefreshCcw className="h-4 w-4 text-cyan-300" aria-hidden />
+          <div className="text-left">
+            <div className="text-sm font-medium text-white">Reset Session</div>
+            <div className="text-xs text-slate-400">Clear chat, tasks, and devices</div>
           </div>
         </button>
 
         <button
           type="button"
           onClick={handleNextSession}
-          className="flex items-center justify-between rounded-2xl border border-white/10 bg-gradient-to-r from-galaxy-blue/20 to-galaxy-purple/20 px-4 py-3 transition hover:from-galaxy-blue/30 hover:to-galaxy-purple/30"
+          className="flex items-center gap-3 rounded-2xl border border-emerald-400/30 bg-gradient-to-r from-emerald-500/20 to-cyan-500/20 px-4 py-3 transition hover:border-emerald-400/50 hover:from-emerald-500/30 hover:to-cyan-500/30"
         >
-          <div className="flex items-center gap-3">
-            <Rocket className="h-4 w-4 text-emerald-300" aria-hidden />
-            <div>
-              <div className="text-sm font-medium text-white">Next session</div>
-              <div className="text-xs text-slate-400">Launch with a fresh constellation</div>
-            </div>
+          <Rocket className="h-4 w-4 text-emerald-300" aria-hidden />
+          <div className="text-left">
+            <div className="text-sm font-medium text-white">Next Session</div>
+            <div className="text-xs text-slate-400">Launch with a fresh constellation</div>
           </div>
         </button>
       </div>

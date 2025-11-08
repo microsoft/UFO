@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { shallow } from 'zustand/shallow';
-import { Cpu, WifiOff, Search, Activity, Clock } from 'lucide-react';
+import { Cpu, WifiOff, Search, Clock } from 'lucide-react';
 import clsx from 'clsx';
 import { Device, DeviceStatus, useGalaxyStore } from '../../store/galaxyStore';
 
@@ -110,15 +110,11 @@ const DevicePanel: React.FC = () => {
   return (
     <div className="glass-card flex h-full flex-col gap-4 rounded-3xl p-5 text-sm text-slate-100">
       <div className="flex items-center justify-between">
-        <div>
-          <div className="text-xs uppercase tracking-[0.25em] text-slate-400">
-            Devices
+        <div className="flex items-center gap-3">
+          <div className="font-heading text-xl font-semibold tracking-tight text-white">Device Agent</div>
+          <div className="rounded-lg border border-emerald-400/30 bg-emerald-500/10 px-3 py-1.5 text-sm font-medium text-emerald-200">
+            {online}/{total} online
           </div>
-          <div className="text-lg font-semibold text-white">{online}/{total} online</div>
-        </div>
-        <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] uppercase tracking-[0.2em] text-slate-300">
-          <Activity className="h-3 w-3" aria-hidden />
-          Fleet
         </div>
       </div>
 
