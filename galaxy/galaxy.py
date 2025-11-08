@@ -76,6 +76,12 @@ Examples:
         help="Run demonstration mode with sample workflows",
     )
 
+    parser.add_argument(
+        "--webui",
+        action="store_true",
+        help="Launch Web UI interface on http://localhost:8000",
+    )
+
     # Session configuration
     parser.add_argument(
         "--session-name", dest="session_name", help="Custom name for the Galaxy session"
@@ -191,7 +197,15 @@ async def main():
     """
 
     # Handle no arguments case
-    if not any([args.simple_request, args.request_text, args.interactive, args.demo]):
+    if not any(
+        [
+            args.simple_request,
+            args.request_text,
+            args.interactive,
+            args.demo,
+            args.webui,
+        ]
+    ):
         from galaxy.visualization.client_display import ClientDisplay
 
         display = ClientDisplay(console)
@@ -210,8 +224,12 @@ async def main():
     try:
         await client.initialize()
 
+        # WebUI mode
+        if args.webui:
+            await run_webui_mode(client)
+
         # Demo mode
-        if args.demo:
+        elif args.demo:
             await run_demo_with_client(client)
 
         # Interactive mode
@@ -239,6 +257,10 @@ async def main():
 
             display = ClientDisplay(console=console)
             display.print_warning("\n👋 Interrupted by user")
+    except asyncio.CancelledError:
+        # Gracefully handle cancelled tasks
+        if "client" in locals():
+            client.display.print_warning("\n👋 Shutting down...")
     except Exception as e:
         if "client" in locals():
             client.display.print_error(f"❌ Galaxy Framework error: {e}")
@@ -251,7 +273,11 @@ async def main():
         logging.error(f"Galaxy Framework error: {e}", exc_info=True)
         sys.exit(1)
     finally:
-        await client.shutdown()
+        # Suppress any remaining CancelledError during shutdown
+        try:
+            await client.shutdown()
+        except asyncio.CancelledError:
+            pass
 
 
 async def run_demo_with_client(client: GalaxyClient):
@@ -284,6 +310,84 @@ async def run_demo_with_client(client: GalaxyClient):
         client.display.display_result(result)
 
     client.display.show_demo_complete()
+
+
+async def run_webui_mode(client: GalaxyClient):
+    """
+    Launch WebUI mode with FastAPI server.
+
+    :param client: Initialized GalaxyClient instance
+    """
+    import socket
+    import webbrowser
+    import uvicorn
+    from galaxy.webui.server import app, set_galaxy_client
+
+    # Set the Galaxy client for the WebUI server
+    set_galaxy_client(client)
+
+    # Find available port
+    def find_free_port(start_port=8000, max_attempts=10):
+        """Find a free port starting from start_port."""
+        for port in range(start_port, start_port + max_attempts):
+            try:
+                with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as s:
+                    s.bind(("127.0.0.1", port))
+                    return port
+            except OSError:
+                continue
+        return None
+
+    port = find_free_port()
+    if port is None:
+        client.display.print_error(
+            "❌ Could not find an available port (tried 8000-8009)"
+        )
+        return
+
+    # Display banner
+    client.display.print_info("🌌 Galaxy WebUI Starting...")
+    client.display.print_info(f"📡 Server: http://localhost:{port}")
+    client.display.print_info(
+        f"🎨 Frontend: Open http://localhost:{port} in your browser"
+    )
+    client.display.print_info(f"🔌 WebSocket: ws://localhost:{port}/ws")
+    client.display.print_info("\n💡 Press Ctrl+C to stop the server\n")
+
+    # Configure and run uvicorn server
+    config = uvicorn.Config(
+        app,
+        host="0.0.0.0",
+        port=port,
+        log_level="info",
+        access_log=False,
+    )
+    server = uvicorn.Server(config)
+
+    # Open browser after a short delay
+    async def open_browser_delayed():
+        """Open browser after server starts."""
+        await asyncio.sleep(1.5)  # Wait for server to start
+        url = f"http://localhost:{port}"
+        client.display.print_info(f"🌐 Opening browser: {url}")
+        webbrowser.open(url)
+
+    # Start browser opening task
+    asyncio.create_task(open_browser_delayed())
+
+    try:
+        await server.serve()
+    except KeyboardInterrupt:
+        client.display.print_warning("\n👋 WebUI server stopped by user")
+    except asyncio.CancelledError:
+        # Gracefully handle cancelled tasks during shutdown
+        pass
+    finally:
+        # Suppress CancelledError during shutdown
+        try:
+            await server.shutdown()
+        except asyncio.CancelledError:
+            pass
 
 
 if __name__ == "__main__":

@@ -1,0 +1,68 @@
+import React from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react';
+import clsx from 'clsx';
+import { NotificationItem, useGalaxyStore } from '../../store/galaxyStore';
+
+const severityStyles: Record<NotificationItem['severity'], { icon: React.ReactNode; className: string }> = {
+  info: { icon: <Info className="h-4 w-4" aria-hidden />, className: 'border-cyan-400/40 bg-cyan-500/10 text-cyan-100' },
+  success: { icon: <CheckCircle2 className="h-4 w-4" aria-hidden />, className: 'border-emerald-400/40 bg-emerald-500/10 text-emerald-100' },
+  warning: { icon: <AlertCircle className="h-4 w-4" aria-hidden />, className: 'border-amber-400/40 bg-amber-500/10 text-amber-100' },
+  error: { icon: <AlertCircle className="h-4 w-4" aria-hidden />, className: 'border-rose-400/40 bg-rose-500/10 text-rose-100' },
+};
+
+const NotificationCenter: React.FC = () => {
+  const { notifications, dismissNotification, markNotificationRead } = useGalaxyStore(
+    (state) => ({
+      notifications: state.notifications,
+      dismissNotification: state.dismissNotification,
+      markNotificationRead: state.markNotificationRead,
+    }),
+  );
+
+  return (
+    <div className="pointer-events-none fixed bottom-6 left-6 z-50 flex w-80 flex-col gap-3">
+      <AnimatePresence>
+        {notifications.map((notification) => {
+          const style = severityStyles[notification.severity];
+          return (
+            <motion.div
+              key={notification.id}
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 10, opacity: 0 }}
+              transition={{ duration: 0.2 }}
+              className={clsx('pointer-events-auto rounded-2xl border px-4 py-3 shadow-lg backdrop-blur-lg', style.className)}
+              onMouseEnter={() => markNotificationRead(notification.id)}
+            >
+              <div className="flex items-start gap-3">
+                <div className="mt-1">{style.icon}</div>
+                <div className="flex-1 text-xs">
+                  <div className="flex items-center justify-between">
+                    <div className="font-semibold text-white">{notification.title}</div>
+                    <button
+                      type="button"
+                      className="rounded-full border border-white/20 p-1 text-[10px] text-slate-200"
+                      onClick={() => dismissNotification(notification.id)}
+                    >
+                      <X className="h-3 w-3" aria-hidden />
+                    </button>
+                  </div>
+                  {notification.description && (
+                    <div className="mt-1 text-[11px] text-slate-200/80">{notification.description}</div>
+                  )}
+                  <div className="mt-2 flex items-center justify-between text-[10px] uppercase tracking-[0.18em] text-slate-300/70">
+                    <span>{notification.source || 'system'}</span>
+                    <span>{new Date(notification.timestamp).toLocaleTimeString()}</span>
+                  </div>
+                </div>
+              </div>
+            </motion.div>
+          );
+        })}
+      </AnimatePresence>
+    </div>
+  );
+};
+
+export default NotificationCenter;

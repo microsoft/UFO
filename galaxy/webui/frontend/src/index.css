@@ -1,0 +1,214 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  font-family: Inter, system-ui, "IBM Plex Sans", Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+  color: rgba(247, 250, 255, 0.92);
+  background-color: #050816;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, rgba(47, 102, 255, 0.25), transparent 55%),
+    radial-gradient(circle at 20% 80%, rgba(33, 240, 255, 0.18), transparent 50%),
+    #020617;
+  overflow: hidden;
+}
+
+#root {
+  width: 100vw;
+  height: 100vh;
+}
+
+.high-contrast body,
+body.high-contrast {
+  background: #000;
+  color: #fff;
+}
+
+.high-contrast *,
+body.high-contrast * {
+  outline-offset: 2px;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(33, 240, 255, 0.28);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(15, 123, 255, 0.6);
+}
+
+/* Galaxy background effect */
+.galaxy-bg {
+  position: relative;
+  background: linear-gradient(135deg, #050b1a 0%, #081a34 45%, #0b223f 100%);
+}
+
+.galaxy-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-image: 
+    radial-gradient(2px 2px at 20% 30%, white, transparent),
+    radial-gradient(2px 2px at 60% 70%, white, transparent),
+    radial-gradient(1px 1px at 50% 50%, white, transparent),
+    radial-gradient(1px 1px at 80% 10%, white, transparent),
+    radial-gradient(2px 2px at 90% 60%, white, transparent),
+    radial-gradient(1px 1px at 33% 70%, white, transparent);
+  background-size: 200% 200%;
+  animation: stars 60s linear infinite;
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+@keyframes stars {
+  from {
+    background-position: 0 0;
+  }
+  to {
+    background-position: 100% 100%;
+  }
+}
+
+/* Glow effects */
+.glow-text {
+  text-shadow: 0 0 10px rgba(0, 212, 255, 0.5),
+               0 0 20px rgba(123, 44, 191, 0.3);
+}
+
+.glow-border {
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 10px rgba(0, 212, 255, 0.2),
+              inset 0 0 10px rgba(0, 212, 255, 0.1);
+}
+
+.frosted-panel {
+  background: linear-gradient(140deg, rgba(11, 24, 44, 0.85) 0%, rgba(18, 18, 32, 0.9) 100%);
+  border: 1px solid rgba(33, 240, 255, 0.08);
+  box-shadow: 0 12px 30px rgba(3, 7, 15, 0.45), inset 0 0 0 1px rgba(147, 197, 253, 0.02);
+  backdrop-filter: blur(18px) saturate(140%);
+}
+
+.glass-card {
+  background: linear-gradient(165deg, rgba(8, 25, 45, 0.72) 0%, rgba(10, 13, 30, 0.78) 100%);
+  border: 1px solid rgba(15, 123, 255, 0.12);
+  box-shadow: 0 10px 35px rgba(2, 10, 24, 0.6);
+  backdrop-filter: blur(16px) saturate(160%);
+}
+
+/* Animation utilities */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+.star-particle {
+  position: absolute;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0) 65%);
+  border-radius: 50%;
+  opacity: 0.8;
+  animation: starFloat 14s ease-in-out infinite;
+}
+
+.star-twinkle {
+  animation: twinkle 8s ease-in-out infinite, starFloat 14s ease-in-out infinite;
+}
+
+.shooting-star {
+  position: absolute;
+  width: 180px;
+  height: 2px;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+  opacity: 0;
+  transform: rotate(12deg);
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
+  animation: shooting 28s linear infinite;
+}
+
+@keyframes starFloat {
+  0%,
+  100% {
+    transform: translateY(0px) scale(1);
+  }
+  50% {
+    transform: translateY(-6px) scale(1.05);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.4;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes shooting {
+  0%,
+  80% {
+    transform: translate3d(0, 0, 0) rotate(15deg);
+    opacity: 0;
+  }
+  82% {
+    opacity: 1;
+  }
+  86% {
+    transform: translate3d(160px, 20px, 0) rotate(15deg);
+    opacity: 0.6;
+  }
+  92%,
+  100% {
+    transform: translate3d(300px, 35px, 0) rotate(15deg);
+    opacity: 0;
+  }
+}
+
+.noise-overlay::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160' viewBox='0 0 160 160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  pointer-events: none;
+  mix-blend-mode: screen;
+}
+
+.compose-area-shadow {
+  box-shadow: 0 -12px 30px rgba(5, 12, 25, 0.6);
+}

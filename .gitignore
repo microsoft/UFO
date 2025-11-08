@@ -33,6 +33,7 @@ vectordb/demonstration/*
 tasks/*
 scripts/*
 backup/*
+node_modules/*
 
 # Don't ignore the example files
 !vectordb/docs/example/
@@ -66,3 +67,4 @@ ufo/config/config_llm.yaml
 !config/*/third_party.yaml
 !config/*/device.yaml
 !config/*/network.yaml
+node_modules

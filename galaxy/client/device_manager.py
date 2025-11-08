@@ -10,10 +10,12 @@ Uses modular components for clean separation of concerns.
 
 import asyncio
 import logging
+import time
 from typing import Any, Dict, List, Optional
 import websockets
 
 from galaxy.core.types import ExecutionResult
+from galaxy.core.events import DeviceEvent, EventType, get_event_bus
 from aip.messages import TaskStatus
 
 from .components import (
@@ -77,7 +79,97 @@ class ConstellationDeviceManager:
         # Reconnection management
         self._reconnect_tasks: Dict[str, asyncio.Task] = {}
 
+        # Event bus for device events
+        self.event_bus = get_event_bus()
+
         self.logger = logging.getLogger(__name__)
+
+    def _get_device_registry_snapshot(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Create a snapshot of all devices in the registry.
+
+        :return: Dictionary mapping device_id to device status information
+        """
+        snapshot = {}
+        all_devices = self.device_registry.get_all_devices()
+
+        for device_id, device_info in all_devices.items():
+            snapshot[device_id] = {
+                "device_id": device_info.device_id,
+                "status": device_info.status.value,
+                "os": device_info.os,
+                "server_url": device_info.server_url,
+                "capabilities": device_info.capabilities,
+                "metadata": device_info.metadata,
+                "last_heartbeat": (
+                    device_info.last_heartbeat.isoformat()
+                    if device_info.last_heartbeat
+                    else None
+                ),
+                "connection_attempts": device_info.connection_attempts,
+                "max_retries": device_info.max_retries,
+                "current_task_id": device_info.current_task_id,
+            }
+
+        return snapshot
+
+    async def _publish_device_event(
+        self, event_type: EventType, device_id: str, device_info: AgentProfile
+    ) -> None:
+        """
+        Publish a device event to the event bus.
+
+        :param event_type: Type of device event
+        :param device_id: Device ID
+        :param device_info: Device information
+        """
+        try:
+            # Get device registry snapshot
+            all_devices_snapshot = self._get_device_registry_snapshot()
+
+            # Create device-specific info
+            device_data = {
+                "device_id": device_info.device_id,
+                "status": device_info.status.value,
+                "os": device_info.os,
+                "server_url": device_info.server_url,
+                "capabilities": device_info.capabilities,
+                "metadata": device_info.metadata,
+                "last_heartbeat": (
+                    device_info.last_heartbeat.isoformat()
+                    if device_info.last_heartbeat
+                    else None
+                ),
+                "connection_attempts": device_info.connection_attempts,
+                "max_retries": device_info.max_retries,
+                "current_task_id": device_info.current_task_id,
+            }
+
+            # Create and publish device event
+            event = DeviceEvent(
+                event_type=event_type,
+                source_id=f"device_manager.{device_id}",
+                timestamp=time.time(),
+                data={
+                    "event_name": event_type.value,
+                    "device_count": len(all_devices_snapshot),
+                },
+                device_id=device_id,
+                device_status=device_info.status.value,
+                device_info=device_data,
+                all_devices=all_devices_snapshot,
+            )
+
+            await self.event_bus.publish_event(event)
+            self.logger.debug(
+                f"📢 Published {event_type.value} event for device {device_id}"
+            )
+
+        except Exception as e:
+            self.logger.error(
+                f"❌ Failed to publish device event for {device_id}: {e}",
+                exc_info=True,
+            )
 
     async def register_device(
         self,
@@ -191,6 +283,11 @@ class ConstellationDeviceManager:
             # Set device to IDLE (ready to accept tasks)
             self.device_registry.set_device_idle(device_id)
 
+            # Publish DEVICE_CONNECTED event
+            await self._publish_device_event(
+                EventType.DEVICE_CONNECTED, device_id, device_info
+            )
+
             self.logger.info(f"✅ Successfully connected to device {device_id}")
             return True
 
@@ -261,6 +358,9 @@ class ConstellationDeviceManager:
 
     async def disconnect_device(self, device_id: str) -> None:
         """Manually disconnect from a device"""
+        # Get device info before disconnection for event publishing
+        device_info = self.device_registry.get_device(device_id)
+
         # Stop background services
         self.message_processor.stop_message_handler(device_id)
         self.heartbeat_manager.stop_heartbeat(device_id)
@@ -270,6 +370,12 @@ class ConstellationDeviceManager:
 
         # Update status
         self.device_registry.update_device_status(device_id, DeviceStatus.DISCONNECTED)
+
+        # Publish DEVICE_DISCONNECTED event
+        if device_info:
+            await self._publish_device_event(
+                EventType.DEVICE_DISCONNECTED, device_id, device_info
+            )
 
     async def _handle_device_disconnection(self, device_id: str) -> None:
         """
@@ -301,6 +407,11 @@ class ConstellationDeviceManager:
 
             # Clean up connection
             await self.connection_manager.disconnect_device(device_id)
+
+            # Publish DEVICE_DISCONNECTED event
+            await self._publish_device_event(
+                EventType.DEVICE_DISCONNECTED, device_id, device_info
+            )
 
             # Cancel current task if device was executing one
             current_task_id = device_info.current_task_id
@@ -504,6 +615,13 @@ class ConstellationDeviceManager:
             # Set device to BUSY
             self.device_registry.set_device_busy(device_id, task_request.task_id)
 
+            # Publish DEVICE_STATUS_CHANGED event (BUSY)
+            device_info = self.device_registry.get_device(device_id)
+            if device_info:
+                await self._publish_device_event(
+                    EventType.DEVICE_STATUS_CHANGED, device_id, device_info
+                )
+
             # Execute task through connection manager
             result = await self.connection_manager.send_task_to_device(
                 device_id, task_request
@@ -603,6 +721,13 @@ class ConstellationDeviceManager:
         finally:
             # Set device back to IDLE
             self.device_registry.set_device_idle(device_id)
+
+            # Publish DEVICE_STATUS_CHANGED event (IDLE)
+            device_info = self.device_registry.get_device(device_id)
+            if device_info:
+                await self._publish_device_event(
+                    EventType.DEVICE_STATUS_CHANGED, device_id, device_info
+                )
 
             # Check if there are queued tasks and process next one
             await self._process_next_queued_task(device_id)

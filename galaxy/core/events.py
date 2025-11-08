@@ -38,6 +38,13 @@ class EventType(Enum):
     AGENT_RESPONSE = "agent_response"  # Agent LLM response (thought, plan, etc.)
     AGENT_ACTION = "agent_action"  # Agent action execution details
 
+    # Device events (for device connection and status monitoring)
+    DEVICE_CONNECTED = "device_connected"  # Device connected to constellation
+    DEVICE_DISCONNECTED = (
+        "device_disconnected"  # Device disconnected from constellation
+    )
+    DEVICE_STATUS_CHANGED = "device_status_changed"  # Device status changed
+
 
 @dataclass
 class Event:
@@ -96,6 +103,21 @@ class AgentEvent(Event):
     agent_type: str  # "constellation", "app", "host", etc.
     output_type: str  # "response", "action", "thought", "plan"
     output_data: Dict[str, Any]  # The actual output content
+
+
+@dataclass
+class DeviceEvent(Event):
+    """
+    Device-specific event.
+
+    Extends base Event class with device-specific information including
+    device ID, device status, and a snapshot of all devices in the registry.
+    """
+
+    device_id: str
+    device_status: str
+    device_info: Dict[str, Any]  # Current device information
+    all_devices: Dict[str, Dict[str, Any]]  # Snapshot of all devices in registry
 
 
 class IEventObserver(ABC):
