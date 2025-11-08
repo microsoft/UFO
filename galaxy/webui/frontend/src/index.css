@@ -139,25 +139,26 @@ body.high-contrast * {
 
 .star-particle {
   position: absolute;
-  background: radial-gradient(circle, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0) 65%);
+  background: radial-gradient(circle, rgba(200, 220, 255, 0.6) 0%, rgba(180, 200, 255, 0.4) 20%, rgba(255, 255, 255, 0) 70%);
   border-radius: 50%;
-  opacity: 0.8;
+  opacity: 0.5;
   animation: starFloat 14s ease-in-out infinite;
+  box-shadow: 0 0 2px rgba(200, 220, 255, 0.4), 0 0 4px rgba(180, 200, 255, 0.2);
 }
 
 .star-twinkle {
-  animation: twinkle 8s ease-in-out infinite, starFloat 14s ease-in-out infinite;
+  animation: twinkle 6s ease-in-out infinite, starFloat 14s ease-in-out infinite;
 }
 
 .shooting-star {
   position: absolute;
-  width: 180px;
-  height: 2px;
-  background: linear-gradient(90deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0));
+  width: 200px;
+  height: 2.5px;
+  background: linear-gradient(90deg, rgba(200, 220, 255, 0.9) 0%, rgba(180, 200, 255, 0.7) 30%, rgba(200, 220, 255, 0) 100%);
   opacity: 0;
   transform: rotate(12deg);
-  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
-  animation: shooting 28s linear infinite;
+  filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.5)) drop-shadow(0 0 3px rgba(200, 220, 255, 0.4));
+  animation: shooting 20s linear infinite;
 }
 
 @keyframes starFloat {
@@ -173,29 +174,29 @@ body.high-contrast * {
 @keyframes twinkle {
   0%,
   100% {
-    opacity: 0.4;
+    opacity: 0.2;
   }
   50% {
-    opacity: 1;
+    opacity: 0.6;
   }
 }
 
 @keyframes shooting {
   0%,
-  80% {
+  75% {
     transform: translate3d(0, 0, 0) rotate(15deg);
     opacity: 0;
   }
-  82% {
+  77% {
     opacity: 1;
   }
-  86% {
-    transform: translate3d(160px, 20px, 0) rotate(15deg);
-    opacity: 0.6;
+  82% {
+    transform: translate3d(180px, 22px, 0) rotate(15deg);
+    opacity: 0.7;
   }
-  92%,
+  90%,
   100% {
-    transform: translate3d(300px, 35px, 0) rotate(15deg);
+    transform: translate3d(340px, 40px, 0) rotate(15deg);
     opacity: 0;
   }
 }

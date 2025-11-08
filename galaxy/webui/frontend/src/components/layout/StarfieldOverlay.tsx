@@ -22,23 +22,23 @@ const buildStars = (count: number): StarConfig[] =>
     id: `star-${index}`,
     left: Math.random() * 100,
     top: Math.random() * 100,
-    size: Math.random() * 0.7 + 0.35,
+    size: Math.random() * 0.5 + 0.2, // Smaller, more realistic stars
     delay: Math.random() * 10,
     duration: Math.random() * 12 + 10,
-    twinkle: Math.random() > 0.55,
+    twinkle: Math.random() > 0.4, // More twinkling stars
   }));
 
 const buildShootingStars = (count: number): ShootingStarConfig[] =>
   Array.from({ length: count }, (_, index) => ({
     id: `shooting-${index}`,
-    delay: Math.random() * 45 + index * 30,
+    delay: Math.random() * 20 + index * 8, // More frequent shooting stars
     top: Math.random() * 60 + 10,
     start: Math.random() * 50,
   }));
 
 const StarfieldOverlay: React.FC = () => {
-  const stars = useMemo(() => buildStars(14), []);
-  const shootingStars = useMemo(() => buildShootingStars(1), []);
+  const stars = useMemo(() => buildStars(80), []); // Increased from 14 to 80
+  const shootingStars = useMemo(() => buildShootingStars(4), []); // Increased from 1 to 4
 
   return (
     <div className="absolute inset-0 overflow-hidden">
