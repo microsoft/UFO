@@ -5,16 +5,15 @@ interface StarConfig {
   left: number;
   top: number;
   size: number;
-  delay: number;
-  duration: number;
-  twinkle: boolean;
+  opacity: number;
 }
 
 interface ShootingStarConfig {
   id: string;
-  delay: number;
   top: number;
-  start: number;
+  left: number;
+  width: number;
+  opacity: number;
 }
 
 const buildStars = (count: number): StarConfig[] =>
@@ -22,37 +21,36 @@ const buildStars = (count: number): StarConfig[] =>
     id: `star-${index}`,
     left: Math.random() * 100,
     top: Math.random() * 100,
-    size: Math.random() * 0.5 + 0.2, // Smaller, more realistic stars
-    delay: Math.random() * 10,
-    duration: Math.random() * 12 + 10,
-    twinkle: Math.random() > 0.4, // More twinkling stars
+    size: Math.random() * 0.5 + 0.25,
+    opacity: Math.random() * 0.4 + 0.2,
   }));
 
 const buildShootingStars = (count: number): ShootingStarConfig[] =>
   Array.from({ length: count }, (_, index) => ({
     id: `shooting-${index}`,
-    delay: Math.random() * 20 + index * 8, // More frequent shooting stars
     top: Math.random() * 60 + 10,
-    start: Math.random() * 50,
+    left: Math.random() * 80,
+    width: Math.random() * 100 + 120,
+    opacity: Math.random() * 0.3 + 0.3,
   }));
 
 const StarfieldOverlay: React.FC = () => {
-  const stars = useMemo(() => buildStars(80), []); // Increased from 14 to 80
-  const shootingStars = useMemo(() => buildShootingStars(4), []); // Increased from 1 to 4
+  // Static stars avoid continuous animations while keeping the background rich
+  const stars = useMemo(() => buildStars(40), []);
+  const shootingStars = useMemo(() => buildShootingStars(3), []);
 
   return (
-    <div className="absolute inset-0 overflow-hidden">
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
       {stars.map((star) => (
         <span
           key={star.id}
-          className={`star-particle${star.twinkle ? ' star-twinkle' : ''}`}
+          className="star-static"
           style={{
             left: `${star.left}%`,
             top: `${star.top}%`,
             width: `${star.size}rem`,
             height: `${star.size}rem`,
-            animationDelay: `${star.delay}s`,
-            animationDuration: `${star.duration}s`,
+            opacity: star.opacity,
           }}
           aria-hidden
         />
@@ -60,11 +58,12 @@ const StarfieldOverlay: React.FC = () => {
       {shootingStars.map((trail) => (
         <span
           key={trail.id}
-          className="shooting-star"
+          className="shooting-star-static"
           style={{
             top: `${trail.top}%`,
-            left: `${trail.start}%`,
-            animationDelay: `${trail.delay}s`,
+            left: `${trail.left}%`,
+            width: `${trail.width}px`,
+            opacity: trail.opacity,
           }}
           aria-hidden
         />

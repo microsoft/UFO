@@ -40,17 +40,20 @@ const App: React.FC = () => {
 
   return (
     <div className={`relative min-h-screen w-full text-white galaxy-bg`}>
-      <div className="pointer-events-none absolute inset-0 bg-starfield opacity-70" aria-hidden />
+      {/* Removed bg-starfield overlay for performance optimization */}
+      {/* <div className="pointer-events-none absolute inset-0 bg-starfield opacity-70" aria-hidden /> */}
       <div className="pointer-events-none absolute inset-0">
         <StarfieldOverlay />
       </div>
-      <div className="pointer-events-none absolute inset-0 noise-overlay" aria-hidden />
+      {/* Removed noise overlay for performance optimization */}
+      {/* <div className="pointer-events-none absolute inset-0 noise-overlay" aria-hidden /> */}
 
       <header className="relative z-20 border-b border-white/5 bg-transparent backdrop-blur-xl">
         <div className="mx-auto flex max-w-[2000px] items-center justify-between gap-6 px-6 py-3">
           <div className="flex items-center gap-2">
             <div className="relative">
-              <div className="absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 blur-xl"></div>
+              {/* Removed blur animation for performance optimization */}
+              {/* <div className="absolute inset-0 animate-pulse rounded-2xl bg-gradient-to-br from-cyan-500/20 to-purple-500/20 blur-xl"></div> */}
               <img
                 src="/logo3.png"
                 alt="UFO3 logo"
