@@ -34,7 +34,7 @@
 
 ## 🎯 Choose Your Path
 
-<table align="center">
+<table align="center" width="95%">
 <tr>
 <td width="50%" valign="top">
 
