@@ -633,74 +633,32 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for guidelines.
 
 ---
 
-## 📊 Benchmarks & Evaluation
-
-### UFO² Desktop AgentOS
-
-**Tested on:**
-- ✅ [Windows Agent Arena (WAA)](https://github.com/nice-mee/WindowsAgentArena) – 154 real tasks
-- ✅ [OSWorld (Windows)](https://github.com/nice-mee/WindowsAgentArena/tree/2020-qqtcg/osworld) – 49 cross-app tasks
-
-**Performance:**
-- High success rate on Office automation
-- Robust control detection
-- Efficient multi-action speculation
-
-**📖 [Detailed Results →](./ufo/README.md#-evaluation)**
-
-### UFO³ Galaxy
-
-**Evaluated on Multi-Device Benchmarks:**
-
-According to the [UFO³ technical paper](https://arxiv.org/abs/[TBD]):
-
-- ✅ **Cross-Device Workflows**: 50+ complex multi-device scenarios
-- ✅ **Heterogeneous Platforms**: Windows, Linux, macOS, Android integration
-- ✅ **Parallel Execution**: DAG-based workflows with dependency management
-- ✅ **Fault Tolerance**: Automatic error recovery and task rescheduling
-
-**Key Metrics:**
-- **Task Completion Rate**: Successful orchestration across multiple devices
-- **Parallel Efficiency**: Speedup from DAG-based parallel execution
-- **Device Assignment Accuracy**: Correct capability matching and selection
-- **Fault Recovery**: Automatic detection and recovery from device failures
-
-**Research Highlights:**
-1. **Novel Constellation Framework**: First multi-device orchestration system for GUI agents
-2. **Dynamic Device Assignment**: Intelligent capability-based task-to-device matching
-3. **Real-time Adaptation**: Event-driven monitoring and workflow adjustments
-4. **Heterogeneous Integration**: Seamless coordination across diverse platforms
-
-**📖 [Full Evaluation Details →](./galaxy/benchmarks/)** | **📄 [Read the Paper →](https://arxiv.org/abs/[TBD])**
-
-**Status:** Active research project with ongoing benchmark development
-
----
-
 ## 🗺️ Roadmap
 
-### UFO² Desktop AgentOS (Stable/LTS)
-- ✅ Long-term support and maintenance
-- ✅ Bug fixes and security updates
-- ✅ Performance optimization
-- ✅ Integration with Galaxy as Windows device agent
-- 🔜 Enhanced device agent capabilities for Galaxy
-- 🔜 Picture-in-Picture desktop mode
+<div align="center">
 
-### UFO³ Galaxy (Active Development)
-- ✅ **Constellation Framework** - DAG-based task planning **[DONE]**
-- ✅ **ConstellationAgent** - Intelligent task decomposition **[DONE]**
-- ✅ **Multi-device coordination** - Heterogeneous platform support **[DONE]**
-- ✅ **Event-driven architecture** - Real-time monitoring with observers **[DONE]**
-- ✅ **Dynamic device assignment** - Capability-based matching **[DONE]**
-- 🔄 **Advanced device types** - Mobile, Web, IoT agents **[IN PROGRESS]**
-- 🔄 **Enhanced visualization** - Interactive constellation graphs **[IN PROGRESS]**
-- 🔄 **Performance optimization** - Parallel execution efficiency **[IN PROGRESS]**
-- 🔜 **Fault tolerance enhancement** - Advanced recovery strategies
-- 🔜 **Cross-device data flow** - Optimized inter-device communication
-- 🔜 Auto-debugging toolkit
+| Feature | UFO² Desktop AgentOS (Stable/LTS) | UFO³ Galaxy (Active Development) |
+|---------|:--------------------------------:|:--------------------------------:|
+| **Long-term Support** | ✅ Active maintenance | 🔄 Under development |
+| **Bug Fixes & Security** | ✅ Ongoing updates | ✅ Active |
+| **Performance Optimization** | ✅ Completed | � In Progress |
+| **Constellation Framework** | N/A | ✅ Done |
+| **ConstellationAgent** | N/A | ✅ Done |
+| **Multi-device Coordination** | N/A | ✅ Done |
+| **Event-driven Architecture** | N/A | ✅ Done |
+| **Dynamic Device Assignment** | N/A | ✅ Done |
+| **Galaxy Integration** | ✅ As Windows device agent | ✅ Core feature |
+| **Advanced Device Types** | N/A | 🔄 Mobile, Web, IoT |
+| **Enhanced Visualization** | N/A | 🔄 Interactive graphs |
+| **Fault Tolerance Enhancement** | N/A | 🔜 Planned |
+| **Cross-device Data Flow** | N/A | 🔜 Planned |
+| **Auto-debugging Toolkit** | N/A | 🔜 Planned |
+| **Enhanced Device Agent Capabilities** | 🔜 Planned | N/A |
+| **Picture-in-Picture Mode** | 🔜 Planned | N/A |
 
 **Legend:** ✅ Done | 🔄 In Progress | 🔜 Planned
+
+</div>
 
 ---
 
@@ -750,13 +708,6 @@ If you use UFO³ Galaxy or UFO² in your research, please cite the relevant pape
   note    = {Multi-device orchestration framework with Constellation-based planning}
 }
 ```
-
-**Paper Highlights:**
-- Novel Constellation framework for multi-device task orchestration
-- ConstellationAgent for intelligent task decomposition into DAG workflows
-- Dynamic device assignment via capability-based matching
-- Event-driven architecture for real-time monitoring and adaptation
-- Evaluation on cross-platform workflows and heterogeneous device integration
 
 ### UFO² Desktop AgentOS (2025)
 ```bibtex
