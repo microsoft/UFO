@@ -70,18 +70,9 @@ UFO³ Galaxy 通过五个紧密集成的设计原则实现跨设备编排：
 
 **关键优势：** 声明式结构用于自动调度 • 运行时自省 • 动态重写 • 跨设备编排
 
-```mermaid
-graph LR
-    A[用户请求] --> B[ConstellationAgent]
-    B --> C[TaskConstellation DAG]
-    C --> T1[TaskStar 1<br/>Windows]
-    C --> T2[TaskStar 2<br/>Linux GPU]
-    C --> T3[TaskStar 3<br/>Linux CPU]
-    C --> T4[TaskStar 4<br/>Mobile]
-    T2 --> T5[TaskStar 5]
-    T3 --> T5
-    T4 --> T5
-```
+<div align="center">
+  <img src="../assets/task_constellation.png" alt="Task Constellation DAG" width="60%">
+</div>
 
 ---
 
@@ -179,7 +170,7 @@ graph LR
 ## 🏗️ 架构概览
 
 <div align="center">
-  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy 架构" width="40% style="max-width: 50%; height: auto; margin: 20px 0;">
+  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy 架构" width="50% style="max-width: 50%; height: auto; margin: 20px 0;">
   <p><em>UFO³ Galaxy 分层架构 —— 从自然语言到分布式执行</em></p>
 </div>
 
@@ -200,19 +191,11 @@ graph LR
 </td>
 <td width="50%" valign="top">
 
-#### 🔄 执行流程
+#### 🔄 执行工作流
 
-```mermaid
-graph TD
-    A[1️⃣ DAG 合成] --> B[2️⃣ 设备分配]
-    B --> C[3️⃣ 异步执行]
-    C --> D[4️⃣ 动态适应]
-    
-    A1[ConstellationAgent 构建<br/>TaskConstellation] -.-> A
-    B1[基于配置文件<br/>匹配到有能力的设备] -.-> B
-    C1[事件驱动协调<br/>并行执行] -.-> C
-    D1[基于反馈的<br/>工作流演化] -.-> D
-```
+<div align="center">
+  <img src="../assets/orchestrator.png" alt="执行工作流" width="100%">
+</div>
 
 </td>
 </tr>

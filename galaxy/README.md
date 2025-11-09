@@ -69,18 +69,9 @@ User requests are decomposed by the **ConstellationAgent** into a structured DAG
 
 **Key Benefits:** Declarative structure for automated scheduling • Runtime introspection • Dynamic rewriting • Cross-device orchestration
 
-```mermaid
-graph LR
-    A[User Request] --> B[ConstellationAgent]
-    B --> C[TaskConstellation DAG]
-    C --> T1[TaskStar 1<br/>Windows]
-    C --> T2[TaskStar 2<br/>Linux GPU]
-    C --> T3[TaskStar 3<br/>Linux CPU]
-    C --> T4[TaskStar 4<br/>Mobile]
-    T2 --> T5[TaskStar 5]
-    T3 --> T5
-    T4 --> T5
-```
+<div align="center">
+  <img src="../assets/task_constellation.png" alt="Task Constellation DAG" width="60%">
+</div>
 
 ---
 
@@ -178,7 +169,7 @@ See UFO³ Galaxy in action with this comprehensive demonstration of cross-device
 ## 🏗️ Architecture Overview
 
 <div align="center">
-  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy Architecture"  width="40% style="max-width: 50%; height: auto; margin: 20px 0;">
+  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy Architecture"  width="50% style="max-width: 50%; height: auto; margin: 20px 0;">
   <p><em>UFO³ Galaxy Layered Architecture — From natural language to distributed execution</em></p>
 </div>
 
@@ -199,19 +190,11 @@ See UFO³ Galaxy in action with this comprehensive demonstration of cross-device
 </td>
 <td width="50%" valign="top">
 
-#### 🔄 Execution Flow
+#### 🔄 Execution Workflow
 
-```mermaid
-graph TD
-    A[1️⃣ DAG Synthesis] --> B[2️⃣ Device Assignment]
-    B --> C[3️⃣ Asynchronous Execution]
-    C --> D[4️⃣ Dynamic Adaptation]
-    
-    A1[ConstellationAgent constructs<br/>TaskConstellation] -.-> A
-    B1[Match to capable devices<br/>based on profiles] -.-> B
-    C1[Event-driven coordination<br/>parallel execution] -.-> C
-    D1[Workflow evolution<br/>based on feedback] -.-> D
-```
+<div align="center">
+  <img src="../assets/orchestrator.png" alt="Execution Workflow" width="100%">
+</div>
 
 </td>
 </tr>
