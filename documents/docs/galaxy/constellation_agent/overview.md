@@ -8,7 +8,7 @@
 ## 🌟 Introduction
 
 <figure markdown>
-  ![Constellation Agent Architecture](/img/constellation_agent.png)
+  ![Constellation Agent Architecture](../../img/constellation_agent.png)
   <figcaption><b>Figure:</b> An overview of the Constellation Agent showing the dual-mode control cycle between creation and editing phases.</figcaption>
 </figure>
 
@@ -223,7 +223,7 @@ The agent can perform the following modifications through MCP tools:
 ## 🔁 Finite-State Machine Lifecycle
 
 <figure markdown>
-  ![Agent State Transitions](/img/agent_state.png)
+  ![Agent State Transitions](../../img/agent_state.png)
   <figcaption><b>Figure:</b> Lifecycle state transitions of the Constellation Agent FSM.</figcaption>
 </figure>
 

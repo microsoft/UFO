@@ -8,7 +8,7 @@
 ## What is AppAgent?
 
 <figure markdown>
-  ![AppAgent Architecture](/img/appagent2.png)
+  ![AppAgent Architecture](../../img/appagent2.png)
   <figcaption>AppAgent Architecture: Application-specialized worker process for subtask execution</figcaption>
 </figure>
 

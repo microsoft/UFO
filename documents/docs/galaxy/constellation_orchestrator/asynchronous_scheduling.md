@@ -6,7 +6,7 @@ At the core of the Constellation Orchestrator lies a fully **asynchronous schedu
 
 Most critically, **task execution and constellation editing can proceed concurrently**, allowing the system to adapt in real-time as results stream in while computation continues uninterrupted.
 
-![Asynchronous Timeline](/img/async_timeline.png)
+![Asynchronous Timeline](../../img/async_timeline.png)
 
 *Illustration of asynchronous scheduling and concurrent constellation editing. Task execution overlaps with DAG modifications, reducing end-to-end latency.*
 

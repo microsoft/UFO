@@ -498,7 +498,7 @@ stateDiagram-v2
 ```
 
 <figure markdown>
-  ![AppAgent State Machine](/img/app_state.png)
+  ![AppAgent State Machine](../../img/app_state.png)
   <figcaption>AppAgent State Machine: Visual representation of the 6-state FSM with transitions and conditions</figcaption>
 </figure>
 

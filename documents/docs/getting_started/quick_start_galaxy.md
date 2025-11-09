@@ -628,7 +628,7 @@ python -m galaxy --interactive --max-rounds 20
 Now that Galaxy is set up, explore these guides to unlock its full potential:
 
 1. **[Add More Devices](../configuration/system/galaxy_devices.md)** - Expand your device pool
-2. **[Configure Capabilities](../configuration/system/galaxy_devices.md#capabilities-based-task-routing)** - Optimize task routing
+2. **[Configure Capabilities](../configuration/system/galaxy_devices.md)** - Optimize task routing
 3. **[Constellation Agent](../galaxy/constellation_agent/overview.md)** - Deep dive into orchestration agent
 4. **[Advanced Orchestration](../galaxy/constellation_orchestrator/overview.md)** - Deep dive into DAG planning
 

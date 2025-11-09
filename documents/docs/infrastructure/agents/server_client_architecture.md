@@ -572,8 +572,8 @@ stateDiagram-v2
 
 **Resilience features:**
 
-- **Heartbeat Monitoring**: Detects silent connection failures ([WebSocket Handler](../../server/websocket_handler.md#heartbeat-mechanism))
-- **Automatic Reconnection**: Exponential backoff with jitter ([WebSocket Client](../../client/websocket_client.md#reconnection-logic))
+- **Heartbeat Monitoring**: Detects silent connection failures ([WebSocket Handler](../../server/websocket_handler.md#heartbeat-handling))
+- **Automatic Reconnection**: Exponential backoff with jitter ([WebSocket Client](../../client/websocket_client.md#connection-lifecycle))
 - **Message Queuing**: Buffers messages during disconnection
 - **Session Recovery**: Restores context after reconnection
 

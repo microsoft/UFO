@@ -352,7 +352,7 @@ class ConfirmHostAgentState(HostAgentState):
 ## State Transition Diagram
 
 <figure markdown>
-  ![HostAgent State Machine](/img/host_state_machine.png)
+  ![HostAgent State Machine](../../img/host_state_machine.png)
   <figcaption>HostAgent State Machine: Visual representation of the 7-state FSM with transitions and conditions</figcaption>
 </figure>
 

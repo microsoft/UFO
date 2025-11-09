@@ -8,7 +8,7 @@
 ## 📐 State Machine Overview
 
 <figure markdown>
-  ![Agent State Transitions](/img/agent_state.png)
+  ![Agent State Transitions](../../img/agent_state.png)
   <figcaption><b>Figure:</b> Lifecycle state transitions of the Constellation Agent showing the 4-state FSM.</figcaption>
 </figure>
 

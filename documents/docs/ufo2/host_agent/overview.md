@@ -10,7 +10,7 @@
 Operating atop the native Windows substrate, HostAgent monitors active applications, issues shell commands to spawn new processes as needed, and manages the creation and teardown of application-specific AppAgent instances. All coordination occurs through a persistent state machine, which governs the transitions across execution phases.
 
 <figure markdown>
-  ![HostAgent Architecture](/img/hostagent2.png)
+  ![HostAgent Architecture](../../img/hostagent2.png)
   <figcaption><b>Figure:</b> HostAgent architecture showing the finite state machine, processing pipeline, and interactions with AppAgents through the Blackboard pattern.</figcaption>
 </figure>
 
@@ -30,7 +30,7 @@ Given a user's natural language input, HostAgent identifies the underlying task 
 2. Create chart in Excel with extracted data
 
 <figure markdown>
-  ![Task Decomposition](/img/decomposition.png)
+  ![Task Decomposition](../../img/decomposition.png)
   <figcaption><b>Figure:</b> HostAgent decomposes user requests into sequential subtasks, assigns each to the appropriate application, and orchestrates AppAgents to complete them in dependency order.</figcaption>
 </figure>
 

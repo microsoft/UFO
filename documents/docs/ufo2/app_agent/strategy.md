@@ -1006,7 +1006,7 @@ class AppControlInfoStrategy(BaseProcessingStrategy):
 
 !!!info "Design Patterns"
     - **[Processor Framework](../../infrastructure/agents/design/processor.md)**: ProcessorTemplate architecture
-    - **[Strategy Pattern](../../infrastructure/agents/design/processor.md#strategy-pattern)**: BaseProcessingStrategy design
+    - **[Strategy Pattern](../../infrastructure/agents/design/processor.md)**: BaseProcessingStrategy design
 
 ---
 

@@ -33,7 +33,7 @@ UFO² addresses fundamental limitations of existing desktop automation solutions
 ✅ **10%+ better success rate** than state-of-the-art CUAs
 
 <figure markdown>
-  ![AgentOS vs Traditional CUA](/img/comparison.png)
+  ![AgentOS vs Traditional CUA](../img/comparison.png)
   <figcaption><b>Figure 1:</b> Comparison between (a) traditional CUAs that rely on screenshots and simulated inputs, and (b) UFO² AgentOS that deeply integrates with OS APIs, application internals, and hybrid GUI–API execution.</figcaption>
 </figure>
 
@@ -44,7 +44,7 @@ UFO² addresses fundamental limitations of existing desktop automation solutions
 UFO² implements a **hierarchical multi-agent system** optimized for Windows desktop automation:
 
 <figure markdown>
-  ![UFO² System Architecture](/img/framework2.png)
+  ![UFO² System Architecture](../img/framework2.png)
   <figcaption><b>Figure 2:</b> UFO² system architecture featuring the two-tier agent hierarchy (HostAgent + AppAgents), hybrid control detection pipeline, continuous knowledge substrate integration, and unified GUI–API action layer coordinated through MCP servers.</figcaption>
 </figure>
 

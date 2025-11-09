@@ -484,7 +484,7 @@ Key features:
     - ✅ **Cleaner code**: No manual prompt file maintenance
     - ✅ **Better testing**: Direct server testing with FastMCP Client
     
-    If you're migrating from the old system, see [Creating MCP Servers Tutorial](../creating_mcp_servers.md#migration-guide).
+    If you're migrating from the old system, see [Creating MCP Servers Tutorial](../creating_mcp_servers.md).
 
 ## Best Practices
 

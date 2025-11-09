@@ -158,7 +158,7 @@ async def get_constellation_status(
 |-----------|------|-------------|----------|
 | `constellation` | `TaskConstellation` | Constellation to query | Yes |
 
-**Returns**: Status dictionary from ConstellationManager (see [ConstellationManager.get_constellation_status](#get_constellation_status-1))
+**Returns**: Status dictionary from ConstellationManager
 
 !!! note
     This method delegates to `ConstellationManager.get_constellation_status()` using the constellation's ID.

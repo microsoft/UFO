@@ -454,7 +454,7 @@ UFO³ Galaxy consists of several integrated components working together:
 | **Agent Profile** | Device metadata and capability declarations |
 | **MCP Servers** | Tool augmentation via Model Context Protocol |
 
-For detailed component documentation, see the respective sections in [Documentation Structure](#-documentation-structure).
+For detailed component documentation, see the respective sections in [Documentation Structure](#documentation-structure).
 
 ### Technology Stack
 

@@ -127,7 +127,7 @@ graph TD
 - Parallel execution saves time
 - Centralized result aggregation
 
-**Learn More:** [Galaxy Multi-Platform Support](./galaxy/overview.md#-cross-device-collaboration)
+**Learn More:** [Galaxy Multi-Platform Support](./galaxy/overview.md#cross-device-collaboration)
 
 ---
 
@@ -190,7 +190,7 @@ graph TD
 - Formal safety guarantees for correctness
 - Supports heterogeneous infrastructure
 
-**Learn More:** [Galaxy Architecture](./galaxy/overview.md#-architecture)
+**Learn More:** [Galaxy Architecture](./galaxy/overview.md#architecture)
 
 ---
 
@@ -255,7 +255,7 @@ python -m galaxy --request "Cross-device workflow"
 | **Data processing** | Galaxy (if distributed) | Multi-node ML training |
 | **Quick automation** | UFO² | One-off tasks |
 
-**Learn More:** [When to Use Which](./getting_started/migration_ufo2_to_galaxy.md#-when-to-use-which)
+**Learn More:** [When to Use Which](./getting_started/migration_ufo2_to_galaxy.md#when-to-use-which)
 
 ---
 
@@ -280,7 +280,7 @@ python -m galaxy --request "Cross-device workflow"
 python -m ufo --mode agent-server --port 5005
 ```
 
-**Learn More:** [Migration Guide](./getting_started/migration_ufo2_to_galaxy.md#option-2-convert-ufo-instance-to-galaxy-device)
+**Learn More:** [Migration Guide](./getting_started/migration_ufo2_to_galaxy.md#option-2-convert-ufo2-instance-to-galaxy-device)
 
 ---
 
@@ -394,7 +394,7 @@ Still unsure? Answer these questions:
 3. 🌟 [Task Constellation Concepts](./galaxy/constellation/overview.md)
 
 ### If you're still exploring:
-1. 📊 [Detailed Comparison](./getting_started/migration_ufo2_to_galaxy.md#-when-to-use-which)
+1. 📊 [Detailed Comparison](./getting_started/migration_ufo2_to_galaxy.md#when-to-use-which)
 2. 🎬 [Demo Video](https://www.youtube.com/watch?v=QT_OhygMVXU)
 3. 📄 [Research Paper](https://arxiv.org/abs/2504.14603)
 
@@ -429,4 +429,4 @@ Still unsure? Answer these questions:
 - **GitHub Issues:** [https://github.com/microsoft/UFO/issues](https://github.com/microsoft/UFO/issues)
 - **Discussions:** [https://github.com/microsoft/UFO/discussions](https://github.com/microsoft/UFO/discussions)
 
-Still have questions? Check the [Migration FAQ](./getting_started/migration_ufo2_to_galaxy.md#-getting-help) or open a discussion on GitHub!
+Still have questions? Check the [Migration FAQ](./getting_started/migration_ufo2_to_galaxy.md#getting-help) or open a discussion on GitHub!

@@ -53,7 +53,7 @@ UFO² addresses this dilemma through a **unified action layer** that:
 4. **Leverages MCP servers** for extensible, modular integration of application-specific APIs
 
 <figure markdown>
-  ![Hybrid Action Architecture via MCP](/img/mcp.png)
+  ![Hybrid Action Architecture via MCP](../../img/mcp.png)
   <figcaption><b>Figure:</b> UFO²'s hybrid action architecture powered by Model Context Protocol (MCP) servers. Agents dynamically select between GUI automation (via UI Automation/Win32 APIs) and native application APIs (via MCP servers like Excel COM, Outlook API, PowerPoint), enabling optimal execution strategies for each task.</figcaption>
 </figure>
 
