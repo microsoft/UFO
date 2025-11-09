@@ -180,8 +180,8 @@ graph TD
 See UFO³ Galaxy in action with this comprehensive demonstration of cross-device orchestration:
 
 <div align="center">
-  <a href="YOUR_YOUTUBE_VIDEO_URL_HERE">
-    <img src="https://img.youtube.com/vi/VIDEO_ID_HERE/maxresdefault.jpg" alt="UFO³ Galaxy Demo Video" width="90%">
+  <a href="https://github.com/microsoft/UFO/releases/download/v3.0.0/UFO3.mp4">
+    <img src="../assets/demo_preview.png" alt="UFO³ Galaxy Demo Video" width="90%">
   </a>
   <p><em>🎬 Watch the full demo: Multi-device workflow orchestration with UFO³ Galaxy</em></p>
 </div>

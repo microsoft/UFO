@@ -10,7 +10,7 @@
   <b>UFO³</b> <img src="assets/logo3.png" alt="UFO logo" width="80" style="vertical-align: -30px;"> : 编织数字智能体星系
 </h1>
 <p align="center">
-  <em>多设备编排框架，实现跨平台智能自动化</em>
+  <em>从单设备智能体到多设备星系</em>
 </p>
 
 <p align="center">
@@ -18,12 +18,6 @@
   <a href="#-选择您的路径">🌌 UFO³ 概述</a> •
   <a href="./ufo/README_ZH.md">🖥️ UFO² 中文文档</a> •
   <a href="https://microsoft.github.io/UFO/">📖 完整文档</a>
-</p>
-
-<p align="center">
-  <strong>从单设备智能体到多设备星系</strong>
-  <br>
-  将复杂任务分解为跨异构设备和平台的协调工作流。
 </p>
 
 <div align="center">
@@ -121,8 +115,8 @@ python -m ufo \
 观看 UFO³ Galaxy 如何跨多个设备编排复杂工作流：
 
 <div align="center">
-  <a href="YOUR_YOUTUBE_VIDEO_URL_HERE">
-    <img src="https://img.youtube.com/vi/VIDEO_ID_HERE/maxresdefault.jpg" alt="UFO³ Galaxy 演示" width="80%">
+  <a href="https://github.com/microsoft/UFO/releases/download/v3.0.0/UFO3.mp4">
+    <img src="assets/demo_preview.png" alt="UFO³ Galaxy 演示" width="80%">
   </a>
   <p><em>🎥 点击观看：使用 UFO³ Galaxy 进行跨设备任务编排</em></p>
 </div>
