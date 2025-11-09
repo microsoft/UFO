@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import ReactFlow, {
   Background,
   Controls,
@@ -12,6 +12,7 @@ import ReactFlow, {
   NodeProps,
   Handle,
   Position,
+  useReactFlow,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 import { DagNode, DagEdge } from '../../store/galaxyStore';
@@ -125,13 +126,13 @@ const nodeTypes: NodeTypes = {
           </div>
           
           <div 
-            className="text-base font-semibold uppercase tracking-wider mb-2"
+            className="text-xl font-semibold uppercase tracking-wider mb-2"
             style={{ color: colors.text, opacity: 0.85 }}
           >
             {data.taskId}
           </div>
           <div 
-            className="text-xl font-bold leading-snug"
+            className="text-2xl font-bold leading-snug"
             style={{ color: colors.text }}
           >
             {data.label}
@@ -213,8 +214,8 @@ const computeDagLayout = (nodes: DagNode[], edges: DagEdge[]) => {
   });
 
   // 增加间距，减少拥挤
-  const columnSpacing = 400;
-  const baseRowSpacing = 150;
+  const columnSpacing = 400;  // 水平间距：层级之间的距离（增加此值让节点更分散）
+  const baseRowSpacing = 150; // 垂直间距：同一层级节点之间的基础距离（增加此值让节点纵向更分散）
 
   const positions = new Map<string, { x: number; y: number }>();
 
@@ -284,37 +285,81 @@ const buildNodes = (nodes: DagNode[], edges: DagEdge[]): Node<StarNodeData>[] =>
 };
 
 const buildEdges = (edges: DagEdge[]): Edge[] =>
-  edges.map((edge) => ({
-    id: edge.id,
-    source: edge.source,
-    target: edge.target,
-    type: 'default', // 使用 default 类型，它会根据节点位置自动选择最佳路径
-    animated: false,
-    style: {
-      stroke: 'rgba(100, 181, 246, 0.6)',
-      strokeWidth: 2.5,
-    },
-    markerEnd: {
-      type: MarkerType.ArrowClosed,
-      color: 'rgba(100, 181, 246, 0.8)',
-      width: 18,
-      height: 18,
-    },
-    // 添加平滑的边缘半径
-    pathOptions: {
-      offset: 5,
-      borderRadius: 20,
-    },
-  }));
+  edges.map((edge) => {
+    // Different colors based on dependency satisfaction status
+    const edgeColor = edge.isSatisfied === false 
+      ? 'rgba(248, 113, 113, 0.6)'  // Red for unsatisfied dependencies
+      : edge.isSatisfied === true
+        ? 'rgba(74, 222, 128, 0.6)'  // Green for satisfied dependencies
+        : 'rgba(100, 181, 246, 0.6)'; // Blue for unknown status
+    
+    const markerColor = edge.isSatisfied === false 
+      ? 'rgba(248, 113, 113, 0.8)'
+      : edge.isSatisfied === true
+        ? 'rgba(74, 222, 128, 0.8)'
+        : 'rgba(100, 181, 246, 0.8)';
+
+    return {
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      type: 'default', // 使用 default 类型，它会根据节点位置自动选择最佳路径
+      animated: edge.isSatisfied === false, // Animate unsatisfied dependencies to draw attention
+      style: {
+        stroke: edgeColor,
+        strokeWidth: 2.5,
+      },
+      markerEnd: {
+        type: MarkerType.ArrowClosed,
+        color: markerColor,
+        width: 18,
+        height: 18,
+      },
+      // 添加平滑的边缘半径
+      pathOptions: {
+        offset: 5,
+        borderRadius: 20,
+      },
+    };
+  });
 
 const DagPreviewInner: React.FC<DagPreviewProps> = ({ nodes, edges, onSelectNode }) => {
   const [flowNodes, setNodes, onNodesChange] = useNodesState(buildNodes(nodes, edges));
   const [flowEdges, setEdges, onEdgesChange] = useEdgesState(buildEdges(edges));
+  const { fitView } = useReactFlow();
+  const initializedRef = useRef(false);
 
   useEffect(() => {
     setNodes(buildNodes(nodes, edges));
     setEdges(buildEdges(edges));
   }, [edges, nodes, setEdges, setNodes]);
+
+  // 自定义左对齐的视图调整
+  useEffect(() => {
+    if (flowNodes.length > 0 && !initializedRef.current) {
+      // 延迟执行以确保节点已渲染
+      setTimeout(() => {
+        // 首先使用 fitView 计算合适的缩放
+        fitView({ 
+          padding: 0.15,
+          minZoom: 0.5,
+          maxZoom: 1.5,
+        });
+        
+        // 然后调整到左对齐位置
+        setTimeout(() => {
+          fitView({
+            padding: 0.15,
+            minZoom: 0.5,
+            maxZoom: 1.5,
+            nodes: flowNodes,
+          });
+        }, 50);
+        
+        initializedRef.current = true;
+      }, 100);
+    }
+  }, [flowNodes, fitView]);
 
   return (
     <ReactFlow
@@ -323,15 +368,8 @@ const DagPreviewInner: React.FC<DagPreviewProps> = ({ nodes, edges, onSelectNode
       nodeTypes={nodeTypes}
       onNodesChange={onNodesChange}
       onEdgesChange={onEdgesChange}
-      fitView
-      fitViewOptions={{ 
-        padding: 0.15,
-        minZoom: 0.5, 
-        maxZoom: 1.5,
-        // 初始位置偏左
-        includeHiddenNodes: false,
-      }}
-      defaultViewport={{ x: 20, y: 0, zoom: 0.8 }}
+      fitView={false}
+      defaultViewport={{ x: 50, y: 0, zoom: 0.65 }}
       onNodeClick={(_, node) => onSelectNode?.(node.id)}
       panOnScroll
       zoomOnScroll={true}

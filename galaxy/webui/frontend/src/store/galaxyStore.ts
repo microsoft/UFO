@@ -12,6 +12,7 @@ export type MessageRole = 'user' | 'assistant' | 'system';
 export type MessageKind = 'user' | 'response' | 'action' | 'system';
 
 export type TaskStatus = 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+export type DependencyType = 'unconditional' | 'conditional' | 'success_only' | 'completion_only';
 export type DeviceStatus =
   | 'idle'
   | 'busy'
@@ -49,6 +50,7 @@ export interface DagEdge {
   id: string;
   source: string;
   target: string;
+  isSatisfied?: boolean;  // Whether the dependency is satisfied
 }
 
 export interface TaskLogEntry {
