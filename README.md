@@ -126,21 +126,26 @@ Watch how UFO³ Galaxy orchestrates complex workflows across multiple devices:
 
 ### Evolution Timeline
 
-```
-2024.02    →    2025.04    →    2025.11
-   ↓              ↓              ↓
-  UFO           UFO²         UFO³ Galaxy
-  GUI         Desktop        Multi-Device
-Agent         AgentOS       Orchestration
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0078D4','primaryTextColor':'#fff','primaryBorderColor':'#005A9E','lineColor':'#0078D4','secondaryColor':'#50E6FF','tertiaryColor':'#FFB900'}}}%%
+graph LR
+    A["🎈 UFO<br/>Feb 2024<br/><i>GUI Agent</i>"] --> B["🖥️ UFO²<br/>Apr 2025<br/><i>Desktop AgentOS</i>"]
+    B --> C["🌌 UFO³ Galaxy<br/>Nov 2025<br/><i>Multi-Device<br/>Orchestration</i>"]
+    
+    style A fill:#0078D4,stroke:#005A9E,stroke-width:3px,color:#fff
+    style B fill:#50E6FF,stroke:#0078D4,stroke-width:3px,color:#000
+    style C fill:#FFB900,stroke:#D83B01,stroke-width:3px,color:#000
 ```
 
 ### 🚀 UFO³ = **Galaxy** (Multi-Device Orchestration) + **UFO²** (Device Agent)
 
-UFO³ introduces **Galaxy**, a novel multi-device orchestration framework that coordinates intelligent agents across heterogeneous platforms. Built on three core innovations:
+UFO³ introduces **Galaxy**, a novel multi-device orchestration framework that coordinates intelligent agents across heterogeneous platforms. Built on five core innovations:
 
-1. **🌟 TaskConstellation** - Task decomposition into DAG-based workflows
-2. **🎯 ConstellationAgent** - Intelligent task planning and device assignment  
-3. **⚡ Dynamic Orchestration** - Real-time monitoring and adaptive execution
+1. **🌟 Declarative Task Decomposition** - Natural language requests decomposed into dynamic DAG (TaskConstellation) with structured workflow logic and dependencies
+2. **🔄 Result-Driven Graph Evolution** - Living constellation that continuously adapts through controlled rewrites based on intermediate results, failures, and observations
+3. **🎯 Heterogeneous Orchestration** - Asynchronous, safe execution with capability-based device matching via rich AgentProfiles, ensuring correctness and concurrency
+4. **🔌 Unified Agent Interaction Protocol (AIP)** - WebSocket-based protocol providing secure, fault-tolerant agent registry, session management, and coordination
+5. **🛠️ Template-Driven Agent Framework** - Lightweight toolkit for rapidly building MCP-empowered device agents with modular capability declaration
 
 | Aspect | UFO² | UFO³ Galaxy |
 |--------|------|-------------|
@@ -435,19 +440,18 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 ### 2025-11 – UFO³ Galaxy Framework Released 🌌
 **Major Research Breakthrough:** Multi-Device Orchestration System
 
-- 🌟 **Constellation Framework**: Novel DAG-based task planning for multi-device workflows
-- 🎯 **ConstellationAgent**: Intelligent task decomposition with dependency analysis
-- 🔗 **Cross-Platform Integration**: Seamless orchestration across Windows, Linux, macOS, Android
-- ⚡ **Dynamic Device Assignment**: Capability-based matching and resource allocation
-- 📊 **Real-Time Monitoring**: Event-driven architecture with observer pattern
-- 🛡️ **Fault Tolerance**: Automatic error detection and recovery mechanisms
+- 🌟 **Declarative DAG Decomposition**: TaskConstellation structure for workflow logic and dependencies
+- 🔄 **Dynamic Graph Evolution**: Living constellation that adapts through controlled rewrites
+- 🎯 **Heterogeneous Orchestration**: Safe, asynchronous execution with capability-based device matching
+- � **Unified AIP Protocol**: WebSocket-based secure agent coordination with fault tolerance
+- �️ **MCP-Empowered Agent Framework**: Template-driven toolkit for rapid device agent development
 - 📄 **Research Paper**: [UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/[TBD])
 
-**Key Innovations:**
+**Key Features:**
 - First multi-device orchestration framework for GUI agents
-- Constellation (星座) metaphor for distributed task workflows
-- Heterogeneous platform coordination with unified interface
-- Parallel DAG execution for improved efficiency
+- Result-driven adaptive execution instead of rigid workflows
+- Model Context Protocol (MCP) integration for tool augmentation
+- Formally verified correctness and concurrency safety guarantees
 
 ### 2025-04 – UFO² v2.0.0
 - 📅 UFO² Desktop AgentOS released

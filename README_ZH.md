@@ -115,21 +115,26 @@
 
 ### 演化时间线
 
-```
-2024.02    →    2025.04    →    2025.11
-   ↓              ↓              ↓
-  UFO           UFO²         UFO³ Galaxy
-  GUI         桌面智能体      多设备
-智能体        操作系统        编排
+```mermaid
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#0078D4','primaryTextColor':'#fff','primaryBorderColor':'#005A9E','lineColor':'#0078D4','secondaryColor':'#50E6FF','tertiaryColor':'#FFB900'}}}%%
+graph LR
+    A["🎈 UFO<br/>2024年2月<br/><i>GUI 智能体</i>"] --> B["🖥️ UFO²<br/>2025年4月<br/><i>桌面智能体操作系统</i>"]
+    B --> C["🌌 UFO³ Galaxy<br/>2025年11月<br/><i>多设备<br/>编排</i>"]
+    
+    style A fill:#0078D4,stroke:#005A9E,stroke-width:3px,color:#fff
+    style B fill:#50E6FF,stroke:#0078D4,stroke-width:3px,color:#000
+    style C fill:#FFB900,stroke:#D83B01,stroke-width:3px,color:#000
 ```
 
 ### 🚀 UFO³ = **Galaxy**（多设备编排）+ **UFO²**（设备智能体）
 
-UFO³ 引入了 **Galaxy**，这是一个新颖的多设备编排框架，可在异构平台上协调智能智能体。建立在三个核心创新之上：
+UFO³ 引入了 **Galaxy**，这是一个新颖的多设备编排框架，可在异构平台上协调智能智能体。建立在五个核心创新之上：
 
-1. **🌟 TaskConstellation（任务星座）** - 任务分解为基于 DAG 的工作流
-2. **🎯 ConstellationAgent（星座智能体）** - 智能任务规划和设备分配  
-3. **⚡ 动态编排** - 实时监控和自适应执行
+1. **🌟 声明式任务分解** - 自然语言请求分解为动态 DAG（TaskConstellation），具有结构化工作流逻辑和依赖关系
+2. **🔄 结果驱动的图演化** - 基于中间结果、失败和观察，通过受控重写持续适应的活态星座
+3. **🎯 异构编排** - 通过丰富的 AgentProfiles 进行基于能力的设备匹配，确保正确性和并发性的异步安全执行
+4. **🔌 统一智能体交互协议（AIP）** - 基于 WebSocket 的协议，提供安全、容错的智能体注册、会话管理和协调
+5. **🛠️ 模板驱动的智能体框架** - 用于快速构建支持 MCP 的设备智能体的轻量级工具包，具有模块化能力声明
 
 | 方面 | UFO² | UFO³ Galaxy |
 |--------|------|-------------|
@@ -422,19 +427,18 @@ API_DEPLOYMENT_ID: "your-deployment-id"
 ### 2025-11 – UFO³ Galaxy 框架发布 🌌
 **重大研究突破：** 多设备编排系统
 
-- 🌟 **星座框架**：用于多设备工作流的新颖基于 DAG 的任务规划
-- 🎯 **ConstellationAgent**：具有依赖分析的智能任务分解
-- 🔗 **跨平台集成**：跨 Windows、Linux、macOS、Android 的无缝编排
-- ⚡ **动态设备分配**：基于能力的匹配和资源分配
-- 📊 **实时监控**：具有观察者模式的事件驱动架构
-- 🛡️ **容错性**：自动错误检测和恢复机制
+- 🌟 **声明式 DAG 分解**：TaskConstellation 结构实现工作流逻辑和依赖关系
+- � **动态图演化**：通过受控重写适应的活态星座
+- 🎯 **异构编排**：基于能力的设备匹配实现安全的异步执行
+- � **统一 AIP 协议**：基于 WebSocket 的安全智能体协调，具有容错能力
+- �️ **支持 MCP 的智能体框架**：用于快速设备智能体开发的模板驱动工具包
 - 📄 **研究论文**：[UFO³: Weaving the Digital Agent Galaxy](https://arxiv.org/abs/[TBD])
 
-**关键创新：**
+**核心特性：**
 - 首个用于 GUI 智能体的多设备编排框架
-- 用于分布式任务工作流的星座（星座）隐喻
-- 具有统一接口的异构平台协调
-- 并行 DAG 执行以提高效率
+- 结果驱动的自适应执行，而非僵化的工作流
+- 模型上下文协议（MCP）集成用于工具增强
+- 经过形式化验证的正确性和并发安全保证
 
 ### 2025-04 – UFO² v2.0.0
 - 📅 UFO² 桌面智能体操作系统发布
