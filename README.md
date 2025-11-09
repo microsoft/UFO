@@ -185,103 +185,63 @@ UFO³ introduces **Galaxy**, a novel multi-device orchestration framework that c
 
 #### 🌟 Constellation Planning
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#FFF4E6','primaryTextColor':'#2C3E50','primaryBorderColor':'#F39C12','lineColor':'#95A5A6','fontSize':'12px'}}}%%
-graph TD
-    U["👤 User<br/><small>Natural Language</small>"]
-    C["🎯 Agent<br/><small>Decompose</small>"]
-    D["📊 DAG"]
-    T1["💻 Win"]
-    T2["🔬 Linux"]
-    T3["📈 Mac"]
-    
-    U --> C --> D
-    D --> T1 & T2 & T3
-    T1 -.-> T2 -.-> T3
-    
-    style U fill:#E8F8F5,stroke:#27AE60,stroke-width:2px,rx:8
-    style C fill:#FFF4E6,stroke:#F39C12,stroke-width:2px,rx:8
-    style D fill:#EBF5FB,stroke:#3498DB,stroke-width:2px,rx:8
-    style T1 fill:#F4ECF7,stroke:#9B59B6,stroke-width:1.5px,rx:6
-    style T2 fill:#FADBD8,stroke:#E74C3C,stroke-width:1.5px,rx:6
-    style T3 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1.5px,rx:6
+```
+User Request
+     ↓
+ConstellationAgent
+     ↓
+  [Task DAG]
+   /   |   \
+Task1 Task2 Task3
+(Win) (Linux)(Mac)
 ```
 
 **Benefits:**
-- ✓ Dependency tracking
-- ✓ Parallel execution
-- ✓ Cross-device data flow
+- Cross-device dependency tracking
+- Parallel execution optimization
+- Cross-device dataflow management
 
 </td>
 <td width="33%" valign="top">
 
 #### 🎯 Device Assignment
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F0F8FF','primaryTextColor':'#2C3E50','primaryBorderColor':'#5DADE2','fontSize':'12px'}}}%%
-graph TB
-    subgraph S["<b>Selection</b>"]
-        P1["💻 Platform"]
-        P2["⚡ Resource"]
-        P3["🎯 Task"]
-        P4["📊 History"]
-    end
-    
-    A["✨<br/><b>Auto-Assign</b>"]
-    
-    subgraph R["<b>Results</b>"]
-        A1["🎖️ Best-fit"]
-        A2["⚖️ Balancing"]
-        A3["🛡️ Tolerance"]
-    end
-    
-    S --> A --> R
-    
-    style S fill:#EBF5FB,stroke:#3498DB,stroke-width:2px,rx:10
-    style A fill:#FFF4E6,stroke:#F39C12,stroke-width:2.5px,rx:8
-    style R fill:#E8F8F5,stroke:#27AE60,stroke-width:2px,rx:10
-    style P1 fill:#F0F8FF,stroke:#5DADE2,stroke-width:1px,rx:5
-    style P2 fill:#F0F8FF,stroke:#5DADE2,stroke-width:1px,rx:5
-    style P3 fill:#F0F8FF,stroke:#5DADE2,stroke-width:1px,rx:5
-    style P4 fill:#F0F8FF,stroke:#5DADE2,stroke-width:1px,rx:5
-    style A1 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1px,rx:5
-    style A2 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1px,rx:5
-    style A3 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1px,rx:5
+```
+Selection Criteria
+  • Platform
+  • Resource
+  • Task requirements
+  • Performance history
+        ↓
+  Auto-Assignment
+        ↓
+  Optimal Devices
 ```
 
-**Features:**
-- 🎯 Capability matching
-- 📈 Real-time monitoring
-- 🔄 Dynamic reallocation
+**Smart Matching:**
+- Capability-based selection
+- Real-time resource monitoring
+- Dynamic reallocation
 
 </td>
 <td width="33%" valign="top">
 
 #### 📊 Orchestration
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F4ECF7','primaryTextColor':'#2C3E50','primaryBorderColor':'#9B59B6','fontSize':'12px'}}}%%
-stateDiagram-v2
-    [*] --> Collect
-    Collect --> Process: ✅
-    Process --> Visual: 🔄
-    Visual --> Report: ⏸️
-    Report --> [*]: ✅
-    
-    Process --> Recovery: ❌
-    Recovery --> Process: 🔄
-    
-    style Collect fill:#D5F4E6,stroke:#1ABC9C,stroke-width:2px
-    style Process fill:#FFF4E6,stroke:#F39C12,stroke-width:2px
-    style Visual fill:#EBF5FB,stroke:#3498DB,stroke-width:2px
-    style Report fill:#F4ECF7,stroke:#9B59B6,stroke-width:2px
-    style Recovery fill:#FADBD8,stroke:#E74C3C,stroke-width:2px
+```
+Task1 → Running  ✅
+Task2 → Pending  ⏸️
+Task3 → Running  🔄
+        ↓
+   Completion
+        ↓
+   Final Report
 ```
 
-**Capabilities:**
-- ✓ Live status updates
-- ✓ Error recovery
-- ✓ Progress tracking
+**Orchestration:**
+- Real-time status updates
+- Automatic error recovery
+- Progress tracking with feedback
 
 </td>
 </tr>

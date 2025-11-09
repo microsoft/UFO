@@ -168,108 +168,73 @@ UFO³ 引入了 **Galaxy**，这是一个新颖的多设备编排框架，可在
 
 ### 🌌 Galaxy 框架 – 有什么不同？
 
+<table>
+<tr>
+<td width="33%" valign="top">
+
 #### 🌟 星座规划
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#FFF4E6','primaryTextColor':'#2C3E50','primaryBorderColor':'#F39C12','lineColor':'#95A5A6','fontSize':'14px','fontFamily':'Microsoft YaHei, Segoe UI'}}}%%
-graph TD
-    User["👤 用户请求<br/><i>从 Windows 上的 Excel 收集销售数据，<br/>在 Linux 上分析，在 Mac 上可视化</i>"]
-    CA["🎯 星座智能体<br/><b>任务分解</b>"]
-    DAG["📊 任务 DAG"]
-    T1["💻 任务 1<br/>数据收集<br/><small>Windows</small>"]
-    T2["🔬 任务 2<br/>分析<br/><small>Linux</small>"]
-    T3["📈 任务 3<br/>可视化<br/><small>macOS</small>"]
-    
-    User -->|自然语言| CA
-    CA -->|生成| DAG
-    DAG --> T1
-    DAG --> T2
-    DAG --> T3
-    T1 -.->|数据流| T2
-    T2 -.->|结果| T3
-    
-    style User fill:#E8F8F5,stroke:#27AE60,stroke-width:2px,rx:10
-    style CA fill:#FFF4E6,stroke:#F39C12,stroke-width:2.5px,rx:10
-    style DAG fill:#EBF5FB,stroke:#3498DB,stroke-width:2px,rx:10
-    style T1 fill:#F4ECF7,stroke:#9B59B6,stroke-width:2px,rx:8
-    style T2 fill:#FADBD8,stroke:#E74C3C,stroke-width:2px,rx:8
-    style T3 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:2px,rx:8
+```
+用户请求
+     ↓
+星座智能体
+     ↓
+  [任务 DAG]
+   /   |   \
+任务1 任务2 任务3
+(Win) (Linux)(Mac)
 ```
 
-**核心优势：**
-- ✓ 跨设备依赖关系跟踪
-- ✓ 并行执行优化
-- ✓ 跨设备数据流管理
+**优势：**
+- 跨设备依赖关系跟踪
+- 并行执行优化
+- 跨设备数据流管理
 
----
+</td>
+<td width="33%" valign="top">
 
-#### 🎯 动态设备分配
+#### 🎯 设备分配
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F0F8FF','primaryTextColor':'#2C3E50','primaryBorderColor':'#5DADE2','fontSize':'14px','fontFamily':'Microsoft YaHei, Segoe UI'}}}%%
-graph LR
-    subgraph Selection["<b>🔍 设备选择标准</b>"]
-        P1["💻 平台<br/>兼容性"]
-        P2["⚡ 资源<br/>可用性"]
-        P3["🎯 任务<br/>要求"]
-        P4["📊 性能<br/>历史"]
-    end
-    
-    subgraph Assignment["<b>✨ 自动分配</b>"]
-        A1["🎖️ 最佳<br/>设备"]
-        A2["⚖️ 负载<br/>平衡"]
-        A3["🛡️ 容错<br/>处理"]
-    end
-    
-    P1 & P2 & P3 & P4 --> Assignment
-    
-    style Selection fill:#EBF5FB,stroke:#3498DB,stroke-width:2.5px,rx:15
-    style Assignment fill:#E8F8F5,stroke:#27AE60,stroke-width:2.5px,rx:15
-    style P1 fill:#FFF4E6,stroke:#F39C12,stroke-width:1.5px,rx:8
-    style P2 fill:#FFF4E6,stroke:#F39C12,stroke-width:1.5px,rx:8
-    style P3 fill:#FFF4E6,stroke:#F39C12,stroke-width:1.5px,rx:8
-    style P4 fill:#FFF4E6,stroke:#F39C12,stroke-width:1.5px,rx:8
-    style A1 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1.5px,rx:8
-    style A2 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1.5px,rx:8
-    style A3 fill:#D5F4E6,stroke:#1ABC9C,stroke-width:1.5px,rx:8
+```
+选择标准
+  • 平台兼容性
+  • 资源可用性
+  • 任务要求
+  • 性能历史
+        ↓
+  自动分配
+        ↓
+  最佳设备
 ```
 
 **智能匹配：**
-- 🎯 基于能力的选择
-- 📈 实时资源监控
-- 🔄 动态重新分配
+- 基于能力的选择
+- 实时资源监控
+- 动态重新分配
 
----
+</td>
+<td width="33%" valign="top">
 
 #### 📊 实时编排
 
-```mermaid
-%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F4ECF7','primaryTextColor':'#2C3E50','primaryBorderColor':'#9B59B6','fontSize':'14px','fontFamily':'Microsoft YaHei, Segoe UI'}}}%%
-stateDiagram-v2
-    [*] --> 数据收集: 启动星座
-    数据收集 --> 处理中: ✅ 完成
-    处理中 --> 可视化: 🔄 进行中
-    可视化 --> 报告生成: ⏸️ 待处理
-    报告生成 --> [*]: ✅ 成功
-    
-    处理中 --> 错误恢复: ❌ 错误
-    错误恢复 --> 处理中: 🔄 重试
-    
-    note right of 数据收集
-        实时状态更新
-        实时监控
-    end note
-    
-    note right of 错误恢复
-        自动恢复
-        容错处理
-    end note
+```
+任务1 → 运行中  ✅
+任务2 → 等待中  ⏸️
+任务3 → 运行中  🔄
+        ↓
+   完成汇总
+        ↓
+   最终报告
 ```
 
 **编排功能：**
-- ✓ 所有任务的实时状态更新
-- ✓ 自动错误检测和恢复
-- ✓ 带有视觉反馈的进度跟踪
+- 实时状态更新
+- 自动错误恢复
+- 进度跟踪反馈
+
+</td>
+</tr>
+</table>
 
 ---
 
