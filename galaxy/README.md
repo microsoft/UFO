@@ -24,16 +24,6 @@
 
 ---
 
-<h3 align="center">
-  <img src="../assets/poster.png" width="85%"/> 
-</h3>
-
-<p align="center">
-  <em><strong>From isolated device agents to interconnected constellations — Building the Digital Agent Galaxy</strong></em>
-</p>
-
----
-
 ## 🌟 What is UFO³ Galaxy?
 
 **UFO³ Galaxy** is a revolutionary **cross-device orchestration framework** that transforms isolated device agents into a unified digital ecosystem. It models complex user requests as **Task Constellations** (星座) — dynamic distributed DAGs where nodes represent executable subtasks and edges capture dependencies across heterogeneous devices.
@@ -181,7 +171,7 @@ See UFO³ Galaxy in action with this comprehensive demonstration of cross-device
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
-    <img src="../assets/demo_preview.png" alt="UFO³ Galaxy Demo Video" width="90%">
+    <img src="../assets/poster.png" alt="UFO³ Galaxy Demo Video" width="90%">
   </a>
   <p><em>🎬 Click to watch: Multi-device workflow orchestration with UFO³ Galaxy</em></p>
 </div>

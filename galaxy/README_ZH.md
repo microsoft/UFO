@@ -22,15 +22,6 @@
 
 </div>
 
----
-
-<h3 align="center">
-  <img src="../assets/poster.png" width="85%"/> 
-</h3>
-
-<p align="center">
-  <em><strong>从孤立的设备智能体到互联的星座——构建数字智能体星系</strong></em>
-</p>
 
 ---
 
@@ -181,7 +172,7 @@ graph TD
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
-    <img src="../assets/demo_preview.png" alt="UFO³ Galaxy 演示视频" width="90%">
+    <img src="../assets/poster.png" alt="UFO³ Galaxy 演示视频" width="90%">
   </a>
   <p><em>🎬 点击观看：使用 UFO³ Galaxy 进行多设备工作流编排</em></p>
 </div>

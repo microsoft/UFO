@@ -125,7 +125,7 @@ Watch how UFO³ Galaxy orchestrates complex workflows across multiple devices:
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
-    <img src="assets/demo_preview.png" alt="UFO³ Galaxy Demo" width="80%">
+    <img src="assets/poster.png" alt="UFO³ Galaxy Demo" width="90%">
   </a>
   <p><em>🎥 Click to watch: Cross-device task orchestration with UFO³ Galaxy</em></p>
 </div>
@@ -139,10 +139,6 @@ Watch how UFO³ Galaxy orchestrates complex workflows across multiple devices:
 ---
 
 ## 🌟 What's New in UFO³?
-
-<h3 align="center">
-  <img src="./assets/poster.png" width="70%"/> 
-</h3>
 
 ### Evolution Timeline
 

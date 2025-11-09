@@ -116,7 +116,7 @@ python -m ufo \
 
 <div align="center">
   <a href="https://www.youtube.com/watch?v=NGrVWGcJL8o">
-    <img src="assets/demo_preview.png" alt="UFO³ Galaxy 演示" width="80%">
+    <img src="assets/poster.png" alt="UFO³ Galaxy 演示" width="90%">
   </a>
   <p><em>🎥 点击观看：使用 UFO³ Galaxy 进行跨设备任务编排</em></p>
 </div>
@@ -130,10 +130,6 @@ python -m ufo \
 ---
 
 ## 🌟 UFO³ 有什么新功能？
-
-<h3 align="center">
-  <img src="./assets/poster.png" width="70%"/> 
-</h3>
 
 ### 演化时间线
 
