@@ -1,11 +1,5 @@
 <!-- markdownlint-disable MD033 MD041 -->
 
-<p align="center">
-  <strong>📖 Language / 语言:</strong>
-  <a href="README.md"><strong>English</strong></a> | 
-  <a href="README_ZH.md">中文</a>
-</p>
-
 <!-- <h1 align="center">
   <img src="assets/logo3.png" alt="UFO logo" width="50">
   <br>
@@ -20,6 +14,12 @@
 </h1>
 <p align="center">
   <em>From Single Device Agent to Multi-Device Galaxy</em>
+</p>
+
+<p align="center">
+  <strong>📖 Language / 语言:</strong>
+  <a href="README.md"><strong>English</strong></a> | 
+  <a href="README_ZH.md">中文</a>
 </p>
 
 <p align="center">
@@ -47,7 +47,7 @@
 <tr>
 <td width="50%" valign="top">
 
-### <img src="assets/logo3.png" alt="Galaxy logo" width="40" style="vertical-align: -10px;"> **Galaxy** – Multi-Device Orchestration
+### <img src="assets/logo3.png" alt="Galaxy logo" width="40" style="vertical-align: -10px;"> **UFO³ Multi-Device Agent Galaxy**
 <sub>**✨ NEW & RECOMMENDED**</sub>
 
 **Perfect for:**

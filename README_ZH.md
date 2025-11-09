@@ -1,16 +1,16 @@
 <!-- markdownlint-disable MD033 MD041 -->
 
-<p align="center">
-  <strong>📖 Language / 语言:</strong>
-  <a href="README.md">English</a> | 
-  <strong>中文</strong>
-</p>
-
 <h1 align="center">
   <b>UFO³</b> <img src="assets/logo3.png" alt="UFO logo" width="80" style="vertical-align: -30px;"> : 编织数字智能体星系
 </h1>
 <p align="center">
   <em>从单设备智能体到多设备星系</em>
+</p>
+
+<p align="center">
+  <strong>📖 Language / 语言:</strong>
+  <a href="README.md">English</a> | 
+  <strong>中文</strong>
 </p>
 
 <p align="center">
@@ -38,7 +38,7 @@
 <tr>
 <td width="50%" valign="top">
 
-### <img src="assets/logo3.png" alt="Galaxy logo" width="40" style="vertical-align: -10px;"> **Galaxy** – 多设备编排
+### <img src="assets/logo3.png" alt="Galaxy logo" width="40" style="vertical-align: -10px;"> **UFO³ 多设备智能体星系**
 <sub>**✨ 新功能 & 推荐**</sub>
 
 **适用于：**
