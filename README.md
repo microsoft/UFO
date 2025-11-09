@@ -16,10 +16,10 @@
 
 
 <h1 align="center">
-  <b>UFO³</b> <img src="assets/logo3.png" alt="UFO logo" width="80" style="vertical-align: -20px;"> : Weaving the Digital Agent Galaxy
+  <b>UFO³</b> <img src="assets/logo3.png" alt="UFO logo" width="80"> <b>: Weaving the Digital Agent Galaxy</b>
 </h1>
 <p align="center">
-  <em>A From Single Device Agent to Multi-Device Galaxy</em>
+  <em>From Single Device Agent to Multi-Device Galaxy</em>
 </p>
 
 <p align="center">
