@@ -19,7 +19,7 @@
   <b>UFO³</b> <img src="assets/logo3.png" alt="UFO logo" width="80" style="vertical-align: -20px;"> : Weaving the Digital Agent Galaxy
 </h1>
 <p align="center">
-  <em>A Multi-Device Orchestration Framework for Cross-Platform Intelligent Automation</em>
+  <em>A From Single Device Agent to Multi-Device Galaxy</em>
 </p>
 
 <p align="center">
@@ -27,12 +27,6 @@
   <a href="#-choose-your-path">🌌 UFO³ Overview</a> •
   <a href="./ufo/README.md">🖥️ UFO² README</a> •
   <a href="https://microsoft.github.io/UFO/">📖 Full Documentation</a>
-</p>
-
-<p align="center">
-  <strong>From Single Device Agent to Multi-Device Galaxy</strong>
-  <br>
-  Decompose complex tasks into coordinated workflows across heterogeneous devices and platforms.
 </p>
 
 <div align="center">
