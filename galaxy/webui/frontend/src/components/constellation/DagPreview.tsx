@@ -167,7 +167,7 @@ const computeDagLayout = (nodes: DagNode[], edges: DagEdge[]) => {
     reverseAdjacency.get(edge.target)?.push(edge.source);
   });
 
-  // 使用拓扑排序计算层级
+  // Use topological sort to calculate levels
   const queue: string[] = [];
   const levels = new Map<string, number>();
 
@@ -196,14 +196,14 @@ const computeDagLayout = (nodes: DagNode[], edges: DagEdge[]) => {
     });
   }
 
-  // 确保所有节点都有层级
+  // Ensure all nodes have levels
   nodes.forEach((node) => {
     if (!levels.has(node.id)) {
       levels.set(node.id, 0);
     }
   });
 
-  // 按层级分组
+  // Group by level
   const groupedByLevel = new Map<number, DagNode[]>();
   nodes.forEach((node) => {
     const level = levels.get(node.id) ?? 0;
@@ -213,18 +213,18 @@ const computeDagLayout = (nodes: DagNode[], edges: DagEdge[]) => {
     groupedByLevel.get(level)!.push(node);
   });
 
-  // 增加间距，减少拥挤
-  const columnSpacing = 400;  // 水平间距：层级之间的距离（增加此值让节点更分散）
-  const baseRowSpacing = 150; // 垂直间距：同一层级节点之间的基础距离（增加此值让节点纵向更分散）
+  // Increase spacing to reduce crowding
+  const columnSpacing = 400;  // Horizontal spacing: distance between levels (increase this value to spread nodes more)
+  const baseRowSpacing = 150; // Vertical spacing: basic distance between nodes in the same level (increase this value to spread nodes vertically more)
 
   const positions = new Map<string, { x: number; y: number }>();
 
   Array.from(groupedByLevel.entries())
     .sort(([a], [b]) => a - b)
     .forEach(([level, levelNodes]) => {
-      // 优化排序：考虑连接关系
+      // Optimize sorting: consider connection relationships
       const sorted = levelNodes.sort((a, b) => {
-        // 优先按照前驱节点的平均位置排序
+        // Prioritize sorting by average position of parent nodes
         const aParents = reverseAdjacency.get(a.id) ?? [];
         const bParents = reverseAdjacency.get(b.id) ?? [];
         
@@ -242,12 +242,12 @@ const computeDagLayout = (nodes: DagNode[], edges: DagEdge[]) => {
           return aAvgY - bAvgY;
         }
         
-        // 回退到字母排序
+        // Fallback to alphabetical sorting
         return a.label.localeCompare(b.label);
       });
 
       const count = sorted.length;
-      // 动态调整行间距：节点越多，间距越大
+      // Dynamically adjust row spacing: more nodes = larger spacing
       const rowSpacing = baseRowSpacing + Math.min(count * 10, 100);
       const totalHeight = (count - 1) * rowSpacing;
       const startY = totalHeight > 0 ? -(totalHeight / 2) : 0;
@@ -303,7 +303,7 @@ const buildEdges = (edges: DagEdge[]): Edge[] =>
       id: edge.id,
       source: edge.source,
       target: edge.target,
-      type: 'default', // 使用 default 类型，它会根据节点位置自动选择最佳路径
+      type: 'default', // Use default type, it will automatically select the best path based on node position
       animated: edge.isSatisfied === false, // Animate unsatisfied dependencies to draw attention
       style: {
         stroke: edgeColor,
@@ -315,7 +315,7 @@ const buildEdges = (edges: DagEdge[]): Edge[] =>
         width: 18,
         height: 18,
       },
-      // 添加平滑的边缘半径
+      // Add smooth edge radius
       pathOptions: {
         offset: 5,
         borderRadius: 20,
@@ -334,19 +334,19 @@ const DagPreviewInner: React.FC<DagPreviewProps> = ({ nodes, edges, onSelectNode
     setEdges(buildEdges(edges));
   }, [edges, nodes, setEdges, setNodes]);
 
-  // 自定义左对齐的视图调整
+  // Custom left-aligned view adjustment
   useEffect(() => {
     if (flowNodes.length > 0 && !initializedRef.current) {
-      // 延迟执行以确保节点已渲染
+      // Delay execution to ensure nodes have been rendered
       setTimeout(() => {
-        // 首先使用 fitView 计算合适的缩放
+        // First use fitView to calculate appropriate zoom
         fitView({ 
           padding: 0.15,
           minZoom: 0.5,
           maxZoom: 1.5,
         });
         
-        // 然后调整到左对齐位置
+        // Then adjust to left-aligned position
         setTimeout(() => {
           fitView({
             padding: 0.15,

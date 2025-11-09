@@ -40,6 +40,7 @@ nav:
           - Custom Model: configuration/models/custom_model.md
   - UFO³ Agent Galaxy:
       - Overview: galaxy/overview.md
+      - WebUI: galaxy/webui.md
       - Galaxy Client:
           - Overview: galaxy/client/overview.md
           - ConstellationClient: galaxy/client/constellation_client.md

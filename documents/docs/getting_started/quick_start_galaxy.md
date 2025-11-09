@@ -259,7 +259,35 @@ With all device agents running and configured, you can now launch Galaxy!
     5. ✅ **Devices configured** in `config/galaxy/devices.yaml`
     6. ✅ **Network connectivity** between all components
 
-### Launch Galaxy - Interactive Mode
+### 🎨 Launch Galaxy - WebUI Mode (Recommended)
+
+Start Galaxy with an interactive web interface for real-time constellation visualization and monitoring:
+
+```powershell
+# Assume you are in the cloned UFO folder
+python -m galaxy --webui
+```
+
+This will start the Galaxy server with WebUI and automatically open your browser to the interactive interface:
+
+<div align="center">
+  <img src="../img/webui.png" alt="UFO³ Galaxy WebUI Interface" width="90%">
+  <p><em>🎨 Galaxy WebUI - Interactive constellation visualization and chat interface</em></p>
+</div>
+
+**WebUI Features:**
+
+- 🗣️ **Chat Interface**: Submit requests and interact with ConstellationAgent in real-time
+- 📊 **Live DAG Visualization**: Watch task constellation formation and execution
+- 🎯 **Task Status Tracking**: Monitor each TaskStar's progress and completion
+- 🔄 **Dynamic Updates**: See constellation evolution as tasks complete
+- 📱 **Responsive Design**: Works on desktop and tablet devices
+
+**Default URL:** `http://localhost:8000` (automatically finds next available port if 8000 is occupied)
+
+---
+
+### 💬 Launch Galaxy - Interactive Terminal Mode
 
 Start Galaxy in interactive mode where you can enter requests dynamically:
 
@@ -285,7 +313,9 @@ Multi-Device AI Orchestration System
 Please enter your request 🛸:
 ```
 
-### Launch Galaxy - Direct Request Mode
+---
+
+### ⚡ Launch Galaxy - Direct Request Mode
 
 Invoke Galaxy with a specific request directly:
 
@@ -299,7 +329,9 @@ python -m galaxy --request "Your task description here"
 python -m galaxy --request "Generate a sales report from the database and create an Excel dashboard"
 ```
 
-### Launch Galaxy - Demo Mode
+---
+
+### 🎬 Launch Galaxy - Demo Mode
 
 Run Galaxy in demo mode to see example workflows:
 

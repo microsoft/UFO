@@ -1,4 +1,4 @@
-// WebSocket客户端用于连接Galaxy后端
+// WebSocket client for connecting to Galaxy backend
 export interface GalaxyEvent {
   event_type: string;
   timestamp: number;

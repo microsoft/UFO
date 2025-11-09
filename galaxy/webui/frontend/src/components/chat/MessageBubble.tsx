@@ -24,8 +24,8 @@ import { getWebSocketClient } from '../../services/websocket';
 
 interface MessageBubbleProps {
   message: Message;
-  nextMessage?: Message; // 用于检查下一条消息是否是 action
-  stepNumber?: number; // 步骤编号
+  nextMessage?: Message; // Used to check if the next message is an action
+  stepNumber?: number; // Step number
 }
 
 type PayloadRecord = Record<string, any>;
@@ -126,14 +126,14 @@ const formatConstellationOperation = (action: any): string => {
     case 'build_constellation': {
       const config = args.config || {};
       
-      // 首先检查是否有简化格式（task_count 和 dependency_count）
+      // First check if there is a simplified format (task_count and dependency_count)
       if (args.task_count !== undefined || args.dependency_count !== undefined) {
         const taskCount = args.task_count || 0;
         const depCount = args.dependency_count || 0;
         return `Build Constellation (${taskCount} tasks, ${depCount} dependencies)`;
       }
       
-      // 回退到完整 config 格式
+      // Fallback to full config format
       if (typeof config === 'object' && config !== null) {
         const taskCount = Array.isArray(config.tasks) ? config.tasks.length : 0;
         const depCount = Array.isArray(config.dependencies) ? config.dependencies.length : 0;
@@ -200,13 +200,13 @@ const ActionTreeNode: React.FC<{
   isExpanded: boolean;
   onToggle: () => void;
 }> = ({ action, isLast, isExpanded, onToggle }) => {
-  // 获取状态：优先从 result.status，然后 status，最后从 arguments.status
+  // Get status: prioritize from result.status, then status, then arguments.status
   const status = action?.result?.status || action?.status || action?.arguments?.status;
   const resultError = action?.result?.error || action?.result?.message;
   const isContinue = status && String(status).toLowerCase() === 'continue';
   const operation = formatConstellationOperation(action);
 
-  // 获取状态颜色
+  // Get status color
   const getStatusColor = () => {
     if (!status) return 'text-slate-400';
     const normalized = status.toLowerCase();
@@ -224,35 +224,35 @@ const ActionTreeNode: React.FC<{
 
   return (
     <div className="relative">
-      {/* 连接线 */}
+      {/* Vertical connecting line */}
       <div className="absolute left-0 top-0 flex h-full w-6">
         <div className="w-px bg-white/10" />
         {!isLast && <div className="absolute left-0 top-7 h-[calc(100%-1.75rem)] w-px bg-white/10" />}
       </div>
       
-      {/* Action 内容 */}
+      {/* Action content */}
       <div className="ml-6 pb-3">
         <div className="flex items-start gap-2">
-          {/* 横向连接线 */}
+          {/* Horizontal connecting line */}
           <div className="mt-3 h-px w-3 flex-shrink-0 bg-white/10" />
           
-          {/* Action 主内容 */}
+          {/* Action main content */}
           <div className="flex-1 min-w-0">
             <button
               onClick={onToggle}
               className="group flex w-full items-center gap-2 rounded-lg border border-white/5 bg-white/5 px-3 py-2 text-left text-sm transition hover:border-white/20 hover:bg-white/10"
             >
-              {/* 状态图标 */}
+              {/* Status icon */}
               <span className={clsx('flex-shrink-0', getStatusColor())}>
                 {getStatusIcon(status)}
               </span>
               
-              {/* 操作描述 */}
+              {/* Operation description */}
               <span className="flex-1 truncate font-medium text-slate-200">
                 {operation}
               </span>
               
-              {/* 展开/收起图标 */}
+              {/* Expand/collapse icon */}
               {!isContinue && (action.arguments || resultError) && (
                 <ChevronDown
                   className={clsx(
@@ -263,7 +263,7 @@ const ActionTreeNode: React.FC<{
               )}
             </button>
 
-            {/* 展开的详细信息 */}
+            {/* Expanded details */}
             {isExpanded && !isContinue && (
               <div className="mt-2 space-y-2 rounded-lg border border-white/5 bg-black/20 p-3">
                 {/* Status display */}
@@ -336,11 +336,11 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage, ste
 
   const responseStatus = responsePayload?.status;
 
-  // 检查下一条消息是否是 action，如果是则附加到当前 response
+  // Check if next message is an action, if so attach it to current response
   const hasAttachedActions = message.kind === 'response' && nextMessage?.kind === 'action';
   const attachedActionPayload = hasAttachedActions ? (nextMessage?.payload as PayloadRecord | undefined) : undefined;
 
-  // 如果是 action 消息，直接返回 null，不渲染任何内容（因为已经附加到 response 中）
+  // If it is an action message, return null directly without rendering any content (because it has been attached to response)
   if (isAction) {
     return null;
   }
@@ -371,10 +371,10 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage, ste
             : 'rounded-bl-xl border-white/10 bg-black/40 text-slate-200',
         )}
       >
-        {/* Agent 消息头部 */}
+        {/* Agent message header */}
         {!isUser && (
           <div className="mb-4 flex items-center justify-between gap-3">
-            {/* 左侧：Agent 名称和图标 */}
+            {/* Left side: Agent name and icon */}
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-500/20 to-blue-500/20 border border-cyan-400/30 shadow-lg">
                 <Zap className="h-5 w-5 text-cyan-300" aria-hidden />
@@ -395,7 +395,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage, ste
               </div>
             </div>
 
-            {/* 右侧：状态标签 */}
+            {/* Right side: Status label */}
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/10 bg-white/5 px-2.5 py-1 text-[10px] font-medium uppercase tracking-wider text-slate-300">
                 <Sparkles className="h-3 w-3" aria-hidden />
@@ -411,7 +411,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage, ste
           </div>
         )}
 
-        {/* User 消息头部 */}
+        {/* User message header */}
         {isUser && (
           <div className="mb-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3">
@@ -649,7 +649,7 @@ const MessageBubble: React.FC<MessageBubbleProps> = ({ message, nextMessage, ste
         </AnimatePresence>
       </div>
 
-      {/* 附加的 Actions 树形展示 */}
+      {/* Attached Actions tree view */}
       {hasAttachedActions && attachedActionPayload && Array.isArray(attachedActionPayload.actions) && attachedActionPayload.actions.length > 0 && (
         <div className="ml-12 w-[calc(88%-3rem)] sm:w-[calc(74%-3rem)]">
           {attachedActionPayload.actions.map((action: any, index: number) => (

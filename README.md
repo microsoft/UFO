@@ -1,4 +1,11 @@
 <!-- markdownlint-disable MD033 MD041 -->
+
+<p align="center">
+  <strong>📖 Language / 语言:</strong>
+  <a href="README.md"><strong>English</strong></a> | 
+  <a href="README_ZH.md">中文</a>
+</p>
+
 <!-- <h1 align="center">
   <img src="assets/logo3.png" alt="UFO logo" width="50">
   <br>
@@ -15,6 +22,12 @@
   <em>A Multi-Device Orchestration Framework for Cross-Platform Intelligent Automation</em>
 </p>
 
+<p align="center">
+  <strong>📚 Quick Links:</strong>
+  <a href="#-choose-your-path">🌌 UFO³ Overview</a> •
+  <a href="./ufo/README.md">🖥️ UFO² README</a> •
+  <a href="https://microsoft.github.io/UFO/">📖 Full Documentation</a>
+</p>
 
 <p align="center">
   <strong>From Single Device Agent to Multi-Device Galaxy</strong>

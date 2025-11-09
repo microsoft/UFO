@@ -1,4 +1,16 @@
 <!-- markdownlint-disable MD033 MD041 -->
+
+<p align="center">
+  <strong>📖 Language / 语言:</strong>
+  <a href="README.md"><strong>English</strong></a> | 
+  <a href="README_ZH.md">中文</a>
+</p>
+
+<p align="center">
+  <strong>⬆️ Looking for UFO³ (Multi-Device Galaxy)?</strong>
+  <a href="../README.md">🌌 Back to UFO³ Main README</a>
+</p>
+
 <h1 align="center">
   <b>UFO²</b> <img src="../assets/ufo_blue.png" alt="UFO logo" width="40"> :&nbsp;The&nbsp;Desktop&nbsp;AgentOS
 </h1>

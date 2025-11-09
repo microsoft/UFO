@@ -1,4 +1,11 @@
 <!-- markdownlint-disable MD033 MD041 -->
+
+<p align="center">
+  <strong>📖 Language / 语言:</strong>
+  <a href="README.md"><strong>English</strong></a> | 
+  <a href="README_ZH.md">中文</a>
+</p>
+
 <h1 align="center">
   <b>UFO³</b> <img src="../assets/logo3.png" alt="UFO³ logo" width="80" style="vertical-align: -30px;"> : Weaving the Digital Agent Galaxy
 </h1>
@@ -399,17 +406,56 @@ python -m ufo.client.mcp.http_servers.linux_mcp_server
 
 ### 🌌 Step 6: Launch Galaxy Client
 
-**Interactive Mode:**
+#### 🎨 Interactive WebUI Mode (Recommended)
+
+Launch Galaxy with an interactive web interface for real-time constellation visualization and monitoring:
+
+```powershell
+python -m galaxy --webui
+```
+
+This will start the Galaxy server with WebUI and open your browser to the interactive interface:
+
+<div align="center">
+  <img src="../assets/webui.png" alt="UFO³ Galaxy WebUI Interface" width="90%">
+  <p><em>🎨 Galaxy WebUI - Interactive constellation visualization and chat interface</em></p>
+</div>
+
+**WebUI Features:**
+- 🗣️ **Chat Interface**: Submit requests and interact with ConstellationAgent in real-time
+- 📊 **Live DAG Visualization**: Watch task constellation formation and execution
+- 🎯 **Task Status Tracking**: Monitor each TaskStar's progress and completion
+- 🔄 **Dynamic Updates**: See constellation evolution as tasks complete
+- 📱 **Responsive Design**: Works on desktop and tablet devices
+
+**Default URL:** `http://localhost:8000` (automatically finds next available port if 8000 is occupied)
+
+---
+
+#### 💬 Interactive Terminal Mode
+
+For command-line interaction:
+
 ```powershell
 python -m galaxy --interactive
 ```
 
-**Direct Request:**
+---
+
+#### ⚡ Direct Request Mode
+
+Execute a single request and exit:
+
 ```powershell
 python -m galaxy --request "Extract data from Excel on Windows, process with Python on Linux, and generate visualization report"
 ```
 
-**Programmatic API:**
+---
+
+#### 🔧 Programmatic API
+
+Embed Galaxy in your Python applications:
+
 ```python
 from galaxy.galaxy_client import GalaxyClient
 
