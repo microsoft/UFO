@@ -1,16 +1,16 @@
 <!-- markdownlint-disable MD033 MD041 -->
 
+<h1 align="center">
+  <b>UFO³</b> <img src="../assets/logo3.png" alt="UFO³ logo" width="70" style="vertical-align: -30px;"> : Weaving the Digital Agent Galaxy
+</h1>
+<p align="center">
+  <em>Cross-Device Orchestration Framework for Ubiquitous Intelligent Automation</em>
+</p>
+
 <p align="center">
   <strong>📖 Language / 语言:</strong>
   <a href="README.md"><strong>English</strong></a> | 
   <a href="README_ZH.md">中文</a>
-</p>
-
-<h1 align="center">
-  <b>UFO³</b> <img src="../assets/logo3.png" alt="UFO³ logo" width="80" style="vertical-align: -30px;"> : Weaving the Digital Agent Galaxy
-</h1>
-<p align="center">
-  <em>Cross-Device Orchestration Framework for Ubiquitous Intelligent Automation</em>
 </p>
 
 <div align="center">
@@ -30,26 +30,26 @@
 
 ### 🎯 The Vision
 
-Building truly ubiquitous intelligent agents requires moving beyond single-device automation. UFO³ Galaxy addresses four fundamental challenges:
+Building truly ubiquitous intelligent agents requires moving beyond single-device automation. UFO³ Galaxy addresses four fundamental challenges in cross-device agent orchestration:
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
-**🔄 Asynchronous Parallelism**
-Concurrent task execution across devices while maintaining correctness through event-driven coordination
+**🔄 Asynchronous Parallelism**  
+Enabling concurrent task execution across multiple devices while maintaining correctness through event-driven coordination and safe concurrency control
 
 **⚡ Dynamic Adaptation**  
-Real-time workflow evolution based on runtime feedback and task completion events
+Real-time workflow evolution in response to intermediate results, transient failures, and runtime observations without workflow abortion
 
 </td>
 <td width="50%" valign="top">
 
 **🌐 Distributed Coordination**  
-Reliable, low-latency cross-device communication via WebSocket-based Agent Interaction Protocol
+Reliable, low-latency communication across heterogeneous devices via WebSocket-based Agent Interaction Protocol with fault tolerance
 
 **🛡️ Safety Guarantees**  
-Formal invariants (I1-I3) ensure DAG consistency during concurrent modifications and parallel execution
+Formal invariants ensuring DAG consistency during concurrent modifications and parallel execution, verified through rigorous proofs
 
 </td>
 </tr>
@@ -59,72 +59,117 @@ Formal invariants (I1-I3) ensure DAG consistency during concurrent modifications
 
 ## ✨ Key Innovations
 
+UFO³ Galaxy realizes cross-device orchestration through five tightly integrated design principles:
+
 <table>
 <tr>
 <td width="50%" valign="top">
 
-### 🌟 Task Constellation Framework
+### 🌟 Declarative Decomposition into Dynamic DAG
 
-Natural language requests are decomposed into **Task Constellations** — structured DAG workflows with **TaskStars** (nodes) and **TaskStarLines** (edges) encoding task logic, dependencies, and device assignments. This enables **declarative workflow representation** for automated scheduling, **runtime introspection** and dynamic modification, **parallel execution** of independent subtasks, and **cross-device data flow** management.
+Natural language or programmatic requests are decomposed by the **ConstellationAgent** into a structured DAG of **TaskStars** (nodes) and **TaskStarLines** (edges) that encode workflow logic, dependencies, and device assignments.
+
+**Key Benefits:**
+- 📋 **Declarative structure** amenable to automated scheduling
+- 🔍 **Runtime introspection** for workflow visibility
+- ✏️ **Dynamic rewriting** throughout execution
+- 🔄 **Automated orchestration** across heterogeneous devices
 
 ```
-User Intent → ConstellationAgent → Task Constellation (DAG)
-                                    ├─ TaskStar 1 (Windows)
-                                    ├─ TaskStar 2 (Linux GPU) ─┐
-                                    ├─ TaskStar 3 (Linux CPU) ─┼─ TaskStar 5
-                                    └─ TaskStar 4 (Mobile)    ─┘
+User Request → ConstellationAgent → TaskConstellation (DAG)
+                                     ├─ TaskStar 1 (Windows)
+                                     ├─ TaskStar 2 (Linux GPU) ─┐
+                                     ├─ TaskStar 3 (Linux CPU) ─┼─ TaskStar 5
+                                     └─ TaskStar 4 (Mobile)    ─┘
 ```
 
 ---
 
-### ⚡ Event-Driven Orchestration
+### 🔄 Continuous Result-Driven Graph Evolution
 
-**Constellation Orchestrator** executes DAGs asynchronously with:
+The **TaskConstellation** is a living data structure that evolves in response to execution feedback. Intermediate outputs, transient failures, and new observations trigger controlled rewrites.
 
-- 👁️ **Observer pattern** for real-time task status monitoring
-- 🔒 **Safe assignment locking** to prevent race conditions
-- ✅ **Three formal invariants** ensuring DAG correctness:
-- 📅 **Dynamic task scheduling** based on dependency completion
-- 🔄 **Automatic retry and migration** on failures
+**Adaptation Mechanisms:**
+- 🩺 **Diagnostic TaskStars** added for debugging
+- �️ **Fallback creation** for error recovery
+- 🔗 **Dependency rewiring** for workflow optimization
+- ✂️ **Node pruning** after completion
+
+This enables the system to adapt dynamically instead of aborting on errors, achieving true resilience.
+
+---
+
+### ⚡ Heterogeneous, Asynchronous & Safe Orchestration
+
+Each **TaskStar** is matched to the most suitable device agent via rich **AgentProfiles** reflecting OS, hardware capabilities, and installed tools. The **Constellation Orchestrator** executes tasks asynchronously, allowing multiple TaskStars to progress in parallel.
+
+**Safety Guarantees:**
+- 🔒 **Safe assignment locking** prevents race conditions
+- 📅 **Event-driven scheduling** monitors DAG readiness
+- ✅ **DAG consistency checks** maintain structural integrity
+- 🔄 **Batched edits** ensure atomicity
+- � **Formal verification** reinforces correctness
+
+These mechanisms collectively ensure **high efficiency without compromising reliability**.
 
 </td>
 <td width="50%" valign="top">
 
-### 🎯 Intelligent Constellation Agent
+### 🔌 Unified Agent Interaction Protocol (AIP)
 
-LLM-powered agent that operates in two modes:
+Built atop persistent **WebSocket channels**, AIP provides a unified, secure, and fault-tolerant layer for the entire agent ecosystem.
 
-- **Creation Mode**: Synthesizes initial DAG from user request with device-aware task decomposition
-- **Editing Mode**: Incrementally refines constellation based on task completion events and runtime feedback
+**Core Capabilities:**
+- 📝 **Agent registry** with capability profiles
+- 🔐 **Session management** for secure communication
+- 📤 **Task dispatch** with intelligent routing
+- 🎯 **Coordination primitives** for distributed workflows
+- 💓 **Heartbeat monitoring** for health tracking
+- 🔌 **Automatic reconnection** under network fluctuations
+- 🔄 **Retry mechanisms** for reliability
 
-**Features:**
-- 🧠 ReAct architecture for context-aware planning
-- 🎯 Capability-based device assignment
-- 🛡️ Automatic error recovery and workflow adaptation
-- 🔄 State machine control with safe transitions
+**Architecture Benefits:**
+- � **Lightweight interface** for easy integration
+- 🧩 **Extensible design** supports new agent types
+- 🛡️ **Fault tolerance** ensures continuous operation
+
+This allows new agents to integrate seamlessly into the UFO³ ecosystem.
 
 ---
 
-### 🔌 Agent Interaction Protocol (AIP)
+### MCP-Empowered Device Agents
 
-Unified WebSocket-based communication layer providing:
+To democratize agent creation, UFO³ provides a **lightweight development template and toolkit** for rapidly building new device agents.
 
-- 📝 **Device registration** with capability profiles
-- 💓 **Heartbeat monitoring** for availability tracking
-- 📤 **Task dispatch** with dynamic routing
-- 📊 **Result streaming** with real-time progress updates
-- 🔌 **Connection resilience** with automatic reconnection
+**Development Framework:**
+- 📄 **Capability declaration** defines agent profiles
+- � **Environment binding** connects to local systems
+- 🧩 **MCP server integration** for tool augmentation
+- 🔧 **Modular design** accelerates development
+
+**Model Context Protocol (MCP) Integration:**
+- 🎁 **Tool packages** via MCP servers
+- 🔌 **Plug-and-play** capability extension
+- 🌐 **Cross-platform** tool standardization
+- 🚀 **Rapid prototyping** of new agents
+
+This modular architecture maintains consistency across the constellation while enabling developers to extend UFO³ to new platforms (mobile, web, IoT, embedded systems, etc.) with minimal effort.
 
 </td>
 </tr>
 </table>
+
+<div align="center">
+  <br>
+  <em>🎯 Together, these designs enable UFO³ to decompose, schedule, execute, and adapt distributed tasks efficiently while maintaining safety and consistency across heterogeneous devices.</em>
+</div>
 
 ---
 
 ## 🏗️ Architecture Overview
 
 <div align="center">
-  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy Architecture" style="max-width: 100%; height: auto; margin: 20px 0;">
+  <img src="../documents/docs/img/overview2.png" alt="UFO³ Galaxy Architecture" style="max-width: 60%; height: auto; margin: 20px 0;">
   <p><em>UFO³ Galaxy Layered Architecture — From natural language to distributed execution</em></p>
 </div>
 
@@ -533,46 +578,70 @@ Extract (Windows) → Process (Linux) ┬→ Generate PDF (Windows)
 
 ---
 
-## 🌐 Core Capabilities
+## 🌐 System Capabilities
+
+Building on the five design principles, UFO³ Galaxy delivers powerful capabilities for distributed automation:
 
 <table>
 <tr>
 <td width="50%" valign="top">
 
-### ⚡ Asynchronous Parallelism
-- Event-driven scheduling monitors DAG for ready tasks
-- Non-blocking execution with Python `asyncio`
-- Dynamic integration of new tasks without interruption
-- **Result:** Up to 70% reduction in end-to-end latency
+### ⚡ Efficient Parallel Execution
+- **Event-driven scheduling** monitors DAG for ready tasks
+- **Non-blocking execution** with Python `asyncio`
+- **Dynamic task integration** without workflow interruption
+- **Result:** Up to 70% reduction in end-to-end latency compared to sequential execution
 
-### 🛡️ Safety & Consistency
-- Three formal invariants (I1-I3) for DAG correctness
-- Safe assignment locking prevents race conditions
-- Acyclicity validation ensures no circular dependencies
-- State merging preserves execution progress during edits
+---
+
+### 🛡️ Formal Safety Guarantees
+- **Three formal invariants (I1-I3)** ensure DAG correctness
+- **Safe assignment locking** prevents race conditions
+- **Acyclicity validation** eliminates circular dependencies
+- **State merging** preserves progress during runtime modifications
+- **Formally verified** through rigorous mathematical proofs
 
 </td>
 <td width="50%" valign="top">
 
-### 🔄 Dynamic Adaptation
-- Dual-mode operation (creation/editing) with FSM control
-- Feedback-driven constellation refinement
-- LLM-powered reasoning via ReAct architecture
-- Automatic error recovery and task rescheduling
+### 🔄 Intelligent Adaptation
+- **Dual-mode ConstellationAgent** (creation/editing) with FSM control
+- **Result-driven evolution** based on execution feedback
+- **LLM-powered reasoning** via ReAct architecture
+- **Automatic error recovery** through diagnostic tasks and fallbacks
+- **Workflow optimization** via dynamic rewiring and pruning
 
-### 👁️ Rich Observability
-- Real-time constellation visualization with DAG updates
-- Event bus with publish-subscribe pattern
-- Detailed execution logs with markdown trajectories
-- Task status tracking and dependency inspection
+---
+
+### 👁️ Comprehensive Observability
+- **Real-time visualization** of constellation structure and execution
+- **Event-driven updates** via publish-subscribe pattern
+- **Rich execution logs** with markdown trajectories
+- **Status tracking** for each TaskStar and dependency
+- **Interactive WebUI** for monitoring and control
 
 </td>
 </tr>
 </table>
 
-### 🔌 Extensibility & Custom Device Agents
+---
 
-UFO³ is designed as a **universal framework** that supports developing new device agents for different platforms (mobile, web, IoT, embedded systems, etc.) and applications. Through the **Agent Interaction Protocol (AIP)**, custom device agents can seamlessly integrate into UFO³ Galaxy for coordinated multi-device automation. 
+### 🔌 Extensibility & Platform Independence
+
+UFO³ is designed as a **universal orchestration framework** that seamlessly integrates heterogeneous device agents across platforms.
+
+**Multi-Platform Support:**
+- 🪟 **Windows** — Desktop automation via UFO²
+- 🐧 **Linux** — Server management, DevOps, data processing
+- 📱 **Mobile** — Extend to iOS/Android (coming soon)
+- 🌐 **Web** — Browser-based agents (coming soon)
+- 🤖 **IoT/Embedded** — Edge devices and sensors (coming soon)
+
+**Developer-Friendly:**
+- 📦 **Lightweight template** for rapid agent development
+- 🧩 **MCP integration** for plug-and-play tool extension
+- 📖 **Comprehensive tutorials** and API documentation
+- 🔌 **AIP protocol** for seamless ecosystem integration
 
 **📖 Want to build your own device agent?** See our [Creating Custom Device Agents tutorial](../documents/docs/tutorials/creating_device_agent/overview.md) to learn how to extend UFO³ to new platforms.
 
